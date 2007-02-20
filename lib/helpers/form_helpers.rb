@@ -6,7 +6,7 @@ module ActionView::Helpers
       return send(override_helper, @record) if respond_to? override_helper
 
       ## In the absence of an override use the partial based on column type
-      return render :partial => form_partial_for_column(column), :locals => { :column => column }
+      return render(:partial => form_partial_for_column(column), :locals => { :column => column })
     end
 
     def form_partial_for_column(column)

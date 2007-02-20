@@ -68,13 +68,9 @@ ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldListHelpers)
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldFormHelpers)
 
 ##
-## Add MIME type for JSON
+## Add MIME type for JSON (backwards compat)
 ##
-
-begin
-  # Edge Rails Method
-  Mime::Type.register "application/json", :json, %w( text/json )
-rescue
+unless Mime.const_defined?(:JSON)
   # Rails 1.1 Method
   # Register a new Mime::Type
   Mime::JSON = Mime::Type.new 'application/json', :json, %w( text/json )
