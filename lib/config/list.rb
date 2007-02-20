@@ -51,7 +51,7 @@ module ActiveScaffold::Config
       val.each { |clause| sorting.add *clause.to_a.first }
     end
     def sorting
-      @sorting ||= ActiveScaffold::DataStructures::Sorting(@core.columns)
+      @sorting ||= ActiveScaffold::DataStructures::Sorting.new(@core.columns)
     end
 
     # the label for this List action. used for the header.
@@ -80,8 +80,13 @@ module ActiveScaffold::Config
         @session['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
         @session['sort'] = nil if @params['sort_direction'] == 'reset'
 
-        @conf.sorting.set(*@session['sort']) if @session['sort']
-        @conf.sorting
+        if @session['sort']
+          sorting = @conf.sorting.clone
+          sorting.set(*@session['sort'])
+          return sorting
+        else
+          return @conf.sorting
+        end
       end
     end
   end
