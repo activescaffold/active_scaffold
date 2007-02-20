@@ -42,9 +42,7 @@ module ActiveScaffold::Actions
           if successful?
             render :action => 'create', :layout => false
           else
-            render :update do |page|
-              page.replace_html element_messages_id(:action => :create), :partial => 'form_messages'
-            end
+            render :action => 'form_messages.rjs', :layout => false
           end
         end
         type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }

@@ -1,0 +1,1 @@
+page << "$('#{action_link_id(:action => active_scaffold_config.update.link.action)}').action_link.close_with_refresh()"
