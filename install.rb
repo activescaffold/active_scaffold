@@ -12,14 +12,14 @@ directory = File.dirname(__FILE__)
 
 copy_files("/public", "/public", directory)
 
-available_themes = Dir[File.join(directory, 'themes', '*')].collect { |d| File.basename d }
+available_frontends = Dir[File.join(directory, 'frontends', '*')].collect { |d| File.basename d }
 [ :stylesheets, :javascripts, :images].each do |asset_type|
   path = "/public/#{asset_type}/active_scaffold"
   copy_files(path, path, directory)
 
-  available_themes.each do |theme|
-    source = "/themes/#{theme}/#{asset_type}/"
-    destination = "/public/#{asset_type}/active_scaffold/#{theme}"
+  available_frontends.each do |frontend|
+    source = "/frontends/#{frontend}/#{asset_type}/"
+    destination = "/public/#{asset_type}/active_scaffold/#{frontend}"
     copy_files(source, destination, directory)
   end
 end

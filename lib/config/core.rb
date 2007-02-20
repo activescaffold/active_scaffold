@@ -14,21 +14,21 @@ module ActiveScaffold::Config
     cattr_accessor :plugin_directory
     @@plugin_directory = File.expand_path(__FILE__).match(/vendor\/plugins\/(\w*)/)[1]
 
-    # lets you specify a global ActiveScaffold theme.
-    cattr_accessor :theme
-    @@theme = :default
+    # lets you specify a global ActiveScaffold frontend.
+    cattr_accessor :frontend
+    @@frontend = :default
 
     # lets you specify the language.
     #     ActiveScaffold.set_defaults do |conf|
     #       conf.lang = "en_US"
     #     end
     #   Files stored in:
-    #     themes/default/lang/
+    #     frontends/default/lang/
     #   Filename format:
     #     en_US.rb
     def self.lang=(value)
       Localization.lang = value
-      require "#{File.dirname __FILE__}/../../themes/default/lang/#{value}"
+      require "#{File.dirname __FILE__}/../../frontends/default/lang/#{value}"
       rescue MissingSourceFile
         # Should we warn them in the logs that they had better supply a Language file?
     end
@@ -62,8 +62,8 @@ module ActiveScaffold::Config
       @columns = ActiveScaffold::DataStructures::Columns.new(self.model, *val)
     end
 
-    # lets you override the global ActiveScaffold theme for a specific controller
-    attr_accessor :theme
+    # lets you override the global ActiveScaffold frontend for a specific controller
+    attr_accessor :frontend
 
     # action links are used by actions to tie together. they appear as links for each record, or general links for the ActiveScaffold.
     attr_reader :action_links
@@ -92,8 +92,8 @@ module ActiveScaffold::Config
       column_names -= self.class.ignore_columns.collect { |c| c.to_sym }
       self.columns = column_names
 
-      # inherit the global theme
-      @theme = self.class.theme
+      # inherit the global frontend
+      @frontend = self.class.frontend
 
       # inherit from the global set of action links
       @action_links = self.class.action_links.clone
@@ -168,11 +168,11 @@ module ActiveScaffold::Config
     end
 
     def self.asset_path(type, filename)
-      "active_scaffold/#{ActiveScaffold::Config::Core.theme.to_s}/#{filename}"
+      "active_scaffold/#{ActiveScaffold::Config::Core.frontend.to_s}/#{filename}"
     end
 
     def self.javascripts
-      javascript_dir = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "themes", ActiveScaffold::Config::Core.theme.to_s, "javascripts")
+      javascript_dir = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends", ActiveScaffold::Config::Core.frontend.to_s, "javascripts")
       Dir.entries(javascript_dir).reject { |e| !e.match(/\.js/) }
     end
 
@@ -180,14 +180,14 @@ module ActiveScaffold::Config
     def self.template_search_path
       search_path = []
       search_path << 'active_scaffold_overrides'
-      search_path <<  "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/themes/#{ActiveScaffold::Config::Core.theme.to_s}/views" if ActiveScaffold::Config::Core.theme.to_sym != :default
-      search_path << "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/themes/default/views"
+      search_path <<  "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/frontends/#{ActiveScaffold::Config::Core.frontend.to_s}/views" if ActiveScaffold::Config::Core.frontend.to_sym != :default
+      search_path << "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/frontends/default/views"
       return search_path
     end
 
-    def self.available_themes
-      themes_dir = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "themes")
-      Dir.entries(themes_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
+    def self.available_frontends
+      frontends_dir = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends")
+      Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
     end
   end
 end
