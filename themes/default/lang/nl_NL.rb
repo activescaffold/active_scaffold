@@ -1,3 +1,18 @@
-Localization.define('nl_NL') do |lang|
-  lang["CREATE"] ||= "maken"
+Localization.define('nl_NL') do |lang| 
+  lang['ARE_YOU_SURE'] ||= 'Weet u het zeker?' 
+  lang['CANCEL'] ||= 'Annuleren' 
+  lang['CREATE'] ||= 'Toevoegen' 
+  lang['CREATE_NEW'] ||= 'Nieuw' 
+  lang['DELETE'] ||= 'Verwijderen' 
+  lang['EDIT'] ||= 'Bewerken' 
+  lang['NEXT'] ||= 'Volgende' 
+  lang['NO_ENTRIES'] ||= 'Geen data' 
+  lang['PREVIOUS'] ||= 'Vorige' 
+  lang['RESET'] ||= 'Reset' 
+  lang['SEARCH'] ||= 'Zoeken' 
+  lang['SHOW'] ||= 'Laat zien' 
+  lang['UPDATE'] ||= 'Bijwerken' 
+  lang['CREATED %s'] ||= '%s aangemaakt' 
+  lang['UPDATED %s'] ||= '%s bijgewerkt' 
+  lang['DELETED %s'] ||= '%s verwijderd' 
 end

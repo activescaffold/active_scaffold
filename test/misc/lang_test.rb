@@ -14,6 +14,6 @@ class LocalizationTest < Test::Unit::TestCase
     ##
     ## test language specified
     ##
-    assert_equal "maken", _("CREATE")
+    assert_equal "Toevoegen", _("CREATE")
   end
 end
