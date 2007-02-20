@@ -176,11 +176,13 @@ var PsuedoForm = {
 /**
  * A set of links. As a set, they can be controlled such that only one is "open" at a time, etc.
  */
-Abstract.ActiveScaffoldActions = function(){}
-Abstract.ActiveScaffoldActions.prototype = {
-  initialize: function(links, target, loading_indicator) {
+ActiveScaffold.Actions = new Object();
+ActiveScaffold.Actions.Abstract = function(){}
+ActiveScaffold.Actions.Abstract.prototype = {
+  initialize: function(links, target, loading_indicator, options) {
     this.target = $(target);
     this.loading_indicator = $(loading_indicator);
+    this.options = options;
     this.links = links.collect(function(link) {
       return this.instantiate_link(link);
     }.bind(this));
@@ -195,8 +197,9 @@ Abstract.ActiveScaffoldActions.prototype = {
  * A DataStructures::ActionLink, represented in JavaScript.
  * Concerned with AJAX-enabling a link and adapting the result for insertion into the table.
  */
-Abstract.ActiveScaffoldActionLink = function(){}
-Abstract.ActiveScaffoldActionLink.prototype = {
+ActiveScaffold.ActionLink = new Object();
+ActiveScaffold.ActionLink.Abstract = function(){}
+ActiveScaffold.ActionLink.Abstract.prototype = {
   initialize: function(a, target, loading_indicator) {
     this.tag = $(a);
     this.url = this.tag.href;
@@ -275,18 +278,19 @@ Abstract.ActiveScaffoldActionLink.prototype = {
 /**
  * Concrete classes for record actions
  */
-var ActiveScaffoldRecordActions = Class.create();
-ActiveScaffoldRecordActions.prototype = Object.extend(new Abstract.ActiveScaffoldActions(), {
+ActiveScaffold.Actions.Record = Class.create();
+ActiveScaffold.Actions.Record.prototype = Object.extend(new ActiveScaffold.Actions.Abstract(), {
   instantiate_link: function(link) {
-    var l = new ActiveScaffoldRecordActionLink(link, this.target, this.loading_indicator);
+    var l = new ActiveScaffold.ActionLink.Record(link, this.target, this.loading_indicator);
+    l.refresh_url = this.options.refresh_url;
     if (l.position) l.url = l.url.append_params({adapter: '_list_inline_adapter'});
     l.set = this;
     return l;
   }
 });
 
-var ActiveScaffoldRecordActionLink = Class.create();
-ActiveScaffoldRecordActionLink.prototype = Object.extend(new Abstract.ActiveScaffoldActionLink(), {
+ActiveScaffold.ActionLink.Record = Class.create();
+ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.ActionLink.Abstract(), {
   insert: function(content) {
     this.set.links.each(function(item) {
       if (item.url != this.url && item.is_disabled() && item.adapter) item.close();
@@ -318,7 +322,7 @@ ActiveScaffoldRecordActionLink.prototype = Object.extend(new Abstract.ActiveScaf
   },
 
   close_with_refresh: function() {
-    new Ajax.Request(this.target.getAttribute('from'), {
+    new Ajax.Request(this.refresh_url, {
       asynchronous: true,
       evalScripts: true,
 
@@ -336,17 +340,17 @@ ActiveScaffoldRecordActionLink.prototype = Object.extend(new Abstract.ActiveScaf
 /**
  * Concrete classes for table actions
  */
-var ActiveScaffoldTableActions = Class.create();
-ActiveScaffoldTableActions.prototype = Object.extend(new Abstract.ActiveScaffoldActions(), {
+ActiveScaffold.Actions.Table = Class.create();
+ActiveScaffold.Actions.Table.prototype = Object.extend(new ActiveScaffold.Actions.Abstract(), {
   instantiate_link: function(link) {
-    var l = new ActiveScaffoldTableActionLink(link, this.target, this.loading_indicator);
+    var l = new ActiveScaffold.ActionLink.Table(link, this.target, this.loading_indicator);
     l.url = l.url.append_params({adapter: '_list_inline_adapter'});
     return l;
   }
 });
 
-var ActiveScaffoldTableActionLink = Class.create();
-ActiveScaffoldTableActionLink.prototype = Object.extend(new Abstract.ActiveScaffoldActionLink(), {
+ActiveScaffold.ActionLink.Table = Class.create();
+ActiveScaffold.ActionLink.Table.prototype = Object.extend(new ActiveScaffold.ActionLink.Abstract(), {
   insert: function(content) {
     if (this.position == 'top') {
       new Insertion.Top(this.target, content);

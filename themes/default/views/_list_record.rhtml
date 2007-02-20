@@ -3,7 +3,7 @@
 <% url_options = params_for(:action => :list, :id => record.id) -%>
 <% @running_totals ||= {} -%>
 
-<tr <%= classAttr %> id="<%= element_row_id(:action => :list, :id => record.id) %>" from="<%= url_for params_for(:action => :row, :id => record.id) -%>">
+<tr <%= classAttr %> id="<%= element_row_id(:action => :list, :id => record.id) %>">
   <% active_scaffold_config.list.columns.each do |column| %>
     <% column_value = render_column(record, column) -%>
     <% if column.calculate_total? -%>
@@ -29,9 +29,10 @@
 
 <% target_id = element_row_id(:action => :list, :id => record.id) -%>
 <script type="text/javascript">
-new ActiveScaffoldRecordActions(
+actions = new ActiveScaffold.Actions.Record(
   $$('#<%= target_id -%> a.action'),
   $('<%= target_id -%>'),
-  $('<%= loading_indicator_id(:action => :record, :id => record.id) -%>')
+  $('<%= loading_indicator_id(:action => :record, :id => record.id) -%>'),
+  {refresh_url: '<%= url_for params_for(:action => :row, :id => record.id) -%>'}
 );
 </script>

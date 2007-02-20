@@ -11,5 +11,5 @@
 <script type="text/javascript">
 Rico.Corner.round($$('#<%= active_scaffold_id %> div.active-scaffold-header').first(), {color: 'fromElement', bgColor: 'fromParent', corners: 'top', compact: true});
 Rico.Corner.round($$('#<%= active_scaffold_id %> div.active-scaffold-footer').first(), {color: 'fromElement', bgColor: 'fromParent', corners: 'bottom', compact: true});
-new ActiveScaffoldTableActions($$('#<%= active_scaffold_id -%> div.active-scaffold-header a.action'), $('<%= before_header_id -%>'), $('<%= loading_indicator_id(:action => :table) -%>'))
+new ActiveScaffold.Actions.Table($$('#<%= active_scaffold_id -%> div.active-scaffold-header a.action'), $('<%= before_header_id -%>'), $('<%= loading_indicator_id(:action => :table) -%>'))
 </script>
