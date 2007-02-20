@@ -1,0 +1,8 @@
+if @successful
+  page.remove element_row_id(:action => 'list', :id => params[:id])
+  page << "ActiveScaffold.toggleEmptyMessage('#{active_scaffold_tbody_id}','#{empty_message_id}');"
+  page << "ActiveScaffold.stripe('#{active_scaffold_tbody_id}');"
+  page << "ActiveScaffold.decrement_record_count('#{active_scaffold_id}');"
+end
+
+page.replace_html active_scaffold_messages_id, :partial => 'messages'

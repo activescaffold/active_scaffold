@@ -1,0 +1,15 @@
+Localization.define('nb_NO') do |lang|
+  lang['ARE_YOU_SURE'] ||= 'Er du sikker?'
+  lang['CANCEL'] ||= 'Avbryt'
+  lang['CREATE'] ||= 'Opprett'
+  lang['CREATE_NEW'] ||= 'Opprett ny'
+  lang['DELETE'] ||= 'Slett'
+  lang['EDIT'] ||= 'Redigèr'
+  lang['NEXT'] ||= 'Neste'
+  lang['NO_ENTRIES'] ||= 'Ingen oppføringer'
+  lang['PREVIOUS'] ||= 'Forrige'
+  lang['RESET'] ||= 'Nullstill'
+  lang['SEARCH'] ||= 'Søk'
+  lang['SHOW'] ||= 'Vis'
+  lang['UPDATE'] ||= 'Oppdatèr'
+end

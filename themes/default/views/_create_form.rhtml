@@ -1,0 +1,39 @@
+<% url_options = params_for(:action => :create) -%>
+<% if request.xhr? -%>
+<%= form_remote_tag :url => url_options,
+                    :after => "Element.show('#{loading_indicator_id(:action => :create, :id => params[:id])}'); Form.disable('#{element_form_id(:action => :create)}');",
+                    :complete => "Element.hide('#{loading_indicator_id(:action => :create, :id => params[:id])}'); Form.enable('#{element_form_id(:action => :create)}');",
+                    :html => { :href => url_for(url_options),
+                    :id => element_form_id(:action => :create),
+                    :class => 'create' } %>
+<% else -%>
+<%= form_tag url_options,
+             :id => element_form_id(:action => :create),
+             :class => 'create' %>
+<% end -%>
+
+  <%= hidden_field_tag "record[#{params[:nested_active_scaffold_id_name]}]", params[:nested_active_scaffold_id] if params[:nested_active_scaffold_id_name] %>
+
+  <h4><%= active_scaffold_config.create.label -%></h4>
+
+  <% if request.xhr? -%>
+    <div id="<%= element_messages_id(:action => :create) %>" class="messages-container"></div>
+  <% else -%>
+    <%= render :partial => 'form_messages' %>
+  <% end -%>
+
+  <%= render :partial => 'form', :locals => { :columns => active_scaffold_config.create.columns } %>
+
+  <p class="form-footer">
+  <%= submit_tag _('CREATE'), :class => "submit" %>
+  <%= loading_indicator_tag(:action => :create, :id => params[:id]) %>
+  <%= link_to _('CANCEL'), params_for(:action => 'list'), { :onclick => "$('#{action_link_id(:action => active_scaffold_config.create.link.action)}').action_link.close(); return false;" }%>
+  </p>
+
+<%= end_form_tag %>
+<%
+js = update_page_tag do |page|
+  page << "Form.focusFirstElement('#{element_form_id(:action => :create)}');"
+end
+-%>
+<%= js -%>

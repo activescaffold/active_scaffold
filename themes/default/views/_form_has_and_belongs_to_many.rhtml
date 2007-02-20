@@ -1,0 +1,10 @@
+<% existing_associations = @record.send(column.association.name) %>
+<% association_primary_key = column.association.klass.primary_key %>
+<% field_name = "record[#{Inflector.underscore(Inflector.singularize(column.name))}_ids][]" %>
+<label for="<%= "record_#{column.name}" %>">
+  <%= Inflector.humanize(column.name) %>
+</label>
+<% column.association.klass.find(:all).each do |association_record| -%>
+  <%= check_box_tag( field_name, association_record.id, existing_associations.include?(association_record)) %>
+  <%=h association_record.to_label %>
+<% end -%>

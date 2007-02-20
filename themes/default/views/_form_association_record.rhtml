@@ -1,0 +1,31 @@
+<% association ||= @association # Actual AssociationReflection object from the parent record -%>
+<% record ||= @record # ActiveRecord object for this association -%>
+<tr>
+  <%# TODO Move to using a dedicated 'sublist' module that inherits from list %>
+  <% active_scaffold_config_for(record.class).list.columns.each do |column| %>
+    <% column_value = render_column(record, column) -%>
+    <td class="<%= column_class(column, column_value) %>" >
+      <%= column_value %>
+    </td>
+  <% end -%>
+  <td>
+    <%= link_to_function "Remove", "Element.remove(this.parentNode.parentNode);" %>
+
+    <% if record.id.nil? %>
+      <% # If the record is new then we will want to post all of it's attributes under our special _associations parameter on create/update %>
+      <% temporary_id = generate_temporary_id -%>
+      <% params[record.class.to_s.underscore].each do |key,value| %>
+        <input type="hidden" name="_associations[<%= association.name.to_s %>][<%= temporary_id %>][<%= key %>]" value="<%= value %>" />
+      <% end %>
+    <% else %>
+      <% unless association.macro == :has_one -%>
+        <% # If the record already exists then we'll leverage ActiveRecord's model.association_id= and model.association_ids= methods %>
+        <% field_name = (association.macro == :belongs_to) ? "record[#{association.name.to_s}_id]" : "record[#{association.name.to_s.singularize}_ids][]"  %>
+        <input type="hidden" name="<%= field_name %>" value="<%= record.id %>" />
+      <% else -%>
+        <% # has_one associations lack the association_id= methods so we have to fall back to using our _associations parameter %>
+        <input type="hidden" name="_associations[<%= association.name.to_s %>][id]" value="<%= record.id %>" />
+      <% end -%>
+    <% end %>
+  </td>
+</tr>

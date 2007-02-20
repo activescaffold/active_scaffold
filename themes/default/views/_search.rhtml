@@ -1,0 +1,18 @@
+<% href = url_for(params_for(:action => :update_table)) -%>
+<%= form_remote_tag :url => href,
+                    :before => "addActiveScaffoldPageToHistory('#{href}', '#{params[:controller]}')",
+                    :after => "Element.show('#{loading_indicator_id(:action => :search)}'); Form.disable('#{search_form_id}');",
+                    :complete => "Element.hide('#{loading_indicator_id(:action => :search)}'); Form.enable('#{search_form_id}');",
+                    :update => active_scaffold_content_id,
+                    :html => { :href => href, :id => search_form_id, :class => 'search' } %>
+  <input type="text" name="search" value="<%= params[:search] -%>" class="text-input" id="<%= search_input_id %>" autocompleted="off" />
+  <%= submit_tag _('SEARCH'), :class => "submit" %>
+  <input type="reset" value="<%= _('RESET') -%>" onclick="f = this.up('form'); f.reset(); f.onsubmit();" />
+  <%= loading_indicator_tag(:action => :search) %>
+</form>
+
+<script type="text/javascript">
+//<![CDATA[
+  Form.focusFirstElement('<%= search_form_id -%>');
+//]]>
+</script>

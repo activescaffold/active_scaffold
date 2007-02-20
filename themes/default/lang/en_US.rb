@@ -1,0 +1,18 @@
+Localization.define('en_US') do |lang|
+  lang['ARE_YOU_SURE'] ||= 'Are you sure?'
+  lang['CANCEL'] ||= 'Cancel'
+  lang['CREATE'] ||= 'Create'
+  lang['CREATED %s'] ||= 'Created %s'
+  lang['CREATE_NEW'] ||= 'Create New'
+  lang['DELETE'] ||= 'Delete'
+  lang['DELETED %s'] ||= 'Deleted %s' 
+  lang['EDIT'] ||= 'Edit'
+  lang['NEXT'] ||= 'Next'
+  lang['NO_ENTRIES'] ||= 'No Entries'
+  lang['PREVIOUS'] ||= 'Previous'
+  lang['RESET'] ||= 'Reset'
+  lang['SEARCH'] ||= 'Search'
+  lang['SHOW'] ||= 'Show'
+  lang['UPDATE'] ||= 'Update'
+  lang['UPDATED %s'] ||= 'Updated %s'
+end

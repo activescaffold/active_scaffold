@@ -1,0 +1,7 @@
+3.2.1 ========
+
+* Fixed bug with :class_name attribute being ignored
+
+3.2.0 ==========
+
+* Initial release

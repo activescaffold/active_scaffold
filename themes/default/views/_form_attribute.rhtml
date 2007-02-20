@@ -1,0 +1,16 @@
+<% # should we pass in :name on our own? %>
+<% scope ||= nil %>
+<% record ||= nil %>
+<% object = record.nil? ? :record : record %>
+<% name = scope.nil? ? "record[#{column.name}]" : "#{scope}[#{column.name}]" %>
+
+<label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
+<% if column.virtual? -%>
+  <%= text_field(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) %>
+<% else -%>
+  <%= input(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) %>
+<% end -%>
+
+<% if column.description -%>
+  <p><%= column.description %></p>
+<% end -%>

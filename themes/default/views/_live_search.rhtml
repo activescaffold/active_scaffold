@@ -1,0 +1,23 @@
+<%= form_tag params_for(:action => :update_table), :id => search_form_id, :class => 'search' %>
+  <input type="text" name="search" value="<%= params[:search] -%>" class="text-input" id="<%= search_input_id %>" autocompleted="off" />
+  <input type="reset" value="<%= _('RESET') -%>" onclick="f = this.up('form'); f.reset(); f.onsubmit();" />
+  <%= loading_indicator_tag(:action => :search) %>
+</form>
+
+<script type="text/javascript">
+//<![CDATA[
+  new TextFieldWithExample('<%= search_input_id %>', "Live Search");
+  new Form.Element.Observer('<%= search_input_id %>', 1.5, function(element, value) {
+    if (!$(element.id)) return false; // because the element may have been destroyed
+    new Ajax.Updater('<%= active_scaffold_content_id %>', "<%= url_for params_for(:action => :update_table) %>", {
+      asynchronous:true, evalScripts:true,
+      onComplete:function(request){Element.hide('<%= loading_indicator_id(:action => :search) %>');},
+      onLoading:function(request){Element.show('<%= loading_indicator_id(:action => :search) %>');},
+      parameters:Form.serialize($('<%= search_form_id %>'))
+    });
+    return false;
+  });
+
+  Form.focusFirstElement('<%= search_form_id -%>');
+//]]>
+</script>

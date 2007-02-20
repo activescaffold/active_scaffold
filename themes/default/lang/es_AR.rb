@@ -1,0 +1,15 @@
+Localization.define('es_AR') do |lang| 
+  lang['ARE_YOU_SURE'] ||= '¿Está seguro?' 
+  lang['CANCEL'] ||= 'Cancelar' 
+  lang['CREATE'] ||= 'Crear' 
+  lang['CREATE_NEW'] ||= 'Crear Nuevo' 
+  lang['DELETE'] ||= 'Eliminar' 
+  lang['EDIT'] ||= 'Editar' 
+  lang['NEXT'] ||= 'Siguiente' 
+  lang['NO_ENTRIES'] ||= 'No hay entradas' 
+  lang['PREVIOUS'] ||= 'Anterior' 
+  lang['RESET'] ||= 'Restablecer' 
+  lang['SEARCH'] ||= 'Buscar' 
+  lang['SHOW'] ||= 'Mostrar' 
+  lang['UPDATE'] ||= 'Actualizar' 
+end

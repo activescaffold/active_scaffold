@@ -1,0 +1,5 @@
+<% if column.association.options[:through] %>
+  <%= render :partial => 'form_has_many_through', :locals => { :column => column } %>
+<% else %>
+  <%= render :partial => 'form_has_and_belongs_to_many', :locals => { :column => column } %>
+<% end %>

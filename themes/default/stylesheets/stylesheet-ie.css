@@ -1,0 +1,10 @@
+/* IE hacks
+   ==================================== */
+
+* html .active-scaffold-header {
+zoom: 1;
+}
+
+* html .active-scaffold td .messages-container {
+border-top: solid 1px #DAFFCD;
+}

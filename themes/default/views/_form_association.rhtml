@@ -1,0 +1,127 @@
+<% nested ||= false %>
+<% klass = column.association.klass %>
+<% association = column.association %>
+<% association_config = active_scaffold_config_for(klass) %>
+<% association_name, columns = column.name, association_config.create.columns %>
+<% eval("@#{klass.to_s.underscore} = klass.send(:new)") %>
+
+<% puts association_config.list.columns.inspect %>
+
+<% if column.association.klass == @record.class %>
+
+<%# TODO Don't show associations back to parent %>
+
+<% elsif column.association.options[:through] %>
+
+<code>has_many :through</code> is read-only and therefore not supported. You should use a
+<code>has_many</code> association with the intermediary table instead. Please remove this column
+from the form in the config.
+
+<% elsif nested %>
+
+  <%# In nested forms we only handle belongs_to and has_one associations %>
+  <%# TODO Don't show associations back to parent %>
+  <%# TODO add a default options (ex: - select -) %>
+  <% if [:belongs_to, :has_one].include?(association.macro) %>
+  <% existing_options = options_for_association(association) %>
+  <% unless existing_options.empty? %>
+    <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
+    <%= select(scope, column.name, existing_options) %>
+  <% end %>
+
+  <% end %>
+<% else %>
+<%# TODO simplify all these ids %>
+<% temporary_id = generate_temporary_id %>
+<% list_id = "#{klass.to_s.downcase}-form-#{temporary_id}" %>
+<% existing_form_id = "#{klass.to_s.downcase}-add-#{temporary_id}" %>
+<% existing_form_messages_id = "#{klass.to_s.downcase}-add-messages-#{temporary_id}" %>
+<% new_form_id = "#{klass.to_s.downcase}-create-#{temporary_id}" %>
+<% new_form_messages_id = "#{klass.to_s.downcase}-create-messages-#{temporary_id}" %>
+
+<div class="subsection">
+  <h4><%= Inflector.titleize(association_name) %></h4>
+
+  <table id="<%= list_id %>" cellpadding="0" cellspacing="0">
+    <tr>
+      <% association_config.list.columns.each do |column| -%>
+      <th><p><%= column.label %></p></th>
+      <% end -%>
+      <th class="actions"></th>
+    </tr>
+    <% association_records = [:belongs_to, :has_one].include?(association.macro) ?  [ @record.send(association_name) ].compact : @record.send(association_name) %>
+    <% association_records.each do |association_record| -%>
+      <%= render :partial => "form_association_record",
+                 :locals => { :record => association_record, :association => association } %>
+    <% end -%>
+  </table>
+
+  <% existing_options = options_for_association(association) %>
+  <% unless existing_options.empty? %>
+  <div id="<%= existing_form_id %>" class="nested-form">
+    <h5>Add Existing</h5>
+    <div id="<%= existing_form_messages_id %>" class="messages-container"></div>
+    <%= link_to "", { :action => "add_association", :id => association_name, :messages_id => existing_form_messages_id, :form_id => existing_form_id, :list_id => list_id },
+                    { :class => "form-action" } %>
+
+    <%# TODO convert this to a search method rather than a simple drop down %>
+    <%# TODO add a default options (ex: - select -) %>
+    <%= select(klass.to_s.underscore, :id, existing_options) %>
+    <p class="form-footer">
+      <button class="submit">Add</button>
+    </p>
+  </div>
+
+  <script type="text/javascript">
+    new Form.Pseudo('<%= existing_form_id %>');
+    Rico.Corner.round('<%= existing_form_id %>',{bgColor:'#DAFFCD',color:'#B8FF9F'});
+  </script>
+  <% end -%>
+
+  <%# TODO check for create_authorized? on the other controller %>
+  <div id="<%= new_form_id %>" class="nested-form">
+
+    <h5>Add New</h5>
+    <div id="<%= new_form_messages_id %>" class="messages-container"></div>
+    <%= link_to "", { :action => "add_association", :id => association_name, :messages_id => new_form_messages_id, :form_id => new_form_id, :list_id => list_id },
+                    { :class => "form-action" } %>
+
+    <%# TODO can we reuse the form partial here? %>
+    <ol class="form">
+      <% columns.each do |column| -%>
+      <% if column.is_a? ActiveScaffold::DataStructures::ActionColumns -%>
+      <li>
+        <div class="subsection">
+          <h4><%= column.name %></h4>
+          <%= render :partial => 'form', :locals => { :columns => column } %>
+        </div>
+      </li>
+      <% else -%>
+      <%# Wrapping <li>'s around the form is problematic when we don't actually want to show that column %>
+      <%# TODO We need better filtering of the columns for nested (take out certian types of associations) %>
+      <li class="form-element <%= 'required' if column.required? %>">
+        <%= render :partial => "#{form_partial_for_column(column)}",
+            :locals => { :column => column, :scope => "#{klass.to_s.underscore}",
+            :record => klass.to_s.underscore, :nested => true } %>
+      </li>
+      <% end -%>
+      <% end -%>
+    </ol>
+
+    <p class="form-footer">
+      <button class="submit">Add</button>
+    </p>
+  </div>
+
+  <script type="text/javascript">
+    new Form.Pseudo('<%= new_form_id %>');
+    Rico.Corner.round('<%= new_form_id %>',{bgColor:'#DAFFCD',color:'#B8FF9F'});
+  </script>
+</div>
+<% end %>
+
+<% # How to override association sub-form or individual attribute? Change form_partial_for_column() to work for nested ones
+   # I'd like to hide forms once they click 'save' but you can't do that with all fields like images... but those
+   #   are special unsupported cases anyways?
+   # Options for passing form element size in configuration
+   %>

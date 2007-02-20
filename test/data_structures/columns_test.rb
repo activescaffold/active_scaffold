@@ -1,0 +1,78 @@
+require 'test/test_helper'
+require 'test/model_stub'
+
+class ColumnsTest < Test::Unit::TestCase
+  def setup
+    @columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b)
+  end
+
+  def test_initialization
+    assert_equal ModelStub, @columns.active_record_class
+
+    assert @columns.include?('a'), 'checking via string'
+    assert @columns.include?(:b), 'checking via symbol'
+    assert !@columns.include?(:c)
+  end
+
+  def test_add
+    assert !@columns.include?(:c)
+    @columns.add 'c'
+    assert @columns.include?('c')
+
+    # test the alias
+    assert !@columns.include?(:d)
+    @columns << :d
+    assert @columns.include?(:d)
+  end
+
+  def test_finders
+    # test some basic assumptions before testing the finders
+    assert @columns.include?(:a)
+    assert @columns[:a].is_a?(ActiveScaffold::DataStructures::Column)
+
+    # test the single finders
+    assert @columns.find_by_name(:a).name == :a
+    assert @columns[:b].name == :b
+
+    # test the collection finders
+    found = @columns.find_by_names(:a, :b)
+    assert found.any? {|c| c.name == :a}
+    assert found.any? {|c| c.name == :b}
+  end
+
+  def test_each
+    @columns.each do |column|
+      assert [:a, :b].include?(column.name)
+    end
+  end
+
+  def test_blacklist
+    column_b = @columns[:b] # grab it now, before it's too late
+    # poke @columns so it picks up on :b not being authorized
+    @columns.create_blacklist(nil, 'bar')
+
+    # then test
+    assert @columns.unauthorized_columns.include?(column_b)
+    @columns.each do |column|
+      assert column.name == :a
+    end
+    assert_raise ActiveScaffold::ColumnNotAllowed do
+      @columns[:b]
+    end
+  end
+
+  def test_block_config
+    assert !@columns.include?(:d)
+    assert !@columns.include?(:c)
+
+    @columns.configure do |config|
+      # test that we can use the config object
+      config << :d
+      # but test that we don't have to
+      add 'c'
+    end
+
+    assert @columns.include?(:d)
+    assert @columns.include?(:c)
+  end
+end

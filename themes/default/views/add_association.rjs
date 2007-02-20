@@ -1,0 +1,7 @@
+if @record.valid?
+  page.insert_html :bottom, params[:list_id], :partial => 'form_association_record'
+  page.replace_html params[:messages_id], ""
+  page << "PsuedoForm.clear('#{params[:form_id]}');"
+else
+  page.replace_html params[:messages_id], :partial => 'form_messages'
+end

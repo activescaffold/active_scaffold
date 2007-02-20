@@ -1,0 +1,552 @@
+/*
+ ActiveScaffold
+ (c) 2006 Richard White <rrwhite@gmail.com>
+
+ ActiveScaffold is freely distributable under the terms of an MIT-style license.
+
+ For details, see the ActiveScaffold web site: http://www.active_scaffold.com/
+*/
+
+.active-scaffold form,
+.active-scaffold table,
+.active-scaffold p,
+.active-scaffold div,
+.active-scaffold fieldset {
+margin: 0;
+padding: 0;
+}
+
+.active-scaffold {
+margin: 5px 0;
+}
+
+.active-scaffold table {
+width: 100%;
+}
+
+.active-scaffold a {
+color: #06c;
+text-decoration: none;
+}
+
+.active-scaffold a.disabled {
+color: #999;
+}
+
+.active-scaffold a:hover {
+background-color: #ff8;
+}
+
+.active-scaffold .clear-fix {
+clear: both;
+}
+
+/* Header Styling
+   ======================== */
+
+.active-scaffold-header {
+background-color: #005CB8;
+position: relative;
+}
+
+.active-scaffold-header h2 {
+color: #fff;
+padding: 2px 5px 4px 5px;
+margin: 0;
+font: normal 17px verdana, sans-serif;
+}
+
+.active-scaffold-header div.actions a {
+float: right;
+color: #fff;
+font: bold 14px arial, sans-serif;
+letter-spacing: -1px;
+text-decoration: none;
+padding: 1px 2px 1px 19px;
+white-space: nowrap;
+margin-left: 5px;
+}
+
+.active-scaffold-header div.actions a.new {
+background: url(/images/active_scaffold/default/add.gif) 1px 50% no-repeat;
+}
+
+.active-scaffold-header div.actions a.new:hover {
+background-color: #378CDF;
+}
+
+.active-scaffold-header div.actions a.show_search {
+background: url(/images/active_scaffold/default/magnifier.png) 1px 50% no-repeat;
+}
+
+.active-scaffold-header div.actions a.show_search:hover {
+background-color: #378CDF;
+}
+
+.active-scaffold-header div.actions {
+position: absolute;
+right: 5px;
+top: 3px;
+text-align: right;
+}
+
+.active-scaffold-header div.actions img {
+margin-bottom: -3px;
+}
+
+/* Header Styling : Nested
+   ======================== */
+
+.active-scaffold .active-scaffold {
+margin: 2px 5px;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header h2 {
+font-size: 13px;
+font-weight: bold;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions a {
+font: bold 11px verdana, sans-serif;
+padding: 0 2px 1px 17px;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions {
+top: 4px;
+}
+
+/* Search
+   ============================= */
+
+.active-scaffold .search input.text-input {
+background-color: #ddd;
+border: solid 1px #666;
+width: 70%;
+font: bold 14px arial;
+padding: 1px 2px;
+}
+
+.active-scaffold .search input.example {
+color: #888;
+}
+
+.active-scaffold .search input:focus {
+background-color: #ffa;
+}
+
+/* Table Column Headers
+   ============================= */
+
+.active-scaffold th {
+background-color: #555;
+text-align: left;
+}
+
+.active-scaffold th a,
+.active-scaffold th p {
+font: bold 11px arial, sans-serif;
+display: block;
+background-color: #555;
+}
+
+.active-scaffold th a {
+color: #fff;
+padding: 2px 15px 2px 5px;
+}
+
+.active-scaffold th p {
+color: #eee;
+padding: 2px 5px;
+}
+
+.active-scaffold th a:hover {
+background-color: #000;
+color: #ff8;
+}
+
+.active-scaffold th.sorted {
+background-color: #333;
+}
+
+.active-scaffold th.asc a,
+.active-scaffold th.asc a:hover {
+background: #333 url(/images/active_scaffold/default/arrow_up.gif) right 50% no-repeat;
+}
+
+.active-scaffold th.desc a,
+.active-scaffold th.desc a:hover {
+background: #333 url(/images/active_scaffold/default/arrow_down.gif) right 50% no-repeat;
+}
+
+.active-scaffold th.loading a,
+.active-scaffold th.loading a:hover {
+background: #333 url(/images/active_scaffold/default/indicator-small.gif) right 50% no-repeat;
+}
+
+/* Table Body Styling
+   ============================= */
+
+.active-scaffold td {
+padding: 5px 4px;
+color: #333;
+font-family: Verdana, sans-serif;
+font-size: 11px;
+background-color: #E6F2FF;
+border-bottom: solid 1px #C5DBF7;
+border-left: solid 1px #C5DBF7;
+}
+
+.active-scaffold td.actions {
+border-right: solid 1px #ccc;
+}
+
+.active-scaffold tr.even td {
+background-color: #fff;
+border-left: solid 1px #ddd;
+}
+
+.active-scaffold tr td.sorted {
+background-color: #B9DCFF;
+border-bottom: solid 1px #AFD0F5;
+}
+
+.active-scaffold tr.even td.sorted {
+background-color: #E6F2FF;
+border-bottom: solid 1px #AFD0F5;
+}
+
+.active-scaffold td.empty {
+color: #999;
+text-align: center;
+}
+
+/* Table Inline Adapter Styling
+   ============================= */
+
+.active-scaffold td.inline-adapter {
+padding: 0px;
+border-width: 0px;
+}
+
+.active-scaffold a.inline-adapter-close {
+float: right;
+border: 1px solid #c5dbf7;
+background-color: #e6f2ff;
+padding: 2px 5px;
+margin: 5px 5px 0px 0px;
+font: 10px sans-serif;
+font-weight: bold;
+}
+
+.active-scaffold .before_header .inline-adapter td {
+background-color: #333;
+padding: 3px 2px;
+border-left: solid 1px #333;
+border-bottom: solid 1px #333;
+}
+
+.active-scaffold .before_header a.inline-adapter-close {
+border-color: #fff;
+background-color: #fff;
+}
+
+/* Table Actions (Edit, Delete) Styling
+   ============================= */
+
+.active-scaffold td.actions {
+padding: 0;
+width: 1%;
+}
+
+.active-scaffold td.actions table {
+float: right;
+width: auto;
+margin-right: 5px;
+}
+
+.active-scaffold td.actions table td {
+border: none;
+text-align: right;
+padding: 0 2px;
+}
+
+.active-scaffold td.actions a {
+font: bold 11px verdana, sans-serif;
+letter-spacing: -1px;
+padding: 2px;
+margin: 0 2px;
+line-height: 16px;
+white-space: nowrap;
+}
+
+/* active_scaffold Footer Styling
+   ========================== */
+
+.active-scaffold-totals td {
+background-color: #eee;
+border-top: 2px solid #005CB8;
+font: bold 12px arial, sans-serif;
+}
+
+.active-scaffold .active-scaffold-footer {
+background-color: #005CB8;
+padding: 3px 0px 2px 0px;
+border-bottom: none;
+color: #ccc;
+font: bold 12px arial, sans-serif;
+}
+
+.active-scaffold-footer .active-scaffold-pagination {
+float: right;
+white-space: nowrap;
+margin-right: 5px;
+}
+
+.active-scaffold-footer .active-scaffold-records {
+  margin-left: 5px;
+}
+
+.active-scaffold-footer a {
+color: #fff;
+text-decoration: none;
+letter-spacing: 0;
+padding: 0 2px;
+margin: 0 -2px;
+font: bold 12px arial, sans-serif;
+}
+
+.active-scaffold-footer a:hover {
+background-color: #378CDF;
+}
+
+.active-scaffold-footer .next {
+margin-left: 0;
+padding-left: 5px;
+border-left: solid 1px #ccc;
+}
+
+.active-scaffold-footer .previous {
+margin-right: 0;
+padding-right: 5px;
+border-right: solid 1px #ccc;
+}
+
+/* Messages
+   ========================= */
+
+.active-scaffold .messages-container,
+.active-scaffold .active-scaffold .messages-container{
+padding: 0;
+margin: 0 7px;
+border: none;
+}
+
+.active-scaffold .empty-message {
+background-color: #e8e8e8;
+padding: 4px;
+text-align: center;
+color: #666;
+}
+
+.active-scaffold .message {
+font-size: 11px;
+font-weight: bold;
+padding: 5px 20px 5px 5px;
+color: #333;
+position: relative;
+margin: 2px 7px;
+line-height: 12px;
+}
+
+.active-scaffold .message a {
+position: absolute;
+right: 10px;
+top: 4px;
+padding: 0;
+font: bold 11px verdana, sans-serif;
+letter-spacing: -1px;
+}
+
+.active-scaffold .messages-container .message {
+margin: 0;
+}
+
+.active-scaffold .error-message {
+border-left: solid 5px #f66;
+background-color: #fbb;
+}
+
+.active-scaffold .warning-message {
+border-left: solid 5px #ff6;
+background-color: #ffb;
+}
+
+.active-scaffold .info-message {
+border-left: solid 5px #66f;
+background-color: #bbf;
+}
+
+/* Error Styling
+   ========================== */
+
+.active-scaffold #errorExplanation {
+background-color: #fcc;
+margin: 2px 0;
+border: solid 1px #f66;
+}
+
+.active-scaffold fieldset {
+clear: both;
+}
+
+.active-scaffold #errorExplanation h2 {
+padding: 2px 5px;
+color: #333;
+font-size: 11px;
+margin: 0;
+letter-spacing: 0;
+font-family: Verdana;
+background-color: #f66;
+}
+
+.active-scaffold #errorExplanation ul {
+margin: 0;
+padding: 0 2px 4px 25px;
+list-style: disc;
+}
+
+.active-scaffold #errorExplanation p {
+font-size: 11px;
+padding: 2px 5px;
+font-family: Verdana;
+margin: 0;
+}
+
+.active-scaffold #errorExplanation ul li {
+font: bold 11px verdana;
+letter-spacing: -1px;
+margin: 0;
+padding: 0;
+background-color: transparent;
+}
+
+.active-scaffold .fieldWithErrors input {
+border: solid 1px #f00;
+}
+
+/* Loading Indicators
+   ============================== */
+
+.active-scaffold .loading-indicator {
+vertical-align: bottom;
+margin: 0;
+}
+
+.active-scaffold .active-scaffold-header .loading-indicator,
+.active-scaffold .update .loading-indicator,
+.active-scaffold .create .loading-indicator {
+vertical-align: bottom;
+margin-bottom: 3px;
+}
+
+/* Form Styling
+   ============================== */
+
+.active-scaffold form.update,
+.active-scaffold form.create {
+background-color: #DAFFCD;
+padding: 4px;
+border: solid 1px #7FcF00;
+border-top: none;
+}
+
+.active-scaffold .active-scaffold form.update,
+.active-scaffold .active-scaffold form.create {
+background-color: #ffb;
+border: solid 1px #DDDF37;
+border-top: none;
+}
+
+.active-scaffold .submit {
+font-weight: bold;
+font-size: 14px;
+font-family: Arial, sans-serif;
+letter-spacing: 0;
+margin: 0;
+margin-top: 5px;
+}
+
+.active-scaffold fieldset {
+border: none;
+}
+
+.active-scaffold .required label {
+font-weight: bold;
+}
+
+.active-scaffold label.example {
+font-size: 11px;
+font-family: arial;
+color: #888;
+}
+
+.active-scaffold h4 {
+padding: 2px;
+margin: 0;
+text-transform: none;
+color: #1F7F00;
+letter-spacing: -1px;
+font: bold 16px arial;
+}
+
+.active-scaffold p.form-footer a {
+font: bold 14px arial, sans-serif;
+letter-spacing: 0;
+}
+
+.active-scaffold p {
+clear: both;
+}
+
+.active-scaffold ol {
+clear: both;
+float: none;
+padding: 2px;
+margin-left: 5px;
+list-style: none;
+}
+
+.active-scaffold li.form-element {
+float: left;
+margin-right: 10px;
+margin-bottom: 2px;
+}
+
+.active-scaffold label {
+display: block;
+font-family: Verdana, sans-serif;
+color: #555;
+font-size: 11px;
+padding-bottom: 1px;
+}
+
+.active-scaffold .subsection {
+background-color: #B8FF9F;
+}
+
+.active-scaffold input.text-input,
+.active-scaffold select {
+font-size: 16px;
+font-weight: bold;
+font-family: Arial, sans-serif;
+letter-spacing: -1px;
+border: solid 1px #1F7F00;
+}
+
+.active-scaffold textarea {
+height: 65px;
+font-family: Arial, sans-serif;
+font-size: 12px;
+padding: 1px;
+border: solid 1px #1F7F00;
+}
