@@ -36,3 +36,24 @@ module ActionView #:nodoc:
     end
   end
 end
+
+module ActionView
+  module Helpers
+    class InstanceTag
+      def to_text_area_tag(options = {})
+        options = DEFAULT_TEXT_AREA_OPTIONS.merge(options.stringify_keys)
+        add_default_name_and_id(options)
+
+        if size = options.delete("size")
+          options["cols"], options["rows"] = size.split("x") if size.class == String
+        end
+
+        if method(:value_before_type_cast).arity > 0
+          content_tag("textarea", html_escape(options.delete('value') || value_before_type_cast(object)), options)
+        else
+          content_tag("textarea", html_escape(options.delete('value') || value_before_type_cast), options)
+        end
+      end
+    end
+  end
+end
