@@ -14,12 +14,21 @@ module ActiveScaffold
     self.class.active_scaffold_config
   end
 
+  def active_scaffold_session_storage
+    id = params[:eid] || params[:controller]
+    session_index = "as:#{id}"
+    session[session_index] ||= {}
+    session[session_index]
+  end
+
   # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.
   def handle_user_settings
     if active_scaffold_config
       active_scaffold_config.actions.each do |m|
         conf_instance = active_scaffold_config.send(m) rescue next
-        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, session, params)
+        next if conf_instance.class::UserSettings == ActiveScaffold::Config::Base::UserSettings # if it hasn't been extended, skip it
+        active_scaffold_session_storage[m] ||= {}
+        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, active_scaffold_session_storage[m], params)
       end
     end
   end

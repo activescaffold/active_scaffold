@@ -3,7 +3,13 @@ module ActionView #:nodoc:
   class Base
     def render_with_active_scaffold(*args)
       if args.first[:active_scaffold]
-        render_component :controller => args.first[:active_scaffold].to_s, :action => 'table'
+        require 'digest/md5'
+        remote_controller = args.first[:active_scaffold]
+        constraints = args.first[:params]
+        eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s)
+        session["as:#{eid}"] = {:constraints => constraints}
+
+        render_component :controller => remote_controller, :action => 'table', :params => {:eid => eid}
       else
         render_without_active_scaffold *args
       end
@@ -37,6 +43,7 @@ module ActionView #:nodoc:
   end
 end
 
+# patch an issue with integer size parameters
 module ActionView
   module Helpers
     class InstanceTag

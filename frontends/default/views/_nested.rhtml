@@ -29,7 +29,7 @@
 				controller_name = "#{controller_named_path}#{singular_name.camelize}Controller".constantize
 			end
 %>
-		<%= render_component :controller => controller_name, :action => "table", :params => options  %>
+		<%= render :active_scaffold => controller_name, :params => options  %>
 <%
 		end
   end
