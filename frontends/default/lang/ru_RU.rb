@@ -12,4 +12,7 @@ Localization.define('ru_RU') do |lang|
   lang['SEARCH'] ||= 'Искать' 
   lang['SHOW'] ||= 'Показать' 
   lang['UPDATE'] ||= 'Обновить' 
+  lang['CREATED %s'] ||= '%s создан(а)' 
+  lang['UPDATED %s'] ||= '%s изменен(а)' 
+  lang['DELETED %s'] ||= '%s удален(а)' 
 end
