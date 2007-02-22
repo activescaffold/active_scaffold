@@ -1,5 +1,10 @@
 if @record.valid?
-  page.insert_html :bottom, params[:list_id], :partial => 'form_association_record'
+  # if it's a singular association do a replace
+  if [:has_one, :belongs_to].include? @association.macro
+    page.replace_html params[:list_id], :partial => 'form_association_record'
+  else
+    page.insert_html :bottom, params[:list_id], :partial => 'form_association_record'
+  end
   page.replace_html params[:messages_id], ""
   page << "PsuedoForm.clear('#{params[:form_id]}');"
 else

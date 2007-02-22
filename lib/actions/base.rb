@@ -1,5 +1,8 @@
 module ActiveScaffold::Actions
-  # every action gets basic security control for free. this is accomplished by placing a before_filter on each public method of the action which calls a method that can be overwritten by the developer to enable security controls. the method is named #{action}_authorized?, and by default returns true.
+  # every action gets basic security control for free. this is accomplished by
+  # placing a before_filter on each public method of the action which calls a
+  # method that can be overwritten by the developer to enable security controls.
+  # the method is named #{action}_authorized?, and by default returns true.
   # we also filter params[:record] on a per-action basis, as applicable.
   module Base
     def self.included(base)

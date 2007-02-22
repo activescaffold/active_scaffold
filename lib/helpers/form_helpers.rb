@@ -13,7 +13,6 @@ module ActionView::Helpers
       column.association.nil? ? "form_attribute" : "form_association"
     end
 
-    # TODO Make it work correctly for different types of associations
     def options_for_association(association)
       case association.macro
         when :has_one
@@ -33,6 +32,35 @@ module ActionView::Helpers
 
     def generate_temporary_id
       (Time.now.to_f*1000).to_i.to_s
+    end
+
+    # Turns [[label, value]] into <option> tags
+    # Takes optional parameter of :include_blank
+    def option_tags_for(select_options, options = {})
+      select_options.insert(0,["- select -",nil]) if options[:include_blank]
+      select_options.collect do |option|
+        label, value = option[0], option[1]
+        value.nil? ? "<option value="">#{label}</option>" : "<option value=\"#{value}\">#{label}</option>"
+      end
+    end
+
+    # Takes a params hash and constructs hidden form inputs that match.
+    def params_to_input_tags(params, scope = [])
+      tags = []
+      params.each do |key,value|
+        local_scope = scope.dup.push(key)
+        if value.is_a? Hash
+          tags << params_to_input_tags(value, local_scope)
+        else
+          tags << "<input type=\"hidden\" name=\"#{input_name_for_scope(local_scope)}\" value=\"#{value}\" />"
+        end
+      end
+      tags.flatten.join
+    end
+
+    # Turns ['record','name'] into 'record[name]'
+    def input_name_for_scope(scope)
+      scope.shift + scope.collect{ |node| "[#{node}]" }.join
     end
 
   end

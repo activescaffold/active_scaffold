@@ -5,7 +5,6 @@
 <% association_name, columns = column.name, association_config.create.columns %>
 <% eval("@#{klass.to_s.underscore} = klass.send(:new)") %>
 
-<% puts association_config.list.columns.inspect %>
 
 <% if column.association.klass == @record.class %>
 
@@ -21,12 +20,11 @@ from the form in the config.
 
   <%# In nested forms we only handle belongs_to and has_one associations %>
   <%# TODO Don't show associations back to parent %>
-  <%# TODO add a default options (ex: - select -) %>
   <% if [:belongs_to, :has_one].include?(association.macro) %>
-  <% existing_options = options_for_association(association) %>
-  <% unless existing_options.empty? %>
+  <% select_options = options_for_association(association) %>
+  <% unless select_options.empty? %>
     <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
-    <%= select(scope, column.name, existing_options) %>
+    <%= select_tag("#{scope}[#{column.name}][id]", option_tags_for(select_options, :include_blank => true)) %>
   <% end %>
 
   <% end %>
@@ -42,19 +40,25 @@ from the form in the config.
 <div class="subsection">
   <h4><%= Inflector.titleize(association_name) %></h4>
 
-  <table id="<%= list_id %>" cellpadding="0" cellspacing="0">
-    <tr>
-      <% association_config.list.columns.each do |column| -%>
-      <th><p><%= column.label %></p></th>
-      <% end -%>
-      <th class="actions"></th>
-    </tr>
+  <table cellpadding="0" cellspacing="0">
+    <thead>
+      <tr>
+        <%# TODO Don't show parent association in the list %>
+        <% association_config.list.columns.each do |column| -%>
+        <th><p><%= column.label %></p></th>
+        <% end -%>
+        <th class="actions"></th>
+      </tr>
+    </thead>
+    <tbody id="<%= list_id %>">
     <% association_records = [:belongs_to, :has_one].include?(association.macro) ?  [ @record.send(association_name) ].compact : @record.send(association_name) %>
     <% association_records.each do |association_record| -%>
       <%= render :partial => "form_association_record",
                  :locals => { :record => association_record, :association => association } %>
     <% end -%>
+    </tbody>
   </table>
+  <input type="hidden" name="record[<%= association.name.to_s %>]" value="" />
 
   <% existing_options = options_for_association(association) %>
   <% unless existing_options.empty? %>
@@ -119,9 +123,3 @@ from the form in the config.
   </script>
 </div>
 <% end %>
-
-<% # How to override association sub-form or individual attribute? Change form_partial_for_column() to work for nested ones
-   # I'd like to hide forms once they click 'save' but you can't do that with all fields like images... but those
-   #   are special unsupported cases anyways?
-   # Options for passing form element size in configuration
-   %>

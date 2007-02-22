@@ -3,49 +3,69 @@ module ActiveScaffold::Actions
     def self.included(base)
       base.class_eval do
         after_filter :clear_flashes
-        before_filter :association_filter, :only => [:create, :update]
       end
     end
 
-    # Provide validation and template for displaying association in list
-    # TODO How to handle associations on the association?
+    # Provides validation and template for displaying association in sub-list
     def add_association
       @association = active_scaffold_config.model.reflect_on_association(params[:id].to_sym)
-      @record_params = params[@association.klass.to_s.underscore]
+      @record = find_or_create_for_params(params[@association.klass.to_s.underscore], @association.klass)
 
-      # Create a new object or find based on what params are available
-      @record = @record_params[:id].nil? ? @association.klass.new(@record_params) : @association.klass.find(@record_params[:id])
       render(:action => 'add_association', :layout => false)
     end
 
     protected
 
-    # Initialize all non-singular associations to be empty if not defined by the form
-    # TODO Big problem here... if you don't have all elements on the form then those hidden
-    #      attributes will be deleted every time... We should only be initializing the xxx_ids=
-    #      methods for those associations that are actually in create.columns
-    def association_filter
-      associations = [:has_many, :has_and_belongs_to_many].collect { |type| active_scaffold_config.model.reflect_on_all_associations(type) }.flatten
-      associations.each do |association|
-        unless params[:record].nil? || params[:record].empty?
-          params[:record]["#{association.name.to_s.singularize}_ids"] ||= []
+    # Finds or creates ActiveRecord objects for the associations params (derived from the request
+    # params using split_record_params) and tacks them onto the given parent AR model.
+    def build_associations(parent_record, associations_params = {})
+      return if associations_params.empty?
+
+      associations_params.each do |association_name, values|
+        association = parent_record.class.reflect_on_association(association_name.to_sym)
+
+        if [:has_one, :belongs_to].include? association.macro
+          record_params = values
+          record = find_or_create_for_params(record_params, association.klass)
+          eval "parent_record.#{association.name} = record" unless record.nil?
+        else
+          records = values.values.collect do |record_params|
+            find_or_create_for_params(record_params, association.klass)
+          end.compact rescue []
+          eval "parent_record.#{association.name} = records"
         end
       end
     end
 
-    def build_associations(record)
-      unless params[:_associations].nil? || params[:_associations].empty?
-        associations_params = params[:_associations]
-        associations_params.each do |association_name, values|
-          association = active_scaffold_config.model.reflect_on_association(association_name.to_sym)
+    # Attempts to create or find an instance of klass (which must be an ActiveRecord object) from the
+    # request parameters given. If params[:id] exists it will attempt to find an existing object
+    # otherwise it will build a new one.
+    def find_or_create_for_params(params, klass)
+      return nil if params.empty?
 
-          if [:has_one, :belongs_to].include? association.macro
-            values.each { |temp, attributes| record.method("build_#{association_name}").call(attributes) }
-          else
-            values.each { |temp, attributes| record.send(association_name).build(attributes) }
-          end
+      record = nil
+      if params.has_key? :id
+        record = klass.find(params[:id]) unless params[:id].empty?
+      else
+        # TODO We need some security checks in here so we don't create new objects when you are not authorized
+        attribute_params, associations_params = split_record_params(params,klass)
+        record = klass.new(attribute_params)
+        build_associations(record, associations_params) unless associations_params.empty?
+      end
+      record
+    end
+
+    # Splits a params hash into two hashes: one of all values that map to an attribute on the given class (klass)
+    # and one all the values that map to associations (belongs_to, has_many, etc) on the class.
+    def split_record_params(params, klass)
+      attribute_params, associations_params = params.dup, {}
+      klass.reflect_on_all_associations.each do |association|
+        if attribute_params.has_key?(association.name)
+          value = attribute_params.delete(association.name)
+          associations_params[association.name] = value
         end
       end
+      return attribute_params, associations_params
     end
 
     def clear_flashes
