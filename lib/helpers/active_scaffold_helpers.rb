@@ -36,8 +36,6 @@ module ActionView::Helpers
   			path.pop # remove the parent controller
   			controller_path = path.join("/") + "/"
   			controller_named_path = path.collect{|p| p.capitalize}.join("::") + "::"
-logger.debug controller_named_path
-logger.debug controller_path
   		end
       ["#{klass.to_s}", "#{klass.to_s.pluralize}"].each do |controller_name|
         controller = "#{controller_named_path}#{controller_name.camelize}Controller".constantize rescue next
