@@ -11,7 +11,7 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # the ActionLink for this action
-    cattr_reader :link
+    cattr_accessor :link
     @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => _('SEARCH'), :type => :table, :security_method => :search_authorized?)
 
     # instance-level configuration

@@ -18,7 +18,7 @@ module ActiveScaffold::Config
     # ----------------------------
 
     # the ActionLink for this action
-    attr_reader :link
+    attr_accessor :link
 
     # the label for this Form action. used for the header.
     attr_accessor :label

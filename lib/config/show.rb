@@ -12,14 +12,14 @@ module ActiveScaffold::Config
 
     # global level configuration
     # --------------------------
-    cattr_reader :link
+    cattr_accessor :link
     @@link = ActiveScaffold::DataStructures::ActionLink.new('show', :label => _('SHOW'), :type => :record, :security_method => :show_authorized?)
 
     # instance-level configuration
     # ----------------------------
 
     # the ActionLink for this action
-    attr_reader :link
+    attr_accessor :link
 
     # the label for this action. used for the header.
     attr_accessor :label

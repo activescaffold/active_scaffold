@@ -16,11 +16,6 @@ module ActiveScaffold::DataStructures
     end
     alias_method :<<, :add
 
-    # removes an ActionLink, possibly one automatically created by a module that you don't want
-    def remove(action)
-      @set.delete_if {|item| item.action == action}
-    end
-
     # finds an ActionLink by matching the action
     def [](val)
       @set.find {|item| item.action == val}

@@ -6,6 +6,9 @@ module ActiveScaffold::Config
     def self.link
       @@link
     end
+    def self.link=(val)
+      @@link = val
+    end
     @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => _('EDIT'), :type => :record, :security_method => :update_authorized?)
 
     # instance-level configuration
