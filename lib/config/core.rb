@@ -113,8 +113,12 @@ module ActiveScaffold::Config
         def each
           @set.each do |item|
             unless item.is_a? ActiveScaffold::DataStructures::ActionColumns
-              item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
-              next if item.field_name and constraint_columns.include?(item.field_name.to_sym)
+              begin
+                item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
+                next if item.field_name and constraint_columns.include?(item.field_name.to_sym)
+              rescue ActiveScaffold::ColumnNotAllowed
+                next
+              end
             end
             yield item
           end
