@@ -222,7 +222,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
   open: function() {
     if (this.is_disabled()) return;
     if (this.onclick && !this.onclick()) return;//e.g. confirmation messages
-    this.disable();
+    if (this.position) this.disable();
     this.loading_indicator.show();
     new Ajax.Request(this.url, {
       asynchronous: true,
@@ -236,7 +236,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
       }.bind(this),
 
       onFailure: function(request) {
-        this.enable()
+        if (this.position) this.enable()
       }.bind(this),
 
       onComplete: function(request) {
