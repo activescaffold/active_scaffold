@@ -141,6 +141,12 @@ module ActiveScaffold::DataStructures
       self.includes = association ? [association.name] : []
     end
 
+    # just the field (not table.field)
+    def field_name
+      return nil if virtual?
+      @column ? @column.name : @association.primary_key_name
+    end
+
     protected
 
     def initialize_sort
@@ -181,12 +187,6 @@ module ActiveScaffold::DataStructures
     # the table.field name for this column, if applicable
     def field
       @field ||= [@table, field_name].join('.')
-    end
-
-    # just the field (not table.field)
-    def field_name
-      return nil if virtual?
-      @column ? @column.name : @association.primary_key_name
     end
   end
 end
