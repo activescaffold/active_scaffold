@@ -24,6 +24,19 @@ class ActionLinksTest < Test::Unit::TestCase
     assert_equal 3, @links.find_all{true}.size
   end
 
+  def test_remove
+    @links.add 'foo'
+    @links.add 'bar'
+    
+    assert_equal 'foo', @links['foo'].action
+    assert_equal 'bar', @links['bar'].action
+
+    @links.remove 'foo'
+
+    assert_equal nil, @links['foo']
+    assert_equal 'bar', @links['bar'].action
+  end
+
   def test_array_access
     @link1 = ActiveScaffold::DataStructures::ActionLink.new 'foo/bar'
     @link2 = ActiveScaffold::DataStructures::ActionLink.new 'hello_world'
