@@ -30,7 +30,7 @@ module ActiveScaffold::DataStructures
       @set.find_all { |column| names.include? column.name }
     end
 
-    # returns the column of the given name. useful if method_missing doesn't trigger because of a pre-existing method (like `id')
+    # returns the column of the given name.
     def find_by_name(name)
       # this works because of `def column.=='
       column = @set.find { |c| c == name }

@@ -114,6 +114,7 @@ module ActiveScaffold::Config
           @set.each do |item|
             unless item.is_a? ActiveScaffold::DataStructures::ActionColumns
               item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
+              next if item.field_name and constraint_columns.include?(item.field_name.to_sym)
             end
             yield item
           end
@@ -125,6 +126,11 @@ module ActiveScaffold::Config
           self.each do |item|
             item.set_columns(columns) if item.respond_to? :set_columns
           end
+        end
+
+        attr_writer :constraint_columns
+        def constraint_columns
+          @constraint_columns ||= []
         end
       end
       # then, register the column objects

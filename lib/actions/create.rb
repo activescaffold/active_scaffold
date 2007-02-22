@@ -59,6 +59,7 @@ module ActiveScaffold::Actions
 
     def do_create
       @record = active_scaffold_config.model.new(params[:record])
+      active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) }
       build_associations(@record)
       @record.save
     end

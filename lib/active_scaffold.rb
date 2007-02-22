@@ -3,6 +3,7 @@ module ActiveScaffold
     base.extend(ClassMethods)
     base.module_eval do
       before_filter :handle_user_settings
+      before_filter :handle_column_constraints
     end
   end
 
@@ -21,14 +22,28 @@ module ActiveScaffold
     session[session_index]
   end
 
+  def active_scaffold_constraints
+    return active_scaffold_session_storage[:constraints] || {}
+  end
+
   # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.
   def handle_user_settings
-    if active_scaffold_config
-      active_scaffold_config.actions.each do |m|
-        conf_instance = active_scaffold_config.send(m) rescue next
+    if self.class.uses_active_scaffold?
+      active_scaffold_config.actions.each do |action_name|
+        conf_instance = active_scaffold_config.send(action_name) rescue next
         next if conf_instance.class::UserSettings == ActiveScaffold::Config::Base::UserSettings # if it hasn't been extended, skip it
-        active_scaffold_session_storage[m] ||= {}
-        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, active_scaffold_session_storage[m], params)
+        active_scaffold_session_storage[action_name] ||= {}
+        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, active_scaffold_session_storage[action_name], params)
+      end
+    end
+  end
+
+  def handle_column_constraints
+    if self.class.uses_active_scaffold?
+      active_scaffold_config.actions.each do |action_name|
+        action = active_scaffold_config.send(action_name)
+        next unless action.respond_to? :columns
+        action.columns.constraint_columns = active_scaffold_constraints.keys
       end
     end
   end

@@ -13,6 +13,8 @@ module ActiveScaffold
       [sql, *tokens]
     end
 
+    protected
+
     attr_writer :active_scaffold_conditions
     def active_scaffold_conditions
       @active_scaffold_conditions ||= []
@@ -22,8 +24,6 @@ module ActiveScaffold
     def active_scaffold_includes
       @active_scaffold_includes ||= []
     end
-
-    protected
 
     # returns a single record (the given id) but only if it's allowed for the specified action.
     # accomplishes this by checking model.#{action}_authorized?
@@ -49,7 +49,12 @@ module ActiveScaffold
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => build_order_clause(options[:sorting]),
-                         :conditions => merge_conditions(active_scaffold_conditions, conditions_for_collection, conditions_from_params),
+                         :conditions => merge_conditions(
+                           active_scaffold_conditions, # from the modules
+                           conditions_for_collection, # from the dev
+                           conditions_from_params, # from the parameters (used?)
+                           conditions_from_constraints # from any constraints (embedded scaffolds)
+                         ),
                          :include => active_scaffold_includes.empty? ? nil : active_scaffold_includes}
 
       count = klass.count(finder_options.reject{|k,v| k == :order})

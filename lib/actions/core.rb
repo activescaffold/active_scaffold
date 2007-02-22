@@ -127,16 +127,21 @@ module ActiveScaffold::Actions
     def conditions_for_collection
     end
 
+    # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
     def conditions_from_params
       conditions = nil
       params.reject {|key, value| [:controller, :action, :id].include?(key.to_sym)}.each do |key, value|
         next unless active_scaffold_config.model.column_names.include?(key)
         conditions = merge_conditions(conditions, ["#{key.to_s} = ?", value])
-        if key.include?('_id')
-          active_scaffold_config.label << " for " + eval("#{key.gsub('_id', '').camelize.constantize}.find(value).to_label")
-          params[:nested_active_scaffold_id_name] = key
-          params[:nested_active_scaffold_id] = value
-        end
+      end
+      conditions
+    end
+
+    # Builds search conditions based on the current scaffold constraints. This is used for embedded scaffolds (e.g. render :active_scaffold => 'users').
+    def conditions_from_constraints
+      conditions = nil
+      active_scaffold_constraints.each do |k, v|
+        conditions = merge_conditions(conditions, ["#{k.to_s} = ?", v])
       end
       conditions
     end

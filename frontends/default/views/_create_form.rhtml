@@ -12,8 +12,6 @@
              :class => 'create' %>
 <% end -%>
 
-  <%= hidden_field_tag "record[#{params[:nested_active_scaffold_id_name]}]", params[:nested_active_scaffold_id] if params[:nested_active_scaffold_id_name] %>
-
   <h4><%= active_scaffold_config.create.label -%></h4>
 
   <% if request.xhr? -%>
@@ -31,9 +29,6 @@
   </p>
 
 <%= end_form_tag %>
-<%
-js = update_page_tag do |page|
-  page << "Form.focusFirstElement('#{element_form_id(:action => :create)}');"
-end
--%>
-<%= js -%>
+<script type="text/javascript">
+Form.focusFirstElement('<%= element_form_id(:action => :create) -%>');
+</script>

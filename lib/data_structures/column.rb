@@ -108,6 +108,11 @@ module ActiveScaffold::DataStructures
       @column.nil? && association.nil?
     end
 
+    def field_name
+      return nil if virtual?
+      @column ? @column.name : @association.primary_key_name
+    end
+
     # this is so that array.delete and array.include?, etc., will work by column name
     def ==(other) #:nodoc:
       # another column
