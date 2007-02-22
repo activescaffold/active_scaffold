@@ -108,11 +108,6 @@ module ActiveScaffold::DataStructures
       @column.nil? && association.nil?
     end
 
-    def field_name
-      return nil if virtual?
-      @column ? @column.name : @association.primary_key_name
-    end
-
     # this is so that array.delete and array.include?, etc., will work by column name
     def ==(other) #:nodoc:
       # another column
@@ -134,7 +129,6 @@ module ActiveScaffold::DataStructures
       @association = active_record_class.reflect_on_association(self.name)
       @active_record_class = active_record_class
       @table = active_record_class.table_name
-      @field = [@table, self.name].join('.')
 
       # default all the configurable variables
       self.label = self.name.to_s.titleize
@@ -185,6 +179,14 @@ module ActiveScaffold::DataStructures
     attr_reader :table
 
     # the table.field name for this column, if applicable
-    attr_reader :field
+    def field
+      @field ||= [@table, field_name].join('.')
+    end
+
+    # just the field (not table.field)
+    def field_name
+      return nil if virtual?
+      @column ? @column.name : @association.primary_key_name
+    end
   end
 end
