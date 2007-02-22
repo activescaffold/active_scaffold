@@ -10,7 +10,7 @@ module ActiveScaffold::Actions
     end
 
     def destroy
-      return redirect_to params.merge(:action => :delete) if request.get?
+      return redirect_to(params.merge(:action => :delete)) if request.get?
 
       insulate { do_destroy }
 
