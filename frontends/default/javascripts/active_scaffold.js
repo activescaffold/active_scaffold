@@ -334,6 +334,20 @@ ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.Ac
         this.close();
       }.bind(this)
     });
+  },
+
+  enable: function() {
+    this.set.links.each(function(item) {
+      if (item.url != this.url) return;
+      item.tag.removeClassName('disabled');
+    }.bind(this));
+  },
+
+  disable: function() {
+    this.set.links.each(function(item) {
+      if (item.url != this.url) return;
+      item.tag.addClassName('disabled');
+    }.bind(this));
   }
 });
 
