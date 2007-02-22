@@ -20,16 +20,30 @@ module ActionView::Helpers
     ## TODO We should check the the model being used is the same Class
     ##      ie make sure ProductsController doesn't active_scaffold :shoe
     def active_scaffold_config_for(klass)
-      ["#{klass.to_s}", "#{klass.to_s.pluralize}"].each do |controller_name|
-        controller = eval("#{controller_name}Controller") rescue next
-        return controller.active_scaffold_config if controller.uses_active_scaffold?
-      end
+      controller = active_scaffold_controller_for(klass)
+      return controller.active_scaffold_config unless controller.nil? or !controller.uses_active_scaffold?
 
       config = ActiveScaffold::Config::Core.new(klass)
       config._load_action_columns
       config
     end
 
+    def active_scaffold_controller_for(klass, parent_controller = nil)
+  		controller_named_path = ""
+  		controller_path = ""
+  		if parent_controller
+  			path = parent_controller.split('/')
+  			path.pop # remove the parent controller
+  			path.collect! {|p| p.capitalize}
+  			controller_named_path = "#{path.join("::")}::"
+  			controller_path = "#{path.join("/")}/"
+  		end
+      ["#{klass.to_s}", "#{klass.to_s.pluralize}"].each do |controller_name|
+        controller = "#{controller_named_path}#{controller_name.camelize}Controller".constantize rescue next
+        return "#{controller_path}#{controller_name}"
+      end
+      nil
+    end
 
     # a general-use loading indicator (the "stuff is happening, please wait" feedback)
     def loading_indicator_tag(options)

@@ -3,33 +3,10 @@
 	models = []
 	models = params[:associations].split(" ") unless params[:associations].nil?
 	unless models.empty?
-		controller_named_path = ""
-		if params[:controller]["/"]
-			path = params[:controller].split('/')
-			path.pop # remove the parent controller
-			path.collect! {|p| p.capitalize}
-			controller_named_path = "#{path.join("::")}::"
-		end
 		parent_id = params[:id]
-		parent_class = active_scaffold_config.model
-		parent_assoc_name = active_scaffold_config.model_id
-		models.each do | child_table |
-			singular_name   = child_table.to_s.singularize
-			class_name      = singular_name.camelize
-			plural_name     = eval("#{class_name}.table_name") || singular_name.pluralize
-			scaffold_class 	= class_name.constantize
-			parent_id_column_name = "#{parent_class.to_s.tableize.singularize}_id"
-			parent_id_column_name = scaffold_class.reflect_on_association(parent_assoc_name).primary_key_name unless scaffold_class.reflect_on_association(parent_assoc_name).nil?
-			options = {parent_id_column_name.to_sym => parent_id}
-			begin
-				controller_name = "#{controller_named_path}#{plural_name.camelize}Controller".constantize
-			rescue NameError => err
-				# I am confused why we need to check for .class here but alas I do. Otherwise it rolls to the singular name if any error in the plural controller. Maybe 1.2.2 will fix this?
-				raise unless err.class == NameError
-				controller_name = "#{controller_named_path}#{singular_name.camelize}Controller".constantize
-			end
+		models.each do | model_name |
 %>
-		<%= render :active_scaffold => controller_name, :params => options  %>
+		<%= render :active_scaffold => active_scaffold_controller_for(model_name, params[:controller]), :params => {active_scaffold_config.columns[model_name].association.primary_key_name.to_sym => parent_id}  %>
 <%
 		end
   end
