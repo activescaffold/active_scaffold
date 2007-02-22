@@ -2,7 +2,15 @@
 module ActionView #:nodoc:
   class Base
     def render_with_active_scaffold(*args)
-      if args.first[:active_scaffold]
+      if args.first == :super
+        template_path = caller.first.split(':').first
+        template = File.basename(template_path)
+
+        ActiveScaffold::Config::Core.template_search_path.each do |active_scaffold_template_path|
+          active_scaffold_template = File.join(active_scaffold_template_path, template)
+          return render :file => active_scaffold_template if file_exists? active_scaffold_template
+        end
+      elsif args.first[:active_scaffold]
         require 'digest/md5'
         remote_controller = args.first[:active_scaffold]
         constraints = args.first[:params]
