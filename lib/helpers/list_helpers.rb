@@ -9,6 +9,7 @@ module ActionView::Helpers
     end
 
     def render_action_link(link, url_options)
+      url_options = url_options.clone
       url_options[:action] = link.action
       url_options.merge! link.parameters if link.parameters
 
