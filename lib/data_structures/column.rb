@@ -48,7 +48,8 @@ module ActiveScaffold::DataStructures
       end
     end
 
-
+    # :select on a :belongs_to or :has_one association will display a select control in the form
+    #  default is to display a sub-form.
     attr_accessor :ui_type
     def ui_type
       @ui_type || @column.type

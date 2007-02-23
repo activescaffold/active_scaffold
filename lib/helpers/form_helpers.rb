@@ -12,6 +12,7 @@ module ActionView::Helpers
       elsif !column.association.nil?
         if [:belongs_to, :has_one].include?(column.association.macro) && column.ui_type == :select
           "form_attribute" 
+        #TODO 2007-02-23 (EJM) Level=0 - Need to check if they have the security to CRUD the association column?
         else
           "form_association"
         end
