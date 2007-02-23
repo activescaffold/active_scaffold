@@ -48,6 +48,12 @@ module ActiveScaffold::DataStructures
       end
     end
 
+
+    attr_accessor :ui_type
+    def ui_type
+      @ui_type || @column.type
+    end
+    
     # associate an action_link with this column
     attr_reader :link
 

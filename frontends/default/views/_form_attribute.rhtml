@@ -6,7 +6,9 @@
 
 <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
 <% if override_form_field?(column) -%>
-	<%= return send(override_form_field(column), object) %>
+	<%= send(override_form_field(column), object) %>
+<% elsif !column.association.nil? and column.ui_type == :select -%>
+  <%= select(object, column.name, column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}, {}, { :name => name }) %>
 <% elsif column.virtual? -%>
   <%= text_field(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) %>
 <% else -%>

@@ -7,10 +7,14 @@ module ActionView::Helpers
     def form_partial_for_column(column)
       if override_form_field_partial?(column)
         override_form_field_partial(column)
-      elsif column.association.nil? || override_form_field?(column) 
+      elsif column.association.nil? || override_form_field?(column)
         "form_attribute" 
-      else
-        "form_association"
+      elsif !column.association.nil?
+        if [:belongs_to, :has_one].include?(column.association.macro) && column.ui_type == :select
+          "form_attribute" 
+        else
+          "form_association"
+        end
       end
     end
 
