@@ -52,13 +52,11 @@ module ActiveScaffold
   class RecordNotAllowed < SecurityError; end
 
   module ClassMethods
-    attr_reader :active_scaffold_config
-
     def active_scaffold(model_id, &block)
       # run the configuration
       @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
-      @active_scaffold_config.configure &block if block_given?
-      @active_scaffold_config._load_action_columns
+      self.active_scaffold_config.configure &block if block_given?
+      self.active_scaffold_config._load_action_columns
 
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
@@ -76,8 +74,12 @@ module ActiveScaffold
       end
     end
 
+    def active_scaffold_config
+       @active_scaffold_config || self.superclass.instance_variable_get('@active_scaffold_config')
+    end
+
     def uses_active_scaffold?
-      !@active_scaffold_config.nil?
+      !active_scaffold_config.nil?
     end
   end
 end
