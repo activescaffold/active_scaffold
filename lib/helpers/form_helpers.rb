@@ -1,18 +1,36 @@
 module ActionView::Helpers
   module ActiveScaffoldFormHelpers
     def render_form_field_for_column(column)
-      # first check for an override helper
-      override_helper = "#{column.name}_form_column"
-      return send(override_helper, @record) if respond_to? override_helper
-
-      ## In the absence of an override use the partial based on column type
       return render(:partial => form_partial_for_column(column), :locals => { :column => column })
     end
 
     def form_partial_for_column(column)
-      column.association.nil? ? "form_attribute" : "form_association"
+      if override_form_field_partial?(column)
+        override_form_field_partial(column)
+      elsif column.association.nil? || override_form_field?(column) 
+        "form_attribute" 
+      else
+        "form_association"
+      end
     end
 
+    def override_form_field(column)
+      "#{column.name}_form_column"
+    end
+
+    def override_form_field?(column)
+      respond_to?(override_form_field(column))
+    end
+    
+    def override_form_field_partial(column)
+      "#{column.name}_form_column"
+    end
+
+    def override_form_field_partial?(column)
+      path, partial_name = partial_pieces(override_form_field_partial(column))
+      file_exists? File.join(path, "_#{partial_name}")
+    end
+    
     def options_for_association(association)
       case association.macro
         when :has_one

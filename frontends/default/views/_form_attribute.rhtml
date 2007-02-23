@@ -5,7 +5,9 @@
 <% name = scope.nil? ? "record[#{column.name}]" : "#{scope}[#{column.name}]" %>
 
 <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
-<% if column.virtual? -%>
+<% if override_form_field?(column) -%>
+	<%= return send(override_form_field(column), object) %>
+<% elsif column.virtual? -%>
   <%= text_field(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) %>
 <% else -%>
   <%= input(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) %>
