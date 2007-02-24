@@ -1,15 +1,10 @@
 <% record = list_record if list_record # compat with render :partial :collection -%>
 <% classAttr = cycle("", "class=\"even\"") -%>
 <% url_options = params_for(:action => :list, :id => record.id) -%>
-<% @running_totals ||= {} -%>
 
 <tr <%= classAttr %> id="<%= element_row_id(:action => :list, :id => record.id) %>">
   <% active_scaffold_config.list.columns.each do |column| %>
     <% column_value = render_column(record, column) -%>
-    <% if column.calculate_total? -%>
-      <% @running_totals[column.name.to_sym] ||= 0.0 -%>
-      <% @running_totals[column.name.to_sym] += column_value.to_f -%>
-    <% end -%>
 
     <td class="<%= column_class(column, column_value) %>" >
       <% if column.link -%>

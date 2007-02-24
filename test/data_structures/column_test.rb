@@ -45,10 +45,10 @@ class ColumnTest < Test::Unit::TestCase
     @column.required = true
     assert @column.required?, 'can be changed'
 
-    # totals calculation
-    assert !@column.calculate_total?, 'default is false'
-    @column.calculate_total = true
-    assert @column.calculate_total?, 'can be changed'
+    # calculation
+    assert !@column.calculation?, 'default is nil'
+    @column.calculate = :sum
+    assert @column.calculation?, 'can be changed'
   end
 
   def test_field

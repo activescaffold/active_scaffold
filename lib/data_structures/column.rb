@@ -48,8 +48,9 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    # :select on a :belongs_to or :has_one association will display a select control in the form
-    #  default is to display a sub-form.
+    # supported options:
+    #   * :select on a :belongs_to or :has_one association will display a select control in the form
+    #   * :crud (default) will display a sub-form
     attr_accessor :ui_type
     def ui_type
       @ui_type || @column.type
@@ -69,12 +70,12 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    # set whether to calculate totals for this column
-    attr_writer :calculate_total
+    # define a calculation for the column. anything that ActiveRecord::Calculations::ClassMethods#calculate accepts will do.
+    attr_accessor :calculate
 
-    # get whether to calculate totals for this column
-    def calculate_total?
-      @calculate_total
+    # get whether to run a calculation on this column
+    def calculation?
+      !(@calculate == false or @calculate.nil?)
     end
 
     # a collection of associations to pre-load when finding the records on a page
@@ -141,7 +142,6 @@ module ActiveScaffold::DataStructures
       self.label = self.name.to_s.titleize
       self.css_class = ''
       self.required = false
-      self.calculate_total = false
       self.sort = true
       self.search_sql = true
 

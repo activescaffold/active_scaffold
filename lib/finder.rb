@@ -25,6 +25,15 @@ module ActiveScaffold
       @active_scaffold_includes ||= []
     end
 
+    def all_conditions
+      merge_conditions(
+        active_scaffold_conditions, # from the modules
+        conditions_for_collection, # from the dev
+        conditions_from_params, # from the parameters (is this still used?)
+        conditions_from_constraints # from any constraints (embedded scaffolds)
+      )
+    end
+
     # returns a single record (the given id) but only if it's allowed for the specified action.
     # accomplishes this by checking model.#{action}_authorized?
     def find_if_allowed(id, mod)
@@ -49,12 +58,7 @@ module ActiveScaffold
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => build_order_clause(options[:sorting]),
-                         :conditions => merge_conditions(
-                           active_scaffold_conditions, # from the modules
-                           conditions_for_collection, # from the dev
-                           conditions_from_params, # from the parameters (used?)
-                           conditions_from_constraints # from any constraints (embedded scaffolds)
-                         ),
+                         :conditions => all_conditions,
                          :include => active_scaffold_includes.empty? ? nil : active_scaffold_includes}
 
       count = klass.count(finder_options.reject{|k,v| k == :order})

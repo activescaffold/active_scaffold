@@ -86,13 +86,20 @@ module ActionView::Helpers
       end
 
       # check for an override helper
-      override_method_name = "#{column.name}_column"
-      if respond_to? override_method_name
-        override_method = self.method(override_method_name)
+      if column_override? column
+        override_method = self.method(column_override(column))
         formatted_value = override_method.arity < 2 ? override_method.call(formatted_value) : override_method.call(formatted_value, record)
       end
 
       formatted_value
+    end
+
+    def column_override(column)
+      "#{column.name}_column"
+    end
+
+    def column_override?(column)
+      respond_to?(column_override(column))
     end
 
     def format_column(column_value)
@@ -117,6 +124,10 @@ module ActionView::Helpers
 
     def column_empty?(column_value)
       column_value.nil? || (column_value.empty? rescue false)
+    end
+
+    def column_calculation(column)
+      calculation = active_scaffold_config.model.calculate(column.calculate, column.name, :conditions => controller.send(:all_conditions))
     end
   end
 end

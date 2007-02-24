@@ -21,7 +21,7 @@ var ActiveScaffold = {
       if (!tableRow.hasClassName("create")
         && !tableRow.hasClassName("update")
         && !tableRow.hasClassName("inline-adapter")
-        && !tableRow.hasClassName("active-scaffold-totals")) {
+        && !tableRow.hasClassName("active-scaffold-calculations")) {
 
         if (even) {
           tableRow.addClassName("even");

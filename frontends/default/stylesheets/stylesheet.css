@@ -282,7 +282,7 @@ white-space: nowrap;
 /* active_scaffold Footer Styling
    ========================== */
 
-.active-scaffold-totals td {
+.active-scaffold-calculations td {
 background-color: #eee;
 border-top: 2px solid #005CB8;
 font: bold 12px arial, sans-serif;
