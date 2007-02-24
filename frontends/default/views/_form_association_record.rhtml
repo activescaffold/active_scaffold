@@ -3,6 +3,7 @@
 <tr>
   <%# TODO Move to using a dedicated 'sublist' module that inherits from list %>
   <% active_scaffold_config_for(record.class).list.columns.each do |column| %>
+		<% next if !column.association.nil? and column.association.primary_key_name == association.primary_key_name %>
     <% column_value = render_column(record, column) -%>
     <td class="<%= column_class(column, column_value) %>" >
       <%= column_value %>

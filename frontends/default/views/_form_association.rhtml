@@ -43,8 +43,8 @@ from the form in the config.
   <table cellpadding="0" cellspacing="0">
     <thead>
       <tr>
-        <%# TODO Don't show parent association in the list %>
         <% association_config.list.columns.each do |column| -%>
+				<% next if !column.association.nil? and column.association.klass == association.active_record %>
         <th><p><%= column.label %></p></th>
         <% end -%>
         <th class="actions"></th>
