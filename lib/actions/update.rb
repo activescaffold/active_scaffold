@@ -60,7 +60,7 @@ module ActiveScaffold::Actions
     def do_update
       @record = find_if_allowed(params[:id], 'update')
       attribute_params, associations_params = split_record_params(params[:record], active_scaffold_config.model)
-      build_associations(@record, associations_params) unless associations_params.empty?
+      build_associations(@record, active_scaffold_config.update.columns, associations_params) unless associations_params.empty?
       @record.update_attributes(attribute_params)
     end
   end

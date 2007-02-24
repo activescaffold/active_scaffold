@@ -18,21 +18,23 @@ module ActiveScaffold::Actions
 
     # Finds or creates ActiveRecord objects for the associations params (derived from the request
     # params using split_record_params) and tacks them onto the given parent AR model.
-    def build_associations(parent_record, associations_params = {})
+    def build_associations(parent_record, columns, associations_params = {})
       return if associations_params.empty?
 
-      associations_params.each do |association_name, values|
-        association = parent_record.class.reflect_on_association(association_name.to_sym)
+      columns.each do |column|
+        next unless column.association
+        next if column.ui_type == :select
 
-        if [:has_one, :belongs_to].include? association.macro
+        values = associations_params[column.name]
+        if [:has_one, :belongs_to].include? column.association.macro
           record_params = values
-          record = find_or_create_for_params(record_params, association.klass)
-          eval "parent_record.#{association.name} = record" unless record.nil?
+          record = find_or_create_for_params(record_params, column.association.klass)
+          eval "parent_record.#{column.association.name} = record" unless record.nil?
         else
           records = values.values.collect do |record_params|
-            find_or_create_for_params(record_params, association.klass)
+            find_or_create_for_params(record_params, column.association.klass)
           end.compact rescue []
-          eval "parent_record.#{association.name} = records"
+          eval "parent_record.#{column.association.name} = records"
         end
       end
     end
