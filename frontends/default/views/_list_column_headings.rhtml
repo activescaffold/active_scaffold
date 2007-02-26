@@ -1,9 +1,17 @@
-<% sorting = active_scaffold_config.list.user.sorting -%>
+<%
+sorting = active_scaffold_config.list.user.sorting
+sorting_stages = ['reset', 'ASC', 'DESC']
+default_sorting = active_scaffold_config.list.sorting
+default_sorting_stages = ['ASC', 'DESC']
+-%>
 <% active_scaffold_config.list.columns.each do |column| -%>
-  <% column_sort_direction = ['reset', 'ASC', 'DESC'].after(sorting.direction_of(column)) || 'ASC' -%>
-  <% sort_params = params_for(:action => :update_table, :page => 1,
-                              :sort => column.name, :sort_direction => column_sort_direction) -%>
-  <% column_header_id = active_scaffold_column_header_id(column) -%>
+  <%
+  stages = default_sorting.sorts_on?(column) ? default_sorting_stages : sorting_stages
+  column_sort_direction = stages.after(sorting.direction_of(column)) || 'ASC'
+  sort_params = params_for(:action => :update_table, :page => 1,
+                           :sort => column.name, :sort_direction => column_sort_direction)
+  column_header_id = active_scaffold_column_header_id(column)
+  -%>
   <th id="<%= column_header_id %>" <%= "class=\"sorted #{sorting.direction_of(column).downcase}\"" if sorting.sorts_on? column %>>
   <% if column.sortable? -%>
     <% href = url_for(sort_params) -%>
