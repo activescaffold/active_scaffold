@@ -18,6 +18,7 @@ module ActiveScaffold::DataStructures
 
     # the way to add columns to the set. this is primarily useful for virtual columns.
     def add(*args)
+      args.flatten! # allow [] as a param
       args.each { |arg|
         arg = ActiveScaffold::DataStructures::Column.new(arg.to_sym, @active_record_class)
         @set << arg

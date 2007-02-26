@@ -11,12 +11,14 @@ module ActiveScaffold::DataStructures
 
     # the way to remove columns from the set.
     def exclude(*args)
+      args.flatten! # allow [] as a param
       args.collect! { |a| a.to_sym } # symbolize the args
       @set.reject! { |c| args.include? c.to_sym } # reject all columns specified
     end
 
     # the way to add columns to the set.
     def add(*args)
+      args.flatten! # allow [] as a param
       args.each do |arg|
         arg = arg.to_sym unless arg.is_a? ActiveScaffold::DataStructures::ActionColumns
         @set << arg
