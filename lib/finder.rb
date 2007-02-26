@@ -1,6 +1,8 @@
 module ActiveScaffold
   module Finder
     def self.create_conditions_for_columns(tokens, columns)
+      tokens = [tokens] if tokens.is_a? String
+
       where_clauses = []
       columns.each do |column|
         where_clauses << "LOWER(#{column.search_sql}) LIKE ?"
