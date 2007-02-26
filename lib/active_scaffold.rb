@@ -52,7 +52,10 @@ module ActiveScaffold
   class RecordNotAllowed < SecurityError; end
 
   module ClassMethods
-    def active_scaffold(model_id, &block)
+    def active_scaffold(model_id = nil, &block)
+      # converts Foo::BarController to 'bar' and FooBarsController to 'foo_bar' and AddressController to 'address'
+      model_id = self.to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore unless model_id
+
       # run the configuration
       @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
       self.active_scaffold_config.configure &block if block_given?
