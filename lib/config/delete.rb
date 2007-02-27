@@ -12,7 +12,7 @@ module ActiveScaffold::Config
 
     # the ActionLink for this action
     cattr_accessor :link
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('destroy', :label => _('DELETE'), :type => :record, :confirm => _('ARE_YOU_SURE'), :position => false, :security_method => :delete_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('destroy', :label => _('DELETE'), :type => :record, :confirm => _('ARE_YOU_SURE'), :method => :delete, :position => false, :security_method => :delete_authorized?)
 
     # instance-level configuration
     # ----------------------------

@@ -32,6 +32,7 @@ require 'extensions/action_view'
 require 'extensions/action_controller'
 require 'extensions/active_record'
 require 'extensions/array'
+require 'extensions/resources'
 
 ##
 ## Autoloading for some directories

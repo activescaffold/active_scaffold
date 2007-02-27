@@ -4,7 +4,7 @@ module ActiveScaffold::Actions
 
     def self.included(base)
       super
-      base.verify :method => :post,
+      base.verify :method => [:post, :put],
                   :only => :update,
                   :redirect_to => { :action => :index }
     end

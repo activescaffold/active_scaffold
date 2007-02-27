@@ -1,5 +1,6 @@
 <% href = url_for(params_for(:action => :update_table)) -%>
 <%= form_remote_tag :url => href,
+                    :method => :get,
                     :before => "addActiveScaffoldPageToHistory('#{href}', '#{params[:controller]}')",
                     :after => "Element.show('#{loading_indicator_id(:action => :search)}'); Form.disable('#{search_form_id}');",
                     :complete => "Element.hide('#{loading_indicator_id(:action => :search)}'); Form.enable('#{search_form_id}');",

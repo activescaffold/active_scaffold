@@ -8,6 +8,7 @@ module ActiveScaffold::DataStructures
       self.confirm = false
       self.type = :table
       self.inline = true
+      self.method = :get
 
       # apply quick properties
       options.each_pair do |k, v|
@@ -21,6 +22,9 @@ module ActiveScaffold::DataStructures
 
     # a hash of request parameters
     attr_accessor :parameters
+
+    # the RESTful method
+    attr_accessor :method
 
     # what string to use to represent this action
     attr_accessor :label

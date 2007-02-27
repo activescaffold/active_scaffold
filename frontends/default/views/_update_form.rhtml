@@ -5,7 +5,8 @@
                     :complete => "Element.hide('#{loading_indicator_id(:action => :update, :id => params[:id])}'); Form.enable('#{element_form_id(:action => :update)}');",
                     :html => { :href => url_for(url_options),
                     :id => element_form_id(:action => :update),
-                    :class => 'update' } %>
+                    :class => 'update',
+                    :method => :put } %>
 
 <% else -%>
 <%= form_tag url_options,

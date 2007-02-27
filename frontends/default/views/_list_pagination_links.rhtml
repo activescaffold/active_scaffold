@@ -11,7 +11,8 @@
           :before => "addActiveScaffoldPageToHistory('#{previous_url}', '#{controller_id}')",
           :before => "Element.show('#{loading_indicator_id(:action => :pagination)}');",
           :complete => "Element.hide('#{loading_indicator_id(:action => :pagination)}');",
-          :update => active_scaffold_content_id },
+          :update => active_scaffold_content_id,
+          :method => :get },
         { :href => previous_url,
           :class => "previous"}) if current_page.prev? %>
   <%= pagination_ajax_links current_page, pagination_params %>
@@ -20,7 +21,8 @@
           :before => "addActiveScaffoldPageToHistory('#{next_url}', '#{controller_id}')",
           :before => "Element.show('#{loading_indicator_id(:action => :pagination)}');",
           :complete => "Element.hide('#{loading_indicator_id(:action => :pagination)}');",
-          :update => active_scaffold_content_id },
+          :update => active_scaffold_content_id,
+          :method => :get },
         { :href => next_url,
           :class => "next"}) if current_page.next? %>
 <% end -%>

@@ -13,6 +13,11 @@ module ActionView::Helpers
       url_options[:action] = link.action
       url_options.merge! link.parameters if link.parameters
 
+      # NOTE this is in url_options instead of html_options on purpose. the reason is that the client-side
+      # action link javascript needs to submit the proper method, but the normal html_options[:method]
+      # argument leaves no way to extract the proper method from the rendered tag.
+      url_options[:_method] = link.method
+
       html_options = {:class => link.action}
       html_options[:confirm] = link.confirm if link.confirm?
       html_options[:position] = link.position if link.position and link.inline?
@@ -30,7 +35,8 @@ module ActionView::Helpers
       page_link = link_to_remote(page_number,
                 { :url => params.merge(:page => page_number),
                   :before => "Element.show('#{loading_indicator_id(:action => :pagination)}');",
-                  :update => active_scaffold_content_id },
+                  :update => active_scaffold_content_id,
+                  :method => :get },
                 { :href => url_for(params.merge(:page => page_number)) })
     end
 

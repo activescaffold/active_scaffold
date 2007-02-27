@@ -32,6 +32,10 @@ class ActionLinkTest < Test::Unit::TestCase
     assert_equal :table, @link.type
     @link.type = :record
     assert_equal :record, @link.type
+
+    assert_equal :get, @link.method
+    @link.method = :put
+    assert_equal :put, @link.method
   end
 
   def test_position
