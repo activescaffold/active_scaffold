@@ -23,6 +23,12 @@ class ColumnsTest < Test::Unit::TestCase
     assert !@columns.include?(:d)
     @columns << :d
     assert @columns.include?(:d)
+
+    # try adding an array of columns
+    assert !@columns.include?(:f)
+    @columns.add [:f, :g]
+    assert @columns.include?(:f)
+    assert @columns.include?(:g)
   end
 
   def test_finders

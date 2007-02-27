@@ -38,6 +38,14 @@ class ActionColumnsTest < Test::Unit::TestCase
     assert !@columns.include?(:a)
   end
 
+  def test_exclude_array
+    # exclude with a symbol
+    assert @columns.include?(:b)
+    @columns.exclude [:a, :b]
+    assert !@columns.include?(:b)
+    assert !@columns.include?(:a)
+  end
+
   def test_add
     # try adding a simple column using a string
     assert !@columns.include?(:c)
@@ -53,6 +61,13 @@ class ActionColumnsTest < Test::Unit::TestCase
     assert !@columns.include?(:e)
     @columns << :e
     assert @columns.include?(:e)
+
+    # try adding an array of columns
+    assert !@columns.include?(:f)
+    @columns.add [:f, :g]
+    assert @columns.include?(:f)
+    assert @columns.include?(:g)
+
   end
 
   def test_length
