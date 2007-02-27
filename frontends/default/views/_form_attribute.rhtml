@@ -5,15 +5,24 @@
 <% name = scope.nil? ? "record[#{column.name}]" : "#{scope}[#{column.name}]" %>
 
 <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
-<% if override_form_field?(column) -%>
-	<%= send(override_form_field(column), object) %>
-<% elsif !column.association.nil? and column.ui_type == :select -%>
-  <%= select(object, column.name, column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}, {}, { :name => name }) %>
-<% elsif column.virtual? -%>
-  <%= text_field(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) %>
-<% else -%>
-  <%= input(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) %>
-<% end -%>
+<%= if override_form_field?(column)
+  send(override_form_field(column), object)
+elsif is_file_column?(column, record)
+  file_column_field('record', column.name)
+elsif !column.association.nil? and column.ui_type == :select
+  select(object, column.name, column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}, {}, { :name => name })
+else
+  options = { :name => name }
+  text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )
+  if column.virtual?
+    text_field(object, column.name, text_options)
+  elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)
+    input(object, column.name, text_options)
+  else
+    input(object, column.name, options)
+  end
+end
+-%>
 
 <% if column.description -%>
   <p><%= column.description %></p>
