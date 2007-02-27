@@ -63,7 +63,8 @@ module ActiveScaffold
                          :conditions => all_conditions,
                          :include => active_scaffold_includes.empty? ? nil : active_scaffold_includes}
 
-      count = klass.count(finder_options.reject{|k,v| [:order, :include].include? k})
+      # NOTE: we must use :include in the count query, because some conditions may reference other tables
+      count = klass.count(finder_options.reject{|k,v| [:order].include? k})
 
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
