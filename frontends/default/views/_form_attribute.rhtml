@@ -7,8 +7,6 @@
 <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
 <%= if override_form_field?(column)
   send(override_form_field(column), object)
-elsif is_file_column?(column, record)
-  file_column_field('record', column.name)
 elsif !column.association.nil? and column.ui_type == :select
   select(object, column.name, column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}, {}, { :name => name })
 else
