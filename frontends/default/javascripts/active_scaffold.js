@@ -37,8 +37,8 @@ var ActiveScaffold = {
     if ($(tableBody).rows.length == 0) {
       $(emptyMessageElement).show();
     } else {
-			$(emptyMessageElement).hide();
-		}
+      $(emptyMessageElement).hide();
+    }
   },
   removeSortClasses: function(active_scaffoldId) {
     $$('#' + active_scaffoldId + ' td.sorted').each(function(element) {
@@ -132,7 +132,7 @@ Form.Pseudo.prototype = {
   },
 
   setOptions: function(options) {
-	this.options = { asynchronous: true,
+  this.options = { asynchronous: true,
                      evalScripts: true,
                      onLoading: this.onLoading.bindAsEventListener(this),
                      onLoaded: this.onComplete.bindAsEventListener(this) };
@@ -223,7 +223,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
     if (this.is_disabled()) return;
     if (this.onclick && !this.onclick()) return;//e.g. confirmation messages
     if (this.position) this.disable();
-    this.loading_indicator.show();
+    this.loading_indicator.style.visibility = 'visible';
     new Ajax.Request(this.url, {
       asynchronous: true,
       evalScripts: true,
@@ -240,7 +240,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
       }.bind(this),
 
       onComplete: function(request) {
-        this.loading_indicator.hide();
+        this.loading_indicator.style.visibility = 'hidden';
       }.bind(this)
     });
   },

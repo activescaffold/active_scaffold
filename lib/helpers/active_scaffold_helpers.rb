@@ -30,14 +30,14 @@ module ActionView::Helpers
 
     # :parent_controller, pass in something like, params[:controller], this will resolve the controller to the proper path for subsequent call to render :active_scaffold or render :component.
     def active_scaffold_controller_for(klass, parent_controller = nil)
-  		controller_path = ""
-  		controller_named_path = ""
-  		if parent_controller
-  			path = parent_controller.split('/')
-  			path.pop # remove the parent controller
-  			controller_named_path = path.collect{|p| p.capitalize}.join("::") + "::"
-    		controller_path = path.join("/") + "/"
-  		end
+      controller_path = ""
+      controller_named_path = ""
+      if parent_controller
+        path = parent_controller.split('/')
+        path.pop # remove the parent controller
+        controller_named_path = path.collect{|p| p.capitalize}.join("::") + "::"
+        controller_path = path.join("/") + "/"
+      end
       ["#{klass.to_s}", "#{klass.to_s.pluralize}"].each do |controller_name|
         controller = "#{controller_named_path}#{controller_name.camelize}Controller".constantize rescue next
         return controller, "#{controller_path}#{controller_name}"
@@ -47,7 +47,7 @@ module ActionView::Helpers
 
     # a general-use loading indicator (the "stuff is happening, please wait" feedback)
     def loading_indicator_tag(options)
-      image_tag "/images/active_scaffold/default/indicator.gif", :style => "display:none;", :id => loading_indicator_id(options), :alt => "loading indicator", :class => "loading-indicator"
+      image_tag "/images/active_scaffold/default/indicator.gif", :style => "visibility:hidden;", :id => loading_indicator_id(options), :alt => "loading indicator", :class => "loading-indicator"
     end
 
     def params_for(options = {})

@@ -68,7 +68,7 @@ from the form in the config.
     <%= link_to "", { :action => "add_association", :id => association_name, :messages_id => existing_form_messages_id, :form_id => existing_form_id, :list_id => list_id },
                     { :class => "form-action" } %>
 
-    <%# TODO convert this to a search method rather than a simple drop down %>
+    <%# TODO FUTURE convert this to a search method rather than a simple drop down %>
     <%# TODO add a default options (ex: - select -) %>
     <%= select(klass.to_s.underscore, :id, existing_options) %>
     <p class="form-footer">
@@ -78,7 +78,9 @@ from the form in the config.
 
   <script type="text/javascript">
     new Form.Pseudo('<%= existing_form_id %>');
-    Rico.Corner.round('<%= existing_form_id %>',{bgColor:'#DAFFCD',color:'#B8FF9F'});
+    //Rico.Corner.round('<%= existing_form_id %>',{bgColor:'#DAFFCD',color:'#B8FF9F'});
+    Rico.Corner.round('<%= existing_form_id %>', {color: 'fromElement', bgColor: 'fromParent', compact: true});
+
   </script>
   <% end -%>
 
@@ -119,7 +121,9 @@ from the form in the config.
 
   <script type="text/javascript">
     new Form.Pseudo('<%= new_form_id %>');
-    Rico.Corner.round('<%= new_form_id %>',{bgColor:'#DAFFCD',color:'#B8FF9F'});
+    Rico.Corner.round('<%= new_form_id %>', {color: 'fromElement', bgColor: 'fromParent', compact: true});
+
+    //Rico.Corner.round('<%= new_form_id %>',{bgColor:'#DAFFCD',color:'#B8FF9F'});
   </script>
 </div>
 <% end %>

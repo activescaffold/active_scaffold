@@ -1,8 +1,8 @@
 <% url_options = params_for(:action => :update) -%>
 <% if request.xhr? -%>
 <%= form_remote_tag :url => url_options,
-                    :after => "Element.show('#{loading_indicator_id(:action => :update, :id => params[:id])}'); Form.disable('#{element_form_id(:action => :update)}');",
-                    :complete => "Element.hide('#{loading_indicator_id(:action => :update, :id => params[:id])}'); Form.enable('#{element_form_id(:action => :update)}');",
+                    :after => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :update)}');",
+                    :complete => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :update)}');",
                     :html => { :href => url_for(url_options),
                     :id => element_form_id(:action => :update),
                     :class => 'update',
@@ -25,10 +25,9 @@
   <%= render :partial => 'form', :locals => { :columns => active_scaffold_config.update.columns } %>
 
   <p class="form-footer">
-  <%= submit_tag _('UPDATE'), :class => "submit" %>
-  <%= loading_indicator_tag(:action => :update, :id => params[:id]) %>
-
-  <%= link_to _('CANCEL'), params_for(:action => 'list'), { :onclick => "$('#{action_link_id(:action => active_scaffold_config.update.link.action)}').action_link.close_with_refresh(); return false;" }%>
+    <%= submit_tag _('UPDATE'), :class => "submit" %>
+    <%= link_to _('CANCEL'), params_for(:action => 'list'), { :onclick => "$('#{action_link_id(:action => active_scaffold_config.update.link.action)}').action_link.close_with_refresh(); return false;" }%>
+    <%= loading_indicator_tag(:action => :update, :id => params[:id]) %>
   </p>
 
 <%= end_form_tag %>

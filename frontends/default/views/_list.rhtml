@@ -4,7 +4,7 @@
       <%= render :partial => 'list_column_headings' %>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="messages">
     <tr>
       <td colspan="<%= active_scaffold_config.list.columns.length + 1 -%>" class="messages-container">
         <div id="<%= active_scaffold_messages_id -%>">
@@ -16,7 +16,7 @@
       </td>
     </tr>
   </tbody>
-  <tbody id="<%= active_scaffold_tbody_id %>">
+  <tbody class="records" id="<%= active_scaffold_tbody_id %>">
     <% if !@records.empty? -%>
       <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false } %>
       <% if active_scaffold_config.list.columns.any? {|c| c.calculation?} -%>
