@@ -14,19 +14,11 @@ module ActiveScaffold::DataStructures
     def add(*args)
       args.flatten! # allow [] as a param
       args.each { |arg|
-        arg = arg.to_sym unless arg.is_a? ActiveScaffold::DataStructures::Set
+        arg = arg.to_sym if arg.is_a? String
         @set << arg
       }
     end
     alias_method :<<, :add
-
-    # nests a subgroup in the item set
-    def add_subgroup(label, &proc)
-      items = ActiveScaffold::DataStructures::Set.new
-      items.configure &proc
-      items.label = label
-      self.add items
-    end
 
     # the way to remove items from the set.
     def exclude(*args)
@@ -55,14 +47,6 @@ module ActiveScaffold::DataStructures
     # returns the number of items in the set
     def length
       @set.length
-    end
-
-    def include?(item)
-      @set.each do |c|
-        return true if c.is_a? ActiveScaffold::DataStructures::Set and c.include? item
-        return true if c == item.to_sym
-      end
-      return false
     end
 
   end

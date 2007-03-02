@@ -1,30 +1,8 @@
 module ActiveScaffold::DataStructures
   # A set of columns. These structures can be nested for organization.
-  class ActionColumns
+  class ActionColumns < Set
     include ActiveScaffold::Configurable
     attr_accessor :label
-
-    def initialize(*args)
-      @set = []
-      self.add *args
-    end
-
-    # the way to remove columns from the set.
-    def exclude(*args)
-      args.flatten! # allow [] as a param
-      args.collect! { |a| a.to_sym } # symbolize the args
-      @set.reject! { |c| args.include? c.to_sym } # reject all columns specified
-    end
-
-    # the way to add columns to the set.
-    def add(*args)
-      args.flatten! # allow [] as a param
-      args.each do |arg|
-        arg = arg.to_sym unless arg.is_a? ActiveScaffold::DataStructures::ActionColumns
-        @set << arg
-      end
-    end
-    alias_method :<<, :add
 
     # nests a subgroup in the column set
     def add_subgroup(label, &proc)
@@ -34,17 +12,16 @@ module ActiveScaffold::DataStructures
       self.add columns
     end
 
-    # returns the number of columns in the set
-    def length
-      @set.length
+    def each # this comes later
     end
-
-    def include?(column)
+    
+    def include?(item)
       @set.each do |c|
-        return true if c.is_a? ActiveScaffold::DataStructures::ActionColumns and c.include? column
-        return true if c == column.to_sym
+        return true if !c.is_a? Symbol and c.include? item
+        return true if c == item.to_sym
       end
       return false
     end
+
   end
 end

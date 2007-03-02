@@ -45,7 +45,7 @@ class SetTest < Test::Unit::TestCase
 
     # test that << also adds
     assert !@items.include?(:e)
-    @items << :e
+    @items << "e"
     assert @items.include?(:e)
 
     # try adding an array of columns
@@ -66,28 +66,15 @@ class SetTest < Test::Unit::TestCase
       config.add :c
       # or we may not
       exclude :b
-      add_subgroup 'my subgroup' do
-        add :e
-      end
     end
 
     assert @items.include?(:c)
     assert !@items.include?(:b)
-    @items.each { |c|
-      next unless c.is_a? ActiveScaffold::DataStructures::Set
-      assert c.include?(:e)
-      assert_equal 'my subgroup', c.label
-    }
   end
 
   def test_include
-    @items.add_subgroup 'foo' do
-      add :c
-    end
-
     assert @items.include?(:a)
     assert @items.include?(:b)
-    assert @items.include?(:c)
     assert !@items.include?(:d)
   end
 end
