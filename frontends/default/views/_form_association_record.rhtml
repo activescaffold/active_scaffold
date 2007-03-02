@@ -1,20 +1,20 @@
-<% association ||= @association # Actual AssociationReflection object from the parent record -%>
-<% record ||= @record # ActiveRecord object for this association -%>
-<tr>
-  <%# TODO Move to using a dedicated 'sublist' module that inherits from list %>
-  <% active_scaffold_config_for(record.class).list.columns.each do |column| %>
-		<% next if !column.association.nil? and column.association.primary_key_name == association.primary_key_name %>
-    <% column_value = render_column(record, column) -%>
-    <td class="<%= column_class(column, column_value) %>" >
-      <%= column_value %>
-    </td>
-  <% end -%>
-  <td>
-    <%= link_to_function _('DELETE'), "Element.remove(this.parentNode.parentNode);" %>
-
-    <% scope = [ "record", association.name.to_s ] -%>
-    <% scope << "#{generate_temporary_id}" unless [:has_one, :belongs_to].include?(association.macro) -%>
-    <% record_params = record.id.nil? ? params[record.class.to_s.underscore] : { :id => record.id } -%>
-    <%= params_to_input_tags(record_params, scope) %>
-  </td>
-</tr>
+<%
+config = active_scaffold_config_for(@record.class)
+columns = @record.new_record? ? config.create.columns : config.update.columns
+%>
+<ol>
+<% unless @record.new_record? %>
+<input type="hidden" name="<%= "record#{scope}[id]" -%>" value="<%= @record.id -%>" />
+<% end -%>
+<% columns.each :flatten => true do |column| %>
+  <%
+  next if column.association and (column.association.klass == parent_record.class or !column.singular_association?)
+  column = column.clone
+  column.ui_type = :select if column.association
+  -%>
+  <li class="form-element">
+    <%= render_form_field_for_column(column, :scope => scope) %>
+  </li>
+<% end -%>
+  <li><%= link_to_function 'Remove', 'this.up(".association-record").remove()' -%></li>
+</ol>

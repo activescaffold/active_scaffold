@@ -82,6 +82,7 @@ module ActiveScaffold::Config
     ## ------------------------------------
 
     def initialize(model_id)
+      puts model_id.to_s
       # model_id is the only absolutely required configuration value. it is also not publicly accessible.
       @model_id = model_id.to_s.pluralize.singularize
 
@@ -89,7 +90,11 @@ module ActiveScaffold::Config
       @actions = self.class.actions.clone
 
       # create a new default columns datastructure, since it doesn't make sense before now
+      begin
       content_column_names = self.model.content_columns.collect { |c| c.name.to_sym }
+      rescue
+        raise model_id.to_s
+      end
       association_column_names = self.model.reflect_on_all_associations.collect { |a| a.name.to_sym }
       column_names = content_column_names + association_column_names
       column_names -= self.class.ignore_columns.collect { |c| c.to_sym }
@@ -113,7 +118,7 @@ module ActiveScaffold::Config
       # first, add an iterator that returns actual Column objects and a method for registering Column objects
       ActiveScaffold::DataStructures::ActionColumns.class_eval do
         include Enumerable
-        def each
+        def each(options = {}, &proc)
           @set.each do |item|
             unless item.is_a? ActiveScaffold::DataStructures::ActionColumns
               begin
@@ -123,7 +128,11 @@ module ActiveScaffold::Config
                 next
               end
             end
-            yield item
+            if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.has_key?(:flatten) and options[:flatten]
+              item.each(options, &proc)
+            else
+              yield item
+            end
           end
         end
 

@@ -1,6 +1,22 @@
 class ModelStub < ActiveRecord::Base
   abstract_class = true
-  has_one :other_model
+  has_one :other_model, :class_name => 'ModelStub'
+  has_many :other_models, :class_name => 'ModelStub'
+  attr_accessor :a, :b, :c, :d
+
+  def other_model=(val)
+    @other_model = val
+  end
+  def other_model
+    @other_model || nil
+  end
+
+  def other_models=(val)
+    @other_models = val
+  end
+  def other_models
+    @other_models || []
+  end
 
   def self.columns
     @columns ||= [

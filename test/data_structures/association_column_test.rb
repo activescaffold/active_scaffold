@@ -29,4 +29,13 @@ class AssociationColumnTest < Test::Unit::TestCase
   def test_includes
     assert_equal [:other_model], @association_column.includes
   end
+
+  def test_plurality
+    assert @association_column.singular_association?
+    assert !@association_column.plural_association?
+
+    plural_association_column = ActiveScaffold::DataStructures::Column.new('other_models', ModelStub)
+    assert plural_association_column.plural_association?
+    assert !plural_association_column.singular_association?
+  end
 end

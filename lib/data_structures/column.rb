@@ -51,11 +51,11 @@ module ActiveScaffold::DataStructures
     # supported options:
     #   * :select on a :belongs_to or :has_one association will display a select control in the form
     #   * :crud (default) will display a sub-form
-    attr_accessor :ui_type
+    attr_writer :ui_type
     def ui_type
-      @ui_type || @column.type
+      @ui_type || column.type
     end
-    
+
     # associate an action_link with this column
     attr_reader :link
 
@@ -110,10 +110,16 @@ module ActiveScaffold::DataStructures
 
     # the association from the ActiveRecord class
     attr_reader :association
+    def singular_association?
+      self.association and [:has_one, :belongs_to].include? self.association.macro
+    end
+    def plural_association?
+      self.association and [:has_many, :has_and_belongs_to_many].include? self.association.macro
+    end
 
     # an interpreted property. the column is virtual if it isn't from the active record model or any associated models
     def virtual?
-      @column.nil? && association.nil?
+      column.nil? && association.nil?
     end
 
     # this is so that array.delete and array.include?, etc., will work by column name
@@ -151,7 +157,7 @@ module ActiveScaffold::DataStructures
     # just the field (not table.field)
     def field_name
       return nil if virtual?
-      @column ? @column.name : @association.primary_key_name
+      column ? column.name : association.primary_key_name
     end
 
     protected
@@ -161,16 +167,12 @@ module ActiveScaffold::DataStructures
         # we don't automatically enable method sorting for virtual columns because it's slow, and we expect fewer complaints this way.
         self.sort = false
       else
-        if association.nil?
-          self.sort = {:sql => self.field}
+        if self.singular_association?
+          self.sort = {:method => "#{self.name}.to_s"}
+        elsif self.plural_association?
+          self.sort = {:method => "#{self.name}.join(',')"}
         else
-          case association.macro
-            when :has_one, :belongs_to
-            self.sort = {:method => "#{self.name}.to_s"}
-
-            when :has_many, :has_and_belongs_to_many
-            self.sort = {:method => "#{self.name}.join(',')"}
-          end
+          self.sort = {:sql => self.field}
         end
       end
     end

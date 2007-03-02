@@ -1,17 +1,20 @@
 module ActionView::Helpers
   module ActiveScaffoldFormHelpers
-    def render_form_field_for_column(column)
-      return render(:partial => form_partial_for_column(column), :locals => { :column => column })
+    def render_form_field_for_column(column, locals = {})
+      locals[:column] = column
+      return render(:partial => form_partial_for_column(column), :locals => locals)
     end
 
     def form_partial_for_column(column)
       if override_form_field_partial?(column)
         override_form_field_partial(column)
       elsif column.association.nil? || override_form_field?(column)
-        "form_attribute" 
+        "form_attribute"
       elsif !column.association.nil?
-        if [:belongs_to, :has_one].include?(column.association.macro) && column.ui_type == :select
-          "form_attribute" 
+        if column.singular_association? and column.ui_type == :select
+          "form_attribute"
+        elsif column.singular_association?
+          'form_association_singular'
         #TODO 2007-02-23 (EJM) Level=0 - Need to check if they have the security to CRUD the association column?
         else
           "form_association"
@@ -26,7 +29,7 @@ module ActionView::Helpers
     def override_form_field?(column)
       respond_to?(override_form_field(column))
     end
-    
+
     def override_form_field_partial(column)
       "#{column.name}_form_column"
     end
@@ -35,7 +38,7 @@ module ActionView::Helpers
       path, partial_name = partial_pieces(override_form_field_partial(column))
       file_exists? File.join(path, "_#{partial_name}")
     end
-    
+
     def options_for_association(association)
       case association.macro
         when :has_one

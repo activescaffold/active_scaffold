@@ -62,7 +62,7 @@ color: #fff;
 font: bold 14px arial;
 letter-spacing: -1px;
 text-decoration: none;
-padding: 1px 2px 1px 19px;
+padding: 1px 2px;
 white-space: nowrap;
 margin-left: 5px;
 background-position: 1px 50%;
@@ -72,6 +72,13 @@ background-repeat: no-repeat;
 .active-scaffold-header div.actions a.disabled {
 color: #fff;
 opacity: 0.5;
+}
+
+.active-scaffold-header div.actions a.new,
+.active-scaffold-header div.actions a.show_search {
+padding-left: 19px;
+background-position: 1px 50%;
+background-repeat: no-repeat;
 }
 
 .active-scaffold-header div.actions a.new {
@@ -99,28 +106,7 @@ top: 5px;
 text-align: right;
 }
 
-/* Header Styling : Nested
-   ======================== */
-
-.active-scaffold .active-scaffold {
-margin: 2px 5px;
-}
-
-.active-scaffold .active-scaffold .active-scaffold-header h2 {
-font-size: 13px;
-font-weight: bold;
-}
-
-.active-scaffold .active-scaffold .active-scaffold-header div.actions a {
-font: bold 11px verdana, sans-serif;
-padding: 0 2px 1px 17px;
-}
-
-.active-scaffold .active-scaffold .active-scaffold-header div.actions {
-top: 4px;
-}
-
-/* Table Column Headers
+/* Table :: Column Headers
    ============================= */
 
 .active-scaffold th {
@@ -206,7 +192,7 @@ color: #999;
 text-align: center;
 }
 
-/* Table Actions (Edit, Delete) Styling
+/* Table :: Actions (Edit, Delete)
    ============================= */
 
 .active-scaffold td.actions {
@@ -238,7 +224,7 @@ white-space: nowrap;
 /* Table :: Inline Adapter
    ============================= */
 
-.active-scaffold .inline-adapter td {
+.active-scaffold td.inline-adapter-cell {
 background-color: #DAFFCD;
 padding: 4px;
 border: solid 1px #7FcF00;
@@ -250,7 +236,42 @@ float: right;
 text-indent: -4000px;
 width: 16px;
 height: 17px;
-background: url(../images/active_scaffold/default/close.gif) 0 0 no-repeat;
+background: url(/images/active_scaffold/default/close.gif) 0 0 no-repeat;
+}
+
+/* Nested
+   ======================== */
+
+.active-scaffold .active-scaffold .active-scaffold-header {
+background-color: #1F7F00;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header h2 {
+font-size: 12px;
+font-weight: bold;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions a {
+font: bold 11px verdana, sans-serif;
+padding: 0 2px 1px 17px;
+}
+
+.active-scaffold .active-scaffold  td {
+background-color: #ECFFE7;
+border-bottom: solid 1px #CDF7C5;
+border-left: solid 1px #CDF7C5;
+}
+
+.active-scaffold .active-scaffold td.inline-adapter-cell {
+background-color: #FFFFBB;
+padding: 4px;
+border: solid 1px #DDDF37;
+border-top: none;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-footer {
+background-color: #1F7F00;
+font-size: 11px;
 }
 
 /* Footer

@@ -58,10 +58,8 @@ module ActiveScaffold::Actions
     end
 
     def do_create
-      attribute_params, associations_params = split_record_params(params[:record], active_scaffold_config.model)
-      @record = active_scaffold_config.model.new(attribute_params)
+      @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
       active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) }
-      build_associations(@record, active_scaffold_config.create.columns, associations_params) unless associations_params.empty?
       @record.save
     end
   end

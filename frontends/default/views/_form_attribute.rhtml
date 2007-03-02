@@ -1,23 +1,22 @@
-<% # should we pass in :name on our own? %>
-<% scope ||= nil %>
-<% record ||= nil %>
-<% object = record.nil? ? :record : record %>
-<% name = scope.nil? ? "record[#{column.name}]" : "#{scope}[#{column.name}]" %>
+<%
+scope ||= nil
+name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
+-%>
 
 <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
 <%= if override_form_field?(column)
-  send(override_form_field(column), object)
+  send(override_form_field(column), @record)
 elsif !column.association.nil? and column.ui_type == :select
-  select(object, column.name, column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}, {}, { :name => name })
+  select(:record, column.name, column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}, {}, { :name => name })
 else
   options = { :name => name }
   text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )
   if column.virtual?
-    text_field(object, column.name, text_options)
+    text_field(:record, column.name, text_options)
   elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)
-    input(object, column.name, text_options)
+    input(:record, column.name, text_options)
   else
-    input(object, column.name, options)
+    input(:record, column.name, options)
   end
 end
 -%>
