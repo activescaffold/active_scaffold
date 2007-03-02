@@ -45,7 +45,10 @@ module ActiveScaffold::Config
     # columns that should be ignored for every model. these should be metadata columns like change dates, versions, etc.
     # values in this array may be symbols or strings.
     cattr_accessor :ignore_columns
-    @@ignore_columns = []
+    def columns=(val)
+      @columns = ActiveScaffold::DataStructures::Set.new(self.model, *val)
+    end
+    @@ignore_columns = ActiveScaffold::DataStructures::Set.new
 
     # instance-level configuration
     # ----------------------------
