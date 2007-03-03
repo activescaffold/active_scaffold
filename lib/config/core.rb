@@ -82,7 +82,6 @@ module ActiveScaffold::Config
     ## ------------------------------------
 
     def initialize(model_id)
-      puts model_id.to_s
       # model_id is the only absolutely required configuration value. it is also not publicly accessible.
       @model_id = model_id.to_s.pluralize.singularize
 
@@ -90,11 +89,7 @@ module ActiveScaffold::Config
       @actions = self.class.actions.clone
 
       # create a new default columns datastructure, since it doesn't make sense before now
-      begin
       content_column_names = self.model.content_columns.collect { |c| c.name.to_sym }
-      rescue
-        raise model_id.to_s
-      end
       association_column_names = self.model.reflect_on_all_associations.collect { |a| a.name.to_sym }
       column_names = content_column_names + association_column_names
       column_names -= self.class.ignore_columns.collect { |c| c.to_sym }
