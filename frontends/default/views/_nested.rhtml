@@ -7,7 +7,7 @@
 		models.each do | model_name |
 			controller, controller_path = active_scaffold_controller_for(model_name, params[:controller])
 %>
-		<%= render :active_scaffold => controller_path, :params => {active_scaffold_config.columns[model_name].association.primary_key_name.to_sym => parent_id}  %>
+		<%= render :active_scaffold => controller_path, :constraints => {active_scaffold_config.columns[model_name].association.primary_key_name.to_sym => parent_id}, :label => active_scaffold_config_for(model_name).label + _(" for ") + active_scaffold_config.label %>
 <%
 		end
   end

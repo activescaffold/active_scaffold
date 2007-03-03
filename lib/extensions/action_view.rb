@@ -13,9 +13,9 @@ module ActionView #:nodoc:
       elsif args.first[:active_scaffold]
         require 'digest/md5'
         remote_controller = args.first[:active_scaffold]
-        constraints = args.first[:params]
+        constraints = args.first[:constraints]
         eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s)
-        session["as:#{eid}"] = {:constraints => constraints}
+        session["as:#{eid}"] = {:constraints => constraints, :list => {:label => args.first[:label]}}
 
         render_component :controller => remote_controller, :action => 'table', :params => {:eid => eid}
       else

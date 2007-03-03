@@ -61,6 +61,10 @@ module ActiveScaffold::Config
     end
 
     class UserSettings < UserSettings
+      def label
+        @session[:label] || @conf.label
+      end
+      
       def per_page
         @session['per_page'] = @params['limit'].to_i if @params.has_key? 'limit'
         @session['per_page'] || @conf.per_page
