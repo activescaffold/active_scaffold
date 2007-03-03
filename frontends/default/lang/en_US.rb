@@ -7,6 +7,7 @@ Localization.define('en_US') do |lang|
   lang['DELETE'] ||= 'Delete'
   lang['DELETED %s'] ||= 'Deleted %s' 
   lang['EDIT'] ||= 'Edit'
+  lang['FOR'] ||= ' for '
   lang['NEXT'] ||= 'Next'
   lang['NO_ENTRIES'] ||= 'No Entries'
   lang['PREVIOUS'] ||= 'Previous'
