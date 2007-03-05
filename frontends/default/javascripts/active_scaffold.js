@@ -233,7 +233,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
           this.insert(request.responseText);
           if (this.hide_target) this.target.hide();
         }	else {
-					evalResponse();
+					request.evalResponse();
 				}
       }.bind(this),
 
