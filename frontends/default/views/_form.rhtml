@@ -1,15 +1,17 @@
 <ol class="form">
   <% columns.each do |column| -%>
-  <% if column.is_a? ActiveScaffold::DataStructures::ActionColumns -%>
-  <li>
-    <div class="subsection">
-      <h5><%= column.label %></h5>
-      <%= render :partial => 'form', :locals => { :columns => column } %>
-    </div>
+  <% if is_subsection? column -%>
+  <li class="sub-section">
+    <h5><%= column.label %></h5>
+    <%= render :partial => 'form', :locals => { :columns => column } %>
+  </li>
+  <% elsif is_subform? column -%>
+  <li class="sub-form">
+    <%= render :partial => form_partial_for_column(column), :locals => { :column => column } -%>
   </li>
   <% else -%>
   <li class="form-element <%= 'required' if column.required? %>">
-    <%= render_form_field_for_column(column) -%>
+    <%= render :partial => form_partial_for_column(column), :locals => { :column => column } -%>
   </li>
   <% end -%>
   <% end -%>

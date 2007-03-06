@@ -4,7 +4,7 @@ module ActionView::Helpers
     def controller_id
       @controller_id ||= params[:controller].gsub("/", "__")
     end
-    
+
     def active_scaffold_id
       "#{controller_id}-active-scaffold"
     end
@@ -67,6 +67,10 @@ module ActionView::Helpers
       else
         "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
       end
+    end
+
+    def sub_form_list_id(options = {})
+      "#{controller_id}-#{options[:id]}-#{options[:association]}-list"
     end
 
     def element_messages_id(options = {})

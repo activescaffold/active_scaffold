@@ -5,6 +5,24 @@ module ActionView::Helpers
       return render(:partial => form_partial_for_column(column), :locals => locals)
     end
 
+    def is_subform?(column)
+      column_renders_as(column) == :subform
+    end
+
+    def is_subsection?(column)
+      column_renders_as(column) == :subsection
+    end
+
+    def column_renders_as(column)
+      if column.is_a? ActiveScaffold::DataStructures::ActionColumns
+        return :subsection
+      elsif column.association.nil? or column.ui_type == :select
+        return :field
+      else
+        return :subform
+      end
+    end
+
     def form_partial_for_column(column)
       if override_form_field_partial?(column)
         override_form_field_partial(column)

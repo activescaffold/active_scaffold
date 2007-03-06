@@ -22,24 +22,34 @@ build finder
 parent_record = @record
 associated = parent_record.send(column.name).sort_by {|r| r.id}
 -%>
-<label><%= column.label -%></label>
-<ul class="association">
+<h5><%= column.label -%></h5>
+<table cellpadding="0" cellspacing="0">
+  <% @record = column.association.klass.new -%>
+  <%= render :partial => 'form_association_header', :locals => {:parent_record => parent_record} %>
 
-  <% associated.each do |record| %>
-  <% @record = record -%>
-  <li class="association-record">
-    <%= render :partial => 'form_association_record', :locals => {:scope => "[#{column.name}][#{@record.id}]", :parent_record => parent_record} %>
-  </li>
-  <% end -%>
+  <tbody id="<%= sub_form_list_id(:association => column.name, :id => params[:id]) %>">
+    <% associated.each_index do |index| %>
+    <% @record = associated[index] -%>
+    <tr class="association-record">
+      <%= render :partial => 'form_association_record', :locals => {:scope => "[#{column.name}][#{@record.id}]", :parent_record => parent_record} %>
+    </tr>
+    <% end -%>
 
-  <li>
-    <%
-    @record = column.association.klass.new
-    template = render(:partial => 'form_association_record', :locals => {:scope => "[#{column.name}][--new--]", :parent_record => parent_record})
-    template = h(template.gsub(/[\n\r]/, '').gsub(/'/, "&#39;"))
-    -%>
-    <%= link_to_function 'Create Another', %|t='<li class="association-record association-record-new">#{template}</li>'; new Insertion.Before(this.parentNode, t.gsub(/--new--/, 'new' + Math.floor(Math.random() * 10000000)))| %>
-    | <a>Find Existing</a>
-  </li>
-</ul>
+    <%# Always keep one open new form -%>
+    <% @record = column.association.klass.new -%>
+    <tr class="association-record association-record-new locked">
+      <%= render :partial => 'form_association_record', :locals => {:scope => "[#{column.name}][#{generate_temporary_id}]", :parent_record => parent_record} %>
+    </tr>
+  </tbody>
+</table>
+
+<%
+@record = column.association.klass.new
+template = render(:partial => 'form_association_record', :locals => {:scope => "[#{column.name}][--new--]", :parent_record => parent_record})
+template = h(template.gsub(/[\n\r]/, '').gsub(/'/, "&#39;"))
+-%>
+
+<%= link_to_function 'Create Another', %|t='<tr class="association-record association-record-new">#{template}</tr>'; new Insertion.Bottom('#{sub_form_list_id(:association => column.name, :id => params[:id])}', t.gsub(/--new--/, 'new' + Math.floor(Math.random() * 10000000)))| %>
+| <a>Find Existing</a>
+
 <% @record = parent_record -%>

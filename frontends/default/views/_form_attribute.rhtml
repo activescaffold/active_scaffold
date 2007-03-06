@@ -7,7 +7,14 @@ name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
 <%= if override_form_field?(column)
   send(override_form_field(column), @record)
 elsif !column.association.nil? and column.ui_type == :select
-  select(:record, column.name, column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}, {}, { :name => name })
+  select_options = [["- select -",nil]]
+  # Need to add as options all current associations for this record
+  associated = @record.send(column.association.name)
+  select_options += [[ associated.to_label, associated.id ]] unless associated.nil?
+  select_options += [[ associated.to_label, associated.id ]] unless associated.nil?
+  select_options += options_for_association(column.association)
+  selected = associated.nil? ? nil : associated.id
+  select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => name })
 else
   options = { :name => name }
   text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )

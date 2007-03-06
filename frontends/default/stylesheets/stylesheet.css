@@ -444,7 +444,7 @@ vertical-align: bottom;
 margin-bottom: 3px;
 }
 
-/* Form Styling
+/* Form
    ============================== */
 
 .active-scaffold .submit {
@@ -456,8 +456,59 @@ margin: 0;
 margin-top: 5px;
 }
 
+.active-scaffold form p {
+clear: both;
+}
+
 .active-scaffold fieldset {
 border: none;
+}
+
+.active-scaffold h4,
+.active-scaffold h5 {
+padding: 2px;
+margin: 0;
+text-transform: none;
+color: #1F7F00;
+letter-spacing: -1px;
+font: bold 16px arial;
+}
+
+.active-scaffold h5 {
+padding: 0;
+margin: 5px 0 2px 0;
+font-size: 14px;
+letter-spacing: 0;
+}
+
+.active-scaffold ol {
+clear: both;
+float: none;
+padding: 2px;
+margin-left: 5px;
+list-style: none;
+}
+
+.active-scaffold a.cancel,
+.active-scaffold p.form-footer a {
+font: bold 14px arial, sans-serif;
+letter-spacing: 0;
+}
+
+/* Form :: Fields
+   ============================== */
+
+.active-scaffold li.form-element {
+float: left;
+margin-right: 10px;
+margin-bottom: 2px;
+}
+
+.active-scaffold label {
+display: block;
+font: normal 11px verdana, sans-serif;
+color: #555;
+padding-bottom: 1px;
 }
 
 .active-scaffold .required label {
@@ -470,58 +521,19 @@ font-family: arial;
 color: #888;
 }
 
-.active-scaffold h4 {
-padding: 2px;
-margin: 0;
-text-transform: none;
-color: #1F7F00;
-letter-spacing: -1px;
-font: bold 16px arial;
-}
-
-.active-scaffold a.cancel,
-.active-scaffold p.form-footer a {
-font: bold 14px arial, sans-serif;
-letter-spacing: 0;
-}
-
-.active-scaffold p {
-clear: both;
-}
-
-.active-scaffold ol {
-clear: both;
-float: none;
-padding: 2px;
-margin-left: 5px;
-list-style: none;
-}
-
-.active-scaffold li.form-element {
-float: left;
-margin-right: 10px;
-margin-bottom: 2px;
-}
-
-.active-scaffold label {
-display: block;
-font-family: Verdana, sans-serif;
-color: #555;
-font-size: 11px;
-padding-bottom: 1px;
-}
-
-.active-scaffold .subsection {
-background-color: #B8FF9F;
-}
-
 .active-scaffold input.text-input,
 .active-scaffold select {
-font-size: 16px;
-font-weight: bold;
-font-family: Arial, sans-serif;
+font: bold 16px arial;
 letter-spacing: -1px;
 border: solid 1px #1F7F00;
+}
+
+.active-scaffold input.text-input {
+padding: 2px;
+}
+
+.active-scaffold select {
+padding: 1px;
 }
 
 .active-scaffold input.example {
@@ -536,27 +548,92 @@ padding: 1px;
 border: solid 1px #1F7F00;
 }
 
-/* Sub-Form Styling
+/* Form :: Sub-Sections
    ============================== */
-.active-scaffold form ul,
-.active-scaffold form li {
-list-style: none;
+
+.active-scaffold li.sub-section {
+float: left;
+clear: left;
+margin-bottom: 5px;
 }
 
-.active-scaffold form .association-record {
-padding: 0px 0px 3px 3px;
-margin-bottom: 3px;
-border-color: #666;
-border-style: solid;
-border-width: 0px 0px 1px 1px;
-background-color: #aea;
+/* Form :: Association Sub-Forms
+   ============================== */
+
+.active-scaffold .sub-form {
+float: left;
+clear: left;
+margin-bottom: 5px;
+padding-left: 5px;
 }
 
-.active-scaffold form .association-record-new {
-background-color: #eea;
+.active-scaffold .sub-form h5 {
+margin-left: -5px;
 }
 
-.active-scaffold form .association-record ol {
-overflow: auto;
-zoom: 1;
+.active-scaffold .sub-form table,
+.active-scaffold .sub-form table td {
+width: auto;
+}
+
+.active-scaffold .sub-form table th {
+font: normal 10px verdana, sans-serif;
+color: #555;
+padding: 0 0 0 1px;
+background: none;
+}
+
+.active-scaffold .sub-form label {
+display: none;
+}
+
+.active-scaffold .sub-form table td {
+border: none;
+background-color: none;
+padding: 1px;
+}
+
+.active-scaffold .sub-form table .association-record-new td {
+background-color: transparent;
+}
+
+.active-scaffold .sub-form table td input,
+.active-scaffold .sub-form table td select {
+background: #B8FF9F;
+}
+
+.active-scaffold .sub-form table .association-record-new td select,
+.active-scaffold .sub-form table .association-record-new td input {
+background: #fff;
+}
+
+
+.active-scaffold .sub-form table td.actions {
+vertical-align: middle;
+background-color: transparent;
+}
+
+.active-scaffold .sub-form .association-record a.destroy {
+font-weight: bold;
+display: block;
+height: 16px;
+padding: 0;
+width: 16px;
+text-indent: -4000px;
+background: url(/images/active_scaffold/default/cross.png) 0 0 no-repeat;
+}
+
+.active-scaffold .sub-form .locked a.destroy {
+display: none;
+}
+
+.active-scaffold .sub-form a {
+font-weight: bold;
+font-size: 10px;
+}
+
+.active-scaffold .sub-form input.text-input,
+.active-scaffold .sub-form select {
+letter-spacing: 0;
+font: bold 12px arial;
 }

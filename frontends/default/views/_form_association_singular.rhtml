@@ -2,20 +2,24 @@
 parent_record = @record
 @record = parent_record.send(column.name) || column.association.klass.new
 -%>
-<label><%= column.label -%></label>
-<ul class="association">
-  <li class="association-record <%= 'association-record-new' if @record.new_record? -%>">
-    <%= render :partial => 'form_association_record', :locals => {:scope => "[#{column.name}]", :parent_record => parent_record} %>
-  </li>
+<h5><%= column.label -%></h5>
+<table>
+  <% @record = column.association.klass.new -%>
+  <%= render :partial => 'form_association_header', :locals => {:parent_record => parent_record} %>
+  <tbody id="<%= sub_form_list_id(:association => column.name, :id => params[:id]) %>">
+    <tr class="association-record <%= 'association-record-new locked' if @record.new_record? -%>">
+      <%= render :partial => 'form_association_record', :locals => {:scope => "[#{column.name}]", :parent_record => parent_record} %>
+    </tr>
+  </tbody>
+</table>
 
-  <li>
-    <%
-    @record = column.association.klass.new
-    template = render(:partial => 'form_association_record', :locals => {:scope => "[#{column.name}]", :parent_record => parent_record, :record_id => '{{new}}'})
-    template = h(template.gsub(/[\n\r]/, '').gsub(/'/, "&#39;"))
-    -%>
-    <%= link_to_function 'Replace With New', %|t = '<li class="association-record association-record-new">#{template}</li>'; t = t.gsub(/{{new}}/, 'new' + Math.floor(Math.random() * 10000000)); current = this.parentNode.previous('li.association-record'); current ? new Element.replace(current, t) : new Insertion.Top(this.up('.association'), t);| %>
-    | <a>Find Existing</a>
-  </li>
-</ul>
+<%
+@record = column.association.klass.new
+template = render(:partial => 'form_association_record', :locals => {:scope => "[#{column.name}]", :parent_record => parent_record, :record_id => '{{new}}'})
+template = h(template.gsub(/[\n\r]/, '').gsub(/'/, "&#39;"))
+-%>
+
+<%= link_to_function 'Replace With New', %|t = '<tr class="association-record association-record-new locked">#{template}</tr>'; t = t.gsub(/{{new}}/, 'new' + Math.floor(Math.random() * 10000000)); current = $$('##{sub_form_list_id(:association => column.name, :id => params[:id])} .association-record')[0]; current ? new Element.replace(current, t) : new Insertion.Top(this.up('.association'), t);| %>
+| <a>Find Existing</a>
+
 <% @record = parent_record -%>
