@@ -38,14 +38,11 @@ module ActiveScaffold
 
     # returns a single record (the given id) but only if it's allowed for the specified action.
     # accomplishes this by checking model.#{action}_authorized?
-    def find_if_allowed(id, mod, klass = nil)
+    def find_if_allowed(id, action, klass = nil)
       klass ||= active_scaffold_config.model
-
-      security_method = "#{mod}_authorized?"
-      current_user = self.send(active_scaffold_config.current_user_method) rescue nil
       record = klass.find(id)
-      raise ActiveScaffold::RecordNotAllowed if current_user and record.respond_to? security_method and !record.send(security_method, current_user)
-      record
+      raise ActiveScaffold::RecordNotAllowed unless record_allowed_for_action?(record, action)
+      return record
     end
 
     # returns a Paginator::Page (not from ActiveRecord::Paginator) for the given parameters

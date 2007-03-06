@@ -8,6 +8,12 @@ module ActiveScaffold::Actions
 
     protected
 
+    def record_allowed_for_action?(record, action)
+      current_user = self.send(active_scaffold_config.current_user_method) rescue nil
+      security_method = "#{action}_authorized?"
+      return (record.respond_to?(security_method) and current_user) ? record.send(security_method, current_user) : true
+    end
+
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
     # association attributes and attempts to instantiate them as associated objects.
     #
@@ -15,6 +21,8 @@ module ActiveScaffold::Actions
     # set. The columns set will not yield unauthorized columns, and it will not yield unregistered columns.
     # this very effectively replaces the params[:record] filtering i set up before.
     def update_record_from_params(parent_record, columns, attributes)
+      return parent_record unless record.new_record? or record_allowed_for_action(parent_record, 'update')
+
       columns.each :flatten => true do |column|
         next unless attributes.has_key? column.name
         value = attributes[column.name]
@@ -55,7 +63,7 @@ module ActiveScaffold::Actions
       return nil if params.empty?
 
       if params.has_key? :id
-        return find_if_allowed(params[:id], 'update', klass)
+        return klass.find(params[:id])
       else
         # TODO check that user is authorized to create a record of this klass
         return klass.new

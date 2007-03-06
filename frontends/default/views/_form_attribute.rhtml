@@ -11,7 +11,6 @@ elsif !column.association.nil? and column.ui_type == :select
   # Need to add as options all current associations for this record
   associated = @record.send(column.association.name)
   select_options += [[ associated.to_label, associated.id ]] unless associated.nil?
-  select_options += [[ associated.to_label, associated.id ]] unless associated.nil?
   select_options += options_for_association(column.association)
   selected = associated.nil? ? nil : associated.id
   select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => name })

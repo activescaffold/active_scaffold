@@ -5,7 +5,11 @@
   column.ui_type = :select if column.association
   -%>
   <td>
-    <%= render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope } -%>
+    <% if record_allowed_for_action? @record, 'update' -%>
+      <%= render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope } -%>
+    <% else -%>
+      <p><%= @record.send(column.name) -%></p>
+    <% end -%>
   </td>
 <% end -%>
   <td class="actions">
