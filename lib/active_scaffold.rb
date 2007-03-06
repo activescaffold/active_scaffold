@@ -16,7 +16,6 @@ module ActiveScaffold
   end
 
   def active_scaffold_config_for(klass)
-    puts klass.to_s
     self.class.active_scaffold_config_for(klass)
   end
 
@@ -70,7 +69,6 @@ module ActiveScaffold
       module_eval do
         include ActiveScaffold::Finder
         include ActiveScaffold::Actions::Core
-        include ActiveScaffold::FormAssociations
         active_scaffold_config.actions.each do |mod|
           name = mod.to_s.camelize
           include eval("ActiveScaffold::Actions::#{name}") if ActiveScaffold::Actions.const_defined? name
@@ -90,10 +88,8 @@ module ActiveScaffold
     ## TODO We should check the the model being used is the same Class
     ##      ie make sure ProductsController doesn't active_scaffold :shoe
     def active_scaffold_config_for(klass)
-      puts klass.to_s
       controller, controller_path = active_scaffold_controller_for(klass)
       return controller.active_scaffold_config unless controller.nil? or !controller.uses_active_scaffold?
-puts klass.to_s
       config = ActiveScaffold::Config::Core.new(klass)
       config._load_action_columns
       config

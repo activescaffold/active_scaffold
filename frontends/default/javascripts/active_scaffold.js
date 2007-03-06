@@ -108,9 +108,6 @@ Object.extend(String.prototype, {
 /*
  * Nested Form... sorta
  */
-
-
-
 Form.Pseudo = Class.create();
 Form.Pseudo.prototype = {
   initialize: function(element, options) {

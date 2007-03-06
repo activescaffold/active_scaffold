@@ -591,6 +591,7 @@ display: none;
 border: none;
 background-color: none;
 padding: 1px;
+vertical-align: top;
 }
 
 .active-scaffold .sub-form table .association-record-new td {

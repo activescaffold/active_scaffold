@@ -22,7 +22,6 @@ require 'active_scaffold'
 require 'configurable'
 require 'finder'
 require 'localization'
-require 'form_associations'
 
 require 'helpers/active_scaffold_helpers'
 require 'helpers/id_helpers'

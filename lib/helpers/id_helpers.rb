@@ -60,6 +60,11 @@ module ActionView::Helpers
       "#{controller_id}-#{options[:action]}-#{options[:id]}-form"
     end
 
+    def association_subform_id(column)
+      klass = column.association.klass.to_s.underscore
+      "#{controller_id}-associated-#{klass}"
+    end
+
     def loading_indicator_id(options = {})
       options[:action] ||= params[:action]
       unless options[:id]
@@ -70,6 +75,7 @@ module ActionView::Helpers
     end
 
     def sub_form_list_id(options = {})
+      options[:id] ||= params[:id]
       "#{controller_id}-#{options[:id]}-#{options[:association]}-list"
     end
 
