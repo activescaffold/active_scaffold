@@ -5,7 +5,7 @@
     <h5><%= column.label %></h5>
     <%= render :partial => 'form', :locals => { :columns => column } %>
   </li>
-  <% elsif is_subform? column -%>
+  <% elsif is_subform? column and !override_form_field?(column) -%>
   <li class="sub-form">
     <%= render :partial => form_partial_for_column(column), :locals => { :column => column } -%>
   </li>
