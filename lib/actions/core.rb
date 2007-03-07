@@ -21,7 +21,7 @@ module ActiveScaffold::Actions
     # set. The columns set will not yield unauthorized columns, and it will not yield unregistered columns.
     # this very effectively replaces the params[:record] filtering i set up before.
     def update_record_from_params(parent_record, columns, attributes)
-      return parent_record unless record.new_record? or record_allowed_for_action(parent_record, 'update')
+      return parent_record unless parent_record.new_record? or record_allowed_for_action?(parent_record, 'update')
 
       columns.each :flatten => true do |column|
         next unless attributes.has_key? column.name
@@ -34,18 +34,23 @@ module ActiveScaffold::Actions
         elsif column.singular_association?
           hash = value
           record = find_or_create_for_params(hash, column.association.klass)
-          record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-          update_record_from_params(record, record_columns, hash)
+          if record
+            record_columns = active_scaffold_config_for(column.association.klass).subform.columns
+            update_record_from_params(record, record_columns, hash)
+          end
           record
 
         elsif column.plural_association?
-          value.collect do |key_value_pair|
+          collection = value.collect do |key_value_pair|
             hash = key_value_pair[1]
             record = find_or_create_for_params(hash, column.association.klass)
-            record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-            update_record_from_params(record, record_columns, hash)
+            if record
+              record_columns = active_scaffold_config_for(column.association.klass).subform.columns
+              update_record_from_params(record, record_columns, hash)
+            end
             record
           end
+          collection.compact
 
         else
           value
@@ -60,7 +65,7 @@ module ActiveScaffold::Actions
     # request parameters given. If params[:id] exists it will attempt to find an existing object
     # otherwise it will build a new one.
     def find_or_create_for_params(params, klass)
-      return nil if params.empty?
+      return nil if params.all? {|k, v| v.empty?}
 
       if params.has_key? :id
         return klass.find(params[:id])
