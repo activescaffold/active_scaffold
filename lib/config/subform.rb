@@ -13,10 +13,20 @@ module ActiveScaffold::Config
     # provides access to the list of columns specifically meant for the Sub-Form to use
     def columns
       # we want to delay initializing to the @core.update.columns set for as long as possible. but we have to eventually clone, or else have a configuration "leak"
-      @columns ||= @core.update.columns.clone
+      unless @columns
+        if @core.actions.include? :update
+          @columns = @core.update.columns.clone
+        else
+          self.columns = @core.columns.collect{|c| c.name}
+        end
+      end
+
+      @columns
     end
+
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
+      return @columns
     end
   end
 end
