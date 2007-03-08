@@ -2,6 +2,7 @@ module ActiveScaffold
   def self.included(base)
     base.extend(ClassMethods)
     base.module_eval do
+      # TODO: these should be in actions/core
       before_filter :handle_user_settings
       before_filter :handle_column_constraints
     end

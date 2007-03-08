@@ -33,7 +33,7 @@ module ActiveScaffold::Actions
 
         elsif column.singular_association?
           hash = value
-          record = find_or_create_for_params(hash, column.association.klass)
+          record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
           if record
             record_columns = active_scaffold_config_for(column.association.klass).subform.columns
             update_record_from_params(record, record_columns, hash)
@@ -43,7 +43,7 @@ module ActiveScaffold::Actions
         elsif column.plural_association?
           collection = value.collect do |key_value_pair|
             hash = key_value_pair[1]
-            record = find_or_create_for_params(hash, column.association.klass)
+            record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
             if record
               record_columns = active_scaffold_config_for(column.association.klass).subform.columns
               update_record_from_params(record, record_columns, hash)
@@ -64,11 +64,20 @@ module ActiveScaffold::Actions
     # Attempts to create or find an instance of klass (which must be an ActiveRecord object) from the
     # request parameters given. If params[:id] exists it will attempt to find an existing object
     # otherwise it will build a new one.
-    def find_or_create_for_params(params, klass)
+    def find_or_create_for_params(params, klass, current)
       return nil if params.all? {|k, v| v.empty?}
 
       if params.has_key? :id
-        return klass.find(params[:id])
+        # modifying the current object of a singular association
+        if current and current.is_a? ActiveRecord::Base and current.id = params[:id]
+          return current
+        # modifying one of the current objects in a plural association
+        elsif current and current.any? {|o| o.id.to_s == params[:id]}
+          return current.detect {|o| o.id.to_s == params[:id]}
+        # attaching an existing but not-current object
+        else
+          return klass.find(params[:id])
+        end
       else
         # TODO check that user is authorized to create a record of this klass
         return klass.new
