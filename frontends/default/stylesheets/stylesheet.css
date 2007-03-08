@@ -539,6 +539,10 @@ padding: 1px;
 color: #aaa;
 }
 
+.active-scaffold input:focus {
+background-color: #ffc;
+}
+
 .active-scaffold textarea {
 height: 65px;
 font-family: Arial, sans-serif;

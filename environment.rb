@@ -3,16 +3,6 @@
 ##
 begin
   Paginator rescue require('paginator')
-rescue NameError, MissingSourceFile
-  message = <<-EOM
-    ************************************************************************
-    Paginator gem is required! Try `sudo gem install paginator`,'
-    or see http://rubyforge.org/projects/paginator/ for more.'
-    ************************************************************************
-  EOM
-  ActionController::Base::logger.error message
-  puts message
-  raise
 end
 
 ##
