@@ -59,8 +59,11 @@ module ActiveScaffold::Actions
 
     def do_update
       @record = find_if_allowed(params[:id], 'update')
-      @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
-      @record.save
+      transaction do
+        @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
+        # TODO: make this a "recursive" save
+        @record.save
+      end
     end
   end
 end

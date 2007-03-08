@@ -58,9 +58,12 @@ module ActiveScaffold::Actions
     end
 
     def do_create
-      @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
-      active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) }
-      @record.save
+      transaction do
+        @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
+        active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) }
+        # TODO: make this a "recursive" save
+        @record.save
+      end
     end
   end
 end
