@@ -11,7 +11,8 @@ contextual error display (tough)
 %>
 <%
 parent_record = @record
-associated = column.singular_association? ? [parent_record.send(column.name) || column.association.klass.new] : parent_record.send(column.name).sort_by {|r| r.id}
+#associated = column.singular_association? ? [parent_record.send(column.name) || column.association.klass.new] : parent_record.send(column.name).sort_by {|r| r.id}
+associated = column.singular_association? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).sort_by {|r| r.id}
 -%>
 <h5><%= column.label -%></h5>
 <table cellpadding="0" cellspacing="0">
@@ -26,7 +27,7 @@ associated = column.singular_association? ? [parent_record.send(column.name) || 
     </tr>
     <% end -%>
 
-    <% if column.plural_association? -%>
+    <% if column.plural_association? or (column.singular_association? and associated.empty?) -%>
     <%# Always keep one open new form -%>
     <% @record = column.association.klass.new -%>
     <tr class="association-record association-record-new locked">
@@ -37,7 +38,13 @@ associated = column.singular_association? ? [parent_record.send(column.name) || 
 </table>
 
 <%= link_to_remote 'Create Another', :url => {:action => 'edit_associated', :id => parent_record.id, :association => column.name} -%>
-&nbsp;|&nbsp;
-<%= select_tag 'associated_id', '<option value=""></option>' + options_for_select(options_for_association(column.association)) %>
-<%= button_to_function 'Add Existing', "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get).to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true})" %>
+
+<% select_options = options_for_select(options_for_association(column.association)) -%>
+<% unless select_options.empty? -%>
+  &nbsp;|&nbsp;
+  <%= select_tag 'associated_id', '<option value="">- select -</option>' + select_options %>
+  <%= button_to_function 'Add Existing', "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get).to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true})" %>
+<% end -%>
+
+
 <% @record = parent_record -%>

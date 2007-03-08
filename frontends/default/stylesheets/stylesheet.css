@@ -89,8 +89,7 @@ background-image: url(/images/active_scaffold/default/add.gif);
 background-image: url(/images/active_scaffold/default/magnifier.png);
 }
 
-.active-scaffold-header div.actions a.new:hover,
-.active-scaffold-header div.actions a.show_search:hover {
+.active-scaffold-header div.actions a:hover {
 background-color: #378CDF;
 }
 
@@ -574,6 +573,7 @@ margin-left: -5px;
 .active-scaffold .sub-form table,
 .active-scaffold .sub-form table td {
 width: auto;
+background: none;
 }
 
 .active-scaffold .sub-form table th {
@@ -592,10 +592,6 @@ border: none;
 background-color: none;
 padding: 1px;
 vertical-align: top;
-}
-
-.active-scaffold .sub-form table .association-record-new td {
-background-color: transparent;
 }
 
 .active-scaffold .sub-form table td input,
@@ -630,6 +626,11 @@ display: none;
 
 .active-scaffold .sub-form a {
 font-weight: bold;
+font-size: 10px;
+}
+
+.active-scaffold .sub-form input {
+font-weight: normal ;
 font-size: 10px;
 }
 
