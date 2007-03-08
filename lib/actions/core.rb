@@ -32,7 +32,8 @@ module ActiveScaffold::Actions
           column.association.klass.find(value)
 
         elsif column.singular_association?
-          hash = value
+          puts value.inspect
+          hash = value[0]
           record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
           if record
             record_columns = active_scaffold_config_for(column.association.klass).subform.columns
@@ -65,7 +66,8 @@ module ActiveScaffold::Actions
     # request parameters given. If params[:id] exists it will attempt to find an existing object
     # otherwise it will build a new one.
     def find_or_create_for_params(params, klass, current)
-      return nil if params.all? {|k, v| v.empty?}
+      puts params.inspect
+      return nil if params.nil? or params.all? {|k, v| v.empty?}
 
       if params.has_key? :id
         # modifying the current object of a singular association

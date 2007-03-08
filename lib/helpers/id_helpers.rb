@@ -74,9 +74,14 @@ module ActionView::Helpers
       end
     end
 
+    def sub_form_id(options = {})
+      options[:id] ||= params[:id]
+      "#{controller_id}-#{options[:id]}-#{options[:association]}-subform"
+    end
+
     def sub_form_list_id(options = {})
       options[:id] ||= params[:id]
-      "#{controller_id}-#{options[:id]}-#{options[:association]}-list"
+      "#{controller_id}-#{options[:id]}-#{options[:association]}-subform-list"
     end
 
     def element_messages_id(options = {})

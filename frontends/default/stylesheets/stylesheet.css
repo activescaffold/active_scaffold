@@ -600,14 +600,17 @@ vertical-align: top;
 
 .active-scaffold .sub-form table td input,
 .active-scaffold .sub-form table td select {
-background: #B8FF9F;
+background-color: #B8FF9F;
 }
 
 .active-scaffold .sub-form table .association-record-new td select,
 .active-scaffold .sub-form table .association-record-new td input {
-background: #fff;
+background-color: #fff;
 }
 
+.active-scaffold .sub-form table .association-record td input:focus {
+background-color: #ffc;
+}
 
 .active-scaffold .sub-form table td.actions {
 vertical-align: middle;
@@ -633,13 +636,25 @@ font-weight: bold;
 font-size: 10px;
 }
 
-.active-scaffold .sub-form input {
-font-weight: normal ;
-font-size: 10px;
-}
-
 .active-scaffold .sub-form input.text-input,
 .active-scaffold .sub-form select {
 letter-spacing: 0;
 font: bold 12px arial;
+}
+
+.active-scaffold .sub-form .footer-wrapper {
+margin-top: 3px;
+background-color: #B8FF9F;
+}
+
+.active-scaffold .sub-form .footer {
+color: #999;
+padding: 0 5px;
+}
+
+.active-scaffold .sub-form .footer select,
+.active-scaffold .sub-form .footer input {
+font-weight: normal;
+font-size: 11px;
+padding: 0;
 }
