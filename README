@@ -1,6 +1,6 @@
-********************************************************************************
+**********************************************************************************
 ** For all documentation see the project website: http://www.ActiveScaffold.com **
-********************************************************************************
+**********************************************************************************
 
 ActiveScaffold plugin by Scott Rutherford (scott@caronsoftware.com), Richard White (rrwhite@gmail.com), Lance Ivy (lance@cainlevy.net), and Ed Moss
 
@@ -12,5 +12,8 @@ http://adamv.com/dev/javascript/querystring
 
 Uses Paginator by Bruce Williams
 http://paginator.rubyforge.org/
+
+Supports RecordSelect by Lance Ivy
+http://recordselect.googlecode.com/
 
 Released under the MIT license (included)

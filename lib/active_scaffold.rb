@@ -106,7 +106,7 @@ module ActiveScaffold
         controller_named_path = path.collect{|p| p.capitalize}.join("::") + "::"
         controller_path = path.join("/") + "/"
       end
-      ["#{klass.to_s}", "#{klass.to_s.pluralize}"].each do |controller_name|
+      ["#{klass.to_s.underscore}", "#{klass.to_s.underscore.pluralize}"].each do |controller_name|
         controller = "#{controller_named_path}#{controller_name.camelize}Controller".constantize rescue next
         return controller, "#{controller_path}#{controller_name}"
       end
