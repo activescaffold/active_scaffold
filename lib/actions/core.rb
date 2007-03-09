@@ -65,7 +65,7 @@ module ActiveScaffold::Actions
     # request parameters given. If params[:id] exists it will attempt to find an existing object
     # otherwise it will build a new one.
     def find_or_create_for_params(params, klass, current)
-      return nil if params.all? {|k, v| v.empty?}
+      return nil if is_empty? params
 
       if params.has_key? :id
         # modifying the current object of a singular association
@@ -81,6 +81,12 @@ module ActiveScaffold::Actions
       else
         # TODO check that user is authorized to create a record of this klass
         return klass.new
+      end
+    end
+
+    def is_empty?(hash)
+      hash.all? do |key,value|
+        value.is_a?(Hash) ? is_empty?(value) : value.empty?
       end
     end
 

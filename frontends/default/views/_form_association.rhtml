@@ -23,7 +23,8 @@ remote_controller, remote_controller_path = active_scaffold_controller_for(colum
     <% associated.each_index do |index| %>
     <% @record = associated[index] -%>
     <tr class="association-record">
-      <%= render :partial => 'form_association_record', :locals => {:scope => "[#{column.name}][#{@record.id}]", :parent_record => parent_record} %>
+      <% scope = column.plural_association? ? "[#{column.name}][#{@record.id}]" : "[#{column.name}]" -%>
+      <%= render :partial => 'form_association_record', :locals => {:scope => scope, :parent_record => parent_record} %>
     </tr>
     <% end -%>
 
