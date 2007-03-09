@@ -1,4 +1,4 @@
-require 'test/test_helper'
+require File.join(File.dirname(__FILE__), '../test_helper.rb')
 
 class ErrorMessageTest < Test::Unit::TestCase
   def setup
