@@ -1,6 +1,6 @@
 module ActiveScaffold
   module Finder
-    def self.create_conditions_for_columns(tokens, columns, like_pattern = '?%')
+    def self.create_conditions_for_columns(tokens, columns, like_pattern = '%?%')
       tokens = [tokens] if tokens.is_a? String
 
       where_clauses = []
