@@ -10,7 +10,7 @@ end
 
 directory = File.dirname(__FILE__)
 
-puts directory
+raise directory.to_s
 
 copy_files("/public", "/public", directory)
 
