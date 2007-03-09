@@ -13,7 +13,7 @@ elsif !column.association.nil? and column.ui_type == :select
   select_options += [[ associated.to_label, associated.id ]] unless associated.nil?
   select_options += options_for_association(column.association)
   selected = associated.nil? ? nil : associated.id
-  select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => name })
+  select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => "#{name}[id]" })
 else
   options = { :name => name }
   text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )

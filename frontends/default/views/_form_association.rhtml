@@ -31,7 +31,8 @@ remote_controller, remote_controller_path = active_scaffold_controller_for(colum
     <%# Always keep one open new form -%>
     <% @record = column.association.klass.new -%>
     <tr class="association-record association-record-new locked">
-      <%= render :partial => 'form_association_record', :locals => {:scope => "[#{column.name}][#{generate_temporary_id}]", :parent_record => parent_record} %>
+      <% scope = column.plural_association? ? "[#{column.name}][#{generate_temporary_id}]" : "[#{column.name}]" -%>
+      <%= render :partial => 'form_association_record', :locals => {:scope => scope, :parent_record => parent_record} %>
     </tr>
     <% end -%>
   </tbody>
@@ -39,7 +40,8 @@ remote_controller, remote_controller_path = active_scaffold_controller_for(colum
 
 <div class="footer-wrapper">
   <div class="footer">
-    <%= link_to_remote 'Create Another', :url => {:action => 'edit_associated', :id => parent_record.id, :association => column.name} -%>
+    <% add_label = column.plural_association? ? "Create Another" : "Replace With New" -%>
+    <%= link_to_remote add_label, :url => {:action => 'edit_associated', :id => parent_record.id, :association => column.name} -%>
 
     <% select_options = options_for_select(options_for_association(column.association)) -%>
     <% unless select_options.empty? -%>
