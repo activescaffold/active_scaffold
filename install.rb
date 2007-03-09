@@ -10,6 +10,8 @@ end
 
 directory = File.dirname(__FILE__)
 
+puts directory
+
 copy_files("/public", "/public", directory)
 
 available_frontends = Dir[File.join(directory, 'frontends', '*')].collect { |d| File.basename d }
