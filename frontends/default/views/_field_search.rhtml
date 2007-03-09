@@ -14,7 +14,13 @@
 			<% name = scope.nil? ? "record[#{column.name}]" : "#{scope}[#{column.name}]" %>
 		  <li class="form-element">
 				<label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
-				<%= text_field(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) %>
+				<%= case column.ui_type
+					when :boolean
+						check_box(object, column.name)
+					else
+						text_field(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) 
+					end
+				%>
 			</li>
 		<% end -%>
 </ol>

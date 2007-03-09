@@ -2,9 +2,6 @@ module ActiveScaffold::Config
   class FieldSearch < Base
     def initialize(core_config)
       @core = core_config
-
-      # inherit searchable columns from the core's list of columns
-      self.columns = @core.columns.collect{|c| c.name if c.searchable?}.compact
     end
       
 
@@ -18,7 +15,14 @@ module ActiveScaffold::Config
     # ----------------------------
 
     # provides access to the list of columns specifically meant for the Search to use
-    attr_reader :columns
+    def columns
+      # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will not be available to .searchable?
+      unless @columns
+        self.columns = @core.columns.collect{|c| c.name if c.searchable?}.compact
+      end
+      @columns
+    end
+
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
     end

@@ -26,10 +26,10 @@ module ActiveScaffold::Actions
         conditions = nil
         params[:record].each do |key, value|
           next unless active_scaffold_config.field_search.columns.include?(key) and !value.empty?
-          case active_scaffold_config.columns[key].column.type
+          case active_scaffold_config.columns[key].ui_type
           when :boolean, :integer
             conditions = merge_conditions(conditions, ["#{active_scaffold_config.columns[key].search_sql} = ?", "%#{value.downcase}%"])
-          when :date, :datetime, :string, :text
+          else
             conditions = merge_conditions(conditions, ["LOWER(#{active_scaffold_config.columns[key].search_sql}) LIKE ?", "%#{value.downcase}%"])
           end
         end
