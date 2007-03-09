@@ -42,8 +42,8 @@ class TemplateSearchingTest < Test::Unit::TestCase
     @controller.send(:rewrite_template_path_for_active_scaffold, 'create_form')
     assert_equal ['app/views/current/create_form.rhtml',
                   'app/views/active_scaffold_overrides/create_form.rhtml',
-                  'app/views/../../vendor/plugins/active_scaffold/frontends/some_frontend/views/create_form.rhtml',
-                  'app/views/../../vendor/plugins/active_scaffold/frontends/default/views/create_form.rhtml'],
+                  'app/views/../../vendor/plugins/'+ActiveScaffold::Config::Core.plugin_directory+'/frontends/some_frontend/views/create_form.rhtml',
+                  'app/views/../../vendor/plugins/'+ActiveScaffold::Config::Core.plugin_directory+'/frontends/default/views/create_form.rhtml'],
                  @template.template_paths
   end
 
@@ -68,8 +68,8 @@ class TemplateSearchingTest < Test::Unit::TestCase
     @template.send(:rewrite_partial_path_for_active_scaffold, 'create_form')
     assert_equal ['app/views/current/_create_form.rhtml',
                   'app/views/active_scaffold_overrides/_create_form.rhtml',
-                  'app/views/../../vendor/plugins/active_scaffold/frontends/some_frontend/views/_create_form.rhtml',
-                  'app/views/../../vendor/plugins/active_scaffold/frontends/default/views/_create_form.rhtml'],
+                  'app/views/../../vendor/plugins/'+ActiveScaffold::Config::Core.plugin_directory+'/frontends/some_frontend/views/_create_form.rhtml',
+                  'app/views/../../vendor/plugins/'+ActiveScaffold::Config::Core.plugin_directory+'/frontends/default/views/_create_form.rhtml'],
                  @template.template_paths
   end
 
