@@ -29,7 +29,7 @@ module ActiveScaffold::Actions
 
         # convert the value, possibly by instantiating associated objects
         value = if column.singular_association? and column.ui_type == :select
-          column.association.klass.find(value)
+          column.association.klass.find(value[:id])
 
         elsif column.singular_association?
           hash = value
