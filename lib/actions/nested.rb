@@ -4,7 +4,7 @@ module ActiveScaffold::Actions
     def self.included(base)
       super
       base.active_scaffold_config.list.columns.each do |column|
-        column.set_link('nested', :parameters => {:associations => column.name.to_sym}) if column.association and column.link.nil? and [:has_many, :has_and_belongs_to_many].include?(column.association.macro)
+        column.set_link('nested', :parameters => {:associations => column.name.to_sym}) if column.association and column.link.nil? and [:has_many].include?(column.association.macro)
       end
     end
 
