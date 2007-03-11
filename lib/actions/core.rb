@@ -23,40 +23,51 @@ module ActiveScaffold::Actions
     def update_record_from_params(parent_record, columns, attributes)
       return parent_record unless parent_record.new_record? or record_allowed_for_action?(parent_record, 'update')
 
+      multi_parameter_attributes = {}
+      attributes.each do |k, v|
+        next unless k.include? '('
+        column_name = k.split('(').first.to_sym
+        multi_parameter_attributes[column_name] ||= []
+        multi_parameter_attributes[column_name] << [k, v]
+      end
+
       columns.each :flatten => true do |column|
-        next unless attributes.has_key? column.name
-        value = attributes[column.name]
+        if multi_parameter_attributes.has_key? column.name
+          parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
+        elsif attributes.has_key? column.name
+          value = attributes[column.name]
 
-        # convert the value, possibly by instantiating associated objects
-        value = if column.singular_association? and column.ui_type == :select
-          column.association.klass.find(value[:id])
+          # convert the value, possibly by instantiating associated objects
+          value = if column.singular_association? and column.ui_type == :select
+            column.association.klass.find(value[:id])
 
-        elsif column.singular_association?
-          hash = value
-          record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
-          if record
-            record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-            update_record_from_params(record, record_columns, hash)
-          end
-          record
-
-        elsif column.plural_association?
-          collection = value.collect do |key_value_pair|
-            hash = key_value_pair[1]
+          elsif column.singular_association?
+            hash = value
             record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
             if record
               record_columns = active_scaffold_config_for(column.association.klass).subform.columns
               update_record_from_params(record, record_columns, hash)
             end
             record
+
+          elsif column.plural_association?
+            collection = value.collect do |key_value_pair|
+              hash = key_value_pair[1]
+              record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
+              if record
+                record_columns = active_scaffold_config_for(column.association.klass).subform.columns
+                update_record_from_params(record, record_columns, hash)
+              end
+              record
+            end
+            collection.compact
+
+          else
+            value
           end
-          collection.compact
 
-        else
-          value
+          parent_record.send("#{column.name}=", value)
         end
-
-        parent_record.send("#{column.name}=", value)
       end
       parent_record
     end
