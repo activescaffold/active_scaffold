@@ -38,6 +38,34 @@ module ActionView::Helpers
       end
     end
 
+    def form_column(column)
+      scope ||= nil
+      name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
+      if override_form_field?(column)
+        send(override_form_field(column), @record)
+      elsif !column.association.nil? and column.ui_type == :select
+        select_options = [["- select -",nil]]
+        # Need to add as options all current associations for this record
+        associated = @record.send(column.association.name)
+        select_options += [[ associated.to_label, associated.id ]] unless associated.nil?
+        select_options += options_for_association(column.association)
+        selected = associated.nil? ? nil : associated.id
+        select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => "#{name}[id]" })
+      else
+        options = { :name => name }
+        text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )
+        if column.virtual?
+          text_field(:record, column.name, text_options)
+        elsif :boolean == column.ui_type
+          check_box(:record, column.name)
+        elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)
+          input(:record, column.name, text_options)
+        else
+          input(:record, column.name, options)
+        end
+      end      
+    end
+    
     def override_form_field(column)
       "#{column.name}_form_column"
     end

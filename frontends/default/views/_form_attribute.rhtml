@@ -1,32 +1,5 @@
-<%
-scope ||= nil
-name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
--%>
-
 <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
-<%= if override_form_field?(column)
-  send(override_form_field(column), @record)
-elsif !column.association.nil? and column.ui_type == :select
-  select_options = [["- select -",nil]]
-  # Need to add as options all current associations for this record
-  associated = @record.send(column.association.name)
-  select_options += [[ associated.to_label, associated.id ]] unless associated.nil?
-  select_options += options_for_association(column.association)
-  selected = associated.nil? ? nil : associated.id
-  select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => "#{name}[id]" })
-else
-  options = { :name => name }
-  text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )
-  if column.virtual?
-    text_field(:record, column.name, text_options)
-  elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)
-    input(:record, column.name, text_options)
-  else
-    input(:record, column.name, options)
-  end
-end
--%>
-
+<%= form_column column %>
 <% if column.description -%>
   <p><%= column.description %></p>
 <% end -%>
