@@ -54,7 +54,6 @@ module ActiveScaffold::Actions
     protected
 
     def do_edit
-raise 'halt'
       @record = find_if_allowed(params[:id], 'update')
     end
 
