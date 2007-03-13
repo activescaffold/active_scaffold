@@ -66,6 +66,11 @@ module ActiveScaffold
       self.active_scaffold_config.configure &block if block_given?
       self.active_scaffold_config._load_action_columns
 
+      # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
+      # NOTE define_read_methods is an *instance* method even though it adds methods to the *class*.
+      klass = self.active_scaffold_config.model
+      klass.new.send(:define_read_methods) if klass.read_methods.empty? && klass.generate_read_methods
+
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
         include ActiveScaffold::Finder
