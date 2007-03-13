@@ -1,5 +1,6 @@
+<% scope ||= nil %>
 <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
-<%= form_column column %>
+<%= form_column column, scope %>
 <% if column.description -%>
   <p><%= column.description %></p>
 <% end -%>

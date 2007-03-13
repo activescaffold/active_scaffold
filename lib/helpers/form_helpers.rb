@@ -38,8 +38,7 @@ module ActionView::Helpers
       end
     end
 
-    def form_column(column)
-      scope ||= nil
+    def form_column(column, scope = nil)
       name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
       if override_form_field?(column)
         send(override_form_field(column), @record)
@@ -54,9 +53,9 @@ module ActionView::Helpers
       else
         options = { :name => name }
         active_scaffold_input(column, options)
-      end      
+      end
     end
-    
+
     def active_scaffold_input(column, options)
       text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )
       if column.virtual?
@@ -69,7 +68,7 @@ module ActionView::Helpers
         input(:record, column.name, options)
       end
     end
-    
+
     def override_form_field(column)
       "#{column.name}_form_column"
     end
