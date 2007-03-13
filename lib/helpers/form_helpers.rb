@@ -53,17 +53,21 @@ module ActionView::Helpers
         select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => "#{name}[id]" })
       else
         options = { :name => name }
-        text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )
-        if column.virtual?
-          text_field(:record, column.name, text_options)
-        elsif :boolean == column.ui_type
-          check_box(:record, column.name)
-        elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)
-          input(:record, column.name, text_options)
-        else
-          input(:record, column.name, options)
-        end
+        active_scaffold_input(column, options)
       end      
+    end
+    
+    def active_scaffold_input(column, options)
+      text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )
+      if column.virtual?
+        text_field(:record, column.name, text_options)
+      elsif :boolean == column.ui_type
+        check_box(:record, column.name)
+      elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)
+        input(:record, column.name, text_options)
+      else
+        input(:record, column.name, options)
+      end
     end
     
     def override_form_field(column)
