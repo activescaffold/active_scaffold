@@ -9,7 +9,7 @@ module ActiveScaffold::Actions
     end
 
     def nested
-      insulate { do_nested }
+      return unless insulate { do_nested }
 
       respond_to do |type|
         type.html { render :partial => 'nested', :layout => true }

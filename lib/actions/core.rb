@@ -112,7 +112,7 @@ module ActiveScaffold::Actions
     # Wraps the given block to catch and handle exceptions.
     # Uses the overridable insulate? method to determine when to actually insulate.
     def insulate(&block)
-      if insulate?
+      if insulate? or true
         begin
           yield
         rescue
@@ -122,18 +122,21 @@ module ActiveScaffold::Actions
             type.html { return_to_main }
             type.js do
               flash[:error] = error_object.to_s;
-              render :update do |page| # render page update
-                page.replace_html active_scaffold_messages_id, :partial => 'messages'
-              end
+              params[:adapter] = nil
+              render :action => 'insulated_exception.rjs', :layout => false, :status => 500
             end
             type.xml { render :xml => error_object.to_xml, :content_type => Mime::XML, :status => 500}
             type.json { render :text => error_object.to_json, :content_type => Mime::JSON, :status => 500}
             type.yaml { render :text => error_object.to_yaml, :content_type => Mime::YAML, :status => 500}
           end
+
+          return false
         end
       else
         yield
       end
+
+      return true
     end
 
     # Should the do_xxxxx call be wrapped by insulate to catch errors

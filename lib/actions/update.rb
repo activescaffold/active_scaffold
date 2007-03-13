@@ -10,7 +10,7 @@ module ActiveScaffold::Actions
     end
 
     def edit
-      insulate { do_edit }
+      return unless insulate { do_edit }
 
       respond_to do |type|
         type.html do
@@ -27,7 +27,7 @@ module ActiveScaffold::Actions
     end
 
     def update
-      insulate { do_update }
+      return unless insulate { do_update }
 
       respond_to do |type|
         type.html do
@@ -54,6 +54,7 @@ module ActiveScaffold::Actions
     protected
 
     def do_edit
+raise 'halt'
       @record = find_if_allowed(params[:id], 'update')
     end
 

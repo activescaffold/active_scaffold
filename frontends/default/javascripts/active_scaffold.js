@@ -227,11 +227,12 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
 
       onSuccess: function(request) {
         if (this.position) {
+          alert(request.responseText);
           this.insert(request.responseText);
           if (this.hide_target) this.target.hide();
-        }	else {
-					request.evalResponse();
-				}
+        } else {
+          request.evalResponse();
+        }
       }.bind(this),
 
       onFailure: function(request) {

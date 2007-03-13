@@ -28,7 +28,7 @@ module ActiveScaffold::Actions
     end
 
     def list
-      insulate { do_list }
+      return unless insulate { do_list }
 
       respond_to do |type|
         type.html {

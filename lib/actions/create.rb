@@ -10,7 +10,7 @@ module ActiveScaffold::Actions
     end
 
     def new
-      insulate { do_new }
+      return unless insulate { do_new }
 
       respond_to do |type|
         type.html do
@@ -27,7 +27,7 @@ module ActiveScaffold::Actions
     end
 
     def create
-      insulate { do_create }
+      return unless insulate { do_create }
 
       respond_to do |type|
         type.html do

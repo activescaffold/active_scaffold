@@ -16,5 +16,9 @@ module ActiveScaffold::DataStructures
     def to_yaml
       public_attributes.to_yaml
     end
+
+    def to_s
+      @error
+    end
   end
 end
