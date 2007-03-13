@@ -16,8 +16,9 @@ module ActionView::Helpers
     def column_renders_as(column)
       if column.is_a? ActiveScaffold::DataStructures::ActionColumns
         return :subsection
-      elsif column.association.nil? or column.ui_type == :select
+      elsif column.association.nil? or column.ui_type == :select or !active_scaffold_config_for(column.association.klass).actions.include?(:subform)
         return :field
+      #TODO 2007-02-23 (EJM) Level=0 - Need to check if they have the security to CRUD the association column?
       else
         return :subform
       end
@@ -26,15 +27,10 @@ module ActionView::Helpers
     def form_partial_for_column(column)
       if override_form_field_partial?(column)
         override_form_field_partial(column)
-      elsif column.association.nil? || override_form_field?(column)
+      elsif column_renders_as(column) == :field or override_form_field?(column)
         "form_attribute"
-      elsif !column.association.nil?
-        if column.singular_association? and column.ui_type == :select
-          "form_attribute"
-        #TODO 2007-02-23 (EJM) Level=0 - Need to check if they have the security to CRUD the association column?
-        else
-          "form_association"
-        end
+      elsif column_renders_as(column) == :subform
+        "form_association"
       end
     end
 
@@ -42,7 +38,7 @@ module ActionView::Helpers
       name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
       if override_form_field?(column)
         send(override_form_field(column), @record)
-      elsif !column.association.nil? and column.ui_type == :select
+      elsif column.singular_association?
         select_options = [["- select -",nil]]
         # Need to add as options all current associations for this record
         associated = @record.send(column.association.name)
@@ -50,6 +46,9 @@ module ActionView::Helpers
         select_options += options_for_association(column.association)
         selected = associated.nil? ? nil : associated.id
         select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => "#{name}[id]" })
+      elsif column.plural_association?
+        # TODO need support for plural associations
+        '<em>simple selection for plural associations is not yet supported</em>'
       else
         options = { :name => name }
         active_scaffold_input(column, options)
