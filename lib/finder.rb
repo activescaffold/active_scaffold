@@ -22,9 +22,9 @@ module ActiveScaffold
       @active_scaffold_conditions ||= []
     end
 
-    attr_writer :active_scaffold_includes
-    def active_scaffold_includes
-      @active_scaffold_includes ||= []
+    attr_writer :active_scaffold_joins
+    def active_scaffold_joins
+      @active_scaffold_joins ||= []
     end
 
     def all_conditions
@@ -60,7 +60,7 @@ module ActiveScaffold
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => build_order_clause(options[:sorting]),
                          :conditions => all_conditions,
-                         :include => active_scaffold_includes.empty? ? nil : active_scaffold_includes}
+                         :include => active_scaffold_joins.empty? ? nil : active_scaffold_joins}
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       count = klass.count(finder_options.reject{|k,v| [:order].include? k})
