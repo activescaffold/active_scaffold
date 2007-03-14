@@ -1,0 +1,18 @@
+Localization.define('bg_BG') do |lang| 
+  lang['ARE_YOU_SURE'] ||= 'Сигурни ли сте?' 
+  lang['CANCEL'] ||= 'Откажи' 
+  lang['CREATE'] ||= 'Създай' 
+  lang['CREATE_NEW'] ||= 'Нов Запис' 
+  lang['DELETE'] ||= 'Изтрий' 
+  lang['EDIT'] ||= 'Промени' 
+  lang['NEXT'] ||= 'Следващ' 
+  lang['NO_ENTRIES'] ||= 'Няма Записи' 
+  lang['PREVIOUS'] ||= 'Предишен' 
+  lang['RESET'] ||= 'Занули' 
+  lang['SEARCH'] ||= 'Търси' 
+  lang['SHOW'] ||= 'Покажи' 
+  lang['UPDATE'] ||= 'Обнови' 
+  lang['CREATED %s'] ||= '%s създаден(и)' 
+  lang['UPDATED %s'] ||= '%s обновен(и)' 
+  lang['DELETED %s'] ||= '%s изтрит(и)' 
+end
