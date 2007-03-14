@@ -31,8 +31,14 @@ require 'extensions/resources'
 def autoload_dir(directory, namespace)
   Dir.entries(directory).each do |file|
     next if file =~ /^\./
-    constant = File.basename(file, '.rb').camelcase
-    eval(namespace).autoload constant, File.join(directory, file)
+    if file =~ /^[a-z_]+.rb$/
+      constant = File.basename(file, '.rb').camelcase
+      eval(namespace).autoload constant, File.join(directory, file)
+    else
+      message = "ActiveScaffold: could not autoload #{File.join(directory, file)}"
+      RAILS_DEFAULT_LOGGER.error message
+      puts message
+    end
   end
 end
 
