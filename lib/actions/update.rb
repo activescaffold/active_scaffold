@@ -61,8 +61,12 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], 'update')
       active_scaffold_config.model.transaction do
         @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
+        before_update_save(@record)
         @record.save! and @record.save_associated!
       end
     end
+
+    # override this method if you want to interject data in the @record (or its associated objects) before the save
+    def before_update_save(@record); end
   end
 end

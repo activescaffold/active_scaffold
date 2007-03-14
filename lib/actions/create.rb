@@ -61,8 +61,12 @@ module ActiveScaffold::Actions
       active_scaffold_config.model.transaction do
         @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
         active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) }
+        before_create_save(@record)
         @record.save! and @record.save_associated!
       end
     end
+
+    # override this method if you want to interject data in the @record (or its associated objects) before the save
+    def before_create_save(@record); end
   end
 end
