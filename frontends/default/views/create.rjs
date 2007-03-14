@@ -4,10 +4,14 @@ page << "ActiveScaffold.toggleEmptyMessage('#{active_scaffold_tbody_id}','#{empt
 page << "ActiveScaffold.increment_record_count('#{active_scaffold_id}');"
 
 if (form_stays_open = true)
-  # why not just re-render the form? that wouldn't utilize a possible do_new override which sets default values.
   page << "$('#{element_form_id}').reset()"
+  page.select("##{element_form_id} li.sub-form tr.association-record").each do |subform_record|
+    page << 'if (value.hasClassName("locked")) return;'
+    subform_record.remove();
+  end
+
   page.replace_html element_messages_id(:action => :create), :partial => 'form_messages'
-  # have to delay the focus, because there's no "firstElement" in prototype until at least one element is not disabled
+  # have to delay the focus until form is enabled
   page.delay 0.1 do
     page << "Form.focusFirstElement('#{element_form_id}');"
   end
