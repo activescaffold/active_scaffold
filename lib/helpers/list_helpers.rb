@@ -4,7 +4,7 @@ module ActionView::Helpers
     def record_is_allowed_for_link(record, link)
       return true unless record.respond_to? link.security_method
       current_user = controller.send(active_scaffold_config.current_user_method) rescue nil
-      return true unless current_user #if there's no current_user, then don't check security
+      # return true unless current_user #if there's no current_user, then don't check security
       return record.send(link.security_method, current_user)
     end
 
