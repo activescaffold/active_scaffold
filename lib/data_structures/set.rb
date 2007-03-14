@@ -26,6 +26,7 @@ module ActiveScaffold::DataStructures
       args.collect! { |a| a.to_sym } # symbolize the args
       @set.reject! { |c| args.include? c.to_sym } # reject all items specified
     end
+    alias_method :remove, :exclude
 
     # returns an array of items with the provided names
     def find_by_names(*names)

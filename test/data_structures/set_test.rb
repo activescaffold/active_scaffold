@@ -32,6 +32,12 @@ class SetTest < Test::Unit::TestCase
     assert !@items.include?(:a)
   end
 
+  def test_remove
+    assert @items.include?(:a)
+    @items.remove 'a'
+    assert !@items.include?(:a)
+  end
+
   def test_add
     # try adding a simple column using a string
     assert !@items.include?(:c)
