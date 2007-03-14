@@ -47,8 +47,22 @@ module ActionView::Helpers
         selected = associated.nil? ? nil : associated.id
         select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => "#{name}[id]" })
       elsif column.plural_association?
-        # TODO need support for plural associations
-        '<em>simple selection for plural associations is not yet supported</em>'
+        html = '<div class="checkbox-list">'
+
+        associated = @record.send(column.association.name).collect {|r| r.id}
+        options = column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}.sort_by {|o| o.first}
+
+        options.each_with_index do |option, i|
+          label, id = option
+          this_name = "#{name}[#{i}][id]"
+          html << "<label for='#{this_name}'>"
+          html << check_box_tag(this_name, id, associated.include?(id))
+          html << label
+          html << "</label>"
+        end
+
+        html << '</div>'
+        html
       else
         options = { :name => name }
         active_scaffold_input(column, options)

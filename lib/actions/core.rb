@@ -40,8 +40,13 @@ module ActiveScaffold::Actions
           value = attributes[column.name]
 
           # convert the value, possibly by instantiating associated objects
-          value = if column.singular_association? and column.ui_type == :select
-            column.association.klass.find(value[:id])
+          value = if column.ui_type == :select
+            ids = if column.singular_association?
+              value[:id]
+            else
+              value.values.collect {|hash| hash[:id]}
+            end
+            column.association.klass.find(ids)
 
           elsif column.singular_association?
             hash = value
@@ -114,7 +119,7 @@ module ActiveScaffold::Actions
     # Wraps the given block to catch and handle exceptions.
     # Uses the overridable insulate? method to determine when to actually insulate.
     def insulate(&block)
-      if insulate? or true
+      if insulate?
         begin
           yield
         rescue

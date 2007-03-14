@@ -49,7 +49,7 @@ module ActiveScaffold::DataStructures
     end
 
     # supported options:
-    #   * :select on a :belongs_to or :has_one association will display a select control in the form
+    #   * :select will display a simple <select> (or collection of checkboxes) on the form to (dis)associate records
     #   * :crud (default) will display a sub-form
     attr_writer :ui_type
     def ui_type

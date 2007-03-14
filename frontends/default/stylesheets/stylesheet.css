@@ -551,6 +551,13 @@ padding: 1px;
 border: solid 1px #1F7F00;
 }
 
+.active-scaffold .checkbox-list {
+height: 90px;
+overflow: auto;
+padding: 2px;
+border: 1px solid #666;
+}
+
 /* Form :: Sub-Sections
    ============================== */
 
