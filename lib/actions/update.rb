@@ -67,6 +67,6 @@ module ActiveScaffold::Actions
     end
 
     # override this method if you want to interject data in the @record (or its associated objects) before the save
-    def before_update_save(@record); end
+    def before_update_save(record); end
   end
 end
