@@ -11,7 +11,9 @@ module ActiveScaffold::Actions
     def record_allowed_for_action?(record, action)
       current_user = self.send(active_scaffold_config.current_user_method) rescue nil
       security_method = "#{action}_authorized?"
-      return (record.respond_to?(security_method) and current_user) ? record.send(security_method, current_user) : true
+      #return (record.respond_to?(security_method) and current_user) ? record.send(security_method, current_user) : true
+      # the security method if implemented should decide on how to react to a null user
+      return record.respond_to?(security_method) ? record.send(security_method, current_user) : true
     end
 
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
