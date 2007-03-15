@@ -10,6 +10,7 @@
 			controller, controller_path = active_scaffold_controller_for(association.klass, params[:controller])
 			table_name = association.table_name
 			table_name = association.options[:join_table] if association.macro == :has_and_belongs_to_many
+			table_name = association.through_reflection.table_name if association.options[:through]
 			primary_key = table_name + "." + association.primary_key_name
 %>
 		<%= render :active_scaffold => controller_path, :constraints => { primary_key.to_sym => parent_id}, :label => active_scaffold_config_for(association.klass).label + _("FOR") + active_scaffold_config.label, :options => {:association => column_name, :association_macro => association.macro, :parent_model => association.active_record} %>
