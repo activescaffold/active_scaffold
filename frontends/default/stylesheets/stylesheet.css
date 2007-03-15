@@ -84,11 +84,11 @@ background-repeat: no-repeat;
 
 .active-scaffold-header div.actions a.new,
 .active-scaffold-header div.actions a.new_existing {
-background-image: url(../images/active_scaffold/default/add.gif);
+background-image: url(../../../images/active_scaffold/default/add.gif);
 }
 
 .active-scaffold-header div.actions a.show_search {
-background-image: url(../images/active_scaffold/default/magnifier.png);
+background-image: url(../../../images/active_scaffold/default/magnifier.png);
 }
 
 .active-scaffold-header div.actions a:hover {
@@ -143,17 +143,17 @@ background-color: #333;
 
 .active-scaffold th.asc a,
 .active-scaffold th.asc a:hover {
-background: #333 url(../images/active_scaffold/default/arrow_up.gif) right 50% no-repeat;
+background: #333 url(../../../images/active_scaffold/default/arrow_up.gif) right 50% no-repeat;
 }
 
 .active-scaffold th.desc a,
 .active-scaffold th.desc a:hover {
-background: #333 url(../images/active_scaffold/default/arrow_down.gif) right 50% no-repeat;
+background: #333 url(../../../images/active_scaffold/default/arrow_down.gif) right 50% no-repeat;
 }
 
 .active-scaffold th.loading a,
 .active-scaffold th.loading a:hover {
-background: #333 url(../images/active_scaffold/default/indicator-small.gif) right 50% no-repeat;
+background: #333 url(../../../images/active_scaffold/default/indicator-small.gif) right 50% no-repeat;
 }
 
 /* Table :: Record Rows
@@ -237,7 +237,7 @@ float: right;
 text-indent: -4000px;
 width: 16px;
 height: 17px;
-background: url(../images/active_scaffold/default/close.gif) 0 0 no-repeat;
+background: url(../../../images/active_scaffold/default/close.gif) 0 0 no-repeat;
 }
 
 /* Nested
@@ -633,7 +633,7 @@ height: 16px;
 padding: 0;
 width: 16px;
 text-indent: -4000px;
-background: url(../images/active_scaffold/default/cross.png) 0 0 no-repeat;
+background: url(../../../images/active_scaffold/default/cross.png) 0 0 no-repeat;
 }
 
 .active-scaffold .sub-form .locked a.destroy {
