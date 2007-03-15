@@ -27,25 +27,12 @@ module ActiveScaffold
     session[session_index]
   end
 
-  def active_scaffold_association
-    return active_scaffold_session_storage[:association]
-  end
-
-  def active_scaffold_association_macro
-    return active_scaffold_session_storage[:association_macro]
+  def active_scaffold_options
+    return active_scaffold_session_storage[:options] || {}
   end
 
   def active_scaffold_constraints
     return active_scaffold_session_storage[:constraints] || {}
-  end
-
-  def active_scaffold_parent_model
-    return active_scaffold_session_storage[:parent_model]
-  end
-
-  def active_scaffold_parent_association
-    id = active_scaffold_constraints.find {|k, v| k.to_s.include?(active_scaffold_association)}
-    return active_scaffold_parent_model, id[1], active_scaffold_association
   end
 
   # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.

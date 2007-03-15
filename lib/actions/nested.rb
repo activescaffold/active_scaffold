@@ -7,12 +7,6 @@ module ActiveScaffold::Actions
         column.set_link('nested', :parameters => {:associations => column.name.to_sym}) if column.association and column.link.nil? and [:has_and_belongs_to_many, :has_many].include?(column.association.macro)
       end
       base.before_filter :include_join_table_actions
-
-#TODO 2007-03-15 (EJM) Level=0 - Do we need to do this?
-      # ActiveScaffold::Actions::Nested::ChildMethods
-      base.verify :method => :post,
-                  :only => :add_existing,
-                  :redirect_to => { :action => :index }
     end
 
     def nested
@@ -31,7 +25,7 @@ module ActiveScaffold::Actions
     end
 
     def include_join_table_actions
-      if active_scaffold_association_macro == :has_and_belongs_to_many
+      if active_scaffold_options[:association_macro] == :has_and_belongs_to_many
         active_scaffold_config.action_links.add('new_existing', :label => _('CREATE_FROM_EXISTING'), :type => :table, :security_method => :add_existing_authorized?) 
         self.class.module_eval do
           include ActiveScaffold::Actions::Nested::ChildMethods
@@ -45,14 +39,19 @@ end
 module ActiveScaffold::Actions::Nested
   module ChildMethods
   
+    def self.included(base)
+      super
+      base.verify :method => :post,
+                  :only => :add_existing,
+                  :redirect_to => { :action => :index }
+    end
+    
     def new_existing
       return unless insulate { do_new }
 
 #TODO 2007-03-14 (EJM) Level=0 - Can we share create_form.rhtml and create_form.rjs somehow?
 #TODO 2007-03-14 (EJM) Level=0 - tie in do_destroy_association
-#TODO 2007-03-15 (EJM) Level=0 - Do we need to support all respond_to forms?
-#FIXME 2007-03-14 (EJM) Level=0 - Fix rjs errors - cancel goes somewhere unexpected
-#FIXME 2007-03-15 (EJM) Level=0 - Create and Add_Existing should be mutually exclusive
+#FIXME 2007-03-14 (EJM) Level=0 - Fix rjs errors - :nested cancel's sometimes go somewhere unexpected
 
       respond_to do |type|
         type.html do
@@ -94,7 +93,25 @@ module ActiveScaffold::Actions::Nested
     end
   
     protected
+
+    def do_create
+      active_scaffold_config.model.transaction do
+        @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
+        active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) } unless active_scaffold_options[:association_macro] == :has_and_belongs_to_many
+        before_create_save(@record)
+        @record.save! and @record.save_associated!
+        if active_scaffold_options[:association_macro] == :has_and_belongs_to_many
+          params[:associated_id] = @record
+          do_add_existing 
+        end
+      end
+    end
     
+    def active_scaffold_parent_association
+      id = active_scaffold_constraints.find {|k, v| k.to_s.include?(active_scaffold_options[:association])}
+      return active_scaffold_options[:parent_model], id[1], active_scaffold_options[:association]
+    end
+
     def do_new
       @record = active_scaffold_config.model.new
     end

@@ -10,6 +10,8 @@
       <% if column.link -%>
         <% column.link.label = column_value %>
         <%= render_action_link(column.link, url_options) %>
+	    <% elsif column.ui_type == :boolean -%>
+				<%= check_box_tag(nil, 1, column_value || column_value == 1, :disabled => true) %>
       <% else -%>
         <%= column_value %>
       <% end -%>
