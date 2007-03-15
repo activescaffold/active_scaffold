@@ -6,11 +6,11 @@ page << "ActiveScaffold.increment_record_count('#{active_scaffold_id}');"
 if (form_stays_open = true)
   # why not just re-render the form? that wouldn't utilize a possible do_new override which sets default values.
   page << "$('#{element_form_id}').reset()"
-  page.replace_html element_messages_id(:action => :create), :partial => 'form_messages'
+  page.replace_html element_messages_id(:action => :add_existing), :partial => 'form_messages'
   # have to delay the focus, because there's no "firstElement" in prototype until at least one element is not disabled
   page.delay 0.1 do
     page << "Form.focusFirstElement('#{element_form_id}');"
   end
 else
-  page << "$('#{action_link_id(:action => active_scaffold_config.create.link.action)}').action_link.close()"
+  page << "$('#{action_link_id(:action => :new_existing)}').action_link.close()"
 end

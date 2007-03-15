@@ -51,7 +51,8 @@ module ActiveScaffold::Actions::Nested
 #TODO 2007-03-14 (EJM) Level=0 - Can we share create_form.rhtml and create_form.rjs somehow?
 #TODO 2007-03-14 (EJM) Level=0 - tie in do_destroy_association
 #TODO 2007-03-15 (EJM) Level=0 - Do we need to support all respond_to forms?
-#FIXME 2007-03-14 (EJM) Level=0 - Fix rjs errors
+#FIXME 2007-03-14 (EJM) Level=0 - Fix rjs errors - cancel goes somewhere unexpected
+#FIXME 2007-03-15 (EJM) Level=0 - Create and Add_Existing should be mutually exclusive
 
       respond_to do |type|
         type.html do
@@ -101,18 +102,17 @@ module ActiveScaffold::Actions::Nested
     def do_add_existing
       #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
       parent_model, id, association = active_scaffold_parent_association
-      active_scaffold_config.model.transaction do
-        parent_record = find_if_allowed(id, 'update', parent_model)
-        @record = active_scaffold_config.model.find(params[:associated_id])
-        parent_record.send(association) << @record
-        parent_record.save!
-      end
+      parent_record = find_if_allowed(id, 'update', parent_model)
+      @record = active_scaffold_config.model.find(params[:associated_id])
+      parent_record.send(association) << @record
+      parent_record.save
     end
     
     def do_destroy_association
+      #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
       parent_model, id, association = active_scaffold_parent_association
       parent_record = find_if_allowed(id, 'update', parent_model)
-      @record = parent_record.send("roles").find(params[:id]) #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
+      @record = parent_record.send("roles").find(params[:id]) 
       @record.destroy
     end
     
