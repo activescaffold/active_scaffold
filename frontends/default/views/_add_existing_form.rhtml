@@ -20,10 +20,10 @@
     <%= render :partial => 'form_messages' %>
   <% end -%>
 
-	<label for="<%= "record_#{active_scaffold_config.model}" %>"><%= active_scaffold_config.model %></label>
+  <label for="<%= "record_#{active_scaffold_config.model}" %>"><%= active_scaffold_config.model %></label>
   <% select_options = active_scaffold_config.model.find(:all).collect {|c| [c.to_label, c.id]} -%>
   <% unless select_options.empty? -%>
-  	<%= select_tag 'associated_id', options_for_select(select_options) %>
+    <%= select_tag 'associated_id', options_for_select(select_options) %>
   <% end -%>
 
   <p class="form-footer">
