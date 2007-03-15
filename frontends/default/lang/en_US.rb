@@ -23,17 +23,14 @@ Localization.define('en_US') do |lang|
   # For flash[:info] feedback after deleting a record (in HTML mode)
   lang['DELETED %s'] ||= 'Deleted %s'
 
-  # Submit button for Remove Association.
-  lang['DISASSOCIATE'] ||= 'Remove Association'
-
-  # Used to confirm an Remove Association or Delete.
-  lang['DISASSOCIATE_OR_DELETE'] ||= 'Remove Association or Delete?'
-
   # The link to the Update form
   lang['EDIT'] ||= 'Edit'
 
   # Used for nested scaffolds to modify the scaffold title (e.g. Contacts for Client X)
   lang['FOR'] ||= ' for '
+
+  # Used in list footer, number of rows found
+  lang['FOUND'] ||= 'Found'
 
   # Appears as a placeholder when there are no records on the page.
   lang['NO_ENTRIES'] ||= 'No Entries'
@@ -49,6 +46,9 @@ Localization.define('en_US') do |lang|
 
   # The link to the Search interface
   lang['SEARCH'] ||= 'Search'
+
+  # Used in select controls to entice user to select something
+  lang['_SELECT_'] ||= '- select -'
 
   # The link to the Show view
   lang['SHOW'] ||= 'Show'
