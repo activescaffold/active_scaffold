@@ -1,0 +1,38 @@
+<% url_options = params_for(:action => :add_existing) -%>
+<% if request.xhr? -%>
+<%= form_remote_tag :url => url_options,
+                    :after => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :create)}');",
+                    :complete => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :create)}');",
+                    :html => { :href => url_for(url_options),
+                    :id => element_form_id(:action => :create),
+                    :class => 'create' } %>
+<% else -%>
+<%= form_tag url_options,
+             :id => element_form_id(:action => :create),
+             :class => 'create' %>
+<% end -%>
+
+  <h4><%= active_scaffold_config.nested.label -%></h4>
+
+  <% if request.xhr? -%>
+    <div id="<%= element_messages_id(:action => :create) %>" class="messages-container"></div>
+  <% else -%>
+    <%= render :partial => 'form_messages' %>
+  <% end -%>
+
+	<label for="<%= "record_#{active_scaffold_config.model}" %>"><%= active_scaffold_config.model %></label>
+  <% select_options = active_scaffold_config.model.find(:all).collect {|c| [c.to_label, c.id]} -%>
+  <% unless select_options.empty? -%>
+  	<%= select_tag 'associated_id', options_for_select(select_options) %>
+  <% end -%>
+
+  <p class="form-footer">
+    <%= submit_tag _('CREATE'), :class => "submit" %>
+    <%= link_to _('CANCEL'), params_for(:action => 'list'), { :onclick => "$('#{action_link_id(:action => :add_existing)}').action_link.close(); return false;" }%>
+    <%= loading_indicator_tag(:action => :create, :id => params[:id]) %>
+  </p>
+
+<%= end_form_tag %>
+<script type="text/javascript">
+Form.focusFirstElement('<%= element_form_id(:action => :create) -%>');
+</script>

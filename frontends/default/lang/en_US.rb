@@ -5,11 +5,14 @@ Localization.define('en_US') do |lang|
   # For a cancel button
   lang['CANCEL'] ||= 'Cancel'
 
-  # For the submit button on Create forms
+  # For the submit button and Label on Create forms
   lang['CREATE'] ||= 'Create'
 
   # For flash[:info] feedback after creating a new record (in HTML mode)
   lang['CREATED %s'] ||= 'Created %s'
+
+  # The link to the Create From Existing form
+  lang['CREATE_FROM_EXISTING'] ||= 'Add From Existing'
 
   # The link to the Create form
   lang['CREATE_NEW'] ||= 'Create New'
@@ -19,6 +22,12 @@ Localization.define('en_US') do |lang|
 
   # For flash[:info] feedback after deleting a record (in HTML mode)
   lang['DELETED %s'] ||= 'Deleted %s'
+
+  # Submit button for Remove Association.
+  lang['DISASSOCIATE'] ||= 'Remove Association'
+
+  # Used to confirm an Remove Association or Delete.
+  lang['DISASSOCIATE_OR_DELETE'] ||= 'Remove Association or Delete?'
 
   # The link to the Update form
   lang['EDIT'] ||= 'Edit'

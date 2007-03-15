@@ -1,16 +1,18 @@
 <h4>&nbsp;</h4>
 <%
-	models = []
-	models = params[:associations].split(" ") unless params[:associations].nil?
-	unless models.empty?
+	# This assumes that the association is included as a column in the active_scaffold_config.columns collection
+	associated_columns = []
+	associated_columns = params[:associations].split(" ") unless params[:associations].nil?
+	unless associated_columns.empty?
 		parent_id = params[:id]
-		models.each do | model_name |
-			controller, controller_path = active_scaffold_controller_for(model_name, params[:controller])
-			primary_key = ""
-			primary_key << active_scaffold_config.columns[model_name].association.options[:join_table] + "." if active_scaffold_config.columns[model_name].association.macro == :has_and_belongs_to_many
-			primary_key << active_scaffold_config.columns[model_name].association.primary_key_name
+		associated_columns.each do | column_name |
+			association = active_scaffold_config.columns[column_name].association
+			controller, controller_path = active_scaffold_controller_for(association.klass, params[:controller])
+			table_name = association.table_name
+			table_name = association.options[:join_table] if association.macro == :has_and_belongs_to_many
+			primary_key = table_name + "." + association.primary_key_name
 %>
-		<%= render :active_scaffold => controller_path, :constraints => { primary_key.to_sym => parent_id}, :label => active_scaffold_config_for(model_name).label + _("FOR") + active_scaffold_config.label %>
+		<%= render :active_scaffold => controller_path, :constraints => { primary_key.to_sym => parent_id}, :association => column_name, :association_macro => association.macro, :parent_model => association.active_record, :label => active_scaffold_config_for(association.klass).label + _("FOR") + active_scaffold_config.label %>
 <%
 		end
   end

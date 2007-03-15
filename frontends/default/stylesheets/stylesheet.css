@@ -75,13 +75,15 @@ opacity: 0.5;
 }
 
 .active-scaffold-header div.actions a.new,
+.active-scaffold-header div.actions a.new_existing,
 .active-scaffold-header div.actions a.show_search {
 padding-left: 19px;
 background-position: 1px 50%;
 background-repeat: no-repeat;
 }
 
-.active-scaffold-header div.actions a.new {
+.active-scaffold-header div.actions a.new,
+.active-scaffold-header div.actions a.new_existing {
 background-image: url(../images/active_scaffold/default/add.gif);
 }
 

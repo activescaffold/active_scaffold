@@ -13,9 +13,12 @@ module ActionView #:nodoc:
       elsif args.first[:active_scaffold]
         require 'digest/md5'
         remote_controller = args.first[:active_scaffold]
+        association = args.first[:association]
+        association_macro = args.first[:association_macro]
         constraints = args.first[:constraints]
+        parent_model = args.first[:parent_model]
         eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s)
-        session["as:#{eid}"] = {:constraints => constraints, :list => {:label => args.first[:label]}}
+        session["as:#{eid}"] = {:constraints => constraints, :parent_model => parent_model, :association => association, :association_macro => association_macro, :list => {:label => args.first[:label]}}
 
         render_component :controller => remote_controller, :action => 'table', :params => {:eid => eid}
       else

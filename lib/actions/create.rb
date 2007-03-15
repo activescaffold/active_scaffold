@@ -60,9 +60,13 @@ module ActiveScaffold::Actions
     def do_create
       active_scaffold_config.model.transaction do
         @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
-        active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) }
+        active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) } unless active_scaffold_association_macro == :has_and_belongs_to_many
         before_create_save(@record)
         @record.save! and @record.save_associated!
+        if active_scaffold_association_macro == :has_and_belongs_to_many
+          params[:associated_id] = @record
+          do_add_existing 
+        end
       end
     end
 
