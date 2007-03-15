@@ -113,7 +113,7 @@ module ActionView::Helpers
           available_records = association.klass.find(:all)
       end
       available_records ||= []
-      available_records.collect { |model| [ model.to_label, model.id ] }
+      available_records.sort{|a,b| a.to_label <=> b.to_label}.collect { |model| [ model.to_label, model.id ] }
     end
 
     def generate_temporary_id
