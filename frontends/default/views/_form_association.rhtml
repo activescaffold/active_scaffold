@@ -41,17 +41,17 @@ remote_controller, remote_controller_path = active_scaffold_controller_for(colum
 
 <div class="footer-wrapper">
   <div class="footer">
-    <% add_label = column.plural_association? ? "Create Another" : "Replace With New" -%>
+    <% add_label = column.plural_association? ? _('CREATE_ANOTHER') : _('REPLACE_WITH_NEW') -%>
     <%= link_to_remote add_label, :url => {:action => 'edit_associated', :id => parent_record.id, :association => column.name} -%>
 
     <% select_options = options_for_select(options_for_association(column.association)) -%>
     <% unless select_options.empty? -%>
       |
       <% if remote_controller and remote_controller.respond_to? :uses_record_select? and remote_controller.uses_record_select? -%>
-        <%= link_to_record_select 'Add Existing', remote_controller_path, :onselect => "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get, :escape => false).to_json}.sub('--ID--', id), {asynchronous: true, evalScripts: true}); container.remove();" -%>
+        <%= link_to_record_select _('CREATE_FROM_EXISTING'), remote_controller_path, :onselect => "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get, :escape => false).to_json}.sub('--ID--', id), {asynchronous: true, evalScripts: true}); container.remove();" -%>
       <% else -%>
         <%= select_tag 'associated_id', '<option value="">' + _('_SELECT_') + '</option>' + select_options %>
-        <%= button_to_function 'Add Existing', "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get).to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true})" %>
+        <%= button_to_function _('CREATE_FROM_EXISTING'), "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get).to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true})" %>
       <% end -%>
     <% end -%>
   </div>

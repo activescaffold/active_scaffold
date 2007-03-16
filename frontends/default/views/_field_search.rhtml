@@ -24,8 +24,8 @@
 			</li>
 		<% end -%>
 </ol>
-  <%= submit_tag _('SEARCH'), :class => "submit" %>
-  <input type="reset" value="<%= _('RESET') -%>" onclick="f = this.up('form'); f.reset(); f.onsubmit();" />
+  <%= submit_tag _('SEARCH_BUTTON'), :class => "submit" %>
+  <input type="reset" value="<%= _('RESET_BUTTON') -%>" onclick="f = this.up('form'); f.reset(); f.onsubmit();" />
   <%= loading_indicator_tag(:action => :search) %>
 </form>
 

@@ -2,10 +2,10 @@
   <div class="delete">
     <h4><%= _('ARE_YOU_SURE') -%></h4>
     <%= form_tag params_for(:action => :destroy, :id => params[:id]), { :method => :delete } %>
-      <%= submit_tag _('DELETE'), :class => 'submit' %>
+      <%= submit_tag _('DELETE_BUTTON'), :class => 'submit' %>
     <%= end_form_tag %>
     <%= form_tag params_for(:action => :index), { :method => :get } %>
-      <%= submit_tag _('CANCEL'), :class => 'submit' %>
+      <%= submit_tag _('CANCEL_BUTTON'), :class => 'submit' %>
     <%= end_form_tag %>
   </div>
 </div>

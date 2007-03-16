@@ -7,13 +7,13 @@ class LocalizationTest < Test::Unit::TestCase
     ## test no language specified
     ##
     assert_equal "dutch", _("dutch")
-    assert_equal "Create", _("CREATE")
+    assert_equal "Create", _("CREATE_BUTTON")
     ActiveScaffold::Config::Core.configure do |c| 
       c.lang = "nl_NL" 
     end
     ##
     ## test language specified
     ##
-    assert_equal "Toevoegen", _("CREATE")
+    assert_equal "Toevoegen", _("CREATE_BUTTON")
   end
 end

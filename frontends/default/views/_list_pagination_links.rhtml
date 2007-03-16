@@ -6,7 +6,7 @@
   <% current_url = url_for(pagination_params.merge(:page => current_page.number)) -%>
 
   <%= loading_indicator_tag :action => :pagination %>
-  <%= link_to_remote(_('PREVIOUS'),
+  <%= link_to_remote(_('PREVIOUS_BUTTON'),
         { :url => pagination_params.merge(:page => current_page.number - 1),
           :before => "addActiveScaffoldPageToHistory('#{previous_url}', '#{controller_id}')",
           :before => "Element.show('#{loading_indicator_id(:action => :pagination)}');",
@@ -16,7 +16,7 @@
         { :href => previous_url,
           :class => "previous"}) if current_page.prev? %>
   <%= pagination_ajax_links current_page, pagination_params %>
-  <%= link_to_remote(_('NEXT'),
+  <%= link_to_remote(_('NEXT_BUTTON'),
         { :url => pagination_params.merge(:page => current_page.number + 1),
           :before => "addActiveScaffoldPageToHistory('#{next_url}', '#{controller_id}')",
           :before => "Element.show('#{loading_indicator_id(:action => :pagination)}');",

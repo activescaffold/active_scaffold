@@ -7,8 +7,8 @@
                     :update => active_scaffold_content_id,
                     :html => { :href => href, :id => search_form_id, :class => 'search' } %>
   <input type="text" name="search" size="50" value="<%= params[:search] -%>" class="text-input" id="<%= search_input_id %>" autocompleted="off" />
-  <%= submit_tag _('SEARCH'), :class => "submit" %>
-  <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= _('RESET') -%></a>
+  <%= submit_tag _('SEARCH_BUTTON'), :class => "submit" %>
+  <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= _('RESET_BUTTON') -%></a>
   <%= loading_indicator_tag(:action => :search) %>
 </form>
 

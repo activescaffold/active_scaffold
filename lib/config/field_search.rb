@@ -9,7 +9,7 @@ module ActiveScaffold::Config
     # --------------------------
     # the ActionLink for this action
     cattr_reader :link
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => _('SEARCH'), :type => :table, :security_method => :search_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => _('SEARCH_BUTTON'), :type => :table, :security_method => :search_authorized?)
 
     # instance-level configuration
     # ----------------------------

@@ -9,14 +9,14 @@ module ActiveScaffold::Config
     def self.link=(val)
       @@link = val
     end
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => _('EDIT'), :type => :record, :security_method => :update_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => _('EDIT_BUTTON'), :type => :record, :security_method => :update_authorized?)
 
     # instance-level configuration
     # ----------------------------
 
     # the label= method already exists in the Form base class
     def label
-      @label || "#{_('UPDATE')} #{@core.label.singularize}"
+      @label || "#{_('UPDATE_HEADER')} #{@core.label.singularize}"
     end
   end
 end
