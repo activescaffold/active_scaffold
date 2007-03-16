@@ -15,7 +15,7 @@ module ActiveScaffold::Config
       @core.action_links.add('nested', :label => label, :type => :record, :security_method => :nested_authorized?, :position => :after, :parameters => {:associations => models.join(' ')})
     end
 
-    # the label for this Form action. used for the header.
+    # the label for this Nested action. used for the header.
     attr_accessor :label
     def label
       @label || "#{_('CREATE_FROM_EXISTING')} #{@core.label.singularize}"

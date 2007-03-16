@@ -27,6 +27,7 @@ module ActiveScaffold::Actions
     def include_join_table_actions
       if active_scaffold_options[:association_macro] == :has_and_belongs_to_many
         active_scaffold_config.action_links.add('new_existing', :label => _('CREATE_FROM_EXISTING'), :type => :table, :security_method => :add_existing_authorized?) 
+        active_scaffold_config.list.columns.exclude active_scaffold_options[:association]
         self.class.module_eval do
           include ActiveScaffold::Actions::Nested::ChildMethods
         end
@@ -49,7 +50,8 @@ module ActiveScaffold::Actions::Nested
     def new_existing
       return unless insulate { do_new }
 
-#TODO 2007-03-14 (EJM) Level=0 - Can we share create_form.rhtml and create_form.rjs somehow?
+#TODO 2007-03-15 (EJM) Level=0 - Create on a hm :through is not working
+#TODO 2007-03-14 (EJM) Level=1 - Can we share create_form.rhtml and create_form.rjs somehow?
 #TODO 2007-03-14 (EJM) Level=0 - tie in do_destroy_association
 #FIXME 2007-03-14 (EJM) Level=0 - Fix rjs errors - :nested cancel's sometimes go somewhere unexpected
 

@@ -8,7 +8,7 @@ module ActionController
           @options[:collection] ||= {}
           @options[:collection].merge! :show_search => :get, :update_table => :get
           @options[:member] ||= {}
-          @options[:member].merge! :row => :get, :nested => :get, :edit_associated => :get
+          @options[:member].merge! :row => :get, :nested => :get, :edit_associated => :get, :add_association => :get
         end
         @options
       end
