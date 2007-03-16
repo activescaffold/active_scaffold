@@ -55,7 +55,7 @@ module ActiveScaffold::Config
 
     # provides read/write access to the local Actions DataStructure
     attr_reader :actions
-    def actions=(*args)
+    def actions=(args)
       @actions = ActiveScaffold::DataStructures::Actions.new(*args)
     end
 
