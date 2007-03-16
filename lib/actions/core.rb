@@ -46,7 +46,7 @@ module ActiveScaffold::Actions
             else
               value.values.collect {|hash| hash[:id]}
             end
-            column.association.klass.find(ids)
+            (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
 
           elsif column.singular_association?
             hash = value
