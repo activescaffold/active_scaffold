@@ -58,11 +58,14 @@ module ActiveScaffold::Actions
     end
 
     def do_create
-      active_scaffold_config.model.transaction do
-        @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
-        active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) }
-        before_create_save(@record)
-        @record.save! and @record.save_associated!
+      begin
+        active_scaffold_config.model.transaction do
+          @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
+          active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) }
+          before_create_save(@record)
+          @record.save! and @record.save_associated!
+        end
+      rescue ActiveRecord::RecordInvalid
       end
     end
 

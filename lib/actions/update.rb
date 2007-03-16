@@ -59,10 +59,13 @@ module ActiveScaffold::Actions
 
     def do_update
       @record = find_if_allowed(params[:id], 'update')
-      active_scaffold_config.model.transaction do
-        @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
-        before_update_save(@record)
-        @record.save! and @record.save_associated!
+      begin
+        active_scaffold_config.model.transaction do
+          @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
+          before_update_save(@record)
+          @record.save! and @record.save_associated!
+        end
+      rescue ActiveRecord::RecordInvalid
       end
     end
 
