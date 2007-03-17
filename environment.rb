@@ -30,7 +30,7 @@ require 'extensions/resources'
 ##
 def autoload_dir(directory, namespace)
   Dir.entries(directory).each do |file|
-    next if file =~ /^\./
+    next if file =~ /^[._]/
     if file =~ /^[a-z_]+.rb$/
       constant = File.basename(file, '.rb').camelcase
       eval(namespace).autoload constant, File.join(directory, file)
