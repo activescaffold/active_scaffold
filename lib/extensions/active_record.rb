@@ -38,3 +38,11 @@ class ActiveRecord::Base
     end
   end
 end
+
+module ActiveRecord
+  module Reflection
+    class AssociationReflection #:nodoc:
+      attr_accessor :reverse
+    end
+  end
+end
