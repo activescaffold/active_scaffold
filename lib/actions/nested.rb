@@ -25,6 +25,11 @@ module ActiveScaffold::Actions
     end
 
     def include_join_table_actions
+      if active_scaffold_options[:association_reverse]
+        active_scaffold_config.create.columns.exclude active_scaffold_options[:association_reverse]
+        active_scaffold_config.update.columns.exclude active_scaffold_options[:association_reverse]
+        active_scaffold_config.list.columns.exclude active_scaffold_options[:association_reverse]
+      end
       if active_scaffold_options[:association_macro] == :has_and_belongs_to_many
         active_scaffold_config.action_links.add('new_existing', :label => _('CREATE_FROM_EXISTING'), :type => :table, :security_method => :add_existing_authorized?) 
         active_scaffold_config.list.columns.exclude active_scaffold_options[:association]
@@ -96,19 +101,10 @@ module ActiveScaffold::Actions::Nested
   
     protected
 
-    def do_create
-      begin
-        active_scaffold_config.model.transaction do
-          @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
-          active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) } unless active_scaffold_options[:association_macro] == :has_and_belongs_to_many
-          before_create_save(@record)
-          @record.save! and @record.save_associated!
-          if active_scaffold_options[:association_macro] == :has_and_belongs_to_many
-            params[:associated_id] = @record
-            do_add_existing 
-          end
-        end
-      rescue ActiveRecord::RecordInvalid
+    def after_create_save(record)
+      if active_scaffold_options[:association_macro] == :has_and_belongs_to_many
+        params[:associated_id] = record
+        do_add_existing 
       end
     end
     
