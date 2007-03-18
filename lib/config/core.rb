@@ -159,8 +159,12 @@ module ActiveScaffold::Config
       @action_configs ||= {}
       titled_name = name.to_s.camelcase
       underscored_name = name.to_s.underscore.to_sym
-      if @actions.include? underscored_name and ActiveScaffold::Config.const_defined? titled_name
-        return @action_configs[underscored_name] ||= eval("ActiveScaffold::Config::#{titled_name}").new(self)
+      if ActiveScaffold::Config.const_defined? titled_name
+        if @actions.include? underscored_name
+          return @action_configs[underscored_name] ||= eval("ActiveScaffold::Config::#{titled_name}").new(self)
+        else
+          raise "#{titled_name} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
+        end
       end
       super
     end
