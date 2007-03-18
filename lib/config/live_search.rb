@@ -4,9 +4,6 @@ module ActiveScaffold::Config
       @core = core_config
 
       @full_text_search = self.class.full_text_search?
-
-      # inherit searchable columns from the core's list of columns
-      self.columns = @core.columns.collect{|c| c.name if c.searchable? and (c.column.type == :string or c.column.type == :text)}.compact
     end
 
 
@@ -26,7 +23,14 @@ module ActiveScaffold::Config
     # ----------------------------
 
     # provides access to the list of columns specifically meant for the Search to use
-    attr_reader :columns
+    def columns
+      # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will not be available to .searchable?
+      unless @columns
+        self.columns = @core.columns.collect{|c| c.name if c.searchable? and (c.column.type == :string or c.column.type == :text)}.compact
+      end
+      @columns
+    end
+
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
     end
