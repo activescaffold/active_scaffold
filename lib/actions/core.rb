@@ -105,7 +105,7 @@ module ActiveScaffold::Actions
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
         next true if klass.columns_hash[key.to_s] and [:boolean, :datetime].include?(klass.columns_hash[key.to_s].type)
-        value.is_a?(Hash) ? attributes_hash_is_empty?(value) : value.empty?
+        value.is_a?(Hash) ? attributes_hash_is_empty?(value, klass) : value.empty?
       end
     end
 
