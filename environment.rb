@@ -1,6 +1,19 @@
 ##
 ## Check for dependencies
 ##
+
+version = Rails::VERSION::STRING.split(".")
+if version[0] < "1" or (version[0] == "1" and version[1] < "2")
+  message = <<-EOM
+    ************************************************************************
+    Rails 1.2.1 or greater is required.
+    ************************************************************************
+  EOM
+  ActionController::Base::logger.error message
+  puts message
+  raise ActiveScaffold::ActiveScaffoldDead
+end
+
 begin
   Paginator rescue require('paginator')
 end
