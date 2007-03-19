@@ -51,6 +51,7 @@ module ActionView::Helpers
 
         associated = @record.send(column.association.name).collect {|r| r.id}
         options = column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}.sort_by {|o| o.first}
+        return 'no options' if options.empty?
 
         options.each_with_index do |option, i|
           label, id = option
