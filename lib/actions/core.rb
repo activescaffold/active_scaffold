@@ -81,7 +81,7 @@ module ActiveScaffold::Actions
     # request parameters given. If params[:id] exists it will attempt to find an existing object
     # otherwise it will build a new one.
     def find_or_create_for_params(params, klass, current)
-      return nil if is_empty? params
+      return nil if attributes_hash_is_empty?(params, klass)
 
       if params.has_key? :id
         # modifying the current object of a singular association
@@ -100,9 +100,12 @@ module ActiveScaffold::Actions
       end
     end
 
-    def is_empty?(hash)
+    def attributes_hash_is_empty?(hash, klass)
       hash.all? do |key,value|
-        value.is_a?(Hash) ? is_empty?(value) : value.empty?
+        # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
+        # this could be a bad idea. but the current situation (excess record entry) seems worse.
+        next true if klass.columns_hash[key.to_s] and [:boolean, :datetime].include?(klass.columns_hash[key.to_s].type)
+        value.is_a?(Hash) ? attributes_hash_is_empty?(value) : value.empty?
       end
     end
 
