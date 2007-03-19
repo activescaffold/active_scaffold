@@ -116,6 +116,9 @@ module ActiveScaffold::DataStructures
     def plural_association?
       self.association and [:has_many, :has_and_belongs_to_many].include? self.association.macro
     end
+    def through_association?
+      self.association and self.association.options[:through]
+    end
 
     # an interpreted property. the column is virtual if it isn't from the active record model or any associated models
     def virtual?

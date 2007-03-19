@@ -15,6 +15,10 @@ associated = column.singular_association? ? [parent_record.send(column.name)].co
 remote_controller, remote_controller_path = active_scaffold_controller_for(column.association.klass)
 -%>
 <h5><%= column.label -%></h5>
+<% if column.through_association? %>
+<label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
+:through associations are not supported. exclude this colum in your config block (config.create.exclude :column). If you want to edit the association create a has_many association to the intermediary table.
+<% else %>
 <table cellpadding="0" cellspacing="0">
   <% @record = column.association.klass.new -%>
   <%= render :partial => 'form_association_header', :locals => {:parent_record => parent_record} %>
@@ -60,5 +64,5 @@ remote_controller, remote_controller_path = active_scaffold_controller_for(colum
 <script type="text/javascript">
 Rico.Corner.round($$('#<%= sub_form_id(:association => column.name) %> .footer-wrapper').first(), {color: 'fromElement', bgColor: 'fromParent', compact: false});
 </script>
-
+<% end %>
 <% @record = parent_record -%>
