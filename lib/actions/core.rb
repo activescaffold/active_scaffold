@@ -21,7 +21,8 @@ module ActiveScaffold::Actions
     # set. The columns set will not yield unauthorized columns, and it will not yield unregistered columns.
     # this very effectively replaces the params[:record] filtering i set up before.
     def update_record_from_params(parent_record, columns, attributes)
-      return parent_record unless parent_record.new_record? or record_allowed_for_action?(parent_record, 'update')
+      action = parent_record.new_record? ? 'create' : 'update'
+      return parent_record unless parent_record.new_record? or record_allowed_for_action?(parent_record, action)
 
       multi_parameter_attributes = {}
       attributes.each do |k, v|
