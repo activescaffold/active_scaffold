@@ -10,6 +10,7 @@
 <% else -%>
 <%= form_tag url_options,
              :id => element_form_id(:action => :create),
+             :multipart => active_scaffold_config.create.multipart?,
              :class => 'create' %>
 <% end -%>
 
