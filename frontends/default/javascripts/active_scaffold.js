@@ -362,7 +362,7 @@ ActiveScaffold.Actions.Table = Class.create();
 ActiveScaffold.Actions.Table.prototype = Object.extend(new ActiveScaffold.Actions.Abstract(), {
   instantiate_link: function(link) {
     var l = new ActiveScaffold.ActionLink.Table(link, this.target, this.loading_indicator);
-    l.url = l.url.append_params({adapter: '_list_inline_adapter'});
+    if (l.position) l.url = l.url.append_params({adapter: '_list_inline_adapter'});
     return l;
   }
 });
