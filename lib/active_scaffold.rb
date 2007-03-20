@@ -85,12 +85,11 @@ module ActiveScaffold
     end
 
     # :parent_controller, pass in something like, params[:controller], this will resolve the controller to the proper path for subsequent call to render :active_scaffold or render :component.
-    def active_scaffold_controller_for(klass, parent_controller = nil)
-      controller_path = ""
-      controller_named_path = ""
+    def active_scaffold_controller_for(klass)
+      controller_path = controller_named_path = ""
       error_message = []
-      if parent_controller and parent_controller.include?("/")
-        path = parent_controller.split('/')
+      if self.to_s.include?("::")
+        path = self.to_s.split('::')
         path.pop # remove the parent controller
         controller_named_path = path.collect{|p| p.capitalize}.join("::") + "::"
         controller_path = path.join("/") + "/"

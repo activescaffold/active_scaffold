@@ -7,27 +7,21 @@
     parent_id = params[:id]
     associated_columns.each do | column_name |
       column = active_scaffold_config.columns[column_name]
-      if (!column.singular_association? and !column.plural_association?)
-%>
+      if (!column.singular_association? and !column.plural_association?) %>
         <%= "Association type of #{column.association} is not supported."%>
-<%
-        next
+<%      next
       end
       association = column.association
       begin
-        controller, controller_path = active_scaffold_controller_for(association.klass, params[:controller])
-      rescue ActiveScaffold::ControllerNotFound => error
-%>
+        controller, controller_path = active_scaffold_controller_for(association.klass)
+      rescue ActiveScaffold::ControllerNotFound => error %>
         <%= "#{error.class} - #{error.message}"%>
-<%
-      else
-%>
+<%    else %>
     <%= render :active_scaffold => controller_path,
                :constraints => { association.reverse => parent_id},
                :label => active_scaffold_config_for(association.klass).label + _("FOR") + active_scaffold_config.label,
                :params => {:association => column_name, :association_macro => association.macro, :parent_model => association.active_record} %>
-<%
-      end
+<%    end
     end
   end
 %>
