@@ -6,7 +6,12 @@ version = Rails::VERSION::STRING.split(".")
 if version[0] < "1" or (version[0] == "1" and version[1] < "2")
   message = <<-EOM
     ************************************************************************
-    Rails 1.2.1 or greater is required.
+    Rails 1.2.1 or greater is required. Please remove ActiveScaffold or
+    upgrade Rails. After you upgrade Rails, be sure to run
+
+    > rake rails:update:javascripts
+
+    to get the newest prototype.js.
     ************************************************************************
   EOM
   ActionController::Base::logger.error message
