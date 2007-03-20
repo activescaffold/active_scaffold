@@ -240,6 +240,25 @@ height: 17px;
 background: url(../../../images/active_scaffold/default/close.gif) 0 0 no-repeat;
 }
 
+/* Show
+   ============================= */
+.inline-adapter-cell dt
+{
+width: 12em;
+float: left;
+margin: 0px;
+padding: .5em;
+font-weight: bold;
+clear: both;
+}
+
+.inline-adapter-cell dd
+{
+float: left;
+margin: 0px;
+padding: .5em;
+}
+
 /* Nested
    ======================== */
 
