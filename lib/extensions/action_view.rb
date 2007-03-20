@@ -37,7 +37,8 @@ module ActionView #:nodoc:
         constraints = options[:constraints]
         eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s)
         session["as:#{eid}"] = {:constraints => constraints, :list => {:label => args.first[:label]}}
-        options[:params] ||= {}.merge! :eid => eid
+        options[:params] ||= {}
+        options[:params].merge! :eid => eid
 
         render_component :controller => remote_controller, :action => 'table', :params => options[:params]
       else
