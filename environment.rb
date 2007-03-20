@@ -1,3 +1,4 @@
+require 'exceptions'
 ##
 ## Check for dependencies
 ##
@@ -16,7 +17,7 @@ if version[0] < "1" or (version[0] == "1" and version[1] < "2")
   EOM
   ActionController::Base::logger.error message
   puts message
-  raise ActiveScaffold::ActiveScaffoldDead
+  raise ActiveScaffold::DependencyFailure
 end
 
 begin

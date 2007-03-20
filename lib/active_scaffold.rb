@@ -38,9 +38,6 @@ module ActiveScaffold
     end
   end
 
-  class ColumnNotAllowed < SecurityError; end
-  class RecordNotAllowed < SecurityError; end
-
   module ClassMethods
     def active_scaffold(model_id = nil, &block)
       # converts Foo::BarController to 'bar' and FooBarsController to 'foo_bar' and AddressController to 'address'
@@ -91,6 +88,7 @@ module ActiveScaffold
     def active_scaffold_controller_for(klass, parent_controller = nil)
       controller_path = ""
       controller_named_path = ""
+      error_message = []
       if parent_controller and parent_controller.include?("/")
         path = parent_controller.split('/')
         path.pop # remove the parent controller
@@ -98,10 +96,15 @@ module ActiveScaffold
         controller_path = path.join("/") + "/"
       end
       ["#{klass.to_s.underscore.pluralize}", "#{klass.to_s.underscore.pluralize.singularize}"].each do |controller_name|
-        controller = "#{controller_named_path}#{controller_name.camelize}Controller".constantize rescue next
+        begin
+          controller = "#{controller_named_path}#{controller_name.camelize}Controller".constantize 
+        rescue NameError 
+          error_message << "#{controller_named_path}#{controller_name.camelize}Controller"
+          next
+        end
         return controller, "#{controller_path}#{controller_name}"
       end
-      nil
+      raise ActiveScaffold::ControllerNotFound, "Could not find " + error_message.join(" or "), caller
     end
 
     def uses_active_scaffold?
