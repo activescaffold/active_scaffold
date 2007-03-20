@@ -4,7 +4,6 @@
                     :after => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :update)}');",
                     :complete => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :update)}');",
                     :html => { :href => url_for(url_options),
-                    :multipart => active_scaffold_config.update.multipart?,
                     :id => element_form_id(:action => :update),
                     :class => 'update',
                     :method => :put } %>

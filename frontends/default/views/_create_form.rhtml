@@ -4,7 +4,6 @@
                     :after => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :create)}');",
                     :complete => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :create)}');",
                     :html => { :href => url_for(url_options),
-                    :multipart => active_scaffold_config.create.multipart?,
                     :id => element_form_id(:action => :create),
                     :class => 'create' } %>
 <% else -%>
