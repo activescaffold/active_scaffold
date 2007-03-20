@@ -600,6 +600,10 @@ background: none;
 display: none;
 }
 
+.active-scaffold .sub-form .checkbox-list label {
+display: block;
+}
+
 .active-scaffold .sub-form table td {
 border: none;
 background-color: none;
