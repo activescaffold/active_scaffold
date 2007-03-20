@@ -42,7 +42,22 @@ end
 module ActiveRecord
   module Reflection
     class AssociationReflection #:nodoc:
-      attr_accessor :reverse
+      attr_writer :reverse
+      def reverse
+        @reverse ||= case self.macro
+          # the reverse is singular
+          when :has_one, :has_many
+          @active_record.to_s.underscore
+
+          # the reverse is plural
+          when :has_and_belongs_to_many
+          @active_record.to_s.pluralize.underscore
+
+          # the reverse is unknown ... we'll guess plural
+          when :belongs_to
+          @active_record.to_s.underscore.pluralize
+        end
+      end
     end
   end
 end

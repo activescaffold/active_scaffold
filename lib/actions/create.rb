@@ -61,8 +61,7 @@ module ActiveScaffold::Actions
       begin
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
-          #FIXME 2007-03-17 (EJM) Level=0 - need to move this :has_and_belongs_to_many check to somewhere else.
-          active_scaffold_constraints.each { |k, v| @record.send("#{k}=", v) } unless active_scaffold_options[:association_macro] == :has_and_belongs_to_many
+          apply_constraints_to_record(@record)
           before_create_save(@record)
           @record.save! and @record.save_associated!
           after_create_save(@record)
@@ -73,7 +72,7 @@ module ActiveScaffold::Actions
 
     # override this method if you want to interject data in the @record (or its associated objects) before the save
     def before_create_save(record); end
-    
+
     # override this method if you want to do something after the save
     def after_create_save(record); end
   end

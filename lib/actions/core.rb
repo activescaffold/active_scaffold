@@ -201,14 +201,5 @@ module ActiveScaffold::Actions
       end
       conditions
     end
-
-    # Builds search conditions based on the current scaffold constraints. This is used for embedded scaffolds (e.g. render :active_scaffold => 'users').
-    def conditions_from_constraints
-      conditions = nil
-      active_scaffold_constraints.each do |k, v|
-        conditions = merge_conditions(conditions, ["#{k.to_s} = ?", v])
-      end
-      conditions
-    end
   end
 end

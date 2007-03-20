@@ -1,7 +1,26 @@
 # wrap the action rendering for ActiveScaffold views
 module ActionView #:nodoc:
   class Base
+    # Adds two rendering options.
+    #
+    # ==render :super
+    #
+    # This syntax skips all template overrides and goes directly to the provided ActiveScaffold templates.
+    # Useful if you want to wrap an existing template. Just call super!
+    #
+    # ==render :active_scaffold => #{controller.to_s}, options = {}+
+    #
+    # Lets you embed an ActiveScaffold by referencing the controller where it's configured.
+    #
+    # You may specify options[:constraints] for the embedded scaffold. These constraints have three effects:
+    #   * the scaffold's only displays records matching the constraint
+    #   * all new records created will be assigned the constrained values
+    #   * constrained columns will be hidden (they're pretty boring at this point)
+    #
+    # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
+    #
     def render_with_active_scaffold(*args)
+
       if args.first == :super
         template_path = caller.first.split(':').first
         template = File.basename(template_path)
@@ -12,12 +31,15 @@ module ActionView #:nodoc:
         end
       elsif args.first[:active_scaffold]
         require 'digest/md5'
-        remote_controller = args.first[:active_scaffold]
-        constraints = args.first[:constraints]
-        eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s)
-        session["as:#{eid}"] = {:constraints => constraints, :options => args.first[:options], :list => {:label => args.first[:label]}}
+        options = args.first
 
-        render_component :controller => remote_controller, :action => 'table', :params => {:eid => eid}
+        remote_controller = options[:active_scaffold]
+        constraints = options[:constraints]
+        eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s)
+        session["as:#{eid}"] = {:constraints => constraints, :list => {:label => args.first[:label]}}
+        options[:params] ||= {}.merge! :eid => eid
+
+        render_component :controller => remote_controller, :action => 'table', :params => options[:params]
       else
         render_without_active_scaffold *args
       end
@@ -25,7 +47,7 @@ module ActionView #:nodoc:
     alias_method :render_without_active_scaffold, :render
     alias_method :render, :render_with_active_scaffold
 
-    def render_partial_with_active_scaffold(partial_path, local_assigns = nil, deprecated_local_assigns = nil)
+    def render_partial_with_active_scaffold(partial_path, local_assigns = nil, deprecated_local_assigns = nil) #:nodoc:
       if self.controller.class.respond_to?(:uses_active_scaffold?) and self.controller.class.uses_active_scaffold?
         partial_path = rewrite_partial_path_for_active_scaffold(partial_path)
       end
