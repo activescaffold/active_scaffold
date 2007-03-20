@@ -44,19 +44,37 @@ module ActiveRecord
     class AssociationReflection #:nodoc:
       attr_writer :reverse
       def reverse
-        @reverse ||= case self.macro
-          # the reverse is singular
-          when :has_one, :has_many
-          @active_record.to_s.underscore
+        unless @reverse
+          reverse_matches = []
+          # stage 1 filter: collect associations that point back to this model and use the same primary_key_name
+          self.class_name.constantize.reflect_on_all_associations.each do |assoc|
+            next unless assoc.class_name.constantize == self.active_record
+            case [assoc.macro, self.macro].find_all{|m| m == :has_and_belongs_to_many}.length
+              # if both are a habtm, then match them based on the join table
+              when 2
+              next unless assoc.options[:join_table] == self.options[:join_table]
 
-          # the reverse is plural
-          when :has_and_belongs_to_many
-          @active_record.to_s.pluralize.underscore
+              # if only one is a habtm, they do not match
+              when 1
+              next
 
-          # the reverse is unknown ... we'll guess plural
-          when :belongs_to
-          @active_record.to_s.underscore.pluralize
+              # otherwise, match them based on the primary_key_name
+              when 0
+              next unless assoc.primary_key_name == self.primary_key_name
+            end
+
+            reverse_matches << assoc
+          end
+
+          # stage 2 filter: name-based matching (association name vs self.active_record.to_s)
+          reverse_matches.find_all do |assoc|
+            self.active_record.to_s.underscore.include? assoc.name.to_s.pluralize.singularize
+          end if reverse_matches.length > 1
+
+          # stage 3 filter: grab first association, or make a wild guess
+          @reverse = reverse_matches.empty? ? self.active_record.to_s.pluralize.underscore : reverse_matches.first.name
         end
+        @reverse
       end
     end
   end
