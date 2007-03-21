@@ -26,11 +26,14 @@ module ActiveScaffold::Actions
 
     def include_habtm_actions
       if nested_habtm?
-        #FIXME 2007-03-21 (EJM) Level=0 - Production mode is caching this link into a non nested scaffold
-        #active_scaffold_config.action_links.add('new_existing', :label => _('CREATE_FROM_EXISTING'), :type => :table, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
+        # Production mode is ok with adding a link everytime the scaffold is nested - we ar not ok with that.
+        active_scaffold_config.action_links.add('new_existing', :label => _('CREATE_FROM_EXISTING'), :type => :table, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
         self.class.module_eval do
           include ActiveScaffold::Actions::Nested::ChildMethods
         end
+      else
+        # Production mode is caching this link into a non nested scaffold
+        active_scaffold_config.action_links.delete('new_existing') if active_scaffold_config.action_links['new_existing']
       end
     end
 
