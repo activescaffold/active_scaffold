@@ -6,7 +6,7 @@ module ActiveScaffold::Actions
       base.active_scaffold_config.list.columns.each do |column|
         column.set_link('nested', :parameters => {:associations => column.name.to_sym}) if column.association and column.link.nil? and column.plural_association? and !column.through_association?
       end
-      base.before_filter :include_join_table_actions
+      base.before_filter :include_habtm_actions
     end
 
     def nested
@@ -24,9 +24,10 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], 'nested')
     end
 
-    def include_join_table_actions
+    def include_habtm_actions
       if nested_habtm?
-        active_scaffold_config.action_links.add('new_existing', :label => _('CREATE_FROM_EXISTING'), :type => :table, :security_method => :add_existing_authorized?)
+        #FIXME 2007-03-21 (EJM) Level=0 - Production mode is caching this link into a non nested scaffold
+        #active_scaffold_config.action_links.add('new_existing', :label => _('CREATE_FROM_EXISTING'), :type => :table, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
         self.class.module_eval do
           include ActiveScaffold::Actions::Nested::ChildMethods
         end
@@ -72,8 +73,6 @@ module ActiveScaffold::Actions::Nested
     def new_existing
       return unless insulate { do_new }
 
-#TODO 2007-03-15 (EJM) Level=0 - :through is no longer working Create on a hm :through is not working
-#TODO 2007-03-14 (EJM) Level=1 - Can we share create_form.rhtml and create_form.rjs somehow?
 #TODO 2007-03-14 (EJM) Level=0 - tie in do_destroy_association when js window code is complete
 #FIXME 2007-03-14 (EJM) Level=0 - Fix rjs errors - :nested cancel's sometimes go somewhere unexpected
 
