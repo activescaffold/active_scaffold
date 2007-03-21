@@ -77,11 +77,15 @@ module ActiveScaffold
     ## TODO We should check the the model being used is the same Class
     ##      ie make sure ProductsController doesn't active_scaffold :shoe
     def active_scaffold_config_for(klass)
-      controller, controller_path = active_scaffold_controller_for(klass)
-      return controller.active_scaffold_config unless controller.nil? or !controller.uses_active_scaffold?
-      config = ActiveScaffold::Config::Core.new(klass)
-      config._load_action_columns
-      config
+      begin
+        controller, controller_path = active_scaffold_controller_for(klass)
+      rescue ActiveScaffold::ControllerNotFound
+        config = ActiveScaffold::Config::Core.new(klass)
+        config._load_action_columns
+        config
+      else
+        controller.active_scaffold_config
+      end
     end
 
     # :parent_controller, pass in something like, params[:controller], this will resolve the controller to the proper path for subsequent call to render :active_scaffold or render :component.
@@ -107,7 +111,8 @@ module ActiveScaffold
               raise
             end
         end
-        return controller, "#{controller_path}#{controller_name}"
+        raise ActiveScaffold::ControllerNotFound, "#{controller} missing active_scaffold.", caller unless controller.uses_active_scaffold?
+        return controller, "#{controller_path}#{controller_name}" 
       end
       raise ActiveScaffold::ControllerNotFound, "Could not find " + error_message.join(" or "), caller
     end
