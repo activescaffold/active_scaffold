@@ -5,7 +5,7 @@ if (typeof Prototype == 'undefined')
 }
 if (Prototype.Version.substring(0, 8) == '1.5.0_rc')
 {
-  warning = "ActiveScaffold Error: Prototype 1.5.0_rc is not supported. Please update prototype.js (rake rails:update).";
+  warning = "ActiveScaffold Error: Prototype 1.5.0_rc is not supported. Please update prototype.js (rake rails:update:javascripts).";
   alert(warning);
 }
 
