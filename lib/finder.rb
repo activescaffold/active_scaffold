@@ -121,7 +121,7 @@ module ActiveScaffold
       sorter = column.sort[:method]
       collection = collection.sort_by { |record|
         value = (sorter.is_a? Proc) ? record.instance_eval(&sorter) : record.instance_eval(sorter)
-        value = column.column.type_cast('') if value.nil? and column.column
+        value = '' if value.nil?
         value
       }
       collection.reverse! if order.downcase == 'desc'
