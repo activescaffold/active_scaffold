@@ -15,7 +15,7 @@ class ActiveRecord::Base
   end
 
   def save_associated!
-    self.save_associated || raise(RecordNotSaved)
+    self.save_associated || raise(ActiveRecord::RecordNotSaved)
   end
 
   private
@@ -27,10 +27,10 @@ class ActiveRecord::Base
       if associated = instance_variable_get("@#{association.name}")
         case association.macro
           when :belongs_to, :has_one
-          yield associated
+          yield associated unless associated.readonly?
 
           when :has_many, :has_and_belongs_to_many
-          associated.all? {|r| yield r}
+          associated.find_all {|r| not r.readonly?}.all? {|r| yield r}
         end
       else
         true
