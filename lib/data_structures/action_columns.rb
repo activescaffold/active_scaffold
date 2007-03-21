@@ -14,7 +14,7 @@ module ActiveScaffold::DataStructures
 
     def each # this comes later
     end
-    
+
     def include?(item)
       @set.each do |c|
         return true if !c.is_a? Symbol and c.include? item
@@ -23,5 +23,11 @@ module ActiveScaffold::DataStructures
       return false
     end
 
+    protected
+
+    # called during clone or dup. makes the clone/dup deeper.
+    def initialize_copy(from)
+      @set = from.instance_variable_get('@set').clone
+    end
   end
 end
