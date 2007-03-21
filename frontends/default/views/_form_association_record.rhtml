@@ -6,7 +6,7 @@
   column.ui_type = :select if column.association
   -%>
   <td>
-    <% if readonly -%>
+    <% unless readonly -%>
       <%= render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope } -%>
     <% else -%>
       <p><%= @record.send(column.name) -%></p>
