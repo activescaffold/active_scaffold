@@ -96,10 +96,16 @@ module ActiveScaffold
       end
       ["#{klass.to_s.underscore.pluralize}", "#{klass.to_s.underscore.pluralize.singularize}"].each do |controller_name|
         begin
-          controller = "#{controller_named_path}#{controller_name.camelize}Controller".constantize 
-        rescue NameError 
-          error_message << "#{controller_named_path}#{controller_name.camelize}Controller"
-          next
+          controller = "#{controller_named_path}#{controller_name.camelize}Controller"
+          controller = controller.constantize 
+          rescue NameError => error
+            # Only rescue NameError asscociated with the controller constant not existing - not other compile errors
+            if error.message["uninitialized constant #{controller}"]
+              error_message << controller
+              next
+            else
+              raise
+            end
         end
         return controller, "#{controller_path}#{controller_name}"
       end
