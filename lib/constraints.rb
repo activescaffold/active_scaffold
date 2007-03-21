@@ -63,7 +63,7 @@ module ActiveScaffold
         elsif active_scaffold_config.model.column_names.include? k.to_s
           ["#{k.to_s} = ?", v]
         else
-          raise "Malformed constraint `#{k}'. If you are using a nested scaffold, please specify or double-check the reverse association name."
+          raise ActiveScaffold::MalformedConstraint, constraint_error(k), caller
         end
 
         conditions = merge_conditions(conditions, constraint_condition)
@@ -71,6 +71,10 @@ module ActiveScaffold
       conditions
     end
 
+    def constraint_error(column_name)
+      "Malformed constraint `#{column_name}'. If you are using a nested scaffold, please specify or double-check the reverse association name."
+    end
+    
     # Applies constraints to the given record.
     #
     # Searches through the known columns for association columns. If the given constraint is an association,

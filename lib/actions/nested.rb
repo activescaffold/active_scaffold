@@ -4,7 +4,7 @@ module ActiveScaffold::Actions
     def self.included(base)
       super
       base.active_scaffold_config.list.columns.each do |column|
-        column.set_link('nested', :parameters => {:associations => column.name.to_sym}) if column.association and column.link.nil? and [:has_and_belongs_to_many, :has_many].include?(column.association.macro)
+        column.set_link('nested', :parameters => {:associations => column.name.to_sym}) if column.association and column.link.nil? and column.plural_association? and !column.through_association?
       end
       base.before_filter :include_join_table_actions
     end
@@ -25,12 +25,35 @@ module ActiveScaffold::Actions
     end
 
     def include_join_table_actions
-      if params[:association_macro] == :has_and_belongs_to_many
+      if nested_habtm?
         active_scaffold_config.action_links.add('new_existing', :label => _('CREATE_FROM_EXISTING'), :type => :table, :security_method => :add_existing_authorized?)
         self.class.module_eval do
           include ActiveScaffold::Actions::Nested::ChildMethods
         end
       end
+    end
+
+    def nested?
+      !params[:nested].nil?
+    end
+
+    def nested_habtm?
+      begin
+        return active_scaffold_config.columns[nested_association].association.macro == :has_and_belongs_to_many if nested?
+        false
+      rescue
+        raise ActiveScaffold::MalformedConstraint, constraint_error(nested_association), caller
+      end
+    end
+
+    def nested_association
+      return active_scaffold_constraints.keys.to_s.to_sym if nested?
+      nil
+    end
+
+    def nested_parent_id
+      return active_scaffold_constraints.values.to_s if nested?
+      nil
     end
 
   end
@@ -49,9 +72,9 @@ module ActiveScaffold::Actions::Nested
     def new_existing
       return unless insulate { do_new }
 
-#TODO 2007-03-15 (EJM) Level=0 - Create on a hm :through is not working
+#TODO 2007-03-15 (EJM) Level=0 - :through is no longer working Create on a hm :through is not working
 #TODO 2007-03-14 (EJM) Level=1 - Can we share create_form.rhtml and create_form.rjs somehow?
-#TODO 2007-03-14 (EJM) Level=0 - tie in do_destroy_association
+#TODO 2007-03-14 (EJM) Level=0 - tie in do_destroy_association when js window code is complete
 #FIXME 2007-03-14 (EJM) Level=0 - Fix rjs errors - :nested cancel's sometimes go somewhere unexpected
 
       respond_to do |type|
@@ -102,9 +125,8 @@ module ActiveScaffold::Actions::Nested
       end
     end
 
-    def active_scaffold_parent_association
-      id = active_scaffold_constraints.find {|k, v| k.to_s.include?(params[:association])}
-      return params[:parent_model], id[1], params[:association]
+    def nested_action_from_params
+      return params[:parent_model].constantize, nested_parent_id, params[:parent_column]
     end
 
     def do_new
@@ -113,7 +135,7 @@ module ActiveScaffold::Actions::Nested
 
     def do_add_existing
       #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
-      parent_model, id, association = active_scaffold_parent_association
+      parent_model, id, association = nested_action_from_params
       parent_record = find_if_allowed(id, 'update', parent_model)
       @record = active_scaffold_config.model.find(params[:associated_id])
       parent_record.send(association) << @record
@@ -122,7 +144,7 @@ module ActiveScaffold::Actions::Nested
 
     def do_destroy_association
       #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
-      parent_model, id, association = active_scaffold_parent_association
+      parent_model, id, association = nested_action_from_params
       parent_record = find_if_allowed(id, 'update', parent_model)
       @record = parent_record.send("roles").find(params[:id])
       @record.destroy

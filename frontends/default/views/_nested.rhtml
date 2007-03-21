@@ -7,8 +7,8 @@
     parent_id = params[:id]
     associated_columns.each do | column_name |
       column = active_scaffold_config.columns[column_name]
-      if (!column.singular_association? and !column.plural_association?) %>
-        <%= "Association type of #{column.association} is not supported."%>
+      if column.through_association? %>
+:through associations are not supported. exclude this colum in your config block (config.list.exclude :column). If you want to edit the association create a has_many association to the intermediary table.
 <%      next
       end
       association = column.association
@@ -19,8 +19,8 @@
 <%    else %>
     <%= render :active_scaffold => controller_path,
                :constraints => { association.reverse => parent_id},
-               :label => active_scaffold_config_for(association.klass).label + _("FOR") + active_scaffold_config.label,
-               :params => {:association => column_name, :association_macro => association.macro, :parent_model => association.active_record} %>
+               :label => active_scaffold_config_for(association.klass).label + _("FOR") + @record.to_label,
+               :params => {:nested => true, :parent_column => column_name, :parent_model => association.active_record} %>
 <%    end
     end
   end
