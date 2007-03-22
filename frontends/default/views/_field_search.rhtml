@@ -1,4 +1,4 @@
-<% href = url_for(params_for(:action => :update_table)) -%>
+<% href = url_for(params_for(:action => :update_table, :escape => false)) -%>
 <%= form_remote_tag :url => href,
                     :before => "addActiveScaffoldPageToHistory('#{href}', '#{params[:controller]}')",
                     :after => "Element.show('#{loading_indicator_id(:action => :search)}'); Form.disable('#{search_form_id}');",
@@ -18,7 +18,7 @@
 					when :boolean
 						check_box(object, column.name)
 					else
-						text_field(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name }) 
+						text_field(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name })
 					end
 				%>
 			</li>
