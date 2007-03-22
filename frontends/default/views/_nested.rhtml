@@ -7,10 +7,6 @@
     parent_id = params[:id]
     associated_columns.each do | column_name |
       column = active_scaffold_config.columns[column_name]
-      if column.through_association? %>
-:through associations are not supported. exclude this colum in your config block (config.list.exclude :column). If you want to edit the association create a has_many association to the intermediary table.
-<%      next
-      end
       association = column.association
       begin
         controller, controller_path = active_scaffold_controller_for(association.klass)
