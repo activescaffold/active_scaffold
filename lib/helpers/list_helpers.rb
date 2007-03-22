@@ -20,14 +20,10 @@ module ActionView::Helpers
       html_options = {:class => link.action}
       html_options[:confirm] = link.confirm if link.confirm?
       html_options[:position] = link.position if link.position and link.inline?
-      html_options[:id] = action_link_id(url_options)
+      html_options[:class] += ' action' if link.inline?
+      html_options[:id] = action_link_id(url_options.clone)
 
-      if link.page?
-        link_to link.label, url_options, html_options
-      elsif link.inline?
-        html_options[:class] += ' action'
-        link_to link.label, url_options, html_options
-      end
+      link_to link.label, url_options, html_options
     end
 
     def pagination_ajax_link(page_number, params)
