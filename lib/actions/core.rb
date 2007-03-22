@@ -72,7 +72,7 @@ module ActiveScaffold::Actions
             value
           end
 
-          parent_record.send("#{column.name}=", value)
+          parent_record.send("#{column.name}=", value) unless column.through_association?
         end
       end
       parent_record

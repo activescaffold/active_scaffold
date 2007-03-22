@@ -1,0 +1,33 @@
+<%
+remote_controller, remote_controller_path = active_scaffold_controller_for(column.association.klass)
+select_options = options_for_select(options_for_association(column.association)) unless column.through_association?
+
+show_add_new = (column.plural_association? or (column.singular_association? and not associated.empty?))
+show_add_existing = (select_options and not select_options.empty?)
+show_add_new = show_add_existing = false if column.through_association?
+
+return unless show_add_new or show_add_existing
+
+-%>
+<div class="footer-wrapper">
+  <div class="footer">
+    <% if show_add_new -%>
+    <% add_label = column.plural_association? ? _('CREATE_ANOTHER') : _('REPLACE_WITH_NEW') -%>
+    <%= link_to_remote add_label, :url => {:action => 'edit_associated', :id => parent_record.id, :association => column.name} -%>
+    <% end -%>
+
+    <% if show_add_existing -%>
+      |
+      <% if remote_controller and remote_controller.respond_to? :uses_record_select? and remote_controller.uses_record_select? -%>
+        <%= link_to_record_select _('CREATE_FROM_EXISTING'), remote_controller_path, :onselect => "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get, :escape => false).to_json}.sub('--ID--', id), {asynchronous: true, evalScripts: true}); container.remove();" -%>
+      <% else -%>
+        <%= select_tag 'associated_id', '<option value="">' + _('_SELECT_') + '</option>' + select_options %>
+        <%= button_to_function _('CREATE_FROM_EXISTING'), "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get).to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true})" %>
+      <% end -%>
+    <% end -%>
+  </div>
+</div>
+
+<script type="text/javascript">
+Rico.Corner.round($$('#<%= sub_form_id(:association => column.name) %> .footer-wrapper').first(), {color: 'fromElement', bgColor: 'fromParent', compact: false});
+</script>
