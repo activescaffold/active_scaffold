@@ -50,11 +50,18 @@ module ActiveScaffold
               when :belongs_to
               active_scaffold_config.model.table_name
 
+              when :has_many
+              if column.association.options[:through]
+                column.association.through_reflection.table_name
+              else
+                column.association.table_name
+              end
+
               else
               column.association.table_name
             end
 
-            active_scaffold_joins.concat column.includes # we'll need these includes to make the table.field work, probably
+            active_scaffold_joins.concat column.includes
             ["#{table}.#{field} = ?", v]
           elsif column.searchable?
             active_scaffold_joins.concat column.includes
@@ -68,13 +75,14 @@ module ActiveScaffold
 
         conditions = merge_conditions(conditions, constraint_condition)
       end
+
       conditions
     end
 
     def constraint_error(column_name)
       "Malformed constraint `#{column_name}'. If you are using a nested scaffold, please specify or double-check the reverse association name."
     end
-    
+
     # Applies constraints to the given record.
     #
     # Searches through the known columns for association columns. If the given constraint is an association,

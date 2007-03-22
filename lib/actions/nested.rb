@@ -4,7 +4,7 @@ module ActiveScaffold::Actions
     def self.included(base)
       super
       base.active_scaffold_config.list.columns.each do |column|
-        column.set_link('nested', :parameters => {:associations => column.name.to_sym}) if column.association and column.link.nil? and column.plural_association? and !column.through_association?
+        column.set_link('nested', :parameters => {:associations => column.name.to_sym}) if column.association and column.link.nil? and column.plural_association?
       end
       base.before_filter :include_habtm_actions
     end
