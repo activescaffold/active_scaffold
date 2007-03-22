@@ -60,7 +60,7 @@ module ActiveRecord
 
               # otherwise, match them based on the primary_key_name
               when 0
-              next unless assoc.primary_key_name == self.primary_key_name
+              next unless assoc.primary_key_name.to_sym == self.primary_key_name.to_sym
             end
 
             reverse_matches << assoc
