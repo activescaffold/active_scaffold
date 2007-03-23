@@ -103,9 +103,15 @@ module ActiveScaffold::Actions
 
     def attributes_hash_is_empty?(hash, klass)
       hash.all? do |key,value|
+        column = klass.columns_hash[key.to_s]
+
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
-        next true if klass.columns_hash[key.to_s] and [:boolean, :datetime].include?(klass.columns_hash[key.to_s].type)
+        next true if column and [:boolean, :datetime].include?(column.type)
+
+        # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
+        next true if column and value == column.default
+
         value.is_a?(Hash) ? attributes_hash_is_empty?(value, klass) : value.empty?
       end
     end
