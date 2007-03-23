@@ -22,20 +22,24 @@ module ActiveScaffold::Actions
     protected
 
     def do_search
+      @query = ''
       unless params[:record].nil?
-        conditions = nil
+        like_pattern = active_scaffold_config.field_search.full_text_search? ? '%?%' : '?%'
+        columns = active_scaffold_config.field_search.columns
+        self.active_scaffold_conditions = merge_conditions(self.active_scaffold_conditions, ActiveScaffold::Finder.create_conditions_for_columns(@query.split(' '), columns, like_pattern))
+        conditions = self.active_scaffold_conditions
         params[:record].each do |key, value|
-          next unless active_scaffold_config.field_search.columns.include?(key) and !value.empty?
+          next if !active_scaffold_config.field_search.columns.include?(key) or value.nil? or value.empty?
           case active_scaffold_config.columns[key].ui_type
           when :boolean, :integer
-            conditions = merge_conditions(conditions, ["#{active_scaffold_config.columns[key].search_sql} = ?", "%#{value.downcase}%"])
+            conditions = merge_conditions(conditions, ["#{active_scaffold_config.columns[key].search_sql} = ?", value])
           else
-            conditions = merge_conditions(conditions, ["LOWER(#{active_scaffold_config.columns[key].search_sql}) LIKE ?", "%#{value.downcase}%"])
+            conditions = merge_conditions(conditions, ["LOWER(#{active_scaffold_config.columns[key].search_sql}) LIKE ?", like_pattern.sub(/\?/, value.downcase)])
           end
-        end
+        end        
         self.active_scaffold_conditions = conditions
 
-        includes_for_search_columns = active_scaffold_config.field_search.columns.collect{ |column| column.includes}.flatten.uniq.compact
+        includes_for_search_columns = columns.collect{ |column| column.includes}.flatten.uniq.compact
         self.active_scaffold_joins.concat includes_for_search_columns
 
         active_scaffold_config.list.user.page = nil
