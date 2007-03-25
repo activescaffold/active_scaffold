@@ -89,8 +89,8 @@ module ActiveScaffold::Config
       @actions = self.class.actions.clone
 
       # create a new default columns datastructure, since it doesn't make sense before now
-      content_column_names = self.model.content_columns.collect { |c| c.name.to_sym }
-      association_column_names = self.model.reflect_on_all_associations.collect { |a| a.name.to_sym }
+      content_column_names = self.model.content_columns.collect{ |c| c.name.to_sym }.sort_by { |c| c.to_s }
+      association_column_names = self.model.reflect_on_all_associations.collect{ |a| a.name.to_sym }.sort_by { |c| c.to_s }
       column_names = content_column_names + association_column_names
       column_names -= self.class.ignore_columns.collect { |c| c.to_sym }
       self.columns = column_names
