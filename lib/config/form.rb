@@ -24,7 +24,7 @@ module ActiveScaffold::Config
     attr_accessor :link
 
     # the label for this Form action. used for the header.
-    attr_accessor :label
+    attr_writer :label
     def label
       _(@label)
     end

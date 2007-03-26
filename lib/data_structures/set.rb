@@ -3,7 +3,7 @@ module ActiveScaffold::DataStructures
     include Enumerable
     include ActiveScaffold::Configurable
 
-    attr_accessor :label
+    attr_writer :label
     def label
       _(@label)
     end

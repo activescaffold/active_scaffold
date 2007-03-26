@@ -22,7 +22,7 @@ module ActiveScaffold::Config
     attr_accessor :link
 
     # the label for this action. used for the header.
-    attr_accessor :label
+    attr_writer :label
     def label
       _(@label)
     end

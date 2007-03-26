@@ -27,7 +27,7 @@ module ActiveScaffold::DataStructures
     attr_accessor :method
 
     # what string to use to represent this action
-    attr_accessor :label
+    attr_writer :label
     def label
       _(@label)
     end

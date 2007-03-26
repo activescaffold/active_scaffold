@@ -2,7 +2,7 @@ module ActiveScaffold::DataStructures
   # A set of columns. These structures can be nested for organization.
   class ActionColumns < Set
     include ActiveScaffold::Configurable
-    attr_accessor :label
+    attr_writer :label
     def label
       _(@label)
     end

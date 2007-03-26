@@ -6,13 +6,13 @@ module ActiveScaffold::DataStructures
     attr_accessor :name
 
     # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.
-    attr_accessor :label
+    attr_writer :label
     def label
       _(@label)
     end
 
     # a textual description of the column and its contents. this will be displayed with any associated form input widget, so you may want to consider adding a content example.
-    attr_accessor :description
+    attr_writer :description
     def description
       _(@description)
     end
