@@ -18,7 +18,7 @@ module ActiveScaffold::Config
     # the label for this Nested action. used for the header.
     attr_accessor :label
     def label
-      @label || "#{_('CREATE_FROM_EXISTING')} #{@core.label.singularize}"
+      _(@label) || "#{_('CREATE_FROM_EXISTING')} #{@core.label.singularize}"
     end
 
   end

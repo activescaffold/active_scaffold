@@ -23,6 +23,9 @@ module ActiveScaffold::Config
 
     # the label for this action. used for the header.
     attr_accessor :label
+    def label
+      _(@label)
+    end
 
     # provides access to the list of columns specifically meant for this action to use
     attr_reader :columns

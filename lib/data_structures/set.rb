@@ -4,6 +4,9 @@ module ActiveScaffold::DataStructures
     include ActiveScaffold::Configurable
 
     attr_accessor :label
+    def label
+      _(@label)
+    end
 
     def initialize(*args)
       @set = []

@@ -28,6 +28,9 @@ module ActiveScaffold::DataStructures
 
     # what string to use to represent this action
     attr_accessor :label
+    def label
+      _(@label)
+    end
 
     # if the action requires confirmation
     attr_accessor :confirm

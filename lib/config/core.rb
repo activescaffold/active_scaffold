@@ -57,6 +57,9 @@ module ActiveScaffold::Config
 
     # a generally-applicable name for this ActiveScaffold ... will be used for generating page/section headers
     attr_accessor :label
+    def label
+      _(@label)
+    end
 
     # the name of a method that will return the current user. this will be used for security checks against records.
     attr_accessor :current_user_method
@@ -73,8 +76,8 @@ module ActiveScaffold::Config
       @actions = self.class.actions.clone
 
       # create a new default columns datastructure, since it doesn't make sense before now
-      content_column_names = self.model.content_columns.collect{ |c| c.name.to_sym }.sort_by { |c| c.to_s }
-      association_column_names = self.model.reflect_on_all_associations.collect{ |a| a.name.to_sym }.sort_by { |c| c.to_s }
+      content_column_names = self.model.content_columns.collect { |c| c.name.to_sym }
+      association_column_names = self.model.reflect_on_all_associations.collect { |a| a.name.to_sym }
       column_names = content_column_names + association_column_names
       column_names -= self.class.ignore_columns.collect { |c| c.to_sym }
       self.columns = column_names

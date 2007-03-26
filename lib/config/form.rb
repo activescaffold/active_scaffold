@@ -25,6 +25,9 @@ module ActiveScaffold::Config
 
     # the label for this Form action. used for the header.
     attr_accessor :label
+    def label
+      _(@label)
+    end
 
     # provides access to the list of columns specifically meant for the Form to use
     attr_reader :columns

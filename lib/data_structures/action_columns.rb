@@ -3,6 +3,9 @@ module ActiveScaffold::DataStructures
   class ActionColumns < Set
     include ActiveScaffold::Configurable
     attr_accessor :label
+    def label
+      _(@label)
+    end
 
     # nests a subgroup in the column set
     def add_subgroup(label, &proc)
