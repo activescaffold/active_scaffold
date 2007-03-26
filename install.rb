@@ -23,3 +23,9 @@ available_frontends = Dir[File.join(directory, 'frontends', '*')].collect { |d| 
     copy_files(source, destination, directory)
   end
 end
+
+##
+## Install a very simple application.rhtml layout, if none exists yet
+##
+layout_dir = File.join(RAILS_ROOT, 'app', 'views', 'layouts')
+FileUtils.cp(File.join(directory, 'frontends', 'application.rhtml'), layout_dir) unless File.exists?(File.join(layout_dir, 'application.rhtml'))
