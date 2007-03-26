@@ -61,16 +61,15 @@ def autoload_dir(directory, namespace)
     end
   end
 end
-
-module ActiveScaffold
-  module Config; end
-  module Actions; end
-  module DataStructures; end
+[:config, :actions, :data_structures].each do |namespace|
+  ActiveScaffold.class_eval "module #{namespace.to_s.camelcase}; end"
+  autoload_dir "#{File.dirname __FILE__}/lib/#{namespace}", "ActiveScaffold::#{namespace.to_s.camelcase}"
 end
 
-autoload_dir "#{File.dirname __FILE__}/lib/config", "ActiveScaffold::Config"
-autoload_dir "#{File.dirname __FILE__}/lib/actions", "ActiveScaffold::Actions"
-autoload_dir "#{File.dirname __FILE__}/lib/data_structures", "ActiveScaffold::DataStructures"
+##
+## Preload other directories
+##
+Dir["#{File.dirname __FILE__}/frontends/**/lang/*.rb"].each {|file| require file}
 
 ##
 ## Inject includes for ActiveScaffold libraries

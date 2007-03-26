@@ -18,22 +18,6 @@ module ActiveScaffold::Config
     cattr_accessor :frontend
     @@frontend = :default
 
-    # lets you specify the language.
-    #     ActiveScaffold.set_defaults do |conf|
-    #       conf.lang = "en_US"
-    #     end
-    #   Files stored in:
-    #     frontends/default/lang/
-    #   Filename format:
-    #     en_US.rb
-    def self.lang=(value)
-      Localization.lang = value
-      require "#{File.dirname __FILE__}/../../frontends/default/lang/#{value}"
-      rescue MissingSourceFile
-        # Should we warn them in the logs that they had better supply a Language file?
-    end
-    self.lang = "en_US"
-
     # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
     cattr_reader :action_links
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
