@@ -9,7 +9,7 @@ module ActiveScaffold::Config
     def self.link=(val)
       @@link = val
     end
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('new', :label => _('CREATE_NEW'), :type => :table, :security_method => :create_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('new', :label => 'CREATE_NEW', :type => :table, :security_method => :create_authorized?)
 
     # instance-level configuration
     # ----------------------------
