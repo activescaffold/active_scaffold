@@ -4,17 +4,12 @@ page << "ActiveScaffold.toggleEmptyMessage('#{active_scaffold_tbody_id}','#{empt
 page << "ActiveScaffold.increment_record_count('#{active_scaffold_id}');"
 
 if (form_stays_open = true)
-  page << "$('#{element_form_id}').reset()"
-  page.select("##{element_form_id} li.sub-form tr.association-record").each do |subform_record|
-    page << 'if (value.hasClassName("locked")) return;'
-    subform_record.remove();
-  end
-
-  page.replace_html element_messages_id(:action => :create), :partial => 'form_messages'
-  # have to delay the focus until form is enabled
-  page.delay 0.1 do
-    page << "Form.focusFirstElement('#{element_form_id}');"
-  end
+  original_record = @record
+  # these next few lines simulate the new action
+  controller.send :do_new
+  @record = controller.instance_variable_get('@record')
+  page.replace_html element_form_id, :partial => 'create_form'
+  @record = original_record
 else
   page << "$('#{action_link_id(:action => active_scaffold_config.create.link.action)}').action_link.close()"
 end
