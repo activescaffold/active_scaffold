@@ -116,11 +116,13 @@ module ActionView::Helpers
     end
 
     def format_time(time)
-      time.strftime("%m/%d/%Y %I:%M %p")
+      format = ActiveSupport::CoreExtensions::Time::Conversions::DATE_FORMATS[:default] || "%m/%d/%Y %I:%M %p"
+      time.strftime(format)
     end
 
     def format_date(date)
-      date.strftime("%m/%d/%Y")
+      format = ActiveSupport::CoreExtensions::Date::Conversions::DATE_FORMATS[:default] || "%m/%d/%Y"
+      date.strftime(format)
     end
 
     def column_empty?(column_value)

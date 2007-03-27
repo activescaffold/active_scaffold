@@ -129,24 +129,5 @@ module ActionView::Helpers
       end
     end
 
-    # Takes a params hash and constructs hidden form inputs that match.
-    def params_to_input_tags(params, scope = [])
-      tags = []
-      params.each do |key,value|
-        local_scope = scope.dup.push(key)
-        if value.is_a? Hash
-          tags << params_to_input_tags(value, local_scope)
-        else
-          tags << "<input type=\"hidden\" name=\"#{input_name_for_scope(local_scope)}\" value=\"#{value}\" />"
-        end
-      end
-      tags.flatten.join
-    end
-
-    # Turns ['record','name'] into 'record[name]'
-    def input_name_for_scope(scope)
-      scope.shift + scope.collect{ |node| "[#{node}]" }.join
-    end
-
   end
 end
