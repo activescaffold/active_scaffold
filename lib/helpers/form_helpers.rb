@@ -37,7 +37,7 @@ module ActionView::Helpers
     def form_column(column, scope = nil)
       name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
       if override_form_field?(column)
-        send(override_form_field(column), @record)
+        send(override_form_field(column), @record, name)
       elsif column.singular_association?
         select_options = [[_('_SELECT_'),nil]]
         # Need to add as options all current associations for this record

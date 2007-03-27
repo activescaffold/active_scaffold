@@ -71,29 +71,30 @@ module ActionView::Helpers
     ##
 
     def render_column(record, column)
-      value = record.send(column.name)
-
-      if column.association.nil? or column_empty?(value)
-        formatted_value = h(format_column(value))
-      else
-        case column.association.macro
-          when :has_one, :belongs_to
-            formatted_value = h(format_column(value.to_label))
-
-          when :has_many, :has_and_belongs_to_many
-            firsts = value.first(4).collect { |v| v.to_label }
-            firsts[3] = '…' if firsts.length == 4
-            formatted_value = h(format_column(firsts.join(', ')))
-        end
-      end
-
       # check for an override helper
       if column_override? column
-        override_method = self.method(column_override(column))
-        formatted_value = override_method.arity < 2 ? override_method.call(formatted_value) : override_method.call(formatted_value, record)
-      end
+        # we only pass the record as the argument. we previously also passed the formatted_value,
+        # but mike perham pointed out that prohibited the usage of overrides to improve on the
+        # performance of our default formatting. see issue #138.
+        send(column_override(column), record)
+      else
+        value = record.send(column.name)
+        if column.association.nil? or column_empty?(value)
+          formatted_value = h(format_column(value))
+        else
+          case column.association.macro
+            when :has_one, :belongs_to
+              formatted_value = h(format_column(value.to_label))
 
-      formatted_value
+            when :has_many, :has_and_belongs_to_many
+              firsts = value.first(4).collect { |v| v.to_label }
+              firsts[3] = '…' if firsts.length == 4
+              formatted_value = h(format_column(firsts.join(', ')))
+          end
+        end
+
+        formatted_value
+      end
     end
 
     def column_override(column)
