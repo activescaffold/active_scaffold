@@ -1,8 +1,8 @@
 module Localization
   mattr_accessor :lang
 
-  @@l10s = { :default => {} }
-  @@lang = :default
+  @@l10s = { 'en_US' => {} }
+  @@lang = 'en_US'
 
   def self._(string_to_localize, *args)
     if @@l10s[@@lang].nil? or @@l10s[@@lang][string_to_localize].nil?
