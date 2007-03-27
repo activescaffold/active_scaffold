@@ -32,10 +32,7 @@
     <%= loading_indicator_tag(:action => :update, :id => params[:id]) %>
   </p>
 
-<%= end_form_tag %>
-<%
-js = update_page_tag do |page|
-  page << "Form.focusFirstElement('#{element_form_id(:action => :update)}');"
-end
--%>
-<%= js -%>
+</form>
+<script type="text/javascript">
+Form.focusFirstElement('<%= element_form_id(:action => :update) -%>');
+</script>

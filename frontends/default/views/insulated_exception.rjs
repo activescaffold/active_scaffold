@@ -1,1 +1,0 @@
-page.replace_html active_scaffold_messages_id, :partial => 'messages'
