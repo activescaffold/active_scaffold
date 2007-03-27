@@ -33,7 +33,10 @@ module ActiveScaffold::DataStructures
     end
 
     # if the action requires confirmation
-    attr_accessor :confirm
+    attr_writer :confirm
+    def confirm
+      _(@confirm) if @confirm
+    end
     def confirm?
       @confirm ? true : false
     end
