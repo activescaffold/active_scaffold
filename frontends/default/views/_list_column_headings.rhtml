@@ -19,6 +19,7 @@ default_sorting_stages = ['ASC', 'DESC']
       { :url => sort_params,
         :before => "addActiveScaffoldPageToHistory('#{href}', '#{controller_id}')",
         :loading => "Element.addClassName('#{column_header_id}','loading');",
+        :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
         :update => active_scaffold_content_id,
         :method => :get },
       { :href => href } %>

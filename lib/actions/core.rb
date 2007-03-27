@@ -124,41 +124,6 @@ module ActiveScaffold::Actions
       end
     end
 
-    # Wraps the given block to catch and handle exceptions.
-    # Uses the overridable insulate? method to determine when to actually insulate.
-    def insulate(&block)
-      if insulate?
-        begin
-          yield
-        rescue
-          error_object = ActiveScaffold::DataStructures::ErrorMessage.new($!.to_s)
-
-          respond_to do |type|
-            type.html { return_to_main }
-            type.js do
-              flash[:error] = error_object.to_s;
-              params[:adapter] = nil
-              render :action => 'insulated_exception.rjs', :layout => false, :status => 500
-            end
-            type.xml { render :xml => error_object.to_xml, :content_type => Mime::XML, :status => 500}
-            type.json { render :text => error_object.to_json, :content_type => Mime::JSON, :status => 500}
-            type.yaml { render :text => error_object.to_yaml, :content_type => Mime::YAML, :status => 500}
-          end
-
-          return false
-        end
-      else
-        yield
-      end
-
-      return true
-    end
-
-    # Should the do_xxxxx call be wrapped by insulate to catch errors
-    def insulate?
-      !local_request?
-    end
-
     # Returns true if the client accepts one of the MIME types passed to it
     # ex: accepts? :html, :xml
     def accepts?(*types)

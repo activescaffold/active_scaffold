@@ -10,7 +10,7 @@ module ActiveScaffold::Actions
     end
 
     def nested
-      return unless insulate { do_nested }
+      do_nested
 
       respond_to do |type|
         type.html { render :partial => 'nested', :layout => true }
@@ -20,6 +20,8 @@ module ActiveScaffold::Actions
 
     protected
 
+    # A simple method to find the record we'll be nesting *from*
+    # May be overridden to customize the behavior
     def do_nested
       @record = find_if_allowed(params[:id], 'nested')
     end
@@ -74,7 +76,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     def new_existing
-      return unless insulate { do_new }
+      do_new
 
 #TODO 2007-03-14 (EJM) Level=0 - tie in do_destroy_association when js window code is complete
 #FIXME 2007-03-14 (EJM) Level=0 - Fix rjs errors - :nested cancel's sometimes go somewhere unexpected
@@ -94,7 +96,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     def add_existing
-      return unless insulate { do_add_existing }
+      do_add_existing
 
       respond_to do |type|
         type.html do
@@ -131,10 +133,7 @@ module ActiveScaffold::Actions::Nested
       return params[:parent_model].constantize, nested_parent_id, params[:parent_column]
     end
 
-    def do_new
-      @record = active_scaffold_config.model.new
-    end
-
+    # The actual "add_existing" algorithm
     def do_add_existing
       #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
       parent_model, id, association = nested_action_from_params

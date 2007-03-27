@@ -28,7 +28,7 @@ module ActiveScaffold::Actions
     end
 
     def list
-      return unless insulate { do_list }
+      do_list
 
       respond_to do |type|
         type.html {
@@ -42,6 +42,7 @@ module ActiveScaffold::Actions
 
     protected
 
+    # The actual algorithm to prepare for the list view
     def do_list
       includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
       self.active_scaffold_joins.concat includes_for_list_columns

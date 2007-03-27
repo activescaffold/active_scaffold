@@ -4,6 +4,7 @@
                     :before => "addActiveScaffoldPageToHistory('#{href}', '#{params[:controller]}')",
                     :after => "$('#{loading_indicator_id(:action => :search, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{search_form_id}');",
                     :complete => "$('#{loading_indicator_id(:action => :search, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{search_form_id}');",
+                    :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
                     :update => active_scaffold_content_id,
                     :html => { :href => href, :id => search_form_id, :class => 'search' } %>
   <input type="text" name="search" size="50" value="<%= params[:search] -%>" class="text-input" id="<%= search_input_id %>" autocompleted="off" />

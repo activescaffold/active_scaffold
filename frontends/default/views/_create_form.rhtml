@@ -3,6 +3,7 @@
 <%= form_remote_tag :url => url_options,
                     :after => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :create)}');",
                     :complete => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :create)}');",
+                    :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
                     :html => { :href => url_for(url_options),
                     :id => element_form_id(:action => :create),
                     :class => 'create' } %>

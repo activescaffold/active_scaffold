@@ -10,7 +10,7 @@ module ActiveScaffold::Actions
     end
 
     def edit
-      return unless insulate { do_edit }
+      do_edit
 
       respond_to do |type|
         type.html do
@@ -27,7 +27,7 @@ module ActiveScaffold::Actions
     end
 
     def update
-      return unless insulate { do_update }
+      do_update
 
       respond_to do |type|
         type.html do
@@ -53,10 +53,14 @@ module ActiveScaffold::Actions
 
     protected
 
+    # A simple method to find and prepare a record for editing
+    # May be overridden to customize the record (set default values, etc.)
     def do_edit
       @record = find_if_allowed(params[:id], 'update')
     end
 
+    # A complex method to update a record. The complexity comes from the support for subforms, and saving associated records.
+    # If you want to customize this algorithm, consider using the +before_update_save+ callback
     def do_update
       @record = find_if_allowed(params[:id], 'update')
       begin
@@ -69,7 +73,7 @@ module ActiveScaffold::Actions
       end
     end
 
-    # override this method if you want to interject data in the @record (or its associated objects) before the save
+    # override this method if you want to inject data in the record (or its associated objects) before the save
     def before_update_save(record); end
   end
 end

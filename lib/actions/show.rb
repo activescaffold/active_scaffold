@@ -2,7 +2,7 @@ module ActiveScaffold::Actions
   module Show
     include ActiveScaffold::Actions::Base
     def show
-      return unless insulate { do_show }
+      do_show
 
       @successful = successful?
       respond_to do |type|
@@ -16,6 +16,8 @@ module ActiveScaffold::Actions
 
     protected
 
+    # A simple method to retrieve and prepare a record for showing.
+    # May be overridden to customize show routine
     def do_show
       @record = find_if_allowed(params[:id], 'show')
     end

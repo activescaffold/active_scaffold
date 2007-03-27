@@ -8,9 +8,9 @@
   <%= loading_indicator_tag :action => :pagination %>
   <%= link_to_remote(_('PREVIOUS_BUTTON'),
         { :url => pagination_params.merge(:page => current_page.number - 1),
-          :before => "addActiveScaffoldPageToHistory('#{previous_url}', '#{controller_id}')",
-          :before => "Element.show('#{loading_indicator_id(:action => :pagination)}');",
+          :before => "Element.show('#{loading_indicator_id(:action => :pagination)}'); addActiveScaffoldPageToHistory('#{previous_url}', '#{controller_id}');",
           :complete => "Element.hide('#{loading_indicator_id(:action => :pagination)}');",
+          :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
           :update => active_scaffold_content_id,
           :method => :get },
         { :href => previous_url,
@@ -18,9 +18,9 @@
   <%= pagination_ajax_links current_page, pagination_params %>
   <%= link_to_remote(_('NEXT_BUTTON'),
         { :url => pagination_params.merge(:page => current_page.number + 1),
-          :before => "addActiveScaffoldPageToHistory('#{next_url}', '#{controller_id}')",
-          :before => "Element.show('#{loading_indicator_id(:action => :pagination)}');",
+          :before => "Element.show('#{loading_indicator_id(:action => :pagination)}'); addActiveScaffoldPageToHistory('#{next_url}', '#{controller_id}');",
           :complete => "Element.hide('#{loading_indicator_id(:action => :pagination)}');",
+          :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
           :update => active_scaffold_content_id,
           :method => :get },
         { :href => next_url,

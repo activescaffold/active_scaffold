@@ -45,23 +45,31 @@ var ActiveScaffold = {
       $(emptyMessageElement).hide();
     }
   },
-  removeSortClasses: function(active_scaffoldId) {
-    $$('#' + active_scaffoldId + ' td.sorted').each(function(element) {
+  removeSortClasses: function(scaffold_id) {
+    $$('#' + scaffold_id + ' td.sorted').each(function(element) {
       element.removeClassName("sorted");
     });
-    $$('#' + active_scaffoldId + ' th.sorted').each(function(element) {
+    $$('#' + scaffold_id + ' th.sorted').each(function(element) {
       element.removeClassName("sorted");
       element.removeClassName("asc");
       element.removeClassName("desc");
     });
   },
-  decrement_record_count: function(active_scaffoldId) {
-    count = $$('#' + active_scaffoldId + ' span.active-scaffold-records').first();
+  decrement_record_count: function(scaffold_id) {
+    count = $$('#' + scaffold_id + ' span.active-scaffold-records').first();
     count.innerHTML = parseInt(count.innerHTML) - 1;
   },
-  increment_record_count: function(active_scaffoldId) {
-    count = $$('#' + active_scaffoldId + ' span.active-scaffold-records').first();
+  increment_record_count: function(scaffold_id) {
+    count = $$('#' + scaffold_id + ' span.active-scaffold-records').first();
     count.innerHTML = parseInt(count.innerHTML) + 1;
+  },
+  report_500_response: function(active_scaffold_id) {
+    message = '<p class="error-message message">'
+            + 'Request Failed (code 500, Internal Error)'
+            + '<a href="#" onclick="Element.remove(this.parentNode); return false;">Close</a>'
+            + '</p>';
+    messages_container = $(active_scaffold_id).down('td.messages-container');
+    new Insertion.Top(messages_container, message);
   }
 }
 
@@ -109,71 +117,6 @@ Object.extend(String.prototype, {
     return url;
   }
 });
-
-/*
- * Nested Form... sorta
- */
-Form.Pseudo = Class.create();
-Form.Pseudo.prototype = {
-  initialize: function(element, options) {
-    this.element = $(element);
-    this.href = $$("#" + this.element.id + " .form-action")[0].href;
-    this.setOptions(options);
-
-    // Put hook on buttons
-    this.submitButtons = $$("#" + this.element.id + " .submit");
-    for (var i=0; i < this.submitButtons.length; i++) {
-      Event.observe(this.submitButtons[i], 'click', this.onSubmit.bindAsEventListener(this));
-    }
-
-    // find action uri for request
-    this.formElements = Form.getElements(this.element);
-    for (var i=0; i < this.formElements.length; i++) {
-      Event.observe(this.formElements[i], 'keydown', this.onKeyPress.bindAsEventListener(this));
-    }
-  },
-
-  setOptions: function(options) {
-  this.options = { asynchronous: true,
-                     evalScripts: true,
-                     onLoading: this.onLoading.bindAsEventListener(this),
-                     onLoaded: this.onComplete.bindAsEventListener(this) };
-    Object.extend(this.options, options || {});
-  },
-
-  onKeyPress: function(event) {
-    if (event.keyCode == Event.KEY_RETURN) {
-      this.onSubmit(event);
-    }
-  },
-
-  onLoading: function(request) {
-    Form.disable(this.element);
-  },
-
-  onComplete: function(request) {
-    Form.enable(this.element);
-  },
-
-  onSubmit: function(event) {
-    var params = Object.extend(this.options, { parameters: Form.serialize(this.element) });
-    new Ajax.Request(this.href, params);
-    Event.stop(event);
-  }
-}
-
-var PsuedoForm = {
-  clear: function(element) {
-    this.element = $(element);
-
-    this.formElements = Form.getElements(this.element);
-    for (var i=0; i < this.formElements.length; i++) {
-      if (this.formElements[i].type.toLowerCase() != 'submit') {
-        this.formElements[i].value = "";
-      }
-    }
-  }
-}
 
 /**
  * A set of links. As a set, they can be controlled such that only one is "open" at a time, etc.
@@ -240,6 +183,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
       }.bind(this),
 
       onFailure: function(request) {
+        ActiveScaffold.report_500_response(this.scaffold_id());
         if (this.position) this.enable()
       }.bind(this),
 
@@ -276,6 +220,10 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
 
   is_disabled: function() {
     return this.tag.hasClassName('disabled');
+  },
+
+  scaffold_id: function() {
+    return this.tag.up('div.active-scaffold').id;
   }
 }
 
@@ -336,7 +284,11 @@ ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.Ac
         if (this.target.hasClassName('even')) new_target.addClassName('even');
         this.target = new_target;
         this.close();
-      }.bind(this)
+      }.bind(this),
+
+      onFailure: function(request) {
+        ActiveScaffold.report_500_response(this.scaffold_id());
+      }
     });
   },
 

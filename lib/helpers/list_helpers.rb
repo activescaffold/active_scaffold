@@ -31,6 +31,7 @@ module ActionView::Helpers
                 { :url => params.merge(:page => page_number),
                   :before => "Element.show('#{loading_indicator_id(:action => :pagination)}');",
                   :update => active_scaffold_content_id,
+                  :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
                   :method => :get },
                 { :href => url_for(params.merge(:page => page_number)) })
     end

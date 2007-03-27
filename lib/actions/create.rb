@@ -10,7 +10,7 @@ module ActiveScaffold::Actions
     end
 
     def new
-      return unless insulate { do_new }
+      do_new
 
       respond_to do |type|
         type.html do
@@ -27,7 +27,7 @@ module ActiveScaffold::Actions
     end
 
     def create
-      return unless insulate { do_create }
+      do_create
 
       respond_to do |type|
         type.html do
@@ -53,10 +53,14 @@ module ActiveScaffold::Actions
 
     protected
 
+    # A simple method to find and prepare an example new record for the form
+    # May be overridden to customize the behavior (add default values, for instance)
     def do_new
       @record = active_scaffold_config.model.new
     end
 
+    # A somewhat complex method to actually create a new record. The complexity is from support for subforms and associated records.
+    # If you want to customize this behavior, consider using the +before_create_save+ and +after_create_save+ callbacks.
     def do_create
       begin
         active_scaffold_config.model.transaction do
@@ -70,7 +74,7 @@ module ActiveScaffold::Actions
       end
     end
 
-    # override this method if you want to interject data in the @record (or its associated objects) before the save
+    # override this method if you want to inject data in the record (or its associated objects) before the save
     def before_create_save(record); end
 
     # override this method if you want to do something after the save

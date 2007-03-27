@@ -6,6 +6,8 @@ show_add_new = (column.plural_association? or (column.singular_association? and 
 show_add_existing = (select_options and not select_options.empty?)
 show_add_new = show_add_existing = false if column.through_association?
 
+edit_associated_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get, :escape => false)
+
 return unless show_add_new or show_add_existing
 
 -%>
@@ -13,16 +15,16 @@ return unless show_add_new or show_add_existing
   <div class="footer">
     <% if show_add_new -%>
     <% add_label = column.plural_association? ? _('CREATE_ANOTHER') : _('REPLACE_WITH_NEW') -%>
-    <%= link_to_remote add_label, :url => {:action => 'edit_associated', :id => parent_record.id, :association => column.name} -%>
+    <%= link_to_remote add_label, :url => {:action => 'edit_associated', :id => parent_record.id, :association => column.name}, :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')" -%>
     <% end -%>
 
     <% if show_add_existing -%>
       |
       <% if remote_controller and remote_controller.respond_to? :uses_record_select? and remote_controller.uses_record_select? -%>
-        <%= link_to_record_select _('CREATE_FROM_EXISTING'), remote_controller_path, :onselect => "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get, :escape => false).to_json}.sub('--ID--', id), {asynchronous: true, evalScripts: true}); container.remove();" -%>
+        <%= link_to_record_select _('CREATE_FROM_EXISTING'), remote_controller_path, :onselect => "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', id), {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id})}}); container.remove();" -%>
       <% else -%>
         <%= select_tag 'associated_id', '<option value="">' + _('_SELECT_') + '</option>' + select_options %>
-        <%= button_to_function _('CREATE_FROM_EXISTING'), "new Ajax.Request(#{url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get).to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true})" %>
+        <%= button_to_function _('CREATE_FROM_EXISTING'), "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id})}})" %>
       <% end -%>
     <% end -%>
   </div>
