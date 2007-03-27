@@ -21,7 +21,7 @@ module Localization
     sprintf translated, *args
   end
 
-  def self.define(lang = :default)
+  def self.define(lang = 'en_US')
     @@l10s[lang] ||= {}
     yield @@l10s[lang]
   end
