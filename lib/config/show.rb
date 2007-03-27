@@ -24,7 +24,7 @@ module ActiveScaffold::Config
     # the label for this action. used for the header.
     attr_writer :label
     def label
-      _(@label)
+      _(@label) if @label
     end
 
     # provides access to the list of columns specifically meant for this action to use

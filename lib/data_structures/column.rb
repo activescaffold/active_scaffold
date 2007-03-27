@@ -14,7 +14,7 @@ module ActiveScaffold::DataStructures
     # a textual description of the column and its contents. this will be displayed with any associated form input widget, so you may want to consider adding a content example.
     attr_writer :description
     def description
-      _(@description)
+      _(@description) if @description
     end
 
     # this will be /joined/ to the :name for the td's class attribute. useful if you want to style columns on different ActiveScaffolds the same way, but the columns have different names.

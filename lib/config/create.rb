@@ -15,7 +15,7 @@ module ActiveScaffold::Config
     # ----------------------------
     # the label= method already exists in the Form base class
     def label
-      _(@label) || "#{_('CREATE_HEADER')} #{@core.label.singularize}"
+      @label ? _(@label) : "#{_('CREATE_HEADER')} #{@core.label.singularize}"
     end
   end
 end
