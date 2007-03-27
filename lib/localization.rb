@@ -5,7 +5,6 @@ module Localization
   @@lang = :default
 
   def self._(string_to_localize, *args)
-p caller[0..5] if string_to_localize.nil?
     if @@l10s[@@lang].nil? or @@l10s[@@lang][string_to_localize].nil?
       translated = string_to_localize
     else

@@ -17,7 +17,7 @@ var ActiveScaffold = {
   stripe: function(tableBody) {
     var even = false;
     var tableBody = $(tableBody);
-    var tableRows = tableBody.getElementsByTagName("tr");
+    var tableRows = tableBody.down("tr");
     var length = tableBody.rows.length;
 
     for (var i = 0; i < length; i++) {
