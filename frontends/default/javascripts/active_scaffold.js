@@ -108,7 +108,7 @@ Object.extend(String.prototype, {
   append_params: function(params) {
     url = this;
     if (url.indexOf('?') == -1) url += '?';
-    else if (url.indexOf('&') != url.length) url += '&';
+    else if (url.lastIndexOf('&') != url.length) url += '&';
 
     url += $H(params).collect(function(item) {
       return item.key + '=' + item.value;

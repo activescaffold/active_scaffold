@@ -28,6 +28,6 @@ actions = new ActiveScaffold.Actions.Record(
   $$('#<%= target_id -%> a.action'),
   $('<%= target_id -%>'),
   $('<%= loading_indicator_id(:action => :record, :id => record.id) -%>'),
-  {refresh_url: '<%= url_for params_for(:action => :row, :id => record.id, :_method => :get) -%>'}
+  {refresh_url: '<%= url_for params_for(:action => :row, :id => record.id, :_method => :get, :escape => false) -%>'}
 );
 </script>
