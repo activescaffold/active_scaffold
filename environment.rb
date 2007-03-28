@@ -32,6 +32,7 @@ require 'configurable'
 require 'finder'
 require 'localization'
 require 'constraints'
+require 'attribute_params'
 
 require 'helpers/active_scaffold_helpers'
 require 'helpers/id_helpers'

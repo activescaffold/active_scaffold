@@ -57,6 +57,7 @@ module ActiveScaffold
       module_eval do
         include ActiveScaffold::Finder
         include ActiveScaffold::Constraints
+        include ActiveScaffold::AttributeParams
         include ActiveScaffold::Actions::Core
         active_scaffold_config.actions.each do |mod|
           name = mod.to_s.camelize
@@ -74,8 +75,6 @@ module ActiveScaffold
        @active_scaffold_config || self.superclass.instance_variable_get('@active_scaffold_config')
     end
 
-    ## TODO We should check the the model being used is the same Class
-    ##      ie make sure ProductsController doesn't active_scaffold :shoe
     def active_scaffold_config_for(klass)
       begin
         controller, controller_path = active_scaffold_controller_for(klass)
@@ -88,7 +87,8 @@ module ActiveScaffold
       end
     end
 
-    # :parent_controller, pass in something like, params[:controller], this will resolve the controller to the proper path for subsequent call to render :active_scaffold or render :component.
+    # Tries to find a controller for the given ActiveRecord model.
+    # Searches in the namespace of the current controller for singular and plural versions of the conventional "#{model}Controller" syntax.
     def active_scaffold_controller_for(klass)
       controller_path = controller_named_path = ""
       error_message = []
@@ -101,18 +101,19 @@ module ActiveScaffold
       ["#{klass.to_s.underscore.pluralize}", "#{klass.to_s.underscore.pluralize.singularize}"].each do |controller_name|
         begin
           controller = "#{controller_named_path}#{controller_name.camelize}Controller"
-          controller = controller.constantize 
-          rescue NameError => error
-            # Only rescue NameError asscociated with the controller constant not existing - not other compile errors
-            if error.message["uninitialized constant #{controller}"]
-              error_message << controller
-              next
-            else
-              raise
-            end
+          controller = controller.constantize
+        rescue NameError => error
+          # Only rescue NameError associated with the controller constant not existing - not other compile errors
+          if error.message["uninitialized constant #{controller}"]
+            error_message << controller
+            next
+          else
+            raise
+          end
         end
-        raise ActiveScaffold::ControllerNotFound, "#{controller} missing active_scaffold.", caller unless controller.uses_active_scaffold?
-        return controller, "#{controller_path}#{controller_name}" 
+        raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
+        raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model == klass
+        return controller, "#{controller_path}#{controller_name}"
       end
       raise ActiveScaffold::ControllerNotFound, "Could not find " + error_message.join(" or "), caller
     end
