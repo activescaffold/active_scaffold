@@ -5,8 +5,11 @@ module ActiveScaffold::Actions
       base.before_filter :do_search
     end
 
+    # FieldSearch uses params[:record] and not @record because search conditions do not always pass the Model's validations.
+    # This facilitates for example, textual searches against associations via .search_sql
+    # Note: can not use params[:search] until url_for supports nested hashes. using :record because it is blacklisted in params_for
     def show_search
-      @record = active_scaffold_config.model.new
+      params[:record] ||= {}
       respond_to do |type|
         type.html do
           if successful?
@@ -22,11 +25,8 @@ module ActiveScaffold::Actions
     protected
 
     def do_search
-      @query = ''
       unless params[:record].nil?
         like_pattern = active_scaffold_config.field_search.full_text_search? ? '%?%' : '?%'
-        columns = active_scaffold_config.field_search.columns
-        self.active_scaffold_conditions = merge_conditions(self.active_scaffold_conditions, ActiveScaffold::Finder.create_conditions_for_columns(@query.split(' '), columns, like_pattern))
         conditions = self.active_scaffold_conditions
         params[:record].each do |key, value|
           next if !active_scaffold_config.field_search.columns.include?(key) or value.nil? or value.empty?
@@ -39,6 +39,7 @@ module ActiveScaffold::Actions
         end        
         self.active_scaffold_conditions = conditions
 
+        columns = active_scaffold_config.field_search.columns
         includes_for_search_columns = columns.collect{ |column| column.includes}.flatten.uniq.compact
         self.active_scaffold_joins.concat includes_for_search_columns
 

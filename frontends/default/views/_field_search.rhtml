@@ -1,3 +1,6 @@
+<% # We have to remove search form params before the url_for method call, otherwise it throughs it on %>
+<% search_params = params %>
+<% params.merge!(:search => nil) -%>
 <% href = url_for(params_for(:action => :update_table, :escape => false)) -%>
 <%= form_remote_tag :url => href,
                     :method => :get,
@@ -8,24 +11,21 @@
                     :update => active_scaffold_content_id,
                     :html => { :href => href, :id => search_form_id, :class => 'search' } %>
 
-<% scope ||= nil %>
-<% record ||= nil %>
-<% object = record.nil? ? :record : record %>
-	<ol class="form">
-	  <% active_scaffold_config.field_search.columns.each do |column| -%>
-			<% name = scope.nil? ? "record[#{column.name}]" : "#{scope}[#{column.name}]" %>
-		  <li class="form-element">
-				<label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
+  <ol class="form">
+    <% active_scaffold_config.field_search.columns.each do |column| -%>
+  		<% name = "record[#{column.name}]" %>
+  	  <li class="form-element">
+  			<label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
 				<%= case column.ui_type
 					when :boolean
-						check_box(object, column.name)
+            check_box_tag(name, 1, params[:record][column.name] || params[:record][column.name] == 1)
 					else
-						text_field(object, column.name, { :autocomplete => "off", :size => 20, :class => 'text-input', :name => name })
+						text_field_tag(name, params[:record][column.name], { :autocomplete => "off", :size => 20, :class => 'text-input', :id => "search_#{column.name}"})
 					end
 				%>
-			</li>
-		<% end -%>
-</ol>
+  		</li>
+  	<% end -%>
+  </ol>
   <%= submit_tag _('SEARCH_BUTTON'), :class => "submit" %>
   <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= _('RESET_BUTTON') -%></a>
   <%= loading_indicator_tag(:action => :search) %>
