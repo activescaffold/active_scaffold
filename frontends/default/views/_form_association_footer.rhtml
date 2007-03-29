@@ -7,6 +7,7 @@ show_add_existing = (select_options and not select_options.empty?)
 show_add_new = show_add_existing = false if column.through_association?
 
 edit_associated_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get, :escape => false)
+add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :_method => :get);
 
 return unless show_add_new or show_add_existing
 
@@ -15,7 +16,7 @@ return unless show_add_new or show_add_existing
   <div class="footer">
     <% if show_add_new -%>
     <% add_label = column.plural_association? ? _('CREATE_ANOTHER') : _('REPLACE_WITH_NEW') -%>
-    <%= link_to_remote add_label, :url => {:action => 'edit_associated', :id => parent_record.id, :association => column.name}, :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')" -%>
+    <%= button_to_function add_label, "new Ajax.Request(#{add_new_url.to_json}, {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id})}})" %>
     <% end -%>
 
     <% if show_add_existing -%>

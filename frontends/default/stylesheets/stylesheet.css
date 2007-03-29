@@ -193,6 +193,11 @@ color: #999;
 text-align: center;
 }
 
+.active-scaffold td.numeric,
+.active-scaffold-calculations td {
+text-align: right;
+}
+
 /* Table :: Actions (Edit, Delete)
    ============================= */
 
@@ -404,7 +409,7 @@ background-color: #bbf;
 /* Error Styling
    ========================== */
 
-.active-scaffold #errorExplanation {
+.active-scaffold .errorExplanation {
 background-color: #fcc;
 margin: 2px 0;
 border: solid 1px #f66;
@@ -414,7 +419,7 @@ border: solid 1px #f66;
 clear: both;
 }
 
-.active-scaffold #errorExplanation h2 {
+.active-scaffold .errorExplanation h2 {
 padding: 2px 5px;
 color: #333;
 font-size: 11px;
@@ -424,20 +429,20 @@ font-family: Verdana;
 background-color: #f66;
 }
 
-.active-scaffold #errorExplanation ul {
+.active-scaffold .errorExplanation ul {
 margin: 0;
 padding: 0 2px 4px 25px;
 list-style: disc;
 }
 
-.active-scaffold #errorExplanation p {
+.active-scaffold .errorExplanation p {
 font-size: 11px;
 padding: 2px 5px;
 font-family: Verdana;
 margin: 0;
 }
 
-.active-scaffold #errorExplanation ul li {
+.active-scaffold .errorExplanation ul li {
 font: bold 11px verdana;
 letter-spacing: -1px;
 margin: 0;
@@ -519,16 +524,24 @@ letter-spacing: 0;
    ============================== */
 
 .active-scaffold li.form-element {
-float: left;
-margin-right: 10px;
-margin-bottom: 2px;
+clear: both;
+padding-bottom: 2px;
 }
 
 .active-scaffold label {
-display: block;
+float: left;
+width: 120px;
+display: inline;
+padding: 6px 0;
 font: normal 11px verdana, sans-serif;
 color: #555;
-padding-bottom: 1px;
+}
+
+.active-scaffold p.description {
+display: inline;
+color: #999;
+font-size: 10px;
+margin-left: 5px;
 }
 
 .active-scaffold .required label {
@@ -560,7 +573,8 @@ padding: 1px;
 color: #aaa;
 }
 
-.active-scaffold input:focus {
+.active-scaffold select:focus,
+.active-scaffold input.text-input:focus {
 background-color: #ffc;
 }
 
@@ -628,6 +642,7 @@ border: none;
 background-color: none;
 padding: 1px;
 vertical-align: top;
+color: #999;
 }
 
 .active-scaffold .sub-form table td input,
@@ -686,7 +701,7 @@ padding: 0 5px;
 
 .active-scaffold .sub-form .footer select,
 .active-scaffold .sub-form .footer input {
-font-weight: normal;
-font-size: 11px;
+font-weight: bold;
+font-size: 12px;
 padding: 0;
 }
