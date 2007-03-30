@@ -78,7 +78,6 @@ Dir["#{File.dirname __FILE__}/frontends/**/lang/*.rb"].each {|file| require file
 
 ActionController::Base.send(:include, ActiveScaffold)
 ActionController::Base.send(:include, ActionView::Helpers::ActiveScaffoldIdHelpers)
-ActionController::Base.send(:include, Localization)
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldHelpers)
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldIdHelpers)
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldListHelpers)

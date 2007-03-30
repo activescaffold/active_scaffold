@@ -1,4 +1,4 @@
-Localization.define('ru_RU') do |lang| 
+ActiveScaffold::Localization.define('ru_RU') do |lang| 
   lang['ARE_YOU_SURE'] ||= 'Вы уверены?' 
   lang['CANCEL_BUTTON'] ||= 'Отмена' 
   lang['CREATE_BUTTON'] ||= 'Создать' 

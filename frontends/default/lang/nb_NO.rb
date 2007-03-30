@@ -1,4 +1,4 @@
-Localization.define('nb_NO') do |lang|
+ActiveScaffold::Localization.define('nb_NO') do |lang|
   lang['ARE_YOU_SURE'] ||= 'Er du sikker?'
   lang['CANCEL_BUTTON'] ||= 'Avbryt'
   lang['CREATE_BUTTON'] ||= 'Opprett'

@@ -1,4 +1,4 @@
-Localization.define('he_HE') do |lang|
+ActiveScaffold::Localization.define('he_HE') do |lang|
   lang['ARE_YOU_SURE'] ||= '? האם אתה בטוח'
   lang['CANCEL_BUTTON'] ||= 'בטל'
   lang['CREATE_BUTTON'] ||= 'צור'

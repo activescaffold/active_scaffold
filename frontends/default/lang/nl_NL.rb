@@ -1,4 +1,4 @@
-Localization.define('nl_NL') do |lang| 
+ActiveScaffold::Localization.define('nl_NL') do |lang| 
   lang['ARE_YOU_SURE'] ||= 'Weet u het zeker?' 
   lang['CANCEL_BUTTON'] ||= 'Annuleren' 
   lang['CREATE_BUTTON'] ||= 'Toevoegen' 

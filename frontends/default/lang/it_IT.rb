@@ -1,4 +1,4 @@
-Localization.define('it_IT') do |lang|
+ActiveScaffold::Localization.define('it_IT') do |lang|
   lang['ARE_YOU_SURE'] ||= 'Sei sicuro?'
   lang['CANCEL'] ||= 'Annulla'
   lang['CREATE'] ||= 'Crea'

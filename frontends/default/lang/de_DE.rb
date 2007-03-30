@@ -1,4 +1,4 @@
-Localization.define('de_DE') do |lang| 
+ActiveScaffold::Localization.define('de_DE') do |lang| 
   # Used to confirm an action. Presently used for Delete.
   lang['ARE_YOU_SURE'] ||= 'Sind Sie sicher?'
 

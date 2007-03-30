@@ -1,4 +1,4 @@
-Localization.define('fr_CA') do |lang|
+ActiveScaffold::Localization.define('fr_CA') do |lang|
   lang['ARE_YOU_SURE'] ||= 'Ãtes-vous sÃ»r?'
   lang['CANCEL_BUTTON'] ||= 'Annuler'
   lang['CREATE_BUTTON'] ||= 'CrÃ©er'

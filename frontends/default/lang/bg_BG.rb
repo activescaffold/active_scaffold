@@ -1,4 +1,4 @@
-Localization.define('bg_BG') do |lang| 
+ActiveScaffold::Localization.define('bg_BG') do |lang| 
   lang['ARE_YOU_SURE'] ||= 'Сигурни ли сте?' 
   lang['CANCEL_BUTTON'] ||= 'Откажи' 
   lang['CREATE_BUTTON'] ||= 'Създай' 
