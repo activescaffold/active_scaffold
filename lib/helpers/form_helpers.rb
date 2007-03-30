@@ -9,6 +9,11 @@ module ActionView::Helpers
       column_renders_as(column) == :subform
     end
 
+    # A column shouldn't be in the subform if it's the reverse association to the parent or if it's habtm
+    def in_subform?(column, parent_record)
+      !(column.association and ((column.association.klass == parent_record.class) or (column.association.macro == :has_and_belongs_to_many)))
+    end
+
     def is_subsection?(column)
       column_renders_as(column) == :subsection
     end

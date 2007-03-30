@@ -537,8 +537,7 @@ font: normal 11px verdana, sans-serif;
 color: #555;
 }
 
-.active-scaffold p.description {
-display: inline;
+.active-scaffold .description {
 color: #999;
 font-size: 10px;
 margin-left: 5px;
@@ -597,7 +596,6 @@ border: 1px solid #666;
    ============================== */
 
 .active-scaffold li.sub-section {
-float: left;
 clear: left;
 margin-bottom: 5px;
 }
@@ -691,12 +689,13 @@ font: bold 12px arial;
 
 .active-scaffold .sub-form .footer-wrapper {
 margin-top: 3px;
+margin-right: 10px;
 background-color: #B8FF9F;
 }
 
 .active-scaffold .sub-form .footer {
 color: #999;
-padding: 0 5px;
+padding: 3px 5px;
 }
 
 .active-scaffold .sub-form .footer select,

@@ -1,7 +1,7 @@
 <% readonly = (@record.readonly? or not record_allowed_for_action?(@record, 'update')) -%>
 <% active_scaffold_config_for(@record.class).subform.columns.each :flatten => true do |column| %>
   <%
-  next if column.association and (column.association.klass == parent_record.class)
+  next unless in_subform?(column, parent_record)
   column = column.clone
   column.ui_type = :select if column.association
   -%>
