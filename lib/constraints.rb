@@ -42,7 +42,7 @@ module ActiveScaffold
           # If a column is an association, then we do NOT want to use .search_sql. If anything,
           # search_sql will refer to a human-searchable value on the associated record.
           if column.association
-            field = column.association.association_foreign_key
+            field = column.association.options[:foreign_key] || column.association.association_foreign_key
             table = case column.association.macro
               when :has_and_belongs_to_many
               column.association.options[:join_table]
