@@ -9,10 +9,10 @@ module ActiveScaffold
     @@lang = 'en-us'
 
     def self._(string_to_localize, *args)
-      sprintf translate(string_to_localize, *args)
+      sprintf translate(string_to_localize), *args
     end
 
-    def self.translate(string_to_localize, *args)
+    def self.translate(string_to_localize)
       if @@l10s[@@lang].nil? or @@l10s[@@lang][string_to_localize].nil?
         string_to_localize
       else
