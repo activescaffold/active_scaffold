@@ -5,8 +5,8 @@ module ActiveScaffold
       @@lang = standardize_name(value)
     end
 
-    @@l10s = { 'en_US' => {} }
-    @@lang = 'en_US'
+    @@l10s = { 'en-us' => {} }
+    @@lang = 'en-us'
 
     def self._(string_to_localize, *args)
       if @@l10s[@@lang].nil? or @@l10s[@@lang][string_to_localize].nil?
@@ -25,7 +25,7 @@ module ActiveScaffold
       sprintf translated, *args
     end
 
-    def self.define(lang = 'en_US')
+    def self.define(lang = 'en-us')
       lang = standardize_name(lang)
       @@l10s[lang] ||= {}
       yield @@l10s[lang]
@@ -34,7 +34,7 @@ module ActiveScaffold
     def self.standardize_name(value)
       tmp = value.split("-") if value["-"]
       tmp = value.split("_") if value["_"]
-      tmp[0].downcase + "_" + tmp[1].upcase
+      tmp[0].downcase + "-" + tmp[1].downcase
     end
   end
 end
