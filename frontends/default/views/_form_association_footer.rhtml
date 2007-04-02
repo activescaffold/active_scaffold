@@ -5,6 +5,7 @@ select_options = options_for_select(options_for_association(column.association))
 show_add_new = (column.plural_association? or (column.singular_association? and not associated.empty?))
 show_add_existing = (select_options and not select_options.empty?)
 show_add_new = show_add_existing = false if column.through_association?
+show_add_new = false unless @record.class.authorized_for?(:action => :create)
 
 edit_associated_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get, :escape => false)
 add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :_method => :get);

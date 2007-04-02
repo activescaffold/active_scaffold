@@ -8,10 +8,8 @@ module ActiveScaffold::Actions
 
     protected
 
-    def record_allowed_for_action?(record, action)
-      current_user = self.send(active_scaffold_config.current_user_method) rescue nil
-      security_method = "#{action}_authorized?"
-      return record.respond_to?(security_method) ? record.send(security_method, current_user) : true
+    def authorized_for?(*args)
+      active_scaffold_config.model.authorized_for?(*args)
     end
 
     def clear_flashes

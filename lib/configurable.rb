@@ -19,7 +19,7 @@ module ActiveScaffold
         super
       rescue NoMethodError, NameError
         if @configuration_binding.nil?
-          raise
+          raise $!
         else
           eval(name.to_s, @configuration_binding)
         end

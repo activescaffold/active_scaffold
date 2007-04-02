@@ -22,9 +22,13 @@ module ActiveScaffold::Config
     cattr_reader :action_links
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
 
-    # the name of a method that will return the current user. this will be used for security checks against records.
-    cattr_accessor :current_user_method
-    @@current_user_method = :current_user
+    # access to the permissions configuration.
+    # configuration options include:
+    #  * current_user_method - what method on the controller returns the current user. default: :current_user
+    #  * default_permission - what the default permission is. default: true
+    def self.security
+      ActiveRecordPermissions
+    end
 
     # columns that should be ignored for every model. these should be metadata columns like change dates, versions, etc.
     # values in this array may be symbols or strings.
@@ -61,9 +65,6 @@ module ActiveScaffold::Config
       _(@label)
     end
 
-    # the name of a method that will return the current user. this will be used for security checks against records.
-    attr_accessor :current_user_method
-
     ##
     ## internal usage only below this point
     ## ------------------------------------
@@ -90,47 +91,12 @@ module ActiveScaffold::Config
 
       # the default label
       @label = self.model_id.pluralize.titleize
-
-      @current_user_method = self.class.current_user_method
     end
 
     # To be called after your finished configuration
     def _load_action_columns
-      # add enumerability to the ActionColumns objects. we don't want to do this earlier because right now we don't want the ActionColumns object to have any access during the configuration to actual Column objects. basically we just don't want someone trying to use the iterator in an unsupported way and then complaining because things are broken.
-      # first, add an iterator that returns actual Column objects and a method for registering Column objects
-      ActiveScaffold::DataStructures::ActionColumns.class_eval do
-        include Enumerable
-        def each(options = {}, &proc)
-          @set.each do |item|
-            unless item.is_a? ActiveScaffold::DataStructures::ActionColumns
-              begin
-                item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
-                next if constraint_columns.include?(item.name.to_sym) or (item.field_name and constraint_columns.include?(item.field_name.to_sym))
-              rescue ActiveScaffold::ColumnNotAllowed
-                next
-              end
-            end
-            if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.has_key?(:flatten) and options[:flatten]
-              item.each(options, &proc)
-            else
-              yield item
-            end
-          end
-        end
+      ActiveScaffold::DataStructures::ActionColumns.class_eval {include ActiveScaffold::DataStructures::ActionColumns::AfterConfiguration}
 
-        # registers a set of column objects (recursively, for all nested ActionColumns)
-        def set_columns(columns)
-          @columns = columns
-          self.each do |item|
-            item.set_columns(columns) if item.respond_to? :set_columns
-          end
-        end
-
-        attr_writer :constraint_columns
-        def constraint_columns
-          @constraint_columns ||= []
-        end
-      end
       # then, register the column objects
       self.actions.each do |action_name|
         action = self.send(action_name)

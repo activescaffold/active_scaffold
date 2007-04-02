@@ -42,9 +42,5 @@ module ActionView::Helpers
       end
       @params_for.merge(options)
     end
-
-    def record_allowed_for_action?(*args)
-      controller.send(:record_allowed_for_action?, *args)
-    end
   end
 end

@@ -26,6 +26,7 @@ module ActiveScaffold::Config
 
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
+      @columns.action = self
       return @columns
     end
   end

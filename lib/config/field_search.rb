@@ -1,11 +1,13 @@
 module ActiveScaffold::Config
   class FieldSearch < Base
+    self.crud_type = :read
+
     def initialize(core_config)
       @core = core_config
 
       @full_text_search = self.class.full_text_search?
     end
-      
+
 
     # global level configuration
     # --------------------------
@@ -33,12 +35,13 @@ module ActiveScaffold::Config
 
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
+      @columns.action = self
     end
-    
+
     attr_writer :full_text_search
     def full_text_search?
       @full_text_search
     end
-    
+
   end
 end

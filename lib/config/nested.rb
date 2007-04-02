@@ -1,12 +1,14 @@
 module ActiveScaffold::Config
   class Nested < Base
+    self.crud_type = :read
+
     def initialize(core_config)
       @core = core_config
     end
 
     # global level configuration
     # --------------------------
-    
+
     # instance-level configuration
     # ----------------------------
 

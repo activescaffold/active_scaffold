@@ -33,6 +33,7 @@ module ActiveScaffold::Config
     attr_reader :columns
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
+      @columns.action = self
     end
 
     # whether the form should be multipart

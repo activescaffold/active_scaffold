@@ -33,6 +33,7 @@ require 'finder'
 require 'localization'
 require 'constraints'
 require 'attribute_params'
+require 'active_record_permissions'
 
 require 'helpers/active_scaffold_helpers'
 require 'helpers/id_helpers'

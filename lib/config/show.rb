@@ -1,5 +1,7 @@
 module ActiveScaffold::Config
   class Show < Base
+    self.crud_type = :read
+
     def initialize(core_config)
       @core = core_config
 
@@ -31,6 +33,7 @@ module ActiveScaffold::Config
     attr_reader :columns
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
+      @columns.action = self
     end
   end
 end

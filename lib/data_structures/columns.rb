@@ -3,8 +3,6 @@ module ActiveScaffold::DataStructures
     include Enumerable
     include ActiveScaffold::Configurable
 
-    attr_reader :unauthorized_columns
-
     # This accessor is used by ActionColumns to create new Column objects without adding them to this set
     attr_reader :active_record_class
 
@@ -12,7 +10,6 @@ module ActiveScaffold::DataStructures
       @active_record_class = active_record_class
 
       @set = []
-      @unauthorized_columns = []
       self.add *args
     end
 
@@ -35,23 +32,12 @@ module ActiveScaffold::DataStructures
     def find_by_name(name)
       # this works because of `def column.=='
       column = @set.find { |c| c == name }
-      raise ActiveScaffold::ColumnNotAllowed if unauthorized_columns.include? column
       column
     end
     alias_method :[], :find_by_name
 
     def each
-      @set.each {|i| yield i unless unauthorized_columns.include? i }
-    end
-
-    # at some point we need to determine if any of the columns in this set are not authorized for the current user and action
-    # this method needs to be called in a before_filter so that @unauthorized_columns is created before any action
-    # the columns in @set that are not authorized for the current user/action will be blacklisted here
-    def create_blacklist(current_user, action)
-      @unauthorized_columns = []
-      @set.each do |column|
-        self.unauthorized_columns << column unless column.authorized?(current_user, action)
-      end
+      @set.each {|i| yield i }
     end
   end
 end

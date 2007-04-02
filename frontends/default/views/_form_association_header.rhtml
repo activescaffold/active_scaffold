@@ -1,7 +1,7 @@
 <thead>
   <tr>
     <%
-    active_scaffold_config_for(@record.class).subform.columns.each :flatten => true do |column|
+    active_scaffold_config_for(@record.class).subform.columns.each :for => @record, :flatten => true do |column|
       next unless in_subform?(column, parent_record)
       -%>
       <th><%= column.label %></th>

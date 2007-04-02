@@ -1,9 +1,7 @@
 module ActiveScaffold::Actions
   module Update
-    include Base
-
     def self.included(base)
-      super
+      base.before_filter :update_authorized?, :only => [:edit, :update]
       base.verify :method => [:post, :put],
                   :only => :update,
                   :redirect_to => { :action => :index }
@@ -56,13 +54,13 @@ module ActiveScaffold::Actions
     # A simple method to find and prepare a record for editing
     # May be overridden to customize the record (set default values, etc.)
     def do_edit
-      @record = find_if_allowed(params[:id], 'update')
+      @record = find_if_allowed(params[:id], :update)
     end
 
     # A complex method to update a record. The complexity comes from the support for subforms, and saving associated records.
     # If you want to customize this algorithm, consider using the +before_update_save+ callback
     def do_update
-      @record = find_if_allowed(params[:id], 'update')
+      @record = find_if_allowed(params[:id], :update)
       begin
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
@@ -75,5 +73,11 @@ module ActiveScaffold::Actions
 
     # override this method if you want to inject data in the record (or its associated objects) before the save
     def before_update_save(record); end
+
+    # The default security delegates to ActiveRecordPermissions.
+    # You may override the method to customize.
+    def update_authorized?
+      authorized_for?(:action => :update)
+    end
   end
 end

@@ -1,5 +1,5 @@
 <dl>
-<% columns.each do |column| %>
+<% columns.each :for => @record do |column| %>
   <% if column.is_a? ActiveScaffold::DataStructures::ActionColumns -%>
     <dt><%= column.name -%></dt>
     <dd>

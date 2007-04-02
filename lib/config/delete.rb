@@ -1,5 +1,7 @@
 module ActiveScaffold::Config
   class Delete < Base
+    self.crud_type = :destroy
+
     def initialize(core_config)
       @core = core_config
 
@@ -12,7 +14,7 @@ module ActiveScaffold::Config
 
     # the ActionLink for this action
     cattr_accessor :link
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('destroy', :label => 'DELETE_BUTTON', :type => :record, :confirm => 'ARE_YOU_SURE', :method => :delete, :position => false, :security_method => :delete_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('destroy', :label => 'DELETE_BUTTON', :type => :record, :confirm => 'ARE_YOU_SURE', :method => :delete, :position => false, :security_method => :delete_authorized?, :crud_type => :destroy)
 
     # instance-level configuration
     # ----------------------------

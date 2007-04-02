@@ -1,12 +1,5 @@
 module ActionView::Helpers
   module ActiveScaffoldListHelpers
-    # checks whether the given action_link is allowed for the given record
-    def record_is_allowed_for_link(record, link)
-      return true unless record.respond_to? link.security_method
-      current_user = controller.send(active_scaffold_config.current_user_method) rescue nil
-      return record.send(link.security_method, current_user)
-    end
-
     def render_action_link(link, url_options)
       url_options = url_options.clone
       url_options[:action] = link.action

@@ -103,14 +103,6 @@ module ActiveScaffold::DataStructures
     # the below functionality is intended for internal consumption only #
     # ----------------------------------------------------------------- #
 
-    # checks whether this column is authorized for the given user (and possibly the given action)
-    def authorized?(current_user, action = nil)
-      security_method = "#{@name}_authorized_for_#{action}?" if action
-      security_method = "#{@name}_authorized?" unless security_method and @active_record_class.respond_to?(security_method)
-      return true unless @active_record_class.respond_to? security_method
-      return @active_record_class.send(security_method, current_user)
-    end
-
     # the ConnectionAdapter::*Column object from the ActiveRecord class
     attr_reader :column
 

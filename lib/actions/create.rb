@@ -1,9 +1,7 @@
 module ActiveScaffold::Actions
   module Create
-    include Base
-
     def self.included(base)
-      super
+      base.before_filter :create_authorized?, :only => [:new, :create]
       base.verify :method => :post,
                   :only => :create,
                   :redirect_to => { :action => :index }
@@ -79,5 +77,11 @@ module ActiveScaffold::Actions
 
     # override this method if you want to do something after the save
     def after_create_save(record); end
+
+    # The default security delegates to ActiveRecordPermissions.
+    # You may override the method to customize.
+    def create_authorized?
+      authorized_for?(:action => :create)
+    end
   end
 end

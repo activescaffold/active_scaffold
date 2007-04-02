@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module LiveSearch
-    include ActiveScaffold::Actions::Base
     def self.included(base)
+      base.before_filter :live_search_authorized?, :only => :show_search
       base.before_filter :do_search
     end
 
@@ -33,6 +33,12 @@ module ActiveScaffold::Actions
 
         active_scaffold_config.list.user.page = nil
       end
+    end
+
+    # The default security delegates to ActiveRecordPermissions.
+    # You may override the method to customize.
+    def live_search_authorized?
+      authorized_for?(:action => :read)
     end
   end
 end

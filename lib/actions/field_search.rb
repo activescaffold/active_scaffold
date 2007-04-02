@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module FieldSearch
-    include ActiveScaffold::Actions::Base
     def self.included(base)
+      base.before_filter :field_search_authorized?, :only => :show_search
       base.before_filter :do_search
     end
 
@@ -36,7 +36,7 @@ module ActiveScaffold::Actions
           else
             conditions = merge_conditions(conditions, ["LOWER(#{active_scaffold_config.columns[key].search_sql}) LIKE ?", like_pattern.sub(/\?/, value.downcase)])
           end
-        end        
+        end
         self.active_scaffold_conditions = conditions
 
         columns = active_scaffold_config.field_search.columns
@@ -45,6 +45,12 @@ module ActiveScaffold::Actions
 
         active_scaffold_config.list.user.page = nil
       end
+    end
+
+    # The default security delegates to ActiveRecordPermissions.
+    # You may override the method to customize.
+    def field_search_authorized?
+      authorized_for?(:action => :read)
     end
   end
 end

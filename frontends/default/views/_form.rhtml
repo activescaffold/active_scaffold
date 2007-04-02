@@ -1,5 +1,5 @@
 <ol class="form">
-  <% columns.each do |column| -%>
+  <% columns.each :for => @record do |column| -%>
   <% if is_subsection? column -%>
   <li class="sub-section">
     <h5><%= column.label %></h5>

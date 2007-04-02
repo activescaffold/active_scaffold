@@ -6,16 +6,6 @@ class ColumnTest < Test::Unit::TestCase
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
   end
 
-  def test_authorized
-    column_a = @column
-    column_b = ActiveScaffold::DataStructures::Column.new(:b, ModelStub)
-
-    user = nil
-    action = 'bar'
-    assert column_a.authorized?(user, action)
-    assert !column_b.authorized?(user, action)
-  end
-
   def test_column
     assert @column.column.is_a?(ActiveRecord::ConnectionAdapters::Column)
     assert @column.column.name == :a

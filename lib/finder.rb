@@ -41,7 +41,7 @@ module ActiveScaffold
     def find_if_allowed(id, action, klass = nil)
       klass ||= active_scaffold_config.model
       record = klass.find(id)
-      raise ActiveScaffold::RecordNotAllowed unless record_allowed_for_action?(record, action)
+      raise ActiveScaffold::RecordNotAllowed unless record.authorized_for?(:action => action)
       return record
     end
 

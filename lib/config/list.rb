@@ -1,5 +1,7 @@
 module ActiveScaffold::Config
   class List < Base
+    self.crud_type = :read
+
     def initialize(core_config)
       @core = core_config
 
@@ -36,6 +38,7 @@ module ActiveScaffold::Config
     attr_reader :columns
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
+      @columns.action = self
     end
 
     # how many rows to show at once
@@ -64,7 +67,7 @@ module ActiveScaffold::Config
       def label
         _(@session[:label] || @conf.label)
       end
-      
+
       def per_page
         @session['per_page'] = @params['limit'].to_i if @params.has_key? 'limit'
         @session['per_page'] || @conf.per_page

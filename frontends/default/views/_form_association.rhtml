@@ -4,6 +4,8 @@ associated = column.singular_association? ? [parent_record.send(column.name)].co
 
 show_blank_record = (column.plural_association? or (column.singular_association? and associated.empty?))
 show_blank_record = false if column.through_association?
+show_blank_record = false unless column.association.klass.authorized_for?(:action => :create)
+
 -%>
 <h5><%= column.label -%></h5>
 <table cellpadding="0" cellspacing="0">

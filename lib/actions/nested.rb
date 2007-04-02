@@ -23,7 +23,7 @@ module ActiveScaffold::Actions
     # A simple method to find the record we'll be nesting *from*
     # May be overridden to customize the behavior
     def do_nested
-      @record = find_if_allowed(params[:id], 'nested')
+      @record = find_if_allowed(params[:id], :read)
     end
 
     def include_habtm_actions

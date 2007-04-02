@@ -1,6 +1,8 @@
 module ActiveScaffold::Actions
   module List
-    include ActiveScaffold::Actions::Base
+    def self.included(base)
+      base.before_filter :list_authorized?, :only => [:index, :table, :update_table, :row, :list]
+    end
 
     def index
       list
@@ -24,7 +26,7 @@ module ActiveScaffold::Actions
 
     # get just a single row
     def row
-      render :partial => 'list_record', :locals => {:record => find_if_allowed(params[:id], 'list')}
+      render :partial => 'list_record', :locals => {:record => find_if_allowed(params[:id], :read)}
     end
 
     def list
@@ -56,6 +58,12 @@ module ActiveScaffold::Actions
 
       @page = find_page(options)
       @records = @page.items
+    end
+
+    # The default security delegates to ActiveRecordPermissions.
+    # You may override the method to customize.
+    def list_authorized?
+      authorized_for?(:action => :read)
     end
   end
 end

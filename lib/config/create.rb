@@ -1,5 +1,7 @@
 module ActiveScaffold::Config
   class Create < Form
+    self.crud_type = :create
+
     # global level configuration
     # --------------------------
     # the ActionLink for this action
@@ -9,7 +11,7 @@ module ActiveScaffold::Config
     def self.link=(val)
       @@link = val
     end
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('new', :label => 'CREATE_NEW', :type => :table, :security_method => :create_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('new', :label => 'CREATE_NEW', :type => :table, :security_method => :create_authorized?, :crud_type => :create)
 
     # instance-level configuration
     # ----------------------------

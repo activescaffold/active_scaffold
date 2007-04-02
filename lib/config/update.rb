@@ -1,5 +1,7 @@
 module ActiveScaffold::Config
   class Update < Form
+    self.crud_type = :update
+
     # global level configuration
     # --------------------------
     # the ActionLink for this action
@@ -9,7 +11,7 @@ module ActiveScaffold::Config
     def self.link=(val)
       @@link = val
     end
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => 'EDIT_BUTTON', :type => :record, :security_method => :update_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => 'EDIT_BUTTON', :type => :record, :security_method => :update_authorized?, :crud_type => :update)
 
     # instance-level configuration
     # ----------------------------
