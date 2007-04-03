@@ -101,7 +101,7 @@ module ActiveScaffold
           return klass.find(params[:id])
         end
       else
-        return klass.new unless klass.authorized_for?(:action => :create)
+        return klass.new if klass.authorized_for?(:action => :create)
       end
     end
 
