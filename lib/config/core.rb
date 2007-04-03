@@ -30,6 +30,12 @@ module ActiveScaffold::Config
       ActiveRecordPermissions
     end
 
+    # a shortcut to Localization.lang
+    # now that Localization is namespaced for ActiveScaffold, it's worth configuring through here
+    def self.lang=(val)
+      ActiveScaffold::Localization.lang = val
+    end
+
     # columns that should be ignored for every model. these should be metadata columns like change dates, versions, etc.
     # values in this array may be symbols or strings.
     cattr_accessor :ignore_columns
@@ -123,9 +129,8 @@ module ActiveScaffold::Config
     end
 
     def self.method_missing(name, *args)
-      name = name.to_s
-      if @@actions.include? name.underscore and ActiveScaffold::Config.const_defined? name.titleize
-        return eval("ActiveScaffold::Config::#{name.titleize}")
+      if @@actions.include? name.to_s.underscore and ActiveScaffold::Config.const_defined? name.to_s.titleize
+        return eval("ActiveScaffold::Config::#{name.to_s.titleize}")
       end
       super
     end
