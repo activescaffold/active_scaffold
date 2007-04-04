@@ -5,9 +5,6 @@ module ActiveScaffold::Config
     def initialize(core_config)
       @core = core_config
 
-      # inherit from the core's list of columns.
-      self.columns = @core.columns.collect{|c| c.name}
-
       # start with the ActionLink defined globally
       @link = self.class.link.clone
     end
@@ -30,7 +27,10 @@ module ActiveScaffold::Config
     end
 
     # provides access to the list of columns specifically meant for this action to use
-    attr_reader :columns
+    def columns
+      self.columns = @core.columns.collect{|c| c.name} unless @columns # lazy evaluation
+      @columns
+    end
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
       @columns.action = self

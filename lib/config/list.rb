@@ -5,9 +5,6 @@ module ActiveScaffold::Config
     def initialize(core_config)
       @core = core_config
 
-      # inherit from the core's list of columns.
-      self.columns = @core.columns.collect{|c| c.name}
-
       # inherit from global scope
       # full configuration path is: defaults => global table => local table
       @per_page = self.class.per_page
@@ -35,7 +32,10 @@ module ActiveScaffold::Config
     # ----------------------------
 
     # provides access to the list of columns specifically meant for the Table to use
-    attr_reader :columns
+    def columns
+      self.columns = @core.columns.collect{|c| c.name} unless @columns # lazy evaluation
+      @columns
+    end
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
       @columns.action = self

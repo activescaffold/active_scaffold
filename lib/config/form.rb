@@ -6,10 +6,6 @@ module ActiveScaffold::Config
       # start with the ActionLink defined globally
       @link = self.class.link.clone
 
-      # inherit from the core's list of columns, but exclude a few extra fields by default
-      self.columns = @core.columns.collect{|c| c.name}
-      self.columns.exclude :created_on, :created_at, :updated_on, :updated_at
-
       # no global setting here because multipart should only be set for specific forms
       @multipart = false
     end
@@ -30,7 +26,13 @@ module ActiveScaffold::Config
     end
 
     # provides access to the list of columns specifically meant for the Form to use
-    attr_reader :columns
+    def columns
+      unless @columns # lazy evaluation
+        self.columns = @core.columns.collect{|c| c.name}
+        self.columns.exclude :created_on, :created_at, :updated_on, :updated_at
+      end
+      @columns
+    end
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
       @columns.action = self
