@@ -70,7 +70,8 @@ module ActiveScaffold::DataStructures
       # registers a set of column objects (recursively, for all nested ActionColumns)
       def set_columns(columns)
         @columns = columns
-        self.each do |item|
+        # iterate over @set instead of self to avoid dealing with security queries
+        @set.each do |item|
           item.set_columns(columns) if item.respond_to? :set_columns
         end
       end
