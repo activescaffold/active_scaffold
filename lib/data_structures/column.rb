@@ -70,7 +70,7 @@ module ActiveScaffold::DataStructures
         @link = action
       else
         options[:label] ||= @label
-        options[:position] ||= :after
+        options[:position] ||= :after unless options.has_key?(:position)
         options[:type] ||= :record
         @link = ActiveScaffold::DataStructures::ActionLink.new(action, options)
       end
