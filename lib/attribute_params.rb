@@ -74,7 +74,9 @@ module ActiveScaffold
             collection.compact
 
           else
-            value
+            # convert empty strings into nil. this works better with 'null => true' columns (and validations),
+            # and 'null => false' columns should just convert back to an empty string.
+            (value.nil? or value.empty?) ? nil : value
           end
 
           parent_record.send("#{column.name}=", value) unless column.through_association?
