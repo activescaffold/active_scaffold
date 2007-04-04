@@ -39,61 +39,69 @@ module ActionView::Helpers
 
     def active_scaffold_column_header_id(column)
       name = column.respond_to?(:name) ? column.name : column.to_s
-      "#{controller_id}-#{name}-column"
+      clean_id "#{controller_id}-#{name}-column"
     end
 
     def element_row_id(options = {})
       options[:action] ||= params[:action]
       options[:id] ||= params[:id]
-      "#{controller_id}-#{options[:action]}-#{options[:id]}-row"
+      options[:id] = "#{options[:id]}@"
+      clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-row"
     end
 
     def element_cell_id(options = {})
       options[:action] ||= params[:action]
       options[:id] ||= params[:id]
-      "#{controller_id}-#{options[:action]}-#{options[:id]}-cell"
+      clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-cell"
     end
 
     def element_form_id(options = {})
       options[:action] ||= params[:action]
       options[:id] ||= params[:id]
-      "#{controller_id}-#{options[:action]}-#{options[:id]}-form"
+      clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-form"
     end
 
     def association_subform_id(column)
       klass = column.association.klass.to_s.underscore
-      "#{controller_id}-associated-#{klass}"
+      clean_id "#{controller_id}-associated-#{klass}"
     end
 
     def loading_indicator_id(options = {})
       options[:action] ||= params[:action]
       unless options[:id]
-        "#{controller_id}-#{options[:action]}-loading-indicator"
+        clean_id "#{controller_id}-#{options[:action]}-loading-indicator"
       else
-        "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
+        clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
       end
     end
 
     def sub_form_id(options = {})
       options[:id] ||= params[:id]
-      "#{controller_id}-#{options[:id]}-#{options[:association]}-subform"
+      clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform"
     end
 
     def sub_form_list_id(options = {})
       options[:id] ||= params[:id]
-      "#{controller_id}-#{options[:id]}-#{options[:association]}-subform-list"
+      clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform-list"
     end
 
     def element_messages_id(options = {})
       options[:action] ||= params[:action]
       options[:id] ||= params[:id]
-      "#{controller_id}-#{options[:action]}-#{options[:id]}-messages"
+      clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-messages"
     end
 
     def action_link_id(options = {})
       options[:id] ||= params[:id]
       options[:action] ||= params[:action]
-      "#{controller_id}-#{options[:action]}-#{options[:id]}-link"
+      clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-link"
+    end
+
+    private
+
+    # whitelists id-safe characters
+    def clean_id(val)
+      val.gsub /[^-._0-9a-zA-Z]/, '-'
     end
   end
 end
