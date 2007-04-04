@@ -1,4 +1,4 @@
-ActiveScaffold::Localization.define('de-de') do |lang| 
+ActiveScaffold::Localization.define('de-de') do |lang|
   # Used to confirm an action. Presently used for Delete.
   lang['ARE_YOU_SURE'] ||= 'Sind Sie sicher?'
 
@@ -24,16 +24,16 @@ ActiveScaffold::Localization.define('de-de') do |lang|
   lang['CREATE_NEW'] ||= 'Neu'
 
   # The link to delete a record
-  lang['DELETE_BUTTON'] ||= 'LÃ¶schen'
+  lang['DELETE_BUTTON'] ||= 'L&ouml;schen'
 
   # For flash[:info] feedback after deleting a record (in HTML mode)
-  lang['DELETED %s'] ||= 'GelÃ¶scht %s'
+  lang['DELETED %s'] ||= 'Gel&ouml;scht %s'
 
   # The link to the Update form
   lang['EDIT_BUTTON'] ||= 'Bearbeiten'
 
   # Used for nested scaffolds to modify the scaffold title (e.g. Contacts for Client X)
-  lang['FOR'] ||= ' fÃ¼r '
+  lang['FOR'] ||= ' f&uuml;r '
 
   # Used in list footer, number of rows found
   lang['FOUND'] ||= 'Gesamt'
@@ -42,7 +42,7 @@ ActiveScaffold::Localization.define('de-de') do |lang|
   lang['NO_ENTRIES'] ||= 'Keine Daten vorhanden'
 
   # For pagination - navigate to the previous page
-  lang['PREVIOUS_BUTTON'] ||= 'ZurÃ¼ck'
+  lang['PREVIOUS_BUTTON'] ||= 'Zur&uuml;ck'
 
   # For pagination - navigate to the next page
   lang['NEXT_BUTTON'] ||= 'Vor'
@@ -54,19 +54,19 @@ ActiveScaffold::Localization.define('de-de') do |lang|
   lang['REPLACE_WITH_NEW'] ||= 'Ersetzen'
 
   # For a reset button
-  lang['RESET_BUTTON'] ||= 'ZurÃ¼cksetzen'
+  lang['RESET_BUTTON'] ||= 'Zur&uuml;cksetzen'
 
   # The link to the Search interface
   lang['SEARCH_BUTTON'] ||= 'Suchen'
 
   # Used in select controls to entice user to select something
-  lang['_SELECT_'] ||= '- Bitte wÃ¤hlen -'
+  lang['_SELECT_'] ||= '- Bitte w&auml;hlen -'
 
   # The link to the Show view
   lang['SHOW_BUTTON'] ||= 'Anzeigen'
 
   # The header label on the Show view
-  lang['SHOW_HEADER'] ||= 'Info Ã¼ber '
+  lang['SHOW_HEADER'] ||= 'Info &uuml;ber '
 
   # For the submit button on Update forms
   lang['UPDATE_BUTTON'] ||= 'Speichern'
