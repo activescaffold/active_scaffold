@@ -17,3 +17,7 @@ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/active_s
 .active-scaffold-header div.actions a.disabled {
 filter: alpha(opacity=50);
 }
+
+.inline-adapter-cell dd {
+float: none;
+}
