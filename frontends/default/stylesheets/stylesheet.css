@@ -259,7 +259,7 @@ clear: both;
 
 .inline-adapter-cell dd
 {
-float: left;
+float: inherit;
 margin: 0px;
 padding: .5em;
 }
