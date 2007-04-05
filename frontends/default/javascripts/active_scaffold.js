@@ -95,10 +95,12 @@ Element.replace = function(element, html) {
     }
   } else {
     var range = element.ownerDocument.createRange();
-    range.selectNodeContents(element);
+    /* patch to fix <form> replaces in Firefox. see http://dev.rubyonrails.org/ticket/8010 */
+    range.selectNodeContents(element.parentNode);
     element.parentNode.replaceChild(range.createContextualFragment(html.stripScripts()), element);
   }
   setTimeout(function() {html.evalScripts()}, 10);
+  return element;
 };
 
 /*
