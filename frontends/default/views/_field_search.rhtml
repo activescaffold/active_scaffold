@@ -13,14 +13,14 @@
 
   <ol class="form">
     <% active_scaffold_config.field_search.columns.each do |column| -%>
-  		<% name = "search_record[#{column.name}]" %>
+  		<% name = "search[#{column.name}]" %>
   	  <li class="form-element">
-  			<label for="<%= "search_record_#{column.name}" %>"><%= column.label %></label>
+  			<label for="<%= "search_#{column.name}" %>"><%= column.label %></label>
 				<%= case column.ui_type
 					when :boolean
-            check_box_tag(name, 1, params[:search_record][column.name] || params[:search_record][column.name] == 1)
+            check_box_tag(name, 1, params[:search][column.name] || params[:search][column.name] == 1)
 					else
-						text_field_tag(name, params[:search_record][column.name], { :autocomplete => "off", :size => 20, :class => 'text-input', :id => "search_#{column.name}"})
+						text_field_tag(name, params[:search][column.name], { :autocomplete => "off", :size => 20, :class => 'text-input', :id => "search_#{column.name}"})
 					end
 				%>
   		</li>
