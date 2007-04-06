@@ -13,18 +13,20 @@
 
   <ol class="form">
     <% active_scaffold_config.field_search.columns.each do |column| -%>
-  		<% name = "search[#{column.name}]" %>
-  	  <li class="form-element">
-  			<label for="<%= "search_#{column.name}" %>"><%= column.label %></label>
-				<%= case column.ui_type
-					when :boolean
-            check_box_tag(name, 1, params[:search][column.name] || params[:search][column.name] == 1)
-					else
-						text_field_tag(name, params[:search][column.name], { :autocomplete => "off", :size => 20, :class => 'text-input', :id => "search_#{column.name}"})
-					end
-				%>
-  		</li>
-  	<% end -%>
+      <% name = "search[#{column.name}]" %>
+      <% value = nil %>
+      <% value = params[:search][column.name] if params[:search] %>
+      <li class="form-element">
+        <label for="<%= "search_#{column.name}" %>"><%= column.label %></label>
+        <%= case column.ui_type
+          when :boolean
+            check_box_tag(name, 1, value || value == 1)
+          else
+            text_field_tag(name, value, { :autocomplete => "off", :size => 20, :class => 'text-input', :id => "search_#{column.name}"})
+          end
+        %>
+      </li>
+    <% end -%>
   </ol>
   <%= submit_tag _('SEARCH_BUTTON'), :class => "submit" %>
   <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= _('RESET_BUTTON') -%></a>
