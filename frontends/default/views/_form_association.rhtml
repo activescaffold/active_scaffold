@@ -1,6 +1,7 @@
 <%
 parent_record = @record
-associated = column.singular_association? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).sort_by {|r| r.id}
+associated = column.singular_association? ? [parent_record.send(column.name)].compact : parent_record.send(column.name)
+associated = associated.sort_by {|r| r.id} unless column.association.options.has_key?(:order)
 
 show_blank_record = (column.plural_association? or (column.singular_association? and associated.empty?))
 show_blank_record = false if column.through_association?
