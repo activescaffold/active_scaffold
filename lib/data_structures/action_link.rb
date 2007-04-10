@@ -82,6 +82,7 @@ module ActiveScaffold::DataStructures
     # for :type => :table, supported values are:
     #   :top
     #   :bottom
+    #   :replace (for updating the entire table)
     #   false (no attempt at positioning)
     # for :type => :record, supported values are:
     #   :before

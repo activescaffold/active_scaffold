@@ -91,12 +91,6 @@ module ActionView::Helpers
       clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-messages"
     end
 
-    def action_link_id(options = {})
-      options[:id] ||= params[:id]
-      options[:action] ||= params[:action]
-      clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-link"
-    end
-
     private
 
     # whitelists id-safe characters

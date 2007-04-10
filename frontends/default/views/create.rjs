@@ -11,5 +11,5 @@ if (form_stays_open = true)
   page.replace element_form_id, :partial => 'create_form'
   @record = original_record
 else
-  page << "$('#{action_link_id(:action => active_scaffold_config.create.link.action)}').action_link.close()"
+  page << "$$('##{element_form_id(:action => :create)} a.cancel').first().cancel();"
 end

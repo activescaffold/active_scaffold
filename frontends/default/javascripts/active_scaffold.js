@@ -161,9 +161,6 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
       this.open();
       Event.stop(event);
     }.bind(this));
-
-
-    this.tag.action_link = this;
   },
 
   open: function() {
@@ -267,10 +264,14 @@ ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.Ac
       return false;
     }
 
-    this.adapter.down('a.inline-adapter-close').observe('click', function(event) {
+    var closer = function(event) {
       this.close_with_refresh();
-      Event.stop(event);
-    }.bind(this));
+      if (event) Event.stop(event);
+    }.bind(this);
+
+    this.adapter.down('a.inline-adapter-close').observe('click', closer);
+    // anything in the insert with a class of cancel gets the closer method
+    this.adapter.getElementsByClassName('cancel').each(function(elem) {elem.observe('click', closer); elem.cancel = closer;})
 
     new Effect.Highlight(this.adapter.down('td'));
   },
@@ -332,10 +333,14 @@ ActiveScaffold.ActionLink.Table.prototype = Object.extend(new ActiveScaffold.Act
       throw 'Unknown position "' + this.position + '"'
     }
 
-    this.adapter.down('a.inline-adapter-close').observe('click', function(event) {
+    var closer = function(event) {
       this.close();
-      Event.stop(event);
-    }.bind(this));
+      if (event) Event.stop(event);
+    }.bind(this);
+
+    this.adapter.down('a.inline-adapter-close').observe('click', closer);
+    // anything in the insert with a class of cancel gets the closer method
+    this.adapter.getElementsByClassName('cancel').each(function(elem) {elem.observe('click', closer); elem.cancel = closer;})
 
     new Effect.Highlight(this.adapter.down('td'));
   }

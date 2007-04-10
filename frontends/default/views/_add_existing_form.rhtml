@@ -29,7 +29,7 @@
 
   <p class="form-footer">
     <%= submit_tag _('CREATE_BUTTON'), :class => "submit" %>
-    <%= link_to _('CANCEL_BUTTON'), params_for(:action => 'list'), { :onclick => "$('#{action_link_id(:action => :new_existing)}').action_link.close(); return false;" }%>
+    <%= link_to _('CANCEL_BUTTON'), params_for(:action => 'list'), :class => 'cancel' %>
     <%= loading_indicator_tag(:action => :add_existing, :id => params[:id]) %>
   </p>
 
