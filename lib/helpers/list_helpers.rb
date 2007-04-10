@@ -75,21 +75,32 @@ module ActionView::Helpers
       else
         value = record.send(column.name)
         if column.association.nil? or column_empty?(value)
-          formatted_value = h(format_column(value))
+          formatted_value = clean_column_value(format_column(value))
         else
           case column.association.macro
             when :has_one, :belongs_to
-              formatted_value = h(format_column(value.to_label))
+              formatted_value = clean_column_value(format_column(value.to_label))
 
             when :has_many, :has_and_belongs_to_many
               firsts = value.first(4).collect { |v| v.to_label }
               firsts[3] = '…' if firsts.length == 4
-              formatted_value = h(format_column(firsts.join(', ')))
+              formatted_value = clean_column_value(format_column(firsts.join(', ')))
           end
         end
 
         formatted_value
       end
+    end
+
+    # There are two basic ways to clean a column's value: h() and sanitize(). The latter is useful
+    # when the column contains *valid* html data, and you want to just disable any scripting. People
+    # can always use field overrides to clean data one way or the other, but having this override
+    # lets people decide which way it should happen by default.
+    #
+    # Why is it not a configuration option? Because it seems like a somewhat rare request. But it
+    # could eventually be an option in config.list (and config.show, I guess).
+    def clean_column_value(v)
+      h(v)
     end
 
     def column_override(column)
