@@ -89,6 +89,7 @@ module ActiveScaffold::Config
       association_column_names = self.model.reflect_on_all_associations.collect{ |a| a.name.to_sym }.sort_by { |c| c.to_s }
       column_names = content_column_names + association_column_names
       column_names -= self.class.ignore_columns.collect { |c| c.to_sym }
+      column_names -= self.model.reflect_on_all_associations.collect{|a| "#{a.name}_type".to_sym if a.options[:polymorphic]}.compact
       self.columns = column_names
 
       # inherit the global frontend
