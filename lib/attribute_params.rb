@@ -24,7 +24,7 @@ module ActiveScaffold
     #
     # This is a secure way to apply params to a record, because it's based on a loop over the columns
     # set. The columns set will not yield unauthorized columns, and it will not yield unregistered columns.
-    # this very effectively replaces the params[:record] filtering i set up before.
+    # This very effectively replaces the params[:record] filtering I set up before.
     def update_record_from_params(parent_record, columns, attributes)
       action = parent_record.new_record? ? :create : :update
       return parent_record unless parent_record.authorized_for?(:action => action)
@@ -81,6 +81,10 @@ module ActiveScaffold
           end
 
           parent_record.send("#{column.name}=", value) unless column.through_association?
+        # because the plural association list of checkboxes doesn't submit anything when no checkboxes are checked,
+        # we need to clear the associated set when the attribute is missing from the parameters.
+        elsif column.ui_type == :select and column.plural_association? and not column.through_association?
+          parent_record.send("#{column.name}=", [])
         end
       end
       parent_record
