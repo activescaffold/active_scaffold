@@ -1,8 +1,10 @@
 module ActiveScaffold
   module Localization
-    mattr_reader :lang
+    def self.lang
+      Thread.current[:active_scaffold_lang] ||= @@lang
+    end
     def self.lang=(value)
-      @@lang = standardize_name(value)
+      Thread.current[:active_scaffold_lang] = value
     end
 
     @@l10s = { 'en-us' => {} }
@@ -20,18 +22,18 @@ module ActiveScaffold
     # example of format: { 0=>'nullar %d', 1=>'singular %d', 2=>'dual %d', 3=>"paucal %d", 5=>'plural %d'}
     # empty/nil args will bypass the pluralization in order to be used with external i18n plugins
     def self.translate(string_to_localize, args=[])
-      if @@l10s[@@lang].nil? or @@l10s[@@lang][string_to_localize].nil?
+      if @@l10s[self.lang].nil? or @@l10s[self.lang][string_to_localize].nil?
         string_to_localize
       else
-        format = @@l10s[@@lang][string_to_localize]
+        format = @@l10s[self.lang][string_to_localize]
         if format.is_a?(String)  # pluralization not required; args ignored here
           format
         elsif format.is_a?(Hash) # pluralization required
           if args.empty?         # pluralization bypassed
             format[1]            # singular returned
-          else                   # pluraliztion 
+          else                   # pluralization
             count = (args.select{|i| i.is_a?(Numeric)}).first  # finds the count in args
-            key = (format.keys.sort.reverse.select{|v| v <= count}).first # finds the case 
+            key = (format.keys.sort.reverse.select{|v| v <= count}).first # finds the case
             key = format.keys.sort.first if key.nil?  # when nullar is omitted and count == 0
             format[key] # pluralized format returned
           end
