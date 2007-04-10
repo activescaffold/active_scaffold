@@ -72,7 +72,7 @@ module ActiveRecordPermissions
     # options[:action] should be a CRUD verb (:create, :read, :update, :destroy)
     def authorized_for?(options = {})
       options.assert_valid_keys :action, :column
-      raise "unknown action #{options[:action]}" if options[:action] and ![:create, :read, :update, :destroy].include?(options[:action])
+      raise ArgumentError, "unknown action #{options[:action]}" if options[:action] and ![:create, :read, :update, :destroy].include?(options[:action])
 
       methods = [
         column_security_method(options[:column]),

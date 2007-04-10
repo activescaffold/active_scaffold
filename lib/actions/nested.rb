@@ -137,7 +137,7 @@ module ActiveScaffold::Actions::Nested
     def do_add_existing
       #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
       parent_model, id, association = nested_action_from_params
-      parent_record = find_if_allowed(id, 'update', parent_model)
+      parent_record = find_if_allowed(id, :update, parent_model)
       @record = active_scaffold_config.model.find(params[:associated_id])
       parent_record.send(association) << @record
       parent_record.save
@@ -146,7 +146,7 @@ module ActiveScaffold::Actions::Nested
     def do_destroy_association
       #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
       parent_model, id, association = nested_action_from_params
-      parent_record = find_if_allowed(id, 'update', parent_model)
+      parent_record = find_if_allowed(id, :update, parent_model)
       @record = parent_record.send("roles").find(params[:id])
       @record.destroy
     end
