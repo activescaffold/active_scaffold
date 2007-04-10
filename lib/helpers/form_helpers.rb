@@ -9,9 +9,10 @@ module ActionView::Helpers
       column_renders_as(column) == :subform
     end
 
-    # A column shouldn't be in the subform if it's the reverse association to the parent or if it's habtm
+    # A column shouldn't be in the subform if it's the reverse association to the parent or if it's habtm.
+    # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
     def in_subform?(column, parent_record)
-      !(column.association and ((column.association.klass == parent_record.class) or (column.association.macro == :has_and_belongs_to_many)))
+      !(column.association and (column.polymorphic_association? or column.association.macro == :has_and_belongs_to_many or column.association.klass == parent_record.class))
     end
 
     def is_subsection?(column)

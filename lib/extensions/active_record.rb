@@ -48,7 +48,7 @@ module ActiveRecord
           reverse_matches = []
           # stage 1 filter: collect associations that point back to this model and use the same primary_key_name
           self.class_name.constantize.reflect_on_all_associations.each do |assoc|
-            next unless assoc.class_name.constantize == self.active_record
+            next unless assoc.options[:polymorphic] or assoc.class_name.constantize == self.active_record
             case [assoc.macro, self.macro].find_all{|m| m == :has_and_belongs_to_many}.length
               # if both are a habtm, then match them based on the join table
               when 2

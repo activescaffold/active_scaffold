@@ -117,6 +117,9 @@ module ActiveScaffold::DataStructures
     def through_association?
       self.association and self.association.options[:through]
     end
+    def polymorphic_association?
+      self.association and self.association.options.has_key? :polymorphic and self.association.options[:polymorphic]
+    end
 
     # an interpreted property. the column is virtual if it isn't from the active record model or any associated models
     def virtual?
@@ -152,7 +155,7 @@ module ActiveScaffold::DataStructures
       self.sort = true
       self.search_sql = true
 
-      self.includes = association ? [association.name] : []
+      self.includes = (association and not polymorphic_association?) ? [association.name] : []
     end
 
     # just the field (not table.field)
