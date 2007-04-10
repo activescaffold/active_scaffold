@@ -9,7 +9,10 @@ module ActiveScaffold::DataStructures
       self.type = :table
       self.inline = true
       self.method = :get
-      self.crud_type = :read
+      self.crud_type = :destroy if [:destroy].include?(action.to_sym)
+      self.crud_type = :create if [:create, :new].include?(action.to_sym)
+      self.crud_type = :update if [:edit, :update].include?(action.to_sym)
+      self.crud_type ||= :read
 
       # apply quick properties
       options.each_pair do |k, v|

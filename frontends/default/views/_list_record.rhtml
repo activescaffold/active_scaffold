@@ -9,7 +9,7 @@
     <td class="<%= column_class(column, column_value) %>" >
       <% if column.link -%>
         <% column.link.label = column_value %>
-        <%= render_action_link(column.link, url_options) %>
+        <%= record.authorized_for?(:action => column.link.crud_type) ? render_action_link(column.link, url_options) : "<a class='disabled'>#{column.link.label}</a>" -%>
       <% else -%>
         <%= column_value %>
       <% end -%>
