@@ -1,6 +1,10 @@
 module ActiveScaffold::Config
   class Create < Form
     self.crud_type = :create
+    def initialize(*args)
+      super
+      self.persistent = self.class.persistent
+    end
 
     # global level configuration
     # --------------------------
@@ -13,11 +17,18 @@ module ActiveScaffold::Config
     end
     @@link = ActiveScaffold::DataStructures::ActionLink.new('new', :label => 'CREATE_NEW', :type => :table, :security_method => :create_authorized?)
 
+    # whether the form stays open after a create or not
+    cattr_accessor :persistent
+    @@persistent = false
+
     # instance-level configuration
     # ----------------------------
     # the label= method already exists in the Form base class
     def label
       @label ? _(@label) : "#{_('CREATE_HEADER')} #{@core.label.singularize}"
     end
+
+    # whether the form stays open after a create or not
+    attr_accessor :persistent
   end
 end

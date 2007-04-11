@@ -12,5 +12,5 @@ if (form_stays_open = true)
     page << "Form.focusFirstElement('#{element_form_id}');"
   end
 else
-  page << "$$('##{element_form_id(:action => :new_existing)} a.cancel').first().cancel();"
+  page << "$$('##{element_form_id(:action => :new_existing)} a.cancel').first().link.close();"
 end

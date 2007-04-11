@@ -1,1 +1,1 @@
-page << "$$('##{element_form_id(:action => :update)} a.cancel').first().cancel();"
+page << "$$('##{element_form_id(:action => :update)} a.cancel').first().link.close_with_refresh();"

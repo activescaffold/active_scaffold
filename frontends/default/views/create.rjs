@@ -3,13 +3,8 @@ page << "ActiveScaffold.stripe($('#{active_scaffold_tbody_id}'))"
 page << "ActiveScaffold.toggleEmptyMessage('#{active_scaffold_tbody_id}','#{empty_message_id}');"
 page << "ActiveScaffold.increment_record_count('#{active_scaffold_id}');"
 
-if (form_stays_open = true)
-  original_record = @record
-  # these next few lines simulate the new action
-  controller.send :do_new
-  @record = controller.instance_variable_get('@record')
-  page.replace element_form_id, :partial => 'create_form'
-  @record = original_record
+if (active_scaffold_config.create.persistent)
+  page << "$$('##{element_form_id(:action => :create)} a.cancel').first().link.reload();"
 else
-  page << "$$('##{element_form_id(:action => :create)} a.cancel').first().cancel();"
+  page << "$$('##{element_form_id(:action => :create)} a.cancel').first().link.close();"
 end
