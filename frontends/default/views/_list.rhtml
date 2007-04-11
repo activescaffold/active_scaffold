@@ -11,7 +11,7 @@
           <%= render :partial => 'messages' %>
         </div>
         <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" ' unless @page.items.empty? %>>
-          <%= _('NO_ENTRIES') %>
+          <%= as_('No Entries') %>
         </p>
       </td>
     </tr>
@@ -29,6 +29,6 @@
   <div class="active-scaffold-pagination">
     <%= render :partial => 'list_pagination_links', :locals => { :current_page => @page } unless @page.pager.number_of_pages == 1 %>
   </div>
-  <span class="active-scaffold-records"><%= @page.pager.count -%></span> <%=_('FOUND', @page.pager.count )%>
+  <span class="active-scaffold-records"><%= @page.pager.count -%></span> <%=as_('Found') % @page.pager.count %>
   <div style="clear: both;"></div><%# a hack for the Rico Corner problem %>
 </div>

@@ -1,11 +1,11 @@
 <div class="active-scaffold">
   <div class="delete">
-    <h4><%= _('ARE_YOU_SURE') -%></h4>
+    <h4><%= as_('Are you sure?') -%></h4>
     <%= form_tag params_for(:action => :destroy, :id => params[:id]), { :method => :delete } %>
-      <%= submit_tag _('DELETE_BUTTON'), :class => 'submit' %>
+      <%= submit_tag as_('Delete'), :class => 'submit' %>
     </form>
     <%= form_tag params_for(:action => :index), { :method => :get } %>
-      <%= submit_tag _('CANCEL_BUTTON'), :class => 'submit' %>
+      <%= submit_tag as_('Cancel'), :class => 'submit' %>
     </form>
   </div>
 </div>

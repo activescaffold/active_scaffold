@@ -10,7 +10,7 @@ module ActiveScaffold::DataStructures
     # labels are useful for the Create/Update forms, when we display columns in a grouped fashion and want to name them separately
     attr_writer :label
     def label
-      _(@label) if @label
+      as_(@label) if @label
     end
 
     # nests a subgroup in the column set

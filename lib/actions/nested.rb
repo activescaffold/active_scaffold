@@ -29,7 +29,7 @@ module ActiveScaffold::Actions
     def include_habtm_actions
       if nested_habtm?
         # Production mode is ok with adding a link everytime the scaffold is nested - we ar not ok with that.
-        active_scaffold_config.action_links.add('new_existing', :label => _('CREATE_FROM_EXISTING'), :type => :table, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
+        active_scaffold_config.action_links.add('new_existing', :label => as_('Add From Existing'), :type => :table, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
         self.class.module_eval do
           include ActiveScaffold::Actions::Nested::ChildMethods
         end
@@ -78,9 +78,6 @@ module ActiveScaffold::Actions::Nested
     def new_existing
       do_new
 
-#TODO 2007-03-14 (EJM) Level=0 - tie in do_destroy_association when js window code is complete
-#FIXME 2007-03-14 (EJM) Level=0 - Fix rjs errors - :nested cancel's sometimes go somewhere unexpected
-
       respond_to do |type|
         type.html do
           if successful?
@@ -101,7 +98,7 @@ module ActiveScaffold::Actions::Nested
       respond_to do |type|
         type.html do
           if successful?
-            flash[:info] = _('CREATED %s', @record.to_label)
+            flash[:info] = as_('Created %s', @record.to_label)
             return_to_main
           else
             render(:action => 'add_existing_form', :layout => true)
@@ -135,7 +132,6 @@ module ActiveScaffold::Actions::Nested
 
     # The actual "add_existing" algorithm
     def do_add_existing
-      #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
       parent_model, id, association = nested_action_from_params
       parent_record = find_if_allowed(id, :update, parent_model)
       @record = active_scaffold_config.model.find(params[:associated_id])
@@ -144,7 +140,6 @@ module ActiveScaffold::Actions::Nested
     end
 
     def do_destroy_association
-      #TODO 2007-03-14 (EJM) Level=0 - What to do about security?
       parent_model, id, association = nested_action_from_params
       parent_record = find_if_allowed(id, :update, parent_model)
       @record = parent_record.send("roles").find(params[:id])

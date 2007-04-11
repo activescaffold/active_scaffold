@@ -3,7 +3,7 @@
     <p class="<%= "#{name}-message message" %>" >
       <%= flash[name] %>
       <% if request.xhr? %>
-        <a href="#" onclick="Element.remove(this.parentNode); return false;"><%= _('CLOSE_BUTTON') %></a>
+        <a href="#" onclick="Element.remove(this.parentNode); return false;"><%= as_('Close') %></a>
       <% end %>
     </p>
   <% end %>

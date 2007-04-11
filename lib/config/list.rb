@@ -60,12 +60,12 @@ module ActiveScaffold::Config
     # the label for this List action. used for the header.
     attr_writer :label
     def label
-      _(@label || @core.label)
+      as_(@label || @core.label)
     end
 
     class UserSettings < UserSettings
       def label
-        _(@session[:label] || @conf.label)
+        as_(@session[:label] || @conf.label)
       end
 
       def per_page

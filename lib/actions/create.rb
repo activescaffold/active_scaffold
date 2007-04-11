@@ -30,7 +30,7 @@ module ActiveScaffold::Actions
       respond_to do |type|
         type.html do
           if successful?
-            flash[:info] = _('CREATED %s', @record.to_label)
+            flash[:info] = as_('Created %s', @record.to_label)
             return_to_main
           else
             render(:action => 'create_form', :layout => true)

@@ -30,8 +30,8 @@ href = url_for(params_for(:action => :update_table, :escape => false))
       </li>
     <% end -%>
   </ol>
-  <%= submit_tag _('SEARCH_BUTTON'), :class => "submit" %>
-  <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= _('RESET_BUTTON') -%></a>
+  <%= submit_tag as_('Search'), :class => "submit" %>
+  <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= as_('Reset') -%></a>
   <%= loading_indicator_tag(:action => :search) %>
 </form>
 

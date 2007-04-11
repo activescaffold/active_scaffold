@@ -5,7 +5,7 @@ module ActiveScaffold::DataStructures
 
     attr_writer :label
     def label
-      _(@label)
+      as_(@label)
     end
 
     def initialize(*args)

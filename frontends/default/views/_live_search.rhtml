@@ -1,6 +1,6 @@
 <%= form_tag params_for(:action => :update_table), :id => search_form_id, :class => 'search' %>
   <input type="text" name="search" value="<%= params[:search] -%>" class="text-input" id="<%= search_input_id %>" autocompleted="off" />
-  <input type="reset" value="<%= _('RESET_BUTTON') -%>" onclick="f = this.up('form'); f.reset(); f.onsubmit();" />
+  <input type="reset" value="<%= as_('Reset') -%>" onclick="f = this.up('form'); f.reset(); f.onsubmit();" />
   <%= loading_indicator_tag(:action => :search) %>
 </form>
 

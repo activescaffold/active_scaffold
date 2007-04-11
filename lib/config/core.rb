@@ -30,12 +30,6 @@ module ActiveScaffold::Config
       ActiveRecordPermissions
     end
 
-    # a shortcut to Localization.lang
-    # now that Localization is namespaced for ActiveScaffold, it's worth configuring through here
-    def self.lang=(val)
-      ActiveScaffold::Localization.lang = val
-    end
-
     # columns that should be ignored for every model. these should be metadata columns like change dates, versions, etc.
     # values in this array may be symbols or strings.
     def self.ignore_columns
@@ -70,7 +64,7 @@ module ActiveScaffold::Config
     # a generally-applicable name for this ActiveScaffold ... will be used for generating page/section headers
     attr_writer :label
     def label
-      _(@label)
+      as_(@label)
     end
 
     ##

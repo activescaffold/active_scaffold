@@ -45,7 +45,7 @@ module ActionView::Helpers
       if override_form_field?(column)
         send(override_form_field(column), @record, name)
       elsif column.singular_association?
-        select_options = [[_('_SELECT_'),nil]]
+        select_options = [[as_('- select -'),nil]]
         # Need to add as options all current associations for this record
         associated = @record.send(column.association.name)
         select_options += [[ associated.to_label, associated.id ]] unless associated.nil?
@@ -128,7 +128,7 @@ module ActionView::Helpers
     # Turns [[label, value]] into <option> tags
     # Takes optional parameter of :include_blank
     def option_tags_for(select_options, options = {})
-      select_options.insert(0,[_('_SELECT_'),nil]) if options[:include_blank]
+      select_options.insert(0,[as_('- select -'),nil]) if options[:include_blank]
       select_options.collect do |option|
         label, value = option[0], option[1]
         value.nil? ? "<option value="">#{label}</option>" : "<option value=\"#{value}\">#{label}</option>"

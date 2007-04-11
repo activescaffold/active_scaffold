@@ -30,7 +30,6 @@ end
 require 'active_scaffold'
 require 'configurable'
 require 'finder'
-require 'localization'
 require 'constraints'
 require 'attribute_params'
 require 'active_record_permissions'
@@ -72,7 +71,6 @@ end
 ##
 ## Preload other directories
 ##
-Dir["#{File.dirname __FILE__}/frontends/**/lang/*.rb"].each {|file| require file}
 
 ##
 ## Inject includes for ActiveScaffold libraries

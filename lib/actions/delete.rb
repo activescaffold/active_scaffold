@@ -19,7 +19,7 @@ module ActiveScaffold::Actions
       @successful = successful?
       respond_to do |type|
         type.html do
-          flash[:info] = _('DELETED %s', @record.to_label)
+          flash[:info] = as_('Deleted %s', @record.to_label)
           return_to_main
         end
         type.js { render(:action => 'destroy.rjs', :layout => false) }

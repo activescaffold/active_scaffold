@@ -33,13 +33,13 @@ module ActiveScaffold::DataStructures
     # what string to use to represent this action
     attr_writer :label
     def label
-      _(@label)
+      as_(@label)
     end
 
     # if the action requires confirmation
     attr_writer :confirm
     def confirm
-      @confirm.is_a?(String) ? _(@confirm) : @confirm
+      @confirm.is_a?(String) ? as_(@confirm) : @confirm
     end
     def confirm?
       @confirm ? true : false
