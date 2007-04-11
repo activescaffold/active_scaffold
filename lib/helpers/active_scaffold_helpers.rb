@@ -42,5 +42,10 @@ module ActionView::Helpers
       end
       @params_for.merge(options)
     end
+
+    # Provides a way to honor the :conditions on an association while searching the association's klass
+    def association_options_find(association, conditions = nil)
+      association.klass.find(:all, :conditions => controller.send(:merge_conditions, conditions, association.options[:conditions]))
+    end
   end
 end

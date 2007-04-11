@@ -56,7 +56,7 @@ module ActionView::Helpers
         html = '<div class="checkbox-list">'
 
         associated = @record.send(column.association.name).collect {|r| r.id}
-        options = column.association.klass.find(:all).collect {|r| [r.to_label, r.id]}.sort_by {|o| o.first}
+        options = association_options_find(column.association).collect {|r| [r.to_label, r.id]}.sort_by {|o| o.first}
         return 'no options' if options.empty?
 
         options.each_with_index do |option, i|
@@ -107,15 +107,15 @@ module ActionView::Helpers
     def options_for_association(association)
       case association.macro
         when :has_one
-          available_records = association.klass.find(:all, :conditions => "#{association.primary_key_name} IS NULL")
+          available_records = association_options_find(association, "#{association.primary_key_name} IS NULL")
         when :has_many
           # Find only orphaned objects
-          available_records = association.klass.find(:all, :conditions => "#{association.primary_key_name} IS NULL")
+          available_records = association_options_find(association, "#{association.primary_key_name} IS NULL")
         when :belongs_to
-          available_records = association.klass.find(:all)
+          available_records = association_options_find(association)
         when :has_and_belongs_to_many
           # Any
-          available_records = association.klass.find(:all)
+          available_records = association_options_find(association)
       end
       available_records ||= []
       available_records.sort{|a,b| a.to_label <=> b.to_label}.collect { |model| [ model.to_label, model.id ] }
