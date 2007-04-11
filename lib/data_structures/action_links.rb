@@ -8,11 +8,8 @@ module ActiveScaffold::DataStructures
 
     # adds an ActionLink, creating one from the arguments if need be
     def add(action, options = {})
-      if action.is_a? ActiveScaffold::DataStructures::ActionLink
-        @set << action
-      else
-        @set << ActiveScaffold::DataStructures::ActionLink.new(action, options)
-      end
+      link = action.is_a?(ActiveScaffold::DataStructures::ActionLink) ? action : ActiveScaffold::DataStructures::ActionLink.new(action, options)
+      @set << link unless @set.any? {|a| a.action == link.action and a.parameters == link.parameters}
     end
     alias_method :<<, :add
 
