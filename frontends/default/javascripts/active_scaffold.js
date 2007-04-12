@@ -63,13 +63,11 @@ var ActiveScaffold = {
     count = $$('#' + scaffold_id + ' span.active-scaffold-records').first();
     count.innerHTML = parseInt(count.innerHTML) + 1;
   },
+
+  server_error_response: '',
   report_500_response: function(active_scaffold_id) {
-    message = '<p class="error-message message">'
-            + 'Request Failed (code 500, Internal Error)'
-            + '<a href="#" onclick="Element.remove(this.parentNode); return false;">Close</a>'
-            + '</p>';
     messages_container = $(active_scaffold_id).down('td.messages-container');
-    new Insertion.Top(messages_container, message);
+    new Insertion.Top(messages_container, this.server_error_response);
   }
 }
 
