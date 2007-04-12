@@ -77,7 +77,7 @@ module ActiveScaffold
 
     def active_scaffold_config_for(klass)
       begin
-        controller, controller_path = active_scaffold_controller_for(klass)
+        controller = active_scaffold_controller_for(klass)
       rescue ActiveScaffold::ControllerNotFound
         config = ActiveScaffold::Config::Core.new(klass)
         config._load_action_columns
@@ -90,18 +90,11 @@ module ActiveScaffold
     # Tries to find a controller for the given ActiveRecord model.
     # Searches in the namespace of the current controller for singular and plural versions of the conventional "#{model}Controller" syntax.
     def active_scaffold_controller_for(klass)
-      controller_path = controller_named_path = ""
+      namespace = self.to_s.split('::')[0...-1].join('::') + '::'
       error_message = []
-      if self.to_s.include?("::")
-        path = self.to_s.split('::')
-        path.pop # remove the parent controller
-        controller_named_path = path.collect{|p| p.capitalize}.join("::") + "::"
-        controller_path = path.join("/") + "/"
-      end
       ["#{klass.to_s.underscore.pluralize}", "#{klass.to_s.underscore.pluralize.singularize}"].each do |controller_name|
         begin
-          controller = "#{controller_named_path}#{controller_name.camelize}Controller"
-          controller = controller.constantize
+          controller = "#{namespace}#{controller_name.camelize}Controller".constantize
         rescue NameError => error
           # Only rescue NameError associated with the controller constant not existing - not other compile errors
           if error.message["uninitialized constant #{controller}"]
@@ -113,7 +106,7 @@ module ActiveScaffold
         end
         raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
         raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model == klass
-        return controller, "#{controller_path}#{controller_name}"
+        return controller
       end
       raise ActiveScaffold::ControllerNotFound, "Could not find " + error_message.join(" or "), caller
     end

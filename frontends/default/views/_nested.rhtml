@@ -9,11 +9,11 @@
       column = active_scaffold_config.columns[column_name]
       association = column.association
       begin
-        controller, controller_path = active_scaffold_controller_for(association.klass)
+        controller = active_scaffold_controller_for(association.klass)
       rescue ActiveScaffold::ControllerNotFound => error %>
         <%= "#{error.class} - #{error.message}"%>
 <%    else %>
-    <%= render :active_scaffold => controller_path,
+    <%= render :active_scaffold => controller.controller_path,
                :constraints => { association.reverse => parent_id},
                :label => active_scaffold_config_for(association.klass).label + as_(" for ") + format_column(@record.to_label),
                :params => {:nested => true, :parent_column => column_name, :parent_model => association.active_record} %>
