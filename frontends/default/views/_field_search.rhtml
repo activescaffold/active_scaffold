@@ -1,6 +1,6 @@
 <%
 # We have to remove search form params before the url_for method call, otherwise it throughs it on
-search_params = params
+search_params = params[:search]
 params.merge!(:search => nil)
 href = url_for(params_for(:action => :update_table, :escape => false))
 -%>
@@ -17,7 +17,7 @@ href = url_for(params_for(:action => :update_table, :escape => false))
     <% active_scaffold_config.field_search.columns.each do |column| -%>
       <% name = "search[#{column.name}]" %>
       <% value = nil %>
-      <% value = params[:search][column.name] if params[:search] %>
+      <% value = search_params[column.name] if search_params %>
       <li class="form-element">
         <label for="<%= "search_#{column.name}" %>"><%= column.label %></label>
         <%= case column.ui_type
