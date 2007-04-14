@@ -1,2 +1,8 @@
-<%= active_scaffold_config.show.label -%>
+<h4><%= active_scaffold_config.show.label -%></h4>
+
 <%= render :partial => 'show_columns', :locals => {:columns => active_scaffold_config.show.columns} -%>
+
+<p class="form-footer">
+  <%= link_to _('CLOSE_BUTTON'), params_for(:action => 'list'), { :onclick => "$('#{action_link_id(:action => active_scaffold_config.show.link.action)}').action_link.close(); return false;" }%>
+  <%= loading_indicator_tag(:action => :create, :id => params[:id]) %>
+</p>

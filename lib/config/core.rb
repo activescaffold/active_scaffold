@@ -18,6 +18,10 @@ module ActiveScaffold::Config
     cattr_accessor :frontend
     @@frontend = :default
 
+    # lets you specify a global ActiveScaffold theme for your frontend.
+    cattr_accessor :theme
+    @@theme = :default
+
     # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
     cattr_reader :action_links
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
@@ -58,6 +62,9 @@ module ActiveScaffold::Config
     # lets you override the global ActiveScaffold frontend for a specific controller
     attr_accessor :frontend
 
+    # lets you override the global ActiveScaffold theme for a specific controller
+    attr_accessor :theme
+
     # action links are used by actions to tie together. they appear as links for each record, or general links for the ActiveScaffold.
     attr_reader :action_links
 
@@ -88,6 +95,7 @@ module ActiveScaffold::Config
 
       # inherit the global frontend
       @frontend = self.class.frontend
+      @theme = self.class.theme
 
       # inherit from the global set of action links
       @action_links = self.class.action_links.clone
