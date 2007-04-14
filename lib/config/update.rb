@@ -18,7 +18,7 @@ module ActiveScaffold::Config
 
     # the label= method already exists in the Form base class
     def label
-      @label ? as_(@label) : "#{as_('Update')} #{@core.label.singularize}"
+      @label ? as_(@label) : as_('Update %s', @core.label.singularize)
     end
   end
 end
