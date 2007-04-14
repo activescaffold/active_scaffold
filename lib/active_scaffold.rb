@@ -120,6 +120,6 @@ end
 
 class Object
   def as_(string_to_localize, *args)
-    sprintf string_to_localize, args
+    sprintf string_to_localize, *args
   end
 end
