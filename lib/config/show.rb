@@ -23,7 +23,7 @@ module ActiveScaffold::Config
     # the label for this action. used for the header.
     attr_writer :label
     def label
-      as_(@label) if @label
+      @label ? as_(@label) : as_('Show %s', @core.label.singularize)
     end
 
     # provides access to the list of columns specifically meant for this action to use
