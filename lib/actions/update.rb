@@ -37,11 +37,7 @@ module ActiveScaffold::Actions
           end
         end
         type.js do
-          if successful?
-            render :action => 'update.rjs', :layout => false
-          else
-            render :action => 'form_messages.rjs', :layout => false
-          end
+          render :action => 'update.rjs', :layout => false
         end
         type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
         type.json { render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status }
@@ -65,7 +61,10 @@ module ActiveScaffold::Actions
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
           before_update_save(@record)
-          @record.save! and @record.save_associated!
+          # can't 'and' these together because they must *both* happen
+          @record.valid?
+          @record.associated_valid?
+          @record.save! and @record.save_associated! if successful?
         end
       rescue ActiveRecord::RecordInvalid
       end

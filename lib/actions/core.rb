@@ -47,7 +47,7 @@ module ActiveScaffold::Actions
 
     # We define success as having no errors in object.errors
     def successful?
-      (@record.nil? || @record.errors.full_messages.empty?)
+      (@record and @record.errors.count == 0 and @record.no_errors_in_associated?)
     end
 
     # Redirect to the main page (override if the ActiveScaffold is used as a component on another controllers page) for Javascript degradation

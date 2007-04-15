@@ -16,7 +16,14 @@ show_blank_record = false unless column.association.klass.authorized_for?(:actio
   <tbody id="<%= sub_form_list_id(:association => column.name) %>">
     <% associated.each_index do |index| %>
     <% @record = associated[index] -%>
-    <tr class="association-record">
+    <% if @record.errors.count -%>
+    <tr class="association-record-errors">
+      <td colspan="999">
+        <%= error_messages_for :record %>
+      </td>
+    </tr>
+    <% end %>
+    <tr class="association-record <%= 'association-record-new' if @record.new_record? -%>">
       <% scope = column.plural_association? ? "[#{column.name}][#{@record.id}]" : "[#{column.name}]" -%>
       <%= render :partial => 'form_association_record', :locals => {:scope => scope, :parent_record => parent_record} %>
     </tr>

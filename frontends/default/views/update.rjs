@@ -1,1 +1,9 @@
-page << "$$('##{element_form_id(:action => :update)} a.cancel').first().link.close_with_refresh();"
+cancel_selector = "##{element_form_id(:action => :update)} a.cancel".to_json
+
+if controller.send :successful?
+  page << "$$(#{cancel_selector}).first().link.close_with_refresh();"
+else
+  page << "l = $$(#{cancel_selector}).first().link;"
+  page.replace element_form_id(:action => :update), :partial => 'update_form'
+  page << "$$(#{cancel_selector}).first().link = l;"
+end

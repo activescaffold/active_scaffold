@@ -10,6 +10,10 @@ class ActiveRecord::Base
     with_instantiated_associated {|a| a.valid? and a.associated_valid?}
   end
 
+  def no_errors_in_associated?
+    with_instantiated_associated {|a| a.errors.count == 0 and a.no_errors_in_associated?}
+  end
+
   def save_associated
     with_instantiated_associated {|a| a.save and a.save_associated}
   end
@@ -22,6 +26,7 @@ class ActiveRecord::Base
 
   # yields every associated object that has been instantiated (and therefore possibly changed).
   # returns true if all yields return true. returns false otherwise.
+  # returns true by default, e.g. when none of the associations have been instantiated. build accordingly.
   def with_instantiated_associated
     self.class.reflect_on_all_associations.all? do |association|
       if associated = instance_variable_get("@#{association.name}")
@@ -30,7 +35,7 @@ class ActiveRecord::Base
           yield associated unless associated.readonly?
 
           when :has_many, :has_and_belongs_to_many
-          associated.find_all {|r| not r.readonly?}.all? {|r| yield r}
+          associated.find_all{|r| not r.readonly?}.all?{|r| yield r}
         end
       else
         true
