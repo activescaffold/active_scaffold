@@ -22,7 +22,7 @@ module ActionController
       end
     end
 
-    class NamedRouteCollection
+    class RouteSet #:nodoc:
       def options_as_params(options)
         options_as_params = options.clone
         options_as_params[:action] ||= 'index' if options[:controller]
