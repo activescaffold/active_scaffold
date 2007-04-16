@@ -6,7 +6,7 @@
 
 <script type="text/javascript">
 //<![CDATA[
-  new TextFieldWithExample('<%= search_input_id %>', "Live Search");
+  new TextFieldWithExample('<%= search_input_id %>', '<%= as_("Live Search") %>');
   new Form.Element.Observer('<%= search_input_id %>', 1.5, function(element, value) {
     if (!$(element.id)) return false; // because the element may have been destroyed
     new Ajax.Updater('<%= active_scaffold_content_id %>', "<%= url_for params_for(:action => :update_table, :escape => false) %>", {
