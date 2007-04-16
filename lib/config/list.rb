@@ -64,8 +64,9 @@ module ActiveScaffold::Config
     end
 
     class UserSettings < UserSettings
+      # This label has alread been localized.
       def label
-        @session[:label] ? as_(@session[:label]) : @conf.label
+        @session[:label] ? @session[:label] : @conf.label
       end
 
       def per_page
