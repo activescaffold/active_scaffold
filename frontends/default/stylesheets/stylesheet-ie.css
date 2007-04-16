@@ -18,6 +18,6 @@ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/active_s
 filter: alpha(opacity=50);
 }
 
-* html .active-scaffold .inline-adapter-cell dd {
+.active-scaffold .inline-adapter-cell dd {
 float: none;
 }
