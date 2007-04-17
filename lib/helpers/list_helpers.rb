@@ -56,7 +56,7 @@ module ActionView::Helpers
       classes << column.css_class unless column.css_class.nil?
       classes << 'empty' if column_empty? column_value
       classes << 'sorted' if active_scaffold_config.list.user.sorting.sorts_on?(column)
-      classes << 'numeric' if [:decimal, :float, :integer].include?(column.column.type)
+      classes << 'numeric' if column.column and [:decimal, :float, :integer].include?(column.column.type)
       classes.join(' ')
     end
 

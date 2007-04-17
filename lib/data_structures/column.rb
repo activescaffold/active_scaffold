@@ -59,7 +59,7 @@ module ActiveScaffold::DataStructures
     #   * :crud (default) will display a sub-form
     attr_writer :ui_type
     def ui_type
-      @ui_type || column.type
+      @ui_type || (column.type if column)
     end
 
     # associate an action_link with this column
