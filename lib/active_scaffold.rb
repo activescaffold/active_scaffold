@@ -99,7 +99,7 @@ module ActiveScaffold
         rescue NameError => error
           # Only rescue NameError associated with the controller constant not existing - not other compile errors
           if error.message["uninitialized constant #{controller}"]
-            error_message << controller
+            error_message << "#{namespace}#{controller_name.camelize}Controller"
             next
           else
             raise
