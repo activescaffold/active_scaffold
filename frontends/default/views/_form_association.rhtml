@@ -18,7 +18,7 @@ show_blank_record = false unless column.association.klass.authorized_for?(:actio
     <% @record = associated[index] -%>
     <% if @record.errors.count -%>
     <tr class="association-record-errors">
-      <td colspan="999">
+      <td colspan="<%= active_scaffold_config_for(@record.class).subform.columns.length + 1 %>">
         <%= error_messages_for :record %>
       </td>
     </tr>
