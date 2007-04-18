@@ -22,6 +22,7 @@ margin: 5px 0;
 
 .active-scaffold table {
 width: 100%;
+border-collapse: separate;
 }
 
 .active-scaffold a,
