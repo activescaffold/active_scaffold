@@ -36,6 +36,16 @@ module ActiveScaffold::DataStructures
     end
     alias_method :[], :find_by_name
 
+    # Returns a list of content columns, including association fields
+    # does not return any columns that end in _id or _count
+    def content_columns
+      @content_columns ||= @set.reject { |c| c.column && (c.column.primary || c.column.name =~ /(_id|_count)$/) }
+    end
+
+    def content_column_names    
+      self.content_columns.collect{|c|c.name}
+    end
+    
     def each
       @set.each {|i| yield i }
     end

@@ -11,7 +11,7 @@ module ActiveScaffold::Config
 
       # originates here
       default_sorting_column = ActiveScaffold::DataStructures::Column.new(@core.model.table_name + '.' + @core.model.primary_key, @core.model)
-      @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns) # the sorting object needs all of the columns available to the scaffold: including the id column
+      @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns)
       @sorting.add default_sorting_column, 'ASC'
 
       # inherit from global scope
@@ -33,7 +33,7 @@ module ActiveScaffold::Config
 
     # provides access to the list of columns specifically meant for the Table to use
     def columns
-      self.columns = @core.inheritable_column_names unless @columns # lazy evaluation
+      self.columns = @core.columns.content_column_names unless @columns # lazy evaluation
       @columns
     end
     def columns=(val)
