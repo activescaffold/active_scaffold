@@ -28,7 +28,7 @@ module ActiveScaffold::Config
     # provides access to the list of columns specifically meant for the Form to use
     def columns
       unless @columns # lazy evaluation
-        self.columns = @core.columns.collect{|c| c.name}
+        self.columns = @core.inheritable_column_names
         self.columns.exclude :created_on, :created_at, :updated_on, :updated_at
         self.columns.exclude *@core.columns.collect{|c| c.name if c.polymorphic_association?}.compact
       end

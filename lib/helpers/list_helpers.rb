@@ -103,7 +103,7 @@ module ActionView::Helpers
     end
 
     def column_override(column)
-      "#{column.name}_column"
+       "#{column.name.to_s.gsub('?', '')}_column" # parse out any question marks (see issue 227)
     end
 
     def column_override?(column)
