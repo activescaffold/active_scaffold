@@ -53,8 +53,6 @@ module ActiveScaffold::Config
       @actions = ActiveScaffold::DataStructures::Actions.new(*args)
     end
 
-    attr_accessor :inheritable_column_names
-    
     # provides read/write access to the local Columns DataStructure
     attr_reader :columns
     def columns=(val)
@@ -95,9 +93,6 @@ module ActiveScaffold::Config
       column_names -= self.model.reflect_on_all_associations.collect{|a| "#{a.name}_type".to_sym if a.options[:polymorphic]}.compact
       self.columns = column_names
 
-      # sets the inheritable column names for other config objects to inherit
-      self.inheritable_column_names = column_names - [:id]
-      
       # inherit the global frontend
       @frontend = self.class.frontend
       @theme = self.class.theme
