@@ -2,9 +2,7 @@ module ActiveScaffold::DataStructures
   # encapsulates the column sorting configuration for the List view
   class Sorting
     include Enumerable
-    
-    attr_accessor :columns
-    
+
     def initialize(columns)
       @columns = columns
       @clauses = []

@@ -35,7 +35,7 @@ class ActiveRecord::Base
           yield associated unless associated.readonly?
 
           when :has_many, :has_and_belongs_to_many
-          associated.find_all{|r| not r.readonly?}.all?{|r| yield r}
+          associated.select{|r| not r.readonly?}.all?{|r| yield r}
         end
       else
         true
