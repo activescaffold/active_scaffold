@@ -8,7 +8,7 @@ def copy_files(source_path, destination_path, directory)
   source, destination = File.join(directory, source_path), File.join(RAILS_ROOT, destination_path)
 p '----'
 p directory
-p cwd
+p Dir.getwd
 p destination
   FileUtils.mkdir(destination) unless File.exist?(destination)
   FileUtils.cp_r(Dir.glob(source+'/*.*'), destination)
