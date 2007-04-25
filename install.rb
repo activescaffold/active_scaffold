@@ -1,6 +1,6 @@
 # Workaround a problem with script/plugin and http-based repos.
 # See http://dev.rubyonrails.org/ticket/8189
-Dir.chdir(Dir.getwd.sub(/vendor.*/, '') if Dir.getwd.include? 'vendor/plugins'
+Dir.chdir(Dir.getwd.sub(/vendor.*/, '')) if Dir.getwd.include? 'vendor/plugins'
 
 ##
 ## Copy over asset files (javascript/css/images) from the plugin directory to public/
