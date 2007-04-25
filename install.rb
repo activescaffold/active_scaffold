@@ -1,15 +1,13 @@
+# Workaround a problem with script/plugin and http-based repos.
+# See http://dev.rubyonrails.org/ticket/8189
+Dir.chdir(Dir.getwd.sub(/vendor.*/, '') if Dir.getwd.include? 'vendor/plugins'
+
 ##
 ## Copy over asset files (javascript/css/images) from the plugin directory to public/
 ##
 
-p 'activescaffold debug output for installs'
-
 def copy_files(source_path, destination_path, directory)
   source, destination = File.join(directory, source_path), File.join(RAILS_ROOT, destination_path)
-p '----'
-p directory
-p Dir.getwd
-p destination
   FileUtils.mkdir(destination) unless File.exist?(destination)
   FileUtils.cp_r(Dir.glob(source+'/*.*'), destination)
 end
