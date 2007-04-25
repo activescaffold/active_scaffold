@@ -2,8 +2,14 @@
 ## Copy over asset files (javascript/css/images) from the plugin directory to public/
 ##
 
+logger.info 'activescaffold debug output for installs'
+
 def copy_files(source_path, destination_path, directory)
   source, destination = File.join(directory, source_path), File.join(RAILS_ROOT, destination_path)
+logger.info '----'
+logger.info directory
+logger.info cwd
+logger.info destination
   FileUtils.mkdir(destination) unless File.exist?(destination)
   FileUtils.cp_r(Dir.glob(source+'/*.*'), destination)
 end
