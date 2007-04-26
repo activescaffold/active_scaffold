@@ -24,7 +24,6 @@ module ActionView::Helpers
         return :subsection
       elsif column.association.nil? or column.ui_type == :select or !active_scaffold_config_for(column.association.klass).actions.include?(:subform)
         return :field
-      #TODO 2007-02-23 (EJM) Level=0 - Need to check if they have the security to CRUD the association column?
       else
         return :subform
       end

@@ -22,7 +22,8 @@ module ActionView::Helpers
     def pagination_ajax_link(page_number, params)
       page_link = link_to_remote(page_number,
                 { :url => params.merge(:page => page_number),
-                  :before => "Element.show('#{loading_indicator_id(:action => :pagination)}');",
+                  :after => "$('#{loading_indicator_id(:action => :pagination)}').style.visibility = 'visible';",
+                  :complete => "$('#{loading_indicator_id(:action => :pagination)}').style.visibility = 'hidden';",
                   :update => active_scaffold_content_id,
                   :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
                   :method => :get },
