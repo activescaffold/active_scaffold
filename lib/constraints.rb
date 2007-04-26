@@ -42,7 +42,17 @@ module ActiveScaffold
           # If a column is an association, then we do NOT want to use .search_sql. If anything,
           # search_sql will refer to a human-searchable value on the associated record.
           if column.association
-            field = column.association.options[:foreign_key] || column.association.association_foreign_key
+            # when the reverse association is a :belongs_to, the id for the associated object only exists as
+            # the primary_key on the other table. so for :has_one and :has_many (when the reverse is :belongs_to),
+            # we have to use the other model's primary_key.
+            #
+            # please see the relevant tests for concrete examples.
+            field = if [:has_one, :has_many].include?(column.association.macro)
+              column.association.class_name.constantize.primary_key
+            else
+              column.association.options[:association_foreign_key] || column.association.association_foreign_key
+            end
+
             table = case column.association.macro
               when :has_and_belongs_to_many
               column.association.options[:join_table]
