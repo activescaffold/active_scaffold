@@ -95,7 +95,7 @@ module ActionView::Helpers
 
     # whitelists id-safe characters
     def clean_id(val)
-      val.gsub /[^-._0-9a-zA-Z]/, '-'
+      val.gsub /[^-_0-9a-zA-Z]/, '-'
     end
   end
 end

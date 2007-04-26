@@ -7,6 +7,6 @@ class LocalizationTest < Test::Unit::TestCase
     ## test no language specified
     ##
     assert_equal "dutch", as_("dutch")
-    assert_equal "Create 2", as_("Create %d") % 2
+    assert_equal "Create 2", as_("Create %d", 2)
   end
 end
