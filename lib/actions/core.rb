@@ -45,9 +45,9 @@ module ActiveScaffold::Actions
       @response_object = successful? ? (@record || @records) : @record.errors
     end
 
-    # We define success as having no errors in object.errors
+    # Success is the existence of certain variables and the absence of errors (when applicable)
     def successful?
-      (@record and @record.errors.count == 0 and @record.no_errors_in_associated?)
+      @records or (@record and @record.errors.count == 0 and @record.no_errors_in_associated?)
     end
 
     # Redirect to the main page (override if the ActiveScaffold is used as a component on another controllers page) for Javascript degradation
