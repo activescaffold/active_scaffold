@@ -98,10 +98,10 @@ module ActiveScaffold
 
       if params.has_key? :id
         # modifying the current object of a singular association
-        if current and current.is_a? ActiveRecord::Base and current.id = params[:id]
+        if current and current.is_a? ActiveRecord::Base and current.id.to_s == params[:id]  
           return current
         # modifying one of the current objects in a plural association
-        elsif current and current.any? {|o| o.id.to_s == params[:id]}
+        elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == params[:id]}
           return current.detect {|o| o.id.to_s == params[:id]}
         # attaching an existing but not-current object
         else
