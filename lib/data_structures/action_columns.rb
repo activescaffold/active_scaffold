@@ -13,6 +13,9 @@ module ActiveScaffold::DataStructures
       as_(@label) if @label
     end
 
+    # Whether this column set is collapsed by default in contexts where collapsing is supported
+    attr_accessor :collapsed
+
     # nests a subgroup in the column set
     def add_subgroup(label, &proc)
       columns = ActiveScaffold::DataStructures::ActionColumns.new

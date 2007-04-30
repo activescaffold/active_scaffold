@@ -753,3 +753,7 @@ font-weight: bold;
 font-size: 12px;
 padding: 0;
 }
+
+.active-scaffold a.visibility-toggle {
+font-size: 100%;
+}

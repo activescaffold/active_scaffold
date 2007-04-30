@@ -5,6 +5,9 @@ module ActiveScaffold::DataStructures
     # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all others will be inferred from this name.
     attr_accessor :name
 
+    # Whether this column set is collapsed by default in contexts where collapsing is supported
+    attr_accessor :collapsed
+
     # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.
     attr_writer :label
     def label
