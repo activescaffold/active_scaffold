@@ -28,4 +28,4 @@ available_frontends = Dir[File.join(directory, 'frontends', '*')].collect { |d| 
   end
 end
 
-end if Dir.getwd.include? 'vendor/plugins'
+end
