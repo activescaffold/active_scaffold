@@ -39,6 +39,7 @@ module ActionView::Helpers
       unless @params_for
         @params_for = params.clone.delete_if { |key, value| blacklist.include? key.to_sym if key }
         @params_for[:controller] = '/' + @params_for[:controller] unless @params_for[:controller].first(1) == '/' # for namespaced controllers
+        @params_for.delete(:id) if @params_for[:id].nil?
       end
       @params_for.merge(options)
     end
