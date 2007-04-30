@@ -1,5 +1,9 @@
 <%
-remote_controller = active_scaffold_controller_for(column.association.klass)
+begin
+  remote_controller = active_scaffold_controller_for(column.association.klass)
+rescue ActiveScaffold::ControllerNotFound
+  remote_controller = nil
+end
 select_options = options_for_select(options_for_association(column.association)) unless column.through_association?
 
 show_add_new = (column.plural_association? or (column.singular_association? and not associated.empty?))
