@@ -44,6 +44,7 @@ require 'extensions/action_controller'
 require 'extensions/active_record'
 require 'extensions/array'
 require 'extensions/hashes_in_url_for'
+require 'extensions/nil_id_in_url_params'
 require 'extensions/resources'
 
 ##

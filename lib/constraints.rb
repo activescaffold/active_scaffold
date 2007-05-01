@@ -50,7 +50,7 @@ module ActiveScaffold
             field = if [:has_one, :has_many].include?(column.association.macro)
               column.association.class_name.constantize.primary_key
             else
-              column.association.options[:association_foreign_key] || column.association.association_foreign_key
+              column.association.options[:association_foreign_key] || column.association.options[:foreign_key] || column.association.association_foreign_key
             end
 
             table = case column.association.macro
