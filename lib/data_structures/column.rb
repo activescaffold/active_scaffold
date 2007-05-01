@@ -35,26 +35,27 @@ module ActiveScaffold::DataStructures
     #   sort = false              sometimes sorting doesn't make sense
     #   sort = {:sql => ""}       define your own sql for sorting. this should be result in a sortable value in SQL. ActiveScaffold will handle the ascending/descending.
     #   sort = {:method => ""}    define ruby-side code for sorting. this is SLOW with large recordsets!
-    attr_writer :sort
+    def sort=(value)
+      if value.is_a? Hash
+        value.assert_valid_keys(:sql, :method)
+        @sort = value
+      else
+        @sort = value ? true : false # force true or false
+      end
+    end
+    
     def sort
       self.initialize_sort if @sort === true
       @sort
     end
+    
     def sortable?
       sort != false && !sort.nil?
     end
+    
     # a configuration helper for the self.sort property. simply provides a method syntax instead of setter syntax.
     def sort_by(options)
-      if options
-        if options.is_a? Hash
-          options.assert_valid_keys(:sql, :method)
-          self.sort = options
-        else
-          self.sort = true
-        end
-      else
-        self.sort = false
-      end
+      self.sort = options
     end
 
     # supported options:
