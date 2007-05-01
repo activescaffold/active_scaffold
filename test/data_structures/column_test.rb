@@ -149,5 +149,13 @@ class ColumnTest < Test::Unit::TestCase
 
   def test_includes
     assert_equal [], @column.includes
+    
+    # make sure that when a non-array comes in, an array comes out
+    @column.includes = :column_name
+    assert_equal([:column_name], @column.includes)
+
+    # make sure that when a non-array comes in, an array comes out
+    @column.includes = [:column_name]
+    assert_equal([:column_name], @column.includes)
   end
 end

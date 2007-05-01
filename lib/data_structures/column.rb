@@ -89,8 +89,11 @@ module ActiveScaffold::DataStructures
     end
 
     # a collection of associations to pre-load when finding the records on a page
-    attr_accessor :includes
-
+    attr_reader :includes
+    def includes=(value)
+      @includes = value.is_a?(Array) ? value : [value] # automatically convert to an array  
+    end
+    
     # describes how to search on a column
     #   search = true           default, uses intelligent search sql
     #   search = "CONCAT(a, b)" define your own sql for searching. this should be the "left-side" of a WHERE condition. the operator and value will be supplied by ActiveScaffold.
