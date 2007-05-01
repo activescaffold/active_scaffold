@@ -64,7 +64,7 @@ module ActiveScaffold::Actions
       conditions = nil
       params.reject {|key, value| [:controller, :action, :id].include?(key.to_sym)}.each do |key, value|
         next unless active_scaffold_config.model.column_names.include?(key)
-        conditions = merge_conditions(conditions, ["#{key.to_s} = ?", value])
+        conditions = merge_conditions(conditions, ["#{active_scaffold_config.model.table_name}.#{key.to_s} = ?", value])
       end
       conditions
     end
