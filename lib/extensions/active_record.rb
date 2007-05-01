@@ -10,6 +10,14 @@ class ActiveRecord::Base
     with_instantiated_associated {|a| a.valid? and a.associated_valid?}
   end
 
+  def instantiated_for_edit
+    @instantiated_for_edit = true
+  end
+
+  def instantiated_for_edit?
+    @instantiated_for_edit
+  end
+
   def no_errors_in_associated?
     with_instantiated_associated {|a| a.errors.count == 0 and a.no_errors_in_associated?}
   end
@@ -32,10 +40,10 @@ class ActiveRecord::Base
       if associated = instance_variable_get("@#{association.name}")
         case association.macro
           when :belongs_to, :has_one
-          yield associated unless associated.readonly?
+          (associated.instantiated_for_edit? and not associated.readonly?) ? (yield associated) : true
 
           when :has_many, :has_and_belongs_to_many
-          associated.select{|r| not r.readonly?}.all?{|r| yield r}
+          associated.find_all{|r| r.instantiated_for_edit? and not r.readonly?}.all?{|r| yield r}
         end
       else
         true

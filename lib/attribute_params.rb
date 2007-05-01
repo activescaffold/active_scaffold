@@ -56,6 +56,7 @@ module ActiveScaffold
             hash = value
             record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
             if record
+              record.instantiated_for_edit
               record_columns = active_scaffold_config_for(column.association.klass).subform.columns
               update_record_from_params(record, record_columns, hash)
             end
@@ -66,6 +67,7 @@ module ActiveScaffold
               hash = key_value_pair[1]
               record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
               if record
+                record.instantiated_for_edit
                 record_columns = active_scaffold_config_for(column.association.klass).subform.columns
                 update_record_from_params(record, record_columns, hash)
               end
