@@ -163,8 +163,18 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
 
   open: function() {
     if (this.is_disabled()) return;
-    if (this.onclick && !this.onclick()) return;//e.g. confirmation messages
-    if (this.position) this.disable();
+
+		if (this.tag.hasAttribute( "dhtml_confirm")) {
+			if (this.onclick) this.onclick();
+			return;
+		} else {
+			if (this.onclick && !this.onclick()) return;//e.g. confirmation messages
+			this.open_action();
+		}
+  },
+
+	open_action: function() {
+		if (this.position) this.disable();
     this.loading_indicator.style.visibility = 'visible';
     new Ajax.Request(this.url, {
       asynchronous: true,
@@ -187,8 +197,8 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
       onComplete: function(request) {
         this.loading_indicator.style.visibility = 'hidden';
       }.bind(this)
-    });
-  },
+		});
+	},
 
   insert: function(content) {
     throw 'unimplemented'

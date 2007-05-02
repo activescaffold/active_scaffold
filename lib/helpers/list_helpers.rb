@@ -9,7 +9,12 @@ module ActionView::Helpers
       # action link javascript needs to submit the proper method, but the normal html_options[:method]
       # argument leaves no way to extract the proper method from the rendered tag.
       url_options[:_method] = link.method
-
+      
+      if link.dhtml_confirm?
+        html_options[:dhtml_confirm] = link.dhtml_confirm.value
+        html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options.clone))
+      end
+      
       html_options = {:class => link.action}
       html_options[:confirm] = link.confirm if link.confirm?
       html_options[:position] = link.position if link.position and link.inline?
