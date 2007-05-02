@@ -73,7 +73,7 @@ class ActiveRecord::Base
           yield association_proxy unless association_proxy.readonly?
 
           when :has_many, :has_and_belongs_to_many
-          association_proxy.find_all {|r| not r.readonly?}.all? {|r| yield r}
+          association_proxy.select {|r| not r.readonly?}.all? {|r| yield r}
         end
       else
         true
