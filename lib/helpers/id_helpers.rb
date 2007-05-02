@@ -45,7 +45,6 @@ module ActionView::Helpers
     def element_row_id(options = {})
       options[:action] ||= params[:action]
       options[:id] ||= params[:id]
-      options[:id] = "#{options[:id]}@"
       clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-row"
     end
 
