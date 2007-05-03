@@ -24,7 +24,6 @@ module ActiveScaffold
     #
     # This is a secure way to apply params to a record, because it's based on a loop over the columns
     # set. The columns set will not yield unauthorized columns, and it will not yield unregistered columns.
-    # This very effectively replaces the params[:record] filtering I set up before.
     def update_record_from_params(parent_record, columns, attributes)
       action = parent_record.new_record? ? :create : :update
       return parent_record unless parent_record.authorized_for?(:action => action)
@@ -100,7 +99,7 @@ module ActiveScaffold
 
       if params.has_key? :id
         # modifying the current object of a singular association
-        if current and current.is_a? ActiveRecord::Base and current.id.to_s == params[:id]  
+        if current and current.is_a? ActiveRecord::Base and current.id.to_s == params[:id]
           return current
         # modifying one of the current objects in a plural association
         elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == params[:id]}
@@ -127,7 +126,11 @@ module ActiveScaffold
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
         next true if column and value == column.default
 
-        value.is_a?(Hash) ? attributes_hash_is_empty?(value, klass) : value.empty?
+        if value.is_a?(Hash)
+          attributes_hash_is_empty?(value, klass)
+        else
+          value.respond_to?(:empty?) ? value.empty? : false
+        end
       end
     end
   end
