@@ -29,9 +29,9 @@ var ActiveScaffold = {
         && !tableRow.hasClassName("active-scaffold-calculations")) {
 
         if (even) {
-          tableRow.addClassName("even");
+          tableRow.addClassName("even-record");
         } else {
-          tableRow.removeClassName("even");
+          tableRow.removeClassName("even-record");
         }
         even = !even;
       }
