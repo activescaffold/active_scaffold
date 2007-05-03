@@ -9,10 +9,21 @@ module ActionView::Helpers
       column_renders_as(column) == :subform
     end
 
-    # A column shouldn't be in the subform if it's the reverse association to the parent or if it's habtm.
-    # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
+    # Should this column be displayed in the subform?
     def in_subform?(column, parent_record)
-      !(column.association and (column.polymorphic_association? or column.association.macro == :has_and_belongs_to_many or column.association.klass == parent_record.class))
+      return true unless column.association
+
+      # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
+      return false if column.polymorphic_association?
+
+      # We don't have the UI to currently handle habtm in subforms
+      return false if column.association.macro == :has_and_belongs_to_many
+
+      # A column shouldn't be in the subform if it's the reverse association to the parent
+      return false if column.association.reverse_for?(parent_record.class)
+      #return false if column.association.klass == parent_record.class
+
+      return true
     end
 
     def is_subsection?(column)
@@ -50,9 +61,11 @@ module ActionView::Helpers
         select_options += [[ associated.to_label, associated.id ]] unless associated.nil?
         select_options += options_for_association(column.association)
         selected = associated.nil? ? nil : associated.id
-        select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => "#{name}[id]" })
+        select(:record, column.name, select_options.uniq, { :selected => selected }, { :name => "#{name}[id]", :class => "#{column.name}-input" })
+
       elsif column.plural_association?
-        html = '<div class="checkbox-list">'
+
+        html = '<ul class="checkbox-list">'
 
         associated = @record.send(column.association.name).collect {|r| r.id}
         options = association_options_find(column.association).collect {|r| [r.to_label, r.id]}.sort_by {|o| o.first}
@@ -61,22 +74,24 @@ module ActionView::Helpers
         options.each_with_index do |option, i|
           label, id = option
           this_name = "#{name}[#{i}][id]"
-          html << "<label for='#{this_name}'>"
+          html << "<li>"
           html << check_box_tag(this_name, id, associated.include?(id))
+          html << "<label for='#{this_name}'>"
           html << label
           html << "</label>"
+          html << "</li>"
         end
 
-        html << '</div>'
+        html << '</ul>'
         html
       else
-        options = { :name => name }
+        options = { :name => name, :class => "#{column.name}-input" }
         active_scaffold_input(column, options)
       end
     end
 
     def active_scaffold_input(column, options)
-      text_options = options.merge( :autocomplete => "off", :size => 20, :class => 'text-input' )
+      text_options = options.merge( :autocomplete => "off", :size => 20, :class => "#{column.name}-input text-input" )
       if column.virtual?
         text_field(:record, column.name, text_options)
       elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)

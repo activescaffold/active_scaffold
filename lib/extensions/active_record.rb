@@ -9,11 +9,11 @@ class ActiveRecord::Base
   def associated_valid?
     with_instantiated_associated {|a| a.valid? and a.associated_valid?}
   end
-  
+
   def instantiated_for_edit
     @instantiated_for_edit = true
   end
-  
+
   def instantiated_for_edit?
     @instantiated_for_edit
   end
@@ -40,14 +40,14 @@ class ActiveRecord::Base
   end
 
   private
-  
+
   # Provide an override to allow the model to restrict which associations are considered
   # by ActiveScaffolds update mechanism. This allows the model to restrict things like
   # Acts-As-Versioned versions associations being traversed.
   #
   # By defining the method :scaffold_update_nofollow returning an array of associations
   # these associations will not be traversed.
-  # By defining the method :scaffold_update_follow returning an array of associations, 
+  # By defining the method :scaffold_update_follow returning an array of associations,
   # only those associations will be traversed.
   #
   # Otherwise the default behaviour of traversing all associations will be preserved.
@@ -60,7 +60,7 @@ class ActiveRecord::Base
       self.class.reflect_on_all_associations
     end
   end
-  
+
   # yields every associated object that has been instantiated (and therefore possibly changed).
   # returns true if all yields return true. returns false otherwise.
   # returns true by default, e.g. when none of the associations have been instantiated. build accordingly.
@@ -77,47 +77,6 @@ class ActiveRecord::Base
         end
       else
         true
-      end
-    end
-  end
-end
-
-module ActiveRecord
-  module Reflection
-    class AssociationReflection #:nodoc:
-      attr_writer :reverse
-      def reverse
-        unless @reverse
-          reverse_matches = []
-          # stage 1 filter: collect associations that point back to this model and use the same primary_key_name
-          self.class_name.constantize.reflect_on_all_associations.each do |assoc|
-            next unless assoc.options[:polymorphic] or assoc.class_name.constantize == self.active_record
-            case [assoc.macro, self.macro].find_all{|m| m == :has_and_belongs_to_many}.length
-              # if both are a habtm, then match them based on the join table
-              when 2
-              next unless assoc.options[:join_table] == self.options[:join_table]
-
-              # if only one is a habtm, they do not match
-              when 1
-              next
-
-              # otherwise, match them based on the primary_key_name
-              when 0
-              next unless assoc.primary_key_name.to_sym == self.primary_key_name.to_sym
-            end
-
-            reverse_matches << assoc
-          end
-
-          # stage 2 filter: name-based matching (association name vs self.active_record.to_s)
-          reverse_matches.find_all do |assoc|
-            self.active_record.to_s.underscore.include? assoc.name.to_s.pluralize.singularize
-          end if reverse_matches.length > 1
-
-          # stage 3 filter: grab first association, or make a wild guess
-          @reverse = reverse_matches.empty? ? self.active_record.to_s.pluralize.underscore : reverse_matches.first.name
-        end
-        @reverse
       end
     end
   end
