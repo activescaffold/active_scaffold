@@ -19,7 +19,11 @@ href = url_for(params_for(:action => :update_table, :escape => false))
       <% value = nil %>
       <% value = search_params[column.name] if search_params %>
       <li class="form-element">
-        <label for="<%= "search_#{column.name}" %>"><%= column.label %></label>
+        <dl>
+          <dt>
+            <label for="<%= "search_#{column.name}" %>"><%= column.label %></label>
+          </dt>
+        <dd>
         <%= case column.ui_type
           when :boolean
             check_box_tag(name, 1, value || value == 1)
@@ -27,12 +31,16 @@ href = url_for(params_for(:action => :update_table, :escape => false))
             text_field_tag(name, value, { :autocomplete => "off", :size => 20, :class => 'text-input', :id => "search_#{column.name}"})
           end
         %>
-      </li>
+        </dd>
+      </dl>
+    </li>
     <% end -%>
   </ol>
-  <%= submit_tag as_('Search'), :class => "submit" %>
-  <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= as_('Reset') -%></a>
-  <%= loading_indicator_tag(:action => :search) %>
+  <p class="form-footer">
+    <%= submit_tag as_('Search'), :class => "submit" %>
+    <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= as_('Reset') -%></a>
+    <%= loading_indicator_tag(:action => :search) %>
+  </p>
 </form>
 
 <script type="text/javascript">
