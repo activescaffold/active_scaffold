@@ -1,7 +1,7 @@
 <%
 parent_record = @record
 associated = column.singular_association? ? [parent_record.send(column.name)].compact : parent_record.send(column.name)
-associated = associated.sort_by {|r| r.id} unless column.association.options.has_key?(:order)
+associated = associated.sort_by {|r| r.new_record? ? 99999999999 : r.id} unless column.association.options.has_key?(:order)
 
 show_blank_record = (column.plural_association? or (column.singular_association? and associated.empty?))
 show_blank_record = false if column.through_association?
@@ -25,7 +25,7 @@ show_blank_record = false unless column.association.klass.authorized_for?(:actio
     </tr>
     <% end %>
     <tr class="association-record <%= 'association-record-new' if @record.new_record? -%>">
-      <% scope = column.plural_association? ? "[#{column.name}][#{@record.id}]" : "[#{column.name}]" -%>
+      <% scope = column.plural_association? ? "[#{column.name}][#{@record.id || generate_temporary_id}]" : "[#{column.name}]" -%>
       <%= render :partial => 'form_association_record', :locals => {:scope => scope, :parent_record => parent_record} %>
     </tr>
     <% end -%>
