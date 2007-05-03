@@ -1,6 +1,12 @@
 <% scope ||= nil %>
-<label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
-<%= form_column column, scope %>
-<% if column.description -%>
-  <span class="description"><%= column.description %></span>
-<% end -%>
+<dl>
+  <dt>
+    <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
+  </dt>
+  <dd>
+    <%= form_column column, scope %>
+    <% if column.description -%>
+      <span class="description"><%= column.description %></span>
+    <% end -%>
+  </dd>
+</dl>

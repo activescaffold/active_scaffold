@@ -55,10 +55,10 @@ background-color: #005CB8;
 }
 
 .active-scaffold-header h2 {
-color: #444;
 padding: 2px 0px;
 margin: 0;
-font: normal 17px verdana, sans-serif;
+color: #555;
+font: bold 160% arial, sans-serif;
 }
 
 .blue-theme .active-scaffold-header h2 {
@@ -80,6 +80,11 @@ background-repeat: no-repeat;
 
 .blue-theme .active-scaffold-header div.actions a {
 color: #fff;
+}
+
+.active-scaffold-header div.actions a.disabled {
+color: #666;
+opacity: 0.5;
 }
 
 .blue-theme .active-scaffold-header div.actions a.disabled {
@@ -172,7 +177,7 @@ background: #333 url(../../../images/active_scaffold/default/indicator-small.gif
 /* Table :: Record Rows
    ============================= */
 
-.active-scaffold td {
+.active-scaffold tbody.records td {
 padding: 5px 4px;
 color: #333;
 font-family: Verdana, sans-serif;
@@ -182,26 +187,26 @@ border-bottom: solid 1px #C5DBF7;
 border-left: solid 1px #C5DBF7;
 }
 
-.active-scaffold td.actions {
+.active-scaffold tbody.records td.actions {
 border-right: solid 1px #ccc;
 }
 
-.active-scaffold tr.even td {
+.active-scaffold tbody.records tr.even td {
 background-color: #fff;
 border-left: solid 1px #ddd;
 }
 
-.active-scaffold tr td.sorted {
+.active-scaffold tbody.records tr td.sorted {
 background-color: #B9DCFF;
 border-bottom: solid 1px #AFD0F5;
 }
 
-.active-scaffold tr.even td.sorted {
+.active-scaffold tbody.records tr.even td.sorted {
 background-color: #E6F2FF;
 border-bottom: solid 1px #AFD0F5;
 }
 
-.active-scaffold td.empty {
+.active-scaffold tbody.records td.empty {
 color: #999;
 text-align: center;
 }
@@ -214,24 +219,24 @@ text-align: right;
 /* Table :: Actions (Edit, Delete)
    ============================= */
 
-.active-scaffold td.actions {
+.active-scaffold tbody.records td.actions {
 padding: 0;
 width: 1%;
 }
 
-.active-scaffold td.actions table {
+.active-scaffold tbody.records td.actions table {
 float: right;
 width: auto;
 margin-right: 5px;
 }
 
-.active-scaffold td.actions table td {
+.active-scaffold tbody.records td.actions table td {
 border: none;
 text-align: right;
 padding: 0 2px;
 }
 
-.active-scaffold td.actions a {
+.active-scaffold tbody.records td.actions a {
 font: bold 11px verdana, sans-serif;
 letter-spacing: -1px;
 padding: 2px;
@@ -243,15 +248,24 @@ white-space: nowrap;
 /* Table :: Inline Adapter
    ============================= */
 
-.active-scaffold td.inline-adapter-cell {
+.active-scaffold .view {
 background-color: #DAFFCD;
 padding: 4px;
 border: solid 1px #7FcF00;
+}
+
+.active-scaffold tbody.records td.inline-adapter-cell {
+padding: 0;
+background-color: #E6F2FF;
+border: none;
+}
+
+.active-scaffold tbody.records td.inline-adapter-cell .view {
 border-top: none;
 }
 
-.active-scaffold .before-header td.inline-adapter-cell {
-border-top: solid 1px #7FcF00;
+.active-scaffold .before-header td.inline-adapter-cell .view {
+border-bottom: none;
 }
 
 .active-scaffold a.inline-adapter-close {
@@ -574,16 +588,22 @@ letter-spacing: 0;
 
 .active-scaffold li.form-element {
 clear: both;
-padding-bottom: 2px;
+padding-top: 2px;
 }
 
 .active-scaffold label {
-float: left;
-width: 12em;
-display: inline;
 padding: 6px 0;
 font: normal 11px verdana, sans-serif;
 color: #555;
+}
+
+.active-scaffold li.form-element dt {
+float: left;
+width: 12em;
+}
+
+.active-scaffold li.form-element dd {
+float: left;
 }
 
 .active-scaffold .description {
@@ -634,11 +654,13 @@ padding: 1px;
 border: solid 1px #1F7F00;
 }
 
-.active-scaffold .checkbox-list {
-height: 90px;
-overflow: auto;
-padding: 2px;
-border: 1px solid #666;
+.active-scaffold .checkbox-list li {
+padding-right: 5px;
+display: inline;
+}
+
+.active-scaffold .checkbox-list li label {
+padding: 0 0 0 2px;
 }
 
 /* Form :: Sub-Sections
@@ -680,6 +702,12 @@ background: none;
 display: none;
 }
 
+.active-scaffold .sub-form .checkbox-list {
+padding: 0 2px 2px 2px;
+background-color: #fff;
+border: solid 1px #1F7F00;
+}
+
 .active-scaffold .sub-form .checkbox-list label {
 display: block;
 }
@@ -690,20 +718,6 @@ background-color: none;
 padding: 1px;
 vertical-align: top;
 color: #999;
-}
-
-.active-scaffold .sub-form table td input,
-.active-scaffold .sub-form table td select {
-background-color: #B8FF9F;
-}
-
-.active-scaffold .sub-form table .association-record-new td select,
-.active-scaffold .sub-form table .association-record-new td input {
-background-color: #fff;
-}
-
-.active-scaffold .sub-form table .association-record td input:focus {
-background-color: #ffc;
 }
 
 .active-scaffold .sub-form table td.actions {
@@ -725,9 +739,8 @@ background: url(../../../images/active_scaffold/default/cross.png) 0 0 no-repeat
 display: none;
 }
 
-.active-scaffold .sub-form a {
-font-weight: bold;
-font-size: 10px;
+.active-scaffold .sub-form .association-record a {
+font: bold 12px arial;
 }
 
 .active-scaffold .sub-form input.text-input,
@@ -739,7 +752,6 @@ font: bold 12px arial;
 .active-scaffold .sub-form .footer-wrapper {
 margin-top: 3px;
 margin-right: 10px;
-background-color: #B8FF9F;
 }
 
 .active-scaffold .sub-form .footer {
