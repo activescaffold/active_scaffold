@@ -177,7 +177,7 @@ background: #333 url(../../../images/active_scaffold/default/indicator-small.gif
 /* Table :: Record Rows
    ============================= */
 
-.active-scaffold tbody.records td {
+.active-scaffold tr.record td {
 padding: 5px 4px;
 color: #333;
 font-family: Verdana, sans-serif;
@@ -187,21 +187,17 @@ border-bottom: solid 1px #C5DBF7;
 border-left: solid 1px #C5DBF7;
 }
 
-.active-scaffold tbody.records td.actions {
-border-right: solid 1px #ccc;
-}
-
-.active-scaffold tbody.records tr.even td {
+.active-scaffold tr.even-record td {
 background-color: #fff;
 border-left: solid 1px #ddd;
 }
 
-.active-scaffold tbody.records tr td.sorted {
+.active-scaffold tr.record td.sorted {
 background-color: #B9DCFF;
 border-bottom: solid 1px #AFD0F5;
 }
 
-.active-scaffold tbody.records tr.even td.sorted {
+.active-scaffold tr.even-record td.sorted {
 background-color: #E6F2FF;
 border-bottom: solid 1px #AFD0F5;
 }
@@ -219,24 +215,25 @@ text-align: right;
 /* Table :: Actions (Edit, Delete)
    ============================= */
 
-.active-scaffold tbody.records td.actions {
+.active-scaffold tr.record td.actions {
+border-right: solid 1px #ccc;
 padding: 0;
 width: 1%;
 }
 
-.active-scaffold tbody.records td.actions table {
+.active-scaffold tr.record td.actions table {
 float: right;
 width: auto;
 margin-right: 5px;
 }
 
-.active-scaffold tbody.records td.actions table td {
+.active-scaffold tr.record td.actions table td {
 border: none;
 text-align: right;
 padding: 0 2px;
 }
 
-.active-scaffold tbody.records td.actions a {
+.active-scaffold tr.record td.actions a {
 font: bold 11px verdana, sans-serif;
 letter-spacing: -1px;
 padding: 2px;
@@ -252,12 +249,6 @@ white-space: nowrap;
 background-color: #DAFFCD;
 padding: 4px;
 border: solid 1px #7FcF00;
-}
-
-.active-scaffold tbody.records td.inline-adapter-cell {
-padding: 0;
-background-color: #E6F2FF;
-border: none;
 }
 
 .active-scaffold tbody.records td.inline-adapter-cell .view {
@@ -506,11 +497,11 @@ margin-bottom: 3px;
 /* Show
    ============================= */
 
-.active-scaffold .inline-adapter-cell dl {
+.active-scaffold .show-view dl {
 margin-left: 5px;
 }
 
-.active-scaffold .inline-adapter-cell dt {
+.active-scaffold .show-view dt {
 width: 12em;
 float: left;
 clear: left;
@@ -519,7 +510,7 @@ color: #555;
 line-height: 16px;
 }
 
-.active-scaffold .inline-adapter-cell dd {
+.active-scaffold .show-view dd {
 float: left;
 font: bold 14px arial;
 padding-left: 5px;
@@ -571,7 +562,6 @@ margin-left: 5px;
 list-style: none;
 }
 
-
 .active-scaffold p.form-footer {
 clear: both;
 }
@@ -582,7 +572,6 @@ font: bold 14px arial, sans-serif;
 letter-spacing: 0;
 }
 
-
 /* Form :: Fields
    ============================== */
 
@@ -592,7 +581,6 @@ padding-top: 2px;
 }
 
 .active-scaffold label {
-padding: 6px 0;
 font: normal 11px verdana, sans-serif;
 color: #555;
 }
@@ -600,6 +588,7 @@ color: #555;
 .active-scaffold li.form-element dt {
 float: left;
 width: 12em;
+padding: 6px 0;
 }
 
 .active-scaffold li.form-element dd {
@@ -668,7 +657,7 @@ padding: 0 0 0 2px;
 
 .active-scaffold li.sub-section {
 clear: left;
-margin-bottom: 5px;
+padding: 5px 0;
 }
 
 /* Form :: Association Sub-Forms
@@ -677,7 +666,7 @@ margin-bottom: 5px;
 .active-scaffold .sub-form {
 float: left;
 clear: left;
-margin-bottom: 5px;
+padding: 5px 0;
 padding-left: 5px;
 }
 
