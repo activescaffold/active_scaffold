@@ -37,6 +37,11 @@ module ActionView::Helpers
       "#{controller_id}-search-input"
     end
 
+    def table_action_id(name)
+      "#{controller_id}-action-table-#{name}"
+    end
+
+
     def active_scaffold_column_header_id(column)
       name = column.respond_to?(:name) ? column.name : column.to_s
       clean_id "#{controller_id}-#{name}-column"

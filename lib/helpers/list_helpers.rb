@@ -20,6 +20,7 @@ module ActionView::Helpers
       html_options[:position] = link.position if link.position and link.inline?
       html_options[:class] += ' action' if link.inline?
       html_options[:popup] = true if link.popup?
+      html_options[:id] = table_action_id(link.action)
 
       link_to link.label, url_options, html_options
     end
@@ -58,7 +59,7 @@ module ActionView::Helpers
 
     def column_class(column, column_value)
       classes = []
-      classes << column.name
+      classes << "#{column.name}-column"
       classes << column.css_class unless column.css_class.nil?
       classes << 'empty' if column_empty? column_value
       classes << 'sorted' if active_scaffold_config.list.user.sorting.sorts_on?(column)
