@@ -46,6 +46,7 @@ require 'extensions/array'
 require 'extensions/hashes_in_url_for'
 require 'extensions/nil_id_in_url_params'
 require 'extensions/resources'
+require 'extensions/reverse_associations'
 
 ##
 ## Autoloading for some directories
