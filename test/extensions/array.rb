@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), '../test_helper.rb')
 
-def ArrayTest < Test::Unit::TestCase
+class ArrayTest < Test::Unit::TestCase
   def test_after
     @sequence = ['a', 'b', 'c']
 

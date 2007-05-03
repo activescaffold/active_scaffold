@@ -1,45 +1,53 @@
+# the ever-useful to_label method
 class ActiveRecord::Base
-
   def to_label
     [:name, :label, :title, :to_s].each do |attribute|
       return send(attribute) if respond_to?(attribute) and send(attribute).is_a?(String)
     end
   end
+end
 
+# a simple (manual) unsaved? flag and method. at least it automatically reverts after a save!
+class ActiveRecord::Base
+  # acts like a dirty? flag, manually thrown during update_record_from_params.
+  def unsaved=(val)
+    @unsaved = (val) ? true : false
+  end
+
+  # whether the unsaved? flag has been thrown
+  def unsaved?
+    @unsaved
+  end
+
+  # automatically unsets the unsaved flag
+  def save_with_unsaved_flag(*args)
+    result = save_without_unsaved_flag(*args)
+    self.unsaved = false
+    return result
+  end
+  alias_method_chain :save, :unsaved_flag
+end
+
+# save and validation support for associations.
+class ActiveRecord::Base
   def associated_valid?
-    with_instantiated_associated {|a| a.valid? and a.associated_valid?}
+    # using [].all? syntax to avoid a short-circuit
+    with_unsaved_associated { |a| [a.valid?, a.associated_valid?].all? {|v| v == true} }
   end
 
-  def instantiated_for_edit
-    @instantiated_for_edit = true
-  end
-
-  def instantiated_for_edit?
-    @instantiated_for_edit
-  end
-
-  def no_errors_in_associated?
-    with_instantiated_associated {|a| a.errors.count == 0 and a.no_errors_in_associated?}
-  end
-
-  # To prevent the risk of a circular association we track which objects
-  # have been saved already. We use a [class,id] tuple because find will
-  # return different object references for the same record.
-  def save_associated( save_list = [] )
-    with_instantiated_associated do |a|
-      if save_list.include?( [a.class,a.id] )
-        true
-      else
-        a.save and a.save_associated( save_list << [a.class,a.id] )
-      end
-    end
+  def save_associated
+    with_unsaved_associated { |a| a.save and a.save_associated }
   end
 
   def save_associated!
-    self.save_associated || raise(ActiveRecord::RecordNotSaved)
+    save_associated or raise(ActiveRecord::RecordNotSaved)
   end
 
-  private
+  def no_errors_in_associated?
+    with_unsaved_associated {|a| a.errors.count == 0 and a.no_errors_in_associated?}
+  end
+
+  protected
 
   # Provide an override to allow the model to restrict which associations are considered
   # by ActiveScaffolds update mechanism. This allows the model to restrict things like
@@ -61,20 +69,18 @@ class ActiveRecord::Base
     end
   end
 
-  # yields every associated object that has been instantiated (and therefore possibly changed).
-  # returns true if all yields return true. returns false otherwise.
-  # returns true by default, e.g. when none of the associations have been instantiated. build accordingly.
-  def with_instantiated_associated
+  private
+
+  # yields every associated object that has been instantiated and is flagged as unsaved.
+  # returns false if any yield returns false.
+  # returns true otherwise, even when none of the associations have been instantiated. build wrapper methods accordingly.
+  def with_unsaved_associated
     associations_for_update.all? do |association|
       association_proxy = instance_variable_get("@#{association.name}")
-      if association_proxy && association_proxy.target && !( association_proxy.class == self.class && association_proxy.id == self.id )
-        case association.macro
-          when :belongs_to, :has_one
-          yield association_proxy unless association_proxy.readonly?
-
-          when :has_many, :has_and_belongs_to_many
-          association_proxy.select {|r| not r.readonly?}.all? {|r| yield r}
-        end
+      if association_proxy
+        records = association_proxy
+        records = [records] unless records.is_a? Array # convert singular associations into collections for ease of use
+        records.select {|r| r.unsaved? and not r.readonly?}.all? {|r| yield r} # must use select instead of find_all, which Rails overrides on association proxies for db access
       else
         true
       end

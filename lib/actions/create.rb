@@ -61,9 +61,7 @@ module ActiveScaffold::Actions
           @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
           apply_constraints_to_record(@record)
           before_create_save(@record)
-          # can't 'and' these together because they must *both* happen
-          @record.valid?
-          @record.associated_valid?
+          self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
           if successful?
             @record.save! and @record.save_associated!
             after_create_save(@record)
