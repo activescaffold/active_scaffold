@@ -159,6 +159,8 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
       this.open();
       Event.stop(event);
     }.bind(this));
+
+    this.tag.action_link = this;
   },
 
   open: function() {
