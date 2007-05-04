@@ -40,7 +40,10 @@ module ActionView::Helpers
     def table_action_id(name)
       "#{controller_id}-action-table-#{name}"
     end
-
+    
+    def action_link_id(link_action,link_id)
+      "#{controller_id}-#{link_action}-#{link_id}-link"
+    end
 
     def active_scaffold_column_header_id(column)
       name = column.respond_to?(:name) ? column.name : column.to_s

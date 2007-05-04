@@ -10,18 +10,18 @@ module ActionView::Helpers
       # argument leaves no way to extract the proper method from the rendered tag.
       url_options[:_method] = link.method
       
-      if link.dhtml_confirm?
-        html_options[:dhtml_confirm] = link.dhtml_confirm.value
-        html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options.clone))
-      end
-      
       html_options = {:class => link.action}
       html_options[:confirm] = link.confirm if link.confirm?
       html_options[:position] = link.position if link.position and link.inline?
       html_options[:class] += ' action' if link.inline?
       html_options[:popup] = true if link.popup?
-      html_options[:id] = table_action_id(link.action)
+      html_options[:id] = action_link_id(url_options[:action],url_options[:id])
 
+      if link.dhtml_confirm?
+        html_options[:dhtml_confirm] = link.dhtml_confirm.value
+        html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],url_options[:id]))
+      end
+      
       link_to link.label, url_options, html_options
     end
 
