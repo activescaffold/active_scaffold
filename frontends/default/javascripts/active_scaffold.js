@@ -303,7 +303,7 @@ ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.Ac
       onSuccess: function(request) {
         Element.replace(this.target, request.responseText);
         var new_target = $(this.target.id);
-        if (this.target.hasClassName('even')) new_target.addClassName('even');
+        if (this.target.hasClassName('even-record')) new_target.addClassName('even-record');
         this.target = new_target;
         this.close();
       }.bind(this),
