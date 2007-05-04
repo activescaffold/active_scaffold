@@ -50,7 +50,8 @@ module ActiveScaffold::Actions
       self.active_scaffold_joins.concat includes_for_list_columns
 
       options = {}
-      if accepts? :html, :js
+      paginate = (params[:format].nil?) ? (accepts? :html, :js) : [:html, :js].include?(params[:format])
+      if paginate
         options = { :sorting => active_scaffold_config.list.user.sorting,
                     :per_page => active_scaffold_config.list.user.per_page,
                     :page => active_scaffold_config.list.user.page }
