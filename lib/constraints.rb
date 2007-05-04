@@ -18,7 +18,8 @@ module ActiveScaffold
     def register_constraints_with_action_columns
       constrained_fields = active_scaffold_constraints.keys.collect {|c| c.to_sym}
 
-      if self.class.uses_active_scaffold? and not constrained_fields.empty?
+      if self.class.uses_active_scaffold?
+        # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
         active_scaffold_config.actions.each do |action_name|
           action = active_scaffold_config.send(action_name)
           next unless action.respond_to? :columns
