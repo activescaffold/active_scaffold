@@ -1,7 +1,9 @@
 module ActiveScaffold::DataStructures
   class Column
     include ActiveScaffold::Configurable
-
+    
+    attr_reader :active_record_class
+    
     # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all others will be inferred from this name.
     attr_accessor :name
 

@@ -33,6 +33,8 @@ module ActionView::Helpers
     def column_renders_as(column)
       if column.is_a? ActiveScaffold::DataStructures::ActionColumns
         return :subsection
+      elsif column.active_record_class.locking_column.to_s == column.name.to_s
+        return :hidden
       elsif column.association.nil? or column.ui_type == :select or !active_scaffold_config_for(column.association.klass).actions.include?(:subform)
         return :field
       else
@@ -47,6 +49,8 @@ module ActionView::Helpers
         "form_attribute"
       elsif column_renders_as(column) == :subform
         "form_association"
+      elsif column_renders_as(column) == :hidden
+        "form_hidden_attribute"
       end
     end
 

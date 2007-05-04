@@ -66,6 +66,9 @@ module ActiveScaffold::Actions
           @record.save! and @record.save_associated! if successful?
         end
       rescue ActiveRecord::RecordInvalid
+      rescue ActiveRecord::StaleObjectError
+        @record.errors.add_to_base as_("Version inconsistency - this record has been modified since you started editing it.")
+        self.successful=false
       end
     end
 
