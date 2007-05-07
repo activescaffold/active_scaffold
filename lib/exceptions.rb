@@ -3,5 +3,4 @@ module ActiveScaffold
   class DependencyFailure < RuntimeError; end
   class MalformedConstraint < RuntimeError; end
   class RecordNotAllowed < SecurityError; end
-  class ReverseAssociationRequired < RuntimeError; end
 end

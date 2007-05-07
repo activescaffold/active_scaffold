@@ -103,16 +103,9 @@ module ActiveScaffold
       active_scaffold_constraints.each do |k, v|
         if column = active_scaffold_config.columns[k] and column.association
           if column.plural_association?
-raise 'unsupported' if column.association.options[:polymorphic] == true
             record.send("#{k}").send(:<<, column.association.klass.find(v))
           else # singular_association
-            if column.association.options[:polymorphic]
-              record.send("#{column.association.options[:primary_key] or column.association.primary_key_name}=", v)
-raise 'problem: params[:parent_model] only works in a nested context, so this would not work for constraints in general'
-              record.send("#{column.association.options[:foreign_type]}=", params[:parent_model])
-            else
-              record.send("#{k}=", column.association.klass.find(v))
-            end
+            record.send("#{k}=", column.association.klass.find(v))
           end
         else
           record.send("#{k}=", v)
