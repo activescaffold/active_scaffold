@@ -4,11 +4,10 @@ begin
 rescue ActiveScaffold::ControllerNotFound
   remote_controller = nil
 end
-select_options = options_for_select(options_for_association(column.association)) unless column.through_association?
 
-show_add_new = (column.plural_association? or (column.singular_association? and not associated.empty?))
-show_add_existing = (select_options and not select_options.empty?)
-show_add_new = show_add_existing = false if column.through_association?
+show_add_existing = (!column.through_association? and options_for_association_count(column.association) > 0)
+
+show_add_new = !column.through_association? and (column.plural_association? or (column.singular_association? and not associated.empty?))
 show_add_new = false unless @record.class.authorized_for?(:action => :create)
 
 edit_associated_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :_method => :get, :escape => false)
@@ -30,6 +29,7 @@ return unless show_add_new or show_add_existing
       <% if remote_controller and remote_controller.respond_to? :uses_record_select? and remote_controller.uses_record_select? -%>
         <%= link_to_record_select as_('Add From Existing'), remote_controller.controller_path, :onselect => "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', id), {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id})}});" -%>
       <% else -%>
+        <% select_options = options_for_select(options_for_association(column.association)) unless column.through_association? -%>
         <%= select_tag 'associated_id', '<option value="">' + as_('- select -') + '</option>' + select_options %>
         <%= button_to_function as_('Add From Existing'), "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id})}})" %>
       <% end -%>

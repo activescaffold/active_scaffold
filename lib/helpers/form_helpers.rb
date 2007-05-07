@@ -123,20 +123,24 @@ module ActionView::Helpers
     end
 
     def options_for_association(association)
-      case association.macro
-        when :has_one
-          available_records = association_options_find(association, "#{association.primary_key_name} IS NULL")
-        when :has_many
-          # Find only orphaned objects
-          available_records = association_options_find(association, "#{association.primary_key_name} IS NULL")
-        when :belongs_to
-          available_records = association_options_find(association)
-        when :has_and_belongs_to_many
-          # Any
-          available_records = association_options_find(association)
-      end
+      available_records = association_options_find(association, options_for_association_conditions(association))
       available_records ||= []
       available_records.sort{|a,b| a.to_label <=> b.to_label}.collect { |model| [ model.to_label, model.id ] }
+    end
+
+    def options_for_association_count(association)
+      association_options_count(association, options_for_association_conditions(association))
+    end
+
+    def options_for_association_conditions(association)
+      case association.macro
+        when :has_one, :has_many
+          # Find only orphaned objects
+          "#{association.primary_key_name} IS NULL"
+        when :belongs_to, :has_and_belongs_to_many
+          # Find all
+          nil
+      end
     end
 
     def generate_temporary_id
