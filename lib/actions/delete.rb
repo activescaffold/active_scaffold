@@ -16,16 +16,15 @@ module ActiveScaffold::Actions
 
       do_destroy
 
-      @successful = successful?
       respond_to do |type|
         type.html do
           flash[:info] = as_('Deleted %s', @record.to_label)
           return_to_main
         end
         type.js { render(:action => 'destroy.rjs', :layout => false) }
-        type.xml { render :xml => @successful ? "" : response_object.to_xml, :content_type => Mime::XML, :status => response_status }
-        type.json { render :text => @successful ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status }
-        type.yaml { render :text => @successful ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
+        type.xml { render :xml => successful? ? "" : response_object.to_xml, :content_type => Mime::XML, :status => response_status }
+        type.json { render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status }
+        type.yaml { render :text => successful? ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
       end
     end
 
@@ -35,7 +34,7 @@ module ActiveScaffold::Actions
     # May be overridden to customize the behavior
     def do_destroy
       @record = find_if_allowed(params[:id], :destroy)
-      @record.destroy
+      self.successful = @record.destroy
     end
 
     # The default security delegates to ActiveRecordPermissions.

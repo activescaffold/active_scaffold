@@ -7,7 +7,7 @@ module ActiveScaffold::Actions
     def show
       do_show
 
-      @successful = successful?
+      successful?
       respond_to do |type|
         type.html { render :action => 'show', :layout => true }
         type.js { render :partial => 'show', :layout => false }
