@@ -73,10 +73,10 @@ module ActiveScaffold
             end
 
             active_scaffold_joins.concat column.includes
-            ["#{table}.#{field} = ?", v]
+            v.nil? ? "#{table}.#{field} IS NULL" : ["#{table}.#{field} = ?", v]
           elsif column.searchable?
             active_scaffold_joins.concat column.includes
-            ["#{column.search_sql} = ?", v]
+            v.nil? ? "#{column.search_sql} IS NULL" : ["#{column.search_sql} = ?", v]
           end
         elsif active_scaffold_config.model.column_names.include? k.to_s
           ["#{k.to_s} = ?", v]
