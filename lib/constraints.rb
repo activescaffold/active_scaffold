@@ -49,7 +49,7 @@ module ActiveScaffold
             #
             # please see the relevant tests for concrete examples.
             field = if [:has_one, :has_many].include?(column.association.macro)
-              column.association.class_name.constantize.primary_key
+              column.association.klass.primary_key
             else
               column.association.options[:association_foreign_key] || column.association.options[:foreign_key] || column.association.association_foreign_key
             end
@@ -62,11 +62,7 @@ module ActiveScaffold
               active_scaffold_config.model.table_name
 
               when :has_many
-              if column.association.options[:through]
-                column.association.through_reflection.table_name
-              else
-                column.association.table_name
-              end
+              column.association.table_name
 
               else
               column.association.table_name

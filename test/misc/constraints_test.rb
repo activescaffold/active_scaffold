@@ -1,33 +1,39 @@
 require File.join(File.dirname(__FILE__), '../test_helper.rb')
 
-# These test situations do not yet cover:
-#   :through associations
-#   polymorphic associations
-
 module ModelStubs
+  class ModelStub < ActiveRecord::Base
+    abstract_class = true
+    def self.columns; [ActiveRecord::ConnectionAdapters::Column.new('foo', '')] end
+    def self.table_name
+      to_s.split('::').last.underscore.pluralize
+    end
+  end
+
   ##
   ## Standard associations
   ##
 
-  class Alias < ActiveRecord::Base
-    def self.columns; [ActiveRecord::ConnectionAdapters::Column.new('foo', '')] end
-    belongs_to :user
+  class Address < ModelStub
+    belongs_to :addressable, :polymorphic => true
   end
 
-  class User < ActiveRecord::Base
-    def self.columns; [ActiveRecord::ConnectionAdapters::Column.new('foo', '')] end
-    has_many :aliases
+  class User < ModelStub
     has_and_belongs_to_many :roles
-    has_one :address
+    has_one :subscription
+    has_one :address, :as => :addressable
   end
 
-  class Address < ActiveRecord::Base
-    def self.columns; [ActiveRecord::ConnectionAdapters::Column.new('foo', '')] end
+  class Service < ModelStub
+    has_many :subscriptions
+    has_many :users, :through => :subscriptions
+  end
+
+  class Subscription < ModelStub
+    belongs_to :service
     belongs_to :user
   end
 
-  class Role < ActiveRecord::Base
-    def self.columns; [ActiveRecord::ConnectionAdapters::Column.new('foo', '')] end
+  class Role < ModelStub
     has_and_belongs_to_many :users
   end
 
@@ -35,30 +41,33 @@ module ModelStubs
   ## These versions of the associations require extra configuration to work properly
   ##
 
-  class OtherAlias < ActiveRecord::Base
-    def self.columns; [] end
-    set_table_name 'aliases'
-    belongs_to :other_user, :class_name => 'ModelStubs::OtherUser', :foreign_key => 'user_id'
-  end
-
-  class OtherUser < ActiveRecord::Base
-    def self.columns; [] end
-    set_table_name 'users'
-    has_many :other_aliases, :class_name => 'ModelStubs::OtherAlias', :foreign_key => 'user_id'
-    has_and_belongs_to_many :other_roles, :class_name => 'ModelStubs::OtherRole', :foreign_key => 'user_id', :association_foreign_key => 'role_id', :join_table => 'roles_users'
-    has_one :other_address, :class_name => 'ModelStubs::OtherAddress', :foreign_key => 'user_id'
-  end
-
-  class OtherAddress < ActiveRecord::Base
-    def self.columns; [] end
+  class OtherAddress < ModelStub
     set_table_name 'addresses'
+    belongs_to :other_addressable, :polymorphic => true
+  end
+
+  class OtherUser < ModelStub
+    set_table_name 'users'
+    has_and_belongs_to_many :other_roles, :class_name => 'ModelStubs::OtherRole', :foreign_key => 'user_id', :association_foreign_key => 'role_id', :join_table => 'roles_users'
+    has_one :other_subscription, :class_name => 'ModelStubs::OtherSubscription', :foreign_key => 'user_id'
+    has_one :other_address, :as => :other_addressable, :class_name => 'ModelStubs::OtherAddress', :foreign_key => 'addressable_id'
+  end
+
+  class OtherService < ModelStub
+    set_table_name 'services'
+    has_many :other_subscriptions, :class_name => 'ModelStubs::OtherSubscription', :foreign_key => 'service_id'
+    has_many :other_users, :through => :subscriptions # :class_name and :foreign_key are ignored for :through
+  end
+
+  class OtherSubscription < ModelStub
+    set_table_name 'subscriptions'
+    belongs_to :other_service, :class_name => 'ModelStubs::OtherService', :foreign_key => 'service_id'
     belongs_to :other_user, :class_name => 'ModelStubs::OtherUser', :foreign_key => 'user_id'
   end
 
-  class OtherRole < ActiveRecord::Base
-    def self.columns; [] end
+  class OtherRole < ModelStub
     set_table_name 'roles'
-    has_and_belongs_to_many :other_users, :class_name => 'ModelStubs::OtherUser', :foreign_key => 'user_id', :association_foreign_key => 'role_id', :join_table => 'roles_users'
+    has_and_belongs_to_many :other_users, :class_name => 'ModelStubs::OtherUser', :foreign_key => 'role_id', :association_foreign_key => 'user_id', :join_table => 'roles_users'
   end
 end
 
@@ -90,42 +99,56 @@ class ConstraintsTest < Test::Unit::TestCase
   def test_constraint_conditions_for_default_associations
     @test_object.active_scaffold_config = config_for('user')
     # has_one (vs belongs_to)
-    assert_constraint_condition({:address => 5}, ['addresses.id = ?', 5], 'find the user with address #5')
-    # has_many (vs belongs_to)
-    assert_constraint_condition({:aliases => 10}, ['aliases.id = ?', 10], 'find the user with alias #10')
+    assert_constraint_condition({:subscription => 5}, ['subscriptions.id = ?', 5], 'find the user with subscription #5')
     # habtm (vs habtm)
     assert_constraint_condition({:roles => 4}, ['roles_users.role_id = ?', 4], 'find all users with role #4')
+    # has_one (vs polymorphic)
+    assert_constraint_condition({:address => 11}, ['addresses.id = ?', 11], 'find the user with address #11')
 
-    @test_object.active_scaffold_config = config_for('alias')
+    @test_object.active_scaffold_config = config_for('subscription')
+    # belongs_to (vs has_one)
+    assert_constraint_condition({:user => 2}, ['subscriptions.user_id = ?', 2], 'find the subscription for user #2')
     # belongs_to (vs has_many)
-    assert_constraint_condition({:user => 1}, ['aliases.user_id = ?', 1], 'find all aliases for user #1')
+    assert_constraint_condition({:service => 1}, ['subscriptions.service_id = ?', 1], 'find all subscriptions for service #1')
+
+    @test_object.active_scaffold_config = config_for('service')
+    # has_many (vs belongs_to)
+    assert_constraint_condition({:subscriptions => 10}, ['subscriptions.id = ?', 10], 'find the service with subscription #10')
+    # has_many :through (through has_many)
+    assert_constraint_condition({:users => 7}, ['users.id = ?', 7], 'find the service with user #7')
 
     @test_object.active_scaffold_config = config_for('address')
-    # belongs_to (vs has_one)
-    assert_constraint_condition({:user => 2}, ['addresses.user_id = ?', 2], 'find the address for user #2')
+    # belongs_to polymorphic ... can't really constrain.
   end
 
   def test_constraint_conditions_for_configured_associations
     @test_object.active_scaffold_config = config_for('other_user')
     # has_one (vs belongs_to)
-    assert_constraint_condition({:other_address => 5}, ['addresses.id = ?', 5], 'find the user with address #5')
-    # has_many (vs belongs_to)
-    assert_constraint_condition({:other_aliases => 10}, ['aliases.id = ?', 10], 'find the user with alias #10')
+    assert_constraint_condition({:other_subscription => 5}, ['subscriptions.id = ?', 5], 'find the user with subscription #5')
     # habtm (vs habtm)
     assert_constraint_condition({:other_roles => 4}, ['roles_users.role_id = ?', 4], 'find all users with role #4')
+    # has_one (vs polymorphic)
+    assert_constraint_condition({:other_address => 11}, ['addresses.id = ?', 11], 'find the user with address #11')
 
-    @test_object.active_scaffold_config = config_for('other_alias')
+    @test_object.active_scaffold_config = config_for('other_subscription')
+    # belongs_to (vs has_one)
+    assert_constraint_condition({:other_user => 2}, ['subscriptions.user_id = ?', 2], 'find the subscription for user #2')
     # belongs_to (vs has_many)
-    assert_constraint_condition({:other_user => 1}, ['aliases.user_id = ?', 1], 'find all aliases for user #1')
+    assert_constraint_condition({:other_service => 1}, ['subscriptions.service_id = ?', 1], 'find all subscriptions for service #1')
+
+    @test_object.active_scaffold_config = config_for('other_service')
+    # has_many (vs belongs_to)
+    assert_constraint_condition({:other_subscriptions => 10}, ['subscriptions.id = ?', 10], 'find the service with subscription #10')
+    # has_many :through (through has_many)
+    assert_constraint_condition({:other_users => 7}, ['users.id = ?', 7], 'find the service with user #7')
 
     @test_object.active_scaffold_config = config_for('other_address')
-    # belongs_to (vs has_one)
-    assert_constraint_condition({:other_user => 2}, ['addresses.user_id = ?', 2], 'find the address for user #2')
+    # belongs_to polymorphic ... can't really constrain.
   end
 
   def test_constraint_conditions_for_normal_attributes
-    @test_object.active_scaffold_config = config_for('alias')
-    assert_constraint_condition({'foo' => 'bar'}, ['aliases.foo = ?', 'bar'], 'normal column-based constraint')
+    @test_object.active_scaffold_config = config_for('user')
+    assert_constraint_condition({'foo' => 'bar'}, ['users.foo = ?', 'bar'], 'normal column-based constraint')
   end
 
   protected
