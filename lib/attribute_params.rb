@@ -77,7 +77,8 @@ module ActiveScaffold
           else
             # convert empty strings into nil. this works better with 'null => true' columns (and validations),
             # and 'null => false' columns should just convert back to an empty string.
-            value = nil if value.is_a? String and value.empty?
+            # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
+            value = nil if value.is_a? String and value.empty? and column.column.null
             value
           end
 
