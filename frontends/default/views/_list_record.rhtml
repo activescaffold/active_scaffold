@@ -5,6 +5,7 @@
 <tr class="record <%= classAttr %>" id="<%= element_row_id(:action => :list, :id => record.id) %>" class="record">
   <% active_scaffold_config.list.columns.each do |column| %>
     <% column_value = render_column(record, column) -%>
+    <% column_value << "&nbsp;" if column_value.empty? # For IE6 -%>
 
     <td class="<%= column_class(column, column_value) %>" >
       <% if column.link -%>

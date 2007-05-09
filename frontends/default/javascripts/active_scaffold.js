@@ -118,6 +118,22 @@ Object.extend(String.prototype, {
   }
 });
 
+/*
+ * Prototype's implementation was throwing an error instead of false
+ */
+Element.Methods.Simulated = {
+  hasAttribute: function(element, attribute) {
+    var t = Element._attributeTranslations;
+    attribute = t.names[attribute] || attribute;
+    // Return false if we get an error here
+    try {
+      return $(element).getAttributeNode(attribute).specified;
+    } catch (e) {
+      return false;
+    }
+  }
+};
+
 /**
  * A set of links. As a set, they can be controlled such that only one is "open" at a time, etc.
  */
@@ -166,17 +182,17 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
   open: function() {
     if (this.is_disabled()) return;
 
-		if (this.tag.hasAttribute( "dhtml_confirm")) {
-			if (this.onclick) this.onclick();
-			return;
-		} else {
-			if (this.onclick && !this.onclick()) return;//e.g. confirmation messages
-			this.open_action();
-		}
+    if (this.tag.hasAttribute( "dhtml_confirm")) {
+      if (this.onclick) this.onclick();
+      return;
+    } else {
+      if (this.onclick && !this.onclick()) return;//e.g. confirmation messages
+      this.open_action();
+    }
   },
 
-	open_action: function() {
-		if (this.position) this.disable();
+  open_action: function() {
+    if (this.position) this.disable();
     this.loading_indicator.style.visibility = 'visible';
     new Ajax.Request(this.url, {
       asynchronous: true,
@@ -199,8 +215,8 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
       onComplete: function(request) {
         this.loading_indicator.style.visibility = 'hidden';
       }.bind(this)
-		});
-	},
+    });
+  },
 
   insert: function(content) {
     throw 'unimplemented'
