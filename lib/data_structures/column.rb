@@ -195,7 +195,7 @@ module ActiveScaffold::DataStructures
         self.search_sql = nil
       else
         if association.nil?
-          self.search_sql = self.field.to_s.downcase
+          self.search_sql = self.field.to_s
         else
           # with associations we really don't know what to sort by without developer intervention. we could sort on the primary key ('id'), but that's hardly useful. previously ActiveScaffold would try and search using the same sql as from :sort, but we decided to just punt.
           self.search_sql = nil
