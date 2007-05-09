@@ -90,6 +90,13 @@ module ActiveRecordPermissions
       return ActiveRecordPermissions.default_permission
     end
 
+    # Because any class-level queries get delegated to the instance level via a new record,
+    # it's useful to know when the authorization query is meant for a specific record or not.
+    # But using new_record? is confusing, even though accurate. So this is basically just a wrapper.
+    def existing_record_check?
+      !new_record?
+    end
+
     module ClassMethods
       # Class level just delegates to instance level
       def authorized_for?(*args)
