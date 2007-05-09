@@ -474,10 +474,6 @@ padding: 0;
 background-color: transparent;
 }
 
-.active-scaffold .fieldWithErrors input {
-border: solid 1px #f00;
-}
-
 /* Loading Indicators
    ============================== */
 
@@ -620,6 +616,11 @@ border: solid 1px #1F7F00;
 
 .active-scaffold input.text-input {
 padding: 2px;
+}
+
+.active-scaffold .fieldWithErrors input.text-input,
+.active-scaffold .fieldWithErrors select {
+border: solid 1px #f00;
 }
 
 .active-scaffold select {
