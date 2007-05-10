@@ -61,7 +61,7 @@ module ActionView::Helpers
       options[:default_visible] = true if options[:default_visible].nil?
 
       link_text = options[:default_visible] ? 'hide' : 'show'
-      link_to_function link_text, "e = #{options[:of]}; e.toggle(); this.innerHTML = (e.style.display == 'none') ? 'show' : 'hide'", :class => 'visibility-toggle'
+      link_to_function as_(link_text), "e = #{options[:of]}; e.toggle(); this.innerHTML = (e.style.display == 'none') ? '#{as_('show')}' : '#{as_('hide')}'", :class => 'visibility-toggle'
     end
   end
 end
