@@ -2,8 +2,8 @@
    ==================================== */
 
 * html .active-scaffold-header,
-* html .active-scaffold li.form-element,
-* html .active-scaffold li.sub-section {
+.active-scaffold li.form-element,
+.active-scaffold li.sub-section {
 zoom: 1;
 }
 
@@ -29,6 +29,6 @@ filter: alpha(opacity=50);
 float: none;
 }
 
-* html .active-scaffold li.form-element dt {
+.active-scaffold li.form-element dt {
 padding: 4px 0;
 }
