@@ -18,6 +18,8 @@ module ActionView::Helpers
       html_options[:id] = action_link_id(url_options[:action],url_options[:id])
 
       if link.dhtml_confirm?
+        html_options[:class] += ' action' if !link.inline?
+        html_options[:page_link] = 'true' if !link.inline?
         html_options[:dhtml_confirm] = link.dhtml_confirm.value
         html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],url_options[:id]))
       end
