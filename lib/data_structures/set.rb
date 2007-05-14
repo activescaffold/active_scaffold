@@ -18,7 +18,7 @@ module ActiveScaffold::DataStructures
       args.flatten! # allow [] as a param
       args.each { |arg|
         arg = arg.to_sym if arg.is_a? String
-        @set << arg
+        @set << arg unless @set.include? arg # avoid duplicates
       }
     end
     alias_method :<<, :add
