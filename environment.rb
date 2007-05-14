@@ -33,6 +33,7 @@ require 'finder'
 require 'constraints'
 require 'attribute_params'
 require 'active_record_permissions'
+require 'responds_to_parent'
 
 require 'helpers/active_scaffold_helpers'
 require 'helpers/id_helpers'
@@ -80,6 +81,7 @@ end
 
 ActionController::Base.send(:include, ActiveScaffold)
 ActionController::Base.send(:include, ActionView::Helpers::ActiveScaffoldIdHelpers)
+ActionController::Base.send(:include, RespondsToParent) 
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldHelpers)
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldIdHelpers)
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldListHelpers)

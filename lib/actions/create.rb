@@ -29,11 +29,21 @@ module ActiveScaffold::Actions
 
       respond_to do |type|
         type.html do
-          if successful?
-            flash[:info] = as_('Created %s', @record.to_label)
-            return_to_main
-          else
-            render(:action => 'create_form', :layout => true)
+          if params[:iframe]=='true' # was this an iframe post ?
+            responds_to_parent do
+              if successful?
+                render :action => 'create.rjs', :layout => false
+              else
+                render :action => 'form_messages.rjs', :layout => false
+              end
+            end
+          else          
+            if successful?
+              flash[:info] = as_('Created %s', @record.to_label)
+              return_to_main
+            else
+              render(:action => 'create_form', :layout => true)
+            end
           end
         end
         type.js do

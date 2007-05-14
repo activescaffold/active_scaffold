@@ -157,5 +157,27 @@ module ActionView::Helpers
       end
     end
 
+    def form_remote_upload_tag(url_for_options = {}, options = {})
+      output=""
+      
+      output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>"
+      
+      options[:form] = true
+  
+      options ||= {}
+      
+      onsubmits = options[:onsubmit] ? [ options[:onsubmit] ] : [ ]
+      onsubmits << "setTimeout(function() { #{options[:loading]} }, 10); "
+      # the setTimeout prevents the Form.disable from being called before the submit.  If that occurs, then no data will be posted.
+      onsubmits << "return true"
+      
+      # simulate a "loading"
+      options[:onsubmit] = onsubmits * ';'
+      options[:target] = action_iframe_id(url_for_options)
+      options[:multipart] = true
+      
+      output << form_tag(url_for_options, options)
+    end
+
   end
 end
