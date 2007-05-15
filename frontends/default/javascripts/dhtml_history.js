@@ -931,10 +931,10 @@ function initialize() {
 /** Our callback to receive history
     change events. */
 function handleHistoryChange(pageId, pageData) {
-			 //alert(pageData)
-			 var info = pageId.split(':');
-			 var id = info[0];
-       new Ajax.Updater(id+'-content', pageData, {asynchronous:true, evalScripts:true, onLoading:function(request){Element.show(id+'-pagination-loading-indicator');}});
+  var info = pageId.split(':');
+  var id = info[0];
+  pageData += '&_method=get';
+  new Ajax.Updater(id+'-content', pageData, {asynchronous:true, evalScripts:true, onLoading:function(request){Element.show(id+'-pagination-loading-indicator');}});
 }
 
 function addActiveScaffoldPageToHistory(url, active_scaffold_id) {
