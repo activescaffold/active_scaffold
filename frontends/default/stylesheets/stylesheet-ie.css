@@ -25,6 +25,7 @@ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/active
 filter: alpha(opacity=50);
 }
 
+.active-scaffold .show-view dd,
 .active-scaffold li.form-element dd {
 float: none;
 }
