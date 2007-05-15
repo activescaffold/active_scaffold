@@ -132,6 +132,9 @@ module ActionView::Helpers
       association_options_count(association, options_for_association_conditions(association))
     end
 
+    # A useful override for customizing the records present in an association dropdown.
+    # Should work in both the subform and ui_type=>:select modes.
+    # Check association.name to specialize the conditions per-column.
     def options_for_association_conditions(association)
       case association.macro
         when :has_one, :has_many
