@@ -931,6 +931,7 @@ function initialize() {
 /** Our callback to receive history
     change events. */
 function handleHistoryChange(pageId, pageData) {
+  if (!pageData) return;
   var info = pageId.split(':');
   var id = info[0];
   pageData += '&_method=get';

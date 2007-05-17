@@ -194,7 +194,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
 
 	open_action: function() {
 		if (this.position) this.disable();
-		
+
 		if (this.page_link) {
 			window.location = this.url;
 		} else {
@@ -232,6 +232,15 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
     this.enable();
     this.adapter.remove();
     if (this.hide_target) this.target.show();
+  },
+
+  register_cancel_hooks: function() {
+    // anything in the insert with a class of cancel gets the closer method, and a reference to this object for good measure
+    var self = this;
+    this.adapter.getElementsByClassName('cancel').each(function(elem) {
+      elem.observe('click', this.close_handler.bind(this));
+      elem.link = self;
+    }.bind(this))
   },
 
   reload: function() {
@@ -301,22 +310,18 @@ ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.Ac
       return false;
     }
 
-    var closer = function(event) {
-      this.close_with_refresh();
-      if (event) Event.stop(event);
-    }.bind(this);
-    var self = this;
-
-    this.adapter.down('a.inline-adapter-close').observe('click', closer);
-    // anything in the insert with a class of cancel gets the closer method, and a reference to this object for good measure
-    this.adapter.getElementsByClassName('cancel').each(function(elem) {
-      elem.observe('click', closer);
-      elem.link = self;
-    })
+    this.adapter.down('a.inline-adapter-close').observe('click', this.close_handler.bind(this));
+    this.register_cancel_hooks();
 
     new Effect.Highlight(this.adapter.down('td'));
   },
 
+  close_handler: function(event) {
+    this.close_with_refresh();
+    if (event) Event.stop(event);
+  },
+
+  /* it might simplify things to just override the close function. then the Record and Table links could share more code ... wouldn't need custom close_handler functions, for instance */
   close_with_refresh: function() {
     new Ajax.Request(this.refresh_url, {
       asynchronous: true,
@@ -374,19 +379,14 @@ ActiveScaffold.ActionLink.Table.prototype = Object.extend(new ActiveScaffold.Act
       throw 'Unknown position "' + this.position + '"'
     }
 
-    var closer = function(event) {
-      this.close();
-      if (event) Event.stop(event);
-    }.bind(this);
-    var self = this;
-
-    this.adapter.down('a.inline-adapter-close').observe('click', closer);
-    // anything in the insert with a class of cancel gets the closer method, and a reference to this object for good measure
-    this.adapter.getElementsByClassName('cancel').each(function(elem) {
-      elem.observe('click', closer);
-      elem.link = self;
-    })
+    this.adapter.down('a.inline-adapter-close').observe('click', this.close_handler.bind(this));
+    this.register_cancel_hooks();
 
     new Effect.Highlight(this.adapter.down('td'));
+  },
+
+  close_handler: function(event) {
+    this.close();
+    if (event) Event.stop(event);
   }
 });

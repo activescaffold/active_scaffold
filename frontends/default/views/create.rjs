@@ -14,5 +14,5 @@ if controller.send :successful?
 else
   page << "l = $$(#{cancel_selector}).first().link;"
   page.replace element_form_id(:action => :create), :partial => 'create_form'
-  page << "$$(#{cancel_selector}).first().link = l;"
+  page << "l.register_cancel_hooks();"
 end

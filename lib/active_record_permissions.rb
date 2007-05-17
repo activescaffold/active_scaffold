@@ -47,9 +47,9 @@ module ActiveRecordPermissions
         # The proc to call that retrieves the current_user from the ApplicationController.
         attr_accessor :current_user_proc
 
-        # Class-level access to the current user [is this useful?]
+        # Class-level access to the current user
         def current_user
-          ActiveRecord::Base.current_user_proc.call
+          ActiveRecord::Base.current_user_proc.call if ActiveRecord::Base.current_user_proc
         end
       end
 
