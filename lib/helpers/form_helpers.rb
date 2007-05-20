@@ -98,6 +98,13 @@ module ActionView::Helpers
       text_options = options.merge( :autocomplete => "off", :size => 20, :class => "#{column.name}-input text-input" )
       if column.virtual?
         text_field(:record, column.name, text_options)
+      elsif column.column.type == :boolean
+        select_options = []
+        select_options << [as_('- select -'), nil] if column.column.null
+        select_options << [as_('True'), true]
+        select_options << [as_('False'), false]
+
+        select_tag(options[:name], options_for_select(select_options, @record.send(column.name)))
       elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)
         input(:record, column.name, text_options)
       else
@@ -162,23 +169,23 @@ module ActionView::Helpers
 
     def form_remote_upload_tag(url_for_options = {}, options = {})
       output=""
-      
+
       output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>"
-      
+
       options[:form] = true
-  
+
       options ||= {}
-      
+
       onsubmits = options[:onsubmit] ? [ options[:onsubmit] ] : [ ]
       onsubmits << "setTimeout(function() { #{options[:loading]} }, 10); "
       # the setTimeout prevents the Form.disable from being called before the submit.  If that occurs, then no data will be posted.
       onsubmits << "return true"
-      
+
       # simulate a "loading"
       options[:onsubmit] = onsubmits * ';'
       options[:target] = action_iframe_id(url_for_options)
       options[:multipart] = true
-      
+
       output << form_tag(url_for_options, options)
     end
 
