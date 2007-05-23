@@ -1,9 +1,9 @@
 module ActiveScaffold::DataStructures
   class Column
     include ActiveScaffold::Configurable
-    
+
     attr_reader :active_record_class
-    
+
     # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all others will be inferred from this name.
     attr_accessor :name
 
@@ -45,27 +45,46 @@ module ActiveScaffold::DataStructures
         @sort = value ? true : false # force true or false
       end
     end
-    
+
     def sort
       self.initialize_sort if @sort === true
       @sort
     end
-    
+
     def sortable?
       sort != false && !sort.nil?
     end
-    
+
     # a configuration helper for the self.sort property. simply provides a method syntax instead of setter syntax.
     def sort_by(options)
       self.sort = options
     end
 
     # supported options:
-    #   * :select will display a simple <select> (or collection of checkboxes) on the form to (dis)associate records
-    #   * :crud (default) will display a sub-form
-    attr_writer :ui_type
-    def ui_type
-      @ui_type || (column.type if column)
+    #   * for association columns
+    #     * :select - displays a simple <select> or a collection of checkboxes to (dis)associate records
+    #     * :crud - will display a sub-form (default)
+    #
+    # proposed options:
+    #   * for string fields
+    #     * :text - (default)
+    #     * :textarea - use a textarea for larger expected input
+    #   * for datetime fields
+    #     * :calendar - (ActiveScaffold 1.1 default)
+    #     * :select - (ActiveScaffold 1.0 default)
+    #   * for boolean fields
+    #     * :checkbox
+    #     * :select
+    attr_writer :form_ui
+    def form_ui
+      @form_ui || (column.type if column)
+    end
+
+    # DEPRECATED
+    alias :ui_type :form_ui
+    def ui_type=(val)
+      ::ActiveSupport::Deprecation.warn("config.columns[:#{name}].ui_type has been deprecated in ActiveScaffold 1.1 and will disappear in 1.2. Please use config.columns[:#{name}].form_ui instead.", caller)
+      self.form_ui = val
     end
 
     # associate an action_link with this column
@@ -93,9 +112,9 @@ module ActiveScaffold::DataStructures
     # a collection of associations to pre-load when finding the records on a page
     attr_reader :includes
     def includes=(value)
-      @includes = value.is_a?(Array) ? value : [value] # automatically convert to an array  
+      @includes = value.is_a?(Array) ? value : [value] # automatically convert to an array
     end
-    
+
     # describes how to search on a column
     #   search = true           default, uses intelligent search sql
     #   search = "CONCAT(a, b)" define your own sql for searching. this should be the "left-side" of a WHERE condition. the operator and value will be supplied by ActiveScaffold.
