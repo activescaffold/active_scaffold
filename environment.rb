@@ -40,15 +40,6 @@ require 'helpers/id_helpers'
 require 'helpers/list_helpers'
 require 'helpers/form_helpers'
 
-require 'extensions/action_view'
-require 'extensions/action_controller'
-require 'extensions/active_record'
-require 'extensions/array'
-require 'extensions/hashes_in_url_for'
-require 'extensions/nil_id_in_url_params'
-require 'extensions/resources'
-require 'extensions/reverse_associations'
-
 ##
 ## Autoloading for some directories
 ## (this could probably be optimized more -lance)
@@ -74,6 +65,7 @@ end
 ##
 ## Preload other directories
 ##
+Dir["#{File.dirname __FILE__}/lib/extensions/*.rb"].each { |file| require file }
 
 ##
 ## Inject includes for ActiveScaffold libraries
@@ -81,7 +73,7 @@ end
 
 ActionController::Base.send(:include, ActiveScaffold)
 ActionController::Base.send(:include, ActionView::Helpers::ActiveScaffoldIdHelpers)
-ActionController::Base.send(:include, RespondsToParent) 
+ActionController::Base.send(:include, RespondsToParent)
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldHelpers)
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldIdHelpers)
 ActionView::Base.send(:include, ActionView::Helpers::ActiveScaffoldListHelpers)
