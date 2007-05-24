@@ -135,10 +135,10 @@ module ActiveScaffold
         # argument leaves no way to extract the proper method from the rendered tag.
         url_options[:_method] = link.method
         
+        html_options = {:class => link.action}
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails
         html_options[:method] = link.method
-
-        html_options = {:class => link.action}
+        
         html_options[:confirm] = link.confirm if link.confirm?
         html_options[:position] = link.position if link.position and link.inline?
         html_options[:class] += ' action' if link.inline?
