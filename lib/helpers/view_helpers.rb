@@ -134,6 +134,9 @@ module ActiveScaffold
         # action link javascript needs to submit the proper method, but the normal html_options[:method]
         # argument leaves no way to extract the proper method from the rendered tag.
         url_options[:_method] = link.method
+        
+        # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails
+        html_options[:method] = link.method
 
         html_options = {:class => link.action}
         html_options[:confirm] = link.confirm if link.confirm?
