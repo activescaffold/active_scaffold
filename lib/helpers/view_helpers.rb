@@ -137,7 +137,8 @@ module ActiveScaffold
         
         html_options = {:class => link.action}
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails
-        html_options[:method] = link.method
+        # this has other effects - ajax links break, further investigation is on going.
+        # html_options[:method] = link.method
         
         html_options[:confirm] = link.confirm if link.confirm?
         html_options[:position] = link.position if link.position and link.inline?
