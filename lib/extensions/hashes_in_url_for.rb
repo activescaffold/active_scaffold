@@ -15,7 +15,7 @@ module ActionController
         elements.empty? ? '' : "?#{elements.sort * '&'}"
       end
     end
-    
+
     class DynamicSegment
       def extract_value
         "#{local_name} = hash[:#{key}] && hash[:#{key}].to_param #{"|| #{default.inspect}" if default}"
@@ -27,6 +27,7 @@ module ActionController
         options_as_params = options.clone
         options_as_params[:action] ||= 'index' if options[:controller]
         options_as_params[:action] = options_as_params[:action].to_s if options_as_params[:action]
+        options_as_params[:controller] = options_as_params[:controller].to_s if options_as_params[:controller]
         options_as_params
       end
     end
