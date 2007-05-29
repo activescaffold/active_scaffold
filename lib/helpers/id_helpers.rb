@@ -22,6 +22,10 @@ module ActiveScaffold
         "#{controller_id}-messages"
       end
 
+      def active_scaffold_calculations_id
+        "#{controller_id}-calculations"
+      end
+
       def empty_message_id
         "#{controller_id}-empty-message"
       end
@@ -99,15 +103,15 @@ module ActiveScaffold
         clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-messages"
       end
 
+      def action_iframe_id(options)
+        "#{controller_id}-#{options[:action]}-#{options[:id]}-iframe"
+      end
+
       private
 
       # whitelists id-safe characters
       def clean_id(val)
         val.gsub /[^-_0-9a-zA-Z]/, '-'
-      end
-
-      def action_iframe_id(options)
-        "#{controller_id}-#{options[:action]}-#{options[:id]}-iframe"
       end
     end
   end
