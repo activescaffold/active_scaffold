@@ -58,8 +58,12 @@ module ActiveScaffold::Actions
         })
       end
 
-      @page = find_page(options)
-      @records = @page.items
+      page = find_page(options);
+      if page.items.empty? and params[:with_fix]
+        page = page.pager.first
+        active_scaffold_config.list.user.page = 1
+      end
+      @page, @records = page, page.items
     end
 
     # The default security delegates to ActiveRecordPermissions.
