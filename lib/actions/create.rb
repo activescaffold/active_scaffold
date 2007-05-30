@@ -37,7 +37,7 @@ module ActiveScaffold::Actions
                 render :action => 'form_messages.rjs', :layout => false
               end
             end
-          else          
+          else
             if successful?
               flash[:info] = as_('Created %s', @record.to_label)
               return_to_main
@@ -61,6 +61,8 @@ module ActiveScaffold::Actions
     # May be overridden to customize the behavior (add default values, for instance)
     def do_new
       @record = active_scaffold_config.model.new
+      apply_constraints_to_record(@record)
+      @record
     end
 
     # A somewhat complex method to actually create a new record. The complexity is from support for subforms and associated records.
