@@ -17,7 +17,7 @@ module ActiveScaffold::Config
         if @core.actions.include? :update
           @columns = @core.update.columns.clone
         else
-          self.columns = @core.columns.content_column_names
+          self.columns = @core.columns._inheritable
         end
       end
 

@@ -56,7 +56,7 @@ module ActiveScaffold::Config
     # provides read/write access to the local Columns DataStructure
     attr_reader :columns
     def columns=(val)
-      @columns = ActiveScaffold::DataStructures::Columns.new(self.model, *val)
+      @columns._inheritable = val.collect {|c| c.to_sym}
     end
 
     # lets you override the global ActiveScaffold frontend for a specific controller
@@ -86,12 +86,14 @@ module ActiveScaffold::Config
       @actions = self.class.actions.clone
 
       # create a new default columns datastructure, since it doesn't make sense before now
-      column_names = self.model.columns.collect{ |c| c.name.to_sym }.sort_by { |c| c.to_s }
+      attribute_names = self.model.columns.collect{ |c| c.name.to_sym }.sort_by { |c| c.to_s }
       association_column_names = self.model.reflect_on_all_associations.collect{ |a| a.name.to_sym }.sort_by { |c| c.to_s }
-      column_names += association_column_names
-      column_names -= self.class.ignore_columns.collect { |c| c.to_sym }
-      column_names -= self.model.reflect_on_all_associations.collect{|a| "#{a.name}_type".to_sym if a.options[:polymorphic]}.compact
-      self.columns = column_names
+      @columns = ActiveScaffold::DataStructures::Columns.new(self.model, attribute_names + association_column_names)
+
+      # and then, let's remove some columns from the inheritable set.
+      @columns.exclude(self.class.ignore_columns)
+      @columns.exclude(@columns.collect { |c| c.column and (c.column.primary or c.column.name =~ /(_id|_count)$/) })
+      @columns.exclude(self.model.reflect_on_all_associations.collect{|a| :"#{a.name}_type" if a.options[:polymorphic]}.compact)
 
       # inherit the global frontend
       @frontend = self.class.frontend

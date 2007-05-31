@@ -3,25 +3,44 @@ module ActiveScaffold::DataStructures
     include Enumerable
     include ActiveScaffold::Configurable
 
+    # The motivation for this collection is that this Columns data structure fills two roles: it provides
+    # the master list of all known columns, and it provides an inheritable list for all other actions (e.g.
+    # Create and Update and List). Well we actually want to *know* about as many columns as possible, so
+    # we don't want people actually removing columns from @set. But at the same time, we want to be able to
+    # manage which columns get inherited. Tada!
+    #
+    # This collection is referenced by other parts of ActiveScaffold and by methods within this DataStructure.
+    # IT IS NOT MEANT FOR PUBLIC USE (but if you know what you're doing, go ahead)
+    attr_accessor :_inheritable
+
     # This accessor is used by ActionColumns to create new Column objects without adding them to this set
     attr_reader :active_record_class
 
     def initialize(active_record_class, *args)
       @active_record_class = active_record_class
-
+      @_inheritable = []
       @set = []
+
       self.add *args
     end
 
     # the way to add columns to the set. this is primarily useful for virtual columns.
+    # note that this also makes columns inheritable
     def add(*args)
       args.flatten! # allow [] as a param
-      args.each { |arg|
-        arg = ActiveScaffold::DataStructures::Column.new(arg.to_sym, @active_record_class)
-        @set << arg
-      }
+      args = args.collect{ |a| a.to_sym }
+
+      # make the columns inheritable
+      self._inheritable = _inheritable.concat(args)
+      # then add columns to @set (unless they already exist)
+      args.each { |a| @set << ActiveScaffold::DataStructures::Column.new(a.to_sym, @active_record_class) unless find_by_name(a) }
     end
     alias_method :<<, :add
+
+    def exclude(*args)
+      # only remove columns from _inheritable. we never want to completely forget about a column.
+      args.each { |a| self._inheritable.delete a }
+    end
 
     # returns an array of columns with the provided names
     def find_by_names(*names)
@@ -36,16 +55,6 @@ module ActiveScaffold::DataStructures
     end
     alias_method :[], :find_by_name
 
-    # Returns a list of content columns, including association fields
-    # does not return any columns that end in _id or _count
-    def content_columns
-      @content_columns ||= @set.reject { |c| c.column && (c.column.primary || c.column.name =~ /(_id|_count)$/) }
-    end
-
-    def content_column_names    
-      self.content_columns.collect{|c|c.name}
-    end
-    
     def each
       @set.each {|i| yield i }
     end

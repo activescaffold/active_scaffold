@@ -87,7 +87,7 @@ module ActiveScaffold
     end
 
     def constraint_error(column_name)
-      "Malformed constraint `#{column_name}'. If this column is legitimate, please double-check that it exists in the config.columns set. If not, and you are using a nested scaffold, please specify or double-check the reverse association name."
+      "Malformed constraint `#{column_name}'. If it's a legimitate column, and you are using a nested scaffold, please specify or double-check the reverse association name."
     end
 
     # Applies constraints to the given record.
