@@ -44,15 +44,12 @@ module ActiveScaffold
 
       def active_scaffold_input(column, options)
         text_options = options.merge( :autocomplete => "off", :size => 20, :class => "#{column.name}-input text-input" )
-        if column.virtual?
-          text_field(:record, column.name, text_options)
-        elsif column.column.type == :boolean
-          select_options = []
-          select_options << [as_('- select -'), nil] if column.column.null
-          select_options << [as_('True'), true]
-          select_options << [as_('False'), false]
-
-          select_tag(options[:name], options_for_select(select_options, @record.send(column.name)))
+        if column.form_ui and override_input?(column.form_ui)
+          send(override_input(column.form_ui), column, options, text_options)
+        elsif column.virtual?
+          active_scaffold_input_virtual(column, options, text_options)
+        elsif column.type and override_input?(column.type)
+          send(override_input(column.type), column, options, text_options)
         elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)
           input(:record, column.name, text_options)
         else
@@ -60,6 +57,30 @@ module ActiveScaffold
         end
       end
 
+      ##
+      ## Form input methods
+      ##
+      def active_scaffold_input_boolean(column, options, text_options)
+        select_options = []
+        select_options << [as_('- select -'), nil] if column.column.null
+        select_options << [as_('True'), true]
+        select_options << [as_('False'), false]
+
+        select_tag(options[:name], options_for_select(select_options, @record.send(column.name)))
+      end
+
+      def active_scaffold_input_checkbox(column, options, text_options)
+        check_box(:record, column.name, options)
+      end
+
+      def active_scaffold_input_password(column, options, text_options)
+        password_field :record, column.name, text_options              
+      end
+
+      def active_scaffold_input_virtual(column, options, text_options)
+        text_field(:record, column.name, text_options)
+      end      
+      
       ##
       ## Form column overrides
       ##
@@ -81,6 +102,15 @@ module ActiveScaffold
       # the naming convention for overriding form fields with helpers
       def override_form_field(column)
         "#{column.name}_form_column"
+      end
+
+      def override_input?(ui_type)
+        respond_to?(override_input(ui_type))
+      end
+
+      # the naming convention for overriding form input types with helpers
+      def override_input(ui_type)
+        "active_scaffold_input_#{ui_type}"
       end
 
       def form_partial_for_column(column)

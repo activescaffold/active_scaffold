@@ -77,7 +77,7 @@ module ActiveScaffold::DataStructures
     #     * :select
     attr_writer :form_ui
     def form_ui
-      @form_ui || (column.type if column)
+      @form_ui
     end
 
     # DEPRECATED
@@ -85,6 +85,12 @@ module ActiveScaffold::DataStructures
     def ui_type=(val)
       ::ActiveSupport::Deprecation.warn("config.columns[:#{name}].ui_type has been deprecated in ActiveScaffold 1.1 and will disappear in 1.2. Please use config.columns[:#{name}].form_ui instead.", caller)
       self.form_ui = val
+    end
+
+    # a place to store dev's column specific options
+    attr_accessor :options
+    def options
+      @options || {}
     end
 
     # associate an action_link with this column
