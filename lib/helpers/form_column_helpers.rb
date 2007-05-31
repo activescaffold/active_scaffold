@@ -48,8 +48,8 @@ module ActiveScaffold
           send(override_input(column.form_ui), column, options, text_options)
         elsif column.virtual?
           active_scaffold_input_virtual(column, options, text_options)
-        elsif column.type and override_input?(column.type)
-          send(override_input(column.type), column, options, text_options)
+        elsif column.column.type and override_input?(column.column.type)
+          send(override_input(column.column.type), column, options, text_options)
         elsif [:text, :string, :integer, :float, :decimal].include?(column.column.type)
           input(:record, column.name, text_options)
         else
