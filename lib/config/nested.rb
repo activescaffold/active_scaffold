@@ -20,7 +20,7 @@ module ActiveScaffold::Config
     # the label for this Nested action. used for the header.
     attr_writer :label
     def label
-      @label ? as_(@label) : "#{as_('Add From Existing')} #{@core.label.singularize}"
+      @label ? as_(@label) : "#{as_('Add Existing')} #{@core.label.singularize}"
     end
 
   end
