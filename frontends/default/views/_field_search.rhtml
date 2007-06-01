@@ -24,7 +24,7 @@ href = url_for(params_for(:action => :update_table, :escape => false))
             <label for="<%= "search_#{column.name}" %>"><%= column.label %></label>
           </dt>
         <dd>
-        <%= case column.ui_type
+        <%= case column.form_ui
           when :boolean
             check_box_tag(name, 1, value || value == 1)
           else

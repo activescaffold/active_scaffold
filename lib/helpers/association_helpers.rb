@@ -21,7 +21,7 @@ module ActiveScaffold
       end
 
       # A useful override for customizing the records present in an association dropdown.
-      # Should work in both the subform and ui_type=>:select modes.
+      # Should work in both the subform and form_ui=>:select modes.
       # Check association.name to specialize the conditions per-column.
       def options_for_association_conditions(association)
         case association.macro

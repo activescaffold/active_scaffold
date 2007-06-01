@@ -29,7 +29,7 @@ module ActiveScaffold::Actions
         conditions = self.active_scaffold_conditions
         params[:search].each do |key, value|
           next if !active_scaffold_config.field_search.columns.include?(key) or value.nil? or value.empty?
-          case active_scaffold_config.columns[key].ui_type
+          case active_scaffold_config.columns[key].form_ui
           when :boolean, :integer
             conditions = merge_conditions(conditions, ["#{active_scaffold_config.columns[key].search_sql} = ?", value])
           else

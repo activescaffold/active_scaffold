@@ -146,13 +146,13 @@ module ActiveScaffold
         "#{column.name}_form_column"
       end
 
-      def override_input?(ui_type)
-        respond_to?(override_input(ui_type))
+      def override_input?(form_ui)
+        respond_to?(override_input(form_ui))
       end
 
       # the naming convention for overriding form input types with helpers
-      def override_input(ui_type)
-        "active_scaffold_input_#{ui_type}"
+      def override_input(form_ui)
+        "active_scaffold_input_#{form_ui}"
       end
 
       def form_partial_for_column(column)

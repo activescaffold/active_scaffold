@@ -63,18 +63,6 @@ module ActiveScaffold::DataStructures
     # supported options:
     #   * for association columns
     #     * :select - displays a simple <select> or a collection of checkboxes to (dis)associate records
-    #     * :crud - will display a sub-form (default)
-    #
-    # proposed options:
-    #   * for string fields
-    #     * :text - (default)
-    #     * :textarea - use a textarea for larger expected input
-    #   * for datetime fields
-    #     * :calendar - (ActiveScaffold 1.1 default)
-    #     * :select - (ActiveScaffold 1.0 default)
-    #   * for boolean fields
-    #     * :checkbox
-    #     * :select
     attr_writer :form_ui
     def form_ui
       @form_ui
@@ -83,7 +71,7 @@ module ActiveScaffold::DataStructures
     # DEPRECATED
     alias :ui_type :form_ui
     def ui_type=(val)
-      ::ActiveSupport::Deprecation.warn("config.columns[:#{name}].ui_type has been deprecated in ActiveScaffold 1.1 and will disappear in 1.2. Please use config.columns[:#{name}].form_ui instead.", caller)
+      ::ActiveSupport::Deprecation.warn("config.columns[:#{name}].ui_type will disappear in version 2.0. Please use config.columns[:#{name}].form_ui instead.", caller)
       self.form_ui = val
     end
 

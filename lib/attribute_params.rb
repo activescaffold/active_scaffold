@@ -43,7 +43,7 @@ module ActiveScaffold
           value = attributes[column.name]
 
           # convert the value, possibly by instantiating associated objects
-          value = if column.ui_type == :select
+          value = if column.form_ui == :select
             ids = if column.singular_association?
               value[:id]
             else
@@ -85,7 +85,7 @@ module ActiveScaffold
           parent_record.send("#{column.name}=", value) unless column.through_association?
         # because the plural association list of checkboxes doesn't submit anything when no checkboxes are checked,
         # we need to clear the associated set when the attribute is missing from the parameters.
-        elsif column.ui_type == :select and column.plural_association? and not column.through_association?
+        elsif column.form_ui == :select and column.plural_association? and not column.through_association?
           parent_record.send("#{column.name}=", [])
         end
       end
