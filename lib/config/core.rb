@@ -91,9 +91,9 @@ module ActiveScaffold::Config
       @columns = ActiveScaffold::DataStructures::Columns.new(self.model, attribute_names + association_column_names)
 
       # and then, let's remove some columns from the inheritable set.
-      @columns.exclude(self.class.ignore_columns)
-      @columns.exclude(@columns.collect { |c| c.column and (c.column.primary or c.column.name =~ /(_id|_count)$/) })
-      @columns.exclude(self.model.reflect_on_all_associations.collect{|a| :"#{a.name}_type" if a.options[:polymorphic]}.compact)
+      @columns.exclude(*self.class.ignore_columns)
+      @columns.exclude(*@columns.collect { |c| c.column and (c.column.primary or c.column.name =~ /(_id|_count)$/) })
+      @columns.exclude(*self.model.reflect_on_all_associations.collect{|a| :"#{a.name}_type" if a.options[:polymorphic]}.compact)
 
       # inherit the global frontend
       @frontend = self.class.frontend
