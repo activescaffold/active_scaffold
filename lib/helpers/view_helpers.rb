@@ -62,24 +62,18 @@ module ActiveScaffold
       end
 
       def form_remote_upload_tag(url_for_options = {}, options = {})
-        output=""
-
-        output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>"
-
-        options[:form] = true
-
-        options ||= {}
-
         onsubmits = options[:onsubmit] ? [ options[:onsubmit] ] : [ ]
+        # simulate a "loading". the setTimeout prevents the Form.disable from being called before the submit, so that data actually posts.
         onsubmits << "setTimeout(function() { #{options[:loading]} }, 10); "
-        # the setTimeout prevents the Form.disable from being called before the submit.  If that occurs, then no data will be posted.
-        onsubmits << "return true"
+        onsubmits << "return true" # make sure the form still submits
 
-        # simulate a "loading"
         options[:onsubmit] = onsubmits * ';'
         options[:target] = action_iframe_id(url_for_options)
         options[:multipart] = true
+        options[:form] = true # what does this do?
 
+        output=""
+        output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>"
         output << form_tag(url_for_options, options)
       end
 
@@ -129,7 +123,7 @@ module ActiveScaffold
         url_options = url_options.clone
         url_options[:action] = link.action
         url_options.merge! link.parameters if link.parameters
-        
+
         html_options = {:class => link.action}
         if link.inline?
           # NOTE this is in url_options instead of html_options on purpose. the reason is that the client-side
@@ -140,7 +134,7 @@ module ActiveScaffold
           # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails
           html_options[:method] = link.method
         end
-                
+
         html_options[:confirm] = link.confirm if link.confirm?
         html_options[:position] = link.position if link.position and link.inline?
         html_options[:class] += ' action' if link.inline?
