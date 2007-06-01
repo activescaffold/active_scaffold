@@ -3,11 +3,9 @@
 if request.xhr?
   if active_scaffold_config.update.multipart?  # file_uploads
     form_remote_upload_tag url_options.merge({:iframe => true}),
-      :after => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :update)}');",
-      :complete => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :update)}');",
-      :id => element_form_id(:action => :update),
-      :class => 'update',
-      :method => :put
+                           :id => element_form_id(:action => :update),
+                           :class => 'update',
+                           :method => :put
   else
     form_remote_tag :url => url_options,
                     :after => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :update)}');",
@@ -18,13 +16,14 @@ if request.xhr?
                       :id => element_form_id(:action => :update),
                       :class => 'update',
                       :method => :put
-                    } 
+                    }
   end
 else
   form_tag url_options,
-             :id => element_form_id(:action => :update),
-             :multipart => active_scaffold_config.update.multipart?,
-             :class => 'create'
+           :id => element_form_id(:action => :update),
+           :multipart => active_scaffold_config.update.multipart?,
+           :class => 'create',
+           :method => :put
 end
 %>
 
