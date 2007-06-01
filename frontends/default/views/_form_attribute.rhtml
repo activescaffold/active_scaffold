@@ -4,7 +4,7 @@
     <label for="<%= "record_#{column.name}" %>"><%= column.label %></label>
   </dt>
   <dd>
-    <%= form_column column, scope %>
+    <%= active_scaffold_input_for column, scope %>
     <% if column.description -%>
       <span class="description"><%= column.description %></span>
     <% end -%>
