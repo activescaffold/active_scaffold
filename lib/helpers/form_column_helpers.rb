@@ -63,6 +63,7 @@ module ActiveScaffold
 
         selected = associated.nil? ? nil : associated.id
 
+        options[:name] += '[id]'
         select(:record, column.name, select_options.uniq, { :selected => selected }, options)
       end
 

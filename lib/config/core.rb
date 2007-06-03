@@ -92,7 +92,7 @@ module ActiveScaffold::Config
 
       # and then, let's remove some columns from the inheritable set.
       @columns.exclude(*self.class.ignore_columns)
-      @columns.exclude(*@columns.collect { |c| c.column and (c.column.primary or c.column.name =~ /(_id|_count)$/) })
+      @columns.exclude(*@columns.find_all { |c| c.column and (c.column.primary or c.column.name =~ /(_id|_count)$/) }.collect {|c| c.name})
       @columns.exclude(*self.model.reflect_on_all_associations.collect{|a| :"#{a.name}_type" if a.options[:polymorphic]}.compact)
 
       # inherit the global frontend
