@@ -57,6 +57,8 @@ module ActiveScaffold::Config
     attr_reader :columns
     def columns=(val)
       @columns._inheritable = val.collect {|c| c.to_sym}
+      # Add virtual columns
+      @columns << val.collect {|c| c.to_sym unless @columns[c.to_sym]}.compact
     end
 
     # lets you override the global ActiveScaffold frontend for a specific controller
