@@ -26,7 +26,12 @@ href = url_for(params_for(:action => :update_table, :escape => false))
         <dd>
         <%= case column.column.type
           when :boolean
-            check_box_tag(name, 1, value || value == 1)
+            options = [
+              ['', ''],
+              [as_('True'), 1],
+              [as_('False'), 0]
+            ]
+            select_tag name, options_for_select(options, value)
           else
             text_field_tag(name, value, { :autocomplete => "off", :size => 20, :class => 'text-input', :id => "search_#{column.name}"})
           end
