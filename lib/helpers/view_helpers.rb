@@ -148,7 +148,7 @@ module ActiveScaffold
           html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],url_options[:id]))
         end
 
-        link_to link.label, url_options, html_options
+        link_to url_options[:link] || link.label, url_options, html_options
       end
 
       def column_class(column, column_value)

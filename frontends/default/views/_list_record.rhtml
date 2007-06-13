@@ -12,8 +12,7 @@ url_options = params_for(:action => :list, :id => record.id)
 
     <td class="<%= column_class(column, column_value) %>" >
       <% if column.link -%>
-        <% column.link.label = column_value %>
-        <%= record.authorized_for?(:action => column.link.crud_type) ? render_action_link(column.link, url_options) : "<a class='disabled'>#{column.link.label}</a>" -%>
+        <%= record.authorized_for?(:action => column.link.crud_type) ? render_action_link(column.link, url_options.merge(:link => column_value)) : "<a class='disabled'>#{column_value}</a>" -%>
       <% else -%>
         <%= column_value %>
       <% end -%>
