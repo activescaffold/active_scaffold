@@ -103,8 +103,27 @@ module ActiveScaffold
         check_box(:record, column.name, options)
       end
 
+      def active_scaffold_input_country(column, options)
+        priority = ["United States"]
+        select_options = {:include_blank => true}
+        select_options.merge!(options)
+        country_select(:record, column.name, column.options[:priority] || priority, select_options, column.options)
+      end
+
       def active_scaffold_input_password(column, options)
         password_field :record, column.name, active_scaffold_input_text_options(options)
+      end
+
+      def active_scaffold_input_textarea(column, options)
+        text_area(:record, column.name, options.merge(:cols => column.options[:cols], :rows => column.options[:rows]))
+      end
+
+      def active_scaffold_input_usa_state(column, options)
+        priority = []
+        select_options = {:include_blank => true}
+        select_options.merge!(options)
+        select_options.delete(:size)
+        usa_state_select(:record, column.name, column.options[:priority] || priority, select_options, column.options)
       end
 
       def active_scaffold_input_virtual(column, options)
