@@ -29,7 +29,7 @@ module ActiveScaffold::Config
     def columns
       # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will not be available to .searchable?
       unless @columns
-        self.columns = @core.columns.collect{|c| c.name if c.searchable? and (c.column.type == :string or c.column.type == :text)}.compact
+        self.columns = @core.columns.collect{|c| c.name if c.searchable? and c.column.text?}.compact
       end
       @columns
     end
