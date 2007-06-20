@@ -1,0 +1,8 @@
+column_span_id = element_cell_id(:id => @record.id.to_s, :action => 'update_column', :name => params[:column])
+unless controller.send :successful?
+  page.alert(@record.errors.full_messages.join("\n"))
+  @record.reload
+end
+value = @record.send(active_scaffold_config.columns[params[:column]].name)
+formatted_value = clean_column_value(format_column(value))
+page.replace_html(column_span_id,  formatted_value)

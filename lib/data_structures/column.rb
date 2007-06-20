@@ -8,6 +8,9 @@ module ActiveScaffold::DataStructures
     attr_accessor :name
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
+    attr_accessor :inplace_edit
+
+    # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
 
     # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.

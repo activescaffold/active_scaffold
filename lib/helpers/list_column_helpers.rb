@@ -9,6 +9,8 @@ module ActiveScaffold
           # but mike perham pointed out that prohibited the usage of overrides to improve on the
           # performance of our default formatting. see issue #138.
           send(column_override(column), record)
+        elsif column.inplace_edit
+          active_scaffold_input_inplace_edit(record, column)
         else
           value = record.send(column.name)
           if column.association.nil? or column_empty?(value)

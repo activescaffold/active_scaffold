@@ -55,6 +55,14 @@ module ActiveScaffold::Actions
       end
     end
 
+    def update_column
+      params[:record] = {}
+      params[:record][params[:column]] = params[:value]
+      params[:record][:id] = params[:id]
+      do_update
+      render :action => 'update_column.rjs', :layout => false
+    end
+
     protected
 
     # A simple method to find and prepare a record for editing

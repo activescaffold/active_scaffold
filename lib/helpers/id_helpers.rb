@@ -64,7 +64,8 @@ module ActiveScaffold
       def element_cell_id(options = {})
         options[:action] ||= params[:action]
         options[:id] ||= params[:id]
-        clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-cell"
+        options[:name] ||= params[:name]
+        clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-#{options[:name]}-cell"
       end
 
       def element_form_id(options = {})
