@@ -10,7 +10,7 @@ module ActiveScaffold
       phrase = "(#{where_clauses.join(' OR ')})"
 
       sql = ([phrase] * tokens.length).join(' AND ')
-      tokens = tokens.collect{ |value| [like_pattern.sub(/\?/, value.downcase)] * columns.length }.flatten
+      tokens = tokens.collect{ |value| [like_pattern.sub(/\?/, value.downcase)] * where_clauses.length }.flatten
 
       [sql, *tokens]
     end

@@ -83,6 +83,10 @@ module ActiveScaffold::DataStructures
       def constraint_columns
         @constraint_columns ||= []
       end
+      
+      def length
+        (@set - self.constraint_columns).length
+      end
     end
   end
 end
