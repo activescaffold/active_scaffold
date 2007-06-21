@@ -84,7 +84,7 @@ module ActiveScaffold
 
       def active_scaffold_input_plural_association(column, options)
         associated = @record.send(column.association.name).collect {|r| r.id}
-        select_options = association_options_find(column.association).collect {|r| [r.to_label, r.id]}.sort_by {|o| o.first}
+        select_options = options_for_association(column.association)
         return 'no options' if select_options.empty?
 
         html = '<ul class="checkbox-list">'
