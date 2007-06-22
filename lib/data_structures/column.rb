@@ -7,7 +7,7 @@ module ActiveScaffold::DataStructures
     # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all others will be inferred from this name.
     attr_accessor :name
 
-    # Whether this column set is collapsed by default in contexts where collapsing is supported
+    # Whether to enable inplace editing for this column. Currently works for text columns, in the List.
     attr_accessor :inplace_edit
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
