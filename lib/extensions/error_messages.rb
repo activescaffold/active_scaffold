@@ -1,5 +1,7 @@
 module ActiveRecord
   class Errors
+    # uses config.columns[attr].label instead of attr.humanize, for improved consistency in form feedback.
+    # also passes strings through as_(), since it's handy.
     def as_full_messages(config)
       @as_config = config
       full_messages = []
@@ -25,6 +27,8 @@ end
 module ActionView
   module Helpers
     module ActiveRecordHelper
+      # overrides the standard error_messages_for() to use our own as_full_messages()
+      # also passes strings through as_(), since it's handy.
       def error_messages_for(*params)
         options = params.last.is_a?(Hash) ? params.pop.symbolize_keys : {}
         objects = params.collect {|object_name| instance_variable_get("@#{object_name}") }.compact
