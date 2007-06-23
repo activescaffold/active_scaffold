@@ -105,7 +105,7 @@ module ActiveScaffold
 
       def active_scaffold_input_country(column, options)
         priority = ["United States"]
-        select_options = {:include_blank => true}
+        select_options = {:prompt => as_('- select -')}
         select_options.merge!(options)
         country_select(:record, column.name, column.options[:priority] || priority, select_options, column.options)
       end
@@ -119,11 +119,10 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_usa_state(column, options)
-        priority = []
-        select_options = {:include_blank => true}
+        select_options = {:prompt => as_('- select -')}
         select_options.merge!(options)
         select_options.delete(:size)
-        usa_state_select(:record, column.name, column.options[:priority] || priority, select_options, column.options)
+        usa_state_select(:record, column.name, column.options[:priority], select_options, column.options)
       end
 
       def active_scaffold_input_virtual(column, options)

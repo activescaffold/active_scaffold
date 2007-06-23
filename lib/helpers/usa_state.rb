@@ -2,11 +2,6 @@ module ActionView
   module Helpers
     module FormOptionsHelper
 
-      def select(object, method, choices, options = {}, html_options = {})
-        # IE needs a space inside the fieldWithErrors div tag or it will not show red.
-        InstanceTag.new(object, method, self, nil, options.delete(:object)).to_select_tag(choices, options, html_options).gsub("</div>", "&nbsp;</div>")
-      end
-
       # Return a full select and option tags for the given object and method, using usa_state_options_for_select to generate the list of option <tags>.
       def usa_state_select(object, method, priority_states = nil, options = {}, html_options = {})
         InstanceTag.new(object, method, self, nil, options.delete(:object)).to_usa_state_select_tag(priority_states, options, html_options)
