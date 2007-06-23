@@ -37,12 +37,20 @@ var ActiveScaffold = {
       }
     }
   },
-  toggleEmptyMessage: function(tableBody, emptyMessageElement) {
-    // Check to see if this was the last element in the list
-    if ($(tableBody).rows.length == 0) {
-      $(emptyMessageElement).show();
-    } else {
-      $(emptyMessageElement).hide();
+  hide_empty_message: function(tbody, empty_message_id) {
+    tbody = $(tbody);
+    if (tbody.rows.length != 0) {
+      $(empty_message_id).hide();
+    }
+  },
+  reload_if_empty: function(tbody, url) {
+    var content_container_id = tbody.replace('tbody', 'content');
+    tbody = $(tbody);
+    if (tbody.rows.length == 0) {
+      new Ajax.Updater($(content_container_id), url, {
+        asynchronous: true,
+        evalScripts: true,
+      });
     }
   },
   removeSortClasses: function(scaffold_id) {
