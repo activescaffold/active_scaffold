@@ -3,6 +3,7 @@ module ActiveScaffold
     # A bunch of helper methods to produce the common view ids
     module Ids
       def controller_id
+        @controller_id ||= params[:parent_controller].gsub("/", "__") if params[:parent_controller]
         @controller_id ||= params[:controller].gsub("/", "__")
       end
 
