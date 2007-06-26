@@ -22,9 +22,10 @@
   <% end -%>
 
   <label for="<%= "record_#{active_scaffold_config.model}" %>"><%= active_scaffold_config.model %></label>
-  <% select_options = active_scaffold_config.model.find(:all).collect {|c| [c.to_label, c.id]} -%>
+  <%# select_options = options_for_select(options_for_association(nested_association)) unless column.through_association? -%>
+  <% select_options ||= options_for_select(active_scaffold_config.model.find(:all).collect {|c| [c.to_label, c.id]}) -%>
   <% unless select_options.empty? -%>
-    <%= select_tag 'associated_id', options_for_select(select_options) %>
+    <%= select_tag 'associated_id', '<option value="">' + as_('- select -') + '</option>' + select_options %>
   <% end -%>
 
   <p class="form-footer">
