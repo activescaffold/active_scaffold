@@ -13,8 +13,15 @@ url_options = params_for(:action => :list, :id => record.id)
     <td class="<%= column_class(column, column_value) %>" >
       <% if column.link -%>
         <% link_url_options = url_options.merge(:link => column_value) -%>
-        <% link_url_options = link_url_options.merge(:id => record.send(column.association.name).id, :parent_model => column.association.active_record, :parent_column => column.association.name.to_s) if column.singular_association? -%>
-        <%= record.authorized_for?(:action => column.link.crud_type) ? render_action_link(column.link, link_url_options) : "<a class='disabled'>#{column_value}</a>" -%>
+        <% valid_link = record.authorized_for?(:action => column.link.crud_type) %>
+        <% if column.singular_association? %>
+          <% if record.send(column.association.name) %>
+            <% link_url_options = link_url_options.merge(:id => record.send(column.association.name).id, :parent_model => column.association.active_record, :parent_column => column.association.name.to_s) -%>
+          <% else %>
+            <% valid_link = false %>
+          <% end %>
+        <% end %>
+        <%= valid_link ? render_action_link(column.link, link_url_options) : "<a class='disabled'>#{column_value}</a>" -%>
       <% else -%>
         <%= column_value %>
       <% end -%>
