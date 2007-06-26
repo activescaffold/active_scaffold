@@ -121,6 +121,7 @@ module ActiveScaffold
       def render_action_link(link, url_options)
         url_options = url_options.clone
         url_options[:action] = link.action
+        url_options[:controller] = link.controller
         url_options.merge! link.parameters if link.parameters
 
         html_options = {:class => link.action}
@@ -162,7 +163,10 @@ module ActiveScaffold
       end
 
       def column_empty?(column_value)
-        column_value.nil? || (column_value.empty? rescue false)
+        empty = column_value.nil?
+        empty &&= column_value.empty? if column_value.respond_to? :empty?
+        empty &&= (column_value == '&nbsp;')
+        empty &&= (column_value == active_scaffold_config.list.empty_field_text)
       end
 
       def column_calculation(column)

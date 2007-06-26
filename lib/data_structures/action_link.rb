@@ -23,6 +23,9 @@ module ActiveScaffold::DataStructures
 
     # the action-path for this link. what page to request? this is required!
     attr_accessor :action
+    
+    # the controller for this action link. if nil, the current controller should be assumed.
+    attr_accessor :controller
 
     # a hash of request parameters
     attr_accessor :parameters
