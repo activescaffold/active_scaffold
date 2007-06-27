@@ -4,7 +4,7 @@ module ActiveScaffold::Actions
     def self.included(base)
       super
       base.before_filter :include_habtm_actions
-      base.before_filter :links_for_assoctioations
+      base.before_filter :links_for_associations
     end
 
     def nested
@@ -24,16 +24,16 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], :read)
     end
 
-    def links_for_assoctioations
+    def links_for_associations
       active_scaffold_config.list.columns.each do |column|
-        # note: we can't create nested scaffolds on :through associations because there's no association reverse.
         if column.association and column.link.nil?
           if column.plural_association? 
+            # note: we can't create nested scaffolds on :through associations because there's no reverse association.
             column.set_link('nested', :parameters => {:associations => column.name.to_sym}) unless column.through_association?
           else
-            controller = self.class.active_scaffold_controller_for(column.association.klass)
             parent_controller = params[:controller]
-            column.set_link('show', :parameters => {:controller => controller.controller_path, :parent_controller => parent_controller}) 
+            controller = self.class.active_scaffold_controller_for(column.association.klass)
+            column.set_link('show', :controller => controller.controller_path, :parameters => {:parent_controller => params[:controller]})
           end
         end
       end
