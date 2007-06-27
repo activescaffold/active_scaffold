@@ -87,6 +87,11 @@ module ActiveScaffold::DataStructures
     # associate an action_link with this column
     attr_reader :link
 
+    # this should not only delete any existing link but also prevent column links from being automatically added by later routines
+    def clear_link
+      @link = false
+    end
+
     def set_link(action, options = {})
       if action.is_a? ActiveScaffold::DataStructures::ActionLink
         @link = action
