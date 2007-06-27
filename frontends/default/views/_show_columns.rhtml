@@ -5,7 +5,7 @@
     <dd><%= render :partial => 'show_columns' %></dd>
   <% else -%>
     <dt><%= column.label -%></dt>
-    <dd><%= render_column(@record, column) -%> &nbsp;</dd>
+    <dd><%= get_column_value(@record, column) -%> &nbsp;</dd>
   <% end -%>
 <% end -%>
 </dl>

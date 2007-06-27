@@ -148,8 +148,8 @@ module ActiveScaffold
           html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],url_options[:id]))
         end
 
-        # issue 260, use url_options[:label] if it exists. This prevents DB data from being localized.
-        link_to url_options[:link] || link.label, url_options, html_options
+        # issue 260, use url_options[:link] if it exists. This prevents DB data from being localized.
+        link_to (url_options[:link] || link.label), url_options, html_options
       end
 
       def column_class(column, column_value)

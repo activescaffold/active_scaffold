@@ -2,9 +2,9 @@ module ActiveScaffold
   module Helpers
     # Helpers that assist with the rendering of a List Column
     module ListColumns
-      def render_column(record, column)
+      def get_column_value(record, column)
         # check for an override helper
-        if column_override? column
+        value = if column_override? column
           # we only pass the record as the argument. we previously also passed the formatted_value,
           # but mike perham pointed out that prohibited the usage of overrides to improve on the
           # performance of our default formatting. see issue #138.
@@ -28,6 +28,28 @@ module ActiveScaffold
           end
 
           formatted_value
+        end
+
+        value = '&nbsp;' if value.nil? or value.empty? # fix for IE 6
+        return value
+      end
+
+      # TODO: move empty_field_text and &nbsp; logic in here?
+      # TODO: move active_scaffold_inplace_edit in here?
+      # TODO: we need to distinguish between the automatic links *we* create and the ones that the dev specified. some logic may not apply if the dev specified the link.
+      def render_list_column(text, column, record)
+        if column.link
+          return "<a class='disabled'>#{text}</a>" unless record.authorized_for?(:action => column.link.crud_type)
+          return text if column.singular_association? and column_empty?(text)
+
+          url_options = params_for(:action => nil, :id => record.id, :link => text)
+          if column.singular_association? and associated = record.send(column.association.name)
+            url_options[:id] = associated.id
+          end
+
+          render_action_link(column.link, link_url_options)
+        else
+          text
         end
       end
 
@@ -79,7 +101,7 @@ module ActiveScaffold
         format = ActiveSupport::CoreExtensions::Date::Conversions::DATE_FORMATS[:default] || "%m/%d/%Y"
         date.strftime(format)
       end
-      
+
       # ==========
       # = Inline Edit =
       # ==========
@@ -89,7 +111,7 @@ module ActiveScaffold
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
         tag_options = {:tag => "span", :id => element_cell_id(id_options), :class => "in_place_editor_field"}
         in_place_editor_options = {:url => {:action => "update_column", :column => column.name, :id => record.id.to_s},
-         :click_to_edit_text => as_("Click to edit"), 
+         :click_to_edit_text => as_("Click to edit"),
          :cancel_text => as_("Cancel"),
          :loading_text => as_("Loading…"),
          :save_text => as_("Update"),
@@ -97,7 +119,7 @@ module ActiveScaffold
          :script => true}.merge(column.options)
         content_tag(:span, formatted_column, tag_options) + in_place_editor(tag_options[:id], in_place_editor_options)
       end
-      
+
     end
   end
 end
