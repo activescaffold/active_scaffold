@@ -121,7 +121,7 @@ module ActiveScaffold
       def render_action_link(link, url_options)
         url_options = url_options.clone
         url_options[:action] = link.action
-        url_options[:controller] = link.controller
+        url_options[:controller] = link.controller if link.controller
         url_options.merge! link.parameters if link.parameters
 
         html_options = {:class => link.action}
@@ -149,7 +149,8 @@ module ActiveScaffold
         end
 
         # issue 260, use url_options[:link] if it exists. This prevents DB data from being localized.
-        link_to (url_options[:link] || link.label), url_options, html_options
+        label = url_options.delete(:link) || link.label
+        link_to label, url_options, html_options
       end
 
       def column_class(column, column_value)
@@ -164,9 +165,10 @@ module ActiveScaffold
 
       def column_empty?(column_value)
         empty = column_value.nil?
-        empty &&= column_value.empty? if column_value.respond_to? :empty?
-        empty &&= (column_value == '&nbsp;')
-        empty &&= (column_value == active_scaffold_config.list.empty_field_text)
+        empty ||= column_value.empty? if column_value.respond_to? :empty?
+        empty ||= (column_value == '&nbsp;')
+        empty ||= (column_value == active_scaffold_config.list.empty_field_text)
+        return empty
       end
 
       def column_calculation(column)

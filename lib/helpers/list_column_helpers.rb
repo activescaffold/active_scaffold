@@ -13,6 +13,7 @@ module ActiveScaffold
           active_scaffold_inplace_edit(record, column)
         else
           value = record.send(column.name)
+
           if column.association.nil? or column_empty?(value)
             formatted_value = clean_column_value(format_column(value))
           else
@@ -47,7 +48,7 @@ module ActiveScaffold
             url_options[:id] = associated.id
           end
 
-          render_action_link(column.link, link_url_options)
+          render_action_link(column.link, url_options)
         else
           text
         end
