@@ -104,6 +104,9 @@ class ConstraintsTest < Test::Unit::TestCase
     assert_constraint_condition({:roles => 4}, ['roles_users.role_id = ?', 4], 'find all users with role #4')
     # has_one (vs polymorphic)
     assert_constraint_condition({:address => 11}, ['addresses.id = ?', 11], 'find the user with address #11')
+    # reverse of a has_many :through
+    assert_constraint_condition({:subscription => {:service => 5}}, ['services.id = ?', 5], 'find all users subscribed to service #5')
+    assert(@test_object.active_scaffold_joins.include?({:subscription => :service}), 'multi-level association include')
 
     @test_object.active_scaffold_config = config_for('subscription')
     # belongs_to (vs has_one)
@@ -129,6 +132,8 @@ class ConstraintsTest < Test::Unit::TestCase
     assert_constraint_condition({:other_roles => 4}, ['roles_users.role_id = ?', 4], 'find all users with role #4')
     # has_one (vs polymorphic)
     assert_constraint_condition({:other_address => 11}, ['addresses.id = ?', 11], 'find the user with address #11')
+    # reverse of a has_many :through
+    assert_constraint_condition({:other_subscription => {:other_service => 5}}, ['services.id = ?', 5], 'find all users subscribed to service #5')
 
     @test_object.active_scaffold_config = config_for('other_subscription')
     # belongs_to (vs has_one)

@@ -1,9 +1,11 @@
 module ActiveScaffold::Actions
+  # The Nested module basically handles automatically linking controllers together. It does this by creating column links with the right parameters, and by providing any supporting systems (like a /:controller/nested action for returning associated scaffolds).
   module Nested
 
     def self.included(base)
       super
       base.before_filter :include_habtm_actions
+      # TODO: it's a bit wasteful to run this routine every page load.
       base.before_filter :links_for_associations
     end
 
@@ -24,23 +26,28 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], :read)
     end
 
+    # Create the automatic column links. Note that this has to happen when configuration is *done*, because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?
+    # TODO: This should really be a post-config routine, instead of a before_filter.
     def links_for_associations
       active_scaffold_config.list.columns.each do |column|
+        # if column.link == false we won't create a link. that's how a dev can suppress the auto links.
         if column.association and column.link.nil?
-          if column.plural_association? 
+          if column.plural_association?
             # note: we can't create nested scaffolds on :through associations because there's no reverse association.
-            column.set_link('nested', :parameters => {:associations => column.name.to_sym}) unless column.through_association?
+            column.set_link('nested', :parameters => {:associations => column.name.to_sym}) #unless column.through_association?
           else
             parent_controller = params[:controller]
             controller = self.class.active_scaffold_controller_for(column.association.klass)
+            # TODO: allow both update and show
+            # TODO: check whether ('show' || 'update') is included on remote controller
             column.set_link('show', :controller => controller.controller_path, :parameters => {:parent_controller => params[:controller]})
           end
         end
       end
     end
-    
+
     def include_habtm_actions
-      return if params[:parent_controller]
+      return unless params[:eid]
       if nested_habtm?
         # Production mode is ok with adding a link everytime the scaffold is nested - we ar not ok with that.
         active_scaffold_config.action_links.add('new_existing', :label => as_('Add Existing'), :type => :table, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
@@ -59,7 +66,8 @@ module ActiveScaffold::Actions
 
     def nested_habtm?
       begin
-        return active_scaffold_config.columns[nested_association].association.macro == :has_and_belongs_to_many if nested?
+        a = active_scaffold_config.columns[nested_association]
+        return a.association.macro == :has_and_belongs_to_many if a and nested?
         false
       rescue
         raise ActiveScaffold::MalformedConstraint, constraint_error(nested_association), caller
