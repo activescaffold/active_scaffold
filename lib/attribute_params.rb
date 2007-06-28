@@ -133,7 +133,9 @@ module ActiveScaffold
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
       hash.all? do |key,value|
-        column = klass.columns_hash[key.to_s]
+        # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
+        column_name = key.to_s.split('(').first.to_sym
+        column = klass.columns_hash[column_name]
 
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
