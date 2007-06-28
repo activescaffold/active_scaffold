@@ -82,7 +82,9 @@ module ActiveScaffold
             value
           end
 
-          parent_record.send("#{column.name}=", value) unless column.through_association?
+          # we avoid assigning a value that already exists because otherwise has_one associations will break (AR bug in has_one_association.rb#replace)
+          parent_record.send("#{column.name}=", value) unless column.through_association? or parent_record.send(column.name) == value
+
         # because the plural association list of checkboxes doesn't submit anything when no checkboxes are checked,
         # we need to clear the associated set when the attribute is missing from the parameters.
         elsif column.form_ui == :select and column.plural_association? and not column.through_association?
