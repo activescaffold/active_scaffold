@@ -134,7 +134,7 @@ module ActiveScaffold
     def attributes_hash_is_empty?(hash, klass)
       hash.all? do |key,value|
         # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
-        column_name = key.to_s.split('(').first.to_sym
+        column_name = key.to_s.split('(').first
         column = klass.columns_hash[column_name]
 
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
