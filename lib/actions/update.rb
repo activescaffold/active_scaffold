@@ -80,7 +80,10 @@ module ActiveScaffold::Actions
           @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
           before_update_save(@record)
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
-          @record.save! and @record.save_associated! if successful?
+          if successful?
+            @record.save! and @record.save_associated!
+            after_update_save(@record)
+          end
         end
       rescue ActiveRecord::RecordInvalid
       rescue ActiveRecord::StaleObjectError
@@ -91,6 +94,9 @@ module ActiveScaffold::Actions
 
     # override this method if you want to inject data in the record (or its associated objects) before the save
     def before_update_save(record); end
+
+    # override this method if you want to do something after the save
+    def after_update_save(record); end
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
