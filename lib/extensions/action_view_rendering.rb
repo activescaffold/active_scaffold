@@ -19,7 +19,7 @@ module ActionView #:nodoc:
     #
     # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
     #
-    def render_with_active_scaffold(*args)
+    def render_with_active_scaffold(*args, &block)
       if args.first == :super
         template_path = caller.first.split(':').first
         template = File.basename(template_path)
@@ -28,7 +28,7 @@ module ActionView #:nodoc:
           active_scaffold_template = File.join(active_scaffold_template_path, template)
           return render :file => active_scaffold_template if file_exists? active_scaffold_template
         end
-      elsif args.first[:active_scaffold]
+      elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
         require 'digest/md5'
         options = args.first
 
@@ -41,7 +41,7 @@ module ActionView #:nodoc:
 
         render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]
       else
-        render_without_active_scaffold *args
+        render_without_active_scaffold *args, &block
       end
     end
     alias_method :render_without_active_scaffold, :render
