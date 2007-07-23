@@ -35,7 +35,7 @@ module ActiveScaffold::Actions
           if column.plural_association?
             # note: we can't create nested scaffolds on :through associations because there's no reverse association.
             column.set_link('nested', :parameters => {:associations => column.name.to_sym}) #unless column.through_association?
-          else
+          elsif not column.polymorphic_association?
             parent_controller = params[:controller]
             begin
               controller = self.class.active_scaffold_controller_for(column.association.klass)
