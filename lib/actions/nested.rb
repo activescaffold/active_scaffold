@@ -37,7 +37,11 @@ module ActiveScaffold::Actions
             column.set_link('nested', :parameters => {:associations => column.name.to_sym}) #unless column.through_association?
           else
             parent_controller = params[:controller]
-            controller = self.class.active_scaffold_controller_for(column.association.klass)
+            begin
+              controller = self.class.active_scaffold_controller_for(column.association.klass)
+            rescue ActiveScaffold::ControllerNotFound
+              next
+            end
             # TODO: allow both update and show
             # TODO: check whether ('show' || 'update') is included on remote controller
             column.set_link('show', :controller => controller.controller_path, :parameters => {:parent_controller => params[:controller]})
