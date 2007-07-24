@@ -206,7 +206,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
 		if (this.page_link) {
 			window.location = this.url;
 		} else {
-			this.loading_indicator.style.visibility = 'visible';
+			if (this.loading_indicator) this.loading_indicator.style.visibility = 'visible';
 	    new Ajax.Request(this.url, {
 	      asynchronous: true,
 	      evalScripts: true,
@@ -226,7 +226,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
 	      }.bind(this),
 
 	      onComplete: function(request) {
-	        this.loading_indicator.style.visibility = 'hidden';
+	        if (this.loading_indicator) this.loading_indicator.style.visibility = 'hidden';
 	      }.bind(this)
 			});
 		}
