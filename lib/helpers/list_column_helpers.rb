@@ -74,7 +74,15 @@ module ActiveScaffold
       ##
       def active_scaffold_column_checkbox(column, record)
         column_value = record.send(column.name)
-        check_box_tag(nil, 1, column_value || column_value == 1, :disabled => true)
+        if column.inplace_edit
+          id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
+          tag_options = {:tag => "span", :id => element_cell_id(id_options), :class => "in_place_editor_field"}
+          script = remote_function(:url => {:action => "update_column", :column => column.name, :id => record.id.to_s, :value => !column_value}) 
+          check_box = check_box_tag(tag_options[:id], 1, column_value || column_value == 1, {:onchange => script}) 
+          content_tag(:span, check_box, tag_options)
+        else
+          check_box_tag(nil, 1, column_value || column_value == 1, :disabled => true)
+        end
       end
 
       def column_override(column)
