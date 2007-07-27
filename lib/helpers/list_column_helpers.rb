@@ -77,9 +77,8 @@ module ActiveScaffold
         if column.inplace_edit
           id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
           tag_options = {:tag => "span", :id => element_cell_id(id_options), :class => "in_place_editor_field"}
-          script = remote_function(:url => {:action => "update_column", :column => column.name, :id => record.id.to_s, :value => !column_value}) 
-          check_box = check_box_tag(tag_options[:id], 1, column_value || column_value == 1, {:onchange => script}) 
-          content_tag(:span, check_box, tag_options)
+          script = remote_function(:url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s, :value => !column_value}) 
+          content_tag(:span, check_box_tag(tag_options[:id], 1, column_value || column_value == 1, {:onchange => script}) , tag_options)
         else
           check_box_tag(nil, 1, column_value || column_value == 1, :disabled => true)
         end
@@ -136,7 +135,7 @@ module ActiveScaffold
         formatted_column = clean_column_value(format_column(value))
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
         tag_options = {:tag => "span", :id => element_cell_id(id_options), :class => "in_place_editor_field"}
-        in_place_editor_options = {:url => {:action => "update_column", :column => column.name, :id => record.id.to_s},
+        in_place_editor_options = {:url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s},
          :click_to_edit_text => as_("Click to edit"),
          :cancel_text => as_("Cancel"),
          :loading_text => as_("Loading…"),
