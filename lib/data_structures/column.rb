@@ -184,7 +184,8 @@ module ActiveScaffold::DataStructures
       @table = active_record_class.table_name
 
       # default all the configurable variables
-      self.label = self.name.to_s.titleize
+      self.label = @column.human_name unless @column.nil?
+      self.label ||= self.name.to_s.titleize
       self.css_class = ''
       self.required = false
       self.sort = true
