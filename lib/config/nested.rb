@@ -8,14 +8,19 @@ module ActiveScaffold::Config
 
     # global level configuration
     # --------------------------
+    cattr_accessor :shallow_delete
+    @@shallow_delete = false
 
     # instance-level configuration
     # ----------------------------
+    attr_accessor :shallow_delete
 
     # Add a nested ActionLink
     def add_link(label, models)
       @core.action_links.add('nested', :label => label, :type => :record, :security_method => :nested_authorized?, :position => :after, :parameters => {:associations => models.join(' ')})
     end
+
+    attr_accessor :shallow_delete
 
     # the label for this Nested action. used for the header.
     attr_writer :label

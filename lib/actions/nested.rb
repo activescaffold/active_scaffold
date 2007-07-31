@@ -54,7 +54,11 @@ module ActiveScaffold::Actions
       return unless params[:eid]
       if nested_habtm?
         # Production mode is ok with adding a link everytime the scaffold is nested - we ar not ok with that.
-        active_scaffold_config.action_links.add('new_existing', :label => as_('Add Existing'), :type => :table, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
+        active_scaffold_config.action_links.add('new_existing', :label => 'Add Existing', :type => :table, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
+        if active_scaffold_config.nested.shallow_delete
+          active_scaffold_config.action_links.add('destroy_existing', :label => 'Delete Existing', :type => :record, :confirm => 'Are you sure?', :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy_existing']
+          active_scaffold_config.action_links.delete("destroy") if active_scaffold_config.action_links['destroy']
+        end
         self.class.module_eval do
           include ActiveScaffold::Actions::Nested::ChildMethods
         end
@@ -143,6 +147,23 @@ module ActiveScaffold::Actions::Nested
       end
     end
 
+    def destroy_existing
+      return redirect_to(params.merge(:action => :delete)) if request.get?
+
+      do_destroy_existing
+
+      respond_to do |type|
+        type.html do
+          flash[:info] = as_('Deleted %s', @record.to_label)
+          return_to_main
+        end
+        type.js { render(:action => 'destroy.rjs', :layout => false) }
+        type.xml { render :xml => successful? ? "" : response_object.to_xml, :content_type => Mime::XML, :status => response_status }
+        type.json { render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status }
+        type.yaml { render :text => successful? ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
+      end
+    end
+    
     protected
 
     def after_create_save(record)
@@ -165,11 +186,16 @@ module ActiveScaffold::Actions::Nested
       parent_record.save
     end
 
-    def do_destroy_association
-      parent_model, id, association = nested_action_from_params
-      parent_record = find_if_allowed(id, :update, parent_model)
-      @record = parent_record.send("roles").find(params[:id])
-      @record.destroy
+    def do_destroy_existing
+      if active_scaffold_config.nested.shallow_delete
+        parent_model, id, association = nested_action_from_params
+        @record = find_if_allowed(id, :update, parent_model)
+        collection = @record.send(association)
+        assoc_record = collection.find(params[:id])
+        collection.delete(assoc_record)
+      else
+        do_destroy
+      end
     end
 
   end
