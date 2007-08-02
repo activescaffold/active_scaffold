@@ -73,7 +73,7 @@ module ActiveScaffold::DataStructures
     # exclusive with popup? and page?
     def inline=(val)
       @inline = (val == true)
-      self.popup, self.page = false if @inline
+      self.popup = self.page = false if @inline
     end
     def inline?; @inline end
 
@@ -81,7 +81,12 @@ module ActiveScaffold::DataStructures
     # exclusive with inline? and page?
     def popup=(val)
       @popup = (val == true)
-      self.inline, self.page = false if @popup
+      if @popup
+        # the :method parameter doesn't mix with the :popup parameter
+        # when/if we start using DHTML popups, we can bring :method back
+        self.method = nil
+        self.inline = self.page = false
+      end
     end
     def popup?; @popup end
 
@@ -89,7 +94,7 @@ module ActiveScaffold::DataStructures
     # exclusive with inline? and popup?
     def page=(val)
       @page = (val == true)
-      self.inline, self.popup = false if @page
+      self.inline = self.popup = false if @page
     end
     def page?; @page end
 
