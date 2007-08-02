@@ -82,10 +82,11 @@ module ActiveScaffold::DataStructures
     def popup=(val)
       @popup = (val == true)
       if @popup
+        self.inline = self.page = false
+
         # the :method parameter doesn't mix with the :popup parameter
         # when/if we start using DHTML popups, we can bring :method back
         self.method = nil
-        self.inline = self.page = false
       end
     end
     def popup?; @popup end
@@ -94,7 +95,16 @@ module ActiveScaffold::DataStructures
     # exclusive with inline? and popup?
     def page=(val)
       @page = (val == true)
-      self.inline = self.popup = false if @page
+      if @page
+        self.inline = self.popup = false
+
+        # when :method is defined, ActionView adds an onclick to use a form ...
+        # so it's best to just empty out :method whenever possible.
+        # we only ever need to know @method = :get for things that default to POST.
+        # the only things that default to POST are forms and ajax calls.
+        # when @page = true, we don't use ajax.
+        self.method = nil if method == :get
+      end
     end
     def page?; @page end
 
