@@ -944,7 +944,7 @@ function addActiveScaffoldPageToHistory(url, active_scaffold_id) {
 	var sort = qs.get('sort')
 	var dir = qs.get('sort_direction')
   var page = qs.get('page')
-	dhtmlHistory.add(active_scaffold_id+":"+page+":"+sort+":"+dir, url);
+	if (sort || dir || page) dhtmlHistory.add(active_scaffold_id+":"+page+":"+sort+":"+dir, url);
 }
 
 /** set onload handler */
