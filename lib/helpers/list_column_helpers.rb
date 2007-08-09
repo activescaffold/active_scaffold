@@ -130,9 +130,13 @@ module ActiveScaffold
       # ==========
       # = Inline Edit =
       # ==========
-      def active_scaffold_inplace_edit(record, column)
+      def format_inplace_edit_column(record,column)
         value = record.send(column.name)
-        formatted_column = clean_column_value(format_column(value))
+        return clean_column_value(format_column(value))
+      end
+      
+      def active_scaffold_inplace_edit(record, column)
+        formatted_column = format_inplace_edit_column(record,column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
         tag_options = {:tag => "span", :id => element_cell_id(id_options), :class => "in_place_editor_field"}
         in_place_editor_options = {:url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s},
