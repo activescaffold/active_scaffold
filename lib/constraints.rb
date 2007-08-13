@@ -52,7 +52,7 @@ module ActiveScaffold
             table = far_association.table_name
 
             active_scaffold_joins.concat([{k => v.keys.first}]) # e.g. {:den => :park}
-            constraint_condition_for("#{table}.#{field}", v.values.first.to_i)
+            constraint_condition_for("#{table}.#{field}", v.values.first)
 
           # If a column is an association, then we do NOT want to use .search_sql. If anything,
           # search_sql will refer to a human-searchable value on the associated record.
@@ -83,7 +83,7 @@ module ActiveScaffold
             end
 
             active_scaffold_joins.concat column.includes
-            constraint_condition_for("#{table}.#{field}", v.to_i)
+            constraint_condition_for("#{table}.#{field}", v)
           elsif column.searchable?
             active_scaffold_joins.concat column.includes
             constraint_condition_for(column.search_sql, v)
