@@ -167,6 +167,14 @@ module ActiveScaffold
         end
       end
 
+      # only works for singular associations
+      # requires RecordSelect plugin to be installed and configured.
+      # ... maybe this should be provided in a bridge?
+      def active_scaffold_input_record_select(column, options)
+        field_name = "#{options[:name]}[id]"
+        record_select_field(field_name, @record.send(column.name) || column.association.klass.new, column.options)
+      end
+
       def active_scaffold_input_checkbox(column, options)
         check_box(:record, column.name, options)
       end
@@ -265,7 +273,7 @@ module ActiveScaffold
           return :subsection
         elsif column.active_record_class.locking_column.to_s == column.name.to_s
           return :hidden
-        elsif column.association.nil? or column.form_ui == :select or column.form_ui == :auto_complete or !active_scaffold_config_for(column.association.klass).actions.include?(:subform)
+        elsif column.association.nil? or column.form_ui or !active_scaffold_config_for(column.association.klass).actions.include?(:subform)
           return :field
         else
           return :subform
