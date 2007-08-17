@@ -1,6 +1,9 @@
 module ActiveScaffold
   module Finder
     def self.create_conditions_for_columns(tokens, columns, like_pattern = '%?%')
+      # if there aren't any columns, then just return a nil condition
+      return nil unless columns.length
+
       tokens = [tokens] if tokens.is_a? String
 
       where_clauses = []
