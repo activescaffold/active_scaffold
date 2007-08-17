@@ -1,8 +1,11 @@
 module ActiveScaffold
   module Finder
+    # Takes a collection of search terms (the tokens) and creates SQL that
+    # searches all specified ActiveScaffold columns. A row will match if each
+    # token is found in at least one of the columns.
     def self.create_conditions_for_columns(tokens, columns, like_pattern = '%?%')
       # if there aren't any columns, then just return a nil condition
-      return nil unless columns.length
+      return unless columns.length
 
       tokens = [tokens] if tokens.is_a? String
 
@@ -13,9 +16,25 @@ module ActiveScaffold
       phrase = "(#{where_clauses.join(' OR ')})"
 
       sql = ([phrase] * tokens.length).join(' AND ')
-      tokens = tokens.collect{ |value| [like_pattern.sub(/\?/, value.downcase)] * where_clauses.length }.flatten
+      tokens = tokens.collect{ |value| [like_pattern.sub('?', value.downcase)] * where_clauses.length }.flatten
 
       [sql, *tokens]
+    end
+
+    # Generates an SQL condition for the given ActiveScaffold column based on
+    # that column's database type (or form_ui ... for virtual columns?).
+    def self.condition_for_column(column, value, like_pattern = '%?%')
+      return unless column and column.search_sql and value and not value.empty?
+      case column.form_ui || column.column.type
+        when :boolean
+        ["#{column.search_sql} = ?", (value.to_i == 1)]
+
+        when :integer
+        ["#{column.search_sql} = ?", value.to_i]
+
+        else
+        ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
+      end
     end
 
     protected
@@ -100,19 +119,6 @@ module ActiveScaffold
       conditions
     end
 
-    def condition_from_search_sql(conditions, column_name, value, like_pattern = '%?%')
-      return conditions if active_scaffold_config.columns[column_name].nil? or value.nil? or value.empty?
-      case active_scaffold_config.columns[column_name].form_ui || active_scaffold_config.columns[column_name].column.type
-      when :boolean
-        value = (value.to_i == 1) ? true : false
-        conditions = merge_conditions(conditions, ["#{active_scaffold_config.columns[column_name].search_sql} = ?", value])
-      when :integer
-        conditions = merge_conditions(conditions, ["#{active_scaffold_config.columns[column_name].search_sql} = ?", value.to_i])
-      else
-        conditions = merge_conditions(conditions, ["LOWER(#{active_scaffold_config.columns[column_name].search_sql}) LIKE ?", like_pattern.sub(/\?/, value.downcase)])
-      end      
-    end
-    
     # accepts a DataStructure::Sorting object and builds an order-by clause
     def build_order_clause(sorting)
       return nil if sorting.nil? or sorting.sorts_by_method?

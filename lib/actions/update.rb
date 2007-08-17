@@ -55,6 +55,7 @@ module ActiveScaffold::Actions
       end
     end
 
+    # for inline (inlist) editing
     def update_column
       params[:record] = {}
       params[:record][params[:column]] = params[:value]
@@ -63,9 +64,13 @@ module ActiveScaffold::Actions
       render :action => 'update_column.rjs', :layout => false
     end
 
+    # NOTE: hmm, actually, this should be available for 'create', too
     def auto_complete_column
-      @record = find_if_allowed(params[:id], :update)
-      render :partial => 'auto_complete_column', :layout => false
+      if params[:column] and active_scaffold_config.columns[params[:column].to_sym]
+        render :partial => 'auto_complete_column', :layout => false
+      else
+        render :nothing => true, :layout => false
+      end
     end
 
     protected

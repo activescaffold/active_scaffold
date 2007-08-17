@@ -31,6 +31,8 @@ class FinderTest < Test::Unit::TestCase
       '%foo%', '%foo%'
     ]
     assert_equal expected_conditions, ActiveScaffold::Finder.create_conditions_for_columns('foo', columns)
+
+    assert_equal nil, ActiveScaffold::Finder.create_conditions_for_columns('foo', [])
   end
 
   def test_merge_conditions

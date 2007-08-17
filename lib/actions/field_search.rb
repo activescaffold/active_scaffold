@@ -28,8 +28,9 @@ module ActiveScaffold::Actions
         like_pattern = active_scaffold_config.field_search.full_text_search? ? '%?%' : '?%'
         conditions = self.active_scaffold_conditions
         params[:search].each do |key, value|
-          next if !active_scaffold_config.field_search.columns.include?(key)
-          conditions = condition_from_search_sql(conditions, key, value, like_pattern)
+          next unless active_scaffold_config.field_search.columns.include?(key)
+          column = active_scaffold_config.columns[key]
+          conditions = merge_conditions(conditions, ActiveScaffold::Finder.condition_for_column(column, value, like_pattern))
         end
         self.active_scaffold_conditions = conditions
 
