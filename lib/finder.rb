@@ -97,6 +97,19 @@ module ActiveScaffold
       conditions
     end
 
+    def condition_from_search_sql(conditions, column_name, value, like_pattern = '%?%')
+      return conditions if active_scaffold_config.columns[column_name].nil? or value.nil? or value.empty?
+      case active_scaffold_config.columns[column_name].form_ui || active_scaffold_config.columns[column_name].column.type
+      when :boolean
+        value = (value.to_i == 1) ? true : false
+        conditions = merge_conditions(conditions, ["#{active_scaffold_config.columns[column_name].search_sql} = ?", value])
+      when :integer
+        conditions = merge_conditions(conditions, ["#{active_scaffold_config.columns[column_name].search_sql} = ?", value.to_i])
+      else
+        conditions = merge_conditions(conditions, ["LOWER(#{active_scaffold_config.columns[column_name].search_sql}) LIKE ?", like_pattern.sub(/\?/, value.downcase)])
+      end      
+    end
+    
     # accepts a DataStructure::Sorting object and builds an order-by clause
     def build_order_clause(sorting)
       return nil if sorting.nil? or sorting.sorts_by_method?

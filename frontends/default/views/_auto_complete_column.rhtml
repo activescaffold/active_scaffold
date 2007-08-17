@@ -1,0 +1,9 @@
+<% if params[:column] and active_scaffold_config.columns[params[:column].to_sym] %>
+  <% column = active_scaffold_config.columns[params[:column].to_sym] %>
+  <% value = params[:record]["#{column.name}_companion".to_sym] %>
+  <% associated = @record.send(column.association.name) %>
+  <% conditions = options_for_association_conditions(column.association)  %>
+  <% conditions = controller.send(:condition_from_search_sql, conditions, column.name, value) %>
+  <% @items = column.association.klass.find(:all, :conditions => conditions, :limit => 8, :order => "name ASC") %>
+  <%= active_scaffold_auto_responder(@items) %>
+<% end %>

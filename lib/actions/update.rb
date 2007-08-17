@@ -63,6 +63,11 @@ module ActiveScaffold::Actions
       render :action => 'update_column.rjs', :layout => false
     end
 
+    def auto_complete_column
+      @record = find_if_allowed(params[:id], :update)
+      render :partial => 'auto_complete_column', :layout => false
+    end
+
     protected
 
     # A simple method to find and prepare a record for editing

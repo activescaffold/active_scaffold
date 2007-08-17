@@ -54,7 +54,50 @@ module ActiveScaffold
         name = scope ? "record#{scope}[#{column_name}]" : "record[#{column_name}]"
         options = { :name => name, :class => "#{column_name}-input" }
       end
-      
+
+      ##
+      ## Autocomplete support for :form_ui => :auto_complete
+      ##
+  
+      def active_scaffold_input_singular_association_with_auto_complete(column, options)
+        associated = @record.send(column.association.name)
+        options[:name] += '[id]'
+        
+        text_input_options = active_scaffold_input_text_options
+        method = column.name
+        input_name = options[:name] # "record[#{method}][id]"
+        input_id = input_name.gsub("[", "_").gsub("]", "") # "record_#{method}_id"
+        companion_name = "record[#{method}_companion]"
+        companion_id = "record_#{method}_companion"
+        value_id = associated.id if associated
+        value = associated.to_label if associated
+        (column.options[:skip_style] ? "" : auto_complete_stylesheet) +
+          hidden_field_tag(input_name, value_id, {:id => input_id}) +
+          text_field_tag(companion_name, value, text_input_options.merge(:id => companion_id)) +
+          content_tag("div", "", :id => "#{companion_id}_auto_complete", :class => "auto_complete") +
+          auto_complete_field(companion_id, { :url => { :action => "auto_complete_column", :column => method, :id => @record.id } }.update(:after_update_element => "function(element, value) {
+          Element.cleanWhitespace(value);
+          dn = value.childNodes;
+          $('#{companion_id}').value = dn[0].firstChild.nodeValue;
+          $('#{input_id}').value = dn[1].firstChild.nodeValue;}"))
+      end
+  
+      def active_scaffold_auto_responder(entries)
+        items = entries.map { |entry|   
+          active_scaffold_auto_responder_item(entry.to_label, entry.id.to_s)
+        }
+        items = active_scaffold_auto_responder_item(_('No Entries'), nil).to_a if items.length == 0
+        html = content_tag("ul", items.uniq, :class => "autocomplete_list")
+        html    
+      end
+        
+      def active_scaffold_auto_responder_item(label, id)
+        content_tag("li", 
+          content_tag('span', label, :class => "autocomplete_item") +
+          content_tag('span', id, :class => "autocomplete_item", :style => "visibility:hidden;")
+        )
+      end
+        
       ##
       ## Form input methods
       ##
@@ -92,6 +135,16 @@ module ActiveScaffold
 
         html << '</ul>'
         html
+      end
+
+      def active_scaffold_input_auto_complete(column, options)
+        if column.singular_association?
+          active_scaffold_input_singular_association_with_auto_complete(column, options)
+        # elsif column.plural_association?
+        #   active_scaffold_input_plural_association(column, options)
+        else
+          select(:record, column.name, column.options, { :selected => @record.send(column.name) }, options)
+        end
       end
 
       def active_scaffold_input_select(column, options)
@@ -202,7 +255,7 @@ module ActiveScaffold
           return :subsection
         elsif column.active_record_class.locking_column.to_s == column.name.to_s
           return :hidden
-        elsif column.association.nil? or column.form_ui == :select or !active_scaffold_config_for(column.association.klass).actions.include?(:subform)
+        elsif column.association.nil? or column.form_ui == :select or column.form_ui == :auto_complete or !active_scaffold_config_for(column.association.klass).actions.include?(:subform)
           return :field
         else
           return :subform
