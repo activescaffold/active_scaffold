@@ -140,10 +140,8 @@ module ActiveScaffold
       def active_scaffold_input_auto_complete(column, options)
         if column.singular_association?
           active_scaffold_input_singular_association_with_auto_complete(column, options)
-        # elsif column.plural_association?
-        #   active_scaffold_input_plural_association(column, options)
         else
-          select(:record, column.name, column.options, { :selected => @record.send(column.name) }, options)
+          active_scaffold_input_select(column, options)
         end
       end
 
