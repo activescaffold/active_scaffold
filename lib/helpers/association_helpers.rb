@@ -10,6 +10,7 @@ module ActiveScaffold
         association.klass.count(:all, :conditions => controller.send(:merge_conditions, conditions, association.options[:conditions]))
       end
 
+      # returns options for the given association as a collection of [id, label] pairs intended for the +options_for_select+ helper.
       def options_for_association(association)
         available_records = association_options_find(association, options_for_association_conditions(association))
         available_records ||= []
@@ -24,6 +25,7 @@ module ActiveScaffold
       # Should work in both the subform and form_ui=>:select modes.
       # Check association.name to specialize the conditions per-column.
       def options_for_association_conditions(association)
+        return nil if association.options[:through]
         case association.macro
           when :has_one, :has_many
             # Find only orphaned objects
