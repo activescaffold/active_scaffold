@@ -127,17 +127,18 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_plural_association(column, options)
-        associated = @record.send(column.association.name).collect {|r| r.id}
-        select_options = options_for_association(column.association)
+        associated_options = @record.send(column.association.name).collect {|r| [r.to_label, r.id]}
+        select_options = associated_options | options_for_association(column.association)
         return 'no options' if select_options.empty?
 
         html = '<ul class="checkbox-list">'
 
+        associated_ids = associated_options.collect {|a| a[1]}
         select_options.each_with_index do |option, i|
           label, id = option
           this_name = "#{options[:name]}[#{i}][id]"
           html << "<li>"
-          html << check_box_tag(this_name, id, associated.include?(id))
+          html << check_box_tag(this_name, id, associated_ids.include?(id))
           html << "<label for='#{this_name}'>"
           html << label
           html << "</label>"
