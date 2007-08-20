@@ -173,17 +173,25 @@ module ActiveScaffold
       # ... maybe this should be provided in a bridge?
       def active_scaffold_input_record_select(column, options)
         remote_controller = active_scaffold_controller_for(column.association.klass).controller_path
+
+        # if the opposite association is a :belongs_to, then only show records that have not been associated yet
+        params = if column.association and [:has_one, :has_many].include?(column.association.macro)
+          {column.association.primary_key_name => ''}
+        else
+          {}
+        end
+
         if column.singular_association?
           record_select_field(
             "#{options[:name]}[id]",
             @record.send(column.name) || column.association.klass.new,
-            {:controller => remote_controller}.merge(column.options)
+            {:controller => remote_controller, :params => params}.merge(column.options)
           )
         elsif column.plural_association?
           record_multi_select_field(
             options[:name],
             @record.send(column.name),
-            {:controller => remote_controller}.merge(column.options)
+            {:controller => remote_controller, :params => params}.merge(column.options)
           )
         end
       end
