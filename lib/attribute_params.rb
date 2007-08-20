@@ -18,6 +18,16 @@ module ActiveScaffold
   #     # a singular association hash
   #     'location' => {'id' => 12, 'city' => 'New York'}
   #   }
+  #
+  # Simpler association structures are also supported, like:
+  #   params[:record] = {
+  #     # a simple record attribute
+  #     'name' => 'John',
+  #     # a plural association ... all ids refer to existing records
+  #     'roles' => ['5', '6'],
+  #     # a singular association ... all ids refer to existing records
+  #     'location' => '12'
+  # }
   module AttributeParams
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
     # association attributes and attempts to instantiate them as associated objects.
@@ -43,27 +53,18 @@ module ActiveScaffold
           value = attributes[column.name]
 
           # convert the value, possibly by instantiating associated objects
-          value = if column.form_ui == :select
-            ids = if column.singular_association?
-              value[:id]
-            else
-              value.values.collect {|hash| hash[:id]}
-            end
-            (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
+          value = if value.is_a?(Hash)
+            # this is just for backwards compatibility. we should clean this up in 2.0.
+            if column.form_ui == :select
+              ids = if column.singular_association?
+                value[:id]
+              else
+                value.values.collect {|hash| hash[:id]}
+              end
+              (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
 
-          elsif column.singular_association?
-            hash = value
-            record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
-            if record
-              record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-              update_record_from_params(record, record_columns, hash)
-              record.unsaved = true
-            end
-            record
-
-          elsif column.plural_association?
-            collection = value.collect do |key_value_pair|
-              hash = key_value_pair[1]
+            elsif column.singular_association?
+              hash = value
               record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
               if record
                 record_columns = active_scaffold_config_for(column.association.klass).subform.columns
@@ -71,23 +72,41 @@ module ActiveScaffold
                 record.unsaved = true
               end
               record
-            end
-            collection.compact
 
+            elsif column.plural_association?
+              collection = value.collect do |key_value_pair|
+                hash = key_value_pair[1]
+                record = find_or_create_for_params(hash, column.association.klass, parent_record.send("#{column.name}"))
+                if record
+                  record_columns = active_scaffold_config_for(column.association.klass).subform.columns
+                  update_record_from_params(record, record_columns, hash)
+                  record.unsaved = true
+                end
+                record
+              end
+              collection.compact
+            end
           else
-            # convert empty strings into nil. this works better with 'null => true' columns (and validations),
-            # and 'null => false' columns should just convert back to an empty string.
-            # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
-            value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
-            value
+            if column.singular_association?
+              # it's a single id
+              column.association.klass.find(value) if value and not value.empty?
+            elsif column.plural_association?
+              # it's an array of ids
+              column.association.klass.find(value) if value and not value.empty?
+            else
+              # convert empty strings into nil. this works better with 'null => true' columns (and validations),
+              # and 'null => false' columns should just convert back to an empty string.
+              # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
+              value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
+              value
+            end
           end
 
           # we avoid assigning a value that already exists because otherwise has_one associations will break (AR bug in has_one_association.rb#replace)
           parent_record.send("#{column.name}=", value) unless column.through_association? or parent_record.send(column.name) == value
 
-        # because the plural association list of checkboxes doesn't submit anything when no checkboxes are checked,
-        # we need to clear the associated set when the attribute is missing from the parameters.
-        elsif column.form_ui == :select and column.plural_association? and not column.through_association?
+        # plural associations may not actually appear in the params if all of the options have been unselected or cleared away.
+        elsif column.plural_association? and not column.through_association?
           parent_record.send("#{column.name}=", [])
         end
       end
