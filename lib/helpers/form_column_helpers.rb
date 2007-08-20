@@ -172,8 +172,20 @@ module ActiveScaffold
       # requires RecordSelect plugin to be installed and configured.
       # ... maybe this should be provided in a bridge?
       def active_scaffold_input_record_select(column, options)
-        field_name = "#{options[:name]}[id]"
-        record_select_field(field_name, @record.send(column.name) || column.association.klass.new, column.options)
+        remote_controller = active_scaffold_controller_for(column.association.klass).controller_path
+        if column.singular_association?
+          record_select_field(
+            "#{options[:name]}[id]",
+            @record.send(column.name) || column.association.klass.new,
+            {:controller => remote_controller}.merge(column.options)
+          )
+        elsif column.plural_association?
+          record_multi_select_field(
+            options[:name],
+            @record.send(column.name),
+            {:controller => remote_controller}.merge(column.options)
+          )
+        end
       end
 
       def active_scaffold_input_checkbox(column, options)
