@@ -55,6 +55,11 @@ module ActiveScaffold::Actions
       end
     end
 
+    def auto_complete_column
+      @record = find_if_allowed(params[:id], :update)
+      render :partial => 'auto_complete_column', :layout => false
+    end
+
     protected
 
     # A simple method to find and prepare an example new record for the form

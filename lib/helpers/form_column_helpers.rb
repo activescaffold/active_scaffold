@@ -81,8 +81,8 @@ module ActiveScaffold
           :url => { :action => :auto_complete_column, :column => column.name, :id => @record.id },
           :after_update_element => "function(text_box, selected_list_item) {
             Element.cleanWhitespace(selected_list_item);
-            var text = selected_list_item.childNodes[0].nodeValue;
-            var id = selected_list_item.childNodes[1].nodeValue;
+            var text = selected_list_item.childNodes[0].firstChild.nodeValue;
+            var id = selected_list_item.childNodes[1].firstChild.nodeValue;
             if (id) {
               text_box.value = text;
               $('#{input_id}').value = id;
