@@ -5,7 +5,7 @@ module ActiveScaffold
     # token is found in at least one of the columns.
     def self.create_conditions_for_columns(tokens, columns, like_pattern = '%?%')
       # if there aren't any columns, then just return a nil condition
-      return unless columns.length
+      return unless columns.length > 0
 
       tokens = [tokens] if tokens.is_a? String
 

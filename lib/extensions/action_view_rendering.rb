@@ -24,7 +24,7 @@ module ActionView #:nodoc:
         template_path = caller.first.split(':').first
         template = File.basename(template_path)
 
-        ActiveScaffold::Config::Core.template_search_path.each do |active_scaffold_template_path|
+        active_scaffold_config.template_search_path.each do |active_scaffold_template_path|
           active_scaffold_template = File.join(active_scaffold_template_path, template)
           return render :file => active_scaffold_template if file_exists? active_scaffold_template
         end
@@ -65,7 +65,7 @@ module ActionView #:nodoc:
       return partial_path if file_exists? File.join(path, "_#{partial_name}")
 
       # check the ActiveScaffold-specific directories
-      ActiveScaffold::Config::Core.template_search_path.each do |template_path|
+      active_scaffold_config.template_search_path.each do |template_path|
         return File.join(template_path, partial_name) if file_exists? File.join(template_path, "_#{partial_name}")
       end
       return partial_path

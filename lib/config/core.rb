@@ -155,21 +155,23 @@ module ActiveScaffold::Config
       @model ||= @model_id.to_s.camelize.constantize
     end
 
-    def self.asset_path(type, filename)
-      "active_scaffold/#{ActiveScaffold::Config::Core.frontend.to_s}/#{filename}"
+    def asset_path(type, filename)
+      "active_scaffold/#{self.frontend}/#{filename}"
     end
 
-    def self.javascripts
-      javascript_dir = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends", ActiveScaffold::Config::Core.frontend.to_s, "javascripts")
+    def javascripts
+      javascript_dir = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends", self.frontend.to_s, "javascripts")
       Dir.entries(javascript_dir).reject { |e| !e.match(/\.js/) }
     end
 
     # the ActiveScaffold-specific template paths
-    def self.template_search_path
+    def template_search_path
+      frontends_path = "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/frontends"
+
       search_path = []
       search_path << 'active_scaffold_overrides'
-      search_path <<  "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/frontends/#{ActiveScaffold::Config::Core.frontend.to_s}/views" if ActiveScaffold::Config::Core.frontend.to_sym != :default
-      search_path << "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/frontends/default/views"
+      search_path << "#{frontends_path}/#{self.frontend}/views" if self.frontend.to_sym != :default
+      search_path << "#{frontends_path}/default/views"
       return search_path
     end
 

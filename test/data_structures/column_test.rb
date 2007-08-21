@@ -8,7 +8,7 @@ class ColumnTest < Test::Unit::TestCase
 
   def test_column
     assert @column.column.is_a?(ActiveRecord::ConnectionAdapters::Column)
-    assert @column.column.name == :a
+    assert @column.column.name == 'a'
   end
 
   def test_basic_properties

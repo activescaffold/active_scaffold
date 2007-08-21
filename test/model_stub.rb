@@ -20,10 +20,10 @@ class ModelStub < ActiveRecord::Base
 
   def self.columns
     @columns ||= [
-      ActiveRecord::ConnectionAdapters::Column.new(:a, ''),
-      ActiveRecord::ConnectionAdapters::Column.new(:b, ''),
-      ActiveRecord::ConnectionAdapters::Column.new(:c, ''),
-      ActiveRecord::ConnectionAdapters::Column.new(:d, '')
+      ActiveRecord::ConnectionAdapters::Column.new('a', ''),
+      ActiveRecord::ConnectionAdapters::Column.new('b', ''),
+      ActiveRecord::ConnectionAdapters::Column.new('c', ''),
+      ActiveRecord::ConnectionAdapters::Column.new('d', '')
     ]
   end
 
