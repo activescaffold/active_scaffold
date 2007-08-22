@@ -155,22 +155,27 @@ module ActiveScaffold::Config
       @model ||= @model_id.to_s.camelize.constantize
     end
 
-    def asset_path(type, filename)
-      "active_scaffold/#{self.frontend}/#{filename}"
+    # must be a class method so the layout doesn't depend on a controller that uses active_scaffold
+    # note that this is unaffected by per-controller frontend configuration.
+    def self.asset_path(filename, frontend = self.frontend)
+      "active_scaffold/#{frontend}/#{filename}"
     end
 
-    def javascripts
-      javascript_dir = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends", self.frontend.to_s, "javascripts")
+    # must be a class method so the layout doesn't depend on a controller that uses active_scaffold
+    # note that this is unaffected by per-controller frontend configuration.
+    def self.javascripts(frontend = self.frontend)
+      javascript_dir = File.join(RAILS_ROOT, "public", "javascripts", asset_path('', frontend))
       Dir.entries(javascript_dir).reject { |e| !e.match(/\.js/) }
     end
 
     # the ActiveScaffold-specific template paths
-    def template_search_path
+    # an instance method. this is the only place that pays attention to per-controller frontend configuration.
+    def template_search_path(frontend = self.frontend)
       frontends_path = "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/frontends"
 
       search_path = []
       search_path << 'active_scaffold_overrides'
-      search_path << "#{frontends_path}/#{self.frontend}/views" if self.frontend.to_sym != :default
+      search_path << "#{frontends_path}/#{frontend}/views" if frontend.to_sym != :default
       search_path << "#{frontends_path}/default/views"
       return search_path
     end
