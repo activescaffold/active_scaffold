@@ -49,9 +49,15 @@ module ActiveScaffold
       self.active_scaffold_config._load_action_columns
 
       # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
-      # NOTE define_read_methods is an *instance* method even though it adds methods to the *class*.
       klass = self.active_scaffold_config.model
-      klass.new.send(:define_read_methods) if klass.read_methods.empty? && klass.generate_read_methods
+      if klass.respond_to? :generated_methods?
+        # edge rails (2.0)
+        klass.define_attribute_methods unless klass.generated_methods?
+      else
+        # stable rails (1.2.3)
+        # NOTE define_read_methods is an *instance* method even though it adds methods to the *class*.
+        klass.new.send(:define_read_methods) if klass.read_methods.empty? && klass.generate_read_methods
+      end
 
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
