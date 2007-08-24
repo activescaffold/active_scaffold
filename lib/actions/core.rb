@@ -67,6 +67,8 @@ module ActiveScaffold::Actions
     # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
     def conditions_for_collection
     end
+    def joins_for_collection
+    end
 
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
     def conditions_from_params
