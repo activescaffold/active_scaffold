@@ -65,8 +65,8 @@ module ActiveScaffold
           value = associated.to_label
         end
 
-        input_name = "#{options[:name]}[id]" # "record[#{column.name}][id]"
-        input_id = input_name.gsub("[", "_").gsub("]", "") # "record_#{column.name}_id"
+        input_name = "#{options[:name]}"
+        input_id = input_name.gsub("[", "_").gsub("]", "")
         id_tag = hidden_field_tag(input_name, value_id, {:id => input_id})
 
         companion_name = "record[#{column.name}_companion]"
@@ -183,7 +183,7 @@ module ActiveScaffold
 
         if column.singular_association?
           record_select_field(
-            "#{options[:name]}[id]",
+            "#{options[:name]}",
             @record.send(column.name) || column.association.klass.new,
             {:controller => remote_controller, :params => params}.merge(column.options)
           )
