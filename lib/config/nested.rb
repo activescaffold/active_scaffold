@@ -20,8 +20,6 @@ module ActiveScaffold::Config
       @core.action_links.add('nested', :label => label, :type => :record, :security_method => :nested_authorized?, :position => :after, :parameters => {:associations => models.join(' ')})
     end
 
-    attr_accessor :shallow_delete
-
     # the label for this Nested action. used for the header.
     attr_writer :label
     def label
