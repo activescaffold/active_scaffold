@@ -185,13 +185,13 @@ module ActiveScaffold
           record_select_field(
             "#{options[:name]}",
             @record.send(column.name) || column.association.klass.new,
-            {:controller => remote_controller, :params => params}.merge(column.options)
+            {:controller => remote_controller, :params => params.merge(:parent_id => @record.id, :parent_model => @record.class)}.merge(column.options)
           )
         elsif column.plural_association?
           record_multi_select_field(
             options[:name],
             @record.send(column.name),
-            {:controller => remote_controller, :params => params}.merge(column.options)
+            {:controller => remote_controller, :params => params.merge(:parent_id => @record.id, :parent_model => @record.class)}.merge(column.options)
           )
         end
       end
