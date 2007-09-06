@@ -3,8 +3,8 @@ module ActiveScaffold::DataStructures
     # provides a quick way to set any property of the object from a hash
     def initialize(action, options = {})
       # set defaults
-      self.action = action
-      self.label = action
+      self.action = action.to_s
+      self.label = action.to_s
       self.confirm = false
       self.type = :table
       self.inline = true
