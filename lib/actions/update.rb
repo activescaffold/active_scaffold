@@ -64,15 +64,6 @@ module ActiveScaffold::Actions
       render :action => 'update_column.rjs', :layout => false
     end
 
-    # NOTE: hmm, actually, this should be available for 'create', too
-    def auto_complete_column
-      if params[:column] and active_scaffold_config.columns[params[:column].to_sym]
-        render :partial => 'auto_complete_column', :layout => false
-      else
-        render :nothing => true, :layout => false
-      end
-    end
-
     protected
 
     # A simple method to find and prepare a record for editing
