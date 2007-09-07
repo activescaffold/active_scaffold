@@ -5,7 +5,7 @@ module ActiveScaffold
       # This method decides which input to use for the given column.
       # It does not do any rendering. It only decides which method is responsible for rendering.
       def active_scaffold_input_for(column, scope = nil)
-        options = active_scaffold_input_options(column.name, scope)
+        options = active_scaffold_input_options(column, scope)
 
         # first, check if the dev has created an override for this specific field
         if override_form_field?(column)
@@ -50,9 +50,9 @@ module ActiveScaffold
       end
 
       # the standard active scaffold options used for class, name and scope
-      def active_scaffold_input_options(column_name, scope = nil)
-        name = scope ? "record#{scope}[#{column_name}]" : "record[#{column_name}]"
-        options = { :name => name, :class => "#{column_name}-input" }
+      def active_scaffold_input_options(column, scope = nil)
+        name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
+        options = { :name => name, :class => "#{column.name}-input" }
       end
 
       ##
