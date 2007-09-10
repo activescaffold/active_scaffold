@@ -26,7 +26,7 @@ module ActiveScaffold
     def self.condition_for_column(column, value, like_pattern = '%?%')
       return unless column and column.search_sql and value and not value.empty?
       case column.form_ui || column.column.type
-        when :boolean
+        when :boolean, :checkbox
         ["#{column.search_sql} = ?", (value.to_i == 1)]
 
         when :integer
