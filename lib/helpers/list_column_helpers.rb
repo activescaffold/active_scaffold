@@ -132,7 +132,11 @@ module ActiveScaffold
       # ==========
       def format_inplace_edit_column(record,column)
         value = record.send(column.name)
-        return clean_column_value(format_column(value))
+        if column.list_ui == :checkbox
+          active_scaffold_column_checkbox(column, record)
+        else
+          clean_column_value(format_column(value))
+        end
       end
       
       def active_scaffold_inplace_edit(record, column)
