@@ -938,14 +938,5 @@ function handleHistoryChange(pageId, pageData) {
   new Ajax.Updater(id+'-content', pageData, {asynchronous:true, evalScripts:true, onLoading:function(request){Element.show(id+'-pagination-loading-indicator');}});
 }
 
-function addActiveScaffoldPageToHistory(url, active_scaffold_id) {
-	var array = url.split('?');
-	var qs = new Querystring(array[1]);
-	var sort = qs.get('sort')
-	var dir = qs.get('sort_direction')
-  var page = qs.get('page')
-	if (sort || dir || page) dhtmlHistory.add(active_scaffold_id+":"+page+":"+sort+":"+dir, url);
-}
-
 /** set onload handler */
 Event.observe(window, 'load', initialize, false);

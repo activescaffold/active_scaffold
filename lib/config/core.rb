@@ -22,6 +22,15 @@ module ActiveScaffold::Config
     cattr_accessor :theme
     @@theme = :default
 
+    # lets you disable the DHTML history
+    def self.dhtml_history=(val)
+      @@dhtml_history = val
+    end
+    def self.dhtml_history?
+      @@dhtml_history ? true : false
+    end
+    @@dhtml_history = true
+
     # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
     cattr_reader :action_links
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
@@ -165,7 +174,7 @@ module ActiveScaffold::Config
     # note that this is unaffected by per-controller frontend configuration.
     def self.javascripts(frontend = self.frontend)
       javascript_dir = File.join(RAILS_ROOT, "public", "javascripts", asset_path('', frontend))
-      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js/) }
+      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js/) or (!self.dhtml_history? and e.match('dhtml_history')) }
     end
 
     # the ActiveScaffold-specific template paths

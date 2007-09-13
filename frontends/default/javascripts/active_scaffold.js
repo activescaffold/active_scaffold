@@ -80,6 +80,20 @@ var ActiveScaffold = {
 }
 
 /*
+ * DHTML history tie-in
+ */
+function addActiveScaffoldPageToHistory(url, active_scaffold_id) {
+  if (typeof dhtmlHistory == 'undefined') return; // it may not be loaded
+
+  var array = url.split('?');
+  var qs = new Querystring(array[1]);
+  var sort = qs.get('sort')
+  var dir = qs.get('sort_direction')
+  var page = qs.get('page')
+  if (sort || dir || page) dhtmlHistory.add(active_scaffold_id+":"+page+":"+sort+":"+dir, url);
+}
+
+/*
  * Add-ons/Patches to Prototype
  */
 
