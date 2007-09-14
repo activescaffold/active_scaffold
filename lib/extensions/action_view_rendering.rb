@@ -17,6 +17,9 @@ module ActionView #:nodoc:
     #   * all new records created will be assigned the constrained values
     #   * constrained columns will be hidden (they're pretty boring at this point)
     #
+    # You may also specify options[:conditions] for the embedded scaffold. These only do 1/3 of what
+    # constraints do (they only limit search results). Any format accepted by ActiveRecord::Base.find is valid.
+    #
     # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
     #
     def render_with_active_scaffold(*args, &block)
@@ -34,8 +37,9 @@ module ActionView #:nodoc:
 
         remote_controller = options[:active_scaffold]
         constraints = options[:constraints]
-        eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s)
-        session["as:#{eid}"] = {:constraints => constraints, :list => {:label => args.first[:label]}}
+        conditions = options[:conditions]
+        eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
+        session["as:#{eid}"] = {:constraints => constraints, :conditions => conditions, :list => {:label => args.first[:label]}}
         options[:params] ||= {}
         options[:params].merge! :eid => eid
 

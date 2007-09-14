@@ -52,10 +52,11 @@ module ActiveScaffold
 
     def all_conditions
       merge_conditions(
-        active_scaffold_conditions, # from the modules
-        conditions_for_collection, # from the dev
-        conditions_from_params, # from the parameters (is this still used?)
-        conditions_from_constraints # from any constraints (embedded scaffolds)
+        active_scaffold_conditions,                   # from the search modules
+        conditions_for_collection,                    # from the dev
+        conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
+        conditions_from_constraints,                  # from any constraints (embedded scaffolds)
+        active_scaffold_session_storage[:conditions] # embedding conditions (weaker constraints)
       )
     end
 
