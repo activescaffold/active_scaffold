@@ -35,19 +35,6 @@ class FinderTest < Test::Unit::TestCase
     assert_equal nil, ActiveScaffold::Finder.create_conditions_for_columns('foo', [])
   end
 
-  def test_merge_conditions
-    conditions_a = ['a', 1, 2]
-    conditions_b = ['b', 3, 4, 5]
-    conditions_c = 'c = 1'
-    conditions_d = 'd = 2'
-    conditions_e = []
-
-    assert_equal ['a AND b', 1, 2, 3, 4, 5], @klass.send(:merge_conditions, conditions_a, conditions_b)
-    assert_equal 'c = 1 AND d = 2', @klass.send(:merge_conditions, conditions_c, conditions_d)
-    assert_equal ['a AND d = 2', 1, 2], @klass.send(:merge_conditions, conditions_a, conditions_d)
-    assert_equal ['b', 3, 4, 5], @klass.send(:merge_conditions, conditions_e, conditions_b)
-  end
-
   def test_build_order_clause
     columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b, :c, :d)
     sorting = ActiveScaffold::DataStructures::Sorting.new(columns)

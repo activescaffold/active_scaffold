@@ -23,6 +23,7 @@ module ActiveScaffold
 
     # Generates an SQL condition for the given ActiveScaffold column based on
     # that column's database type (or form_ui ... for virtual columns?).
+    # TODO: this should reside on the column, not the controller
     def self.condition_for_column(column, value, like_pattern = '%?%')
       return unless column and column.search_sql and value and not value.empty?
       case column.form_ui || column.column.type
@@ -60,6 +61,7 @@ module ActiveScaffold
 
     # returns a single record (the given id) but only if it's allowed for the specified action.
     # accomplishes this by checking model.#{action}_authorized?
+    # TODO: this should reside on the model, not the controller
     def find_if_allowed(id, action, klass = nil)
       klass ||= active_scaffold_config.model
       record = klass.find(id)
@@ -72,6 +74,7 @@ module ActiveScaffold
     # * :sorting - a Sorting DataStructure (basically an array of hashes of field => direction, e.g. [{:field1 => 'asc'}, {:field2 => 'desc'}]). please note that multi-column sorting has some limitations: if any column in a multi-field sort uses method-based sorting, it will be ignored. method sorting only works for single-column sorting.
     # * :per_page
     # * :page
+    # TODO: this should reside on the model, not the controller
     def find_page(options = {})
       options.assert_valid_keys :sorting, :per_page, :page
       options[:per_page] ||= 999999999
@@ -103,24 +106,14 @@ module ActiveScaffold
       pager.page(options[:page])
     end
 
-    # accepts arguments like the :conditions clauses that can get passed to an ActiveRecord find, and merges them together into one :conditions-worthy clause.
+    # TODO: this should reside on the model, not the controller
     def merge_conditions(*conditions)
-      sql, values = [], []
-      conditions.compact.each do |condition|
-        next if condition.empty? # .compact removes nils but it doesn't remove empty arrays.
-        condition = condition.clone
-        # "name = 'Joe'" gets parsed to sql => "name = 'Joe'", values => []
-        # ["name = '?'", 'Joe'] gets parsed to sql => "name = '?'", values => ['Joe']
-        sql << ((condition.is_a? String) ? condition : condition.shift)
-        values += (condition.is_a? String) ? [] : condition
-      end
-      # if there are no values, then simply return the joined sql. otherwise, stick the joined sql onto the beginning of the values array and return that.
-      conditions = values.empty? ? sql.join(" AND ") : values.unshift(sql.join(" AND "))
-      conditions = nil if conditions.empty?
-      conditions
+      c = conditions.find_all {|c| not c.nil? and not c.empty? }
+      c.empty? ? nil : c.collect{|c| ActiveRecord::Base.send(:sanitize_sql, c)}.join(' AND ')
     end
 
     # accepts a DataStructure::Sorting object and builds an order-by clause
+    # TODO: this should reside on the model, not the controller
     def build_order_clause(sorting)
       return nil if sorting.nil? or sorting.sorts_by_method?
 
@@ -140,6 +133,7 @@ module ActiveScaffold
       order
     end
 
+    # TODO: this should reside on the column, not the controller
     def sort_collection_by_column(collection, column, order)
       sorter = column.sort[:method]
       collection = collection.sort_by { |record|
