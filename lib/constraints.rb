@@ -68,7 +68,7 @@ module ActiveScaffold
         elsif active_scaffold_config.model.column_names.include? k.to_s
           constraint_condition_for(k.to_s, v)
         else
-          raise ActiveScaffold::MalformedConstraint, constraint_error(k), caller
+          raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
         end
 
         conditions = merge_conditions(conditions, constraint_condition)
@@ -116,8 +116,8 @@ module ActiveScaffold
       condition
     end
 
-    def constraint_error(column_name)
-      "Malformed constraint `#{column_name}'. If it's a legimitate column, and you are using a nested scaffold, please specify or double-check the reverse association name."
+    def constraint_error(klass, column_name)
+      "Malformed constraint `#{klass}##{column_name}'. If it's a legimitate column, and you are using a nested scaffold, please specify or double-check the reverse association name."
     end
 
     # Applies constraints to the given record.

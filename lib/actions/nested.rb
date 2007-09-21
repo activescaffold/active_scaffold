@@ -78,7 +78,7 @@ module ActiveScaffold::Actions
         return a.association.macro == :has_and_belongs_to_many if a and nested?
         false
       rescue
-        raise ActiveScaffold::MalformedConstraint, constraint_error(nested_association), caller
+        raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, nested_association), caller
       end
     end
 
