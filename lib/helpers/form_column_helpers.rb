@@ -18,8 +18,8 @@ module ActiveScaffold
         # fallback: we get to make the decision
         else
           if column.association
-            # note: i'm not sure if this branch would ever get used. left to our own devices, we render associations as subforms. only if form_ui == :select do we render selects/checkboxes ... and that routing goes through the active_scaffold_input_select method.
-            raise "Tell the ActiveScaffold team: I'm a real boy!"
+            # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
+            raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
           elsif column.virtual?
             active_scaffold_input_virtual(column, options)
 
