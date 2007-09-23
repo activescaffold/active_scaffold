@@ -12,6 +12,12 @@ module ActiveScaffold::DataStructures
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
+    
+    # Any extra parameters this particular column uses.  This is for create/update purposes.
+    def params
+      # lazy initialize
+      @params ||= Set.new
+    end
 
     # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.
     attr_writer :label

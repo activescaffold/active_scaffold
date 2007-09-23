@@ -52,6 +52,10 @@ module ActiveScaffold::DataStructures
     def length
       @set.length
     end
+    
+    def empty?
+      @set.empty?
+    end
 
   end
 end

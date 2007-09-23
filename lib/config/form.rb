@@ -34,11 +34,12 @@ module ActiveScaffold::Config
       end
       @columns
     end
+    
     def columns=(val)
       @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
       @columns.action = self
     end
-
+    
     # whether the form should be multipart
     attr_writer :multipart
     def multipart?

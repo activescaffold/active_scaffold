@@ -2,7 +2,10 @@ class ModelStub < ActiveRecord::Base
   abstract_class = true
   has_one :other_model, :class_name => 'ModelStub'
   has_many :other_models, :class_name => 'ModelStub'
-  attr_accessor :a, :b, :c, :d
+  
+  cattr_accessor :stubbed_columns
+  self.stubbed_columns = [:a, :b, :c, :d, :id]
+  attr_accessor *self.stubbed_columns
 
   def other_model=(val)
     @other_model = val
@@ -19,12 +22,7 @@ class ModelStub < ActiveRecord::Base
   end
 
   def self.columns
-    @columns ||= [
-      ActiveRecord::ConnectionAdapters::Column.new('a', ''),
-      ActiveRecord::ConnectionAdapters::Column.new('b', ''),
-      ActiveRecord::ConnectionAdapters::Column.new('c', ''),
-      ActiveRecord::ConnectionAdapters::Column.new('d', '')
-    ]
+    @columns ||= self.stubbed_columns.map{|c| ActiveRecord::ConnectionAdapters::Column.new(c.to_s, '') }
   end
 
   def self.columns_hash
