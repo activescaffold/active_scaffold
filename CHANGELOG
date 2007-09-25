@@ -1,0 +1,72 @@
+path to 1.1.0
+-- as of r639
+=============
+
+features
+--------
+boolean columns: when the database column allows nil, we now add a third option to the dropdown so you don't *have* to pick true or false.
+fieldsearch module handles booleans better - provides third option so you don't *have* to search on a boolean column
+row class: new helper method (list_row_class) gets called for each record in the list and returns a CSS class.
+use #human_name for the column label when possible.
+active_scaffold_includes now accepts a frontend name. this is necessary so you can include the proper assets even if active_scaffold isn't configured on the current controller (it's embedded).
+merge_conditions now supports hash conditions (and should forever support every conditions style that ActiveRecord supports)
+`render :active_scaffold' now accepts a :conditions option, which is a weaker but more flexible variation of :constraints
+nested scaffolds now utilize the :conditions configured on associations
+:through associations may now be nested
+polymorphic constraints are now supported, assuming params[:parent_model].to_s is the proper content for the polymorphic _type field.
+improved support for associations in parameters. for simply selecting/deselecting associations, activescaffold will now recognize `:user => 5' or `:users => [1, 2, 5]'.
+action links:
+  may now remove an action link with #clear_link
+  new :controller option, so you don't have to sneak it into :params anymore
+added after_update_save controller override method
+dhtml history may now be disabled
+inplace_edit option on list columns. currently works for text boxes, booleans ... ?
+automatically link to the :show action of singular associations. this is similar to the nested scaffolds for plural associations.
+no longer trying to nest a polymorphic association (there's no consistent model to list)
+new :params option for a column lets you specify additional parameters to accept when the given column is on the form. this is for when a column needs to submit multiple values to work.
+nested#shallow_delete: ... ?
+file uploads
+  ... details? ...
+form_ui
+  form interface options are now supported through helper method named active_scaffold_input_#{form_ui}. if you want a different form interface than activescaffold normally provides, you may configure the form_ui for that column to use one of these methods. you can easily define your own, too.
+  new form interface options:
+    :record_select - paginated/searchable interface for for singular and plural associations (requires recordselect plugin)
+    :country
+    :usa_state
+    :textarea
+    ... check form_column_helpers.rb for official list ...
+also created list_ui, good for when you want to render multiple columns the same way.
+
+
+bugfixes
+--------
+no longer blow up on data strings with unintentional % characters. as_() was sprintf'ing too frequently.
+the calculation row now updates on edit/create/destroy.
+link_to no longer blows up on controller symbols
+constraints are now applied to a record during the #new action, in case any custom form rendering depends on the constrained column
+list now returns to page 1 if the current page has no records.
+list will now try to reload the scaffold on a previous page if you delete the last entry on the current page.
+activescaffold no longer loses information on columns - `config.columns.add', `config.columns = [...]', and `config.columns.exclude' all now affect the *inheritability* of a column by the other modules (list, create, update, etc.), but all columns remain in config.columns. this also makes _id columns behave better.
+dhtml history no longer saves null:null:null history bookmark.
+if there were no end-of-line record actions, then any column actions would not use ajax. this was because the loading indicator was missing, which messed up the action link javascript.
+if there aren't any columns to search on, then activescaffold no longer creates an empty WHERE clause
+the default options_for_association_conditions now returns nil for :through associations
+fixed :conditions generation for nested/embedded scaffolds - was causing a bind variable mismatch.
+will not update a record attribute if the value hasn't changed. this is a workaround for an activerecord bug with has_one associations.
+attributes_hash_is_empty? didn't handle multi-parameter attribute names like 'created_at(5i)', which resulted in extra records being created from subforms.
+render :update was failing in some cases because activescaffold wasn't expecting blocks to the render call.
+theme == :default no longer attempts to use Rico.Corner
+column_empty? now treats any values equal to list.empty_field_text as empty, too.
+search/livesearch should no longer choke on virtual columns
+better :method handling for action links.
+
+misc
+--------
+reorganized the helpers and extensions
+ui_type is now an alias for form_ui
+improvements to exception messages
+when initializing in production mode, activescaffold now recovers gracefully if it can't copy asset files
+RESTful routing is now accomplished in a way that'll let other add-ons extend the meaning of :active_scaffold => true.
+fixes for edge rails compatibility
+small improvements for localization accessibility
+minor string renaming (will affect localization tables, though)
