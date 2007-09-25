@@ -51,7 +51,6 @@ module ActiveScaffold::Actions
     end
 
     def include_habtm_actions
-      return unless params[:eid]
       if nested_habtm?
         # Production mode is ok with adding a link everytime the scaffold is nested - we ar not ok with that.
         active_scaffold_config.action_links.add('new_existing', :label => 'Add Existing', :type => :table, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
@@ -59,12 +58,21 @@ module ActiveScaffold::Actions
           active_scaffold_config.action_links.add('destroy_existing', :label => 'Remove', :type => :record, :confirm => 'Are you sure?', :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy_existing']
           active_scaffold_config.action_links.delete("destroy") if active_scaffold_config.action_links['destroy']
         end
+        
         self.class.module_eval do
           include ActiveScaffold::Actions::Nested::ChildMethods
-        end
+          # we need specifically to tell action_controller to add these public methods as action_methods
+          ActiveScaffold::Actions::Nested::ChildMethods.public_instance_methods.each{|m| self.action_methods.add m }
+        end unless self.class.included_modules.include?(ActiveScaffold::Actions::Nested::ChildMethods)
       else
         # Production mode is caching this link into a non nested scaffold
         active_scaffold_config.action_links.delete('new_existing') if active_scaffold_config.action_links['new_existing']
+        
+        if active_scaffold_config.nested.shallow_delete
+          active_scaffold_config.action_links.delete("destroy_existing") if active_scaffold_config.action_links['destroy_existing']
+          active_scaffold_config.action_links.add('destroy', :label => 'Delete', :type => :record, :confirm => 'Are you sure?', :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy']
+        end
+        
       end
     end
 
