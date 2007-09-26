@@ -43,8 +43,7 @@ module ActionView #:nodoc:
         options[:params] ||= {}
         options[:params].merge! :eid => eid
 
-        o = '<noscript class="active-scaffold">You do not have JavaScript enabled. Some features may not work.</noscript>'
-        o << controller.send(:render_component_as_string, :controller => remote_controller.to_s, :action => 'table', :params => options[:params])
+        render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]
       else
         render_without_active_scaffold *args, &block
       end
