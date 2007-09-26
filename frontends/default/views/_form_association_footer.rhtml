@@ -20,7 +20,7 @@ return unless show_add_new or show_add_existing
   <div class="footer">
     <% if show_add_new -%>
     <% add_label = column.plural_association? ? as_('Create Another') : as_('Replace With New') -%>
-    <%= button_to_function add_label, "new Ajax.Request(#{add_new_url.to_json}, {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id})}})" %>
+    <%= button_to_function add_label, "new Ajax.Request(#{add_new_url.to_json}, {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id.to_json})}})" %>
     <% end -%>
 
     <%= '|' if show_add_new and show_add_existing %>
