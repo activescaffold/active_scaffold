@@ -35,7 +35,7 @@ module ActiveScaffold
           formatted_value
         end
 
-        value = '&nbsp;' if value.nil? or value.empty? # fix for IE 6
+        value = '&nbsp;' if value.nil? or (value.respond_to?(:empty?) and value.empty?) # fix for IE 6
         return value
       end
 
