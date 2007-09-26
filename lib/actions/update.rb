@@ -57,10 +57,7 @@ module ActiveScaffold::Actions
 
     # for inline (inlist) editing
     def update_column
-      @record = find_if_allowed(params[:id], :update)
-      if @record.authorized_for?(:action => :update, :column => params[:column])
-        @record.update_attributes(params[:column] => params[:value])
-      end
+      do_update_column
       render :action => 'update_column.rjs', :layout => false
     end
 
@@ -90,6 +87,13 @@ module ActiveScaffold::Actions
       rescue ActiveRecord::StaleObjectError
         @record.errors.add_to_base as_("Version inconsistency - this record has been modified since you started editing it.")
         self.successful=false
+      end
+    end
+
+    def do_update_column
+      @record = find_if_allowed(params[:id], :update)
+      if @record.authorized_for?(:action => :update, :column => params[:column])
+        @record.update_attributes(params[:column] => params[:value])
       end
     end
 
