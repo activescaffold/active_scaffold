@@ -3,7 +3,7 @@
   <%
   next unless in_subform?(column, parent_record)
   column = column.clone
-  column.form_ui = :select if column.association
+  column.form_ui ||= :select if column.association
   -%>
   <td>
     <% unless readonly -%>
