@@ -124,6 +124,10 @@ module ActiveScaffold
         url_options[:controller] = link.controller if link.controller
         url_options.merge! link.parameters if link.parameters
 
+        if link.method != :get and respond_to?(:protect_against_forgery?) and protect_against_forgery?
+          url_options[:authenticity_token] = form_authenticity_token
+        end
+
         html_options = {:class => link.action}
         if link.inline?
           # NOTE this is in url_options instead of html_options on purpose. the reason is that the client-side
