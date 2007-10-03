@@ -124,16 +124,16 @@ module ActiveScaffold
         url_options[:controller] = link.controller if link.controller
         url_options.merge! link.parameters if link.parameters
 
-        if link.method != :get and respond_to?(:protect_against_forgery?) and protect_against_forgery?
-          url_options[:authenticity_token] = form_authenticity_token
-        end
-
         html_options = {:class => link.action}
         if link.inline?
           # NOTE this is in url_options instead of html_options on purpose. the reason is that the client-side
           # action link javascript needs to submit the proper method, but the normal html_options[:method]
           # argument leaves no way to extract the proper method from the rendered tag.
           url_options[:_method] = link.method
+
+          if link.method != :get and respond_to?(:protect_against_forgery?) and protect_against_forgery?
+            url_options[:authenticity_token] = form_authenticity_token
+          end
         else
           # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails
           html_options[:method] = link.method
