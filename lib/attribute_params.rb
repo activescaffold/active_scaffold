@@ -171,7 +171,7 @@ module ActiveScaffold
         next true if column and [:boolean, :datetime].include?(column.type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
-        next true if column and value == column.default
+        next true if column and value == column.default.to_s
 
         if value.is_a?(Hash)
           attributes_hash_is_empty?(value, klass)
