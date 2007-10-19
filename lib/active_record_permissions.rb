@@ -70,8 +70,8 @@ module ActiveRecordPermissions
     # intelligently combine multiple applicable methods.
     #
     # options[:action] should be a CRUD verb (:create, :read, :update, :destroy)
+    # options[:column] should be the name of a model attribute
     def authorized_for?(options = {})
-      options.assert_valid_keys :action, :column
       raise ArgumentError, "unknown action #{options[:action]}" if options[:action] and ![:create, :read, :update, :destroy].include?(options[:action])
 
       # collect the possibly-related methods that actually exist
