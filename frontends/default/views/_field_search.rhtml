@@ -2,7 +2,7 @@
 # We have to remove search form params before the url_for method call, otherwise it throughs it on
 search_params = params[:search]
 params.merge!(:search => nil)
-href = url_for(params_for(:action => :update_table, :escape => false))
+href = url_for(params_for(:action => :update_table, :escape => false).delete_if{|k,v| k == 'search'})
 -%>
 <%= form_remote_tag :url => href,
                     :method => :get,
