@@ -28,7 +28,7 @@ module ActiveScaffold::Config
     def columns
       # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will not be available to .searchable?
       unless @columns
-        self.columns = @core.columns.collect{|c| c.name if c.searchable?}.compact
+        self.columns = @core.columns._inheritable
         self.columns.exclude :created_on, :created_at, :updated_on, :updated_at, :id, @core.columns.active_record_class.locking_column.to_sym
       end
       @columns
