@@ -67,6 +67,12 @@ end
 require 'helpers/view_helpers'
 require 'helpers/controller_helpers'
 
+## 
+## Load the bridge infrastructure
+## 
+require 'bridges/bridge.rb'
+
+
 ##
 ## Inject includes for ActiveScaffold libraries
 ##

@@ -6,6 +6,7 @@ module ActiveScaffold
   class Bridge
     attr_accessor :name
     cattr_accessor :bridges
+    cattr_accessor :bridges_run
     self.bridges = []
     
     def initialize(name, &block)
@@ -35,9 +36,13 @@ module ActiveScaffold
     end
     
     def self.run_all
+      return false if self.bridges_run
       ActiveScaffold::Bridge.bridges.each{|bridge|
         bridge.run
       }
+      
+      
+      self.bridges_run=true
     end
   end
 end
