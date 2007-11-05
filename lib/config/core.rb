@@ -164,6 +164,10 @@ module ActiveScaffold::Config
       @model ||= @model_id.to_s.camelize.constantize
     end
 
+    def inherited_view_paths
+      @inherited_view_paths||=[]
+    end
+    
     # must be a class method so the layout doesn't depend on a controller that uses active_scaffold
     # note that this is unaffected by per-controller frontend configuration.
     def self.asset_path(filename, frontend = self.frontend)
@@ -182,13 +186,13 @@ module ActiveScaffold::Config
     def template_search_path(frontend = self.frontend)
       frontends_path = "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/frontends"
 
-      search_path = []
+      search_path = self.inherited_view_paths.clone
       search_path << 'active_scaffold_overrides'
       search_path << "#{frontends_path}/#{frontend}/views" if frontend.to_sym != :default
       search_path << "#{frontends_path}/default/views"
       return search_path
     end
-
+    
     def self.available_frontends
       frontends_dir = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends")
       Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
