@@ -29,7 +29,7 @@ module ActionView #:nodoc:
 
         active_scaffold_config.template_search_path.each do |active_scaffold_template_path|
           active_scaffold_template = File.join(active_scaffold_template_path, template)
-          return render :file => active_scaffold_template if file_exists? active_scaffold_template
+          return render(:file => active_scaffold_template) if file_exists? active_scaffold_template
         end
       elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
         require 'digest/md5'
@@ -45,7 +45,7 @@ module ActionView #:nodoc:
 
         render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]
       else
-        render_without_active_scaffold *args, &block
+        render_without_active_scaffold(*args, &block)
       end
     end
     alias_method :render_without_active_scaffold, :render
