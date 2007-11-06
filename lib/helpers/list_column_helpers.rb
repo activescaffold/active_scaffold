@@ -48,7 +48,7 @@ module ActiveScaffold
           return text if column.singular_association? and column_empty?(text)
 
           url_options = params_for(:action => nil, :id => record.id, :link => text)
-          if column.singular_association? and associated = record.send(column.association.name)
+          if column.singular_association? and column.link.action != 'nested' and associated = record.send(column.association.name)
             url_options[:id] = associated.id
           end
 
@@ -77,7 +77,7 @@ module ActiveScaffold
         if column.inplace_edit and record.authorized_for?(:action => :update, :column => column.name)
           id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
           tag_options = {:tag => "span", :id => element_cell_id(id_options), :class => "in_place_editor_field"}
-          script = remote_function(:url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s, :value => !column_value}) 
+          script = remote_function(:url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s, :value => !column_value})
           content_tag(:span, check_box_tag(tag_options[:id], 1, column_value || column_value == 1, {:onchange => script}) , tag_options)
         else
           check_box_tag(nil, 1, column_value || column_value == 1, :disabled => true)
@@ -138,7 +138,7 @@ module ActiveScaffold
           clean_column_value(format_column(value))
         end
       end
-      
+
       def active_scaffold_inplace_edit(record, column)
         formatted_column = format_inplace_edit_column(record,column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
