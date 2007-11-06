@@ -125,7 +125,12 @@ module ActiveScaffold
     # Searches through the known columns for association columns. If the given constraint is an association,
     # it assumes that the constraint value is an id. It then does a association.klass.find with the value
     # and adds the associated object to the record.
-    def apply_constraints_to_record(record)
+    #
+    # For some operations ActiveRecord will automatically update the database. That's not always ok.
+    # If it *is* ok (e.g. you're in a transaction), then set :allow_autosave to true.
+    def apply_constraints_to_record(record, options = {})
+      options[:allow_autosave] = false if options[:allow_autosave].nil?
+
       active_scaffold_constraints.each do |k, v|
         column = active_scaffold_config.columns[k]
         if column and column.association
@@ -143,6 +148,16 @@ module ActiveScaffold
             record.send("#{k}=", params[:parent_model].constantize.find(v))
           else # regular singular association
             record.send("#{k}=", column.association.klass.find(v))
+
+            # setting the belongs_to side of a has_one isn't safe. if the has_one was already
+            # specified, rails won't automatically clear out the previous associated record.
+            #
+            # note that we can't take the extra step to correct this unless we're permitted to
+            # run operations where activerecord auto-saves the object.
+            reverse = column.association.klass.reflect_on_association(column.association.reverse)
+            if reverse.macro == :has_one and options[:allow_autosave]
+              record.send(k).send("#{column.association.reverse}=", record)
+            end
           end
         else
           record.send("#{k}=", v)

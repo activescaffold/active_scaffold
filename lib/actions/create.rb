@@ -71,7 +71,7 @@ module ActiveScaffold::Actions
       begin
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
-          apply_constraints_to_record(@record)
+          apply_constraints_to_record(@record, :allow_autosave => true)
           before_create_save(@record)
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
           if successful?
