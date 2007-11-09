@@ -146,7 +146,7 @@ Object.extend(String.prototype, {
 Element.Methods.Simulated = {
   hasAttribute: function(element, attribute) {
     var t = Element._attributeTranslations;
-    attribute = t.names[attribute] || attribute;
+    attribute = (t.names && t.names[attribute]) || attribute;
     // Return false if we get an error here
     try {
       return $(element).getAttributeNode(attribute).specified;
