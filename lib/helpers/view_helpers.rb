@@ -177,7 +177,8 @@ module ActiveScaffold
       end
 
       def column_calculation(column)
-        calculation = active_scaffold_config.model.calculate(column.calculate, column.name, :conditions => controller.send(:all_conditions), :include => controller.send(:active_scaffold_joins))
+        calculation = active_scaffold_config.model.calculate(column.calculate, column.name, :conditions => controller.send(:all_conditions),
+         :joins => controller.send(:joins_for_collection), :include => controller.send(:active_scaffold_joins))
       end
     end
   end
