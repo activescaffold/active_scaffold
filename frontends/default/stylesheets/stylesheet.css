@@ -765,3 +765,7 @@ padding: 0;
 .active-scaffold a.visibility-toggle {
 font-size: 100%;
 }
+
+.active-scaffold-found {
+  float:left;
+}
