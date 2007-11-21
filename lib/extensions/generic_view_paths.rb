@@ -11,6 +11,11 @@ class ActionController::Base
   self.generic_view_paths = []
 end
 
+class ActionMailer::Base
+  class_inheritable_accessor :generic_view_paths
+  self.generic_view_paths = []
+end
+
 class ActionView::Base
   private
   def find_full_template_path_with_generic_paths(template_path, extension)
