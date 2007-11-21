@@ -110,7 +110,7 @@ module ActiveScaffold
     # TODO: this should reside on the model, not the controller
     def merge_conditions(*conditions)
       c = conditions.find_all {|c| not c.nil? and not c.empty? }
-      c.empty? ? nil : c.collect{|c| active_record_config.model.send(:sanitize_sql, c)}.join(' AND ')
+      c.empty? ? nil : c.collect{|c| active_scaffold_config.model.send(:sanitize_sql, c)}.join(' AND ')
     end
 
     # accepts a DataStructure::Sorting object and builds an order-by clause
