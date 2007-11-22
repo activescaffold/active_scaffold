@@ -16,18 +16,13 @@ class ActionController::Base
   self.generic_view_paths = []
 end
 
-class ActionMailer::Base
-  class_inheritable_accessor :generic_view_paths
-  self.generic_view_paths = []
-end
-
 class ActionView::Base
   private
   def find_full_template_path_with_generic_paths(template_path, extension)
     path = find_full_template_path_without_generic_paths(template_path, extension)
     if path and not path.empty?
       path
-    elsif action_defined_on_controller?
+    elsif search_generic_view_paths?
       template_file = File.basename("#{template_path}.#{extension}")
       path = find_generic_base_path_for(template_file)
       path ? "#{path}/#{template_file}" : ""
@@ -42,9 +37,10 @@ class ActionView::Base
     controller.generic_view_paths.find { |p| File.file?(File.join(p, template_file_name)) }
   end
 
-  # Returns true if this action was explicitly defined on the controller
-  def action_defined_on_controller?
-    controller.class.action_methods.include?(controller.action_name)
+  # We don't want to use generic_view_paths in ActionMailer, and we don't want
+  # to use them unless the controller action was explicitly defined.
+  def search_generic_view_paths?
+    controller.respond_to?(:generic_view_paths) and controller.class.action_methods.include?(controller.action_name)
   end
 end
 
