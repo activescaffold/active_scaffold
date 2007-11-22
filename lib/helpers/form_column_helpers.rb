@@ -52,7 +52,7 @@ module ActiveScaffold
       # the standard active scaffold options used for class, name and scope
       def active_scaffold_input_options(column, scope = nil)
         name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
-        options = { :name => name, :class => "#{column.name}-input" }
+        options = { :name => name, :class => "#{column.name}-input", :id => "record_#{column.name}_#{params[:eid] || params[:id]}"}
       end
 
       ##
@@ -122,13 +122,13 @@ module ActiveScaffold
           record_select_field(
             "#{options[:name]}",
             @record.send(column.name) || column.association.klass.new,
-            {:controller => remote_controller, :params => params.merge(:parent_id => @record.id, :parent_model => @record.class)}.merge(active_scaffold_input_text_options).merge(column.options)
+            {:controller => remote_controller, :id => options[:id], :params => params.merge(:parent_id => @record.id, :parent_model => @record.class)}.merge(active_scaffold_input_text_options).merge(column.options)
           )
         elsif column.plural_association?
           record_multi_select_field(
             options[:name],
             @record.send(column.name),
-            {:controller => remote_controller, :params => params.merge(:parent_id => @record.id, :parent_model => @record.class)}.merge(active_scaffold_input_text_options).merge(column.options)
+            {:controller => remote_controller, :id => options[:id], :params => params.merge(:parent_id => @record.id, :parent_model => @record.class)}.merge(active_scaffold_input_text_options).merge(column.options)
           )
         end
       end
