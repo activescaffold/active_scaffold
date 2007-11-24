@@ -163,7 +163,8 @@ module ActiveScaffold::Config
     def model
       @model ||= @model_id.to_s.camelize.constantize
     end
-
+    
+    # warning - this won't work as a per-request dynamic attribute in rails 2.0.  You'll need to interact with Controller#generic_view_paths
     def inherited_view_paths
       @inherited_view_paths||=[]
     end
