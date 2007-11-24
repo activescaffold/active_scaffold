@@ -21,7 +21,7 @@ module ActiveScaffold
         if @configuration_binding.nil?
           raise $!
         else
-          eval(name.to_s, @configuration_binding)
+          eval("self", @configuration_binding).send(name, *args)
         end
       end
     end
