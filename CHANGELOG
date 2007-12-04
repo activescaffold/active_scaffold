@@ -6,24 +6,21 @@
 * row class: new helper method (list_row_class) gets called for each record in the list and returns a CSS class.
 * automatically link to the :show action of singular associations. this is similar to the nested scaffolds for plural associations.
 * column.list_ui: good for when you want to render multiple columns the same way.
-* * new list interface options:
-* * * ... ?
+* * built-in list interface options:
+* * * for inplace edits - checkbox
 * Support :joins_for_collection in column_calculation
-* inplace_edit option on list columns. currently works for text boxes, booleans ... ?
+* inplace_edit option on list columns. currently works for text boxes and booleans
 
 === CREATE/UPDATE
+* file uploads - largely taken care of by file_column bridge. tim, you should say something more here.
 * form_ui
 * * form interface options are now supported through helper method named active_scaffold_input_#{form_ui}. if you want a different form interface than activescaffold normally provides, you may configure the form_ui for that column to use one of these methods. you can easily define your own, too.
-* * new form interface options:
-* * * :country
-* * * :usa_state
-* * * :textarea
-* * * :record_select - paginated/searchable interface for for singular and plural associations (requires recordselect plugin)
-* * * ... check form_column_helpers.rb for official list ...
+* * built-in form interface options:
+* * * for associations - singular_association, plural_association, select, record_select
+* * * others - select, checkbox, country, password, textarea, usa_state, virtual, boolean
 * * subforms respect form_ui settings. but if form_ui is empty, it will be set to :select to disable subform nesting.
 * boolean columns: when the database column allows nil, we now add a third option to the dropdown so you don't *have* to pick true or false.
 * new :params option for a column lets you specify additional parameters to accept when the given column is on the form. this is for when a column needs to submit multiple values to work.
-* file uploads (details ... ?)
 * improved support for associations in parameters. for simply selecting/deselecting associations, activescaffold will now recognize `:user => 5' or `:users => [1, 2, 5]'.
 * Supply a unique id from active_scaffold_input_options for form fields.
 * added after_update_save controller override method
@@ -36,7 +33,7 @@
 
 === NESTING
 * :through associations may now be nested
-* nested#shallow_delete: ... ?
+* nested#shallow_delete
 
 === SEARCH
 * fieldsearch module handles booleans better - provides third option so you don't *have* to search on a boolean column
@@ -51,7 +48,7 @@
 * authorized_for? in ActiveRecordPermissions now calls respond_to? only as much as needed
 * removing an assert_valid_keys? call in active_record_permissions#authorized_for?. it just wasn't worth the CPU time.
 * render :super is now extension-agnostic. ex: `render :super` in list.html.erb will properly find list.rhtml as the "parent" template.
-Auto-bridge loading mechanism.  Bridges integrated into core.
+* Auto-bridge loading mechanism.  Bridges integrated into core.
 * inherited_view_paths: ability to specify other folders to look for if missing view occurs
 
 == FIXES
