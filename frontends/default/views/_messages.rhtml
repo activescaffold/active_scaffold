@@ -1,7 +1,7 @@
 <% for name in [:info, :warning, :error] %>
   <% if flash[name] %>
     <p class="<%= "#{name}-message message" %>" >
-      <%= flash[name] %>
+      <%= h flash[name] %>
       <% if request.xhr? %>
         <a href="#" onclick="Element.remove(this.parentNode); return false;"><%= as_('Close') %></a>
       <% end %>

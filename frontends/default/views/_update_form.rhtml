@@ -27,7 +27,7 @@ else
 end
 %>
 
-  <h4><%= @record.to_label.nil? ? active_scaffold_config.update.label : as_('Update %s', @record.to_label) %></h4>
+  <h4><%= @record.to_label.nil? ? active_scaffold_config.update.label : as_('Update %s', clean_column_value(@record.to_label)) %></h4>
 
   <% if request.xhr? -%>
     <div id="<%= element_messages_id(:action => :update) %>" class="messages-container"><%= error_messages_for :record %></div>
