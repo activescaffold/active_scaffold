@@ -95,7 +95,6 @@
 
 == MISC
 
-* Rails 2.0 compatibility where necessary
 * reorganized the helpers and extensions
 * ui_type is now only an alias for form_ui
 * improvements to exception messages
@@ -104,3 +103,4 @@
 * fixes for edge rails compatibility
 * small improvements for localization accessibility
 * minor string renaming (will affect localization tables, though)
+* closed a few XSS holes
