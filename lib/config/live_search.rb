@@ -6,6 +6,9 @@ module ActiveScaffold::Config
       @core = core_config
 
       @full_text_search = self.class.full_text_search?
+
+      # start with the ActionLink defined globally
+      @link = self.class.link.clone
     end
 
 
@@ -42,5 +45,8 @@ module ActiveScaffold::Config
     def full_text_search?
       @full_text_search
     end
+
+    # the ActionLink for this action
+    attr_accessor :link
   end
 end
