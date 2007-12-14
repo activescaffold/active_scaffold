@@ -28,7 +28,7 @@
 <div class="active-scaffold-footer">
   <div class="active-scaffold-found"><span class="active-scaffold-records"><%= @page.pager.count -%></span> <%=as_('Found') %></div>
   <div class="active-scaffold-pagination">
-    <%= render :partial => 'list_pagination_links', :locals => { :current_page => @page } unless @page.pager.number_of_pages == 1 %>
+    <%= render :partial => 'list_pagination_links', :locals => { :current_page => @page } unless @page.pager.number_of_pages < 2 %>
   </div>
   <br clear="both" /><%# a hack for the Rico Corner problem %>
 </div>
