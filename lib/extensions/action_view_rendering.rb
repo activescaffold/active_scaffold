@@ -28,6 +28,7 @@ module ActionView #:nodoc:
         template = File.basename(template_path).split('.').first
 
         active_scaffold_config.template_search_path.each do |active_scaffold_template_path|
+          next if template_path.include? active_scaffold_template_path
           active_scaffold_template = File.join(active_scaffold_template_path, template)
           return render(:file => active_scaffold_template) if file_exists? active_scaffold_template
         end
