@@ -27,7 +27,9 @@ module ActionView #:nodoc:
         options = args[1] || {}
         options[:locals] ||= {}
 
-        template_path = caller.first.split(':').first
+        known_extensions = [:erb, :rhtml, :rjs, :haml]
+        # search through call stack for a template file (normally matches on first caller)
+        template_path = caller.find{|c| known_extensions.include?(c.split(':').first.split('.').last.to_sym) }
         template = File.basename(template_path).split('.').first
 
         active_scaffold_config.template_search_path.each do |active_scaffold_template_path|
