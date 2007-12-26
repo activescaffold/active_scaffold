@@ -29,7 +29,9 @@ module ActionView #:nodoc:
 
         known_extensions = [:erb, :rhtml, :rjs, :haml]
         # search through call stack for a template file (normally matches on first caller)
-        template_path = caller.find{|c| known_extensions.include?(c.split(':').first.split('.').last.to_sym) }
+        # note that we can't use split(':').first because windoze boxen may have an extra colon to specify the drive letter. the
+        # solution is to count colons from the *right* of the string, not the left. see issue #299.
+        template_path = caller.find{|c| known_extensions.include?(c.split(':')[-3].split('.').last.to_sym) }
         template = File.basename(template_path).split('.').first
 
         active_scaffold_config.template_search_path.each do |active_scaffold_template_path|
