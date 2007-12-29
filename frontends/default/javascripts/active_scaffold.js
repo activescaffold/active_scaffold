@@ -48,6 +48,7 @@ var ActiveScaffold = {
     tbody = $(tbody);
     if (tbody.rows.length == 0) {
       new Ajax.Updater($(content_container_id), url, {
+        method: 'get',
         asynchronous: true,
         evalScripts: true
       });
