@@ -16,6 +16,7 @@ module ActiveScaffold::DataStructures
       raise ArgumentError, "Could not find column #{column_name}" if column.nil?
       raise ArgumentError, "Sorting direction unknown" unless [:ASC, :DESC].include? direction.to_sym
       @clauses << [column, direction] if column.sortable?
+      raise ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
     end
 
     # an alias for +add+. must accept its arguments in a slightly different form, though.
@@ -50,6 +51,10 @@ module ActiveScaffold::DataStructures
       @clauses.any? { |sorting| sorting[0].sort.is_a? Hash and sorting[0].sort.has_key? :method }
     end
 
+    def sorts_by_sql?
+      @clauses.any? { |sorting| sorting[0].sort.is_a? Hash and sorting[0].sort.has_key? :sql }
+    end
+
     # iterate over the clauses
     def each
       @clauses.each { |clause| yield clause }
@@ -75,6 +80,10 @@ module ActiveScaffold::DataStructures
       # it's a name
       name_or_column = name_or_column.to_s.split('.').last if name_or_column.to_s.include? '.'
       return @columns[name_or_column]
+    end
+
+    def mixed_sorting?
+      sorts_by_method? and sorts_by_sql?
     end
   end
 end
