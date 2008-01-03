@@ -168,7 +168,7 @@ module ActiveScaffold
 
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
-        next true if column and [:boolean, :datetime].include?(column.type)
+        next true if column and [:boolean, :datetime, :date, :time].include?(column.type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
         next true if column and value == column.default.to_s
