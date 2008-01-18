@@ -149,6 +149,7 @@ module ActiveScaffold
          :loading_text => as_("Loading…"),
          :save_text => as_("Update"),
          :saving_text => as_("Saving…"),
+         :options => "{method: 'post'}",
          :script => true}.merge(column.options)
         content_tag(:span, formatted_column, tag_options) + in_place_editor(tag_options[:id], in_place_editor_options)
       end
