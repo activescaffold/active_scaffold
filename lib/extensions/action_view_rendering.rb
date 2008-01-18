@@ -38,9 +38,9 @@ module ActionView #:nodoc:
 
           path = File.join(active_scaffold_template_path, template)
           extension = find_template_extension_from_handler(path)
-          template = "#{path}.#{extension}"
+          template_file = "#{path}.#{extension}"
 
-          return render(:file => template, :locals => options[:locals], :use_full_path => false) if File.file? template
+          return render(:file => template_file, :locals => options[:locals], :use_full_path => false) if File.file? template_file
         end
       elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
         require 'digest/md5'
