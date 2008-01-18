@@ -17,11 +17,11 @@ var ActiveScaffold = {
   stripe: function(tableBody) {
     var even = false;
     var tableBody = $(tableBody);
-    var tableRows = tableBody.down("tr");
-    var length = tableBody.rows.length;
+    var tableRows = tableBody.childElements();
+    var length = tableRows.length;
 
     for (var i = 0; i < length; i++) {
-      var tableRow = tableBody.rows[i];
+      var tableRow = tableRows[i];
       //Make sure to skip rows that are create or edit rows or messages
       if (!tableRow.hasClassName("create")
         && !tableRow.hasClassName("update")
@@ -39,14 +39,14 @@ var ActiveScaffold = {
   },
   hide_empty_message: function(tbody, empty_message_id) {
     tbody = $(tbody);
-    if (tbody.rows.length != 0) {
+    if (tbody.childElements().length != 0) {
       $(empty_message_id).hide();
     }
   },
   reload_if_empty: function(tbody, url) {
     var content_container_id = tbody.replace('tbody', 'content');
     tbody = $(tbody);
-    if (tbody.rows.length == 0) {
+    if (tbody.childElements().length == 0) {
       new Ajax.Updater($(content_container_id), url, {
         method: 'get',
         asynchronous: true,
