@@ -159,7 +159,7 @@ window.dhtmlHistory = {
    /** Gets the current hash value that is in the browser's
        location bar, removing leading # symbols if they are present. */
    /** public */ getCurrentLocation: function() {
-      var currentLocation = this.removeHash(window.location.hash);
+      var currentLocation = escape(this.removeHash(window.location.hash));
 
       return currentLocation;
    },
