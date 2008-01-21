@@ -1,3 +1,20 @@
+= 1.1.0
+
+== FEATURES
+
+* `render :super' now accepts a :locals option
+* parameter-based conditions now support arrays of values (e.g. users?name[]=bob&name[]=fred becomes "name IN ('bob', 'fred')")
+
+== FIXES
+
+* `render :super' now works from active_scaffold_overrides without endlessly looping
+* `render :super' no longer assumes that the *immediate* caller was the override template file
+* `render :super' works better with windows file names (e.g. c:/...)
+* reload_if_empty() javascript now uses GET
+* inplace_edit now uses POST instead of GET
+* adding time and date fields to ignore list for determining whether subform row is empty. previously only datetime was ignored.
+* closed a potential internet explorer security issue in dhtml_history.js library
+
 = 1.1.0 RC1
 
 == FEATURES
