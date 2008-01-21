@@ -37,7 +37,7 @@ module ActionView #:nodoc:
           next if template_path.include? active_scaffold_template_path
 
           path = File.join(active_scaffold_template_path, template)
-          extension = find_template_extension_from_handler(path)
+          extension = find_template_extension_from_handler(path) rescue 'rhtml' # the rescue is a hack for rails 1.2.x compat
           template_file = "#{path}.#{extension}"
 
           return render(:file => template_file, :locals => options[:locals], :use_full_path => false) if File.file? template_file
@@ -81,7 +81,7 @@ module ActionView #:nodoc:
 
       # check the ActiveScaffold-specific directories
       active_scaffold_config.template_search_path.each do |template_path|
-        return File.join(template_path, partial_name) if file_exists? File.join(template_path, "_#{partial_name}")
+        return File.join("../../", template_path, partial_name) if file_exists? File.join("../../", template_path, "_#{partial_name}")
       end
       return partial_path
     end
