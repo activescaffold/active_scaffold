@@ -1,3 +1,9 @@
+= 1.1.1
+
+== FIXES
+
+* rendering for rails 1.2.x
+
 = 1.1.0
 
 == FEATURES
