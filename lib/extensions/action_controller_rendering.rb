@@ -35,10 +35,9 @@ module ActionController #:nodoc:
     def rewrite_template_path_for_active_scaffold(path)
       # test for the actual file
       return path if template_exists? default_template_name(path)
-
       # check the ActiveScaffold-specific directories
       active_scaffold_config.template_search_path.each do |template_path|
-        full_path = File.join("../../", template_path, path)
+        full_path = File.join(template_path, path)
         return full_path if template_exists? full_path
       end
       return path

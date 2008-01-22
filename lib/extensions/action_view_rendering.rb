@@ -34,6 +34,7 @@ module ActionView #:nodoc:
         template_path = caller.find{|c| known_extensions.include?(c.split(':')[-3].split('.').last.to_sym) }
         template = File.basename(template_path).split('.').first
         active_scaffold_config.template_search_path.each do |active_scaffold_template_path|
+          active_scaffold_template_path = File.expand_path(active_scaffold_template_path, "app/views")
           next if template_path.include? active_scaffold_template_path
 
           path = File.join(active_scaffold_template_path, template)
@@ -81,7 +82,7 @@ module ActionView #:nodoc:
 
       # check the ActiveScaffold-specific directories
       active_scaffold_config.template_search_path.each do |template_path|
-        return File.join("../../", template_path, partial_name) if file_exists? File.join("../../", template_path, "_#{partial_name}")
+        return File.join(template_path, partial_name) if file_exists? File.join(template_path, "_#{partial_name}")
       end
       return partial_path
     end

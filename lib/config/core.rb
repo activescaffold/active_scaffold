@@ -184,8 +184,9 @@ module ActiveScaffold::Config
 
     # the ActiveScaffold-specific template paths
     # an instance method. this is the only place that pays attention to per-controller frontend configuration.
+    # note: for the rails 1.2.x rendering, this needs to be relative to app/views.
     def template_search_path(frontend = self.frontend)
-      frontends_path = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends")
+      frontends_path = "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/frontends"
 
       search_path = self.inherited_view_paths.clone
       search_path << 'active_scaffold_overrides'
