@@ -34,14 +34,9 @@ module ActionView #:nodoc:
         template_path = caller.find{|c| known_extensions.include?(c.split(':')[-3].split('.').last.to_sym) }
         template = File.basename(template_path).split('.').first
         active_scaffold_config.template_search_path.each do |active_scaffold_template_path|
-          active_scaffold_template_path = File.expand_path(active_scaffold_template_path, "app/views")
           next if template_path.include? active_scaffold_template_path
-
-          path = File.join(active_scaffold_template_path, template)
-          extension = find_template_extension_from_handler(path) rescue 'rhtml' # the rescue is a hack for rails 1.2.x compat
-          template_file = "#{path}.#{extension}"
-
-          return render(:file => template_file, :locals => options[:locals], :use_full_path => false) if File.file? template_file
+          active_scaffold_template = File.join(active_scaffold_template_path, template)
+          return render(:file => active_scaffold_template, :locals => options[:locals]) if @finder.file_exists? active_scaffold_template
         end
       elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
         require 'digest/md5'
@@ -78,11 +73,11 @@ module ActionView #:nodoc:
       path, partial_name = partial_pieces(partial_path)
 
       # test for the actual file
-      return partial_path if file_exists? File.join(path, "_#{partial_name}")
-
+      return partial_path if @finder.file_exists? File.join(path, "_#{partial_name}")
+      
       # check the ActiveScaffold-specific directories
       active_scaffold_config.template_search_path.each do |template_path|
-        return File.join(template_path, partial_name) if file_exists? File.join(template_path, "_#{partial_name}")
+        return File.join(template_path, partial_name) if @finder.file_exists? File.join(template_path, "_#{partial_name}")
       end
       return partial_path
     end
