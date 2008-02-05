@@ -26,22 +26,19 @@ class ActionView::TemplateFinder
 
   def pick_template_with_generic_paths(template_path, extension)
     path = pick_template_without_generic_paths(template_path, extension)
-    if path and not path.empty?
-      path
-    elsif search_generic_view_paths?
+    if path.blank? and search_generic_view_paths?
       template_file = File.basename("#{template_path}.#{extension}")
       path = find_generic_base_path_for(template_file)
-      path ? "#{path}/#{template_file}" : ""
-    else
-      ""
+      path = path ? "#{path}/#{template_file}" : ""
     end
+    path
   end
   alias_method_chain :pick_template, :generic_paths
   alias_method :template_exists?, :pick_template # re-alias to the new pick_template
   
   def find_template_extension_from_handler_with_generic_paths(template_path)
     extension = find_template_extension_from_handler_without_generic_paths(template_path)
-    if extension.blank?
+    if extension.blank? and search_generic_view_paths?
       template_file = File.basename(template_path)
       controller.generic_view_paths.each do |path|
         self.class.template_handler_extensions.each do |extension|
