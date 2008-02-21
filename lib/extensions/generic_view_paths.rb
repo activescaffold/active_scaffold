@@ -27,7 +27,6 @@ class ActionView::TemplateFinder
   def pick_template_with_generic_paths(template_path, extension)
     path = pick_template_without_generic_paths(template_path, extension)
     if path.blank? and search_generic_view_paths?
-p "pick path for: #{template_path}.#{extension}"
       template_file = File.basename("#{template_path}.#{extension}")
       path = find_generic_base_path_for(template_file)
       path = path ? "#{path}/#{template_file}" : nil
@@ -46,8 +45,6 @@ p "pick path for: #{template_path}.#{extension}"
           return handler_extension if File.file?(File.join(path, "#{template_file}.#{handler_extension}"))
         end
       end
-p template_path
-p extension
     end
     extension
   end
