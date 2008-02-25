@@ -1,36 +1,40 @@
-# Workaround a problem with script/plugin and http-based repos.
-# See http://dev.rubyonrails.org/ticket/8189
-Dir.chdir(Dir.getwd.sub(/vendor.*/, '')) do
-
 ##
-## Copy over asset files (javascript/css/images) from the plugin directory to public/
+## Install ActiveScaffold assets into /public 
 ##
 
-def copy_files(source_path, destination_path, directory)
-  source, destination = File.join(directory, source_path), File.join(RAILS_ROOT, destination_path)
-  FileUtils.mkdir(destination) unless File.exist?(destination)
-  FileUtils.cp_r(Dir.glob(source+'/*.*'), destination)
-end
+require File.dirname(__FILE__) + '/install_assets'
 
-directory = File.dirname(__FILE__)
+##
+## Install Counter
+##
+#
+# What's going on here? 
+#   We're incrementing a web counter so we can track SVN installs of ActiveScaffold 
+# 
+# How? 
+#   We're making a GET request to errcount.com to update a simple counter. No data is transmitted.
+# 
+# Why?
+#   So we can know how many people are using ActiveScaffold and modulate our level of effort accordingly.
+#   Despite numerous pleas our Googly overlords still only provide us with download stats for the zip distro.
+# 
+# *Thanks for your understanding* 
+#
 
-copy_files("/public", "/public", directory)
-
-available_frontends = Dir[File.join(directory, 'frontends', '*')].collect { |d| File.basename d }
-[ :stylesheets, :javascripts, :images].each do |asset_type|
-  path = "/public/#{asset_type}/active_scaffold"
-  copy_files(path, path, directory)
+class ErrCounter # using errcount.com
+  require "net/http"
   
-  File.open(File.join(RAILS_ROOT, path, 'DO_NOT_EDIT'), 'w') do |f|
-    f.puts "Any changes made to files in sub-folders will be lost."
-    f.puts "See http://activescaffold.com/tutorials/faq#custom-css."
-  end
-
-  available_frontends.each do |frontend|
-    source = "/frontends/#{frontend}/#{asset_type}/"
-    destination = "/public/#{asset_type}/active_scaffold/#{frontend}"
-    copy_files(source, destination, directory)
-  end
+  @@ACCOUNT_ID = 341
+  @@SITE_DOMAIN = 'installs.activescaffold.com'
+  
+  def self.increment
+    @http = Net::HTTP.new("errcount.com")
+    resp, data = @http.get2("/ctr/#{@@ACCOUNT_ID}.js", {'Referer' => @@SITE_DOMAIN})
+    puts resp.body
+  end  
 end
 
+begin
+  ErrCounter.increment
+rescue
 end
