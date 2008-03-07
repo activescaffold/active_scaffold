@@ -4,10 +4,10 @@ require 'exceptions'
 ##
 
 version = Rails::VERSION::STRING.split(".")
-if version[0] < "1" or (version[0] == "1" and version[1] < "2")
+if version[0] < "2"
   message = <<-EOM
     ************************************************************************
-    Rails 1.2.1 or greater is required. Please remove ActiveScaffold or
+    Rails 2.0 or greater is required. Please remove ActiveScaffold or
     upgrade Rails. After you upgrade Rails, be sure to run
 
     > rake rails:update:javascripts
