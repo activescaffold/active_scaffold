@@ -88,15 +88,6 @@ module ActiveScaffold
         js + "\n" + css + "\n<!--[if IE]>" + ie_css + "<![endif]-->\n"
       end
 
-      def active_scaffold_includes_with_tools(frontend = :default)
-        js = javascript_include_tag(ActiveScaffold::Config::Core.asset_path('input_box.js', frontend))
-        js << javascript_include_tag(ActiveScaffold::Config::Core.asset_path('number_formats.js', frontend))
-        css = stylesheet_link_tag(ActiveScaffold::Config::Core.asset_path('tools-stylesheet.css', frontend))
-        ie_css = stylesheet_link_tag(ActiveScaffold::Config::Core.asset_path('tools-stylesheet-ie.css', frontend))
-        active_scaffold_includes_without_tools + "\n" + js + "\n" + css + "\n<!--[if IE]>" + ie_css + "<![endif]-->\n"
-      end
-      alias_method_chain :active_scaffold_includes, :tools
-
       # a general-use loading indicator (the "stuff is happening, please wait" feedback)
       def loading_indicator_tag(options)
         image_tag "/images/active_scaffold/default/indicator.gif", :style => "visibility:hidden;", :id => loading_indicator_id(options), :alt => "loading indicator", :class => "loading-indicator"
