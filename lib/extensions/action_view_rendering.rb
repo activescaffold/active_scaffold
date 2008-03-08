@@ -72,6 +72,12 @@ module ActionView #:nodoc:
     alias_method :render_partial_without_active_scaffold, :render_partial
     alias_method :render_partial, :render_partial_with_active_scaffold
 
+    def template_format
+      #return @template_format if @template_format  <-- I COMMENTED THIS OUT
+      format = controller && controller.respond_to?(:request) && controller.request.parameters[:format]
+      @template_format = format.blank? ? :html : format.to_sym
+    end
+        
     private
 
     def rewrite_partial_path_for_active_scaffold(partial_path)
