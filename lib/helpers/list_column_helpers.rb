@@ -138,7 +138,34 @@ module ActiveScaffold
           clean_column_value(format_column(value))
         end
       end
+      
+      def active_scaffold_in_place_editor_js(field_id, options = {})
+        function =  "new Ajax.InPlaceEditor("
+        function << "'#{field_id}', "
+        function << "'#{url_for(options[:url])}'"
 
+        js_options = {}
+        js_options['cancelText'] = %('#{options[:cancel_text]}') if options[:cancel_text]
+        js_options['okText'] = %('#{options[:save_text]}') if options[:save_text]
+        js_options['loadingText'] = %('#{options[:loading_text]}') if options[:loading_text]
+        js_options['savingText'] = %('#{options[:saving_text]}') if options[:saving_text]
+        js_options['rows'] = options[:rows] if options[:rows]
+        js_options['htmlResponse'] = options[:html_response] if options.has_key?(:html_response)
+        js_options['cols'] = options[:cols] if options[:cols]
+        js_options['size'] = options[:size] if options[:size]
+        js_options['externalControl'] = "'#{options[:external_control]}'" if options[:external_control]
+        js_options['loadTextURL'] = "'#{url_for(options[:load_text_url])}'" if options[:load_text_url]        
+        js_options['ajaxOptions'] = options[:options] if options[:options]
+        js_options['evalScripts'] = options[:script] if options[:script]
+        js_options['callback']   = "function(form) { return #{options[:with]} }" if options[:with]
+        js_options['clickToEditText'] = %('#{options[:click_to_edit_text]}') if options[:click_to_edit_text]
+        function << (', ' + options_for_javascript(js_options)) unless js_options.empty?
+        
+        function << ')'
+
+        javascript_tag(function)
+      end
+      
       def active_scaffold_inplace_edit(record, column)
         formatted_column = format_inplace_edit_column(record,column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
@@ -149,9 +176,10 @@ module ActiveScaffold
          :loading_text => as_("Loading…"),
          :save_text => as_("Update"),
          :saving_text => as_("Saving…"),
+         :html_response => false,
          :options => "{method: 'post'}",
          :script => true}.merge(column.options)
-        content_tag(:span, formatted_column, tag_options) + in_place_editor(tag_options[:id], in_place_editor_options)
+        content_tag(:span, formatted_column, tag_options) + active_scaffold_in_place_editor_js(tag_options[:id], in_place_editor_options)
       end
 
     end
