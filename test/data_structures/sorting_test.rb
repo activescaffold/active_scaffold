@@ -83,10 +83,11 @@ class SortingTest < Test::Unit::TestCase
     @sorting.add :a
     assert @sorting.sorts_by_method?
 
-    #test mixed sql/method sorting: true
-    @sorting.add :b
-    assert @sorting.sorts_by_method?
-
+    #test mixed sql/method sorting: raise error
+    assert_raise ArgumentError do
+      @sorting.add :b
+    end
+    
     #test pure sql sorting: false
     @sorting.clear
     @sorting.add :b
