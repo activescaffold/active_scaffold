@@ -152,7 +152,10 @@ module ActiveScaffold
           if link.method != :get and respond_to?(:protect_against_forgery?) and protect_against_forgery?
             url_options[:authenticity_token] = form_authenticity_token
           end
-        else
+
+          # robd: protect against submitting get links as forms, since this causes annoying 
+          # 'Do you wish to resubmit your form?' messages whenever you go back and forwards.
+        elsif link.method != :get
           # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails
           html_options[:method] = link.method
         end
