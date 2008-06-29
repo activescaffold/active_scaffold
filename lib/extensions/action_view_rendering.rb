@@ -55,31 +55,32 @@ module ActionView #:nodoc:
         render_without_active_scaffold(*args, &block)
       end
     end
-    alias_method :render_without_active_scaffold, :render
-    alias_method :render, :render_with_active_scaffold
+    alias_method_chain :render, :active_scaffold
+  end
+end
 
-    def render_partial_with_active_scaffold(partial_path, local_assigns = nil, deprecated_local_assigns = nil) #:nodoc:
-      if self.controller.class.respond_to?(:uses_active_scaffold?) and self.controller.class.uses_active_scaffold?
-        partial_path = rewrite_partial_path_for_active_scaffold(partial_path)
+module ActionView #:nodoc:
+  class PartialTemplate < Template #:nodoc:
+    def initialize_with_active_scaffold(view, partial_path, object = nil, locals = {})
+      if view.controller.class.respond_to?(:uses_active_scaffold?) and view.controller.class.uses_active_scaffold?
+        partial_path = rewrite_partial_path_for_active_scaffold(view, partial_path)
       end
-      render_partial_without_active_scaffold(partial_path, local_assigns, deprecated_local_assigns)
+      initialize_without_active_scaffold(view, partial_path, object, locals)
     end
-    alias_method :render_partial_without_active_scaffold, :render_partial
-    alias_method :render_partial, :render_partial_with_active_scaffold
-
+    alias_method_chain :initialize, :active_scaffold
+    
     private
+      def rewrite_partial_path_for_active_scaffold(view, partial_path)
+        path, partial_name = partial_pieces(view, partial_path)
 
-    def rewrite_partial_path_for_active_scaffold(partial_path)
-      path, partial_name = partial_pieces(partial_path)
-
-      # test for the actual file
-      return partial_path if @finder.file_exists? File.join(path, "_#{partial_name}")
+        # test for the actual file
+        return partial_path if view.finder.file_exists? File.join(path, "_#{partial_name}")
       
-      # check the ActiveScaffold-specific directories
-      active_scaffold_config.template_search_path.each do |template_path|
-        return File.join(template_path, partial_name) if @finder.file_exists? File.join(template_path, "_#{partial_name}")
+        # check the ActiveScaffold-specific directories
+        view.controller.active_scaffold_config.template_search_path.each do |template_path|
+          return File.join(template_path, partial_name) if view.finder.file_exists? File.join(template_path, "_#{partial_name}")
+        end
+        return partial_path
       end
-      return partial_path
-    end
   end
 end
