@@ -44,7 +44,6 @@ module ActiveScaffold
       # the standard active scaffold options used for textual inputs
       def active_scaffold_input_text_options(options = {})
         options[:autocomplete] = 'off'
-        options[:size] = 20
         options[:class] = "#{options[:class]} text-input".strip
         options
       end
