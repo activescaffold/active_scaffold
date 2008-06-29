@@ -50,7 +50,7 @@ module ActiveScaffold::Config
     def sorting=(val)
       val = [val] if val.is_a? Hash
       sorting.clear
-      val.each { |clause| sorting.add *clause.to_a.first }
+      val.each { |clause| sorting.add *Array(clause).first }
     end
     def sorting
       @sorting ||= ActiveScaffold::DataStructures::Sorting.new(@core.columns)

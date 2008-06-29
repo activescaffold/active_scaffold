@@ -3,9 +3,9 @@ if (typeof Prototype == 'undefined')
   warning = "ActiveScaffold Error: Prototype could not be found. Please make sure that your application's layout includes prototype.js (e.g. <%= javascript_include_tag :defaults %>) *before* it includes active_scaffold.js (e.g. <%= active_scaffold_includes %>).";
   alert(warning);
 }
-if (Prototype.Version.substring(0, 8) == '1.5.0_rc')
+if (Prototype.Version.substring(0, 3) != '1.6')
 {
-  warning = "ActiveScaffold Error: Prototype 1.5.0_rc is not supported. Please update prototype.js (rake rails:update:javascripts).";
+  warning = "ActiveScaffold Error: Prototype version 1.6.x is required. Please update prototype.js (rake rails:update:javascripts).";
   alert(warning);
 }
 
@@ -263,7 +263,7 @@ ActiveScaffold.ActionLink.Abstract.prototype = {
   register_cancel_hooks: function() {
     // anything in the insert with a class of cancel gets the closer method, and a reference to this object for good measure
     var self = this;
-    this.adapter.getElementsByClassName('cancel').each(function(elem) {
+    this.adapter.select('.cancel').each(function(elem) {
       elem.observe('click', this.close_handler.bind(this));
       elem.link = self;
     }.bind(this))

@@ -76,14 +76,31 @@ module ActiveScaffold
         output << form_tag(url_for_options, options)
       end
 
+      # Provides list of javascripts to include with +javascript_include_tag+
+      # You can use this with your javascripts like
+      #   <%= javascript_include_tag :defaults, 'your_own_cool_script', active_scaffold_javascripts, :cache => true %>
+      def active_scaffold_javascripts(frontend = :default)
+        ActiveScaffold::Config::Core.javascripts(frontend).collect do |name|
+          ActiveScaffold::Config::Core.asset_path(name, frontend)
+        end
+      end
+      
+      # Provides stylesheets to include with +stylesheet_link_tag+
+      def active_scaffold_stylesheets(frontend = :default)
+        ActiveScaffold::Config::Core.asset_path("stylesheet.css", frontend)
+      end
+
+      # Provides stylesheets for IE to include with +stylesheet_link_tag+ 
+      def active_scaffold_ie_stylesheets(frontend = :default)
+        ActiveScaffold::Config::Core.asset_path("stylesheet-ie.css", frontend)
+      end
+
       # easy way to include ActiveScaffold assets
       def active_scaffold_includes(frontend = :default)
-        js = ActiveScaffold::Config::Core.javascripts(frontend).collect do |name|
-          javascript_include_tag(ActiveScaffold::Config::Core.asset_path(name, frontend))
-        end.join('')
+        js = javascript_include_tag(*active_scaffold_javascripts(frontend))
 
-        css = stylesheet_link_tag(ActiveScaffold::Config::Core.asset_path("stylesheet.css", frontend))
-        ie_css = stylesheet_link_tag(ActiveScaffold::Config::Core.asset_path("stylesheet-ie.css", frontend))
+        css = stylesheet_link_tag(*active_scaffold_stylesheets(frontend))
+        ie_css = stylesheet_link_tag(*active_scaffold_ie_stylesheets(frontend))
 
         js + "\n" + css + "\n<!--[if IE]>" + ie_css + "<![endif]-->\n"
       end
