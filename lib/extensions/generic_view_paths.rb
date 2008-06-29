@@ -13,8 +13,13 @@ class ActionController::Base
   self.generic_view_paths = []
 
   # Returns the view path that contains the given relative template path.
-  def find_generic_base_path_for(template_file_name)
-    self.generic_view_paths.find { |p| File.file?(File.join(p, template_file_name)) }
+  def find_generic_base_path_for(template_path, extension)
+    self.generic_view_paths.each do |generic_path| 
+      template_file_name = File.basename("#{template_path}.#{extension}")
+      generic_file_path = File.join(generic_path, template_file_name)
+      return generic_file_path if File.file?(generic_file_path)
+    end
+    nil
   end
 
   # We don't want to use generic_view_paths in ActionMailer, and we don't want
@@ -29,9 +34,7 @@ class ActionView::TemplateFinder
   def pick_template_with_generic_paths(template_path, extension)
     path = pick_template_without_generic_paths(template_path, extension)
     if path.blank? and controller.search_generic_view_paths?
-      template_file = File.basename("#{template_path}.#{extension}")
-      path = controller.find_generic_base_path_for(template_file)
-      path = path ? "#{path}/#{template_file}" : nil
+      path = controller.find_generic_base_path_for(template_path, extension)
     end
     path
   end
@@ -41,9 +44,8 @@ class ActionView::TemplateFinder
   def find_template_extension_from_handler_with_generic_paths(template_path, template_format = @template.template_format)
     extension = find_template_extension_from_handler_without_generic_paths(template_path, template_format)
     if extension.blank? and controller.search_generic_view_paths?
-      template_file = File.basename(template_path)
       self.class.template_handler_extensions.each do |handler_extension|
-        return handler_extension if controller.find_generic_base_path_for("#{template_file}.#{handler_extension}")
+        return handler_extension if controller.find_generic_base_path_for(template_path, handler_extension)
       end
     end
     extension
@@ -55,5 +57,4 @@ private
   def controller
     @template.controller
   end
-
 end
