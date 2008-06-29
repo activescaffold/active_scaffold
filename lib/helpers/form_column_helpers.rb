@@ -109,6 +109,7 @@ module ActiveScaffold
       # requires RecordSelect plugin to be installed and configured.
       # ... maybe this should be provided in a bridge?
       def active_scaffold_input_record_select(column, options)
+        raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
         remote_controller = active_scaffold_controller_for(column.association.klass).controller_path
 
         # if the opposite association is a :belongs_to, then only show records that have not been associated yet
