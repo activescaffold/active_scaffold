@@ -52,7 +52,7 @@ module ActiveScaffold
       # the standard active scaffold options used for class, name and scope
       def active_scaffold_input_options(column, scope = nil)
         name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
-        options = { :name => name, :class => "#{column.name}-input", :id => "record_#{column.name}_#{params[:eid] || params[:id]}"}
+        { :name => name, :class => "#{column.name}-input", :id => "record_#{column.name}_#{params[:eid] || params[:id]}"}
       end
 
       ##
@@ -114,25 +114,24 @@ module ActiveScaffold
         end
         remote_controller = active_scaffold_controller_for(column.association.klass).controller_path
 
+        params = {:parent_id => @record.id, :parent_model => @record.class}
+        
         # if the opposite association is a :belongs_to, then only show records that have not been associated yet
-        params = if column.association and [:has_one, :has_many].include?(column.association.macro)
-          {column.association.primary_key_name => ''}
-        else
-          {}
+        # robd 2008-06-29: is this code doing the right thing? doesn't seem to check :belongs_to...
+        # in any case, could we encapsulate this code on column in a method like .singular_association?
+        if [:has_one, :has_many].include?(column.association.macro)
+          params.merge!(column.association.primary_key_name => '') 
         end
-
+        
+        options = { :controller => remote_controller, :id => options[:id], :params => params }
+        options.merge!(active_scaffold_input_text_options)
+        options.merge!(column.options)
+        record_select_args = [options[:name], (@record.send(column.name) || column.association.klass.new), options]
+        
         if column.singular_association?
-          record_select_field(
-            "#{options[:name]}",
-            @record.send(column.name) || column.association.klass.new,
-            {:controller => remote_controller, :id => options[:id], :params => params.merge(:parent_id => @record.id, :parent_model => @record.class)}.merge(active_scaffold_input_text_options).merge(column.options)
-          )
+          record_select_field(*record_select_args)
         elsif column.plural_association?
-          record_multi_select_field(
-            options[:name],
-            @record.send(column.name),
-            {:controller => remote_controller, :id => options[:id], :params => params.merge(:parent_id => @record.id, :parent_model => @record.class)}.merge(active_scaffold_input_text_options).merge(column.options)
-          )
+          record_multi_select_field(*record_select_args)
         end
       end
 
