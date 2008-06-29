@@ -14,6 +14,7 @@
 - Fixed in_place_editor to work with latest control.js
 - Fixed infinite recursion bug when creating a new record with a new association
 - Subform action name conflict fix
+- Helpful warning message if record_select is not on a column with an association
 
 = 1.1.1
 
