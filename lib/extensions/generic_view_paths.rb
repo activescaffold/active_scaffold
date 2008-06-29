@@ -51,10 +51,8 @@ class ActionView::TemplateFinder
     extension = find_template_extension_from_handler_without_generic_paths(template_path, template_format)
     if extension.blank? and controller.search_generic_view_paths?
       template_file = File.basename(template_path)
-      controller.generic_view_paths.each do |path|
-        self.class.template_handler_extensions.each do |handler_extension|
-          return handler_extension if File.file?(File.join(path, "#{template_file}.#{handler_extension}"))
-        end
+      self.class.template_handler_extensions.each do |handler_extension|
+        return handler_extension if controller.find_generic_base_path_for("#{template_file}.#{handler_extension}")
       end
     end
     extension
