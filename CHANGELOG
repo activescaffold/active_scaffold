@@ -1,3 +1,20 @@
+= 1.2RC1
+
+== FEATURES
+
+- Added view helpers (active_scaffold_javascripts, active_scaffold_stylesheets, active_scaffold_ie_stylesheets) to help with asset cacheing (Alexander Semyonov)
+- Works with Rails 2.1 (2.0 / 1.2.x will continue to be supported by version 1.1)
+
+== FIXES
+
+- Javascript compatibility with FF3 / Safari 3.1 (Mike Dalessio)
+  see http://groups.google.com/group/activescaffold/browse_thread/thread/d37afa3f2ac687f2/b34ebf62d767bee3
+- Avoid ruby deprecation warning in config/list.rb (Dustin Sallings)
+- Fixes bug where template overrides are ignored when placed in Engines plugins (Mike Dalessio)
+- Fixed in_place_editor to work with latest control.js
+- Fixed infinite recursion bug when creating a new record with a new association
+- Subform action name conflict fix
+
 = 1.1.1
 
 == FIXES
