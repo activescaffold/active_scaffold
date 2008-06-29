@@ -56,6 +56,14 @@ module ActionView #:nodoc:
       end
     end
     alias_method_chain :render, :active_scaffold
+    
+    def partial_pieces(partial_path)
+      if partial_path.include?('/')
+        return File.dirname(partial_path), File.basename(partial_path)
+      else
+        return controller.class.controller_path, partial_path
+      end
+    end
   end
 end
 
