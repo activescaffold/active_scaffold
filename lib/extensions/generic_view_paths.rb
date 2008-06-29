@@ -24,16 +24,7 @@ class ActionController::Base
   end
 end
 
-class ActionView::Base
-  def initialize_with_generic_paths(*args)
-    initialize_without_generic_paths(*args)
-    @finder.controller = @controller
-  end
-  alias_method_chain :initialize, :generic_paths
-end
-
 class ActionView::TemplateFinder
-  attr_accessor :controller
 
   def pick_template_with_generic_paths(template_path, extension)
     path = pick_template_without_generic_paths(template_path, extension)
@@ -58,4 +49,11 @@ class ActionView::TemplateFinder
     extension
   end
   alias_method_chain :find_template_extension_from_handler, :generic_paths
+
+private
+
+  def controller
+    @template.controller
+  end
+
 end
