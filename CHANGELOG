@@ -35,7 +35,12 @@
 * inplace_edit option on list columns. currently works for text boxes and booleans
 
 === CREATE/UPDATE
-* file uploads - largely taken care of by file_column bridge. tim, you should say something more here.
+* file uploads - largely taken care of by file_column bridge.
+* * automatically detects if FileColumn is installed.  If so, uses it, and sets the form_ui for file columns to be file upload fields
+* * sets multipart? on config.create and config.update if file_columns are used on the target model
+* * Posts through iframe to give ajax-style file uploads
+* * Image columns are recognized and previewed as such
+* * Ability to delete a file
 * form_ui
 * * form interface options are now supported through helper method named active_scaffold_input_#{form_ui}. if you want a different form interface than activescaffold normally provides, you may configure the form_ui for that column to use one of these methods. you can easily define your own, too.
 * * built-in form interface options:
