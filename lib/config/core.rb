@@ -178,9 +178,9 @@ module ActiveScaffold::Config
     # note that this is unaffected by per-controller frontend configuration.
     def self.javascripts(frontend = self.frontend)
       javascript_dir = File.join(Rails.public_path, "javascripts", asset_path('', frontend))
-      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js/) or (!self.dhtml_history? and e.match('dhtml_history')) }
+      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js$/) or (!self.dhtml_history? and e.match('dhtml_history')) }
     end
-
+    
     # the ActiveScaffold-specific template paths
     # an instance method. this is the only place that pays attention to per-controller frontend configuration.
     # note: for the rails 1.2.x rendering, this needs to be relative to app/views.
