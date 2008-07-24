@@ -64,7 +64,7 @@ module ActiveScaffold
 
       # set up the generic_view_paths (Rails 2.x)
       if method_defined? :generic_view_paths
-        frontends_path = File.join(RAILS_ROOT, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
+        frontends_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
 
         paths = self.active_scaffold_config.inherited_view_paths.clone 
         ActionController::Base.view_paths.each do |dir|

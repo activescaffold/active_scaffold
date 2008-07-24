@@ -12,5 +12,5 @@ require File.dirname(__FILE__) + '/environment'
 begin
   require File.dirname(__FILE__) + '/install_assets'
 rescue
-  raise $! unless RAILS_ENV == 'production'
+  raise $! unless Rails.env == 'production'
 end

@@ -152,7 +152,6 @@ module ActiveScaffold::Config
       end
       super
     end
-
     # some utility methods
     # --------------------
 
@@ -196,7 +195,7 @@ module ActiveScaffold::Config
     end
 
     def self.available_frontends
-      frontends_dir = File.join(RAILS_ROOT, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends")
+      frontends_dir = File.join(Rails.root, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends")
       Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
     end
   end

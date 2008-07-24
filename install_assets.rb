@@ -7,7 +7,7 @@ Dir.chdir(Dir.getwd.sub(/vendor.*/, '')) do
 ##
 
 def copy_files(source_path, destination_path, directory)
-  source, destination = File.join(directory, source_path), File.join(RAILS_ROOT, destination_path)
+  source, destination = File.join(directory, source_path), File.join(Rails.root, destination_path)
   FileUtils.mkdir(destination) unless File.exist?(destination)
   FileUtils.cp_r(Dir.glob(source+'/*.*'), destination)
 end
@@ -21,7 +21,7 @@ available_frontends = Dir[File.join(directory, 'frontends', '*')].collect { |d| 
   path = "/public/#{asset_type}/active_scaffold"
   copy_files(path, path, directory)
   
-  File.open(File.join(RAILS_ROOT, path, 'DO_NOT_EDIT'), 'w') do |f|
+  File.open(File.join(Rails.root, path, 'DO_NOT_EDIT'), 'w') do |f|
     f.puts "Any changes made to files in sub-folders will be lost."
     f.puts "See http://activescaffold.com/tutorials/faq#custom-css."
   end
