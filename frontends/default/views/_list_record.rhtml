@@ -1,5 +1,6 @@
 <%
 record = list_record if list_record # compat with render :partial :collection
+dont_show_calculations ||= false
 tr_class = cycle("", "even-record")
 tr_class += " #{list_row_class(record)}" if respond_to? :list_row_class
 url_options = params_for(:action => :list, :id => record.id)
@@ -28,4 +29,7 @@ actions = new ActiveScaffold.Actions.Record(
   $('<%= loading_indicator_id(:action => :record, :id => record.id) -%>'),
   {refresh_url: '<%= url_for params_for(:action => :row, :id => record.id, :_method => :get, :escape => false) -%>'}
 );
+  <%= update_page do |page|
+        page.replace active_scaffold_calculations_id, :partial => 'list_calculations'
+      end if not dont_show_calculations and active_scaffold_config.list.columns.any? {|c| c.calculation?} %>
 </script>
