@@ -32,8 +32,7 @@ module ActiveScaffold
               # for textual fields we pass different options
               text_types = [:text, :string, :integer, :float, :decimal]
               options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
-
-              input(:record, column.name, options)
+              input(:record, column.name, options.merge(column.options))
             end
           end
         end
