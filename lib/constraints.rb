@@ -56,7 +56,11 @@ module ActiveScaffold
 
           # association column constraint
           elsif column.association
-            active_scaffold_joins.concat column.includes
+            if column.association.macro == :has_and_belongs_to_many
+              active_scaffold_habtm_joins.concat column.includes
+            else
+              active_scaffold_joins.concat column.includes
+            end
             condition_from_association_constraint(column.association, v)
 
           # regular column constraints
