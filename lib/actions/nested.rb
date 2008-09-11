@@ -29,6 +29,8 @@ module ActiveScaffold::Actions
     # Create the automatic column links. Note that this has to happen when configuration is *done*, because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?
     # TODO: This should really be a post-config routine, instead of a before_filter.
     def links_for_associations
+      actions = active_scaffold_config.actions
+      logger.debug "ACTIONS: #{actions.inspect}"
       active_scaffold_config.list.columns.each do |column|
         # if column.link == false we won't create a link. that's how a dev can suppress the auto links.
         if column.association and column.link.nil?
@@ -42,9 +44,9 @@ module ActiveScaffold::Actions
             rescue ActiveScaffold::ControllerNotFound
               next
             end
-            # TODO: allow both update and show
-            # TODO: check whether ('show' || 'update') is included on remote controller
-            column.set_link('show', :controller => controller.controller_path, :parameters => {:parent_controller => params[:controller]})
+
+            action = actions.include?(:update) ? 'edit' : 'show'
+            column.set_link(action, :controller => controller.controller_path, :parameters => {:parent_controller => params[:controller]})
           end
         end
       end
