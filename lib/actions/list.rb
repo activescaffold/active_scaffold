@@ -49,7 +49,8 @@ module ActiveScaffold::Actions
       includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
       self.active_scaffold_joins.concat includes_for_list_columns
 
-      options = {:sorting => active_scaffold_config.list.user.sorting,}
+      options = { :sorting => active_scaffold_config.list.user.sorting,
+                  :count_includes => active_scaffold_config.list.user.count_includes }
       paginate = (params[:format].nil?) ? (accepts? :html, :js) : [:html, :js].include?(params[:format])
       if paginate
         options.merge!({

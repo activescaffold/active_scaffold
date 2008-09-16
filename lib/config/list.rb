@@ -55,6 +55,9 @@ module ActiveScaffold::Config
     def sorting
       @sorting ||= ActiveScaffold::DataStructures::Sorting.new(@core.columns)
     end
+    
+    # overwrite the includes used for the count sql query
+    attr_accessor :count_includes
 
     # the label for this List action. used for the header.
     attr_writer :label
@@ -95,6 +98,11 @@ module ActiveScaffold::Config
           return @conf.sorting
         end
       end
+      
+      def count_includes
+        @conf.count_includes
+      end
+      
     end
   end
 end
