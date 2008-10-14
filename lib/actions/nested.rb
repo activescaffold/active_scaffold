@@ -29,8 +29,6 @@ module ActiveScaffold::Actions
     # Create the automatic column links. Note that this has to happen when configuration is *done*, because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?
     # TODO: This should really be a post-config routine, instead of a before_filter.
     def links_for_associations
-      actions = active_scaffold_config.actions
-      logger.debug "ACTIONS: #{actions.inspect}"
       active_scaffold_config.list.columns.each do |column|
         # if column.link == false we won't create a link. that's how a dev can suppress the auto links.
         if column.association and column.link.nil?
@@ -38,15 +36,21 @@ module ActiveScaffold::Actions
             # note: we can't create nested scaffolds on :through associations because there's no reverse association.
             column.set_link('nested', :parameters => {:associations => column.name.to_sym}) #unless column.through_association?
           elsif not column.polymorphic_association?
-            parent_controller = params[:controller]
+            model = column.association.klass
             begin
-              controller = self.class.active_scaffold_controller_for(column.association.klass)
+              controller = self.class.active_scaffold_controller_for(model)
             rescue ActiveScaffold::ControllerNotFound
               next
             end
 
-            action = actions.include?(:update) ? 'edit' : 'show'
-            column.set_link(action, :controller => controller.controller_path, :parameters => {:parent_controller => params[:controller]})
+            actions = controller.active_scaffold_config.actions
+            action = nil
+            if actions.include? :update and model.authorized_for? :action => :update
+              action = 'edit'
+            elsif actions.include? :show and model.authorized_for? :action => :read
+              action = 'show'
+            end
+            column.set_link(action, :controller => controller.controller_path, :parameters => {:parent_controller => params[:controller]}) if action
           end
         end
       end
