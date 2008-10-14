@@ -32,12 +32,17 @@ module ActionView #:nodoc:
         # note that we can't use split(':').first because windoze boxen may have an extra colon to specify the drive letter. the
         # solution is to count colons from the *right* of the string, not the left. see issue #299.
         template_path = caller.find{|c| known_extensions.include?(c.split(':')[-3].split('.').last.to_sym) }
-        template = File.basename(template_path).split('.').first
-        active_scaffold_config.template_search_path.each do |active_scaffold_template_path|
-          next if template_path.include? active_scaffold_template_path
+        template = File.basename(template_path.split(':')[-3])
+
+        # paths previous to current template_path must be ignored to avoid infinite loops when is called twice or more
+        index = 0
+        controller.class.generic_view_paths.each_with_index do |active_scaffold_template_path, i|
+          index = i + 1 and break if template_path.include? active_scaffold_template_path
+        end
+
+        controller.class.generic_view_paths[index..-1].each do |active_scaffold_template_path|
           active_scaffold_template = File.join(active_scaffold_template_path, template)
-          file_name = @finder.file_exists?(active_scaffold_template)
-          return render(:file => file_name, :locals => options[:locals]) if file_name
+          return render(:file => active_scaffold_template, :locals => options[:locals]) if File.file? active_scaffold_template
         end
       elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
         require 'digest/md5'
@@ -65,31 +70,5 @@ module ActionView #:nodoc:
         return controller.class.controller_path, partial_path
       end
     end
-  end
-end
-
-module ActionView #:nodoc:
-  class PartialTemplate < Template #:nodoc:
-    def initialize_with_active_scaffold(view, partial_path, object = nil, locals = {})
-      if view.controller.class.respond_to?(:uses_active_scaffold?) and view.controller.class.uses_active_scaffold?
-        partial_path = rewrite_partial_path_for_active_scaffold(view, partial_path)
-      end
-      initialize_without_active_scaffold(view, partial_path, object, locals)
-    end
-    alias_method_chain :initialize, :active_scaffold
-    
-    private
-      def rewrite_partial_path_for_active_scaffold(view, partial_path)
-        path, partial_name = partial_pieces(view, partial_path)
-
-        # test for the actual file
-        return partial_path if view.finder.file_exists? File.join(path, "_#{partial_name}")
-      
-        # check the ActiveScaffold-specific directories
-        view.controller.active_scaffold_config.template_search_path.each do |template_path|
-          return File.join(template_path, partial_name) if view.finder.file_exists? File.join(template_path, "_#{partial_name}")
-        end
-        return partial_path
-      end
   end
 end

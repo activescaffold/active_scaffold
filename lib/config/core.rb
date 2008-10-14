@@ -180,19 +180,6 @@ module ActiveScaffold::Config
       javascript_dir = File.join(Rails.public_path, "javascripts", asset_path('', frontend))
       Dir.entries(javascript_dir).reject { |e| !e.match(/\.js$/) or (!self.dhtml_history? and e.match('dhtml_history')) }
     end
-    
-    # the ActiveScaffold-specific template paths
-    # an instance method. this is the only place that pays attention to per-controller frontend configuration.
-    # note: for the rails 1.2.x rendering, this needs to be relative to app/views.
-    def template_search_path(frontend = self.frontend)
-      frontends_path = "../../vendor/plugins/#{ActiveScaffold::Config::Core.plugin_directory}/frontends"
-
-      search_path = self.inherited_view_paths.clone
-      search_path << 'active_scaffold_overrides'
-      search_path << "#{frontends_path}/#{frontend}/views" if frontend.to_sym != :default
-      search_path << "#{frontends_path}/default/views"
-      return search_path
-    end
 
     def self.available_frontends
       frontends_dir = File.join(Rails.root, "vendor", "plugins", ActiveScaffold::Config::Core.plugin_directory, "frontends")
