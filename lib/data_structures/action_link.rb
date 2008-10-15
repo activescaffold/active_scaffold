@@ -13,6 +13,7 @@ module ActiveScaffold::DataStructures
       self.crud_type = :create if [:create, :new].include?(action.to_sym)
       self.crud_type = :update if [:edit, :update].include?(action.to_sym)
       self.crud_type ||= :read
+      self.html_options = {}
 
       # apply quick properties
       options.each_pair do |k, v|
@@ -129,5 +130,7 @@ module ActiveScaffold::DataStructures
 
     # what type of link this is. currently supported values are :table and :record.
     attr_accessor :type
+    # html options for the link
+    attr_accessor :html_options
   end
 end

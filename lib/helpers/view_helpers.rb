@@ -142,7 +142,7 @@ module ActiveScaffold
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters
 
-        html_options = {:class => link.action}
+        html_options = link.html_options.merge({:class => link.action})
         if link.inline?
           # NOTE this is in url_options instead of html_options on purpose. the reason is that the client-side
           # action link javascript needs to submit the proper method, but the normal html_options[:method]
@@ -172,6 +172,7 @@ module ActiveScaffold
           html_options[:dhtml_confirm] = link.dhtml_confirm.value
           html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],url_options[:id]))
         end
+        html_options[:class] += " #{link.html_options[:class]}" unless link.html_options[:class].blank?
 
         # issue 260, use url_options[:link] if it exists. This prevents DB data from being localized.
         label = url_options.delete(:link) || link.label
