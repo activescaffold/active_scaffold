@@ -188,6 +188,7 @@ module ActiveScaffold::DataStructures
       @association = active_record_class.reflect_on_association(self.name)
       @active_record_class = active_record_class
       @table = active_record_class.table_name
+      @weight = 0
 
       # default all the configurable variables
       self.label = @column.human_name unless @column.nil?
@@ -204,6 +205,12 @@ module ActiveScaffold::DataStructures
     def field_name
       return nil if virtual?
       column ? @active_record_class.connection.quote_column_name(column.name) : association.primary_key_name
+    end
+
+    attr_accessor :weight
+    def <=>(other_column)
+      order_weight = self.weight <=> other_column.weight
+      order_weight != 0 ? order_weight : self.name.to_s <=> other_column.name.to_s
     end
 
     protected

@@ -11,7 +11,7 @@ module ActiveScaffold::DataStructures
     #
     # This collection is referenced by other parts of ActiveScaffold and by methods within this DataStructure.
     # IT IS NOT MEANT FOR PUBLIC USE (but if you know what you're doing, go ahead)
-    attr_accessor :_inheritable
+    attr_writer :_inheritable
 
     # This accessor is used by ActionColumns to create new Column objects without adding them to this set
     attr_reader :active_record_class
@@ -31,7 +31,7 @@ module ActiveScaffold::DataStructures
       args = args.collect{ |a| a.to_sym }
 
       # make the columns inheritable
-      self._inheritable = _inheritable.concat(args)
+      @_inheritable.concat(args)
       # then add columns to @set (unless they already exist)
       args.each { |a| @set << ActiveScaffold::DataStructures::Column.new(a.to_sym, @active_record_class) unless find_by_name(a) }
     end
@@ -39,7 +39,7 @@ module ActiveScaffold::DataStructures
 
     def exclude(*args)
       # only remove columns from _inheritable. we never want to completely forget about a column.
-      args.each { |a| self._inheritable.delete a }
+      args.each { |a| @_inheritable.delete a }
     end
 
     # returns an array of columns with the provided names
@@ -57,6 +57,12 @@ module ActiveScaffold::DataStructures
 
     def each
       @set.each {|i| yield i }
+    end
+
+    def _inheritable
+      @_inheritable.sort do |a, b|
+        self[a] <=> self[b]
+      end
     end
   end
 end
