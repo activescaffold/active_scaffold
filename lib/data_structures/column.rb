@@ -194,7 +194,13 @@ module ActiveScaffold::DataStructures
       self.label = @column.human_name unless @column.nil?
       self.label ||= self.name.to_s.titleize
       self.css_class = ''
-      self.required = false
+      if active_record_class.respond_to? :reflect_on_validations_for
+        column_name = name
+        column_name = @association.primary_key_name if @association
+        self.required = active_record_class.reflect_on_validations_for(column_name.to_sym).any? {|val| val.macro == :validates_presence_of}
+      else
+        self.required = false
+      end
       self.sort = true
       self.search_sql = true
 
