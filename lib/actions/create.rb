@@ -26,6 +26,7 @@ module ActiveScaffold::Actions
 
     def create
       do_create
+      @insert_row = params[:parent_controller].nil?
 
       respond_to do |type|
         type.html do

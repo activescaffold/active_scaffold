@@ -44,15 +44,34 @@ module ActiveScaffold
       # TODO: we need to distinguish between the automatic links *we* create and the ones that the dev specified. some logic may not apply if the dev specified the link.
       def render_list_column(text, column, record)
         if column.link
+          link = column.link.clone
+          if column.singular_association? and column_empty?(text)
+            column_model = column.association.klass
+            controller_actions = active_scaffold_config_for(column_model).actions
+            if controller_actions.include?(:create) and column_model.authorized_for?(:action => :create)
+              link.action = 'new'
+              link.crud_type = :create
+              text = as_('Create New')
+            end
+          end
           return "<a class='disabled'>#{text}</a>" unless record.authorized_for?(:action => column.link.crud_type)
-          return text if column.singular_association? and column_empty?(text)
 
           url_options = params_for(:action => nil, :id => record.id, :link => text)
-          if column.singular_association? and column.link.action != 'nested' and associated = record.send(column.association.name)
-            url_options[:id] = associated.id
+          if column.singular_association? and column.link.action != 'nested'
+            if associated = record.send(column.association.name)
+              url_options[:id] = associated.id
+            elsif link.action == 'new'
+              url_options.delete :id
+              url_options[:parent_id] = record.id
+              url_options[:parent_column] = column.association.reverse
+              constraints = {url_options[:parent_column].to_sym => url_options[:parent_id]}
+              eid = Digest::MD5.hexdigest(params[:controller] + params[:parent_controller].to_s + constraints.to_s)
+              session["as:#{eid}"] = {:constraints => constraints}
+              url_options[:eid] = eid
+            end
           end
 
-          render_action_link(column.link, url_options)
+          render_action_link(link, url_options)
         else
           text
         end
