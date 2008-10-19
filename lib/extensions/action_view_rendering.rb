@@ -36,7 +36,8 @@ module ActionView #:nodoc:
         active_scaffold_config.template_search_path.each do |active_scaffold_template_path|
           next if template_path.include? active_scaffold_template_path
           active_scaffold_template = File.join(active_scaffold_template_path, template)
-          return render(:file => active_scaffold_template, :locals => options[:locals]) if @finder.file_exists? active_scaffold_template
+          file_name = @finder.file_exists?(active_scaffold_template)
+          return render(:file => file_name, :locals => options[:locals]) if file_name
         end
       elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
         require 'digest/md5'
