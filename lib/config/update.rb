@@ -20,5 +20,7 @@ module ActiveScaffold::Config
     def label
       @label ? as_(@label) : as_('Update %s', @core.label.singularize)
     end
+
+    attr_accessor :nested_links
   end
 end
