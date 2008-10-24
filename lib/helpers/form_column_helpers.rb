@@ -183,6 +183,16 @@ module ActiveScaffold
       ## Form column override signatures
       ##
 
+      # add functionality for overriding subform partials from association class path
+      def override_subform_partial?(column)
+        path, partial_name = partial_pieces(override_subform_partial(column))
+        @finder.file_exists? File.join(path, "_#{partial_name}")
+      end
+
+      def override_subform_partial(column)
+        File.join(active_scaffold_controller_for(column.association.klass).controller_path, "subform") if column_renders_as(column) == :subform
+      end
+
       def override_form_field_partial?(column)
         path, partial_name = partial_pieces(override_form_field_partial(column))
         @finder.file_exists? File.join(path, "_#{partial_name}")
@@ -223,6 +233,14 @@ module ActiveScaffold
         end
       end
 
+      def subform_partial_for_column(column)
+        if override_subform_partial?(column)
+          override_subform_partial(column)
+        else
+          "horizontal_subform"
+        end
+      end
+
       ##
       ## Macro-level rendering decisions for columns
       ##
@@ -245,6 +263,14 @@ module ActiveScaffold
 
       def is_subform?(column)
         column_renders_as(column) == :subform
+      end
+
+      def column_scope(column)
+        if column.plural_association?
+          "[#{column.name}][#{@record.id || generate_temporary_id}]"
+        else
+          "[#{column.name}]"
+        end
       end
     end
   end

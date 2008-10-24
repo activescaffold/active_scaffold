@@ -7,38 +7,10 @@ show_blank_record = (column.plural_association? or (column.singular_association?
 show_blank_record = false if column.through_association?
 show_blank_record = false unless column.association.klass.authorized_for?(:action => :create)
 
+associated << column.association.klass.new if show_blank_record
 -%>
 <h5><%= column.label -%> (<%= link_to_visibility_toggle(:default_visible => !column.collapsed) -%>)</h5>
 <div <%= 'style="display: none;"' if column.collapsed -%>>
-<table cellpadding="0" cellspacing="0">
-  <% @record = column.association.klass.new -%>
-  <%= render :partial => 'form_association_header', :locals => {:parent_record => parent_record} %>
-
-  <tbody id="<%= sub_form_list_id(:association => column.name) %>">
-    <% associated.each_index do |index| %>
-    <% @record = associated[index] -%>
-    <% if @record.errors.count -%>
-    <tr class="association-record-errors">
-      <td colspan="<%= active_scaffold_config_for(@record.class).subform.columns.length + 1 %>">
-        <%= error_messages_for :record %>
-      </td>
-    </tr>
-    <% end %>
-    <tr class="association-record <%= 'association-record-new' if @record.new_record? -%>">
-      <% scope = column.plural_association? ? "[#{column.name}][#{@record.id || generate_temporary_id}]" : "[#{column.name}]" -%>
-      <%= render :partial => 'form_association_record', :locals => {:scope => scope, :parent_record => parent_record} %>
-    </tr>
-    <% end -%>
-
-    <% if show_blank_record -%>
-    <% @record = column.association.klass.new -%>
-    <tr class="association-record association-record-new locked">
-      <% scope = column.plural_association? ? "[#{column.name}][#{generate_temporary_id}]" : "[#{column.name}]" -%>
-      <%= render :partial => 'form_association_record', :locals => {:scope => scope, :parent_record => parent_record} %>
-    </tr>
-    <% end -%>
-  </tbody>
-</table>
-<%= render :partial => 'form_association_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated} -%>
+<%= render :partial => subform_partial_for_column(column), :locals => {:column => column, :scope => column_scope(column), :parent_record => parent_record, :associated => associated} %>
 </div>
 <% @record = parent_record -%>
