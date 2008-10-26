@@ -3,6 +3,7 @@
 if request.xhr?
   if active_scaffold_config.update.multipart?  # file_uploads
     form_remote_upload_tag url_options.merge({:iframe => true}),
+                           :onsubmit => onsubmit,
                            :id => element_form_id(:action => :update),
                            :class => 'update',
                            :method => :put
@@ -13,6 +14,7 @@ if request.xhr?
                     :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
                     :html => {
                       :href => url_for(url_options),
+                      :onsubmit => onsubmit,
                       :id => element_form_id(:action => :update),
                       :class => 'update',
                       :method => :put
@@ -20,6 +22,7 @@ if request.xhr?
   end
 else
   form_tag url_options,
+           :onsubmit => onsubmit,
            :id => element_form_id(:action => :update),
            :multipart => active_scaffold_config.update.multipart?,
            :class => 'update',

@@ -179,6 +179,9 @@ module ActiveScaffold
         select_tag(options[:name], options_for_select(select_options, @record.send(column.name)))
       end
 
+      def onsubmit
+      end
+
       ##
       ## Form column override signatures
       ##
