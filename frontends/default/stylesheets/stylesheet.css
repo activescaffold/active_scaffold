@@ -718,7 +718,7 @@ display: block;
 
 .active-scaffold .sub-form table td {
 border: none;
-background-color: none;
+background-color: transparent;
 padding: 1px;
 vertical-align: top;
 color: #999;
