@@ -50,6 +50,11 @@ module ActiveScaffold
       @active_scaffold_joins ||= []
     end
 
+    attr_writer :active_scaffold_habtm_joins
+    def active_scaffold_habtm_joins
+      @active_scaffold_habtm_joins ||= []
+    end
+    
     def all_conditions
       merge_conditions(
         active_scaffold_conditions,                   # from the search modules
@@ -89,7 +94,7 @@ module ActiveScaffold
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => build_order_clause(options[:sorting]),
                          :conditions => all_conditions,
-                         :joins => joins_for_collection,
+                         :joins => joins_for_finder,
                          :include => options[:count_includes]}
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
@@ -112,6 +117,17 @@ module ActiveScaffold
       pager.page(options[:page])
     end
 
+    def joins_for_finder
+      case joins_for_collection.class
+      when String
+        [ joins_for_collection ]
+      when Array
+        joins_for_collection
+      else
+        []
+      end + active_scaffold_habtm_joins
+    end
+    
     # TODO: this should reside on the model, not the controller
     def merge_conditions(*conditions)
       c = conditions.find_all {|c| not c.nil? and not c.empty? }
