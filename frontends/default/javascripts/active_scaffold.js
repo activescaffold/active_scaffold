@@ -68,11 +68,13 @@ var ActiveScaffold = {
     });
   },
   decrement_record_count: function(scaffold_id) {
-    count = $$('#' + scaffold_id + ' span.active-scaffold-records').first();
+    // decrement the last record count, firsts record count are in nested lists
+    count = $$('#' + scaffold_id + ' span.active-scaffold-records').last();
     count.innerHTML = parseInt(count.innerHTML) - 1;
   },
   increment_record_count: function(scaffold_id) {
-    count = $$('#' + scaffold_id + ' span.active-scaffold-records').first();
+    // increment the last record count, firsts record count are in nested lists
+    count = $$('#' + scaffold_id + ' span.active-scaffold-records').last();
     count.innerHTML = parseInt(count.innerHTML) + 1;
   },
 
@@ -314,10 +316,14 @@ ActiveScaffold.Actions.Record.prototype = Object.extend(new ActiveScaffold.Actio
 
 ActiveScaffold.ActionLink.Record = Class.create();
 ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.ActionLink.Abstract(), {
-  insert: function(content) {
+  close_previous_adapter: function() {
     this.set.links.each(function(item) {
       if (item.url != this.url && item.is_disabled() && item.adapter) item.close();
     }.bind(this));
+  },
+
+  insert: function(content) {
+    this.close_previous_adapter();
 
     if (this.position == 'replace') {
       this.position = 'after';
