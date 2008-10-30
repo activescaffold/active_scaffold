@@ -140,6 +140,12 @@ module ActiveScaffold::DataStructures
       search_sql != false && search_sql != nil
     end
 
+    # to modify the default order of columns
+    attr_accessor :weight
+
+    # to set how many associated records a column with plural association must show in list
+    attr_accessor :associated_limit
+
     # ----------------------------------------------------------------- #
     # the below functionality is intended for internal consumption only #
     # ----------------------------------------------------------------- #
@@ -189,6 +195,7 @@ module ActiveScaffold::DataStructures
       @active_record_class = active_record_class
       @table = active_record_class.table_name
       @weight = 0
+      @associated_limit = 3
 
       # default all the configurable variables
       self.label = @column.human_name unless @column.nil?
@@ -215,7 +222,6 @@ module ActiveScaffold::DataStructures
       column ? @active_record_class.connection.quote_column_name(column.name) : association.primary_key_name
     end
 
-    attr_accessor :weight
     def <=>(other_column)
       order_weight = self.weight <=> other_column.weight
       order_weight != 0 ? order_weight : self.name.to_s <=> other_column.name.to_s
