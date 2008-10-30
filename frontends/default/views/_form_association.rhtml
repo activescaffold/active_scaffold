@@ -12,5 +12,9 @@ associated << column.association.klass.new if show_blank_record
 <h5><%= column.label -%> (<%= link_to_visibility_toggle(:default_visible => !column.collapsed) -%>)</h5>
 <div <%= 'style="display: none;"' if column.collapsed -%>>
 <%= render :partial => subform_partial_for_column(column), :locals => {:column => column, :parent_record => parent_record, :associated => associated} %>
+<% unless show_blank_record -%>
+<% @record = column.association.klass.new -%>
+<%= hidden_field_tag "record#{column_scope(column)}", nil, :id => nil %>
+<% end -%>
 </div>
 <% @record = parent_record -%>
