@@ -46,7 +46,7 @@ module ActiveScaffold
         multi_parameter_attributes[column_name] << [k, v]
       end
 
-      columns.each :for => parent_record, :flatten => true do |column|
+      columns.each :for => parent_record, :action => action, :flatten => true do |column|
         if multi_parameter_attributes.has_key? column.name
           parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
         elsif attributes.has_key? column.name
