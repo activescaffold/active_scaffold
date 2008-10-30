@@ -13,10 +13,7 @@
     <% unless readonly and not @record.new_record? -%>
       <%= render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope } -%>
     <% else -%>
-      <p>
-        <%= get_column_value(@record, column) -%>
-        <%= hidden_field :record, column.name, active_scaffold_input_options(column, scope) -%>
-      </p>
+      <p><%= get_column_value(@record, column) -%></p>
     <% end -%>
   </td>
 <% end -%>
