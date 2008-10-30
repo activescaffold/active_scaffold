@@ -197,7 +197,9 @@ module ActiveScaffold::DataStructures
       if active_record_class.respond_to? :reflect_on_validations_for
         column_name = name
         column_name = @association.primary_key_name if @association
-        self.required = active_record_class.reflect_on_validations_for(column_name.to_sym).any? {|val| val.macro == :validates_presence_of}
+        self.required = active_record_class.reflect_on_validations_for(column_name.to_sym).any? do |val|
+          val.macro == :validates_presence_of or (val.macro == :validates_inclusion_of and not val.options[:allow_nil] and not val.options[:allow_blank])
+        end
       else
         self.required = false
       end
