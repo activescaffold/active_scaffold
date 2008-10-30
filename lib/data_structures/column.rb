@@ -146,6 +146,12 @@ module ActiveScaffold::DataStructures
     # to set how many associated records a column with plural association must show in list
     attr_accessor :associated_limit
 
+    # whether the number of associated records must be shown or not
+    attr_writer :associated_number
+    def associated_number?
+      @associated_number
+    end
+
     # ----------------------------------------------------------------- #
     # the below functionality is intended for internal consumption only #
     # ----------------------------------------------------------------- #
@@ -196,6 +202,7 @@ module ActiveScaffold::DataStructures
       @table = active_record_class.table_name
       @weight = 0
       @associated_limit = 3
+      @associated_number = true
 
       # default all the configurable variables
       self.label = @column.human_name unless @column.nil?
