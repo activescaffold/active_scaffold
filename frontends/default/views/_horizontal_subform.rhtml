@@ -13,7 +13,7 @@
     </tr>
     <% end %>
     <tr class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if @record.new_record? and @record == associated.last -%>">
-      <%= render :partial => 'form_association_record', :locals => {:scope => scope, :parent_record => parent_record} %>
+      <%= render :partial => 'form_association_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column} %>
     </tr>
     <% end -%>
   </tbody>
