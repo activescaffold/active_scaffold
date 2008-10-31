@@ -18,16 +18,22 @@ module ActionView
       end
 
       private
-
       # patch in support for options[:name]
-      def options_with_prefix_with_name(position, options)
-        if options[:name]
-          options.merge(:prefix => options[:name].dup.insert(-2, "(#{position}i)"))
-        else
-          options_with_prefix_without_name(position, options)
-        end
+      def datetime_selector_with_name(options, html_options)
+        datetime = value(object) || default_datetime(options)
+
+        options = options.dup
+        options[:field_name]           = @method_name
+        options[:include_position]     = true
+        options[:prefix]             ||= @object_name
+        options[:index]              ||= @auto_index
+        options[:datetime_separator] ||= ' &mdash; '
+        options[:time_separator]     ||= ' : '
+        options.merge(:prefix => options[:name].dup.insert(-2, "(#{position}i)")) if options[:name]
+
+        DateTimeSelector.new(datetime, options.merge(:tag => true), html_options)
       end
-      alias_method_chain :options_with_prefix, :name
+      alias_method_chain :datetime_selector, :name
     end
   end
 end
