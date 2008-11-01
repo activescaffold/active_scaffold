@@ -70,11 +70,9 @@ module ActiveScaffold
 
     def self.condition_for_datetime_column(column, value, like_pattern)
       conversion = value['from']['hour'].blank? && value['to']['hour'].blank? ? 'to_date' : 'to_time'
-      ['from', 'to'].each do |field|
-        value[field] = ['year', 'month', 'day', 'hour', 'minutes', 'seconds'].collect {|part| value[field][part].to_i}
+      from_value, to_value = ['from', 'to'].collect do |field|
+        Time.zone.local(*['year', 'month', 'day', 'hour', 'minutes', 'seconds'].collect {|part| value[field][part].to_i}) rescue nil
       end
-      from_value = Time.zone.local(*value['from']) rescue nil
-      to_value = Time.zone.local(*value['to']) rescue nil
 
       if from_value.nil? and to_value.nil?
         nil
