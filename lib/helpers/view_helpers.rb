@@ -9,6 +9,7 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::ListColumns
       include ActiveScaffold::Helpers::ShowColumns
       include ActiveScaffold::Helpers::FormColumns
+      include ActiveScaffold::Helpers::SearchColumns
 
       ##
       ## Delegates

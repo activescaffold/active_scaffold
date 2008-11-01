@@ -82,6 +82,11 @@ module ActiveScaffold::DataStructures
       @list_ui || @form_ui
     end
 
+    attr_writer :search_ui
+    def search_ui
+      @search_ui || @form_ui
+    end
+
     # DEPRECATED
     alias :ui_type :form_ui
     def ui_type=(val)

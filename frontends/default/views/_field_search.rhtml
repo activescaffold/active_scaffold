@@ -15,6 +15,7 @@ href = url_for(params_for(:action => :update_table, :escape => false).delete_if{
 
   <ol class="form">
     <% active_scaffold_config.field_search.columns.each do |column| -%>
+      <% next unless column.search_sql -%>
       <% name = "search[#{column.name}]" %>
       <% value = nil %>
       <% value = search_params[column.name] if search_params %>
@@ -24,18 +25,7 @@ href = url_for(params_for(:action => :update_table, :escape => false).delete_if{
             <label for="<%= "search_#{column.name}" %>"><%= column.label %></label>
           </dt>
         <dd>
-        <%= case column.column.type
-          when :boolean
-            options = [
-              ['', ''],
-              [as_('True'), 1],
-              [as_('False'), 0]
-            ]
-            select_tag name, options_for_select(options, value)
-          else
-            text_field_tag(name, value, { :autocomplete => "off", :size => 20, :class => 'text-input', :id => "search_#{column.name}"})
-          end
-        %>
+        <%= active_scaffold_search_for(column) %>
         </dd>
       </dl>
     </li>
