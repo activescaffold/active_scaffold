@@ -10,13 +10,7 @@ module ActiveScaffold::Actions
     def show_search
       params[:search] ||= {}
       respond_to do |type|
-        type.html do
-          if successful?
-            render(:partial => "field_search", :layout => true)
-          else
-            return_to_main
-          end
-        end
+        type.html { render(:action => "field_search") }
         type.js { render(:partial => "field_search", :layout => false) }
       end
     end
