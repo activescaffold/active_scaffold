@@ -26,18 +26,18 @@ module ActiveScaffold
     # TODO: this should reside on the column, not the controller
     def self.condition_for_column(column, value, like_pattern = '%?%')
       # we must check false or not blank because we want to search for false but false is blank
-      return unless column and column.search_sql and (value == false or not value.blank?)
+      return unless column and column.search_sql and not value.blank?
       search_ui = column.search_ui || column.column.type
       if self.respond_to?("condition_for_#{search_ui}_column")
         self.send("condition_for_#{search_ui}_column", column, value, like_pattern)
       else
         case search_ui
           when :boolean, :checkbox
-          ["#{column.search_sql} = ?", value]
+          ["#{column.search_sql} = ?", value.to_i]
           when :select
-          ["#{column.search_sql} = ?", value.id]
+          ["#{column.search_sql} = ?", value[:id]] unless value[:id].blank?
           when :multi_select
-          ["#{column.search_sql} in (?)", value.collect(&:id)]
+          ["#{column.search_sql} in (?)", value.values.collect{|hash| hash[:id]}]
           else
           ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
         end
@@ -55,7 +55,7 @@ module ActiveScaffold
     ]
 
     def self.condition_for_integer_column(column, value, like_pattern)
-      if value['from_number'].blank? or not NumericComparators.include?(value['opt'])
+      if value['from'].blank? or not NumericComparators.include?(value['opt'])
         nil
       elsif value['opt'] == 'BETWEEN'
         ["#{column.search_sql} BETWEEN ? AND ?", value['from'].to_f, value['to'].to_f]

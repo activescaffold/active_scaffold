@@ -20,27 +20,11 @@ module ActiveScaffold::Actions
     def do_search
       @record = active_scaffold_config.model.new
       unless params[:search].nil?
-        # set values to search in @record, because helper methods in view use @record to fill the fields
-        associations, values = params[:search].partition {|key, value| value.is_a?(Hash)}
-        @record.attributes = Hash[*values.reject{|key, value| value.blank?}.flatten]
-        complex_conditions = {}
-        associations.each do |key, value|
-          column = active_scaffold_config.columns[key]
-          if column.association
-            next if value[:id].blank? # it hasn't a value to search
-            associated = column.association.klass.find(value[:id])
-            @record.send("#{key}=", column.singular_association? ? associated : [*associated])
-          else # if value is a hash and column doesn't have association, is a search_ui with a complex condition
-            complex_conditions[key] = value
-          end
-        end
-
         like_pattern = active_scaffold_config.field_search.full_text_search? ? '%?%' : '?%'
         conditions = self.active_scaffold_conditions
         columns = active_scaffold_config.field_search.columns
         columns.each do |column|
-          value = complex_conditions.include?(column.name.to_s) ? complex_conditions[column.name.to_s] : @record.send(column.name)
-          conditions = merge_conditions(conditions, ActiveScaffold::Finder.condition_for_column(column, value, like_pattern))
+          conditions = merge_conditions(conditions, ActiveScaffold::Finder.condition_for_column(column, params[:search][column.name], like_pattern))
         end
         self.active_scaffold_conditions = conditions
 
