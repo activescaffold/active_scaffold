@@ -11,7 +11,10 @@ module ActiveScaffold::DataStructures
     #
     # This collection is referenced by other parts of ActiveScaffold and by methods within this DataStructure.
     # IT IS NOT MEANT FOR PUBLIC USE (but if you know what you're doing, go ahead)
-    attr_writer :_inheritable
+    def _inheritable=(value)
+      @sorted = true
+      @_inheritable = value
+    end
 
     # This accessor is used by ActionColumns to create new Column objects without adding them to this set
     attr_reader :active_record_class
@@ -60,8 +63,12 @@ module ActiveScaffold::DataStructures
     end
 
     def _inheritable
-      @_inheritable.sort do |a, b|
-        self[a] <=> self[b]
+      if @sorted
+        @_inheritable
+      else
+        @_inheritable.sort do |a, b|
+          self[a] <=> self[b]
+        end
       end
     end
   end
