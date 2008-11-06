@@ -21,12 +21,14 @@ module ActiveScaffold::Actions
       @record = active_scaffold_config.model.new
       unless params[:search].nil?
         like_pattern = active_scaffold_config.field_search.full_text_search? ? '%?%' : '?%'
-        conditions = self.active_scaffold_conditions
+        search_conditions = []
         columns = active_scaffold_config.field_search.columns
         columns.each do |column|
-          conditions = merge_conditions(conditions, ActiveScaffold::Finder.condition_for_column(column, params[:search][column.name], like_pattern))
+          search_conditions << ActiveScaffold::Finder.condition_for_column(column, params[:search][column.name], like_pattern)
         end
-        self.active_scaffold_conditions = conditions
+        search_conditions.compact!
+        self.active_scaffold_conditions = merge_conditions(self.active_scaffold_conditions, *search_conditions)
+        @filtered = !search_conditions.blank?
 
         includes_for_search_columns = columns.collect{ |column| column.includes}.flatten.uniq.compact
         self.active_scaffold_joins.concat includes_for_search_columns
