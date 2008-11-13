@@ -22,6 +22,7 @@ module ActiveScaffold::DataStructures
       columns.configure &proc
       columns.label = label
       columns.action = self.action
+      self.exclude columns.instance_variable_get('@set').clone
       self.add columns
     end
 

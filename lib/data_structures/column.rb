@@ -82,6 +82,11 @@ module ActiveScaffold::DataStructures
       @list_ui || @form_ui
     end
 
+    attr_writer :search_ui
+    def search_ui
+      @search_ui || @form_ui
+    end
+
     # DEPRECATED
     alias :ui_type :form_ui
     def ui_type=(val)
@@ -144,9 +149,13 @@ module ActiveScaffold::DataStructures
     attr_accessor :weight
 
     # to set how many associated records a column with plural association must show in list
+    cattr_accessor :associated_limit
+    @@associated_limit = 3
     attr_accessor :associated_limit
 
     # whether the number of associated records must be shown or not
+    cattr_accessor :associated_number
+    @@associated_number = true
     attr_writer :associated_number
     def associated_number?
       @associated_number
@@ -201,8 +210,8 @@ module ActiveScaffold::DataStructures
       @active_record_class = active_record_class
       @table = active_record_class.table_name
       @weight = 0
-      @associated_limit = 3
-      @associated_number = true
+      @associated_limit = self.class.associated_limit
+      @associated_number = self.class.associated_number
 
       # default all the configurable variables
       self.label = @column.human_name unless @column.nil?

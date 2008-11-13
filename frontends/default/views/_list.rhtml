@@ -10,6 +10,9 @@
         <div id="<%= active_scaffold_messages_id -%>">
           <%= render :partial => 'messages' %>
         </div>
+        <p class="filtered-message" <%= ' style="display:none;" ' unless @filtered %>>
+          <%= as_('Filtered list') %>
+        </p>
         <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" ' unless @page.items.empty? %>>
           <%= as_('No Entries') %>
         </p>

@@ -7,7 +7,9 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::Associations
       include ActiveScaffold::Helpers::Pagination
       include ActiveScaffold::Helpers::ListColumns
+      include ActiveScaffold::Helpers::ShowColumns
       include ActiveScaffold::Helpers::FormColumns
+      include ActiveScaffold::Helpers::SearchColumns
 
       ##
       ## Delegates

@@ -398,7 +398,7 @@ margin: 0 7px;
 border: none;
 }
 
-.active-scaffold .empty-message {
+.active-scaffold .empty-message, .active-scaffold .filtered-message {
 background-color: #e8e8e8;
 padding: 4px;
 text-align: center;

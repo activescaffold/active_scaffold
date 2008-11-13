@@ -10,13 +10,7 @@ module ActiveScaffold::Actions
     def show_search
       params[:search] ||= {}
       respond_to do |type|
-        type.html do
-          if successful?
-            render(:partial => "field_search", :layout => true)
-          else
-            return_to_main
-          end
-        end
+        type.html { render(:action => "field_search") }
         type.js { render(:partial => "field_search", :layout => false) }
       end
     end
@@ -24,17 +18,18 @@ module ActiveScaffold::Actions
     protected
 
     def do_search
+      @record = active_scaffold_config.model.new
       unless params[:search].nil?
         like_pattern = active_scaffold_config.field_search.full_text_search? ? '%?%' : '?%'
-        conditions = self.active_scaffold_conditions
-        params[:search].each do |key, value|
-          next unless active_scaffold_config.field_search.columns.include?(key)
-          column = active_scaffold_config.columns[key]
-          conditions = merge_conditions(conditions, ActiveScaffold::Finder.condition_for_column(column, value, like_pattern))
-        end
-        self.active_scaffold_conditions = conditions
-
+        search_conditions = []
         columns = active_scaffold_config.field_search.columns
+        columns.each do |column|
+          search_conditions << ActiveScaffold::Finder.condition_for_column(column, params[:search][column.name], like_pattern)
+        end
+        search_conditions.compact!
+        self.active_scaffold_conditions = merge_conditions(self.active_scaffold_conditions, *search_conditions)
+        @filtered = !search_conditions.blank?
+
         includes_for_search_columns = columns.collect{ |column| column.includes}.flatten.uniq.compact
         self.active_scaffold_joins.concat includes_for_search_columns
 
