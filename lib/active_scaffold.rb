@@ -55,16 +55,25 @@ module ActiveScaffold
       klass = self.active_scaffold_config.model
       klass.define_attribute_methods unless klass.generated_methods?
 
-      # set up the generic_view_paths (Rails 2.x)
-      frontends_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
-
-      paths = self.active_scaffold_config.inherited_view_paths.clone
-      ActionController::Base.view_paths.each do |dir|
-        paths << File.join(dir,"active_scaffold_overrides") if File.exists?(File.join(dir,"active_scaffold_overrides"))
+      if Rails::VERSION::MAJOR == 2 && Rails::VERSION::MINOR == 2
+        self.append_view_path(File.join(Rails.root, 'app', 'views', controller_path))
+        self.append_view_path(File.join(Rails.root, 'app', 'views', 'active_scaffold_overrides'))
+        if active_scaffold_config.frontend.to_sym != :default
+          self.append_view_path(File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views'))
+        end
+        self.append_view_path(File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', 'default' , 'views'))
+      else
+        # set up the generic_view_paths (Rails 2.x)
+        frontends_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
+   
+        paths = self.active_scaffold_config.inherited_view_paths.clone
+        ActionController::Base.view_paths.each do |dir|
+          paths << File.join(dir,"active_scaffold_overrides") if File.exists?(File.join(dir,"active_scaffold_overrides"))
+        end
+        paths << File.join(frontends_path, active_scaffold_config.frontend, 'views') if active_scaffold_config.frontend.to_sym != :default
+        paths << File.join(frontends_path, 'default', 'views')
+        self.generic_view_paths = paths
       end
-      paths << File.join(frontends_path, active_scaffold_config.frontend, 'views') if active_scaffold_config.frontend.to_sym != :default
-      paths << File.join(frontends_path, 'default', 'views')
-      self.generic_view_paths = paths
 
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
