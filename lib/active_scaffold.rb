@@ -59,7 +59,9 @@ module ActiveScaffold
 
       if Rails::VERSION::MAJOR == 2 && Rails::VERSION::MINOR == 2
         self.append_view_path(File.join(Rails.root, 'app', 'views', controller_path))
-        self.append_view_path(File.join(Rails.root, 'app', 'views', 'active_scaffold_overrides'))
+        ActionController::Base.view_paths.each do |dir|
+          self.append_view_path(File.join(dir,"active_scaffold_overrides")) if File.exists?(File.join(dir,"active_scaffold_overrides"))
+        end
         if active_scaffold_config.frontend.to_sym != :default
           self.append_view_path(File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views'))
         end
@@ -67,7 +69,7 @@ module ActiveScaffold
       else
         # set up the generic_view_paths (Rails 2.x)
         frontends_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
-   
+
         paths = self.active_scaffold_config.inherited_view_paths.clone
         ActionController::Base.view_paths.each do |dir|
           paths << File.join(dir,"active_scaffold_overrides") if File.exists?(File.join(dir,"active_scaffold_overrides"))
