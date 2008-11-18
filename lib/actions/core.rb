@@ -62,7 +62,7 @@ module ActiveScaffold::Actions
     # Redirect to the main page (override if the ActiveScaffold is used as a component on another controllers page) for Javascript degradation
     def return_to_main
       params[:controller] = params[:parent_controller] unless params[:parent_controller].nil?
-      redirect_to params.merge(:action => "index")
+      redirect_to params_for(:action => "index")
     end
 
     # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
