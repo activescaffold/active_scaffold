@@ -1,6 +1,10 @@
-require(File.join(File.dirname(__FILE__), 'exceptions'))
-
 module ActiveScaffold
+  class ControllerNotFound < RuntimeError; end
+  class DependencyFailure < RuntimeError; end
+  class MalformedConstraint < RuntimeError; end
+  class RecordNotAllowed < SecurityError; end
+  class ReverseAssociationRequired < RuntimeError; end
+
   def self.included(base)
     base.extend(ClassMethods)
     base.module_eval do

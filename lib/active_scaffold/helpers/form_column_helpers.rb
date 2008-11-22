@@ -1,7 +1,7 @@
 module ActiveScaffold
   module Helpers
     # Helpers that assist with the rendering of a Form Column
-    module FormColumns
+    module FormColumnHelpers
       # This method decides which input to use for the given column.
       # It does not do any rendering. It only decides which method is responsible for rendering.
       def active_scaffold_input_for(column, scope = nil)
