@@ -9,6 +9,7 @@ module ActiveScaffold::Actions
     # This facilitates for example, textual searches against associations via .search_sql
     def show_search
       params[:search] ||= {}
+      @record = active_scaffold_config.model.new
       respond_to do |type|
         type.html { render(:action => "field_search") }
         type.js { render(:partial => "field_search", :layout => false) }
@@ -18,7 +19,6 @@ module ActiveScaffold::Actions
     protected
 
     def do_search
-      @record = active_scaffold_config.model.new
       unless params[:search].nil?
         like_pattern = active_scaffold_config.field_search.full_text_search? ? '%?%' : '?%'
         search_conditions = []
