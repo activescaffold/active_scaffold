@@ -1,6 +1,10 @@
 module ActiveScaffold::Config
   class Update < Form
     self.crud_type = :update
+    def initialize(*args)
+      super
+      self.nested_links = self.class.nested_links
+    end
 
     # global level configuration
     # --------------------------
@@ -22,5 +26,7 @@ module ActiveScaffold::Config
     end
 
     attr_accessor :nested_links
+    cattr_accessor :nested_links
+    @@nested_links = false
   end
 end
