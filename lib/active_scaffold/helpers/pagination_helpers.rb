@@ -1,6 +1,6 @@
 module ActiveScaffold
   module Helpers
-    module Pagination
+    module PaginationHelpers
       def pagination_ajax_link(page_number, params)
         page_link = link_to_remote(page_number,
                   { :url => params.merge(:page => page_number),
