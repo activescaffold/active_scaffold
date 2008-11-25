@@ -61,7 +61,6 @@ module ActiveScaffold
       klass = self.active_scaffold_config.model
       klass.define_attribute_methods unless klass.generated_methods?
 
-      self.append_view_path(File.join(Rails.root, 'app', 'views', controller_path))
       ActionController::Base.view_paths.each do |dir|
         self.append_view_path(File.join(dir,"active_scaffold_overrides")) if File.exists?(File.join(dir,"active_scaffold_overrides"))
       end
