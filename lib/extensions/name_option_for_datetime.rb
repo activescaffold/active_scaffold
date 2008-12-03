@@ -13,7 +13,7 @@ module ActionView
         options[:index]              ||= @auto_index
         options[:datetime_separator] ||= ' &mdash; '
         options[:time_separator]     ||= ' : '
-        options.merge(:prefix => options[:name].dup.insert(-2, "(#{position}i)")) if options[:name]
+        options.merge(:prefix => options[:name].dup.insert(-2, "(#{options[:position]}i)")) if options[:name]
 
         DateTimeSelector.new(datetime, options.merge(:tag => true), html_options)
       end
