@@ -96,7 +96,7 @@ module ActiveScaffold
       ## Overrides
       ##
       def active_scaffold_column_text(column, record)
-        truncate(clean_column_value(record.send(column.name)), 50)
+        truncate(clean_column_value(record.send(column.name)), :length => 50)
       end
 
       def active_scaffold_column_checkbox(column, record)
