@@ -7,6 +7,7 @@ module ActiveScaffold::Actions
       base.before_filter :include_habtm_actions
       # TODO: it's a bit wasteful to run this routine every page load.
       base.before_filter :links_for_associations
+      base.helper_method :nested_habtm?
     end
 
     def nested
