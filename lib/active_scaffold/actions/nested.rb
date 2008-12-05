@@ -77,7 +77,7 @@ module ActiveScaffold::Actions
         
         if active_scaffold_config.nested.shallow_delete
           active_scaffold_config.action_links.delete("destroy_existing") if active_scaffold_config.action_links['destroy_existing']
-          active_scaffold_config.action_links.add('destroy', :label => 'Delete', :type => :record, :confirm => 'Are you sure?', :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy']
+          active_scaffold_config.action_links.add('destroy', :label => 'Delete', :type => :record, :confirm => 'Are you sure?', :method => :delete, :position => false, :security_method => :delete_authorized?) unless active_scaffold_config.action_links['destroy']
         end
         
       end
