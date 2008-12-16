@@ -35,7 +35,7 @@ class ActionView::Base
     if m = template_file_name.match(/\/(\w+)$/)
       generic_template = m[1]
     end
-
+    
     # OPTIMIZE: Checks to lookup template in view path
     if template = self.view_paths["#{template_file_name}.#{template_format}"]
       template
@@ -43,7 +43,8 @@ class ActionView::Base
       template
     elsif template = self.view_paths[generic_template]
       template
-    elsif @_render_stack.first && template = self.view_paths["#{template_file_name}.#{@_render_stack.first.format_and_extension}"]
+    elsif (first_render = @_render_stack.first) && first_render.respond_to?(:format_and_extension) &&
+        (template = self.view_paths["#{template_file_name}.#{first_render.format_and_extension}"])
       template
     elsif template_format == :js && template = self.view_paths["#{template_file_name}.html"]
       @template_format = :html
