@@ -28,10 +28,14 @@ module ActiveScaffold
                 formatted_value = clean_column_value(format_column(value.to_label))
 
               when :has_many, :has_and_belongs_to_many
-                firsts = value.first(column.associated_limit + 1).collect { |v| v.to_label }
-                firsts[column.associated_limit] = '…' if firsts.length > column.associated_limit
+                if column.associated_limit.nil?
+                  firsts = value.collect { |v| v.to_label }
+                else
+                  firsts = value.first(column.associated_limit + 1).collect { |v| v.to_label }
+                  firsts[column.associated_limit] = '…' if firsts.length > column.associated_limit
+                end
                 formatted_value = clean_column_value(format_column(firsts.join(', ')))
-                formatted_value << " (#{value.length})" if column.associated_number? and firsts.length > column.associated_limit
+                formatted_value << " (#{value.length})" if column.associated_number? and column.associated_limit and firsts.length > column.associated_limit
                 formatted_value
             end
           end
