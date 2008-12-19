@@ -148,7 +148,8 @@ module ActiveScaffold::Config
     end
 
     def self.method_missing(name, *args)
-      if @@actions.include? name.to_s.underscore and ActiveScaffold::Config.const_defined? name.to_s.titleize
+      klass = "ActiveScaffold::Config::#{name.to_s.titleize}".constantize rescue nil
+      if @@actions.include? name.to_s.underscore and klass
         return eval("ActiveScaffold::Config::#{name.to_s.titleize}")
       end
       super
