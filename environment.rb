@@ -1,5 +1,4 @@
 require 'active_scaffold'
-require 'bridges/bridge.rb'
 
 # TODO: clean up extensions. some could be organized for autoloading, and others could be removed entirely.
 Dir["#{File.dirname __FILE__}/lib/extensions/*.rb"].each { |file| require file }
@@ -12,3 +11,5 @@ ActionView::Base.send(:include, ActiveScaffold::Helpers::ViewHelpers)
 ActionController::Base.class_eval {include ActiveRecordPermissions::ModelUserAccess::Controller}
 ActiveRecord::Base.class_eval     {include ActiveRecordPermissions::ModelUserAccess::Model}
 ActiveRecord::Base.class_eval     {include ActiveRecordPermissions::Permissions}
+
+require 'bridges/bridge.rb'
