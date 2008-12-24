@@ -4,7 +4,7 @@ module ActionView
 
       # Return a full select and option tags for the given object and method, using usa_state_options_for_select to generate the list of option <tags>.
       def usa_state_select(object, method, priority_states = nil, options = {}, html_options = {})
-        InstanceTag.new(object, method, self, nil, options.delete(:object)).to_usa_state_select_tag(priority_states, options, html_options)
+        InstanceTag.new(object, method, self, options.delete(:object)).to_usa_state_select_tag(priority_states, options, html_options)
       end
     
 
