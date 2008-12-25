@@ -13,13 +13,13 @@ module ActiveScaffold::Actions
       respond_to do |type|
         type.html do
           if successful?
-            render(:action => 'create_form')
+            render(:action => 'create', :layout => true)
           else
             return_to_main
           end
         end
         type.js do
-          render(:partial => 'create_form', :layout => false)
+          render(:partial => 'create_form.rhtml', :layout => false)
         end
       end
     end
@@ -33,14 +33,14 @@ module ActiveScaffold::Actions
           if params[:iframe]=='true' # was this an iframe post ?
             responds_to_parent do
               if successful?
-                render :action => 'create.rjs', :layout => false
+                render :action => 'on_create', :layout => false
               else
                 render :action => 'form_messages.rjs', :layout => false
               end
             end
           else
             if successful?
-              flash[:info] = as_('Created %s', @record.to_label)
+              flash[:info] = as_(:created_model, :model => @record.to_label)
               if active_scaffold_config.create.edit_after_create
                 redirect_to params.merge(:action => "edit", :id => @record.id)
               else
@@ -51,13 +51,13 @@ module ActiveScaffold::Actions
                 do_list
                 render(:action => 'list')
               else
-                render(:action => 'create_form')
+                render(:action => 'create', :layout => true)
               end
             end
           end
         end
         type.js do
-          render :action => 'create.rjs', :layout => false
+          render :action => 'on_create', :layout => false
         end
         type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
         type.json { render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status }

@@ -37,8 +37,8 @@ end -%>
   <%= render :partial => 'form', :locals => { :columns => active_scaffold_config.create.columns } %>
 
   <p class="form-footer">
-    <%= submit_tag as_('Create'), :class => "submit" %>
-    <%= link_to as_('Cancel'), params_for(:controller => params[:parent_controller] ? params[:parent_controller] : params[:controller], :action => 'list'), :class => 'cancel' %>
+    <%= submit_tag as_(:create), :class => "submit" %>
+    <%= link_to as_(:cancel), params_for(:controller => params[:parent_controller] ? params[:parent_controller] : params[:controller], :action => 'list'), :class => 'cancel' %>
     <%= loading_indicator_tag(:action => :create, :id => params[:id]) %>
   </p>
 

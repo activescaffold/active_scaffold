@@ -32,8 +32,8 @@ href = url_for(params_for(:action => :update_table, :escape => false).delete_if{
     <% end -%>
   </ol>
   <p class="form-footer">
-    <%= submit_tag as_('Search'), :class => "submit" %>
-    <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= as_('Reset') -%></a>
+    <%= submit_tag as_(:search), :class => "submit" %>
+    <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= as_(:reset) -%></a>
     <%= loading_indicator_tag(:action => :search) %>
   </p>
 </form>

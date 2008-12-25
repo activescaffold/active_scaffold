@@ -59,7 +59,7 @@ module ActiveScaffold
             if controller_actions.include?(:create) and column.actions_for_association_links.include? :new and column_model.authorized_for?(:action => :create)
               link.action = 'new'
               link.crud_type = :create
-              text = as_('Create New')
+              text = as_(:create_new)
             end
           end
           return "<a class='disabled'>#{text}</a>" unless record.authorized_for?(:action => column.link.crud_type)

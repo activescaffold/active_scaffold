@@ -8,13 +8,13 @@
                     :update => active_scaffold_content_id,
                     :html => { :href => href, :id => search_form_id, :class => 'search', :method => :get } %>
   <input type="text" name="search" size="50" value="<%= params[:search] -%>" class="text-input" id="<%= search_input_id %>" autocompleted="off" />
-  <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= as_('Reset') -%></a>
+  <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= as_(:reset) -%></a>
   <%= loading_indicator_tag(:action => :search) %>
 </form>
 
 <script type="text/javascript">
 //<![CDATA[
-  new TextFieldWithExample('<%= search_input_id %>', '<%= as_("Live Search") %>');
+  new TextFieldWithExample('<%= search_input_id %>', '<%= as_(:live_search) %>');
   new Form.Element.Observer('<%= search_input_id %>', 1.5, function(element, value) {
     if (!$(element.id)) return false; // because the element may have been destroyed
     $(element).up('form').onsubmit();

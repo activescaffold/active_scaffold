@@ -29,7 +29,7 @@ end -%>
   <%= render :partial => 'form', :locals => { :columns => active_scaffold_config.create.columns } %>
 
   <p class="form-footer">
-    <%= submit_tag as_('Create'), :class => "submit" %>
+    <%= submit_tag as_(:create), :class => "submit" %>
     <%= loading_indicator_tag(:action => :create, :id => params[:id]) %>
   </p>
 </form>

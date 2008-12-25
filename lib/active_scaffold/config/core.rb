@@ -82,7 +82,7 @@ module ActiveScaffold::Config
     # a generally-applicable name for this ActiveScaffold ... will be used for generating page/section headers
     attr_writer :label
     def label
-      as_(@label)
+      as_(@label) || model.human_name
     end
 
     ##
@@ -112,9 +112,6 @@ module ActiveScaffold::Config
 
       # inherit from the global set of action links
       @action_links = self.class.action_links.clone
-
-      # the default label
-      @label = self.model_id.pluralize.titleize
     end
 
     # To be called after your finished configuration
