@@ -12,7 +12,7 @@ module ActiveScaffold
               get_column_value(@record, column) + " " +
               hidden_field(:record, "delete_#{column.name}", :value => "false") +
               " | " +
-              link_to_function(as_("Remove file"), "$(this).previous().value='true'; p=$(this).up(); p.hide(); p.next().show();"),
+              link_to_function(as_(:remove_file), "$(this).previous().value='true'; p=$(this).up(); p.hide(); p.next().show();"),
               {}
             ) +
             content_tag(

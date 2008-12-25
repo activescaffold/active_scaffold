@@ -13,3 +13,5 @@ ActiveRecord::Base.class_eval     {include ActiveRecordPermissions::ModelUserAcc
 ActiveRecord::Base.class_eval     {include ActiveRecordPermissions::Permissions}
 
 require 'bridges/bridge.rb'
+
+I18n.load_path << File.dirname(__FILE__) + '/lib/active_scaffold/locale/en.rb'

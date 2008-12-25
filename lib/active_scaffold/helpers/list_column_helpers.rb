@@ -59,7 +59,7 @@ module ActiveScaffold
             if controller_actions.include?(:create) and column.actions_for_association_links.include? :new and column_model.authorized_for?(:action => :create)
               link.action = 'new'
               link.crud_type = :create
-              text = as_('Create New')
+              text = as_(:create_new)
             end
           end
           return "<a class='disabled'>#{text}</a>" unless record.authorized_for?(:action => column.link.crud_type)
@@ -177,11 +177,11 @@ module ActiveScaffold
         tag_options = {:tag => "span", :id => element_cell_id(id_options), :class => "in_place_editor_field"}
         in_place_editor_options = {:url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s},
          :with => params[:eid] ? "Form.serialize(form) + '&eid=#{params[:eid]}'" : nil,
-         :click_to_edit_text => as_("Click to edit"),
-         :cancel_text => as_("Cancel"),
-         :loading_text => as_("Loading…"),
-         :save_text => as_("Update"),
-         :saving_text => as_("Saving…"),
+         :click_to_edit_text => as_(:click_to_edit),
+         :cancel_text => as_(:cancel),
+         :loading_text => as_(:loading…),
+         :save_text => as_(:update),
+         :saving_text => as_(:saving…),
          :options => "{method: 'post'}",
          :script => true}.merge(column.options)
         content_tag(:span, formatted_column, tag_options) + in_place_editor(tag_options[:id], in_place_editor_options)

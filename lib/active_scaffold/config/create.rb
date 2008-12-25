@@ -16,7 +16,7 @@ module ActiveScaffold::Config
     def self.link=(val)
       @@link = val
     end
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('new', :label => 'Create New', :type => :table, :security_method => :create_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('new', :label => :create_new, :type => :table, :security_method => :create_authorized?)
 
     # whether the form stays open after a create or not
     cattr_accessor :persistent
@@ -30,7 +30,7 @@ module ActiveScaffold::Config
     # ----------------------------
     # the label= method already exists in the Form base class
     def label
-      @label ? as_(@label) : as_('Create %s', @core.label.singularize)
+      @label ? as_(@label) : as_(:create_model, :model => @core.label.singularize)
     end
 
     # whether the form stays open after a create or not

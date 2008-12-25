@@ -37,7 +37,7 @@ module ActiveScaffold::DataStructures
     # what string to use to represent this action
     attr_writer :label
     def label
-      as_(@label)
+      @label.is_a?(Symbol) ? as_(@label) : @label
     end
 
     # if the action requires confirmation

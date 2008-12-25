@@ -67,12 +67,12 @@ module ActiveScaffold::Config
 
     attr_writer :no_entries_message
     def no_entries_message
-      @no_entries_message ? as_(@no_entries_message) : 'No Entries'
+      @no_entries_message ? @no_entries_message : :no_entries
     end
 
     attr_writer :filtered_message
     def filtered_message
-      @filtered_message ? as_(@filtered_message) : 'Filtered List'
+      @filtered_message ? @filtered_message : :filtered_list
     end
     
     attr_writer :always_show_search

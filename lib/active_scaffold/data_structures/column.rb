@@ -20,15 +20,16 @@ module ActiveScaffold::DataStructures
     end
 
     # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.
+    # if left alone it will utilize human_attribute_name which includes localization
     attr_writer :label
     def label
-      as_(@label)
+      as_(@label) || active_record_class.human_attribute_name(name.to_s)
     end
 
     # a textual description of the column and its contents. this will be displayed with any associated form input widget, so you may want to consider adding a content example.
     attr_writer :description
     def description
-      as_(@description) if @description
+      @description.is_a?(Symbol) ? as_(@description, {:scope => [:activerecord, :attributes, active_record_class.to_s.underscore.to_sym]}) : as_(@description) if @description
     end
 
     # this will be /joined/ to the :name for the td's class attribute. useful if you want to style columns on different ActiveScaffolds the same way, but the columns have different names.
@@ -112,7 +113,7 @@ module ActiveScaffold::DataStructures
       if action.is_a? ActiveScaffold::DataStructures::ActionLink
         @link = action
       else
-        options[:label] ||= @label
+        options[:label] ||= self.label
         options[:position] ||= :after unless options.has_key?(:position)
         options[:type] ||= :record
         @link = ActiveScaffold::DataStructures::ActionLink.new(action, options)
@@ -226,8 +227,6 @@ module ActiveScaffold::DataStructures
       @actions_for_association_links = self.class.actions_for_association_links if @association
 
       # default all the configurable variables
-      self.label = @column.human_name unless @column.nil?
-      self.label ||= self.name.to_s.titleize
       self.css_class = ''
       if active_record_class.respond_to? :reflect_on_validations_for
         column_names = [name]

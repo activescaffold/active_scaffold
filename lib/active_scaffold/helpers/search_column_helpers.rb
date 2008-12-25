@@ -87,7 +87,7 @@ module ActiveScaffold
           selected = associated.nil? ? nil : associated.id
           method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
           options[:name] += '[id]'
-          select(:record, method, select_options.uniq, {:selected => selected, :include_blank => as_('- select -')}, options)
+          select(:record, method, select_options.uniq, {:selected => selected, :include_blank => as_(:_select_)}, options)
         else
           select(:record, column.name, column.options, { :selected => @record.send(column.name) }, options)
         end
@@ -101,9 +101,9 @@ module ActiveScaffold
       # to decide whether search for this field or not
       def active_scaffold_search_boolean(column, options)
         select_options = []
-        select_options << [as_('- select -'), nil]
-        select_options << [as_('True'), 1]
-        select_options << [as_('False'), 0]
+        select_options << [as_(:_select_), nil]
+        select_options << [as_(:true), 1]
+        select_options << [as_(:false), 0]
 
         select_tag(options[:name], options_for_select(select_options, @record.send(column.name)))
       end
@@ -113,7 +113,7 @@ module ActiveScaffold
       def active_scaffold_search_integer(column, options)
         html = []
         html << select_tag("#{options[:name]}[opt]",
-              options_for_select(ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.titleize), comp]}),
+              options_for_select(ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}),
               :id => "#{options[:id]}_opt",
               :onchange => "Element[this.value == 'BETWEEN' ? 'show' : 'hide']('#{options[:id]}_between');")
         html << text_field_tag("#{options[:name]}[from]", nil, active_scaffold_input_text_options(:id => options[:id], :size => 10))

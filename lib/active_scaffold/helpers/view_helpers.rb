@@ -39,7 +39,7 @@ module ActiveScaffold
       # Turns [[label, value]] into <option> tags
       # Takes optional parameter of :include_blank
       def option_tags_for(select_options, options = {})
-        select_options.insert(0,[as_('- select -'),nil]) if options[:include_blank]
+        select_options.insert(0,[as_(:_select_),nil]) if options[:include_blank]
         select_options.collect do |option|
           label, value = option[0], option[1]
           value.nil? ? "<option value="">#{label}</option>" : "<option value=\"#{value}\">#{label}</option>"
@@ -119,8 +119,8 @@ module ActiveScaffold
         options[:of] ||= '$(this.parentNode).next()'
         options[:default_visible] = true if options[:default_visible].nil?
 
-        link_text = options[:default_visible] ? 'hide' : 'show'
-        link_to_function as_(link_text), "e = #{options[:of]}; e.toggle(); this.innerHTML = (e.style.display == 'none') ? '#{as_('show')}' : '#{as_('hide')}'", :class => 'visibility-toggle'
+        link_text = options[:default_visible] ? as_(:hide) : as_(:show)
+        link_to_function link_text, "e = #{options[:of]}; e.toggle(); this.innerHTML = (e.style.display == 'none') ? '#{as_(:show)}' : '#{as_(:hide)}'", :class => 'visibility-toggle'
       end
 
       def render_action_link(link, url_options)
