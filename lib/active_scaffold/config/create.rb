@@ -4,6 +4,7 @@ module ActiveScaffold::Config
     def initialize(*args)
       super
       self.persistent = self.class.persistent
+      self.show_on_list = self.class.show_on_list
       self.edit_after_create = self.class.edit_after_create
     end
 
@@ -18,6 +19,10 @@ module ActiveScaffold::Config
     end
     @@link = ActiveScaffold::DataStructures::ActionLink.new('new', :label => 'Create New', :type => :table, :security_method => :create_authorized?)
 
+    # whether the create form is initially displayed on list or not
+    cattr_accessor :show_on_list
+    @@show_on_list = false
+    
     # whether the form stays open after a create or not
     cattr_accessor :persistent
     @@persistent = false
@@ -33,6 +38,9 @@ module ActiveScaffold::Config
       @label ? as_(@label) : as_('Create %s', @core.label.singularize)
     end
 
+    # whether the create form is initially displayed on list or not
+    attr_accessor :show_on_list
+    
     # whether the form stays open after a create or not
     attr_accessor :persistent
 

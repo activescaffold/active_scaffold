@@ -23,3 +23,10 @@ ActiveScaffold.server_error_response = '<p class="error-message message">'
   + '</a>'
   + '</p>';
 </script>
+<% if active_scaffold_config.create.show_on_list %>
+  <script type="text/javascript">
+    <% link = action_link_id('new', nil) %>
+    $$("#<%= link %>").first().action_link.open()
+  </script>
+<% end %>
+
