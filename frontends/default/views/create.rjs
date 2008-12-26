@@ -1,5 +1,4 @@
-cancel_selector = "##{element_form_id(:action => :create)} a.cancel".to_json
-
+new_link_selector = "##{action_link_id('new', nil)}".to_json
 if controller.send :successful?
   if @insert_row
     page.insert_html :top, active_scaffold_tbody_id, :partial => 'list_record', :locals => {:record => @record}
@@ -9,16 +8,16 @@ if controller.send :successful?
   end
 
   if (active_scaffold_config.create.persistent)
-    page << "$$(#{cancel_selector}).first().link.reload();"
+    page << "$$(#{new_link_selector}).first().action_link.reload();"
   else
-    page << "$$(#{cancel_selector}).first().link.close#{'_with_refresh' unless @insert_row}();"
+    page << "$$(#{new_link_selector}).first().action_link.close#{'_with_refresh' unless @insert_row}();"
   end
   if (active_scaffold_config.create.edit_after_create)
     page << "var link = $('#{action_link_id 'edit', @record.id}');"
     page << "if (link) (function() { link.action_link.open() }).defer();"
   end
 else
-  page << "l = $$(#{cancel_selector}).first().link;"
+  page << "l = $$(#{new_link_selector}).first().action_link;"
   page.replace element_form_id(:action => :create), :partial => 'create_form'
   page << "l.register_cancel_hooks();"
 end
