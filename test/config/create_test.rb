@@ -11,7 +11,6 @@ class Config::CreateTest < Test::Unit::TestCase
   end
   
   def test_default_options
-    assert !@config.create.show_on_list
     assert !@config.create.persistent
     assert !@config.create.edit_after_create
     assert_equal 'Create Model Stub', @config.create.label
@@ -42,11 +41,6 @@ class Config::CreateTest < Test::Unit::TestCase
     label = 'create new monkeys'
     @config.create.label = label
     assert_equal label, @config.create.label
-  end
-  
-  def test_show_on_list
-    @config.create.show_on_list = true
-    assert @config.create.show_on_list
   end
   
   def test_persistent
