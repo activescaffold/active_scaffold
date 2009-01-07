@@ -8,6 +8,9 @@ module ActiveScaffold::Config
       # inherit from global scope
       # full configuration path is: defaults => global table => local table
       @per_page = self.class.per_page
+      
+      # always_show_create
+      @always_show_create = self.class.always_show_create
 
       # originates here
       @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns)
@@ -23,6 +26,10 @@ module ActiveScaffold::Config
     cattr_accessor :per_page
     @@per_page = 15
 
+    # always show create
+    cattr_accessor :always_show_create
+    @@always_show_create = false
+    
     # what string to use when a field is empty
     cattr_accessor :empty_field_text
     @@empty_field_text = '-'
@@ -64,7 +71,13 @@ module ActiveScaffold::Config
     def label
       @label ? as_(@label) : @core.label
     end
-
+    
+    # always show create
+    attr_writer :always_show_create
+    def always_show_create
+      @always_show_create && @core.actions.include?(:create)
+    end
+    
     class UserSettings < UserSettings
       # This label has alread been localized.
       def label
