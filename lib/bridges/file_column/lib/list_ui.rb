@@ -1,7 +1,7 @@
 module ActiveScaffold
   module Helpers
     # Helpers that assist with the rendering of a List Column
-    module ListColumns
+    module ListColumnHelpers
       def active_scaffold_column_download_link_with_filename(column, record)
         return nil if record.send(column.name).nil?
         active_scaffold_column_download_link(column, record, File.basename(record.send(column.name)))

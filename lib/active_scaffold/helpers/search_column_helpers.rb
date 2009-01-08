@@ -56,21 +56,23 @@ module ActiveScaffold
         select_options = associated_options | options_for_association(column.association, true)
         return 'no options' if select_options.empty?
 
-        html = '<ul class="checkbox-list">'
+        html = "<ul class=\"checkbox-list\" id=\"#{options[:id]}\">"
 
         associated_ids = associated_options.collect {|a| a[1]}
         select_options.each_with_index do |option, i|
           label, id = option
           this_name = "#{options[:name]}[#{i}][id]"
+          this_id = "#{options[:id]}_#{i}_id"
           html << "<li>"
-          html << check_box_tag(this_name, id, associated_ids.include?(id))
-          html << "<label for='#{this_name}'>"
+          html << check_box_tag(this_name, id, associated_ids.include?(id), :id => this_id)
+          html << "<label for='#{this_id}'>"
           html << label
           html << "</label>"
           html << "</li>"
         end
 
         html << '</ul>'
+        html << javascript_tag("new DraggableLists('#{options[:id]}')") if column.options[:draggable_lists]
         html
       end
 
