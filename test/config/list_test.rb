@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), '../test_helper.rb')
 
-class Config::ListeTest < Test::Unit::TestCase
+class Config::ListTest < Test::Unit::TestCase
   def setup
     @config = ActiveScaffold::Config::Core.new :model_stub
   end
