@@ -13,7 +13,7 @@ module ActiveScaffold::Actions
       respond_to do |type|
         type.html do
           if successful?
-            render(:action => 'create_form', :layout => true)
+            render(:action => 'create_form')
           else
             return_to_main
           end
@@ -47,7 +47,7 @@ module ActiveScaffold::Actions
                 return_to_main
               end
             else
-              render(:action => 'create_form', :layout => true)
+              render(:action => 'create_form')
             end
           end
         end

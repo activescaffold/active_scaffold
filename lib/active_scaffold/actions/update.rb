@@ -13,7 +13,7 @@ module ActiveScaffold::Actions
       respond_to do |type|
         type.html do
           if successful?
-            render(:action => 'update_form', :layout => true)
+            render(:action => 'update_form')
           else
             return_to_main
           end
@@ -42,7 +42,7 @@ module ActiveScaffold::Actions
               flash[:info] = as_('Updated %s', @record.to_label)
               return_to_main
             else
-              render(:action => 'update_form', :layout => true)
+              render(:action => 'update_form')
             end
           end
         end
