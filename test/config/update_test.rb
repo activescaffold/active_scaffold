@@ -14,4 +14,11 @@ class Config::UpdateTest < Test::Unit::TestCase
     assert @config.columns[:a].params.include?(:keep_a)
     assert @config.columns[:a].params.include?(:a_temp)
   end
+  
+  def test_show_action_link
+    assert @config.update.show_action_link?
+    @config.list.always_show_create = true
+    assert @config.update.show_action_link?
+    assert @config.update.link
+  end
 end

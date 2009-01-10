@@ -31,7 +31,9 @@ module ActiveScaffold::Actions
 
     def list
       do_list
-
+      if active_scaffold_config.list.always_show_create
+        do_new
+      end
       respond_to do |type|
         type.html {
           render :action => 'list', :layout => true

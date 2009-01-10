@@ -38,5 +38,9 @@ module ActiveScaffold::Config
 
     # whether the form stays open after a create or not
     attr_accessor :edit_after_create
+    
+    def show_action_link?
+      !(@core.actions.include?(:list) && @core.list.always_show_create)
+    end
   end
 end

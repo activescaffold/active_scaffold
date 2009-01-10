@@ -17,8 +17,11 @@ module ActiveScaffold::Config
     # ----------------------------
 
     # the ActionLink for this action
-    attr_accessor :link
-
+    attr_writer :link
+    def link
+      show_action_link? ? @link : nil
+    end
+    
     # the label for this Form action. used for the header.
     attr_writer :label
     def label
