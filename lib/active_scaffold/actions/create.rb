@@ -47,8 +47,12 @@ module ActiveScaffold::Actions
                 return_to_main
               end
             else
-              do_list
-              render(:action => 'list', :layout => true)
+              if params[:nested].nil? && active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
+                do_list
+                render(:action => 'list')
+              else
+                render(:action => 'create_form')
+              end
             end
           end
         end
