@@ -47,7 +47,8 @@ module ActiveScaffold::Actions
                 return_to_main
               end
             else
-              render(:action => 'create_form', :layout => true)
+              do_list
+              render(:action => 'list', :layout => true)
             end
           end
         end

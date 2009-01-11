@@ -52,11 +52,4 @@ class Config::CreateTest < Test::Unit::TestCase
     @config.create.edit_after_create = true
     assert @config.create.edit_after_create
   end
-  
-  def test_show_action_link
-    assert @config.create.show_action_link?
-    @config.list.always_show_create = true
-    assert !@config.create.show_action_link?
-    assert @config.create.link.nil?
-  end
 end
