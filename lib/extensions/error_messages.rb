@@ -44,7 +44,10 @@ module ActionView
             end
           end
           error_message = "error prohibited this"
-          header_message = as_("%d #{error_message} %s from being saved", count, (options[:object_name] || params.first).to_s.gsub('_', ' '))
+          header_message = options[:header_message]
+          header_message ||= as_("%d #{error_message} %s from being saved", count, (options[:object_name] || params.first).to_s.gsub('_', ' '))
+          message = options[:message]
+          message ||= as_('There were problems with the following fields:')
           # Change 'error' to 'errors' for english setups void of a localization plugin
           header_message.gsub!("error", "errors") if header_message.include?(error_message) and count > 1
           error_messages = objects.map {|object| 
@@ -52,7 +55,7 @@ module ActionView
           }
           content_tag(:div,
             content_tag(options[:header_tag] || :h2, header_message) <<
-              content_tag(:p, as_('There were problems with the following fields:')) <<
+              content_tag(:p, message) <<
               content_tag(:ul, error_messages),
             html
           )
