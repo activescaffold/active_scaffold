@@ -9,9 +9,6 @@ module ActiveScaffold::Config
       # full configuration path is: defaults => global table => local table
       @per_page = self.class.per_page
       
-      # always_show_create
-      @always_show_create = self.class.always_show_create
-
       # originates here
       @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns)
       @sorting.add @core.model.primary_key, 'ASC'
@@ -26,10 +23,6 @@ module ActiveScaffold::Config
     cattr_accessor :per_page
     @@per_page = 15
 
-    # always show create
-    cattr_accessor :always_show_create
-    @@always_show_create = false
-    
     # what string to use when a field is empty
     cattr_accessor :empty_field_text
     @@empty_field_text = '-'
