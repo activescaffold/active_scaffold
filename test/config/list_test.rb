@@ -25,6 +25,13 @@ class Config::ListTest < Test::Unit::TestCase
     assert_equal false, @config.list.always_show_create
   end
   
+  def test_no_create_action_link_when_always_show_create
+    assert @config.create.columns
+    always_show_create = true
+    @config.list.always_show_create = always_show_create
+    assert @config.create.link.nil?
+  end
+  
   def test_always_show_create_when_create_is_not_enabled
     always_show_create = true
     @config.list.always_show_create = always_show_create

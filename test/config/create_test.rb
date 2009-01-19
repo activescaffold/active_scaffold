@@ -47,7 +47,7 @@ class Config::CreateTest < Test::Unit::TestCase
     @config.create.persistent = true
     assert @config.create.persistent
   end
-
+ 
   def test_edit_after_create
     @config.create.edit_after_create = true
     assert @config.create.edit_after_create

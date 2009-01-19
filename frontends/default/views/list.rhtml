@@ -3,7 +3,13 @@
     <%= render :partial => 'list_header' %>
   </div>
   <table cellpadding="0" cellspacing="0">
-    <tbody class="before-header" id="<%= before_header_id -%>"></tbody>
+    <tbody class="before-header" id="<%= before_header_id -%>">
+      <% if active_scaffold_config.list.always_show_create %>
+        <tr> <td> <div  class="active-scaffold create-view <%= "#{params[:controller]}-view" %> view">
+	    <%= render :partial => 'create_form_on_list' %>
+		</div> </td> </tr>
+      <% end %>
+    </tbody>
   </table>
   <div id="<%= active_scaffold_content_id -%>">
     <%= render :partial => 'list' %>
@@ -23,9 +29,3 @@ ActiveScaffold.server_error_response = '<p class="error-message message">'
   + '</a>'
   + '</p>';
 </script>
-<% if active_scaffold_config.list.always_show_create %>
-  <script type="text/javascript">
-    <% link = action_link_id('new', nil) %>
-    $$("#<%= link %>").first().action_link.open()
-  </script>
-<% end %>
