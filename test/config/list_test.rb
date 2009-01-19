@@ -9,6 +9,7 @@ class Config::ListTest < Test::Unit::TestCase
     assert_equal 15, @config.list.per_page
     assert_equal '-', @config.list.empty_field_text
     assert !@config.list.always_show_create
+    assert !@config.list.always_show_search
   end
   
   def test_per_page
@@ -21,8 +22,6 @@ class Config::ListTest < Test::Unit::TestCase
     always_show_create = true
     @config.list.always_show_create = always_show_create
     assert_equal always_show_create, @config.list.always_show_create
-    @config.actions.exclude :create
-    assert_equal false, @config.list.always_show_create
   end
   
   def test_always_show_create_when_create_is_not_enabled
@@ -31,4 +30,31 @@ class Config::ListTest < Test::Unit::TestCase
     @config.actions.exclude :create
     assert_equal false, @config.list.always_show_create
   end
+  
+  def test_always_show_search
+    @config.list.always_show_search = true
+    assert @config.list.always_show_search
+    assert_equal 'search', @config.list.search_partial
+  end
+  
+  def test_always_show_search_when_search_is_not_enabled
+    @config.list.always_show_search = true
+    @config.actions.exclude :search
+    assert_equal false, @config.list.always_show_search
+  end
+
+  def test_always_show_search_when_field_search
+    @config.list.always_show_search = true
+    @config.actions.swap :search, :live_search
+    assert @config.list.always_show_search
+    assert_equal 'live_search', @config.list.search_partial
+  end
+  
+  def test_always_show_search_when_field_search
+    @config.list.always_show_search = true
+    @config.actions.swap :search, :field_search
+    assert @config.list.always_show_search
+    assert_equal 'field_search', @config.list.search_partial
+  end
+
 end

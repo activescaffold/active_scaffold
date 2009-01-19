@@ -72,6 +72,17 @@ module ActiveScaffold::Config
       @label ? as_(@label) : @core.label
     end
     
+    attr_writer :always_show_search
+    def always_show_search
+      @always_show_search && !search_partial.blank?
+    end
+    
+    def search_partial
+      return "search" if @core.actions.include?(:search)
+      return "live_search" if @core.actions.include?(:live_search)
+      return "field_search" if @core.actions.include?(:field_search)
+    end
+    
     # always show create
     attr_writer :always_show_create
     def always_show_create
@@ -115,7 +126,6 @@ module ActiveScaffold::Config
       def count_includes
         @conf.count_includes
       end
-      
     end
   end
 end
