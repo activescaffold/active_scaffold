@@ -28,9 +28,5 @@ module ActiveScaffold::Config
     attr_accessor :nested_links
     cattr_accessor :nested_links
     @@nested_links = false
-    
-    def show_action_link?
-      true
-    end
   end
 end
