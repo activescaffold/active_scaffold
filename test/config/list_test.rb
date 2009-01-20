@@ -8,6 +8,8 @@ class Config::ListTest < Test::Unit::TestCase
   def test_default_options
     assert_equal 15, @config.list.per_page
     assert_equal '-', @config.list.empty_field_text
+    assert @config.actions.include?(:search)
+    assert_equal 'search', @config.list.search_partial
     assert !@config.list.always_show_create
     assert !@config.list.always_show_search
   end
