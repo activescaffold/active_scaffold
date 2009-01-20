@@ -64,6 +64,16 @@ module ActiveScaffold::Config
     def label
       @label ? as_(@label) : @core.label
     end
+
+    attr_writer :no_entries_message
+    def no_entries_message
+      @no_entries_message ? as_(@no_entries_message) : 'No Entries'
+    end
+
+    attr_writer :filtered_message
+    def filtered_message
+      @filtered_message ? as_(@filtered_message) : 'Filtered List'
+    end
     
     attr_writer :always_show_search
     def always_show_search
