@@ -20,7 +20,8 @@ http://code.google.com/p/recordselect/
 
 Please note the following list of Active Scaffold branches and Rails versions. Master will not work with Rails < 2.2
 
-Rails >= 2.2: Active Scaffold master
+Rails master (edge): Active Scaffold master
+Rails 2.2.*: Active Scaffold rails-2.2
 Rails 2.1.*: Active Scaffold rails-2.1
 Rails < 2.1: Active Scaffold 1-1-stable (no guarantees)
 
