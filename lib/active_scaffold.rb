@@ -62,15 +62,12 @@ module ActiveScaffold
       klass.define_attribute_methods unless klass.generated_methods?
 
       ActionController::Base.view_paths.each do |dir|
-        active_scaffold_overrides_dir = File.join(dir,"active_scaffold_overrides")
-        self.append_view_path(ActiveScaffoldPath.new(active_scaffold_overrides_dir)) if File.exists?(active_scaffold_overrides_dir)
+        self.append_view_path(File.join(dir,"active_scaffold_overrides")) if File.exists?(File.join(dir,"active_scaffold_overrides"))
       end
       if active_scaffold_config.frontend.to_sym != :default
-        active_scaffold_custom_frontend_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views')
-        self.append_view_path(ActiveScaffoldPath.new(active_scaffold_custom_frontend_path))
+        self.append_view_path(File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views'))
       end
-      active_scaffold_default_frontend_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', 'default' , 'views')
-      self.append_view_path(ActiveScaffoldPath.new(active_scaffold_default_frontend_path))
+      self.append_view_path(File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', 'default' , 'views'))
 
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
