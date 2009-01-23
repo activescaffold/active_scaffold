@@ -21,7 +21,7 @@ module ActiveScaffold::DataStructures
 
     def delete(val)
       index_to_delete = nil
-      @set.each_with_index {|item, index| index_to_delete = index; break if item.action == val.to_s}
+      @set.each_with_index {|item, index| index_to_delete = index and break if item.action == val.to_s}
       @set.delete_at(index_to_delete) unless index_to_delete.nil?
     end
 
