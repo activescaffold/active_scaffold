@@ -50,9 +50,14 @@ module ActiveScaffold
       # the standard active scaffold options used for class, name and scope
       def active_scaffold_input_options(column, scope = nil)
         name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
-        { :name => name, :class => "#{column.name}-input", :id => "record_#{column.name}_#{[params[:eid], params[:id]].compact.join '_'}"}
-      end
 
+        # Fix for keeping unique IDs in subform
+        id_control = "record_#{column.name}_#{[params[:eid], params[:id]].compact.join '_'}"
+        id_control += scope.gsub (/(\[|\])/, '_').gsub('__', '_').gsub(/_$/, '') if scope
+
+        { :name => name, :class => "#{column.name}-input", :id => id_control}
+      end
+ 
       ##
       ## Form input methods
       ##
