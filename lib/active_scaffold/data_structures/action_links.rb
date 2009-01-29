@@ -20,9 +20,7 @@ module ActiveScaffold::DataStructures
     end
 
     def delete(val)
-      index_to_delete = nil
-      @set.each_with_index {|item, index| index_to_delete = index and break if item.action == val.to_s}
-      @set.delete_at(index_to_delete) unless index_to_delete.nil?
+      @set.delete_if{|item| item.action == val.to_s}
     end
 
     # iterates over the links, possibly by type
