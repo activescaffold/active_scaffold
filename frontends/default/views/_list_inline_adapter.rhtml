@@ -2,7 +2,7 @@
 <tr class="inline-adapter">
   <td colspan="99" class="inline-adapter-cell">
     <div class="<%= "#{params[:action]}-view" if params[:action] %> <%= "#{params[:associations] ? params[:associations] : params[:controller]}-view" %> view">
-      <a href="" class="inline-adapter-close" title="close"><%= as_('Close') %></a>
+      <a href="" class="inline-adapter-close" title="<%= as_('Close') %>"><%= as_('Close') %></a>
       <%= payload -%>
     </div>
   </td>
