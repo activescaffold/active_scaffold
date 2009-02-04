@@ -56,7 +56,7 @@ module ActiveScaffold
           if column.singular_association? and column_empty?(text)
             column_model = column.association.klass
             controller_actions = active_scaffold_config_for(column_model).actions
-            if controller_actions.include?(:create) and column_model.authorized_for?(:action => :create)
+            if controller_actions.include?(:create) and column.actions_for_association_links.include? :new and column_model.authorized_for?(:action => :create)
               link.action = 'new'
               link.crud_type = :create
               text = as_('Create New')
