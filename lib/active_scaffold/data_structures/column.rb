@@ -161,6 +161,11 @@ module ActiveScaffold::DataStructures
       @associated_number
     end
 
+    # methods for automatic links in singular association columns
+    cattr_accessor :actions_for_association_links
+    @@actions_for_association_links = [:new, :edit, :show]
+    attr_accessor :actions_for_association_links
+
     # ----------------------------------------------------------------- #
     # the below functionality is intended for internal consumption only #
     # ----------------------------------------------------------------- #
@@ -212,6 +217,7 @@ module ActiveScaffold::DataStructures
       @weight = 0
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
+      @actions_for_association_links = self.class.actions_for_association_links if @association
 
       # default all the configurable variables
       self.label = @column.human_name unless @column.nil?
