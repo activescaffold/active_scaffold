@@ -19,10 +19,10 @@ module ActiveScaffold::DataStructures
     # nests a subgroup in the column set
     def add_subgroup(label, &proc)
       columns = ActiveScaffold::DataStructures::ActionColumns.new
-      columns.configure &proc
       columns.label = label
       columns.action = self.action
-      self.exclude columns.instance_variable_get('@set').clone
+      columns.configure &proc
+      self.exclude columns.collect_columns
       self.add columns
     end
 
@@ -35,6 +35,10 @@ module ActiveScaffold::DataStructures
     end
 
     protected
+
+    def collect_columns
+      @set.collect {|col| col.is_a?(ActiveScaffold::DataStructures::ActionColumns) ? col.collect_columns : col}
+    end
 
     # called during clone or dup. makes the clone/dup deeper.
     def initialize_copy(from)
