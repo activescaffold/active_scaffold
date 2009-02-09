@@ -161,6 +161,16 @@ module ActiveScaffold::DataStructures
       @associated_number
     end
 
+    # whether a blank row must be shown in the subform
+    cattr_accessor :show_blank_record
+    @@show_blank_record = true
+    attr_accessor :show_blank_record
+
+    # methods for automatic links in singular association columns
+    cattr_accessor :actions_for_association_links
+    @@actions_for_association_links = [:new, :edit, :show]
+    attr_accessor :actions_for_association_links
+
     # ----------------------------------------------------------------- #
     # the below functionality is intended for internal consumption only #
     # ----------------------------------------------------------------- #
@@ -212,6 +222,8 @@ module ActiveScaffold::DataStructures
       @weight = 0
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
+      @show_blank_record = self.class.show_blank_record
+      @actions_for_association_links = self.class.actions_for_association_links if @association
 
       # default all the configurable variables
       self.label = @column.human_name unless @column.nil?
