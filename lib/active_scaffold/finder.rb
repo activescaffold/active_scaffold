@@ -170,7 +170,7 @@ module ActiveScaffold
     end
 
     def joins_for_finder
-      case joins_for_collection.class
+      case joins_for_collection
       when String
         [ joins_for_collection ]
       when Array
