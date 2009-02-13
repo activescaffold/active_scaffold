@@ -21,11 +21,11 @@ module ActiveScaffold
           value = record.send(column.name)
 
           if column.association.nil? or column_empty?(value)
-            formatted_value = clean_column_value(format_column(value))
+            formatted_value = clean_column_value(format_value(value))
           else
             case column.association.macro
               when :has_one, :belongs_to
-                formatted_value = clean_column_value(format_column(value.to_label))
+                formatted_value = clean_column_value(format_value(value.to_label))
 
               when :has_many, :has_and_belongs_to_many
                 if column.associated_limit.nil?
@@ -34,7 +34,7 @@ module ActiveScaffold
                   firsts = value.first(column.associated_limit + 1).collect { |v| v.to_label }
                   firsts[column.associated_limit] = '…' if firsts.length > column.associated_limit
                 end
-                formatted_value = clean_column_value(format_column(firsts.join(', ')))
+                formatted_value = clean_column_value(format_value(firsts.join(', ')))
                 formatted_value << " (#{value.length})" if column.associated_number? and column.associated_limit and firsts.length > column.associated_limit
                 formatted_value
             end
@@ -137,7 +137,7 @@ module ActiveScaffold
       ## Formatting
       ##
 
-      def format_column(column_value)
+      def format_value(column_value)
         if column_empty?(column_value)
           active_scaffold_config.list.empty_field_text
         elsif column_value.instance_of? Time
@@ -167,7 +167,7 @@ module ActiveScaffold
         if column.list_ui == :checkbox
           active_scaffold_column_checkbox(column, record)
         else
-          clean_column_value(format_column(value))
+          clean_column_value(format_value(value))
         end
       end
       
