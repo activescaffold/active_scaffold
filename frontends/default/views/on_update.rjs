@@ -8,3 +8,4 @@ else
   page.replace element_form_id(:action => :update), :partial => 'update_form'
   page << "l.register_cancel_hooks();"
 end
+page.replace_html active_scaffold_messages_id, :partial => 'messages'
