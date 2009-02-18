@@ -72,7 +72,7 @@ module ActiveScaffold::Config
 
     attr_writer :filtered_message
     def filtered_message
-      @filtered_message ? @filtered_message : :filtered_list
+      @filtered_message ? @filtered_message : :filtered
     end
     
     attr_writer :always_show_search
