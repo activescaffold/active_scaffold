@@ -7,8 +7,12 @@ module ActiveScaffold
       def active_scaffold_search_for(column)
         options = active_scaffold_search_options(column)
 
+        # first, check if the dev has created an override for this specific field for search
+        if override_search_field?(column)
+          send(override_search_field(column), @record, options[:name])
+
         # first, check if the dev has created an override for this specific field
-        if override_form_field?(column)
+        elsif override_form_field?(column)
           send(override_form_field(column), @record, options[:name])
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
@@ -145,6 +149,15 @@ module ActiveScaffold
       ##
       ## Search column override signatures
       ##
+
+      def override_search_field?(column)
+        respond_to?(override_search_field(column))
+      end
+
+      # the naming convention for overriding form fields with helpers
+      def override_search_field(column)
+        "#{column.name}_search_column"
+      end
 
       def override_search?(search_ui)
         respond_to?(override_search(search_ui))

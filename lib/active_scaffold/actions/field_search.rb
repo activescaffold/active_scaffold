@@ -24,7 +24,7 @@ module ActiveScaffold::Actions
         search_conditions = []
         columns = active_scaffold_config.field_search.columns
         columns.each do |column|
-          search_conditions << ActiveScaffold::Finder.condition_for_column(column, params[:search][column.name], like_pattern)
+          search_conditions << self.class.condition_for_column(column, params[:search][column.name], like_pattern)
         end
         search_conditions.compact!
         self.active_scaffold_conditions = merge_conditions(self.active_scaffold_conditions, *search_conditions)
