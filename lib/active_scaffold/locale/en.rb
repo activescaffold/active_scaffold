@@ -23,6 +23,7 @@
       :nested_for_model => '{{nested_model}} for {{parent_model}}',
       :filtered => '(Filtered)',
       :found => 'Found',
+      :hide => 'Hide',
       :live_search => 'Live Search',
       :loading… => 'Loading…',
       :next => 'Next',
