@@ -8,7 +8,7 @@ module ActionView #:nodoc:
         find_template_without_active_scaffold(original_template_path, format)
       rescue MissingTemplate
         if active_scaffold_paths && original_template_path.include?('/')
-          active_scaffold_paths.find_template_without_active_scaffold(original_template_path.split('/', 2).last, format)
+          active_scaffold_paths.find_template_without_active_scaffold(original_template_path.split('/').last, format)
         else
           raise
         end
