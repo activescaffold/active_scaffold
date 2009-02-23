@@ -179,9 +179,9 @@ module ActiveScaffold
          :with => params[:eid] ? "Form.serialize(form) + '&eid=#{params[:eid]}'" : nil,
          :click_to_edit_text => as_(:click_to_edit),
          :cancel_text => as_(:cancel),
-         :loading_text => as_(:loading…),
+         :loading_text => as_(:loading),
          :save_text => as_(:update),
-         :saving_text => as_(:saving…),
+         :saving_text => as_(:saving),
          :options => "{method: 'post'}",
          :script => true}.merge(column.options)
         content_tag(:span, formatted_column, tag_options) + in_place_editor(tag_options[:id], in_place_editor_options)

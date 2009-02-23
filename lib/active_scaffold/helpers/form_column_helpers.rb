@@ -53,7 +53,7 @@ module ActiveScaffold
 
         # Fix for keeping unique IDs in subform
         id_control = "record_#{column.name}_#{[params[:eid], params[:id]].compact.join '_'}"
-        id_control += scope.gsub (/(\[|\])/, '_').gsub('__', '_').gsub(/_$/, '') if scope
+        id_control += scope.gsub(/(\[|\])/, '_').gsub('__', '_').gsub(/_$/, '') if scope
 
         { :name => name, :class => "#{column.name}-input", :id => id_control}
       end
