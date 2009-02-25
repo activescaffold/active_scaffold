@@ -89,20 +89,22 @@ module ActiveScaffold
       
       # Provides stylesheets to include with +stylesheet_link_tag+
       def active_scaffold_stylesheets(frontend = :default)
-        ActiveScaffold::Config::Core.asset_path("stylesheet.css", frontend)
+        [ActiveScaffold::Config::Core.asset_path("stylesheet.css", frontend)]
       end
 
       # Provides stylesheets for IE to include with +stylesheet_link_tag+ 
       def active_scaffold_ie_stylesheets(frontend = :default)
-        ActiveScaffold::Config::Core.asset_path("stylesheet-ie.css", frontend)
+        [ActiveScaffold::Config::Core.asset_path("stylesheet-ie.css", frontend)]
       end
 
       # easy way to include ActiveScaffold assets
-      def active_scaffold_includes(frontend = :default)
-        js = javascript_include_tag(*active_scaffold_javascripts(frontend))
+      def active_scaffold_includes(*args)
+        frontend = args.first.is_a?(Symbol) ? args.shift : :default
+        options = args.first.is_a?(Hash) ? args.shift : {}
+        js = javascript_include_tag(*active_scaffold_javascripts(frontend).push(options))
 
-        css = stylesheet_link_tag(*active_scaffold_stylesheets(frontend))
-        ie_css = stylesheet_link_tag(*active_scaffold_ie_stylesheets(frontend))
+        css = stylesheet_link_tag(*active_scaffold_stylesheets(frontend).push(options))
+        ie_css = stylesheet_link_tag(*active_scaffold_ie_stylesheets(frontend).push(options))
 
         js + "\n" + css + "\n<!--[if IE]>" + ie_css + "<![endif]-->\n"
       end
