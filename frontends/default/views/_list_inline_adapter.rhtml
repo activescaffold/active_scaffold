@@ -1,4 +1,4 @@
-<%= update_page_tag { |page| page.replace_html active_scaffold_messages_id, :partial => 'core/messages' } %>
+<%= update_page_tag { |page| page.replace_html active_scaffold_messages_id, :partial => 'messages' } %>
 <tr class="inline-adapter">
   <td colspan="99" class="inline-adapter-cell">
     <div class="<%= "#{params[:action]}-view" if params[:action] %> <%= "#{params[:associations] ? params[:associations] : params[:controller]}-view" %> view">
