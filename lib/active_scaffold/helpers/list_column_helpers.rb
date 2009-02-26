@@ -21,7 +21,7 @@ module ActiveScaffold
           value = record.send(column.name)
 
           if column.association.nil? or column_empty?(value)
-            formatted_value = clean_column_value(format_value(value))
+            formatted_value = clean_column_value(format_value(value, column.options))
           else
             case column.association.macro
               when :has_one, :belongs_to
@@ -137,26 +137,14 @@ module ActiveScaffold
       ## Formatting
       ##
 
-      def format_value(column_value)
+      def format_value(column_value, options = {})
         if column_empty?(column_value)
           active_scaffold_config.list.empty_field_text
-        elsif column_value.instance_of? Time
-          format_time(column_value)
-        elsif column_value.instance_of? Date
-          format_date(column_value)
+        elsif column_value.is_a?(Time) || column_value.is_a?(Date)
+          l(column_value, :format => options[:format] || :default)
         else
           column_value.to_s
         end
-      end
-
-      def format_time(time)
-        format = ActiveSupport::CoreExtensions::Time::Conversions::DATE_FORMATS[:default] || "%m/%d/%Y %I:%M %p"
-        time.strftime(format)
-      end
-
-      def format_date(date)
-        format = ActiveSupport::CoreExtensions::Date::Conversions::DATE_FORMATS[:default] || "%m/%d/%Y"
-        date.strftime(format)
       end
 
       # ==========
