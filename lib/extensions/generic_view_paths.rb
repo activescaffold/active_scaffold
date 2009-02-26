@@ -41,7 +41,7 @@ class ActionView::Base
       template
     elsif template = self.view_paths[template_file_name]
       template
-    elsif template = self.view_paths[generic_template]
+    elsif (search_generic_view_paths? and (template = self.view_paths[generic_template]))
       template
     elsif (first_render = @_render_stack.first) && first_render.respond_to?(:format_and_extension) &&
         (template = self.view_paths["#{template_file_name}.#{first_render.format_and_extension}"])
@@ -65,4 +65,7 @@ class ActionView::Base
   end
   alias_method_chain :_pick_template, :generic
 
+  def search_generic_view_paths?
+    controller.class.action_methods.include?(controller.action_name)
+  end
 end
