@@ -72,6 +72,7 @@ module ActiveScaffold
               url_options.delete :id
               url_options[:parent_id] = record.id
               url_options[:parent_column] = column.association.reverse
+              url_options[:parent_model] = record.class.name # needed for polymorphic associations
               constraints = {url_options[:parent_column].to_sym => url_options[:parent_id]}
               eid = Digest::MD5.hexdigest(params[:controller] + params[:parent_controller].to_s + constraints.to_s)
               session["as:#{eid}"] = {:constraints => constraints}
