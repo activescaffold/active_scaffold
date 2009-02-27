@@ -20,10 +20,14 @@ end
 
 module ActionController #:nodoc:
   class Base
-    def initialize_template_class_with_active_scaffold(response)
-      initialize_template_class_without_active_scaffold(response)
-      response.template.view_paths.active_scaffold_paths = self.class.active_scaffold_paths
+    def assign_names_with_active_scaffold
+      assign_names_without_active_scaffold
+      @template.view_paths.active_scaffold_paths = self.class.active_scaffold_paths if search_generic_view_paths?
     end
-    alias_method_chain :initialize_template_class, :active_scaffold
+    alias_method_chain :assign_names, :active_scaffold
+
+    def search_generic_view_paths?
+      self.class.action_methods.include?(self.action_name)
+    end
   end
 end
