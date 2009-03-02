@@ -24,43 +24,23 @@ class ActionView::Base
 
   private
   def _pick_template_with_generic(template_path)
-    return template_path if template_path.respond_to?(:render)
-
-    path = template_path.sub(/^\//, '')
-    if m = path.match(/(.*)\.(\w+)$/)
-      template_file_name, template_file_extension = m[1], m[2]
-    else
-      template_file_name = path
-    end
-    if m = template_file_name.match(/\/(\w+)$/)
-      generic_template = m[1]
-    end
-    
-    # OPTIMIZE: Checks to lookup template in view path
-    if template = self.view_paths["#{template_file_name}.#{template_format}"]
-      template
-    elsif template = self.view_paths[template_file_name]
-      template
-    elsif (search_generic_view_paths? and (template = self.view_paths[generic_template]))
-      template
-    elsif (first_render = @_render_stack.first) && first_render.respond_to?(:format_and_extension) &&
-        (template = self.view_paths["#{template_file_name}.#{first_render.format_and_extension}"])
-      template
-    elsif template_format == :js && template = self.view_paths["#{template_file_name}.html"]
-      @template_format = :html
-      template
-    else
-      template = ActionView::Template.new(template_path, view_paths)
-
-      if self.class.warn_cache_misses && logger
-        logger.debug "[PERFORMANCE] Rendering a template that was " +
-          "not found in view path. Templates outside the view path are " +
-          "not cached and result in expensive disk operations. Move this " +
-          "file into #{view_paths.join(':')} or add the folder to your " +
-          "view path list"
+    begin
+      _pick_template_without_generic(template_path)
+    rescue ActionView::MissingTemplate
+      path = template_path.sub(/^\//, '')
+      if m = path.match(/(.*)\.(\w+)$/)
+        template_file_name, template_file_extension = m[1], m[2]
+      else
+        template_file_name = path
       end
-
-      template
+      if m = template_file_name.match(/\/(\w+)$/)
+        generic_template = m[1]
+      end
+      if search_generic_view_paths? && generic_template && (template = self.view_paths[generic_template])
+        template
+      else
+        raise
+      end
     end
   end
   alias_method_chain :_pick_template, :generic
