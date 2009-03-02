@@ -231,7 +231,7 @@ text-align: right;
 .active-scaffold tr.record td.actions {
 border-right: solid 1px #ccc;
 padding: 0;
-width: 1%;
+min-width: 1%;
 }
 
 .active-scaffold tr.record td.actions table {
