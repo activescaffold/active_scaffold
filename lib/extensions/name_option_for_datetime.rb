@@ -10,10 +10,10 @@ module ActionView
         options[:field_name]           = @method_name
         options[:include_position]     = true
         options[:prefix]             ||= @object_name
-        options[:index]              ||= @auto_index
+        options[:index]                = @auto_index if @auto_index && !options.has_key?(:index)
         options[:datetime_separator] ||= ' &mdash; '
         options[:time_separator]     ||= ' : '
-	options.merge!(:prefix => options[:name].gsub(/\[[^\[]*\]$/,'')) if options[:name]
+        options.merge!(:prefix => options[:name].gsub(/\[[^\[]*\]$/,'')) if options[:name]
 
         DateTimeSelector.new(datetime, options.merge(:tag => true), html_options)
       end
