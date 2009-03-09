@@ -46,6 +46,6 @@ class ActionView::Base
   alias_method_chain :_pick_template, :generic
 
   def search_generic_view_paths?
-    controller.class.action_methods.include?(controller.action_name)
+    !controller.is_a?(ActionMailer::Base) && controller.class.action_methods.include?(controller.action_name)
   end
 end
