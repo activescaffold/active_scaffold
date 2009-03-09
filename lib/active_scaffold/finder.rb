@@ -12,13 +12,13 @@ module ActiveScaffold
 
         where_clauses = []
         columns.each do |column|
-          where_clauses << (column.column.text? ? "LOWER(#{column.search_sql}) LIKE ?" : "#{column.search_sql} = ?")
+          where_clauses << ((column.column.nil? || column.column.text?) ? "LOWER(#{column.search_sql}) LIKE ?" : "#{column.search_sql} = ?")
         end
         phrase = "(#{where_clauses.join(' OR ')})"
 
         sql = ([phrase] * tokens.length).join(' AND ')
         tokens = tokens.collect do |value|
-          columns.collect {|column| column.column.text? ? like_pattern.sub('?', value.downcase) : column.column.type_cast(value)}
+          columns.collect {|column| (column.column.nil? || column.column.text?) ? like_pattern.sub('?', value.downcase) : column.column.type_cast(value)}
         end.flatten
 
         [sql, *tokens]
@@ -44,7 +44,7 @@ module ActiveScaffold
             when :multi_select
             ["#{column.search_sql} in (?)", value.values.collect{|hash| hash[:id]}]
             else
-              if column.column.text?
+              if column.column.nil? || column.column.text?
                 ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
               else
                 ["#{column.search_sql} = ?", column.column.type_cast(value)]
