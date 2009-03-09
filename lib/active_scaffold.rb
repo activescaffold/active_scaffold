@@ -61,17 +61,18 @@ module ActiveScaffold
       klass = self.active_scaffold_config.model
       klass.define_attribute_methods unless klass.generated_methods?
 
-      @active_scaffold_paths = ActionView::PathSet.new
+      @active_scaffold_overrides = []
       ActionController::Base.view_paths.each do |dir|
         active_scaffold_overrides_dir = File.join(dir,"active_scaffold_overrides")
-        @active_scaffold_paths << active_scaffold_overrides_dir if File.exists?(active_scaffold_overrides_dir)
+        @active_scaffold_overrides << active_scaffold_overrides_dir if File.exists?(active_scaffold_overrides_dir)
       end
+      @active_scaffold_frontends = []
       if active_scaffold_config.frontend.to_sym != :default
         active_scaffold_custom_frontend_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views')
-        @active_scaffold_paths << active_scaffold_custom_frontend_path
+        @active_scaffold_frontends << active_scaffold_custom_frontend_path
       end
       active_scaffold_default_frontend_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', 'default' , 'views')
-      @active_scaffold_paths << active_scaffold_default_frontend_path
+      @active_scaffold_frontends << active_scaffold_default_frontend_path
 
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
@@ -92,7 +93,7 @@ module ActiveScaffold
     end
 
     def active_scaffold_paths
-      @active_scaffold_paths
+      @active_scaffold_paths ||= ActionView::PathSet.new(@active_scaffold_overrides + @active_scaffold_frontends)
     end
 
     def active_scaffold_config
