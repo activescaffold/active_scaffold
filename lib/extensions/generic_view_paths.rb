@@ -3,7 +3,7 @@ module ActionView #:nodoc:
   class PathSet
     attr_accessor :active_scaffold_paths
 
-    def find_template_with_active_scaffold(original_template_path, format = nil)
+    def find_template_with_active_scaffold(original_template_path, format = nil, html_fallback = true)
       begin
         find_template_without_active_scaffold(original_template_path, format)
       rescue MissingTemplate
