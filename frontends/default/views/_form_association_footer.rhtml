@@ -27,11 +27,11 @@ return unless show_add_new or show_add_existing
 
     <% if show_add_existing -%>
       <% if remote_controller and remote_controller.respond_to? :uses_record_select? and remote_controller.uses_record_select? -%>
-        <%= link_to_record_select as_('Add Existing'), remote_controller.controller_path, :onselect => "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', id), {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id})}});" -%>
+        <%= link_to_record_select as_('Add Existing'), remote_controller.controller_path, :onselect => "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', id), {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id.to_json})}});" -%>
       <% else -%>
         <% select_options = options_for_select(options_for_association(column.association)) unless column.through_association? -%>
         <%= select_tag 'associated_id', '<option value="">' + as_('- select -') + '</option>' + select_options %>
-        <%= button_to_function as_('Add Existing'), "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id})}})" %>
+        <%= button_to_function as_('Add Existing'), "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id.to_json})}})" %>
       <% end -%>
     <% end -%>
   </div>
