@@ -27,7 +27,7 @@ module ActionController #:nodoc:
     alias_method_chain :assign_names, :active_scaffold
 
     def search_generic_view_paths?
-      !controller.is_a?(ActionMailer::Base) && self.class.action_methods.include?(self.action_name)
+      !self.is_a?(ActionMailer::Base) && self.class.action_methods.include?(self.action_name)
     end
   end
 end
