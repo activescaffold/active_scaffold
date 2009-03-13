@@ -93,7 +93,7 @@ module ActiveScaffold
     end
 
     def active_scaffold_paths
-      @active_scaffold_paths ||= ActionView::PathSet.new(@active_scaffold_overrides + @active_scaffold_frontends)
+      @active_scaffold_paths ||= ActionView::PathSet.new(@active_scaffold_overrides + @active_scaffold_frontends) unless @active_scaffold_overrides.nil? || @active_scaffold_frontends.nil?
     end
 
     def active_scaffold_config
