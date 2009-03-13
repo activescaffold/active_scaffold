@@ -106,8 +106,8 @@ module ActiveScaffold
       def active_scaffold_search_boolean(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
-        select_options << [as_(:true), 1]
-        select_options << [as_(:false), 0]
+        select_options << [as_(:true), true]
+        select_options << [as_(:false), false]
 
         select_tag(options[:name], options_for_select(select_options, @record.send(column.name)))
       end
