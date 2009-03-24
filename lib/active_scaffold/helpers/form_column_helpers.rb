@@ -140,7 +140,8 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_password(column, options)
-        password_field :record, column.name, active_scaffold_input_text_options(options)
+        options = active_scaffold_input_text_options(options)
+        password_field :record, column.name, options.merge(column.options)
       end
 
       def active_scaffold_input_textarea(column, options)
@@ -148,7 +149,8 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_virtual(column, options)
-        text_field :record, column.name, active_scaffold_input_text_options(options)
+        options = active_scaffold_input_text_options(options)
+        text_field :record, column.name, options.merge(column.options)
       end
 
       #
