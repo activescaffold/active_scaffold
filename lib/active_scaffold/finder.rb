@@ -158,6 +158,8 @@ module ActiveScaffold
                          :conditions => all_conditions,
                          :joins => joins_for_finder,
                          :include => options[:count_includes]}
+                         
+      finder_options.merge! custom_finder_options
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       count = klass.count(finder_options.reject{|k,v| [:order].include? k})
@@ -181,12 +183,12 @@ module ActiveScaffold
 
     def joins_for_finder
       case joins_for_collection
-      when String
-        [ joins_for_collection ]
-      when Array
-        joins_for_collection
-      else
-        []
+        when String
+          [ joins_for_collection ]
+        when Array
+          joins_for_collection
+        else
+          []
       end + active_scaffold_habtm_joins
     end
     
