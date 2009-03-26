@@ -22,7 +22,7 @@ module ActiveScaffold::Config
 
     # the label= method already exists in the Form base class
     def label
-      @label ? as_(@label) : as_(:update_model, :model => @core.label.singularize)
+      @label ? as_(@label) : as_(:update_model, :model => @core.label(:count => 1))
     end
 
     attr_accessor :nested_links
