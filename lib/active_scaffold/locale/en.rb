@@ -28,6 +28,7 @@
       :loading => 'Loading…',
       :next => 'Next',
       :no_entries => 'No Entries',
+      :no_options => 'no options',
       :omit_header => 'Omit Header',
       :options => 'Options',
       :pdf => 'PDF',
