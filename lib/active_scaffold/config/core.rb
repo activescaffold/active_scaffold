@@ -83,7 +83,7 @@ module ActiveScaffold::Config
     attr_writer :label
     def label(options={})
       options[:count] ||= model.count
-      as_(@label) || model.human_name(options)
+      as_(@label, options) || model.human_name(options)
     end
 
     ##
