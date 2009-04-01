@@ -124,7 +124,7 @@ module ActiveScaffold
           params.merge!({column.association.primary_key_name => ''})
         end
         
-        record_select_options = {:controller => remote_controller, :id => options[:id], :params => params}
+        record_select_options = {:controller => remote_controller, :id => options[:id]}
         record_select_options.merge!(active_scaffold_input_text_options)
         record_select_options.merge!(column.options)
 
