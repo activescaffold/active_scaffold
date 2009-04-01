@@ -21,7 +21,9 @@ es:
     export: 'Exportar'
     nested_for_model: '{{nested_model}} de {{parent_model}}'
     filtered: '(Filtrado)'
-    found: {:one => 'encontrado', :other => 'encontrados'}
+    found:
+      one: 'encontrado'
+      other: 'encontrados'
     hide: 'Ocultar'
     live_search: 'Buscar en Vivo'
     loading: 'Cargando…'
