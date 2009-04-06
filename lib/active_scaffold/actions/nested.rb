@@ -133,7 +133,7 @@ module ActiveScaffold::Actions::Nested
           end
         end
         type.js do
-          render(:partial => 'add_existing_form', :layout => false)
+          render(:partial => 'add_existing_form.rhtml', :layout => false)
         end
       end
     end
