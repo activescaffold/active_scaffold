@@ -34,7 +34,7 @@ module ActiveScaffold::Actions
               if successful?
                 render :action => 'on_update', :layout => false
               else
-                render :action => 'form_messages.rjs', :layout => false
+                render :action => 'form_messages_on_update.rjs', :layout => false
               end
             end
           else # just a regular post

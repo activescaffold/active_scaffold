@@ -5,6 +5,7 @@ if request.xhr?
     form_remote_upload_tag url_options.merge({:iframe => true}),
                            :onsubmit => onsubmit,
                            :id => element_form_id(:action => :update),
+                           :loading => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'visible';",
                            :class => 'update',
                            :method => :put
   else
