@@ -4,7 +4,7 @@ module ActiveScaffold::DataStructures
     def initialize(action, options = {})
       # set defaults
       self.action = action.to_s
-      self.label = action.to_s
+      self.label = action
       self.confirm = false
       self.type = :table
       self.inline = true
