@@ -12,7 +12,7 @@ module ActiveScaffold::Actions
       @record = active_scaffold_config.model.new
       respond_to do |type|
         type.html { render(:action => "field_search") }
-        type.js { render(:partial => "field_search", :layout => false) }
+        type.js { render(:partial => "field_search") }
       end
     end
 

@@ -13,13 +13,13 @@ module ActiveScaffold::Actions
       respond_to do |type|
         type.html do
           if successful?
-            render(:action => 'update', :layout => true)
+            render(:action => 'update')
           else
             return_to_main
           end
         end
         type.js do
-          render(:partial => 'update_form', :layout => false)
+          render(:partial => 'update_form')
         end
       end
     end
@@ -32,9 +32,9 @@ module ActiveScaffold::Actions
           if params[:iframe]=='true' # was this an iframe post ?
             responds_to_parent do
               if successful?
-                render :action => 'on_update', :layout => false
+                render :action => 'on_update'
               else
-                render :action => 'form_messages_on_update.rjs', :layout => false
+                render :action => 'form_messages_on_update'
               end
             end
           else # just a regular post
@@ -42,12 +42,12 @@ module ActiveScaffold::Actions
               flash[:info] = as_(:updated_model, :model => @record.to_label)
               return_to_main
             else
-              render(:action => 'update', :layout => true)
+              render(:action => 'update')
             end
           end
         end
         type.js do
-          render :action => 'on_update', :layout => false
+          render :action => 'on_update'
         end
         type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
         type.json { render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status }
@@ -58,7 +58,7 @@ module ActiveScaffold::Actions
     # for inline (inlist) editing
     def update_column
       do_update_column
-      render :action => 'update_column.rjs', :layout => false
+      render :action => 'update_column'
     end
 
     protected
