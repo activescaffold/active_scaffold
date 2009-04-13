@@ -32,9 +32,9 @@ module ActiveScaffold::Actions
           if params[:iframe]=='true' # was this an iframe post ?
             responds_to_parent do
               if successful?
-                render :action => 'on_update'
+                render :action => 'on_update.js'
               else
-                render :action => 'form_messages_on_update'
+                render :action => 'form_messages_on_update.js'
               end
             end
           else # just a regular post
