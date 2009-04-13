@@ -14,7 +14,7 @@ module ActiveScaffold::Actions
             return_to_main
           end
         end
-        type.js { render(:partial => "live_search", :layout => false) }
+        type.js { render(:partial => "live_search") }
       end
     end
 

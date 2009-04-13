@@ -4,6 +4,9 @@ module ActiveScaffold::Actions
 
     def self.included(base)
       super
+      base.module_eval do
+        include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
+      end
       base.before_filter :include_habtm_actions
       # TODO: it's a bit wasteful to run this routine every page load.
       base.before_filter :links_for_associations
@@ -15,7 +18,7 @@ module ActiveScaffold::Actions
 
       respond_to do |type|
         type.html { render :partial => 'nested', :layout => true }
-        type.js { render :partial => 'nested', :layout => false }
+        type.js { render :partial => 'nested' }
       end
     end
 
@@ -65,12 +68,6 @@ module ActiveScaffold::Actions
           active_scaffold_config.action_links.add('destroy_existing', :label => 'Remove', :type => :record, :confirm => 'are_you_sure', :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy_existing']
           active_scaffold_config.action_links.delete("destroy") if active_scaffold_config.action_links['destroy']
         end
-        
-        self.class.module_eval do
-          include ActiveScaffold::Actions::Nested::ChildMethods
-          # we need specifically to tell action_controller to add these public methods as action_methods
-          ActiveScaffold::Actions::Nested::ChildMethods.public_instance_methods.each{|m| self.action_methods.add m }
-        end unless self.class.included_modules.include?(ActiveScaffold::Actions::Nested::ChildMethods)
       else
         # Production mode is caching this link into a non nested scaffold
         active_scaffold_config.action_links.delete('new_existing') if active_scaffold_config.action_links['new_existing']
@@ -127,13 +124,13 @@ module ActiveScaffold::Actions::Nested
       respond_to do |type|
         type.html do
           if successful?
-            render(:action => 'add_existing_form', :layout => true)
+            render(:action => 'add_existing_form')
           else
             return_to_main
           end
         end
         type.js do
-          render(:partial => 'add_existing_form.rhtml', :layout => false)
+          render(:partial => 'add_existing_form')
         end
       end
     end
@@ -147,14 +144,14 @@ module ActiveScaffold::Actions::Nested
             flash[:info] = as_(:created_model, :model => @record.to_label)
             return_to_main
           else
-            render(:action => 'add_existing_form', :layout => true)
+            render(:action => 'add_existing_form')
           end
         end
         type.js do
           if successful?
-            render :action => 'add_existing', :layout => false
+            render :action => 'add_existing'
           else
-            render :action => 'form_messages.rjs', :layout => false
+            render :action => 'form_messages'
           end
         end
         type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
@@ -173,7 +170,7 @@ module ActiveScaffold::Actions::Nested
           flash[:info] = as_(:deleted_model, :model => @record.to_label)
           return_to_main
         end
-        type.js { render(:action => 'destroy.rjs', :layout => false) }
+        type.js { render(:action => 'destroy') }
         type.xml { render :xml => successful? ? "" : response_object.to_xml, :content_type => Mime::XML, :status => response_status }
         type.json { render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status }
         type.yaml { render :text => successful? ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
