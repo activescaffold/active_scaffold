@@ -11,7 +11,10 @@ else
   show_blank_record = false
 end
 
-associated << column.association.klass.new if show_blank_record
+if show_blank_record
+  associated << column.association.klass.new
+  associated.last.errors.clear
+end
 -%>
 <h5><%= column.label -%> (<%= link_to_visibility_toggle(:default_visible => !column.collapsed) -%>)</h5>
 <div <%= 'style="display: none;"' if column.collapsed -%>>
