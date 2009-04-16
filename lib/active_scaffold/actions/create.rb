@@ -14,13 +14,13 @@ module ActiveScaffold::Actions
       respond_to do |type|
         type.html do
           if successful?
-            render(:action => 'create', :layout => true)
+            render(:action => 'create')
           else
             return_to_main
           end
         end
         type.js do
-          render(:partial => 'create_form.rhtml', :layout => false)
+          render(:partial => 'create_form')
         end
       end
     end
@@ -34,9 +34,9 @@ module ActiveScaffold::Actions
           if params[:iframe]=='true' # was this an iframe post ?
             responds_to_parent do
               if successful?
-                render :action => 'on_create', :layout => false
+                render :action => 'on_create.js'
               else
-                render :action => 'form_messages_on_create.rjs', :layout => false
+                render :action => 'form_messages_on_create.js'
               end
             end
           else
@@ -52,13 +52,13 @@ module ActiveScaffold::Actions
                 do_list
                 render(:action => 'list')
               else
-                render(:action => 'create', :layout => true)
+                render(:action => 'create')
               end
             end
           end
         end
         type.js do
-          render :action => 'on_create', :layout => false
+          render :action => 'on_create'
         end
         type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
         type.json { render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status }

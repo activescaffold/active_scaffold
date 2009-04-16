@@ -18,7 +18,7 @@ module ActiveScaffold::Actions
       respond_to do |type|
         type.js do
           do_list
-          render(:partial => 'list', :layout => false)
+          render(:partial => 'list')
         end
         type.html { return_to_main }
       end
@@ -35,9 +35,7 @@ module ActiveScaffold::Actions
         do_new
       end
       respond_to do |type|
-        type.html {
-          render :action => 'list', :layout => true
-        }
+        type.html { render :action => 'list' }
         type.js { render :action => 'list', :layout => false }
         type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
         type.json { render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status }

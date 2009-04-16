@@ -11,7 +11,7 @@ module ActiveScaffold::Actions
       @scope = "[#{@column.name}]"
       @scope += (@record.new_record?) ? "[#{(Time.now.to_f*1000).to_i.to_s}]" : "[#{@record.id}]" if @column.plural_association?
 
-      render :action => 'edit_associated.rjs', :layout => false
+      render :action => 'edit_associated'
     end
   end
 end

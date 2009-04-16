@@ -8,7 +8,7 @@ module ActiveScaffold::Actions
     def show_search
       respond_to do |type|
         type.html { render(:action => "search") }
-        type.js { render(:partial => "search", :layout => false) }
+        type.js { render(:partial => "search") }
       end
     end
 
