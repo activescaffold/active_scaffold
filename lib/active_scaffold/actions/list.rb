@@ -52,7 +52,7 @@ module ActiveScaffold::Actions
 
       options = { :sorting => active_scaffold_config.list.user.sorting,
                   :count_includes => active_scaffold_config.list.user.count_includes }
-      paginate = (params[:format].nil?) ? (accepts? :html, :js) : [:html, :js].include?(params[:format])
+      paginate = (params[:format].nil?) ? (accepts? :html, :js) : ['html', 'js'].include?(params[:format])
       if paginate
         options.merge!({
           :per_page => active_scaffold_config.list.user.per_page,
