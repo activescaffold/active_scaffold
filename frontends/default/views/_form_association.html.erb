@@ -12,8 +12,11 @@ else
 end
 
 if show_blank_record
-  associated << column.association.klass.new
-  associated.last.errors.clear
+  if column.singular_association?
+    associated << column.association.klass.new
+  else
+    associated.build
+  end
 end
 -%>
 <h5><%= column.label -%> (<%= link_to_visibility_toggle(:default_visible => !column.collapsed) -%>)</h5>
