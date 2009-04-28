@@ -38,7 +38,7 @@ es:
     refresh: 'Recargar'
     remove: 'Eliminar'
     remove_file: 'Eliminar o Reemplazar archivo'
-    replace_with_new: 'Replace With New'
+    replace_with_new: 'Reemplazar con Nuevo'
     revisions_for_model: 'Revisiones de {{model}}'
     reset: 'Restaurar'
     saving: 'Guardando…'
