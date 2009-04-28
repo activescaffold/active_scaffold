@@ -6,6 +6,18 @@ module ActiveScaffold::Actions
       end
     end
 
+    def render_field
+      @record = active_scaffold_config.model.new
+      column = active_scaffold_config.columns[params[:column]]
+      value = if column.association
+        params[:value].blank? ? nil : column.association.klass.find(params[:value])
+      else
+        params[:value]
+      end
+      @record.send "#{column.name}=", value
+      @update_column = active_scaffold_config.columns[column.options[:update_column]]
+    end
+
     protected
 
     def authorized_for?(*args)

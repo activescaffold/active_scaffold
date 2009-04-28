@@ -35,7 +35,7 @@ module ActiveScaffold
               input(:record, column.name, options.merge(column.options))
             end
           end
-        end
+        end + javascript_for_update_column(column, options)
       end
 
       alias form_column active_scaffold_input_for
@@ -57,7 +57,15 @@ module ActiveScaffold
 
         { :name => name, :class => "#{column.name}-input", :id => id_control}
       end
- 
+
+      def javascript_for_update_column(column, options)
+        if column.options[:update_column]
+          javascript_tag("$(#{options[:id].to_json}).observe('change', function(event) { new Ajax.Request(#{url_for(:action => 'render_field', :id => @record.id).to_json}, {parameters: 'column=#{column.name}&value=' + this.value, method: 'get'}); });")
+        else
+          ''
+        end
+      end
+
       ##
       ## Form input methods
       ##
@@ -77,7 +85,7 @@ module ActiveScaffold
       def active_scaffold_input_plural_association(column, options)
         associated_options = @record.send(column.association.name).collect {|r| [r.to_label, r.id]}
         select_options = associated_options | options_for_association(column.association)
-        return as_(:no_options) if select_options.empty?
+        return content_tag(:span, as_(:no_options), :id => options[:id]) if select_options.empty?
 
         html = "<ul class=\"checkbox-list\" id=\"#{options[:id]}\">"
 
