@@ -35,7 +35,7 @@ module ActiveScaffold
               input(:record, column.name, options.merge(column.options))
             end
           end
-        end + javascript_for_update_column(column, options)
+        end.to_s + javascript_for_update_column(column, options)
       end
 
       alias form_column active_scaffold_input_for
