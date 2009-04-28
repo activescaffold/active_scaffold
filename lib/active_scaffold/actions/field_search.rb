@@ -13,6 +13,7 @@ module ActiveScaffold::Actions
       respond_to do |type|
         type.html { render(:action => "field_search") }
         type.js { render(:partial => "field_search") }
+        show_search_respond_to type if self.respond_to? :show_search_respond_to
       end
     end
 

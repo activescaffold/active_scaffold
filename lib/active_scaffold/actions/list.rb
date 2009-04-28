@@ -21,6 +21,7 @@ module ActiveScaffold::Actions
           render(:partial => 'list')
         end
         type.html { return_to_main }
+        update_table_respond_to type if self.respond_to? :update_table_respond_to
       end
     end
 
@@ -40,6 +41,7 @@ module ActiveScaffold::Actions
         type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
         type.json { render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status }
         type.yaml { render :text => response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
+        list_respond_to type if self.respond_to? :list_respond_to
       end
     end
 

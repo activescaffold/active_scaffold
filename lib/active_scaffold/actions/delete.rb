@@ -25,6 +25,7 @@ module ActiveScaffold::Actions
         type.xml { render :xml => successful? ? "" : response_object.to_xml, :content_type => Mime::XML, :status => response_status }
         type.json { render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status }
         type.yaml { render :text => successful? ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
+        destroy_respond_to type if self.respond_to? :destroy_respond_to
       end
     end
 
