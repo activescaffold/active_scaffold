@@ -184,6 +184,9 @@ module ActiveScaffold
       # add functionality for overriding subform partials from association class path
       def override_subform_partial?(column, subform_partial)
         path, partial_name = partial_pieces(override_subform_partial(column, subform_partial))
+        Rails.logger.debug (File.join(path, "_#{partial_name}")).inspect
+        Rails.logger.debug template_exists?(File.join(path, "_#{partial_name}")).inspect
+        Rails.logger.debug self.view_paths.inspect
         template_exists?(File.join(path, "_#{partial_name}"))
       end
 
