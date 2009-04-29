@@ -32,6 +32,10 @@ module ActiveScaffold
               # for textual fields we pass different options
               text_types = [:text, :string, :integer, :float, :decimal]
               options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
+              if column.column.type == :string && options[:maxlength].blank?
+                options[:maxlength] = column.column.limit
+                options[:size] ||= ActionView::Helpers::InstanceTag::DEFAULT_FIELD_OPTIONS["size"]
+              end
               input(:record, column.name, options.merge(column.options))
             end
           end
