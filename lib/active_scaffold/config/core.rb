@@ -84,6 +84,7 @@ module ActiveScaffold::Config
     attr_writer :label
     def label(options={})
       options[:count] ||= model.count
+      options[:default] ||= model.name.pluralize if options[:count].to_i > 1
       as_(@label, options) || model.human_name(options)
     end
 
