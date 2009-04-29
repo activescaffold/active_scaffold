@@ -182,13 +182,13 @@ module ActiveScaffold
       ##
 
       # add functionality for overriding subform partials from association class path
-      def override_subform_partial?(column)
-        path, partial_name = partial_pieces(override_subform_partial(column))
+      def override_subform_partial?(column, subform_partial)
+        path, partial_name = partial_pieces(override_subform_partial(column, subform_partial))
         template_exists?(File.join(path, "_#{partial_name}"))
       end
 
-      def override_subform_partial(column)
-        File.join(active_scaffold_controller_for(column.association.klass).controller_path, "subform") if column_renders_as(column) == :subform
+      def override_subform_partial(column, subform_partial)
+        File.join(active_scaffold_controller_for(column.association.klass).controller_path, subform_partial) if column_renders_as(column) == :subform
       end
 
       def override_form_field_partial?(column)
@@ -232,10 +232,11 @@ module ActiveScaffold
       end
 
       def subform_partial_for_column(column)
-        if override_subform_partial?(column)
-          override_subform_partial(column)
+        subform_partial = "#{active_scaffold_config_for(column.association.klass).subform.layout}_subform"
+        if override_subform_partial?(column, subform_partial)
+          override_subform_partial(column, subform_partial)
         else
-          "horizontal_subform"
+          subform_partial
         end
       end
 

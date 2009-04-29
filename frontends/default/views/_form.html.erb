@@ -6,7 +6,7 @@
     <%= render :partial => 'form', :locals => { :columns => column } %>
   </li>
   <% elsif is_subform? column and !override_form_field?(column) -%>
-  <li class="sub-form" id="<%= sub_form_id(:association => column.name) %>">
+  <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form" id="<%= sub_form_id(:association => column.name) %>">
     <%= render :partial => form_partial_for_column(column), :locals => { :column => column } -%>
   </li>
   <% else -%>
