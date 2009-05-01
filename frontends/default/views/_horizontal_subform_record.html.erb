@@ -2,13 +2,14 @@
 <% readonly = (@record.readonly? or not @record.authorized_for?(:action => :update)) -%>
 <% action = @record.new_record? ? :create : (readonly ? :read : nil) -%>
 <% show_actions = false -%>
+<tr class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
 <% active_scaffold_config_for(@record.class).subform.columns.each :for => @record.class, :action => action, :flatten => true do |column| %>
-  <%
+<%
   next unless in_subform?(column, parent_record)
   show_actions = true
   column = column.clone
   column.form_ui ||= :select if column.association
-  -%>
+-%>
   <td>
     <% unless readonly and not @record.new_record? -%>
       <%= render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope } -%>
@@ -25,3 +26,4 @@
     <% end -%>
   </td>
 <% end -%>
+</tr>

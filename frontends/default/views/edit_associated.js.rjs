@@ -1,5 +1,4 @@
-associated_form = render :partial => 'form_association_record', :locals => {:scope => @scope, :parent_record => @parent_record, :column => @column}
-associated_form = %|<tr class="association-record #{'association-record-new' if @record.new_record?} #{'locked' if @record.new_record? and @column.singular_association?}">#{associated_form}</tr>|
+associated_form = render :partial => "#{subform_partial_for_column(@column)}_record", :locals => {:scope => @scope, :parent_record => @parent_record, :column => @column, :locked => @record.new_record? && @column.singular_association?}
 
 if @column.singular_association?
   page << %|

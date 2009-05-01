@@ -12,10 +12,8 @@
       </td>
     </tr>
     <% end %>
-    <tr class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if @record.new_record? and @record == associated.last -%>">
-      <%= render :partial => 'horizontal_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column} %>
-    </tr>
+    <%= render :partial => 'horizontal_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => @record.new_record? && @record == associated.last} %>
     <% end -%>
   </tbody>
 </table>
-<%= render :partial => 'horizontal_subform_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated} -%>
+<%= render :partial => 'form_association_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated} -%>
