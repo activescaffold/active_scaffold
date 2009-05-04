@@ -39,7 +39,7 @@ module ActiveScaffold
               input(:record, column.name, options.merge(column.options))
             end
           end
-        end.to_s + javascript_for_update_column(column, options)
+        end.to_s + javascript_for_update_column(column, scope, options)
       end
 
       alias form_column active_scaffold_input_for
@@ -62,9 +62,15 @@ module ActiveScaffold
         { :name => name, :class => "#{column.name}-input", :id => id_control}
       end
 
-      def javascript_for_update_column(column, options)
+      def javascript_for_update_column(column, scope, options)
         if column.options[:update_column]
-          javascript_tag("$(#{options[:id].to_json}).observe('change', function(event) { new Ajax.Request(#{url_for(:action => 'render_field', :id => @record.id).to_json}, {parameters: 'column=#{column.name}&value=' + this.value, method: 'get'}); });")
+          url_params = {:action => 'render_field', :id => @record.id}
+          url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
+
+          parameters = "column=#{column.name}"
+          parameters << "&eid=#{params[:eid]}" if params[:eid]
+          parameters << "&scope=#{scope}" if scope
+          javascript_tag("$(#{options[:id].to_json}).observe('change', function(event) { new Ajax.Request(#{url_for(url_params).to_json}, {parameters: '#{parameters}&value=' + this.value, method: 'get'}); });")
         else
           ''
         end
