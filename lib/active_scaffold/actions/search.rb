@@ -7,14 +7,19 @@ module ActiveScaffold::Actions
 
     def show_search
       respond_to do |type|
-        type.html { render(:action => "search") }
-        type.js { render(:partial => "search") }
-        show_search_respond_to type if self.respond_to? :show_search_respond_to
+        search_formats.each do |format|
+          type.send(format){ send("search_respond_to_#{format}") }
+        end
       end
     end
 
     protected
-
+    def search_respond_to_html
+      render(:action => "search")
+    end
+    def search_respond_to_js
+      render(:partial => "search")
+    end
     def do_search
       @query = params[:search].to_s.strip rescue ''
 
@@ -36,6 +41,10 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     def search_authorized?
       authorized_for?(:action => :read)
+    end
+    private
+    def search_formats
+      (default_formats + active_scaffold_config.custom_formats + active_scaffold_config.search.custom_formats).uniq
     end
   end
 end

@@ -9,50 +9,19 @@ module ActiveScaffold::Actions
 
     def edit
       do_edit
-
       respond_to do |type|
-        type.html do
-          if successful?
-            render(:action => 'update')
-          else
-            return_to_main
-          end
+        edit_formats.each do |format|
+          type.send(format){ send("edit_respond_to_#{format}") }
         end
-        type.js do
-          render(:partial => 'update_form')
-        end
-        edit_respond_to type if self.respond_to? :edit_respond_to
       end
     end
 
     def update
       do_update
       respond_to do |type|
-        type.html do
-          if params[:iframe]=='true' # was this an iframe post ?
-            responds_to_parent do
-              if successful?
-                render :action => 'on_update.js'
-              else
-                render :action => 'form_messages_on_update.js'
-              end
-            end
-          else # just a regular post
-            if successful?
-              flash[:info] = as_(:updated_model, :model => @record.to_label)
-              return_to_main
-            else
-              render(:action => 'update')
-            end
-          end
+        update_formats.each do |format|
+          type.send(format){ send("update_respond_to_#{format}") }
         end
-        type.js do
-          render :action => 'on_update'
-        end
-        type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
-        type.json { render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status }
-        type.yaml { render :text => response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
-        update_respond_to type if self.respond_to? :update_respond_to
       end
     end
 
@@ -63,7 +32,46 @@ module ActiveScaffold::Actions
     end
 
     protected
-
+    def edit_respond_to_html
+      if successful?
+        render(:action => 'update')
+      else
+        return_to_main
+      end
+    end
+    def edit_respond_to_js
+      render(:partial => 'update_form')
+    end
+    def update_respond_to_html  
+      if params[:iframe]=='true' # was this an iframe post ?
+        responds_to_parent do
+          if successful?
+            render :action => 'on_update.js'
+          else
+            render :action => 'form_messages_on_update.js'
+          end
+        end
+      else # just a regular post
+        if successful?
+          flash[:info] = as_(:updated_model, :model => @record.to_label)
+          return_to_main
+        else
+          render(:action => 'update')
+        end
+      end
+    end
+    def update_respond_to_js
+      render :action => 'on_update'
+    end
+    def update_respond_to_xml
+      render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status
+    end
+    def update_respond_to_json
+      render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status
+    end
+    def update_respond_to_yaml
+      render :text => response_object.to_yaml, :content_type => Mime::YAML, :status => response_status
+    end
     # A simple method to find and prepare a record for editing
     # May be overridden to customize the record (set default values, etc.)
     def do_edit
@@ -110,6 +118,13 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     def update_authorized?
       authorized_for?(:action => :update)
+    end
+    private
+    def edit_formats
+      (default_formats + active_scaffold_config.custom_formats).uniq
+    end
+    def update_formats
+      (default_formats + active_scaffold_config.custom_formats + active_scaffold_config.update.custom_formats).uniq
     end
   end
 end

@@ -13,7 +13,15 @@ class Config::CreateTest < Test::Unit::TestCase
   def test_default_options
     assert !@config.create.persistent
     assert !@config.create.edit_after_create
-    assert_equal 'Create Model Stub', @config.create.label
+    assert_equal 'Create Modelstub', @config.create.label
+  end
+
+  def test_custom_formats
+    assert_equal [], @config.create.custom_formats
+    @config.create.custom_formats << :pdf
+    assert_equal [:pdf], @config.create.custom_formats
+    @config.create.custom_formats = [:html]
+    assert_equal [:html], @config.create.custom_formats
   end
 
   def test_link_defaults

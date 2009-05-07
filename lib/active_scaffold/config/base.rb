@@ -33,5 +33,13 @@ module ActiveScaffold::Config
         @conf = conf
       end
     end
+    
+    def custom_formats
+      @custom_formats ||= []
+    end
+    
+    def custom_formats=(val)
+      @custom_formats=val
+    end
   end
 end
