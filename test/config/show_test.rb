@@ -16,7 +16,6 @@ class Config::ShowTest < Test::Unit::TestCase
 
   def test_link_defaults
     link = @config.show.link
-    assert_equal [], @config.show.custom_formats
     assert !link.page?
     assert !link.popup?
     assert !link.confirm?
@@ -31,13 +30,6 @@ class Config::ShowTest < Test::Unit::TestCase
     assert_equal :show_authorized?, link.security_method
   end
   
-  def test_set_formats
-    @config.show.custom_formats << :pdf
-    assert_equal [:pdf], @config.show.custom_formats
-    @config.show.custom_formats = [:html]
-    assert_equal [:html], @config.show.custom_formats
-  end
-
   def test_setting_link
     @config.show.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
     assert_not_equal(@default_link, @config.show.link)

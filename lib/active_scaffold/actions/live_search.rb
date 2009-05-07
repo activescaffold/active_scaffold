@@ -51,7 +51,7 @@ module ActiveScaffold::Actions
     end
     private
     def live_search_formats
-      (default_formats + active_scaffold_config.custom_formats + active_scaffold_config.live_search.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.live_search.formats).uniq
     end
   end
 end

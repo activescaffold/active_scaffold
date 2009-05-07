@@ -135,10 +135,10 @@ module ActiveScaffold::Actions
     end
     private
     def new_formats
-      (default_formats + active_scaffold_config.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats).uniq
     end
     def create_formats
-      (default_formats + active_scaffold_config.custom_formats + active_scaffold_config.create.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.create.formats).uniq
     end
   end
 end

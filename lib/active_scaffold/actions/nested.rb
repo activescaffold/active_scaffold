@@ -78,7 +78,7 @@ module ActiveScaffold::Actions
     end
     private
     def nested_formats
-      (default_formats + active_scaffold_config.custom_formats + active_scaffold_config.nested.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.nested.formats).uniq
     end
   end
 end
@@ -211,13 +211,13 @@ module ActiveScaffold::Actions::Nested
     end
     private
     def new_existing_formats
-      (default_formats + active_scaffold_config.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats).uniq
     end
     def add_existing_formats
-      (default_formats + active_scaffold_config.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats).uniq
     end
     def destroy_existing_formats
-      (default_formats + active_scaffold_config.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats).uniq
     end
   end
 end

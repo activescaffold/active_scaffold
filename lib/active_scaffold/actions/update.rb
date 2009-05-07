@@ -121,10 +121,10 @@ module ActiveScaffold::Actions
     end
     private
     def edit_formats
-      (default_formats + active_scaffold_config.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats).uniq
     end
     def update_formats
-      (default_formats + active_scaffold_config.custom_formats + active_scaffold_config.update.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.update.formats).uniq
     end
   end
 end

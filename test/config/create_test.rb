@@ -16,14 +16,6 @@ class Config::CreateTest < Test::Unit::TestCase
     assert_equal 'Create Modelstub', @config.create.label
   end
 
-  def test_custom_formats
-    assert_equal [], @config.create.custom_formats
-    @config.create.custom_formats << :pdf
-    assert_equal [:pdf], @config.create.custom_formats
-    @config.create.custom_formats = [:html]
-    assert_equal [:html], @config.create.custom_formats
-  end
-
   def test_link_defaults
     link = @config.create.link
     assert !link.page?

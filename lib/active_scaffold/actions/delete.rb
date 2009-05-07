@@ -61,7 +61,7 @@ module ActiveScaffold::Actions
     end
     private
     def destroy_formats
-      (default_formats + active_scaffold_config.custom_formats + active_scaffold_config.delete.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.delete.formats).uniq
     end
   end
 end

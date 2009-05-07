@@ -92,10 +92,10 @@ module ActiveScaffold::Actions
     end
     private
     def update_table_formats
-      (default_formats + active_scaffold_config.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats).uniq
     end
     def list_formats
-      (default_formats + active_scaffold_config.custom_formats + active_scaffold_config.list.custom_formats).uniq
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
     end
   end
 end
