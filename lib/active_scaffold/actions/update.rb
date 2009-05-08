@@ -9,20 +9,12 @@ module ActiveScaffold::Actions
 
     def edit
       do_edit
-      respond_to do |type|
-        edit_formats.each do |format|
-          type.send(format){ send("edit_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:edit)
     end
 
     def update
       do_update
-      respond_to do |type|
-        update_formats.each do |format|
-          type.send(format){ send("update_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:update)
     end
 
     # for inline (inlist) editing

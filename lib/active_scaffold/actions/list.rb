@@ -16,11 +16,7 @@ module ActiveScaffold::Actions
     # This is called when changing pages, sorts and search
     def update_table
       do_list
-      respond_to do |type|
-        update_table_formats.each do |format|
-          type.send(format){ send("update_table_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:update_table)
     end
 
     # get just a single row
@@ -33,11 +29,7 @@ module ActiveScaffold::Actions
       if active_scaffold_config.list.always_show_create
         do_new
       end
-      respond_to do |type|
-        list_formats.each do |format|
-          type.send(format){ send("list_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:list)
     end
     
     protected

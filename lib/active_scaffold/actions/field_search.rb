@@ -10,11 +10,7 @@ module ActiveScaffold::Actions
     def show_search
       params[:search] ||= {}
       @record = active_scaffold_config.model.new
-      respond_to do |type|
-        field_search_formats.each do |format|
-          type.send(format){ send("field_search_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:field_search)
     end
 
     protected

@@ -6,11 +6,7 @@ module ActiveScaffold::Actions
     end
 
     def show_search
-      respond_to do |type|
-        live_search_formats.each do |format|
-          type.send(format){ send("live_search_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:list_search)
     end
 
     protected

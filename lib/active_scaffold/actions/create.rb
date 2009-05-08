@@ -10,21 +10,13 @@ module ActiveScaffold::Actions
 
     def new
       do_new
-      respond_to do |type|
-        new_formats.each do |format|
-          type.send(format){ send("new_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:new)
     end
 
     def create
       do_create
       @insert_row = params[:parent_controller].nil?
-      respond_to do |type|
-        create_formats.each do |format|
-          type.send(format){ send("create_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:create)
     end
 
     protected

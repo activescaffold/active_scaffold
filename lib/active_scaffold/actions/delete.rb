@@ -14,11 +14,7 @@ module ActiveScaffold::Actions
     def destroy
       return redirect_to(params.merge(:action => :delete)) if request.get?
       do_destroy
-      respond_to do |type|
-        destroy_formats.each do |format|
-          type.send(format){ send("destroy_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:destroy)
     end
 
     protected

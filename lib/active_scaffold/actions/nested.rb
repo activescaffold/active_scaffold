@@ -13,11 +13,7 @@ module ActiveScaffold::Actions
 
     def nested
       do_nested
-      respond_to do |type|
-        nested_formats.each do |format|
-          type.send(format){ send("nested_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:nested)
     end
 
     protected
@@ -96,30 +92,18 @@ module ActiveScaffold::Actions::Nested
 
     def new_existing
       do_new
-      respond_to do |type|
-        new_existing_formats.each do |format|
-          type.send(format){ send("new_existing_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:new_existing)
     end
 
     def add_existing
       do_add_existing
-      respond_to do |type|
-        add_existing_formats.each do |format|
-          type.send(format){ send("add_existing_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:add_existing)
     end
 
     def destroy_existing
       return redirect_to(params.merge(:action => :delete)) if request.get?
       do_destroy_existing
-      respond_to do |type|
-        destroy_existing_formats.each do |format|
-          type.send(format){ send("destroy_existing_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:destroy_existing)
     end
     
     protected

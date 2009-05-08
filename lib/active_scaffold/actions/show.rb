@@ -7,11 +7,7 @@ module ActiveScaffold::Actions
     def show
       do_show
       successful?
-      respond_to do |type|
-        show_formats.each do |format|
-          type.send(format){ send("show_respond_to_#{format}") }
-        end
-      end
+      respond_to_action(:show)
     end
 
     protected
