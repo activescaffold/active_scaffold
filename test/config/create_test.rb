@@ -13,7 +13,7 @@ class Config::CreateTest < Test::Unit::TestCase
   def test_default_options
     assert !@config.create.persistent
     assert !@config.create.edit_after_create
-    assert_equal 'Create Model Stub', @config.create.label
+    assert_equal 'Create Modelstub', @config.create.label
   end
 
   def test_link_defaults

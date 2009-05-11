@@ -13,16 +13,16 @@ module ActiveScaffold::Actions
 
     def nested
       do_nested
-
-      respond_to do |type|
-        type.html { render :partial => 'nested', :layout => true }
-        type.js { render :partial => 'nested' }
-        nested_respond_to type if self.respond_to? :nested_respond_to
-      end
+      respond_to_action(:nested)
     end
 
     protected
-
+    def nested_respond_to_html
+      render :partial => 'nested', :layout => true
+    end
+    def nested_respond_to_js
+      render :partial => 'nested'
+    end
     # A simple method to find the record we'll be nesting *from*
     # May be overridden to customize the behavior
     def do_nested
@@ -72,7 +72,10 @@ module ActiveScaffold::Actions
       return active_scaffold_constraints.values.to_s if nested?
       nil
     end
-
+    private
+    def nested_formats
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.nested.formats).uniq
+    end
   end
 end
 
@@ -89,67 +92,75 @@ module ActiveScaffold::Actions::Nested
 
     def new_existing
       do_new
-
-      respond_to do |type|
-        type.html do
-          if successful?
-            render(:action => 'add_existing_form')
-          else
-            return_to_main
-          end
-        end
-        type.js do
-          render(:partial => 'add_existing_form')
-        end
-        new_existing_respond_to type if self.respond_to? :new_existing_respond_to
-      end
+      respond_to_action(:new_existing)
     end
 
     def add_existing
       do_add_existing
-
-      respond_to do |type|
-        type.html do
-          if successful?
-            flash[:info] = as_(:created_model, :model => @record.to_label)
-            return_to_main
-          else
-            render(:action => 'add_existing_form')
-          end
-        end
-        type.js do
-          if successful?
-            render :action => 'add_existing'
-          else
-            render :action => 'form_messages'
-          end
-        end
-        type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
-        type.json { render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status }
-        type.yaml { render :text => response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
-        add_existing_respond_to type if self.respond_to? :add_existing_respond_to
-      end
+      respond_to_action(:add_existing)
     end
 
     def destroy_existing
       return redirect_to(params.merge(:action => :delete)) if request.get?
-
       do_destroy_existing
-
-      respond_to do |type|
-        type.html do
-          flash[:info] = as_(:deleted_model, :model => @record.to_label)
-          return_to_main
-        end
-        type.js { render(:action => 'destroy') }
-        type.xml { render :xml => successful? ? "" : response_object.to_xml, :content_type => Mime::XML, :status => response_status }
-        type.json { render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status }
-        type.yaml { render :text => successful? ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
-        destroy_existing_respond_to type if self.respond_to? :destroy_existing_respond_to
-      end
+      respond_to_action(:destroy_existing)
     end
     
     protected
+    def new_existing_respond_to_html
+      if successful?
+        render(:action => 'add_existing_form')
+      else
+        return_to_main
+      end
+    end
+    def new_existing_respond_to_js
+      render(:partial => 'add_existing_form')
+    end
+    def add_existing_respond_to_html
+      if successful?
+        flash[:info] = as_(:created_model, :model => @record.to_label)
+        return_to_main
+      else
+        render(:action => 'add_existing_form')
+      end
+    end
+    def add_existing_respond_to_js
+      if successful?
+        render :action => 'add_existing'
+      else
+        render :action => 'form_messages'
+      end
+    end
+    def add_existing_respond_to_xml
+      render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status
+    end
+    def add_existing_respond_to_json
+      render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status
+    end
+    def add_existing_respond_to_yaml
+      render :text => response_object.to_yaml, :content_type => Mime::YAML, :status => response_status
+    end
+    def destroy_existing_respond_to_html
+      flash[:info] = as_(:deleted_model, :model => @record.to_label)
+      return_to_main
+    end
+
+    def destroy_existing_respond_to_js
+      render(:action => 'destroy')
+    end
+
+    def destroy_existing_respond_to_xml
+      render :xml => successful? ? "" : response_object.to_xml, :content_type => Mime::XML, :status => response_status
+    end
+
+    def destroy_existing_respond_to_json
+      render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status
+    end
+
+    def destroy_existing_respond_to_yaml
+      render :text => successful? ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status
+    end
 
     def after_create_save(record)
       if params[:association_macro] == :has_and_belongs_to_many
@@ -182,6 +193,15 @@ module ActiveScaffold::Actions::Nested
         do_destroy
       end
     end
-
+    private
+    def new_existing_formats
+      (default_formats + active_scaffold_config.formats).uniq
+    end
+    def add_existing_formats
+      (default_formats + active_scaffold_config.formats).uniq
+    end
+    def destroy_existing_formats
+      (default_formats + active_scaffold_config.formats).uniq
+    end
   end
 end

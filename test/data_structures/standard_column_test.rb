@@ -1,16 +1,6 @@
 require File.join(File.dirname(__FILE__), '../test_helper.rb')
 # require 'test/model_stub'
 
-class ActiveScaffold::DataStructures::Column
-  def h(value)
-    value
-  end
-
-  def format_column(value)
-    value
-  end
-end
-
 class StandardColumnTest < Test::Unit::TestCase
   def setup
     @standard_column = ActiveScaffold::DataStructures::Column.new(ModelStub.columns.first.name, ModelStub)

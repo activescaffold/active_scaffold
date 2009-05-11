@@ -10,14 +10,17 @@ module ActiveScaffold::Actions
     def show_search
       params[:search] ||= {}
       @record = active_scaffold_config.model.new
-      respond_to do |type|
-        type.html { render(:action => "field_search") }
-        type.js { render(:partial => "field_search") }
-        show_search_respond_to type if self.respond_to? :show_search_respond_to
-      end
+      respond_to_action(:field_search)
     end
 
     protected
+    def field_search_respond_to_html
+      render(:action => "field_search")
+    end
+    
+    def field_search_respond_to_js
+      render(:partial => "field_search")
+    end
 
     def do_search
       unless params[:search].nil?
@@ -42,6 +45,10 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     def field_search_authorized?
       authorized_for?(:action => :read)
+    end
+    private
+    def field_search_formats
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.field_search.formats).uniq
     end
   end
 end

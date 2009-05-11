@@ -7,34 +7,46 @@ module ActiveScaffold::Actions
     # this method is for html mode. it provides "the missing action" (http://thelucid.com/articles/2006/07/26/simply-restful-the-missing-action).
     # it also gives us delete confirmation for html mode. woo!
     def delete
-      @record = find_if_allowed(params[:id], :destroy)
+      destroy_find_record
       render :action => 'delete'
     end
 
     def destroy
       return redirect_to(params.merge(:action => :delete)) if request.get?
-
       do_destroy
-
-      respond_to do |type|
-        type.html do
-          flash[:info] = as_(:deleted_model, :model => @record.to_label)
-          return_to_main
-        end
-        type.js { render(:action => 'destroy') }
-        type.xml { render :xml => successful? ? "" : response_object.to_xml, :content_type => Mime::XML, :status => response_status }
-        type.json { render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status }
-        type.yaml { render :text => successful? ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
-        destroy_respond_to type if self.respond_to? :destroy_respond_to
-      end
+      respond_to_action(:destroy)
     end
 
     protected
+    def destroy_respond_to_html
+      flash[:info] = as_(:deleted_model, :model => @record.to_label)
+      return_to_main
+    end
+
+    def destroy_respond_to_js
+      render(:action => 'destroy')
+    end
+
+    def destroy_respond_to_xml
+      render :xml => successful? ? "" : response_object.to_xml, :content_type => Mime::XML, :status => response_status
+    end
+
+    def destroy_respond_to_json
+      render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status
+    end
+
+    def destroy_respond_to_yaml
+      render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status
+    end
+
+    def destroy_find_record
+      @record = find_if_allowed(params[:id], :destroy)
+    end
 
     # A simple method to handle the actual destroying of a record
     # May be overridden to customize the behavior
     def do_destroy
-      @record = find_if_allowed(params[:id], :destroy)
+      destroy_find_record
       self.successful = @record.destroy
     end
 
@@ -42,6 +54,10 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     def delete_authorized?
       authorized_for?(:action => :destroy)
+    end
+    private
+    def destroy_formats
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.delete.formats).uniq
     end
   end
 end

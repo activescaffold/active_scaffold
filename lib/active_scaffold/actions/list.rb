@@ -15,14 +15,8 @@ module ActiveScaffold::Actions
 
     # This is called when changing pages, sorts and search
     def update_table
-      respond_to do |type|
-        type.js do
-          do_list
-          render(:partial => 'list')
-        end
-        type.html { return_to_main }
-        update_table_respond_to type if self.respond_to? :update_table_respond_to
-      end
+      do_list
+      respond_to_action(:update_table)
     end
 
     # get just a single row
@@ -35,18 +29,31 @@ module ActiveScaffold::Actions
       if active_scaffold_config.list.always_show_create
         do_new
       end
-      respond_to do |type|
-        type.html { render :action => 'list' }
-        type.js { render :action => 'list', :layout => false }
-        type.xml { render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status }
-        type.json { render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status }
-        type.yaml { render :text => response_object.to_yaml, :content_type => Mime::YAML, :status => response_status }
-        list_respond_to type if self.respond_to? :list_respond_to
-      end
+      respond_to_action(:list)
     end
-
+    
     protected
-
+    def list_respond_to_html
+      render :action => 'list'
+    end
+    def list_respond_to_js
+      render :action => 'list', :layout => false
+    end
+    def list_respond_to_xml
+      render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status
+    end
+    def list_respond_to_json
+      render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status
+    end
+    def list_respond_to_yaml
+      render :text => response_object.to_yaml, :content_type => Mime::YAML, :status => response_status
+    end
+    def update_table_respond_to_html
+      return_to_main
+    end
+    def update_table_respond_to_js
+      render(:partial => 'list')
+    end
     # The actual algorithm to prepare for the list view
     def do_list
       includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
@@ -74,6 +81,13 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     def list_authorized?
       authorized_for?(:action => :read)
+    end
+    private
+    def update_table_formats
+      (default_formats + active_scaffold_config.formats).uniq
+    end
+    def list_formats
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
     end
   end
 end

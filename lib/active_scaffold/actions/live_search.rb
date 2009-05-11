@@ -6,20 +6,22 @@ module ActiveScaffold::Actions
     end
 
     def show_search
-      respond_to do |type|
-        type.html do
-          if successful?
-            render(:partial => "live_search", :layout => true)
-          else
-            return_to_main
-          end
-        end
-        type.js { render(:partial => "live_search") }
-        show_search_respond_to type if self.respond_to? :show_search_respond_to
-      end
+      respond_to_action(:list_search)
     end
 
     protected
+
+    def live_search_respond_to_html
+      if successful?
+        render(:partial => "live_search", :layout => true)
+      else
+        return_to_main
+      end
+    end
+    
+    def live_search_respond_to_js
+      render(:partial => "live_search")
+    end
 
     def do_search
       @query = params[:search].to_s.strip rescue ''
@@ -42,6 +44,10 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     def live_search_authorized?
       authorized_for?(:action => :read)
+    end
+    private
+    def live_search_formats
+      (default_formats + active_scaffold_config.formats + active_scaffold_config.live_search.formats).uniq
     end
   end
 end

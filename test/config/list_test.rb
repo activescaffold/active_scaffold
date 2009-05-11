@@ -10,8 +10,8 @@ class Config::ListTest < Test::Unit::TestCase
     assert_equal '-', @config.list.empty_field_text
     assert @config.actions.include?(:search)
     assert_equal 'search', @config.list.search_partial
-    assert_equal 'No Entries', @config.list.no_entries_message
-    assert_equal 'Filtered List', @config.list.filtered_message
+    assert_equal :no_entries, @config.list.no_entries_message
+    assert_equal :filtered, @config.list.filtered_message
     assert !@config.list.always_show_create
     assert !@config.list.always_show_search
   end
