@@ -6,15 +6,12 @@ module ActiveScaffold
       # It does not do any rendering. It only decides which method is responsible for rendering.
       def active_scaffold_input_for(column, scope = nil)
         options = active_scaffold_input_options(column, scope)
-
         # first, check if the dev has created an override for this specific field
         if override_form_field?(column)
           send(override_form_field(column), @record, options[:name])
-
         # second, check if the dev has specified a valid form_ui for this column
         elsif column.form_ui and override_input?(column.form_ui)
           send(override_input(column.form_ui), column, options)
-
         # fallback: we get to make the decision
         else
           if column.association
@@ -115,6 +112,10 @@ module ActiveScaffold
         html << '</ul>'
         html << javascript_tag("new DraggableLists('#{options[:id]}')") if column.options[:draggable_lists]
         html
+      end
+
+      def active_scaffold_input_usa_state(column, options)
+        usa_state_select(:record, column.name, nil, options)
       end
 
       def active_scaffold_input_select(column, options)
