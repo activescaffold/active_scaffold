@@ -114,10 +114,6 @@ module ActiveScaffold
         html
       end
 
-      def active_scaffold_input_usa_state(column, options)
-        usa_state_select(:record, column.name, nil, options)
-      end
-
       def active_scaffold_input_select(column, options)
         if column.singular_association?
           active_scaffold_input_singular_association(column, options)

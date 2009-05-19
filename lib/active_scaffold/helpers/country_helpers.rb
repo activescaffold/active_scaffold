@@ -1,5 +1,3 @@
-I18n.load_path << File.dirname(__FILE__) + '/../../../lib/active_scaffold/locale/en-countries.yml'
-
 module ActiveScaffold
   module Helpers
     module CountryHelpers
@@ -25,7 +23,7 @@ module ActiveScaffold
           country_options += "<option value=\"\" disabled=\"disabled\">-------------</option>\n"
         end
 
-        return country_options + options_for_select(COUNTRIES.collect {|country| [I18n.t("countries.#{country}"), country]}, selected)
+        return country_options + options_for_select(COUNTRIES.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country]}, selected)
       end
 
       # Returns a string of option tags for the states in the United States. Supply a state name as +selected to

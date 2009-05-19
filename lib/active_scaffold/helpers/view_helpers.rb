@@ -9,6 +9,7 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::ListColumnHelpers
       include ActiveScaffold::Helpers::ShowColumnHelpers
       include ActiveScaffold::Helpers::FormColumnHelpers
+      include ActiveScaffold::Helpers::CountryHelpers
       include ActiveScaffold::Helpers::SearchColumnHelpers
 
       ##
