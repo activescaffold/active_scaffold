@@ -3,7 +3,7 @@ associated_form = render :partial => "#{subform_partial_for_column(@column)}_rec
 if @column.singular_association?
   page << %|
     associated = #{associated_form.to_json};
-    if (current = $$('##{sub_form_list_id(:association => @column.name)} tr.association-record')[0]) {
+    if (current = $$('##{sub_form_list_id(:association => @column.name)} .association-record')[0]) {
       Element.replace(current, associated)
     } else {
       new Insertion.Top('#{sub_form_list_id(:association => @column.name)}', associated)
