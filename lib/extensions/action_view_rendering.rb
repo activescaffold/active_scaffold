@@ -76,7 +76,7 @@ module ActionView #:nodoc:
     # TODO: Work with rails core team to find a better way to check for this.
     def template_exists?(template_name)
       begin
-        self.view_paths.find_template(template_name, @template_format)
+        self.view_paths.find_template_without_active_scaffold(template_name, @template_format)
         return true
       rescue ActionView::MissingTemplate => e
         return false
