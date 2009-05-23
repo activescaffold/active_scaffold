@@ -6,7 +6,7 @@ module ActiveScaffold::Actions
     end
 
     def show_search
-      respond_to_action(:list_search)
+      respond_to_action(:live_search)
     end
 
     protected
