@@ -18,7 +18,6 @@ module ActiveScaffold
   end
 
   def active_scaffold_config
-    debugger
     self.class.active_scaffold_config
   end
 
