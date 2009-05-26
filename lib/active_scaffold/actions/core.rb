@@ -120,5 +120,14 @@ module ActiveScaffold::Actions
         end
       end
     end
+
+    def response_code_for_rescue(exception)
+      case exception
+        when ActiveScaffold::RecordNotAllowed
+          "403 Record Not Allowed"
+        else
+          super
+      end
+    end
   end
 end
