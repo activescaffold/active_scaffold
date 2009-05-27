@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module List
     def self.included(base)
-      base.before_filter :list_authorized?, :only => [:index, :table, :update_table, :row, :list]
+      base.before_filter :list_authorized_filter, :only => [:index, :table, :update_table, :row, :list]
     end
 
     def index
@@ -83,6 +83,9 @@ module ActiveScaffold::Actions
       authorized_for?(:action => :read)
     end
     private
+    def list_authorized_filter
+      raise ActiveScaffold::ActionNotAllowed unless self.send(active_scaffold_config.list.link.security_method)
+    end
     def update_table_formats
       (default_formats + active_scaffold_config.formats).uniq
     end

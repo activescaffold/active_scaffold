@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module FieldSearch
     def self.included(base)
-      base.before_filter :field_search_authorized?, :only => :show_search
+      base.before_filter :search_authorized_filter, :only => :show_search
       base.before_filter :do_search
     end
 
@@ -43,10 +43,13 @@ module ActiveScaffold::Actions
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
-    def field_search_authorized?
+    def search_authorized?
       authorized_for?(:action => :read)
     end
     private
+    def search_authorized_filter
+      raise ActiveScaffold::ActionNotAllowed unless self.send(active_scaffold_config.field_search.link.security_method)
+    end
     def field_search_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.field_search.formats).uniq
     end

@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Create
     def self.included(base)
-      base.before_filter :create_authorized?, :only => [:new, :create]
+      base.before_filter :create_authorized_filter, :only => [:new, :create]
       base.prepend_before_filter :constraints_for_nested_create, :only => [:new, :create]
       base.verify :method => :post,
                   :only => :create,
@@ -126,6 +126,9 @@ module ActiveScaffold::Actions
       authorized_for?(:action => :create)
     end
     private
+    def create_authorized_filter
+      raise ActiveScaffold::ActionNotAllowed unless self.send(active_scaffold_config.create.link.security_method)
+    end
     def new_formats
       (default_formats + active_scaffold_config.formats).uniq
     end

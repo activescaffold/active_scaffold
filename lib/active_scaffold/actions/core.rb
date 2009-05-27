@@ -125,6 +125,8 @@ module ActiveScaffold::Actions
       case exception
         when ActiveScaffold::RecordNotAllowed
           "403 Record Not Allowed"
+        when ActiveScaffold::ActionNotAllowed
+          "403 Action Not Allowed"
         else
           super
       end

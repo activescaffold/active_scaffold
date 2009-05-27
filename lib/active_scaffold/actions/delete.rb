@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Delete
     def self.included(base)
-      base.before_filter :delete_authorized?, :only => [:delete, :destroy]
+      base.before_filter :delete_authorized_filter, :only => [:delete, :destroy]
     end
 
     # this method is for html mode. it provides "the missing action" (http://thelucid.com/articles/2006/07/26/simply-restful-the-missing-action).
@@ -56,6 +56,9 @@ module ActiveScaffold::Actions
       authorized_for?(:action => :destroy)
     end
     private
+    def delete_authorized_filter
+      raise ActiveScaffold::ActionNotAllowed unless self.send(active_scaffold_config.delete.link.security_method)
+    end
     def destroy_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.delete.formats).uniq
     end

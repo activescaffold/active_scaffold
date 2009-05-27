@@ -3,6 +3,7 @@ module ActiveScaffold
   class DependencyFailure < RuntimeError; end
   class MalformedConstraint < RuntimeError; end
   class RecordNotAllowed < SecurityError; end
+  class ActionNotAllowed < SecurityError; end
   class ReverseAssociationRequired < RuntimeError; end
 
   def self.included(base)
