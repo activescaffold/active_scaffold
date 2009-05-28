@@ -75,6 +75,7 @@ module ActiveScaffold
       end
       active_scaffold_default_frontend_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', 'default' , 'views')
       @active_scaffold_frontends << active_scaffold_default_frontend_path
+      @active_scaffold_custom_paths = []
 
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
@@ -122,8 +123,13 @@ module ActiveScaffold
       end
     end
 
+    def add_active_scaffold_path(path)
+      @active_scaffold_paths = nil # Force active_scaffold_paths to rebuild
+      @active_scaffold_custom_paths << path
+    end
+
     def active_scaffold_paths
-      @active_scaffold_paths ||= ActionView::PathSet.new(@active_scaffold_overrides + @active_scaffold_frontends) unless @active_scaffold_overrides.nil? || @active_scaffold_frontends.nil?
+      @active_scaffold_paths ||= ActionView::PathSet.new(@active_scaffold_overrides + @active_scaffold_custom_paths + @active_scaffold_frontends) unless @active_scaffold_overrides.nil? || @active_scaffold_custom_paths.nil? || @active_scaffold_frontends.nil?
     end
 
     def active_scaffold_config
