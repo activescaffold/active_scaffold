@@ -84,7 +84,7 @@ module ActiveScaffold::Actions
     end
     private
     def list_authorized_filter
-      raise ActiveScaffold::ActionNotAllowed unless self.send(active_scaffold_config.list.link.security_method)
+      raise ActiveScaffold::ActionNotAllowed unless list_authorized?
     end
     def update_table_formats
       (default_formats + active_scaffold_config.formats).uniq
