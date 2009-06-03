@@ -113,7 +113,8 @@ module ActiveScaffold::Actions
     end
     private
     def update_authorized_filter
-      raise ActiveScaffold::ActionNotAllowed unless self.send(active_scaffold_config.update.link.security_method)
+      link = active_scaffold_config.update.link || active_scaffold_config.update.class.link
+      raise ActiveScaffold::ActionNotAllowed unless self.send(link.security_method)
     end
     def edit_formats
       (default_formats + active_scaffold_config.formats).uniq

@@ -40,7 +40,8 @@ module ActiveScaffold::Actions
     end
     private
     def search_authorized_filter
-      raise ActiveScaffold::ActionNotAllowed unless self.send(active_scaffold_config.search.link.security_method)
+      link = active_scaffold_config.search.link || active_scaffold_config.search.class.link
+      raise ActiveScaffold::ActionNotAllowed unless self.send(link.security_method)
     end
     def search_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.search.formats).uniq
