@@ -62,7 +62,7 @@ module ActiveScaffold::Config
     # the label for this List action. used for the header.
     attr_writer :label
     def label
-      @label ? as_(@label) : @core.label
+      @label ? as_(@label, :count => :many) : @core.label(:count => :many)
     end
 
     attr_writer :no_entries_message
