@@ -22,7 +22,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_show_text(column, record)
-        simple_format(get_column_value(record, column))
+        simple_format(clean_column_value(record.send(column.name)))
       end
 
       def show_column_override(column)
