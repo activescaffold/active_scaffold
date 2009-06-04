@@ -11,7 +11,7 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
   action_link_close.apply(this);
 };
         |) if using_tiny_mce?
-        active_scaffold_includes_without_tiny_mce(frontend) + include_tiny_mce_if_needed + (tiny_mce_js || '')
+        active_scaffold_includes_without_tiny_mce(frontend) + (include_tiny_mce_if_needed || '') + (tiny_mce_js || '')
       end
       alias_method_chain :active_scaffold_includes, :tiny_mce
     end
