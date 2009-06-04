@@ -74,11 +74,16 @@ module ActiveRecordPermissions
     def authorized_for?(options = {})
       raise ArgumentError, "unknown action #{options[:action]}" if options[:action] and ![:create, :read, :update, :destroy].include?(options[:action])
 
+      # column_authorized_for_action? has priority over other methods,
+      # you can disable an action and enable that action for a column
+      # (for example, disable update and enable inplace_edit in a column)
+      method = column_and_action_security_method(options[:column], options[:action])
+      return true if method and respond_to?(method) and send(method)
+
       # collect the possibly-related methods that actually exist
       methods = [
         column_security_method(options[:column]),
         action_security_method(options[:action]),
-        column_and_action_security_method(options[:column], options[:action])
       ].compact.select {|m| respond_to?(m)}
 
       # if any method returns false, then return false

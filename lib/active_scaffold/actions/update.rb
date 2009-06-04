@@ -92,7 +92,7 @@ module ActiveScaffold::Actions
     end
 
     def do_update_column
-      do_edit
+      @record = active_scaffold_config.model.find(params[:id])
       if @record.authorized_for?(:action => :update, :column => params[:column])
         params[:value] ||= @record.column_for_attribute(params[:column]).default unless @record.column_for_attribute(params[:column]).null
         @record.send("#{params[:column]}=", params[:value])
