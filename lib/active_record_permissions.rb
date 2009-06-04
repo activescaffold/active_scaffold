@@ -78,7 +78,7 @@ module ActiveRecordPermissions
       # you can disable an action and enable that action for a column
       # (for example, disable update and enable inplace_edit in a column)
       method = column_and_action_security_method(options[:column], options[:action])
-      return true if method and respond_to?(method) and send(method)
+      return send(method) if method and respond_to?(method)
 
       # collect the possibly-related methods that actually exist
       methods = [
