@@ -22,7 +22,7 @@ default_sorting_stages = ['ASC', 'DESC']
         :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
         :update => active_scaffold_content_id,
         :method => :get },
-      { :href => href } %>
+      { :href => href, :title => column.description } %>
    <% else -%>
      <p><%= column.label %></p>
    <% end -%>
