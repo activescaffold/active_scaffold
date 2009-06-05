@@ -146,7 +146,7 @@ module ActiveScaffold
     def find_page(options = {})
       options.assert_valid_keys :sorting, :per_page, :page, :count_includes
 
-      full_includes = (active_scaffold_joins.empty? ? nil : active_scaffold_joins)
+      full_includes = (active_scaffold_joins.blank? ? nil : active_scaffold_joins)
       options[:per_page] ||= 999999999
       options[:page] ||= 1
       options[:count_includes] ||= full_includes
@@ -162,7 +162,7 @@ module ActiveScaffold
       finder_options.merge! custom_finder_options
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count = klass.count(finder_options.reject{|k,v| [:order].include? k})
+      count = klass.count(finder_options.reject{|k,v| [:select, :order].include? k})
 
       finder_options.merge! :include => full_includes
 
