@@ -86,7 +86,7 @@ module ActiveScaffold
         selected = associated.nil? ? nil : associated.id
         method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
         options[:name] += '[id]'
-        select(:record, method, select_options.uniq, {:selected => selected, :include_blank => as_(:_select_)}, options)
+        select(:record, method, select_options.uniq, {:selected => selected, :include_blank => as_(:_select_)}, options.merge(column.options))
       end
 
       def active_scaffold_input_plural_association(column, options)
