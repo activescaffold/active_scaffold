@@ -36,7 +36,7 @@ module ActiveScaffold::Actions
     end
 
     def destroy_respond_to_yaml
-      render :text => successful? ? "" : response_object.to_json, :content_type => Mime::JSON, :status => response_status
+      render :text => successful? ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status
     end
 
     def destroy_find_record

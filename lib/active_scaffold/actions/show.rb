@@ -13,7 +13,7 @@ module ActiveScaffold::Actions
     protected
     
     def show_respond_to_json
-      render :text => response_object.to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status
     end
 
     def show_respond_to_yaml
