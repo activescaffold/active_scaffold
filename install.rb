@@ -30,7 +30,6 @@ class ErrCounter # using errcount.com
   def self.increment
     @http = Net::HTTP.new("errcount.com")
     resp, data = @http.get2("/ctr/#{@@ACCOUNT_ID}.js", {'Referer' => @@SITE_DOMAIN})
-    puts resp.body
   end  
 end
 
