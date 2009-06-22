@@ -61,7 +61,7 @@ module ActiveScaffold
 
       def javascript_for_update_column(column, scope, options)
         if column.options[:update_column]
-          url_params = {:action => 'render_field', :id => @record.id}
+          url_params = {:action => 'render_field', :id => params[:id]}
           url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
 
           parameters = "column=#{column.name}"
