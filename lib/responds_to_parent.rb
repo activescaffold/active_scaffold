@@ -34,8 +34,7 @@ module RespondsToParent
       response.headers['Content-Type'] = 'text/html; charset=UTF-8'
       
       # Either pull out a redirect or the request body
-      script =  if location = response.headers['Location'] # erase_redirect_results returned strange values in production mode
-                  erase_redirect_results
+      script =  if location = erase_redirect_results
                   "document.location.href = #{location.to_s.inspect}"
                 else
                   response.body
