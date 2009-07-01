@@ -290,6 +290,10 @@ background-color: #1F7F00;
 background: transparent;
 }
 
+.active-scaffold .active-scaffold .active-scaffold-header {
+margin-right: 15px;
+}
+
 .active-scaffold .active-scaffold .active-scaffold-header h2 {
 font-size: 12px;
 font-weight: bold;
@@ -298,6 +302,11 @@ font-weight: bold;
 .blue-theme .active-scaffold .active-scaffold-header h2,
 .active-scaffold .active-scaffold .active-scaffold-footer {
 color: #444;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions {
+top: 0px;
+right: 0px;
 }
 
 .active-scaffold .active-scaffold .active-scaffold-header div.actions a {
