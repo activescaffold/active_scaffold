@@ -82,7 +82,7 @@ module ActiveScaffold::Actions
         params[:parent_column] = nil
         params[:parent_id] = nil
       end
-      redirect_to params_for(:action => "index")
+      redirect_to params_for(:action => "index", :id => nil)
     end
 
     # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
