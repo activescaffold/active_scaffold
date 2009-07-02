@@ -19,7 +19,7 @@ module ActiveScaffold::Actions
 
     protected
     def destroy_respond_to_html
-      flash[:info] = as_(:deleted_model, :model => @record.to_label)
+      flash[:info] = as_(:deleted_model, :model => @record.to_label) if self.successful?
       return_to_main
     end
 
@@ -47,7 +47,12 @@ module ActiveScaffold::Actions
     # May be overridden to customize the behavior
     def do_destroy
       destroy_find_record
-      self.successful = @record.destroy
+      begin
+        self.successful = @record.destroy
+      rescue
+        flash[:warning] = as_(:cant_destroy_record, :record => @record.to_label)
+        self.successful = false
+      end
     end
 
     # The default security delegates to ActiveRecordPermissions.

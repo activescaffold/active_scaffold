@@ -60,5 +60,6 @@ es:
     between: 'entre'
 
     # error_messages
+    cant_destroy_record: "No se pudo borrar {{record}}"
     internal_error: 'Petición fallida (código 500, error interno)'
     version_inconsistency: 'Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo.'
