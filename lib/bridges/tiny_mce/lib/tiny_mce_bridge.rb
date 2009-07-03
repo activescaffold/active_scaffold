@@ -1,7 +1,7 @@
 module ActiveScaffold
   module Helpers
     module ViewHelpers
-      def active_scaffold_includes_with_tiny_mce(frontend = :default)
+      def active_scaffold_includes_with_tiny_mce(*args)
         tiny_mce_js = javascript_tag(%|
 var action_link_close = ActiveScaffold.ActionLink.Abstract.prototype.close;
 ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
@@ -11,7 +11,7 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
   action_link_close.apply(this);
 };
         |) if using_tiny_mce?
-        active_scaffold_includes_without_tiny_mce(frontend) + (include_tiny_mce_if_needed || '') + (tiny_mce_js || '')
+        active_scaffold_includes_without_tiny_mce(*args) + (include_tiny_mce_if_needed || '') + (tiny_mce_js || '')
       end
       alias_method_chain :active_scaffold_includes, :tiny_mce
     end
