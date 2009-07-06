@@ -66,7 +66,7 @@ module ActiveScaffold
               authorized = false
             end
           else
-            associated = record.send(column.association.name)
+            associated = record.send(column.association.name) if column.association
             authorized = associated.authorized_for?(:action => link.crud_type)
           end
           return "<a class='disabled'>#{text}</a>" unless authorized
