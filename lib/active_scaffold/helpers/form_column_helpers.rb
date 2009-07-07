@@ -200,7 +200,7 @@ module ActiveScaffold
 
       def override_form_field_partial?(column)
         path, partial_name = partial_pieces(override_form_field_partial(column))
-        template_exists?(File.join(path, "_#{partial_name}"))
+        template_exists?(File.join(path, "_#{partial_name}"), true)
       end
 
       # the naming convention for overriding form fields with partials

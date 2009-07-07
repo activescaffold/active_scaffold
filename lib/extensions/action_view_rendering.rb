@@ -74,9 +74,11 @@ module ActionView #:nodoc:
     # This is the template finder logic, keep it updated with however we find stuff in rails
     # currently this very similar to the logic in ActionBase::Base.render for options file
     # TODO: Work with rails core team to find a better way to check for this.
-    def template_exists?(template_name)
+    def template_exists?(template_name, lookup_overrides = false)
       begin
-        self.view_paths.find_template_without_active_scaffold(template_name, @template_format)
+        method = 'find_template'
+        method << '_without_active_scaffold' unless lookup_overrides
+        self.view_paths.send(method, template_name, @template_format)
         return true
       rescue ActionView::MissingTemplate => e
         return false
