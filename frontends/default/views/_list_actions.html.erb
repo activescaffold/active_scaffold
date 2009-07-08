@@ -6,7 +6,7 @@
     <% active_scaffold_config.action_links.each :record do |link| -%>
       <% next if controller.respond_to? link.security_method and !controller.send(link.security_method) -%>
       <td>
-        <%= record.authorized_for?(:action => link.crud_type) ? render_action_link(link, url_options) : "<a class='disabled'>#{link.label}</a>" -%>
+        <%= record.authorized_for?(:crud_type => link.crud_type, :action => link.action) ? render_action_link(link, url_options) : "<a class='disabled'>#{link.label}</a>" -%>
       </td>
     <% end -%>
   </tr>

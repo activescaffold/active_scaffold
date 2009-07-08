@@ -78,10 +78,10 @@ module ActiveScaffold
 
           # check authorization
           if column.association
-            authorized = (associated ? associated : column.association.klass).authorized_for?(:action => link.crud_type)
-            authorized = authorized and record.authorized_for?(:action => :update, :column => column.name) if link.crud_type == :create
+            authorized = (associated ? associated : column.association.klass).authorized_for?(:crud_type => link.crud_type)
+            authorized = authorized and record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
           else
-            authorized = record.authorized_for?(:action => link.crud_type)
+            authorized = record.authorized_for?(:crud_type => link.crud_type)
           end
           return "<a class='disabled'>#{text}</a>" unless authorized
 
