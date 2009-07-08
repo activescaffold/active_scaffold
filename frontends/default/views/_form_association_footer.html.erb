@@ -8,7 +8,7 @@ end
 show_add_existing = (!column.through_association? and options_for_association_count(column.association) > 0)
 
 show_add_new = !column.through_association? and (column.plural_association? or (column.singular_association? and not associated.empty?))
-show_add_new = false unless @record.class.authorized_for?(:action => :create)
+show_add_new = false unless @record.class.authorized_for?(:crud_type => :create)
 
 edit_associated_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :escape => false, :eid => params[:eid], :parent_controller => params[:parent_controller], :parent_id => params[:parent_id])
 add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :escape => false, :eid => params[:eid], :parent_controller => params[:parent_controller], :parent_id => params[:parent_id]);

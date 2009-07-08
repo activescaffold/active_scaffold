@@ -6,7 +6,7 @@ associated = associated.sort_by {|r| r.new_record? ? 99999999999 : r.id} unless 
 if column.show_blank_record
   show_blank_record = (column.plural_association? or (column.singular_association? and associated.empty?))
   show_blank_record = false if column.through_association?
-  show_blank_record = false unless column.association.klass.authorized_for?(:action => :create)
+  show_blank_record = false unless column.association.klass.authorized_for?(:crud_type => :create)
 else
   show_blank_record = false
 end
