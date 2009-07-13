@@ -3,7 +3,7 @@ module ActiveScaffold
     # A bunch of helper methods to produce the common view ids
     module IdHelpers
       def controller_id
-        @controller_id ||= (params[:eid] || params[:parent_controller] || params[:controller]).gsub("/", "__")
+        @controller_id ||= 'as_' + (params[:eid] || params[:parent_controller] || params[:controller]).gsub("/", "__")
       end
 
       def active_scaffold_id
