@@ -12,6 +12,8 @@
             </div> 
           </td> 
         </tr>
+      <% else %>
+      <tr><td></td></tr>
       <% end %>
       <% if params[:nested].nil? && active_scaffold_config.list.always_show_create %>
         <tr> 
@@ -30,10 +32,11 @@
 </div>
 
 <script type="text/javascript">
-<% if active_scaffold_config.theme != :default %>
+//<![CDATA[
+<% if active_scaffold_config.theme != :default -%>
 Rico.Corner.round($$('#<%= active_scaffold_id %> div.active-scaffold-header').first(), {color: 'fromElement', bgColor: 'fromParent', corners: 'top', compact: true});
 Rico.Corner.round($$('#<%= active_scaffold_id %> div.active-scaffold-footer').first(), {color: 'fromElement', bgColor: 'fromParent', corners: 'bottom', compact: true});
-<% end %>
+<% end -%>
 new ActiveScaffold.Actions.Table($$('#<%= active_scaffold_id -%> div.active-scaffold-header a.action'), $('<%= before_header_id -%>'), $('<%= loading_indicator_id(:action => :table) -%>'))
 ActiveScaffold.server_error_response = '<p class="error-message message">'
   + <%= as_(:internal_error).to_json %>
@@ -41,4 +44,5 @@ ActiveScaffold.server_error_response = '<p class="error-message message">'
   + <%= as_(:close).to_json %>
   + '</a>'
   + '</p>';
+//]]>
 </script>
