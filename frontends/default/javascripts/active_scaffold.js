@@ -314,6 +314,7 @@ ActiveScaffold.Actions.Record.prototype = Object.extend(new ActiveScaffold.Actio
   instantiate_link: function(link) {
     var l = new ActiveScaffold.ActionLink.Record(link, this.target, this.loading_indicator);
     l.refresh_url = this.options.refresh_url;
+    if (link.hasClassName('delete')) l.url = l.url.replace(/\/delete(\?.*)?/, '$1');
     if (l.position) l.url = l.url.append_params({adapter: '_list_inline_adapter'});
     l.set = this;
     return l;
