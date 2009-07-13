@@ -14,15 +14,12 @@ url_options = params_for(:action => :list, :id => record.id)
       <%= record.authorized_for?(:action => :read, :column => column.name) ? render_list_column(column_value, column, record) : '' %>
     </td>
   <% end -%>
-  <% if active_scaffold_config.action_links.any? {|link| link.type == :record } -%>
   <td class="actions">
-    <%= render :partial => 'list_actions', :locals => {:record => record, :url_options => url_options} %>
-  </td>
-  <% end -%>
-</tr>
+    <%= render :partial => 'list_actions', :locals => {:record => record, :url_options => url_options} if active_scaffold_config.action_links.any? {|link| link.type == :record } %>
 
 <% target_id = element_row_id(:action => :list, :id => record.id) -%>
 <script type="text/javascript">
+//<![CDATA[
 actions = new ActiveScaffold.Actions.Record(
   $$('#<%= target_id -%> a.action'),
   $('<%= target_id -%>'),
@@ -32,4 +29,8 @@ actions = new ActiveScaffold.Actions.Record(
   <%= update_page do |page|
         page.replace active_scaffold_calculations_id, :partial => 'list_calculations'
       end if not dont_show_calculations and active_scaffold_config.list.columns.any? {|c| c.calculation?} %>
+//]]>
 </script>
+
+  </td>
+</tr>
