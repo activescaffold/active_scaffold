@@ -78,7 +78,7 @@ module ActiveScaffold
 
           # check authorization
           if column.association
-            authorized = (associated ? associated : column.association.klass).authorized_for?(:action => link.crud_type)
+            authorized = (associated.blank? ? column.association.klass : associated).authorized_for?(:action => link.crud_type)
             authorized = authorized and record.authorized_for?(:action => :update, :column => column.name) if link.crud_type == :create
           else
             authorized = record.authorized_for?(:action => link.crud_type)
