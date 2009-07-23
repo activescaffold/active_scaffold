@@ -741,7 +741,7 @@ padding: 0 5px 0 1px;
 background: none;
 }
 
-.active-scaffold .horizontal-sub-form label {
+.active-scaffold .horizontal-sub-form td label {
 display: none;
 }
 
