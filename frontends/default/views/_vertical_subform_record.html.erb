@@ -12,7 +12,7 @@
   column = column.clone
   column.form_ui ||= :select if column.association
 -%>
-  <li class="form-element">
+  <li class="form-element <%= 'required' if column.required? %>">
     <% unless readonly -%>
       <%= render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope } -%>
     <% else -%>
