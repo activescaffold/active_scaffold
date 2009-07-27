@@ -500,7 +500,7 @@ background-color: transparent;
    ============================== */
 
 .active-scaffold .loading-indicator {
-vertical-align: bottom;
+vertical-align: text-bottom;
 width: 16px;
 margin: 0;
 }
