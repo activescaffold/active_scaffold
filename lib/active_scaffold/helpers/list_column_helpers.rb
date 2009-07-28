@@ -83,7 +83,7 @@ module ActiveScaffold
 
           # check authorization
           if column.association
-            associated_for_authorized = if associated.nil? || associated.empty?
+            associated_for_authorized = if associated.nil? || (associated.respond_to?(:empty?) && associated.empty?)
               column.association.klass
             elsif column.plural_association?
               associated.first
