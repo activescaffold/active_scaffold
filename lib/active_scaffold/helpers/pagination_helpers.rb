@@ -2,8 +2,10 @@ module ActiveScaffold
   module Helpers
     module PaginationHelpers
       def pagination_ajax_link(page_number, params)
+        url = url_for params.merge(:page => page_number)
         page_link = link_to_remote(page_number,
-                  { :url => params.merge(:page => page_number),
+                  { :url => url,
+                    :before => "addActiveScaffoldPageToHistory('#{url}', '#{controller_id}');",
                     :after => "$('#{loading_indicator_id(:action => :pagination)}').style.visibility = 'visible';",
                     :complete => "$('#{loading_indicator_id(:action => :pagination)}').style.visibility = 'hidden';",
                     :update => active_scaffold_content_id,
