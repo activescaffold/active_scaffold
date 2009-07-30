@@ -63,7 +63,7 @@ module ActiveRecordPermissions
   module Permissions
     def self.included(base)
       base.extend SecurityMethods
-      base.include SecurityMethods
+      base.send :include, SecurityMethods
     end
 
     # Because any class-level queries get delegated to the instance level via a new record,
