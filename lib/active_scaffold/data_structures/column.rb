@@ -233,7 +233,7 @@ module ActiveScaffold::DataStructures
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
-      @actions_for_association_links = self.class.actions_for_association_links if @association
+      @actions_for_association_links = self.class.actions_for_association_links.clone if @association
 
       # default all the configurable variables
       self.css_class = ''
