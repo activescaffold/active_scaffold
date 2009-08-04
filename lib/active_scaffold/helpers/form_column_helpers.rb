@@ -77,7 +77,7 @@ module ActiveScaffold
       ## Form input methods
       ##
 
-      def active_scaffold_input_singular_association(column, options)
+      def active_scaffold_input_singular_association(column, html_options)
         associated = @record.send(column.association.name)
 
         select_options = options_for_association(column.association)
@@ -85,8 +85,18 @@ module ActiveScaffold
 
         selected = associated.nil? ? nil : associated.id
         method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
-        options[:name] += '[id]'
-        select(:record, method, select_options.uniq, {:selected => selected, :include_blank => as_(:_select_)}, options.merge(column.options))
+        html_options[:name] += '[id]'
+        options = {:selected => selected, :include_blank => as_(:_select_)}
+
+        # For backwards compatibility, to add method options is needed to set a html_options hash
+        # in other case all column.options will be added as html options
+        if column.options[:html_options]
+          html_options.update(column.options[:html_options])
+          options.update(column.options)
+        else
+          html_options.update(column.options)
+        end
+        select(:record, method, select_options.uniq, options, html_options)
       end
 
       def active_scaffold_input_plural_association(column, options)
@@ -114,13 +124,21 @@ module ActiveScaffold
         html
       end
 
-      def active_scaffold_input_select(column, options)
+      def active_scaffold_input_select(column, html_options)
         if column.singular_association?
-          active_scaffold_input_singular_association(column, options)
+          active_scaffold_input_singular_association(column, html_options)
         elsif column.plural_association?
-          active_scaffold_input_plural_association(column, options)
+          active_scaffold_input_plural_association(column, html_options)
         else
-          select(:record, column.name, column.options, { :selected => @record.send(column.name) }, options)
+          options = { :selected => @record.send(column.name) }
+          if column.options.is_a? Hash
+            options_for_select = column.options[:options]
+            html_options.update(column.options[:html_options] || {})
+            options.update(column.options)
+          else
+            options_for_select = column.options
+          end
+          select(:record, column.name, options_for_select, options, html_options)
         end
       end
 
