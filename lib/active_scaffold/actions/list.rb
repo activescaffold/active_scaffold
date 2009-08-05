@@ -70,7 +70,7 @@ module ActiveScaffold::Actions
       end
 
       page = find_page(options);
-      if page.items.empty?
+      if page.items.try(:empty?)
         page = page.pager.first
         active_scaffold_config.list.user.page = 1
       end
