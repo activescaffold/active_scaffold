@@ -25,7 +25,7 @@
       end
 
       # generate the customized label
-      @label = as_(:nested_for_model, :nested_model => active_scaffold_config_for(association.klass).label, :parent_model => format_value(@record.to_label))
+      @label = as_(:nested_for_model, :nested_model => active_scaffold_config_for(association.klass).list.label, :parent_model => format_value(@record.to_label))
 
       begin
         controller = active_scaffold_controller_for(association.klass)
