@@ -84,7 +84,7 @@ module ActiveScaffold
         select_options.unshift([ associated.to_label, associated.id ]) unless associated.nil? or select_options.find {|label, id| id == associated.id}
 
         selected = associated.nil? ? nil : associated.id
-        method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
+        method = column.name
         html_options[:name] += '[id]'
         options = {:selected => selected, :include_blank => as_(:_select_)}
 
