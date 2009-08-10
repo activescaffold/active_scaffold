@@ -644,7 +644,8 @@ border: solid 1px #1F7F00;
 padding: 2px;
 }
 
-.active-scaffold .fieldWithErrors input.text-input,
+.active-scaffold .fieldWithErrors input,
+.active-scaffold .fieldWithErrors textarea,
 .active-scaffold .fieldWithErrors select {
 border: solid 1px #f00;
 }
