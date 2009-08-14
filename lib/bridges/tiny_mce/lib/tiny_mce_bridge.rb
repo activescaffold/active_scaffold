@@ -26,7 +26,7 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
       end
 
       def onsubmit
-        'tinyMCE.triggerSave();' if using_tiny_mce?
+        'tinyMCE.triggerSave();this.select("textarea.mceEditor").each(function(elem) { tinyMCE.execCommand("mceRemoveControl", false, elem.id); });' if using_tiny_mce?
       end
     end
 
