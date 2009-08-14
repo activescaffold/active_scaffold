@@ -20,7 +20,7 @@ url_options = params_for(:action => :list, :id => record.id)
 <% target_id = element_row_id(:action => :list, :id => record.id) -%>
 <script type="text/javascript">
 //<![CDATA[
-actions = new ActiveScaffold.Actions.Record(
+new ActiveScaffold.Actions.Record(
   $$('#<%= target_id -%> a.action'),
   $('<%= target_id -%>'),
   $('<%= loading_indicator_id(:action => :record, :id => record.id) -%>'),
