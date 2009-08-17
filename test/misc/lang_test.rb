@@ -6,7 +6,7 @@ class LocalizationTest < Test::Unit::TestCase
     ##
     ## test no language specified
     ##
-    assert_equal "dutch", as_(:dutch)
-    assert_equal "Create Test", as_(:create, :model => 'Test')
+    assert_equal "Dutch", as_(:dutch)
+    assert_equal "Create Test", as_(:create_model, :model => 'Test')
   end
 end
