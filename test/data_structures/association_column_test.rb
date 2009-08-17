@@ -1,5 +1,5 @@
 require File.join(File.dirname(__FILE__), '../test_helper.rb')
-require 'test/model_stub'
+require File.join(File.dirname(__FILE__), '../model_stub')
 
 class AssociationColumnTest < Test::Unit::TestCase
   def setup
