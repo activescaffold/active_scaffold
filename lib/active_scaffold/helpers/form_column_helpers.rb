@@ -178,7 +178,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_textarea(column, options)
-        text_area(:record, column.name, options.merge(:cols => column.options[:cols], :rows => column.options[:rows]))
+        text_area(:record, column.name, options.merge(:cols => column.options[:cols], :rows => column.options[:rows], :size => column.options[:size]))
       end
 
       def active_scaffold_input_virtual(column, options)
