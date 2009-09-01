@@ -20,7 +20,7 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
       def active_scaffold_input_text_editor(column, options)
         options[:class] = "#{options[:class]} mceEditor #{column.options[:class]}".strip
         html = []
-        html << text_area(:record, column.name, options.merge(:cols => column.options[:cols], :rows =>column.options[:rows]))
+        html << send(override_input(:textarea), column, options)
         html << javascript_tag("tinyMCE.execCommand('mceAddControl', false, '#{options[:id]}');") if request.xhr?
         html.join "\n"
       end
