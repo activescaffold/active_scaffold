@@ -8,7 +8,7 @@ module ActiveScaffold
     def configure(&configuration_block)
       return unless configuration_block
       @configuration_binding = configuration_block.binding
-      ret = instance_eval &configuration_block
+      ret = instance_exec self, &configuration_block
       @configuration_binding = nil
       return ret
     end
