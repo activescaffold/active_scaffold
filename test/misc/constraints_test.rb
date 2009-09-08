@@ -7,6 +7,7 @@ module ModelStubs
     def self.table_name
       to_s.split('::').last.underscore.pluralize
     end
+    self.store_full_sti_class = false
   end
 
   ##
@@ -56,7 +57,7 @@ module ModelStubs
   class OtherService < ModelStub
     set_table_name 'services'
     has_many :other_subscriptions, :class_name => 'ModelStubs::OtherSubscription', :foreign_key => 'service_id'
-    has_many :other_users, :through => :subscriptions # :class_name and :foreign_key are ignored for :through
+    has_many :other_users, :through => :other_subscriptions # :class_name and :foreign_key are ignored for :through
   end
 
   class OtherSubscription < ModelStub
