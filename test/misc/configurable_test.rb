@@ -39,7 +39,7 @@ class ConfigurableTest < Test::Unit::TestCase
     # variables
     assert_equal configurable_class, configurable_class.configure {configurable_class}
     # constants
-    assert_equal HELLO, configurable_class.configure {HELLO}
+    assert_equal ConfigurableTest::HELLO, configurable_class.configure {ConfigurableTest::HELLO}
 
     ##
     ## test extra "localized" block behavior
@@ -74,7 +74,7 @@ class ConfigurableTest < Test::Unit::TestCase
     # variables
     assert_equal ConfigurableClass, ConfigurableClass.configure {ConfigurableClass}
     # constants
-    assert_equal HELLO, ConfigurableClass.configure {HELLO}
+    assert_equal ConfigurableTest::HELLO, ConfigurableClass.configure {ConfigurableTest::HELLO}
 
     ##
     ## test extra "localized" block behavior
