@@ -102,7 +102,7 @@ module ActiveScaffold
         next unless column.link.nil? and column.autolink
         if column.plural_association?
           # note: we can't create nested scaffolds on :through associations because there's no reverse association.
-          column.set_link('nested', :parameters => {:associations => column.name.to_sym}) #unless column.through_association?
+          column.set_link('nested', :parameters => {:associations => column.name.to_sym}, :html_options => {:class => column.name}) #unless column.through_association?
         elsif column.polymorphic_association?
           # note: we can't create inline forms on singular polymorphic associations
           column.clear_link
@@ -118,7 +118,7 @@ module ActiveScaffold
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update
           column.actions_for_association_links.delete :show unless actions.include? :show
-          column.set_link(:none, :controller => controller.controller_path, :crud_type => nil)
+          column.set_link(:none, :controller => controller.controller_path, :crud_type => nil, :html_options => {:class => column.name})
         end
       end
     end
