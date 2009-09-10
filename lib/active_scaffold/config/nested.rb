@@ -18,7 +18,7 @@ module ActiveScaffold::Config
 
     # Add a nested ActionLink
     def add_link(label, models, options = {})
-      @core.action_links.add('nested', options.merge(:label => label, :type => :record, :security_method => :nested_authorized?, :position => :after, :parameters => {:associations => models.join(' ')}))
+      @core.action_links.add('nested', options.merge(:label => label, :type => :record, :security_method => :nested_authorized?, :position => :after, :parameters => {:associations => models.join(' ')}, :html_options => {:class => models.join(' ')}))
     end
 
     # the label for this Nested action. used for the header.
