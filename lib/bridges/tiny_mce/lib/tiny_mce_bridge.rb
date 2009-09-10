@@ -1,7 +1,7 @@
 module ActiveScaffold
-  module Helpers
+  module TinyMceBridge
     module ViewHelpers
-      def active_scaffold_includes_with_tiny_mce(*args)
+      def active_scaffold_includes(*args)
         tiny_mce_js = javascript_tag(%|
 var action_link_close = ActiveScaffold.ActionLink.Abstract.prototype.close;
 ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
@@ -11,9 +11,8 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
   action_link_close.apply(this);
 };
         |) if using_tiny_mce?
-        active_scaffold_includes_without_tiny_mce(*args) + (include_tiny_mce_if_needed || '') + (tiny_mce_js || '')
+        super(*args) + (include_tiny_mce_if_needed || '') + (tiny_mce_js || '')
       end
-      alias_method_chain :active_scaffold_includes, :tiny_mce
     end
 
     module FormColumnHelpers
@@ -26,12 +25,21 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
       end
 
       def onsubmit
-        'tinyMCE.triggerSave();this.select("textarea.mceEditor").each(function(elem) { tinyMCE.execCommand("mceRemoveControl", false, elem.id); });' if using_tiny_mce?
+        submit_js = 'tinyMCE.triggerSave();this.select("textarea.mceEditor").each(function(elem) { tinyMCE.execCommand("mceRemoveControl", false, elem.id); });' if using_tiny_mce?
+        [super, submit_js].compact.join ';'
       end
     end
 
     module SearchColumnHelpers
-      alias_method :active_scaffold_search_text_editor, :active_scaffold_search_text
+      def self.included(base)
+        base.class_eval { alias_method :active_scaffold_search_text_editor, :active_scaffold_search_text }
+      end
     end
   end
+end
+
+ActionView::Base.class_eval do
+  include ActiveScaffold::TinyMceBridge::FormColumnHelpers
+  include ActiveScaffold::TinyMceBridge::SearchColumnHelpers
+  include ActiveScaffold::TinyMceBridge::ViewHelpers
 end
