@@ -11,7 +11,7 @@ module ActiveScaffold::Config
       
       # originates here
       @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns)
-      @sorting.add @core.model.primary_key, 'ASC'
+      @sorting.set_default_sorting(@core.model)
 
       # inherit from global scope
       @empty_field_text = self.class.empty_field_text

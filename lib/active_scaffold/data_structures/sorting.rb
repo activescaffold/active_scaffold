@@ -7,7 +7,15 @@ module ActiveScaffold::DataStructures
       @columns = columns
       @clauses = []
     end
-
+    
+    def set_default_sorting(model)
+      if model.default_scoping.last.nil?  || model.default_scoping.last[:find].nil? || model.default_scoping.last[:find][:order].nil?
+        set model.primary_key, 'ASC'
+      else
+        set_sorting_from_order_clause(model.default_scoping.last[:find][:order])
+      end
+    end
+    
     # add a clause to the sorting, assuming the column is sortable
     def add(column_name, direction = nil)
       direction ||= 'ASC'
@@ -84,6 +92,31 @@ module ActiveScaffold::DataStructures
 
     def mixed_sorting?
       sorts_by_method? and sorts_by_sql?
+    end
+
+    def set_sorting_from_order_clause(order_clause)
+      clear
+      order_clause.split(',').each do |criterion|
+        order_parts = criterion.strip.split(' ')
+        add(extract_column_name_in_order_criterion(order_parts), extract_direction_in_order_criterion(order_parts)) unless order_parts.empty?
+      end
+    end
+    
+    def extract_column_name_in_order_criterion(criterion_parts)
+      column_name = criterion_parts.first.split('.').last
+      if column_name.starts_with?('"') || column_name.starts_with?('`')
+        column_name[1, (column_name.length - 2)]
+      else
+        column_name
+      end
+    end
+    
+    def extract_direction_in_order_criterion(criterion_parts)
+      if criterion_parts.last.to_s.upcase == 'DESC'
+        'DESC'
+      else
+        'ASC'
+      end
     end
   end
 end
