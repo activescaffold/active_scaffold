@@ -10,9 +10,9 @@ module ActiveScaffold::DataStructures
     
     def set_default_sorting(model)
       if model.default_scoping.last.nil?  || model.default_scoping.last[:find].nil? || model.default_scoping.last[:find][:order].nil?
-        add model.primary_key, 'ASC'
+        set model.primary_key, 'ASC'
       else
-        set_default_sorting_by_default_scope(model.default_scoping.last[:find][:order])
+        set_sorting_from_order_clause(model.default_scoping.last[:find][:order])
       end
     end
     
@@ -94,12 +94,11 @@ module ActiveScaffold::DataStructures
       sorts_by_method? and sorts_by_sql?
     end
 
-    def set_default_sorting_by_default_scope(default_scope_order)
-      default_scope_order.split(',').each do |criterion|
+    def set_sorting_from_order_clause(order_clause)
+      clear
+      order_clause.split(',').each do |criterion|
         order_parts = criterion.strip.split(' ')
-        unless order_parts.empty?
-          add(extract_column_name_in_order_criterion(order_parts), extract_direction_in_order_criterion(order_parts))
-        end
+        add(extract_column_name_in_order_criterion(order_parts), extract_direction_in_order_criterion(order_parts)) unless order_parts.empty?
       end
     end
     
