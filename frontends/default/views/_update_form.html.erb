@@ -33,11 +33,13 @@ end
 
   <h4><%= @record.to_label.nil? ? active_scaffold_config.update.label : as_(:update_model, :model => clean_column_value(@record.to_label)) %></h4>
 
-  <% if request.xhr? -%>
-    <div id="<%= element_messages_id(:action => :update) %>" class="messages-container"><%= error_messages_for :record, :object_name => @record.class.human_name.downcase %></div>
-  <% else -%>
+  <div id="<%= element_messages_id(:action => :update) %>" class="messages-container">
+<% if request.xhr? -%>
+    <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
+<% else -%>
     <%= render :partial => 'form_messages' %>
-  <% end -%>
+<% end -%>
+  </div>
 
   <%= render :partial => 'form', :locals => { :columns => active_scaffold_config.update.columns } %>
 
