@@ -29,11 +29,13 @@ end -%>
 
   <h4><%= active_scaffold_config.create.label -%></h4>
 
-  <% if request.xhr? -%>
-    <div id="<%= element_messages_id(:action => :create) %>" class="messages-container"><%= error_messages_for :record, :object_name => @record.class.human_name.downcase %></div>
-  <% else -%>
+  <div id="<%= element_messages_id(:action => :create) %>" class="messages-container">
+<% if request.xhr? -%>
+    <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
+<% else -%>
     <%= render :partial => 'form_messages' %>
-  <% end -%>
+<% end -%>
+  </div>
 
   <%= render :partial => 'form', :locals => { :columns => active_scaffold_config.create.columns } %>
 
