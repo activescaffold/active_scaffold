@@ -26,9 +26,8 @@ module ActiveScaffold::Actions
 
     def list
       do_list
-      if active_scaffold_config.list.always_show_create
-        do_new
-      end
+      do_new if active_scaffold_config.list.always_show_create
+      @record ||= active_scaffold_config.model.new if active_scaffold_config.list.always_show_search
       respond_to_action(:list)
     end
     
