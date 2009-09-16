@@ -36,14 +36,21 @@ class ActionView::TemplateFinder
   alias_method :template_exists?, :pick_template # re-alias to the new pick_template
 
   def find_template_extension_from_handler_with_generic_paths(template_path, template_format = @template.template_format)
-    extension = find_template_extension_from_handler_without_generic_paths(template_path, template_format)
-    if extension.blank? and search_generic_view_paths?
-      self.class.template_handler_extensions.each do |handler_extension|
-        return handler_extension if controller.find_generic_base_path_for(template_path, handler_extension)
-      end
-    end
-    extension
-  end
+     extension = find_template_extension_from_handler_without_generic_paths(template_path, template_format)
+     if extension.blank? and controller.search_generic_view_paths?
+       self.class.template_handler_extensions.each do |handler_extension|
+         if template_format.blank?
+           extension_with_format = handler_extension
+         else
+           extension_with_format = "#{template_format}.#{handler_extension}"
+         end
+         return extension_with_format if controller.find_generic_base_path_for(template_path, extension_with_format)
+         return handler_extension if controller.find_generic_base_path_for(template_path, handler_extension)
+       end
+     end
+     extension
+   end
+
   alias_method_chain :find_template_extension_from_handler, :generic_paths
 
 protected
