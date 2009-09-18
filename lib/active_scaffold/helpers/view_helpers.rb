@@ -157,7 +157,7 @@ module ActiveScaffold
         html_options[:position] = link.position if link.position and link.inline?
         html_options[:class] += ' action' if link.inline?
         html_options[:popup] = true if link.popup?
-        html_options[:id] = action_link_id("#{url_options[:parent_controller] + '_' if url_options[:parent_controller]}" + url_options[:action],url_options[:id] || url_options[:parent_id])
+        html_options[:id] = action_link_id("#{id_from_controller(url_options[:controller]) + '_' if url_options[:controller]}" + url_options[:action],url_options[:id] || url_options[:parent_id])
 
         if link.dhtml_confirm?
           html_options[:class] += ' action' if !link.inline?
