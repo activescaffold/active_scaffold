@@ -84,10 +84,9 @@ module ActiveScaffold::Actions::Nested
 
     def self.included(base)
       super
-      # This .verify method call is clashing with other non .add_existing actions. How do we do this correctly? Can we make it action specific.
-      # base.verify :method => :post,
-      #             :only => :add_existing,
-      #             :redirect_to => { :action => :index }
+      base.verify :method => :post,
+                  :only => :add_existing,
+                  :redirect_to => { :action => :index }
     end
 
     def new_existing
