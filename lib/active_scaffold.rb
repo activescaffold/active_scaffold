@@ -136,15 +136,19 @@ module ActiveScaffold
     def active_scaffold_paths
       return @active_scaffold_paths unless @active_scaffold_paths.nil?
 
-      @active_scaffold_paths = ActionView::PathSet.new
-      @active_scaffold_paths.concat @active_scaffold_overrides unless @active_scaffold_overrides.nil?
-      @active_scaffold_paths.concat @active_scaffold_custom_paths unless @active_scaffold_custom_paths.nil?
-      @active_scaffold_paths.concat @active_scaffold_frontends unless @active_scaffold_frontends.nil?
-      @active_scaffold_paths
+      if @active_scaffold_config
+        @active_scaffold_paths = ActionView::PathSet.new
+        @active_scaffold_paths.concat @active_scaffold_overrides unless @active_scaffold_overrides.nil?
+        @active_scaffold_paths.concat @active_scaffold_custom_paths unless @active_scaffold_custom_paths.nil?
+        @active_scaffold_paths.concat @active_scaffold_frontends unless @active_scaffold_frontends.nil?
+        @active_scaffold_paths
+      elsif uses_active_scaffold? # superclass is using active_scaffold
+        self.superclass.active_scaffold_paths
+      end
     end
 
     def active_scaffold_config
-       @active_scaffold_config || self.superclass.instance_variable_get('@active_scaffold_config')
+       @active_scaffold_config || self.superclass.active_scaffold_config
     end
 
     def active_scaffold_config_for(klass)
