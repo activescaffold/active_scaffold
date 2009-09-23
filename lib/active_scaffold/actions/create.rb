@@ -119,7 +119,7 @@ module ActiveScaffold::Actions
       if model.columns_hash[model.inheritance_column]
         params = self.params # in new action inheritance_column must be in params
         params = params[:record] || {} unless params[model.inheritance_column] # in create action must be inside record key
-        model = params[model.inheritance_column].camelize.constantize if params[model.inheritance_column]
+        model = params.delete(model.inheritance_column).camelize.constantize if params[model.inheritance_column]
       end
       model.new
     end
