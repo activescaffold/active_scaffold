@@ -12,7 +12,7 @@ module ActiveScaffold
         # :sort, :sort_direction, and :page are arguments that stored in the session. they need not propagate.
         # and wow. no we don't want to propagate :record.
         # :commit is a special rails variable for form buttons
-        blacklist = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method]
+        blacklist = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :authenticity_token]
         unless @params_for
           @params_for = params.clone.delete_if { |key, value| blacklist.include? key.to_sym if key }
           @params_for[:controller] = '/' + @params_for[:controller] unless @params_for[:controller].first(1) == '/' # for namespaced controllers
