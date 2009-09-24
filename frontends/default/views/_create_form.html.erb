@@ -27,7 +27,7 @@ else
            :class => 'create'
 end -%>
 
-  <h4><%= active_scaffold_config.create.label -%></h4>
+  <h4><%= active_scaffold_config.create.label(@record.class.human_name(:count => 1)) -%></h4>
 
   <div id="<%= element_messages_id(:action => :create) %>" class="messages-container">
 <% if request.xhr? -%>

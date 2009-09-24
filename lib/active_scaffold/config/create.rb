@@ -29,8 +29,9 @@ module ActiveScaffold::Config
     # instance-level configuration
     # ----------------------------
     # the label= method already exists in the Form base class
-    def label
-      @label ? as_(@label) : as_(:create_model, :model => @core.label(:count => 1))
+    def label(model = nil)
+      model ||= @core.label(:count => 1)
+      @label ? as_(@label) : as_(:create_model, :model => model)
     end
     
     # whether the form stays open after a create or not
