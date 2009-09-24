@@ -102,7 +102,7 @@ module ActiveScaffold::DataStructures
     # a place to store dev's column specific options
     attr_accessor :options
     def options
-      @options || {}
+      @options ||= {}
     end
 
     # associate an action_link with this column

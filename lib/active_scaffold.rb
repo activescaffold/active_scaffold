@@ -55,7 +55,9 @@ module ActiveScaffold
 
       # run the configuration
       @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
+      @active_scaffold_config_block = block
       self.active_scaffold_config.configure &block if block_given?
+      self.active_scaffold_config._configure_sti unless self.active_scaffold_config.sti_children.nil?
       self.active_scaffold_config._load_action_columns
       self.links_for_associations
 
@@ -93,6 +95,7 @@ module ActiveScaffold
           end
         end
       end
+      self.active_scaffold_config._add_sti_create_links if self.active_scaffold_config.add_sti_create_links?
     end
 
     # Create the automatic column links. Note that this has to happen when configuration is *done*, because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?
@@ -144,7 +147,15 @@ module ActiveScaffold
     end
 
     def active_scaffold_config
-       @active_scaffold_config || self.superclass.instance_variable_get('@active_scaffold_config')
+      if @active_scaffold_config.nil?
+        config = self.superclass.active_scaffold_config if self.superclass.respond_to? :active_scaffold_config
+        self.active_scaffold config.model, &active_scaffold_config_block unless config.nil?
+      end
+      @active_scaffold_config
+    end
+
+    def active_scaffold_config_block
+      @active_scaffold_config_block || self.superclass.instance_variable_get(:@active_scaffold_config_block)
     end
 
     def active_scaffold_config_for(klass)
