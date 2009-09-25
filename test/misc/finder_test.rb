@@ -39,13 +39,12 @@ class FinderTest < Test::Unit::TestCase
     columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b, :c, :d)
     sorting = ActiveScaffold::DataStructures::Sorting.new(columns)
 
-    assert @klass.send(:build_order_clause, nil).nil?
-    assert @klass.send(:build_order_clause, sorting).nil?
+    assert sorting.clause.nil?
 
     sorting << [:a, 'desc']
     sorting << [:b, 'asc']
 
-    assert_equal 'model_stubs.a DESC, model_stubs.b ASC', @klass.send(:build_order_clause, sorting)
+    assert_equal 'model_stubs.a DESC, model_stubs.b ASC', sorting.clause
   end
 
   def test_method_sorting
