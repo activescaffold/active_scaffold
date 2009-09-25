@@ -95,8 +95,7 @@ module ActiveScaffold::Config
       as_(@label, options) || model.human_name(options.merge(options[:count].to_i == 1 ? {} : {:default => model.name.pluralize}))
     end
 
-    # STI children models, use an array of model names if you don't need specific configuration
-    # FIXME: use a hash with model names as keys with specific configuration
+    # STI children models, use an array of model names
     attr_accessor :sti_children
 
     ##
@@ -149,7 +148,7 @@ module ActiveScaffold::Config
       else
         self.columns[column].form_ui ||= :select
         self.columns[column].options ||= {}
-        self.columns[column].options[:options] = self.sti_children_models.collect do |model_name|
+        self.columns[column].options[:options] = self.sti_children.collect do |model_name|
           [model_name.to_s.camelize.constantize.human_name, model_name.to_s.camelize]
         end
       end
@@ -160,7 +159,7 @@ module ActiveScaffold::Config
       new_action_link = @action_links['new']
       unless new_action_link.nil?
         @action_links.delete('new')
-        self.sti_children_models.each do |child| 
+        self.sti_children.each do |child| 
           new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
           new_sti_link.label = as_(:create_model, :model => child.to_s.camelize.constantize.human_name)
           new_sti_link.parameters = {model.inheritance_column => child}
@@ -203,14 +202,6 @@ module ActiveScaffold::Config
 
     def model
       @model ||= @model_id.to_s.camelize.constantize
-    end
-
-    def sti_children_models
-      if self.sti_children.is_a? Hash
-        self.sti_children.keys
-      else
-        self.sti_children
-      end
     end
 
     # warning - this won't work as a per-request dynamic attribute in rails 2.0.  You'll need to interact with Controller#generic_view_paths
