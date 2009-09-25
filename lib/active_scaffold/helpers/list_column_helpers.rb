@@ -21,14 +21,16 @@ module ActiveScaffold
         else
           value = record.send(column.name)
 
-          associated_size = value.size if column.associated_number? # get count before cache association
-          # we are not using eager loading, cache firsts records in order not to query the database in a future
-          unless column.association.nil? or value.loaded?
-            # load at least one record, is needed for column_empty? and checking permissions
-            if column.associated_limit.nil?
-              Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
-            else
-              record.send(column.name).target = value.find(:all, :limit => [column.associated_limit, 1].max)
+          if value && column.association
+            associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
+            # we are not using eager loading, cache firsts records in order not to query the database in a future
+            unless value.loaded?
+              # load at least one record, is needed for column_empty? and checking permissions
+              if column.associated_limit.nil?
+                Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
+              else
+                record.send(column.name).target = value.find(:all, :limit => [column.associated_limit, 1].max)
+              end
             end
           end
 
