@@ -73,6 +73,22 @@ module ActiveScaffold::DataStructures
       @clauses.first
     end
 
+    # builds an order-by clause
+    def clause
+      return nil if sorts_by_method?
+
+      # unless the sorting is by method, create the sql string
+      order = []
+      each do |sort_column, sort_direction|
+        sql = sort_column.sort[:sql]
+        next if sql.nil? or sql.empty?
+
+        order << "#{sql} #{sort_direction}"
+      end
+
+      order.join(', ') unless order.empty?
+    end
+
     protected
 
     # retrieves the sorting clause for the given column

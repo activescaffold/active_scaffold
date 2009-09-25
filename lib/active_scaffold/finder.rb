@@ -154,7 +154,7 @@ module ActiveScaffold
       klass = active_scaffold_config.model
 
       # create a general-use options array that's compatible with Rails finders
-      finder_options = { :order => build_order_clause(options[:sorting]),
+      finder_options = { :order => options[:sorting].try(:clause),
                          :conditions => all_conditions,
                          :joins => joins_for_finder,
                          :include => options[:count_includes]}
@@ -192,30 +192,8 @@ module ActiveScaffold
       end + active_scaffold_habtm_joins
     end
     
-    # TODO: this should reside on the model, not the controller
     def merge_conditions(*conditions)
       active_scaffold_config.model.merge_conditions(*conditions)
-    end
-
-    # accepts a DataStructure::Sorting object and builds an order-by clause
-    # TODO: this should reside on the model, not the controller
-    def build_order_clause(sorting)
-      return nil if sorting.nil? or sorting.sorts_by_method?
-
-      # unless the sorting is by method, create the sql string
-      order = []
-      sorting.each do |clause|
-        sort_column, sort_direction = clause
-        sql = sort_column.sort[:sql]
-        next if sql.nil? or sql.empty?
-
-        order << "#{sql} #{sort_direction}"
-      end
-
-      order = order.join(', ')
-      order = nil if order.empty?
-
-      order
     end
 
     # TODO: this should reside on the column, not the controller
