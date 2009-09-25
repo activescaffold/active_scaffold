@@ -21,6 +21,17 @@ module ActiveScaffold
         else
           value = record.send(column.name)
 
+          associated_size = value.size if column.associated_number? # get count before cache association
+          # we are not using eager loading, cache firsts records in order not to query the database in a future
+          unless column.association.nil? or value.loaded?
+            # load at least one record, is needed for column_empty? and checking permissions
+            if column.associated_limit.nil?
+              Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
+            else
+              record.send(column.name).target = value.find(:all, :limit => [column.associated_limit, 1].max)
+            end
+          end
+
           if column.association.nil? or column_empty?(value)
             formatted_value = clean_column_value(format_value(value, column.options))
           else
@@ -32,19 +43,15 @@ module ActiveScaffold
                 if column.associated_limit.nil?
                   firsts = value.collect { |v| v.to_label }
                 else
-                  firsts = if value.loaded? # we are using eager loading, use first in order not to query the database
-                    value.first(column.associated_limit + 1)
-                  else
-                    value.find(:all, :limit => column.associated_limit + 1)
-                  end
+                  firsts = value.first(column.associated_limit)
                   firsts.collect! { |v| v.to_label }
-                  firsts[column.associated_limit] = '…' if firsts.length > column.associated_limit
+                  firsts[column.associated_limit] = '…' if associated_size > column.associated_limit
                 end
                 if column.associated_limit == 0
-                  formatted_value = value.size if column.associated_number?
+                  formatted_value = associated_size if column.associated_number?
                 else
                   formatted_value = clean_column_value(format_value(firsts.join(', ')))
-                  formatted_value << " (#{value.size})" if column.associated_number? and column.associated_limit and firsts.length > column.associated_limit
+                  formatted_value << " (#{associated_size})" if column.associated_number? and column.associated_limit and associated_size > column.associated_limit
                 end
                 formatted_value
             end
