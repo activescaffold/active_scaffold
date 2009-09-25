@@ -12,7 +12,7 @@ module ActiveScaffold::DataStructures
       if model.default_scoping.last.nil?  || model.default_scoping.last[:find].nil? || model.default_scoping.last[:find][:order].nil?
         set(model.primary_key, 'ASC') if model.column_names.include?(model.primary_key)
       else
-        set_sorting_from_order_clause(model.default_scoping.last[:find][:order])
+        set_sorting_from_order_clause(model.default_scoping.last[:find][:order].to_s)
       end
     end
     
