@@ -29,7 +29,7 @@ module ActiveScaffold
               if column.associated_limit.nil?
                 Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
               else
-                record.send(column.name).target = value.find(:all, :limit => [column.associated_limit, 1].max)
+                record.send(column.name).target = value.find(:all, :limit => [column.associated_limit, 1].max, :select => column.select_columns)
               end
             end
           end

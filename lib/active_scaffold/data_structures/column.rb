@@ -142,6 +142,9 @@ module ActiveScaffold::DataStructures
       @includes = value.is_a?(Array) ? value : [value] # automatically convert to an array
     end
 
+    # a collection of columns to load when eager loading is disabled, if it's nil all columns will be loaded
+    attr_accessor :select_columns
+
     # describes how to search on a column
     #   search = true           default, uses intelligent search sql
     #   search = "CONCAT(a, b)" define your own sql for searching. this should be the "left-side" of a WHERE condition. the operator and value will be supplied by ActiveScaffold.
