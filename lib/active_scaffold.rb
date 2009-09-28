@@ -56,11 +56,11 @@ module ActiveScaffold
       # run the configuration
       @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
       @active_scaffold_config_block = block
+      self.links_for_associations
       self.active_scaffold_superclasses_blocks.each {|superblock| self.active_scaffold_config.configure &superblock}
       self.active_scaffold_config.configure &block if block_given?
       self.active_scaffold_config._configure_sti unless self.active_scaffold_config.sti_children.nil?
       self.active_scaffold_config._load_action_columns
-      self.links_for_associations
 
       # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
       klass = self.active_scaffold_config.model
@@ -102,7 +102,7 @@ module ActiveScaffold
     # Create the automatic column links. Note that this has to happen when configuration is *done*, because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?
     def links_for_associations
       return unless active_scaffold_config.actions.include? :list and active_scaffold_config.actions.include? :nested
-      active_scaffold_config.list.columns.each do |column|
+      active_scaffold_config.columns.each do |column|
         next unless column.link.nil? and column.autolink
         if column.plural_association?
           # note: we can't create nested scaffolds on :through associations because there's no reverse association.
