@@ -29,7 +29,7 @@ module ActiveScaffold
               if column.associated_limit.nil?
                 Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
               else
-                record.send(column.name).target = value.find(:all, :limit => [column.associated_limit, 1].max, :select => column.select_columns)
+                record.send(column.name).target = value.find(:all, :limit => column.associated_limit + 1, :select => column.select_columns)
               end
             end
           end
@@ -47,13 +47,13 @@ module ActiveScaffold
                 else
                   firsts = value.first(column.associated_limit)
                   firsts.collect! { |v| v.to_label }
-                  firsts[column.associated_limit] = '…' if associated_size > column.associated_limit
+                  firsts[column.associated_limit] = '…' if value.size > column.associated_limit
                 end
                 if column.associated_limit == 0
                   formatted_value = associated_size if column.associated_number?
                 else
                   formatted_value = clean_column_value(format_value(firsts.join(', ')))
-                  formatted_value << " (#{associated_size})" if column.associated_number? and column.associated_limit and associated_size > column.associated_limit
+                  formatted_value << " (#{associated_size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
                 end
                 formatted_value
             end
