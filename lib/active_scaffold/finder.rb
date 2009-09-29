@@ -164,6 +164,10 @@ module ActiveScaffold
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       count = klass.count(finder_options.reject{|k,v| [:select, :order].include? k})
 
+      # Converts count to an integer if ActiveRecord returned an OrderedHash
+      # that happens when finder_options contains a :group key
+      count = count.length if count.is_a? ActiveSupport::OrderedHash
+
       finder_options.merge! :include => full_includes
 
       # we build the paginator differently for method- and sql-based sorting
