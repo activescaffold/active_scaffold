@@ -11,12 +11,12 @@ class ClassWithFinder
     {}
   end
 end
-ClassWithFinder.any_instance.stubs(:active_scaffold_session_storage).returns({})
 
 class FinderTest < Test::Unit::TestCase
   def setup
     @klass = ClassWithFinder.new
     @klass.stubs(:active_scaffold_config).returns(mock { stubs(:model).returns(ModelStub) })
+    @klass.stubs(:active_scaffold_session_storage).returns({})
   end
 
   def test_create_conditions_for_columns
