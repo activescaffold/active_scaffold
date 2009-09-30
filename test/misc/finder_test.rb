@@ -3,11 +3,20 @@ require File.join(File.dirname(__FILE__), '../test_helper.rb')
 
 class ClassWithFinder
   include ActiveScaffold::Finder
+  def conditions_for_collection; end
+  def conditions_from_params; end
+  def conditions_from_constraints; end
+  def joins_for_collection; end
+  def custom_finder_options
+    {}
+  end
 end
+ClassWithFinder.any_instance.stubs(:active_scaffold_session_storage).returns({})
 
 class FinderTest < Test::Unit::TestCase
   def setup
     @klass = ClassWithFinder.new
+    @klass.stubs(:active_scaffold_config).returns(mock { stubs(:model).returns(ModelStub) })
   end
 
   def test_create_conditions_for_columns
@@ -53,5 +62,14 @@ class FinderTest < Test::Unit::TestCase
     column.sort_by :method => 'self'
     collection = [3, 1, 2]
     assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
+  end
+
+  def test_count_with_group
+    @klass.expects(:custom_finder_options).returns({:group => :a})
+    ModelStub.expects(:count).returns(ActiveSupport::OrderedHash['foo', 5])
+    page = @klass.send :find_page
+    
+    #assert_instance_of Integer, page.pager.count
+    assert_nothing_raised { page.pager.number_of_pages }
   end
 end
