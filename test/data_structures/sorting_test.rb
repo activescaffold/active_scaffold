@@ -93,4 +93,13 @@ class SortingTest < Test::Unit::TestCase
     @sorting.add :b
     assert !@sorting.sorts_by_method?
   end
+
+  def test_build_order_clause
+    assert @sorting.clause.nil?
+
+    @sorting << [:a, 'desc']
+    @sorting << [:b, 'asc']
+
+    assert_equal 'model_stubs.a DESC, model_stubs.b ASC', @sorting.clause
+  end
 end

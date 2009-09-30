@@ -35,18 +35,6 @@ class FinderTest < Test::Unit::TestCase
     assert_equal nil, ClassWithFinder.create_conditions_for_columns('foo', [])
   end
 
-  def test_build_order_clause
-    columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b, :c, :d)
-    sorting = ActiveScaffold::DataStructures::Sorting.new(columns)
-
-    assert sorting.clause.nil?
-
-    sorting << [:a, 'desc']
-    sorting << [:b, 'asc']
-
-    assert_equal 'model_stubs.a DESC, model_stubs.b ASC', sorting.clause
-  end
-
   def test_method_sorting
     column = ActiveScaffold::DataStructures::Column.new('a', ModelStub)
     column.sort_by :method => proc{self}
