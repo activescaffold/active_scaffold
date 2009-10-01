@@ -301,6 +301,8 @@ module ActiveScaffold
 
         def to_country_select_tag(priority_countries, options, html_options)
           html_options = html_options.stringify_keys
+          html_options['name'] = options[:name]
+          html_options['id'] = options[:id]
           add_default_name_and_id(html_options)
           value = value(object)
           content_tag("select",
@@ -313,6 +315,8 @@ module ActiveScaffold
 
         def to_usa_state_select_tag(priority_states, options, html_options)
           html_options = html_options.stringify_keys
+          html_options['name'] = options[:name]
+          html_options['id'] = options[:id]
           add_default_name_and_id(html_options)
           value = value(object) if method(:value).arity > 0
           if html_options[:name.to_s].include?('search')
