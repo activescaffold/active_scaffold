@@ -237,7 +237,7 @@ module ActiveScaffold::DataStructures
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
-      @search_ui = :select if @association
+      @search_ui = :select if @association and not polymorphic_association?
 
       # default all the configurable variables
       self.css_class = ''
@@ -287,13 +287,13 @@ module ActiveScaffold::DataStructures
     end
 
     def initialize_search_sql
-      if self.virtual?
-        self.search_sql = nil
-      else
+      self.search_sql = unless self.virtual?
         if association.nil?
-          self.search_sql = self.field.to_s
-        else
-          self.search_sql = "#{association.klass.table_name}.#{association.klass.primary_key}"
+          self.field.to_s
+        elsif !self.polymorphic_association?
+          [association.klass.table_name, association.klass.primary_key].collect! do |str|
+            association.klass.connection.quote_column_name str
+          end.join('.')
         end
       end
     end
