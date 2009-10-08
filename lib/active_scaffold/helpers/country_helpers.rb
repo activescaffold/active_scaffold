@@ -315,9 +315,9 @@ module ActiveScaffold
           html_options = html_options.stringify_keys
           add_default_name_and_id(html_options)
           value = value(object) if method(:value).arity > 0
-          if html_options[:name.to_s].include?('search')
-            html_options[:name.to_s] << '[]' 
-            html_options[:multiple] = true
+          if html_options['name'].include?('search')
+            html_options['name'] << '[]' 
+            html_options['multiple'] = true
             options[:include_blank] = true
           end
           content_tag("select", add_options(usa_state_options_for_select(value, priority_states), options, value), html_options)
@@ -330,7 +330,8 @@ module ActiveScaffold
         priority = ["United States"]
         select_options = {:prompt => as_(:_select_)}
         select_options.merge!(options)
-        country_select(:record, column.name, column.options[:priority] || priority, select_options, column.options)
+        options.delete(:prompt)
+        country_select(:record, column.name, column.options[:priority] || priority, select_options, column.options.merge(options))
       end
 
       def active_scaffold_input_usa_state(column, options)
@@ -339,7 +340,7 @@ module ActiveScaffold
         select_options.delete(:size)
         options.delete(:prompt)
         options.delete(:priority)
-        usa_state_select(:record, column.name, column.options[:priority], select_options, column.options.merge!(options))
+        usa_state_select(:record, column.name, column.options[:priority], select_options, column.options.merge(options))
       end
     end
   end
