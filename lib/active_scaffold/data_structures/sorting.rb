@@ -9,10 +9,12 @@ module ActiveScaffold::DataStructures
     end
     
     def set_default_sorting(model)
-      if model.default_scoping.last.nil?  || model.default_scoping.last[:find].nil? || model.default_scoping.last[:find][:order].nil?
+      last_scope = model.default_scoping.last
+      if last_scope.nil?  || last_scope[:find].nil? || last_scope[:find][:order].nil?
         set(model.primary_key, 'ASC') if model.column_names.include?(model.primary_key)
       else
-        set_sorting_from_order_clause(model.default_scoping.last[:find][:order].to_s)
+        set_sorting_from_order_clause(last_scope[:find][:order].to_s, model.table_name)
+        @default_sorting = true
       end
     end
     
@@ -40,6 +42,7 @@ module ActiveScaffold::DataStructures
 
     # clears the sorting
     def clear
+      @default_sorting = false
       @clauses = []
     end
 
@@ -75,7 +78,7 @@ module ActiveScaffold::DataStructures
 
     # builds an order-by clause
     def clause
-      return nil if sorts_by_method?
+      return nil if sorts_by_method? || default_sorting?
 
       # unless the sorting is by method, create the sql string
       order = []
@@ -109,26 +112,44 @@ module ActiveScaffold::DataStructures
     def mixed_sorting?
       sorts_by_method? and sorts_by_sql?
     end
+    
+    def default_sorting?
+      @default_sorting
+    end
 
-    def set_sorting_from_order_clause(order_clause)
+    def set_sorting_from_order_clause(order_clause, model_table_name = nil)
       clear
       order_clause.split(',').each do |criterion|
-        order_parts = criterion.strip.split(' ')
-        add(extract_column_name_in_order_criterion(order_parts), extract_direction_in_order_criterion(order_parts)) unless order_parts.empty?
+        unless criterion.blank?
+          order_parts = extract_order_parts(criterion)
+          add(order_parts[:column_name], order_parts[:direction]) unless different_table?(model_table_name, order_parts[:table_name])
+        end
       end
     end
     
-    def extract_column_name_in_order_criterion(criterion_parts)
-      column_name = criterion_parts.first.split('.').last
-      if column_name.starts_with?('"') || column_name.starts_with?('`')
-        column_name[1, (column_name.length - 2)]
+    def extract_order_parts(criterion_parts)
+      column_name_part, direction_part = criterion_parts.strip.split(' ')
+      column_name_parts = column_name_part.split('.')
+      order = {:direction => extract_direction(direction_part),
+               :column_name => remove_quotes(column_name_parts.last)}
+      order[:table_name] = remove_quotes(column_name_parts[-2]) if column_name_parts.length >= 2
+      order
+    end
+    
+    def different_table?(model_table_name, order_table_name)
+      !order_table_name.nil? && model_table_name != order_table_name
+    end
+    
+    def remove_quotes(sql_name)
+      if sql_name.starts_with?('"') || sql_name.starts_with?('`')
+        sql_name[1, (sql_name.length - 2)]
       else
-        column_name
+        sql_name
       end
     end
     
-    def extract_direction_in_order_criterion(criterion_parts)
-      if criterion_parts.last.to_s.upcase == 'DESC'
+    def extract_direction(direction_part)
+      if direction_part.upcase == 'DESC'
         'DESC'
       else
         'ASC'
