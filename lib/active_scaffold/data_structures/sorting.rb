@@ -13,7 +13,8 @@ module ActiveScaffold::DataStructures
       if last_scope.nil?  || last_scope[:find].nil? || last_scope[:find][:order].nil?
         set(model.primary_key, 'ASC') if model.column_names.include?(model.primary_key)
       else
-        set_sorting_from_order_clause(model)
+        set_sorting_from_order_clause(last_scope[:find][:order].to_s, model.table_name)
+        @default_sorting = true
       end
     end
     
@@ -113,31 +114,30 @@ module ActiveScaffold::DataStructures
     end
     
     def default_sorting?
-      @default_sorting ||= false
+      @default_sorting
     end
 
-    def set_sorting_from_order_clause(model)
+    def set_sorting_from_order_clause(order_clause, model_table_name = nil)
       clear
-      order_clause = model.default_scoping.last[:find][:order].to_s
       order_clause.split(',').each do |criterion|
-        unless criterion.strip.split(' ').empty?
-          order_parts = extract_order_parts(criterion.strip.split(' '))
-          add(order_parts[:column_name], order_parts[:direction]) unless different_table?(model, order_parts[:table_name])
+        unless criterion.blank?
+          order_parts = extract_order_parts(criterion)
+          add(order_parts[:column_name], order_parts[:direction]) unless different_table?(model_table_name, order_parts[:table_name])
         end
       end
-      @default_sorting = true
     end
     
     def extract_order_parts(criterion_parts)
-      column_name_parts = criterion_parts.first.split('.')
-      order = {:direction => extract_direction_in_order_criterion(criterion_parts),
+      column_name_part, direction_part = criterion_parts.strip.split(' ')
+      column_name_parts = column_name_part.split('.')
+      order = {:direction => extract_direction(direction_part),
                :column_name => remove_quotes(column_name_parts.last)}
       order[:table_name] = remove_quotes(column_name_parts[-2]) if column_name_parts.length >= 2
       order
     end
     
-    def different_table?(model, order_table_name)
-      !order_table_name.nil? && model.table_name != order_table_name
+    def different_table?(model_table_name, order_table_name)
+      !order_table_name.nil? && model_table_name != order_table_name
     end
     
     def remove_quotes(sql_name)
@@ -148,8 +148,8 @@ module ActiveScaffold::DataStructures
       end
     end
     
-    def extract_direction_in_order_criterion(criterion_parts)
-      if criterion_parts.last.to_s.upcase == 'DESC'
+    def extract_direction(direction_part)
+      if direction_part.upcase == 'DESC'
         'DESC'
       else
         'ASC'

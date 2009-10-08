@@ -102,4 +102,15 @@ class SortingTest < Test::Unit::TestCase
 
     assert_equal 'model_stubs.a DESC, model_stubs.b ASC', @sorting.clause
   end
+  
+  ModelStubWithDefaultScope = ModelStub.clone
+  ModelStubWithDefaultScope.class_eval { default_scope :order => 'a DESC, players.last_name ASC' }
+  def test_set_default_sorting_with_default_scope
+    @sorting.set_default_sorting ModelStubWithDefaultScope
+    
+    assert @sorting.sorts_on?(:a)
+    assert_equal 'DESC', @sorting.direction_of(:a)
+    assert_equal 1, @sorting.instance_variable_get(:@clauses).size
+    assert_nil @sorting.clause
+  end
 end
