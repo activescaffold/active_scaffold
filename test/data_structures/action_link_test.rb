@@ -22,7 +22,10 @@ class ActionLinkTest < Test::Unit::TestCase
     assert @link.confirm
 
     assert_equal 'bar_authorized?', @link.security_method
+
+    assert_equal false, @link.security_method_set?
     @link.security_method = 'blueberry_pie'
+    assert_equal true, @link.security_method_set?
     assert_equal 'blueberry_pie', @link.security_method
 
     @link.type = :table

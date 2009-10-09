@@ -65,6 +65,10 @@ module ActiveScaffold::DataStructures
       @security_method || "#{self.action}_authorized?"
     end
 
+    def security_method_set?
+      !!@security_method
+    end
+
     # the crud type of the (eventual?) action. different than :method, because this crud action may not be imminent.
     # this is used to determine record-level authorization (e.g. record.authorized_for?(:crud_type => link.crud_type).
     # options are :create, :read, :update, and :destroy
