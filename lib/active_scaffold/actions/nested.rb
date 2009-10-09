@@ -29,6 +29,10 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], :read)
     end
 
+    def nested_authorized?
+      true
+    end
+
     def include_habtm_actions
       if nested_habtm?
         # Production mode is ok with adding a link everytime the scaffold is nested - we ar not ok with that.
@@ -161,6 +165,13 @@ module ActiveScaffold::Actions::Nested
       render :text => successful? ? "" : response_object.to_yaml, :content_type => Mime::YAML, :status => response_status
     end
 
+    def add_existing_authorized?
+      true
+    end
+    def delete_existing_authorized?
+      true
+    end
+ 
     def after_create_save(record)
       if params[:association_macro] == :has_and_belongs_to_many
         params[:associated_id] = record
