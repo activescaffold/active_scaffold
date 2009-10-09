@@ -2,7 +2,7 @@
   <div class="actions">
     <% active_scaffold_config.action_links.each :record do |link| -%>
       <% next unless link.action == 'nested' -%>
-      <% next if controller.respond_to? link.security_method and !controller.send(link.security_method) -%>
+      <% next if skip_action_link(controller, link) -%>
       <%= record.authorized_for?(:action => link.crud_type) ? render_action_link(link, url_options) : "<a class='disabled'>#{link.label}</a>" -%>
     <% end -%>
   </div>
