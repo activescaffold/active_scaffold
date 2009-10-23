@@ -48,7 +48,7 @@ hu:
     _to_ : ' – '
     update: 'Modosítás'
     update_model: '{{model}} modosítása'
-    udated_model: '{{model}} módosítva'
+    updated_model: '{{model}} módosítva'
     '=': '='
     '>=': '>='
     '<=': '<='

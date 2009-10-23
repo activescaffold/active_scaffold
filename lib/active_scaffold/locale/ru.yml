@@ -47,7 +47,7 @@ ru:
     _to_ : ' to '
     update: 'Обновить запись'
     update_model: 'Обновить запись {{model}}'
-    udated_model: 'Обновлена запись {{model}}'
+    updated_model: 'Обновлена запись {{model}}'
     '=': '='
     '>=': '>='
     '<=': '<='

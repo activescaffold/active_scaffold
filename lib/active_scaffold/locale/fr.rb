@@ -49,7 +49,7 @@
       :_to_  => ' à ',
       :update => 'Mettre à jour',
       :update_model => 'Mettre à jour {{model}}',
-      :udated_model => '{{model}} mis à jour',
+      :updated_model => '{{model}} mis à jour',
       :'=' => '=',
       :'>=' => '>=',
       :'<=' => '<=',
