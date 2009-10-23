@@ -19,52 +19,13 @@ module ActiveScaffold
         elsif column.column and override_column_ui?(column.column.type)
           send(override_column_ui(column.column.type), column, record)
         else
-          value = record.send(column.name)
-
-          if value && column.association
-            associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
-            # we are not using eager loading, cache firsts records in order not to query the database in a future
-            unless value.loaded?
-              # load at least one record, is needed for column_empty? and checking permissions
-              if column.associated_limit.nil?
-                Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
-              else
-                record.send(column.name).target = value.find(:all, :limit => column.associated_limit + 1, :select => column.select_columns)
-              end
-            end
-          end
-
-          if column.association.nil? or column_empty?(value)
-            formatted_value = clean_column_value(format_value(value, column.options))
-          else
-            case column.association.macro
-              when :has_one, :belongs_to
-                formatted_value = clean_column_value(format_value(value.to_label))
-
-              when :has_many, :has_and_belongs_to_many
-                if column.associated_limit.nil?
-                  firsts = value.collect { |v| v.to_label }
-                else
-                  firsts = value.first(column.associated_limit)
-                  firsts.collect! { |v| v.to_label }
-                  firsts[column.associated_limit] = '…' if value.size > column.associated_limit
-                end
-                if column.associated_limit == 0
-                  formatted_value = associated_size if column.associated_number?
-                else
-                  formatted_value = clean_column_value(format_value(firsts.join(', ')))
-                  formatted_value << " (#{associated_size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
-                end
-                formatted_value
-            end
-          end
-
-          formatted_value
+          format_column_value(record, column)
         end
 
         value = '&nbsp;' if value.nil? or (value.respond_to?(:empty?) and value.empty?) # fix for IE 6
         return value
       end
+      
 
       # TODO: move empty_field_text and &nbsp; logic in here?
       # TODO: move active_scaffold_inplace_edit in here?
@@ -182,13 +143,61 @@ module ActiveScaffold
       ## Formatting
       ##
 
+      def format_column_value(record, column)
+        value = record.send(column.name)
+        if value && column.association # cache association size before calling column_empty?
+          associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
+          cache_association(value, column)
+        end
+        if column.association.nil? or column_empty?(value)
+          format_value(value, column.options)
+        else
+          format_association_value(value, column, associated_size)
+        end
+      end
+      
+      def format_association_value(value, column, size)
+        case column.association.macro
+          when :has_one, :belongs_to
+            format_value(value.to_label)
+          when :has_many, :has_and_belongs_to_many
+            if column.associated_limit.nil?
+              firsts = value.collect { |v| v.to_label }
+            else
+              firsts = value.first(column.associated_limit)
+              firsts.collect! { |v| v.to_label }
+              firsts[column.associated_limit] = '…' if value.size > column.associated_limit
+            end
+            if column.associated_limit == 0
+              size if column.associated_number?
+            else
+              joined_associated = format_value(firsts.join(', '))
+              joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
+              joined_associated
+            end
+        end
+      end
+      
       def format_value(column_value, options = {})
-        if column_empty?(column_value)
+        value = if column_empty?(column_value)
           active_scaffold_config.list.empty_field_text
         elsif column_value.is_a?(Time) || column_value.is_a?(Date)
           l(column_value, :format => options[:format] || :default)
         else
           column_value.to_s
+        end
+        clean_column_value(value)
+      end
+      
+      def cache_association(value, column)
+        # we are not using eager loading, cache firsts records in order not to query the database in a future
+        unless value.loaded?
+          # load at least one record, is needed for column_empty? and checking permissions
+          if column.associated_limit.nil?
+            Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
+          else
+            value.target = value.find(:all, :limit => column.associated_limit + 1, :select => column.select_columns)
+          end
         end
       end
 
@@ -200,7 +209,7 @@ module ActiveScaffold
         if column.list_ui == :checkbox
           active_scaffold_column_checkbox(column, record)
         else
-          clean_column_value(format_value(value))
+          format_column_value(record, column)
         end
       end
       
