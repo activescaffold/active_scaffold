@@ -50,7 +50,7 @@ es:
     _to_ : ' a '
     update: 'Actualizar'
     update_model: 'Actualizar {{model}}'
-    udated_model: '{{model}} actualizado'
+    updated_model: '{{model}} actualizado'
     '=': '='
     '>=': '>='
     '<=': '<='

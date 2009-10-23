@@ -49,7 +49,7 @@
       :_to_  => ' to ',
       :update => 'Update',
       :update_model => 'Update {{model}}',
-      :udated_model => 'Updated {{model}}',
+      :updated_model => 'Updated {{model}}',
       :'=' => '=',
       :'>=' => '>=',
       :'<=' => '<=',
