@@ -48,7 +48,7 @@ ja:
     _to_ : ' to ' # needed?
     update: '更新'
     update_model: '{{model}}を更新'
-    udated_model: '{{model}}を更新しました'
+    updated_model: '{{model}}を更新しました'
     '=': '='
     '>=': '>='
     '<=': '<='

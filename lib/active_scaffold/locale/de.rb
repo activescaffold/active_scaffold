@@ -49,7 +49,7 @@
       :_to_  => ' zu ',
       :update => 'Speichern',
       :update_model => 'Editiere {{model}}',
-      :udated_model => '{{model}} aktualisiert',
+      :updated_model => '{{model}} aktualisiert',
       :'=' => '=',
       :'>=' => '>=',
       :'<=' => '<=',
