@@ -6,6 +6,7 @@ module ActiveScaffold
       # It does not do any rendering. It only decides which method is responsible for rendering.
       def active_scaffold_input_for(column, scope = nil)
         options = active_scaffold_input_options(column, scope)
+        options = javascript_for_update_column(column, scope, options)
         # first, check if the dev has created an override for this specific field
         if override_form_field?(column)
           send(override_form_field(column), @record, options[:name])
@@ -36,7 +37,7 @@ module ActiveScaffold
               input(:record, column.name, options.merge(column.options))
             end
           end
-        end.to_s + javascript_for_update_column(column, scope, options)
+        end
       end
 
       alias form_column active_scaffold_input_for
@@ -67,10 +68,9 @@ module ActiveScaffold
           parameters = "column=#{column.name}"
           parameters << "&eid=#{params[:eid]}" if params[:eid]
           parameters << "&scope=#{scope}" if scope
-          javascript_tag("$(#{options[:id].to_json}).observe('change', function(event) { new Ajax.Request(#{url_for(url_params).to_json}, {parameters: '#{parameters}&value=' + this.value, method: 'get'}); });")
-        else
-          ''
+          options[:onchange] = "new Ajax.Request(#{url_for(url_params).to_json}, {parameters: '#{parameters}&value=' + this.value, method: 'get'});#{options[:onchange]}"
         end
+        options
       end
 
       ##
