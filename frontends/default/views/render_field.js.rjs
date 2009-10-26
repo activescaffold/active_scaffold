@@ -1,7 +1,7 @@
 column = @update_column
 while column
   field_id = active_scaffold_input_options(column, params[:scope])[:id]
-  page[field_id].up('li').replace_html :partial => form_partial_for_column(column), :locals => { :column => column, :scope => params[:scope] }
+  page[field_id].up('dl').replace :partial => form_partial_for_column(column), :locals => { :column => column, :scope => params[:scope] }
   column = Hash === column.options ? column.options[:update_column] : nil
   column = active_scaffold_config.columns[column] if column
 end
