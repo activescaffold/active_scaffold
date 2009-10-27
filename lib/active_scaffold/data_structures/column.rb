@@ -109,7 +109,9 @@ module ActiveScaffold::DataStructures
     attr_reader :link
 
     # set an action_link to nested list or inline form in this column
-    attr_reader :autolink
+    def autolink?
+      @autolink and self.association.reverse
+    end
 
     # this should not only delete any existing link but also prevent column links from being automatically added by later routines
     def clear_link

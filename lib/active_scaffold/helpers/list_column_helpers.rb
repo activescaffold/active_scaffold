@@ -39,7 +39,7 @@ module ActiveScaffold
           url_options[:id] = associated.id if associated and link.controller and link.controller.to_s != params[:controller]
 
           # setup automatic link
-          if column.autolink # link to nested scaffold or inline form
+          if column.autolink? # link to nested scaffold or inline form
             link = action_link_to_inline_form(column, associated) if link.crud_type.nil? # automatic link to inline form (singular association)
             return text if link.crud_type.nil?
             if link.crud_type == :create
