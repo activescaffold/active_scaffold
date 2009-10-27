@@ -103,7 +103,7 @@ module ActiveScaffold
     def links_for_associations
       return unless active_scaffold_config.actions.include? :list and active_scaffold_config.actions.include? :nested
       active_scaffold_config.columns.each do |column|
-        next unless column.link.nil? and column.autolink
+        next unless column.link.nil? and column.autolink?
         if column.plural_association?
           # note: we can't create nested scaffolds on :through associations because there's no reverse association.
           column.set_link('nested', :parameters => {:associations => column.name.to_sym}, :html_options => {:class => column.name}) #unless column.through_association?
