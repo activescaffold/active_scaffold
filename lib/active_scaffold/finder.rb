@@ -147,15 +147,16 @@ module ActiveScaffold
       options.assert_valid_keys :sorting, :per_page, :page, :count_includes
 
       full_includes = (active_scaffold_joins.blank? ? nil : active_scaffold_joins)
+      search_conditions = all_conditions
       options[:per_page] ||= 999999999
       options[:page] ||= 1
-      options[:count_includes] ||= full_includes
+      options[:count_includes] ||= full_includes unless search_conditions.nil?
 
       klass = active_scaffold_config.model
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => options[:sorting].try(:clause),
-                         :conditions => all_conditions,
+                         :conditions => search_conditions,
                          :joins => joins_for_finder,
                          :include => options[:count_includes]}
                          
