@@ -149,7 +149,7 @@ module ActiveScaffold::DataStructures
     end
     
     def extract_direction(direction_part)
-      if direction_part.upcase == 'DESC'
+      if direction_part.to_s.upcase == 'DESC'
         'DESC'
       else
         'ASC'
