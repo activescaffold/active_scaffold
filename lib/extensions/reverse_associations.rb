@@ -7,7 +7,7 @@ module ActiveRecord
 
       attr_writer :reverse
       def reverse
-        unless @reverse.nil?
+        if @reverse.nil?
           reverse_matches = reverse_matches_for(self.class_name.constantize)
           # grab first association, or make a wild guess
           @reverse = reverse_matches.empty? ? false : reverse_matches.first.name
