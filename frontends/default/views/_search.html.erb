@@ -15,7 +15,6 @@
 
 <script type="text/javascript">
 //<![CDATA[
-  new TextFieldWithExample('<%= search_input_id %>', '<%= as_(:search_terms) %>');
-  Form.focusFirstElement('<%= search_form_id -%>');
+  new TextFieldWithExample('<%= search_input_id %>', '<%= as_(:search_terms) %>', {focus: true});
 //]]>
 </script>
