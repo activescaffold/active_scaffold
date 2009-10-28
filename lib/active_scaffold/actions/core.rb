@@ -14,7 +14,7 @@ module ActiveScaffold::Actions
         params[:value]
       end
       @record.send "#{column.name}=", value
-      @update_column = active_scaffold_config.columns[column.options[:update_column]]
+      @update_columns = Array(column.options[:update_column]).collect {|column_name| active_scaffold_config.columns[column_name]}
     end
 
     protected
