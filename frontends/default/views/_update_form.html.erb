@@ -45,7 +45,7 @@ end
 
   <p class="form-footer">
     <%= submit_tag as_(:update), :class => "submit" %>
-    <%= link_to as_(:cancel), params_for(:controller => params[:parent_controller] ? params[:parent_controller] : params[:controller], :action => 'list', :id => nil), :class => 'cancel' %>
+    <%= link_to as_(:cancel), main_path_to_return, :class => 'cancel' %>
     <%= loading_indicator_tag(:action => :update, :id => params[:id]) %>
   </p>
 

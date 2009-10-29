@@ -5,7 +5,7 @@
 
       <p class="form-footer">
         <%= submit_tag as_(:delete), :class => 'submit' %>
-        <%= link_to as_(:cancel), params_for(:action => 'index'), :class => 'cancel' %>
+        <%= link_to as_(:cancel), main_path_to_return, :class => 'cancel' %>
       </p>
 
     </form>

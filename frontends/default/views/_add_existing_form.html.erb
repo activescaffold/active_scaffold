@@ -30,7 +30,7 @@
 
   <p class="form-footer">
     <%= submit_tag as_(:add), :class => "submit" %>
-    <%= link_to as_(:cancel), params_for(:action => 'list'), :class => 'cancel' %>
+    <%= link_to as_(:cancel), main_path_to_return, :class => 'cancel' %>
     <%= loading_indicator_tag(:action => :add_existing, :id => params[:id]) %>
   </p>
 
