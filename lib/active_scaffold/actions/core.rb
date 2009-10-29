@@ -7,17 +7,25 @@ module ActiveScaffold::Actions
     end
     def render_field
       @record = active_scaffold_config.model.new
+      @update_columns = []
       column = active_scaffold_config.columns[params[:column]]
-      value = if column.association
-        params[:value].blank? ? nil : column.association.klass.find(params[:value])
-      else
-        params[:value]
+      unless column.nil?
+        value = if column.association
+          params[:value].blank? ? nil : column.association.klass.find(params[:value])
+        else
+          params[:value]
+        end
+        @record.send "#{column.name}=", value
+        @update_columns << Array(column.options[:update_column]).collect {|column_name| active_scaffold_config.columns[column_name]}
+        @update_columns.flatten!
+        after_render_field(@record, column)
       end
-      @record.send "#{column.name}=", value
-      @update_columns = Array(column.options[:update_column]).collect {|column_name| active_scaffold_config.columns[column_name]}
     end
 
     protected
+    
+    # override this method if you want to do something after render_field
+    def after_render_field(record, column); end
 
     def authorized_for?(*args)
       active_scaffold_config.model.authorized_for?(*args)
