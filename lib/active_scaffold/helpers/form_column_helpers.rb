@@ -62,13 +62,17 @@ module ActiveScaffold
 
       def javascript_for_update_column(column, scope, options)
         if column.options.is_a?(Hash) && column.options[:update_column]
-          url_params = {:action => 'render_field', :id => params[:id]}
+          form_action = :create
+          form_action = :update if params[:action] == 'edit'
+          url_params = {:action => 'render_field', :id => params[:id], :column => column.name}
+          url_params[:eid] = params[:eid] if params[:eid]
           url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
-
-          parameters = "column=#{column.name}"
-          parameters << "&eid=#{params[:eid]}" if params[:eid]
-          parameters << "&scope=#{scope}" if scope
-          options[:onchange] = "new Ajax.Request(#{url_for(url_params).to_json}, {parameters: '#{parameters}&value=' + this.value, method: 'get'});#{options[:onchange]}"
+          url_params[:scope] = params[:scope] if scope
+          ajax_options = {:method => :get, 
+                          :url => url_for(url_params), :with => "'value=' + this.value",
+                          :after => "$('#{loading_indicator_id(:action => :render_field, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => form_action)}');",
+                          :complete => "$('#{loading_indicator_id(:action => :render_field, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => form_action)}');"}
+         options[:onchange] = "#{remote_function(ajax_options)};#{options[:onchange]}"
         end
         options
       end
