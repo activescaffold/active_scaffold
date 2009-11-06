@@ -98,6 +98,7 @@ module ActiveScaffold
           html_options.update(column.options[:html_options])
           options.update(column.options)
         else
+          Rails.logger.warn "ActiveScaffold: Setting html options directly in a hash is deprecated for :select form_ui. Set the html options hash under html_options key, such as config.columns[:column_name].options = {:html_options => {...}, ...}"
           html_options.update(column.options)
         end
         select(:record, method, select_options.uniq, options, html_options)
@@ -140,6 +141,7 @@ module ActiveScaffold
             html_options.update(column.options[:html_options] || {})
             options.update(column.options)
           else
+            Rails.logger.warn "ActiveScaffold: Setting the options array directly is deprecated for :select form_ui. Set the options array in a hash under options key, such as config.columns[:column_name].options = {:options => [...], ...}"
             options_for_select = column.options
           end
           select(:record, column.name, options_for_select, options, html_options)
