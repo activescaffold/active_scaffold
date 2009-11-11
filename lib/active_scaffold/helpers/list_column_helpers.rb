@@ -14,7 +14,7 @@ module ActiveScaffold
         elsif column.list_ui and override_column_ui?(column.list_ui)
           send(override_column_ui(column.list_ui), column, record)
 
-        elsif column.inplace_edit and record.authorized_for?(:action => :update, :column => column.name)
+        elsif inplace_edit?(record, column)
           active_scaffold_inplace_edit(record, column)
         elsif column.column and override_column_ui?(column.column.type)
           send(override_column_ui(column.column.type), column, record)
@@ -26,7 +26,6 @@ module ActiveScaffold
         return value
       end
       
-
       # TODO: move empty_field_text and &nbsp; logic in here?
       # TODO: move active_scaffold_inplace_edit in here?
       # TODO: we need to distinguish between the automatic links *we* create and the ones that the dev specified. some logic may not apply if the dev specified the link.
@@ -183,6 +182,8 @@ module ActiveScaffold
           active_scaffold_config.list.empty_field_text
         elsif column_value.is_a?(Time) || column_value.is_a?(Date)
           l(column_value, :format => options[:format] || :default)
+        elsif [FalseClass, TrueClass].include?(column_value.class)
+          as_(column_value.to_s.to_sym)
         else
           column_value.to_s
         end
@@ -204,6 +205,11 @@ module ActiveScaffold
       # ==========
       # = Inline Edit =
       # ==========
+      
+      def inplace_edit?(record, column)
+        column.inplace_edit and record.authorized_for?(:action => :update, :column => column.name)
+      end
+      
       def format_inplace_edit_column(record,column)
         value = record.send(column.name)
         if column.list_ui == :checkbox
@@ -225,8 +231,64 @@ module ActiveScaffold
          :save_text => as_(:update),
          :saving_text => as_(:saving),
          :options => "{method: 'post'}",
-         :script => true}.merge(column.options)
-        content_tag(:span, formatted_column, tag_options) + in_place_editor(tag_options[:id], in_place_editor_options)
+         :script => true,
+         :inplace_pattern_selector => "##{active_scaffold_column_header_id(column)} .#{inplace_edit_control_css_class}",
+         :node_id_suffix => record.id.to_s}.merge(column.options)
+        content_tag(:span, formatted_column, tag_options) + active_scaffold_in_place_editor(tag_options[:id], in_place_editor_options)
+      end
+      
+      def inplace_edit_control(column)
+        @record = active_scaffold_config.model.new
+        edit_control = ''
+        if inplace_edit?(@record, column)
+          update_column_option = column.options.delete(:update_column)
+          orig_form_ui = column.form_ui
+          column.form_ui = :select if (column.association && column.form_ui.nil?) || column.form_ui == :record_select
+          edit_control = content_tag(:div, active_scaffold_input_for(column), {:style => "display:none;", :class => inplace_edit_control_css_class})
+          column.options[:update_column] = update_column_option unless update_column_option.nil?
+          column.form_ui = orig_form_ui
+        end
+        @record = nil
+        edit_control
+      end
+      
+      def inplace_edit_control_css_class
+        "as_inplace_pattern"
+      end
+      
+      def active_scaffold_in_place_editor(field_id, options = {})
+        function =  "new ActiveScaffold.InPlaceEditor("
+        function << "'#{field_id}', "
+        function << "'#{url_for(options[:url])}'"
+    
+        js_options = {}
+    
+        if protect_against_forgery?
+          options[:with] ||= "Form.serialize(form)"
+          options[:with] += " + '&authenticity_token=' + encodeURIComponent('#{form_authenticity_token}')"
+        end
+    
+        js_options['cancelText'] = %('#{options[:cancel_text]}') if options[:cancel_text]
+        js_options['okText'] = %('#{options[:save_text]}') if options[:save_text]
+        js_options['loadingText'] = %('#{options[:loading_text]}') if options[:loading_text]
+        js_options['savingText'] = %('#{options[:saving_text]}') if options[:saving_text]
+        js_options['rows'] = options[:rows] if options[:rows]
+        js_options['cols'] = options[:cols] if options[:cols]
+        js_options['size'] = options[:size] if options[:size]
+        js_options['externalControl'] = "'#{options[:external_control]}'" if options[:external_control]
+        js_options['loadTextURL'] = "'#{url_for(options[:load_text_url])}'" if options[:load_text_url]        
+        js_options['ajaxOptions'] = options[:options] if options[:options]
+        js_options['htmlResponse'] = !options[:script] if options[:script]
+        js_options['callback']   = "function(form) { return #{options[:with]} }" if options[:with]
+        js_options['clickToEditText'] = %('#{options[:click_to_edit_text]}') if options[:click_to_edit_text]
+        js_options['textBetweenControls'] = %('#{options[:text_between_controls]}') if options[:text_between_controls]
+        js_options['inplacePatternSelector'] = %('#{options[:inplace_pattern_selector]}') if options[:inplace_pattern_selector]
+        js_options['nodeIdSuffix'] = %('#{options[:node_id_suffix]}') if options[:node_id_suffix]
+        function << (', ' + options_for_javascript(js_options)) unless js_options.empty?
+        
+        function << ')'
+    
+        javascript_tag(function)
       end
 
     end
