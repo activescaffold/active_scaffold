@@ -239,6 +239,7 @@ module ActiveScaffold
       
       def inplace_edit_control(column)
         if inplace_edit?(active_scaffold_config.model, column)
+          @record = active_scaffold_config.model.new
           column = column.clone
           column.options = column.options.clone
           column.options.delete(:update_column)
