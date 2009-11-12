@@ -438,49 +438,36 @@ ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
     $super(element, url, options);
   },
 
-  createEditField: function() {
-    var text = (this.options.loadTextURL ? this.options.loadingText : this.getText());
-    var fld;
-    var patternNodes = null;
+  createEditField: function($super) {
     if (this.options.inplacePatternSelector) {
-      patternNodes = this.getPatternNodes(this.options.inplacePatternSelector);
-      //var editNode = $('record_first_name_');
-      if (!(patternNodes.editNode == null)) {
-        fld = patternNodes.editNode.cloneNode(true);
-        if (fld.id.length > 0) {
-          fld.id = fld.id + this.options.nodeIdSuffix;
-        }
-      } else {
+      var patternNodes = this.getPatternNodes(this.options.inplacePatternSelector);
+      if (patternNodes.editNode == null) {
         alert('did not find any matching node for ' + this.options.editFieldSelector);
+        return;
       }
-    } else if (1 >= this.options.rows && !/\r|\n/.test(this.getText())) {
-      fld = document.createElement('input');
-      fld.type = 'text';
-      var size = this.options.size || this.options.cols || 0;
-      if (0 < size) fld.size = size;
-    } else {
-      fld = document.createElement('textarea');
-      fld.rows = (1 >= this.options.rows ? this.options.autoRows : this.options.rows);
-      fld.cols = this.options.cols || 40;
-    }
-    fld.name = this.options.paramName;
-    fld.className = 'editor_field';
-    this.setValue(fld, text);
-    if (this.options.submitOnBlur)
-      fld.onblur = this._boundSubmitHandler;
-    this._controls.editor = fld;
-    if (this.options.loadTextURL)
-      this.loadExternalText();
-    this._form.appendChild(this._controls.editor);
-    if (patternNodes != null) {
-      var patternNode;
-      for(var i=0; i < patternNodes.additionalNodes.length; i++) {
-        patternNode = patternNodes.additionalNodes[i].cloneNode(true);
+
+      var text = (this.options.loadTextURL ? this.options.loadingText : this.getText());
+      var fld = patternNodes.editNode.cloneNode(true);
+      if (fld.id.length > 0) fld.id += this.options.nodeIdSuffix;
+      fld.name = this.options.paramName;
+      fld.className = 'editor_field';
+      this.setValue(fld, text);
+      if (this.options.submitOnBlur)
+        fld.onblur = this._boundSubmitHandler;
+      this._controls.editor = fld;
+      if (this.options.loadTextURL)
+        this.loadExternalText();
+      this._form.appendChild(this._controls.editor);
+
+      $A(patternNodes.additionalNodes).each(function(node) {
+        var patternNode = node.cloneNode(true);
         if (patternNode.id.length > 0) {
           patternNode.id = patternNode.id + this.options.nodeIdSuffix;
         }
         this._form.appendChild(patternNode);
-      }
+      }.bind(this));
+    } else {
+      $super();
     }
   },
   
@@ -498,7 +485,6 @@ ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
       nodes.editNode = selectedNodes.first();
       selectedNodes.shift();
       nodes.additionalNodes = selectedNodes;
-      
     }
     return nodes;
   },
