@@ -94,7 +94,11 @@ module ActiveScaffold::Actions
     def do_update_column
       @record = active_scaffold_config.model.find(params[:id])
       if @record.authorized_for?(:crud_type => :update, :column => params[:column])
-        params[:value] ||= @record.column_for_attribute(params[:column]).default unless @record.column_for_attribute(params[:column]).null
+        column = active_scaffold_config.columns[params[:column].to_sym]
+        params[:value] ||= @record.column_for_attribute(params[:column]).default unless @record.column_for_attribute(params[:column]).nil? || @record.column_for_attribute(params[:column]).null
+        if !column.nil? && column.association
+            params[:value] = params[:value].blank? ? nil : column.association.klass.find(params[:value])
+        end
         @record.send("#{params[:column]}=", params[:value])
         @record.save
       end

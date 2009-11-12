@@ -72,7 +72,7 @@ module ActiveScaffold
                           :url => url_for(url_params), :with => "'value=' + this.value",
                           :after => "$('#{loading_indicator_id(:action => :render_field, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => form_action)}');",
                           :complete => "$('#{loading_indicator_id(:action => :render_field, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => form_action)}');"}
-         options[:onchange] = "#{remote_function(ajax_options)};#{options[:onchange]}"
+          options[:onchange] = "#{remote_function(ajax_options)};#{options[:onchange]}"
         end
         options
       end
