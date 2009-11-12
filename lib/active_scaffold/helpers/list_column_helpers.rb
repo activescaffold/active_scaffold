@@ -238,18 +238,13 @@ module ActiveScaffold
       end
       
       def inplace_edit_control(column)
-        @record = active_scaffold_config.model.new
-        edit_control = ''
-        if inplace_edit?(@record, column)
-          update_column_option = column.options.delete(:update_column)
-          orig_form_ui = column.form_ui
+        if inplace_edit?(active_scaffold_config.model, column)
+          column = column.clone
+          column.options = column.options.clone
+          column.options.delete(:update_column)
           column.form_ui = :select if (column.association && column.form_ui.nil?) || column.form_ui == :record_select
-          edit_control = content_tag(:div, active_scaffold_input_for(column), {:style => "display:none;", :class => inplace_edit_control_css_class})
-          column.options[:update_column] = update_column_option unless update_column_option.nil?
-          column.form_ui = orig_form_ui
+          content_tag(:div, active_scaffold_input_for(column), {:style => "display:none;", :class => inplace_edit_control_css_class})
         end
-        @record = nil
-        edit_control
       end
       
       def inplace_edit_control_css_class
