@@ -8,7 +8,11 @@ module ActiveScaffold::DataStructures
     attr_accessor :name
 
     # Whether to enable inplace editing for this column. Currently works for text columns, in the List.
-    attr_accessor :inplace_edit
+    attr_reader :inplace_edit
+    def inplace_edit=(value)
+      self.clear_link if value
+      @inplace_edit = value
+    end
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
