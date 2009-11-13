@@ -223,37 +223,39 @@ module ActiveScaffold
         formatted_column = format_inplace_edit_column(record,column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
         tag_options = {:tag => "span", :id => element_cell_id(id_options), :class => "in_place_editor_field"}
-        in_place_editor_options = {:url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s},
-         :with => params[:eid] ? "Form.serialize(form) + '&eid=#{params[:eid]}'" : nil,
-         :click_to_edit_text => as_(:click_to_edit),
-         :cancel_text => as_(:cancel),
-         :loading_text => as_(:loading),
-         :save_text => as_(:update),
-         :saving_text => as_(:saving),
-         :options => "{method: 'post'}",
-         :script => true,
-         :inplace_pattern_selector => "##{active_scaffold_column_header_id(column)} .#{inplace_edit_control_css_class}",
-         :node_id_suffix => record.id.to_s}.merge(column.options)
+        in_place_editor_options = {
+          :url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s},
+          :with => params[:eid] ? "Form.serialize(form) + '&eid=#{params[:eid]}'" : nil,
+          :click_to_edit_text => as_(:click_to_edit),
+          :cancel_text => as_(:cancel),
+          :loading_text => as_(:loading),
+          :save_text => as_(:update),
+          :saving_text => as_(:saving),
+          :options => "{method: 'post'}",
+          :script => true
+        }
+
+        if override_form_field?(column) or column.form_ui
+          ajax_options = {
+            :method => :get, 
+            :url => {:action => 'render_field', :id => record.id, :column => column.name, :update_column => column.name, :in_place_editing => true},
+            :complete => %|
+element._form.insert({top: request.responseText});
+var fld = element._form.findFirstElement();
+element._controls.editor = fld;
+fld.name = element.options.paramName;
+fld.className = 'editor_field';
+if (element.options.submitOnBlur) fld.onblur = ipe._boundSubmitHandler;
+          |}
+          in_place_editor_options[:form_customization] = "element._controls.editor.remove(); #{remote_function(ajax_options)}"
+        end
+
+        in_place_editor_options.merge!(column.options)
         content_tag(:span, formatted_column, tag_options) + active_scaffold_in_place_editor(tag_options[:id], in_place_editor_options)
       end
       
-      def inplace_edit_control(column)
-        if inplace_edit?(active_scaffold_config.model, column)
-          @record = active_scaffold_config.model.new
-          column = column.clone
-          column.options = column.options.clone
-          column.options.delete(:update_column)
-          column.form_ui = :select if (column.association && column.form_ui.nil?) || column.form_ui == :record_select
-          content_tag(:div, active_scaffold_input_for(column), {:style => "display:none;", :class => inplace_edit_control_css_class})
-        end
-      end
-      
-      def inplace_edit_control_css_class
-        "as_inplace_pattern"
-      end
-      
       def active_scaffold_in_place_editor(field_id, options = {})
-        function =  "new ActiveScaffold.InPlaceEditor("
+        function =  "new Ajax.InPlaceEditor("
         function << "'#{field_id}', "
         function << "'#{url_for(options[:url])}'"
     
@@ -266,20 +268,29 @@ module ActiveScaffold
     
         js_options['cancelText'] = %('#{options[:cancel_text]}') if options[:cancel_text]
         js_options['okText'] = %('#{options[:save_text]}') if options[:save_text]
+        js_options['okControl'] = %('#{options[:save_control_type]}') if options[:save_control_type]
+        js_options['cancelControl'] = %('#{options[:cancel_control_type]}') if options[:cancel_control_type]
         js_options['loadingText'] = %('#{options[:loading_text]}') if options[:loading_text]
         js_options['savingText'] = %('#{options[:saving_text]}') if options[:saving_text]
         js_options['rows'] = options[:rows] if options[:rows]
         js_options['cols'] = options[:cols] if options[:cols]
         js_options['size'] = options[:size] if options[:size]
         js_options['externalControl'] = "'#{options[:external_control]}'" if options[:external_control]
+        js_options['externalControlOnly'] = "true" if options[:external_control_only]
+        js_options['submitOnBlur'] = "'#{options[:submit_on_blur]}'" if options[:submit_on_blur]
         js_options['loadTextURL'] = "'#{url_for(options[:load_text_url])}'" if options[:load_text_url]        
         js_options['ajaxOptions'] = options[:options] if options[:options]
         js_options['htmlResponse'] = !options[:script] if options[:script]
         js_options['callback']   = "function(form) { return #{options[:with]} }" if options[:with]
         js_options['clickToEditText'] = %('#{options[:click_to_edit_text]}') if options[:click_to_edit_text]
         js_options['textBetweenControls'] = %('#{options[:text_between_controls]}') if options[:text_between_controls]
-        js_options['inplacePatternSelector'] = %('#{options[:inplace_pattern_selector]}') if options[:inplace_pattern_selector]
-        js_options['nodeIdSuffix'] = %('#{options[:node_id_suffix]}') if options[:node_id_suffix]
+        js_options['highlightcolor'] = %('#{options[:highlight_color]}') if options[:highlight_color]
+        js_options['highlightendcolor'] = %('#{options[:highlight_end_color]}') if options[:highlight_end_color]
+        js_options['onFailure'] = "function(element, transport) { #{options[:failure]} }" if options[:failure]
+        js_options['onComplete'] = "function(transport, element) { #{options[:complete]} }" if options[:complete]
+        js_options['onEnterEditMode'] = "function(element) { #{options[:enter_editing]} }" if options[:enter_editing]
+        js_options['onLeaveEditMode'] = "function(element) { #{options[:exit_editing]} }" if options[:exit_editing]
+        js_options['onFormCustomization'] = "function(element, form) { #{options[:form_customization]} }" if options[:form_customization]
         function << (', ' + options_for_javascript(js_options)) unless js_options.empty?
         
         function << ')'
