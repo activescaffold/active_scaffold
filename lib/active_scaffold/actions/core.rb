@@ -6,7 +6,11 @@ module ActiveScaffold::Actions
       end
     end
     def render_field
-      @record = active_scaffold_config.model.send(params[:in_place_editing] ? :find : :new, params[:id])
+      @record = if params[:in_place_editing]
+        active_scaffold_config.model.find params[:id]
+      else
+        active_scaffold_config.model.new
+      end
       @update_columns = []
       column = active_scaffold_config.columns[params[:column]]
       if params[:in_place_editing]
