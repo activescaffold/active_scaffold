@@ -10,7 +10,7 @@
         calculation = self.method(override_formatter).call(calculation) if respond_to? override_formatter
 
         -%>
-        <%= calculation.to_s %>
+        <%= as_(column.calculate) %>: <%= calculation.to_s %>
       <% else -%>
         &nbsp;
       <% end -%>
