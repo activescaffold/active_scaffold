@@ -6,17 +6,19 @@ module ActiveScaffold::Actions
       end
     end
     def render_field
-      @record = active_scaffold_config.model.new
+      @record = active_scaffold_config.model.send(params[:in_place_editing] ? :find : :new, params[:id])
       @update_columns = []
       column = active_scaffold_config.columns[params[:column]]
-      unless column.nil?
+      if params[:in_place_editing]
+        render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
+      elsif !column.nil?
         value = if column.association
           params[:value].blank? ? nil : column.association.klass.find(params[:value])
         else
           params[:value]
         end
         @record.send "#{column.name}=", value
-        @update_columns << Array(column.options[:update_column]).collect {|column_name| active_scaffold_config.columns[column_name]}
+        @update_columns << Array(params[:update_column]).collect {|column_name| active_scaffold_config.columns[column_name.to_sym]}
         @update_columns.flatten!
         after_render_field(@record, column)
       end

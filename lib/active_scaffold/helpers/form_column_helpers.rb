@@ -64,7 +64,7 @@ module ActiveScaffold
         if column.options.is_a?(Hash) && column.options[:update_column]
           form_action = :create
           form_action = :update if params[:action] == 'edit'
-          url_params = {:action => 'render_field', :id => params[:id], :column => column.name}
+          url_params = {:action => 'render_field', :id => params[:id], :column => column.name, :update_column => column.options[:update_column]}
           url_params[:eid] = params[:eid] if params[:eid]
           url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
           url_params[:scope] = params[:scope] if scope
@@ -148,10 +148,7 @@ module ActiveScaffold
         end
       end
 
-      # only works for singular associations
-      # requires RecordSelect plugin to be installed and configured.
-      # ... maybe this should be provided in a bridge?
-      def active_scaffold_input_record_select(column, options)
+      def active_scaffold_input_record_select_options(column, options)
         unless column.association
           raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
         end
@@ -163,10 +160,13 @@ module ActiveScaffold
           params.merge!({column.association.primary_key_name => ''})
         end
         
-        record_select_options = {:controller => remote_controller, :id => options[:id]}
-        record_select_options.merge!(active_scaffold_input_text_options)
-        record_select_options.merge!(column.options)
+        active_scaffold_input_text_options({:controller => remote_controller, :id => options[:id]}.merge!(column.options))
+      end
 
+      # requires RecordSelect plugin to be installed and configured.
+      # ... maybe this should be provided in a bridge?
+      def active_scaffold_input_record_select(column, options)
+        record_select_options = active_scaffold_input_record_select_options(column, options)
         if column.singular_association?
           record_select_field(options[:name], (@record.send(column.name) || column.association.klass.new), record_select_options)
         elsif column.plural_association?
