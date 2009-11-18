@@ -26,6 +26,7 @@ default_sorting_stages = ['ASC', 'DESC']
    <% else -%>
      <p><%= column.label %></p>
    <% end -%>
+   <%= inplace_edit_control(column) -%>
  </th>
 <% end -%>
 <th class="actions">

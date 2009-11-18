@@ -210,6 +210,10 @@ module ActiveScaffold
         column.inplace_edit and record.authorized_for?(:action => :update, :column => column.name)
       end
       
+      def inplace_edit_cloning?(column)
+         column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
+      end
+      
       def format_inplace_edit_column(record,column)
         value = record.send(column.name)
         if column.list_ui == :checkbox
@@ -235,27 +239,40 @@ module ActiveScaffold
           :script => true
         }
 
-        if override_form_field?(column) or column.form_ui
-          ajax_options = {
-            :method => :get, 
-            :url => {:action => 'render_field', :id => record.id, :column => column.name, :update_column => column.name, :in_place_editing => true},
-            :complete => %|
-element._form.insert({top: request.responseText});
-var fld = element._form.findFirstElement();
-element._controls.editor = fld;
-fld.name = element.options.paramName;
-fld.className = 'editor_field';
-if (element.options.submitOnBlur) fld.onblur = ipe._boundSubmitHandler;
-          |}
-          in_place_editor_options[:form_customization] = "element._controls.editor.remove(); #{remote_function(ajax_options)}"
+        if inplace_edit_cloning?(column)
+          in_place_editor_options.merge!(
+            :inplace_pattern_selector => "##{active_scaffold_column_header_id(column)} .#{inplace_edit_control_css_class}",
+            :node_id_suffix => record.id.to_s,
+            :form_customization => 'element.clonePatternField();'
+          )
+        elsif column.inplace_edit == :ajax
+          url = url_for(:action => 'render_field', :id => record.id, :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
+          in_place_editor_options[:form_customization] = "element.setFieldFromAjax('#{escape_javascript(url)}');"
+        elsif column.column.try(:type) == :text
+          in_place_editor_options[:rows] = column.options[:rows] || 5
         end
 
         in_place_editor_options.merge!(column.options)
         content_tag(:span, formatted_column, tag_options) + active_scaffold_in_place_editor(tag_options[:id], in_place_editor_options)
       end
       
+      def inplace_edit_control(column)
+        if inplace_edit?(active_scaffold_config.model, column) and inplace_edit_cloning?(column)
+          @record = active_scaffold_config.model.new
+          column = column.clone
+          column.options = column.options.clone
+          column.options.delete(:update_column)
+          column.form_ui = :select if (column.association && column.form_ui.nil?)
+          content_tag(:div, active_scaffold_input_for(column), {:style => "display:none;", :class => inplace_edit_control_css_class})
+        end
+      end
+      
+      def inplace_edit_control_css_class
+        "as_inplace_pattern"
+      end
+      
       def active_scaffold_in_place_editor(field_id, options = {})
-        function =  "new Ajax.InPlaceEditor("
+        function =  "new ActiveScaffold.InPlaceEditor("
         function << "'#{field_id}', "
         function << "'#{url_for(options[:url])}'"
     
@@ -291,6 +308,8 @@ if (element.options.submitOnBlur) fld.onblur = ipe._boundSubmitHandler;
         js_options['onEnterEditMode'] = "function(element) { #{options[:enter_editing]} }" if options[:enter_editing]
         js_options['onLeaveEditMode'] = "function(element) { #{options[:exit_editing]} }" if options[:exit_editing]
         js_options['onFormCustomization'] = "function(element, form) { #{options[:form_customization]} }" if options[:form_customization]
+        js_options['inplacePatternSelector'] = %('#{options[:inplace_pattern_selector]}') if options[:inplace_pattern_selector]
+        js_options['nodeIdSuffix'] = %('#{options[:node_id_suffix]}') if options[:node_id_suffix]
         function << (', ' + options_for_javascript(js_options)) unless js_options.empty?
         
         function << ')'
