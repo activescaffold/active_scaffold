@@ -50,57 +50,7 @@ module ActiveScaffold
         if multi_parameter_attributes.has_key? column.name
           parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
         elsif attributes.has_key? column.name
-          value = attributes[column.name]
-
-          # convert the value, possibly by instantiating associated objects
-          value = if value.is_a?(Hash)
-            # this is just for backwards compatibility. we should clean this up in 2.0.
-            if column.form_ui == :select
-              ids = if column.singular_association?
-                value[:id]
-              else
-                value.values.collect {|hash| hash[:id]}
-              end
-              (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
-
-            elsif column.singular_association?
-              hash = value
-              record = find_or_create_for_params(hash, column, parent_record)
-              if record
-                record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-                update_record_from_params(record, record_columns, hash)
-                record.unsaved = true
-              end
-              record
-
-            elsif column.plural_association?
-              collection = value.collect do |key_value_pair|
-                hash = key_value_pair[1]
-                record = find_or_create_for_params(hash, column, parent_record)
-                if record
-                  record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-                  update_record_from_params(record, record_columns, hash)
-                  record.unsaved = true
-                end
-                record
-              end
-              collection.compact
-            end
-          else
-            if column.singular_association?
-              # it's a single id
-              column.association.klass.find(value) if value and not value.empty?
-            elsif column.plural_association?
-              # it's an array of ids
-              column.association.klass.find(value) if value and not value.empty?
-            else
-              # convert empty strings into nil. this works better with 'null => true' columns (and validations),
-              # and 'null => false' columns should just convert back to an empty string.
-              # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
-              value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
-              value
-            end
-          end
+          value = column_value_from_param_value(parent_record, column, attributes[column.name]) 
 
           # we avoid assigning a value that already exists because otherwise has_one associations will break (AR bug in has_one_association.rb#replace)
           parent_record.send("#{column.name}=", value) unless column.through_association? or parent_record.send(column.name) == value
@@ -134,6 +84,50 @@ module ActiveScaffold
       end
 
       parent_record
+    end
+    
+    def manage_nested_record_from_params(parent_record, column, attributes)
+      record = find_or_create_for_params(attributes, column, parent_record)
+      if record
+        record_columns = active_scaffold_config_for(column.association.klass).subform.columns
+        update_record_from_params(record, record_columns, attributes)
+        record.unsaved = true
+      end
+      record
+    end
+    
+    def column_value_from_param_value(parent_record, column, value)
+      # convert the value, possibly by instantiating associated objects
+      if value.is_a?(Hash)
+        # this is just for backwards compatibility. we should clean this up in 2.0.
+        if column.form_ui == :select
+          ids = if column.singular_association?
+            value[:id]
+          else
+            value.values.collect {|hash| hash[:id]}
+          end
+          (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
+
+        elsif column.singular_association?
+          manage_nested_record_from_params(parent_record, column, value)
+        elsif column.plural_association?
+          value.collect {|key_value_pair| manage_nested_record_from_params(parent_record, column, key_value_pair[1])}.compact
+        end
+      else
+        if column.singular_association?
+          # it's a single id
+          column.association.klass.find(value) if value and not value.empty?
+        elsif column.plural_association?
+          # it's an array of ids
+          column.association.klass.find(value) if value and not value.empty?
+        else
+          # convert empty strings into nil. this works better with 'null => true' columns (and validations),
+          # and 'null => false' columns should just convert back to an empty string.
+          # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
+          value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
+          value
+        end
+      end
     end
 
     # Attempts to create or find an instance of klass (which must be an ActiveRecord object) from the
