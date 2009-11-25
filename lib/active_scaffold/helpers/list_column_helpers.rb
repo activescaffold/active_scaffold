@@ -149,7 +149,14 @@ module ActiveScaffold
           cache_association(value, column)
         end
         if column.association.nil? or column_empty?(value)
-          format_value(value, column.options)
+          case column.list_ui
+          when :currency
+            clean_column_value(number_to_currency(value, column.options[:l18n_options] || {}))
+          when :l18n_number
+            clean_column_value(number_with_precision(value, column.options[:l18n_options] || {}))
+          else
+            format_value(value, column.options)
+          end
         else
           format_association_value(value, column, associated_size)
         end
