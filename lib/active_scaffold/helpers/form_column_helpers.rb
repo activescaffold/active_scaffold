@@ -186,6 +186,20 @@ module ActiveScaffold
       def active_scaffold_input_textarea(column, options)
         text_area(:record, column.name, options.merge(:cols => column.options[:cols], :rows => column.options[:rows], :size => column.options[:size]))
       end
+      
+      def active_scaffold_input_i18n_number(column, options)
+        active_scaffold_input_number_helper(column, options, :number_with_precision)
+      end
+        
+      def active_scaffold_input_currency(column, options)
+        active_scaffold_input_number_helper(column, options, :number_to_currency)
+      end
+      
+      def active_scaffold_input_number_helper(column, options, helper)
+        options = active_scaffold_input_text_options(options).merge(column.options)
+        options.delete(:i18n_options)
+        text_field_tag(column.name, send(helper, @record.send(column.name), column.options[:i18n_options] || {}), options)
+      end
 
       def active_scaffold_input_virtual(column, options)
         options = active_scaffold_input_text_options(options)

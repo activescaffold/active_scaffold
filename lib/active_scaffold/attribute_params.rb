@@ -120,6 +120,8 @@ module ActiveScaffold
         elsif column.plural_association?
           # it's an array of ids
           column.association.klass.find(value) if value and not value.empty?
+        elsif [:i18n_number, :currency].include?(column.form_ui)
+          value.gsub(/[^0-9\-#{I18n.t(:'number.format.separator')}]/, '').gsub(I18n.t(:'number.format.separator'), '.')
         else
           # convert empty strings into nil. this works better with 'null => true' columns (and validations),
           # and 'null => false' columns should just convert back to an empty string.
