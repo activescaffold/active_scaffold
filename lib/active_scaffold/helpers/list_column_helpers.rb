@@ -121,6 +121,14 @@ module ActiveScaffold
         end
       end
 
+      def active_scaffold_column_currency(column, record)
+        clean_column_value(number_to_currency(record.send(column.name), column.options[:i18n_options] || {}))
+      end
+
+      def active_scaffold_column_i18n_number(column, record)
+        clean_column_value(number_with_precision(record.send(column.name), column.options[:i18n_options] || {}))
+      end
+
       def column_override(column)
         "#{column.name.to_s.gsub('?', '')}_column" # parse out any question marks (see issue 227)
       end
