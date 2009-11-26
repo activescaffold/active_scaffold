@@ -121,6 +121,14 @@ module ActiveScaffold
         end
       end
 
+      def active_scaffold_column_currency(column, record)
+        clean_column_value(number_to_currency(record.send(column.name), column.options[:i18n_options] || {}))
+      end
+
+      def active_scaffold_column_i18n_number(column, record)
+        clean_column_value(number_with_precision(record.send(column.name), column.options[:i18n_options] || {}))
+      end
+
       def column_override(column)
         "#{column.name.to_s.gsub('?', '')}_column" # parse out any question marks (see issue 227)
       end
@@ -149,14 +157,7 @@ module ActiveScaffold
           cache_association(value, column)
         end
         if column.association.nil? or column_empty?(value)
-          case column.list_ui
-          when :currency
-            clean_column_value(number_to_currency(value, column.options[:l18n_options] || {}))
-          when :l18n_number
-            clean_column_value(number_with_precision(value, column.options[:l18n_options] || {}))
-          else
-            format_value(value, column.options)
-          end
+          format_value(value, column.options)
         else
           format_association_value(value, column, associated_size)
         end
