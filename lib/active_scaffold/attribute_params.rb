@@ -76,7 +76,7 @@ module ActiveScaffold
           next unless [:has_one, :has_many].include?(a.macro) and not a.options[:through]
           next unless association_proxy = parent_record.send(a.name)
 
-          raise ActiveScaffold::ReverseAssociationRequired, "In order to support :has_one and :has_many where the parent record is new and the child record(s) validate the presence of the parent, ActiveScaffold requires the reverse association (the belongs_to)." unless a.reverse
+          raise ActiveScaffold::ReverseAssociationRequired, "Association #{a.name}: In order to support :has_one and :has_many where the parent record is new and the child record(s) validate the presence of the parent, ActiveScaffold requires the reverse association (the belongs_to)." unless a.reverse
 
           association_proxy = [association_proxy] if a.macro == :has_one
           association_proxy.each { |record| record.send("#{a.reverse}=", parent_record) }
