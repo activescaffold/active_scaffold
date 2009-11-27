@@ -40,7 +40,7 @@ module ActiveScaffold::Actions
           if successful?
             render :action => 'on_update.js'
           else
-            render :action => 'form_messages_on_update.js'
+            render :action => 'form_messages_on_save.js'
           end
         end
       else # just a regular post

@@ -46,7 +46,7 @@ module ActiveScaffold::Actions
           if successful?
             render :action => 'on_create.js'
           else
-            render :action => 'form_messages_on_create.js'
+            render :action => 'form_messages_on_save.js'
           end
         end
       else
