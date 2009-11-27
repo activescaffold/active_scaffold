@@ -71,6 +71,7 @@ module ActiveScaffold
         active_scaffold_overrides_dir = File.join(dir,"active_scaffold_overrides")
         @active_scaffold_overrides << active_scaffold_overrides_dir if File.exists?(active_scaffold_overrides_dir)
       end
+      @active_scaffold_overrides.uniq! # Fix rails duplicating some view_paths
       @active_scaffold_frontends = []
       if active_scaffold_config.frontend.to_sym != :default
         active_scaffold_custom_frontend_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views')
