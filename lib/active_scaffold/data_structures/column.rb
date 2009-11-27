@@ -182,7 +182,14 @@ module ActiveScaffold::DataStructures
     # whether a blank row must be shown in the subform
     cattr_accessor :show_blank_record
     @@show_blank_record = true
-    attr_accessor :show_blank_record
+    attr_writer :show_blank_record
+    def show_blank_record?(associated)
+      if @show_blank_record
+        return false if self.through_association?
+        return false unless self.association.klass.authorized_for?(:action => :create)
+        self.plural_association? or (self.singular_association? and associated.empty?)
+      end
+    end
 
     # methods for automatic links in singular association columns
     cattr_accessor :actions_for_association_links
