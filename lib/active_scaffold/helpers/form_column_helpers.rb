@@ -148,6 +148,14 @@ module ActiveScaffold
         end
       end
 
+      def active_scaffold_input_radio(column, html_options)
+        html_options.update(column.options[:html_options] || {})
+        column.options[:options].inject('') do |html, (text, value)|
+          value ||= text
+          html << content_tag(:label, radio_button(:record, column.name, value, html_options.merge(:id => html_options[:id] + '-' + value)) + text)
+        end
+      end
+
       # only works for singular associations
       # requires RecordSelect plugin to be installed and configured.
       # ... maybe this should be provided in a bridge?
@@ -209,7 +217,7 @@ module ActiveScaffold
         select_options << [as_(:true), true]
         select_options << [as_(:false), false]
 
-        select_tag(options[:name], options_for_select(select_options, @record.send(column.name)))
+        select_tag(options[:name], options_for_select(select_options, @record.send(column.name)), options)
       end
 
       def onsubmit
