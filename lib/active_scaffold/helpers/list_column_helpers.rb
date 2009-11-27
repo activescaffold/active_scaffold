@@ -251,7 +251,7 @@ module ActiveScaffold
           :loading_text => as_(:loading),
           :save_text => as_(:update),
           :saving_text => as_(:saving),
-          :options => "{method: 'post'}",
+          :ajax_options => "{method: 'post'}",
           :script => true
         }
 
@@ -312,7 +312,7 @@ module ActiveScaffold
         js_options['externalControlOnly'] = "true" if options[:external_control_only]
         js_options['submitOnBlur'] = "'#{options[:submit_on_blur]}'" if options[:submit_on_blur]
         js_options['loadTextURL'] = "'#{url_for(options[:load_text_url])}'" if options[:load_text_url]        
-        js_options['ajaxOptions'] = options[:options] if options[:options]
+        js_options['ajaxOptions'] = options[:ajax_options] if options[:ajax_options]
         js_options['htmlResponse'] = !options[:script] if options[:script]
         js_options['callback']   = "function(form) { return #{options[:with]} }" if options[:with]
         js_options['clickToEditText'] = %('#{options[:click_to_edit_text]}') if options[:click_to_edit_text]
