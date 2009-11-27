@@ -8,10 +8,11 @@ url_options = params_for(:action => :list, :id => record.id)
 
 <tr class="record <%= tr_class %>" id="<%= element_row_id(:action => :list, :id => record.id) %>">
   <% active_scaffold_config.list.columns.each do |column| %>
-    <% column_value = get_column_value(record, column) -%>
+    <% authorized = record.authorized_for?(:action => :read, :column => column.name) -%>
+    <% column_value = authorized ? get_column_value(record, column) : active_scaffold_config.list.empty_field_text -%>
 
     <td class="<%= column_class(column, column_value) %>" >
-      <%= record.authorized_for?(:action => :read, :column => column.name) ? render_list_column(column_value, column, record) : '' %>
+      <%= authorized ? render_list_column(column_value, column, record) : column_value %>
     </td>
   <% end -%>
   <td class="actions">
