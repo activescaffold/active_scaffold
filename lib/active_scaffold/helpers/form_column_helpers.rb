@@ -188,18 +188,11 @@ module ActiveScaffold
       end
       
       def active_scaffold_input_i18n_number(column, options)
-        active_scaffold_input_number_helper(column, options, :number_with_precision)
-      end
-        
-      def active_scaffold_input_currency(column, options)
-        active_scaffold_input_number_helper(column, options, :number_to_currency)
-      end
-      
-      def active_scaffold_input_number_helper(column, options, helper)
         options = active_scaffold_input_text_options(options).merge(column.options)
         options.delete(:i18n_options)
-        text_field_tag(column.name, send(helper, @record.send(column.name), column.options[:i18n_options] || {}), options)
+        text_field_tag(column.name, format_number_value(@record.send(column.name), column.form_ui, column.options), options)
       end
+      alias_method :active_scaffold_input_currency, :active_scaffold_input_i18n_number
 
       def active_scaffold_input_virtual(column, options)
         options = active_scaffold_input_text_options(options)
