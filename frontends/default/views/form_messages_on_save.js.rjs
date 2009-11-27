@@ -1,0 +1,10 @@
+page.replace_html element_messages_id, :partial => 'form_messages'
+active_scaffold_config.send(action_name).columns.each(:for => @record, :flatten => true) do |column|
+  next unless is_subform? column
+  associated = Array(@record.send(column.name)).compact
+  associated << column.association.klass.new if column.show_blank_record? associated
+  associated.each_with_index do |record, index|
+    page.replace_html element_messages_id(:action => record.class.name.underscore, :id => "#{@record.id}-#{index}"), error_messages_for(:record, :object => record, :object_name => record.class.human_name.downcase) if record.errors.count
+  end
+end
+page << "$('#{loading_indicator_id(:action => action_name, :id => params[:id])}').style.visibility = 'hidden';"
