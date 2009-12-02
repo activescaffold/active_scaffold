@@ -251,6 +251,7 @@ module ActiveScaffold::DataStructures
       @show_blank_record = self.class.show_blank_record
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
       @search_ui = :select if @association and not polymorphic_association?
+      @form_ui = :i18n_number if @column.try(:number?)
 
       # default all the configurable variables
       self.css_class = ''

@@ -30,3 +30,10 @@ ModelStub.connection.instance_eval do
     name
   end
 end
+
+class Test::Unit::TestCase
+  protected
+  def config_for(klass, namespace = nil)
+    ActiveScaffold::Config::Core.new("#{namespace}#{klass.to_s.underscore.downcase}")
+  end
+end
