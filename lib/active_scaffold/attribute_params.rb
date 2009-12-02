@@ -121,7 +121,15 @@ module ActiveScaffold
           # it's an array of ids
           column.association.klass.find(value) if value and not value.empty?
         elsif [:i18n_number, :currency].include?(column.form_ui)
-          value.gsub(/[^0-9\-#{I18n.t(:'number.format.separator')}]/, '').gsub(I18n.t(:'number.format.separator'), '.')
+          native = '.'
+          delimiter = I18n.t('number.format.delimiter')
+          separator = I18n.t('number.format.separator')
+
+          unless delimiter == native && !value.include?(separator) && value !~ /\.\d{3}$/
+            value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
+          else
+            value
+          end
         else
           # convert empty strings into nil. this works better with 'null => true' columns (and validations),
           # and 'null => false' columns should just convert back to an empty string.
