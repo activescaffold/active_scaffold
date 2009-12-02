@@ -2,14 +2,6 @@ require File.join(File.dirname(__FILE__), '../test_helper.rb')
 # require 'test/model_stub'
 require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/data_structures/set.rb')
 
-ActiveScaffold::DataStructures::ActionColumns.class_eval do
-  #include Enumerable
-  include ActiveScaffold::DataStructures::ActionColumns::AfterConfiguration
-  def each
-    @set.each {|i| yield i}
-  end
-end
-
 class ActionColumnsTest < Test::Unit::TestCase
   def setup
     @columns = ActiveScaffold::DataStructures::ActionColumns.new([:a, :b])

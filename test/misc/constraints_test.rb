@@ -187,7 +187,7 @@ class ConstraintsTest < Test::Unit::TestCase
     assert_equal condition, @test_object.send(:conditions_from_constraints), message
   end
 
-  def config_for(klass)
-    ActiveScaffold::Config::Core.new("model_stubs/#{klass.to_s.underscore.downcase}")
+  def config_for(klass, namespace = nil)
+    super(klass, "model_stubs/")
   end
 end
