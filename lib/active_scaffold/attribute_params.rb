@@ -120,7 +120,7 @@ module ActiveScaffold
         elsif column.plural_association?
           # it's an array of ids
           column.association.klass.find(value) if value and not value.empty?
-        elsif [:i18n_number, :currency].include?(column.form_ui)
+        elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
           native = '.'
           delimiter = I18n.t('number.format.delimiter')
           separator = I18n.t('number.format.separator')
