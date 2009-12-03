@@ -21,7 +21,6 @@ class AttributeParamsTest < Test::Unit::TestCase
     }}
 
     @config = config_for('number_model')
-    @config.columns[:number].form_ui = :i18n_number
     class << @config.list.columns
       include ActiveScaffold::DataStructures::ActionColumns::AfterConfiguration
     end
