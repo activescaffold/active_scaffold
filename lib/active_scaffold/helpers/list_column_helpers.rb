@@ -150,7 +150,7 @@ module ActiveScaffold
         end
         if column.association.nil? or column_empty?(value)
           if value.is_a? Numeric
-            format_number_value(value, column.list_ui, column.options)
+            format_number_value(value, column.options)
           else
             format_value(value, column.options)
           end
@@ -159,8 +159,12 @@ module ActiveScaffold
         end
       end
       
-      def format_number_value(value, ui, options = {})
-        value = case ui
+      def format_number_value(value, options = {})
+        value = case options[:format]
+          when :size
+            number_to_human_size(value, options[:i18n_options] || {})
+          when :percentage
+            number_to_percentage(value, options[:i18n_options] || {})
           when :currency
             number_to_currency(value, options[:i18n_options] || {})
           when :i18n_number
