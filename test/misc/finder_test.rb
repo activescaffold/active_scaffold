@@ -10,6 +10,9 @@ class ClassWithFinder
   def custom_finder_options
     {}
   end
+  def named_scopes_for_collection
+    nil
+  end
 end
 
 class FinderTest < Test::Unit::TestCase

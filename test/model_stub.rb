@@ -6,6 +6,22 @@ class ModelStub < ActiveRecord::Base
   cattr_accessor :stubbed_columns
   self.stubbed_columns = [:a, :b, :c, :d, :id]
   attr_accessor *self.stubbed_columns
+  
+  @@nested_scope_calls = []
+  cattr_accessor :nested_scope_calls
+  
+  named_scope :a_is_defined, :conditions => "a is not null"
+  named_scope :b_like, lambda {|pattern| {:conditions => ["b like ?", pattern]}}
+  
+  def self.a_is_defined
+    @@nested_scope_calls << :a_is_defined
+    self
+  end
+  
+  def self.b_like(pattern)
+    @@nested_scope_calls << :b_like
+    self
+  end
 
   def other_model=(val)
     @other_model = val
