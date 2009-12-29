@@ -126,7 +126,26 @@ module ActiveScaffold
         active_scaffold_session_storage[:conditions] # embedding conditions (weaker constraints)
       )
     end
-
+    
+    def model_with_named_scope(scope_definitions = named_scopes_for_collection)
+      case scope_definitions
+      when String
+        active_scaffold_config.model.instance_eval(scope_definitions)
+      when Symbol
+        active_scaffold_config.model.send(scope_definitions)
+      when Array
+        if scope_definitions.first.is_a?(Array)
+          scope_definitions.inject(active_scaffold_config.model) do |records, scope_definition|
+            records = model_with_named_scope(scope_definition)
+          end
+        else
+          active_scaffold_config.model.send(*scope_definitions)
+        end
+      else
+        active_scaffold_config.model
+      end
+    end
+    
     # returns a single record (the given id) but only if it's allowed for the specified action.
     # accomplishes this by checking model.#{action}_authorized?
     # TODO: this should reside on the model, not the controller
@@ -152,8 +171,6 @@ module ActiveScaffold
       options[:page] ||= 1
       options[:count_includes] ||= full_includes unless search_conditions.nil?
 
-      klass = active_scaffold_config.model
-
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => options[:sorting].try(:clause),
                          :conditions => search_conditions,
@@ -163,7 +180,7 @@ module ActiveScaffold
       finder_options.merge! custom_finder_options
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count = klass.count(finder_options.reject{|k,v| [:select, :order].include? k})
+      count = model_with_named_scope.count(finder_options.reject{|k,v| [:select, :order].include? k})
 
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when finder_options contains a :group key
@@ -174,12 +191,12 @@ module ActiveScaffold
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          sorted_collection = sort_collection_by_column(klass.find(:all, finder_options), *options[:sorting].first)
+          sorted_collection = sort_collection_by_column(model_with_named_scope.all(finder_options), *options[:sorting].first)
           sorted_collection.slice(offset, per_page)
         end
       else
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          klass.find(:all, finder_options.merge(:offset => offset, :limit => per_page))
+          model_with_named_scope.all(finder_options.merge(:offset => offset, :limit => per_page))
         end
       end
 
