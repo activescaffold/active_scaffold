@@ -101,7 +101,11 @@ module ActiveScaffold::Actions
       {}
     end
   
-
+    #Overide this method on your controller to provide model with named scopes
+    def named_scopes_for_collection
+      nil
+    end
+        
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
     def conditions_from_params
       conditions = nil
