@@ -170,7 +170,7 @@ class ConstraintsTest < Test::Unit::TestCase
 
   def test_constraint_conditions_for_normal_attributes
     @test_object.active_scaffold_config = config_for('user')
-    assert_constraint_condition({'foo' => 'bar'}, ['users.foo = ?', 'bar'], 'normal column-based constraint')
+    assert_constraint_condition({'foo' => 'bar'}, ['`users`.`foo` = ?', 'bar'], 'normal column-based constraint')
   end
 
   def test_constraint_conditions_for_associations_with_primary_key_option

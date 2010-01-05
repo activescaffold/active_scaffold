@@ -25,12 +25,6 @@ for file in %w[model_stub const_mocker]
   require File.join(File.dirname(__FILE__), file)
 end
 
-ModelStub.connection.instance_eval do
-  def quote_column_name(name)
-    name
-  end
-end
-
 class Test::Unit::TestCase
   protected
   def config_for(klass, namespace = nil)
