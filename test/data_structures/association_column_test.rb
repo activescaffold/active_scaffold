@@ -20,7 +20,7 @@ class AssociationColumnTest < Test::Unit::TestCase
   def test_searching
     # by default searching on association columns uses primary key
     assert @association_column.searchable?
-    assert_equal 'model_stubs.id', @association_column.search_sql
+    assert_equal '`model_stubs`.`id`', @association_column.search_sql
   end
 
   def test_association
