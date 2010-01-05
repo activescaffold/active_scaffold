@@ -11,14 +11,14 @@ zoom: 1;
 border-top: solid 1px #DAFFCD;
 }
 
-.active-scaffold-header div.actions a.show_search {
+* html .active-scaffold-header div.actions a.show_search {
 background-image: none;
-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/active_scaffold/default/magnifier.png', sizingMethod='crop');
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../../../images/active_scaffold/default/magnifier.png', sizingMethod='crop');
 }
 
-.active-scaffold .sub-form .association-record a.destroy {
+* html .active-scaffold .sub-form .association-record a.destroy {
 background-image: none;
-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/active_scaffold/default/cross.png', sizingMethod='crop');
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../../../images/active_scaffold/default/cross.png', sizingMethod='crop');
 }
 
 .active-scaffold-header div.actions a.disabled {
