@@ -41,5 +41,14 @@ module ActiveScaffold::Config
     def formats=(val)
       @formats=val
     end
+    
+    private
+    
+    def columns=(val)
+      @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
+      @columns.action = self
+      @columns.set_columns(@core.columns) if @columns.respond_to?(:set_columns)
+      @columns
+    end
   end
 end
