@@ -36,10 +36,7 @@ module ActiveScaffold::Config
       @columns
     end
 
-    def columns=(val)
-      @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
-      @columns.action = self
-    end
+    public :columns=
 
     attr_writer :full_text_search
     def full_text_search?
