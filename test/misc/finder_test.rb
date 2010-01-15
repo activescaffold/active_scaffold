@@ -33,13 +33,13 @@ class FinderTest < Test::Unit::TestCase
     ]
 
     expected_conditions = [
-			'(LOWER(`model_stubs`.`a`) LIKE ? OR LOWER(`model_stubs`.`b`) LIKE ?) AND (LOWER(`model_stubs`.`a`) LIKE ? OR LOWER(`model_stubs`.`b`) LIKE ?)',
+			'(LOWER("model_stubs"."a") LIKE ? OR LOWER("model_stubs"."b") LIKE ?) AND (LOWER("model_stubs"."a") LIKE ? OR LOWER("model_stubs"."b") LIKE ?)',
 		  '%foo%', '%foo%', '%bar%', '%bar%'
 		]
     assert_equal expected_conditions, ClassWithFinder.create_conditions_for_columns(tokens, columns)
 
     expected_conditions = [
-      '(LOWER(`model_stubs`.`a`) LIKE ? OR LOWER(`model_stubs`.`b`) LIKE ?)',
+      '(LOWER("model_stubs"."a") LIKE ? OR LOWER("model_stubs"."b") LIKE ?)',
       '%foo%', '%foo%'
     ]
     assert_equal expected_conditions, ClassWithFinder.create_conditions_for_columns('foo', columns)

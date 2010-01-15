@@ -41,7 +41,7 @@ class ColumnTest < Test::Unit::TestCase
   end
 
   def test_field
-    assert_equal '`model_stubs`.`a`', @column.send(:field)
+    assert_equal '"model_stubs"."a"', @column.send(:field)
   end
 
   def test_table
@@ -96,7 +96,7 @@ class ColumnTest < Test::Unit::TestCase
 
   def test_custom_search
     @column.search_sql = true
-    assert_equal '`model_stubs`.`a`', @column.search_sql
+    assert_equal '"model_stubs"."a"', @column.search_sql
     @column.search_sql = 'foobar'
     assert_equal 'foobar', @column.search_sql
     assert @column.searchable?
@@ -104,7 +104,7 @@ class ColumnTest < Test::Unit::TestCase
 
   def test_custom_sort
     @column.sort = true
-    hash = {:sql => '`model_stubs`.`a`'}
+    hash = {:sql => '"model_stubs"."a"'}
     assert_equal hash, @column.sort
     @column.sort_by :sql => 'foobar'
     hash = {:sql => 'foobar'}
