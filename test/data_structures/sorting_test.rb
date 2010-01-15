@@ -100,7 +100,7 @@ class SortingTest < Test::Unit::TestCase
     @sorting << [:a, 'desc']
     @sorting << [:b, 'asc']
 
-    assert_equal '`model_stubs`.`a` DESC, `model_stubs`.`b` ASC', @sorting.clause
+    assert_equal '"model_stubs"."a" DESC, "model_stubs"."b" ASC', @sorting.clause
   end
   
   def test_set_default_sorting_with_simple_default_scope
