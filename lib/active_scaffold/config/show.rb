@@ -28,9 +28,7 @@ module ActiveScaffold::Config
       self.columns = @core.columns._inheritable unless @columns # lazy evaluation
       @columns
     end
-    def columns=(val)
-      @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
-      @columns.action = self
-    end
+    
+    public :columns=
   end
 end
