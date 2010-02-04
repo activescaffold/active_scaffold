@@ -30,8 +30,8 @@ module ActiveScaffold
             html << pagination_ajax_link(num, params)
           end
         end
-        html << ".." unless end_number < current_page.pager.last.number - 1
-        html << pagination_ajax_link(current_page.pager.last.number, params) unless end_number < current_page.pager.last.number - window_size
+        html << ".." unless end_number >= current_page.pager.last.number - 1
+        html << pagination_ajax_link(current_page.pager.last.number, params) unless end_number == current_page.pager.last.number
         html.join(' ')
       end
     end
