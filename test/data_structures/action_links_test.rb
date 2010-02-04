@@ -50,13 +50,13 @@ class ActionLinksTest < Test::Unit::TestCase
   end
 
   def test_each
-    @links.add 'foo', :type => :table
-    @links.add 'bar', :type => :record
+    @links.add 'foo', :type => :collection
+    @links.add 'bar', :type => :member
 
-    @links.each :table do |link|
+    @links.each :collection do |link|
       assert_equal 'foo', link.action
     end
-    @links.each :record do |link|
+    @links.each :member do |link|
       assert_equal 'bar', link.action
     end
   end

@@ -25,7 +25,7 @@ class Config::ShowTest < Test::Unit::TestCase
     blank = {}
     assert_equal blank, link.html_options
     assert_equal :get, link.method
-    assert_equal :record, link.type
+    assert_equal :member, link.type
     assert_equal :read, link.crud_type
     assert_equal :show_authorized?, link.security_method
   end

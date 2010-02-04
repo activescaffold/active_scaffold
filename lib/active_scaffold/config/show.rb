@@ -11,7 +11,7 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     cattr_accessor :link
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('show', :label => :show, :type => :record, :security_method => :show_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('show', :label => :show, :type => :member, :security_method => :show_authorized?)
     # instance-level configuration
     # ----------------------------
 

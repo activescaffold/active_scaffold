@@ -27,7 +27,7 @@ class Config::CreateTest < Test::Unit::TestCase
     blank = {}
     assert_equal blank, link.html_options
     assert_equal :get, link.method
-    assert_equal :table, link.type
+    assert_equal :collection, link.type
     assert_equal :create, link.crud_type
     assert_equal :create_authorized?, link.security_method
   end
