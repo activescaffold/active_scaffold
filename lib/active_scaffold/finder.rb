@@ -107,9 +107,19 @@ module ActiveScaffold
       @active_scaffold_conditions ||= []
     end
 
-    attr_writer :active_scaffold_joins
-    def active_scaffold_joins
-      @active_scaffold_joins ||= []
+    attr_writer :active_scaffold_includes
+    def active_scaffold_includes
+      if respond_to? :active_scaffold_joins
+        ::ActiveSupport::Deprecation.warn("You have defined active_scaffold_joins, but it's deprecated because it's confusing, you should use active_scaffold_includes now", caller)
+        return active_scaffold_joins 
+      end
+      @active_scaffold_includes ||= []
+    end
+
+    # Deprecated method
+    def active_scaffold_joins=(value)
+      ::ActiveSupport::Deprecation.warn("active_scaffold_joins is deprecated because it's confusing, you should use active_scaffold_includes now", caller)
+      self.active_scaffold_includes = value
     end
 
     attr_writer :active_scaffold_habtm_joins
@@ -163,7 +173,7 @@ module ActiveScaffold
     def find_page(options = {})
       options.assert_valid_keys :sorting, :per_page, :page, :count_includes
 
-      full_includes = (active_scaffold_joins.blank? ? nil : active_scaffold_joins)
+      full_includes = (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
       search_conditions = all_conditions
       options[:per_page] ||= 999999999
       options[:page] ||= 1
