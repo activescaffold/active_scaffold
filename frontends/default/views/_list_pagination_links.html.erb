@@ -16,7 +16,7 @@
           :method => :get },
         { :href => previous_url,
           :class => "previous"}) if current_page.prev? %>
-  <%= pagination_ajax_links current_page, pagination_params %>
+  <%= pagination_ajax_links current_page, pagination_params, active_scaffold_config.list.page_links_window %>
   <%= link_to_remote(as_(:next),
         { :url => pagination_params.merge(:page => current_page.number + 1),
           :after => "$('#{loading_indicator_id(:action => :pagination)}').style.visibility = 'visible';",

@@ -8,6 +8,7 @@ module ActiveScaffold::Config
       # inherit from global scope
       # full configuration path is: defaults => global table => local table
       @per_page = self.class.per_page
+      @page_links_window = self.class.page_links_window
       
       # originates here
       @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns)
@@ -22,6 +23,10 @@ module ActiveScaffold::Config
     # how many records to show per page
     cattr_accessor :per_page
     @@per_page = 15
+
+    # how many page links around current page to show
+    cattr_accessor :page_links_window
+    @@page_links_window = 2
 
     # what string to use when a field is empty
     cattr_accessor :empty_field_text
@@ -40,6 +45,9 @@ module ActiveScaffold::Config
 
     # how many rows to show at once
     attr_accessor :per_page
+
+    # how many page links around current page to show
+    attr_accessor :page_links_window
 
     # what string to use when a field is empty
     attr_accessor :empty_field_text
