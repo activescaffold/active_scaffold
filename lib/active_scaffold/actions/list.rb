@@ -56,7 +56,7 @@ module ActiveScaffold::Actions
     # The actual algorithm to prepare for the list view
     def do_list
       includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
-      self.active_scaffold_joins.concat includes_for_list_columns
+      self.active_scaffold_includes.concat includes_for_list_columns
 
       options = { :sorting => active_scaffold_config.list.user.sorting,
                   :count_includes => active_scaffold_config.list.user.count_includes }

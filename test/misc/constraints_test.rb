@@ -83,7 +83,7 @@ end
 class ConstraintsTestObject
   # stub out what the mixin expects to find ...
   def self.before_filter(*args); end
-  attr_accessor :active_scaffold_joins
+  attr_accessor :active_scaffold_includes
   attr_accessor :active_scaffold_habtm_joins
   attr_accessor :active_scaffold_config
   attr_accessor :params
@@ -98,7 +98,7 @@ class ConstraintsTestObject
   attr_accessor :active_scaffold_constraints
 
   def initialize
-    @active_scaffold_joins = []
+    @active_scaffold_includes = []
     @active_scaffold_habtm_joins = []
     @params = {}
   end
@@ -119,7 +119,7 @@ class ConstraintsTest < Test::Unit::TestCase
     assert_constraint_condition({:address => 11}, ['addresses.id = ?', 11], 'find the user with address #11')
     # reverse of a has_many :through
     assert_constraint_condition({:subscription => {:service => 5}}, ['services.id = ?', 5], 'find all users subscribed to service #5')
-    assert(@test_object.active_scaffold_joins.include?({:subscription => :service}), 'multi-level association include')
+    assert(@test_object.active_scaffold_includes.include?({:subscription => :service}), 'multi-level association include')
 
     @test_object.active_scaffold_config = config_for('subscription')
     # belongs_to (vs has_one)

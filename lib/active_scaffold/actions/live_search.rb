@@ -34,7 +34,7 @@ module ActiveScaffold::Actions
         @filtered = !search_conditions.blank?
 
         includes_for_search_columns = columns.collect{ |column| column.includes}.flatten.uniq.compact
-        self.active_scaffold_joins.concat includes_for_search_columns
+        self.active_scaffold_includes.concat includes_for_search_columns
 
         active_scaffold_config.list.user.page = nil
       end

@@ -51,7 +51,7 @@ module ActiveScaffold
             field = far_association.klass.primary_key
             table = far_association.table_name
 
-            active_scaffold_joins.concat([{k => v.keys.first}]) # e.g. {:den => :park}
+            active_scaffold_includes.concat([{k => v.keys.first}]) # e.g. {:den => :park}
             constraint_condition_for("#{table}.#{field}", v.values.first)
 
           # association column constraint
@@ -59,13 +59,13 @@ module ActiveScaffold
             if column.association.macro == :has_and_belongs_to_many
               active_scaffold_habtm_joins.concat column.includes
             else
-              active_scaffold_joins.concat column.includes
+              active_scaffold_includes.concat column.includes
             end
             condition_from_association_constraint(column.association, v)
 
           # regular column constraints
           elsif column.searchable?
-            active_scaffold_joins.concat column.includes
+            active_scaffold_includes.concat column.includes
             constraint_condition_for(column.search_sql, v)
           end
         # unknown-to-activescaffold-but-real-database-column constraint
