@@ -23,7 +23,7 @@ module ActiveScaffold
 
       # Parameters to generate url to the main page (override if the ActiveScaffold is used as a component on another controllers page)
       def main_path_to_return
-        parameters = params.clone
+        parameters = {}
         if params[:parent_controller]
           parameters[:controller] = params[:parent_controller]
           parameters[:eid] = params[:parent_controller]
