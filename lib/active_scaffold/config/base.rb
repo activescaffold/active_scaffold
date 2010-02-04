@@ -5,14 +5,14 @@ module ActiveScaffold::Config
 
     def self.inherited(subclass)
       class << subclass
-        # the crud type of the action. possible values are :create, :read, :update, :destroy, and nil.
+        # the crud type of the action. possible values are :create, :read, :update, :delete, and nil.
         # this is not a setting for the developer. it's self-description for the actions.
         def crud_type; @crud_type; end
 
         protected
 
         def crud_type=(val)
-          raise ArgumentError, "unknown CRUD type #{val}" unless [:create, :read, :update, :destroy].include?(val.to_sym)
+          raise ArgumentError, "unknown CRUD type #{val}" unless [:create, :read, :update, :delete].include?(val.to_sym)
           @crud_type = val.to_sym
         end
       end

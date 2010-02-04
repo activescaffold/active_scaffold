@@ -9,7 +9,7 @@ module ActiveScaffold::DataStructures
       self.type = :collection
       self.inline = true
       self.method = :get
-      self.crud_type = :destroy if [:destroy].include?(action.to_sym)
+      self.crud_type = :delete if [:destroy].include?(action.to_sym)
       self.crud_type = :create if [:create, :new].include?(action.to_sym)
       self.crud_type = :update if [:edit, :update].include?(action.to_sym)
       self.crud_type ||= :read
@@ -71,7 +71,7 @@ module ActiveScaffold::DataStructures
 
     # the crud type of the (eventual?) action. different than :method, because this crud action may not be imminent.
     # this is used to determine record-level authorization (e.g. record.authorized_for?(:action => link.crud_type).
-    # options are :create, :read, :update, and :destroy
+    # options are :create, :read, :update, and :delete
     attr_accessor :crud_type
 
     # an "inline" link is inserted into the existing page
