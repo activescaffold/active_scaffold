@@ -42,8 +42,8 @@ module ActiveScaffold::DataStructures
 
     # if the action requires confirmation
     attr_writer :confirm
-    def confirm
-      @confirm.is_a?(String) ? as_(@confirm) : @confirm
+    def confirm(label = '')
+      @confirm.is_a?(String) ? @confirm : as_(@confirm, :label => label)
     end
     def confirm?
       @confirm ? true : false

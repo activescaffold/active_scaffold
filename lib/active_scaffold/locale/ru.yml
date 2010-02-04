@@ -3,7 +3,7 @@ ru:
     add: 'Добавить запись'
     add_existing: 'Добавить существующую запись'
     add_existing_model: 'Добавить существующую запись {{model}}'
-    are_you_sure: 'Вы уверены?'
+    are_you_sure_to_delete: 'Вы уверены?'
     cancel: 'Отмена'
     click_to_edit: 'Нажмите для редактирования'
     close: 'Закрыть'
