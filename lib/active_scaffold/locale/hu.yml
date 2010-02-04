@@ -3,7 +3,7 @@ hu:
     add: 'Hozzáadás'
     add_existing: 'Meglevő hozzáadása'
     add_existing_model: 'Meglevő {{model}} hozzáadása'
-    are_you_sure: 'Biztos vagy benne?'
+    are_you_sure_to_delete: 'Biztos vagy benne?'
     cancel: 'Mégse'
     click_to_edit: 'Kattints a szerkesztéshez'
     close: 'Bezárás'
