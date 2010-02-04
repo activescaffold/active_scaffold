@@ -40,7 +40,7 @@ module ActiveScaffold::Actions
     end
 
     def destroy_find_record
-      @record = find_if_allowed(params[:id], :destroy)
+      @record = find_if_allowed(params[:id], :delete)
     end
 
     # A simple method to handle the actual destroying of a record
@@ -58,7 +58,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def delete_authorized?
-      authorized_for?(:action => :destroy)
+      authorized_for?(:action => :delete)
     end
     private
     def delete_authorized_filter
