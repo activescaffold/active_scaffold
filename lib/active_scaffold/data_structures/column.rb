@@ -129,7 +129,7 @@ module ActiveScaffold::DataStructures
       else
         options[:label] ||= self.label
         options[:position] ||= :after unless options.has_key?(:position)
-        options[:type] ||= :record
+        options[:type] ||= :member
         @link = ActiveScaffold::DataStructures::ActionLink.new(action, options)
       end
     end

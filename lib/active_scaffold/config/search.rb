@@ -16,7 +16,7 @@ module ActiveScaffold::Config
     # --------------------------
     # the ActionLink for this action
     cattr_accessor :link
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => :search, :type => :table, :security_method => :search_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => :search, :type => :collection, :security_method => :search_authorized?)
 
     cattr_writer :full_text_search
     def self.full_text_search?
