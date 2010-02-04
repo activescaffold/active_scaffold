@@ -89,6 +89,15 @@ module ActiveRecordPermissions
         # (for example, disable update and enable inplace_edit in a column)
         method = column_and_crud_type_security_method(options[:column], options[:crud_type])
         return send(method) if method and respond_to?(method)
+        # code for deprecation
+        if options[:crud_type] == :delete
+          good_method = method
+          method = column_and_crud_type_security_method(options[:column], :destroy)
+          if method and respond_to?(method)
+            ::ActiveSupport::Deprecation.warn("destroy crud type is deprecated, rename #{method} to #{good_method}", caller)
+            return send(method)
+          end
+        end
 
         # authorized_for_action? has higher priority than other methods,
         # you can disable a crud verb and enable an action with that crud verb
@@ -101,6 +110,15 @@ module ActiveRecordPermissions
           column_security_method(options[:column]),
           crud_type_security_method(options[:crud_type]),
         ].compact.select {|m| respond_to?(m)}
+
+        # code for deprecation
+        if options[:crud_type] == :delete
+          method = crud_type_security_method(:destroy)
+          if respond_to?(method)
+            ::ActiveSupport::Deprecation.warn("destroy crud type is deprecated, rename #{method} to #{crud_type_security_method(options[:crud_type])}", caller)
+            methods << method
+          end
+        end
 
         # if any method returns false, then return false
         return false if methods.any? {|m| !send(m)}
