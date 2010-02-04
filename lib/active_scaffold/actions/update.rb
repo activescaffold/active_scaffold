@@ -98,7 +98,9 @@ module ActiveScaffold::Actions
         params[:value] ||= @record.column_for_attribute(params[:column]).default unless @record.column_for_attribute(params[:column]).nil? || @record.column_for_attribute(params[:column]).null
         params[:value] = column_value_from_param_value(@record, column, params[:value]) unless column.nil?
         @record.send("#{params[:column]}=", params[:value])
+        before_update_save(@record)
         @record.save
+        after_update_save(@record)
       end
     end
 
