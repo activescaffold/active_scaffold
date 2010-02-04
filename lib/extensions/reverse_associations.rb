@@ -8,9 +8,9 @@ module ActiveRecord
       attr_writer :reverse
       def reverse
         if @reverse.nil? and not self.options[:polymorphic]
-          reverse_matches = reverse_matches_for(self.class_name.constantize)
+          reverse_matches = reverse_matches_for(self.class_name.constantize) rescue nil
           # grab first association, or make a wild guess
-          @reverse = reverse_matches.empty? ? false : reverse_matches.first.name
+          @reverse = reverse_matches.blank? ? false : reverse_matches.first.name
         end
         @reverse
       end
