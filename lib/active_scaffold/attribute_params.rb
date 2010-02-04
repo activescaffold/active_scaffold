@@ -112,6 +112,8 @@ module ActiveScaffold
           manage_nested_record_from_params(parent_record, column, value)
         elsif column.plural_association?
           value.collect {|key_value_pair| manage_nested_record_from_params(parent_record, column, key_value_pair[1])}.compact
+        else
+          value
         end
       else
         if column.singular_association?
