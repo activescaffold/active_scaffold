@@ -1,6 +1,10 @@
 require 'test/unit'
 require 'rubygems'
 require 'mocha'
+begin
+  require 'redgreen'
+rescue LoadError
+end
 
 ENV['RAILS_ENV'] = 'test'
 ENV['RAILS_ROOT'] ||= File.join(File.dirname(__FILE__), 'mock_app')
