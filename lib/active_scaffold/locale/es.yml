@@ -3,7 +3,7 @@ es:
     add: 'Añadir'
     add_existing: 'Añadir Existente'
     add_existing_model: 'Añadir {{model}} Existente'
-    are_you_sure: '¿Estás seguro?'
+    are_you_sure_to_delete: '¿Estás seguro de que quieres borrar {{label}}?'
     cancel: 'Cancelar'
     click_to_edit: 'Pulsa para editar'
     close: 'Cerrar'

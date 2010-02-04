@@ -132,7 +132,7 @@ module ActiveScaffold
         (link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method)
       end
 
-      def render_action_link(link, url_options)
+      def render_action_link(link, url_options, record = nil)
         url_options = url_options.clone
         url_options[:action] = link.action
         url_options[:controller] = link.controller if link.controller
@@ -157,7 +157,7 @@ module ActiveScaffold
           html_options[:method] = link.method
         end
 
-        html_options[:confirm] = link.confirm if link.confirm?
+        html_options[:confirm] = link.confirm(record.try(:to_label)) if link.confirm?
         html_options[:position] = link.position if link.position and link.inline?
         html_options[:class] += ' action' if link.inline?
         html_options[:popup] = true if link.popup?

@@ -4,7 +4,7 @@
       :add => 'Ajouter',
       :add_existing => 'Ajouter un existant',
       :add_existing_model => 'Ajouter un {{model}} existant',
-      :are_you_sure => 'Etes vous sûr ?',
+      :are_you_sure_to_delete => 'Etes vous sûr ?',
       :cancel => 'Annuler',
       :click_to_edit => 'Cliquer pour éditer',
       :close => 'Fermer',
