@@ -17,7 +17,6 @@ module ActiveScaffold::Actions
     end
 
     def show_respond_to_yaml
-      debugger
       render :text => Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.show.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
 
