@@ -2,11 +2,14 @@ module ActiveScaffold::Config
   class Subform < Base
     def initialize(core_config)
       @core = core_config
-      @layout = :horizontal # default layout
+      @layout = self.class.layout # default layout
     end
 
     # global level configuration
     # --------------------------
+
+    cattr_accessor :layout
+    @@layout = :horizontal
 
     # instance-level configuration
     # ----------------------------
