@@ -4,9 +4,10 @@ module ActiveScaffold
       # Takes a collection of search terms (the tokens) and creates SQL that
       # searches all specified ActiveScaffold columns. A row will match if each
       # token is found in at least one of the columns.
-      def create_conditions_for_columns(tokens, columns, like_pattern = '%?%')
+      def create_conditions_for_columns(tokens, columns, text_search = :full)
         # if there aren't any columns, then just return a nil condition
         return unless columns.length > 0
+        like_pattern = like_pattern(text_search)
 
         tokens = [tokens] if tokens.is_a? String
 
@@ -27,7 +28,8 @@ module ActiveScaffold
       # Generates an SQL condition for the given ActiveScaffold column based on
       # that column's database type (or form_ui ... for virtual columns?).
       # TODO: this should reside on the column, not the controller
-      def condition_for_column(column, value, like_pattern = '%?%')
+      def condition_for_column(column, value, text_search = :full)
+        like_pattern = like_pattern(text_search)
         # we must check false or not blank because we want to search for false but false is blank
         return unless column and column.search_sql and not value.blank?
         search_ui = column.search_ui || column.column.type
@@ -84,6 +86,15 @@ module ActiveScaffold
       alias_method :condition_for_date_type, :condition_for_datetime_type
       alias_method :condition_for_time_type, :condition_for_datetime_type
       alias_method :condition_for_timestamp_type, :condition_for_datetime_type
+
+      def like_pattern(text_search)
+        case text_search
+          when :full then '%?%'
+          when :start then '?%'
+          when :end then '%?'
+          else '?'
+        end
+      end
     end
 
     NumericComparators = [

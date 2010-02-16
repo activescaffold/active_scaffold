@@ -5,7 +5,7 @@ module ActiveScaffold::Config
     def initialize(core_config)
       @core = core_config
 
-      @full_text_search = self.class.full_text_search?
+      @text_search = self.class.text_search
 
       # start with the ActionLink defined globally
       @link = self.class.link.clone
@@ -18,11 +18,16 @@ module ActiveScaffold::Config
     cattr_accessor :link
     @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => :search, :type => :collection, :security_method => :search_authorized?)
 
-    cattr_writer :full_text_search
-    def self.full_text_search?
-      @@full_text_search
+    def self.full_text_search=(value)
+      ::ActiveSupport::Deprecation.warn("full_text_search is deprecated, use text_search = :full instead", caller)
+      @@text_search = :full
     end
-    @@full_text_search = true
+    def self.full_text_search?
+      ::ActiveSupport::Deprecation.warn("full_text_search? is deprecated, use text_search == :full instead", caller)
+      @@text_search == :full
+    end
+    cattr_accessor :text_search
+    @@text_search = :full
 
     # instance-level configuration
     # ----------------------------
@@ -38,9 +43,14 @@ module ActiveScaffold::Config
 
     public :columns=
 
-    attr_writer :full_text_search
+    attr_accessor :text_search
+    def full_text_search=(value)
+      ::ActiveSupport::Deprecation.warn("full_text_search is deprecated, use text_search = :full instead", caller)
+      @text_search = :full
+    end
     def full_text_search?
-      @full_text_search
+      ::ActiveSupport::Deprecation.warn("full_text_search? is deprecated, use text_search == :full instead", caller)
+      @text_search == :full
     end
 
     # the ActionLink for this action
