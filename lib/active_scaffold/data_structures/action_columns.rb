@@ -34,6 +34,10 @@ module ActiveScaffold::DataStructures
       return false
     end
 
+    def names
+      self.collect(&:name)
+    end
+
     protected
 
     def collect_columns
