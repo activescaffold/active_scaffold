@@ -435,7 +435,7 @@ ActiveScaffold.ActionLink.Table.prototype = Object.extend(new ActiveScaffold.Act
 
 ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
   setFieldFromAjax: function(url, options) {
-    this._controls.editor.remove();
+    $(this._controls.editor).remove();
     new Ajax.Request(url, {
       method: 'get',
       onComplete: function(response) {
@@ -464,7 +464,7 @@ ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
     this.setValue(fld, this._controls.editor.value);
     if (this.options.submitOnBlur)
       fld.onblur = this._boundSubmitHandler;
-    this._controls.editor.remove();
+    $(this._controls.editor).remove();
     this._controls.editor = fld;
     this._form.appendChild(this._controls.editor);
 
