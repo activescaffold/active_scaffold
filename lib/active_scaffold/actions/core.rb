@@ -61,7 +61,11 @@ module ActiveScaffold::Actions
     end
 
     def response_status
-      successful? ? 200 : 422
+      if successful?
+        action_name == 'create' ? 201 : 200
+      else
+        422
+      end
     end
 
     # API response object that will be converted to XML/YAML/JSON using to_xxx
