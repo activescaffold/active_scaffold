@@ -56,13 +56,13 @@ module ActiveScaffold::Actions
       render :action => 'on_update'
     end
     def update_respond_to_xml
-      render :xml => response_object.to_xml, :content_type => Mime::XML, :status => response_status
+      render :xml => response_object.to_xml(:only => active_scaffold_config.update.columns.names), :content_type => Mime::XML, :status => response_status
     end
     def update_respond_to_json
-      render :text => response_object.to_json, :content_type => Mime::JSON, :status => response_status
+      render :text => response_object.to_json(:only => active_scaffold_config.update.columns.names), :content_type => Mime::JSON, :status => response_status
     end
     def update_respond_to_yaml
-      render :text => response_object.to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :text => Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.update.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
     # A simple method to find and prepare a record for editing
     # May be overridden to customize the record (set default values, etc.)
