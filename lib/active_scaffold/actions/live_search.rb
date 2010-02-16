@@ -28,8 +28,8 @@ module ActiveScaffold::Actions
 
       unless @query.empty?
         columns = active_scaffold_config.live_search.columns
-        like_pattern = active_scaffold_config.live_search.full_text_search? ? '%?%' : '?%'
-        search_conditions = self.class.create_conditions_for_columns(@query.split(' '), columns, like_pattern)
+        text_search = active_scaffold_config.live_search.text_search
+        search_conditions = self.class.create_conditions_for_columns(@query.split(' '), columns, text_search)
         self.active_scaffold_conditions = merge_conditions(self.active_scaffold_conditions, search_conditions)
         @filtered = !search_conditions.blank?
 
