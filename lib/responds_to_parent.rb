@@ -59,7 +59,7 @@ module RespondsToParent
       # window.eval - legal eval for Opera
       render :text => "<html><body><script type='text/javascript' charset='utf-8'>
         var loc = document.location;
-        with(window.parent) { setTimeout(function() { window.eval('#{script}'); loc.replace('about:blank'); }, 1) } 
+        with(window.parent) { setTimeout(function() { window.eval('#{script}'); if (typeof(loc) !== 'undefined') loc.replace('about:blank'); }, 1) };
       </script></body></html>"
     end
   end
