@@ -355,7 +355,7 @@ ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.Ac
     this.adapter.down('a.inline-adapter-close').observe('click', this.close_handler.bind(this));
     this.register_cancel_hooks();
 
-    new Effect.Highlight(this.adapter.down('td'));
+    new Effect.Highlight(this.adapter.down('td').down());
   },
 
   close_handler: function(event) {
@@ -375,6 +375,7 @@ ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.Ac
         if (this.target.hasClassName('even-record')) new_target.addClassName('even-record');
         this.target = new_target;
         this.close();
+        new Effect.Highlight(this.target);
       }.bind(this),
 
       onFailure: function(request) {
@@ -424,7 +425,7 @@ ActiveScaffold.ActionLink.Table.prototype = Object.extend(new ActiveScaffold.Act
     this.adapter.down('a.inline-adapter-close').observe('click', this.close_handler.bind(this));
     this.register_cancel_hooks();
 
-    new Effect.Highlight(this.adapter.down('td'));
+    new Effect.Highlight(this.adapter.down('td').down());
   },
 
   close_handler: function(event) {
