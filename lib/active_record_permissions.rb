@@ -82,7 +82,7 @@ module ActiveRecordPermissions
       # options[:column] should be the name of a model attribute
       # options[:action] is the name of a method
       def authorized_for?(options = {})
-        raise ArgumentError, "unknown action #{options[:crud_type]}" if options[:crud_type] and ![:create, :read, :update, :destroy].include?(options[:crud_type])
+        raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] and ![:create, :read, :update, :delete].include?(options[:crud_type])
 
         # column_authorized_for_crud_type? has the highest priority over other methods,
         # you can disable a crud verb and enable that verb for a column
