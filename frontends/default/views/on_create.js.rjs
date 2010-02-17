@@ -12,7 +12,7 @@ if controller.send :successful?
   if (active_scaffold_config.create.persistent)
     page << "$$(#{cancel_selector}).first().link.reload();"
   else
-    page << "$$(#{cancel_selector}).first().link.close#{'_with_refresh' unless @insert_row}();"
+    page << "$$(#{cancel_selector}).first().link.close();"
   end
   if (active_scaffold_config.create.edit_after_create)
     page << "var link = $('#{action_link_id 'edit', @record.id}');"
