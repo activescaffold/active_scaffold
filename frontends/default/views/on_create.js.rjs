@@ -6,6 +6,7 @@ if controller.send :successful?
     page << "ActiveScaffold.stripe($('#{active_scaffold_tbody_id}'))"
     page << "ActiveScaffold.hide_empty_message('#{active_scaffold_tbody_id}','#{empty_message_id}');"
     page << "ActiveScaffold.increment_record_count('#{active_scaffold_id}');"
+    page[element_row_id(:action => :list, :id => @record.id)].highlight
   end
 
   if (active_scaffold_config.create.persistent)
