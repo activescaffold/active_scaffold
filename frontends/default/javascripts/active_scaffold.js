@@ -364,24 +364,33 @@ ActiveScaffold.ActionLink.Record.prototype = Object.extend(new ActiveScaffold.Ac
   },
 
   /* it might simplify things to just override the close function. then the Record and Table links could share more code ... wouldn't need custom close_handler functions, for instance */
-  close_with_refresh: function() {
-    new Ajax.Request(this.refresh_url, {
-      asynchronous: true,
-      evalScripts: true,
-      method: this.method,
-      onSuccess: function(request) {
-        Element.replace(this.target, request.responseText);
-        var new_target = $(this.target.id);
-        if (this.target.hasClassName('even-record')) new_target.addClassName('even-record');
-        this.target = new_target;
-        this.close();
-        new Effect.Highlight(this.target);
-      }.bind(this),
-
-      onFailure: function(request) {
-        ActiveScaffold.report_500_response(this.scaffold_id());
-      }
-    });
+  close_with_refresh: function(updatedRow) {
+    if (updatedRow) {
+      Element.replace(this.target, updatedRow);
+      var new_target = $(this.target.id);
+      if (this.target.hasClassName('even-record')) new_target.addClassName('even-record');
+      this.target = new_target;
+      this.close();
+      new Effect.Highlight(this.target);
+    } else {
+      new Ajax.Request(this.refresh_url, {
+        asynchronous: true,
+        evalScripts: true,
+        method: this.method,
+        onSuccess: function(request) {
+          Element.replace(this.target, request.responseText);
+          var new_target = $(this.target.id);
+          if (this.target.hasClassName('even-record')) new_target.addClassName('even-record');
+          this.target = new_target;
+          this.close();
+          new Effect.Highlight(this.target);
+        }.bind(this),
+  
+        onFailure: function(request) {
+          ActiveScaffold.report_500_response(this.scaffold_id());
+        }
+      });
+    }
   },
 
   enable: function() {
