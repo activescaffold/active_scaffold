@@ -190,29 +190,33 @@ background: #333 url(../../../images/active_scaffold/default/indicator-small.gif
 /* Table :: Record Rows
    ============================= */
 
+.active-scaffold tr.record {
+  background-color: #E6F2FF;
+}
 .active-scaffold tr.record td {
 padding: 5px 4px;
 color: #333;
 font-family: Verdana, sans-serif;
 font-size: 11px;
-background-color: #E6F2FF;
 border-bottom: solid 1px #C5DBF7;
 border-left: solid 1px #C5DBF7;
 }
 
-.active-scaffold tr.even-record td {
+.active-scaffold tr.even-record {
 background-color: #fff;
-border-left: solid 1px #ddd;
+}
+.active-scaffold tr.even-record td {
+border-left-color: #ddd;
 }
 
 .active-scaffold tr.record td.sorted {
 background-color: #B9DCFF;
-border-bottom: solid 1px #AFD0F5;
+border-bottom-color: #AFD0F5;
 }
 
 .active-scaffold tr.even-record td.sorted {
 background-color: #E6F2FF;
-border-bottom: solid 1px #AFD0F5;
+border-bottom-color: #AFD0F5;
 }
 
 .active-scaffold tbody.records td.empty {
