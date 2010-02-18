@@ -36,22 +36,6 @@
       :print => 'Imprimer',
       :refresh => 'Rafraîchir',
       :remove => 'Supprimer',
-<<<<<<< HEAD:lib/active_scaffold/locale/fr.rb
-      :remove_file => 'Supprimer ou Remplacer le fichier',
-      :replace_with_new => 'Remplacer avec le nouveau',
-      :revisions_for_model => 'Version pour {{model}}',
-      :reset => 'Ré-initialiser',
-      :saving => 'Sauvegarde en cours…',
-      :search => 'Rechercher',
-      :search_terms => 'Rechercher les termes',
-      :_select_ => '- sélectionner -',
-      :show => 'Afficher',
-      :show_model => 'Afficher {{model}}',
-      :_to_  => ' à ',
-      :update => 'Mettre à jour',
-      :update_model => 'Mettre à jour {{model}}',
-      :updated_model => '{{model}} mis à jour',
-=======
       :remove_file => 'Supprimer et remplacer le fichier',
       :replace_with_new => 'Remplacer avec le nouveau',
       :revisions_for_model => 'Révision pour {{model}}',
@@ -65,8 +49,7 @@
       :_to_  => ' à ',
       :update => 'Mettre à jour',
       :update_model => 'Mettre à jour le(/la) {{model}}',
-      :udated_model => 'Mis à jour de {{model}}',
->>>>>>> b8368cb... corrections:lib/active_scaffold/locale/fr.rb
+      :updated_model => 'Mis à jour de {{model}}',
       :'=' => '=',
       :'>=' => '>=',
       :'<=' => '<=',
@@ -77,10 +60,6 @@
 
       # error_messages
       :internal_error => 'Erreur de la requête (code 500, Erreur interne)',
-<<<<<<< HEAD:lib/active_scaffold/locale/fr.rb
-      :version_inconsistency => "Inconsistante de version - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer.",
-=======
       :version_inconsistency => "Version incomplète - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer.",
->>>>>>> b8368cb... corrections:lib/active_scaffold/locale/fr.rb
     }
   }}
