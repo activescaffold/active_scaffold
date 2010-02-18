@@ -29,9 +29,11 @@
   </tbody>
 </table>
 <div class="active-scaffold-footer">
+<% unless @page.pager.infinite? -%>
   <div class="active-scaffold-found"><span class="active-scaffold-records"><%= @page.pager.count -%></span> <%=as_(:found, :count => @page.pager.count) %></div>
+<% end -%>
   <div class="active-scaffold-pagination">
-    <%= render :partial => 'list_pagination_links', :locals => { :current_page => @page } unless @page.pager.number_of_pages < 2 %>
+    <%= render :partial => 'list_pagination_links', :locals => { :current_page => @page } if @page.pager.infinite? || @page.pager.number_of_pages > 1 %>
   </div>
   <br clear="both" /><%# a hack for the Rico Corner problem %>
 </div>

@@ -64,14 +64,15 @@ module ActiveScaffold::Actions
       if paginate
         options.merge!({
           :per_page => active_scaffold_config.list.user.per_page,
-          :page => active_scaffold_config.list.user.page
+          :page => active_scaffold_config.list.user.page, 
+          :infinite_pagination => active_scaffold_config.list.infinite_pagination
         })
       end
 
       page = find_page(options);
-      if page.items.blank?
-        page = page.pager.first
-        active_scaffold_config.list.user.page = 1
+      if page.items.blank? && !page.pager.infinite?
+        page = page.pager.last
+        active_scaffold_config.list.user.page = page.number
       end
       @page, @records = page, page.items
     end

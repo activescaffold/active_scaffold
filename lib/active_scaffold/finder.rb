@@ -182,7 +182,7 @@ module ActiveScaffold
     # * :page
     # TODO: this should reside on the model, not the controller
     def find_page(options = {})
-      options.assert_valid_keys :sorting, :per_page, :page, :count_includes
+      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :infinite_pagination
 
       full_includes = (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
       search_conditions = all_conditions
@@ -201,7 +201,7 @@ module ActiveScaffold
       finder_options.merge! custom_finder_options
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count = klass.count(finder_options.reject{|k,v| [:select, :order].include? k})
+      count = klass.count(finder_options.reject{|k,v| [:select, :order].include? k}) unless options[:infinite_pagination]
 
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when finder_options contains a :group key
