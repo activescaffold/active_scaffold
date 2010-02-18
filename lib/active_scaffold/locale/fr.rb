@@ -2,9 +2,9 @@
   :'fr' => {
     :active_scaffold => {
       :add => 'Ajouter',
-      :add_existing => 'Ajouter un existant',
-      :add_existing_model => 'Ajouter un {{model}} existant',
-      :are_you_sure_to_delete => 'Etes vous sûr ?',
+      :add_existing => 'Ajouter un(e) existant(e)',
+      :add_existing_model => 'Ajouter un(e) {{model}} existant(e)',
+      :are_you_sure_to_delete => 'Êtes vous sûr?',
       :cancel => 'Annuler',
       :click_to_edit => 'Cliquer pour éditer',
       :close => 'Fermer',
@@ -36,6 +36,7 @@
       :print => 'Imprimer',
       :refresh => 'Rafraîchir',
       :remove => 'Supprimer',
+<<<<<<< HEAD:lib/active_scaffold/locale/fr.rb
       :remove_file => 'Supprimer ou Remplacer le fichier',
       :replace_with_new => 'Remplacer avec le nouveau',
       :revisions_for_model => 'Version pour {{model}}',
@@ -50,6 +51,22 @@
       :update => 'Mettre à jour',
       :update_model => 'Mettre à jour {{model}}',
       :updated_model => '{{model}} mis à jour',
+=======
+      :remove_file => 'Supprimer et remplacer le fichier',
+      :replace_with_new => 'Remplacer avec le nouveau',
+      :revisions_for_model => 'Révision pour {{model}}',
+      :reset => 'Annuler',
+      :saving => 'Sauvegarder…',
+      :search => 'Rechercher',
+      :search_terms => 'Recherche de termes',
+      :_select_ => '- sélectionner -',
+      :show => 'Montrer',
+      :show_model => 'Montrer {{model}}',
+      :_to_  => ' à ',
+      :update => 'Mettre à jour',
+      :update_model => 'Mettre à jour le(/la) {{model}}',
+      :udated_model => 'Mis à jour de {{model}}',
+>>>>>>> b8368cb... corrections:lib/active_scaffold/locale/fr.rb
       :'=' => '=',
       :'>=' => '>=',
       :'<=' => '<=',
@@ -60,6 +77,10 @@
 
       # error_messages
       :internal_error => 'Erreur de la requête (code 500, Erreur interne)',
+<<<<<<< HEAD:lib/active_scaffold/locale/fr.rb
       :version_inconsistency => "Inconsistante de version - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer.",
+=======
+      :version_inconsistency => "Version incomplète - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer.",
+>>>>>>> b8368cb... corrections:lib/active_scaffold/locale/fr.rb
     }
   }}
