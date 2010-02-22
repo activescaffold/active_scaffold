@@ -13,7 +13,7 @@ class Paginator
   # Instantiate a new Paginator object
   #
   # Provide:
-  # * A total count of the number of objects to paginate. Use nil for infinite pagination
+  # * A total count of the number of objects to paginate
   # * The number of objects in each page
   # * A block that returns the array of items
   #   * The block is passed the item offset 
@@ -27,14 +27,9 @@ class Paginator
     @select = select
   end
   
-  # Is this an "infinite" paginator
-  def infinite?
-    @count.nil?
-  end
-  
   # Total number of pages
   def number_of_pages
-     (@count / @per_page).to_i + (@count % @per_page > 0 ? 1 : 0) unless infinite?
+     (@count / @per_page).to_i + (@count % @per_page > 0 ? 1 : 0)
   end
   
   # First page object
@@ -110,7 +105,6 @@ class Paginator
     
     # Checks to see if there's a page after this one
     def next?
-      return true if @pager.infinite?
       @number < @pager.number_of_pages
     end
     
