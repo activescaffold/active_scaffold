@@ -10,8 +10,8 @@ class ClassWithFinder
   def custom_finder_options
     {}
   end
-  def named_scopes_for_collection
-    nil
+  def beginning_of_chain
+    active_scaffold_config.model
   end
 end
 
