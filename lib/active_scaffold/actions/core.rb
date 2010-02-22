@@ -106,8 +106,12 @@ module ActiveScaffold::Actions
     end
   
     #Overide this method on your controller to provide model with named scopes
-    def named_scopes_for_collection
-      nil
+    def beginning_of_chain
+      if respond_to? :named_scopes_for_collection
+        ::ActiveSupport::Deprecation.warn(":named_scope_for_collection is deprecated, override beginning_of_chain instead", caller)
+        return model_with_named_scope
+      end
+      active_scaffold_config.model
     end
         
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
