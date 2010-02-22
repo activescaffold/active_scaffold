@@ -65,7 +65,7 @@ module ActiveScaffold::Actions
         options.merge!({
           :per_page => active_scaffold_config.list.user.per_page,
           :page => active_scaffold_config.list.user.page, 
-          :infinite_pagination => active_scaffold_config.list.infinite_pagination
+          :pagination => active_scaffold_config.list.pagination
         })
       end
 
