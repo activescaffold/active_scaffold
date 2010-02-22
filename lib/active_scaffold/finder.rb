@@ -148,6 +148,7 @@ module ActiveScaffold
       )
     end
     
+    # Deprecated
     def model_with_named_scope(model = active_scaffold_config.model, scope_definitions = named_scopes_for_collection)
       case scope_definitions
       when String
@@ -168,7 +169,7 @@ module ActiveScaffold
     # returns a single record (the given id) but only if it's allowed for the specified action.
     # accomplishes this by checking model.#{action}_authorized?
     # TODO: this should reside on the model, not the controller
-    def find_if_allowed(id, action, klass = nil)
+    def find_if_allowed(id, action, klass = beginning_of_chain)
       klass ||= active_scaffold_config.model
       record = klass.find(id)
       raise ActiveScaffold::RecordNotAllowed unless record.authorized_for?(:action => action.to_sym)
@@ -190,7 +191,7 @@ module ActiveScaffold
       options[:page] ||= 1
       options[:count_includes] ||= full_includes unless search_conditions.nil?
 
-      klass = model_with_named_scope
+      klass = beginning_of_chain
       
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => options[:sorting].try(:clause),
