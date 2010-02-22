@@ -170,7 +170,6 @@ module ActiveScaffold
     # accomplishes this by checking model.#{action}_authorized?
     # TODO: this should reside on the model, not the controller
     def find_if_allowed(id, crud_type, klass = beginning_of_chain)
-      klass ||= active_scaffold_config.model
       record = klass.find(id)
       raise ActiveScaffold::RecordNotAllowed unless record.authorized_for?(:crud_type => crud_type.to_sym)
       return record
