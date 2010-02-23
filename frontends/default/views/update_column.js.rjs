@@ -4,9 +4,5 @@ unless controller.send :successful?
   @record.reload
 end
 column = active_scaffold_config.columns[params[:column]]
-if column.inplace_edit
-  page.replace_html(column_span_id,format_inplace_edit_column(@record, column))
-else
-  formatted_value = get_column_value(@record, column)
-  page.replace_html(column_span_id,  formatted_value)
-end
+formatted_value = get_column_value(@record, column)
+page.replace_html(column_span_id,  formatted_value)
