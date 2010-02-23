@@ -11,7 +11,7 @@ href = url_for(params_for(:action => :update_table, :escape => false).delete_if{
                     :complete => "$('#{loading_indicator_id(:action => :search, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{search_form_id}');",
                     :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
                     :update => active_scaffold_content_id,
-                    :html => { :href => href, :id => search_form_id, :class => 'search', :method => :get } %>
+                    :html => { :action => href, :id => search_form_id, :class => 'search', :method => :get } %>
 
   <ol class="form">
     <% active_scaffold_config.field_search.columns.each do |column| -%>

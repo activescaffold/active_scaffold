@@ -109,15 +109,12 @@ module ActiveScaffold
       end
 
       def active_scaffold_column_checkbox(column, record)
-        column_value = record.send(column.name)
-        checked = column_value.class.to_s.include?('Class') ? column_value : column_value == 1
         if column.inplace_edit and record.authorized_for?(:action => :update, :column => column.name)
           id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
           tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field"}
-          script = remote_function(:method => 'POST', :url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s, :value => !column_value, :eid => params[:eid]})
-          content_tag(:span, check_box_tag(nil, 1, checked, :onclick => script, :id => nil), tag_options)
+          content_tag(:span, format_column_checkbox(record, column), tag_options)
         else
-          check_box_tag(nil, 1, checked, :disabled => true, :id => nil)
+          check_box(:record, column.name, :disabled => true, :id => nil, :object => record)
         end
       end
 
@@ -141,6 +138,12 @@ module ActiveScaffold
       ##
       ## Formatting
       ##
+
+      def format_column_checkbox(record, column)
+        checked = ActionView::Helpers::InstanceTag.check_box_checked?(record.send(column.name), '1')
+        script = remote_function(:method => 'POST', :url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s, :value => !checked, :eid => params[:eid]})
+        check_box(:record, column.name, :onclick => script, :id => nil, :object => record)
+      end
 
       def format_column_value(record, column)
         value = record.send(column.name)
@@ -232,6 +235,14 @@ module ActiveScaffold
       
       def inplace_edit_cloning?(column)
          column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
+      end
+      
+      def format_inplace_edit_column(record,column)
+        if column.list_ui == :checkbox
+          format_column_checkbox(record, column)
+        else
+          format_column_value(record, column)
+        end
       end
       
       def active_scaffold_inplace_edit(record, column)
