@@ -184,8 +184,8 @@ module ActiveScaffold
     def find_page(options = {})
       options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination
 
-      full_includes = (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
       search_conditions = all_conditions
+      full_includes = (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
       options[:per_page] ||= 999999999
       options[:page] ||= 1
       options[:count_includes] ||= full_includes unless search_conditions.nil?
