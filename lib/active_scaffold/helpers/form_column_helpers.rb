@@ -93,12 +93,9 @@ module ActiveScaffold
         html_options[:name] += '[id]'
         options = {:selected => selected, :include_blank => as_(:_select_)}
 
-        # For backwards compatibility, to add method options is needed to set a html_options hash
-        # in other case all column.options will be added as html options
-        if column.options[:html_options]
-          html_options.update(column.options[:html_options] || {})
-          options.update(column.options)
-        else
+        html_options.update(column.options[:html_options] || {})
+        options.update(column.options)
+        unless column.options[:html_options] || column.options.empty?
           Rails.logger.warn "ActiveScaffold: Setting html options directly in a hash is deprecated for :select form_ui. Set the html options hash under html_options key, such as config.columns[:column_name].options = {:html_options => {...}, ...}"
           html_options.update(column.options)
         end
