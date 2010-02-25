@@ -2,7 +2,7 @@
 # We have to remove search form params before the url_for method call, otherwise it throughs it on
 search_params = params[:search]
 params.merge!(:search => nil)
-href = url_for(params_for(:action => :update_table, :escape => false).delete_if{|k,v| k == 'search'})
+href = url_for(params_for(:action => :index, :escape => false).delete_if{|k,v| k == 'search'})
 -%>
 <%= form_remote_tag :url => href,
                     :method => :get,
@@ -10,7 +10,6 @@ href = url_for(params_for(:action => :update_table, :escape => false).delete_if{
                     :after => "$('#{loading_indicator_id(:action => :search, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{search_form_id}');",
                     :complete => "$('#{loading_indicator_id(:action => :search, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{search_form_id}');",
                     :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-                    :update => active_scaffold_content_id,
                     :html => { :action => href, :id => search_form_id, :class => 'search', :method => :get } %>
 
   <ol class="form">
