@@ -26,6 +26,7 @@ module ActionView #:nodoc:
       if args.first == :super
         options = args[1] || {}
         options[:locals] ||= {}
+        options[:locals].reverse_merge! @local_assigns
 
         known_extensions = [:erb, :rhtml, :rjs, :haml]
         # search through call stack for a template file (normally matches on first caller)
@@ -85,4 +86,15 @@ module ActionView #:nodoc:
       end
     end
   end
+end
+
+module ActionView::Renderable
+  def render_with_active_scaffold(view, local_assigns = {})
+    old_local_assigns = view.instance_variable_get(:@local_assigns)
+    view.instance_variable_set(:@local_assigns, local_assigns)
+    output = render_without_active_scaffold(view, local_assigns)
+    view.instance_variable_set(:@local_assigns, old_local_assigns)
+    output
+  end
+  alias_method_chain :render, :active_scaffold
 end
