@@ -8,7 +8,7 @@ default_sorting_stages = ['ASC', 'DESC']
   <%
   stages = default_sorting.sorts_on?(column) ? default_sorting_stages : sorting_stages
   column_sort_direction = stages.after(sorting.direction_of(column)) || 'ASC'
-  sort_params = params_for(:action => :update_table, :page => 1,
+  sort_params = params_for(:action => :index, :page => 1,
                            :sort => column.name, :sort_direction => column_sort_direction)
   column_header_id = active_scaffold_column_header_id(column)
   -%>
@@ -20,7 +20,6 @@ default_sorting_stages = ['ASC', 'DESC']
         :before => "addActiveScaffoldPageToHistory('#{href}', '#{controller_id}')",
         :loading => "Element.addClassName('#{column_header_id}','loading');",
         :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-        :update => active_scaffold_content_id,
         :method => :get },
       { :href => href } %>
    <% else -%>
