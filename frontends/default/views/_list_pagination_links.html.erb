@@ -1,5 +1,5 @@
 <% unless current_page.nil? -%>
-  <% pagination_params = params_for(:action => 'update_table') -%>
+  <% pagination_params = params_for(:action => :index) -%>
   <% indicator_params = pagination_params.merge(:action => 'pagination') -%>
   <% previous_url = url_for(pagination_params.merge(:page => current_page.number - 1)) -%>
   <% next_url = url_for(pagination_params.merge(:page => current_page.number + 1)) -%>
@@ -12,7 +12,6 @@
           :before => "addActiveScaffoldPageToHistory('#{previous_url}', '#{controller_id}');",
           :complete => "$('#{loading_indicator_id(:action => :pagination)}').style.visibility = 'hidden';",
           :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-          :update => active_scaffold_content_id,
           :method => :get },
         { :href => previous_url,
           :class => "previous"}) if current_page.prev? %>
@@ -23,7 +22,6 @@
           :before => "addActiveScaffoldPageToHistory('#{next_url}', '#{controller_id}');",
           :complete => "$('#{loading_indicator_id(:action => :pagination)}').style.visibility = 'hidden';",
           :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-          :update => active_scaffold_content_id,
           :method => :get },
         { :href => next_url,
           :class => "next"}) if current_page.next? %>

@@ -8,7 +8,6 @@ module ActiveScaffold
                     :before => "addActiveScaffoldPageToHistory('#{url}', '#{controller_id}');",
                     :after => "$('#{loading_indicator_id(:action => :pagination)}').style.visibility = 'visible';",
                     :complete => "$('#{loading_indicator_id(:action => :pagination)}').style.visibility = 'hidden';",
-                    :update => active_scaffold_content_id,
                     :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
                     :method => :get },
                   { :href => url_for(params.merge(:page => page_number)) })

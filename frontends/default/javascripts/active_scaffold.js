@@ -48,9 +48,8 @@ var ActiveScaffold = {
     }
   },
   reload_if_empty: function(tbody, url) {
-    var content_container_id = tbody.replace('tbody', 'content');
     if (this.records_for(tbody).length == 0) {
-      new Ajax.Updater($(content_container_id), url, {
+      new Ajax.Request(url, {
         method: 'get',
         asynchronous: true,
         evalScripts: true
