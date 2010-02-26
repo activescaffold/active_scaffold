@@ -1,4 +1,3 @@
-require 'active_scaffold/config/base'
 module ActiveScaffold::Config
   class Core < Base
     # global level configuration
