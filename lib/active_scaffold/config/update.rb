@@ -1,5 +1,5 @@
 module ActiveScaffold::Config
-  class Update < Form
+  class Update < ActiveScaffold::Config::Form
     self.crud_type = :update
     def initialize(*args)
       super

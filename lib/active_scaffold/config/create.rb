@@ -1,5 +1,5 @@
 module ActiveScaffold::Config
-  class Create < Form
+  class Create < ActiveScaffold::Config::Form
     self.crud_type = :create
     def initialize(*args)
       super
