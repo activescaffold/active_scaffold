@@ -10,7 +10,7 @@ module ActiveScaffold::Actions
 
     def table
       do_list
-      render(:action => 'list', :layout => false)
+      render(:action => 'list.html', :layout => false)
     end
 
     # get just a single row
