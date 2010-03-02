@@ -269,7 +269,8 @@ module ActiveScaffold
           )
         elsif column.inplace_edit == :ajax
           url = url_for(:action => 'render_field', :id => record.id, :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
-          in_place_editor_options[:form_customization] = "element.setFieldFromAjax('#{escape_javascript(url)}');"
+          plural = column.plural_association? && !override_form_field?(column) && column.form_ui == :select
+          in_place_editor_options[:form_customization] = "element.setFieldFromAjax('#{escape_javascript(url)}', {plural: #{plural}});"
         elsif column.column.try(:type) == :text
           in_place_editor_options[:rows] = column.options[:rows] || 5
         end
