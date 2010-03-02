@@ -434,18 +434,28 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
 
 ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
   setFieldFromAjax: function(url, options) {
-    $(this._controls.editor).remove();
+    var ipe = this;
+    $(ipe._controls.editor).remove();
     new Ajax.Request(url, {
       method: 'get',
       onComplete: function(response) {
-        this._form.insert({top: response.responseText});
-        var fld = this._form.findFirstElement();
-        fld.name = this.options.paramName;
-        fld.className = 'editor_field';
-        if (this.options.submitOnBlur)
-          fld.onblur = this._boundSubmitHandler;
-        this._controls.editor = fld;
-      }.bind(this)
+        ipe._form.insert({top: response.responseText});
+        if (options.plural) {
+          ipe._form.getElements().each(function(el) {
+            if (el.type != "submit" && el.type != "image") {
+              el.name = ipe.options.paramName + '[]';
+              el.className = 'editor_field';
+            }
+          });
+        } else {
+          var fld = ipe._form.findFirstElement();
+          fld.name = ipe.options.paramName;
+          fld.className = 'editor_field';
+          if (ipe.options.submitOnBlur)
+            fld.onblur = ipe._boundSubmitHandler;
+          ipe._controls.editor = fld;
+        }
+      }
     });
   },
 
