@@ -335,7 +335,10 @@ ActiveScaffold.Actions.Record = Class.create(ActiveScaffold.Actions.Abstract, {
 ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstract, {
   close_previous_adapter: function() {
     this.set.links.each(function(item) {
-      if (item.url != this.url && item.is_disabled() && item.adapter) item.close();
+      if (item.url != this.url && item.is_disabled() && item.adapter) {
+        item.enable();
+        item.adapter.remove();
+      }
     }.bind(this));
   },
 
