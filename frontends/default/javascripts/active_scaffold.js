@@ -429,7 +429,7 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
     this.register_cancel_hooks();
 
     new Effect.Highlight(this.adapter.down('td').down());
-  },
+  }
 });
 
 ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
