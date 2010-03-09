@@ -62,7 +62,7 @@ module ActiveScaffold
       end
 
       def javascript_for_update_column(column, scope, options)
-        if column.options.is_a?(Hash) && column.options[:update_column]
+        if column.options[:update_column]
           form_action = :create
           form_action = :update if params[:action] == 'edit'
           url_params = {:action => 'render_field', :id => params[:id], :column => column.name, :update_column => column.options[:update_column]}
@@ -95,10 +95,6 @@ module ActiveScaffold
 
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
-        unless column.options[:html_options] || column.options.empty?
-          Rails.logger.warn "ActiveScaffold: Setting html options directly in a hash is deprecated for :select form_ui. Set the html options hash under html_options key, such as config.columns[:column_name].options = {:html_options => {...}, ...}"
-          html_options.update(column.options)
-        end
         select(:record, method, select_options.uniq, options, html_options)
       end
 
@@ -134,14 +130,9 @@ module ActiveScaffold
           active_scaffold_input_plural_association(column, html_options)
         else
           options = { :selected => @record.send(column.name) }
-          if column.options.is_a? Hash
-            options_for_select = column.options[:options]
-            html_options.update(column.options[:html_options] || {})
-            options.update(column.options)
-          else
-            Rails.logger.warn "ActiveScaffold: Setting the options array directly is deprecated for :select form_ui. Set the options array in a hash under options key, such as config.columns[:column_name].options = {:options => [...], ...}"
-            options_for_select = column.options
-          end
+          options_for_select = column.options[:options]
+          html_options.update(column.options[:html_options] || {})
+          options.update(column.options)
           select(:record, column.name, options_for_select, options, html_options)
         end
       end

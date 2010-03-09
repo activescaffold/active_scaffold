@@ -134,17 +134,6 @@ module ActiveScaffold::DataStructures
 
     # what type of link this is. currently supported values are :collection and :member.
     attr_accessor :type
-    # deprecated
-    def type=(value)
-      old_value = value
-      value = case value
-        when :table then :collection
-        when :record then :member
-        else value
-      end
-      ::ActiveSupport::Deprecation.warn(":#{old_value} is deprecated, use :#{value} instead", caller) if old_value != value
-      @type = value
-    end
 
     # html options for the link
     attr_accessor :html_options

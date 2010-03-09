@@ -18,14 +18,6 @@ module ActiveScaffold::Config
     cattr_reader :link
     @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => :search, :type => :collection, :security_method => :search_authorized?)
 
-    def self.full_text_search=(value)
-      ::ActiveSupport::Deprecation.warn("full_text_search is deprecated, use text_search = :full instead", caller)
-      @@text_search = :full
-    end
-    def self.full_text_search?
-      ::ActiveSupport::Deprecation.warn("full_text_search? is deprecated, use text_search == :full instead", caller)
-      @@text_search == :full
-    end
     cattr_accessor :text_search
     @@text_search = :full
 
@@ -45,14 +37,6 @@ module ActiveScaffold::Config
     public :columns=
 
     attr_accessor :text_search
-    def full_text_search=(value)
-      ::ActiveSupport::Deprecation.warn("full_text_search is deprecated, use text_search = :full instead", caller)
-      @text_search = :full
-    end
-    def full_text_search?
-      ::ActiveSupport::Deprecation.warn("full_text_search? is deprecated, use text_search == :full instead", caller)
-      @text_search == :full
-    end
 
     # the ActionLink for this action
     attr_accessor :link
