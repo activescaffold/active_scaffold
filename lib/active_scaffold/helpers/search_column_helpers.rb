@@ -56,7 +56,9 @@ module ActiveScaffold
       ##
 
       def active_scaffold_search_multi_select(column, options)
-        associated_options = @record.send(column.association.name).collect {|r| [r.to_label, r.id]}
+        associated_options = @record.send(column.association.name)
+        associated_options = [associated_options].compact unless associated_options.is_a? Array
+        associated_options.collect! {|r| [r.to_label, r.id]}
         select_options = associated_options | options_for_association(column.association, true)
         return as_(:no_options) if select_options.empty?
 
