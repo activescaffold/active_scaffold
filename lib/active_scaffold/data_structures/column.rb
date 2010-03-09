@@ -96,13 +96,6 @@ module ActiveScaffold::DataStructures
       @search_ui || @form_ui
     end
 
-    # DEPRECATED
-    alias :ui_type :form_ui
-    def ui_type=(val)
-      ::ActiveSupport::Deprecation.warn("config.columns[:#{name}].ui_type will disappear in version 2.0. Please use config.columns[:#{name}].form_ui instead.", caller)
-      self.form_ui = val
-    end
-
     # a place to store dev's column specific options
     attr_accessor :options
     def options

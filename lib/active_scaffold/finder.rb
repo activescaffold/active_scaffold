@@ -120,17 +120,7 @@ module ActiveScaffold
 
     attr_writer :active_scaffold_includes
     def active_scaffold_includes
-      if respond_to? :active_scaffold_joins
-        ::ActiveSupport::Deprecation.warn("You have defined active_scaffold_joins, but it's deprecated because it's confusing, you should use active_scaffold_includes now", caller)
-        return active_scaffold_joins 
-      end
       @active_scaffold_includes ||= []
-    end
-
-    # Deprecated method
-    def active_scaffold_joins=(value)
-      ::ActiveSupport::Deprecation.warn("active_scaffold_joins is deprecated because it's confusing, you should use active_scaffold_includes now", caller)
-      self.active_scaffold_includes = value
     end
 
     attr_writer :active_scaffold_habtm_joins
@@ -146,24 +136,6 @@ module ActiveScaffold
         conditions_from_constraints,                  # from any constraints (embedded scaffolds)
         active_scaffold_session_storage[:conditions] # embedding conditions (weaker constraints)
       )
-    end
-    
-    # Deprecated
-    def model_with_named_scope(model = active_scaffold_config.model, scope_definitions = named_scopes_for_collection)
-      case scope_definitions
-      when String
-        model.instance_eval(scope_definitions)
-      when Symbol
-        model.send(scope_definitions)
-      when Array
-        if scope_definitions.any?{|element| element.is_a?(Array)}
-          scope_definitions.inject(model) {|records, scope_definition| records = model_with_named_scope(records, scope_definition)}
-        else
-          model.send(*scope_definitions)
-        end
-      else
-        model
-      end
     end
     
     # returns a single record (the given id) but only if it's allowed for the specified action.

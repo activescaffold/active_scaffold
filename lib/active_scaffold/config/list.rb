@@ -39,10 +39,6 @@ module ActiveScaffold::Config
     # * false: Disable pagination
     cattr_accessor :pagination
     @@pagination = true
-    def self.infinite_pagination=(value)
-      ::ActiveSupport::Deprecation.warn("infinite_pagination is deprecated, use pagination = :infinite instead", caller)
-      self.pagination = :infinite
-    end
 
     # instance-level configuration
     # ----------------------------
@@ -66,10 +62,6 @@ module ActiveScaffold::Config
     # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for large tables where counting is slow and we don't really care anyway)
     # * false: Disable pagination
     attr_accessor :pagination
-    def infinite_pagination=(value)
-      ::ActiveSupport::Deprecation.warn("infinite_pagination is deprecated, use pagination = :infinite instead", caller)
-      self.pagination = :infinite
-    end
 
     # what string to use when a field is empty
     attr_accessor :empty_field_text

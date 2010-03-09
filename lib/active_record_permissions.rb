@@ -79,30 +79,12 @@ module ActiveRecordPermissions
       # (for example, disable update and enable inplace_edit in a column)
       method = column_and_action_security_method(options[:column], options[:action])
       return send(method) if method and respond_to?(method)
-      # code for deprecation
-      if options[:action] == :delete
-        good_method = method
-        method = column_and_action_security_method(options[:column], :destroy)
-        if method and respond_to?(method)
-          ::ActiveSupport::Deprecation.warn("destroy crud type is deprecated, rename #{method} to #{good_method}", caller)
-          return send(method)
-        end
-      end
 
       # collect the possibly-related methods that actually exist
       methods = [
         column_security_method(options[:column]),
         action_security_method(options[:action]),
       ].compact.select {|m| respond_to?(m)}
-
-      # code for deprecation
-      if options[:action] == :delete
-        method = action_security_method(:destroy)
-        if respond_to?(method)
-          ::ActiveSupport::Deprecation.warn("destroy crud type is deprecated, rename #{method} to #{action_security_method(options[:action])}", caller)
-          methods << method
-        end
-      end
 
       # if any method returns false, then return false
       return false if methods.any? {|m| !send(m)}
