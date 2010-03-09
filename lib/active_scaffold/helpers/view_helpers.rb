@@ -54,12 +54,8 @@ module ActiveScaffold
         # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
         return false if column.polymorphic_association?
 
-        # We don't have the UI to currently handle habtm in subforms
-        return false if column.association.macro == :has_and_belongs_to_many
-
         # A column shouldn't be in the subform if it's the reverse association to the parent
         return false if column.association.reverse_for?(parent_record.class)
-        #return false if column.association.klass == parent_record.class
 
         return true
       end
