@@ -93,7 +93,7 @@ module ActiveScaffold::DataStructures
 
     attr_writer :search_ui
     def search_ui
-      @search_ui || @form_ui
+      @search_ui || @form_ui || (@association && !polymorphic_association? ? :select : nil)
     end
 
     # a place to store dev's column specific options
@@ -243,7 +243,6 @@ module ActiveScaffold::DataStructures
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
-      @search_ui = :select if @association and not polymorphic_association?
       @options = {:format => :i18n_number} if @column.try(:number?)
 
       # default all the configurable variables
