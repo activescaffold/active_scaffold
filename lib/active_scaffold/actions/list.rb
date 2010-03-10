@@ -68,7 +68,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def list_authorized?
-      authorized_for?(:action => :read)
+      authorized_for?(:crud_type => :read)
     end
     private
     def list_authorized_filter

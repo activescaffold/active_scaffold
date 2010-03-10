@@ -59,10 +59,10 @@ module ActiveScaffold
             else
               associated
             end
-            authorized = associated_for_authorized.authorized_for?(:action => link.crud_type)
-            authorized = authorized and record.authorized_for?(:action => :update, :column => column.name) if link.crud_type == :create
+            authorized = associated_for_authorized.authorized_for?(:crud_type => link.crud_type)
+            authorized = authorized and record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
           else
-            authorized = record.authorized_for?(:action => link.crud_type)
+            authorized = record.authorized_for?(:crud_type => link.crud_type)
           end
           return "<a class='disabled'>#{text}</a>" unless authorized
 
@@ -109,7 +109,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_column_checkbox(column, record)
-        if column.inplace_edit and record.authorized_for?(:action => :update, :column => column.name)
+        if inplace_edit?(record, column)
           id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
           tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field"}
           content_tag(:span, format_column_checkbox(record, column), tag_options)
@@ -230,7 +230,7 @@ module ActiveScaffold
       # ==========
       
       def inplace_edit?(record, column)
-        column.inplace_edit and record.authorized_for?(:action => :update, :column => column.name)
+        column.inplace_edit and record.authorized_for?(:crud_type => :update, :column => column.name)
       end
       
       def inplace_edit_cloning?(column)

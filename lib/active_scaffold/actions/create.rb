@@ -139,7 +139,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def create_authorized?
-      authorized_for?(:action => :create)
+      authorized_for?(:crud_type => :create)
     end
     private
     def create_authorized_filter
