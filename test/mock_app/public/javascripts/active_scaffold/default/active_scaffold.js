@@ -48,9 +48,8 @@ var ActiveScaffold = {
     }
   },
   reload_if_empty: function(tbody, url) {
-    var content_container_id = tbody.replace('tbody', 'content');
     if (this.records_for(tbody).length == 0) {
-      new Ajax.Updater($(content_container_id), url, {
+      new Ajax.Request(url, {
         method: 'get',
         asynchronous: true,
         evalScripts: true
@@ -336,7 +335,10 @@ ActiveScaffold.Actions.Record = Class.create(ActiveScaffold.Actions.Abstract, {
 ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstract, {
   close_previous_adapter: function() {
     this.set.links.each(function(item) {
-      if (item.url != this.url && item.is_disabled() && item.adapter) item.close();
+      if (item.url != this.url && item.is_disabled() && item.adapter) {
+        item.enable();
+        item.adapter.remove();
+      }
     }.bind(this));
   },
 
@@ -427,23 +429,33 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
     this.register_cancel_hooks();
 
     new Effect.Highlight(this.adapter.down('td').down());
-  },
+  }
 });
 
 ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
   setFieldFromAjax: function(url, options) {
-    $(this._controls.editor).remove();
+    var ipe = this;
+    $(ipe._controls.editor).remove();
     new Ajax.Request(url, {
       method: 'get',
       onComplete: function(response) {
-        this._form.insert({top: response.responseText});
-        var fld = this._form.findFirstElement();
-        fld.name = this.options.paramName;
-        fld.className = 'editor_field';
-        if (this.options.submitOnBlur)
-          fld.onblur = this._boundSubmitHandler;
-        this._controls.editor = fld;
-      }.bind(this)
+        ipe._form.insert({top: response.responseText});
+        if (options.plural) {
+          ipe._form.getElements().each(function(el) {
+            if (el.type != "submit" && el.type != "image") {
+              el.name = ipe.options.paramName + '[]';
+              el.className = 'editor_field';
+            }
+          });
+        } else {
+          var fld = ipe._form.findFirstElement();
+          fld.name = ipe.options.paramName;
+          fld.className = 'editor_field';
+          if (ipe.options.submitOnBlur)
+            fld.onblur = ipe._boundSubmitHandler;
+          ipe._controls.editor = fld;
+        }
+      }
     });
   },
 
