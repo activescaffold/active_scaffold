@@ -96,7 +96,7 @@ module ActiveScaffold::Actions
 
     def do_update_column
       @record = active_scaffold_config.model.find(params[:id])
-      if @record.authorized_for?(:action => :update, :column => params[:column])
+      if @record.authorized_for?(:crud_type => :update, :column => params[:column])
         column = active_scaffold_config.columns[params[:column].to_sym]
         params[:value] ||= @record.column_for_attribute(params[:column]).default unless @record.column_for_attribute(params[:column]).nil? || @record.column_for_attribute(params[:column]).null
         params[:value] = column_value_from_param_value(@record, column, params[:value]) unless column.nil?
@@ -116,7 +116,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def update_authorized?
-      authorized_for?(:action => :update)
+      authorized_for?(:crud_type => :update)
     end
     private
     def update_authorized_filter

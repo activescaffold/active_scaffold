@@ -69,7 +69,7 @@ module ActiveScaffold::DataStructures
             # skip if this matches the field_name of a constrained column
             next if item.field_name and constraint_columns.include?(item.field_name.to_sym)
             # skip this field if it's not authorized
-            next unless options[:for].authorized_for?(:action => options[:action] || self.action.crud_type, :column => item.name)
+            next unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || self.action.crud_type, :column => item.name)
           end
           if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.has_key?(:flatten) and options[:flatten]
             item.each(options, &proc)

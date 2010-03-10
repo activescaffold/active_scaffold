@@ -29,8 +29,8 @@ module ActiveScaffold::Actions
     # override this method if you want to do something after render_field
     def after_render_field(record, column); end
 
-    def authorized_for?(*args)
-      active_scaffold_config.model.authorized_for?(*args)
+    def authorized_for?(options = {})
+      active_scaffold_config.model.authorized_for?(options)
     end
 
     def clear_flashes

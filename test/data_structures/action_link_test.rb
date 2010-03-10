@@ -21,10 +21,7 @@ class ActionLinkTest < Test::Unit::TestCase
     @link.confirm = true
     assert @link.confirm
 
-    @link.label = 'Hello World'
-    assert_equal 'hello_world_authorized?', @link.security_method
-    @link.label = 'HelloWorld'
-    assert_equal 'hello_world_authorized?', @link.security_method
+    assert_equal 'bar_authorized?', @link.security_method
 
     assert_equal false, @link.security_method_set?
     @link.security_method = 'blueberry_pie'
