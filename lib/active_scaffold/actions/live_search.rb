@@ -1,8 +1,11 @@
 module ActiveScaffold::Actions
   module LiveSearch
+    include ActiveScaffold::Actions::CommonSearch
     def self.included(base)
       base.before_filter :search_authorized_filter, :only => :show_search
-      base.before_filter :do_search
+      base.before_filter :store_search_params_into_session, :only => [:list, :index]
+      base.before_filter :do_search, :only => [:show_search, :list, :index]
+      base.helper_method :search_params
     end
 
     def show_search
@@ -24,12 +27,12 @@ module ActiveScaffold::Actions
     end
 
     def do_search
-      @query = params[:search].to_s.strip rescue ''
+      query = search_params.to_s.strip rescue ''
 
-      unless @query.empty?
+      unless query.empty?
         columns = active_scaffold_config.live_search.columns
         text_search = active_scaffold_config.live_search.text_search
-        search_conditions = self.class.create_conditions_for_columns(@query.split(' '), columns, text_search)
+        search_conditions = self.class.create_conditions_for_columns(query.split(' '), columns, text_search)
         self.active_scaffold_conditions = merge_conditions(self.active_scaffold_conditions, search_conditions)
         @filtered = !search_conditions.blank?
 
@@ -40,11 +43,6 @@ module ActiveScaffold::Actions
       end
     end
 
-    # The default security delegates to ActiveRecordPermissions.
-    # You may override the method to customize.
-    def search_authorized?
-      authorized_for?(:crud_type => :read)
-    end
     private
     def search_authorized_filter
       link = active_scaffold_config.live_search.link || active_scaffold_config.live_search.class.link
