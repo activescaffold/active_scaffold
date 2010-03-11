@@ -16,6 +16,10 @@ module ActiveScaffold::DataStructures
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
+
+    # Whether to enable add_existing for this column
+    attr_accessor :allow_add_existing
+    @allow_add_existing = true
     
     # Any extra parameters this particular column uses.  This is for create/update purposes.
     def params
