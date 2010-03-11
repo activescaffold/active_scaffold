@@ -9,7 +9,7 @@ es:
     close: 'Cerrar'
     create: 'Crear'
     create_model: 'Crear {{model}}'
-    create_another: 'Crear Otro'
+    create_another: 'Crear Otro {{model}}'
     created_model: '{{model}} creado'
     create_new: 'Crear Nuevo'
     customize: 'Personalizar'
