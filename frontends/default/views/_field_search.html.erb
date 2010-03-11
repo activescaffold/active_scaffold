@@ -32,7 +32,7 @@ href = url_for(params_for(:action => :index, :escape => false).delete_if{|k,v| k
   </ol>
   <p class="form-footer">
     <%= submit_tag as_(:search), :class => "submit" %>
-    <a href="javascript:void(0)" class="cancel" onclick="f = this.up('form'); f.reset(); f.onsubmit();"><%= as_(:reset) -%></a>
+    <a href="javascript:void(0)" class="cancel" onclick="f = $(this).up('form'); f.reset(); f.onsubmit();"><%= as_(:reset) -%></a>
     <%= loading_indicator_tag(:action => :search) %>
   </p>
 </form>
