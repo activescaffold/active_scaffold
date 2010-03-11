@@ -1,4 +1,4 @@
-<table cellpadding="0" cellspacing="0">
+<td class="actions"><table cellpadding="0" cellspacing="0">
   <tr>
     <td class="indicator-container">
       <%= loading_indicator_tag(:action => :record, :id => record.id) %>
@@ -11,3 +11,19 @@
     <% end -%>
   </tr>
 </table>
+
+<% target_id = element_row_id(:action => :list, :id => record.id) -%>
+<script type="text/javascript">
+//<![CDATA[
+new ActiveScaffold.Actions.Record(
+  $$('#<%= target_id -%> a.action'),
+  $('<%= target_id -%>'),
+  $('<%= loading_indicator_id(:action => :record, :id => record.id) -%>'),
+  {refresh_url: '<%= url_for params_for(:action => :row, :id => record.id, :_method => :get, :escape => false) -%>'}
+);
+  <%= update_page do |page|
+        page.replace active_scaffold_calculations_id, :partial => 'list_calculations'
+      end if not dont_show_calculations and active_scaffold_config.list.columns.any? {|c| c.calculation?} %>
+//]]>
+</script>
+</td>
