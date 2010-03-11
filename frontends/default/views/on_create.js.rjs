@@ -20,7 +20,7 @@ if controller.send :successful?
   end
 else
   page << "l = $$(#{cancel_selector}).first().link;"
-  page.replace element_form_id(:action => :create), :partial => 'create_form'
+  page.replace element_form_id(:action => :create), :partial => 'create_form', :locals => {:xhr => true}
   page << "l.register_cancel_hooks();"
 end
 page.replace_html active_scaffold_messages_id, :partial => 'messages'

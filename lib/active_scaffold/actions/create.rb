@@ -39,11 +39,7 @@ module ActiveScaffold::Actions
     def create_respond_to_html
       if params[:iframe]=='true' # was this an iframe post ?
         responds_to_parent do
-          if successful?
-            render :action => 'on_create.js'
-          else
-            render :action => 'form_messages_on_save.js'
-          end
+          render :action => 'on_create.js'
         end
       else
         if successful?

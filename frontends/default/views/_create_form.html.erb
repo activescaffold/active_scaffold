@@ -1,6 +1,7 @@
 <% url_options = params_for(:action => :create) -%>
+<% xhr ||= request.xhr? -%>
 <%=
-if request.xhr?
+if xhr
   if active_scaffold_config.create.multipart? # file_uploads
     form_remote_upload_tag url_options.merge({:iframe => true}),
                            :onsubmit => onsubmit,
