@@ -299,6 +299,28 @@ module ActiveScaffold
           "[#{column.name}]"
         end
       end
+
+      def active_scaffold_add_existing_input(options)
+        if controller.respond_to?(:record_select_config)
+          remote_controller = active_scaffold_controller_for(record_select_config.model).controller_path
+          options.merge!(:controller => remote_controller)
+          options.merge!(active_scaffold_input_text_options)
+          record_select_field(options[:name], @record, options)
+        else
+          column = active_scaffold_config_for(params[:parent_model]).columns[params[:parent_column]]
+          select_options = options_for_select(options_for_association(column.association)) unless column.through_association?
+          select_options ||= options_for_select(active_scaffold_config.model.find(:all).collect {|c| [h(c.to_label), c.id]})
+          select_tag 'associated_id', '<option value="">' + as_(:_select_) + '</option>' + select_options unless select_options.empty?
+        end
+      end
+
+      def active_scaffold_add_existing_label
+        if controller.respond_to?(:record_select_config)
+          record_select_config.model.human_name
+        else
+          active_scaffold_config.model.human_name
+        end
+      end
     end
   end
 end
