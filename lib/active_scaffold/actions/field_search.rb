@@ -1,15 +1,16 @@
 module ActiveScaffold::Actions
   module FieldSearch
+    include ActiveScaffold::Actions::CommonSearch
     def self.included(base)
       base.before_filter :search_authorized_filter, :only => :show_search
-      base.before_filter :do_search
+      base.before_filter :store_search_params_into_session, :only => [:list, :index]
+      base.before_filter :do_search, :only => [:show_search, :list, :index]
     end
 
     # FieldSearch uses params[:search] and not @record because search conditions do not always pass the Model's validations.
     # This facilitates for example, textual searches against associations via .search_sql
     def show_search
-      params[:search] ||= {}
-      @record = active_scaffold_config.model.new
+      @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.field_search.columns, search_params)
       respond_to_action(:field_search)
     end
 
@@ -23,12 +24,13 @@ module ActiveScaffold::Actions
     end
 
     def do_search
-      unless params[:search].nil?
+      unless search_params.nil?
         text_search = active_scaffold_config.field_search.text_search
         search_conditions = []
         columns = active_scaffold_config.field_search.columns
-        columns.each do |column|
-          search_conditions << self.class.condition_for_column(column, params[:search][column.name], text_search)
+        search_params.each do |key, value|
+          next unless columns.include? key
+          search_conditions << self.class.condition_for_column(active_scaffold_config.columns[key], value, text_search)
         end
         search_conditions.compact!
         self.active_scaffold_conditions = merge_conditions(self.active_scaffold_conditions, *search_conditions)
@@ -41,11 +43,6 @@ module ActiveScaffold::Actions
       end
     end
 
-    # The default security delegates to ActiveRecordPermissions.
-    # You may override the method to customize.
-    def search_authorized?
-      authorized_for?(:crud_type => :read)
-    end
     private
     def search_authorized_filter
       link = active_scaffold_config.field_search.link || active_scaffold_config.field_search.class.link

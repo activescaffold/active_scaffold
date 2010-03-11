@@ -6,8 +6,9 @@
                     :complete => "$('#{loading_indicator_id(:action => :search, :id => params[:id])}').style.visibility = 'hidden';",
                     :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
                     :html => { :action => href, :id => search_form_id, :class => 'search', :method => :get } %>
-  <%= text_field_tag :search, params[:search], :class => 'text-input', :id => search_input_id, :size => 50, :autocompleted => :off %>
-  <a href="javascript:void(0)" class="cancel" onclick="f = $(this).up('form'); f.reset(); f.onsubmit();"><%= as_(:reset) -%></a>
+  <%= text_field_tag :search, search_params, :class => 'text-input', :id => search_input_id, :size => 50, :autocompleted => :off %>
+  <%= link_to_remote as_(:reset), {:url => href, :with => "'search='", :method => :get,
+        :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')"}, :class => 'cancel' %>
   <%= loading_indicator_tag(:action => :search) %>
 </form>
 
