@@ -10,7 +10,7 @@
       :close => 'Close',
       :create => 'Create',
       :create_model => 'Create {{model}}',
-      :create_another => 'Create Another',
+      :create_another => 'Create Another {{model}}',
       :created_model => 'Created {{model}}',
       :create_new => 'Create New',
       :customize => 'Customize',
