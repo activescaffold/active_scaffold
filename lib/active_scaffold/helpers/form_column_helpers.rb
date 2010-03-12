@@ -4,12 +4,12 @@ module ActiveScaffold
     module FormColumnHelpers
       # This method decides which input to use for the given column.
       # It does not do any rendering. It only decides which method is responsible for rendering.
-      def active_scaffold_input_for(column, scope = nil)
-        options = active_scaffold_input_options(column, scope)
+      def active_scaffold_input_for(column, scope = nil, options = {})
+        options = active_scaffold_input_options(column, scope, options)
         options = javascript_for_update_column(column, scope, options)
         # first, check if the dev has created an override for this specific field
         if override_form_field?(column)
-          send(override_form_field(column), @record, options[:name])
+          send(override_form_field(column), @record, options)
         # second, check if the dev has specified a valid form_ui for this column
         elsif column.form_ui and override_input?(column.form_ui)
           send(override_input(column.form_ui), column, options)
@@ -51,14 +51,14 @@ module ActiveScaffold
       end
 
       # the standard active scaffold options used for class, name and scope
-      def active_scaffold_input_options(column, scope = nil)
+      def active_scaffold_input_options(column, scope = nil, options = {})
         name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
 
         # Fix for keeping unique IDs in subform
         id_control = "record_#{column.name}_#{[params[:eid], params[:id]].compact.join '_'}"
         id_control += scope.gsub(/(\[|\])/, '_').gsub('__', '_').gsub(/_$/, '') if scope
 
-        { :name => name, :class => "#{column.name}-input", :id => id_control}
+        { :name => name, :class => "#{column.name}-input", :id => id_control}.merge(options)
       end
 
       def javascript_for_update_column(column, scope, options)
