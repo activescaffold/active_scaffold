@@ -5,39 +5,45 @@ module ActiveScaffold
       # This method decides which input to use for the given column.
       # It does not do any rendering. It only decides which method is responsible for rendering.
       def active_scaffold_input_for(column, scope = nil, options = {})
-        options = active_scaffold_input_options(column, scope, options)
-        options = javascript_for_update_column(column, scope, options)
-        # first, check if the dev has created an override for this specific field
-        if override_form_field?(column)
-          send(override_form_field(column), @record, options)
-        # second, check if the dev has specified a valid form_ui for this column
-        elsif column.form_ui and override_input?(column.form_ui)
-          send(override_input(column.form_ui), column, options)
-        # fallback: we get to make the decision
-        else
-          if column.association
-            # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
-            raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
-          elsif column.virtual?
-            active_scaffold_input_virtual(column, options)
+        begin
+          options = active_scaffold_input_options(column, scope, options)
+          options = javascript_for_update_column(column, scope, options)
+          # first, check if the dev has created an override for this specific field
+          if override_form_field?(column)
+            send(override_form_field(column), @record, options)
+          # second, check if the dev has specified a valid form_ui for this column
+          elsif column.form_ui and override_input?(column.form_ui)
+            send(override_input(column.form_ui), column, options)
+          # fallback: we get to make the decision
+          else
+            if column.association
+              # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
+              raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
+            elsif column.virtual?
+              active_scaffold_input_virtual(column, options)
 
-          else # regular model attribute column
-            # if we (or someone else) have created a custom render option for the column type, use that
-            if override_input?(column.column.type)
-              send(override_input(column.column.type), column, options)
-            # final ultimate fallback: use rails' generic input method
-            else
-              # for textual fields we pass different options
-              text_types = [:text, :string, :integer, :float, :decimal]
-              options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
-              if column.column.type == :string && options[:maxlength].blank?
-                options[:maxlength] = column.column.limit
-                options[:size] ||= ActionView::Helpers::InstanceTag::DEFAULT_FIELD_OPTIONS["size"]
+            else # regular model attribute column
+              # if we (or someone else) have created a custom render option for the column type, use that
+              if override_input?(column.column.type)
+                send(override_input(column.column.type), column, options)
+              # final ultimate fallback: use rails' generic input method
+              else
+                # for textual fields we pass different options
+                text_types = [:text, :string, :integer, :float, :decimal]
+                options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
+                if column.column.type == :string && options[:maxlength].blank?
+                  options[:maxlength] = column.column.limit
+                  options[:size] ||= ActionView::Helpers::InstanceTag::DEFAULT_FIELD_OPTIONS["size"]
+                end
+                options.update(:value => format_number_value(@record.send(column.name), column.options)) if column.column.number?
+                input(:record, column.name, options.merge(column.options))
               end
-              options.update(:value => format_number_value(@record.send(column.name), column.options)) if column.column.number?
-              input(:record, column.name, options.merge(column.options))
             end
           end
+        end
+        rescue Exception => e
+          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{@controller.class}"
+          raise e
         end
       end
 
