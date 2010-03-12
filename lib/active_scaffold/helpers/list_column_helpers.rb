@@ -4,26 +4,31 @@ module ActiveScaffold
     # Helpers that assist with the rendering of a List Column
     module ListColumnHelpers
       def get_column_value(record, column)
-        # check for an override helper
-        value = if column_override? column
-          # we only pass the record as the argument. we previously also passed the formatted_value,
-          # but mike perham pointed out that prohibited the usage of overrides to improve on the
-          # performance of our default formatting. see issue #138.
-          send(column_override(column), record)
-        # second, check if the dev has specified a valid list_ui for this column
-        elsif column.list_ui and override_column_ui?(column.list_ui)
-          send(override_column_ui(column.list_ui), column, record)
+        begin
+          # check for an override helper
+          value = if column_override? column
+            # we only pass the record as the argument. we previously also passed the formatted_value,
+            # but mike perham pointed out that prohibited the usage of overrides to improve on the
+            # performance of our default formatting. see issue #138.
+            send(column_override(column), record)
+          # second, check if the dev has specified a valid list_ui for this column
+          elsif column.list_ui and override_column_ui?(column.list_ui)
+            send(override_column_ui(column.list_ui), column, record)
 
-        elsif inplace_edit?(record, column)
-          active_scaffold_inplace_edit(record, column)
-        elsif column.column and override_column_ui?(column.column.type)
-          send(override_column_ui(column.column.type), column, record)
-        else
-          format_column_value(record, column)
+          elsif inplace_edit?(record, column)
+            active_scaffold_inplace_edit(record, column)
+          elsif column.column and override_column_ui?(column.column.type)
+            send(override_column_ui(column.column.type), column, record)
+          else
+            format_column_value(record, column)
+          end
+
+          value = '&nbsp;' if value.nil? or (value.respond_to?(:empty?) and value.empty?) # fix for IE 6
+          return value
+        rescue Exception => e
+          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{@controller.class}"
+          raise e
         end
-
-        value = '&nbsp;' if value.nil? or (value.respond_to?(:empty?) and value.empty?) # fix for IE 6
-        return value
       end
       
       # TODO: move empty_field_text and &nbsp; logic in here?
