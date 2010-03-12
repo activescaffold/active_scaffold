@@ -40,7 +40,6 @@ module ActiveScaffold
               end
             end
           end
-        end
         rescue Exception => e
           logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{@controller.class}"
           raise e

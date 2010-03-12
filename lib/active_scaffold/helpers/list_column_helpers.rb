@@ -250,8 +250,8 @@ module ActiveScaffold
         end
       end
       
-      def active_scaffold_inplace_edit(record, column)
-        formatted_column = format_column_value(record, column)
+      def active_scaffold_inplace_edit(record, column, options = {})
+        formatted_column = options[:formatted_column] || format_column_value(record, column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
         tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field"}
         in_place_editor_options = {
