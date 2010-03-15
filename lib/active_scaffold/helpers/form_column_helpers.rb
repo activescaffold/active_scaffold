@@ -95,7 +95,7 @@ module ActiveScaffold
 
         selected = associated.nil? ? nil : associated.id
         method = column.name
-        html_options[:name] += '[id]'
+        #html_options[:name] += '[id]'
         options = {:selected => selected, :include_blank => as_(:_select_)}
 
         html_options.update(column.options[:html_options] || {})
@@ -113,7 +113,7 @@ module ActiveScaffold
         associated_ids = associated_options.collect {|a| a[1]}
         select_options.each_with_index do |option, i|
           label, id = option
-          this_name = "#{options[:name]}[#{i}][id]"
+          this_name = "#{options[:name]}[]"
           this_id = "#{options[:id]}_#{i}_id"
           html << "<li>"
           html << check_box_tag(this_name, id, associated_ids.include?(id), :id => this_id)
