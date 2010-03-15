@@ -4,7 +4,7 @@ module ActiveScaffold::Actions
     def self.included(base)
       base.before_filter :search_authorized_filter, :only => :show_search
       base.before_filter :store_search_params_into_session, :only => [:list, :index]
-      base.before_filter :do_search, :only => [:show_search, :list, :index]
+      base.before_filter :do_search, :only => [:list, :index]
       base.helper_method :search_params
     end
 

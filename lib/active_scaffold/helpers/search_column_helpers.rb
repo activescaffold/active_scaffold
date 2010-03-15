@@ -48,7 +48,7 @@ module ActiveScaffold
 
       # the standard active scaffold options used for class, name and scope
       def active_scaffold_search_options(column)
-        { :name => "search[#{column.name}]", :class => "#{column.name}-input", :id => "search_#{column.name}"}
+        { :name => "search[#{column.name}]", :class => "#{column.name}-input", :id => "search_#{column.name}", :value => field_search_params[column.name] }
       end
 
       ##
@@ -56,21 +56,20 @@ module ActiveScaffold
       ##
 
       def active_scaffold_search_multi_select(column, options)
-        associated_options = @record.send(column.association.name)
-        associated_options = [associated_options].compact unless associated_options.is_a? Array
-        associated_options.collect! {|r| [r.to_label, r.id]}
-        select_options = associated_options | options_for_association(column.association, true)
+        associated = options.delete :value
+        associated = [associated].compact unless associated.is_a? Array
+        associated.collect!(&:to_i)
+        select_options = options_for_association(column.association, true)
         return as_(:no_options) if select_options.empty?
 
         html = "<ul class=\"checkbox-list\" id=\"#{options[:id]}\">"
 
-        associated_ids = associated_options.collect {|a| a[1]}
+        options[:name] += '[]'
         select_options.each_with_index do |option, i|
           label, id = option
-          this_name = "#{options[:name]}[#{i}][id]"
           this_id = "#{options[:id]}_#{i}_id"
           html << "<li>"
-          html << check_box_tag(this_name, id, associated_ids.include?(id), :id => this_id)
+          html << check_box_tag(options[:name], id, associated.include?(id), :id => this_id)
           html << "<label for='#{this_id}'>"
           html << label
           html << "</label>"
@@ -83,7 +82,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_search_select(column, html_options)
-        associated = field_search_params[column.name]
+        associated = html_options.delete :value
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
           method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
