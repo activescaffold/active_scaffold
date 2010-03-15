@@ -17,6 +17,7 @@ module ActiveScaffold::Config
       # inherit from global scope
       @empty_field_text = self.class.empty_field_text
       @pagination = self.class.pagination
+      @show_search_reset = true
     end
 
     # global level configuration
@@ -65,6 +66,9 @@ module ActiveScaffold::Config
 
     # what string to use when a field is empty
     attr_accessor :empty_field_text
+
+    # show a link to reset the search next to filtered message
+    attr_accessor :show_search_reset
 
     # the default sorting. should be an array of hashes of {column_name => direction}, e.g. [{:a => 'desc'}, {:b => 'asc'}]. to just sort on one column, you can simply provide a hash, though, e.g. {:a => 'desc'}.
     def sorting=(val)
