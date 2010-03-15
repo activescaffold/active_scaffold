@@ -7,6 +7,7 @@
       :are_you_sure_to_delete => 'Are you sure you want to delete {{label}}?',
       :cancel => 'Cancel',
       :click_to_edit => 'Click to edit',
+      :click_to_reset => 'Click to reset',
       :close => 'Close',
       :create => 'Create',
       :create_model => 'Create {{model}}',

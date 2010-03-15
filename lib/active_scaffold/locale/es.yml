@@ -6,6 +6,7 @@ es:
     are_you_sure_to_delete: '¿Estás seguro de que quieres borrar {{label}}?'
     cancel: 'Cancelar'
     click_to_edit: 'Pulsa para editar'
+    click_to_reset: 'Pulsa para restaurar'
     close: 'Cerrar'
     create: 'Crear'
     create_model: 'Crear {{model}}'
