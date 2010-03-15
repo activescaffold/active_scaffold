@@ -9,11 +9,7 @@ module ActiveScaffold
 
         # first, check if the dev has created an override for this specific field for search
         if override_search_field?(column)
-          send(override_search_field(column), @record, options[:name])
-
-        # first, check if the dev has created an override for this specific field
-        elsif override_form_field?(column)
-          send(override_form_field(column), @record, options[:name])
+          send(override_search_field(column), @record, options)
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
         elsif column.search_ui and override_search?(column.search_ui)
@@ -22,6 +18,10 @@ module ActiveScaffold
         # third, check if the dev has specified a valid search_ui for this column, using generic ui for forms
         elsif column.search_ui and override_input?(column.search_ui)
           send(override_input(column.search_ui), column, options)
+
+        # fourth, check if the dev has created an override for this specific field
+        elsif override_form_field?(column)
+          send(override_form_field(column), @record, options)
 
         # fallback: we get to make the decision
         else
@@ -82,21 +82,25 @@ module ActiveScaffold
         html
       end
 
-      def active_scaffold_search_select(column, options)
+      def active_scaffold_search_select(column, html_options)
+        associated = field_search_params[column.name]
         if column.association
-          associated = @record.send(column.association.name)
-          associated = associated.first if associated.is_a?(Array) # for columns with plural association
-
-          select_options = options_for_association(column.association, true)
-          select_options.unshift([ associated.to_label, associated.id ]) unless associated.nil? or select_options.find {|label, id| id == associated.id}
-
-          selected = associated.nil? ? nil : associated.id
+          associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
           method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
-          options[:name] += '[id]'
-          select(:record, method, select_options.uniq, {:selected => selected, :include_blank => as_(:_select_)}, options)
+          select_options = options_for_association(column.association, true)
         else
-          select(:record, column.name, column.options, { :selected => @record.send(column.name) }, options)
+          method = column.name
+          select_options = column.options[:options]
         end
+
+        options = { :selected => associated }.merge! column.options
+        html_options.merge! column.options[:html_options] || {}
+        if html_options[:multiple]
+          html_options[:name] += '[]'
+        else
+          options[:include_blank] ||= as_(:_select_) 
+        end
+        select(:record, method, select_options, options, html_options)
       end
 
       def active_scaffold_search_text(column, options)

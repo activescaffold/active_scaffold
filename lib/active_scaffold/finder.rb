@@ -43,7 +43,7 @@ module ActiveScaffold
               when :boolean, :checkbox
               ["#{column.search_sql} = ?", column.column.type_cast(value)]
               when :select
-              ["#{column.search_sql} = ?", value[:id]] unless value[:id].blank?
+              ["#{column.search_sql} in (?)", value] unless value.blank?
               when :multi_select
               ["#{column.search_sql} in (?)", value.values.collect{|hash| hash[:id]}]
               else
