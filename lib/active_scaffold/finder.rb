@@ -42,10 +42,8 @@ module ActiveScaffold
             case search_ui
               when :boolean, :checkbox
               ["#{column.search_sql} = ?", column.column.type_cast(value)]
-              when :select
+              when :select, :multi_select
               ["#{column.search_sql} in (?)", value] unless value.blank?
-              when :multi_select
-              ["#{column.search_sql} in (?)", value.values.collect{|hash| hash[:id]}]
               else
                 if column.column.nil? || column.column.text?
                   ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]

@@ -4,14 +4,14 @@ module ActiveScaffold::Actions
     def self.included(base)
       base.before_filter :search_authorized_filter, :only => :show_search
       base.before_filter :store_search_params_into_session, :only => [:list, :index]
-      base.before_filter :do_search, :only => [:show_search, :list, :index]
+      base.before_filter :do_search, :only => [:list, :index]
       base.helper_method :field_search_params
     end
 
     # FieldSearch uses params[:search] and not @record because search conditions do not always pass the Model's validations.
     # This facilitates for example, textual searches against associations via .search_sql
     def show_search
-      @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.field_search.columns, field_search_params)
+      @record = active_scaffold_config.model.new
       respond_to_action(:field_search)
     end
 
