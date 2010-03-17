@@ -58,6 +58,9 @@
       :'<' => '<',
       :'!=' => '!=',
       :between => 'Between',
+      :contains => 'Contains',
+      :begins_with => 'Begins with',
+      :ends_with => 'Ends with',
 
       # error_messages
       :cant_destroy_record => "{{record}} can't be destroyed",

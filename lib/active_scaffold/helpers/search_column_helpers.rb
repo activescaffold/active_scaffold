@@ -119,20 +119,33 @@ module ActiveScaffold
       # we can't use checkbox ui because it's not possible to decide whether search for this field or not
       alias_method :active_scaffold_search_checkbox, :active_scaffold_search_boolean
 
-      def active_scaffold_search_integer(column, options)
+      def field_search_params_range_values(column)
+        search_ui = column.search_ui || column.column.type
+        values = field_search_params[column.name]
+        return nil if values.nil?
+        return values[:opt], values[:from], values[:to]
+      end
+
+      def active_scaffold_search_range(column, options)
+        opt_value, from_value, to_value = field_search_params_range_values(column)
+        select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
+        select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]} if column.column && column.column.text?
+
         html = []
         html << select_tag("#{options[:name]}[opt]",
-              options_for_select(ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}),
+              options_for_select(select_options, opt_value),
               :id => "#{options[:id]}_opt",
               :onchange => "Element[this.value == 'BETWEEN' ? 'show' : 'hide']('#{options[:id]}_between');")
-        html << text_field_tag("#{options[:name]}[from]", nil, active_scaffold_input_text_options(:id => options[:id], :size => 10))
-        html << content_tag(:span, ' - ' + text_field_tag("#{options[:name]}[to]", nil,
+        html << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => 10))
+        html << content_tag(:span, ' - ' + text_field_tag("#{options[:name]}[to]", to_value,
               active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => 10)),
               :id => "#{options[:id]}_between", :style => "display:none")
         html * ' '
       end
-      alias_method :active_scaffold_search_decimal, :active_scaffold_search_integer
-      alias_method :active_scaffold_search_float, :active_scaffold_search_integer
+      alias_method :active_scaffold_search_integer, :active_scaffold_search_range
+      alias_method :active_scaffold_search_decimal, :active_scaffold_search_range
+      alias_method :active_scaffold_search_float, :active_scaffold_search_range
+      alias_method :active_scaffold_search_string, :active_scaffold_search_range
 
       def active_scaffold_search_datetime(column, options)
         options = column.options.merge(options)
