@@ -268,7 +268,7 @@ module ActiveScaffold
             :form_customization => 'element.clonePatternField();'
           )
         elsif column.inplace_edit == :ajax
-          url = url_for(:action => 'render_field', :id => record.id, :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
+          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => record.id, :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
           plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
           in_place_editor_options[:form_customization] = "element.setFieldFromAjax('#{escape_javascript(url)}', {plural: #{!!plural}});"
         elsif column.column.try(:type) == :text
