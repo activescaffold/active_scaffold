@@ -150,10 +150,17 @@ module ActiveScaffold
         end
       end
 
-      # only works for singular associations
       # requires RecordSelect plugin to be installed and configured.
       # ... maybe this should be provided in a bridge?
       def active_scaffold_input_record_select(column, options)
+        if column.singular_association?
+          active_scaffold_record_select(column, options, @record.send(column.name), false)
+        elsif column.plural_association?
+          active_scaffold_record_select(column, options, @record.send(column.name), true)
+        end
+      end
+
+      def active_scaffold_record_select(column, options, value, multiple)
         unless column.association
           raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
         end
@@ -164,16 +171,16 @@ module ActiveScaffold
         if [:has_one, :has_many].include?(column.association.macro)
           params.merge!({column.association.primary_key_name => ''})
         end
-        
+ 
         record_select_options = {:controller => remote_controller, :id => options[:id]}
         record_select_options.merge!(active_scaffold_input_text_options)
         record_select_options.merge!(column.options)
 
-        if column.singular_association?
-          record_select_field(options[:name], (@record.send(column.name) || column.association.klass.new), record_select_options)
-        elsif column.plural_association?
-          record_multi_select_field(options[:name], @record.send(column.name), record_select_options)
-        end   
+        if multiple
+          record_multi_select_field(options[:name], value || [], record_select_options)
+        else
+          record_select_field(options[:name], value || column.association.klass.new, record_select_options)
+        end
       end
 
       def active_scaffold_input_checkbox(column, options)
