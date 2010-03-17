@@ -330,17 +330,13 @@ module ActiveScaffold
         priority = ["United States"]
         select_options = {:prompt => as_(:_select_)}
         select_options.merge!(options)
-        options.delete(:prompt)
-        country_select(:record, column.name, column.options[:priority] || priority, select_options, column.options.merge(options))
+        country_select(:record, column.name, column.options[:priority] || priority, select_options, column.options.merge(options).except!(:prompt, :priority))
       end
 
       def active_scaffold_input_usa_state(column, options)
         select_options = {:prompt => as_(:_select_)}
         select_options.merge!(options)
-        select_options.delete(:size)
-        options.delete(:prompt)
-        options.delete(:priority)
-        usa_state_select(:record, column.name, column.options[:priority], select_options, column.options.merge(options))
+        usa_state_select(:record, column.name, column.options[:priority], select_options, column.options.merge(options).except!(:prompt, :priority))
       end
     end
   end
