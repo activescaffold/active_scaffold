@@ -30,7 +30,6 @@ module ActiveScaffold
       # TODO: this should reside on the column, not the controller
       def condition_for_column(column, value, text_search = :full)
         like_pattern = like_pattern(text_search)
-        # we must check false or not blank because we want to search for false but false is blank
         return unless column and column.search_sql and not value.blank?
         search_ui = column.search_ui || column.column.type
         begin
@@ -43,7 +42,7 @@ module ActiveScaffold
               when :boolean, :checkbox
               ["#{column.search_sql} = ?", column.column.type_cast(value)]
               when :select, :multi_select
-              ["#{column.search_sql} in (?)", value] unless value.blank?
+              ["#{column.search_sql} in (?)", value]
               else
                 if column.column.nil? || column.column.text?
                   ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
@@ -59,21 +58,36 @@ module ActiveScaffold
       end
 
       def condition_for_integer_type(column, value, like_pattern = nil)
-        if value['from'].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value['opt'])
+        if value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           nil
-        elsif value['opt'] == 'BETWEEN'
-          ["#{column.search_sql} BETWEEN ? AND ?", value['from'].to_f, value['to'].to_f]
+        elsif value[:opt] == 'BETWEEN'
+          ["#{column.search_sql} BETWEEN ? AND ?", value[:from].to_f, value[:to].to_f]
         else
-          ["#{column.search_sql} #{value['opt']} ?", value['from'].to_f]
+          ["#{column.search_sql} #{value[:opt]} ?", value[:from].to_f]
         end
       end
       alias_method :condition_for_decimal_type, :condition_for_integer_type
       alias_method :condition_for_float_type, :condition_for_integer_type
 
+      def condition_for_range_type(column, value, like_pattern = nil)
+        if value[:from].blank?
+          nil
+        elsif ActiveScaffold::Finder::StringComparators.values.include?(value[:opt])
+          ["#{column.search_sql} LIKE ?", value[:opt].sub('?', value[:from])]
+        elsif value[:opt] == 'BETWEEN'
+          ["#{column.search_sql} BETWEEN ? AND ?", value[:from], value[:to]]
+        elsif ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
+          ["#{column.search_sql} #{value[:opt]} ?", value[:from]]
+        else
+          nil
+        end
+      end
+      alias_method :condition_for_string_type, :condition_for_range_type
+
       def condition_for_datetime_type(column, value, like_pattern = nil)
-        conversion = value['from']['hour'].blank? && value['to']['hour'].blank? ? 'to_date' : 'to_time'
-        from_value, to_value = ['from', 'to'].collect do |field|
-          Time.zone.local(*['year', 'month', 'day', 'hour', 'minutes', 'seconds'].collect {|part| value[field][part].to_i}) rescue nil
+        conversion = value[:from][:hour].blank? && value[:to][:hour].blank? ? :to_date : :to_time
+        from_value, to_value = [:from, :to].collect do |field|
+          Time.zone.local(*[:year, :month, :day, :hour, :minutes, :seconds].collect {|part| value[field][part].to_i}) rescue nil
         end
 
         if from_value.nil? and to_value.nil?
@@ -109,6 +123,11 @@ module ActiveScaffold
       '!=',
       'BETWEEN'
     ]
+    StringComparators = {
+      :contains    => '%?%',
+      :begins_with => '?%',
+      :ends_with   => '%?'
+    }
 
     def self.included(klass)
       klass.extend ClassMethods

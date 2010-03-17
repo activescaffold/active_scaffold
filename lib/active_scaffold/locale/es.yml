@@ -58,7 +58,10 @@ es:
     '>': '>'
     '<': '<'
     '!=': '!='
-    between: 'entre'
+    between: 'Entre'
+    contains: 'Contiene'
+    begins_with: 'Empieza con'
+    ends_with: 'Termina con'
 
     # error_messages
     cant_destroy_record: "No se pudo borrar {{record}}"
