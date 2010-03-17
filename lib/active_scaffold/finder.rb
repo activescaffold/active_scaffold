@@ -104,6 +104,14 @@ module ActiveScaffold
       alias_method :condition_for_time_type, :condition_for_datetime_type
       alias_method :condition_for_timestamp_type, :condition_for_datetime_type
 
+      def condition_for_record_select_type(column, value, like_pattern = nil)
+        if value.is_a?(Array)
+          ["#{column.search_sql} IN (?)", value]
+        else
+          ["#{column.search_sql} = ?", value]
+        end
+      end
+
       def like_pattern(text_search)
         case text_search
           when :full then '%?%'
