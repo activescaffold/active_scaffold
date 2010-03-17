@@ -16,14 +16,13 @@ module ActiveScaffold
       #
       # NOTE: Only the option tags are returned, you have to wrap this call in a regular HTML select tag.
       def country_options_for_select(selected = nil, priority_countries = nil)
-        country_options = ""
-
         if priority_countries
-          country_options += options_for_select(priority_countries, selected)
-          country_options += "<option value=\"\" disabled=\"disabled\">-------------</option>\n"
+          country_options = options_for_select(priority_countries.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s]} + [['-------------', '']], :selected => selected, :disabled => '')
+        else
+          country_options = ""
         end
 
-        return country_options + options_for_select(COUNTRIES.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country]}, selected)
+        return country_options + options_for_select(COUNTRIES.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s]}, :selected => selected)
       end
 
       # Returns a string of option tags for the states in the United States. Supply a state name as +selected to
@@ -31,16 +30,16 @@ module ActiveScaffold
       # in case you want to highligh a local area
       # NOTE: Only the option tags are returned from this method, wrap it in a <select>
       def usa_state_options_for_select(selected = nil, priority_states = nil)
-        state_options = ""
         if priority_states
-          state_options += options_for_select(priority_states, selected)
-          state_options += "<option>-------------</option>\n"
+          state_options = options_for_select(priority_states + [['-------------', '']], :selected => selected, :disabled => '')
+        else
+          state_options = ""
         end
 
         if priority_states && priority_states.include?(selected)
-          state_options += options_for_select(USASTATES - priority_states, selected)
+          state_options += options_for_select(USASTATES - priority_states, :selected => selected)
         else
-          state_options += options_for_select(USASTATES, selected)
+          state_options += options_for_select(USASTATES, :selected => selected)
         end
 
         return state_options
@@ -303,10 +302,11 @@ module ActiveScaffold
           html_options = html_options.stringify_keys
           add_default_name_and_id(html_options)
           value = value(object)
+          selected_value = options.has_key?(:selected) ? options[:selected] : value
           content_tag("select",
             add_options(
-              country_options_for_select(value, priority_countries),
-              options, value
+              country_options_for_select(selected_value, priority_countries),
+              options, selected_value
             ), html_options
           )
         end
@@ -314,29 +314,38 @@ module ActiveScaffold
         def to_usa_state_select_tag(priority_states, options, html_options)
           html_options = html_options.stringify_keys
           add_default_name_and_id(html_options)
-          value = value(object) if method(:value).arity > 0
-          if html_options['name'].include?('search')
-            html_options['name'] << '[]' 
-            html_options['multiple'] = true
-            options[:include_blank] = true
-          end
-          content_tag("select", add_options(usa_state_options_for_select(value, priority_states), options, value), html_options)
+          value = value(object)
+          selected_value = options.has_key?(:selected) ? options[:selected] : value
+          content_tag("select", add_options(usa_state_options_for_select(selected_value, priority_states), options, selected_value), html_options)
         end
       end
     end
     
     module FormColumnHelpers
       def active_scaffold_input_country(column, options)
-        priority = ["United States"]
         select_options = {:prompt => as_(:_select_)}
         select_options.merge!(options)
-        country_select(:record, column.name, column.options[:priority] || priority, select_options, column.options.merge(options).except!(:prompt, :priority))
+        options.reverse_merge!(column.options).except!(:prompt, :priority)
+        options[:name] += '[]' if options[:multiple]
+        country_select(:record, column.name, column.options[:priority] || [:united_states], select_options, options)
       end
 
       def active_scaffold_input_usa_state(column, options)
         select_options = {:prompt => as_(:_select_)}
         select_options.merge!(options)
-        usa_state_select(:record, column.name, column.options[:priority], select_options, column.options.merge(options).except!(:prompt, :priority))
+        options.reverse_merge!(column.options).except!(:prompt, :priority)
+        options[:name] += '[]' if options[:multiple]
+        usa_state_select(:record, column.name, column.options[:priority], select_options, options)
+      end
+    end
+    
+    module SearchColumnHelpers
+      def active_scaffold_search_country(column, options)
+        active_scaffold_input_country(column, options.merge!(:selected => options.delete(:value)))       
+      end
+
+      def active_scaffold_search_usa_state(column, options)
+        active_scaffold_input_usa_state(column, options.merge!(:selected => options.delete(:value)))       
       end
     end
   end

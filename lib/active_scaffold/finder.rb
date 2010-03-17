@@ -41,7 +41,7 @@ module ActiveScaffold
             case search_ui
               when :boolean, :checkbox
               ["#{column.search_sql} = ?", column.column.type_cast(value)]
-              when :select, :multi_select
+              when :select, :multi_select, :country, :usa_state
               ["#{column.search_sql} in (?)", value]
               else
                 if column.column.nil? || column.column.text?
