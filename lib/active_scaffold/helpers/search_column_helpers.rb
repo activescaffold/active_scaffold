@@ -114,7 +114,7 @@ module ActiveScaffold
         select_options << [as_(:true), true]
         select_options << [as_(:false), false]
 
-        select_tag(options[:name], options_for_select(select_options, @record.send(column.name)))
+        select_tag(options[:name], options_for_select(select_options, column.column.type_cast(field_search_params[column.name])))
       end
       # we can't use checkbox ui because it's not possible to decide whether search for this field or not
       alias_method :active_scaffold_search_checkbox, :active_scaffold_search_boolean
