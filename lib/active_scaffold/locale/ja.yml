@@ -14,7 +14,7 @@ ja:
     create_new: '新規作成'
     customize: 'カスタマイズ'
     delete: '削除'
-    deleted_model: '%sを削除しました'
+    deleted_model: '{{model}}を削除しました'
     delimiter: 'Delimiter' # needed?
     download: 'ダウンロード'
     edit: '編集'
