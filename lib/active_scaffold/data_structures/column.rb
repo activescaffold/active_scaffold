@@ -19,7 +19,6 @@ module ActiveScaffold::DataStructures
 
     # Whether to enable add_existing for this column
     attr_accessor :allow_add_existing
-    @allow_add_existing = true
     
     # Any extra parameters this particular column uses.  This is for create/update purposes.
     def params
@@ -249,6 +248,7 @@ module ActiveScaffold::DataStructures
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
       @options = {:format => :i18n_number} if @column.try(:number?)
       @form_ui = :checkbox if @column and @column.type == :boolean
+      @allow_add_existing = true
 
       # default all the configurable variables
       self.css_class = ''
