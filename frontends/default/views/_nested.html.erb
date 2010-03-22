@@ -14,15 +14,7 @@
       association = column.association
 
       # determine what constraints we need
-      if column.through_association?
-        @constraints = {
-          association.source_reflection.reverse => {
-            association.through_reflection.reverse => parent_id
-          }
-        }
-      else
-        @constraints = { association.reverse => parent_id }
-      end
+      @constraints = { association.reverse => parent_id }
 
       # generate the customized label
       @label = as_(:nested_for_model, :nested_model => active_scaffold_config_for(association.klass).list.label, :parent_model => format_value(@record.to_label))

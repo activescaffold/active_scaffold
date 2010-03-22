@@ -141,15 +141,7 @@ module ActiveScaffold
       active_scaffold_constraints.each do |k, v|
         column = active_scaffold_config.columns[k]
         if column and column.association
-          if v.is_a? Hash # reverse of a through association ... we need to set the far association
-            # example
-            #   data model: Park -> Den -> Bear
-            #   constraint: :den => {:park => 5}
-            #   remote_klass: Park
-            remote_klass = column.association.klass.reflect_on_association(v.keys.first).klass
-            first_associated = record.send("#{k}")
-            first_associated.send("#{v.keys.first}=", remote_klass.find(v.values.first)) if first_associated
-          elsif column.plural_association?
+          if column.plural_association?
             record.send("#{k}").send(:<<, column.association.klass.find(v))
           elsif column.association.options[:polymorphic]
             record.send("#{k}=", params[:parent_model].constantize.find(v))

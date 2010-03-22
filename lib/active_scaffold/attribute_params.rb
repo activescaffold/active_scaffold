@@ -58,7 +58,7 @@ module ActiveScaffold
           value = column_value_from_param_value(parent_record, column, attributes[column.name]) 
 
           # we avoid assigning a value that already exists because otherwise has_one associations will break (AR bug in has_one_association.rb#replace)
-          parent_record.send("#{column.name}=", value) unless column.through_association? or parent_record.send(column.name) == value
+          parent_record.send("#{column.name}=", value) unless parent_record.send(column.name) == value
           
         # plural associations may not actually appear in the params if all of the options have been unselected or cleared away.
         # NOTE: the "form_ui" check isn't really necessary, except that without it we have problems
