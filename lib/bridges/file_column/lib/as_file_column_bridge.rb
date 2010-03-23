@@ -1,8 +1,5 @@
-require 'active_scaffold/data_structures/column'
-module ActiveScaffold::DataStructures
-  class Column
-    attr_accessor :file_column_display
-  end
+class ActiveScaffold::DataStructures::Column.class_eval do
+  attr_accessor :file_column_display
 end
 
 module ActiveScaffold::Config
