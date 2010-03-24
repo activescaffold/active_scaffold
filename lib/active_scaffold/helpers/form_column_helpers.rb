@@ -35,7 +35,8 @@ module ActiveScaffold
                   options[:maxlength] = column.column.limit
                   options[:size] ||= ActionView::Helpers::InstanceTag::DEFAULT_FIELD_OPTIONS["size"]
                 end
-                options.update(:value => format_number_value(@record.send(column.name), column.options)) if column.column.number?
+                options[:include_blank] = true if column.column.null and [:date, :datetime, :time].include?(column.column.type)
+                options[:value] = format_number_value(@record.send(column.name), column.options) if column.column.number?
                 input(:record, column.name, options.merge(column.options))
               end
             end
