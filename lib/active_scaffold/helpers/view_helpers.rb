@@ -197,6 +197,14 @@ module ActiveScaffold
          :joins => controller.send(:joins_for_collection), :include => includes)
       end
 
+      def render_column_calculation(column)
+        calculation = column_calculation(column)
+        override_formatter = "render_#{column.name}_#{column.calculate}"
+        calculation = send(override_formatter, calculation) if respond_to? override_formatter
+
+        "#{as_(column.calculate)}: #{calculation}"
+      end
+
       def column_show_add_existing(column)
         (column.allow_add_existing and options_for_association_count(column.association) > 0)
       end
