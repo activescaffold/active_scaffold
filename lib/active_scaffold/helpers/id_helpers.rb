@@ -26,8 +26,8 @@ module ActiveScaffold
         "#{controller_id}-messages"
       end
 
-      def active_scaffold_calculations_id
-        "#{controller_id}-calculations"
+      def active_scaffold_calculations_id(column = nil)
+        "#{controller_id}-calculations#{'-' + column.name.to_s if column}"
       end
 
       def empty_message_id
