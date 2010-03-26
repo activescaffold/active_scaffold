@@ -24,10 +24,15 @@ class ActiveSupport::TestCase
   end
 
   def self.should_render_as_form_ui(column_name, form_ui)
-    before_should "render column #{column_name} as #{form_ui} form_ui" do
-      column = @controller.active_scaffold_config.columns[column_name]
-      ActionView::Base.any_instance.expects(:"active_scaffold_input_#{form_ui}").with(column, is_a(Hash))
-      assert_equal form_ui, column.form_ui
+    should "render column #{column_name} as #{form_ui} form_ui", :before => lambda{
+      @rendered_columns = []
+      ActionView::Base.any_instance.expects(:"active_scaffold_input_#{form_ui}").at_least_once.with {|column, options|
+        @rendered_columns << column.name
+        true
+      }
+    } do
+      assert_equal form_ui, @controller.active_scaffold_config.columns[column_name].form_ui
+      assert @rendered_columns.include?(column_name)
     end
   end
 
@@ -46,10 +51,15 @@ class ActiveSupport::TestCase
   end
 
   def self.should_render_as_list_ui(column_name, list_ui)
-    before_should "render column #{column_name} as #{list_ui} list_ui" do
-      column = @controller.active_scaffold_config.columns[column_name]
-      ActionView::Base.any_instance.expects(:"active_scaffold_column_#{list_ui}").with(column, is_a(@controller.active_scaffold_config.model))
-      assert_equal list_ui, column.list_ui
+    should "render column #{column_name} as #{list_ui} list_ui", :before => lambda{
+      @rendered_columns = []
+      ActionView::Base.any_instance.expects(:"active_scaffold_column_#{list_ui}").at_least_once.with {|column, options|
+        @rendered_columns << column.name
+        true
+      }
+    } do
+      assert_equal list_ui, @controller.active_scaffold_config.columns[column_name].list_ui
+      assert @rendered_columns.include?(column_name)
     end
   end
 
@@ -68,11 +78,17 @@ class ActiveSupport::TestCase
   end
 
   def self.should_render_as_inplace_edit(column_name)
-    before_should "render column #{column_name} as inplace edit" do
-      column = @controller.active_scaffold_config.columns[column_name]
-      method = column.list_ui == :checkbox ? :format_column_checkbox : :active_scaffold_inplace_edit
-      ActionView::Base.any_instance.expects(method).with(is_a(@controller.active_scaffold_config.model), column, optionally(is_a(Hash)))
-      assert column.inplace_edit
+    should "render column #{column_name} as inplace edit", :before => lambda{
+      @column = @controller.active_scaffold_config.columns[column_name]
+      @rendered_columns = []
+      method = @column.list_ui == :checkbox ? :format_column_checkbox : :active_scaffold_inplace_edit
+      ActionView::Base.any_instance.expects(method).at_least_once.with {|model, column, options|
+        @rendered_columns << column.name
+        true
+      }
+    } do
+      assert @column.inplace_edit
+      assert @rendered_columns.include?(column_name)
     end
   end
 end
