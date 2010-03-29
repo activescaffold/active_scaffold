@@ -120,7 +120,6 @@ module ActiveScaffold
       alias_method :active_scaffold_search_checkbox, :active_scaffold_search_boolean
 
       def field_search_params_range_values(column)
-        search_ui = column.search_ui || column.column.type
         values = field_search_params[column.name]
         return nil if values.nil?
         return values[:opt], values[:from], values[:to]
@@ -164,13 +163,18 @@ module ActiveScaffold
 
         active_scaffold_record_select(column, options, value, column.options[:multiple])
       end
+
+      def field_search_datetime_value(value)
+        DateTime.new(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
+      end
       
       def active_scaffold_search_datetime(column, options)
+        opt_value, from_value, to_value = field_search_params_range_values(column)
         options = column.options.merge(options)
         helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
         html = []
-        html << send(helper, nil, {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options))
-        html << send(helper, nil, {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
+        html << send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options))
+        html << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
         html * ' - '
       end
 

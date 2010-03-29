@@ -32,11 +32,12 @@ module ActiveScaffold
 
     module SearchColumnHelpers
       def active_scaffold_search_calendar_date_select(column, options)
-        options = column.options.merge(options)
+        opt_value, from_value, to_value = field_search_params_range_values(column)
+        options = column.options.merge(options).except!(:include_blank)
         helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
         html = []
-        html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[from]", :id => "#{options[:id]}_from"))
-        html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[to]", :id => "#{options[:id]}_to"))
+        html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[from]", :id => "#{options[:id]}_from", :value => from_value))
+        html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[to]", :id => "#{options[:id]}_to", :value => to_value))
         html * ' - '
       end
     end
