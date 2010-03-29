@@ -34,6 +34,7 @@ module ActionView #:nodoc:
         # solution is to count colons from the *right* of the string, not the left. see issue #299.
         template_path = caller.find{|c| known_extensions.include?(c.split(':')[-3].split('.').last.to_sym) }
         template = File.basename(template_path.split(':')[-3])
+        template, format = template.split('.')
 
         # paths previous to current template_path must be ignored to avoid infinite loops when is called twice or more
         index = 0
@@ -42,8 +43,8 @@ module ActionView #:nodoc:
         end
 
         controller.class.active_scaffold_paths.slice(index..-1).each do |active_scaffold_template_path|
-          active_scaffold_template = File.join(active_scaffold_template_path, template)
-          return render(:file => active_scaffold_template, :locals => options[:locals]) if File.file? active_scaffold_template
+          active_scaffold_template = ActionView::PathSet.new([active_scaffold_template_path]).find_template_without_active_scaffold(template, format, false) rescue nil
+          return render(:file => active_scaffold_template, :locals => options[:locals]) if active_scaffold_template
         end
       elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
         require 'digest/md5'
