@@ -202,7 +202,7 @@ module ActiveScaffold
         override_formatter = "render_#{column.name}_#{column.calculate}"
         calculation = send(override_formatter, calculation) if respond_to? override_formatter
 
-        "#{as_(column.calculate)}: #{calculation}"
+        "#{as_(column.calculate)}: #{format_column_value nil, column, calculation}"
       end
 
       def column_show_add_existing(column)
