@@ -87,7 +87,7 @@ module ActiveScaffold
       def condition_for_datetime_type(column, value, like_pattern = nil)
         conversion = value[:from][:hour].blank? && value[:to][:hour].blank? ? :to_date : :to_time
         from_value, to_value = [:from, :to].collect do |field|
-          Time.zone.local(*[:year, :month, :day, :hour, :minutes, :seconds].collect {|part| value[field][part].to_i}) rescue nil
+          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[field][part].to_i}) rescue nil
         end
 
         if from_value.nil? and to_value.nil?
