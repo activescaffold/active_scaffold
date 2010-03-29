@@ -42,10 +42,8 @@ module ActionView #:nodoc:
           index = i + 1 and break if template_path.include? active_scaffold_template_path
         end
 
-        controller.class.active_scaffold_paths.slice(index..-1).each do |active_scaffold_template_path|
-          active_scaffold_template = ActionView::PathSet.new([active_scaffold_template_path]).find_template_without_active_scaffold(template, format, false) rescue nil
-          return render(:file => active_scaffold_template, :locals => options[:locals]) if active_scaffold_template
-        end
+        active_scaffold_template = controller.class.active_scaffold_paths.slice(index..-1).find_template(template, format, false)
+        render(:file => active_scaffold_template, :locals => options[:locals])
       elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
         require 'digest/md5'
         options = args.first
