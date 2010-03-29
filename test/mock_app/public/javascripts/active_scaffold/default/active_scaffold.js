@@ -201,6 +201,8 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
       this.method = 'delete';
     } else if(this.url.match('_method=post')){
       this.method = 'post';
+    } else if(this.url.match('_method=put')){
+      this.method = 'put';
     }
     this.target = target;
     this.loading_indicator = loading_indicator;
