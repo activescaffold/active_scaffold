@@ -18,7 +18,7 @@
 //<![CDATA[
   new TextFieldWithExample('<%= search_input_id %>', '<%= as_(live_search ? :live_search : :search_terms) %>', {focus: true});
 <% if live_search -%>
-  new Form.Element.Observer('<%= search_input_id %>', 1.5, function(element, value) {
+  new Form.Element.DelayedObserver('<%= search_input_id %>', 0.5, function(element, value) {
     if (!$(element.id)) return false; // because the element may have been destroyed
     $(element).up('form').onsubmit();
   });
