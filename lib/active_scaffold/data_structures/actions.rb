@@ -27,6 +27,7 @@ class ActiveScaffold::DataStructures::Actions
   # swaps one element in the list with the other.
   # accepts arguments in any order. it just figures out which one is in the list and which one is not.
   def swap(one, two)
+    ::ActiveSupport::Deprecation.warn("live_search is deprecated, use search.live = true instead", caller) if [two.to_sym, one.to_sym].include? :live_search
     if include? one
       exclude one
       add two
