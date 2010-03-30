@@ -1,3 +1,4 @@
+<% live_search = active_scaffold_config.search.live? -%>
 <% href = url_for(params_for(:action => :index, :escape => false).delete_if{|k,v| k == 'search'}) -%>
 <%= form_remote_tag :url => href,
                     :method => :get,
@@ -7,13 +8,19 @@
                     :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
                     :html => { :action => href, :id => search_form_id, :class => 'search', :method => :get } %>
   <%= text_field_tag :search, params[:search], :class => 'text-input', :id => search_input_id, :size => 50, :autocompleted => :off %>
-  <%= submit_tag as_(:search), :class => "submit" %>
+  <%= submit_tag as_(:search), :class => "submit" unless live_search %>
   <a href="javascript:void(0)" class="cancel" onclick="f = $(this).up('form'); f.reset(); f.onsubmit();"><%= as_(:reset) -%></a>
   <%= loading_indicator_tag(:action => :search) %>
 </form>
 
 <script type="text/javascript">
 //<![CDATA[
-  new TextFieldWithExample('<%= search_input_id %>', '<%= as_(:search_terms) %>', {focus: true});
+  new TextFieldWithExample('<%= search_input_id %>', '<%= as_(live_search ? :live_search : :search_terms) %>', {focus: true});
+<% if live_search -%>
+  new Form.Element.Observer('<%= search_input_id %>', 1.5, function(element, value) {
+    if (!$(element.id)) return false; // because the element may have been destroyed
+    $(element).up('form').onsubmit();
+  });
+<% end -%>
 //]]>
 </script>

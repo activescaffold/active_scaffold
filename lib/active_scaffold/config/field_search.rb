@@ -26,6 +26,12 @@ module ActiveScaffold::Config
       ::ActiveSupport::Deprecation.warn("full_text_search? is deprecated, use text_search == :full instead", caller)
       @@text_search == :full
     end
+    # A flag for how the search should do full-text searching in the database:
+    # * :full: LIKE %?%
+    # * :start: LIKE ?%
+    # * :end: LIKE %?
+    # * false: LIKE ?
+    # Default is :full
     cattr_accessor :text_search
     @@text_search = :full
 
@@ -44,6 +50,12 @@ module ActiveScaffold::Config
 
     public :columns=
 
+    # A flag for how the search should do full-text searching in the database:
+    # * :full: LIKE %?%
+    # * :start: LIKE ?%
+    # * :end: LIKE %?
+    # * false: LIKE ?
+    # Default is :full
     attr_accessor :text_search
     def full_text_search=(value)
       ::ActiveSupport::Deprecation.warn("full_text_search is deprecated, use text_search = :full instead", caller)
