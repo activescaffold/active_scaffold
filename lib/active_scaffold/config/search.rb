@@ -6,6 +6,7 @@ module ActiveScaffold::Config
       @core = core_config
 
       @text_search = self.class.text_search
+      @live = self.class.live?
 
       # start with the ActionLink defined globally
       @link = self.class.link.clone
@@ -26,8 +27,20 @@ module ActiveScaffold::Config
       ::ActiveSupport::Deprecation.warn("full_text_search? is deprecated, use text_search == :full instead", caller)
       @@text_search == :full
     end
+    # A flag for how the search should do full-text searching in the database:
+    # * :full: LIKE %?%
+    # * :start: LIKE ?%
+    # * :end: LIKE %?
+    # * false: LIKE ?
+    # Default is :full
     cattr_accessor :text_search
     @@text_search = :full
+
+    # whether submits the search as you type
+    cattr_writer :live
+    def self.live?
+      @@live
+    end
 
     # instance-level configuration
     # ----------------------------
@@ -43,6 +56,12 @@ module ActiveScaffold::Config
 
     public :columns=
 
+    # A flag for how the search should do full-text searching in the database:
+    # * :full: LIKE %?%
+    # * :start: LIKE ?%
+    # * :end: LIKE %?
+    # * false: LIKE ?
+    # Default is :full
     attr_accessor :text_search
     def full_text_search=(value)
       ::ActiveSupport::Deprecation.warn("full_text_search is deprecated, use text_search = :full instead", caller)
@@ -55,5 +74,11 @@ module ActiveScaffold::Config
 
     # the ActionLink for this action
     attr_accessor :link
+
+    # whether submits the search as you type
+    attr_writer :live
+    def live?
+      @live
+    end
   end
 end
