@@ -58,19 +58,27 @@ module ActiveScaffold
       end
 
       def condition_for_integer_type(column, value, like_pattern = nil)
-        if value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
+        if !value.is_a?(Hash)
+          ["#{column.search_sql} = ?", column.column.type_cast(value)]
+        elsif value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
-          ["#{column.search_sql} BETWEEN ? AND ?", value[:from].to_f, value[:to].to_f]
+          ["#{column.search_sql} BETWEEN ? AND ?", column.column.type_cast(value[:from]), column.column.type_cast(value[:to])]
         else
-          ["#{column.search_sql} #{value[:opt]} ?", value[:from].to_f]
+          ["#{column.search_sql} #{value[:opt]} ?", column.column.type_cast(value[:from])]
         end
       end
       alias_method :condition_for_decimal_type, :condition_for_integer_type
       alias_method :condition_for_float_type, :condition_for_integer_type
 
       def condition_for_range_type(column, value, like_pattern = nil)
-        if value[:from].blank?
+        if !value.is_a?(Hash)
+          if column.column.nil? || column.column.text?
+            ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
+          else
+            ["#{column.search_sql} = ?", column.column.type_cast(value)]
+          end
+        elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::StringComparators.values.include?(value[:opt])
           ["#{column.search_sql} LIKE ?", value[:opt].sub('?', value[:from])]
