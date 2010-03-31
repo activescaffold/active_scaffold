@@ -8,6 +8,8 @@ if (Prototype.Version.substring(0, 3) != '1.6')
   warning = "ActiveScaffold Error: Prototype version 1.6.x is required. Please update prototype.js (rake rails:update:javascripts).";
   alert(warning);
 }
+if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFunction});
+
 
 /*
  * Simple utility methods
@@ -81,7 +83,7 @@ var ActiveScaffold = {
     Element.replace(row, html);
     var new_row = $(row.id);
     if (row.hasClassName('even-record')) new_row.addClassName('even-record');
-    new Effect.Highlight(new_row);
+    new_row.highlight();
   },
 
   server_error_response: '',
@@ -367,7 +369,7 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
     this.adapter.down('a.inline-adapter-close').observe('click', this.close_handler.bind(this));
     this.register_cancel_hooks();
 
-    new Effect.Highlight(this.adapter.down('td').down());
+    this.adapter.down('td').down().highlight();
   },
 
   close: function($super, updatedRow) {
@@ -430,10 +432,11 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
     this.adapter.down('a.inline-adapter-close').observe('click', this.close_handler.bind(this));
     this.register_cancel_hooks();
 
-    new Effect.Highlight(this.adapter.down('td').down());
+    this.adapter.down('td').down().highlight();
   }
 });
 
+if (Ajax.InPlaceEditor) {
 ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
   setFieldFromAjax: function(url, options) {
     var ipe = this;
@@ -526,3 +529,4 @@ ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
     }
   }
 });
+}
