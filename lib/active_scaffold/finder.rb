@@ -59,13 +59,18 @@ module ActiveScaffold
 
       def condition_for_integer_type(column, value, like_pattern = nil)
         if !value.is_a?(Hash)
-          ["#{column.search_sql} = ?", column.column.type_cast(value)]
+          ["#{column.search_sql} = ?", column.column.nil? ? value.to_f : column.column.type_cast(value)]
         elsif value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
-          ["#{column.search_sql} BETWEEN ? AND ?", column.column.type_cast(value[:from]), column.column.type_cast(value[:to])]
+          condition = "#{column.search_sql} BETWEEN ? AND ?"
+          if column.column.nil?
+            [condition, value[:from].to_f, value[:to].to_f]
+          else
+            [condition, column.column.type_cast(value[:from]), column.column.type_cast(value[:to])]
+          end
         else
-          ["#{column.search_sql} #{value[:opt]} ?", column.column.type_cast(value[:from])]
+          ["#{column.search_sql} #{value[:opt]} ?", column.column.nil? ? value[:from].to_f : column.column.type_cast(value[:from])]
         end
       end
       alias_method :condition_for_decimal_type, :condition_for_integer_type
