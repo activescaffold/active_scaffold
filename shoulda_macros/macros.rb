@@ -9,7 +9,7 @@ class ActiveSupport::TestCase
     should "include columns in #{action}" do
       action_columns = @controller.active_scaffold_config.send(action).columns.map(&:name)
       columns.each do |column|
-        assert action_columns.include?(column.to_sym)
+        assert action_columns.include?(column.to_sym), "#{column} is not included in #{action}"
       end
     end
   end
@@ -18,7 +18,7 @@ class ActiveSupport::TestCase
     should "not include columns in #{action}" do
       action_columns = @controller.active_scaffold_config.send(action).columns.map(&:name)
       columns.each do |column|
-        assert !action_columns.include?(column.to_sym)
+        assert !action_columns.include?(column.to_sym), "#{column} is included in #{action}"
       end
     end
   end
