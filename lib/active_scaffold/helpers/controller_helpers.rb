@@ -29,7 +29,6 @@ module ActiveScaffold
           parameters[:eid] = params[:parent_controller]
         end
         parameters[:nested] = nil
-        parameters[:parent_model] = nil
         parameters[:parent_column] = nil
         parameters[:parent_id] = nil
         parameters[:action] = "index"
