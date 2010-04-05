@@ -50,6 +50,19 @@ class ActiveSupport::TestCase
     end
   end
 
+  def self.should_render_as_form_hidden(column_name)
+    should "render column #{column_name} as form hidden", :before => lambda{
+      @rendered_columns = []
+      ActionView::Base.any_instance.expects(:"hidden_field").at_least_once.with {|object, method, options|
+        @rendered_columns << method
+        true
+      }
+    } do
+      assert_template :partial => "_form_hidden_attribute"
+      assert @rendered_columns.include?(column_name)
+    end
+  end
+
   def self.should_render_as_list_ui(column_name, list_ui)
     should "render column #{column_name} as #{list_ui} list_ui", :before => lambda{
       @rendered_columns = []
