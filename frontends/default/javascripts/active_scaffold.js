@@ -71,12 +71,12 @@ var ActiveScaffold = {
   decrement_record_count: function(scaffold_id) {
     // decrement the last record count, firsts record count are in nested lists
     count = $$('#' + scaffold_id + ' span.active-scaffold-records').last();
-    count.innerHTML = parseInt(count.innerHTML) - 1;
+    if (count) count.update(parseInt(count.innerHTML, 10) - 1);
   },
   increment_record_count: function(scaffold_id) {
     // increment the last record count, firsts record count are in nested lists
     count = $$('#' + scaffold_id + ' span.active-scaffold-records').last();
-    count.innerHTML = parseInt(count.innerHTML) + 1;
+    if (count) count.update(parseInt(count.innerHTML, 10) + 1);
   },
   update_row: function(row, html) {
     row = $(row);
