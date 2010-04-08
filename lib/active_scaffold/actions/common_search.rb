@@ -1,9 +1,6 @@
 module ActiveScaffold::Actions
   module CommonSearch
-    def reset_search
-      update_table
-    end
-    
+    protected
     def store_search_params_into_session
       active_scaffold_session_storage[:search] = params.delete :search if params[:search]
     end
@@ -12,7 +9,6 @@ module ActiveScaffold::Actions
       active_scaffold_session_storage[:search]
     end
 
-    protected
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def search_authorized?
