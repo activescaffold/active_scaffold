@@ -61,12 +61,11 @@ module ActiveScaffold
           parent_record.send("#{column.name}=", value) unless parent_record.send(column.name) == value
           
         # plural associations may not actually appear in the params if all of the options have been unselected or cleared away.
-        # NOTE: the "form_ui" check isn't really necessary, except that without it we have problems
+        # the "form_ui" check is necessary, becuase without it we have problems
         # with subforms. the UI cuts out deep associations, which means they're not present in the
         # params even though they're in the columns list. the result is that associations were being
-        # emptied out way too often. BUT ... this means there's still a lingering bug in the default association
-        # form code: you can't delete the last association in the list.
-        elsif column.form_ui and column.plural_association? and not column.through_association?
+        # emptied out way too often.
+        elsif column.form_ui and column.plural_association?
           parent_record.send("#{column.name}=", [])
         end
       end
