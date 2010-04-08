@@ -57,14 +57,6 @@ module ActiveScaffold
       @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
       @active_scaffold_config_block = block
       self.links_for_associations
-      self.active_scaffold_superclasses_blocks.each {|superblock| self.active_scaffold_config.configure &superblock}
-      self.active_scaffold_config.configure &block if block_given?
-      self.active_scaffold_config._configure_sti unless self.active_scaffold_config.sti_children.nil?
-      self.active_scaffold_config._load_action_columns
-
-      # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
-      klass = self.active_scaffold_config.model
-      klass.define_attribute_methods unless klass.generated_methods?
 
       @active_scaffold_overrides = []
       ActionController::Base.view_paths.each do |dir|
@@ -80,6 +72,15 @@ module ActiveScaffold
       active_scaffold_default_frontend_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', 'default' , 'views')
       @active_scaffold_frontends << active_scaffold_default_frontend_path
       @active_scaffold_custom_paths = []
+
+      self.active_scaffold_superclasses_blocks.each {|superblock| self.active_scaffold_config.configure &superblock}
+      self.active_scaffold_config.configure &block if block_given?
+      self.active_scaffold_config._configure_sti unless self.active_scaffold_config.sti_children.nil?
+      self.active_scaffold_config._load_action_columns
+
+      # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
+      klass = self.active_scaffold_config.model
+      klass.define_attribute_methods unless klass.generated_methods?
 
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
