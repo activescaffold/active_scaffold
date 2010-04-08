@@ -104,4 +104,19 @@ class ActiveSupport::TestCase
       assert @rendered_columns.include?(column_name)
     end
   end
+
+  def self.should_respond_to_parent_redirecting_to(description, &block)
+    should_respond_to_parent("redirecting to #{description}") { "document.location.href = \"#{instance_eval(&block)}\"" }
+  end
+
+  def self.should_respond_to_parent(description = nil, &block)
+    should "respond to parent #{description}" do
+      script = block ? instance_eval(&block) : /.*/
+      script = script.is_a?(Regexp) ? script.source : Regexp.quote(script)
+      script = script.gsub('\n', '\\\\\\n').
+        gsub(/['"]/, '\\\\\\\\\&').
+        gsub('</script>','</scr"+"ipt>')
+      assert_select 'script[type=text/javascript]', Regexp.new('.*' + Regexp.quote("with(window.parent) { setTimeout(function() { window.eval('") + script + Regexp.quote("'); if (typeof(loc) !== 'undefined') loc.replace('about:blank'); }, 1) };") + '.*')
+    end
+  end
 end
