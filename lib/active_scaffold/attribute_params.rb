@@ -29,6 +29,7 @@ module ActiveScaffold
   #     'location' => '12'
   # }
   module AttributeParams
+    protected
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
     # association attributes and attempts to instantiate them as associated objects.
     #
