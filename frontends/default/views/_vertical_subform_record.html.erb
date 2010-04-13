@@ -3,9 +3,10 @@
   readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
   crud_type = @record.new_record? ? :create : (readonly ? :read : nil)
   show_actions = false
+  config = active_scaffold_config_for(@record.class)
 -%>
 <ol class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
-<% active_scaffold_config_for(@record.class).subform.columns.each :for => @record, :crud_type => crud_type, :flatten => true do |column| %>
+<% config.subform.columns.each :for => @record, :crud_type => crud_type, :flatten => true do |column| %>
 <%
   next unless in_subform?(column, parent_record)
   show_actions = true
@@ -24,7 +25,8 @@
   <li class="actions">
     <%= link_to_function as_(:remove), '$(this).up(".association-record").remove()', { :class => "destroy" } if record_column.plural_association? and (@record.authorized_for?(:crud_type => :delete) or not [:destroy, :delete_all].include?(record_column.association.options[:dependent])) %>
     <% unless @record.new_record? %>
-    <input type="hidden" name="<%= "record#{scope}[id]" -%>" value="<%= @record.id -%>" />
+    <% options = active_scaffold_input_options(config.columns[@record.class.primary_key], scope) -%>
+    <input type="hidden" name="<%= options[:name] -%>" id="<%= options[:id] -%>" value="<%= @record.id -%>" />
     <% end -%>
   </li>
 <% end -%>
