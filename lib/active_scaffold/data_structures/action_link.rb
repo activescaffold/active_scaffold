@@ -13,6 +13,7 @@ module ActiveScaffold::DataStructures
       self.crud_type = :create if [:create, :new].include?(action.to_sym)
       self.crud_type = :update if [:edit, :update].include?(action.to_sym)
       self.crud_type ||= :read
+      self.parameters = {}
       self.html_options = {}
 
       # apply quick properties
