@@ -8,7 +8,7 @@ if controller.send :successful?
 else
   page << "var l = $$(#{cancel_selector}).first().link;"
   page.replace form, :partial => 'update_form', :locals => {:xhr => true}
-  page << "l.register_cancel_hooks();"
+  page << "if (l) l.register_cancel_hooks();"
   page[form].scroll_to
 end
 page.replace_html active_scaffold_messages_id, :partial => 'messages'
