@@ -151,7 +151,7 @@ module ActiveScaffold
       end
 
       def format_column_value(record, column, value = nil)
-        value ||= record.send(column.name)
+        value ||= record.send(column.name) unless record.nil?
         if value && column.association # cache association size before calling column_empty?
           associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
           cache_association(value, column)
