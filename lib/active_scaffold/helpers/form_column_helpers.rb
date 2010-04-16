@@ -141,7 +141,7 @@ module ActiveScaffold
           active_scaffold_input_plural_association(column, html_options)
         else
           options = { :selected => @record.send(column.name) }
-          options_for_select = column.options[:options].collect do |(text, value)|
+          options_for_select = column.options[:options].collect do |text, value|
             active_scaffold_translated_option(column, text, value)
           end
           html_options.update(column.options[:html_options] || {})
