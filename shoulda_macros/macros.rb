@@ -1,13 +1,13 @@
 class ActiveSupport::TestCase
   def self.should_have_columns_in(action, *columns)
     should "have #{columns.to_sentence} columns in #{action}" do
-      assert_equal columns, @controller.active_scaffold_config.send(action).columns.map(&:name)
+      assert_equal columns, column_names(action)
     end
   end
 
   def self.should_include_columns_in(action, *columns)
     should "include #{columns.to_sentence} columns in #{action}" do
-      action_columns = @controller.active_scaffold_config.send(action).columns.map(&:name)
+      action_columns = column_names(action)
       columns.each do |column|
         assert action_columns.include?(column.to_sym), "#{column} is not included in #{action}"
       end
@@ -16,7 +16,7 @@ class ActiveSupport::TestCase
 
   def self.should_not_include_columns_in(action, *columns)
     should "not include #{columns.to_sentence} columns in #{action}" do
-      action_columns = @controller.active_scaffold_config.send(action).columns.map(&:name)
+      action_columns = column_names(action)
       columns.each do |column|
         assert !action_columns.include?(column.to_sym), "#{column} is included in #{action}"
       end
@@ -125,5 +125,12 @@ class ActiveSupport::TestCase
         gsub('</script>','</scr"+"ipt>')
       assert_select 'script[type=text/javascript]', Regexp.new('.*' + Regexp.quote("with(window.parent) { setTimeout(function() { window.eval('") + script + Regexp.quote("'); if (typeof(loc) !== 'undefined') loc.replace('about:blank'); }, 1) };") + '.*')
     end
+  end
+
+  private
+  def column_names(action)
+    columns = []
+    @controller.active_scaffold_config.send(action).columns.each(:flatten => true) {|col| columns << col.name}
+    columns
   end
 end
