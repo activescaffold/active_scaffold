@@ -73,7 +73,7 @@ module ActiveScaffold
 
       if parent_record.new_record?
         parent_record.class.reflect_on_all_associations.each do |a|
-          next unless [:has_one, :has_many].include?(a.macro) and not a.options[:through]
+          next unless [:has_one, :has_many].include?(a.macro) and not (a.options[:through] || a.options[:finder_sql])
           next unless association_proxy = parent_record.send(a.name)
 
           raise ActiveScaffold::ReverseAssociationRequired, "Association #{a.name}: In order to support :has_one and :has_many where the parent record is new and the child record(s) validate the presence of the parent, ActiveScaffold requires the reverse association (the belongs_to)." unless a.reverse
