@@ -20,7 +20,7 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
         options[:class] = "#{options[:class]} mceEditor #{column.options[:class]}".strip
         html = []
         html << send(override_input(:textarea), column, options)
-        html << javascript_tag("tinyMCE.execCommand('mceAddControl', false, '#{options[:id]}');") if request.xhr?
+        html << javascript_tag("tinyMCE.execCommand('mceAddControl', false, '#{options[:id]}');") if request.xhr? || params[:iframe]
         html.join "\n"
       end
 
