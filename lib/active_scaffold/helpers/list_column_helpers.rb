@@ -355,7 +355,18 @@ module ActiveScaffold
     
         javascript_tag(function)
       end
-
+      
+      def mark_column_heading
+        all_marked = (marked_records.length >= @page.pager.count)
+        tag_options = {:id => "mark_heading", :class => "mark_heading"}
+        url_params = {:action => 'mark_all'}
+        ajax_options = {:method => :post,
+                        :url => url_for(url_params), :with => "'value=' + this.value",
+                        :after => "this.disable();",
+                        :complete => "this.enable();"}
+        script = remote_function(ajax_options)
+        content_tag(:span, check_box_tag(tag_options[:id], !all_marked, all_marked, {:onclick => script}) , tag_options)
+      end
     end
   end
 end
