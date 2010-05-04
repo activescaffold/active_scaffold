@@ -26,7 +26,7 @@ module ActiveScaffold::Actions
     end
     
     def marked_records
-      active_scaffold_session_storage[:marked_records] ||= []
+      active_scaffold_session_storage[:marked_records] ||= Set.new
     end
     
     def mark_all?
