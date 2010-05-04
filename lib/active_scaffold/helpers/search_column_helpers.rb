@@ -86,10 +86,10 @@ module ActiveScaffold
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
           method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
-          select_options = options_for_association(column.association, true)
+          options_for_select = options_for_association(column.association, true)
         else
           method = column.name
-          select_options = column.options[:options]
+          options_for_select = active_scaffold_translated_options(column)
         end
 
         options = { :selected => associated }.merge! column.options
@@ -99,7 +99,7 @@ module ActiveScaffold
         else
           options[:include_blank] ||= as_(:_select_) 
         end
-        select(:record, method, select_options, options, html_options)
+        select(:record, method, options_for_select, options, html_options)
       end
 
       def active_scaffold_search_text(column, options)
