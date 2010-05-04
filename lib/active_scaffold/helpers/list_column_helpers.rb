@@ -6,15 +6,7 @@ module ActiveScaffold
       def get_column_value(record, column)
         begin
           # check for an override helper
-          value = if column.options[:format_call]
-            column_value = record.send(column.name)
-            if column_empty?(column_value)
-              active_scaffold_config.list.empty_field_text
-            else
-              column.options[:format_call][1] = column_value
-              send(*(column.options[:format_call]))
-            end
-          elsif column_override? column
+          value = if column_override? column
             # we only pass the record as the argument. we previously also passed the formatted_value,
             # but mike perham pointed out that prohibited the usage of overrides to improve on the
             # performance of our default formatting. see issue #138.
@@ -175,32 +167,26 @@ module ActiveScaffold
           associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
           cache_association(value, column)
         end
-        return active_scaffold_config.list.empty_field_text if column_empty?(value)
-        
-        if column.association.nil? 
+        if column.association.nil? or column_empty?(value)
           if value.is_a? Numeric
-            format_number_value(value, column.options, column)
+            format_number_value(value, column.options)
           else
-            format_value(value, column.options, column)
+            format_value(value, column.options)
           end
         else
           format_association_value(value, column, associated_size)
         end
       end
       
-      def format_number_value(value, options = {}, column = nil)
+      def format_number_value(value, options = {})
         value = case options[:format]
           when :size
-            column.options[:format_call] = [:number_to_human_size, :value, options[:i18n_options] || {}] if column
             number_to_human_size(value, options[:i18n_options] || {})
           when :percentage
-            column.options[:format_call] = [:number_to_percentage, :value, options[:i18n_options] || {}] if column
             number_to_percentage(value, options[:i18n_options] || {})
           when :currency
-            column.options[:format_call] = [:number_to_currency, :value, options[:i18n_options] || {}] if column
             number_to_currency(value, options[:i18n_options] || {})
           when :i18n_number
-            column.options[:format_call] = ["number_with_#{value.is_a?(Integer) ? 'delimiter' : 'precision'}".to_sym, :value, options[:i18n_options] || {}] if column
             send("number_with_#{value.is_a?(Integer) ? 'delimiter' : 'precision'}", value, options[:i18n_options] || {})
           else
             value
@@ -211,7 +197,7 @@ module ActiveScaffold
       def format_association_value(value, column, size)
         case column.association.macro
           when :has_one, :belongs_to
-            format_value(value.to_label, {}, column)
+            format_value(value.to_label)
           when :has_many, :has_and_belongs_to_many
             if column.associated_limit.nil?
               firsts = value.collect { |v| v.to_label }
@@ -230,23 +216,17 @@ module ActiveScaffold
         end
       end
       
-      def format_value(column_value, options = {}, column = nil)
+      def format_value(column_value, options = {})
         value = if column_empty?(column_value)
           active_scaffold_config.list.empty_field_text
         elsif column_value.is_a?(Time) || column_value.is_a?(Date)
-          column.options[:format_call] = [:l, :value, {:format => options[:format] || :default}] if column
           l(column_value, :format => options[:format] || :default)
         elsif [FalseClass, TrueClass].include?(column_value.class)
-          column.options[:format_call] = [:format_boolean_value, :value] if column
           as_(column_value.to_s.to_sym)
         else
           column_value.to_s
         end
         clean_column_value(value)
-      end
-      
-      def format_boolean_value(value)
-        as_(column_value.to_s.to_sym)
       end
       
       def cache_association(value, column)
@@ -387,6 +367,7 @@ module ActiveScaffold
         script = remote_function(ajax_options)
         content_tag(:span, check_box_tag(tag_options[:id], !all_marked, all_marked, {:onclick => script}) , tag_options)
       end
+
     end
   end
 end
