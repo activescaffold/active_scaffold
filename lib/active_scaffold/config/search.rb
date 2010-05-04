@@ -8,6 +8,8 @@ module ActiveScaffold::Config
       @text_search = self.class.text_search
       @live = self.class.live?
 
+      @split_terms = self.class.split_terms
+
       # start with the ActionLink defined globally
       @link = self.class.link.clone
     end
@@ -55,6 +57,10 @@ module ActiveScaffold::Config
     # * false: LIKE ?
     # Default is :full
     attr_accessor :text_search
+
+    @@split_terms = " "
+    cattr_accessor :split_terms
+    attr_accessor :split_terms
 
     # the ActionLink for this action
     attr_accessor :link
