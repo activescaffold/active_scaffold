@@ -4,7 +4,7 @@ module ActiveScaffold
     
     def self.included(base)
       base.extend ClassMethods
-      base.named_scope :marked, lambda {{:conditions => {:id => base.marked_records}}}
+      base.named_scope :marked, lambda {{:conditions => {:id => base.marked_records.to_a}}}
     end
     
     def marked
@@ -26,7 +26,7 @@ module ActiveScaffold
   
       # Class-level access to the marked_records
       def marked_records
-        (marked_records_proc.call || []) if marked_records_proc
+        (marked_records_proc.call || Set.new) if marked_records_proc
       end
     end
   
