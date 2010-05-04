@@ -23,7 +23,11 @@ default_sorting_stages = ['ASC', 'DESC']
         :method => :get },
       { :href => href } %>
    <% else -%>
-     <p><%= column.label %></p>
+     <% if column.name != :marked -%>
+       <p><%= column.label %></p>
+     <% else -%>
+       <%= mark_column_heading -%>
+     <% end -%>
    <% end -%>
    <%= inplace_edit_control(column) -%>
  </th>
