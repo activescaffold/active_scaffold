@@ -18,15 +18,15 @@ module ActiveScaffold
 
       # access to the configuration variable
       def active_scaffold_config
-        @controller.class.active_scaffold_config
+        controller.class.active_scaffold_config
       end
 
       def active_scaffold_config_for(*args)
-        @controller.class.active_scaffold_config_for(*args)
+        controller.class.active_scaffold_config_for(*args)
       end
 
       def active_scaffold_controller_for(*args)
-        @controller.class.active_scaffold_controller_for(*args)
+        controller.class.active_scaffold_controller_for(*args)
       end
 
       ##
@@ -105,7 +105,7 @@ module ActiveScaffold
         options[:concat] += '_ie' if options[:concat].is_a? String
         ie_css = stylesheet_link_tag(*active_scaffold_ie_stylesheets(frontend).push(options))
 
-        js + "\n" + css + "\n<!--[if IE]>" + ie_css + "<![endif]-->\n"
+        js + "\n" + css + "\n<!--[if IE]>".html_safe + ie_css + "<![endif]-->\n".html_safe
       end
 
       # a general-use loading indicator (the "stuff is happening, please wait" feedback)
