@@ -4,6 +4,7 @@ sorting_stages = ['reset', 'ASC', 'DESC']
 default_sorting = active_scaffold_config.list.sorting
 default_sorting_stages = ['ASC', 'DESC']
 -%>
+  <%= content_tag :th, mark_record(marked_records.length >= @page.pager.count), :class => 'mark_record_column' if active_scaffold_config.list.mark_records %>
 <% active_scaffold_config.list.columns.each do |column| -%>
   <%
   stages = default_sorting.sorts_on?(column) ? default_sorting_stages : sorting_stages
@@ -23,11 +24,7 @@ default_sorting_stages = ['ASC', 'DESC']
         :method => :get },
       { :href => href } %>
    <% else -%>
-     <% if column.name != :marked -%>
-       <p><%= column.label %></p>
-     <% else -%>
-       <%= mark_column_heading -%>
-     <% end -%>
+     <p><%= column.label %></p>
    <% end -%>
    <%= inplace_edit_control(column) -%>
  </th>

@@ -41,6 +41,10 @@ module ActiveScaffold::Actions
       end
     end
 
+    def marked_records
+      active_scaffold_session_storage[:marked_records] ||= Set.new
+    end
+    
     def default_formats
       [:html, :js, :json, :xml, :yaml]
     end

@@ -190,50 +190,63 @@ module ActiveScaffold
       return record
     end
 
-    # returns a Paginator::Page (not from ActiveRecord::Paginator) for the given parameters
-    # options may include:
+    # returns a hash with options to find records
+    # valid options may include:
     # * :sorting - a Sorting DataStructure (basically an array of hashes of field => direction, e.g. [{:field1 => 'asc'}, {:field2 => 'desc'}]). please note that multi-column sorting has some limitations: if any column in a multi-field sort uses method-based sorting, it will be ignored. method sorting only works for single-column sorting.
     # * :per_page
     # * :page
-    # TODO: this should reside on the model, not the controller
-    def find_page(options = {})
-      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination
+    def finder_options(options = {})
+      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination, :select
 
       search_conditions = all_conditions
       full_includes = (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
-      options[:per_page] ||= 999999999
-      options[:page] ||= 1
-      options[:count_includes] ||= full_includes unless search_conditions.nil?
 
-      klass = beginning_of_chain
-      
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => options[:sorting].try(:clause),
                          :conditions => search_conditions,
                          :joins => joins_for_finder,
-                         :include => options[:count_includes]}
+                         :include => full_includes}
                          
       finder_options.merge! custom_finder_options
+      finder_options
+    end
 
+    # Returns a hash with options to count records, rejecting select and order options
+    # See finder_options for valid options
+    def count_options(find_options = {}, count_includes = nil)
+      count_includes ||= find_options[:include] unless find_options[:conditions].nil?
+      options = find_options.reject{|k,v| [:select, :order].include? k}
+      options[:include] = count_includes
+      options
+    end
+
+    # returns a Paginator::Page (not from ActiveRecord::Paginator) for the given parameters
+    # See finder_options for valid options
+    # TODO: this should reside on the model, not the controller
+    def find_page(options = {})
+      options[:per_page] ||= 999999999
+      options[:page] ||= 1
+
+      find_options = finder_options(options)
+      klass = beginning_of_chain
+      
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count = klass.count(finder_options.reject{|k,v| [:select, :order].include? k}) unless options[:pagination] == :infinite
+      count = klass.count(count_options(find_options, options[:count_includes])) if options[:pagination] && options[:pagination] != :infinite
 
       # Converts count to an integer if ActiveRecord returned an OrderedHash
-      # that happens when finder_options contains a :group key
+      # that happens when find_options contains a :group key
       count = count.length if count.is_a? ActiveSupport::OrderedHash
-
-      finder_options.merge! :include => full_includes
 
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          sorted_collection = sort_collection_by_column(klass.all(finder_options), *options[:sorting].first)
+          sorted_collection = sort_collection_by_column(klass.all(find_options), *options[:sorting].first)
           sorted_collection.slice(offset, per_page) if options[:pagination]
         end
       else
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          finder_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
-          klass.all(finder_options)
+          find_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
+          klass.all(find_options)
         end
       end
 
