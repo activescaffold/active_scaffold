@@ -252,7 +252,14 @@ module ActiveScaffold
     end
     
     def merge_conditions(*conditions)
-      active_scaffold_config.model.merge_conditions(*conditions)
+      segments = []
+      conditions.each do |condition|
+        unless condition.blank?
+          sql = active_scaffold_config.model.sanitize_sql(condition)
+          segments << sql unless sql.blank?
+        end
+      end
+      "(#{segments.join(') AND (')})" unless segments.empty?
     end
 
     # TODO: this should reside on the column, not the controller

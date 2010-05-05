@@ -60,7 +60,7 @@ module ActiveScaffold
 
       @active_scaffold_overrides = []
       ActionController::Base.view_paths.each do |dir|
-        active_scaffold_overrides_dir = File.join(dir,"active_scaffold_overrides")
+        active_scaffold_overrides_dir = File.join(dir.to_s,"active_scaffold_overrides")
         @active_scaffold_overrides << active_scaffold_overrides_dir if File.exists?(active_scaffold_overrides_dir)
       end
       @active_scaffold_overrides.uniq! # Fix rails duplicating some view_paths
@@ -80,8 +80,7 @@ module ActiveScaffold
 
       # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
       klass = self.active_scaffold_config.model
-      klass.define_attribute_methods unless klass.generated_methods?
-
+      klass.define_attribute_methods unless klass.attribute_methods_generated?
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
         include ActiveScaffold::Finder
@@ -97,6 +96,9 @@ module ActiveScaffold
             active_scaffold_config.action_links << link
           end
         end
+      end
+      active_scaffold_paths.each do |path|
+        self.append_view_path(ActionView::ActiveScaffoldResolver.new(path))
       end
       self.active_scaffold_config._add_sti_create_links if self.active_scaffold_config.add_sti_create_links?
     end
@@ -142,8 +144,9 @@ module ActiveScaffold
     def active_scaffold_paths
       return @active_scaffold_paths unless @active_scaffold_paths.nil?
 
-      @active_scaffold_paths = ActionView::PathSet.new
-      @active_scaffold_paths.concat @active_scaffold_overrides unless @active_scaffold_overrides.nil?
+      #@active_scaffold_paths = ActionView::PathSet.new
+      @active_scaffold_paths = []
+      #@active_scaffold_paths.concat @active_scaffold_overrides unless @active_scaffold_overrides.nil?
       @active_scaffold_paths.concat @active_scaffold_custom_paths unless @active_scaffold_custom_paths.nil?
       @active_scaffold_paths.concat @active_scaffold_frontends unless @active_scaffold_frontends.nil?
       @active_scaffold_paths

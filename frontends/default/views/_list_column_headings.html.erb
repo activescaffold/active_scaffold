@@ -15,8 +15,9 @@ default_sorting_stages = ['ASC', 'DESC']
   <th id="<%= column_header_id %>" class="<%= column.css_class unless column.css_class.nil? %> <%= "sorted #{sorting.direction_of(column).downcase}" if sorting.sorts_on? column %>" title="<%= h column.description %>">
   <% if column.sortable? -%>
     <% href = url_for(sort_params) -%>
-    <%= link_to_remote column.label,
-      { :url => sort_params,
+    <%= link_to column.label,
+      { :remote => true,
+        :url => sort_params,
         :before => "addActiveScaffoldPageToHistory('#{href}', '#{controller_id}')",
         :loading => "Element.addClassName('#{column_header_id}','loading');",
         :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
