@@ -130,7 +130,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_translated_option(column, text, value = nil)
-        value ||= text
+        value = text if value.nil?
         [(text.is_a?(Symbol) ? column.active_record_class.human_attribute_name(text) : text), value]
       end
 
