@@ -2,6 +2,7 @@ module ActiveScaffold::Actions
   module List
     def self.included(base)
       base.before_filter :list_authorized_filter, :only => [:index, :table, :row, :list]
+      base.send :include, ActiveScaffold::Actions::Mark if base.active_scaffold_config.list.mark_records
     end
 
     def index
@@ -41,10 +42,15 @@ module ActiveScaffold::Actions
     def list_respond_to_yaml
       render :text => Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.list.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
-    # The actual algorithm to prepare for the list view
-    def do_list
+
+    def set_includes_for_list_columns
       includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
       self.active_scaffold_includes.concat includes_for_list_columns
+    end
+
+    # The actual algorithm to prepare for the list view
+    def do_list
+      set_includes_for_list_columns
 
       options = { :sorting => active_scaffold_config.list.user.sorting,
                   :count_includes => active_scaffold_config.list.user.count_includes }
@@ -57,7 +63,7 @@ module ActiveScaffold::Actions
         })
       end
 
-      page = find_page(options);
+      page = find_page(options)
       if page.items.blank? && !page.pager.infinite?
         page = page.pager.last
         active_scaffold_config.list.user.page = page.number

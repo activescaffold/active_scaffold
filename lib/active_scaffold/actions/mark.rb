@@ -2,53 +2,66 @@ module ActiveScaffold::Actions
   module Mark
 
     def self.included(base)
-      base.before_filter :mark_authorized?, :only => [:mark_all]
-      base.prepend_before_filter :assign_marked_records_to_model
+      base.before_filter :mark_authorized?, :only => :mark
+      #base.prepend_before_filter :assign_marked_records_to_model
       base.helper_method :marked_records
     end
 
-    def mark_all
-      if mark_all?
-        do_mark_all
+    def mark
+      if mark?
+        do_mark
       else
-        do_demark_all
+        do_unmark
       end
-      do_list
-      respond_to_action(:list) 
+      mark_respond_to_js
     end
- protected
- 
+
+    protected
     # We need to give the ActiveRecord classes a handle to currently marked records. We don't want to just pass the object,
     # because the object may change. So we give ActiveRecord a proc that ties to the
     # marked_records_method on this ApplicationController.
     def assign_marked_records_to_model
       active_scaffold_config.model.marked_records_proc = proc {send(:marked_records)}
     end
-    
-    def marked_records
-      active_scaffold_session_storage[:marked_records] ||= Set.new
+
+    def mark?
+      params[:value] == 'true'
     end
     
-    def mark_all?
-      @mark_all ||= (params[:value] == 'true')
+    def do_mark
+      if params[:id]
+        marked_records << params[:id]
+      else
+        each_record_in_scope {|record| marked_records << record.id.to_s}
+      end
     end
 
-    def do_mark_all
-      each_record_in_scope {|record| marked_records << record.id}
-    end
-
-    def do_demark_all
-      each_record_in_scope {|record| marked_records.delete(record.id)}
+    def do_unmark
+      if params[:id]
+        marked_records.delete params[:id]
+      else
+        each_record_in_scope {|record| marked_records.delete(record.id.to_s)}
+      end
     end
     
     def each_record_in_scope
-      finder_options = { :order => "#{active_scaffold_config.model.primary_key} ASC",
-                         :conditions => all_conditions,
-                         :joins => joins_for_finder}
-      finder_options.merge! custom_finder_options
-      finder_options.merge! :include => (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
-      klass = beginning_of_chain
-      klass.all(finder_options).each {|record| yield record}
+      do_search if respond_to? :do_search
+      set_includes_for_list_columns
+      find_options = finder_options
+      find_options[:include] = nil if find_options[:conditions].nil?
+      beginning_of_chain.all(find_options).each {|record| yield record}
+    end
+
+    def mark_respond_to_js
+      if params[:id]
+        do_search if respond_to? :do_search
+        set_includes_for_list_columns
+        count = beginning_of_chain.count(count_options(finder_options, active_scaffold_config.list.user.count_includes))
+        # FIXME: It isn't right when there are filtered records by a search
+        render :js => "$('#{active_scaffold_id}').down('.mark_record').checked = #{marked_records.length >= count ? true : false};"
+      else
+        render :js => "$$('##{active_scaffold_tbody_id} > tr > td > .mark_record').each(function(checkbox) { checkbox.checked = #{mark? ? true : false};});"
+      end
     end
 
     # The default security delegates to ActiveRecordPermissions.
