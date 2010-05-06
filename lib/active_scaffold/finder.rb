@@ -144,11 +144,11 @@ module ActiveScaffold
       '!=',
       'BETWEEN'
     ]
-    StringComparators = {
-      :contains    => '%?%',
-      :begins_with => '?%',
-      :ends_with   => '%?'
-    }
+    StringComparators = ActiveSupport::OrderedHash[
+      :contains,    '%?%',
+      :begins_with, '?%',
+      :ends_with,   '%?'
+    ]
 
     def self.included(klass)
       klass.extend ClassMethods
