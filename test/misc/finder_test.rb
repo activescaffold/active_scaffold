@@ -80,7 +80,6 @@ class FinderTest < Test::Unit::TestCase
   end
 
   def test_disabled_pagination
-    ModelStub.expects(:count).returns(85)
     ModelStub.expects(:find).with(:all, Not(has_entries(:limit => 20, :offset => 0)))
     page = @klass.send :find_page, :per_page => 20, :pagination => false
     page.items
