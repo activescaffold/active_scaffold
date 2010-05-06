@@ -148,7 +148,6 @@ module ActiveScaffold
     def find_or_create_for_params(params, parent_column, parent_record)
       current = parent_record.send(parent_column.name)
       klass = parent_column.association.klass
-      debugger
       return nil if parent_column.show_blank_record?(current) and attributes_hash_is_empty?(params, klass)
 
       if params.has_key? :id
