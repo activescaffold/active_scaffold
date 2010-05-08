@@ -8,7 +8,7 @@
     <% if column.options.is_a?(Hash) && column.options[:update_column] -%>
       <%= loading_indicator_tag(:action => :render_field, :id => params[:id]) %>
     <% end -%>
-    <% if column.description -%>
+    <% if column.description.present? -%>
       <span class="description"><%= column.description %></span>
     <% end -%>
   </dd>
