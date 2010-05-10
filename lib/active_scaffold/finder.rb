@@ -31,11 +31,11 @@ module ActiveScaffold
       def condition_for_column(column, value, text_search = :full)
         like_pattern = like_pattern(text_search)
         return unless column and column.search_sql and not value.blank?
-        search_ui = column.search_ui || column.column.type
+        search_ui = column.search_ui || column.column.try(:type)
         begin
           if self.respond_to?("condition_for_#{column.name}_column")
             self.send("condition_for_#{column.name}_column", column, value, like_pattern)
-          elsif self.respond_to?("condition_for_#{search_ui}_type")
+          elsif search_ui && self.respond_to?("condition_for_#{search_ui}_type")
             self.send("condition_for_#{search_ui}_type", column, value, like_pattern)
           else
             case search_ui
