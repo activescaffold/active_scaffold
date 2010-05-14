@@ -30,12 +30,13 @@ module ActiveScaffold
               else
                 # for textual fields we pass different options
                 text_types = [:text, :string, :integer, :float, :decimal]
+                date_types = [:date, :datetime, :time]
                 options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
+                options = active_scaffold_input_date_options(column, options) if date_types.include?(column.column.type)
                 if column.column.type == :string && options[:maxlength].blank?
                   options[:maxlength] = column.column.limit
                   options[:size] ||= ActionView::Helpers::InstanceTag::DEFAULT_FIELD_OPTIONS["size"]
                 end
-                options[:include_blank] = true if column.column.null and [:date, :datetime, :time].include?(column.column.type)
                 options[:value] = format_number_value(@record.send(column.name), column.options) if column.column.number?
                 input(:record, column.name, options.merge(column.options))
               end
@@ -53,6 +54,13 @@ module ActiveScaffold
       def active_scaffold_input_text_options(options = {})
         options[:autocomplete] = 'off'
         options[:class] = "#{options[:class]} text-input".strip
+        options
+      end
+
+      # the standard active scaffold options used for date, datetime and time inputs
+      def active_scaffold_input_date_options(column, options = {})
+        options[:include_blank] = true if column.column.null
+        options[:prefix] = options[:name].gsub("[#{column.name}]", '')
         options
       end
 
