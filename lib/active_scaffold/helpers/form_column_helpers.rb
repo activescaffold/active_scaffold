@@ -138,8 +138,8 @@ module ActiveScaffold
       end
 
       def active_scaffold_translated_option(column, text, value = nil)
-        value = text.to_s if value.nil?
-        [(text.is_a?(Symbol) ? column.active_record_class.human_attribute_name(text) : text), value]
+        value = text if value.nil?
+        [(text.is_a?(Symbol) ? column.active_record_class.human_attribute_name(text) : text), value.to_s]
       end
 
       def active_scaffold_translated_options(column)
@@ -154,7 +154,7 @@ module ActiveScaffold
         elsif column.plural_association?
           active_scaffold_input_plural_association(column, html_options)
         else
-          options = { :selected => @record.send(column.name) }
+          options = { :selected => @record.send(column.name).to_s }
           options_for_select = active_scaffold_translated_options(column)
           html_options.update(column.options[:html_options] || {})
           options.update(column.options)
