@@ -187,7 +187,7 @@ module ActiveScaffold::DataStructures
       if @show_blank_record
         return false if self.through_association?
         return false unless self.association.klass.authorized_for?(:action => :create)
-        self.plural_association? or (self.singular_association? and associated.empty?)
+        self.plural_association? or (self.singular_association? and associated.blank?)
       end
     end
 
