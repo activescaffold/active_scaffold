@@ -29,7 +29,8 @@ Rails < 2.1: Active Scaffold 1-1-stable (no guarantees)
 Since Rails 2.3, render_component plugin is needed for nested and embbeded scaffolds. It works with rails-2.3 branch from ewildgoose repository:
 script/plugin install git://github.com/ewildgoose/render_component.git -r rails-2.3
 
-Since Rails 3.0, verification plugin is needed:
+Since Rails 3.0, verification and dynamic form plugins are needed:
 rails plugin install git://github.com/rails/verification.git
+rails plugin install git://github.com/rails/dynamic_form.git
 
 Released under the MIT license (included)

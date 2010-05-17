@@ -9,16 +9,16 @@ if xhr
                            :loading => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible';",
                            :class => 'create'
   else
-    form_remote_tag :url => url_options,
-                    :after => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :create)}');",
-                    :complete => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :create)}');",
-                    :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-                    :html => {
+    form_tag :url => url_options,
+             :remote => true,
+             :after => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :create)}');",
+             :complete => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :create)}');",
+             :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
+             :html => {
                       :href => url_for(url_options),
                       :onsubmit => onsubmit,
                       :id => element_form_id(:action => :create),
-                      :class => 'create'
-                    }
+                      :class => 'create'}
   end
 else
   form_tag url_options,
@@ -28,11 +28,11 @@ else
            :class => 'create'
 end -%>
 
-  <h4><%= active_scaffold_config.create.label(active_scaffold_config.sti_create_links ? @record.class.human_name(:count => 1) : nil) -%></h4>
+  <h4><%= active_scaffold_config.create.label(active_scaffold_config.sti_create_links ? @record.class.model_name.human(:count => 1) : nil) -%></h4>
 
   <div id="<%= element_messages_id(:action => :create) %>" class="messages-container">
 <% if request.xhr? -%>
-    <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
+    <%= error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
 <% else -%>
     <%= render :partial => 'form_messages' %>
 <% end -%>
