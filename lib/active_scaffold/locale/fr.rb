@@ -57,6 +57,11 @@
       :'<' => '<',
       :'!=' => '!=',
       :between => 'Entre',
+      :is_null => 'Is null',
+      :is_not_null => 'Is not null',
+      :contains => 'Contains',
+      :begins_with => 'Begins with',
+      :ends_with => 'Ends with',
 
       # error_messages
       :internal_error => 'Erreur de la requête (code 500, Erreur interne)',

@@ -60,7 +60,9 @@ module ActiveScaffold
       def condition_for_integer_type(column, value, like_pattern = nil)
         if !value.is_a?(Hash)
           ["#{column.search_sql} = ?", column.column.nil? ? value.to_f : column.column.type_cast(value)]
-        elsif value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
+        elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
+          condition = "#{column.search_sql} #{value[:opt].humanize}"
+        elsif value[:from].blank?
           nil
         elsif value[:opt] == 'BETWEEN'
           condition = "#{column.search_sql} BETWEEN ? AND ?"
@@ -69,7 +71,7 @@ module ActiveScaffold
           else
             [condition, column.column.type_cast(value[:from]), column.column.type_cast(value[:to])]
           end
-        else
+        elsif ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           ["#{column.search_sql} #{value[:opt]} ?", column.column.nil? ? value[:from].to_f : column.column.type_cast(value[:from])]
         end
       end
@@ -83,6 +85,8 @@ module ActiveScaffold
           else
             ["#{column.search_sql} = ?", column.column.type_cast(value)]
           end
+        elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
+          condition = "#{column.search_sql} #{value[:opt].humanize}"
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::StringComparators.values.include?(value[:opt])
@@ -149,6 +153,8 @@ module ActiveScaffold
       :begins_with, '?%',
       :ends_with,   '%?'
     ]
+
+    NullComparators = ['is_null', 'is_not_null']
 
     def self.included(klass)
       klass.extend ClassMethods

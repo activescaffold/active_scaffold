@@ -61,6 +61,8 @@ es:
     '<': '<'
     '!=': '!='
     between: 'Entre'
+    is_null: 'Es nulo'
+    is_not_null: 'No es nulo'
     contains: 'Contiene'
     begins_with: 'Empieza con'
     ends_with: 'Termina con'

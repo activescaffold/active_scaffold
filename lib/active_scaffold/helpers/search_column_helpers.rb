@@ -129,6 +129,7 @@ module ActiveScaffold
         opt_value, from_value, to_value = field_search_params_range_values(column)
         select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
         select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]} if column.options[:string_comparators] || column.column && column.column.text?
+        select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]} if column.column && column.column.null
 
         html = []
         html << select_tag("#{options[:name]}[opt]",

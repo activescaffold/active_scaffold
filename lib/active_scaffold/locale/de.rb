@@ -57,6 +57,11 @@
       :'<' => '<',
       :'!=' => '!=',
       :between => 'Zwischen',
+      :is_null => 'Is null',
+      :is_not_null => 'Is not null',
+      :contains => 'Contains',
+      :begins_with => 'Begins with',
+      :ends_with => 'Ends with',
 
       # error_messages
       :cant_destroy_record => "{{record}} kann nicht gelöscht werden",
