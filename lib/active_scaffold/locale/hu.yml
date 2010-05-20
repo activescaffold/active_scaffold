@@ -56,6 +56,11 @@ hu:
     '<': '<'
     '!=': '!='
     between: 'Között'
+    is_null: 'Is null'
+    is_not_null: 'Is not null'
+    contains: 'Contains'
+    begins_with: 'Begins with'
+    ends_with: 'Ends with'
     
     # error_messages
     internal_error: 'A lekérés sikertelen (code 500, Internal Error)'
