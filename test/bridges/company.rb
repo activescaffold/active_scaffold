@@ -11,8 +11,24 @@ class Company
     @with_main_company = with_or_without == :with_main_company
   end
   
+  def self.columns_hash
+    {
+      'name' => ActiveRecord::ConnectionAdapters::Column.new('name', nil, 'varchar(255)'),
+      'date' => ActiveRecord::ConnectionAdapters::Column.new('date', nil, 'date'),
+      'datetime' => ActiveRecord::ConnectionAdapters::Column.new('datetime', nil, 'datetime')
+    }
+  end
+
+  def self.columns
+    self.columns_hash.values
+  end
+  
   def self.class_name
     self.name
+  end
+  
+  def self.table_name
+    'companies'
   end
   
   # not the real signature of the method, but forgive me

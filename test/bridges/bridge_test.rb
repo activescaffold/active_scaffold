@@ -32,6 +32,49 @@ class Bridges::BridgeTest < Test::Unit::TestCase
       assert(bridge_will_be_installed("FileColumn"))
     end
   end
+  
+  def test__dependent_protect_bridge
+    ConstMocker.mock("DependentProtect") do |cm|
+      cm.remove
+      assert(! bridge_will_be_installed("DependentProtect"))
+      cm.declare
+      assert(bridge_will_be_installed("DependentProtect"))
+    end
+  end
+  
+  def test__paperclip_bridge
+    ConstMocker.mock("Paperclip") do |cm|
+      cm.remove
+      assert(! bridge_will_be_installed("Paperclip"))
+      cm.declare
+      assert(bridge_will_be_installed("Paperclip"))
+    end
+  end
+  
+  def test__unobtrusive_date_picker_bridge
+    ConstMocker.mock("UnobtrusiveDatePicker") do |cm|
+      cm.remove
+      assert(! bridge_will_be_installed("UnobtrusiveDatePicker"))
+      cm.declare
+      assert(bridge_will_be_installed("UnobtrusiveDatePicker"))
+    end
+  end
+  
+  def test__validation_reflection_bridge
+    class << ActiveRecord::Base; undef_method :reflect_on_validations_for; end rescue nil
+    assert(! bridge_will_be_installed("ValidationReflection"))
+    class << ActiveRecord::Base; define_method :reflect_on_validations_for, lambda{}; end
+    assert(bridge_will_be_installed("ValidationReflection"))
+  end
+  
+  def test__semantic_attributes_bridge
+    ConstMocker.mock("SemanticAttributes") do |cm|
+      cm.remove
+      assert(! bridge_will_be_installed("SemanticAttributes"))
+      cm.declare
+      assert(bridge_will_be_installed("SemanticAttributes"))
+    end
+  end
 
 protected
 
