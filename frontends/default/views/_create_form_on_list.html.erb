@@ -6,16 +6,11 @@ if active_scaffold_config.create.multipart? # file_uploads
                          :id => element_form_id(:action => :create),
                          :class => 'create'
 else
-  form_remote_tag :url => url_options,
-                  :after => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :create)}');",
-                  :complete => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :create)}');",
-                  :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-                  :html => {
-                    :href => url_for(url_options),
-                    :onsubmit => onsubmit,
-                    :id => element_form_id(:action => :create),
-                    :class => 'create'
-                  }
+  form_tag url_options,
+           :remote => true,
+           :id => element_form_id(:action => :create),
+           :onsubmit => onsubmit,
+           :class => 'create'
 end -%>
 
   <h4><%= active_scaffold_config.create.label -%></h4>
@@ -35,4 +30,15 @@ end -%>
 </form>
 <script type="text/javascript">
 Form.focusFirstElement('<%= element_form_id(:action => :create) -%>');
+$('<% element_form_id(:action => :create) %>').observe("ajax:after", function(event){
+ $('<% loading_indicator_id(:action => :create, :id => params[:id]) %>').style.visibility = 'visible';
+ Form.disable('<% element_form_id(:action => :create)%>');
+})
+$('<% element_form_id(:action => :create) %>').observe("ajax:complete", function(event){
+ $('<% loading_indicator_id(:action => :create, :id => params[:id]) %>').style.visibility = 'hidden';
+ Form.enable('<% element_form_id(:action => :create)%>');
+})
+$('<% element_form_id(:action => :create) %>').observe("ajax:failure", function(event){
+ ActiveScaffold.report_500_response('<% active_scaffold_id %>');
+})
 </script>

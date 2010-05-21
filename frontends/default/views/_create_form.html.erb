@@ -9,16 +9,11 @@ if xhr
                            :loading => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible';",
                            :class => 'create'
   else
-    form_tag :url => url_options,
+    form_tag url_options,
              :remote => true,
-             :after => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :create)}');",
-             :complete => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :create)}');",
-             :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-             :html => {
-                      :href => url_for(url_options),
-                      :onsubmit => onsubmit,
-                      :id => element_form_id(:action => :create),
-                      :class => 'create'}
+             :id => element_form_id(:action => :create),
+             :onsubmit => onsubmit,
+             :class => 'create'
   end
 else
   form_tag url_options,
@@ -26,7 +21,7 @@ else
            :id => element_form_id(:action => :create),
            :multipart => active_scaffold_config.create.multipart?,
            :class => 'create'
-end -%>
+end %>
 
   <h4><%= active_scaffold_config.create.label(active_scaffold_config.sti_create_links ? @record.class.model_name.human(:count => 1) : nil) -%></h4>
 
@@ -49,4 +44,15 @@ end -%>
 </form>
 <script type="text/javascript">
 Form.focusFirstElement('<%= element_form_id(:action => :create) -%>');
+$('<% element_form_id(:action => :create) %>').observe("ajax:after", function(event){
+ $('<% loading_indicator_id(:action => :create, :id => params[:id]) %>').style.visibility = 'visible';
+ Form.disable('<% element_form_id(:action => :create)%>');
+})
+$('<% element_form_id(:action => :create) %>').observe("ajax:complete", function(event){
+ $('<% loading_indicator_id(:action => :create, :id => params[:id]) %>').style.visibility = 'hidden';
+ Form.enable('<% element_form_id(:action => :create)%>');
+})
+$('<% element_form_id(:action => :create) %>').observe("ajax:failure", function(event){
+ ActiveScaffold.report_500_response('<% active_scaffold_id %>');
+})
 </script>
