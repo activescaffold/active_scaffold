@@ -16,6 +16,4 @@ module ActiveScaffold
     end
   end
 end
-ActiveScaffold::DataStructures::Column.class_eval do
-  include ActiveScaffold::ValidationReflectionBridge
-end
+
