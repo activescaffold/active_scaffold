@@ -37,7 +37,7 @@ module ActiveScaffold
                 end
                 options[:include_blank] = true if column.column.null and [:date, :datetime, :time].include?(column.column.type)
                 options[:value] = format_number_value(@record.send(column.name), column.options) if column.column.number?
-                input(:record, column.name, options.merge(column.options))
+                text_field(:record, column.name, options.merge(column.options))
               end
             end
           end
