@@ -1,0 +1,14 @@
+<script type="text/javascript">
+Form.focusFirstElement('<%= element_form_id(:action => action_type) -%>');
+$('<%= element_form_id(:action => action_type) %>').observe("ajax:after", function(event){
+ $('<%= loading_indicator_id(:action => action_type, :id => id) %>').style.visibility = 'visible';
+ Form.disable('<%= element_form_id(:action => action_type)%>');
+});
+$('<%= element_form_id(:action => action_type) %>').observe("ajax:complete", function(event){
+ $('<%= loading_indicator_id(:action => action_type, :id => id) %>').style.visibility = 'hidden';
+ Form.enable('<%= element_form_id(:action => action_type)%>');
+});
+$('<%= element_form_id(:action => action_type) %>').observe("ajax:failure", function(event){
+ ActiveScaffold.report_500_response('<%= active_scaffold_id %>');
+});
+</script>

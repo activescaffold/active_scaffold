@@ -28,17 +28,4 @@ end -%>
     <%= loading_indicator_tag(:action => :create, :id => params[:id]) %>
   </p>
 </form>
-<script type="text/javascript">
-Form.focusFirstElement('<%= element_form_id(:action => :create) -%>');
-$('<% element_form_id(:action => :create) %>').observe("ajax:after", function(event){
- $('<% loading_indicator_id(:action => :create, :id => params[:id]) %>').style.visibility = 'visible';
- Form.disable('<% element_form_id(:action => :create)%>');
-})
-$('<% element_form_id(:action => :create) %>').observe("ajax:complete", function(event){
- $('<% loading_indicator_id(:action => :create, :id => params[:id]) %>').style.visibility = 'hidden';
- Form.enable('<% element_form_id(:action => :create)%>');
-})
-$('<% element_form_id(:action => :create) %>').observe("ajax:failure", function(event){
- ActiveScaffold.report_500_response('<% active_scaffold_id %>');
-})
-</script>
+<%= render :partial => 'form_js', :locals => {:action_type => :create, :id => params[:id]} %>
