@@ -10,17 +10,12 @@ if xhr
                            :class => 'update',
                            :method => :put
   else
-    form_remote_tag :url => url_options,
-                    :after => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :update)}');",
-                    :complete => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :update)}');",
-                    :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-                    :html => {
-                      :href => url_for(url_options),
-                      :onsubmit => onsubmit,
-                      :id => element_form_id(:action => :update),
-                      :class => 'update',
-                      :method => :put
-                    }
+    form_tag url_options,
+           :onsubmit => onsubmit,
+           :id => element_form_id(:action => :update),
+           :multipart => active_scaffold_config.update.multipart?,
+           :class => 'update',
+           :method => :put
   end
 else
   form_tag url_options,
@@ -53,4 +48,15 @@ end
 </form>
 <script type="text/javascript">
 Form.focusFirstElement('<%= element_form_id(:action => :update) -%>');
+$('<% element_form_id(:action => :update) %>').observe("ajax:after", function(event){
+ $('<% loading_indicator_id(:action => :update, :id => params[:id]) %>').style.visibility = 'visible';
+ Form.disable('<% element_form_id(:action => :update)%>');
+})
+$('<% element_form_id(:action => :update) %>').observe("ajax:complete", function(event){
+ $('<% loading_indicator_id(:action => :update, :id => params[:id]) %>').style.visibility = 'hidden';
+ Form.enable('<% element_form_id(:action => :update)%>');
+})
+$('<% element_form_id(:action => :update) %>').observe("ajax:failure", function(event){
+ ActiveScaffold.report_500_response('<% active_scaffold_id %>');
+})
 </script>
