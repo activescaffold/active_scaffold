@@ -5,7 +5,7 @@ require File.join(File.dirname(__FILE__), '../../lib/bridges/dependent_protect/l
 
 # Mocking everything necesary to test the plugin.
 class Company
-  def initialize(with_or_without)
+  def initialize(with_or_without = nil)
     @with_companies = with_or_without == :with_companies
     @with_company = with_or_without == :with_company
     @with_main_company = with_or_without == :with_main_company
@@ -15,7 +15,11 @@ class Company
     {
       'name' => ActiveRecord::ConnectionAdapters::Column.new('name', nil, 'varchar(255)'),
       'date' => ActiveRecord::ConnectionAdapters::Column.new('date', nil, 'date'),
-      'datetime' => ActiveRecord::ConnectionAdapters::Column.new('datetime', nil, 'datetime')
+      'datetime' => ActiveRecord::ConnectionAdapters::Column.new('datetime', nil, 'datetime'),
+      'logo_file_name' => ActiveRecord::ConnectionAdapters::Column.new('logo_file_name', nil, 'varchar(255)'),
+      'logo_content_type' => ActiveRecord::ConnectionAdapters::Column.new('logo_content_type', nil, 'varchar(255)'),
+      'logo_file_size' => ActiveRecord::ConnectionAdapters::Column.new('logo_file_size', nil, 'int(11)'),
+      'logo_updated_at' => ActiveRecord::ConnectionAdapters::Column.new('logo_updated_at', nil, 'datetime'),
     }
   end
 
@@ -29,6 +33,10 @@ class Company
   
   def self.table_name
     'companies'
+  end
+  
+  def self.attachment_definitions
+    {:logo => {}}
   end
   
   # not the real signature of the method, but forgive me

@@ -1,5 +1,5 @@
-module ActiveScaffold::Config
-  class Core < Base
+module ActiveScaffold
+  module PaperclipBridge
     def initialize_with_paperclip(model_id)
       initialize_without_paperclip(model_id)
       return if self.model.attachment_definitions.nil?
@@ -13,8 +13,12 @@ module ActiveScaffold::Config
         PaperclipBridgeHelpers.generate_delete_helper(self.model, field)
       end
     end
-    alias_method_chain :initialize, :paperclip
 
+    def self.included(base)
+      base.alias_method_chain :initialize, :paperclip
+    end
+
+    private
     def configure_paperclip_field(field)
       self.columns << field
       self.columns[field].form_ui ||= :paperclip
