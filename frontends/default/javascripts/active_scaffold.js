@@ -3,9 +3,9 @@ if (typeof Prototype == 'undefined')
   warning = "ActiveScaffold Error: Prototype could not be found. Please make sure that your application's layout includes prototype.js (e.g. <%= javascript_include_tag :defaults %>) *before* it includes active_scaffold.js (e.g. <%= active_scaffold_includes %>).";
   alert(warning);
 }
-if (Prototype.Version.substring(0, 3) != '1.6')
+if (Prototype.Version.substring(0, 3) < '1.6')
 {
-  warning = "ActiveScaffold Error: Prototype version 1.6.x is required. Please update prototype.js (rake rails:update:javascripts).";
+  warning = "ActiveScaffold Error: Prototype version 1.6.x or higher is required. Please update prototype.js (rake rails:update:javascripts).";
   alert(warning);
 }
 if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFunction});
