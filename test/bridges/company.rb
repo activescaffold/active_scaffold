@@ -75,4 +75,7 @@ class Company
   def main_company
     @with_main_company
   end
+  
+  def name
+  end
 end

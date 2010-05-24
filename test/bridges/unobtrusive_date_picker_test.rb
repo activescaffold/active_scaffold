@@ -10,6 +10,7 @@ end
 
 class UnobtrusiveDatePickerTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ViewHelpers
+  include ActiveScaffold::UnobtrusiveDatePickerHelpers
 
   def test_set_form_ui
     config = UDPCore.new(:company)
