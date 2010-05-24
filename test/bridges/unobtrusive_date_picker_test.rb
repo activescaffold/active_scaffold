@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), '../../lib/bridges/unobtrusive_date_pi
 require File.join(File.dirname(__FILE__), '../../lib/bridges/unobtrusive_date_picker/lib/view_helpers')
 require File.join(File.dirname(__FILE__), '../../lib/bridges/unobtrusive_date_picker/lib/form_ui')
 
-class Core < ActiveScaffold::Config::Core
+class UDPCore < ActiveScaffold::Config::Core
   include ActiveScaffold::UnobtrusiveDatePickerBridge
 end
 
@@ -12,7 +12,7 @@ class UnobtrusiveDatePickerTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ViewHelpers
 
   def test_set_form_ui
-    config = Core.new(:company)
+    config = UDPCore.new(:company)
     assert_equal nil, config.columns[:name].form_ui, 'form_ui for name'
     assert_equal :datepicker, config.columns[:date].form_ui, 'form_ui for date'
     assert_equal :datepicker, config.columns[:datetime].form_ui, 'form_ui for datetime'
@@ -28,7 +28,7 @@ class UnobtrusiveDatePickerTest < ActionView::TestCase
   end
 
   def test_form_ui
-    config = Core.new(:company)
+    config = UDPCore.new(:company)
     self.expects(:date_select).returns('')
     self.expects(:date_picker).returns('')
     assert active_scaffold_input_datepicker(config.columns[:date], :name => 'record[date]', :id => 'record_date')
@@ -44,8 +44,5 @@ class UnobtrusiveDatePickerTest < ActionView::TestCase
   end
   def unobtrusive_datepicker_javascripts
     ['datepicker.js', 'datepicker_lang/es.js']
-  end
-  def date_picker(record, name, options, html_options)
-    javascript_tag ''
   end
 end

@@ -8,7 +8,7 @@ module ActiveScaffold
           content = active_scaffold_column_paperclip(column, @record)
           content_tag(:div,
             content + " | " +
-            link_to_function(as_(:remove_file), "$(this).next().value='true'; p=$(this).up(); p.hide(); p.next().show()") +
+            link_to_function(as_(:remove_file), "$(this).next().value='true'; $(this).up().hide().next().show()") +
             hidden_field(:record, "delete_#{column.name}", :value => "false")
           ) + content_tag(:div, input, :style => "display: none")
         else

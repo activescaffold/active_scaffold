@@ -8,5 +8,6 @@ ActiveScaffold.bridge "Paperclip" do
     require File.join(File.dirname(__FILE__), "lib/paperclip_bridge")
     require File.join(File.dirname(__FILE__), "lib/form_ui")
     require File.join(File.dirname(__FILE__), "lib/list_ui")
+    ActiveScaffold::Config::Core.send :include, ActiveScaffold::PaperclipBridge
   end
 end
