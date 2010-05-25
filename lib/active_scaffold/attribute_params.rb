@@ -123,11 +123,11 @@ module ActiveScaffold
           # it's an array of ids
           column.association.klass.find(value) if value and not value.empty?
         elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
-          native = '.'
+          native = '.' # native ruby separator
           delimiter = I18n.t('number.format.delimiter')
           separator = I18n.t('number.format.separator')
 
-          unless delimiter == native && !value.include?(separator) && value !~ /\.\d{3}$/
+          unless !value.include?(separator) && value.include?(native) && (delimiter != native || value !~ /\.\d{3}$/)
             value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
           else
             value
