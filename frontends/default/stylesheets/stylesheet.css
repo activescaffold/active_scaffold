@@ -521,6 +521,9 @@ margin-bottom: 3px;
 .active-scaffold .show-view dl {
 margin-left: 5px;
 }
+.active-scaffold .show-view dl dl {
+margin-left: 0px;
+}
 
 .active-scaffold .show-view dt {
 width: 12em;
