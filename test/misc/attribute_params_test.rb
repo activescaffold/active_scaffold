@@ -19,6 +19,10 @@ class AttributeParamsTest < Test::Unit::TestCase
       :delimiter => '.',
       :separator => ','
     }}
+    I18n.backend.store_translations :ru, :number => {:format => {
+      :delimiter => '',
+      :separator => ','
+    }}
 
     @config = config_for('number_model')
     class << @config.list.columns
@@ -99,6 +103,29 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal 1234.345, convert_number('+1.234,345')
     assert_equal -1234.345, convert_number('-1.234,345')
     assert_equal 1234000.1, convert_number('1.234.000,100')
+  end
+
+  def test_english_format_with_decimal_separator_using_russian_language
+    I18n.locale = :ru
+    assert_equal 0.1, convert_number('.1')
+    assert_equal 0.1, convert_number('0.1')
+    assert_equal 0.12, convert_number('+0.12')
+    assert_equal -0.12, convert_number('-0.12')
+    assert_equal 9.1, convert_number('9.1')
+    assert_equal 90.1, convert_number('90.1')
+  end
+
+  def test_russian_format_with_decimal_separator_using_russian_language
+    I18n.locale = :ru
+    assert_equal 0.1, convert_number(',1')
+    assert_equal 0.1, convert_number(',100')
+    assert_equal 0.1, convert_number('0,1')
+    assert_equal 0.345, convert_number('0,345')
+    assert_equal 0.345, convert_number('+0,345')
+    assert_equal -0.345, convert_number('-0,345')
+    assert_equal 9.1, convert_number('9,1')
+    assert_equal 90.1, convert_number('90,1')
+    assert_equal 9.1, convert_number('9,100')
   end
 
   private
