@@ -14,4 +14,4 @@ ActiveRecord::Base.class_eval     {include ActiveRecordPermissions::Permissions}
 
 require 'bridges/bridge.rb'
 
-I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'lib', 'active_scaffold', 'locale', '*.{rb,yml}')]
+I18n.load_path.unshift *Dir[File.join(File.dirname(__FILE__), 'lib', 'active_scaffold', 'locale', '*.{rb,yml}')]
