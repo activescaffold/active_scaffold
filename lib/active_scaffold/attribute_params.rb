@@ -122,18 +122,20 @@ module ActiveScaffold
         elsif column.plural_association?
           # it's an array of ids
           column.association.klass.find(value) if value and not value.empty?
-        elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
+        elsif column.column && column.column.number? && column.options[:format]
           native = '.' # native ruby separator
-          case column.options[:format]
+          format = {:separator => '', :delimiter => ''}.merge! I18n.t('number.format', :default => {})
+          specific = case column.options[:format]
           when :currency
-            delimiter = I18n.t('number.currency.format.delimiter')
-            separator = I18n.t('number.currency.format.separator')
-          when :i18n_number
-            delimiter = I18n.t('number.format.delimiter')
-            separator = I18n.t('number.format.separator')
+            I18n.t('number.currency.format', :default => nil)
+          when :size
+            I18n.t('number.human.format', :default => nil)
+          when :percentage
+            I18n.t('number.percentage.format', :default => nil)
           end
-          unless !value.include?(separator) && value.include?(native) && (delimiter != native || value !~ /\.\d{3}$/)
-            value.gsub(/[^0-9\-#{separator}]/, '').gsub(separator, native)
+          format.merge! specific unless specific.nil?
+          unless format[:separator].blank? || !value.include?(format[:separator]) && value.include?(native) && (format[:delimiter] != native || value !~ /\.\d{3}$/)
+            value.gsub(/[^0-9\-#{format[:separator]}]/, '').gsub(format[:separator], native)
           else
             value
           end
