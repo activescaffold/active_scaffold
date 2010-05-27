@@ -171,7 +171,7 @@ module ActiveScaffold
           when :currency
             number_to_currency(value, options[:i18n_options] || {})
           when :i18n_number
-            send("number_with_#{value.is_a?(Integer) ? 'delimiter' : 'precision'}", value, options[:i18n_options] || {})
+            number_with_delimiter(value, options[:i18n_options] || {})
           else
             value
         end
