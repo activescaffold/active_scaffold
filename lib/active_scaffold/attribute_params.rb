@@ -124,11 +124,16 @@ module ActiveScaffold
           column.association.klass.find(value) if value and not value.empty?
         elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
           native = '.' # native ruby separator
-          delimiter = I18n.t('number.format.delimiter')
-          separator = I18n.t('number.format.separator')
-
+          case column.options[:format]
+          when :currency
+            delimiter = I18n.t('number.currency.format.delimiter')
+            separator = I18n.t('number.currency.format.separator')
+          when :i18n_number
+            delimiter = I18n.t('number.format.delimiter')
+            separator = I18n.t('number.format.separator')
+          end
           unless !value.include?(separator) && value.include?(native) && (delimiter != native || value !~ /\.\d{3}$/)
-            value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
+            value.gsub(/[^0-9\-#{separator}]/, '').gsub(separator, native)
           else
             value
           end
