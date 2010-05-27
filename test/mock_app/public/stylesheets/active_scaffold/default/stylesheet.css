@@ -299,7 +299,7 @@ background: transparent;
 }
 
 .active-scaffold .active-scaffold .active-scaffold-header {
-margin-right: 15px;
+margin-right: 25px;
 }
 
 .active-scaffold .active-scaffold .active-scaffold-header h2 {
@@ -319,7 +319,6 @@ right: 0px;
 
 .active-scaffold .active-scaffold .active-scaffold-header div.actions a {
 font: bold 11px verdana, sans-serif;
-padding: 0 2px 1px 17px;
 }
 
 .blue-theme .active-scaffold .active-scaffold-header div.actions a,
@@ -529,7 +528,7 @@ margin: 0;
 }
 
 .active-scaffold .active-scaffold-header .loading-indicator {
-margin-bottom: 3px;
+margin-top: 3px;
 }
 
 /* Show

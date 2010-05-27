@@ -125,20 +125,20 @@ module ActiveScaffold
         return values[:opt], values[:from], values[:to]
       end
 
+      def include_null_comparators?(column)
+        return column.options[:null_comparators] if column.options.has_key? :null_comparators
+        if column.association
+          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.primary_key_name].column.try(:null)
+        else
+          column.column.try(:null)
+        end
+      end
+
       def active_scaffold_search_range(column, options)
         opt_value, from_value, to_value = field_search_params_range_values(column)
         select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
         select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]} if column.options[:string_comparators] || column.column.try(:text?)
-        null_comparators = if column.association
-          if column.association.macro == :belongs_to
-            active_scaffold_config.columns[column.association.primary_key_name].column.try(:null)
-          else
-            true
-          end
-        else
-          column.column.try(:null)
-        end
-        select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]} if null_comparators
+        select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]} if include_null_comparators? column
 
         html = []
         html << select_tag("#{options[:name]}[opt]",
