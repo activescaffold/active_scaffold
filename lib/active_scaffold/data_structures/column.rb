@@ -251,7 +251,7 @@ module ActiveScaffold::DataStructures
 
       # default all the configurable variables
       self.css_class = ''
-      self.required = false
+      self.required = active_record_class.validators_on(self.name).map(&:class).include? ActiveModel::Validations::PresenceValidator
       self.sort = true
       self.search_sql = true
 
