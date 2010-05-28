@@ -1,5 +1,5 @@
 form = element_form_id(:action => :update)
-cancel_selector = "##{form} a.cancel".to_json
+cancel_selector = "##{form} a.as_cancel".to_json
 
 if controller.send :successful?
   updated_row = render :partial => 'list_record', :locals => {:record => @record}
