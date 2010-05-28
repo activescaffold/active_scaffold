@@ -79,7 +79,7 @@ document.observe("dom:loaded", function() {
     return true;
   });
   Event.on($(document.body), 'click', 'a.as_cancel', function(event) {
-    var as_cancel = event.findElement();
+    var as_cancel = event.findElement('.as_adapter');
     if (as_cancel.action_link) {
       var action_link = as_cancel.action_link;
       action_link.close();
@@ -329,14 +329,6 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     if (this.hide_target) this.target.show();
   },
 
-  register_cancel_hooks: function() {
-    // anything in the insert with a class of cancel gets the closer method, and a reference to this object for good measure
-    var self = this;
-    this.adapter.select('.as_cancel').each(function(elem) {
-      elem.action_link = self;
-    })
-  },
-
   reload: function() {
     this.close();
     this.open();
@@ -407,15 +399,18 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
     if (this.position == 'after') {
       this.target.insert({after:content});
       this.adapter = this.target.next();
+      this.adapter.addClassName('as_adapter');
+      this.adapter.action_link = this;
     }
     else if (this.position == 'before') {
       this.target.insert({before:content});
       this.adapter = this.target.previous();
+      this.adapter.addClassName('as_adapter');
+      this.adapter.action_link = this;
     }
     else {
       return false;
     }
-    this.register_cancel_hooks();
     this.adapter.down('td').down().highlight();
   },
 
@@ -474,12 +469,12 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
     if (this.position == 'top') {
       this.target.insert({top:content});
       this.adapter = this.target.immediateDescendants().first();
+      this.adapter.addClassName('as_adapter');
+      this.adapter.action_link = this;
     }
     else {
       throw 'Unknown position "' + this.position + '"'
     }
-
-    this.register_cancel_hooks();
     this.adapter.down('td').down().highlight();
   }
 });

@@ -1,5 +1,4 @@
-form = element_form_id(:action => :create)
-cancel_selector = "##{form} a.as_cancel".to_json
+form_selector = "#{element_form_id(:action => :create)}".to_json
 
 if controller.send :successful?
   if @insert_row
@@ -11,18 +10,16 @@ if controller.send :successful?
   end
 
   if (active_scaffold_config.create.persistent)
-    page << "$$(#{cancel_selector}).first().link.reload();"
+    page << "$(#{form_selector}).up('.as_adapter').action_link.reload();"
   else
-    page << "$$(#{cancel_selector}).first().link.close();"
+    page << "$(#{form_selector}).up('.as_adapter').action_link.close();"
   end
   if (active_scaffold_config.create.edit_after_create)
     page << "var link = $('#{action_link_id 'edit', @record.id}');"
     page << "if (link) (function() { link.action_link.open() }).defer();"
   end
 else
-  page << "var l = $$(#{cancel_selector}).first().action_link;"
   page.replace form, :partial => 'create_form', :locals => {:xhr => true}
-  page << "if (l) l.register_cancel_hooks();"
   page[form].scroll_to
 end
 page.replace_html active_scaffold_messages_id, :partial => 'messages'
