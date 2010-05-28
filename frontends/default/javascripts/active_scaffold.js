@@ -3,12 +3,91 @@ if (typeof Prototype == 'undefined')
   warning = "ActiveScaffold Error: Prototype could not be found. Please make sure that your application's layout includes prototype.js (e.g. <%= javascript_include_tag :defaults %>) *before* it includes active_scaffold.js (e.g. <%= active_scaffold_includes %>).";
   alert(warning);
 }
-if (Prototype.Version.substring(0, 3) != '1.6')
+if (Prototype.Version.substring(0, 3) < '1.6')
 {
-  warning = "ActiveScaffold Error: Prototype version 1.6.x is required. Please update prototype.js (rake rails:update:javascripts).";
+  warning = "ActiveScaffold Error: Prototype version 1.6.x or higher is required. Please update prototype.js (rake rails:update:javascripts).";
   alert(warning);
 }
 if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFunction});
+
+
+document.observe("dom:loaded", function() {
+  Event.on($(document.body), 'ajax:before', 'form.as_form', function(event) {
+    var as_form = event.findElement('form');
+    if (as_form) {
+      var loading_indicator = $(as_form.id.sub('--form', '-loading-indicator'));
+      if (loading_indicator) loading_indicator.style.visibility = 'visible';
+      as_form.disable();
+    }
+    return true;
+  });
+  Event.on($(document.body), 'ajax:complete', 'form.as_form', function(event) {
+    var as_form = event.findElement('form');
+    if (as_form) {
+      var loading_indicator = $(as_form.id.sub('--form', '-loading-indicator'));
+      if (loading_indicator) loading_indicator.style.visibility = 'hidden';
+      as_form.enable();
+      event.stop();
+      return false;
+    }
+  });
+  Event.on($(document.body), 'ajax:failure', 'form.as_form', function(event) {
+    var as_div = event.findElement('div.activescaffold');
+    if (as_div) {
+      ActiveScaffold.report_500_response(as_div)
+      event.stop();
+      return false;
+    }
+  });
+  Event.on($(document.body), 'ajax:before', 'a.as_action', function(event) {
+    var as_action = event.findElement();
+    if (as_action.action_link) {
+      var action_link = as_action_link;
+      if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'visible';  
+    }
+    return true;
+  });
+  Event.on($(document.body), 'ajax:success', 'a.as_action', function(event) {
+    var as_action = event.findElement();
+    if (as_action.action_link && event.memo && event.memo.request) {
+      var action_link = as_action.action_link;
+      if (action_link.position) {
+        action_link.insert(event.memo.request.responseText);
+        if (action_link.hide_target) action_link.target.hide();
+      } else {
+        event.memo.request.evalResponse();
+      }
+      event.stop();
+    }
+    return true;
+  });
+  Event.on($(document.body), 'ajax:complete', 'a.as_action', function(event) {
+    var as_action = event.findElement();
+    if (as_action.action_link) {
+      var action_link = as_action_link;
+      if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'hidden';  
+    }
+    return true;
+  });
+  Event.on($(document.body), 'ajax:failure', 'a.as_action', function(event) {
+    var as_action = event.findElement();
+    if (as_action.action_link) {
+      var action_link = as_action_link;
+      ActiveScaffold.report_500_response(action_link.scaffold_id());
+      if (action_link.position) action_link.enable();
+    }
+    return true;
+  });
+  Event.on($(document.body), 'click', 'a.as_cancel', function(event) {
+    var as_cancel = event.findElement();
+    if (as_cancel.action_link) {
+      var action_link = as_cancel.action_link;
+      action_link.close();
+      event.stop();
+    }
+    return true;
+  });
+});
 
 
 /*
@@ -209,63 +288,37 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     this.target = target;
     this.loading_indicator = loading_indicator;
     this.hide_target = false;
-    this.position = this.tag.getAttribute('position');
-		this.page_link = this.tag.getAttribute('page_link');
-
-    this.onclick = this.tag.onclick;
-    this.tag.onclick = null;
-    this.tag.observe('click', function(event) {
-      this.open();
-      Event.stop(event);
-    }.bind(this));
+    this.position = this.tag.getAttribute('data-position');
+		var ajax_link = this.tag.getAttribute('data-remote');
+    
+		if (ajax_link == 'true') {
+      this.onclick = this.tag.onclick;
+      this.tag.onclick = null;
+      this.tag.observe('click', function(event) {
+        this.open(event);
+      }.bind(this));
+    }
 
     this.tag.action_link = this;
   },
 
-  open: function() {
-    if (this.is_disabled()) return;
-
-    if (this.tag.hasAttribute( "dhtml_confirm")) {
+  open: function(event) {
+    if (this.is_disabled()) {
+      if (event) Event.stop(event);
+      return;
+    }
+    
+/*
+    if (this.tag.hasAttribute( "data-confirm")) {
       if (this.onclick) this.onclick();
       return;
     } else {
       if (this.onclick && !this.onclick()) return;//e.g. confirmation messages
       this.open_action();
     }
+*/
   },
-
-  open_action: function() {
-    if (this.position) this.disable();
-
-    if (this.page_link) {
-      window.location = this.url;
-    } else {
-      if (this.loading_indicator) this.loading_indicator.style.visibility = 'visible';
-      new Ajax.Request(this.url, {
-        asynchronous: true,
-        evalScripts: true,
-        method: this.method,
-        onSuccess: function(request) {
-          if (this.position) {
-            this.insert(request.responseText);
-            if (this.hide_target) this.target.hide();
-          } else {
-            request.evalResponse();
-          }
-        }.bind(this),
-
-        onFailure: function(request) {
-          ActiveScaffold.report_500_response(this.scaffold_id());
-          if (this.position) this.enable()
-        }.bind(this),
-
-        onComplete: function(request) {
-          if (this.loading_indicator) this.loading_indicator.style.visibility = 'hidden';
-        }.bind(this)
-      });
-    }
-  },
-
+  
   insert: function(content) {
     throw 'unimplemented'
   },
@@ -276,18 +329,12 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     if (this.hide_target) this.target.show();
   },
 
-  close_handler: function(event) {
-    this.close();
-    if (event) Event.stop(event);
-  },
-
   register_cancel_hooks: function() {
     // anything in the insert with a class of cancel gets the closer method, and a reference to this object for good measure
     var self = this;
-    this.adapter.select('.cancel').each(function(elem) {
-      elem.observe('click', this.close_handler.bind(this));
-      elem.link = self;
-    }.bind(this))
+    this.adapter.select('.as_cancel').each(function(elem) {
+      elem.action_link = self;
+    })
   },
 
   reload: function() {
@@ -330,7 +377,10 @@ ActiveScaffold.Actions.Record = Class.create(ActiveScaffold.Actions.Abstract, {
       l.url = l.url.replace(/\/delete(\?.*)?$/, '$1');
       l.url = l.url.replace(/\/delete\/(.*)/, '/destroy/$1');
     }
-    if (l.position) l.url = l.url.append_params({adapter: '_list_inline_adapter'});
+    if (l.position) {
+      l.url = l.url.append_params({adapter: '_list_inline_adapter'});
+      l.tag.href = l.url;
+    }
     l.set = this;
     return l;
   }
@@ -355,20 +405,17 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
     }
 
     if (this.position == 'after') {
-      new Insertion.After(this.target, content);
+      this.target.insert({after:content});
       this.adapter = this.target.next();
     }
     else if (this.position == 'before') {
-      new Insertion.Before(this.target, content);
+      this.target.insert({before:content});
       this.adapter = this.target.previous();
     }
     else {
       return false;
     }
-
-    this.adapter.down('a.inline-adapter-close').observe('click', this.close_handler.bind(this));
     this.register_cancel_hooks();
-
     this.adapter.down('td').down().highlight();
   },
 
@@ -414,7 +461,10 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
 ActiveScaffold.Actions.Table = Class.create(ActiveScaffold.Actions.Abstract, {
   instantiate_link: function(link) {
     var l = new ActiveScaffold.ActionLink.Table(link, this.target, this.loading_indicator);
-    if (l.position) l.url = l.url.append_params({adapter: '_list_inline_adapter'});
+    if (l.position) {
+      l.url = l.url.append_params({adapter: '_list_inline_adapter'});
+      l.tag.href = l.url;
+    }
     return l;
   }
 });
@@ -422,16 +472,14 @@ ActiveScaffold.Actions.Table = Class.create(ActiveScaffold.Actions.Abstract, {
 ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstract, {
   insert: function(content) {
     if (this.position == 'top') {
-      new Insertion.Top(this.target, content);
+      this.target.insert({top:content});
       this.adapter = this.target.immediateDescendants().first();
     }
     else {
       throw 'Unknown position "' + this.position + '"'
     }
 
-    this.adapter.down('a.inline-adapter-close').observe('click', this.close_handler.bind(this));
     this.register_cancel_hooks();
-
     this.adapter.down('td').down().highlight();
   }
 });

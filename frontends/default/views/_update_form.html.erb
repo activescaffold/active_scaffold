@@ -7,14 +7,15 @@ if xhr
                            :onsubmit => onsubmit,
                            :id => element_form_id(:action => :update),
                            :loading => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'visible';",
-                           :class => 'update',
+                           :class => 'as_form update',
                            :method => :put
   else
     form_tag url_options,
+           :remote => true,
            :onsubmit => onsubmit,
            :id => element_form_id(:action => :update),
            :multipart => active_scaffold_config.update.multipart?,
-           :class => 'update',
+           :class => 'as_form update',
            :method => :put
   end
 else
@@ -22,7 +23,7 @@ else
            :onsubmit => onsubmit,
            :id => element_form_id(:action => :update),
            :multipart => active_scaffold_config.update.multipart?,
-           :class => 'update',
+           :class => 'as_form update',
            :method => :put
 end
 %>
@@ -31,7 +32,7 @@ end
 
   <div id="<%= element_messages_id(:action => :update) %>" class="messages-container">
 <% if request.xhr? -%>
-    <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
+    <%= error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
 <% else -%>
     <%= render :partial => 'form_messages' %>
 <% end -%>
@@ -41,9 +42,8 @@ end
 
   <p class="form-footer">
     <%= submit_tag as_(:update), :class => "submit" %>
-    <%= link_to as_(:cancel), main_path_to_return, :class => 'cancel' %>
+    <%= link_to as_(:cancel), main_path_to_return, :class => 'as_cancel', :remote => true %>
     <%= loading_indicator_tag(:action => :update, :id => params[:id]) %>
   </p>
 
 </form>
-<%= render :partial => 'form_js', :locals => {:action_type => :update, :id => params[:id]} %>

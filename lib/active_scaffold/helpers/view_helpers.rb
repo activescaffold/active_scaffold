@@ -142,8 +142,11 @@ module ActiveScaffold
           # argument leaves no way to extract the proper method from the rendered tag.
           url_options[:_method] = link.method
 
-          if link.method != :get and respond_to?(:protect_against_forgery?) and protect_against_forgery?
-            url_options[:authenticity_token] = form_authenticity_token
+          #if link.method != :get and respond_to?(:protect_against_forgery?) and protect_against_forgery?
+          #  url_options[:authenticity_token] = form_authenticity_token
+          #end
+          if link.method != :get
+            html_options['data-method'] = link.method
           end
 
           # robd: protect against submitting get links as forms, since this causes annoying 
@@ -153,14 +156,14 @@ module ActiveScaffold
           html_options[:method] = link.method
         end
 
-        html_options[:confirm] = link.confirm(record.try(:to_label)) if link.confirm?
-        html_options[:position] = link.position if link.position and link.inline?
-        html_options[:class] += ' action' if link.inline?
+        html_options['data-confirm'] = link.confirm(record.try(:to_label)) if link.confirm?
+        html_options['data-position'] = link.position if link.position and link.inline?
+        html_options[:class] += ' as_action' if link.inline?
         html_options[:popup] = true if link.popup?
         html_options[:id] = action_link_id("#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}" + "#{url_options[:associations].to_s + '-' if url_options[:associations]}" + url_options[:action].to_s,url_options[:id] || url_options[:parent_id])
-
+        html_options[:remote] = true unless link.page? || html_options['data-method']
         if link.dhtml_confirm?
-          html_options[:class] += ' action' if !link.inline?
+          html_options[:class] += ' as_action' if !link.inline?
           html_options[:page_link] = 'true' if !link.inline?
           html_options[:dhtml_confirm] = link.dhtml_confirm.value
           html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],url_options[:id] || url_options[:parent_id]))

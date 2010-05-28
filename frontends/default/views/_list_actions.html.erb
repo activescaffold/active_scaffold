@@ -16,7 +16,7 @@
 <script type="text/javascript">
 //<![CDATA[
 new ActiveScaffold.Actions.Record(
-  $$('#<%= target_id -%> a.action'),
+  $$('#<%= target_id -%> a.as_action'),
   $('<%= target_id -%>'),
   $('<%= loading_indicator_id(:action => :record, :id => record.id) -%>'),
   {refresh_url: '<%= url_for params_for(:action => :row, :id => record.id, :_method => :get, :escape => false) -%>'}
