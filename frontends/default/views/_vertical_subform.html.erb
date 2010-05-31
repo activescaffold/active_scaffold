@@ -6,7 +6,7 @@
     <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
   </div>
   <% end %>
-  <%= render :partial => 'vertical_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => @record.new_record? && @record == associated.last} %>
+  <%= render :partial => 'vertical_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => @record == locked} %>
   <% end -%>
 </div>
 <%= render :partial => 'form_association_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated} -%>
