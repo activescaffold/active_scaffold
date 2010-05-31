@@ -17,6 +17,18 @@ module ActiveScaffold
   def self.set_defaults(&block)
     ActiveScaffold::Config::Core.configure &block
   end
+  
+  def self.add_routes(resource)
+    resource.collection do 
+      resource.get :show_search, :edit_associated, :list, :new_existing, :render_field
+      resource.post :add_existing
+    end
+    resource.member do
+      resource.get :row, :nested, :edit_associated, :add_association, :render_field, :delete
+      resource.post :update_column
+      resource.delete :destroy_existing
+    end
+  end
 
   def active_scaffold_config
     self.class.active_scaffold_config
