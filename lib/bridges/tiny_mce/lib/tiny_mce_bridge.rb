@@ -1,5 +1,13 @@
 module ActiveScaffold
   module TinyMceBridge
+    def self.included(base)
+      base.class_eval do
+        include FormColumnHelpers
+        include SearchColumnHelpers
+        include ViewHelpers
+      end
+    end
+
     module ViewHelpers
       def self.included(base)
         base.alias_method_chain :active_scaffold_includes, :tiny_mce
@@ -46,8 +54,4 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
   end
 end
 
-ActiveScaffold::Helpers::ViewHelpers.module_eval do
-  include ActiveScaffold::TinyMceBridge::FormColumnHelpers
-  include ActiveScaffold::TinyMceBridge::SearchColumnHelpers
-  include ActiveScaffold::TinyMceBridge::ViewHelpers
-end
+ActionView::Base.class_eval { include ActiveScaffold::TinyMceBridge }

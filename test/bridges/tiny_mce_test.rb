@@ -4,6 +4,7 @@ require File.join(File.dirname(__FILE__), '../../lib/bridges/tiny_mce/lib/tiny_m
 
 class TinyMceTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ViewHelpers
+  include ActiveScaffold::TinyMceBridge
 
   def test_includes
     assert_match /.*<script type="text\/javascript">.*ActiveScaffold\.ActionLink\.Abstract\.prototype\.close = function\(\).*<\/script>.*/m, active_scaffold_includes
