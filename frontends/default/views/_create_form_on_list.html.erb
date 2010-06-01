@@ -4,22 +4,26 @@
 options = {:onsubmit => onsubmit,
            :id => element_form_id(:action => :create),
            :multipart => active_scaffold_config.create.multipart?,
-           :class => 'as_form create'}
-if active_scaffold_config.create.multipart? # file_uploads
-  form_remote_upload_tag url_options.merge({:iframe => true}), options
+           :class => 'as_form create',
+           :method => :post}
+if xhr && active_scaffold_config.create.multipart? # file_uploads
+  form_remote_upload_tag url_options.merge({:iframe => true}),
+                         options.merge({:loading => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible';"})
 else
-  options[:remote] = true if xhr
+  options[:remote] = true if xhr && !active_scaffold_config.create.multipart?
   form_tag url_options, options
 end -%>
 
-  <h4><%= active_scaffold_config.create.label -%></h4>
-
-  <% if request.xhr? -%>
-    <div id="<%= element_messages_id(:action => :create) %>" class="messages-container"><%= error_messages_for :record, :object_name => @record.class.human_name.downcase %></div>
-  <% else -%>
+  <h4><%= active_scaffold_config.create.label(active_scaffold_config.sti_create_links ? @record.class.model_name.human(:count => 1) : nil) -%></h4>
+  
+  <div id="<%= element_messages_id(:action => :create) %>" class="messages-container">
+<% if request.xhr? -%>
+    <%= error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
+<% else -%>
     <%= render :partial => 'form_messages' %>
-  <% end -%>
-
+<% end -%>
+  </div>
+  
   <%= render :partial => 'form', :locals => { :columns => active_scaffold_config.create.columns } %>
 
   <p class="form-footer">
