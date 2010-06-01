@@ -2,7 +2,7 @@ module ActiveScaffold
   module PaperclipBridge
     def initialize_with_paperclip(model_id)
       initialize_without_paperclip(model_id)
-      return unless self.model.respond_to?(:attachment_definitions)
+      return unless self.model.respond_to?(:attachment_definitions) && !self.model.attachment_definitions.nil? 
 
       self.update.multipart = true
       self.create.multipart = true
