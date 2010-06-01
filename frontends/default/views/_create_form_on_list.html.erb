@@ -1,4 +1,5 @@
 <% url_options = params_for(:action => :create) -%>
+<% xhr ||= request.xhr? -%>
 <%=
 options = {:onsubmit => onsubmit,
            :id => element_form_id(:action => :create),
