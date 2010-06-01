@@ -72,7 +72,7 @@ module ActiveScaffold
 
         output=""
         output << form_tag(url_for_options, options)
-        output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>"
+        (output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>").html_safe
       end
 
       # Provides list of javascripts to include with +javascript_include_tag+
