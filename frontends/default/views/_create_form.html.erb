@@ -4,14 +4,15 @@
 options = {:onsubmit => onsubmit,
            :id => element_form_id(:action => :create),
            :multipart => active_scaffold_config.create.multipart?,
-           :class => 'as_form create'}
+           :class => 'as_form create',
+           :method => :post}
 if xhr && active_scaffold_config.create.multipart? # file_uploads
-    form_remote_upload_tag url_options.merge({:iframe => true}),
-                           options.merge({:loading => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible';"})
+  form_remote_upload_tag url_options.merge({:iframe => true}),
+                         options.merge({:loading => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible';"})
 else
-  options[:remote] = true if xhr
+  options[:remote] = true if xhr && !active_scaffold_config.create.multipart?
   form_tag url_options, options
-end %>
+end -%>
 
   <h4><%= active_scaffold_config.create.label(active_scaffold_config.sti_create_links ? @record.class.model_name.human(:count => 1) : nil) -%></h4>
 

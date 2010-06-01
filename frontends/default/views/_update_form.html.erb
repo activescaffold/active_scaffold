@@ -9,14 +9,12 @@ options = {:onsubmit => onsubmit,
 if xhr && active_scaffold_config.update.multipart?  # file_uploads
   form_remote_upload_tag url_options.merge({:iframe => true}),
                          options.merge({:loading => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'visible';"})
-                           
 else
-  options[:remote] = true if xhr
+  options[:remote] = true if xhr && !active_scaffold_config.create.multipart?
   form_tag url_options, options
-end
-%>
+end -%>
 
-  <h4><%= @record.to_label.nil? ? active_scaffold_config.update.label : as_(:update_model, :model => clean_column_value(@record.to_label)) %></h4>
+  <h4><%= @record.to_label.nil? ? active_scaffold_config.update.label : as_(:update_model, :model => clean_column_value(@record.to_label)) -%></h4>
 
   <div id="<%= element_messages_id(:action => :update) %>" class="messages-container">
 <% if request.xhr? -%>
