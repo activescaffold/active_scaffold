@@ -1,26 +1,16 @@
 <% url_options = params_for(:action => :create) -%>
 <% xhr ||= request.xhr? -%>
 <%=
-if xhr
-  if active_scaffold_config.create.multipart? # file_uploads
-    form_remote_upload_tag url_options.merge({:iframe => true}),
-                           :onsubmit => onsubmit,
-                           :id => element_form_id(:action => :create),
-                           :loading => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible';",
-                           :class => 'as_form create'
-  else
-    form_tag url_options,
-             :remote => true,
-             :id => element_form_id(:action => :create),
-             :onsubmit => onsubmit,
-             :class => 'as_form create'
-  end
-else
-  form_tag url_options,
-           :onsubmit => onsubmit,
+options = {:onsubmit => onsubmit,
            :id => element_form_id(:action => :create),
            :multipart => active_scaffold_config.create.multipart?,
-           :class => 'as_fom create'
+           :class => 'as_form create'}
+if xhr && active_scaffold_config.create.multipart? # file_uploads
+    form_remote_upload_tag url_options.merge({:iframe => true}),
+                           options.merge({:loading => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible';"})
+else
+  options[:remote] = true if xhr
+  form_tag url_options, options
 end %>
 
   <h4><%= active_scaffold_config.create.label(active_scaffold_config.sti_create_links ? @record.class.model_name.human(:count => 1) : nil) -%></h4>
