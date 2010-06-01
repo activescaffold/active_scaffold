@@ -1,16 +1,14 @@
 <% url_options = params_for(:action => :create) -%>
 <%=
-if active_scaffold_config.create.multipart? # file_uploads
-  form_remote_upload_tag url_options.merge({:iframe => true}),
-                         :onsubmit => onsubmit,
-                         :id => element_form_id(:action => :create),
-                         :class => 'create'
-else
-  form_tag url_options,
-           :remote => true,
+options = {:onsubmit => onsubmit,
            :id => element_form_id(:action => :create),
-           :onsubmit => onsubmit,
-           :class => 'create'
+           :multipart => active_scaffold_config.create.multipart?,
+           :class => 'as_form create'}
+if active_scaffold_config.create.multipart? # file_uploads
+  form_remote_upload_tag url_options.merge({:iframe => true}), options
+else
+  options[:remote] = true if xhr
+  form_tag url_options, options
 end -%>
 
   <h4><%= active_scaffold_config.create.label -%></h4>
