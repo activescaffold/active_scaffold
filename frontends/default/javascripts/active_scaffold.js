@@ -72,7 +72,7 @@ document.observe("dom:loaded", function() {
   Event.on($(document.body), 'ajax:failure', 'a.as_action', function(event) {
     var as_action = event.findElement();
     if (as_action.action_link) {
-      var action_link = as_action_link;
+      var action_link = as_action.action_link;
       ActiveScaffold.report_500_response(action_link.scaffold_id());
       if (action_link.position) action_link.enable();
     }
