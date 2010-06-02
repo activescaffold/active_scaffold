@@ -1,35 +1,5 @@
-<% url_options = params_for(:action => :update) -%>
-<% xhr ||= request.xhr? -%>
-<%=
-options = {:onsubmit => onsubmit,
-           :id => element_form_id(:action => :update),
-           :multipart => active_scaffold_config.update.multipart?,
-           :class => 'as_form update',
-           :method => :put} 
-if xhr && active_scaffold_config.update.multipart?  # file_uploads
-  form_remote_upload_tag url_options.merge({:iframe => true}),
-                         options.merge({:loading => "$('#{loading_indicator_id(:action => :update, :id => params[:id])}').style.visibility = 'visible';"})
-else
-  options[:remote] = true if xhr && !active_scaffold_config.create.multipart?
-  form_tag url_options, options
-end -%>
-
-  <h4><%= @record.to_label.nil? ? active_scaffold_config.update.label : as_(:update_model, :model => clean_column_value(@record.to_label)) -%></h4>
-
-  <div id="<%= element_messages_id(:action => :update) %>" class="messages-container">
-<% if request.xhr? -%>
-    <%= error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
-<% else -%>
-    <%= render :partial => 'form_messages' %>
-<% end -%>
-  </div>
-
-  <%= render :partial => 'form', :locals => { :columns => active_scaffold_config.update.columns } %>
-
-  <p class="form-footer">
-    <%= submit_tag as_(:update), :class => "submit" %>
-    <%= link_to as_(:cancel), main_path_to_return, :class => 'as_cancel' %>
-    <%= loading_indicator_tag(:action => :update, :id => params[:id]) %>
-  </p>
-
-</form>
+<%= render :partial => "base_form", :locals => {:xhr => xhr ||= nil,
+                                                :form_action => form_action ||= :update,
+                                                :method => method ||= :put,
+                                                :cancel_link => cancel_link ||= true,
+                                                :headline => headline ||= @record.to_label.nil? ? active_scaffold_config.update.label : as_(:update_model, :model => clean_column_value(@record.to_label))} %>

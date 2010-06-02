@@ -1,33 +1,5 @@
-<% url_options = params_for(:action => :create) -%>
-<% xhr ||= request.xhr? -%>
-<%=
-options = {:onsubmit => onsubmit,
-           :id => element_form_id(:action => :create),
-           :multipart => active_scaffold_config.create.multipart?,
-           :class => 'as_form create',
-           :method => :post}
-if xhr && active_scaffold_config.create.multipart? # file_uploads
-  form_remote_upload_tag url_options.merge({:iframe => true}),
-                         options.merge({:loading => "$('#{loading_indicator_id(:action => :create, :id => params[:id])}').style.visibility = 'visible';"})
-else
-  options[:remote] = true if xhr && !active_scaffold_config.create.multipart?
-  form_tag url_options, options
-end -%>
-
-  <h4><%= active_scaffold_config.create.label(active_scaffold_config.sti_create_links ? @record.class.model_name.human(:count => 1) : nil) -%></h4>
-  
-  <div id="<%= element_messages_id(:action => :create) %>" class="messages-container">
-<% if request.xhr? -%>
-    <%= error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
-<% else -%>
-    <%= render :partial => 'form_messages' %>
-<% end -%>
-  </div>
-  
-  <%= render :partial => 'form', :locals => { :columns => active_scaffold_config.create.columns } %>
-
-  <p class="form-footer">
-    <%= submit_tag as_(:create), :class => "submit" %>
-    <%= loading_indicator_tag(:action => :create, :id => params[:id]) %>
-  </p>
-</form>
+<%= render :partial => "base_form", :locals => {:xhr => xhr ||= nil,
+                                                :form_action => form_action ||= :create,
+                                                :method => method ||= :post,
+                                                :cancel_link => cancel_link ||= false,
+                                                :headline => headline ||= active_scaffold_config.create.label(active_scaffold_config.sti_create_links ? @record.class.model_name.human(:count => 1) : nil) %>
