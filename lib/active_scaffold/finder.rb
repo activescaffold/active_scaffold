@@ -255,7 +255,7 @@ module ActiveScaffold
       segments = []
       conditions.each do |condition|
         unless condition.blank?
-          sql = active_scaffold_config.model.sanitize_sql(condition)
+          sql = active_scaffold_config.model.send(:sanitize_sql, condition)
           segments << sql unless sql.blank?
         end
       end
