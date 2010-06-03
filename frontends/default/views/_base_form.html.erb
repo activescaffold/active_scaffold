@@ -6,7 +6,8 @@ options = {:onsubmit => onsubmit,
            :id => element_form_id(:action => form_action),
            :multipart => as_action_config.multipart?,
            :class => "as_form #{form_action.to_s}",
-           :method => method}
+           :method => method,
+           'data-loading' => true}
 if xhr && as_action_config.multipart? # file_uploads
   form_remote_upload_tag url_options.merge({:iframe => true}),
                          options.merge({:loading => "$('#{loading_indicator_id(:action => form_action, :id => params[:id])}').style.visibility = 'visible';"})
@@ -29,7 +30,7 @@ end -%>
 
   <p class="form-footer">
     <%= submit_tag as_(form_action), :class => "submit" %>
-    <%= link_to (as_(:cancel), main_path_to_return, :class => 'as_cancel') if cancel_link %>
+    <%= link_to(as_(:cancel), main_path_to_return, :class => 'as_cancel', :remote => true) if cancel_link %>
     <%= loading_indicator_tag(:action => form_action, :id => params[:id]) %>
   </p>
 
