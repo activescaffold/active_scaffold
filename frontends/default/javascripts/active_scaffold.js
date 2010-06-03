@@ -79,11 +79,38 @@ document.observe("dom:loaded", function() {
     return true;
   });
   Event.on($(document.body), 'ajax:before', 'a.as_cancel', function(event) {
-    var as_cancel = event.findElement('.as_adapter');
-    if (as_cancel.action_link) {
-      var action_link = as_cancel.action_link;
-      action_link.close();
-      event.stop();
+    var as_adapter = event.findElement('.as_adapter');
+    var as_cancel = event.findElement();
+    
+    if (as_adapter.action_link) {
+      var action_link = as_adapter.action_link;
+      if (action_link.refresh_url) {
+        event.memo.url = action_link.refresh_url;
+      } else if (typeof(event.memo.url) !== 'undefined' && event.memo.url.blank()) {
+        action_link.close();
+        event.stop();
+      }
+    }
+    return true;
+  });
+  Event.on($(document.body), 'ajax:success', 'a.as_cancel', function(event) {
+    var as_adapter = event.findElement('.as_adapter');
+
+    if (as_adapter.action_link) {
+      var action_link = as_adapter.action_link;
+      if (action_link.position) {
+        action_link.close(event.memo.request.responseText);
+      } else {
+        event.memo.request.evalResponse(); 
+      }
+    }
+    return true;
+  });
+  Event.on($(document.body), 'ajax:failure', 'a.as_cancel', function(event) {
+    var as_adapter = event.findElement('.as_adapter');
+    if (as_adapter.action_link) {
+      var action_link = as_adapter.action_link;
+      ActiveScaffold.report_500_response(action_link.scaffold_id());
     }
     return true;
   });
@@ -374,10 +401,12 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
 ActiveScaffold.Actions.Record = Class.create(ActiveScaffold.Actions.Abstract, {
   instantiate_link: function(link) {
     var l = new ActiveScaffold.ActionLink.Record(link, this.target, this.loading_indicator);
-    l.refresh_url = this.options.refresh_url;
+    if (this.options.refresh_url) l.refresh_url = this.options.refresh_url;
+    
     if (link.hasClassName('delete')) {
       l.url = l.url.replace(/\/delete(\?.*)?$/, '$1');
       l.url = l.url.replace(/\/delete\/(.*)/, '/destroy/$1');
+      l.tag.href = l.url;
     }
     if (l.position) {
       l.url = l.url.append_params({adapter: '_list_inline_adapter'});
@@ -424,25 +453,11 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
     this.adapter.down('td').down().highlight();
   },
 
-  close: function($super, updatedRow) {
-    if (updatedRow) {
-      ActiveScaffold.update_row(this.target, updatedRow);
-      $super();
-    } else {
-      new Ajax.Request(this.refresh_url, {
-        asynchronous: true,
-        evalScripts: true,
-        method: this.method,
-        onSuccess: function(request) {
-          ActiveScaffold.update_row(this.target, request.responseText);
-          $super();
-        }.bind(this),
-  
-        onFailure: function(request) {
-          ActiveScaffold.report_500_response(this.scaffold_id());
-        }
-      });
+  close: function($super, refreshed_content) {
+    if (refreshed_content) {
+      ActiveScaffold.update_row(this.target, refreshed_content);
     }
+    $super();
   },
 
   enable: function() {
