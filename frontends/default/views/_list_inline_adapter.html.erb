@@ -3,7 +3,7 @@
 <tr class="inline-adapter" id="<%= element_row_id :action => :nested %>">
   <td colspan="99" class="inline-adapter-cell">
     <div class="<%= "#{params[:action]}-view" if params[:action] %> <%= "#{params[:associations] ? params[:associations] : params[:controller]}-view" %> view">
-      <a href="" class="inline-adapter-close as_cancel" title="<%= as_(:close) %>"><%= as_(:close) %></a>
+      <%= link_to(as_(:close), '', :class => 'inline-adapter-close as_cancel', :remote => true, :title => as_(:close)) -%>
       <%= payload -%>
     </div>
   </td>

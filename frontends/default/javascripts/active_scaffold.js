@@ -14,7 +14,7 @@ if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFu
 document.observe("dom:loaded", function() {
   Event.on($(document.body), 'ajax:before', 'form.as_form', function(event) {
     var as_form = event.findElement('form');
-    if (as_form) {
+    if (as_form && as_form.readAttribute('data-loading') == 'true') {
       var loading_indicator = $(as_form.id.sub('--form', '-loading-indicator'));
       if (loading_indicator) loading_indicator.style.visibility = 'visible';
       as_form.disable();
@@ -23,7 +23,7 @@ document.observe("dom:loaded", function() {
   });
   Event.on($(document.body), 'ajax:complete', 'form.as_form', function(event) {
     var as_form = event.findElement('form');
-    if (as_form) {
+    if (as_form && as_form.readAttribute('data-loading') == 'true') {
       var loading_indicator = $(as_form.id.sub('--form', '-loading-indicator'));
       if (loading_indicator) loading_indicator.style.visibility = 'hidden';
       as_form.enable();
@@ -78,7 +78,7 @@ document.observe("dom:loaded", function() {
     }
     return true;
   });
-  Event.on($(document.body), 'click', 'a.as_cancel', function(event) {
+  Event.on($(document.body), 'ajax:before', 'a.as_cancel', function(event) {
     var as_cancel = event.findElement('.as_adapter');
     if (as_cancel.action_link) {
       var action_link = as_cancel.action_link;
