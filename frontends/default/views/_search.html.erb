@@ -1,16 +1,14 @@
 <% live_search = active_scaffold_config.search.live? -%>
-<% href = url_for(params_for(:action => :index, :escape => false).delete_if{|k,v| k == 'search'}) -%>
-<%= form_remote_tag :url => href,
-                    :method => :get,
-                    :before => "addActiveScaffoldPageToHistory('#{href}', '#{params[:controller]}')",
-                    :after => "$('#{loading_indicator_id(:action => :search, :id => params[:id])}').style.visibility = 'visible';#{"Form.disable('#{search_form_id}');" unless live_search }",
-                    :complete => "$('#{loading_indicator_id(:action => :search, :id => params[:id])}').style.visibility = 'hidden';#{"Form.enable('#{search_form_id}');" unless live_search }",
-                    :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-                    :html => { :action => href, :id => search_form_id, :class => 'search', :method => :get } %>
+<% url_options =  params_for(:action => :index, :escape => false).delete_if{|k,v| k == 'search'} -%>
+<%=
+options = {:id => search_form_id,
+           :class => "as_form search",
+           :method => :get}
+options['data-loading'] = true unless live_search
+  form_tag url_options, options %>
   <%= text_field_tag :search, search_params, :class => 'text-input', :id => search_input_id, :size => 50, :autocompleted => :off %>
   <%= submit_tag as_(:search), :class => "submit" unless live_search %>
-  <%= link_to_remote as_(:reset), {:url => href, :with => "'search='", :method => :get,
-        :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')"}, :class => 'cancel' %>
+  <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), :class => 'as_cancel', :remote => true %>
   <%= loading_indicator_tag(:action => :search) %>
 </form>
 
