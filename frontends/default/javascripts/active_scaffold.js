@@ -12,26 +12,26 @@ if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFu
 
 
 document.observe("dom:loaded", function() {
-  Event.on($(document.body), 'ajax:before', 'form.as_form', function(event) {
+  document.on('ajax:loading', 'form.as_form', function(event) {
     var as_form = event.findElement('form');
     if (as_form && as_form.readAttribute('data-loading') == 'true') {
-      var loading_indicator = $(as_form.id.sub('--form', '-loading-indicator'));
+      var loading_indicator = $(as_form.id.sub('-form', '-loading-indicator'));
       if (loading_indicator) loading_indicator.style.visibility = 'visible';
       as_form.disable();
     }
     return true;
   });
-  Event.on($(document.body), 'ajax:complete', 'form.as_form', function(event) {
+  document.on('ajax:complete', 'form.as_form', function(event) {
     var as_form = event.findElement('form');
     if (as_form && as_form.readAttribute('data-loading') == 'true') {
-      var loading_indicator = $(as_form.id.sub('--form', '-loading-indicator'));
+      var loading_indicator = $(as_form.id.sub('-form', '-loading-indicator'));
       if (loading_indicator) loading_indicator.style.visibility = 'hidden';
       as_form.enable();
       event.stop();
       return false;
     }
   });
-  Event.on($(document.body), 'ajax:failure', 'form.as_form', function(event) {
+  document.on('ajax:failure', 'form.as_form', function(event) {
     var as_div = event.findElement('div.activescaffold');
     if (as_div) {
       ActiveScaffold.report_500_response(as_div)
@@ -39,15 +39,15 @@ document.observe("dom:loaded", function() {
       return false;
     }
   });
-  Event.on($(document.body), 'ajax:before', 'a.as_action', function(event) {
+  document.on('ajax:before', 'a.as_action', function(event) {
     var as_action = event.findElement();
     if (as_action.action_link) {
-      var action_link = as_action_link;
+      var action_link = as_action.action_link;
       if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'visible';  
     }
     return true;
   });
-  Event.on($(document.body), 'ajax:success', 'a.as_action', function(event) {
+  document.on('ajax:success', 'a.as_action', function(event) {
     var as_action = event.findElement();
     if (as_action.action_link && event.memo && event.memo.request) {
       var action_link = as_action.action_link;
@@ -61,15 +61,15 @@ document.observe("dom:loaded", function() {
     }
     return true;
   });
-  Event.on($(document.body), 'ajax:complete', 'a.as_action', function(event) {
+  document.on('ajax:complete', 'a.as_action', function(event) {
     var as_action = event.findElement();
     if (as_action.action_link) {
-      var action_link = as_action_link;
+      var action_link = as_action.action_link;
       if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'hidden';  
     }
     return true;
   });
-  Event.on($(document.body), 'ajax:failure', 'a.as_action', function(event) {
+  document.on('ajax:failure', 'a.as_action', function(event) {
     var as_action = event.findElement();
     if (as_action.action_link) {
       var action_link = as_action.action_link;
@@ -78,7 +78,7 @@ document.observe("dom:loaded", function() {
     }
     return true;
   });
-  Event.on($(document.body), 'ajax:before', 'a.as_cancel', function(event) {
+  document.on('ajax:before', 'a.as_cancel', function(event) {
     var as_adapter = event.findElement('.as_adapter');
     var as_cancel = event.findElement();
     
@@ -86,14 +86,14 @@ document.observe("dom:loaded", function() {
       var action_link = as_adapter.action_link;
       if (action_link.refresh_url) {
         event.memo.url = action_link.refresh_url;
-      } else if (typeof(event.memo.url) !== 'undefined' && event.memo.url.blank()) {
+      } else if (as_cancel.readAttribute('href').blank()) {
         action_link.close();
         event.stop();
       }
     }
     return true;
   });
-  Event.on($(document.body), 'ajax:success', 'a.as_cancel', function(event) {
+  document.on('ajax:success', 'a.as_cancel', function(event) {
     var as_adapter = event.findElement('.as_adapter');
 
     if (as_adapter.action_link) {
@@ -106,7 +106,7 @@ document.observe("dom:loaded", function() {
     }
     return true;
   });
-  Event.on($(document.body), 'ajax:failure', 'a.as_cancel', function(event) {
+  document.on('ajax:failure', 'a.as_cancel', function(event) {
     var as_adapter = event.findElement('.as_adapter');
     if (as_adapter.action_link) {
       var action_link = as_adapter.action_link;
