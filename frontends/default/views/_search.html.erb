@@ -3,6 +3,7 @@
 <%=
 options = {:id => search_form_id,
            :class => "as_form search",
+           :remote => true,
            :method => :get}
 options['data-loading'] = true unless live_search
   form_tag url_options, options %>
