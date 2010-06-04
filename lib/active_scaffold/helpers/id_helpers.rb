@@ -88,11 +88,7 @@ module ActiveScaffold
 
       def loading_indicator_id(options = {})
         options[:action] ||= params[:action]
-        unless options[:id]
-          clean_id "#{controller_id}-#{options[:action]}-loading-indicator"
-        else
-          clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
-        end
+        clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
       end
 
       def sub_form_id(options = {})
