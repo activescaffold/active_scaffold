@@ -1,5 +1,5 @@
 module ActiveScaffold::Config
-  class Form < Base
+  class Form < ActiveScaffold::Config::Base
     def initialize(core_config)
       @core = core_config
 
