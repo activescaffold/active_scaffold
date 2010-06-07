@@ -3,7 +3,11 @@ cancel_selector = "##{form} a.cancel".to_json
 
 if controller.send :successful?
   updated_row = render :partial => 'list_record', :locals => {:record => @record}
-  page << "$$(#{cancel_selector}).first().link.close('#{escape_javascript(updated_row)}');"
+  if active_scaffold_config.update.persistent
+    flash.now[:info] = 'Update Succeeded!'
+  else
+    page << "$$(#{cancel_selector}).first().link.close('#{escape_javascript(updated_row)}');"
+  end
   page.replace active_scaffold_calculations_id, :partial => 'list_calculations' if active_scaffold_config.list.columns.any? {|c| c.calculation?}
 else
   page << "var l = $$(#{cancel_selector}).first().link;"
