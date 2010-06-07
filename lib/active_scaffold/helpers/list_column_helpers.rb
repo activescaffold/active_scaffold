@@ -39,20 +39,16 @@ module ActiveScaffold
           link = column.link
           associated = record.send(column.association.name) if column.association
           url_options = params_for(:action => nil, :id => record.id, :link => text)
-          url_options[:parent_controller] = params[:controller] if link.controller and link.controller.to_s != params[:controller]
-          url_options[:id] = associated.id if associated and link.controller and link.controller.to_s != params[:controller]
+          if column.association and link.controller.to_s != params[:controller]
+            url_options[record.class.name.foreign_key.to_sym] = url_options.delete(:id)
+            url_options[:id] = associated.id if associated and column.singular_association?
+          end
 
           # setup automatic link
-          if column.autolink? # link to nested scaffold or inline form
-            link = action_link_to_inline_form(column, associated) if link.crud_type.nil? # automatic link to inline form (singular association)
+          if column.autolink? && column.singular_association? # link to inline form
+            link = action_link_to_inline_form(column, associated)
             return text if link.crud_type.nil?
-            if link.crud_type == :create
-              url_options[:link] = as_(:create_new)
-              url_options[:parent_id] = record.id
-              url_options[:parent_column] = column.association.reverse
-              url_options[:parent_model] = record.class.name # needed for polymorphic associations
-              url_options.delete :id
-            end
+            url_options[:link] = as_(:create_new) if link.crud_type == :create
           end
 
           # check authorization

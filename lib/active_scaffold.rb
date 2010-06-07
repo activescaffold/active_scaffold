@@ -108,20 +108,23 @@ module ActiveScaffold
       return unless active_scaffold_config.actions.include? :list and active_scaffold_config.actions.include? :nested
       active_scaffold_config.columns.each do |column|
         next unless column.link.nil? and column.autolink?
-        if column.plural_association?
-          # note: we can't create nested scaffolds on :through associations because there's no reverse association.
-          column.set_link('nested', :parameters => {:associations => column.name.to_sym}, :html_options => {:class => column.name}) #unless column.through_association?
-        elsif column.polymorphic_association?
+        if column.polymorphic_association?
           # note: we can't create inline forms on singular polymorphic associations
           column.clear_link
-        else
-          model = column.association.klass
-          begin
-            controller = active_scaffold_controller_for(model)
-          rescue ActiveScaffold::ControllerNotFound
-            next
-          end
+          next
+        end
 
+        model = column.association.klass
+        begin
+          controller = active_scaffold_controller_for(model)
+        rescue ActiveScaffold::ControllerNotFound
+          next
+        end
+
+        if column.plural_association?
+          # note: we can't create nested scaffolds on :through associations because there's no reverse association.
+          column.set_link('list', :controller => controller.controller_path) #unless column.through_association?
+        else
           actions = controller.active_scaffold_config.actions
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update

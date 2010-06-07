@@ -1,16 +1,21 @@
 module ActiveScaffold
   module Constraints
-    def self.included(base)
-      base.module_eval do
-        before_filter :register_constraints_with_action_columns
-      end
-    end
 
     protected
 
     # Returns the current constraints
     def active_scaffold_constraints
-      return active_scaffold_session_storage[:constraints] || {}
+      @active_scaffold_constraints ||= active_scaffold_session_storage[:constraints] || {}
+    end
+
+    def set_active_scaffold_constraints
+      associations_by_params = {}
+      active_scaffold_config.model.reflect_on_all_associations.each do |association|
+        associations_by_params[association.klass.name.foreign_key] = association.name unless association.options[:polymorphic]
+      end
+      params.each do |key, value|
+        active_scaffold_constraints[associations_by_params[key]] = value if associations_by_params.include? key
+      end
     end
 
     # For each enabled action, adds the constrained columns to the ActionColumns object (if it exists).

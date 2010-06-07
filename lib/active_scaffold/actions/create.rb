@@ -2,7 +2,6 @@ module ActiveScaffold::Actions
   module Create
     def self.included(base)
       base.before_filter :create_authorized_filter, :only => [:new, :create]
-      base.prepend_before_filter :constraints_for_nested_create, :only => [:new, :create]
       base.verify :method => :post,
                   :only => :create,
                   :redirect_to => { :action => :index }
@@ -78,22 +77,11 @@ module ActiveScaffold::Actions
       render :text => Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.create.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status, :location => response_location
     end
 
-    def constraints_for_nested_create
-      if params[:parent_column] && params[:parent_id]
-        @old_eid = params[:eid]
-        @remove_eid = true
-        constraints = {params[:parent_column].to_sym => params[:parent_id]}
-        params[:eid] = Digest::MD5.hexdigest(params[:parent_controller] + params[:controller].to_s + constraints.to_s)
-        session["as:#{params[:eid]}"] = {:constraints => constraints}
-      end
-    end
-
     # A simple method to find and prepare an example new record for the form
     # May be overridden to customize the behavior (add default values, for instance)
     def do_new
       @record = new_model
       apply_constraints_to_record(@record)
-      params[:eid] = @old_eid if @remove_eid
       @record
     end
 
@@ -104,7 +92,6 @@ module ActiveScaffold::Actions
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(new_model, active_scaffold_config.create.columns, params[:record])
           apply_constraints_to_record(@record, :allow_autosave => true)
-          params[:eid] = @old_eid if @remove_eid
           before_create_save(@record)
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
           if successful?
