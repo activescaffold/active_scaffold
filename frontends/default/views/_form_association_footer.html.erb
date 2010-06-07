@@ -17,7 +17,7 @@ add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :as
 <div class="footer-wrapper">
   <div class="footer">
     <% if show_add_new -%>
-    <% add_label = column.plural_association? ? as_(:create_another, :model => column.association.klass.human_name) : as_(:replace_with_new) -%>
+    <% add_label = column.plural_association? ? as_(:create_another, :model => column.association.klass.model_name.human) : as_(:replace_with_new) -%>
     <%= button_to_function add_label, "new Ajax.Request(#{add_new_url.to_json}, {asynchronous: true, method: 'get', evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id.to_json})}})" %>
     <% end -%>
 
