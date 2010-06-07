@@ -30,7 +30,11 @@ module ActiveScaffold::Actions
       render :action => 'list'
     end
     def list_respond_to_js
-      render :action => 'list.js'
+      if params[:adapter]
+        render(:partial => 'list', :layout => false)
+      else
+        render :action => 'list.js'
+      end
     end
     def list_respond_to_xml
       render :xml => response_object.to_xml(:only => active_scaffold_config.list.columns.names), :content_type => Mime::XML, :status => response_status
