@@ -4,6 +4,7 @@ module ActiveScaffold::Config
     def initialize(*args)
       super
       self.nested_links = self.class.nested_links
+      self.persistent = self.class.persistent
     end
 
     # global level configuration
@@ -17,6 +18,10 @@ module ActiveScaffold::Config
     end
     @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => :edit, :type => :member, :security_method => :update_authorized?)
 
+    # whether the form stays open after an update or not
+    cattr_accessor :persistent
+    @@persistent = false
+    
     # instance-level configuration
     # ----------------------------
 
@@ -28,5 +33,8 @@ module ActiveScaffold::Config
     attr_accessor :nested_links
     cattr_accessor :nested_links
     @@nested_links = false
+    
+    # whether the form stays open after an update or not
+    attr_accessor :persistent
   end
 end
