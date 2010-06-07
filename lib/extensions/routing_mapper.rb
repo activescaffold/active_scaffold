@@ -2,7 +2,7 @@ module ActionDispatch
   module Routing
     class Mapper
       module Base
-        def as_routes(options = {:full => false})
+        def as_routes(options = {:full => true})
           collection do 
             get :show_search, :list, :render_field
           end
