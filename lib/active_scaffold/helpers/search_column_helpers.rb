@@ -40,7 +40,7 @@ module ActiveScaffold
               # for textual fields we pass different options
               text_types = [:text, :string, :integer, :float, :decimal]
               options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
-              input(:record, column.name, options.merge(column.options))
+              text_field(:record, column.name, options.merge(column.options))
             end
           end
         end
@@ -130,16 +130,15 @@ module ActiveScaffold
         select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
         select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]} if column.column && column.column.text?
 
-        html = []
-        html << select_tag("#{options[:name]}[opt]",
+        html = select_tag("#{options[:name]}[opt]",
               options_for_select(select_options, opt_value),
               :id => "#{options[:id]}_opt",
               :onchange => "Element[this.value == 'BETWEEN' ? 'show' : 'hide']('#{options[:id]}_between');")
-        html << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => 10))
-        html << content_tag(:span, ' - ' + text_field_tag("#{options[:name]}[to]", to_value,
-              active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => 10)),
+        html << ' ' << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => 10))
+        html << ' ' << content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
+              active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => 10))).html_safe,
               :id => "#{options[:id]}_between", :style => "display:none")
-        html * ' '
+        html
       end
       alias_method :active_scaffold_search_integer, :active_scaffold_search_range
       alias_method :active_scaffold_search_decimal, :active_scaffold_search_range
@@ -172,10 +171,9 @@ module ActiveScaffold
         opt_value, from_value, to_value = field_search_params_range_values(column)
         options = column.options.merge(options)
         helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
-        html = []
-        html << send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options))
-        html << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
-        html * ' - '
+        
+        send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options)) << 
+        ' - '.html_safe << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
       end
 
       def active_scaffold_search_date(column, options)
