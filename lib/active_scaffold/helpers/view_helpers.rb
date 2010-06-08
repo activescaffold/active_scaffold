@@ -214,6 +214,10 @@ module ActiveScaffold
         value = false unless record.class.authorized_for?(:crud_type => :create)
         value
       end
+
+      def controller_class
+        "#{h params[:controller]}-view"
+      end
     end
   end
 end

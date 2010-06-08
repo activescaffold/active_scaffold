@@ -25,7 +25,7 @@ module ActiveScaffold::DataStructures
       column = get_column(column_name)
       raise ArgumentError, "Could not find column #{column_name}" if column.nil?
       raise ArgumentError, "Sorting direction unknown" unless [:ASC, :DESC].include? direction.to_sym
-      @clauses << [column, direction] if column.sortable?
+      @clauses << [column, direction.untaint] if column.sortable?
       raise ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
     end
 
