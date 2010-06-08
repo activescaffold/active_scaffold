@@ -43,7 +43,8 @@ document.observe("dom:loaded", function() {
     var as_action = event.findElement();
     if (as_action.action_link) {
       var action_link = as_action.action_link;
-      if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'visible';  
+      if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'visible';
+      if (action_link.position) action_link.disable();
     }
     return true;
   });
