@@ -43,8 +43,12 @@ document.observe("dom:loaded", function() {
     var as_action = event.findElement();
     if (as_action.action_link) {
       var action_link = as_action.action_link;
-      if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'visible';
-      if (action_link.position) action_link.disable();
+      if (action_link.is_disabled()) {
+        event.stop();
+      } else {
+        if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'visible';
+        if (action_link.position) action_link.disable();
+      }
     }
     return true;
   });
@@ -327,34 +331,11 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     this.loading_indicator = loading_indicator;
     this.hide_target = false;
     this.position = this.tag.getAttribute('data-position');
-		var ajax_link = this.tag.getAttribute('data-remote');
-    
-		if (ajax_link == 'true') {
-      this.onclick = this.tag.onclick;
-      this.tag.onclick = null;
-      this.tag.observe('click', function(event) {
-        this.open(event);
-      }.bind(this));
-    }
-
+		
     this.tag.action_link = this;
   },
 
   open: function(event) {
-    if (this.is_disabled()) {
-      if (event) Event.stop(event);
-      return;
-    }
-    
-/*
-    if (this.tag.hasAttribute( "data-confirm")) {
-      if (this.onclick) this.onclick();
-      return;
-    } else {
-      if (this.onclick && !this.onclick()) return;//e.g. confirmation messages
-      this.open_action();
-    }
-*/
   },
   
   insert: function(content) {
