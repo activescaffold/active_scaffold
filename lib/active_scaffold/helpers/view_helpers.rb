@@ -169,7 +169,7 @@ module ActiveScaffold
         if column.association and link.controller.to_s != params[:controller]
           url_options[record.class.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:id] = record.send(column.association.name) if column.singular_association?
-          url_options[:parent_controller] = params[:controller] 
+          url_options[:eid] = "#{params[:controller]}_#{ActiveSupport::SecureRandom.base64(10)}" 
         end
       end
 
