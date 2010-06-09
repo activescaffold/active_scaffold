@@ -129,6 +129,7 @@ module ActiveScaffold
 
       def render_action_link(link, url_options, record = nil, html_options = {})
         url_options = url_options.clone
+        id = url_options[:id] || url_options[:parent_id]
         url_options[:action] = link.action
         url_options[:controller] = link.controller if link.controller
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
@@ -149,13 +150,13 @@ module ActiveScaffold
         html_options['data-position'] = link.position if link.position and link.inline?
         html_options[:class] += ' as_action' if link.inline?
         html_options[:popup] = true if link.popup?
-        html_options[:id] = action_link_id("#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}" + "#{url_options[:associations].to_s + '-' if url_options[:associations]}" + url_options[:action].to_s,url_options[:id] || url_options[:parent_id])
+        html_options[:id] = action_link_id("#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}" + url_options[:action].to_s, id)
         html_options[:remote] = true unless link.page?
         if link.dhtml_confirm?
           html_options[:class] += ' as_action' if !link.inline?
           html_options[:page_link] = 'true' if !link.inline?
           html_options[:dhtml_confirm] = link.dhtml_confirm.value
-          html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],url_options[:id] || url_options[:parent_id]))
+          html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],id))
         end
         html_options[:class] += " #{link.html_options[:class]}" unless link.html_options[:class].blank?
 
