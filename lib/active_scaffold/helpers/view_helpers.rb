@@ -133,6 +133,7 @@ module ActiveScaffold
         url_options[:controller] = link.controller if link.controller
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters
+        url_options_for_nested_link(link.column, record, link, url_options) unless link.column.nil?
 
         html_options.reverse_merge! link.html_options.merge(:class => link.action)
         if link.inline?
