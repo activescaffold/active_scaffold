@@ -164,6 +164,14 @@ module ActiveScaffold
         label = url_options.delete(:link) || link.label
         link_to label, url_options, html_options
       end
+      
+      def url_options_for_nested_link(column, record, link, url_options)
+        if column.association and link.controller.to_s != params[:controller]
+          url_options[record.class.name.foreign_key.to_sym] = url_options.delete(:id)
+          url_options[:id] = record.send(column.association.name) if column.singular_association?
+          url_options[:parent_controller] = params[:controller] 
+        end
+      end
 
       def column_class(column, column_value)
         classes = []
