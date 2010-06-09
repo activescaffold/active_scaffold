@@ -113,24 +113,30 @@ module ActiveScaffold
           column.clear_link
           next
         end
-
-        model = column.association.klass
-        begin
-          controller = active_scaffold_controller_for(model)
-        rescue ActiveScaffold::ControllerNotFound
-          next
-        end
-
+        action_link = link_for_association(column)
+        column.set_link(action_link) unless action_link.nil?
+      end
+    end
+    
+    def link_for_association(column, options = {})
+      begin
+        controller = active_scaffold_controller_for(column.association.klass)
+      rescue ActiveScaffold::ControllerNotFound
+        controller = nil        
+      end
+      
+      unless controller.nil?
+        options.reverse_merge! :label => column.label, :position => :after, :type => :member, :controller => controller.controller_path
         if column.plural_association?
           # note: we can't create nested scaffolds on :through associations because there's no reverse association.
-          column.set_link('list', :controller => controller.controller_path) #unless column.through_association?
+          ActiveScaffold::DataStructures::ActionLink.new('list', options) #unless column.through_association?
         else
           actions = controller.active_scaffold_config.actions
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update
           column.actions_for_association_links.delete :show unless actions.include? :show
-          column.set_link(:none, :controller => controller.controller_path, :crud_type => nil, :html_options => {:class => column.name})
-        end
+          ActiveScaffold::DataStructures::ActionLink.new(:none, options.merge({:crud_type => nil, :html_options => {:class => column.name}}))
+        end 
       end
     end
 

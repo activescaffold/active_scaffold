@@ -39,12 +39,7 @@ module ActiveScaffold
           link = column.link
           associated = record.send(column.association.name) if column.association
           url_options = params_for(:action => nil, :id => record.id, :link => text)
-          
-          if column.association and link.controller.to_s != params[:controller]
-            url_options[record.class.name.foreign_key.to_sym] = url_options.delete(:id)
-            url_options[:id] = associated.id if associated and column.singular_association?
-            url_options[:parent_controller] = params[:controller] 
-          end
+          url_options_for_nested_link(column, record, link, url_options)
 
           # setup automatic link
           if column.autolink? && column.singular_association? # link to inline form
@@ -72,6 +67,14 @@ module ActiveScaffold
           render_action_link(link, url_options, record)
         else
           text
+        end
+      end
+      
+      def url_options_for_nested_link(column, record, link, url_options)
+        if column.association and link.controller.to_s != params[:controller]
+          url_options[record.class.name.foreign_key.to_sym] = url_options.delete(:id)
+          url_options[:id] = record.send(column.association.name) if column.singular_association?
+          url_options[:parent_controller] = params[:controller] 
         end
       end
 

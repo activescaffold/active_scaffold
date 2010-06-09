@@ -15,6 +15,7 @@ module ActiveScaffold::DataStructures
       self.crud_type ||= :read
       self.parameters = {}
       self.html_options = {}
+      self.column = nil
 
       # apply quick properties
       options.each_pair do |k, v|
@@ -138,5 +139,8 @@ module ActiveScaffold::DataStructures
 
     # html options for the link
     attr_accessor :html_options
+    
+    # nested action_links are referencing a column
+    attr_accessor :column
   end
 end
