@@ -53,9 +53,13 @@ module ActionView::Rendering #:nodoc:
       eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
       session["as:#{eid}"] = {:constraints => constraints, :conditions => conditions, :list => {:label => args.first[:label]}}
       options[:params] ||= {}
-      options[:params].merge! :eid => eid
-
-      render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]
+      options[:params].merge! :eid => eid, :embedded => true
+      
+      id = "as_#{eid}-content"
+      url = url_for({:controller => remote_controller.to_s, :action => 'list'}.merge(options[:params]))
+      link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
+        javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get'})")
+      #render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]
     else
       render_without_active_scaffold(*args, &block)
     end
