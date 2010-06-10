@@ -1,4 +1,3 @@
-<%= update_page_tag { |page| page.replace_html active_scaffold_messages_id, :partial => 'messages' } %>
 <%# nested_id, allows us to remove a nested scaffold programmatically %>
 <tr class="inline-adapter" id="<%= element_row_id :action => :nested %>">
   <td colspan="99" class="inline-adapter-cell">
@@ -8,3 +7,4 @@
     </div>
   </td>
 </tr>
+<%= javascript_tag("$('#{element_row_id}').up('tbody.records').prev().down().replace('#{render :partial => 'messages'}');") %>
