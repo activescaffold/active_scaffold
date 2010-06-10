@@ -56,7 +56,7 @@ module ActionView::Rendering #:nodoc:
       options[:params].merge! :eid => eid, :embedded => true
       
       id = "as_#{eid}-content"
-      url = url_for({:controller => remote_controller.to_s, :action => 'list'}.merge(options[:params]))
+      url = url_for({:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params]))
       link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
         javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get'})")
       #render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]

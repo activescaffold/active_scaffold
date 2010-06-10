@@ -4,7 +4,7 @@ module ActionDispatch
       module Base
         def as_routes(options = {:full => true})
           collection do 
-            get :show_search, :list, :render_field
+            get :show_search, :render_field
           end
           member do
             get :row, :nested, :render_field, :delete
