@@ -229,6 +229,7 @@ module ActiveScaffold
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
           sorted_collection = sort_collection_by_column(klass.all(finder_options), *options[:sorting].first)
           sorted_collection.slice(offset, per_page) if options[:pagination]
+          sorted_collection
         end
       else
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
@@ -236,7 +237,6 @@ module ActiveScaffold
           klass.all(finder_options)
         end
       end
-
       pager.page(options[:page])
     end
 
