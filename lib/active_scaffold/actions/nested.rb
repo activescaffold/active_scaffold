@@ -31,7 +31,7 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], :read)
     end
 
-    def nested_authorized?(record)
+    def nested_authorized?(record = nil)
       true
     end
 
