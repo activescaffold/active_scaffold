@@ -190,6 +190,9 @@ module ActiveScaffold::DataStructures
     cattr_accessor :actions_for_association_links
     @@actions_for_association_links = [:new, :edit, :show]
     attr_accessor :actions_for_association_links
+    
+    cattr_accessor :association_form_ui
+    @@association_form_ui = nil
 
     # ----------------------------------------------------------------- #
     # the below functionality is intended for internal consumption only #
@@ -248,6 +251,7 @@ module ActiveScaffold::DataStructures
       @options = {:format => :i18n_number} if @column.try(:number?)
       @form_ui = :checkbox if @column and @column.type == :boolean
       @allow_add_existing = true
+      @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
 
       # default all the configurable variables
       self.css_class = ''
