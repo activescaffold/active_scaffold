@@ -374,6 +374,11 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
 
   scaffold_id: function() {
     return this.tag.up('div.active-scaffold').id;
+  },
+  
+  update_flash_messages: function(messages) {
+    message_node = $(this.scaffold_id().sub('-active-scaffold', '-messages'));
+    if (message_node) message_node.update(messages);
   }
 });
 

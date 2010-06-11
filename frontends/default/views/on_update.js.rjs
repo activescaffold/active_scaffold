@@ -1,5 +1,6 @@
 form_selector = "#{element_form_id(:action => :update)}"
 
+page << "$('#{form_selector}').up('.as_adapter').action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
   updated_row = render :partial => 'list_record', :locals => {:record => @record}
   page << "$('#{form_selector}').up('.as_adapter').action_link.close('#{escape_javascript(updated_row)}');"
@@ -8,4 +9,3 @@ else
   page.replace form_selector, :partial => 'update_form', :locals => {:xhr => true}
   page[form_selector].scroll_to
 end
-page.replace_html active_scaffold_messages_id, :partial => 'messages'

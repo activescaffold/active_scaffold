@@ -1,5 +1,6 @@
 form_selector = "#{element_form_id(:action => :create)}"
 
+page << "$('#{form_selector}').up('.as_adapter').action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
   if @insert_row
     page.insert_html :top, active_scaffold_tbody_id, :partial => 'list_record', :locals => {:record => @record}
@@ -22,4 +23,3 @@ else
   page.replace form_selector, :partial => 'create_form', :locals => {:xhr => true}
   page[form_selector].scroll_to
 end
-page.replace_html active_scaffold_messages_id, :partial => 'messages'
