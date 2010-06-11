@@ -123,8 +123,8 @@ module ActiveScaffold
         link_to_function link_text, "e = #{options[:of]}; e.toggle(); this.innerHTML = (e.style.display == 'none') ? '#{as_(:show)}' : '#{as_(:hide)}'", :class => 'visibility-toggle'
       end
 
-      def skip_action_link(link)
-        (link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method)
+      def skip_action_link(link, *args)
+        (link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args)
       end
 
       def render_action_link(link, url_options, record = nil, html_options = {})
