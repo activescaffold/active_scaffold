@@ -7,4 +7,4 @@
     </div>
   </td>
 </tr>
-<%= javascript_tag("$('#{element_row_id(:action => :nested)}').up('tbody.records').previous().down().replace('#{escape_javascript(render(:partial => 'messages').strip)}');") %>
+<%= javascript_tag("$('#{element_row_id(:action => :nested)}').up('tbody.records').previous().down().update('#{escape_javascript(render(:partial => 'messages').strip)}');") %>
