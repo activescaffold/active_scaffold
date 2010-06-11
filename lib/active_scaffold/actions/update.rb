@@ -111,7 +111,7 @@ module ActiveScaffold::Actions
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
-    def update_authorized?
+    def update_authorized?(record)
       authorized_for?(:crud_type => :update)
     end
     private
