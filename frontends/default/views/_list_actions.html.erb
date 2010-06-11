@@ -4,7 +4,7 @@
       <%= loading_indicator_tag(:action => :record, :id => record.id) %>
     </td>
     <% active_scaffold_config.action_links.each :member do |link| -%>
-      <% next if skip_action_link(link) -%>
+      <% next if skip_action_link(link, record) -%>
       <td>
         <%= record.authorized_for?(:crud_type => link.crud_type, :action => link.action) ? render_action_link(link, url_options, record) : "<a class='disabled #{link.action}'>#{link.label}</a>" -%>
       </td>
