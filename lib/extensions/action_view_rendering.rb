@@ -57,8 +57,10 @@ module ActionView::Rendering #:nodoc:
       
       id = "as_#{eid}-content"
       url = url_for({:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params]))
-      link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
+      content_tag(:div, {:id => id}) do 
+        link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
         javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get'})")
+      end
       #render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]
     else
       render_without_active_scaffold(*args, &block)
