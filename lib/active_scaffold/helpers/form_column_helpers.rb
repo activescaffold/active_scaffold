@@ -333,9 +333,9 @@ module ActiveScaffold
 
       def active_scaffold_add_existing_label
         if controller.respond_to?(:record_select_config)
-          record_select_config.model.human_name
+          record_select_config.model.model_name.human
         else
-          active_scaffold_config.model.human_name
+          active_scaffold_config.model.model_name.human
         end
       end
     end
