@@ -31,7 +31,9 @@ module ActiveScaffold::Actions
     end
     def list_respond_to_js
       if params[:adapter]
-        render(:partial => 'list', :layout => false)
+        #list.user.label = as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => format_value(@record.to_label))
+        active_scaffold_session_storage[:list][:label] = as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => 'Unknown')
+        render(:partial => 'list_with_header')
       elsif params[:embedded]
         params.delete(:embedded)
         render(:partial => 'list_with_header')
