@@ -83,7 +83,7 @@ module ActiveScaffold::Actions
       nil
     end
     
-    def nested_parent_record
+    def nested_parent_record(mode = :read)
       find_if_allowed(nested_parent_id, :read, nested_column.association.klass)
     end
     
@@ -220,11 +220,14 @@ module ActiveScaffold::Actions::Nested
 
     # The actual "add_existing" algorithm
     def do_add_existing
-      parent_model, id, association = nested_action_from_params
-      parent_record = find_if_allowed(id, :update, parent_model)
+      parent_record = nested_parent_record(:update)
       @record = active_scaffold_config.model.find(params[:associated_id])
-      parent_record.send(association) << @record
-      parent_record.save
+      if parent_record && @record
+        parent_record.send(nested_parent_column.name) << @record
+        parent_record.save
+      else
+        false
+      end
     end
 
     def do_destroy_existing
