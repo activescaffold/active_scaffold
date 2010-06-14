@@ -6,11 +6,14 @@ module ActiveScaffold::Actions
       super
       base.module_eval do
         before_filter :set_active_scaffold_constraints
-        before_filter :register_constraints_with_action_columns
+        #before_filter :register_constraints_with_action_columns
+        before_filter :set_nested_list_label
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
       end
       base.before_filter :include_habtm_actions
       base.helper_method :nested_habtm?
+      base.helper_method :nested_column
+      base.helper_method :nested_parent_column
     end
 
     def nested
@@ -61,13 +64,14 @@ module ActiveScaffold::Actions
 
     def nested_habtm?
       begin
-        a = active_scaffold_config.columns[nested_association]
-        return a.association.macro == :has_and_belongs_to_many if a and nested?
+        return nested_column.association.macro == :has_and_belongs_to_many if nested? and nested_column
         false
       rescue
         raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, nested_association), caller
       end
     end
+    
+    
 
     def nested_association
       return active_scaffold_constraints.keys.to_s.to_sym if nested?
@@ -78,6 +82,35 @@ module ActiveScaffold::Actions
       return active_scaffold_constraints.values.to_s if nested?
       nil
     end
+    
+    def nested_parent_record
+      find_if_allowed(nested_parent_id, :read, nested_column.association.klass)
+    end
+    
+    def nested_parent
+      nested_column.association.klass
+    end
+    
+    def nested_parent_column
+      join_table = nested_column.association.options[:join_table]
+      parent_config = active_scaffold_config_for(nested_parent)
+      if join_table && parent_config
+        parent_config.columns.detect {|column| column.association and column.association.macro == :has_and_belongs_to_many and column.association.options[:join_table] and column.association.options[:join_table] == join_table}
+      end
+    end
+    
+    def nested_column
+      begin
+        @nested_column ||= active_scaffold_config.columns[nested_association]
+      rescue
+        raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, nested_association), caller
+      end
+    end
+    
+    def set_nested_list_label
+      active_scaffold_session_storage[:list][:label] = as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label) if nested?
+    end
+    
     private
     def nested_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.nested.formats).uniq
