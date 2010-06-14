@@ -1,14 +1,12 @@
 <% url_options = params_for(:action => :add_existing) -%>
 <% xhr = request.xhr? -%>
-<% as_action_config = active_scaffold_config.send(:add_existing) -%>
 <%=
 options = {:id => element_form_id(:action => :add_existing),
            :class => "as_form create",
            :method => :post,
            'data-loading' => true}
   options[:remote] = true if xhr
-  form_tag url_options, options
-end -%>
+  form_tag url_options, options -%>
 
   <h4><%= active_scaffold_config.nested.label -%></h4>
 
