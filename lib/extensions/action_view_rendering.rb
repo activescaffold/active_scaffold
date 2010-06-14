@@ -59,7 +59,7 @@ module ActionView::Rendering #:nodoc:
       url = url_for({:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params]))
       content_tag(:div, {:id => id}) do 
         link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
-        javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get'})")
+          javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true})")
       end
       #render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]
     else
