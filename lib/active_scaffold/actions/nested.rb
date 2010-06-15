@@ -6,7 +6,7 @@ module ActiveScaffold::Actions
       super
       base.module_eval do
         before_filter :set_active_scaffold_constraints
-        #before_filter :register_constraints_with_action_columns
+        before_filter :register_constraints_with_action_columns
         before_filter :set_nested_list_label
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
       end
@@ -83,8 +83,8 @@ module ActiveScaffold::Actions
       nil
     end
     
-    def nested_parent_record(mode = :read)
-      find_if_allowed(nested_parent_id, :read, nested_column.association.klass)
+    def nested_parent_record(crud = :read)
+      find_if_allowed(nested_parent_id, crud, nested_column.association.klass)
     end
     
     def nested_parent
@@ -200,10 +200,10 @@ module ActiveScaffold::Actions::Nested
       render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.list.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
 
-    def add_existing_authorized?
+    def add_existing_authorized?(record = nil)
       true
     end
-    def delete_existing_authorized?
+    def delete_existing_authorized?(record = nil)
       true
     end
  
@@ -212,10 +212,6 @@ module ActiveScaffold::Actions::Nested
         params[:associated_id] = record
         do_add_existing
       end
-    end
-
-    def nested_action_from_params
-      return params[:parent_model].constantize, nested_parent_id, params[:parent_column]
     end
 
     # The actual "add_existing" algorithm
@@ -232,9 +228,8 @@ module ActiveScaffold::Actions::Nested
 
     def do_destroy_existing
       if active_scaffold_config.nested.shallow_delete
-        parent_model, id, association = nested_action_from_params
-        @record = find_if_allowed(id, :update, parent_model)
-        collection = @record.send(association)
+        @record = nested_parent_record(:update)
+        collection = @record.send(nested_parent_column.name)
         assoc_record = collection.find(params[:id])
         collection.delete(assoc_record)
       else
