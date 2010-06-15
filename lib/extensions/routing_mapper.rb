@@ -7,7 +7,7 @@ module ActionDispatch
             get :show_search, :render_field
           end
           member do
-            get :row, :nested, :render_field, :delete
+            get :row, :render_field, :delete
             post :update_column
           end
           as_extended_routes if options[:full]
