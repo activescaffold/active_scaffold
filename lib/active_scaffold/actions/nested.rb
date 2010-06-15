@@ -16,24 +16,7 @@ module ActiveScaffold::Actions
       base.helper_method :nested_parent_column
     end
 
-    def nested
-      do_nested
-      respond_to_action(:nested)
-    end
-
     protected
-    def nested_respond_to_html
-      render :partial => 'nested', :layout => true
-    end
-    def nested_respond_to_js
-      render :partial => 'nested'
-    end
-    # A simple method to find the record we'll be nesting *from*
-    # May be overridden to customize the behavior
-    def do_nested
-      @record = find_if_allowed(params[:id], :read)
-    end
-
     def nested_authorized?(record = nil)
       true
     end
