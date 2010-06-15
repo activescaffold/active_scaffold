@@ -157,7 +157,7 @@ module ActiveScaffold
 
       #@active_scaffold_paths = ActionView::PathSet.new
       @active_scaffold_paths = []
-      #@active_scaffold_paths.concat @active_scaffold_overrides unless @active_scaffold_overrides.nil?
+      @active_scaffold_paths.concat @active_scaffold_overrides unless @active_scaffold_overrides.nil?
       @active_scaffold_paths.concat @active_scaffold_custom_paths unless @active_scaffold_custom_paths.nil?
       @active_scaffold_paths.concat @active_scaffold_frontends unless @active_scaffold_frontends.nil?
       @active_scaffold_paths
