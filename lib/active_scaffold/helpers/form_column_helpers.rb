@@ -84,7 +84,7 @@ module ActiveScaffold
           url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
           url_params[:scope] = params[:scope] if scope
           ajax_options = {:method => :get, 
-                          :url => url_for(url_params), :with => "'value=' + this.value",
+                          :url => url_for(url_params), :with => column.send_form_on_update_column ? "Form.serialize(this.form)" : "'value=' + this.value",
                           :after => "$('#{loading_indicator_id(:action => :render_field, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => form_action)}');",
                           :complete => "$('#{loading_indicator_id(:action => :render_field, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => form_action)}');"}
           options[:onchange] = "#{remote_function(ajax_options)};#{options[:onchange]}"
