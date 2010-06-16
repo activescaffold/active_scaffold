@@ -12,7 +12,11 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def search_authorized?
-      authorized_for?(:crud_type => :read)
+      if active_scaffold_config.list.always_show_search
+        false
+      else
+        authorized_for?(:crud_type => :read)
+      end
     end
   end
 end
