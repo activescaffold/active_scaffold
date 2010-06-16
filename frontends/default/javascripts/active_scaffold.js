@@ -157,7 +157,8 @@ var ActiveScaffold = {
   },
   hide_empty_message: function(tbody, empty_message_id) {
     if (this.records_for(tbody).length != 0) {
-      $(empty_message_id).hide();
+      var empty_message_node = $(empty_message_id)
+      if (empty_message_node) empty_message_node.hide();
     }
   },
   reload_if_empty: function(tbody, url) {
