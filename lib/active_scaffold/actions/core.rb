@@ -11,7 +11,6 @@ module ActiveScaffold::Actions
       else
         active_scaffold_config.model.new
       end
-      @update_columns = []
       column = active_scaffold_config.columns[params[:column]]
       if params[:in_place_editing]
         render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
@@ -22,8 +21,7 @@ module ActiveScaffold::Actions
           value = column_value_from_param_value(@record, column, params[:value])
           @record.send "#{column.name}=", value
         end
-        @update_columns << Array(params[:update_column]).collect {|column_name| active_scaffold_config.columns[column_name.to_sym]}
-        @update_columns.flatten!
+        @update_columns = Array(params[:update_column])
         after_render_field(@record, column)
       end
     end
