@@ -1,16 +1,11 @@
 module ActiveScaffold::Actions
   module List
     def self.included(base)
-      base.before_filter :list_authorized_filter, :only => [:index, :table, :row, :list]
+      base.before_filter :list_authorized_filter, :only => [:index, :row, :list]
     end
 
     def index
       list
-    end
-
-    def table
-      do_list
-      render(:action => 'list.html', :layout => false)
     end
 
     # get just a single row
