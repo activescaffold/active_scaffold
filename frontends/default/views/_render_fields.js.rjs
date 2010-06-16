@@ -1,0 +1,11 @@
+render_fields.each do |column_name|
+  column = active_scaffold_config.columns[column_name.to_sym]
+  if column_renders_as(column) == :subform
+    field_id = sub_form_id(:association => column.name)
+    page[field_id].replace_html :partial => form_partial_for_column(column), :locals => { :column => column, :scope => params[:scope] }
+  else
+    field_id = active_scaffold_input_options(column, params[:scope])[:id]
+    page[field_id].up('dl').replace :partial => form_partial_for_column(column), :locals => { :column => column, :scope => params[:scope] }
+  end
+  page << render(:partial => 'render_fields.js', :object => Array(column.update_column)) if column.update_column
+end
