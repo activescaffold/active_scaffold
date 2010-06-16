@@ -53,8 +53,12 @@ module ActiveScaffold::DataStructures
       @required
     end
 
-    # column to be updated in a form when this column change
+    # column to be updated in a form when this column changes
     attr_accessor :update_column
+
+    # send all the form instead of only new value when this column change
+    cattr_accessor :send_form_on_update_column
+    attr_accessor :send_form_on_update_column
 
     # sorting on a column can be configured four ways:
     #   sort = true               default, uses intelligent sorting sql default
@@ -247,6 +251,7 @@ module ActiveScaffold::DataStructures
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
+      @send_form_on_update_column = self.class.send_form_on_update_column
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
       @options = {:format => :i18n_number} if @column.try(:number?)
       @form_ui = :checkbox if @column and @column.type == :boolean
