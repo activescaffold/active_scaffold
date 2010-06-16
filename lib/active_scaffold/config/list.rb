@@ -106,7 +106,6 @@ module ActiveScaffold::Config
     
     def search_partial
       return "search" if @core.actions.include?(:search)
-      return "live_search" if @core.actions.include?(:live_search)
       return "field_search" if @core.actions.include?(:field_search)
     end
     
