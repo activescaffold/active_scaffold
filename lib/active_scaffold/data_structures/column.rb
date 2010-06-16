@@ -53,6 +53,9 @@ module ActiveScaffold::DataStructures
       @required
     end
 
+    # column to be updated in a form when this column change
+    attr_accessor :update_column
+
     # sorting on a column can be configured four ways:
     #   sort = true               default, uses intelligent sorting sql default
     #   sort = false              sometimes sorting doesn't make sense
