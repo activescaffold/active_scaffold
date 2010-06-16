@@ -4,14 +4,14 @@
       <div id="<%= active_scaffold_messages_id -%>">
         <%= render :partial => 'messages' %>
       </div>
-      <p class="filtered-message" <%= ' style="display:none;" ' unless @filtered %>>
+      <p class="filtered-message" <%= ' style="display:none;" '.html_safe unless @filtered %>>
         <%= as_(active_scaffold_config.list.filtered_message) %>
       </p>
-      <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" ' unless @page.items.empty? %>>
+      <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" '.html_safe unless @page.items.empty? %>>
         <%= as_(active_scaffold_config.list.no_entries_message) %>
       </p>
     </td>
-    <% if active_scaffold_config.list.show_search_reset -%>
+    <% if active_scaffold_config.list.show_search_reset && @filtered -%>
     <% search_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :member, :position => false)
        action_links = ActiveScaffold::DataStructures::ActionLinks.new
        record = active_scaffold_config.model.new
@@ -19,7 +19,7 @@
        action_links.add(search_link)  -%>
        <%= render :partial => 'list_actions', :locals => {:record => record, :url_options => params_for(:escape => false, :search => ''), :action_links => action_links} %>
     <% else %>
-      <td></td>
+      <td class='actions'></td>
     <% end -%>
    
   </tr>

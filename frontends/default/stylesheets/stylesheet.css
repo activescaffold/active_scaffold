@@ -202,6 +202,10 @@ border-bottom: solid 1px #C5DBF7;
 border-left: solid 1px #C5DBF7;
 }
 
+.active-scaffold tr.record td.messages-container {
+padding: 0px;
+}
+
 .active-scaffold tr.even-record {
 background-color: #fff;
 }
