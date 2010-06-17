@@ -30,14 +30,3 @@
     <%= render :partial => 'list' %>
   </div>
 </div>
-
-<script type="text/javascript">
-//<![CDATA[
-ActiveScaffold.server_error_response = '<p class="error-message message">'
-  + <%= as_(:internal_error).to_json.html_safe %>
-  + '<a href="#" onclick="Element.remove(this.parentNode); return false;">'
-  + <%= as_(:close).to_json.html_safe %>
-  + '</a>'
-  + '</p>';
-//]]>
-</script>

@@ -222,10 +222,13 @@ var ActiveScaffold = {
     new_row.highlight();
   },
 
-  server_error_response: '',
   report_500_response: function(active_scaffold_id) {
-    messages_container = $(active_scaffold_id).down('td.messages-container');
-    new Insertion.Top(messages_container, this.server_error_response);
+    server_error = $(active_scaffold_id).down('td.messages-container p.server-error');
+    if (server_error.visible()) {
+      server_error.highlight();
+    } else {
+      server_error.show();
+    }
   }
 }
 
