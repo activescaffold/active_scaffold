@@ -119,6 +119,18 @@ document.observe("dom:loaded", function() {
     }
     return true;
   });
+  document.on('ajax:before', 'a.as_sort', function(event) {
+    var as_sort = event.findElement();
+    var history_controller_id = as_sort.readAttribute('data-page-history');
+    if (history_controller_id) addActiveScaffoldPageToHistory(as_sort.readAttribute('href'), history_controller_id);
+    as_sort.up('th').addClassName('loading');
+    return true;
+  });
+  document.on('ajax:failure', 'a.as_sort', function(event) {
+    var as_scaffold = event.findElement('.active-scaffold');
+    ActiveScaffold.report_500_response(as_scaffold);
+    return true;
+  });
 });
 
 
