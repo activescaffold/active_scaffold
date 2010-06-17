@@ -45,6 +45,8 @@ document.observe("dom:loaded", function() {
       var parent = as_action.up();
       if (parent && parent.nodeName.toUpperCase() == 'TD') {
         // record action
+        parent = parent.up('tr')
+        new ActiveScaffold.Actions.Record(parent.select('a.as_action'), parent.up('tr.record'), parent.down('.loading-indicator'));
       } else if (parent && parent.nodeName.toUpperCase() == 'DIV') {
         //table action
         new ActiveScaffold.Actions.Table(parent.select('a.as_action'), parent.up('div.active-scaffold').down('tbody.before-header'), parent.down('.loading-indicator'));
@@ -411,7 +413,7 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
 ActiveScaffold.Actions.Record = Class.create(ActiveScaffold.Actions.Abstract, {
   instantiate_link: function(link) {
     var l = new ActiveScaffold.ActionLink.Record(link, this.target, this.loading_indicator);
-    if (this.options.refresh_url) l.refresh_url = this.options.refresh_url;
+    if (!this.target.readAttribute('data-refresh').blank()) l.refresh_url = this.target.readAttribute('data-refresh');
     
     if (link.hasClassName('delete')) {
       l.url = l.url.replace(/\/delete(\?.*)?$/, '$1');

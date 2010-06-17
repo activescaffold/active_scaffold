@@ -12,17 +12,4 @@
     <% end -%>
   </tr>
 </table>
-
-<% target_id = element_row_id(:action => :list, :id => record.id) -%>
-
-<script type="text/javascript">
-//<![CDATA[
-new ActiveScaffold.Actions.Record(
-  $$('#<%= target_id -%> a.as_action'),
-  $('<%= target_id -%>'),
-  $('<%= loading_indicator_id(:action => :record, :id => record.id) -%>'),
-  {refresh_url: '<%= url_for(params_for(:action => :row, :id => record.id, :_method => :get, :escape => false)).html_safe -%>'}
-);
-//]]>
-</script>
 </td>
