@@ -41,6 +41,16 @@ document.observe("dom:loaded", function() {
   });
   document.on('ajax:before', 'a.as_action', function(event) {
     var as_action = event.findElement();
+    if (typeof(as_action.action_link) === 'undefined') {
+      var parent = as_action.up();
+      if (parent && parent.nodeName.toUpperCase() == 'TD') {
+        // record action
+      } else if (parent && parent.nodeName.toUpperCase() == 'DIV') {
+        //table action
+        new ActiveScaffold.Actions.Table(parent.select('a.as_action'), parent.up('div.active-scaffold').down('tbody.before-header'), parent.down('.loading-indicator'));
+      }
+      as_action = event.findElement();
+    }
     if (as_action.action_link) {
       var action_link = as_action.action_link;
       if (action_link.is_disabled()) {

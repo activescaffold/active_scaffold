@@ -33,7 +33,6 @@
 
 <script type="text/javascript">
 //<![CDATA[
-new ActiveScaffold.Actions.Table($$('#<%= active_scaffold_id -%> div.active-scaffold-header a.as_action'), $('<%= before_header_id -%>'), $('<%= loading_indicator_id(:action => :table) -%>'));
 ActiveScaffold.server_error_response = '<p class="error-message message">'
   + <%= as_(:internal_error).to_json.html_safe %>
   + '<a href="#" onclick="Element.remove(this.parentNode); return false;">'
