@@ -15,7 +15,7 @@ module ActiveScaffold::DataStructures
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
-
+    
     # nests a subgroup in the column set
     def add_subgroup(label, &proc)
       columns = ActiveScaffold::DataStructures::ActionColumns.new
@@ -60,7 +60,7 @@ module ActiveScaffold::DataStructures
       #  * :for - the record (or class) being iterated over. used for column-level security. default is the class.
       def each(options = {}, &proc)
         options[:for] ||= @columns.active_record_class
-
+        self.unauthorized_columns = []
         @set.each do |item|
           unless item.is_a? ActiveScaffold::DataStructures::ActionColumns
             item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
@@ -69,7 +69,10 @@ module ActiveScaffold::DataStructures
             # skip if this matches the field_name of a constrained column
             next if item.field_name and constraint_columns.include?(item.field_name.to_sym)
             # skip this field if it's not authorized
-            next unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || self.action.crud_type, :column => item.name)
+            unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || self.action.crud_type, :column => item.name)
+              self.unauthorized_columns << item.name.to_sym
+              next
+            end
           end
           if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.has_key?(:flatten) and options[:flatten]
             item.each(options, &proc)
@@ -78,6 +81,8 @@ module ActiveScaffold::DataStructures
           end
         end
       end
+      
+      
 
       # registers a set of column objects (recursively, for all nested ActionColumns)
       def set_columns(columns)
@@ -93,8 +98,13 @@ module ActiveScaffold::DataStructures
         @constraint_columns ||= []
       end
       
+      attr_writer :unauthorized_columns
+      def unauthorized_columns
+        @unauthorized_columns ||= []
+      end
+      
       def length
-        (@set - self.constraint_columns).length
+        ((@set - self.constraint_columns) - self.unauthorized_columns).length
       end
     end
   end
