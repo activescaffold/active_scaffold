@@ -32,7 +32,7 @@ document.observe("dom:loaded", function() {
     }
   });
   document.on('ajax:failure', 'form.as_form', function(event) {
-    var as_div = event.findElement('div.activescaffold');
+    var as_div = event.findElement('div.active-scaffold');
     if (as_div) {
       ActiveScaffold.report_500_response(as_div)
       event.stop();
@@ -59,7 +59,7 @@ document.observe("dom:loaded", function() {
         event.stop();
       } else {
         if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'visible';
-        if (action_link.position) action_link.disable();
+        action_link.disable();
       }
     }
     return true;
@@ -73,6 +73,7 @@ document.observe("dom:loaded", function() {
         if (action_link.hide_target) action_link.target.hide();
       } else {
         event.memo.request.evalResponse();
+        action_link.enable();
       }
       event.stop();
     }
@@ -91,7 +92,7 @@ document.observe("dom:loaded", function() {
     if (as_action.action_link) {
       var action_link = as_action.action_link;
       ActiveScaffold.report_500_response(action_link.scaffold_id());
-      if (action_link.position) action_link.enable();
+      action_link.enable();
     }
     return true;
   });
@@ -179,9 +180,9 @@ var ActiveScaffold = {
       }
     }
   },
-  hide_empty_message: function(tbody, empty_message_id) {
+  hide_empty_message: function(tbody) {
     if (this.records_for(tbody).length != 0) {
-      var empty_message_node = $(empty_message_id)
+      var empty_message_node = $(tbody).up().down('tbody.messages p.empty-message')
       if (empty_message_node) empty_message_node.hide();
     }
   },
@@ -220,6 +221,31 @@ var ActiveScaffold = {
     var new_row = $(row.id);
     if (row.hasClassName('even-record')) new_row.addClassName('even-record');
     new_row.highlight();
+  },
+  
+  create_record_row: function(tbody, html) {
+    tbody = $(tbody);
+    tbody.insert({top: html});
+
+    var new_row = tbody.firstDescendant();
+    this.stripe(tbody);
+    this.hide_empty_message(tbody);
+    this.increment_record_count(tbody.up('div.active-scaffold'));
+    new_row.highlight();
+  },
+  
+  delete_record_row: function(row, page_reload_url) {
+    row = $(row);
+    var tbody = row.up('tbody.records');
+    
+    var current_action_node = row.down('td.actions a.disabled');
+    if (current_action_node && current_action_node.action_link) {
+      current_action_node.action_link.close_previous_adapter();
+    }
+    row.remove();
+    this.reload_if_empty(tbody, page_reload_url);
+    this.stripe(tbody);
+    this.decrement_record_count(tbody.up('div.active-scaffold'));
   },
 
   report_500_response: function(active_scaffold_id) {

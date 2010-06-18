@@ -1,7 +1,6 @@
-page.insert_html :top, active_scaffold_tbody_id, :partial => 'list_record', :locals => {:record => @record}
-page << "ActiveScaffold.stripe($('#{active_scaffold_tbody_id}'))"
-page << "ActiveScaffold.hide_empty_message('#{active_scaffold_tbody_id}','#{empty_message_id}');"
-page << "ActiveScaffold.increment_record_count('#{active_scaffold_id}');"
+new_row = render :partial => 'list_record', :locals => {:record => @record}
+page << "ActiveScaffold.create_record_row('#{active_scaffold_tbody_id}','#{escape_javascript(new_row)}');"
+page.replace active_scaffold_calculations_id, :partial => 'list_calculations' if active_scaffold_config.list.columns.any? {|c| c.calculation?}
 
 if (form_stays_open = true)
   # why not just re-render the form? that wouldn't utilize a possible do_new override which sets default values.

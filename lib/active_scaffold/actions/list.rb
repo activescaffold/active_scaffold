@@ -10,7 +10,7 @@ module ActiveScaffold::Actions
 
     # get just a single row
     def row
-      render :partial => 'list_record', :locals => {:record => find_if_allowed(params[:id], :read)}
+      render :partial => 'row', :locals => {:record => find_if_allowed(params[:id], :read)}
     end
 
     def list
