@@ -121,12 +121,13 @@ module ActiveScaffold::Actions
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
+    
+    def create_ignore?
+      params[:nested].nil? && active_scaffold_config.list.always_show_create
+    end
+    
     def create_authorized?
-      if params[:nested].nil? && active_scaffold_config.list.always_show_create
-        false
-      else
-        authorized_for?(:crud_type => :create)
-      end
+      authorized_for?(:crud_type => :create)
     end
     private
     def create_authorized_filter
