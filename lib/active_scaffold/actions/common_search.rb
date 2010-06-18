@@ -9,14 +9,14 @@ module ActiveScaffold::Actions
       active_scaffold_session_storage[:search]
     end
 
+    def search_ignore?
+      active_scaffold_config.list.always_show_search
+    end
+    
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def search_authorized?
-      if active_scaffold_config.list.always_show_search
-        false
-      else
-        authorized_for?(:crud_type => :read)
-      end
+      authorized_for?(:crud_type => :read)
     end
   end
 end
