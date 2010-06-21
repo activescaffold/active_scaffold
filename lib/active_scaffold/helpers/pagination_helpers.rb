@@ -56,7 +56,7 @@ module ActiveScaffold
           html << ".." unless end_number >= current_page.pager.last.number - 1
           html << pagination_ajax_link(current_page.pager.last.number, params) unless end_number == current_page.pager.last.number
         end
-        html.join(' ')
+        html.join(' ').html_safe
       end
     end
   end
