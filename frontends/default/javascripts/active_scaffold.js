@@ -45,8 +45,8 @@ document.observe("dom:loaded", function() {
       var parent = as_action.up();
       if (parent && parent.nodeName.toUpperCase() == 'TD') {
         // record action
-        parent = parent.up('tr')
-        new ActiveScaffold.Actions.Record(parent.select('a.as_action'), parent.up('tr.record'), parent.down('.loading-indicator'));
+        parent = parent.up('tr.record')
+        new ActiveScaffold.Actions.Record(parent.select('a.as_action'), parent, parent.down('td.actions .loading-indicator'));
       } else if (parent && parent.nodeName.toUpperCase() == 'DIV') {
         //table action
         new ActiveScaffold.Actions.Table(parent.select('a.as_action'), parent.up('div.active-scaffold').down('tbody.before-header'), parent.down('.loading-indicator'));
