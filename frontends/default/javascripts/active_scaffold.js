@@ -195,24 +195,27 @@ var ActiveScaffold = {
       });
     }
   },
-  removeSortClasses: function(scaffold_id) {
-    $$('#' + scaffold_id + ' td.sorted').each(function(element) {
+  removeSortClasses: function(scaffold) {
+    scaffold = $(scaffold)
+    scaffold.select('td.sorted').each(function(element) {
       element.removeClassName("sorted");
     });
-    $$('#' + scaffold_id + ' th.sorted').each(function(element) {
+    scaffold.select('th.sorted').each(function(element) {
       element.removeClassName("sorted");
       element.removeClassName("asc");
       element.removeClassName("desc");
     });
   },
-  decrement_record_count: function(scaffold_id) {
+  decrement_record_count: function(scaffold) {
     // decrement the last record count, firsts record count are in nested lists
-    count = $$('#' + scaffold_id + ' span.active-scaffold-records').last();
+    scaffold = $(scaffold)
+    count = scaffold.select('span.active-scaffold-records').last();
     if (count) count.update(parseInt(count.innerHTML, 10) - 1);
   },
-  increment_record_count: function(scaffold_id) {
+  increment_record_count: function(scaffold) {
     // increment the last record count, firsts record count are in nested lists
-    count = $$('#' + scaffold_id + ' span.active-scaffold-records').last();
+    scaffold = $(scaffold)
+    count = scaffold.select('span.active-scaffold-records').last();
     if (count) count.update(parseInt(count.innerHTML, 10) + 1);
   },
   update_row: function(row, html) {
@@ -243,9 +246,9 @@ var ActiveScaffold = {
       current_action_node.action_link.close_previous_adapter();
     }
     row.remove();
-    this.reload_if_empty(tbody, page_reload_url);
     this.stripe(tbody);
     this.decrement_record_count(tbody.up('div.active-scaffold'));
+    this.reload_if_empty(tbody, page_reload_url);
   },
 
   report_500_response: function(active_scaffold_id) {
