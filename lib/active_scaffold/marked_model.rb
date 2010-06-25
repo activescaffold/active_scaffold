@@ -4,7 +4,7 @@ module ActiveScaffold
     
     def self.included(base)
       base.extend ClassMethods
-      base.named_scope :marked, lambda {{:conditions => {:id => base.marked_records.to_a}}}
+      base.scope :marked, lambda {{:conditions => {:id => base.marked_records.to_a}}}
     end
     
     def marked
