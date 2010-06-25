@@ -166,8 +166,8 @@ module ActiveScaffold
       end
       
       def url_options_for_nested_link(column, record, link, url_options)
-        if column.association and link.controller.to_s != params[:controller]
-          url_options[record.class.name.foreign_key.to_sym] = url_options.delete(:id)
+        if column.association
+          url_options[:assoc_id] = url_options.delete(:id)
           url_options[:id] = record.send(column.association.name) if column.singular_association?
           url_options[:eid] = "#{params[:controller]}_#{ActiveSupport::SecureRandom.hex(10)}" 
         end
