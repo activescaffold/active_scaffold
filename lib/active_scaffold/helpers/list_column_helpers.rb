@@ -350,7 +350,7 @@ module ActiveScaffold
       
       def mark_column_heading
         all_marked = (marked_records.length >= @page.pager.count)
-        tag_options = {:id => "mark_heading", :class => "mark_heading"}
+        tag_options = {:id => "#{controller_id}_mark_heading", :class => "mark_heading"}
         url_params = {:controller => params_for[:controller], :action => 'mark_all', :eid => params[:eid]}
         ajax_options = {:method => :post,
                         :url => url_for(url_params), :with => "'value=' + this.value",
