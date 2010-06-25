@@ -127,10 +127,11 @@ module ActiveScaffold
       
       unless controller.nil?
         options.reverse_merge! :label => column.label, :position => :after, :type => :member, :controller => controller.controller_path, :column => column
+        options[:parameters] ||= {}
+        options[:parameters].reverse_merge! :nested => true, :parent_model => column.active_record_class, :association => column.association.name
         if column.plural_association?
           # note: we can't create nested scaffolds on :through associations because there's no reverse association.
-          options[:parameters] ||= {}
-          options[:parameters][:nested] = true
+          
           ActiveScaffold::DataStructures::ActionLink.new('index', options) #unless column.through_association?
         else
           actions = controller.active_scaffold_config.actions

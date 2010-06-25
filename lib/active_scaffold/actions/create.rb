@@ -104,7 +104,7 @@ module ActiveScaffold::Actions
     end
 
     def new_model
-      model = active_scaffold_config.model
+      model = beginning_of_chain
       if model.columns_hash[model.inheritance_column]
         params = self.params # in new action inheritance_column must be in params
         params = params[:record] || {} unless params[model.inheritance_column] # in create action must be inside record key

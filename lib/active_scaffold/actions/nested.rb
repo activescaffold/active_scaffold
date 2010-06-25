@@ -5,7 +5,8 @@ module ActiveScaffold::Actions
     def self.included(base)
       super
       base.module_eval do
-        before_filter :set_active_scaffold_constraints
+        before_filter :set_parent_association
+        #before_filter :set_active_scaffold_constraints
         before_filter :register_constraints_with_action_columns
         before_filter :set_nested_list_label
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
@@ -17,6 +18,28 @@ module ActiveScaffold::Actions
     end
 
     protected
+    def parent_association
+      @parent_association ||= active_scaffold_session_storage[:parent_association].nil? ? nil : active_scaffold_session_storage[:parent_association].clone 
+      @parent_association[:association] = @parent_association[:parent_model].reflect_on_association(@parent_association[:name]) if @parent_association
+      @parent_association
+    end
+    
+    def parent_association?
+      !parent_association.nil?
+    end
+    
+    def set_parent_association
+      if nested?
+        if params[:parent_model] && params[:association] && params[:assoc_id]
+          @parent_association = nil
+          active_scaffold_session_storage[:parent_association] = {:parent_model => params[:parent_model].constantize,
+                                                                    :name => params[:association].to_sym,
+                                                                    :parent_id => params[:assoc_id]}
+        end
+        params.delete_if {|key, value| [:parent_model, :association, :assoc_id].include? key.to_sym}
+      end
+    end
+    
     def nested_authorized?(record = nil)
       true
     end
@@ -40,6 +63,15 @@ module ActiveScaffold::Actions
         
       end
     end
+    
+    def beginning_of_chain
+      if parent_association? && !parent_association[:association].belongs_to?
+        Rails.logger.info("begining of chain: #{parent_association[:association].inspect}")
+        parent_scope.send(parent_association[:name])
+      else
+        active_scaffold_config.model
+      end
+    end
 
     def nested?
       !params[:nested].nil?
@@ -47,31 +79,32 @@ module ActiveScaffold::Actions
 
     def nested_habtm?
       begin
-        return nested_column.association.macro == :has_and_belongs_to_many if nested? and nested_column
+        #return nested_column.association.macro == :has_and_belongs_to_many if nested? and nested_column
         false
       rescue
         raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, nested_association), caller
       end
     end
-    
-    
-
+  
     def nested_association
       return active_scaffold_constraints.keys.to_s.to_sym if nested?
       nil
     end
 
     def nested_parent_id
-      return active_scaffold_constraints.values.to_s if nested?
-      nil
+      parent_association? ? parent_association[:parent_id]: nil
+    end
+    
+    def parent_scope
+      nested_parent.find(nested_parent_id)
     end
     
     def nested_parent_record(crud = :read)
-      find_if_allowed(nested_parent_id, crud, nested_column.association.klass)
+      find_if_allowed(nested_parent_id, crud, nested_parent)
     end
     
     def nested_parent
-      nested_column.association.klass
+      parent_association? ? parent_association[:parent_model]: nil
     end
     
     def nested_parent_column
