@@ -5,9 +5,8 @@ module ActiveScaffold::Actions
     def self.included(base)
       super
       base.module_eval do
-        before_filter :set_parent_association
-        #before_filter :set_active_scaffold_constraints
         before_filter :register_constraints_with_action_columns
+        before_filter :set_parent_association
         before_filter :set_nested_list_label
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
       end
@@ -20,8 +19,19 @@ module ActiveScaffold::Actions
     protected
     def parent_association
       @parent_association ||= active_scaffold_session_storage[:parent_association].nil? ? nil : active_scaffold_session_storage[:parent_association].clone 
-      @parent_association[:association] = @parent_association[:parent_model].reflect_on_association(@parent_association[:name]) if @parent_association
+      if @parent_association && @parent_association[:association].nil?
+        @parent_association[:association] = @parent_association[:parent_model].reflect_on_association(@parent_association[:name]) 
+        hide_association_columns(@parent_association[:association]) unless @parent_association[:association].belongs_to?
+      end
       @parent_association
+    end
+    
+    def hide_association_columns(nested_association)
+      constrained_fields = Array(@parent_association[:association].primary_key_name.to_sym)
+      active_scaffold_config.model.reflect_on_all_associations.each do |association|
+        constrained_fields << association.name.to_sym if association.belongs_to? && @parent_association[:association].primary_key_name == association.primary_key_name
+      end
+      register_constraints_with_action_columns(constrained_fields)
     end
     
     def parent_association?
