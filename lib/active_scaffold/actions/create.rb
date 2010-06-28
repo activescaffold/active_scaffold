@@ -14,7 +14,7 @@ module ActiveScaffold::Actions
 
     def create
       do_create
-      @insert_row = params[:parent_controller].nil?
+      @insert_row = !(parent_association? && parent_belongs_to?) && params[:parent_controller].nil?
       respond_to_action(:create)
     end
 
@@ -96,6 +96,7 @@ module ActiveScaffold::Actions
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
           if successful?
             @record.save! and @record.save_associated!
+            create_association_with_parent(@record)
             after_create_save(@record)
           end
         end
