@@ -2,7 +2,11 @@ form_selector = "#{element_form_id(:action => :update)}"
 
 page << "$('#{form_selector}').up('.as_adapter').action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
-  updated_row = render :partial => 'list_record', :locals => {:record => @record}
+  updated_row = if parent_association && parent_association[:association].belongs_to?
+    nil
+  else
+    render :partial => 'list_record', :locals => {:record => @record}
+  end
   page << "$('#{form_selector}').up('.as_adapter').action_link.close('#{escape_javascript(updated_row)}');"
   page.replace active_scaffold_calculations_id, :partial => 'list_calculations' if active_scaffold_config.list.columns.any? {|c| c.calculation?}
 else
