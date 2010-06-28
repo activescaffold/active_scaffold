@@ -11,7 +11,7 @@ module ActiveScaffold::Actions
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
       end
       base.before_filter :include_habtm_actions
-      base.helper_method :nested_habtm?
+      base.helper_method :parent_habtm?
       base.helper_method :parent_association
     end
 
@@ -54,7 +54,7 @@ module ActiveScaffold::Actions
     end
 
     def include_habtm_actions
-      if nested_habtm?
+      if parent_habtm?
         # Production mode is ok with adding a link everytime the scaffold is nested - we ar not ok with that.
         active_scaffold_config.action_links.add('new_existing', :label => :add_existing, :type => :collection, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
         if active_scaffold_config.nested.shallow_delete
@@ -74,7 +74,7 @@ module ActiveScaffold::Actions
     end
     
     def beginning_of_chain
-      if parent_association? && !parent_association[:association].belongs_to?
+      if parent_association? && !parent_belongs_to?
         parent_scope.send(parent_association[:name])
       else
         active_scaffold_config.model
@@ -85,8 +85,12 @@ module ActiveScaffold::Actions
       !params[:nested].nil?
     end
 
-    def nested_habtm?
+    def parent_habtm?
       parent_association? ? parent_association[:association].macro == :has_and_belongs_to_many : false 
+    end
+    
+    def parent_belongs_to?
+      parent_association? && parent_association[:association].belongs_to?
     end
   
     def nested_parent_id
@@ -107,6 +111,13 @@ module ActiveScaffold::Actions
     
     def set_nested_list_label
       active_scaffold_session_storage[:list][:label] = as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label) if nested?
+    end
+    
+    def create_association_with_parent(record)
+      if parent_association? && parent_belongs_to?
+        parent = nested_parent_record(:update)
+        parent.update_attributes!(parent_association[:name].to_sym => record) if parent
+      end
     end
     
     private
