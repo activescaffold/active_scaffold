@@ -29,6 +29,7 @@ module ActiveScaffold::Actions
       constrained_fields = Array(@parent_association[:association].primary_key_name.to_sym)
       active_scaffold_config.model.reflect_on_all_associations.each do |association|
         constrained_fields << association.name.to_sym if association.belongs_to? && @parent_association[:association].primary_key_name == association.primary_key_name
+        constrained_fields << association.name.to_sym if !association.belongs_to? && @parent_association[:association].primary_key_name == association.association_foreign_key
       end
       register_constraints_with_action_columns(constrained_fields)
     end
