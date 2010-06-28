@@ -14,7 +14,7 @@ module ActiveScaffold::Actions
       base.before_filter :include_habtm_actions
       base.helper_method :nested_habtm?
       base.helper_method :nested_column
-      base.helper_method :nested_parent_column
+      base.helper_method :parent_association
     end
 
     protected
@@ -66,7 +66,6 @@ module ActiveScaffold::Actions
     
     def beginning_of_chain
       if parent_association? && !parent_association[:association].belongs_to?
-        Rails.logger.info("begining of chain: #{parent_association[:association].inspect}")
         parent_scope.send(parent_association[:name])
       else
         active_scaffold_config.model
@@ -78,12 +77,7 @@ module ActiveScaffold::Actions
     end
 
     def nested_habtm?
-      begin
-        #return nested_column.association.macro == :has_and_belongs_to_many if nested? and nested_column
-        false
-      rescue
-        raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, nested_association), caller
-      end
+      parent_association? ? parent_association[:association].macro == :has_and_belongs_to_many : false 
     end
   
     def nested_association
@@ -235,7 +229,7 @@ module ActiveScaffold::Actions::Nested
       parent_record = nested_parent_record(:update)
       @record = active_scaffold_config.model.find(params[:associated_id])
       if parent_record && @record
-        parent_record.send(nested_parent_column.name) << @record
+        parent_record.send(parent_association[:name]) << @record
         parent_record.save
       else
         false
@@ -245,7 +239,7 @@ module ActiveScaffold::Actions::Nested
     def do_destroy_existing
       if active_scaffold_config.nested.shallow_delete
         @record = nested_parent_record(:update)
-        collection = @record.send(nested_parent_column.name)
+        collection = @record.send(parent_association[:name])
         assoc_record = collection.find(params[:id])
         collection.delete(assoc_record)
       else
