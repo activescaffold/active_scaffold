@@ -12,7 +12,6 @@ module ActiveScaffold::Actions
       end
       base.before_filter :include_habtm_actions
       base.helper_method :nested_habtm?
-      base.helper_method :nested_column
       base.helper_method :parent_association
     end
 
@@ -90,11 +89,6 @@ module ActiveScaffold::Actions
       parent_association? ? parent_association[:association].macro == :has_and_belongs_to_many : false 
     end
   
-    def nested_association
-      return active_scaffold_constraints.keys.to_s.to_sym if nested?
-      nil
-    end
-
     def nested_parent_id
       parent_association? ? parent_association[:parent_id]: nil
     end
@@ -109,22 +103,6 @@ module ActiveScaffold::Actions
     
     def nested_parent
       parent_association? ? parent_association[:parent_model]: nil
-    end
-    
-    def nested_parent_column
-      join_table = nested_column.association.options[:join_table]
-      parent_config = active_scaffold_config_for(nested_parent)
-      if join_table && parent_config
-        parent_config.columns.detect {|column| column.association and column.association.macro == :has_and_belongs_to_many and column.association.options[:join_table] and column.association.options[:join_table] == join_table}
-      end
-    end
-    
-    def nested_column
-      begin
-        @nested_column ||= active_scaffold_config.columns[nested_association]
-      rescue
-        raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, nested_association), caller
-      end
     end
     
     def set_nested_list_label
