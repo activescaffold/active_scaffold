@@ -82,6 +82,7 @@ module ActiveScaffold::Actions
     def do_new
       @record = new_model
       apply_constraints_to_record(@record)
+      create_association_with_parent(@record)
       @record
     end
 
@@ -92,11 +93,11 @@ module ActiveScaffold::Actions
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(new_model, active_scaffold_config.create.columns, params[:record])
           apply_constraints_to_record(@record, :allow_autosave => true)
+          create_association_with_parent(@record)
           before_create_save(@record)
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
           if successful?
             @record.save! and @record.save_associated!
-            create_association_with_parent(@record)
             after_create_save(@record)
           end
         end
