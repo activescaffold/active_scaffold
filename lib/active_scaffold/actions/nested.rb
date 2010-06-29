@@ -20,16 +20,24 @@ module ActiveScaffold::Actions
       @parent_association ||= active_scaffold_session_storage[:parent_association].nil? ? nil : active_scaffold_session_storage[:parent_association].clone 
       if @parent_association && @parent_association[:association].nil?
         @parent_association[:association] = @parent_association[:parent_model].reflect_on_association(@parent_association[:name]) 
-        hide_association_columns(@parent_association[:association]) unless @parent_association[:association].belongs_to?
+        hide_association_columns(@parent_association[:association])
       end
       @parent_association
     end
     
     def hide_association_columns(nested_association)
-      constrained_fields = Array(@parent_association[:association].primary_key_name.to_sym)
+      constrained_fields = [] 
+      constrained_fields << @parent_association[:association].primary_key_name.to_sym unless @parent_association[:association].belongs_to?
       active_scaffold_config.model.reflect_on_all_associations.each do |association|
-        constrained_fields << association.name.to_sym if association.belongs_to? && @parent_association[:association].primary_key_name == association.primary_key_name
-        constrained_fields << association.name.to_sym if !association.belongs_to? && @parent_association[:association].primary_key_name == association.association_foreign_key
+        if !association.belongs_to? && @parent_association[:association].primary_key_name == association.association_foreign_key
+          constrained_fields << association.name.to_sym
+          @parent_association[:child_association] = association
+        end
+        if @parent_association[:association].primary_key_name == association.primary_key_name
+          # show columns for has_many and has_one child associationes
+          constrained_fields << association.name.to_sym if association.belongs_to? 
+          @parent_association[:child_association] = association
+        end
       end
       register_constraints_with_action_columns(constrained_fields)
     end
@@ -115,9 +123,14 @@ module ActiveScaffold::Actions
     end
     
     def create_association_with_parent(record)
-      if parent_association? && parent_belongs_to?
-        parent = nested_parent_record(:update)
-        parent.update_attributes!(parent_association[:name].to_sym => record) if parent
+      if parent_association? && parent_belongs_to? && parent_association[:child_association] 
+        parent = nested_parent_record(:read)
+        case parent_association[:child_association].macro
+        when :has_one
+          record.send("#{parent_association[:child_association].name}=", parent)
+        when :has_many
+          record.send("#{parent_association[:child_association].name}").send(:<<, parent)
+          end unless parent.nil?
       end
     end
     
