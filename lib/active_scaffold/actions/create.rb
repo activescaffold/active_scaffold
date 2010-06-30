@@ -14,7 +14,7 @@ module ActiveScaffold::Actions
 
     def create
       do_create
-      @insert_row = !(parent_association? && parent_belongs_to?) && params[:parent_controller].nil?
+      @insert_row = !(nested? && nested_belongs_to?) && params[:parent_controller].nil?
       respond_to_action(:create)
     end
 
@@ -125,7 +125,7 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     
     def create_ignore?
-      params[:nested].nil? && active_scaffold_config.list.always_show_create
+      nested? && active_scaffold_config.list.always_show_create
     end
     
     def create_authorized?

@@ -2,7 +2,7 @@ form_selector = "#{element_form_id(:action => :update)}"
 
 page << "$('#{form_selector}').up('.as_adapter').action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
-  updated_row = if parent_association && parent_association[:association].belongs_to?
+  updated_row = if nested && nested[:association].belongs_to?
     nil
   else
     render :partial => 'list_record', :locals => {:record => @record}
