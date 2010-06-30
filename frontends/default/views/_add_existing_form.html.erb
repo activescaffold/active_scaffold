@@ -21,7 +21,7 @@ options = {:id => element_form_id(:action => :add_existing),
 
   <p class="form-footer">
     <%= submit_tag as_(:add), :class => "submit" %>
-    <%= link_to as_(:cancel), main_path_to_return.merge(:nested => true), :class => 'as_cancel', :remote => true %>
+    <%= link_to as_(:cancel), main_path_to_return, :class => 'as_cancel', :remote => true %>
     <%= loading_indicator_tag(:action => :add_existing, :id => params[:id]) %>
   </p>
 

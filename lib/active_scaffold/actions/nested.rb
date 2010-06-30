@@ -6,56 +6,53 @@ module ActiveScaffold::Actions
       super
       base.module_eval do
         before_filter :register_constraints_with_action_columns
-        before_filter :set_parent_association
+        before_filter :set_nested
         before_filter :set_nested_list_label
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
       end
       base.before_filter :include_habtm_actions
-      base.helper_method :parent_habtm?
-      base.helper_method :parent_association
+      base.helper_method :nested
     end
 
     protected
-    def parent_association
-      @parent_association ||= active_scaffold_session_storage[:parent_association].nil? ? nil : active_scaffold_session_storage[:parent_association].clone 
-      if @parent_association && @parent_association[:association].nil?
-        @parent_association[:association] = @parent_association[:parent_model].reflect_on_association(@parent_association[:name]) 
-        hide_association_columns(@parent_association[:association])
+    def nested
+      @nested ||= active_scaffold_session_storage[:nested].nil? ? nil : active_scaffold_session_storage[:nested].clone 
+      if @nested && @nested[:association].nil?
+        @nested[:association] = @nested[:parent_model].reflect_on_association(@nested[:name]) 
+        hide_association_columns(@nested[:association])
       end
-      @parent_association
+      @nested
     end
     
     def hide_association_columns(nested_association)
       constrained_fields = [] 
-      constrained_fields << @parent_association[:association].primary_key_name.to_sym unless @parent_association[:association].belongs_to?
+      constrained_fields << @nested[:association].primary_key_name.to_sym unless @nested[:association].belongs_to?
       active_scaffold_config.model.reflect_on_all_associations.each do |association|
-        if !association.belongs_to? && @parent_association[:association].primary_key_name == association.association_foreign_key
+        if !association.belongs_to? && @nested[:association].primary_key_name == association.association_foreign_key
           constrained_fields << association.name.to_sym
-          @parent_association[:child_association] = association
+          @nested[:child_association] = association
         end
-        if @parent_association[:association].primary_key_name == association.primary_key_name
+        if @nested[:association].primary_key_name == association.primary_key_name
           # show columns for has_many and has_one child associationes
           constrained_fields << association.name.to_sym if association.belongs_to? 
-          @parent_association[:child_association] = association
+          @nested[:child_association] = association
         end
       end
       register_constraints_with_action_columns(constrained_fields)
     end
     
-    def parent_association?
-      !parent_association.nil?
+    def nested?
+      !nested.nil?
     end
     
-    def set_parent_association
-      if nested?
-        if params[:parent_model] && params[:association] && params[:assoc_id]
-          @parent_association = nil
-          active_scaffold_session_storage[:parent_association] = {:parent_model => params[:parent_model].constantize,
-                                                                    :name => params[:association].to_sym,
-                                                                    :parent_id => params[:assoc_id]}
-        end
-        params.delete_if {|key, value| [:parent_model, :association, :assoc_id].include? key.to_sym}
+    def set_nested
+      if params[:parent_model] && params[:association] && params[:assoc_id]
+        @nested = nil
+        active_scaffold_session_storage[:nested] = {:parent_model => params[:parent_model].constantize,
+                                                                  :name => params[:association].to_sym,
+                                                                  :parent_id => params[:assoc_id]}
       end
+      params.delete_if {|key, value| [:parent_model, :association, :assoc_id].include? key.to_sym}
     end
     
     def nested_authorized?(record = nil)
@@ -63,7 +60,7 @@ module ActiveScaffold::Actions
     end
 
     def include_habtm_actions
-      if parent_habtm?
+      if nested_habtm?
         # Production mode is ok with adding a link everytime the scaffold is nested - we ar not ok with that.
         active_scaffold_config.action_links.add('new_existing', :label => :add_existing, :type => :collection, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
         if active_scaffold_config.nested.shallow_delete
@@ -83,30 +80,30 @@ module ActiveScaffold::Actions
     end
     
     def beginning_of_chain
-      if parent_association? && parent_association[:association].collection?
-        parent_scope.send(parent_association[:name])
+      if nested? && nested[:association].collection?
+        nested_scope.send(nested[:name])
       else
         active_scaffold_config.model
       end
     end
 
     def nested?
-      !params[:nested].nil?
+      !nested.nil?
     end
 
-    def parent_habtm?
-      parent_association? ? parent_association[:association].macro == :has_and_belongs_to_many : false 
+    def nested_habtm?
+      nested? ? nested[:association].macro == :has_and_belongs_to_many : false 
     end
     
-    def parent_belongs_to?
-      parent_association? && parent_association[:association].belongs_to?
+    def nested_belongs_to?
+      nested? && nested[:association].belongs_to?
     end
   
     def nested_parent_id
-      parent_association? ? parent_association[:parent_id]: nil
+      nested? ? nested[:parent_id]: nil
     end
     
-    def parent_scope
+    def nested_scope
       nested_parent.find(nested_parent_id)
     end
     
@@ -115,7 +112,7 @@ module ActiveScaffold::Actions
     end
     
     def nested_parent
-      parent_association? ? parent_association[:parent_model]: nil
+      nested? ? nested[:parent_model]: nil
     end
     
     def set_nested_list_label
@@ -123,13 +120,13 @@ module ActiveScaffold::Actions
     end
     
     def create_association_with_parent(record)
-      if parent_association? && parent_belongs_to? && parent_association[:child_association] 
+      if nested? && nested_belongs_to? && nested[:child_association] 
         parent = nested_parent_record(:read)
-        case parent_association[:child_association].macro
+        case nested[:child_association].macro
         when :has_one
-          record.send("#{parent_association[:child_association].name}=", parent)
+          record.send("#{nested[:child_association].name}=", parent)
         when :has_many
-          record.send("#{parent_association[:child_association].name}").send(:<<, parent)
+          record.send("#{nested[:child_association].name}").send(:<<, parent)
           end unless parent.nil?
       end
     end
@@ -242,7 +239,7 @@ module ActiveScaffold::Actions::Nested
       parent_record = nested_parent_record(:update)
       @record = active_scaffold_config.model.find(params[:associated_id])
       if parent_record && @record
-        parent_record.send(parent_association[:name]) << @record
+        parent_record.send(nested[:name]) << @record
         parent_record.save
       else
         false
@@ -252,7 +249,7 @@ module ActiveScaffold::Actions::Nested
     def do_destroy_existing
       if active_scaffold_config.nested.shallow_delete
         @record = nested_parent_record(:update)
-        collection = @record.send(parent_association[:name])
+        collection = @record.send(nested[:name])
         assoc_record = collection.find(params[:id])
         collection.delete(assoc_record)
       else
