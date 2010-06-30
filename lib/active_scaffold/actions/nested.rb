@@ -83,7 +83,7 @@ module ActiveScaffold::Actions
     end
     
     def beginning_of_chain
-      if parent_association? && !parent_belongs_to?
+      if parent_association? && parent_association[:association].collection?
         parent_scope.send(parent_association[:name])
       else
         active_scaffold_config.model
