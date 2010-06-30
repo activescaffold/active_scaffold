@@ -42,7 +42,7 @@ module ActiveScaffold
 
           # setup automatic link
           if column.autolink? && column.singular_association? # link to inline form
-            link = action_link_to_inline_form(column, associated)
+            link = action_link_to_inline_form(column, record, associated)
             return text if link.crud_type.nil?
             url_options[:link] = as_(:create_new) if link.crud_type == :create
           end
@@ -70,8 +70,14 @@ module ActiveScaffold
       end
       
       # setup the action link to inline form
-      def action_link_to_inline_form(column, associated)
+      def action_link_to_inline_form(column, record, associated)
         link = column.link.clone
+        if column.polymorphic_association?
+          polymorphic_controller = polymorphic_controller_for_nested_link(column, record)
+          return link if polymorphic_controller.nil?
+          link.controller = polymorphic_controller
+        end
+        
         if column_empty?(associated) # if association is empty, we only can link to create form
           if column.actions_for_association_links.include?(:new)
             link.action = 'new'
@@ -85,6 +91,15 @@ module ActiveScaffold
           link.crud_type = :read
         end
         link
+      end
+      
+      def polymorphic_controller_for_nested_link(column, record)
+        begin
+          controller = active_scaffold_controller_for(record.send(column.association.name).class)
+          controller.controller_path
+        rescue ActiveScaffold::ControllerNotFound
+          controller = nil        
+        end
       end
 
       # There are two basic ways to clean a column's value: h() and sanitize(). The latter is useful
@@ -189,7 +204,7 @@ module ActiveScaffold
       def format_association_value(value, column, size)
         case column.association.macro
           when :has_one, :belongs_to
-            if column.association.options[:polymorphic]
+            if column.polymorphic_association?
               format_value("#{value.class.model_name.human}: #{value.to_label}")
             else
               format_value(value.to_label)
