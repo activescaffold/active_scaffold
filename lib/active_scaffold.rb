@@ -108,11 +108,6 @@ module ActiveScaffold
       return unless active_scaffold_config.actions.include? :list and active_scaffold_config.actions.include? :nested
       active_scaffold_config.columns.each do |column|
         next unless column.link.nil? and column.autolink?
-        if column.polymorphic_association?
-          # note: we can't create inline forms on singular polymorphic associations
-          column.clear_link
-          next
-        end
         action_link = link_for_association(column)
         column.set_link(action_link) unless action_link.nil?
       end
@@ -120,13 +115,13 @@ module ActiveScaffold
     
     def link_for_association(column, options = {})
       begin
-        controller = active_scaffold_controller_for(column.association.klass)
+        controller = column.polymorphic_association? ? :polymorph : active_scaffold_controller_for(column.association.klass) 
       rescue ActiveScaffold::ControllerNotFound
         controller = nil        
       end
       
       unless controller.nil?
-        options.reverse_merge! :label => column.label, :position => :after, :type => :member, :controller => controller.controller_path, :column => column
+        options.reverse_merge! :label => column.label, :position => :after, :type => :member, :controller => (controller == :polymorph ? controller : controller.controller_path), :column => column
         options[:parameters] ||= {}
         options[:parameters].reverse_merge! :nested => true, :parent_model => column.active_record_class, :association => column.association.name
         if column.plural_association?
@@ -134,7 +129,8 @@ module ActiveScaffold
           
           ActiveScaffold::DataStructures::ActionLink.new('index', options) #unless column.through_association?
         else
-          actions = controller.active_scaffold_config.actions
+          actions = [:create, :update, :show] 
+          actions = controller.active_scaffold_config.actions unless controller == :polymorph
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update
           column.actions_for_association_links.delete :show unless actions.include? :show

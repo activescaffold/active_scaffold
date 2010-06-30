@@ -110,7 +110,7 @@ module ActiveScaffold::DataStructures
 
     # set an action_link to nested list or inline form in this column
     def autolink?
-      @autolink and self.association.reverse
+      @autolink
     end
 
     # this should not only delete any existing link but also prevent column links from being automatically added by later routines
