@@ -189,7 +189,11 @@ module ActiveScaffold
       def format_association_value(value, column, size)
         case column.association.macro
           when :has_one, :belongs_to
-            format_value(value.to_label)
+            if column.association.options[:polymorphic]
+              format_value("#{value.class.model_name.human}: #{value.to_label}")
+            else
+              format_value(value.to_label)
+            end
           when :has_many, :has_and_belongs_to_many
             if column.associated_limit.nil?
               firsts = value.collect { |v| v.to_label }
