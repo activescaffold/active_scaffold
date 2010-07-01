@@ -4,6 +4,7 @@ module ActiveScaffold::Actions
       base.class_eval do
         after_filter :clear_flashes
       end
+      base.helper_method :nested?
     end
     def render_field
       @record = if params[:in_place_editing]
@@ -23,8 +24,12 @@ module ActiveScaffold::Actions
         after_render_field(@record, column)
       end
     end
-
+    
     protected
+
+    def nested?
+      false
+    end
     
     # override this method if you want to do something after render_field
     def after_render_field(record, column); end

@@ -51,7 +51,7 @@ module ActiveScaffold::Actions
             return_to_main
           end
         else
-          if params[:nested].nil? && active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
+          if !nested? && active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
             do_list
             render(:action => 'list')
           else
