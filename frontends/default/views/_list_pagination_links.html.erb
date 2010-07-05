@@ -1,5 +1,5 @@
 <% unless current_page.nil? -%>
-  <% pagination_params = params_for(:action => :index) -%>
+  <% pagination_params = params_for -%>
   <% indicator_params = pagination_params.merge(:action => 'pagination') -%>
   <% previous_url = url_for(pagination_params.merge(:page => current_page.number - 1)) -%>
   <% next_url = url_for(pagination_params.merge(:page => current_page.number + 1)) -%>
