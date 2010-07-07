@@ -544,6 +544,10 @@ margin-bottom: 5px;
 /* Form
    ============================== */
 
+.active-scaffold dl {
+margin: 0;
+}
+
 .active-scaffold .submit {
 font-weight: bold;
 font-size: 14px;
