@@ -3,7 +3,7 @@ module ActiveScaffold
     # A bunch of helper methods to produce the common view ids
     module IdHelpers
       def id_from_controller(controller)
-        h(controller.to_s).gsub("/", "__")
+        controller.to_s.gsub("/", "__").html_safe
       end
 
       def controller_id
