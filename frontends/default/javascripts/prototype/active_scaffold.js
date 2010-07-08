@@ -220,10 +220,22 @@ var ActiveScaffold = {
   },
   update_row: function(row, html) {
     row = $(row);
-    Element.replace(row, html);
-    var new_row = $(row.id);
+    var new_row = this.replace(row, html)
     if (row.hasClassName('even-record')) new_row.addClassName('even-record');
     new_row.highlight();
+  },
+  
+  replace: function(element, html) {
+    element = $(element)
+    Element.replace(element, html);
+    element = $(element.id);
+    return element;
+  },
+  
+  replace_html: function(element, html) {
+    element = $(element);
+    element.update(html);
+    return element;
   },
   
   create_record_row: function(tbody, html) {
@@ -258,6 +270,14 @@ var ActiveScaffold = {
     } else {
       server_error.show();
     }
+  },
+  
+  find_action_link: function(element) {
+    return $(element).up('.as_adapter').action_link;
+  },
+  
+  scroll_to: function(element) {
+    $(element).scrollTo();;
   }
 }
 

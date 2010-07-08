@@ -3,8 +3,8 @@
 <script type="text/javascript">
 //<![CDATA[
   <%= update_page do |page|
-        page.replace active_scaffold_calculations_id, :partial => 'list_calculations'
-      end %>
+    page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations')
+  end %>
 //]]>
 </script>
 <% end %>
