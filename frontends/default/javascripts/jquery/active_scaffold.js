@@ -94,10 +94,11 @@ $(document).ready(function() {
     if (as_adapter.get(0).action_link) {
       var action_link = as_adapter.get(0).action_link;
       var cancel_url = as_cancel.attr('href');
-      if (action_link.refresh_url) {
+      var refresh_data = as_cancel.attr('data-refresh');
+      if (refresh_data === 'true' && action_link.refresh_url) {
         event.data_url = action_link.refresh_url;
         if (action_link.position) event.data_type = 'html' 
-      } else if (typeof(cancel_url) == 'undefined' || cancel_url.length == 0) {
+      } else if (refresh_data === 'false' || typeof(cancel_url) == 'undefined' || cancel_url.length == 0) {
         action_link.close();
         return false;
       }
