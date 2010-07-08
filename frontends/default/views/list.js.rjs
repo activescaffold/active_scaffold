@@ -1,1 +1,1 @@
-page[active_scaffold_content_id].replace_html render(:partial => 'list', :layout => false)
+page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)

@@ -1,23 +1,23 @@
 form_selector = "#{element_form_id(:action => :create)}"
 
-page << "$('#{form_selector}').up('.as_adapter').action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
+page << "ActiveScaffold.find_action_link('#{form_selector}').update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
   if @insert_row
     new_row = render :partial => 'list_record', :locals => {:record => @record}
     page << "ActiveScaffold.create_record_row('#{active_scaffold_tbody_id}','#{escape_javascript(new_row)}');"
-    page.replace active_scaffold_calculations_id, :partial => 'list_calculations' if active_scaffold_config.list.columns.any? {|c| c.calculation?}
+    page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
   end
 
   if (active_scaffold_config.create.persistent)
-    page << "$('#{form_selector}').up('.as_adapter').action_link.reload();"
+    page << "ActiveScaffold.find_action_link('#{form_selector}').reload();"
   else
-    page << "$('#{form_selector}').up('.as_adapter').action_link.close();"
+    page << "ActiveScaffold.find_action_link('#{form_selector}').close();"
   end
   if (active_scaffold_config.create.edit_after_create)
     page << "var link = $('#{action_link_id 'edit', @record.id}');"
     page << "if (link) (function() { link.action_link.open() }).defer();"
   end
 else
-  page.replace form_selector, :partial => 'create_form', :locals => {:xhr => true}
-  page[form_selector].scroll_to
+  page.call 'ActiveScaffold.replace', form_selector, render(:partial => 'create_form', :locals => {:xhr => true})
+  page.call 'ActiveScaffold.scroll_to', form_selector
 end

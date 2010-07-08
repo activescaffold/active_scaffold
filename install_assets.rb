@@ -6,9 +6,12 @@ Dir.chdir(Dir.getwd.sub(/vendor.*/, '')) do
 ## Copy over asset files (javascript/css/images) from the plugin directory to public/
 ##
 
-def copy_files(source_path, destination_path, directory)
+def copy_files(source_path, destination_path, directory, clean_up_destination = false)
   source, destination = File.join(directory, source_path), File.join(Rails.root, destination_path)
   FileUtils.mkdir_p(destination) unless File.exist?(destination)
+  Dir.glob('*.so')
+
+  FileUtils.rm Dir.glob("#{destination}/*") if clean_up_destination
   FileUtils.cp_r(Dir.glob(source+'/*.*'), destination)
 end
 
@@ -27,9 +30,13 @@ available_frontends = Dir[File.join(directory, 'frontends', '*')].collect { |d| 
   end
 
   available_frontends.each do |frontend|
-    source = "/frontends/#{frontend}/#{asset_type}/"
+    if asset_type == :javascripts
+      source = "/frontends/#{frontend}/#{asset_type}/prototype/"
+    else
+      source = "/frontends/#{frontend}/#{asset_type}/"
+    end
     destination = "/public/#{asset_type}/active_scaffold/#{frontend}"
-    copy_files(source, destination, directory)
+    copy_files(source, destination, directory, true)
   end
 end
 
