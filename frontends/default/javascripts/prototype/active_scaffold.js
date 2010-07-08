@@ -102,9 +102,10 @@ document.observe("dom:loaded", function() {
     
     if (as_adapter.action_link) {
       var action_link = as_adapter.action_link;
-      if (action_link.refresh_url) {
+      var refresh_data = as_cancel.readAttribute('data-refresh');
+      if (refresh_data === 'true' && action_link.refresh_url) {
         event.memo.url = action_link.refresh_url;
-      } else if (as_cancel.readAttribute('href').blank()) {
+      } else if (refresh_data === 'false' || as_cancel.readAttribute('href').blank()) {
         action_link.close();
         event.stop();
       }
