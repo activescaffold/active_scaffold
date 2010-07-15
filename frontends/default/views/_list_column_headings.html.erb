@@ -12,7 +12,7 @@ default_sorting_stages = ['ASC', 'DESC']
                            :sort => column.name, :sort_direction => column_sort_direction)
   column_header_id = active_scaffold_column_header_id(column)
   -%>
-  <th id="<%= column_header_id %>" class="<%= column.css_class unless column.css_class.nil? %><%= " sorted #{sorting.direction_of(column).downcase}" if sorting.sorts_on? column %>" title="<%= h column.description %>">
+  <th id="<%= column_header_id %>" class="<%= column_heading_class(column, sorting)%>" title="<%= h column.description %>">
   <% if column.sortable? -%>
     <% options = {:id => search_form_id, :class => "as_sort",
                   'data-page-history' => controller_id,
