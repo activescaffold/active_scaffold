@@ -182,6 +182,14 @@ module ActiveScaffold
         classes << 'numeric' if column.column and [:decimal, :float, :integer].include?(column.column.type)
         classes.join(' ')
       end
+      
+      def column_heading_class(column, sorting)
+        classes = []
+        classes << "#{column.name}-column_heading"
+        classes << "sorted #{sorting.direction_of(column).downcase}" if sorting.sorts_on? column
+        classes << column.css_class unless column.css_class.nil?
+        classes.join(' ')
+      end
 
       def column_empty?(column_value)
         empty = column_value.nil?
