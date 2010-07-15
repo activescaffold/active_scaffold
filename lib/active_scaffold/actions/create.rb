@@ -129,7 +129,7 @@ module ActiveScaffold::Actions
     end
     
     def create_authorized?
-      authorized_for?(:crud_type => :create)
+      (!nested? || !nested.readonly?) && authorized_for?(:crud_type => :create)
     end
     private
     def create_authorized_filter

@@ -13,7 +13,7 @@ module ActiveScaffold::DataStructures
     def initialize(model, session_storage)
       info = session_storage[:nested].clone
       @parent_model = info[:parent_model]
-      @association = @parent_model.reflect_on_association(info[:name]) 
+      @association = @parent_model.reflect_on_association(info[:name])
       @parent_id = info[:parent_id]
       iterate_model_associations(model)
     end
@@ -34,6 +34,14 @@ module ActiveScaffold::DataStructures
     
     def belongs_to?
       association.belongs_to?
+    end
+    
+    def readonly?
+      if association.options.has_key? :readonly
+        association.options[:readonly]
+      else
+        association.options.has_key? :through
+      end
     end
     
     protected
