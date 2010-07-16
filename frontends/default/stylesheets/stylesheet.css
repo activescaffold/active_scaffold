@@ -35,7 +35,7 @@ text-decoration: none;
 color: #999;
 }
 
-.active-scaffold a:hover, .active-scaffold span.in_place_editor_field:hover {
+.active-scaffold a:hover, .active-scaffold span.hover {
 background-color: #ff8;
 }
 
