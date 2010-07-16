@@ -275,35 +275,10 @@ module ActiveScaffold
       def active_scaffold_inplace_edit(record, column, options = {})
         formatted_column = options[:formatted_column] || format_column_value(record, column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
-        tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field"}
-        in_place_editor_options = {
-          :url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s},
-          :with => params[:eid] ? "Form.serialize(form) + '&eid=#{params[:eid]}'" : nil,
-          :click_to_edit_text => as_(:click_to_edit),
-          :cancel_text => as_(:cancel),
-          :loading_text => as_(:loading),
-          :save_text => as_(:update),
-          :saving_text => as_(:saving),
-          :ajax_options => "{method: 'post'}",
-          :script => true
-        }
+        tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
+                       :title => as_(:click_to_edit), 'data-ie_id' => record.id.to_s}
 
-        if inplace_edit_cloning?(column)
-          in_place_editor_options.merge!(
-            :inplace_pattern_selector => "##{active_scaffold_column_header_id(column)} .#{inplace_edit_control_css_class}",
-            :node_id_suffix => record.id.to_s,
-            :form_customization => 'element.clonePatternField();'
-          )
-        elsif column.inplace_edit == :ajax
-          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => record.id, :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
-          plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
-          in_place_editor_options[:form_customization] = "element.setFieldFromAjax('#{escape_javascript(url)}', {plural: #{!!plural}});"
-        elsif column.column.try(:type) == :text
-          in_place_editor_options[:rows] = column.options[:rows] || 5
-        end
-
-        in_place_editor_options.merge!(column.options)
-        content_tag(:span, formatted_column, tag_options) + active_scaffold_in_place_editor(tag_options[:id], in_place_editor_options)
+        content_tag(:span, formatted_column, tag_options)
       end
       
       def inplace_edit_control(column)
@@ -321,50 +296,27 @@ module ActiveScaffold
         "as_inplace_pattern"
       end
       
-      def active_scaffold_in_place_editor(field_id, options = {})
-        function =  "new ActiveScaffold.InPlaceEditor("
-        function << "'#{field_id}', "
-        function << "'#{url_for(options[:url])}'"
-    
-        js_options = {}
-    
-        if protect_against_forgery?
-          options[:with] ||= "Form.serialize(form)"
-          options[:with] += " + '&authenticity_token=' + encodeURIComponent('#{form_authenticity_token}')"
-        end
-    
-        js_options['cancelText'] = %('#{options[:cancel_text]}') if options[:cancel_text]
-        js_options['okText'] = %('#{options[:save_text]}') if options[:save_text]
-        js_options['okControl'] = %('#{options[:save_control_type]}') if options[:save_control_type]
-        js_options['cancelControl'] = %('#{options[:cancel_control_type]}') if options[:cancel_control_type]
-        js_options['loadingText'] = %('#{options[:loading_text]}') if options[:loading_text]
-        js_options['savingText'] = %('#{options[:saving_text]}') if options[:saving_text]
-        js_options['rows'] = options[:rows] if options[:rows]
-        js_options['cols'] = options[:cols] if options[:cols]
-        js_options['size'] = options[:size] if options[:size]
-        js_options['externalControl'] = "'#{options[:external_control]}'" if options[:external_control]
-        js_options['externalControlOnly'] = "true" if options[:external_control_only]
-        js_options['submitOnBlur'] = "'#{options[:submit_on_blur]}'" if options[:submit_on_blur]
-        js_options['loadTextURL'] = "'#{url_for(options[:load_text_url])}'" if options[:load_text_url]        
-        js_options['ajaxOptions'] = options[:ajax_options] if options[:ajax_options]
-        js_options['htmlResponse'] = !options[:script] if options[:script]
-        js_options['callback']   = "function(form) { return #{options[:with]} }" if options[:with]
-        js_options['clickToEditText'] = %('#{options[:click_to_edit_text]}') if options[:click_to_edit_text]
-        js_options['textBetweenControls'] = %('#{options[:text_between_controls]}') if options[:text_between_controls]
-        js_options['highlightcolor'] = %('#{options[:highlight_color]}') if options[:highlight_color]
-        js_options['highlightendcolor'] = %('#{options[:highlight_end_color]}') if options[:highlight_end_color]
-        js_options['onFailure'] = "function(element, transport) { #{options[:failure]} }" if options[:failure]
-        js_options['onComplete'] = "function(transport, element) { #{options[:complete]} }" if options[:complete]
-        js_options['onEnterEditMode'] = "function(element) { #{options[:enter_editing]} }" if options[:enter_editing]
-        js_options['onLeaveEditMode'] = "function(element) { #{options[:exit_editing]} }" if options[:exit_editing]
-        js_options['onFormCustomization'] = "function(element, form) { #{options[:form_customization]} }" if options[:form_customization]
-        js_options['inplacePatternSelector'] = %('#{options[:inplace_pattern_selector]}') if options[:inplace_pattern_selector]
-        js_options['nodeIdSuffix'] = %('#{options[:node_id_suffix]}') if options[:node_id_suffix]
-        function << (', ' + options_for_javascript(js_options)) unless js_options.empty?
+      def inplace_edit_tag_attributes(column)
+        tag_options = {}
+        tag_options['data-ie_url'] = url_for({:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => '__id__'}) 
+        tag_options['data-ie_cancel_text'] = column.options[:cancel_text] || as_(:cancel)
+        tag_options['data-ie_loading_text'] = column.options[:loading_text] || as_(:loading)
+        tag_options['data-ie_save_text'] = column.options[:save_text] || as_(:update)
+        tag_options['data-ie_saving_text'] = column.options[:saving_text] || as_(:saving)
+        tag_options['data-ie_rows'] = column.options[:rows] || 5 if column.column.try(:type) == :text
+        tag_options['data-ie_cols'] = column.options[:cols] if column.options[:cols]
+        tag_options['data-ie_size'] = column.options[:size] if column.options[:size]
         
-        function << ')'
-    
-        javascript_tag(function)
+        if inplace_edit_cloning?(column)
+          tag_options['data-ie_mode'] = :clone
+        elsif column.inplace_edit == :ajax
+          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
+          plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
+          tag_options['data-ie_render_url'] = url
+          tag_options['data-ie_mode'] = :ajax
+          tag_options['data-ie_plural'] = plural
+        end
+        tag_options
       end
       
       def mark_column_heading
@@ -378,7 +330,30 @@ module ActiveScaffold
         script = remote_function(ajax_options)
         content_tag(:span, check_box_tag(tag_options[:id], !all_marked, all_marked, {:onclick => script}) , tag_options)
       end
-
+      
+      def render_column_heading(column, sorting, sort_direction)
+        tag_options = {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => column.description}
+        tag_options.merge!(inplace_edit_tag_attributes(column)) if column.inplace_edit
+        content_tag(:th, column_heading_value(column, sorting, sort_direction) + inplace_edit_control(column), tag_options)
+      end
+      
+          
+      def column_heading_value(column, sorting, sort_direction)
+        if column.sortable?
+          options = {:id => search_form_id, :class => "as_sort",
+                     'data-page-history' => controller_id,
+                     :remote => true, :method => :get}
+          url_options = params_for(:action => :index, :page => 1,
+                           :sort => column.name, :sort_direction => sort_direction)
+          link_to column.label, url_options, options
+        else 
+          if column.name != :marked 
+            content_tag(:p, column.label)
+          else
+            mark_column_heading
+          end
+        end
+      end
     end
   end
 end

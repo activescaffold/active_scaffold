@@ -145,6 +145,58 @@ document.observe("dom:loaded", function() {
     ActiveScaffold.report_500_response(as_scaffold);
     return true;
   });
+  
+  document.on('click', 'span.in_place_editor_field', function(event) {
+    var span = event.findElement();
+    
+    if (typeof(span.inplace_edit) === 'undefined') {
+      var options = {htmlResponse: false,
+                     onEnterHover: null,
+                     onLeaveHover: null,
+                     onComplete: null,
+                     ajaxOptions: {method: 'post'}},
+          csrf_param = $$('meta[name=csrf-param]')[0],
+          csrf_token = $$('meta[name=csrf-token]')[0],
+          heading_selector = '.' + span.up().readAttribute('class').split(' ')[0] + '_heading',
+          column_heading = span.up('.active-scaffold').down(heading_selector),
+          render_url = column_heading.readAttribute('data-ie_render_url'),
+          mode = column_heading.readAttribute('data-ie_mode'),
+          record_id = span.readAttribute('data-ie_id');
+          
+      
+      if (column_heading.readAttribute('data-ie_cancel_text')) options.cancelText = column_heading.readAttribute('data-ie_cancel_text');
+      if (column_heading.readAttribute('data-ie_loading_text')) options.loadingText = column_heading.readAttribute('data-ie_loading_text');
+      if (column_heading.readAttribute('data-ie_saving_text')) options.savingText = column_heading.readAttribute('data-ie_saving_text');
+      if (column_heading.readAttribute('data-ie_save_text')) options.okText = column_heading.readAttribute('data-ie_save_text');
+      if (column_heading.readAttribute('data-ie_rows')) options.rows = column_heading.readAttribute('data-ie_rows');
+      if (column_heading.readAttribute('data-ie_cols')) options.cols = column_heading.readAttribute('data-ie_cols');
+      if (column_heading.readAttribute('data-ie_size')) options.size = column_heading.readAttribute('data-ie_size');
+      
+      if (csrf_param) {
+        var param = csrf_param.readAttribute('content'),
+            token = csrf_token.readAttribute('content');
+        options['callback'] = new Function('form', 'return Form.serialize(form) + ' + "'&" + param + '=' + token + "';");
+      }
+      
+      if (mode && mode === 'clone') {
+        options.nodeIdSuffix = record_id;
+        options.inplacePatternSelector = '#' + column_heading.id + ' .as_inplace_pattern';
+        options['onFormCustomization'] = new Function('element', 'form', 'element.clonePatternField();');
+      }
+      
+      if (render_url) {
+        var plural = false;
+        if (column_heading.readAttribute('data-ie_plural')) plural = true;
+        options['onFormCustomization'] = new Function('element', 'form', 'element.setFieldFromAjax(' + "'" + render_url.sub('__id__', record_id) + "', {plural: " + plural + '});');
+      }
+      
+      span.inplace_edit = new ActiveScaffold.InPlaceEditor(span.id, column_heading.readAttribute('data-ie_url').sub('__id__', record_id), options)
+      span.inplace_edit.enterEditMode();
+    }
+    return true;
+  });
+  
+  
 });
 
 
