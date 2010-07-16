@@ -5,28 +5,8 @@ default_sorting = active_scaffold_config.list.sorting
 default_sorting_stages = ['ASC', 'DESC']
 -%>
 <% active_scaffold_config.list.columns.each do |column| -%>
-  <%
-  stages = default_sorting.sorts_on?(column) ? default_sorting_stages : sorting_stages
-  column_sort_direction = stages.after(sorting.direction_of(column)) || 'ASC'
-  url_options = params_for(:action => :index, :page => 1,
-                           :sort => column.name, :sort_direction => column_sort_direction)
-  column_header_id = active_scaffold_column_header_id(column)
-  -%>
-  <th id="<%= column_header_id %>" class="<%= column_heading_class(column, sorting)%>" title="<%= h column.description %>">
-  <% if column.sortable? -%>
-    <% options = {:id => search_form_id, :class => "as_sort",
-                  'data-page-history' => controller_id,
-                  :remote => true, :method => :get} -%>
-      <%= link_to column.label, url_options, options -%>
-   <% else -%>
-     <% if column.name != :marked -%>
-       <p><%= column.label %></p>
-     <% else -%>
-       <%= mark_column_heading -%>
-     <% end -%>
-   <% end -%>
-   <%= inplace_edit_control(column) -%>
- </th>
+  <% stages = default_sorting.sorts_on?(column) ? default_sorting_stages : sorting_stages -%>
+  <%= render_column_heading(column, sorting, stages.after(sorting.direction_of(column)) || 'ASC') %>
 <% end -%>
 <th class="actions">
 </th>
