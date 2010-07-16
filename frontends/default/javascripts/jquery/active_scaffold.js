@@ -2,7 +2,7 @@ $(document).ready(function() {
   $('form.as_form').live('ajax:loading', function(event) {
     var as_form = $(this).closest("form");
     if (as_form && as_form.attr('data-loading') == 'true') {
-      var loading_indicator = $('#' + as_form.get(0).id.replace(/-form$/, '-loading-indicator'));
+      var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
       if (loading_indicator) loading_indicator.css('visibility','visible');
       $('input[type=submit]', as_form).attr('disabled', 'disabled');
       $("input:disabled", as_form).attr('disabled', 'disabled');
@@ -12,7 +12,7 @@ $(document).ready(function() {
   $('form.as_form').live('ajax:complete', function(event) {
     var as_form = $(this).closest("form");
     if (as_form && as_form.attr('data-loading') == 'true') {
-      var loading_indicator = $('#' + as_form.get(0).id.replace(/-form$/, '-loading-indicator'));
+      var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
       if (loading_indicator) loading_indicator.css('visibility','hidden');
       $('input[type=submit]', as_form).attr('disabled', '');
       $("input:disabled", as_form).attr('disabled', '');
@@ -289,7 +289,7 @@ var ActiveScaffold = {
     if (typeof(element) == 'string') element = '#' + element; 
     element = $(element);
     element.replaceWith(html);
-    element = $('#' + element.get(0).id);
+    element = $('#' + element.attr('id'));
     return element;
   },
   
@@ -407,7 +407,7 @@ ActiveScaffold.ActionLink = new Object();
 ActiveScaffold.ActionLink.Abstract = Class.extend({
   init: function(a, target, loading_indicator) {
     this.tag = $(a);
-    this.url = this.tag.get(0).href;
+    this.url = this.tag.attr('href');
     this.method = 'get';
     
     if(this.url.match('_method=delete')){
@@ -415,7 +415,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
       // action delete is special case cause in ajax world it will be destroy
     } else if(this.url.match('/delete')){
       this.url = this.url.replace('/delete', '');
-      this.tag.get(0).href = this.url;
+      this.tag.attr('href', this.url);
       this.method = 'delete';
     } else if(this.url.match('_method=post')){
       this.method = 'post';
@@ -470,7 +470,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
   },
 
   scaffold_id: function() {
-    return '#' + this.tag.closest('div.active-scaffold').get(0).id;
+    return '#' + this.tag.closest('div.active-scaffold').attr('id');
   },
   
   update_flash_messages: function(messages) {
@@ -496,11 +496,11 @@ ActiveScaffold.Actions.Record = ActiveScaffold.Actions.Abstract.extend({
     if ($(link).hasClass('delete')) {
       l.url = l.url.replace(/\/delete(\?.*)?$/, '$1');
       l.url = l.url.replace(/\/delete\/(.*)/, '/destroy/$1');
-      l.tag.get(0).href = l.url;
+      l.tag.attr('href', l.url);
     }
     if (l.position) {
       l.url = l.url.append_params({adapter: '_list_inline_adapter'});
-      l.tag.get(0).href = l.url;
+      l.tag.attr('href', l.url);
     }
     l.set = this;
     return l;
@@ -571,7 +571,7 @@ ActiveScaffold.Actions.Table = ActiveScaffold.Actions.Abstract.extend({
     var l = new ActiveScaffold.ActionLink.Table(link, this.target, this.loading_indicator);
     if (l.position) {
       l.url = l.url.append_params({adapter: '_list_inline_adapter'});
-      l.tag.get(0).href = l.url;
+      l.tag.attr('href', l.url);
     }
     return l;
   }
