@@ -145,7 +145,12 @@ document.observe("dom:loaded", function() {
     ActiveScaffold.report_500_response(as_scaffold);
     return true;
   });
-  
+  document.on('mouseover', 'span.in_place_editor_field', function(event) {
+      event.findElement().addClassName('hover');
+  });
+  document.on('mouseout', 'span.in_place_editor_field', function(event) {
+      event.findElement().removeClassName('hover');
+  });
   document.on('click', 'span.in_place_editor_field', function(event) {
     var span = event.findElement();
     
@@ -189,7 +194,7 @@ document.observe("dom:loaded", function() {
         if (column_heading.readAttribute('data-ie_plural')) plural = true;
         options['onFormCustomization'] = new Function('element', 'form', 'element.setFieldFromAjax(' + "'" + render_url.sub('__id__', record_id) + "', {plural: " + plural + '});');
       }
-      
+      span.removeClassName('hover');
       span.inplace_edit = new ActiveScaffold.InPlaceEditor(span.id, column_heading.readAttribute('data-ie_url').sub('__id__', record_id), options)
       span.inplace_edit.enterEditMode();
     }
@@ -620,6 +625,13 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
 
 if (Ajax.InPlaceEditor) {
 ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
+  initialize: function($super, element, url, options) {
+    $super(element, url, options);
+    if (this._originalBackground == 'transparent') {
+      this._originalBackground = null;
+    }
+  },
+  
   setFieldFromAjax: function(url, options) {
     var ipe = this;
     $(ipe._controls.editor).remove();
