@@ -1,6 +1,6 @@
 <% if active_scaffold_config.action_links.any? { |link| link.type == :collection } -%>
   <div class="actions">
-    <% new_params = params_for(:action => :table) %>
+    <% new_params = params_for(:action => :index) %>
     <% active_scaffold_config.action_links.each :collection do |link| -%>
       <% next if skip_action_link(link) -%>
 	  <% next if link.action == 'new' && params[:nested].nil? && active_scaffold_config.list.always_show_create %>
@@ -8,7 +8,7 @@
       <%= render_action_link(link, new_params) -%>
     <% end -%>
 
-    <%= loading_indicator_tag(:action => :table) %>
+    <%= loading_indicator_tag(:action => :index) %>
   </div>
 <% end %>
 <h2><%= active_scaffold_config.list.user.label %></h2>

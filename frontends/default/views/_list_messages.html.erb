@@ -9,8 +9,8 @@
                 { :url => href,
                   :method => :get,
                   :before => "addActiveScaffoldPageToHistory('#{href}', '#{params[:controller]}')",
-                  :after => "$('#{loading_indicator_id(:action => :table)}').style.visibility = 'visible';",
-                  :complete => "$('#{loading_indicator_id(:action => :table)}').style.visibility = 'hidden';",
+                  :after => "$('#{loading_indicator_id(:action => :index)}').style.visibility = 'visible';",
+                  :complete => "$('#{loading_indicator_id(:action => :index)}').style.visibility = 'hidden';",
                   :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')"
                 }, :href => href %>
           <% end -%>

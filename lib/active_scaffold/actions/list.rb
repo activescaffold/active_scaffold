@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module List
     def self.included(base)
-      base.before_filter :list_authorized_filter, :only => [:index, :table, :row, :list]
+      base.before_filter :list_authorized_filter, :only => [:index, :row, :list]
       base.send :include, ActiveScaffold::Actions::Mark if base.active_scaffold_config.list.mark_records
     end
 
