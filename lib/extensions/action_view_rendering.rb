@@ -56,7 +56,7 @@ module ActionView #:nodoc:
         options[:params] ||= {}
         options[:params].merge! :eid => eid
 
-        render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]
+        render_component :controller => remote_controller.to_s, :action => 'index', :params => options[:params]
       else
         render_without_active_scaffold(*args, &block)
       end
