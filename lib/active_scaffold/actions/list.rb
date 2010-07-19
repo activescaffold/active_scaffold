@@ -9,11 +9,6 @@ module ActiveScaffold::Actions
       list
     end
 
-    def table
-      do_list
-      render(:action => 'list.html', :layout => false)
-    end
-
     # get just a single row
     def row
       render :partial => 'list_record', :locals => {:record => find_if_allowed(params[:id], :read)}
@@ -28,7 +23,7 @@ module ActiveScaffold::Actions
     
     protected
     def list_respond_to_html
-      render :action => 'list'
+      render :action => 'list', :layout => !respond_to?(:nested?) || !nested?
     end
     def list_respond_to_js
       render :action => 'list.js'

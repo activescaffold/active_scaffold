@@ -46,10 +46,6 @@ module ActiveScaffold
         "#{controller_id}-search-input"
       end
 
-      def table_action_id(name)
-        "#{controller_id}-action-table-#{name}"
-      end
-
       def action_link_id(link_action,link_id)
         "#{controller_id}-#{link_action}-#{link_id}-link"
       end

@@ -27,7 +27,7 @@
           :constraints => @constraints,
           :conditions => association.options[:conditions],
           :label => h(@label),
-          :params => {:nested => true, :parent_column => column_name, :parent_model => association.active_record.name}
+          :params => {:nested => true, :parent_column => column_name, :parent_model => association.active_record.name, :format => 'html'}
         )
       end
     end
