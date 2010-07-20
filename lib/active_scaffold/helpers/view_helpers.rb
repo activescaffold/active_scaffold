@@ -104,7 +104,7 @@ module ActiveScaffold
         options[:concat] += '_ie' if options[:concat].is_a? String
         ie_css = stylesheet_link_tag(*active_scaffold_ie_stylesheets(frontend).push(options))
 
-        "#{js}\n#{css}\n<!--[if IE]>#{ie_css}<![endif]-->\n"
+        "#{js}\n#{css}\n<!--[if IE]>#{ie_css}<![endif]-->\n".html_safe
       end
 
       # a general-use loading indicator (the "stuff is happening, please wait" feedback)
