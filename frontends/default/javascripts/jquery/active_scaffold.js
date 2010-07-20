@@ -342,7 +342,9 @@ var ActiveScaffold = {
   
   scroll_to: function(element) {
     if (typeof(element) == 'string') element = '#' + element;
-    
+    var form_offset = $(element).offset(),
+        destination = form_offset.top;
+    $(document).scrollTop(destination);    
   }
 }
 
