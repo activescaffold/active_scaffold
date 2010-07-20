@@ -39,9 +39,9 @@ Rico.Corner.round($$('#<%= active_scaffold_id %> div.active-scaffold-footer').fi
 <% end -%>
 new ActiveScaffold.Actions.Table($$('#<%= active_scaffold_id -%> div.active-scaffold-header a.action'), $('<%= before_header_id -%>'), $('<%= loading_indicator_id(:action => :index) -%>'));
 ActiveScaffold.server_error_response = '<p class="error-message message">'
-  + <%= as_(:internal_error).to_json %>
+  + <%= as_(:internal_error).to_json.html_safe %>
   + '<a href="#" onclick="Element.remove(this.parentNode); return false;">'
-  + <%= as_(:close).to_json %>
+  + <%= as_(:close).to_json.html_safe %>
   + '</a>'
   + '</p>';
 //]]>
