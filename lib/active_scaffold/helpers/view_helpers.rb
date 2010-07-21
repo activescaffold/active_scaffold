@@ -217,6 +217,14 @@ module ActiveScaffold
       def controller_class
         "#{h params[:controller]}-view"
       end
+
+      def clean_column_name(name)
+        name.to_s.gsub('?', '')
+      end
+
+      def clean_class_name(name)
+        name.underscore.gsub('/', '_')
+      end
     end
   end
 end
