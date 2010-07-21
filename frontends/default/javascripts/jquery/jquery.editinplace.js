@@ -55,7 +55,7 @@ $.fn.editInPlace.defaults = {
 	save_button:		'<button class="inplace_save">Save</button>', // string: image button tag to use as “Save” button
 	cancel_button:		'<button class="inplace_cancel">Cancel</button>', // string: image button tag to use as “Cancel” button
 	params:				"", // string: example: first_name=dave&last_name=hauenstein extra paramters sent via the post request to the server
-	field_type:			"text", // string: "text", "textarea", or "select";  The type of form field that will appear on instantiation
+	field_type:			"text", // string: "text", "textarea", or "select", or "remote";  The type of form field that will appear on instantiation
 	default_text:		"(Click here to add text)", // string: text to show up if the element that has this functionality is empty
 	use_html:			false, // boolean, set to true if the editor should use jQuery.fn.html() to extract the value to show from the dom node
 	textarea_rows:		10, // integer: set rows attribute of textarea, if field_type is set to textarea. Use CSS if possible though
@@ -63,6 +63,7 @@ $.fn.editInPlace.defaults = {
 	select_text:		"Choose new value", // string: default text to show up in select box
 	select_options:		"", // string or array: Used if field_type is set to 'select'. Can be comma delimited list of options 'textandValue,text:value', Array of options ['textAndValue', 'text:value'] or array of arrays ['textAndValue', ['text', 'value']]. The last form is especially usefull if your labels or values contain colons)
 	text_size:			null, // integer: set cols attribute of text input, if field_type is set to text. Use CSS if possible though
+	editor_url: null, // for field_type: remote url to get html_code for edit_control
 	
 	// Specifying callback_skip_dom_reset will disable all saving_* options
 	saving_text:		undefined, // string: text to be used when server is saving information. Example "Saving..."
@@ -263,8 +264,8 @@ $.extend(InlineEditor.prototype, {
 	},
 	
 	createEditorElement: function() {
-		if (-1 === $.inArray(this.settings.field_type, ['text', 'textarea', 'select']))
-			throw "Unknown field_type <fnord>, supported are 'text', 'textarea' and 'select'";
+		if (-1 === $.inArray(this.settings.field_type, ['text', 'textarea', 'select', 'remote']))
+			throw "Unknown field_type <fnord>, supported are 'text', 'textarea', 'select' and 'remote'";
 		
 		var editor = null;
 		if ("select" === this.settings.field_type)
@@ -276,9 +277,18 @@ $.extend(InlineEditor.prototype, {
 			editor = $('<textarea ' + this.inputNameAndClass() 
 				+ ' rows="' + this.settings.textarea_rows + '" '
 				+ ' cols="' + this.settings.textarea_cols + '" />');
+		else if ("remote" === this.settings.field_type)
+			editor = this.createRemoteGeneratedEditor();
 		
 		editor.val(this.triggerDelegateCall('willOpenEditInPlace', this.originalValue));
 		return editor;
+	},
+	
+	createRemoteGeneratedEditor: function () {
+	  return $($.ajax({
+            url: this.settings.editor_url,
+            async: false
+           }).responseText);
 	},
 	
 	inputNameAndClass: function() {
