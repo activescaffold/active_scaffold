@@ -180,12 +180,12 @@ $(document).ready(function() {
       if (render_url) {
         var plural = false;
         if (column_heading.attr('data-ie_plural')) plural = true;
-        options['onFormCustomization'] = new Function('element', 'form', 'element.setFieldFromAjax(' + "'" + render_url.sub('__id__', record_id) + "', {plural: " + plural + '});');
+        options.field_type = 'remote';
+        options.editor_url = render_url.replace(/__id__/, record_id) 
       }
       span.removeClass('hover');
       span.editInPlace(options);
       span.trigger('click.editInPlace');
-      //span.inplace_edit.enterEditMode();
     }
   });
 });
