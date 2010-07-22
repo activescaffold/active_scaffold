@@ -153,7 +153,8 @@ $(document).ready(function() {
           column_heading = span.closest('.active-scaffold').find(heading_selector),
           render_url = column_heading.attr('data-ie_render_url'),
           mode = column_heading.attr('data-ie_mode'),
-          record_id = span.attr('data-ie_id');
+          record_id = span.attr('data-ie_id'),
+          field_type = column_heading.attr('data-ie_field_type');
           
       
       options.url = column_heading.attr('data-ie_url').replace(/__id__/, record_id) 
@@ -168,7 +169,7 @@ $(document).ready(function() {
       if (csrf_param) {
         var param = csrf_param.attr('content'),
             token = csrf_token.attr('content');
-        options['params'] = param + '=' + token
+        options['params'] = param + '=' + token;
       }
       
       if (mode && mode === 'clone') {
@@ -183,9 +184,22 @@ $(document).ready(function() {
         options.field_type = 'remote';
         options.editor_url = render_url.replace(/__id__/, record_id) 
       }
-      span.removeClass('hover');
-      span.editInPlace(options);
-      span.trigger('click.editInPlace');
+      if (field_type === 'inline_checkbox') {
+        var checked = span.find('input:checkbox').is(':checked');
+        if (checked === true) options['params'] += '&value=1';
+        $.ajax({
+          url: options.url,
+          type: "POST",
+          data: options['params'],
+          dataType: options.ajax_data_type,
+          complete: function(request){
+          }
+        });
+      } else {
+        span.removeClass('hover');
+        span.editInPlace(options);
+        span.trigger('click.editInPlace');
+      }
     }
   });
 });

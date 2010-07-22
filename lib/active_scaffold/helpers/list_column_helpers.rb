@@ -14,9 +14,6 @@ module ActiveScaffold
           # second, check if the dev has specified a valid list_ui for this column
           elsif column.list_ui and override_column_ui?(column.list_ui)
             send(override_column_ui(column.list_ui), column, record)
-
-          elsif inplace_edit?(record, column)
-            active_scaffold_inplace_edit(record, column)
           elsif column.column and override_column_ui?(column.column.type)
             send(override_column_ui(column.column.type), column, record)
           else
@@ -32,7 +29,6 @@ module ActiveScaffold
       end
       
       # TODO: move empty_field_text and &nbsp; logic in here?
-      # TODO: move active_scaffold_inplace_edit in here?
       # TODO: we need to distinguish between the automatic links *we* create and the ones that the dev specified. some logic may not apply if the dev specified the link.
       def render_list_column(text, column, record)
         if column.link
@@ -65,6 +61,7 @@ module ActiveScaffold
 
           render_action_link(link, url_options, record)
         else
+          text = active_scaffold_inplace_edit(record, column, {:formatted_column => text}) if inplace_edit?(record, column)
           text
         end
       end
@@ -132,13 +129,9 @@ module ActiveScaffold
       end
 
       def active_scaffold_column_checkbox(column, record)
-        if inplace_edit?(record, column)
-          id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
-          tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field"}
-          content_tag(:span, format_column_checkbox(record, column), tag_options)
-        else
-          check_box(:record, column.name, :disabled => true, :id => nil, :object => record)
-        end
+        options = {:disabled => true, :id => nil, :object => record}
+        options.delete(:disabled) if inplace_edit?(record, column)
+        check_box(:record, column.name, options)
       end
 
       def column_override(column)
@@ -161,13 +154,6 @@ module ActiveScaffold
       ##
       ## Formatting
       ##
-
-      def format_column_checkbox(record, column)
-        checked = ActionView::Helpers::InstanceTag.check_box_checked?(record.send(column.name), '1')
-        script = remote_function(:method => 'POST', :url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s, :value => !checked, :eid => params[:eid]})
-        check_box(:record, column.name, :onclick => script, :id => nil, :object => record)
-      end
-
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
         if value && column.association # cache association size before calling column_empty?
@@ -266,7 +252,7 @@ module ActiveScaffold
       
       def format_inplace_edit_column(record,column)
         if column.list_ui == :checkbox
-          format_column_checkbox(record, column)
+          active_scaffold_column_checkbox(column, record)
         else
           format_column_value(record, column)
         end
@@ -306,6 +292,7 @@ module ActiveScaffold
         tag_options['data-ie_rows'] = column.options[:rows] || 5 if column.column.try(:type) == :text
         tag_options['data-ie_cols'] = column.options[:cols] if column.options[:cols]
         tag_options['data-ie_size'] = column.options[:size] if column.options[:size]
+        tag_options['data-ie_field_type'] = 'inline_checkbox' if column.list_ui == :checkbox
         
         if inplace_edit_cloning?(column)
           tag_options['data-ie_mode'] = :clone
