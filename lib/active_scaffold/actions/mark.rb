@@ -30,7 +30,7 @@ module ActiveScaffold::Actions
     end
     
     def mark_all?
-      @mark_all ||= (params[:value] == 'true')
+      @mark_all ||= [true, 'true', 1, '1', 'T', 't'].include?(params[:value].class == String ? params[:value].downcase : params[:value])
     end
 
     def do_mark_all
