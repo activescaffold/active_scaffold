@@ -156,22 +156,11 @@ $(document).ready(function() {
           record_id = span.attr('data-ie_id'),
           field_type = column_heading.attr('data-ie_field_type');
           
+      ActiveScaffold.read_inplace_edit_heading_attributes(column_heading, options);
+      options.url = column_heading.attr('data-ie_url').replace(/__id__/, record_id);
       
-      options.url = column_heading.attr('data-ie_url').replace(/__id__/, record_id) 
-      if (column_heading.attr('data-ie_cancel_text')) options.cancel_button = '<button class="inplace_cancel">' + column_heading.attr('data-ie_cancel_text') + "</button>";
-      if (column_heading.attr('data-ie_loading_text')) options.loadingText = column_heading.attr('data-ie_loading_text');
-      if (column_heading.attr('data-ie_saving_text')) options.saving_text = column_heading.attr('data-ie_saving_text');
-      if (column_heading.attr('data-ie_save_text')) options.save_button = '<button class="inplace_save">' + column_heading.attr('data-ie_save_text') + "</button>";
-      if (column_heading.attr('data-ie_rows')) options.textarea_rows = column_heading.attr('data-ie_rows');
-      if (column_heading.attr('data-ie_cols')) options.textarea_cols = column_heading.attr('data-ie_cols');
-      if (column_heading.attr('data-ie_size')) options.text_size = column_heading.attr('data-ie_size');
-      
-      if (csrf_param) {
-        var param = csrf_param.attr('content'),
-            token = csrf_token.attr('content');
-        options['params'] = param + '=' + token;
-      }
-      
+      if (csrf_param) options['params'] = csrf_param.attr('content') + '=' + csrf_token.attr('content');
+            
       if (mode && mode === 'clone') {
         options.nodeIdSuffix = record_id;
         options.inplacePatternSelector = '#' + column_heading.id + ' .as_inplace_pattern';
@@ -185,20 +174,9 @@ $(document).ready(function() {
         options.editor_url = render_url.replace(/__id__/, record_id) 
       }
       if (field_type === 'inline_checkbox') {
-        var checked = span.find('input:checkbox').is(':checked');
-        if (checked === true) options['params'] += '&value=1';
-        $.ajax({
-          url: options.url,
-          type: "POST",
-          data: options['params'],
-          dataType: options.ajax_data_type,
-          complete: function(request){
-          }
-        });
+        ActiveScaffold.process_checkbox_inplace_edit(span.find('input:checkbox'), options);
       } else {
-        span.removeClass('hover');
-        span.editInPlace(options);
-        span.trigger('click.editInPlace');
+        ActiveScaffold.create_inplace_editor(span, options);
       }
     }
   });
@@ -409,6 +387,39 @@ var ActiveScaffold = {
     var form_offset = $(element).offset(),
         destination = form_offset.top;
     $(document).scrollTop(destination);    
+  },
+  
+  process_checkbox_inplace_edit: function(checkbox, options) {
+    var checked = checkbox.is(':checked');
+    if (checked === true) options['params'] += '&value=1';
+    $.ajax({
+      url: options.url,
+      type: "POST",
+      data: options['params'],
+      dataType: options.ajax_data_type,
+      after: function(request){
+        checkbox.attr('disabled', 'disabled');
+      },
+      complete: function(request){
+        checkbox.attr('disabled', '');
+      }
+    });
+  },
+  
+  read_inplace_edit_heading_attributes: function(column_heading, options) {
+    if (column_heading.attr('data-ie_cancel_text')) options.cancel_button = '<button class="inplace_cancel">' + column_heading.attr('data-ie_cancel_text') + "</button>";
+    if (column_heading.attr('data-ie_loading_text')) options.loadingText = column_heading.attr('data-ie_loading_text');
+    if (column_heading.attr('data-ie_saving_text')) options.saving_text = column_heading.attr('data-ie_saving_text');
+    if (column_heading.attr('data-ie_save_text')) options.save_button = '<button class="inplace_save">' + column_heading.attr('data-ie_save_text') + "</button>";
+    if (column_heading.attr('data-ie_rows')) options.textarea_rows = column_heading.attr('data-ie_rows');
+    if (column_heading.attr('data-ie_cols')) options.textarea_cols = column_heading.attr('data-ie_cols');
+    if (column_heading.attr('data-ie_size')) options.text_size = column_heading.attr('data-ie_size');
+  }, 
+  
+  create_inplace_editor: function(span, options) {
+    span.removeClass('hover');
+    span.editInPlace(options);
+    span.trigger('click.editInPlace');
   }
 }
 
