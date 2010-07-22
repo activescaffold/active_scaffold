@@ -169,22 +169,12 @@ document.observe("dom:loaded", function() {
           mode = column_heading.readAttribute('data-ie_mode'),
           record_id = span.readAttribute('data-ie_id'),
           field_type = column_heading.readAttribute('data-ie_field_type');
-          
-      
-      if (column_heading.readAttribute('data-ie_cancel_text')) options.cancelText = column_heading.readAttribute('data-ie_cancel_text');
-      if (column_heading.readAttribute('data-ie_loading_text')) options.loadingText = column_heading.readAttribute('data-ie_loading_text');
-      if (column_heading.readAttribute('data-ie_saving_text')) options.savingText = column_heading.readAttribute('data-ie_saving_text');
-      if (column_heading.readAttribute('data-ie_save_text')) options.okText = column_heading.readAttribute('data-ie_save_text');
-      if (column_heading.readAttribute('data-ie_rows')) options.rows = column_heading.readAttribute('data-ie_rows');
-      if (column_heading.readAttribute('data-ie_cols')) options.cols = column_heading.readAttribute('data-ie_cols');
-      if (column_heading.readAttribute('data-ie_size')) options.size = column_heading.readAttribute('data-ie_size');
-      
-      if (csrf_param) {
-        var param = csrf_param.readAttribute('content'),
-            token = csrf_token.readAttribute('content');
-        options['params'] = param + '=' + token;
-      }
-      
+        
+      ActiveScaffold.read_inplace_edit_heading_attributes(column_heading, options);
+      options.url = column_heading.readAttribute('data-ie_url').sub('__id__', record_id);
+       
+      if (csrf_param) options['params'] = csrf_param.readAttribute('content') + '=' + csrf_token.readAttribute('content');
+            
       if (mode && mode === 'clone') {
         options.nodeIdSuffix = record_id;
         options.inplacePatternSelector = '#' + column_heading.id + ' .as_inplace_pattern';
@@ -198,22 +188,9 @@ document.observe("dom:loaded", function() {
       }
       
       if (field_type === 'inline_checkbox') {
-        var checked = span.down('input[type="checkbox"]').readAttribute('checked');
-        // checked attribute is nt updated
-        if (checked !== 'checked') options['params'] += '&value=1';
-        new Ajax.Request(column_heading.readAttribute('data-ie_url').sub('__id__', record_id), {
-          method: 'post',
-          parameters: options['params'],
-          onComplete: function(response) {
-          }
-        });
+        ActiveScaffold.process_checkbox_inplace_edit(span.down('input[type="checkbox"]'), options);
       } else {
-        if (options['params'].length > 0) {
-          options['callback'] = new Function('form', 'return Form.serialize(form) + ' + "'&" + options['params'] + "';");
-        }
-        span.removeClassName('hover');
-        span.inplace_edit = new ActiveScaffold.InPlaceEditor(span.id, column_heading.readAttribute('data-ie_url').sub('__id__', record_id), options)
-        span.inplace_edit.enterEditMode();
+        ActiveScaffold.create_inplace_editor(span, options);
       }
     }
     return true;
@@ -353,7 +330,42 @@ var ActiveScaffold = {
   },
   
   scroll_to: function(element) {
-    $(element).scrollTo();;
+    $(element).scrollTo();
+  },
+  
+  process_checkbox_inplace_edit: function(checkbox, options) {
+    var checked = checkbox.readAttribute('checked');
+    // checked attribute is nt updated
+    if (checked !== 'checked') options['params'] += '&value=1';
+    new Ajax.Request(options.url, {
+      method: 'post',
+      parameters: options['params'],
+      onCreate: function(response) {
+        checkbox.disable();
+      },
+      onComplete: function(response) {
+        checkbox.enable();
+      }
+    });
+  },
+  
+  read_inplace_edit_heading_attributes: function(column_heading, options) {
+    if (column_heading.readAttribute('data-ie_cancel_text')) options.cancelText = column_heading.readAttribute('data-ie_cancel_text');
+    if (column_heading.readAttribute('data-ie_loading_text')) options.loadingText = column_heading.readAttribute('data-ie_loading_text');
+    if (column_heading.readAttribute('data-ie_saving_text')) options.savingText = column_heading.readAttribute('data-ie_saving_text');
+    if (column_heading.readAttribute('data-ie_save_text')) options.okText = column_heading.readAttribute('data-ie_save_text');
+    if (column_heading.readAttribute('data-ie_rows')) options.rows = column_heading.readAttribute('data-ie_rows');
+    if (column_heading.readAttribute('data-ie_cols')) options.cols = column_heading.readAttribute('data-ie_cols');
+    if (column_heading.readAttribute('data-ie_size')) options.size = column_heading.readAttribute('data-ie_size');
+  }, 
+  
+  create_inplace_editor: function(span, options) {
+    if (options['params'].length > 0) {
+      options['callback'] = new Function('form', 'return Form.serialize(form) + ' + "'&" + options['params'] + "';");
+    }
+    span.removeClassName('hover');
+    span.inplace_edit = new ActiveScaffold.InPlaceEditor(span.id, options.url, options)
+    span.inplace_edit.enterEditMode();
   }
 }
 
