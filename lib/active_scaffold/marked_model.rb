@@ -12,7 +12,7 @@ module ActiveScaffold
     end
     
     def marked=(value)
-      value = (value.downcase == 'true') if value.is_a? String 
+      value = [true, 'true', 1, '1', 'T', 't'].include?(value.class == String ? value.downcase : value)
       if value == true
         marked_records << self.id if !marked
       else
