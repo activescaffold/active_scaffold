@@ -149,19 +149,31 @@ $(document).ready(function() {
                      update_value: 'value'},
           csrf_param = $('meta[name=csrf-param]').first(),
           csrf_token = $('meta[name=csrf-token]').first(),
-          heading_selector = '.' + span.parent().attr('class').split(' ')[0] + '_heading',
-          column_heading = span.closest('.active-scaffold').find(heading_selector),
-          render_url = column_heading.attr('data-ie_render_url'),
+          my_parent = span.parent(),
+          column_heading = null;
+      
+      if (my_parent.is('td')) {
+        var column_no = my_parent.prevAll('td').length;
+        column_heading = my_parent.closest('.active-scaffold').find('th:eq(' + column_no + ')');
+      } else if (my_parent.is('th')) {
+        column_heading = my_parent;
+      }
+        
+      var render_url = column_heading.attr('data-ie_render_url'),
           mode = column_heading.attr('data-ie_mode'),
-          record_id = span.attr('data-ie_id'),
-          field_type = column_heading.attr('data-ie_field_type');
+          record_id = span.attr('data-ie_id');
           
       ActiveScaffold.read_inplace_edit_heading_attributes(column_heading, options);
-      options.url = column_heading.attr('data-ie_url').replace(/__id__/, record_id);
+      
+      if (span.attr('data-ie_url')) { 
+        options.url = span.attr('data-ie_url').replace(/__id__/, record_id);
+      } else { 
+        options.url = column_heading.attr('data-ie_url').replace(/__id__/, record_id);
+      }
       
       if (csrf_param) options['params'] = csrf_param.attr('content') + '=' + csrf_token.attr('content');
             
-      if (mode && mode === 'clone') {
+      if (mode === 'clone') {
         options.nodeIdSuffix = record_id;
         options.inplacePatternSelector = '#' + column_heading.id + ' .as_inplace_pattern';
         options['onFormCustomization'] = new Function('element', 'form', 'element.clonePatternField();');
@@ -173,7 +185,7 @@ $(document).ready(function() {
         options.field_type = 'remote';
         options.editor_url = render_url.replace(/__id__/, record_id) 
       }
-      if (field_type === 'inline_checkbox') {
+      if (mode === 'inline_checkbox') {
         ActiveScaffold.process_checkbox_inplace_edit(span.find('input:checkbox'), options);
       } else {
         ActiveScaffold.create_inplace_editor(span, options);

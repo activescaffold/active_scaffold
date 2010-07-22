@@ -163,19 +163,32 @@ document.observe("dom:loaded", function() {
                      ajaxOptions: {method: 'post'}},
           csrf_param = $$('meta[name=csrf-param]')[0],
           csrf_token = $$('meta[name=csrf-token]')[0],
-          heading_selector = '.' + span.up().readAttribute('class').split(' ')[0] + '_heading',
-          column_heading = span.up('.active-scaffold').down(heading_selector),
-          render_url = column_heading.readAttribute('data-ie_render_url'),
+          my_parent = span.up(),
+          column_heading = null;
+          
+      if (my_parent.nodeName.toLowerCase() === 'td') {
+        var heading_selector = '.' + span.up().readAttribute('class').split(' ')[0] + '_heading';
+        column_heading = span.up('.active-scaffold').down(heading_selector);
+      } else if (my_parent.nodeName.toLowerCase() === 'th') {
+        column_heading = my_parent;
+      }
+          
+      var render_url = column_heading.readAttribute('data-ie_render_url'),
           mode = column_heading.readAttribute('data-ie_mode'),
-          record_id = span.readAttribute('data-ie_id'),
-          field_type = column_heading.readAttribute('data-ie_field_type');
+          record_id = span.readAttribute('data-ie_id');
         
       ActiveScaffold.read_inplace_edit_heading_attributes(column_heading, options);
-      options.url = column_heading.readAttribute('data-ie_url').sub('__id__', record_id);
+      
+      if (span.readAttribute('data-ie_url')) {
+        options.url = span.readAttribute('data-ie_url');
+      } else {
+        options.url = column_heading.readAttribute('data-ie_url');
+      }
+      if (record_id) options.url = options.url.sub('__id__', record_id);
        
       if (csrf_param) options['params'] = csrf_param.readAttribute('content') + '=' + csrf_token.readAttribute('content');
             
-      if (mode && mode === 'clone') {
+      if (mode === 'clone') {
         options.nodeIdSuffix = record_id;
         options.inplacePatternSelector = '#' + column_heading.id + ' .as_inplace_pattern';
         options['onFormCustomization'] = new Function('element', 'form', 'element.clonePatternField();');
@@ -187,7 +200,7 @@ document.observe("dom:loaded", function() {
         options['onFormCustomization'] = new Function('element', 'form', 'element.setFieldFromAjax(' + "'" + render_url.sub('__id__', record_id) + "', {plural: " + plural + '});');
       }
       
-      if (field_type === 'inline_checkbox') {
+      if (mode === 'inline_checkbox') {
         ActiveScaffold.process_checkbox_inplace_edit(span.down('input[type="checkbox"]'), options);
       } else {
         ActiveScaffold.create_inplace_editor(span, options);

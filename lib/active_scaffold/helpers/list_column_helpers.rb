@@ -292,9 +292,10 @@ module ActiveScaffold
         tag_options['data-ie_rows'] = column.options[:rows] || 5 if column.column.try(:type) == :text
         tag_options['data-ie_cols'] = column.options[:cols] if column.options[:cols]
         tag_options['data-ie_size'] = column.options[:size] if column.options[:size]
-        tag_options['data-ie_field_type'] = 'inline_checkbox' if column.list_ui == :checkbox
-        
-        if inplace_edit_cloning?(column)
+
+        if column.list_ui == :checkbox
+          tag_options['data-ie_mode'] = :inline_checkbox
+        elsif inplace_edit_cloning?(column)
           tag_options['data-ie_mode'] = :clone
         elsif column.inplace_edit == :ajax
           url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
@@ -308,14 +309,9 @@ module ActiveScaffold
       
       def mark_column_heading
         all_marked = (marked_records.length >= @page.pager.count)
-        tag_options = {:id => "#{controller_id}_mark_heading", :class => "mark_heading"}
-        url_params = {:controller => params_for[:controller], :action => 'mark_all', :eid => params[:eid]}
-        ajax_options = {:method => :post,
-                        :url => url_for(url_params), :with => "'value=' + this.value",
-                        :after => "this.disable();",
-                        :complete => "this.enable();"}
-        script = remote_function(ajax_options)
-        content_tag(:span, check_box_tag(tag_options[:id], !all_marked, all_marked, {:onclick => script}) , tag_options)
+        tag_options = {:id => "#{controller_id}_mark_heading", :class => "mark_heading in_place_editor_field"}
+        tag_options['data-ie_url'] = url_for({:controller => params_for[:controller], :action => 'mark_all', :eid => params[:eid]})
+        content_tag(:span, check_box_tag(nil, !all_marked, all_marked), tag_options)
       end
       
       def render_column_heading(column, sorting, sort_direction)
