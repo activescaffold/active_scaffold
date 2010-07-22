@@ -111,7 +111,8 @@ module ActiveScaffold
         elsif column.singular_association?
           manage_nested_record_from_params(parent_record, column, value)
         elsif column.plural_association?
-          value.collect {|key_value_pair| manage_nested_record_from_params(parent_record, column, key_value_pair[1])}.compact
+          # sort by id or temporary id so new records are created in the same order as user write them
+          value.sort.collect {|key_value_pair| manage_nested_record_from_params(parent_record, column, key_value_pair[1])}.compact
         else
           value
         end
