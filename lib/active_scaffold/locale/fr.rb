@@ -63,3 +63,4 @@
       :version_inconsistency => "Version incomplète - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer.",
     }
   }
+}
