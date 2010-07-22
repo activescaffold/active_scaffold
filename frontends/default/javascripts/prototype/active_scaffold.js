@@ -152,13 +152,14 @@ document.observe("dom:loaded", function() {
       event.findElement().removeClassName('hover');
   });
   document.on('click', 'span.in_place_editor_field', function(event) {
-    var span = event.findElement();
+    var span = event.findElement('span.in_place_editor_field');
     
     if (typeof(span.inplace_edit) === 'undefined') {
       var options = {htmlResponse: false,
                      onEnterHover: null,
                      onLeaveHover: null,
                      onComplete: null,
+                     params: '',
                      ajaxOptions: {method: 'post'}},
           csrf_param = $$('meta[name=csrf-param]')[0],
           csrf_token = $$('meta[name=csrf-token]')[0],
@@ -166,7 +167,8 @@ document.observe("dom:loaded", function() {
           column_heading = span.up('.active-scaffold').down(heading_selector),
           render_url = column_heading.readAttribute('data-ie_render_url'),
           mode = column_heading.readAttribute('data-ie_mode'),
-          record_id = span.readAttribute('data-ie_id');
+          record_id = span.readAttribute('data-ie_id'),
+          field_type = column_heading.readAttribute('data-ie_field_type');
           
       
       if (column_heading.readAttribute('data-ie_cancel_text')) options.cancelText = column_heading.readAttribute('data-ie_cancel_text');
@@ -180,7 +182,7 @@ document.observe("dom:loaded", function() {
       if (csrf_param) {
         var param = csrf_param.readAttribute('content'),
             token = csrf_token.readAttribute('content');
-        options['callback'] = new Function('form', 'return Form.serialize(form) + ' + "'&" + param + '=' + token + "';");
+        options['params'] = param + '=' + token;
       }
       
       if (mode && mode === 'clone') {
@@ -194,9 +196,25 @@ document.observe("dom:loaded", function() {
         if (column_heading.readAttribute('data-ie_plural')) plural = true;
         options['onFormCustomization'] = new Function('element', 'form', 'element.setFieldFromAjax(' + "'" + render_url.sub('__id__', record_id) + "', {plural: " + plural + '});');
       }
-      span.removeClassName('hover');
-      span.inplace_edit = new ActiveScaffold.InPlaceEditor(span.id, column_heading.readAttribute('data-ie_url').sub('__id__', record_id), options)
-      span.inplace_edit.enterEditMode();
+      
+      if (field_type === 'inline_checkbox') {
+        var checked = span.down('input[type="checkbox"]').readAttribute('checked');
+        // checked attribute is nt updated
+        if (checked !== 'checked') options['params'] += '&value=1';
+        new Ajax.Request(column_heading.readAttribute('data-ie_url').sub('__id__', record_id), {
+          method: 'post',
+          parameters: options['params'],
+          onComplete: function(response) {
+          }
+        });
+      } else {
+        if (options['params'].length > 0) {
+          options['callback'] = new Function('form', 'return Form.serialize(form) + ' + "'&" + options['params'] + "';");
+        }
+        span.removeClassName('hover');
+        span.inplace_edit = new ActiveScaffold.InPlaceEditor(span.id, column_heading.readAttribute('data-ie_url').sub('__id__', record_id), options)
+        span.inplace_edit.enterEditMode();
+      }
     }
     return true;
   });
