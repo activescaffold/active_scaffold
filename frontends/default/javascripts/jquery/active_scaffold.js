@@ -138,6 +138,15 @@ $(document).ready(function() {
     ActiveScaffold.report_500_response(as_scaffold);
     return true;
   });
+  $('span.in_place_editor_field').live('hover', function(event) {
+    if (event.type == 'mouseenter') {
+      if (typeof($(this).data('editInPlace')) === 'undefined') $(this).addClass("hover");
+     }
+    if (event.type == 'mouseleave') {
+      if (typeof($(this).data('editInPlace')) === 'undefined') $(this).removeClass("hover");
+    }
+    return true;
+  });
   $('span.in_place_editor_field').live('click', function(event) {
     var span = $(this);
     
@@ -420,7 +429,7 @@ var ActiveScaffold = {
   
   read_inplace_edit_heading_attributes: function(column_heading, options) {
     if (column_heading.attr('data-ie_cancel_text')) options.cancel_button = '<button class="inplace_cancel">' + column_heading.attr('data-ie_cancel_text') + "</button>";
-    if (column_heading.attr('data-ie_loading_text')) options.loadingText = column_heading.attr('data-ie_loading_text');
+    if (column_heading.attr('data-ie_loading_text')) options.loading_text = column_heading.attr('data-ie_loading_text');
     if (column_heading.attr('data-ie_saving_text')) options.saving_text = column_heading.attr('data-ie_saving_text');
     if (column_heading.attr('data-ie_save_text')) options.save_button = '<button class="inplace_save">' + column_heading.attr('data-ie_save_text') + "</button>";
     if (column_heading.attr('data-ie_rows')) options.textarea_rows = column_heading.attr('data-ie_rows');
