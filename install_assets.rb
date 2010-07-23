@@ -31,7 +31,7 @@ available_frontends = Dir[File.join(directory, 'frontends', '*')].collect { |d| 
 
   available_frontends.each do |frontend|
     if asset_type == :javascripts
-      source = "/frontends/#{frontend}/#{asset_type}/prototype/"
+      source = "/frontends/#{frontend}/#{asset_type}/#{ActiveScaffold.js_framework}/"
     else
       source = "/frontends/#{frontend}/#{asset_type}/"
     end

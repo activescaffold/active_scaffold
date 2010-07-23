@@ -44,6 +44,14 @@ module ActiveScaffold
       end
     end
   end
+  
+  def self.js_framework=(framework)
+    @@js_framework = framework
+  end
+  
+  def self.js_framework
+    @@js_framework ||= :prototype
+  end
 
   module ClassMethods
     def active_scaffold(model_id = nil, &block)
