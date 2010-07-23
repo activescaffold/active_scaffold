@@ -34,10 +34,11 @@ Since Rails 3.0 render_component is nt needed anymore
 Since Rails 3.0, the following is needed:
 rails plugin install git://github.com/rails/verification.git
 
-Prototype 1.7
+Prototype 1.7 (default js framework)
 rails.js in git://github.com/vhochstein/prototype-ujs.git
 
 JQuery 1.4.1
 rails.js in git://github.com/vhochstein/jquery-ujs.git
+uncomment last line in ...plugins/active_scaffold/environment.rb in order tu use jquery instead of prototype
 
 Released under the MIT license (included)
