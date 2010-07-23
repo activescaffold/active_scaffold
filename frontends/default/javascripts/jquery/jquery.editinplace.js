@@ -64,7 +64,7 @@ $.fn.editInPlace.defaults = {
 	select_options:		"", // string or array: Used if field_type is set to 'select'. Can be comma delimited list of options 'textandValue,text:value', Array of options ['textAndValue', 'text:value'] or array of arrays ['textAndValue', ['text', 'value']]. The last form is especially usefull if your labels or values contain colons)
 	text_size:			null, // integer: set cols attribute of text input, if field_type is set to text. Use CSS if possible though
 	editor_url: null, // for field_type: remote url to get html_code for edit_control
-	
+	loading_text: 'Loading...', // shown if inplace editor is loaded from server
 	// Specifying callback_skip_dom_reset will disable all saving_* options
 	saving_text:		undefined, // string: text to be used when server is saving information. Example "Saving..."
 	saving_image:		"", // string: uses saving text specify an image location instead of text while server is saving
@@ -285,6 +285,7 @@ $.extend(InlineEditor.prototype, {
 	},
 	
 	createRemoteGeneratedEditor: function () {
+	  this.dom.html(this.settings.loading_text);
 	  return $($.ajax({
             url: this.settings.editor_url,
             async: false
