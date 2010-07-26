@@ -1,4 +1,5 @@
 page.insert_html :top, active_scaffold_tbody_id, :partial => 'list_record', :locals => {:record => @record}
+page.replace active_scaffold_calculations_id, :partial => 'list_calculations' if active_scaffold_config.list.columns.any? {|c| c.calculation?}
 page << "ActiveScaffold.stripe($('#{active_scaffold_tbody_id}'))"
 page << "ActiveScaffold.hide_empty_message('#{active_scaffold_tbody_id}','#{empty_message_id}');"
 page << "ActiveScaffold.increment_record_count('#{active_scaffold_id}');"

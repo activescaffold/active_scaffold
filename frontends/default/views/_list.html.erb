@@ -13,7 +13,7 @@
   </tbody>
   <tbody class="records" id="<%= active_scaffold_tbody_id %>">
     <% if !@records.empty? -%>
-      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false, :dont_show_calculations => true } %>
+      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false } %>
     <% end -%>
     <% if active_scaffold_config.list.columns.any? {|c| c.calculation?} -%>
       <%= render :partial => 'list_calculations' %>
