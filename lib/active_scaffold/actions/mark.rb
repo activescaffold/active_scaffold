@@ -57,10 +57,9 @@ module ActiveScaffold::Actions
         do_search if respond_to? :do_search
         set_includes_for_list_columns
         count = beginning_of_chain.count(count_options(finder_options, active_scaffold_config.list.user.count_includes))
-        # FIXME: It isn't right when there are filtered records by a search
-        render :js => "$('#{active_scaffold_id}').down('.mark_record').checked = #{marked_records.length >= count ? true : false};"
+        @mark = marked_records.length >= count
       else
-        render :js => "$$('##{active_scaffold_tbody_id} > tr > td > .mark_record').each(function(checkbox) { checkbox.checked = #{mark? ? true : false};});"
+        @mark = mark?
       end
     end
 
