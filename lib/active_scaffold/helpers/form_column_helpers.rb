@@ -198,8 +198,10 @@ module ActiveScaffold
         end
  
         record_select_options = {:controller => remote_controller, :id => options[:id]}
+        record_select_options.merge!(options)
         record_select_options.merge!(active_scaffold_input_text_options)
         record_select_options.merge!(column.options)
+        record_select_options[:onchange] = "function(id, label) { this.value = id; #{record_select_options[:onchange]} }" if record_select_options[:onchange]
 
         if multiple
           record_multi_select_field(options[:name], value || [], record_select_options)
