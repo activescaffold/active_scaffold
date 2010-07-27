@@ -23,7 +23,7 @@ module ActiveScaffold::Actions
     
     protected
     def list_respond_to_html
-      render :action => 'list', :layout => (!respond_to?(:nested?) || !nested?) && (!respond_to?(:component_request?) || !component_request?)
+      render :action => 'list', :layout => !respond_to?(:component_request?) || !component_request?
     end
     def list_respond_to_js
       render :action => 'list.js'
