@@ -58,12 +58,18 @@ module ActionView::Rendering #:nodoc:
       options[:params].merge! :eid => eid, :embedded => true
       
       id = "as_#{eid}-content"
-      url = url_for({:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params]))
-      content_tag(:div, {:id => id}) do 
-        link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
-          javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true})")
+      url_options = {:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params])
+      
+      if respond_to? :render_component
+        render_component url_options
+      else
+        content_tag(:div, {:id => id}) do
+          url = url_for(url_options
+          link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
+            javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true})")
+        end
       end
-      #render_component :controller => remote_controller.to_s, :action => 'table', :params => options[:params]
+      
     else
       options = args.first
       @last_partial = {:partial => options[:partial], :index => nil} if options[:partial]
