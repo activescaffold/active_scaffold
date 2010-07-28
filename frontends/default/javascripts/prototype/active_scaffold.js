@@ -297,11 +297,19 @@ var ActiveScaffold = {
     element = $(element.id);
     return element;
   },
-  
+    
   replace_html: function(element, html) {
     element = $(element);
     element.update(html);
     return element;
+  },
+  
+  remove: function(element) {
+    $(element).remove();
+  },
+  
+  hide: function(element) {
+    $(element).hide();
   },
   
   create_record_row: function(tbody, html) {

@@ -3,7 +3,7 @@
     <td colspan="<%= active_scaffold_config.list.columns.length -%>" class="messages-container">
       <p class="error-message message server-error" style="display:none;">
         <%= as_(:internal_error).html_safe %>
-        <a href="#" onclick="Element.hide(this.parentNode); return false;" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
+        <a href="#" onclick="ActiveScaffold.hide(this.parentNode); return false;" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
       </p>
       <div id="<%= active_scaffold_messages_id -%>">
         <%= render :partial => 'messages' %>

@@ -363,6 +363,15 @@ var ActiveScaffold = {
     return element;
   },
   
+  remove: function(element) {
+    if (typeof(element) == 'string') element = '#' + element; 
+    $(element).remove();
+  },
+  
+  hide: function(element) {
+    $(element).hide();
+  },
+  
   create_record_row: function(tbody, html) {
     if (typeof(tbody) == 'string') tbody = '#' + tbody;
     tbody = $(tbody);
