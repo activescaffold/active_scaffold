@@ -22,7 +22,11 @@ module ActiveScaffold::Actions
     
     protected
     def list_respond_to_html
-      render :action => 'list'
+      if params.delete(:embedded)
+        render :action => 'list', :layout => false
+      else
+        render :action => 'list'
+      end
     end
     def list_respond_to_js
       if params[:adapter]
