@@ -79,11 +79,11 @@ $(document).ready(function() {
     return true;
   });
   $('a.as_action').live('ajax:failure', function(event) {
-    var as_action = $this;
+    var as_action = $(this);
     if (as_action.data('action_link')) {
       var action_link = as_action.data('action_link');
       ActiveScaffold.report_500_response(action_link.scaffold_id());
-      action_link.attr('disabled', '');
+      action_link.enable();
     }
     return true;
   });
