@@ -29,10 +29,17 @@ Rails < 2.1: Active Scaffold 1-1-stable (no guarantees)
 Since Rails 2.3, render_component plugin is needed for nested and embbeded scaffolds. It works with rails-2.3 branch from ewildgoose repository:
 script/plugin install git://github.com/ewildgoose/render_component.git -r rails-2.3
 
-Since Rails 3.0 render_component is nt needed anymore
+Rails 3.0 compatible fork of activesaffold by Volker Hochstein:
+
+Since Rails 3.0 render_component is nt used for nesting, but optional for embedded scaffolds
+Rails 3.0 version of render_component:
+rails plugin install git://github.com/vhochstein/render_component.git
 
 Since Rails 3.0, the following is needed:
 rails plugin install git://github.com/rails/verification.git
+
+Fork uses unobtrusive Javascript, so you are basically free to pick your javascript framework
+Out of the box Prototype or JQuery are supported:
 
 Prototype 1.7 (default js framework)
 rails.js in git://github.com/vhochstein/prototype-ujs.git
