@@ -64,7 +64,7 @@ module ActionView::Rendering #:nodoc:
         render_component url_options
       else
         content_tag(:div, {:id => id}) do
-          url = url_for(url_options
+          url = url_for(url_options)
           link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
             javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true})")
         end
