@@ -86,6 +86,10 @@ module ActiveScaffold
         elsif column.actions_for_association_links.include?(:show)
           link.action = 'show'
           link.crud_type = :read
+        elsif column.actions_for_association_links.include?(:index)
+          link.parameters[:id] = record.send(column.association.name).id
+          link.action = 'index'
+          link.crud_type = :read
         end
         link
       end
