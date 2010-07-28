@@ -55,7 +55,7 @@ $.fn.editInPlace.defaults = {
 	save_button:		'<button class="inplace_save">Save</button>', // string: image button tag to use as “Save” button
 	cancel_button:		'<button class="inplace_cancel">Cancel</button>', // string: image button tag to use as “Cancel” button
 	params:				"", // string: example: first_name=dave&last_name=hauenstein extra paramters sent via the post request to the server
-	field_type:			"text", // string: "text", "textarea", or "select", or "remote";  The type of form field that will appear on instantiation
+	field_type:			"text", // string: "text", "textarea", or "select", or "remote", or "clone";  The type of form field that will appear on instantiation
 	default_text:		"(Click here to add text)", // string: text to show up if the element that has this functionality is empty
 	use_html:			false, // boolean, set to true if the editor should use jQuery.fn.html() to extract the value to show from the dom node
 	textarea_rows:		10, // integer: set rows attribute of textarea, if field_type is set to textarea. Use CSS if possible though
@@ -69,6 +69,8 @@ $.fn.editInPlace.defaults = {
 	saving_text:		undefined, // string: text to be used when server is saving information. Example "Saving..."
 	saving_image:		"", // string: uses saving text specify an image location instead of text while server is saving
 	saving_animation_color: 'transparent', // hex color string, will be the color the pulsing animation during the save pulses to. Note: Only works if jquery-ui is loaded
+	clone_selector: null, // if field_type clone a selector to clone editor from
+	clone_id_suffix: null, // if field_type clone a suffix to create unique ids
 	
 	value_required:		false, // boolean: if set to true, the element will not be saved unless a value is entered
 	element_id:			"element_id", // string: name of parameter holding the id or the editable
@@ -264,7 +266,7 @@ $.extend(InlineEditor.prototype, {
 	},
 	
 	createEditorElement: function() {
-		if (-1 === $.inArray(this.settings.field_type, ['text', 'textarea', 'select', 'remote']))
+		if (-1 === $.inArray(this.settings.field_type, ['text', 'textarea', 'select', 'remote', 'clone']))
 			throw "Unknown field_type <fnord>, supported are 'text', 'textarea', 'select' and 'remote'";
 		
 		var editor = null;
@@ -279,7 +281,10 @@ $.extend(InlineEditor.prototype, {
 				+ ' cols="' + this.settings.textarea_cols + '" />');
 		else if ("remote" === this.settings.field_type)
 			editor = this.createRemoteGeneratedEditor();
-		
+		else if ("clone" === this.settings.field_type) {
+		  editor = this.cloneEditor();
+		  return editor;
+		}
 		editor.val(this.triggerDelegateCall('willOpenEditInPlace', this.originalValue));
 		return editor;
 	},
@@ -291,6 +296,68 @@ $.extend(InlineEditor.prototype, {
             async: false
            }).responseText);
 	},
+	
+	cloneEditor: function() {
+    var patternNodes = this.getPatternNodes(this.settings.clone_selector);
+    if (patternNodes.editNode == null) {
+      alert('did not find any matching node for ' + this.settings.clone_selector);
+      return;
+    }
+
+    var editorNode = patternNodes.editNode.clone();
+    var clonedNodes = null;
+    if (editorNode.attr('id').length > 0) editorNode.attr('id', editorNode.attr('id') + this.settings.clone_id_suffix);
+    editorNode.attr('name', 'inplace_value');
+    editorNode.attr('class', 'editor_field');
+    this.setValue(editorNode, this.originalValue);
+    clonedNodes = editorNode;
+    
+    if (patternNodes.additionalNodes) {
+      patternNodes.additionalNodes.each(function (index, node) {
+        var patternNode = $(node).clone();
+        if (patternNode.attr('id').length > 0) {
+          patternNode.attr('id', patternNode.attr('id') + this.settings.clone_id_suffix);
+        }
+        clonedNodes = clonedNodes.after(patternNode);
+      });
+    }
+    return clonedNodes;
+  },
+  
+  getPatternNodes: function(clone_selector) {
+    var nodes = {editNode: null, additionalNodes: null};
+    var selectedNodes = $(clone_selector);
+    var firstNode = selectedNodes.first();
+    
+    if (typeof(firstNode) !== 'undefined') {
+      // AS inplace_edit_control_container -> we have to select all child nodes
+      // Workaround for ie which does not support css > selector
+      if (firstNode.hasClass('as_inplace_pattern')) {
+        selectedNodes = firstNode.children();
+      }
+      nodes.editNode = selectedNodes.first();
+      // buggy...
+      //nodes.additionalNodes = selectedNodes.find(':gt(0)');
+    }
+    return nodes;
+  },
+  
+  setValue: function(editField, textValue) {
+    var function_name = 'setValueFor' + editField.get(0).nodeName.toLowerCase();
+    if (typeof(this[function_name]) == 'function') {
+      this[function_name](editField, textValue);
+    } else {
+      editField.val(textValue);
+    }
+  },
+  
+  setValueForselect: function(editField, textValue) {
+    var option_value = editField.children("option:contains('" + textValue + "')").val();
+    
+    if (typeof(option_value) !== 'undefined') {
+      editField.val(option_value);
+    }
+  },
 	
 	inputNameAndClass: function() {
 		return ' name="inplace_value" class="inplace_field" ';
@@ -387,12 +454,13 @@ $.extend(InlineEditor.prototype, {
 		if (false === this.triggerDelegateCall('shouldCloseEditInPlace', true, anEvent))
 			return;
 		
-		var enteredText = this.dom.find(':input').val();
+		var editor = this.dom.find(':input');
+		var enteredText = editor.val();
 		enteredText = this.triggerDelegateCall('willCloseEditInPlace', enteredText);
 		
 		this.restoreOriginalValue();
 		if (hasContent(enteredText) 
-			&& ! this.isDisabledDefaultSelectChoice())
+			&& ! this.isDisabledDefaultSelectChoice() && !editor.is('select'))
 			this.setClosedEditorContent(enteredText);
 		this.reinit();
 	},
