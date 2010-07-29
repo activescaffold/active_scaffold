@@ -21,6 +21,7 @@
       :edit => 'Bearbeiten',
       :export => 'Exportieren',
       :nested_for_model => '%{nested_model} für %{parent_model}',
+      :nested_of_model => '%{nested_model} von %{parent_model}',
       :filtered => '(Gefiltert)',
       :found => 'Gefunden',
       :hide => 'Verstecken',

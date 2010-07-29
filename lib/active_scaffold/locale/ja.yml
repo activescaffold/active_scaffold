@@ -20,6 +20,7 @@ ja:
     edit: '編集'
     export: 'Export' # needed?
     nested_for_model: '%{parent_model}の%{nested_model}'
+    nested_of_model: '%{nested_model} of %{parent_model}'
     filtered: '（フィルタ中）'
     found: '個ありました'
     hide: '隠す'
