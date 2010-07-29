@@ -39,7 +39,13 @@ module ActiveScaffold::Actions
     end
     
     def set_nested_list_label
-      active_scaffold_session_storage[:list][:label] = as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label) if nested?
+      if nested?
+        active_scaffold_session_storage[:list][:label] =  if nested.belongs_to?
+        as_(:nested_of_model, :nested_model => active_scaffold_config.model.model_name.human, :parent_model => nested_parent_record.to_label)
+        else
+          as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label)
+        end
+      end
     end
     
     def nested_authorized?(record = nil)

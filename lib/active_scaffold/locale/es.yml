@@ -29,6 +29,7 @@ es:
     live_search: 'Buscar en Vivo'
     loading: 'Cargando…'
     nested_for_model: '%{nested_model} de %{parent_model}'
+    nested_of_model: '%{nested_model} of %{parent_model}'
     next: 'Siguiente'
     no_entries: 'Sin entradas'
     no_options: 'sin opciones'

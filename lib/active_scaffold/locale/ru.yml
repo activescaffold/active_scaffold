@@ -20,6 +20,7 @@ ru:
     edit: 'Изменить'
     export: 'Экспорт'
     nested_for_model: '%{parent_model} / %{nested_model}'
+    nested_of_model: '%{nested_model} of %{parent_model}'
     filtered: '(Найденное)'
     found: 'Найдено'
     hide: 'Скрыть'

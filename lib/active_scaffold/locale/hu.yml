@@ -20,6 +20,7 @@ hu:
     edit: 'Szerkesztés'
     export: 'Exportálás'
     nested_for_model: '%{nested_model} / %{parent_model}'
+    nested_of_model: '%{nested_model} of %{parent_model}'
     filtered: '(Szűrt)'
     found: 'Találat'
     hide: 'Elrejtés'
