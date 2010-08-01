@@ -1,5 +1,8 @@
 module ActiveScaffold::Config
-  class Core < Base
+  # to fix the ckeditor bridge problem
+  class Core < ActiveScaffold::Config::Base
+  # code commented out (see above)
+  #class Core < Base
     # global level configuration
     # --------------------------
 
@@ -158,7 +161,7 @@ module ActiveScaffold::Config
       new_action_link = @action_links['new']
       unless new_action_link.nil?
         @action_links.delete('new')
-        self.sti_children.each do |child| 
+        self.sti_children.each do |child|
           new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
           new_sti_link.label = as_(:create_model, :model => child.to_s.camelize.constantize.human_name)
           new_sti_link.parameters = {model.inheritance_column => child}
@@ -227,3 +230,4 @@ module ActiveScaffold::Config
     end
   end
 end
+
