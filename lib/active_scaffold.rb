@@ -56,7 +56,7 @@ module ActiveScaffold
   module ClassMethods
     def active_scaffold(model_id = nil, &block)
       # initialize bridges here
-      ActiveScaffold::Bridge.run_all
+      ActiveScaffold::Bridges::Bridge.run_all
 
       # converts Foo::BarController to 'bar' and FooBarsController to 'foo_bar' and AddressController to 'address'
       model_id = self.to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore unless model_id
