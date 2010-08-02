@@ -5,6 +5,11 @@ module ActiveScaffold
       def active_scaffold_input_file_column(column, options)
         if @record.send(column.name) 
           # we already have a value?  display the form for deletion.
+          if ActiveScaffold.js_framework == :jquery
+            js_remove_file_code = "$(this).prev().val('true'); $(this).parent().hide().next().show();";
+          else
+            js_remove_file_code = "$(this).previous().value='true'; p=$(this).up(); p.hide(); p.next().show();";
+          end
           content_tag(
             :div, 
             content_tag(
@@ -12,7 +17,7 @@ module ActiveScaffold
               get_column_value(@record, column) + " " +
               hidden_field(:record, "delete_#{column.name}", :value => "false") +
               " | " +
-              link_to_function(as_(:remove_file), "$(this).previous().value='true'; p=$(this).up(); p.hide(); p.next().show();"),
+                link_to_function(as_(:remove_file), js_remove_file_code ),
               {}
             ) +
             content_tag(
