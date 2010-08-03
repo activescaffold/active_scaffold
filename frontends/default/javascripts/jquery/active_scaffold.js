@@ -345,7 +345,7 @@ var ActiveScaffold = {
 
     replaced = this.replace(row, html);
     if (even_row === true) replaced.addClass('even-record');
-    //new_row.highlight();
+    ActiveScaffold.highlight(replaced);
   },
   
   replace: function(element, html) {
@@ -381,7 +381,7 @@ var ActiveScaffold = {
     this.stripe(tbody);
     this.hide_empty_message(tbody);
     this.increment_record_count(tbody.closest('div.active-scaffold'));
-    //new_row.highlight();
+    ActiveScaffold.highlight(new_row);
   },
   
   delete_record_row: function(row, page_reload_url) {
@@ -450,6 +450,13 @@ var ActiveScaffold = {
     span.removeClass('hover');
     span.editInPlace(options);
     span.trigger('click.editInPlace');
+  },
+  
+  highlight: function(element) {
+    if (typeof(element) == 'string') element = '#' + element;
+    if (typeof(element.effect) == 'function') {
+      element.effect("highlight", {}, 3000);
+    }
   }
 }
 
@@ -644,6 +651,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       return false;
     }
+    ActiveScaffold.highlight(this.adapter.find('td'));
   },
 
   close: function(refreshed_content) {
@@ -693,6 +701,6 @@ ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       throw 'Unknown position "' + this.position + '"'
     }
-    //this.adapter.find('td').first().children().highlight();
+    ActiveScaffold.highlight(this.adapter.find('td').first().children());
   }
 });
