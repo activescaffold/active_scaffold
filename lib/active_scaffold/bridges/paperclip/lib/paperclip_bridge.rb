@@ -23,7 +23,6 @@ module ActiveScaffold
       
           private
           def configure_paperclip_field(field)
-            Rails.logger.info("configure paperclip field: #{field}")
             self.columns << field
             self.columns[field].form_ui ||= :paperclip
             self.columns[field].params.add "delete_#{field}"
