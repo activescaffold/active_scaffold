@@ -42,7 +42,7 @@ module ActiveScaffold
 
         start_number.upto(end_number) do |num|
           if current_page.number == num
-            html << num
+            html << content_tag(:span, num)
           else
             html << pagination_ajax_link(num, params)
           end
