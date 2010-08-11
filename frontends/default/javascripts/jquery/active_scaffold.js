@@ -201,6 +201,22 @@ $(document).ready(function() {
       }
     }
   });
+  $('a.as_paginate').live('ajax:before',function(event) {
+    var as_paginate = $(this);
+    var history_controller_id = as_paginate.attr('data-page-history');
+    if (history_controller_id) addActiveScaffoldPageToHistory(as_paginate.attr('href'), history_controller_id);
+    as_paginate.prevAll('img.loading-indicator').css('visibility','visible');
+    return true;
+  });
+  $('a.as_paginate').live('ajax:failure', function(event) {
+    var as_scaffold = $(this).closest('.active-scaffold');
+    ActiveScaffold.report_500_response(as_scaffold);
+    return true;
+  });
+  $('a.as_paginate').live('ajax:complete', function(event) {
+    $(this).prevAll('img.loading-indicator').css('visibility','hidden');
+    return true;
+  });
 });
 
 /* Simple Inheritance
