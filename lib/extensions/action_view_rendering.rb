@@ -72,8 +72,9 @@ module ActionView::Rendering #:nodoc:
       
     else
       options = args.first
-      @last_view = {:view => options[:partial] ? options[:partial] : options[:template], :index => !!options[:template] ? 0 : nil, :is_template => !!options[:template]} if options[:partial] || options[:template]
-      @last_view[:locals] = options[:locals] if options[:locals]
+      @last_view = {:view => options[:partial], :index => nil, :is_template => false} if options[:partial] 
+      @last_view = {:view => options[:template], :index => !!options[:template] ? 0 : nil, :is_template => !!options[:template]} if @last_view.nil? && options[:template]
+      @last_view[:locals] = options[:locals] if !@last_view.nil? && options[:locals] 
       render_without_active_scaffold(*args, &block)
     end
   end
