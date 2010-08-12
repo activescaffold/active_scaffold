@@ -40,11 +40,11 @@ module ActionView::Rendering #:nodoc:
     if args.first == :super
       options = args[1] || {}
       options[:locals] ||= {}
-      options[:locals].reverse_merge!(@last_partial[:locals] || {})
-      templates = lookup_context.find_all_templates(@last_partial[:partial], nil, true)
-      @last_partial[:index] = @last_partial[:index].nil? ? 0 : @last_partial[:index] + 1  
-      options[:template] = templates[@last_partial[:index]]
-      render options
+      options[:locals].reverse_merge!(@last_view[:locals] || {})
+      templates = lookup_context.find_all_templates(@last_view[:view], nil, !@last_view[:is_template])
+      @last_view[:index] = @last_view[:index].nil? ? 0 : @last_view[:index] + 1  
+      options[:template] = templates[@last_view[:index]]
+      render_without_active_scaffold options
     elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
       require 'digest/md5'
       options = args.first
@@ -72,8 +72,8 @@ module ActionView::Rendering #:nodoc:
       
     else
       options = args.first
-      @last_partial = {:partial => options[:partial], :index => nil} if options[:partial]
-      @last_partial[:locals] = options[:locals] if options[:locals]
+      @last_view = {:view => options[:partial] ? options[:partial] : options[:template], :index => !!options[:template] ? 0 : nil, :is_template => !!options[:template]} if options[:partial] || options[:template]
+      @last_view[:locals] = options[:locals] if options[:locals]
       render_without_active_scaffold(*args, &block)
     end
   end
