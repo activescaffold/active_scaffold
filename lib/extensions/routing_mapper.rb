@@ -1,26 +1,31 @@
 module ActionDispatch
   module Routing
+    ACTIVE_SCAFFOLD_CORE_ROUTING = {
+        :collection => {:show_search => :get, :render_field => :get},
+        :member => {:row => :get, :update_column => :post, :render_field => :get, :delete => :get}
+    }
+    ACTIVE_SCAFFOLD_HABTM_ROUTING = {
+        :collection => {:edit_associated => :get, :new_existing => :get, :add_existing => :post},
+        :member => {:edit_associated => :get, :add_association => :get, :destroy_existing => :delete}
+    }
     class Mapper
       module Base
-        def as_routes(options = {:full => true})
-          collection do 
-            get :show_search, :render_field
+        def as_routes(options = {:habtm => true})
+          collection do
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each {|name, type| send(type, name)}
           end
           member do
-            get :row, :render_field, :delete
-            post :update_column
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each {|name, type| send(type, name)}
           end
-          as_extended_routes if options[:full]
+          as_habtm_routes if options[:habtm]
         end
         
-        def as_extended_routes
+        def as_habtm_routes
           collection do 
-            get :edit_associated, :new_existing
-            post :add_existing
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_HABTM_ROUTING[:collection].each {|name, type| send(type, name)}
           end
           member do
-            get :edit_associated, :add_association
-            delete :destroy_existing
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_HABTM_ROUTING[:member].each {|name, type| send(type, name)}
           end
         end
       end
