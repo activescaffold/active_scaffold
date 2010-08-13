@@ -41,9 +41,11 @@ module ActionView::Rendering #:nodoc:
       options = args[1] || {}
       options[:locals] ||= {}
       options[:locals].reverse_merge!(@last_view[:locals] || {})
-      templates = lookup_context.find_all_templates(@last_view[:view], nil, !@last_view[:is_template])
-      @last_view[:index] = @last_view[:index].nil? ? 0 : @last_view[:index] + 1  
-      options[:template] = templates[@last_view[:index]]
+      if @last_view[:templates].nil?
+        @last_view[:templates] = lookup_context.find_all_templates(@last_view[:view], controller_path, !@last_view[:is_template])
+        @last_view[:templates].shift
+      end
+      options[:template] = @last_view[:templates].shift
       render_without_active_scaffold options
     elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
       require 'digest/md5'
@@ -72,8 +74,8 @@ module ActionView::Rendering #:nodoc:
       
     else
       options = args.first
-      @last_view = {:view => options[:partial], :index => nil, :is_template => false} if options[:partial] 
-      @last_view = {:view => options[:template], :index => !!options[:template] ? 0 : nil, :is_template => !!options[:template]} if @last_view.nil? && options[:template]
+      @last_view = {:view => options[:partial], :is_template => false} if options[:partial] 
+      @last_view = {:view => options[:template], :is_template => !!options[:template]} if @last_view.nil? && options[:template]
       @last_view[:locals] = options[:locals] if !@last_view.nil? && options[:locals] 
       render_without_active_scaffold(*args, &block)
     end
