@@ -1,30 +1,26 @@
-module ActiveScaffold::Config
-  class Core < Base
-
-    def initialize_with_date_picker(model_id)
-      initialize_without_date_picker(model_id)
-      
-      date_picker_fields = self.model.columns.collect{|c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
-      # check to see if file column was used on the model
-      return if date_picker_fields.empty?
-      
-      # automatically set the forum_ui to a file column
-      date_picker_fields.each{|field|
-        col_config = self.columns[field[:name]] 
-        form_ui = (field[:type] == :date ? :date_picker : :datetime_picker)
-        
-        col_config.form_ui = form_ui
-        if col_config.options[:class]
-          col_config.options[:class] += " #{form_ui.to_s} text-input"
-        else
-          col_config.options[:class] = "#{form_ui.to_s} text-input"
-        end
-      }
-    end
+ActiveScaffold::Config::Core.class_eval do
+  def initialize_with_date_picker(model_id)
+    initialize_without_date_picker(model_id)
     
-    alias_method_chain :initialize, :date_picker
+    date_picker_fields = self.model.columns.collect{|c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
+    # check to see if file column was used on the model
+    return if date_picker_fields.empty?
     
+    # automatically set the forum_ui to a file column
+    date_picker_fields.each{|field|
+      col_config = self.columns[field[:name]] 
+      form_ui = (field[:type] == :date ? :date_picker : :datetime_picker)
+      
+      col_config.form_ui = form_ui
+      if col_config.options[:class]
+        col_config.options[:class] += " #{form_ui.to_s} text-input"
+      else
+        col_config.options[:class] = "#{form_ui.to_s} text-input"
+      end
+    }
   end
+  
+  alias_method_chain :initialize, :date_picker
 end
 
 
