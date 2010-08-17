@@ -1,16 +1,17 @@
 <table cellpadding="0" cellspacing="0">
   <thead>
     <tr>
-      <%= render :partial => 'list_column_headings' %>
+      <% columns = active_scaffold_config.list.columns.collect %>
+      <%= render :partial => 'list_column_headings', :locals => {:columns => columns} %>
     </tr>
   </thead>
-  <%= render :partial => 'list_messages' %>
+  <%= render :partial => 'list_messages', :locals => {:columns => columns} %>
   <tbody class="records" id="<%= active_scaffold_tbody_id %>">
     <% if !@records.empty? -%>
-      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false} %>
+      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false, :columns => columns} %>
     <% end -%>
-    <% if active_scaffold_config.list.columns.any? {|c| c.calculation?} -%>
-      <%= render :partial => 'list_calculations' %>
+    <% if columns.any? {|c| c.calculation?} -%>
+      <%= render :partial => 'list_calculations', locals => {:columns => columns} %>
     <% end -%>
   </tbody>
 </table>
