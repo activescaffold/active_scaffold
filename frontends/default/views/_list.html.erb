@@ -11,7 +11,7 @@
       <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false, :columns => columns} %>
     <% end -%>
     <% if columns.any? {|c| c.calculation?} -%>
-      <%= render :partial => 'list_calculations', locals => {:columns => columns} %>
+      <%= render :partial => 'list_calculations', :locals => {:columns => columns} %>
     <% end -%>
   </tbody>
 </table>
