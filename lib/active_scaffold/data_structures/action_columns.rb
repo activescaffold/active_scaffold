@@ -64,15 +64,7 @@ module ActiveScaffold::DataStructures
         @set.each do |item|
           unless item.is_a? ActiveScaffold::DataStructures::ActionColumns
             item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
-            # skip if this matches a constrained column
-            next if constraint_columns.include?(item.name.to_sym)
-            # skip if this matches the field_name of a constrained column
-            next if item.field_name and constraint_columns.include?(item.field_name.to_sym)
-            # skip this field if it's not authorized
-            unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || self.action.crud_type, :column => item.name)
-              self.unauthorized_columns << item.name.to_sym
-              next
-            end
+            next if self.skip_column?(item, options)
           end
           if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.has_key?(:flatten) and options[:flatten]
             item.each(options, &proc)
@@ -82,7 +74,37 @@ module ActiveScaffold::DataStructures
         end
       end
       
+      def collect(options = {}, &proc)
+        columns = []
+        options[:for] ||= @columns.active_record_class
+        self.unauthorized_columns = []
+        @set.each do |item|
+          unless item.is_a? ActiveScaffold::DataStructures::ActionColumns
+            item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
+            next if self.skip_column?(item, options)
+          end
+          if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.has_key?(:flatten) and options[:flatten]
+            columns = columns + item.collect(options, &proc)
+          else
+            columns << item
+          end
+        end
+        columns
+      end      
       
+      def skip_column?(column, options)
+        result = false
+        # skip if this matches a constrained column
+        result = true if constraint_columns.include?(column.name.to_sym)
+        # skip if this matches the field_name of a constrained column
+        result = true if column.field_name and constraint_columns.include?(column.field_name.to_sym)
+        # skip this field if it's not authorized
+        unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || self.action.crud_type, :column => column.name)
+          self.unauthorized_columns << column.name.to_sym
+          result = true
+        end
+        return result
+      end
 
       # registers a set of column objects (recursively, for all nested ActionColumns)
       def set_columns(columns)
