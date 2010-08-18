@@ -343,14 +343,14 @@ var ActiveScaffold = {
     if (typeof(scaffold) == 'string') scaffold = '#' + scaffold; 
     scaffold = $(scaffold)
     count = scaffold.find('span.active-scaffold-records').last();
-    if (count) count.html(parseInt(count.innerHTML, 10) - 1);
+    if (count) count.html(parseInt(count.html(), 10) - 1);
   },
   increment_record_count: function(scaffold) {
     // increment the last record count, firsts record count are in nested lists
     if (typeof(scaffold) == 'string') scaffold = '#' + scaffold;
     scaffold = $(scaffold)
     count = scaffold.find('span.active-scaffold-records').last();
-    if (count) count.html(parseInt(count.innerHTML, 10) + 1);
+    if (count) count.html(parseInt(count.html(), 10) + 1);
   },
   update_row: function(row, html) {
     var even_row = false;
