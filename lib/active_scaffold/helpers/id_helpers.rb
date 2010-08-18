@@ -90,13 +90,19 @@ module ActiveScaffold
         options[:action] ||= params[:action]
         clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
       end
+      
+      def sub_section_id(options = {})
+        options[:id] ||= params[:id]
+        options[:id] ||= params[:parent_id]
+        clean_id "#{controller_id}-#{options[:id]}-#{options[:sub_section]}-subsection"
+      end
 
       def sub_form_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= params[:parent_id]
         clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform"
       end
-
+      
       def sub_form_list_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= params[:parent_id]

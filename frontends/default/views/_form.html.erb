@@ -1,9 +1,12 @@
-<ol class="form" <%= 'style="display: none;"' if columns.collapsed -%>>
+<% subsection_id ||= nil %>
+<ol class="form" <%= "id=#{subsection_id}" unless subsection_id.nil? %>  <%= 'style="display: none;"' if columns.collapsed -%>>
   <% columns.each :for => @record do |column| -%>
   <% if is_subsection? column -%>
+    <% subsection_id = sub_section_id(:sub_section => column.label) %>
   <li class="sub-section">
-    <h5><%= column.label %> (<%= link_to_visibility_toggle(:default_visible => !column.collapsed) -%>)</h5>
-    <%= render :partial => 'form', :locals => { :columns => column } %>
+    <h5><%= column.label %></h5>
+    <%= render :partial => 'form', :locals => { :columns => column, :subsection_id => subsection_id} %>
+    <%= link_to_visibility_toggle(subsection_id, {:default_visible => !column.collapsed}) -%>
   </li>
   <% elsif is_subform? column and !override_form_field?(column) -%>
   <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column.css_class unless column.css_class.nil? %>" id="<%= sub_form_id(:association => column.name) %>">
