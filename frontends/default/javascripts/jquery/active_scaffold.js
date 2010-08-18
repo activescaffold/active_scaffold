@@ -473,6 +473,19 @@ var ActiveScaffold = {
     if (typeof(element.effect) == 'function') {
       element.effect("highlight", {}, 3000);
     }
+  },
+  
+  create_visibility_toggle: function(element, options) {
+    if (typeof(element) == 'string') element = '#' + element;
+    var toggable = $(element);
+    var toggler = toggable.prev();
+    var initial_label = (options.default_visible === true) ? options.hide_label : options.show_label;
+    
+    toggler.append(' (<a class="visibility-toggle" href="#">' + initial_label + '</a>)');
+    toggler.children('a').click(function() {
+      toggable.toggle(); 
+      $(this).html((toggable.is(':hidden')) ? options.show_label : options.hide_label);
+    });
   }
 }
 

@@ -115,12 +115,11 @@ module ActiveScaffold
       # Creates a javascript-based link that toggles the visibility of some element on the page.
       # By default, it toggles the visibility of the sibling after the one it's nested in. You may pass custom javascript logic in options[:of] to change that, though. For example, you could say :of => '$("my_div_id")'.
       # You may also flag whether the other element is visible by default or not, and the initial text will adjust accordingly.
-      def link_to_visibility_toggle(options = {})
-        options[:of] ||= '$(this.parentNode).next()'
+      def link_to_visibility_toggle(id, options = {})
         options[:default_visible] = true if options[:default_visible].nil?
-
-        link_text = options[:default_visible] ? as_(:hide) : as_(:show)
-        link_to_function link_text, "e = #{options[:of]}; e.toggle(); this.innerHTML = (e.style.display == 'none') ? '#{as_(:show)}' : '#{as_(:hide)}'", :class => 'visibility-toggle'
+        options[:hide_label] = as_(:hide) 
+        options[:show_label] = as_(:show)
+        javascript_tag("ActiveScaffold.create_visibility_toggle('#{id}', #{options.to_json});")
       end
 
       def skip_action_link(link, *args)
