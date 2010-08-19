@@ -17,8 +17,10 @@ add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :as
 <div class="footer-wrapper">
   <div class="footer">
     <% if show_add_new -%>
-    <% add_label = column.plural_association? ? as_(:create_another, :model => column.association.klass.model_name.human) : as_(:replace_with_new) -%>
-    <%= button_to_function add_label, "new Ajax.Request(#{add_new_url.to_json}, {asynchronous: true, method: 'get', evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id.to_json})}})" %>
+    <% add_label = column.plural_association? ? as_(:create_another, :model => column.association.klass.model_name.human) : as_(:replace_with_new) 
+       create_another_id = "#{sub_form_id(:association => column.name)}-create-another" %>
+    <%= tag(:input, {:id => create_another_id, :type => 'button', :value => add_label, :href => add_new_url.html_safe, 'data-remote' => true, :style=> "display: none;"}) %>
+    <%= javascript_tag("ActiveScaffold.show('#{create_another_id}');") %>
     <% end -%>
 
     <%= '|' if show_add_new and show_add_existing %>
@@ -27,9 +29,11 @@ add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :as
       <% if remote_controller and remote_controller.respond_to? :uses_record_select? and remote_controller.uses_record_select? -%>
         <%= link_to_record_select as_(:add_existing), remote_controller.controller_path, :onselect => "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', id), {asynchronous: true, evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id.to_json})}});" -%>
       <% else -%>
-        <% select_options = options_for_select(options_for_association(column.association)) -%>
+        <% select_options = options_for_select(options_for_association(column.association)) 
+           add_existing_id = "#{sub_form_id(:association => column.name)}-add-existing" %>
         <%= select_tag 'associated_id', '<option value="">'.html_safe + as_(:_select_) + '</option>'.html_safe + select_options %>
-        <%= button_to_function as_(:add_existing), "new Ajax.Request(#{edit_associated_url.to_json}.sub('--ID--', Element.previous(this).value), {asynchronous: true, method: 'get', evalScripts: true, onFailure: function(){ActiveScaffold.report_500_response(#{active_scaffold_id.to_json})}})" %>
+        <%= tag(:input, {:id => add_existing_id, :type => 'button', :value => as_(:add_existing), :href => edit_associated_url.html_safe, 'data-remote' => true, :class=> 'as_add_existing', :style => "display: none;"}) %>
+        <%= javascript_tag("ActiveScaffold.show('#{add_existing_id}');") %>
       <% end -%>
     <% end -%>
   </div>
