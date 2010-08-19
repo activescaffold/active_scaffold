@@ -34,8 +34,8 @@ module ActiveScaffold::Actions
         active_scaffold_session_storage[:nested] = {:parent_model => params[:parent_model].constantize,
                                                                   :name => params[:association].to_sym,
                                                                   :parent_id => params[:assoc_id]}
+        params.delete_if {|key, value| [:parent_model, :association, :assoc_id].include? key.to_sym}
       end
-      params.delete_if {|key, value| [:parent_model, :association, :assoc_id].include? key.to_sym}
     end
     
     def set_nested_list_label
