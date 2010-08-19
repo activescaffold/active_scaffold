@@ -229,8 +229,12 @@ document.observe("dom:loaded", function() {
     if(loading_indicator) loading_indicator.style.visibility = 'hidden';  
     return true;
   });
-  
-  
+  document.on('ajax:before', 'input[type=button].as_add_existing', function(event) {
+    var button = event.findElement();
+    var url =  button.readAttribute('href').sub('--ID--', button.previous().getValue());
+    event.memo.url = url;
+    return true;
+  });  
 });
 
 
@@ -331,6 +335,10 @@ var ActiveScaffold = {
   
   hide: function(element) {
     $(element).hide();
+  },
+  
+  show: function(element) {
+    $(element).show();
   },
   
   create_record_row: function(tbody, html) {

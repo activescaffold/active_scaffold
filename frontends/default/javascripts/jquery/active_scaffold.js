@@ -16,16 +16,12 @@ $(document).ready(function() {
       if (loading_indicator) loading_indicator.css('visibility','hidden');
       $('input[type=submit]', as_form).attr('disabled', '');
       $("input:disabled", as_form).attr('disabled', '');
-      //event.stop();
-      //return false;
     }
   });
   $('form.as_form').live('ajax:failure', function(event) {
     var as_div = $(this).closest("div.active-scaffold");
     if (as_div) {
       ActiveScaffold.report_500_response(as_div)
-      event.stop();
-      return false;
     }
   });
   $('a.as_action').live('ajax:before', function(event) {
@@ -217,6 +213,12 @@ $(document).ready(function() {
     $(this).prevAll('img.loading-indicator').css('visibility','hidden');
     return true;
   });
+  $('input[type=button].as_add_existing').live('ajax:before', function(event) {
+    var url = $(this).attr('href').replace('--ID--', $(this).prev().val());
+    event.data_url = url;
+    return true;
+  });
+  
 });
 
 /* Simple Inheritance
@@ -386,6 +388,11 @@ var ActiveScaffold = {
   
   hide: function(element) {
     $(element).hide();
+  },
+  
+  show: function(element) {
+    if (typeof(element) == 'string') element = '#' + element;
+    $(element).show();
   },
   
   create_record_row: function(tbody, html) {
