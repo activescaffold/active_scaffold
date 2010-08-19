@@ -1,6 +1,7 @@
 <% subsection_id ||= nil %>
 <ol class="form" <%= "id=#{subsection_id}" unless subsection_id.nil? %>  <%= 'style="display: none;"' if columns.collapsed -%>>
   <% columns.each :for => @record do |column| -%>
+  <% next if column.readonly_association? %>
   <% if is_subsection? column -%>
     <% subsection_id = sub_section_id(:sub_section => column.label) %>
   <li class="sub-section">

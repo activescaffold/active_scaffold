@@ -215,6 +215,15 @@ module ActiveScaffold::DataStructures
     def polymorphic_association?
       self.association and self.association.options.has_key? :polymorphic and self.association.options[:polymorphic]
     end
+    def readonly_association?
+      if self.association
+        if self.association.options.has_key? :readonly
+          self.association.options[:readonly]
+        else
+          self.through_association?
+        end
+      end
+    end
 
     # an interpreted property. the column is virtual if it isn't from the active record model or any associated models
     def virtual?
