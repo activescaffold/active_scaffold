@@ -429,6 +429,13 @@ var ActiveScaffold = {
       toggable.toggle(); 
       element.innerHTML = (toggable.style.display == 'none') ? options.show_label : options.hide_label;
     });
+  },
+  
+  create_associated_record_form: function(element, content, options) {
+    var element = $(element);
+    if (!(options.id && $(options.id))) {
+      element.insert(content);
+    }
   }
   
 }

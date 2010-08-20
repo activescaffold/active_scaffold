@@ -493,6 +493,14 @@ var ActiveScaffold = {
       toggable.toggle(); 
       $(this).html((toggable.is(':hidden')) ? options.show_label : options.hide_label);
     });
+  },
+  
+  create_associated_record_form: function(element, content, options) {
+    if (typeof(element) == 'string') element = '#' + element;
+    var element = $(element);
+    if (!(options.id && $(options.id))) {
+      element.append(content);
+    }
   }
 }
 
