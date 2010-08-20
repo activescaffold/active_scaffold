@@ -5,7 +5,7 @@ $(document).ready(function() {
       var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
       if (loading_indicator) loading_indicator.css('visibility','visible');
       $('input[type=submit]', as_form).attr('disabled', 'disabled');
-      $("input:disabled", as_form).attr('disabled', 'disabled');
+      $("input:enabled,select:enabled", as_form).attr('disabled', 'disabled');
     }
     return true;
   });
@@ -15,7 +15,7 @@ $(document).ready(function() {
       var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
       if (loading_indicator) loading_indicator.css('visibility','hidden');
       $('input[type=submit]', as_form).attr('disabled', '');
-      $("input:disabled", as_form).attr('disabled', '');
+      $("input:disabled,select:disabled", as_form).attr('disabled', '');
     }
   });
   $('form.as_form').live('ajax:failure', function(event) {
@@ -218,7 +218,25 @@ $(document).ready(function() {
     event.data_url = url;
     return true;
   });
-  
+  $('input.update_form').live('change', function(event) {
+      var element = $(this);
+      var as_form = element.closest('form.as_form');
+      $.ajax({
+        url: element.attr('data-update_url'),
+        data: {value: element.val()},
+        beforeSend: function(event) {
+          element.nextAll('img.loading-indicator').css('visibility','visible');
+          $('input[type=submit]', as_form).attr('disabled', 'disabled');
+          $("input:enabled,select:enabled", as_form).attr('disabled', 'disabled');
+        },
+        complete: function(event) {
+          element.nextAll('img.loading-indicator').css('visibility','hidden');
+          $('input[type=submit]', as_form).attr('disabled', '');
+          $("input:disabled,select:disabled", as_form).attr('disabled', '');
+        }
+      });
+    return true;
+  });
 });
 
 /* Simple Inheritance
@@ -370,7 +388,9 @@ var ActiveScaffold = {
     if (typeof(element) == 'string') element = '#' + element; 
     element = $(element);
     element.replaceWith(html);
-    element = $('#' + element.attr('id'));
+    if (element.attr('id')) {
+      element = $('#' + element.attr('id'));
+    }
     return element;
   },
   
@@ -508,6 +528,16 @@ var ActiveScaffold = {
       } else {
         element.prepend(content);
       }
+    }
+  },
+  
+  render_form_field: function(element, content, options) {
+    if (typeof(element) == 'string') element = '#' + element;
+    var element = $(element);
+    if (options.is_subform == false) {
+      this.replace(element.closest('dl'), content);
+    } else {
+      this.replace_html(element, content);
     }
   }
 }

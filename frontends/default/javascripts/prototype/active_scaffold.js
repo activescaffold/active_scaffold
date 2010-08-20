@@ -241,6 +241,24 @@ document.observe("dom:loaded", function() {
     var url =  button.readAttribute('href').sub('--ID--', button.previous().getValue());
     event.memo.url = url;
     return true;
+  });
+  document.on('change', 'input.update_form', function(event) {
+    var element = event.findElement();
+    var as_form = element.up('form.as_form');
+    
+    new Ajax.Request(element.readAttribute('data-update_url'), {
+      method: 'get',
+      parameters: {value: element.getValue()},
+      onLoading: function(response) {
+        element.next('img.loading-indicator').style.visibility = 'visible';
+        as_form.disable();
+      },
+      onComplete: function(response) {
+        element.next('img.loading-indicator').style.visibility = 'hidden';
+        as_form.enable();
+      }
+    });
+    return true;
   });  
 });
 
@@ -450,6 +468,15 @@ var ActiveScaffold = {
       } else {
         element.insert({top: content});
       }
+    }
+  },
+  
+  render_form_field: function(element, content, options) {
+    var element = $(element);
+    if (options.is_subform == false) {
+      this.replace(element.up('dl'), content);
+    } else {
+      this.replace_html(element, content);
     }
   }
   
