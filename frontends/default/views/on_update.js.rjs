@@ -10,6 +10,6 @@ if controller.send :successful?
   page << "ActiveScaffold.find_action_link('#{form_selector}').close('#{escape_javascript(updated_row)}');"
   page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
 else
-  page.call 'ActiveScaffold.replace', form_selector, render (:partial => 'update_form', :locals => {:xhr => true})
+  page.call 'ActiveScaffold.replace', form_selector, render(:partial => 'update_form', :locals => {:xhr => true})
   page.call 'ActiveScaffold.scroll_to', form_selector
 end
