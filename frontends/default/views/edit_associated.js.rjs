@@ -8,4 +8,4 @@ else
     options[:id] = active_scaffold_input_options(column, @scope)[:id]
   end
 end
-page.call 'ActiveScaffold.create_associated_record_form', sub_form_list_id(:association => @column.name), associated_form, options.to_json
+page.call 'ActiveScaffold.create_associated_record_form', sub_form_list_id(:association => @column.name), associated_form, options
