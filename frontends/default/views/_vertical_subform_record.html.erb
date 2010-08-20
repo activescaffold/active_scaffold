@@ -7,7 +7,7 @@
   options = active_scaffold_input_options(config.columns[@record.class.primary_key], scope)
   tr_id = "association-#{options[:id]}"
 -%>
-<ol id=<%= tr_id %> class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
+<ol id="<%= tr_id %>" class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
 <% config.subform.columns.each :for => @record, :crud_type => crud_type, :flatten => true do |column| %>
 <%
   next unless in_subform?(column, parent_record)
