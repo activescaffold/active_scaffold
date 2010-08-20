@@ -13,11 +13,18 @@ if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFu
 
 document.observe("dom:loaded", function() {
   document.on('ajax:loading', 'form.as_form', function(event) {
+    var source = event.findElement();
     var as_form = event.findElement('form');
-    if (as_form && as_form.readAttribute('data-loading') == 'true') {
-      var loading_indicator = $(as_form.id.sub('-form', '-loading-indicator'));
-      if (loading_indicator) loading_indicator.style.visibility = 'visible';
-      as_form.disable();
+    if (source.nodeName.toUpperCase() == 'INPUT' && source.readAttribute('type') == 'button') {
+      // Hack: Prototype or rails.js somehow screw up event handling if someone clicks
+      // a button of type button such as Create Another <Association>
+      // as a result form is disabled but never reenabled..
+    } else {
+      if (as_form && as_form.readAttribute('data-loading') == 'true') {
+        var loading_indicator = $(as_form.id.sub('-form', '-loading-indicator'));
+        if (loading_indicator) loading_indicator.style.visibility = 'visible';
+        as_form.disable();
+      }
     }
     return true;
   });
