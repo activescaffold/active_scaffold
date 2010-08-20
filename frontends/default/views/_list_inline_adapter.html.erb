@@ -7,4 +7,5 @@
     </div>
   </td>
 </tr>
-<%= javascript_tag("$('#{element_row_id(:action => :nested)}').action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');") %>
+<% row_id = "#{ActiveScaffold.js_framework == :jquery ? '#' : ''}#{element_row_id(:action => :nested)}"  %>
+<%= javascript_tag("$('#{row_id}').action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');") %>
