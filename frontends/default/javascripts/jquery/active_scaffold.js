@@ -498,8 +498,16 @@ var ActiveScaffold = {
   create_associated_record_form: function(element, content, options) {
     if (typeof(element) == 'string') element = '#' + element;
     var element = $(element);
-    if (!(options.id && $(options.id))) {
-      element.append(content);
+    if (options.singular == false) {
+      if (!(options.id && $(options.id))) {
+        element.append(content);
+      }
+    } else {
+      if (current = $('#' + element.attr('id') + '.association-record')[0]) {
+        this.replace(current, content);
+      } else {
+        element.prepend(content);
+      }
     }
   }
 }
