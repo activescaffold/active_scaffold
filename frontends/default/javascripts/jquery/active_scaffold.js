@@ -339,11 +339,7 @@ var ActiveScaffold = {
   },
   reload_if_empty: function(tbody, url) {
     if (this.records_for(tbody).length == 0) {
-      new Ajax.Request(url, {
-        method: 'get',
-        asynchronous: true,
-        evalScripts: true
-      });
+      $.getScript(url);
     }
   },
   removeSortClasses: function(scaffold) {
