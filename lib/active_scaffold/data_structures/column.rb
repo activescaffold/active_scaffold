@@ -52,6 +52,15 @@ module ActiveScaffold::DataStructures
     def required?
       @required
     end
+    
+    attr_reader :update_columns
+    
+    # update dependent columns after value change in form
+    #  update_columns = :name
+    #  update_columns = [:name, :age]
+    def update_columns=(column_names)
+      @update_columns = Array(column_names)
+    end
 
     # sorting on a column can be configured four ways:
     #   sort = true               default, uses intelligent sorting sql default

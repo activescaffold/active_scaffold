@@ -1,0 +1,13 @@
+column = active_scaffold_config.columns[render_field.to_sym]
+options = {:is_subform => false}
+if column_renders_as(column) == :subform
+  options[:is_subform] = true
+  field_id = sub_form_id(:association => column.name)
+else
+  field_id = active_scaffold_input_options(column, params[:scope])[:id]
+end
+page.call 'ActiveScaffold.render_form_field', field_id, render(:partial => form_partial_for_column(column), :locals => { :column => column, :scope => params[:scope] }), options
+render(:partial => "render_field", :collection => column.update_columns) if column.update_columns && !column.update_columns.empty?
+
+    
+
