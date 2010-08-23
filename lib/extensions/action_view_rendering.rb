@@ -68,7 +68,11 @@ module ActionView::Rendering #:nodoc:
         content_tag(:div, {:id => id}) do
           url = url_for(url_options)
           link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
-            javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true})")
+            if ActiveScaffold.js_framework == :prototype
+              javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true});")
+            elsif ActiveScaffold.js_framework == :jquery
+              javascript_tag("$('##{id}').load('#{url}');")
+            end
         end
       end
       
