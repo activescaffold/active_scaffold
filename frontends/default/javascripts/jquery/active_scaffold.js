@@ -233,6 +233,12 @@ $(document).ready(function() {
           element.nextAll('img.loading-indicator').css('visibility','hidden');
           $('input[type=submit]', as_form).attr('disabled', '');
           $("input:disabled,select:disabled", as_form).attr('disabled', '');
+        },
+        error: function (xhr, status, error) {
+          var as_div = element.closest("div.active-scaffold");
+          if (as_div) {
+            ActiveScaffold.report_500_response(as_div)
+          }
         }
       });
     return true;

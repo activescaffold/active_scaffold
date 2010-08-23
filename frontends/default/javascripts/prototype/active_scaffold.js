@@ -256,6 +256,12 @@ document.observe("dom:loaded", function() {
       onComplete: function(response) {
         element.next('img.loading-indicator').style.visibility = 'hidden';
         as_form.enable();
+      },
+      onFailure:  function(request) { 
+        var as_div = event.findElement('div.active-scaffold');
+        if (as_div) {
+          ActiveScaffold.report_500_response(as_div)
+        }
       }
     });
     return true;
