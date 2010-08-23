@@ -176,7 +176,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_checkbox(column, options)
-        check_box(:record, column.name, options)
+        check_box(:record, column.name, options.merge(column.options))
       end
 
       def active_scaffold_input_password(column, options)
