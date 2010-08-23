@@ -316,7 +316,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_add_existing_input(options)
-        if controller.respond_to?(:record_select_config)
+        if ActiveScaffold.js_framework == :prototype && controller.respond_to?(:record_select_config)
           remote_controller = active_scaffold_controller_for(record_select_config.model).controller_path
           options.merge!(:controller => remote_controller)
           options.merge!(active_scaffold_input_text_options)
