@@ -2,4 +2,4 @@ if controller.send(:successful?)
   page << "ActiveScaffold.delete_record_row('#{element_row_id(:action => 'list', :id => params[:id])}','#{url_for(params_for(:action => :index, :id => nil, :page => [active_scaffold_config.list.user.page.to_i - 1, 1].max, :escape => false))}');"
   page.call 'ActiveScaffold.replace',  active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
 end
-page.call 'ActiveScaffold.replace_html', active_scaffold_messages_id, :partial => 'messages'
+page.call 'ActiveScaffold.replace_html', active_scaffold_messages_id, render(:partial => 'messages')
