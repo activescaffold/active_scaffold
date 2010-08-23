@@ -5,7 +5,7 @@
   </dt>
   <dd>
     <%= active_scaffold_input_for column, scope %>
-    <% if column.options.is_a?(Hash) && column.options[:update_column] -%>
+    <% if column.update_columns -%>
       <%= loading_indicator_tag(:action => :render_field, :id => params[:id]) %>
     <% end -%>
     <% if column.description -%>

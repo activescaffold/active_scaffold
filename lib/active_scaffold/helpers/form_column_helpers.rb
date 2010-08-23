@@ -7,7 +7,7 @@ module ActiveScaffold
       def active_scaffold_input_for(column, scope = nil, options = {})
         begin
           options = active_scaffold_input_options(column, scope, options)
-          options = javascript_for_update_column(column, scope, options)
+          options = update_columns_options(column, scope, options)
           # first, check if the dev has created an override for this specific field
           if override_form_field?(column)
             send(override_form_field(column), @record, options)
@@ -67,11 +67,10 @@ module ActiveScaffold
         { :name => name, :class => "#{column.name}-input", :id => id_control}.merge(options)
       end
 
-      def javascript_for_update_column(column, scope, options)
-        if column.options[:update_column]
-          form_action = :create
-          form_action = :update if params[:action] == 'edit'
-          url_params = {:action => 'render_field', :id => params[:id], :column => column.name, :update_column => column.options[:update_column]}
+      def update_columns_options(column, scope, options)
+        if column.update_columns
+          form_action = params[:action] == 'edit' ? :update : :create
+          url_params = {:action => 'render_field', :id => params[:id], :column => column.name, :update_columns => column.update_columns}
           url_params[:eid] = params[:eid] if params[:eid]
           url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
           url_params[:scope] = params[:scope] if scope
