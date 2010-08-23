@@ -26,6 +26,5 @@ options = {:id => element_form_id(:action => :add_existing),
   </p>
 
 </form>
-<script type="text/javascript">
-Form.focusFirstElement('<%= element_form_id(:action => :add_existing) -%>');
-</script>
+<%= javascript_tag("ActiveScaffold.focus_first_element_of_form('#{element_form_id(:action => :add_existing)}');") %>
+

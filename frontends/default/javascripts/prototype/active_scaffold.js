@@ -366,6 +366,14 @@ var ActiveScaffold = {
     $(element).show();
   },
   
+  reset_form: function(element) {
+    $(element).reset();
+  },
+  
+  focus_first_element_of_form: function(form_element) {
+    Form.focusFirstElement(form_element);
+  },  
+  
   create_record_row: function(tbody, html) {
     tbody = $(tbody);
     tbody.insert({top: html});
