@@ -415,6 +415,16 @@ var ActiveScaffold = {
     $(element).show();
   },
   
+  reset_form: function(element) {
+    if (typeof(element) == 'string') element = '#' + element;
+    $(element).get(0).reset();
+  },
+  
+  focus_first_element_of_form: function(form_element) {
+    if (typeof(form_element) == 'string') form_element = '#' + form_element;
+    $("#{form_element}:first *:input[type!=hidden]:first").focus();
+  },
+    
   create_record_row: function(tbody, html) {
     if (typeof(tbody) == 'string') tbody = '#' + tbody;
     tbody = $(tbody);
