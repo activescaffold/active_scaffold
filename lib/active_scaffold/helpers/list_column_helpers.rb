@@ -141,7 +141,7 @@ module ActiveScaffold
 
       def format_column_checkbox(record, column)
         checked = ActionView::Helpers::InstanceTag.check_box_checked?(record.send(column.name), '1')
-        script = remote_function(:method => 'POST', :url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s, :value => !checked, :eid => params[:eid]})
+        script = remote_function(:method => 'POST', :url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s, :value => checked ? false : 1, :eid => params[:eid]})
         check_box(:record, column.name, :onclick => script, :id => nil, :object => record)
       end
 
