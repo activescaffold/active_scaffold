@@ -39,6 +39,17 @@ color: #999;
 background-color: #ff8;
 }
 
+.active-scaffold div.actions a img,
+.active-scaffold td.actions a img {
+border: none;
+vertical-align: middle;
+}
+
+.active-scaffold div.actions a.disabled img,
+.active-scaffold td.actions a.disabled img {
+opacity: 0.5;
+}
+
 .active-scaffold .clear-fix {
 clear: both;
 }

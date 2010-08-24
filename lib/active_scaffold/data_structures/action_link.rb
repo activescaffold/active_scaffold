@@ -16,6 +16,7 @@ module ActiveScaffold::DataStructures
       self.parameters = {}
       self.html_options = {}
       self.column = nil
+      self.image = nil
 
       # apply quick properties
       options.each_pair do |k, v|
@@ -41,6 +42,9 @@ module ActiveScaffold::DataStructures
     def label
       @label.is_a?(Symbol) ? as_(@label) : @label
     end
+    
+    # image to use {:name => 'arrow.png', :size => '16x16'}
+    attr_accessor :image
 
     # if the action requires confirmation
     attr_writer :confirm
