@@ -159,9 +159,20 @@ module ActiveScaffold
         end
         html_options[:class] += " #{link.html_options[:class]}" unless link.html_options[:class].blank?
 
+        action_link_html(link, url_options, html_options)
+      end
+      
+      def action_link_html(link, url, html_options)
         # issue 260, use url_options[:link] if it exists. This prevents DB data from being localized.
-        label = url_options.delete(:link) || link.label
-        link_to label, url_options, html_options
+        label = url.delete(:link) if url.is_a?(Hash) 
+        label ||= link.label
+        if link.image.nil?
+          html = link_to(label, url, html_options)
+        else
+          html = link_to(image_tag(link.image[:name] , :size => link.image[:size], :alt => label), url, html_options)
+        end
+        # if url is nil we would like to generate an anchor without href attribute
+        url.nil? ? html.sub(/href=".*?"/, '') : html 
       end
       
       def url_options_for_nested_link(column, record, link, url_options)
