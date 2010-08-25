@@ -133,11 +133,11 @@ module ActiveScaffold
         html = select_tag("#{options[:name]}[opt]",
               options_for_select(select_options, opt_value),
               :id => "#{options[:id]}_opt",
-              :onchange => "Element[this.value == 'BETWEEN' ? 'show' : 'hide']('#{options[:id]}_between');")
+              :class => "as_search_range_option")
         html << ' ' << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => 10))
         html << ' ' << content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
               active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => 10))).html_safe,
-              :id => "#{options[:id]}_between", :style => "display:none")
+          :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => "display:none")
         html
       end
       alias_method :active_scaffold_search_integer, :active_scaffold_search_range
