@@ -5,8 +5,6 @@ ActiveScaffold::Bridges.bridge "DatePicker" do
     destination = File.join(Rails.root, "public/javascripts/active_scaffold/default/")
 
     if ActiveScaffold.js_framework == :jquery
-      date_options = I18n.t 'date'
-      Rails.logger.info(date_options.inspect)
       require File.join(directory, "lib/datepicker_bridge.rb")
       FileUtils.cp(source, destination)
     else
