@@ -28,26 +28,14 @@ module ActiveScaffold
   module Bridges
     module DatePickerBridge
       module SearchColumnHelpers
-        def active_scaffold_search_date_picker(column, options)
+        def active_scaffold_search_datetime(column, options)
           opt_value, from_value, to_value = field_search_params_range_values(column)
-          options = column.options.merge(options).except!(:include_blank)
-          helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
+          options = column.options.merge(options).except!(:include_blank, :discard_time, :discard_date)
+          options[:class] << " #{column.options[:class]}" if column.options[:class]
           html = []
-          html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[from]", :id => "#{options[:id]}_from", :value => from_value))
-          html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[to]", :id => "#{options[:id]}_to", :value => to_value))
-          html * ' - '
-        end
-      end
-  
-      module ViewHelpers
-        # Provides stylesheets to include with +stylesheet_link_tag+
-        def active_scaffold_stylesheets(frontend = :default)
-          super #+ [calendar_date_select_stylesheets]
-        end
-  
-        # Provides stylesheets to include with +stylesheet_link_tag+
-        def active_scaffold_javascripts(frontend = :default)
-          super #+ [calendar_date_select_javascripts]
+          html << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(options.merge(:id => "#{options[:id]}_from")))
+            html << text_field_tag("#{options[:name]}[to]", to_value, active_scaffold_input_text_options(options.merge(:id => "#{options[:id]}_to")))
+          (html * ' - ').html_safe
         end
       end
   
@@ -78,7 +66,6 @@ end
 
 ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::DatePickerBridge::SearchColumnHelpers
-  include ActiveScaffold::Bridges::DatePickerBridge::ViewHelpers
 end
 ActiveScaffold::Finder::ClassMethods.module_eval do
   include ActiveScaffold::Bridges::DatePickerBridge::Finder::ClassMethods
