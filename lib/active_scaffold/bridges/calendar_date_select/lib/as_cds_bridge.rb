@@ -39,7 +39,7 @@ module ActiveScaffold
           html = []
           html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[from]", :id => "#{options[:id]}_from", :value => from_value))
           html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[to]", :id => "#{options[:id]}_to", :value => to_value))
-          html * ' - '
+          (html * ' - ').html_safe
         end
       end
   
