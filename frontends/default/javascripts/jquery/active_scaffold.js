@@ -243,6 +243,11 @@ $(document).ready(function() {
       });
     return true;
   });
+  
+  $('select.as_search_range_option').live('change', function(event) {
+    ActiveScaffold[$(this).val() == 'BETWEEN' ? 'show' : 'hide']($(this).nextAll('.as_search_range_between'));
+  });
+  
 });
 
 /* Simple Inheritance

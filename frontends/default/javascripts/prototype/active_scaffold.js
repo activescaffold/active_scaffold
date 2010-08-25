@@ -265,7 +265,11 @@ document.observe("dom:loaded", function() {
       }
     });
     return true;
-  });  
+  });
+  document.on('change', 'select.as_search_range_option', function(event) {
+    var element = event.findElement();
+    Element[element.value == 'BETWEEN' ? 'show' : 'hide'](element.id.sub('_opt', '_between'));
+  });
 });
 
 
