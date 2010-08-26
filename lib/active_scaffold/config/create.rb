@@ -25,6 +25,10 @@ module ActiveScaffold::Config
     # whether update form is opened after a create or not
     cattr_accessor :action_after_create
     @@action_after_create = nil
+    def self.edit_after_create=(value)
+      ::ActiveSupport::Deprecation.warn("edit_after_create is deprecated, use action_after_create = :edit instead", caller)
+      @@action_after_create = value ? :edit : nil
+    end
 
     # instance-level configuration
     # ----------------------------
@@ -39,5 +43,9 @@ module ActiveScaffold::Config
 
     # whether the form stays open after a create or not
     attr_accessor :action_after_create
+    def edit_after_create=(value)
+      ::ActiveSupport::Deprecation.warn("edit_after_create is deprecated, use action_after_create = :edit instead", caller)
+      @action_after_create = value ? :edit : nil
+    end
   end
 end
