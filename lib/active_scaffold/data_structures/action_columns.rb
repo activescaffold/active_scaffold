@@ -74,7 +74,7 @@ module ActiveScaffold::DataStructures
         end
       end
       
-      def collect(options = {}, &proc)
+      def collect_visible(options = {}, &proc)
         columns = []
         options[:for] ||= @columns.active_record_class
         self.unauthorized_columns = []
