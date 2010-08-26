@@ -64,6 +64,7 @@
       :contains => 'Contains',
       :begins_with => 'Begins with',
       :ends_with => 'Ends with',
+      :optional_attributes => 'Further Options',
 
       # error_messages
       :cant_destroy_record => "%{record} can't be destroyed",

@@ -58,6 +58,7 @@
       :'<' => '<',
       :'!=' => '!=',
       :between => 'Zwischen',
+      :optional_attributes => 'Further Options',
 
       # error_messages
       :cant_destroy_record => "%{record} kann nicht gelöscht werden",

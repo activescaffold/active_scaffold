@@ -205,6 +205,20 @@ module ActiveScaffold
       def override_search(form_ui)
         "active_scaffold_search_#{form_ui}"
       end
+      
+      def visibles_and_hiddens(search_config)
+        visibles = [] 
+        hiddens = []
+        search_config.columns.each do |column|
+          next unless column.search_sql
+          if search_config.optional_columns.include?(column.name) 
+            hiddens << column
+          else
+            visibles << column
+          end
+        end
+        return visibles, hiddens
+      end
     end
   end
 end

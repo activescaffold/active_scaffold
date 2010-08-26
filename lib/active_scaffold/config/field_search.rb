@@ -52,5 +52,14 @@ module ActiveScaffold::Config
 
     # the ActionLink for this action
     attr_accessor :link
+    
+    # rarely searched columns may be placed in a hidden subgroup
+     def optional_columns=(optionals)
+      @optional_columns= Array(optionals)
+    end
+    
+    def optional_columns
+      @optional_columns ||= []
+    end
   end
 end

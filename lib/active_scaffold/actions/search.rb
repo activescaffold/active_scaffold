@@ -21,7 +21,6 @@ module ActiveScaffold::Actions
     end
     def do_search
       query = search_params.to_s.strip rescue ''
-
       unless query.empty?
         columns = active_scaffold_config.search.columns
         text_search = active_scaffold_config.search.text_search
