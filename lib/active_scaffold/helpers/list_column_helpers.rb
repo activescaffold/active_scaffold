@@ -113,17 +113,6 @@ module ActiveScaffold
         truncate(clean_column_value(record.send(column.name)), :length => column.options[:truncate] || 50)
       end
 
-      def active_scaffold_column_select(column, record)
-        if column.association
-          format_column_value(record, column)
-        else
-          value = record.send(column.name)
-          text, val = column.options[:options].find {|text, val| (val.nil? ? text : val).to_s == value.to_s}
-          value = active_scaffold_translated_option(column, text, val).first if text
-          format_column_value(record, column, value)
-        end
-      end
-
       def active_scaffold_column_checkbox(column, record)
         if inplace_edit?(record, column)
           id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
@@ -175,6 +164,10 @@ module ActiveScaffold
           cache_association(value, column)
         end
         if column.association.nil? or column_empty?(value)
+          if column.form_ui == :select
+            text, val = column.options[:options].find {|text, val| (val.nil? ? text : val).to_s == value.to_s}
+            value = active_scaffold_translated_option(column, text, val).first if text
+          end
           if value.is_a? Numeric
             format_number_value(value, column.options)
           else
