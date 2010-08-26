@@ -16,8 +16,8 @@ if controller.send :successful?
   else
     page << "$$(#{cancel_selector}).first().link.close();"
   end
-  if (active_scaffold_config.create.edit_after_create)
-    page << "var link = $('#{action_link_id 'edit', @record.id}');"
+  if (action = active_scaffold_config.create.action_after_create)
+    page << "var link = $('#{action_link_id action, @record.id}');"
     page << "if (link) (function() { link.action_link.open() }).defer();"
   end
 else
