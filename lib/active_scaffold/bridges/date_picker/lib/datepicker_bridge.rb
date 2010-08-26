@@ -33,8 +33,8 @@ module ActiveScaffold
           options = column.options.merge(options).except!(:include_blank, :discard_time, :discard_date)
           options[:class] << " #{column.options[:class]}" if column.options[:class]
           html = []
-          html << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(options.merge(:id => "#{options[:id]}_from")))
-            html << text_field_tag("#{options[:name]}[to]", to_value, active_scaffold_input_text_options(options.merge(:id => "#{options[:id]}_to")))
+          html << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(options.merge(:id => "#{options[:id]}_from", :name => "#{options[:name]}[from]")))
+          html << text_field_tag("#{options[:name]}[to]", to_value, active_scaffold_input_text_options(options.merge(:id => "#{options[:id]}_to", :name => "#{options[:name]}[to]")))
           (html * ' - ').html_safe
         end
       end
