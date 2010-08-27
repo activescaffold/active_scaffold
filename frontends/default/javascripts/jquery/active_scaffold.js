@@ -429,7 +429,7 @@ var ActiveScaffold = {
   
   focus_first_element_of_form: function(form_element) {
     if (typeof(form_element) == 'string') form_element = '#' + form_element;
-    $("#{form_element}:first *:input[type!=hidden]:first").focus();
+    $(form_element + ":first *:input[type!=hidden]:first").focus();
   },
     
   create_record_row: function(tbody, html) {
