@@ -61,5 +61,10 @@ module ActiveScaffold::Config
     def optional_columns
       @optional_columns ||= []
     end
+    
+    # default search params
+    # default_params = {:title => {"from"=>"test", "to"=>"", "opt"=>"%?%"}} 
+    attr_accessor :default_params
+    
   end
 end
