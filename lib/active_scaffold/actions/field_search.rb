@@ -16,6 +16,23 @@ module ActiveScaffold::Actions
     end
 
     protected
+    
+    def store_search_params_into_session
+      set_field_search_default_params(active_scaffold_config.field_search.default_params) unless active_scaffold_config.field_search.default_params.nil?
+      super
+    end
+    
+    def set_field_search_default_params(default_params)
+      if (params[:search].nil? && search_params.nil?) || (params[:search].is_a?(String) && params[:search].blank?)
+        if default_params.is_a?(Proc)
+          #find a way to call this in controller context to avoid passing all that stuff to the block
+          params[:search] = default_params.call(current_user, params)
+        else
+          params[:search] = default_params
+        end
+      end
+    end
+    
     def field_search_params
       search_params || {}
     end
