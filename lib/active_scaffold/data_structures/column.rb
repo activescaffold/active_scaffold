@@ -261,7 +261,7 @@ module ActiveScaffold::DataStructures
       @autolink = !@association.nil?
       @active_record_class = active_record_class
       @table = active_record_class.table_name
-      @weight = 0
+      @weight = [:created_at, :updated_at].include?(self.name) ? 1 : 0
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
