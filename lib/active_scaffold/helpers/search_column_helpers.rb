@@ -211,13 +211,25 @@ module ActiveScaffold
         hiddens = []
         search_config.columns.each do |column|
           next unless column.search_sql
-          if search_config.optional_columns.include?(column.name) 
+          if search_config.optional_columns.include?(column.name) && !searched_by?(column)
             hiddens << column
           else
             visibles << column
           end
         end
         return visibles, hiddens
+      end
+      
+      def searched_by?(column)
+        value = field_search_params[column.name]
+        case value
+        when Hash
+          !value['from'].blank?
+        when String
+          !value.blank?
+        else
+          false
+        end
       end
     end
   end
