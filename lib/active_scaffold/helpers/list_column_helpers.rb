@@ -164,7 +164,7 @@ module ActiveScaffold
           cache_association(value, column)
         end
         if column.association.nil? or column_empty?(value)
-          if column.form_ui == :select
+          if column.form_ui == :select && column.options[:options]
             text, val = column.options[:options].find {|text, val| (val.nil? ? text : val).to_s == value.to_s}
             value = active_scaffold_translated_option(column, text, val).first if text
           end
