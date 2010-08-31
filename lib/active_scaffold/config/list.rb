@@ -16,6 +16,7 @@ module ActiveScaffold::Config
 
       # inherit from global scope
       @empty_field_text = self.class.empty_field_text
+      @association_join_text = self.class.association_join_text
       @pagination = self.class.pagination
       @show_search_reset = true
       @mark_records = self.class.mark_records
@@ -34,6 +35,10 @@ module ActiveScaffold::Config
     # what string to use when a field is empty
     cattr_accessor :empty_field_text
     @@empty_field_text = '-'
+
+    # what string to use to join records from plural associations
+    cattr_accessor :association_join_text
+    @@association_join_text = ', '
 
     # What kind of pagination to use:
     # * true: The usual pagination
@@ -70,6 +75,9 @@ module ActiveScaffold::Config
 
     # what string to use when a field is empty
     attr_accessor :empty_field_text
+
+    # what string to use to join records from plural associations
+    attr_accessor :association_join_text
 
     # show a link to reset the search next to filtered message
     attr_accessor :show_search_reset
