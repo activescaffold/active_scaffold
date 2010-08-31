@@ -269,7 +269,15 @@ document.observe("dom:loaded", function() {
   document.on('change', 'select.as_search_range_option', function(event) {
     var element = event.findElement();
     Element[element.value == 'BETWEEN' ? 'show' : 'hide'](element.id.sub('_opt', '_between'));
+    return true;
   });
+  document.on('change', 'select.as_search_date_time_option', function(event) {
+    var element = event.findElement();
+    Element[!(element.value == 'PAST' || element.value == 'FUTURE' || element.value == 'RANGE') ? 'show' : 'hide'](element.id.sub('_opt', '_numeric'));
+    Element[(element.value == 'PAST' || element.value == 'FUTURE') ? 'show' : 'hide'](element.id.sub('_opt', '_trend'));
+    Element[element.value == 'RANGE' ? 'show' : 'hide'](element.id.sub('_opt', '_range'));
+    return true;
+  });  
 });
 
 

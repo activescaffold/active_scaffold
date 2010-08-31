@@ -28,36 +28,10 @@ module ActiveScaffold
   module Bridges
     module DatePickerBridge
       module SearchColumnHelpers
-        def active_scaffold_search_datetime(column, options)
-          opt_value, from_value, to_value = field_search_params_range_values(column)
+        def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
           options = column.options.merge(options).except!(:include_blank, :discard_time, :discard_date)
           options[:class] << " #{column.options[:class]}" if column.options[:class]
-          html = []
-          html << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(options.merge(:id => "#{options[:id]}_from", :name => "#{options[:name]}[from]")))
-          html << text_field_tag("#{options[:name]}[to]", to_value, active_scaffold_input_text_options(options.merge(:id => "#{options[:id]}_to", :name => "#{options[:name]}[to]")))
-          (html * ' - ').html_safe
-        end
-      end
-  
-      module Finder
-        module ClassMethods
-          def condition_for_date_picker_type(column, value, like_pattern)
-            conversion = column.column.type == :date ? 'to_date' : 'to_time'
-            from_value, to_value = ['from', 'to'].collect do |field|
-              Time.zone.parse(value[field]) rescue nil
-            end
-  
-            if from_value.nil? and to_value.nil?
-              nil
-            elsif !from_value
-              ["#{column.search_sql} <= ?", to_value.send(conversion).to_s(:db)]
-            elsif !to_value
-              ["#{column.search_sql} >= ?", from_value.send(conversion).to_s(:db)]
-            else
-              ["#{column.search_sql} BETWEEN ? AND ?", from_value.send(conversion).to_s(:db), to_value.send(conversion).to_s(:db)]
-            end
-          end
-          alias_method :condition_for_datetime_picker_type, :condition_for_date_picker_type
+          text_field_tag("#{options[:name]}[#{name}]", current_search[name], options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]"))
         end
       end
     end
@@ -65,8 +39,12 @@ module ActiveScaffold
 end
 
 ActionView::Base.class_eval do
+  include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
+  alias_method :active_scaffold_search_datetime, :active_scaffold_search_date_bridge
   include ActiveScaffold::Bridges::DatePickerBridge::SearchColumnHelpers
 end
 ActiveScaffold::Finder::ClassMethods.module_eval do
-  include ActiveScaffold::Bridges::DatePickerBridge::Finder::ClassMethods
+  include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
+  alias_method :condition_for_date_picker_type, :condition_for_date_bridge_type
+  alias_method :condition_for_datetime_picker_type, :condition_for_date_picker_type
 end
