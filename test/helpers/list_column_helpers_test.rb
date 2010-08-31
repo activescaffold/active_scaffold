@@ -6,22 +6,23 @@ class ListColumnHelpersTest < ActionView::TestCase
 
   def setup
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
+    @column.form_ui = :select
     @record = stub(:a => 'value_2')
     @config = stub(:list => stub(:empty_field_text => '-'))
   end
 
   def test_options_for_select_list_ui_for_simple_column
     @column.options[:options] = [:value_1, :value_2, :value_3]
-    assert_equal 'Value 2', active_scaffold_column_select(@column, @record)
+    assert_equal 'Value 2', format_column_value(@record, @column)
 
     @column.options[:options] = %w(value_1 value_2 value_3)
-    assert_equal 'value_2', active_scaffold_column_select(@column, @record)
+    assert_equal 'value_2', format_column_value(@record, @column)
 
     @column.options[:options] = [%w(text_1 value_1), %w(text_2 value_2), %w(text_3 value_3)]
-    assert_equal 'text_2', active_scaffold_column_select(@column, @record)
+    assert_equal 'text_2', format_column_value(@record, @column)
 
     @column.options[:options] = [[:text_1, :value_1], [:text_2, :value_2], [:text_3, :value_3]]
-    assert_equal 'Text 2', active_scaffold_column_select(@column, @record)
+    assert_equal 'Text 2', format_column_value(@record, @column)
   end
 
   private
