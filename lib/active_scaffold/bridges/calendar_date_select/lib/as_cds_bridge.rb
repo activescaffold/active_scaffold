@@ -30,16 +30,11 @@ module ActiveScaffold
           calendar_date_select("record", column.name, options.merge(column.options))
         end      
       end
-  
+      
       module SearchColumnHelpers
-        def active_scaffold_search_calendar_date_select(column, options)
-          opt_value, from_value, to_value = field_search_params_range_values(column)
-          options = column.options.merge(options).except!(:include_blank)
-          helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
-          html = []
-          html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[from]", :id => "#{options[:id]}_from", :value => from_value))
-          html << calendar_date_select("record", column.name, options.merge(:name => "#{options[:name]}[to]", :id => "#{options[:id]}_to", :value => to_value))
-          (html * ' - ').html_safe
+        def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name) 
+          calendar_date_select("record", column.name, 
+            {:name => "#{options[:name]}[#{name}]", :value => current_search[name], :class => 'text-input', :id => "#{options[:id]}_#{name}", :time => column_datetime?(column) ? true : false})
         end
       end
   
@@ -54,36 +49,19 @@ module ActiveScaffold
           super + [calendar_date_select_javascripts]
         end
       end
-  
-      module Finder
-        module ClassMethods
-          def condition_for_calendar_date_select_type(column, value, like_pattern)
-            conversion = column.column.type == :date ? 'to_date' : 'to_time'
-            from_value, to_value = ['from', 'to'].collect do |field|
-              Time.zone.parse(value[field]) rescue nil
-            end
-  
-            if from_value.nil? and to_value.nil?
-              nil
-            elsif !from_value
-              ["#{column.search_sql} <= ?", to_value.send(conversion).to_s(:db)]
-            elsif !to_value
-              ["#{column.search_sql} >= ?", from_value.send(conversion).to_s(:db)]
-            else
-              ["#{column.search_sql} BETWEEN ? AND ?", from_value.send(conversion).to_s(:db), to_value.send(conversion).to_s(:db)]
-            end
-          end
-        end
-      end
     end
   end
 end
 
 ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::CalendarDateSelectBridge::FormColumnHelpers
+  include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
+  alias_method :active_scaffold_search_calendar_date_select, :active_scaffold_search_date_bridge
   include ActiveScaffold::Bridges::CalendarDateSelectBridge::SearchColumnHelpers
   include ActiveScaffold::Bridges::CalendarDateSelectBridge::ViewHelpers
 end
+
 ActiveScaffold::Finder::ClassMethods.module_eval do
-  include ActiveScaffold::Bridges::CalendarDateSelectBridge::Finder::ClassMethods
+  include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
+  alias_method :condition_for_calendar_date_select_type, :condition_for_date_bridge_type
 end

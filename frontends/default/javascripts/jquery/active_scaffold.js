@@ -245,7 +245,16 @@ $(document).ready(function() {
   });
   
   $('select.as_search_range_option').live('change', function(event) {
-    ActiveScaffold[$(this).val() == 'BETWEEN' ? 'show' : 'hide']($(this).nextAll('.as_search_range_between'));
+    ActiveScaffold[$(this).val() == 'BETWEEN' ? 'show' : 'hide']($(this).parent().find('.as_search_range_between'));
+    return true;
+  });
+  
+  $('select.as_search_range_option').live('change', function(event) {
+    var element = $(this);
+    ActiveScaffold[!(element.val() == 'PAST' || element.val() == 'FUTURE' || element.val() == 'RANGE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_numeric'));
+    ActiveScaffold[(element.val() == 'PAST' || element.val() == 'FUTURE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_trend'));
+    ActiveScaffold[(element.val() == 'RANGE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_range'));
+    return true;
   });
   
 });
@@ -414,6 +423,7 @@ var ActiveScaffold = {
   },
   
   hide: function(element) {
+    if (typeof(element) == 'string') element = '#' + element;
     $(element).hide();
   },
   
