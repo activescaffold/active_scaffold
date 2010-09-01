@@ -131,7 +131,7 @@ module ActiveScaffold
       unless controller.nil?
         options.reverse_merge! :label => column.label, :position => :after, :type => :member, :controller => (controller == :polymorph ? controller : controller.controller_path), :column => column
         options[:parameters] ||= {}
-        options[:parameters].reverse_merge! :parent_model => column.active_record_class, :association => column.association.name
+        options[:parameters].reverse_merge! :parent_model => column.active_record_class.to_s, :association => column.association.name
         if column.plural_association?
           # note: we can't create nested scaffolds on :through associations because there's no reverse association.
           
