@@ -1,7 +1,8 @@
 <% subsection_id ||= nil %>
 <ol class="form" <%= "id=#{subsection_id}" unless subsection_id.nil? %>  <%= 'style="display: none;"' if columns.collapsed -%>>
-  <% columns.each :for => @record do |column| -%>
-  <% if is_subsection? column -%>
+  <% columns.each :for => @record do |column| %>
+  <% renders_as = column_renders_as(column) %>
+  <% if renders_as == :subsection -%>
     <% subsection_id = sub_section_id(:sub_section => column.label) %>
   <li class="sub-section">
     <h5><%= column.label %></h5>
@@ -10,13 +11,13 @@
   </li>
   <% elsif column.readonly_association?
     next %>
-  <% elsif is_subform? column and !override_form_field?(column) -%>
+  <% elsif renders_as == :subform and !override_form_field?(column) -%>
   <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column.css_class unless column.css_class.nil? %>" id="<%= sub_form_id(:association => column.name) %>">
-    <%= render :partial => form_partial_for_column(column), :locals => { :column => column } -%>
+    <%= render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column } -%>
   </li>
   <% else -%>
   <li class="form-element <%= 'required' if column.required? %> <%= column.css_class unless column.css_class.nil? %>">
-    <%= render :partial => form_partial_for_column(column), :locals => { :column => column } -%>
+    <%= render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column } -%>
   </li>
   <% end -%>
   <% end -%>

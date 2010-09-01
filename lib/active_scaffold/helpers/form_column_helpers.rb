@@ -261,14 +261,15 @@ module ActiveScaffold
         "active_scaffold_input_#{form_ui}"
       end
 
-      def form_partial_for_column(column)
+      def form_partial_for_column(column, renders_as = nil)
+        renders_as ||= column_renders_as(column)
         if override_form_field_partial?(column)
           override_form_field_partial(column)
-        elsif column_renders_as(column) == :field or override_form_field?(column)
+        elsif renders_as == :field or override_form_field?(column)
           "form_attribute"
-        elsif column_renders_as(column) == :subform
+        elsif renders_as == :subform
           "form_association"
-        elsif column_renders_as(column) == :hidden
+        elsif renders_as == :hidden
           "form_hidden_attribute"
         end
       end
@@ -296,14 +297,6 @@ module ActiveScaffold
         else
           return :subform
         end
-      end
-
-      def is_subsection?(column)
-        column_renders_as(column) == :subsection
-      end
-
-      def is_subform?(column)
-        column_renders_as(column) == :subform
       end
 
       def column_scope(column)
