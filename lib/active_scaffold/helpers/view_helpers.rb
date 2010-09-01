@@ -127,23 +127,28 @@ module ActiveScaffold
       end
 
       def render_action_link(link, url_options, record = nil, html_options = {})
-        url_options = url_options.clone
+        url_options = action_link_url_options(link, url_options, record)
+        html_options = action_link_html_options(link, url_options, record, html_options)
+        action_link_html(link, url_options, html_options)
+      end
+      
+      def action_link_url_options(link, url_options, record)
+        options = url_options.clone
+        options[:action] = link.action
+        options[:controller] = link.controller if link.controller
+        options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
+        options.merge! link.parameters if link.parameters
+        url_options_for_nested_link(link.column, record, link, options) unless link.column.nil?
+        options[:_method] = link.method if link.inline? && link.method != :get
+        options
+      end
+      
+      def action_link_html_options(link, url_options, record, html_options)
         id = url_options[:id] || url_options[:parent_id]
-        url_options[:action] = link.action
-        url_options[:controller] = link.controller if link.controller
-        url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
-        url_options.merge! link.parameters if link.parameters
-        url_options_for_nested_link(link.column, record, link, url_options) unless link.column.nil?
-
         html_options.reverse_merge! link.html_options.merge(:class => link.action)
-        if link.inline?
-          url_options[:_method] = link.method if link.method != :get
-          # robd: protect against submitting get links as forms, since this causes annoying 
-          # 'Do you wish to resubmit your form?' messages whenever you go back and forwards.
-        elsif link.method != :get
-          # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails
-          html_options[:method] = link.method
-        end
+
+        # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
+        html_options[:method] = link.method if !link.inline? && link.method != :get
 
         html_options['data-confirm'] = link.confirm(record.try(:to_label)) if link.confirm?
         html_options['data-position'] = link.position if link.position and link.inline?
@@ -158,8 +163,7 @@ module ActiveScaffold
           html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],id))
         end
         html_options[:class] += " #{link.html_options[:class]}" unless link.html_options[:class].blank?
-
-        action_link_html(link, url_options, html_options)
+        html_options
       end
       
       def action_link_html(link, url, html_options)
