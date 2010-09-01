@@ -24,12 +24,7 @@ module ActiveScaffold::Actions
     
     def set_field_search_default_params(default_params)
       if (params[:search].nil? && search_params.nil?) || (params[:search].is_a?(String) && params[:search].blank?)
-        if default_params.is_a?(Proc)
-          #find a way to call this in controller context to avoid passing all that stuff to the block
-          params[:search] = default_params.call(current_user, params)
-        else
-          params[:search] = default_params
-        end
+        params[:search] = default_params.is_a?(Proc) ? self.instance_eval(&default_params) : default_params
       end
     end
     
