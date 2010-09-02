@@ -113,6 +113,7 @@ $(document).ready(function() {
     return true;
   });
   $('span.in_place_editor_field').live('hover', function(event) {
+    $(this).data(); // jquery 1.4.2 workaround
     if (event.type == 'mouseenter') {
       if (typeof($(this).data('editInPlace')) === 'undefined') $(this).addClass("hover");
      }
@@ -123,7 +124,7 @@ $(document).ready(function() {
   });
   $('span.in_place_editor_field').live('click', function(event) {
     var span = $(this);
-    
+    span.data(); // jquery 1.4.2 workaround
     if (typeof(span.data('editInPlace')) === 'undefined') {
       var options = {show_buttons: true,
                      hover_class: 'hover',
@@ -612,6 +613,7 @@ ActiveScaffold.ActionLink = {
   get: function(element) {
     if (typeof(element) == 'string') element = '#' + element;
     var element = $(element);
+    element.data(); // jquery 1.4.2 workaround
     if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
       var parent = element.parent();
       
