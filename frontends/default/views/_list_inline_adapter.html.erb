@@ -8,4 +8,4 @@
   </td>
 </tr>
 <% row_id = "#{ActiveScaffold.js_framework == :jquery ? '#' : ''}#{element_row_id(:action => :nested)}"  %>
-<%= javascript_tag("ActiveScaffold.ActionLink.get($('#{row_id}')).update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');") %>
+<%= javascript_tag("ActiveScaffold.ActionLink.get('#{row_id}').update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');") %>

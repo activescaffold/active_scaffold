@@ -610,6 +610,8 @@ ActiveScaffold.Actions.Abstract = Class.extend({
  */
 ActiveScaffold.ActionLink = {
   get: function(element) {
+    if (typeof(element) == 'string') element = '#' + element;
+    var element = $(element);
     if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
       var parent = element.parent();
       
@@ -785,6 +787,16 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
       if (item.url != _this.url) return;
       item.tag.addClass('disabled');
     });
+  },
+  
+  set_opened: function() {
+    if (this.position == 'after') {
+      this.set_adapter(this.target.next());
+    }
+    else if (this.position == 'before') {
+      this.set_adapter(this.target.prev());
+    }
+    this.disable();
   }
 });
 
