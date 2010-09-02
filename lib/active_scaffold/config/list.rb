@@ -115,6 +115,12 @@ module ActiveScaffold::Config
       @always_show_create && @core.actions.include?(:create)
     end
     
+    # might be set to open nested_link automatically in view
+    # conf.nested.add_link(:players)
+    # conf.list.nested_auto_open = {:players => 2}
+    # will open nested views if there are 2 or less records in view
+    attr_accessor :nested_auto_open
+    
     class UserSettings < UserSettings
       # This label has alread been localized.
       def label

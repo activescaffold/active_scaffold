@@ -17,6 +17,7 @@ module ActiveScaffold::Actions
       do_list
       do_new if active_scaffold_config.list.always_show_create
       @record ||= active_scaffold_config.model.new if active_scaffold_config.list.always_show_search
+      @nested_auto_open = active_scaffold_config.list.nested_auto_open
       respond_to_action(:list)
     end
     
