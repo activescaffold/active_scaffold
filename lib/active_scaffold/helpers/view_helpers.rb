@@ -144,7 +144,7 @@ module ActiveScaffold
       end
       
       def action_link_html_options(link, url_options, record, html_options)
-        link_id = get_action_link_id(url_options)
+        link_id = get_action_link_id(url_options, record, link.column)
         html_options.reverse_merge! link.html_options.merge(:class => link.action)
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
@@ -165,9 +165,12 @@ module ActiveScaffold
         html_options[:class] += " #{link.html_options[:class]}" unless link.html_options[:class].blank?
         html_options
       end
-      def get_action_link_id(url_options)
+      def get_action_link_id(url_options, record = nil, column = nil)
+        id = url_options[:id] || url_options[:parent_id]
+        id = "#{column.association.name}-#{record.id}" if column && column.plural_association?
+        id = "#{column.association.name}-#{record.send(column.association.name).id}" if column && column.singular_association?
         action_id = "#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}#{url_options[:action].to_s}"
-        action_link_id(action_id, url_options[:id] || url_options[:parent_id])
+        action_link_id(action_id, id)
       end
       
       def action_link_html(link, url, html_options)
@@ -186,8 +189,7 @@ module ActiveScaffold
       def url_options_for_nested_link(column, record, link, url_options, options = {})
         if column.association
           url_options[:assoc_id] = url_options.delete(:id)
-          url_options[:id] = "#{column.association.name}-#{record.send(column.association.name).id}" if column.singular_association?
-          url_options[:id] = "#{column.association.name}-#{record.id}" if column.plural_association?
+          url_options[:id] = record.send(column.association.name).id if column.singular_association?
           link.eid = "#{params[:controller]}_#{ActiveSupport::SecureRandom.hex(10)}" unless options.has_key?(:reuse_eid)
           url_options[:eid] = link.eid
         end
