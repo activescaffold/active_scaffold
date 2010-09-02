@@ -594,6 +594,7 @@ ActiveScaffold.Actions.Abstract = Class.create({
  */
 ActiveScaffold.ActionLink = {
   get: function(element) {
+    var element = $(element);
     if (typeof(element.retrieve('action_link')) === 'undefined' && !element.hasClassName('as_adapter')) {
       var parent = element.up();
       if (parent && parent.nodeName.toUpperCase() == 'TD') {
