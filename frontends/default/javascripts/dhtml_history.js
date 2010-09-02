@@ -831,26 +831,6 @@ Querystring.prototype.contains = function(key) {
 	return (value != null);
 }
 
-/*******************************************************************/
-/* Added by Ed Wildgoose - MailASail */
-/* Initialise the library and add our history callback */
-/*******************************************************************/
-window.dhtmlHistory.create({
-        toJSON: function(o) {
-                return Object.toJSON(o);
-        }
-        , fromJSON: function(s) {
-                return s.evalJSON();
-        }
-        
-        // Enable this to assist with debugging
-//        , debugMode: true
-
-        // dhtmlHistory has been modified not to need the next line
-        // But left in for robustness when updating dhtmlHistory
-        , blankURL: '/blank.html?'
-});
-
 /** Our callback to receive history
     change events. */
 var handleHistoryChange = function(pageId, pageData) {
@@ -862,6 +842,25 @@ var handleHistoryChange = function(pageId, pageData) {
 }
 
 window.onload = function() {
+	/*******************************************************************/
+	/* Added by Ed Wildgoose - MailASail */
+	/* Initialise the library and add our history callback */
+	/*******************************************************************/
+	dhtmlHistory.create({
+        	toJSON: function(o) {
+                	return Object.toJSON(o);
+	        }
+        	, fromJSON: function(s) {
+                	return s.evalJSON();
+	        }
+        
+        	// Enable this to assist with debugging
+		//, debugMode: true
+
+        	// dhtmlHistory has been modified not to need the next line
+	        // But left in for robustness when updating dhtmlHistory
+        	, blankURL: '/blank.html?'
+	});
         dhtmlHistory.initialize(handleHistoryChange);
 };
 
