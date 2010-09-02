@@ -681,7 +681,13 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
   update_flash_messages: function(messages) {
     message_node = $(this.scaffold_id().sub('-active-scaffold', '-messages'));
     if (message_node) message_node.update(messages);
-  }
+  },
+  
+  set_adapter: function(element) {
+    this.adapter = element;
+    this.adapter.addClassName('as_adapter');
+    this.adapter.action_link = this;
+  },
 });
 
 /**
@@ -726,15 +732,11 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
 
     if (this.position == 'after') {
       this.target.insert({after:content});
-      this.adapter = this.target.next();
-      this.adapter.addClassName('as_adapter');
-      this.adapter.action_link = this;
+      this.set_adapter(this.target.next());
     }
     else if (this.position == 'before') {
       this.target.insert({before:content});
-      this.adapter = this.target.previous();
-      this.adapter.addClassName('as_adapter');
-      this.adapter.action_link = this;
+      this.set_adapter(this.target.previous());
     }
     else {
       return false;
@@ -782,9 +784,7 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
   insert: function(content) {
     if (this.position == 'top') {
       this.target.insert({top:content});
-      this.adapter = this.target.immediateDescendants().first();
-      this.adapter.addClassName('as_adapter');
-      this.adapter.action_link = this;
+      this.set_adapter(this.target.immediateDescendants().first());
     }
     else {
       throw 'Unknown position "' + this.position + '"'
