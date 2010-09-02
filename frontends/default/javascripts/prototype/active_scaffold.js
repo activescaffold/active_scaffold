@@ -594,7 +594,7 @@ ActiveScaffold.Actions.Abstract = Class.create({
  */
 ActiveScaffold.ActionLink = {
   get: function(element) {
-    if (typeof(element.action_link) === 'undefined' && !element.hasClassName('as_adapter')) {
+    if (typeof(element.retrieve('action_link')) === 'undefined' && !element.hasClassName('as_adapter')) {
       var parent = element.up();
       if (parent && parent.nodeName.toUpperCase() == 'TD') {
         // record action
@@ -606,7 +606,7 @@ ActiveScaffold.ActionLink = {
       }
       element = $(element);
     }
-    return element.action_link;
+    return element.retrieve('action_link');
   }
 };
 
@@ -634,7 +634,7 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     this.hide_target = false;
     this.position = this.tag.getAttribute('data-position');
 		
-    this.tag.action_link = this;
+    this.tag.store('action_link', this);
   },
 
   open: function(event) {
@@ -686,7 +686,7 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
   set_adapter: function(element) {
     this.adapter = element;
     this.adapter.addClassName('as_adapter');
-    this.adapter.action_link = this;
+    this.adapter.store('action_link', this);
   },
 });
 
