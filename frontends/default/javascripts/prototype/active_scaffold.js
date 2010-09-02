@@ -59,9 +59,8 @@ document.observe("dom:loaded", function() {
     return true;
   });
   document.on('ajax:success', 'a.as_action', function(event) {
-    var as_action = event.findElement();
-    if (as_action.action_link && event.memo && event.memo.request) {
-      var action_link = as_action.action_link;
+    var action_link = ActiveScaffold.ActionLink.get(event.findElement());
+    if (action_link && event.memo && event.memo.request) {
       if (action_link.position) {
         action_link.insert(event.memo.request.responseText);
         if (action_link.hide_target) action_link.target.hide();
@@ -74,17 +73,15 @@ document.observe("dom:loaded", function() {
     return true;
   });
   document.on('ajax:complete', 'a.as_action', function(event) {
-    var as_action = event.findElement();
-    if (as_action.action_link) {
-      var action_link = as_action.action_link;
-      if (action_link.loading_indicator) action_link.loading_indicator.style.visibility = 'hidden';  
+    var action_link = ActiveScaffold.ActionLink.get(event.findElement());
+    if (action_link && action_link.loading_indicator) {
+      action_link.loading_indicator.style.visibility = 'hidden';  
     }
     return true;
   });
   document.on('ajax:failure', 'a.as_action', function(event) {
-    var as_action = event.findElement();
-    if (as_action.action_link) {
-      var action_link = as_action.action_link;
+    var action_link = ActiveScaffold.ActionLink.get(event.findElement());
+    if (action_link) {
       ActiveScaffold.report_500_response(action_link.scaffold_id());
       action_link.enable();
     }

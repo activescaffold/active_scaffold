@@ -37,9 +37,8 @@ $(document).ready(function() {
     return true;
   });
   $('a.as_action').live('ajax:success', function(event, response) {
-    var as_action = $(this);
-    if (as_action.data('action_link')) {
-      var action_link = as_action.data('action_link');
+    var action_link = ActiveScaffold.ActionLink.get($(this));
+    if (action_link) {
       if (action_link.position) {
         action_link.insert(response);
         if (action_link.hide_target) action_link.target.hide();
@@ -51,17 +50,15 @@ $(document).ready(function() {
     return true;
   });
   $('a.as_action').live('ajax:complete', function(event) {
-    var as_action = $(this);
-    if (as_action.data('action_link')) {
-      var action_link = as_action.data('action_link');
+    var action_link = ActiveScaffold.ActionLink.get($(this));
+    if (action_link) {
       if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
     }
     return true;
   });
   $('a.as_action').live('ajax:failure', function(event) {
-    var as_action = $(this);
-    if (as_action.data('action_link')) {
-      var action_link = as_action.data('action_link');
+    var action_link = ActiveScaffold.ActionLink.get($(this));
+    if (action_link) {
       ActiveScaffold.report_500_response(action_link.scaffold_id());
       action_link.enable();
     }
