@@ -47,21 +47,8 @@ document.observe("dom:loaded", function() {
     }
   });
   document.on('ajax:before', 'a.as_action', function(event) {
-    var as_action = event.findElement();
-    if (typeof(as_action.action_link) === 'undefined') {
-      var parent = as_action.up();
-      if (parent && parent.nodeName.toUpperCase() == 'TD') {
-        // record action
-        parent = parent.up('tr.record')
-        new ActiveScaffold.Actions.Record(parent.select('a.as_action'), parent, parent.down('td.actions .loading-indicator'));
-      } else if (parent && parent.nodeName.toUpperCase() == 'DIV') {
-        //table action
-        new ActiveScaffold.Actions.Table(parent.select('a.as_action'), parent.up('div.active-scaffold').down('tbody.before-header'), parent.down('.loading-indicator'));
-      }
-      as_action = event.findElement();
-    }
-    if (as_action.action_link) {
-      var action_link = as_action.action_link;
+    var action_link = ActiveScaffold.ActionLink.get(event.findElement());
+    if (action_link) {
       if (action_link.is_disabled()) {
         event.stop();
       } else {
@@ -608,7 +595,24 @@ ActiveScaffold.Actions.Abstract = Class.create({
  * A DataStructures::ActionLink, represented in JavaScript.
  * Concerned with AJAX-enabling a link and adapting the result for insertion into the table.
  */
-ActiveScaffold.ActionLink = new Object();
+ActiveScaffold.ActionLink = {
+  get: function(as_action) {
+    if (typeof(as_action.action_link) === 'undefined') {
+      var parent = as_action.up();
+      if (parent && parent.nodeName.toUpperCase() == 'TD') {
+        // record action
+        parent = parent.up('tr.record')
+        new ActiveScaffold.Actions.Record(parent.select('a.as_action'), parent, parent.down('td.actions .loading-indicator'));
+      } else if (parent && parent.nodeName.toUpperCase() == 'DIV') {
+        //table action
+        new ActiveScaffold.Actions.Table(parent.select('a.as_action'), parent.up('div.active-scaffold').down('tbody.before-header'), parent.down('.loading-indicator'));
+      }
+      as_action = $(as_action);
+    }
+    return as_action.action_link;
+  }
+};
+
 ActiveScaffold.ActionLink.Abstract = Class.create({
   initialize: function(a, target, loading_indicator) {
     this.tag = $(a);
