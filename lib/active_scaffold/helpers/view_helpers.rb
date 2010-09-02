@@ -132,19 +132,19 @@ module ActiveScaffold
         action_link_html(link, url_options, html_options)
       end
       
-      def action_link_url_options(link, url_options, record)
-        options = url_options.clone
-        options[:action] = link.action
-        options[:controller] = link.controller if link.controller
-        options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
-        options.merge! link.parameters if link.parameters
-        url_options_for_nested_link(link.column, record, link, options) unless link.column.nil?
-        options[:_method] = link.method if link.inline? && link.method != :get
-        options
+      def action_link_url_options(link, url_options, record, options = {})
+        url_options = url_options.clone
+        url_options[:action] = link.action
+        url_options[:controller] = link.controller if link.controller
+        url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
+        url_options.merge! link.parameters if link.parameters
+        url_options_for_nested_link(link.column, record, link, url_options, options) unless link.column.nil?
+        url_options[:_method] = link.method if link.inline? && link.method != :get
+        url_options
       end
       
       def action_link_html_options(link, url_options, record, html_options)
-        id = url_options[:id] || url_options[:parent_id]
+        link_id = get_action_link_id(url_options)
         html_options.reverse_merge! link.html_options.merge(:class => link.action)
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
@@ -154,16 +154,20 @@ module ActiveScaffold
         html_options['data-position'] = link.position if link.position and link.inline?
         html_options[:class] += ' as_action' if link.inline?
         html_options[:popup] = true if link.popup?
-        html_options[:id] = action_link_id("#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}" + url_options[:action].to_s, id)
+        html_options[:id] = link_id
         html_options[:remote] = true unless link.page?
         if link.dhtml_confirm?
           html_options[:class] += ' as_action' if !link.inline?
           html_options[:page_link] = 'true' if !link.inline?
           html_options[:dhtml_confirm] = link.dhtml_confirm.value
-          html_options[:onclick] = link.dhtml_confirm.onclick_function(controller,action_link_id(url_options[:action],id))
+          html_options[:onclick] = link.dhtml_confirm.onclick_function(controller, link_id)
         end
         html_options[:class] += " #{link.html_options[:class]}" unless link.html_options[:class].blank?
         html_options
+      end
+      def get_action_link_id(url_options)
+        action_id = "#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}#{url_options[:action].to_s}"
+        action_link_id(action_id, url_options[:id] || url_options[:parent_id])
       end
       
       def action_link_html(link, url, html_options)
@@ -179,11 +183,13 @@ module ActiveScaffold
         url.nil? ? html.sub(/href=".*?"/, '') : html 
       end
       
-      def url_options_for_nested_link(column, record, link, url_options)
+      def url_options_for_nested_link(column, record, link, url_options, options = {})
         if column.association
           url_options[:assoc_id] = url_options.delete(:id)
-          url_options[:id] = record.send(column.association.name) if column.singular_association?
-          url_options[:eid] = "#{params[:controller]}_#{ActiveSupport::SecureRandom.hex(10)}" 
+          url_options[:id] = "#{column.association.name}-#{record.send(column.association.name).id}" if column.singular_association?
+          url_options[:id] = "#{column.association.name}-#{record.id}" if column.plural_association?
+          link.eid = "#{params[:controller]}_#{ActiveSupport::SecureRandom.hex(10)}" unless options.has_key?(:reuse_eid)
+          url_options[:eid] = link.eid
         end
       end
 
