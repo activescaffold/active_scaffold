@@ -65,11 +65,10 @@ $(document).ready(function() {
     return true;
   });
   $('a.as_cancel').live('ajax:before', function(event) {
-    var as_adapter = $(this).closest('.as_adapter');
     var as_cancel = $(this);
+    var action_link = ActiveScaffold.find_action_link(as_cancel);  
     
-    if (as_adapter.data('action_link')) {
-      var action_link = as_adapter.data('action_link');
+    if (action_link) {
       var cancel_url = as_cancel.attr('href');
       var refresh_data = as_cancel.attr('data-refresh');
       if (refresh_data === 'true' && action_link.refresh_url) {
@@ -83,10 +82,9 @@ $(document).ready(function() {
     return true;
   });
   $('a.as_cancel').live('ajax:success', function(event, response) {
-    var as_adapter = $(this).closest('.as_adapter');
+    var action_link = ActiveScaffold.find_action_link($(this));
 
-    if (as_adapter.data('action_link')) {
-      var action_link = as_adapter.data('action_link');
+    if (action_link) {
       if (action_link.position) {
         action_link.close(response);
       } else {
@@ -96,9 +94,8 @@ $(document).ready(function() {
     return true;
   });
   $('a.as_cancel').live('ajax:failure', function(event) {
-    var as_adapter = $(this).closest('.as_adapter');
-    if (as_adapter.data('action_link')) {
-      var action_link = as_adapter.data('action_link');
+    var action_link = ActiveScaffold.find_action_link($(this));
+    if (action_link) {
       ActiveScaffold.report_500_response(action_link.scaffold_id());
     }
     return true;
@@ -441,9 +438,13 @@ var ActiveScaffold = {
     var tbody = row.closest('tbody.records');
     
     var current_action_node = row.find('td.actions a.disabled').first();
-    if (current_action_node && current_action_node.data('action_link')) {
-      current_action_node.data('action_link').close_previous_adapter();
+    if (current_action_node) {
+      var action_link = ActiveScaffold.ActionLink.get(current_action_node);
+      if (action_link) {
+        action_link.close_previous_adapter();
+      }
     }
+    
     row.remove();
     this.stripe(tbody);
     this.decrement_record_count(tbody.closest('div.active-scaffold'));
@@ -460,7 +461,7 @@ var ActiveScaffold = {
   find_action_link: function(element) {
     if (typeof(element) == 'string') element = '#' + element;
     var as_adapter = $(element).closest('.as_adapter');
-    return as_adapter.data('action_link');
+    return ActiveScaffold.ActionLink.get(as_adapter);;
   },
   
   scroll_to: function(element) {
@@ -608,9 +609,9 @@ ActiveScaffold.Actions.Abstract = Class.extend({
  * Concerned with AJAX-enabling a link and adapting the result for insertion into the table.
  */
 ActiveScaffold.ActionLink = {
-  get: function(as_action) {
-    if (typeof(as_action.data('action_link')) === 'undefined') {
-      var parent = as_action.parent();
+  get: function(element) {
+    if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
+      var parent = element.parent();
       
       if (parent && parent.is('td')) {
         // record action
@@ -622,9 +623,9 @@ ActiveScaffold.ActionLink = {
         //table action
         new ActiveScaffold.Actions.Table(parent.find('a.as_action'), parent.closest('div.active-scaffold').find('tbody.before-header'), parent.find('.loading-indicator'));
       }
-      as_action = $(as_action);
+      element = $(element);
     }
-    return as_action.data('action_link');
+    return element.data('action_link');
   }
 };
 ActiveScaffold.ActionLink.Abstract = Class.extend({
