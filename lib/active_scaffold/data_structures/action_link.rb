@@ -148,5 +148,15 @@ module ActiveScaffold::DataStructures
     
     # nested action_links are referencing a column
     attr_accessor :column
+    
+    # indicates that this a nested_link
+    def nested_link?
+      @column
+    end
+    
+    # Internal use: generated eid for this action_link
+    attr_accessor :eid
+    
+    
   end
 end
