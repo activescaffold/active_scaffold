@@ -38,17 +38,27 @@ module ActiveScaffold
           elsif self.respond_to?("condition_for_#{search_ui}_type")
             self.send("condition_for_#{search_ui}_type", column, value, like_pattern)
           else
-            case search_ui
-              when :boolean, :checkbox
-              ["#{column.search_sql} = ?", column.column.type_cast(value)]
-              when :select, :multi_select, :country, :usa_state
-              ["#{column.search_sql} in (?)", value]
-              else
-                if column.column.nil? || column.column.text?
-                  ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
+            unless column.search_sql.instance_of? Proc
+              case search_ui
+                when :boolean, :checkbox
+                ["#{column.search_sql} = ?", column.column.type_cast(value)]
+                when :integer, :decimal, :float
+                  condition_for_numeric(column, value)
+                when :string, :range
+                  condition_for_range(column, value, like_pattern)
+                when :date, :time, :datetime, :timestamp
+                  condition_for_datetime(column, value)
+                when :select, :multi_select, :country, :usa_state
+                ["#{column.search_sql} in (?)", value]
                 else
-                  ["#{column.search_sql} = ?", column.column.type_cast(value)]
-                end
+                  if column.column.nil? || column.column.text?
+                    ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
+                  else
+                    ["#{column.search_sql} = ?", column.column.type_cast(value)]
+                  end
+              end
+            else
+              column.search_sql.call(value)
             end
           end
         rescue Exception => e
@@ -57,7 +67,7 @@ module ActiveScaffold
         end
       end
 
-      def condition_for_integer_type(column, value, like_pattern = nil)
+      def condition_for_numeric(column, value)
         if !value.is_a?(Hash)
           ["#{column.search_sql} = ?", column.column.nil? ? value.to_f : column.column.type_cast(value)]
         elsif value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
@@ -73,10 +83,8 @@ module ActiveScaffold
           ["#{column.search_sql} #{value[:opt]} ?", column.column.nil? ? value[:from].to_f : column.column.type_cast(value[:from])]
         end
       end
-      alias_method :condition_for_decimal_type, :condition_for_integer_type
-      alias_method :condition_for_float_type, :condition_for_integer_type
 
-      def condition_for_range_type(column, value, like_pattern = nil)
+      def condition_for_range(column, value, like_pattern = nil)
         if !value.is_a?(Hash)
           if column.column.nil? || column.column.text?
             ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
@@ -95,9 +103,8 @@ module ActiveScaffold
           nil
         end
       end
-      alias_method :condition_for_string_type, :condition_for_range_type
 
-      def condition_for_datetime_type(column, value, like_pattern = nil)
+      def condition_for_datetime(column, value, like_pattern = nil)
         conversion = value[:from][:hour].blank? && value[:to][:hour].blank? ? :to_date : :to_time
         from_value, to_value = [:from, :to].collect do |field|
           Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[field][part].to_i}) rescue nil
@@ -113,9 +120,6 @@ module ActiveScaffold
           ["#{column.search_sql} BETWEEN ? AND ?", from_value.send(conversion).to_s(:db), to_value.send(conversion).to_s(:db)]
         end
       end
-      alias_method :condition_for_date_type, :condition_for_datetime_type
-      alias_method :condition_for_time_type, :condition_for_datetime_type
-      alias_method :condition_for_timestamp_type, :condition_for_datetime_type
 
       def condition_for_record_select_type(column, value, like_pattern = nil)
         if value.is_a?(Array)
