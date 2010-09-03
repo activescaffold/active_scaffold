@@ -29,7 +29,7 @@ module ActiveScaffold
     module DatePickerBridge
       module SearchColumnHelpers
         def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
-          options = column.options.merge(options).except!(:include_blank, :discard_time, :discard_date)
+          options = column.options.merge(options).except!(:include_blank, :discard_time, :discard_date, :value)
           options[:class] << " #{column.options[:class]}" if column.options[:class]
           text_field_tag("#{options[:name]}[#{name}]", current_search[name], options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]"))
         end
