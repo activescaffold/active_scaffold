@@ -10,14 +10,5 @@ action_links = active_scaffold_config.action_links
 <tr class="record <%= tr_class %>" id="<%= element_row_id(:action => :list, :id => record.id) %>" data-refresh="<%= url_for(params_for(:action => :row, :id => record.id, :_method => :get, :escape => false)).html_safe %>">
   <%= render :partial => 'list_record_columns', :locals => {:record => record, :columns => columns} %>
   <%= render :partial => 'list_actions', :locals => {:record => record, :url_options => url_options, :action_links => action_links} if action_links.any? {|link| link.type == :member } %>
-  <% unless @nested_auto_open.nil? ||  %>
-  <% action_links.each(:member) do |link| %>
-      <% if link.nested_link? && @nested_auto_open[link.column.name] && @records.length <= @nested_auto_open[link.column.name] && respond_to?(:render_component) %>
-      <% link_url_options = {:adapter => '_list_inline_adapter', :format => :js}.merge(action_link_url_options(link, url_options, record, options = {:reuse_eid => true})) 
-           link_id = get_action_link_id(link_url_options, record, link.column)%>
-        <%= render_component(link_url_options).html_safe %>
-        <%= javascript_tag("ActiveScaffold.ActionLink.get('#{link_id}').set_opened();") %>
-      <% end %> 
-    <% end %> 
-  <% end %>
+  <%= render_nested_view(action_links, url_options, record) unless @nested_auto_open.nil? %>
 </tr>
