@@ -6,7 +6,7 @@ module ActiveScaffold
           def active_scaffold_search_date_bridge(column, options)
             current_search = {'from' => nil, 'to' => nil, 'opt' => 'BETWEEN',
                               'number' => 1, 'unit' => 'DAYS', 'range' => nil}
-            current_search.merge!(field_search_params[column.name]) unless field_search_params[column.name].nil?
+            current_search.merge!(options[:value]) unless options[:value].nil?
             tags = []
             tags << active_scaffold_search_date_bridge_comparator_tag(column, options, current_search)
             tags << active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
