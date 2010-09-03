@@ -190,7 +190,7 @@ module ActiveScaffold
         if column.association
           url_options[:assoc_id] = url_options.delete(:id)
           url_options[:id] = record.send(column.association.name).id if column.singular_association?
-          link.eid = "#{params[:controller]}_#{ActiveSupport::SecureRandom.hex(10)}" unless options.has_key?(:reuse_eid)
+          link.eid = "#{controller_id.from(3)}_#{record.id}_#{column.association.name}" unless options.has_key?(:reuse_eid)
           url_options[:eid] = link.eid
         end
       end
