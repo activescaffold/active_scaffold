@@ -341,6 +341,19 @@ module ActiveScaffold
           end
         end
       end
+      
+      def render_nested_view(action_links, url_options, record)
+        rendered = []
+        action_links.each(:member) do |link| 
+          if link.nested_link? && @nested_auto_open[link.column.name] && @records.length <= @nested_auto_open[link.column.name] && respond_to?(:render_component) 
+            link_url_options = {:adapter => '_list_inline_adapter', :format => :js}.merge(action_link_url_options(link, url_options, record, options = {:reuse_eid => true})) 
+            link_id = get_action_link_id(link_url_options, record, link.column)
+            rendered << (render_component(link_url_options) + javascript_tag("ActiveScaffold.ActionLink.get('#{link_id}').set_opened();"))
+          end 
+        end
+        rendered.join(' ').html_safe
+      end  
+      
     end
   end
 end
