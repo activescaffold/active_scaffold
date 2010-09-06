@@ -168,7 +168,11 @@ module ActiveScaffold
       def get_action_link_id(url_options, record = nil, column = nil)
         id = url_options[:id] || url_options[:parent_id]
         id = "#{column.association.name}-#{record.id}" if column && column.plural_association?
-        id = "#{column.association.name}-#{record.send(column.association.name).id}" if column && column.singular_association?
+        if record.try(column.association.name.to_sym).present?
+          id = "#{column.association.name}-#{record.send(column.association.name).id}"
+        else
+          id = "#{column.association.name}-#{record.id}" unless record.nil?
+        end if column && column.singular_association?
         action_id = "#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}#{url_options[:action].to_s}"
         action_link_id(action_id, id)
       end
@@ -189,7 +193,7 @@ module ActiveScaffold
       def url_options_for_nested_link(column, record, link, url_options, options = {})
         if column.association
           url_options[:assoc_id] = url_options.delete(:id)
-          url_options[:id] = record.send(column.association.name).id if column.singular_association?
+          url_options[:id] = record.send(column.association.name).id if column.singular_association? && record.send(column.association.name).present?
           link.eid = "#{controller_id.from(3)}_#{record.id}_#{column.association.name}" unless options.has_key?(:reuse_eid)
           url_options[:eid] = link.eid
         end
