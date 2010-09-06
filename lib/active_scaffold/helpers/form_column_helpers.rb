@@ -209,7 +209,7 @@ module ActiveScaffold
 
       def active_scaffold_input_boolean(column, options)
         select_options = []
-        select_options << [as_(:_select_), nil] if column.column.null
+        select_options << [as_(:_select_), nil] if !column.virtual? && column.column.null
         select_options << [as_(:true), true]
         select_options << [as_(:false), false]
 
