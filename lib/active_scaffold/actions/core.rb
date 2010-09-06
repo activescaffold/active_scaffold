@@ -7,7 +7,7 @@ module ActiveScaffold::Actions
       base.helper_method :nested?
     end
     def render_field
-      @record = if params[:in_place_editing]
+      @record ||= if params[:in_place_editing]
         active_scaffold_config.model.find params[:id]
       else
         active_scaffold_config.model.new
