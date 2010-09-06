@@ -59,6 +59,8 @@
       :'!=' => '!=',
       :between => 'Entre',
       :optional_attributes => 'Further Options',
+      :null => 'Null',
+      :not_null => 'Not Null',
 
       # error_messages
       :internal_error => 'Erreur de la requête (code 500, Erreur interne)',
