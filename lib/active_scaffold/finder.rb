@@ -49,7 +49,7 @@ module ActiveScaffold
                 when :date, :time, :datetime, :timestamp
                   condition_for_datetime(column, value)
                 when :select, :multi_select, :country, :usa_state
-                ["#{column.search_sql} in (?)", value]
+                ["#{column.search_sql} in (?)", Array(value)]
                 else
                   if column.column.nil? || column.column.text?
                     ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
