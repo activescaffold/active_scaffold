@@ -59,7 +59,12 @@ module ActiveScaffold
         associated = options.delete :value
         associated = [associated].compact unless associated.is_a? Array
         associated.collect!(&:to_i)
-        select_options = options_for_association(column.association, false)
+        
+        if column.association
+          select_options = options_for_association(column.association, false)
+        else
+          select_options = Array(column.options[:options])
+        end
         return as_(:no_options) if select_options.empty?
 
         html = "<ul class=\"checkbox-list\" id=\"#{options[:id]}\">"
@@ -71,14 +76,14 @@ module ActiveScaffold
           html << "<li>"
           html << check_box_tag(options[:name], id, associated.include?(id), :id => this_id)
           html << "<label for='#{this_id}'>"
-          html << label
+          html << label.to_s
           html << "</label>"
           html << "</li>"
         end
 
         html << '</ul>'
         html << javascript_tag("new DraggableLists('#{options[:id]}')") if column.options[:draggable_lists]
-        html
+        html.html_safe
       end
 
       def active_scaffold_search_select(column, html_options)
@@ -89,7 +94,7 @@ module ActiveScaffold
           select_options = options_for_association(column.association, false)
         else
           method = column.name
-          select_options = column.options[:options]
+          select_options = Array(column.options[:options])
         end
 
         options = { :selected => associated }.merge! column.options
