@@ -59,7 +59,7 @@ module ActiveScaffold
         associated = options.delete :value
         associated = [associated].compact unless associated.is_a? Array
         associated.collect!(&:to_i)
-        select_options = options_for_association(column.association, true)
+        select_options = options_for_association(column.association, false)
         return as_(:no_options) if select_options.empty?
 
         html = "<ul class=\"checkbox-list\" id=\"#{options[:id]}\">"
@@ -86,7 +86,7 @@ module ActiveScaffold
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
           method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
-          select_options = options_for_association(column.association, true)
+          select_options = options_for_association(column.association, false)
         else
           method = column.name
           select_options = column.options[:options]
