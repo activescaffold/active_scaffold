@@ -90,7 +90,8 @@
       # error_messages
       :cant_destroy_record => "%{record} can't be destroyed",
       :internal_error => 'Request Failed (code 500, Internal Error)',
-      :version_inconsistency => 'Version inconsistency - this record has been modified since you started editing it.'
+      :version_inconsistency => 'Version inconsistency - this record has been modified since you started editing it.',
+      :record_not_saved => 'Failed to save record cause of an unknown error'
     }
   }
 }
