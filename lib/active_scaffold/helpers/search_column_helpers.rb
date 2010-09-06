@@ -67,23 +67,7 @@ module ActiveScaffold
         end
         return as_(:no_options) if select_options.empty?
 
-        html = "<ul class=\"checkbox-list\" id=\"#{options[:id]}\">"
-
-        options[:name] += '[]'
-        select_options.each_with_index do |option, i|
-          label, id = option
-          this_id = "#{options[:id]}_#{i}_id"
-          html << "<li>"
-          html << check_box_tag(options[:name], id, associated.include?(id), :id => this_id)
-          html << "<label for='#{this_id}'>"
-          html << label.to_s
-          html << "</label>"
-          html << "</li>"
-        end
-
-        html << '</ul>'
-        html << javascript_tag("new DraggableLists('#{options[:id]}')") if column.options[:draggable_lists]
-        html.html_safe
+        active_scaffold_checkbox_list(column, select_options, associated, options)
       end
 
       def active_scaffold_search_select(column, html_options)
