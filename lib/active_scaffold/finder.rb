@@ -128,6 +128,14 @@ module ActiveScaffold
           ["#{column.search_sql} = ?", value]
         end
       end
+      
+      def condition_for_null_type(column, value, like_pattern = nil)
+        if ActiveRecord::ConnectionAdapters::Column::TRUE_VALUES.include?(value)
+          ["#{column.search_sql} is null"]
+        else
+          ["#{column.search_sql} is not null"]
+        end
+      end
 
       def like_pattern(text_search)
         case text_search
