@@ -85,7 +85,7 @@ module ActiveScaffold::Actions
         @record.errors.add_to_base as_(:version_inconsistency)
         self.successful=false
       rescue ActiveRecord::RecordNotSaved
-        @record.errors.add_to_base as_("Failed to save record cause of an unknown error") if @record.errors.empty?
+        @record.errors.add_to_base as_(:record_not_saved) if @record.errors.empty?
         self.successful = false
       end
     end

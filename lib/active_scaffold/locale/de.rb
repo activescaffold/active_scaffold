@@ -84,7 +84,8 @@
       # error_messages
       :cant_destroy_record => "%{record} kann nicht gelöscht werden",
       :internal_error => 'Fehler bei der Verarbeitung (code 500, Interner Fehler)',
-      :version_inconsistency => 'Inkonsistente Versionen - dieser Eintrag wurde verändert nachdem Sie mit der Bearbeitung begonnen haben.'
+      :version_inconsistency => 'Inkonsistente Versionen - dieser Eintrag wurde verändert nachdem Sie mit der Bearbeitung begonnen haben.',
+      :record_not_saved => 'Eintrag kann nicht gespeichert werden. Ursache unbekannt.'
     }
   }
 }

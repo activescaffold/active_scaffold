@@ -82,8 +82,10 @@
       :not_null => 'Not Null',
 
       # error_messages
+      :cant_destroy_record => "%{record} can't be destroyed",
       :internal_error => 'Erreur de la requête (code 500, Erreur interne)',
       :version_inconsistency => "Version incomplète - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer.",
+      :record_not_saved => 'Failed to save record cause of an unknown error'
     }
   }
 }
