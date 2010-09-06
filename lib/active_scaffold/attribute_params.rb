@@ -101,12 +101,12 @@ module ActiveScaffold
       if value.is_a?(Hash)
         # this is just for backwards compatibility. we should clean this up in 2.0.
         if column.form_ui == :select
-          ids = if column.singular_association?
-            value[:id]
+          if column.singular_association?
+            column.association.klass.find(value[:id])
           else
-            value.values.collect {|hash| hash[:id]}
+            ids = value.values.collect {|hash| hash[:id]}
+            (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
           end
-          (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
 
         elsif column.singular_association?
           manage_nested_record_from_params(parent_record, column, value)
