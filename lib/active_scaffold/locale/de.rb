@@ -58,7 +58,7 @@
       :'<' => '<',
       :'!=' => '!=',
       :between => 'Zwischen',
-      :optional_attributes => 'Further Options',
+      :optional_attributes => 'Weitere',
       :null => 'Definiert',
       :not_null => 'Undefiniert',
 
