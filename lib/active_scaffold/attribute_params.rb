@@ -121,7 +121,10 @@ module ActiveScaffold
           column.association.klass.find(value) if value and not value.empty?
         elsif column.plural_association?
           # it's an array of ids
-          column.association.klass.find(value) if value and not value.empty?
+          if value and not value.empty?
+            ids = value.select {|id| id.respond_to?(:empty?) ? !id.empty? : true}
+            ids.empty? ? [] : column.association.klass.find(ids) 
+          end
         elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
           native = '.'
           delimiter = I18n.t('number.format.delimiter')
@@ -193,6 +196,8 @@ module ActiveScaffold
 
         if value.is_a?(Hash)
           attributes_hash_is_empty?(value, klass)
+        elsif value.is_a?(Array)
+          value.any? {|id| id.respond_to?(:empty?) ? !id.empty? : true}
         else
           value.respond_to?(:empty?) ? value.empty? : false
         end
