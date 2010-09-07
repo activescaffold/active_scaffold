@@ -9,8 +9,7 @@ options = {:onsubmit => onsubmit,
            :method => method,
            'data-loading' => true}
 if xhr && as_action_config.multipart? # file_uploads
-  form_remote_upload_tag url_options.merge({:iframe => true}),
-                         options.merge({:loading => "$('#{loading_indicator_id(:action => form_action, :id => params[:id])}').style.visibility = 'visible';"})
+  form_remote_upload_tag url_options.merge({:iframe => true}), options
 else
   options[:remote] = true if xhr && !as_action_config.multipart?
   form_tag url_options, options

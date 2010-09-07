@@ -21,9 +21,7 @@ document.observe("dom:loaded", function() {
       // as a result form is disabled but never reenabled..
     } else {
       if (as_form && as_form.readAttribute('data-loading') == 'true') {
-        var loading_indicator = $(as_form.id.sub('-form', '-loading-indicator'));
-        if (loading_indicator) loading_indicator.style.visibility = 'visible';
-        as_form.disable();
+        ActiveScaffold.disable_form(as_form);
       }
     }
     return true;
@@ -31,9 +29,7 @@ document.observe("dom:loaded", function() {
   document.on('ajax:complete', 'form.as_form', function(event) {
     var as_form = event.findElement('form');
     if (as_form && as_form.readAttribute('data-loading') == 'true') {
-      var loading_indicator = $(as_form.id.sub('-form', '-loading-indicator'));
-      if (loading_indicator) loading_indicator.style.visibility = 'hidden';
-      as_form.enable();
+      ActiveScaffold.enable_form(as_form);
       event.stop();
       return false;
     }
@@ -45,6 +41,13 @@ document.observe("dom:loaded", function() {
       event.stop();
       return false;
     }
+  });
+  document.on('submit', 'form.as_form.as_remote_upload', function(event) {
+    var as_form = event.findElement('form');
+    if (as_form && as_form.readAttribute('data-loading') == 'true') {
+      setTimeout("ActiveScaffold.disable_form('" + as_form.id + "')", 10);
+    }
+    return true;
   });
   document.on('ajax:before', 'a.as_action', function(event) {
     var action_link = ActiveScaffold.ActionLink.get(event.findElement());
@@ -366,6 +369,20 @@ var ActiveScaffold = {
   
   reset_form: function(element) {
     $(element).reset();
+  },
+  
+  disable_form: function(as_form) {
+    as_form = $(as_form)
+    var loading_indicator = $(as_form.id.sub('-form', '-loading-indicator'));
+    if (loading_indicator) loading_indicator.style.visibility = 'visible';
+    as_form.disable();
+  },
+  
+  enable_form: function(as_form) {
+    as_form = $(as_form)
+    var loading_indicator = $(as_form.id.sub('-form', '-loading-indicator'));
+    if (loading_indicator) loading_indicator.style.visibility = 'hidden';
+    as_form.enable();
   },
   
   focus_first_element_of_form: function(form_element) {

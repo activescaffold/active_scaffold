@@ -2,20 +2,15 @@ $(document).ready(function() {
   $('form.as_form').live('ajax:loading', function(event) {
     var as_form = $(this).closest("form");
     if (as_form && as_form.attr('data-loading') == 'true') {
-      var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
-      if (loading_indicator) loading_indicator.css('visibility','visible');
-      $('input[type=submit]', as_form).attr('disabled', 'disabled');
-      $("input:enabled,select:enabled", as_form).attr('disabled', 'disabled');
+      ActiveScaffold.disable_form(as_form);
     }
     return true;
   });
+  
   $('form.as_form').live('ajax:complete', function(event) {
     var as_form = $(this).closest("form");
     if (as_form && as_form.attr('data-loading') == 'true') {
-      var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
-      if (loading_indicator) loading_indicator.css('visibility','hidden');
-      $('input[type=submit]', as_form).attr('disabled', '');
-      $("input:disabled,select:disabled", as_form).attr('disabled', '');
+      ActiveScaffold.enable_form(as_form);
     }
   });
   $('form.as_form').live('ajax:failure', function(event) {
@@ -23,6 +18,13 @@ $(document).ready(function() {
     if (as_div) {
       ActiveScaffold.report_500_response(as_div)
     }
+  });
+  $('form.as_form.as_remote_upload').live('submit', function(event) {
+    var as_form = $(this).closest("form");
+    if (as_form && as_form.attr('data-loading') == 'true') {
+      setTimeout("ActiveScaffold.disable_form('" + as_form.attr('id') + "')", 10);
+    }
+    return true;
   });
   $('a.as_action').live('ajax:before', function(event) {
     var action_link = ActiveScaffold.ActionLink.get($(this));
@@ -415,6 +417,24 @@ var ActiveScaffold = {
     if (typeof(element) == 'string') element = '#' + element;
     $(element).get(0).reset();
   },
+  
+  disable_form: function(as_form) {
+    if (typeof(as_form) == 'string') as_form = '#' + as_form;
+    as_form = $(as_form)
+    var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
+    if (loading_indicator) loading_indicator.css('visibility','visible');
+    $('input[type=submit]', as_form).attr('disabled', 'disabled');
+    $("input:enabled,select:enabled", as_form).attr('disabled', 'disabled');
+  },
+  
+  enable_form: function(as_form) {
+    if (typeof(as_form) == 'string') as_form = '#' + as_form;
+    as_form = $(as_form)
+    var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
+    if (loading_indicator) loading_indicator.css('visibility','hidden');
+    $('input[type=submit]', as_form).attr('disabled', '');
+    $("input:disabled,select:disabled", as_form).attr('disabled', '');
+  },  
   
   focus_first_element_of_form: function(form_element) {
     if (typeof(form_element) == 'string') form_element = '#' + form_element;

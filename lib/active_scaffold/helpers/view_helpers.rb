@@ -61,14 +61,9 @@ module ActiveScaffold
       end
 
       def form_remote_upload_tag(url_for_options = {}, options = {})
-        onsubmits = options[:onsubmit] ? [ options[:onsubmit] ] : [ ]
-        # simulate a "loading". the setTimeout prevents the Form.disable from being called before the submit, so that data actually posts.
-        onsubmits << "setTimeout(function() { #{options[:loading]} }, 10); "
-        onsubmits << "return true" # make sure the form still submits
-
-        options[:onsubmit] = onsubmits * ';'
         options[:target] = action_iframe_id(url_for_options)
         options[:multipart] ||= true
+        options[:class] = "#{options[:class]} as_remote_upload".strip 
         output=""
         output << form_tag(url_for_options, options)
         (output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>").html_safe
