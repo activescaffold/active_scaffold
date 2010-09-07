@@ -57,7 +57,6 @@ module ActiveScaffold
           else
             authorized = record.authorized_for?(:crud_type => link.crud_type)
           end
-          #return "<a class='disabled'>#{text}</a>" unless authorized
           # to make html render properly
           return "<a class='disabled'>#{text}</a>".html_safe unless authorized
           render_action_link(link, url_options, record)
@@ -248,7 +247,11 @@ module ActiveScaffold
       # ==========
 
       def inplace_edit?(record, column)
-        column.inplace_edit and record.authorized_for?(:crud_type => :update, :column => column.name)
+        if column.inplace_edit
+          editable = controller.send(:update_authorized?, record) if controller.respond_to?(:update_authorized?)
+          editable = record.authorized_for?(:action => :update, :column => column.name) if editable.nil? || editable == true
+          editable
+        end
       end
 
       def inplace_edit_cloning?(column)
