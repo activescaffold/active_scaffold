@@ -261,7 +261,6 @@ module ActiveScaffold::DataStructures
       @autolink = !@association.nil?
       @active_record_class = active_record_class
       @table = active_record_class.table_name
-      @weight = [:created_at, :updated_at].include?(self.name) ? 1 : 0
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
@@ -270,12 +269,14 @@ module ActiveScaffold::DataStructures
       @form_ui = :checkbox if @column and @column.type == :boolean
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
-
+      
       # default all the configurable variables
       self.css_class = ''
       self.required = active_record_class.validators_on(self.name).map(&:class).include? ActiveModel::Validations::PresenceValidator
       self.sort = true
       self.search_sql = true
+      
+      @weight = estimate_weight
 
       self.includes = (association and not polymorphic_association?) ? [association.name] : []
     end
@@ -307,7 +308,7 @@ module ActiveScaffold::DataStructures
         end
       end
     end
-
+    
     def initialize_search_sql
       self.search_sql = unless self.virtual?
         if association.nil?
@@ -326,6 +327,22 @@ module ActiveScaffold::DataStructures
     # the table.field name for this column, if applicable
     def field
       @field ||= [@active_record_class.connection.quote_column_name(@table), field_name].join('.')
+    end
+    
+    def estimate_weight
+      if singular_association?
+        400
+      elsif plural_association?
+        500
+      elsif [:created_at, :updated_at].include?(self.name) 
+        600
+      elsif [:name, :label, :title].include?(self.name)
+        100
+      elsif required?
+        200
+      else
+        300
+      end
     end
   end
 end
