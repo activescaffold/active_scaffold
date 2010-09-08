@@ -221,35 +221,43 @@ module ActiveScaffold
       
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => options[:sorting].try(:clause),
-                         :conditions => search_conditions,
+                         :where => search_conditions,
                          :joins => joins_for_finder,
-                         :include => options[:count_includes]}
+                         :includes => options[:count_includes]}
                          
       finder_options.merge! custom_finder_options
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count = klass.count(finder_options.reject{|k,v| [:select, :order].include? k}) unless options[:pagination] == :infinite
-
+      count_query = append_to_query(klass, finder_options.reject{|k, v| [:select, :order].include?(k)})
+      count = count_query.count unless options[:pagination] == :infinite
+  
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when finder_options contains a :group key
       count = count.length if count.is_a? ActiveSupport::OrderedHash
 
-      finder_options.merge! :include => full_includes
+      finder_options.merge! :includes => full_includes
 
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          sorted_collection = sort_collection_by_column(klass.all(finder_options), *options[:sorting].first)
+          sorted_collection = sort_collection_by_column(append_to_query(klass, finder_options).all, *options[:sorting].first)
           sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
           sorted_collection
         end
       else
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
           finder_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
-          klass.all(finder_options)
+          append_to_query(klass, finder_options).all
         end
       end
       pager.page(options[:page])
+    end
+    
+    def append_to_query(query, options)
+      options.assert_valid_keys :where, :select, :group, :order, :limit, :offset, :joins, :includes, :lock, :readonly, :from
+      options.reject{|k, v| v.blank?}.inject(query) do |query, (k, v)|
+        query.send((k.to_sym), v) 
+      end
     end
 
     def joins_for_finder
