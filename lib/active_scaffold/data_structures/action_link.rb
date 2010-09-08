@@ -42,21 +42,25 @@ module ActiveScaffold::DataStructures
     end
 
     # if the action requires confirmation
-    attr_writer :confirm
+    def confirm=(value)
+      @dhtml_confirm = nil if value
+      @confirm = value
+    end
     def confirm(label = '')
       @confirm.is_a?(String) ? @confirm : as_(@confirm, :label => label)
     end
     def confirm?
-      @confirm ? true : false
+      !!@confirm
     end
     
     # if the action uses a DHTML based (i.e. 2-phase) confirmation
-    attr_writer :dhtml_confirm
-    def dhtml_confirm
-      @dhtml_confirm
+    attr_accessor :dhtml_confirm
+    def dhtml_confirm=(value)
+      @confirm = nil if value
+      @dhtml_confirm = value
     end
     def dhtml_confirm?
-      @dhtml_confirm
+      !!@dhtml_confirm
     end
 
     # what method to call on the controller to see if this action_link should be visible
