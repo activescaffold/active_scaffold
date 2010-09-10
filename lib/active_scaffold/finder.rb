@@ -56,6 +56,11 @@ module ActiveScaffold
       end
 
       def condition_for_integer_type(column, value, like_pattern)
+        if column.options[:format]
+          value['from'] = column.number_to_native(value['from'])
+          value['to'] = column.number_to_native(value['to'])
+        end
+
         if value['from'].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value['opt'])
           nil
         elsif value['opt'] == 'BETWEEN'
