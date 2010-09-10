@@ -119,6 +119,19 @@ module ActiveScaffold
                 end
               end
             end
+            
+            def human_condition_for_date_bridge_type(column, value)
+              case value[:opt]
+              when 'RANGE'
+                "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value[:range]).downcase}"
+              when 'PAST', 'FUTURE'
+                "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt]).downcase} #{as_(value[:number])} #{as_(value[:unit]).downcase}"
+              else
+                from, to = date_bridge_from_to(column, value)
+                "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt]).downcase} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '-' + I18n.l(to) : ''}"
+              end
+            end
+            
           end
         end
       end

@@ -41,7 +41,7 @@ module ActiveScaffold
             unless column.search_sql.instance_of? Proc
               case search_ui
                 when :boolean, :checkbox
-                ["#{column.search_sql} = ?", column.column.type_cast(value)]
+                  ["#{column.search_sql} = ?", column.column.type_cast(value)]
                 when :integer, :decimal, :float
                   condition_for_numeric(column, value)
                 when :string, :range
@@ -103,21 +103,26 @@ module ActiveScaffold
           nil
         end
       end
-
-      def condition_for_datetime(column, value, like_pattern = nil)
+      
+      def condition_value_for_datetime(value)
         conversion = value[:from][:hour].blank? && value[:to][:hour].blank? ? :to_date : :to_time
         from_value, to_value = [:from, :to].collect do |field|
           Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[field][part].to_i}) rescue nil
         end
+        return from_value, to_value
+      end
+
+      def condition_for_datetime(column, value, like_pattern = nil)
+        from_value, to_value = condition_value_for_datetime(value)
 
         if from_value.nil? and to_value.nil?
           nil
         elsif !from_value
-          ["#{column.search_sql} <= ?", to_value.send(conversion).to_s(:db)]
+          ["#{column.search_sql} <= ?", to_value.to_s(:db)]
         elsif !to_value
-          ["#{column.search_sql} >= ?", from_value.send(conversion).to_s(:db)]
+          ["#{column.search_sql} >= ?", from_value.to_s(:db)]
         else
-          ["#{column.search_sql} BETWEEN ? AND ?", from_value.send(conversion).to_s(:db), to_value.send(conversion).to_s(:db)]
+          ["#{column.search_sql} BETWEEN ? AND ?", from_value.to_s(:db), to_value.to_s(:db)]
         end
       end
 
@@ -145,6 +150,45 @@ module ActiveScaffold
           else '?'
         end
       end
+      
+      def override_human_condition?(search_ui)
+        respond_to?(override_human_condition(search_ui))
+      end
+  
+      # the naming convention for overriding human condition search_ui types
+      def override_human_condition(search_ui)
+        "human_condition_for_#{search_ui}_type"
+      end
+      
+      def human_condition_for_column(column, value)
+        if column.search_ui and override_human_condition?(column.search_ui)
+          send(override_human_condition(column.search_ui), column, value)
+        else
+          search_ui = column.search_ui
+          search_ui ||= column.column.type if column.column
+          case search_ui
+          when :integer, :decimal, :float
+            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt])} #{value[:from]} #{value[:opt] == 'BETWEEN' ? '-' + value[:to].to_s : ''}"
+          when :string
+            opt = ActiveScaffold::Finder::StringComparators.index(value[:opt]) || value[:opt]
+            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(opt).downcase} '#{value[:from]}' #{opt == 'BETWEEN' ? '-' + value[:to].to_s : ''}"
+          when :date, :time, :datetime, :timestamp
+            from, to = condition_value_for_datetime(value)
+            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt])} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '-' + I18n.l(to) : ''}"
+          when :select, :multi_select
+            associated = value
+            associated = [associated].compact unless associated.is_a? Array
+            associated = column.association.klass.find(associated.map(&:to_i)).collect(&:to_label) if column.association
+            "#{column.active_record_class.human_attribute_name(column.name)} = #{associated.join(', ')}"
+          when :record_select
+            associated = value
+            "#{column.active_record_class.human_attribute_name(column.name)} = #{associated.to_s}"
+          when :boolean, :checkbox
+            label = column.column.type_cast(value) ? as_(:true) : as_(:false)
+            "#{column.active_record_class.human_attribute_name(column.name)} = #{label}"
+          end
+        end
+      end    
     end
 
     NumericComparators = [
