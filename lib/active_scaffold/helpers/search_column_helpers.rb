@@ -75,7 +75,7 @@ module ActiveScaffold
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
           method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
-          select_options = options_for_association(column.association, false)
+          select_options = options_for_association(column.association, true)
         else
           method = column.name
           select_options = Array(column.options[:options])
@@ -143,9 +143,14 @@ module ActiveScaffold
       alias_method :active_scaffold_search_string, :active_scaffold_search_range
 
       def active_scaffold_search_record_select(column, options)
-        begin
+        value = field_search_record_select_value(column)
+        active_scaffold_record_select(column, options, value, column.options[:multiple])
+      end
+      
+      def field_search_record_select_value(column)
+        begin 
           value = field_search_params[column.name]
-          value = unless value.blank?
+          unless value.blank?
             if column.options[:multiple]
               column.association.klass.find value.collect!(&:to_i)
             else
@@ -156,8 +161,6 @@ module ActiveScaffold
           logger.error Time.now.to_s + "Sorry, we are not that smart yet. Attempted to restore search values to search fields but instead got -- #{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
           raise e
         end
-
-        active_scaffold_record_select(column, options, value, column.options[:multiple])
       end
 
       def field_search_datetime_value(value)
