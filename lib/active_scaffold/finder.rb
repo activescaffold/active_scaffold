@@ -104,16 +104,20 @@ module ActiveScaffold
         end
       end
       
-      def condition_value_for_datetime(value)
-        conversion = value[:from][:hour].blank? && value[:to][:hour].blank? ? :to_date : :to_time
-        from_value, to_value = [:from, :to].collect do |field|
+      def condition_value_for_datetime(value, conversion = :to_time)
+        if value.is_a? Hash
           Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[field][part].to_i}) rescue nil
-        end
-        return from_value, to_value
+        elsif value.respond_to?(:strftime)
+          value.send(conversion)
+        else
+          Time.zone.parse(value).in_time_zone.send(conversion) rescue nil
+        end unless value.nil? || value.blank?
       end
-
+            
       def condition_for_datetime(column, value, like_pattern = nil)
-        from_value, to_value = condition_value_for_datetime(value)
+        conversion = column.column.type == :date ? :to_date : :to_time
+        from_value = condition_value_for_datetime(value[:from], conversion)
+        to_value = condition_value_for_datetime(value[:to], conversion)
 
         if from_value.nil? and to_value.nil?
           nil
@@ -173,7 +177,9 @@ module ActiveScaffold
             opt = ActiveScaffold::Finder::StringComparators.index(value[:opt]) || value[:opt]
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(opt).downcase} '#{value[:from]}' #{opt == 'BETWEEN' ? '-' + value[:to].to_s : ''}"
           when :date, :time, :datetime, :timestamp
-            from, to = condition_value_for_datetime(value)
+            conversion = column.column.type == :date ? :to_date : :to_time
+            from = condition_value_for_datetime(value[:from], conversion)
+            to = condition_value_for_datetime(value[:to], conversion)
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt])} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '-' + I18n.l(to) : ''}"
           when :select, :multi_select
             associated = value

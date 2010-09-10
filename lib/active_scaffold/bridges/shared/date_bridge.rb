@@ -59,29 +59,28 @@ module ActiveScaffold
           module ClassMethods
             def condition_for_date_bridge_type(column, value, like_pattern)
               operator = ActiveScaffold::Finder::NumericComparators.include?(value[:opt]) && value[:opt] != 'BETWEEN' ? value[:opt] : nil
-              conversion = column.column.type == :date ? 'to_date' : 'to_time'
-              
               from_value, to_value = date_bridge_from_to(column, value)
               
               if column.search_sql.is_a? Proc
                 column.search_sql.call(from_value, to_value, operator)
               else
                 unless operator.nil?
-                  ["#{column.search_sql} #{value[:opt]} ?", from_value.send(conversion).to_s(:db)] unless from_value.nil?
+                  ["#{column.search_sql} #{value[:opt]} ?", from_value.to_s(:db)] unless from_value.nil?
                 else
-                  ["#{column.search_sql} BETWEEN ? AND ?", from_value.send(conversion).to_s(:db), to_value.send(conversion).to_s(:db)] unless from_value.nil? && to_value.nil?  
+                  ["#{column.search_sql} BETWEEN ? AND ?", from_value.to_s(:db), to_value.to_s(:db)] unless from_value.nil? && to_value.nil?  
                 end
               end
             end
             
             def date_bridge_from_to(column, value)
+              conversion = column.column.type == :date ? :to_date : :to_time
               case value[:opt]
               when 'RANGE'
-                date_bridge_from_to_for_range(column, value)
+                date_bridge_from_to_for_range(column, value).collect(&conversion)
               when 'PAST', 'FUTURE'
-                date_bridge_from_to_for_trend(column, value)
+                date_bridge_from_to_for_trend(column, value).collect(&conversion)
               else
-                ['from', 'to'].collect { |field| Time.zone.parse(value[field]) rescue nil}
+                ['from', 'to'].collect { |field| condition_value_for_datetime(value[field], conversion)}
               end
             end
             
