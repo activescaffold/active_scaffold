@@ -32,9 +32,10 @@ module ActiveScaffold
       end
       
       module SearchColumnHelpers
-        def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name) 
+        def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
+          value = controller.class.condition_value_for_datetime(current_search[name], column.column.type == :date ? :to_date : :to_time)
           calendar_date_select("record", column.name, 
-            {:name => "#{options[:name]}[#{name}]", :value => current_search[name], :class => 'text-input', :id => "#{options[:id]}_#{name}", :time => column_datetime?(column) ? true : false})
+            {:name => "#{options[:name]}[#{name}]", :value => (value ? l(value) : nil), :class => 'text-input', :id => "#{options[:id]}_#{name}", :time => column_datetime?(column) ? true : false})
         end
       end
   
