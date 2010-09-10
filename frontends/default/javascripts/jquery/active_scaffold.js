@@ -199,7 +199,7 @@ $(document).ready(function() {
     event.data_url = url;
     return true;
   });
-  $('input.update_form').live('change', function(event) {
+  $('input.update_form, select.update_form').live('change', function(event) {
       var element = $(this);
       var as_form = element.closest('form.as_form');
       $.ajax({

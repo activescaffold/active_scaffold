@@ -225,7 +225,7 @@ document.observe("dom:loaded", function() {
     event.memo.url = url;
     return true;
   });
-  document.on('change', 'input.update_form', function(event) {
+  document.on('change', 'input.update_form, select.update_form', function(event) {
     var element = event.findElement();
     var as_form = element.up('form.as_form');
     
