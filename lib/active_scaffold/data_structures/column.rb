@@ -277,6 +277,25 @@ module ActiveScaffold::DataStructures
       order_weight != 0 ? order_weight : self.name.to_s <=> other_column.name.to_s
     end
 
+    def number_to_native(value)
+      native = '.' # native ruby separator
+      format = {:separator => '', :delimiter => ''}.merge! I18n.t('number.format', :default => {})
+      specific = case self.options[:format]
+      when :currency
+        I18n.t('number.currency.format', :default => nil)
+      when :size
+        I18n.t('number.human.format', :default => nil)
+      when :percentage
+        I18n.t('number.percentage.format', :default => nil)
+      end
+      format.merge! specific unless specific.nil?
+      unless format[:separator].blank? || !value.include?(format[:separator]) && value.include?(native) && (format[:delimiter] != native || value !~ /\.\d{3}$/)
+        value.gsub(/[^0-9\-#{format[:separator]}]/, '').gsub(format[:separator], native)
+      else
+        value
+      end
+    end
+
     protected
 
     def initialize_sort
