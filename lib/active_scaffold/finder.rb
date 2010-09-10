@@ -58,6 +58,15 @@ module ActiveScaffold
       end
 
       def condition_for_integer_type(column, value, like_pattern = nil)
+        if column.options[:format]
+          if value.is_a?(Hash)
+            value[:from] = column.number_to_native(value[:from])
+            value[:to] = column.number_to_native(value[:to])
+          else
+            value = column.number_to_native(value)
+          end
+        end
+
         if !value.is_a?(Hash)
           ["#{column.search_sql} = ?", column.column.nil? ? value.to_f : column.column.type_cast(value)]
         elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
