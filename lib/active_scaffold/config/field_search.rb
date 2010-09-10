@@ -49,7 +49,7 @@ module ActiveScaffold::Config
     # * false: LIKE ?
     # Default is :full
     attr_accessor :text_search
-
+    
     # the ActionLink for this action
     attr_accessor :link
     
@@ -65,6 +65,10 @@ module ActiveScaffold::Config
     # default search params
     # default_params = {:title => {"from"=>"test", "to"=>"", "opt"=>"%?%"}} 
     attr_accessor :default_params
+    
+    # human conditions
+    # instead of just filtered you may show the user a humanized search condition statment
+    attr_accessor :human_conditions
     
   end
 end

@@ -47,4 +47,6 @@ ActiveScaffold::Finder::ClassMethods.module_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
   alias_method :condition_for_date_picker_type, :condition_for_date_bridge_type
   alias_method :condition_for_datetime_picker_type, :condition_for_date_picker_type
+  alias_method :human_condition_for_date_picker_type, :human_condition_for_date_bridge_type
+  alias_method :human_condition_for_datetime_picker_type, :human_condition_for_date_bridge_type
 end
