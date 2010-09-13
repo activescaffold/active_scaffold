@@ -58,7 +58,7 @@ module ActiveScaffold::Actions
         if search_conditions.blank?
           @filtered = false
         else
-          @filtered = human_conditions.nil? ? true : human_conditions.compact.join(' and ')
+          @filtered = human_conditions.nil? ? true : human_conditions.compact.join(I18n.t('support.array.two_words_connector'))
         end
 
         includes_for_search_columns = columns.collect{ |column| column.includes}.flatten.uniq.compact
