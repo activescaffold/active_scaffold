@@ -181,14 +181,11 @@ module ActiveScaffold
             from = condition_value_for_datetime(value[:from], conversion)
             to = condition_value_for_datetime(value[:to], conversion)
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt])} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '-' + I18n.l(to) : ''}"
-          when :select, :multi_select
+          when :select, :multi_select, :record_select
             associated = value
             associated = [associated].compact unless associated.is_a? Array
             associated = column.association.klass.find(associated.map(&:to_i)).collect(&:to_label) if column.association
             "#{column.active_record_class.human_attribute_name(column.name)} = #{associated.join(', ')}"
-          when :record_select
-            associated = value
-            "#{column.active_record_class.human_attribute_name(column.name)} = #{associated.to_s}"
           when :boolean, :checkbox
             label = column.column.type_cast(value) ? as_(:true) : as_(:false)
             "#{column.active_record_class.human_attribute_name(column.name)} = #{label}"
