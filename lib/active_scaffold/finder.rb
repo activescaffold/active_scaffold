@@ -139,10 +139,13 @@ module ActiveScaffold
       end
       
       def condition_for_null_type(column, value, like_pattern = nil)
-        if ActiveRecord::ConnectionAdapters::Column::TRUE_VALUES.include?(value)
+        case value.to_sym
+        when :null
           ["#{column.search_sql} is null"]
-        else
+        when :not_null
           ["#{column.search_sql} is not null"]
+        else
+          nil
         end
       end
 
@@ -189,6 +192,8 @@ module ActiveScaffold
           when :boolean, :checkbox
             label = column.column.type_cast(value) ? as_(:true) : as_(:false)
             "#{column.active_record_class.human_attribute_name(column.name)} = #{label}"
+          when :null
+            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value.to_sym)}"
           end
         end
       end    
@@ -208,6 +213,12 @@ module ActiveScaffold
       :begins_with => '?%',
       :ends_with   => '%?'
     }
+    NullComparators = [
+      :null,
+      :not_null
+    ]
+    
+    
 
     def self.included(klass)
       klass.extend ClassMethods

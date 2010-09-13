@@ -111,9 +111,8 @@ module ActiveScaffold
       def active_scaffold_search_null(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
-        select_options << [as_(:null), true]
-        select_options << [as_(:not_null), false]
-        select_tag(options[:name], options_for_select(select_options, ActiveRecord::ConnectionAdapters::Column::TRUE_VALUES.include?(field_search_params[column.name])))
+        select_options.concat ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp), comp]}
+        select_tag(options[:name], options_for_select(select_options, field_search_params[column.name]))
       end
 
       def field_search_params_range_values(column)
