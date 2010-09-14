@@ -86,7 +86,12 @@
       :optional_attributes => 'Further Options',
       :null => 'Null',
       :not_null => 'Not Null',
-
+      :date_picker_options => {
+        :weekHeader => 'Wk',
+        :firstDay => 0,
+        :isRTL => false,
+        :showMonthAfterYear => false
+      },
       # error_messages
       :cant_destroy_record => "%{record} can't be destroyed",
       :internal_error => 'Request Failed (code 500, Internal Error)',

@@ -1,3 +1,13 @@
+class File #:nodoc:
+
+  unless File.respond_to?(:binread)
+    def self.binread(file)
+      File.open(file, 'rb') { |f| f.read }
+    end
+  end
+
+end 
+
 ActiveScaffold::Config::Core.class_eval do
   def initialize_with_date_picker(model_id)
     initialize_without_date_picker(model_id)
@@ -27,6 +37,61 @@ end
 module ActiveScaffold
   module Bridges
     module DatePickerBridge
+      DATE_FORMAT_CONVERSION = {
+        '%a' => 'D',
+        '%A' => 'DD',
+        '%b' => 'M',
+        '$B' => 'MM',
+        '%d' => 'dd',
+        '%j' => 'oo',
+        '%m' => 'mm',
+        '%y' => 'y',
+        '%Y' => 'yy'
+      }  
+      
+      def self.localization(js_file)
+        date_options = I18n.t 'date'
+        date_picker_options = { :closeText => as_(:close),
+          :prevText => as_(:previous),
+          :nextText => as_(:next),
+          :currentText => as_(:today),
+          :monthNames => date_options[:month_names][1, (date_options[:month_names].length - 1)],
+          :monthNamesShort => date_options[:abbr_month_names][1, (date_options[:abbr_month_names].length - 1)],
+          :dayNames => date_options[:day_names],
+          :dayNamesShort => date_options[:abbr_day_names],
+          :dayNamesMin => date_options[:abbr_day_names]
+        }.merge(as_(:date_picker_options))
+        
+        date_time_picker_options = 
+        # what about time format
+        js_format = self.date_format_converter(date_options[:formats][:default])
+        date_picker_options[:dateFormat] = js_format unless js_format.nil? 
+        localization = "jQuery(function($){
+        $.datepicker.regional['#{I18n.locale}'] = #{date_picker_options.to_json};
+  $.datepicker.setDefaults($.datepicker.regional['#{I18n.locale}']);
+});\n"        
+        prepend_js_file(js_file, localization)        
+      end
+      
+      def self.prepend_js_file(js_file, prepend)
+        content = File.binread(js_file)
+        content.gsub!(/\A/, prepend)
+        File.open(js_file, 'wb') { |file| file.write(content) }
+      end
+      
+      def self.date_format_converter(rails_format)
+        if rails_format =~ /%[cUWwxX]/
+          Rails.logger.warning("AS DatePickerBridge: Can t convert rails date format: #{rails_format} to jquery datepicker format. Options %c, %U, %W, %w, %x %X are not supported by datepicker]")
+          nil
+        else
+          js_format = rails_format.dup
+          DATE_FORMAT_CONVERSION.each do |key, value|
+            js_format.gsub!(Regexp.new("#{key}"), value)
+          end
+          js_format
+        end
+      end
+      
       module SearchColumnHelpers
         def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
           value = controller.class.condition_value_for_datetime(current_search[name], column.column.type == :date ? :to_date : :to_time)

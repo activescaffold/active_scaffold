@@ -80,6 +80,12 @@
       :optional_attributes => 'Weitere',
       :null => 'Definiert',
       :not_null => 'Undefiniert',
+      :date_picker_options => {
+        :weekHeader => 'Wo',
+				:firstDay => 1,
+		    :isRTL => false,
+		    :showMonthAfterYear => false,
+      },
 
       # error_messages
       :cant_destroy_record => "%{record} kann nicht gelöscht werden",
