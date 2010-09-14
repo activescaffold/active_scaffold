@@ -66,3 +66,4 @@ ja:
     cant_destroy_record: "%{record}を削除で来ません"
     internal_error: 'リクエストが失敗しました（コード500: 内部エラー）'
     version_inconsistency: 'バージョンが一致しません - あなたが編集している間にこのレコードが変更されました。'
+    failed_to_save_record: 'Failed to save record cause of an unknown error'

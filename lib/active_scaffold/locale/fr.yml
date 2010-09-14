@@ -65,3 +65,4 @@
       # error_messages
     internal_error: 'Erreur de la requête (code 500, Erreur interne)'
     version_inconsistency: "Version incomplète - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer."
+    failed_to_save_record: 'Failed to save record cause of an unknown error'

@@ -69,3 +69,4 @@
     cant_destroy_record: "%{record} can't be destroyed"
     internal_error: 'Request Failed (code 500, Internal Error)'
     version_inconsistency: 'Version inconsistency - this record has been modified since you started editing it.'
+    failed_to_save_record: 'Failed to save record cause of an unknown error'
