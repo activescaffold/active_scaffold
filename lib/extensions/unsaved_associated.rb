@@ -48,7 +48,7 @@ class ActiveRecord::Base
   # returns true otherwise, even when none of the associations have been instantiated. build wrapper methods accordingly.
   def with_unsaved_associated
     associations_for_update.all? do |association|
-      association_proxy = instance_variable_get("@#{association.name}")
+      association_proxy = send(association.name)
       if association_proxy
         records = association_proxy
         records = [records] unless records.is_a? Array # convert singular associations into collections for ease of use
