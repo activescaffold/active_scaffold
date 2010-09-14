@@ -80,6 +80,12 @@
       :optional_attributes => 'Further Options',
       :null => 'Null',
       :not_null => 'Not Null',
+      :date_picker_options => {
+        :weekHeader => 'Sm',
+				:firstDay => 1,
+		    :isRTL => false,
+		    :showMonthAfterYear => false,
+      },
 
       # error_messages
       :cant_destroy_record => "%{record} can't be destroyed",
