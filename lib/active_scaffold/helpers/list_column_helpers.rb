@@ -47,7 +47,7 @@ module ActiveScaffold
             link = action_link_to_inline_form(column, associated) if link.crud_type.nil? # automatic link to inline form (singular association)
             return text if link.crud_type.nil?
             if link.crud_type == :create
-              url_options[:link] = as_(:create_new)
+              url_options[:link] = as_(link.label, :model => column.association.klass.human_name, :parent => column.association.active_record.human_name)
               url_options[:parent_id] = record.id
               url_options[:parent_column] = column.association.reverse
               url_options[:parent_model] = record.class.name # needed for polymorphic associations
