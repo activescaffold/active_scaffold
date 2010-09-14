@@ -3,8 +3,7 @@ module ActiveScaffold::Config
     self.crud_type = :read
 
     def initialize(core_config)
-      @core = core_config
-
+      super
       # inherit from global scope
       # full configuration path is: defaults => global table => local table
       @per_page = self.class.per_page

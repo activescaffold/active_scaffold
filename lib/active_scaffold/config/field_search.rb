@@ -3,8 +3,7 @@ module ActiveScaffold::Config
     self.crud_type = :read
 
     def initialize(core_config)
-      @core = core_config
-
+      super
       @text_search = self.class.text_search
 
       # start with the ActionLink defined globally

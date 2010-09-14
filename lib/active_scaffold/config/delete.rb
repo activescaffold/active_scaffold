@@ -3,8 +3,7 @@ module ActiveScaffold::Config
     self.crud_type = :delete
 
     def initialize(core_config)
-      @core = core_config
-
+      super
       # start with the ActionLink defined globally
       @link = self.class.link.clone
     end

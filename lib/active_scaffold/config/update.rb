@@ -1,10 +1,11 @@
 module ActiveScaffold::Config
   class Update < ActiveScaffold::Config::Form
     self.crud_type = :update
-    def initialize(*args)
+    def initialize(core_config)
       super
       self.nested_links = self.class.nested_links
       self.persistent = self.class.persistent
+      @label = :update_model
     end
 
     # global level configuration
@@ -24,11 +25,6 @@ module ActiveScaffold::Config
     
     # instance-level configuration
     # ----------------------------
-
-    # the label= method already exists in the Form base class
-    def label
-      @label ? as_(@label) : as_(:update_model, :model => @core.label(:count => 1))
-    end
 
     attr_accessor :nested_links
     cattr_accessor :nested_links
