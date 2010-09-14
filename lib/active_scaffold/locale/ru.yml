@@ -69,3 +69,4 @@ ru:
     cant_destroy_record: 'Запись %{record} не может быть удалена'
     internal_error: '500 Внутренняя ошибка сервера'
     version_inconsistency: 'Несоответствие версий: эта запись была обновлена с того момента, как вы начали ее редактировать'
+    failed_to_save_record: 'Failed to save record cause of an unknown error'

@@ -65,3 +65,4 @@ hu:
     # error_messages
     internal_error: 'A lekérés sikertelen (code 500, Internal Error)'
     version_inconsistency: 'Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni.'
+    failed_to_save_record: 'Failed to save record cause of an unknown error'
