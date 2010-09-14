@@ -3,6 +3,10 @@ module ActiveScaffold::Config
     include ActiveScaffold::Configurable
     extend ActiveScaffold::Configurable
 
+    def initialize(core_config)
+      @core = core_config
+    end
+
     def self.inherited(subclass)
       class << subclass
         # the crud type of the action. possible values are :create, :read, :update, :delete, and nil.
@@ -20,6 +24,10 @@ module ActiveScaffold::Config
     # delegate
     def crud_type; self.class.crud_type end
 
+    def label(model = nil)
+      as_(@label, :model => model || @core.label(:count => 1))
+    end
+    
     # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
     attr_accessor :user
 

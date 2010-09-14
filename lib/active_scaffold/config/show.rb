@@ -3,9 +3,10 @@ module ActiveScaffold::Config
     self.crud_type = :read
 
     def initialize(core_config)
-      @core = core_config
+      super
       # start with the ActionLink defined globally
       @link = self.class.link.clone
+      @label = :show_model
     end
 
     # global level configuration
@@ -19,9 +20,6 @@ module ActiveScaffold::Config
     attr_accessor :link
     # the label for this action. used for the header.
     attr_writer :label
-    def label
-      @label ? as_(@label) : as_(:show_model, :model => @core.label(:count => 1))
-    end
 
     # provides access to the list of columns specifically meant for this action to use
     def columns
