@@ -124,7 +124,7 @@ module ActiveScaffold
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update
           column.actions_for_association_links.delete :show unless actions.include? :show
-          column.set_link(:none, :controller => controller.controller_path, :crud_type => nil, :html_options => {:class => column.name})
+          column.set_link(:none, :controller => controller.controller_path, :crud_type => nil, :label => :create_model, :html_options => {:class => column.name})
         end
       end
     end
