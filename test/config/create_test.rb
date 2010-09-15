@@ -13,7 +13,7 @@ class Config::CreateTest < Test::Unit::TestCase
   def test_default_options
     assert !@config.create.persistent
     assert @config.create.action_after_create.nil?
-    assert_equal 'Create Modelstub', @config.create.label
+    assert_equal 'Create ModelStub', @config.create.label
   end
 
   def test_link_defaults
@@ -41,9 +41,9 @@ class Config::CreateTest < Test::Unit::TestCase
     label = 'create new monkeys'
     @config.create.label = label
     assert_equal label, @config.create.label
-    I18n.backend.store_translations :en, :active_scaffold => {:create_model => 'Create new %{model}'}
-    @config.create.label = :create_model
-    assert_equal 'Create new Modelstub', @config.create.label
+    I18n.backend.store_translations :en, :active_scaffold => {:create_new_model => 'Create new %{model}'}
+    @config.create.label = :create_new_model
+    assert_equal 'Create new ModelStub', @config.create.label
   end
   
   def test_persistent

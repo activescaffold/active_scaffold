@@ -15,7 +15,7 @@ class Config::UpdateTest < Test::Unit::TestCase
   def test_default_options
     assert !@config.update.persistent
     assert !@config.update.nested_links
-    assert_equal 'Update Modelstub', @config.update.label
+    assert_equal 'Update ModelStub', @config.update.label
   end
   
   def test_persistent
@@ -32,9 +32,9 @@ class Config::UpdateTest < Test::Unit::TestCase
     label = 'update new monkeys'
     @config.update.label = label
     assert_equal label, @config.update.label
-    I18n.backend.store_translations :en, :active_scaffold => {:update_model => 'Update %{model}'}
-    @config.update.label = :update_model
-    assert_equal 'Update Modelstub', @config.update.label
-    assert_equal 'Update record', @config.update.label('record')
+    I18n.backend.store_translations :en, :active_scaffold => {:change_model => 'Change %{model}'}
+    @config.update.label = :change_model
+    assert_equal 'Change ModelStub', @config.update.label
+    assert_equal 'Change record', @config.update.label('record')
   end
 end

@@ -7,7 +7,7 @@ class Config::NestedTest < Test::Unit::TestCase
   
   def test_default_options
     assert !@config.nested.shallow_delete
-    assert_equal 'Add Existing Modelstub', @config.nested.label
+    assert_equal 'Add Existing ModelStub', @config.nested.label
   end
   
   def test_label
@@ -16,7 +16,7 @@ class Config::NestedTest < Test::Unit::TestCase
     assert_equal label, @config.nested.label
     I18n.backend.store_translations :en, :active_scaffold => {:create_model => 'Add new %{model}'}
     @config.nested.label = :create_model
-    assert_equal 'Add new Modelstub', @config.nested.label
+    assert_equal 'Add new ModelStub', @config.nested.label
   end
   
   def test_shallow_delete
