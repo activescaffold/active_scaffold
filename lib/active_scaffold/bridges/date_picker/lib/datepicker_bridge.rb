@@ -78,7 +78,9 @@ module ActiveScaffold
           :monthNamesShort => date_options[:abbr_month_names][1, (date_options[:abbr_month_names].length - 1)],
           :dayNames => date_options[:day_names],
           :dayNamesShort => date_options[:abbr_day_names],
-          :dayNamesMin => date_options[:abbr_day_names]
+          :dayNamesMin => date_options[:abbr_day_names],
+          :changeYear => true,
+          :changeMonth => true,
         }.merge(as_(:date_picker_options))
         js_format = self.date_format_converter(date_options[:formats][:default])
         date_picker_options[:dateFormat] = js_format unless js_format.nil? 
