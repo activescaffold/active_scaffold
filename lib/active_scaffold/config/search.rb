@@ -6,7 +6,6 @@ module ActiveScaffold::Config
       super
       @text_search = self.class.text_search
       @live = self.class.live?
-
       @split_terms = self.class.split_terms
 
       # start with the ActionLink defined globally
