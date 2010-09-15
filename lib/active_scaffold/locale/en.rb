@@ -92,6 +92,8 @@
         :isRTL => false,
         :showMonthAfterYear => false
       },
+      :datetime_picker_options => {
+      },
       # error_messages
       :cant_destroy_record => "%{record} can't be destroyed",
       :internal_error => 'Request Failed (code 500, Internal Error)',
