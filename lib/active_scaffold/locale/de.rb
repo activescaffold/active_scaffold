@@ -86,7 +86,8 @@
 		    :isRTL => false,
 		    :showMonthAfterYear => false,
       },
-
+      :datetime_picker_options => {
+      },
       # error_messages
       :cant_destroy_record => "%{record} kann nicht gelöscht werden",
       :internal_error => 'Fehler bei der Verarbeitung (code 500, Interner Fehler)',

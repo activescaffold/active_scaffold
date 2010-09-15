@@ -46,10 +46,29 @@ module ActiveScaffold
         '%j' => 'oo',
         '%m' => 'mm',
         '%y' => 'y',
-        '%Y' => 'yy'
+        '%Y' => 'yy',
+        '%H' => 'hh', # options ampm => false
+        '%I' => 'hh', # options ampm => true
+        '%M' => 'mm',
+        '%p' => 'TT',
+        '%S' => 'ss'
       }  
       
       def self.localization(js_file)
+        localization = "jQuery(function($){
+  if (typeof($.datepicker) === 'object') {
+    $.datepicker.regional['#{I18n.locale}'] = #{date_options.to_json};
+    $.datepicker.setDefaults($.datepicker.regional['#{I18n.locale}']);
+  }
+  if (typeof($.timepicker) === 'object') {
+    $.timepicker.regional['#{I18n.locale}'] = #{datetime_options.to_json};
+    $.timepicker.setDefaults($.timepicker.regional['#{I18n.locale}']);
+  }
+});\n"        
+        prepend_js_file(js_file, localization)        
+      end
+      
+      def self.date_options
         date_options = I18n.t 'date'
         date_picker_options = { :closeText => as_(:close),
           :prevText => as_(:previous),
@@ -61,16 +80,20 @@ module ActiveScaffold
           :dayNamesShort => date_options[:abbr_day_names],
           :dayNamesMin => date_options[:abbr_day_names]
         }.merge(as_(:date_picker_options))
-        
-        date_time_picker_options = 
-        # what about time format
         js_format = self.date_format_converter(date_options[:formats][:default])
         date_picker_options[:dateFormat] = js_format unless js_format.nil? 
-        localization = "jQuery(function($){
-        $.datepicker.regional['#{I18n.locale}'] = #{date_picker_options.to_json};
-  $.datepicker.setDefaults($.datepicker.regional['#{I18n.locale}']);
-});\n"        
-        prepend_js_file(js_file, localization)        
+        date_picker_options
+      end
+      
+      def self.datetime_options
+        time_options = I18n.t 'time'
+        datetime_picker_options = {:ampm => false}.merge(as_(:datetime_picker_options))
+        js_format = self.date_format_converter(time_options[:formats][:time] || '%H:%M')
+        unless js_format.nil?
+          datetime_picker_options[:timeFormat] = js_format 
+          datetime_picker_options[:ampm] = true if time_options[:formats][:time].present? && time_options[:formats][:time].include?('%I')
+        end
+        datetime_picker_options
       end
       
       def self.prepend_js_file(js_file, prepend)
@@ -80,8 +103,9 @@ module ActiveScaffold
       end
       
       def self.date_format_converter(rails_format)
-        if rails_format =~ /%[cUWwxX]/
-          Rails.logger.warning("AS DatePickerBridge: Can t convert rails date format: #{rails_format} to jquery datepicker format. Options %c, %U, %W, %w, %x %X are not supported by datepicker]")
+        return nil if rails_format.nil?
+        if rails_format =~ /%[cUWwxXZ]/
+          Rails.logger.warn("AS DatePickerBridge: Can t convert rails date format: #{rails_format} to jquery datepicker format. Options %c, %U, %W, %w, %x %X are not supported by datepicker]")
           nil
         else
           js_format = rails_format.dup
