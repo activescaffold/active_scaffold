@@ -1,4 +1,4 @@
-<h4><%= @record.to_label.nil? ? active_scaffold_config.show.label : as_(:show_model, :model => clean_column_value(@record.to_label)) %></h4>
+<h4><%= active_scaffold_config.show.label(@record.to_label.nil? ? nil : clean_column_value(@record.to_label)) %></h4>
 
 <%= render :partial => 'show_columns', :locals => {:columns => active_scaffold_config.show.columns} -%>
 
