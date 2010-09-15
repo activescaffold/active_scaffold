@@ -14,6 +14,7 @@ module Rails
           get "http://github.com/vhochstein/prototype-ujs/raw/master/src/rails.js", "public/javascripts/rails.js" 
         elsif js_lib == 'jquery'
           get "http://github.com/vhochstein/jquery-ujs/raw/master/src/rails.js", "public/javascripts/rails_jquery.js"
+          get "http://github.com/vhochstein/jQuery-Timepicker-Addon/raw/master/jquery-ui-timepicker-addon.js", "public/javascripts/jquery-ui-timepicker-addon.js"
         end
       end
       
@@ -34,6 +35,7 @@ module Rails
   <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js' %>
   <%= javascript_include_tag 'rails_jquery.js' %>
   <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.js' %>
+  <%= javascript_include_tag 'jquery-ui-timepicker-addon.js' %>
   <%= javascript_include_tag 'application.js' %>
   <%= active_scaffold_includes %>\n",
                    :after => "<%= javascript_include_tag :defaults %>\n"
