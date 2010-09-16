@@ -89,7 +89,12 @@ module ActiveScaffold
       
       def self.datetime_options
         time_options = I18n.t 'time'
-        datetime_picker_options = {:ampm => false}.merge(as_(:datetime_picker_options))
+        datetime_options = I18n.t 'datetime.prompts'
+        datetime_picker_options = {:ampm => false,
+          :hourText => datetime_options[:hour],
+				  :minuteText => datetime_options[:minute],
+				  :secondText => datetime_options[:second],
+        }.merge(as_(:datetime_picker_options))
         js_format = self.date_format_converter(time_options[:formats][:time] || '%H:%M')
         unless js_format.nil?
           datetime_picker_options[:timeFormat] = js_format 

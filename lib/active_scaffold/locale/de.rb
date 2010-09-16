@@ -87,6 +87,7 @@
 		    :showMonthAfterYear => false,
       },
       :datetime_picker_options => {
+        :timeText => 'Uhrzeit'
       },
       # error_messages
       :cant_destroy_record => "%{record} kann nicht gelöscht werden",
