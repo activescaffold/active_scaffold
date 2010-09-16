@@ -131,6 +131,16 @@ module ActiveScaffold
           text_field_tag("#{options[:name]}[#{name}]", value ? l(value) : nil, options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]"))
         end
       end
+      
+      module FormColumnHelpers
+        def active_scaffold_input_date_picker(column, options)
+          options = active_scaffold_input_text_options(options)
+          value = controller.class.condition_value_for_datetime(@record.send(column.name), column.column.type == :date ? :to_date : :to_time)
+          options[:value] = (value ? l(value) : nil)
+          Rails.logger.info("column.name: #{column.name}: #{options[:value]}")
+          text_field(:record, column.name, options.merge(column.options))
+        end
+      end
     end
   end
 end
@@ -139,6 +149,8 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
   alias_method :active_scaffold_search_datetime, :active_scaffold_search_date_bridge
   include ActiveScaffold::Bridges::DatePickerBridge::SearchColumnHelpers
+  include ActiveScaffold::Bridges::DatePickerBridge::FormColumnHelpers
+  alias_method :active_scaffold_input_datetime_picker, :active_scaffold_input_date_picker
 end
 ActiveScaffold::Finder::ClassMethods.module_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods

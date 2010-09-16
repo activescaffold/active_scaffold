@@ -48,12 +48,9 @@ module ActiveScaffold
           end
           
           def column_datetime?(column)
-            (!column.column.nil? && column.column.type == :datetime)
+            (!column.column.nil? && [:datetime, :time].include?(column.column.type))
           end
         end
-        
-        
-        
         
         module Finder
           module ClassMethods
