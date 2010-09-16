@@ -87,6 +87,7 @@
 		    :showMonthAfterYear => false,
       },
       :datetime_picker_options => {
+        :timeText => 'Heure'
       },
       # error_messages
       :cant_destroy_record => "%{record} can't be destroyed",
