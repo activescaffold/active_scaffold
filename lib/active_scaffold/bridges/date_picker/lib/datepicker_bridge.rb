@@ -19,14 +19,7 @@ ActiveScaffold::Config::Core.class_eval do
     # automatically set the forum_ui to a file column
     date_picker_fields.each{|field|
       col_config = self.columns[field[:name]] 
-      form_ui = (field[:type] == :date ? :date_picker : :datetime_picker)
-      
-      col_config.form_ui = form_ui
-      if col_config.options[:class]
-        col_config.options[:class] += " #{form_ui.to_s} text-input"
-      else
-        col_config.options[:class] = "#{form_ui.to_s} text-input"
-      end
+      col_config.form_ui = (field[:type] == :date ? :date_picker : :datetime_picker)
     }
   end
   
@@ -127,18 +120,19 @@ module ActiveScaffold
         def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
           value = controller.class.condition_value_for_datetime(current_search[name], column.column.type == :date ? :to_date : :to_time)
           options = column.options.merge(options).except!(:include_blank, :discard_time, :discard_date, :value)
-          options[:class] << " #{column.options[:class]}" if column.options[:class]
+          options = active_scaffold_input_text_options(options.merge(column.options))
+          options[:class] << " #{column.search_ui.to_s}"
           text_field_tag("#{options[:name]}[#{name}]", value ? l(value) : nil, options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]"))
         end
       end
       
       module FormColumnHelpers
         def active_scaffold_input_date_picker(column, options)
-          options = active_scaffold_input_text_options(options)
+          options = active_scaffold_input_text_options(options.merge(column.options))
+          options[:class] << " #{column.form_ui.to_s}"
           value = controller.class.condition_value_for_datetime(@record.send(column.name), column.column.type == :date ? :to_date : :to_time)
           options[:value] = (value ? l(value) : nil)
-          Rails.logger.info("column.name: #{column.name}: #{options[:value]}")
-          text_field(:record, column.name, options.merge(column.options))
+          text_field(:record, column.name, options)
         end
       end
     end
@@ -147,7 +141,8 @@ end
 
 ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
-  alias_method :active_scaffold_search_datetime, :active_scaffold_search_date_bridge
+  alias_method :active_scaffold_search_date_picker, :active_scaffold_search_date_bridge
+  alias_method :active_scaffold_search_datetime_picker, :active_scaffold_search_date_bridge
   include ActiveScaffold::Bridges::DatePickerBridge::SearchColumnHelpers
   include ActiveScaffold::Bridges::DatePickerBridge::FormColumnHelpers
   alias_method :active_scaffold_input_datetime_picker, :active_scaffold_input_date_picker
