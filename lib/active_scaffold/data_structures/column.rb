@@ -254,7 +254,7 @@ module ActiveScaffold::DataStructures
       @send_form_on_update_column = self.class.send_form_on_update_column
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
       @options = {:format => :i18n_number} if @column.try(:number?)
-      @form_ui = :checkbox if @column and @column.type == :boolean
+      @form_ui = :checkbox if @column and @column.type == :boolean and !@column.null
       @allow_add_existing = true
 
       # default all the configurable variables
