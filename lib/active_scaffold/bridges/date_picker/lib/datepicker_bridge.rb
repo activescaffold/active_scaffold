@@ -135,7 +135,7 @@ module ActiveScaffold
       
       module DatepickerColumnHelpers
         def datepicker_split_datetime_format(datetime_format)
-          ActiveScaffold::Bridges::DatePickerBridge.datepicker_split_datetime_format(datetime_format)
+          ActiveScaffold::Bridges::DatePickerBridge.split_datetime_format(datetime_format)
         end
         
         def to_datepicker_format(rails_format)
@@ -148,10 +148,11 @@ module ActiveScaffold
             options['date:dateFormat'] = js_format unless js_format.nil?
           else
             rails_time_format = I18n.t("time.formats.#{format}")
-            date_format, time_format = self.split_datetime_format(self.to_datepicker_format(rails_time_format))
+            date_format, time_format = datepicker_split_datetime_format(self.to_datepicker_format(rails_time_format))
+            options['date:dateFormat'] = date_format unless date_format.nil?
             unless time_format.nil?
-              datetime_picker_options['time:timeFormat'] = time_format
-              datetime_picker_options['time:ampm'] = true if rails_time_format.include?('%I')
+              options['time:timeFormat'] = time_format
+              options['time:ampm'] = true if rails_time_format.include?('%I')
             end
           end unless format == :default
         end
