@@ -43,7 +43,7 @@ module ActiveScaffold
         '%H' => 'hh', # options ampm => false
         '%I' => 'hh', # options ampm => true
         '%M' => 'mm',
-        '%p' => 'TT',
+        '%p' => 'tt',
         '%S' => 'ss'
       }  
       
@@ -81,17 +81,18 @@ module ActiveScaffold
       end
       
       def self.datetime_options
-        time_options = I18n.t 'time'
+        rails_time_format = I18n.t 'time.formats.default'
         datetime_options = I18n.t 'datetime.prompts'
         datetime_picker_options = {:ampm => false,
           :hourText => datetime_options[:hour],
 				  :minuteText => datetime_options[:minute],
 				  :secondText => datetime_options[:second],
         }.merge(as_(:datetime_picker_options))
-        js_format = self.date_format_converter(time_options[:formats][:time] || '%H:%M')
-        unless js_format.nil?
-          datetime_picker_options[:timeFormat] = js_format 
-          datetime_picker_options[:ampm] = true if time_options[:formats][:time].present? && time_options[:formats][:time].include?('%I')
+        date_format, time_format = self.split_datetime_format(self.date_format_converter(rails_time_format))
+        datetime_picker_options[:dateFormat] = date_format unless date_format.nil?
+        unless time_format.nil?
+          datetime_picker_options[:timeFormat] = time_format
+          datetime_picker_options[:ampm] = true if rails_time_format.include?('%I')
         end
         datetime_picker_options
       end
@@ -114,6 +115,21 @@ module ActiveScaffold
           end
           js_format
         end
+      end
+      
+      def self.split_datetime_format(datetime_format)
+        date_format = datetime_format
+        time_format = nil
+        time_start_indicators = %w{hh mm tt ss}
+        unless datetime_format.nil?
+          start_indicator = time_start_indicators.detect {|indicator| datetime_format.include?(indicator)}
+          unless start_indicator.nil?
+            pos_time_format = datetime_format.index(start_indicator)
+            date_format = datetime_format.to(pos_time_format - 1)
+            time_format = datetime_format.from(pos_time_format)
+          end
+        end
+        return date_format, time_format
       end
       
       module SearchColumnHelpers
