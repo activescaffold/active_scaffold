@@ -87,10 +87,6 @@ background-position: 1px 50%;
 background-repeat: no-repeat;
 }
 
-.view .active-scaffold-header div.actions a {
-float: left;
-}
-
 .blue-theme .active-scaffold-header div.actions a {
 color: #fff;
 }
