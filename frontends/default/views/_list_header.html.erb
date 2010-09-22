@@ -1,11 +1,11 @@
-<% if active_scaffold_config.action_links.any? { |link| link.type == :collection } -%>
+<% action_links = active_scaffold_config.action_links.collect_by_type(:collection) 
+  unless action_links.empty? -%>
   <div class="actions">
     <% new_params = params_for %>
-    <% active_scaffold_config.action_links.each :collection do |link| -%>
+    <% action_links.each do |link| -%>
       <% next if skip_action_link(link) -%>
       <%= render_action_link(link, new_params) -%>
     <% end -%>
-
     <%= loading_indicator_tag(:action => :table) %>
   </div>
 <% end %>
