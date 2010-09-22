@@ -37,6 +37,12 @@ module ActiveScaffold::DataStructures
         yield item
       }
     end
+    
+    def collect_by_type(type = nil)
+      links = []
+      each(type) {|link| links << link}
+      links
+    end
 
     def empty?
       @set.size == 0

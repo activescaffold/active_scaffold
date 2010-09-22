@@ -4,7 +4,7 @@
     <td class="indicator-container">
       <%= loading_indicator_tag(:action => :record, :id => record.id) %>
     </td>
-    <% action_links.each :member do |link| -%>
+    <% action_links.each do |link| -%>
       <% next if skip_action_link(link, record) -%>
       <td>
       <%= record.authorized_for?(:crud_type => link.crud_type, :action => link.action) ? render_action_link(link, url_options, record) : action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"}) %>
