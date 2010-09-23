@@ -17,7 +17,16 @@ module ActiveScaffold::Config
     attr_accessor :shallow_delete
 
     # Add a nested ActionLink
-    def add_link(label, models, options = {})
+    def add_link(label, *models)
+      options = models.extract_options!
+      msg = "config.nested.add_link with multiple associations is deprecated."
+      if models[0].is_a? Array
+        msg += " Remove array" if models[0].size == 1
+        ::ActiveSupport::Deprecation.warn(msg, caller)
+        models.flatten!
+      elsif models.size > 1
+        ::ActiveSupport::Deprecation.warn(msg, caller)
+      end
       options.merge! :label => label, :type => :member, :security_method => :nested_authorized?, :position => :after, :parameters => {:associations => models.join(' ')}
       options[:html_options] ||= {}
       options[:html_options][:class] = [options[:html_options][:class], models.join(' ')].compact.join(' ')
