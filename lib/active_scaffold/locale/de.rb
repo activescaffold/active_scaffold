@@ -89,6 +89,15 @@
       :datetime_picker_options => {
         :timeText => 'Uhrzeit'
       },
+      :errors => {
+        :template => {
+          :header => {
+            :one =>    "Konnte {{model}} nicht speichern: ein Fehler.",
+            :other =>  "Konnte {{model}} nicht speichern: {{count}} Fehler."
+          },
+          :body => "Bitte überprüfen Sie die folgenden Felder:"
+        }
+      },
       # error_messages
       :cant_destroy_record => "%{record} kann nicht gelöscht werden",
       :internal_error => 'Fehler bei der Verarbeitung (code 500, Interner Fehler)',
