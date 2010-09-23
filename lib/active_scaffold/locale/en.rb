@@ -94,6 +94,15 @@
       },
       :datetime_picker_options => {
       },
+      :errors => {
+        :template => {
+          :header => {
+            :one =>    "1 error prohibited this {{model}} from being saved.",
+            :other =>  "{{count}} errors prohibited this {{model}} from being saved"
+          },
+          :body => "There were problems with the following fields:"
+        }
+      },
       # error_messages
       :cant_destroy_record => "%{record} can't be destroyed",
       :internal_error => 'Request Failed (code 500, Internal Error)',
