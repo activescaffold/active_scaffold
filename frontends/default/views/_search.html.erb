@@ -18,7 +18,7 @@ options['data-loading'] = true unless live_search
 <% if ActiveScaffold.js_framework == :prototype %>
   new TextFieldWithExample('<%= search_input_id %>', '<%= as_(live_search ? :live_search : :search_terms) %>', {focus: true});
 <% end -%>
-<% if live_search -%>
+<% if live_search && ActiveScaffold.js_framework == :prototype -%>
   $('<%= search_input_id %>').next().hide();
   new Form.Element.DelayedObserver('<%= search_input_id %>', 0.5, function(element, value) {
     if (!$(element.id)) return false; // because the element may have been destroyed
