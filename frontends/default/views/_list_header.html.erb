@@ -2,7 +2,7 @@
   unless action_links.empty? -%>
   <div class="actions">
     <% new_params = params_for %>
-    <% action_links.each do |link| -%>
+    <% action_links.send(nested.nil? ? :each : :reverse_each) do |link| -%>
       <% next if skip_action_link(link) -%>
       <%= render_action_link(link, new_params) -%>
     <% end -%>
