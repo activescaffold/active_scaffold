@@ -151,7 +151,7 @@ module ActiveScaffold::DataStructures
     
     # indicates that this a nested_link
     def nested_link?
-      @column
+      @column || (parameters && parameters[:named_scope])
     end
     
     # Internal use: generated eid for this action_link

@@ -29,12 +29,12 @@ module ActiveScaffold::Actions
     end
     
     def set_nested
-      if params[:parent_model] && params[:association] && params[:assoc_id]
+      if params[:parent_model] && ((params[:association] && params[:assoc_id]) || params[:named_scope])
         @nested = nil
         active_scaffold_session_storage[:nested] = {:parent_model => params[:parent_model].constantize,
-                                                                  :name => params[:association].to_sym,
+                                                                  :name => (params[:association] || params[:named_scope]).to_sym,
                                                                   :parent_id => params[:assoc_id]}
-        params.delete_if {|key, value| [:parent_model, :association, :assoc_id].include? key.to_sym}
+        params.delete_if {|key, value| [:parent_model, :association, :named_scope, :assoc_id].include? key.to_sym}
       end
     end
     
@@ -74,8 +74,10 @@ module ActiveScaffold::Actions
     end
     
     def beginning_of_chain
-      if nested? && nested.association.collection?
+      if nested? && nested.association && nested.association.collection?
         nested.parent_scope.send(nested.association.name)
+      elsif nested? && nested.scope
+        nested.parent_scope.send(nested.scope)
       else
         active_scaffold_config.model
       end

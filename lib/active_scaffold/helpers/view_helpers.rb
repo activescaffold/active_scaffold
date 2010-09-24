@@ -133,7 +133,7 @@ module ActiveScaffold
         url_options[:controller] = link.controller if link.controller
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters
-        url_options_for_nested_link(link.column, record, link, url_options, options) unless link.column.nil?
+        url_options_for_nested_link(link.column, record, link, url_options, options) if link.nested_link?
         url_options[:_method] = link.method if link.inline? && link.method != :get
         url_options
       end
@@ -186,10 +186,14 @@ module ActiveScaffold
       end
       
       def url_options_for_nested_link(column, record, link, url_options, options = {})
-        if column.association
+        if column && column.association 
           url_options[:assoc_id] = url_options.delete(:id)
           url_options[:id] = record.send(column.association.name).id if column.singular_association? && record.send(column.association.name).present?
           link.eid = "#{controller_id.from(3)}_#{record.id}_#{column.association.name}" unless options.has_key?(:reuse_eid)
+          url_options[:eid] = link.eid
+        elsif link.parameters && link.parameters[:named_scope]
+          url_options[:assoc_id] = url_options.delete(:id)
+          link.eid = "#{controller_id.from(3)}_#{record.id}_#{link.parameters[:named_scope]}" unless options.has_key?(:reuse_eid)
           url_options[:eid] = link.eid
         end
       end
