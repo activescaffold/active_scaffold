@@ -628,7 +628,20 @@ var ActiveScaffold = {
     } else {
       this.replace_html(element, content);
     }
-  }
+  },
+  
+  sortable: function(element, controller, reorder_params) {
+    if (typeof(element) == 'string') element = '#' + element;
+    var element = $(element);
+    reorder_params.authenticity_token = $('meta[name=csrf-param]').attr('content'); 
+    element.sortable({
+       update: function(event, ui) {
+         var url = controller + '/reorder?'
+         url += $(this).sortable('serialize',{key: encodeURIComponent($(this).attr('id') + '[]'), expression:/^[^_-](?:[A-Za-z0-9_-]*)-(.*)-row$/});
+         $.post(url.append_params(reorder_params)); 
+       }
+    });    
+  }  
 }
 
 /*
