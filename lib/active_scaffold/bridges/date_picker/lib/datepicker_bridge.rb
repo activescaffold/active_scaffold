@@ -106,8 +106,8 @@ module ActiveScaffold
       
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
-        if rails_format =~ /%[cUWwxXZ]/
-          Rails.logger.warn("AS DatePickerBridge: Can t convert rails date format: #{rails_format} to jquery datepicker format. Options %c, %U, %W, %w, %x %X are not supported by datepicker]")
+        if rails_format =~ /%[cUWwxXZz]/
+          Rails.logger.warn("AS DatePickerBridge: Can t convert rails date format: #{rails_format} to jquery datepicker format. Options %c, %U, %W, %w, %x %X, %z, %Z are not supported by datepicker]")
           nil
         else
           js_format = rails_format.dup
