@@ -23,7 +23,14 @@ module ActiveScaffold::Config
         options.reverse_merge! :security_method => :nested_authorized?, :label => column.association.klass.model_name.human({:count => 2, :default => column.association.klass.name.pluralize}) 
         action_link = @core.link_for_association(column, options)
         @core.action_links.add(action_link) unless action_link.nil?
+      else
+        
       end
+    end
+    
+    def add_scoped_link(named_scope, options = {})
+      action_link = @core.link_for_association_as_scope(named_scope.to_sym, options)
+      @core.action_links.add(action_link) unless action_link.nil?
     end
 
     # the label for this Nested action. used for the header.

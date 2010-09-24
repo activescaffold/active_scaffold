@@ -4,18 +4,21 @@ module ActiveScaffold::DataStructures
       if session_storage[:nested].nil? 
         nil
       else
-        ActiveScaffold::DataStructures::NestedInfo.new(model, session_storage)
+        session_info = session_storage[:nested].clone
+        session_info[:association] = session_info[:parent_model].reflect_on_association(session_info[:name])
+        unless session_info[:association].nil?
+          ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, session_info)
+        else
+          ActiveScaffold::DataStructures::NestedInfoScope.new(model, session_info)
+        end
       end
     end
     
-    attr_accessor :association, :child_association, :parent_model, :parent_id, :constrained_fields
-    
-    def initialize(model, session_storage)
-      info = session_storage[:nested].clone
-      @parent_model = info[:parent_model]
-      @association = @parent_model.reflect_on_association(info[:name])
-      @parent_id = info[:parent_id]
-      iterate_model_associations(model)
+    attr_accessor :association, :child_association, :parent_model, :parent_id, :constrained_fields, :scope
+        
+    def initialize(model, session_info)
+      @parent_model = session_info[:parent_model]
+      @parent_id = session_info[:parent_id]
     end
     
     def new_instance?
@@ -26,6 +29,26 @@ module ActiveScaffold::DataStructures
     
     def parent_scope
       parent_model.find(parent_id)
+    end
+    
+    def habtm?
+      false 
+    end
+    
+    def belongs_to?
+      false
+    end
+    
+    def readonly?
+      false
+    end    
+  end
+  
+  class NestedInfoAssociation < NestedInfo
+    def initialize(model, session_info)
+      super(model, session_info)
+      @association = session_info[:association]
+      iterate_model_associations(model)
     end
     
     def habtm?
@@ -45,6 +68,7 @@ module ActiveScaffold::DataStructures
     end
     
     protected
+    
     def iterate_model_associations(model)
       @constrained_fields = [] 
       @constrained_fields << association.primary_key_name.to_sym unless association.belongs_to?
@@ -60,7 +84,13 @@ module ActiveScaffold::DataStructures
         end
       end
     end
- 
-    
+  end
+  
+  class NestedInfoScope < NestedInfo
+    def initialize(model, session_info)
+      super(model, session_info)
+      @scope = session_info[:name]
+      @constrained_fields = [] 
+    end
   end
 end

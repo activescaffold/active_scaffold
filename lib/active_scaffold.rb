@@ -146,6 +146,13 @@ module ActiveScaffold
         end 
       end
     end
+    
+    def link_for_association_as_scope(scope, options = {})
+      options.reverse_merge! :label => scope, :position => :after, :type => :member, :controller => controller_path
+      options[:parameters] ||= {}
+      options[:parameters].reverse_merge! :parent_model => active_scaffold_config.model.to_s, :named_scope => scope
+      ActiveScaffold::DataStructures::ActionLink.new('index', options)
+    end
 
     def add_active_scaffold_path(path)
       @active_scaffold_paths = nil # Force active_scaffold_paths to rebuild
