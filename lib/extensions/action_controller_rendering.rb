@@ -6,7 +6,7 @@ module ActionController #:nodoc:
         @rendering_adapter = true # recursion control
         # if we need an adapter, then we render the actual stuff to a string and insert it into the adapter template
         render :partial => params[:adapter][1..-1],
-               :locals => {:payload => render_to_string(args.first, &block)},
+        :locals => {:payload => render_to_string(args.first.merge(:layout => false), &block)},
                :use_full_path => true, :layout => false
         @rendering_adapter = nil # recursion control
       else
