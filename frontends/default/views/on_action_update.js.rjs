@@ -1,0 +1,8 @@
+page.call 'ActiveScaffold.replace_html', active_scaffold_messages_id, render(:partial => 'messages')
+if controller.send :successful?
+  page.call 'ActiveScaffold.replace', element_row_id(:action => :list, :id => @record.id), render(:partial => 'list_record', :locals => {:record => @record}) if @record 
+  page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
+else
+  page.call 'ActiveScaffold.scroll_to', active_scaffold_messages_id
+end
+
