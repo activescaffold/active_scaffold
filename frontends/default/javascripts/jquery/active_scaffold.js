@@ -541,7 +541,7 @@ var ActiveScaffold = {
   find_action_link: function(element) {
     if (typeof(element) == 'string') element = '#' + element;
     var as_adapter = $(element).closest('.as_adapter');
-    return ActiveScaffold.ActionLink.get(as_adapter);;
+    return ActiveScaffold.ActionLink.get(as_adapter);
   },
   
   scroll_to: function(element) {
@@ -705,23 +705,27 @@ ActiveScaffold.ActionLink = {
   get: function(element) {
     if (typeof(element) == 'string') element = '#' + element;
     var element = $(element);
-    element.data(); // jquery 1.4.2 workaround
-    if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
-      var parent = element.parent();
-      
-      if (parent && parent.is('td')) {
-        // record action
-        parent = parent.closest('tr.record');
-        var target = parent.find('a.as_action');
-        var loading_indicator = parent.find('td.actions .loading-indicator');
-        new ActiveScaffold.Actions.Record(target, parent, loading_indicator);
-      } else if (parent && parent.is('div')) {
-        //table action
-        new ActiveScaffold.Actions.Table(parent.find('a.as_action'), parent.closest('div.active-scaffold').find('tbody.before-header'), parent.find('.loading-indicator'));
+    if (element.length > 0) {
+      element.data(); // jquery 1.4.2 workaround
+      if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
+        var parent = element.parent();
+        
+        if (parent && parent.is('td')) {
+          // record action
+          parent = parent.closest('tr.record');
+          var target = parent.find('a.as_action');
+          var loading_indicator = parent.find('td.actions .loading-indicator');
+          new ActiveScaffold.Actions.Record(target, parent, loading_indicator);
+        } else if (parent && parent.is('div')) {
+          //table action
+          new ActiveScaffold.Actions.Table(parent.find('a.as_action'), parent.closest('div.active-scaffold').find('tbody.before-header'), parent.find('.loading-indicator'));
+        }
+        element = $(element);
       }
-      element = $(element);
+      return element.data('action_link');
+    } else {
+      return null;
     }
-    return element.data('action_link');
   }
 };
 ActiveScaffold.ActionLink.Abstract = Class.extend({
