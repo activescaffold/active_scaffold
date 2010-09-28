@@ -6,11 +6,17 @@ module ActiveScaffold
         input = file_field(:record, column.name, options)
         paperclip = @record.send("#{column.name}")
         if paperclip.file?
+          if ActiveScaffold.js_framework == :jquery
+            js_remove_file_code = "$(this).prev().val('true'); $(this).parent().hide().next().show(); return false;";
+          else
+            js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show(); return false;";
+          end
+          
           content = active_scaffold_column_paperclip(column, @record)
           content_tag(:div,
             content + " | " +
-            link_to_function(as_(:remove_file), "$(this).next().value='true'; $(this).up().hide().next().show()") +
-            hidden_field(:record, "delete_#{column.name}", :value => "false")
+              hidden_field(:record, "delete_#{column.name}", :value => "false") +
+              content_tag(:a, as_(:remove_file), {:href => '#', :onclick => js_remove_file_code}) 
           ) + content_tag(:div, input, :style => "display: none")
         else
           input
