@@ -250,7 +250,7 @@ module ActiveScaffold
       end
 
       def column_show_add_new(column, associated, record)
-        value = column.plural_association? or (column.singular_association? and not associated.empty?)
+        value = column.plural_association? || (column.singular_association? and not associated.empty?)
         value = false unless record.class.authorized_for?(:crud_type => :create)
         value
       end
