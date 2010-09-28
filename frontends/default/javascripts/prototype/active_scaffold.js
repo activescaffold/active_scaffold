@@ -490,7 +490,7 @@ var ActiveScaffold = {
         element.insert(content);
       }
     } else {
-      if (current = $$('#' + element.id + '.association-record')[0]) {
+      if (current = $$('#' + element.id + ' tr.association-record')[0]) {
         this.replace(current, content);
       } else {
         element.insert({top: content});

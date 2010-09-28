@@ -616,7 +616,7 @@ var ActiveScaffold = {
         element.append(content);
       }
     } else {
-      if (current = $('#' + element.attr('id') + '.association-record')[0]) {
+      if (current = $('#' + element.attr('id') + ' tr.association-record')[0]) {
         this.replace(current, content);
       } else {
         element.prepend(content);
