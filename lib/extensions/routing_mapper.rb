@@ -4,28 +4,28 @@ module ActionDispatch
         :collection => {:show_search => :get, :render_field => :get},
         :member => {:row => :get, :update_column => :post, :render_field => :get, :delete => :get}
     }
-    ACTIVE_SCAFFOLD_HABTM_ROUTING = {
+    ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING = {
         :collection => {:edit_associated => :get, :new_existing => :get, :add_existing => :post},
         :member => {:edit_associated => :get, :add_association => :get, :destroy_existing => :delete}
     }
     class Mapper
       module Base
-        def as_routes(options = {:habtm => true})
+        def as_routes(options = {:association => true})
           collection do
             ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each {|name, type| send(type, name)}
           end
           member do
             ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each {|name, type| send(type, name)}
           end
-          as_habtm_routes if options[:habtm]
+          as_association_routes if options[:association]
         end
         
-        def as_habtm_routes
+        def as_association_routes
           collection do 
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_HABTM_ROUTING[:collection].each {|name, type| send(type, name)}
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:collection].each {|name, type| send(type, name)}
           end
           member do
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_HABTM_ROUTING[:member].each {|name, type| send(type, name)}
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:member].each {|name, type| send(type, name)}
           end
         end
       end
