@@ -9,12 +9,16 @@ module ActiveScaffold::DataStructures
     end
     
     def set_default_sorting(model)
-      last_scope = model.default_scoping.last
-      if last_scope.nil?  || last_scope[:find].nil? || last_scope[:find][:order].nil?
-        set(model.primary_key, 'ASC') if model.column_names.include?(model.primary_key)
-      else
-        set_sorting_from_order_clause(last_scope[:find][:order].to_s, model.table_name)
+      model_scope = model.send(:current_scoped_methods)
+      order_clause = model_scope.arel.order_clauses.join(",") if model_scope
+
+      # If an ORDER BY clause is found set default sorting according to it, else
+      # fallback to setting primary key ordering
+      if order_clause
+        set_sorting_from_order_clause(order_clause, model.table_name)
         @default_sorting = true
+      else
+        set(model.primary_key, 'ASC') if model.column_names.include?(model.primary_key)
       end
     end
     
@@ -131,7 +135,7 @@ module ActiveScaffold::DataStructures
       column_name_part, direction_part = criterion_parts.strip.split(' ')
       column_name_parts = column_name_part.split('.')
       order = {:direction => extract_direction(direction_part),
-               :column_name => remove_quotes(column_name_parts.last)}
+        :column_name => remove_quotes(column_name_parts.last)}
       order[:table_name] = remove_quotes(column_name_parts[-2]) if column_name_parts.length >= 2
       order
     end
