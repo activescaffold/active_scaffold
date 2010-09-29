@@ -39,6 +39,12 @@ module Rails
   <%= javascript_include_tag 'application.js' %>
   <%= active_scaffold_includes %>\n",
                    :after => "<%= javascript_include_tag :defaults %>\n"
+           
+          inject_into_file "config/locales/en.yml",
+"  time:
+    formats:
+      default: \"%a, %d %b %Y %H:%M:%S\"",                  
+                   :after => "hello: \"Hello world\"\n"
           gsub_file 'app/views/layouts/application.html.erb', /<%= javascript_include_tag :defaults/, '<%# javascript_include_tag :defaults'
         end
       end     
