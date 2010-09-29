@@ -389,11 +389,17 @@ var ActiveScaffold = {
     Form.focusFirstElement(form_element);
   },  
   
-  create_record_row: function(tbody, html) {
+  create_record_row: function(tbody, html, options) {
     tbody = $(tbody);
-    tbody.insert({top: html});
-
-    var new_row = tbody.firstDescendant();
+    
+    if (options.insert_at == 'top') {
+      tbody.insert({top: html});
+      var new_row = tbody.firstDescendant();
+    } else if (options.insert_at == 'bottom') {
+      Selector.findChildElements(tbody, ['tr.record']).last().insert({after: html});
+      var new_row = Selector.findChildElements(tbody, ['tr.record']).last();
+    }
+    
     this.stripe(tbody);
     this.hide_empty_message(tbody);
     this.increment_record_count(tbody.up('div.active-scaffold'));
