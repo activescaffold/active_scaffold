@@ -82,7 +82,10 @@ module ActiveScaffold::Actions
     def do_new
       @record = new_model
       apply_constraints_to_record(@record)
-      create_association_with_parent(@record) if nested?
+      if nested?
+        create_association_with_parent(@record)
+        register_constraints_with_action_columns(nested.constrained_fields)
+      end
       @record
     end
 
@@ -93,7 +96,10 @@ module ActiveScaffold::Actions
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(new_model, active_scaffold_config.create.columns, params[:record])
           apply_constraints_to_record(@record, :allow_autosave => true)
-          create_association_with_parent(@record) if nested?
+          if nested?
+            create_association_with_parent(@record) 
+            register_constraints_with_action_columns(nested.constrained_fields)
+          end
           before_create_save(@record)
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
           if successful?
