@@ -504,12 +504,16 @@ var ActiveScaffold = {
     $(form_element + ":first *:input[type!=hidden]:first").focus();
   },
     
-  create_record_row: function(tbody, html) {
+  create_record_row: function(tbody, html, options) {
     if (typeof(tbody) == 'string') tbody = '#' + tbody;
     tbody = $(tbody);
-    tbody.prepend(html);
-
-    var new_row = tbody.children('tr:first-child');
+    
+    if (options.insert_at == 'top') {
+      tbody.prepend(html);
+      var new_row = tbody.children('tr.record:first-child');
+    } else if (options.insert_at == 'bottom') {
+      var new_row = tbody.children('tr.record').last().after(html).next();
+    }
     this.stripe(tbody);
     this.hide_empty_message(tbody);
     this.increment_record_count(tbody.closest('div.active-scaffold'));
