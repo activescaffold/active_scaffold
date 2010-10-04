@@ -22,12 +22,13 @@ module ActiveScaffold
     # This lets the ActionColumns object skip constrained columns.
     #
     # If the constraint value is a Hash, then we assume the constraint is a multi-level association constraint (the reverse of a has_many :through) and we do NOT register the constraint column.
-    def register_constraints_with_action_columns(association_constrained_fields = [])
+    def register_constraints_with_action_columns(association_constrained_fields = [], exclude_actions = [])
       constrained_fields = active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect{|k| k.to_sym}
       constrained_fields = constrained_fields | association_constrained_fields
       if self.class.uses_active_scaffold?
         # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
         active_scaffold_config.actions.each do |action_name|
+          next if exclude_actions.include?(action_name)
           action = active_scaffold_config.send(action_name)
           next unless action.respond_to? :columns
           action.columns.constraint_columns = constrained_fields
