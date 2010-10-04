@@ -28,5 +28,11 @@ module ActiveScaffold::Config
     attr_accessor :nested_links
     cattr_accessor :nested_links
     @@nested_links = false
+
+    attr_writer :hide_nested_column
+    def hide_nested_column
+      @hide_nested_column.nil? ? true : @hide_nested_column
+    end
+ 
   end
 end
