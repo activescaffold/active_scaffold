@@ -5,6 +5,7 @@ module ActiveScaffold::Actions
         after_filter :clear_flashes
       end
       base.helper_method :nested?
+      base.helper_method :beginning_of_chain
     end
     def render_field
       @record ||= if params[:in_place_editing]
