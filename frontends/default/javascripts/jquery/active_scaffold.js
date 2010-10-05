@@ -512,7 +512,7 @@ var ActiveScaffold = {
       tbody.prepend(html);
       var new_row = tbody.children('tr.record:first-child');
     } else if (options.insert_at == 'bottom') {
-      var new_row = tbody.children('tr.record').last().after(html).next();
+      var new_row = tbody.children('tr.record, tr.inline-adapter').last().after(html).next();
     }
     this.stripe(tbody);
     this.hide_empty_message(tbody);
