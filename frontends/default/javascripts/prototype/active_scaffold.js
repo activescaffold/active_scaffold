@@ -396,7 +396,7 @@ var ActiveScaffold = {
       tbody.insert({top: html});
       var new_row = tbody.firstDescendant();
     } else if (options.insert_at == 'bottom') {
-      Selector.findChildElements(tbody, ['tr.record']).last().insert({after: html});
+      tbody.childElements().reverse().detect(function(node) { return node.hasClassName('record') || node.hasClassName('inline-adapter')}).insert({after: html});
       var new_row = Selector.findChildElements(tbody, ['tr.record']).last();
     }
     
