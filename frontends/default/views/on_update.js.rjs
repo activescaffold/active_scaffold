@@ -2,7 +2,7 @@ form_selector = "#{element_form_id(:action => :update)}"
 
 page << "ActiveScaffold.find_action_link('#{form_selector}').update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
-  updated_row = if nested? && nested.association.belongs_to?
+  updated_row = if nested? && nested.belongs_to?
     nil
   else
     render :partial => 'list_record', :locals => {:record => @record}
