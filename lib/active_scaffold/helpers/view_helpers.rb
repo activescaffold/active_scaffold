@@ -233,7 +233,7 @@ module ActiveScaffold
         conditions = controller.send(:all_conditions)
         includes = active_scaffold_config.list.count_includes
         includes ||= controller.send(:active_scaffold_includes) unless conditions.nil?
-        calculation = active_scaffold_config.model.calculate(column.calculate, column.name, :conditions => conditions,
+        calculation = beginning_of_chain.calculate(column.calculate, column.name, :conditions => conditions,
          :joins => controller.send(:joins_for_collection), :include => includes)
       end
 
