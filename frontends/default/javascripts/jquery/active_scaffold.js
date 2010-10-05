@@ -512,7 +512,13 @@ var ActiveScaffold = {
       tbody.prepend(html);
       var new_row = tbody.children('tr.record:first-child');
     } else if (options.insert_at == 'bottom') {
-      var new_row = tbody.children('tr.record, tr.inline-adapter').last().after(html).next();
+      var rows = tbody.children('tr.record, tr.inline-adapter');
+      var new_row = null;
+      if (rows.length > 0) {
+        new_row = rows.last().after(html).next();
+      } else {
+        new_row = tbody.append(html).children().last();
+      }
     }
     this.stripe(tbody);
     this.hide_empty_message(tbody);

@@ -391,13 +391,19 @@ var ActiveScaffold = {
   
   create_record_row: function(tbody, html, options) {
     tbody = $(tbody);
+    var new_row = null;
     
     if (options.insert_at == 'top') {
       tbody.insert({top: html});
-      var new_row = tbody.firstDescendant();
+      new_row = tbody.firstDescendant();
     } else if (options.insert_at == 'bottom') {
-      tbody.childElements().reverse().detect(function(node) { return node.hasClassName('record') || node.hasClassName('inline-adapter')}).insert({after: html});
-      var new_row = Selector.findChildElements(tbody, ['tr.record']).last();
+      var last_row = tbody.childElements().reverse().detect(function(node) { return node.hasClassName('record') || node.hasClassName('inline-adapter')});
+      if (last_row) {
+        last_row.insert({after: html});
+      } else {
+        tbody.insert({bottom: html});
+      }
+      new_row = Selector.findChildElements(tbody, ['tr.record']).last();
     }
     
     this.stripe(tbody);
