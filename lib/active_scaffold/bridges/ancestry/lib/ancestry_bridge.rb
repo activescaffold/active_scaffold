@@ -2,7 +2,7 @@ ActiveScaffold::Config::Core.class_eval do
   def initialize_with_ancestry(model_id)
     initialize_without_ancestry(model_id)
 
-    return unless self.model.singleton_methods.include?('has_ancestry')
+    return unless self.model.respond_to? :ancestry_column
 
     col_config = self.columns[self.model.ancestry_column]
     unless col_config.nil?
