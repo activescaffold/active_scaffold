@@ -31,7 +31,7 @@ module ActiveScaffold::Actions
     def set_nested
       if params[:parent_model] && ((params[:association] && params[:assoc_id]) || params[:named_scope])
         @nested = nil
-        active_scaffold_session_storage[:nested] = {:parent_model => params[:parent_model].constantize,
+        active_scaffold_session_storage[:nested] = {:parent_model => params[:parent_model].camelize.constantize,
                                                                   :name => (params[:association] || params[:named_scope]).to_sym,
                                                                   :parent_id => params[:assoc_id]}
         params.delete_if {|key, value| [:parent_model, :association, :named_scope, :assoc_id].include? key.to_sym}
