@@ -5,13 +5,13 @@ module ActiveScaffold
 
       def active_scaffold_human_condition_for(column)
         value = field_search_params[column.name]
+        search_ui = column.search_ui
+        search_ui ||= column.column.type if column.column
         if override_human_condition_column?(column)
           send(override_human_condition_column(column), value, {})
-        elsif column.search_ui and override_human_condition?(column.search_ui)
+        elsif search_ui and override_human_condition?(column.search_ui)
           send(override_human_condition(column.search_ui), column, value)
         else
-          search_ui = column.search_ui
-          search_ui ||= column.column.type if column.column
           case search_ui
           when :integer, :decimal, :float
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{format_number_value(controller.class.condition_value_for_numeric(column, value[:from]), column.options)} #{value[:opt] == 'BETWEEN' ? '- ' + format_number_value(controller.class.condition_value_for_numeric(column, value[:to]), column.options).to_s : ''}"

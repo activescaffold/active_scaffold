@@ -189,6 +189,9 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
   alias_method :active_scaffold_search_date_picker, :active_scaffold_search_date_bridge
   alias_method :active_scaffold_search_datetime_picker, :active_scaffold_search_date_bridge
+  include ActiveScaffold::Bridges::Shared::DateBridge::HumanConditionHelpers
+  alias_method :active_scaffold_human_condition_date_picker, :active_scaffold_human_condition_date_bridge
+  alias_method :active_scaffold_human_condition_datetime_picker, :active_scaffold_human_condition_date_bridge
   include ActiveScaffold::Bridges::DatePickerBridge::SearchColumnHelpers
   include ActiveScaffold::Bridges::DatePickerBridge::FormColumnHelpers
   alias_method :active_scaffold_input_datetime_picker, :active_scaffold_input_date_picker
@@ -198,6 +201,4 @@ ActiveScaffold::Finder::ClassMethods.module_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
   alias_method :condition_for_date_picker_type, :condition_for_date_bridge_type
   alias_method :condition_for_datetime_picker_type, :condition_for_date_picker_type
-  alias_method :human_condition_for_date_picker_type, :human_condition_for_date_bridge_type
-  alias_method :human_condition_for_datetime_picker_type, :human_condition_for_date_bridge_type
 end

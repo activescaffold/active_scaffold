@@ -58,6 +58,8 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::CalendarDateSelectBridge::FormColumnHelpers
   include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
   alias_method :active_scaffold_search_calendar_date_select, :active_scaffold_search_date_bridge
+  include ActiveScaffold::Bridges::Shared::DateBridge::HumanConditionHelpers
+  alias_method :active_scaffold_human_condition_calendar_date_select, :active_scaffold_human_condition_date_bridge
   include ActiveScaffold::Bridges::CalendarDateSelectBridge::SearchColumnHelpers
   include ActiveScaffold::Bridges::CalendarDateSelectBridge::ViewHelpers
 end
@@ -65,5 +67,4 @@ end
 ActiveScaffold::Finder::ClassMethods.module_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
   alias_method :condition_for_calendar_date_select_type, :condition_for_date_bridge_type
-  alias_method :human_condition_for_calendar_date_select_type, :human_condition_for_date_bridge_type
 end
