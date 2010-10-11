@@ -126,15 +126,7 @@ module ActiveScaffold
             ids.empty? ? [] : column.association.klass.find(ids) 
           end
         elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
-          native = '.'
-          delimiter = I18n.t('number.format.delimiter')
-          separator = I18n.t('number.format.separator')
-
-          unless delimiter == native && !value.include?(separator) && value !~ /\.\d{3}$/
-            value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
-          else
-            value
-          end
+          i18n_number_to_native_format(value)
         else
           # convert empty strings into nil. this works better with 'null => true' columns (and validations),
           # and 'null => false' columns should just convert back to an empty string.
@@ -142,6 +134,18 @@ module ActiveScaffold
           value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
           value
         end
+      end
+    end
+
+    def i18n_number_to_native_format(value)
+      native = '.'
+      delimiter = I18n.t('number.format.delimiter')
+      separator = I18n.t('number.format.separator')
+
+      unless delimiter == native && !value.include?(separator) && value !~ /\.\d{3}$/
+        value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
+      else
+        value
       end
     end
 
