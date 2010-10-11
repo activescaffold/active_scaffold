@@ -69,18 +69,13 @@ module ActiveScaffold
 
       def condition_for_numeric(column, value)
         if !value.is_a?(Hash)
-          ["#{column.search_sql} = ?", column.column.nil? ? value.to_f : column.column.type_cast(value)]
+          ["#{column.search_sql} = ?", condition_value_for_numeric(column, value)]
         elsif value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
-          condition = "#{column.search_sql} BETWEEN ? AND ?"
-          if column.column.nil?
-            [condition, value[:from].to_f, value[:to].to_f]
-          else
-            [condition, column.column.type_cast(value[:from]), column.column.type_cast(value[:to])]
-          end
-        else
-          ["#{column.search_sql} #{value[:opt]} ?", column.column.nil? ? value[:from].to_f : column.column.type_cast(value[:from])]
+          ["#{column.search_sql} BETWEEN ? AND ?", condition_value_for_numeric(column, value[:from]), condition_value_for_numeric(column, value[:to])]
+         else
+          ["#{column.search_sql} #{value[:opt]} ?", condition_value_for_numeric(column, value[:from])]
         end
       end
 
@@ -112,6 +107,29 @@ module ActiveScaffold
         else
           Time.zone.parse(value).in_time_zone.send(conversion) rescue nil
         end unless value.nil? || value.blank?
+      end
+
+      def condition_value_for_numeric(column, value)
+        value = i18n_number_to_native_format(value) if [:i18n_number, :currency].include?(column.options[:format])
+        case (column.search_ui || column.column.type)
+        when :integer   then value.to_i rescue value ? 1 : 0
+        when :float     then value.to_f
+        when :decimal   then ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
+        else
+          value
+        end
+      end
+
+      def i18n_number_to_native_format(value)
+        native = '.'
+        delimiter = I18n.t('number.format.delimiter')
+        separator = I18n.t('number.format.separator')
+
+        unless delimiter == native && !value.include?(separator) && value !~ /\.\d{3}$/
+          value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
+        else
+          value
+        end
       end
             
       def condition_for_datetime(column, value, like_pattern = nil)
@@ -175,15 +193,15 @@ module ActiveScaffold
           search_ui ||= column.column.type if column.column
           case search_ui
           when :integer, :decimal, :float
-            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt])} #{value[:from]} #{value[:opt] == 'BETWEEN' ? '-' + value[:to].to_s : ''}"
+            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{condition_value_for_numeric(column, value[:from])} #{value[:opt] == 'BETWEEN' ? '- ' + condition_value_for_numeric(column, value[:to]).to_s : ''}"
           when :string
             opt = ActiveScaffold::Finder::StringComparators.index(value[:opt]) || value[:opt]
-            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(opt).downcase} '#{value[:from]}' #{opt == 'BETWEEN' ? '-' + value[:to].to_s : ''}"
+            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(opt).downcase} '#{value[:from]}' #{opt == 'BETWEEN' ? '- ' + value[:to].to_s : ''}"
           when :date, :time, :datetime, :timestamp
             conversion = column.column.type == :date ? :to_date : :to_time
             from = condition_value_for_datetime(value[:from], conversion)
             to = condition_value_for_datetime(value[:to], conversion)
-            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt])} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '-' + I18n.l(to) : ''}"
+            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt])} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"
           when :select, :multi_select, :record_select
             associated = value
             associated = [associated].compact unless associated.is_a? Array
