@@ -110,6 +110,7 @@ module ActiveScaffold
       end
 
       def condition_value_for_numeric(column, value)
+        return value if value.nil?
         value = i18n_number_to_native_format(value) if [:i18n_number, :currency].include?(column.options[:format])
         case (column.search_ui || column.column.type)
         when :integer   then value.to_i rescue value ? 1 : 0
@@ -270,7 +271,6 @@ module ActiveScaffold
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when finder_options contains a :group key
       count = count.length if count.is_a? ActiveSupport::OrderedHash
-
       finder_options.merge! :includes => full_includes
 
       # we build the paginator differently for method- and sql-based sorting
