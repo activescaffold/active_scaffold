@@ -135,24 +135,26 @@ module ActiveScaffold
       end
     end
 
-    # Attempts to create or find an instance of klass (which must be an ActiveRecord object) from the
+   # Attempts to create or find an instance of klass (which must be an ActiveRecord object) from the
     # request parameters given. If params[:id] exists it will attempt to find an existing object
     # otherwise it will build a new one.
     def find_or_create_for_params(params, parent_column, parent_record)
       current = parent_record.send(parent_column.name)
       klass = parent_column.association.klass
+      pk = klass.primary_key.to_sym
       return nil if parent_column.show_blank_record?(current) and attributes_hash_is_empty?(params, klass)
 
-      if params.has_key? :id
+      if params.has_key? pk
         # modifying the current object of a singular association
-        if current and current.is_a? ActiveRecord::Base and current.id.to_s == params[:id]
+        pk_val = params[pk] 
+        if current and current.is_a? ActiveRecord::Base and current.id.to_s == pk_val
           return current
         # modifying one of the current objects in a plural association
-        elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == params[:id]}
-          return current.detect {|o| o.id.to_s == params[:id]}
+        elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == pk_val}
+          return current.detect {|o| o.id.to_s == pk_val}
         # attaching an existing but not-current object
         else
-          return klass.find(params[:id])
+          return klass.find(pk_val)
         end
       else
         if klass.authorized_for?(:crud_type => :create)
@@ -164,7 +166,6 @@ module ActiveScaffold
         end
       end
     end
-
     # Determines whether the given attributes hash is "empty".
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
