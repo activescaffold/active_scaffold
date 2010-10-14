@@ -622,7 +622,7 @@ var ActiveScaffold = {
     if (typeof(element) == 'string') element = '#' + element;
     var element = $(element);
     if (options.singular == false) {
-      if (!(options.id && $(options.id))) {
+      if (!(options.id && $('#' + options.id).size() > 0)) {
         element.append(content);
       }
     } else {
