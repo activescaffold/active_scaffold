@@ -655,7 +655,16 @@ var ActiveScaffold = {
          $.post(url.append_params(reorder_params)); 
        }
     });    
-  }  
+  },
+
+  record_select_onselect: function(edit_associated_url, active_scaffold_id, id){
+    $.ajax({
+      url: edit_associated_url.split('--ID--').join(id),
+      error: function(xhr, textStatus, errorThrown){
+        ActiveScaffold.report_500_response(active_scaffold_id)
+      }
+    });
+  }
 }
 
 /*

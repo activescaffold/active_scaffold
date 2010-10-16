@@ -65,10 +65,10 @@ document.observe("dom:loaded", function() {
     var action_link = ActiveScaffold.ActionLink.get(event.findElement());
     if (action_link && event.memo && event.memo.request) {
       if (action_link.position) {
-        action_link.insert(event.memo.request.responseText);
+        action_link.insert(event.memo.request.transport.responseText);
         if (action_link.hide_target) action_link.target.hide();
       } else {
-        event.memo.request.evalResponse();
+        //event.memo.request.evalResponse(); // (clyfe) prototype evals the response by itself checking headers, this would eval twice
         action_link.enable();
       }
       event.stop();
@@ -517,8 +517,19 @@ var ActiveScaffold = {
     } else {
       this.replace_html(element, content);
     }
+  },
+
+  record_select_onselect: function(edit_associated_url, active_scaffold_id, id){
+    new Ajax.Request(
+      edit_associated_url.sub('--ID--', id), {
+        asynchronous: true,
+        evalScripts: true,
+        onFailure: function(){
+          ActiveScaffold.report_500_response(active_scaffold_id.to_json)
+        }
+      }
+    );
   }
-  
 }
 
 /*
