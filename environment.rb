@@ -14,4 +14,4 @@ ActiveRecord::Base.class_eval     {include ActiveRecordPermissions::Permissions}
 
 require "#{File.dirname __FILE__}/lib/active_scaffold/bridges/bridge.rb"
 I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'lib', 'active_scaffold', 'locale', '*.{rb,yml}')]
-ActiveScaffold.js_framework = :jquery
+#ActiveScaffold.js_framework = :jquery
