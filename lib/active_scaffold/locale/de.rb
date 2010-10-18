@@ -92,8 +92,8 @@
       :errors => {
         :template => {
           :header => {
-            :one =>    "Konnte {{model}} nicht speichern: ein Fehler.",
-            :other =>  "Konnte {{model}} nicht speichern: {{count}} Fehler."
+            :one =>    "Konnte %{model} nicht speichern: ein Fehler.",
+            :other =>  "Konnte %{model} nicht speichern: %{count} Fehler."
           },
           :body => "Bitte überprüfen Sie die folgenden Felder:"
         }
