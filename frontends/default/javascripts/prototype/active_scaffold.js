@@ -728,7 +728,7 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     this.adapter = element;
     this.adapter.addClassName('as_adapter');
     this.adapter.store('action_link', this);
-  },
+  }
 });
 
 /**
@@ -804,6 +804,16 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
       if (item.url != this.url) return;
       item.tag.addClassName('disabled');
     }.bind(this));
+  },
+
+  set_opened: function() {
+    if (this.position == 'after') {
+      this.set_adapter(this.target.next());
+    }
+    else if (this.position == 'before') {
+      this.set_adapter(this.target.previous());
+    }
+    this.disable();
   }
 });
 
