@@ -69,18 +69,20 @@ module ActionView::Rendering #:nodoc:
           url = url_for(url_options)
           link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
             if ActiveScaffold.js_framework == :prototype
-              javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true});")
-            elsif ActiveScaffold.js_framework == :jquery
-              javascript_tag("$('##{id}').load('#{url}');")
-            end
+            javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true});")
+          elsif ActiveScaffold.js_framework == :jquery
+            javascript_tag("$('##{id}').load('#{url}');")
+          end
         end
       end
       
     else
       options = args.first
-      @last_view = {:view => options[:partial], :is_template => false} if options[:partial] 
-      @last_view = {:view => options[:template], :is_template => !!options[:template]} if @last_view.nil? && options[:template]
-      @last_view[:locals] = options[:locals] if !@last_view.nil? && options[:locals] 
+      if options.is_a?(Hash)
+        @last_view = {:view => options[:partial], :is_template => false} if options[:partial]
+        @last_view = {:view => options[:template], :is_template => !!options[:template]} if @last_view.nil? && options[:template]
+        @last_view[:locals] = options[:locals] if !@last_view.nil? && options[:locals]
+      end
       render_without_active_scaffold(*args, &block)
     end
   end
