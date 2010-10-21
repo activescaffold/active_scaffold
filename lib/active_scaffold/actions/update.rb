@@ -20,7 +20,7 @@ module ActiveScaffold::Actions
     # for inline (inlist) editing
     def update_column
       do_update_column
-      render :action => 'update_column'
+      render :action => 'update_column', :locals => {:column_span_id => params[:editor_id] || params[:editorId]}
     end
 
     protected
