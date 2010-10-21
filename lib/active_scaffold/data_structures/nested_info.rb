@@ -41,7 +41,11 @@ module ActiveScaffold::DataStructures
     
     def readonly?
       false
-    end    
+    end
+
+    def sorted?
+      false
+    end
   end
   
   class NestedInfoAssociation < NestedInfo
@@ -65,6 +69,14 @@ module ActiveScaffold::DataStructures
       else
         association.options.has_key? :through
       end
+    end
+
+    def sorted?
+      association.options.has_key? :order
+    end
+
+    def default_sorting
+      association.options[:order]
     end
     
     protected
