@@ -141,6 +141,17 @@ module ActiveScaffold::Config
         @session['page'] = value
       end
 
+      attr_reader :nested_default_sorting
+
+      def nested_default_sorting=(options)
+        @nested_default_sorting ||= @conf.sorting.clone
+        @nested_default_sorting.set_nested_sorting(options[:table_name], options[:default_sorting])
+      end
+
+      def default_sorting
+        nested_default_sorting.nil? ? @conf.sorting : nested_default_sorting
+      end
+
       def sorting
         # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
         @session['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
@@ -151,7 +162,7 @@ module ActiveScaffold::Config
           sorting.set(*@session['sort'])
           return sorting
         else
-          return @conf.sorting
+          return default_sorting
         end
       end
       

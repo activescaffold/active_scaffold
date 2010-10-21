@@ -7,7 +7,7 @@ module ActiveScaffold::Actions
       base.module_eval do
         before_filter :register_constraints_with_action_columns
         before_filter :set_nested
-        before_filter :set_nested_list_label
+        before_filter :configure_nested
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
       end
       base.before_filter :include_habtm_actions
@@ -38,12 +38,15 @@ module ActiveScaffold::Actions
       end
     end
     
-    def set_nested_list_label
+    def configure_nested
       if nested?
         active_scaffold_session_storage[:list][:label] =  if nested.belongs_to?
-        as_(:nested_of_model, :nested_model => active_scaffold_config.model.model_name.human, :parent_model => nested_parent_record.to_label)
+          as_(:nested_of_model, :nested_model => active_scaffold_config.model.model_name.human, :parent_model => nested_parent_record.to_label)
         else
           as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label)
+        end
+        if nested.sorted?
+          active_scaffold_config.list.user.nested_default_sorting = {:table_name => active_scaffold_config.model.model_name, :default_sorting => nested.default_sorting}
         end
       end
     end

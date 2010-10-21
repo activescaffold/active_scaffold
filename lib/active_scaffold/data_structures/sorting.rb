@@ -21,6 +21,11 @@ module ActiveScaffold::DataStructures
         set(model.primary_key, 'ASC') if model.column_names.include?(model.primary_key)
       end
     end
+
+    def set_nested_sorting(table_name, order_clause)
+      clear
+      set_sorting_from_order_clause(order_clause, table_name)
+    end
     
     # add a clause to the sorting, assuming the column is sortable
     def add(column_name, direction = nil)
