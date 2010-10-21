@@ -1,4 +1,4 @@
-column_span_id = element_cell_id(:id => @record.id.to_s, :action => 'update_column', :name => params[:column])
+column_span_id ||= element_cell_id(:id => @record.id.to_s, :action => 'update_column', :name => params[:column])
 unless controller.send :successful?
   page.call 'alert', @record.errors.full_messages(active_scaffold_config).join("\n")
   @record.reload
