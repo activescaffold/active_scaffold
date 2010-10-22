@@ -12,7 +12,7 @@ if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFu
 
 
 document.observe("dom:loaded", function() {
-  document.on('ajax:loading', 'form.as_form', function(event) {
+  document.on('ajax:create', 'form.as_form', function(event) {
     var source = event.findElement();
     var as_form = event.findElement('form');
     if (source.nodeName.toUpperCase() == 'INPUT' && source.readAttribute('type') == 'button') {
