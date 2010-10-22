@@ -299,8 +299,8 @@ var ActiveScaffold = {
   },
   hide_empty_message: function(tbody) {
     if (this.records_for(tbody).length != 0) {
-      var empty_message_node = $(tbody).up().down('tbody.messages p.empty-message')
-      if (empty_message_node) empty_message_node.hide();
+      var empty_message_nodes = $(tbody).up().select('tbody.messages p.empty-message')
+      empty_message_nodes.invoke('hide');
     }
   },
   reload_if_empty: function(tbody, url) {
