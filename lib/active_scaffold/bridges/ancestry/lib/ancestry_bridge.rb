@@ -20,7 +20,7 @@ module ActiveScaffold
     module FormColumnHelpers
       def active_scaffold_input_ancestry(column, options)
         select_options = []
-        traverse_ancestry = lambda do|key, value|
+        traverse_ancestry = proc do|key, value|
           unless key == @record
             select_options << ["#{'__' * key.depth}#{key.to_label}", key.id]
             value.each(&traverse_ancestry) if value.is_a?(Hash) && !value.empty?
