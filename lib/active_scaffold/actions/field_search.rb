@@ -20,6 +20,7 @@ module ActiveScaffold::Actions
     def store_search_params_into_session
       set_field_search_default_params(active_scaffold_config.field_search.default_params) unless active_scaffold_config.field_search.default_params.nil?
       super
+      active_scaffold_session_storage[:search] = nil if search_params.is_a?(String)
     end
     
     def set_field_search_default_params(default_params)
