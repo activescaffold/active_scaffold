@@ -1,5 +1,5 @@
-<% url_options = params_for(:action => form_action) 
-   xhr ||= request.xhr?
+<% url_options ||= params_for(:action => form_action)
+   xhr = request.xhr? if xhr.nil?
    as_action_config = active_scaffold_config.send(form_action)
    body_partial ||= 'form' %>
 <%=
