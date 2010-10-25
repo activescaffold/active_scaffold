@@ -1,6 +1,7 @@
-<% url_options = params_for(:action => form_action) -%>
-<% xhr ||= request.xhr? -%>
-<% as_action_config = active_scaffold_config.send(form_action) -%>
+<% url_options = params_for(:action => form_action) 
+   xhr ||= request.xhr?
+   as_action_config = active_scaffold_config.send(form_action)
+   body_partial ||= 'form' %>
 <%=
 options = {:onsubmit => onsubmit,
            :id => element_form_id(:action => form_action),
@@ -19,13 +20,15 @@ end -%>
 
   <div id="<%= element_messages_id(:action => form_action) %>" class="messages-container">
 <% if request.xhr? -%>
-    <%= error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
+    <% if @record -%>
+      <%= error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
+    <% end   %>
 <% else -%>
     <%= render :partial => 'form_messages' %>
 <% end -%>
   </div>
 
-  <%= render :partial => 'form', :locals => { :columns => as_action_config.columns } %>
+  <%= render :partial => body_partial, :locals => { :columns => as_action_config.columns } %>
 
   <p class="form-footer">
     <%= submit_tag as_(form_action), :class => "submit" %>
