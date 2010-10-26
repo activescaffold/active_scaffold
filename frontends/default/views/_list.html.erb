@@ -1,7 +1,7 @@
 <table cellpadding="0" cellspacing="0">
   <thead>
     <tr>
-      <% columns = active_scaffold_config.list.columns.collect_visible %>
+      <% columns = list_columns %>
       <%= render :partial => 'list_column_headings', :locals => {:columns => columns} %>
     </tr>
   </thead>
