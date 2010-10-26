@@ -1,7 +1,8 @@
 module ActiveScaffold::Actions
   module List
     def self.included(base)
-      base.before_filter :list_authorized_filter, :only => [:index, :row, :list]
+      base.before_filter :list_authorized_filter, :only => [:index, :row]
+      base.helper_method :list_columns
     end
 
     def index
@@ -103,6 +104,10 @@ module ActiveScaffold::Actions
     end
     def action_update_formats
       (default_formats + active_scaffold_config.formats).uniq
+    end
+
+    def list_columns
+      active_scaffold_config.list.columns.collect_visible
     end
   end
 end
