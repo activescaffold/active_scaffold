@@ -644,17 +644,19 @@ var ActiveScaffold = {
     }
   },
   
-  sortable: function(element, controller, reorder_params) {
+  sortable: function(element, controller, options, url_params) {
     if (typeof(element) == 'string') element = '#' + element;
     var element = $(element);
-    reorder_params.authenticity_token = $('meta[name=csrf-param]').attr('content'); 
-    element.sortable({
-       update: function(event, ui) {
-         var url = controller + '/reorder?'
+    var sortable_options = {};
+    if (options.update === true) {
+      url_params.authenticity_token = $('meta[name=csrf-param]').attr('content');
+      sortable_options.update = function(event, ui) {
+         var url = controller + '/' + options.action + '?'
          url += $(this).sortable('serialize',{key: encodeURIComponent($(this).attr('id') + '[]'), expression:/^[^_-](?:[A-Za-z0-9_-]*)-(.*)-row$/});
-         $.post(url.append_params(reorder_params)); 
+         $.post(url.append_params(url_params));
        }
-    });    
+    }
+    element.sortable(sortable_options);
   },
 
   record_select_onselect: function(edit_associated_url, active_scaffold_id, id){
