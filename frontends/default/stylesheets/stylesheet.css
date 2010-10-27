@@ -644,6 +644,10 @@ padding: 6px 0;
 float: left;
 }
 
+.active-scaffold li.form-element dd input[type="checkbox"] {
+margin-top: 6px;
+}
+
 .active-scaffold .form dd {
 margin: 0;
 }
