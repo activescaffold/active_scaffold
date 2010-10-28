@@ -8,6 +8,8 @@
       :cancel => 'Annuler',
       :click_to_edit => 'Cliquer pour éditer',
       :close => 'Fermer',
+      :config_list => 'Configure',
+      :config_list_model => 'Configure Columns for %{model}',
       :create => 'Créer',
       :create_model => 'Créer %{model}',
       :create_another => 'Créer un autre',
