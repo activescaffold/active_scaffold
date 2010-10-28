@@ -63,7 +63,7 @@ module ActiveScaffold
       end
       
       def self.date_options
-        date_options = I18n.t 'date'
+        date_options = I18n.translate! 'date'
         date_picker_options = { :closeText => as_(:close),
           :prevText => as_(:previous),
           :nextText => as_(:next),
@@ -82,8 +82,8 @@ module ActiveScaffold
       end
       
       def self.datetime_options
-        rails_time_format = I18n.t 'time.formats.default'
-        datetime_options = I18n.t 'datetime.prompts'
+        rails_time_format = I18n.translate! 'time.formats.default'
+        datetime_options = I18n.translate! 'datetime.prompts'
         datetime_picker_options = {:ampm => false,
           :hourText => datetime_options[:hour],
 				  :minuteText => datetime_options[:minute],
@@ -144,10 +144,10 @@ module ActiveScaffold
         
         def datepicker_format_options(column, format, options)
           if column.form_ui == :date_picker
-            js_format = to_datepicker_format(I18n.t("date.formats.#{format}"))
+            js_format = to_datepicker_format(I18n.translate!("date.formats.#{format}"))
             options['date:dateFormat'] = js_format unless js_format.nil?
           else
-            rails_time_format = I18n.t("time.formats.#{format}")
+            rails_time_format = I18n.translate!("time.formats.#{format}")
             date_format, time_format = datepicker_split_datetime_format(self.to_datepicker_format(rails_time_format))
             options['date:dateFormat'] = date_format unless date_format.nil?
             unless time_format.nil?
