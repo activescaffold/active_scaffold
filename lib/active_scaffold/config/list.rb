@@ -118,7 +118,7 @@ module ActiveScaffold::Config
     # might be set to open nested_link automatically in view
     # conf.nested.add_link(:players)
     # conf.list.nested_auto_open = {:players => 2}
-    # will open nested views if there are 2 or less records in view
+    # will open nested players view if there are 2 or less records in parent
     attr_accessor :nested_auto_open
     
     class UserSettings < UserSettings
