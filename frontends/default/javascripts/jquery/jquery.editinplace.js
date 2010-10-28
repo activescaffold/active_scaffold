@@ -308,7 +308,7 @@ $.extend(InlineEditor.prototype, {
     var clonedNodes = null;
     if (editorNode.attr('id').length > 0) editorNode.attr('id', editorNode.attr('id') + this.settings.clone_id_suffix);
     editorNode.attr('name', 'inplace_value');
-    editorNode.attr('class', 'editor_field');
+    editorNode.addClass('editor_field');
     this.setValue(editorNode, this.originalValue);
     clonedNodes = editorNode;
     
