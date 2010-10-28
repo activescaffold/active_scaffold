@@ -9,6 +9,8 @@
       :click_to_edit => 'Click to edit',
       :click_to_reset => 'Click to reset',
       :close => 'Close',
+      :config_list => 'Configure',
+      :config_list_model => 'Configure Columns for %{model}',
       :create => 'Create',
       :create_model => 'Create %{model}',
       :create_another => 'Create Another %{model}',

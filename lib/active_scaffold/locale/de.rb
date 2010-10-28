@@ -8,6 +8,8 @@
       :cancel => 'Abbrechen',
       :click_to_edit => 'Zum Editieren anklicken',
       :close => 'Schliessen',
+      :config_list => 'Konfigurieren',
+      :config_list_model => 'Konfiguriere Spalten für %{model}',
       :create => 'Anlegen',
       :create_model => 'Lege %{model} an',
       :create_another => 'Weitere anlegen',
