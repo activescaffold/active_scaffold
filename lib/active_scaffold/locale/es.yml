@@ -10,7 +10,7 @@ es:
     close: 'Cerrar'
     config_list: 'Configure'
     config_list_model: 'Configure Columns for %{model}'
-    'create': 'Crear'
+    create: 'Crear'
     create_model: 'Crear %{model}'
     create_another: 'Crear Otro %{model}'
     created_model: '%{model} creado'
