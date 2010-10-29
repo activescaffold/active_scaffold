@@ -8,7 +8,9 @@ es:
     click_to_edit: 'Pulsa para editar'
     click_to_reset: 'Pulsa para restaurar'
     close: 'Cerrar'
-    create: 'Crear'
+    config_list: 'Configure'
+    config_list_model: 'Configure Columns for %{model}'
+    'create': 'Crear'
     create_model: 'Crear %{model}'
     create_another: 'Crear Otro %{model}'
     created_model: '%{model} creado'
@@ -65,6 +67,41 @@ es:
     contains: 'Contiene'
     begins_with: 'Empieza con'
     ends_with: 'Termina con'
+    today: 'Today'
+    yesterday: 'Yesterday'
+    tomorrow: 'Tommorrow'
+    this_week: 'This Week'
+    prev_week: 'Last Week'
+    next_week: 'Next Week'
+    this_month: 'This Month'
+    prev_month: 'Last Month'
+    next_month: 'Next Month'
+    this_year: 'This Year'
+    prev_year: 'Last Year'
+    next_year: 'Next Year'
+    past: 'Past'
+    future: 'Future'
+    range: 'Range'
+    days: 'Days'
+    weeks: 'Weeks'
+    months: 'Months'
+    years: 'Years'
+    optional_attributes: 'Further Options'
+    null: 'Null'
+    not_null: 'Not Null'
+    date_picker_options:
+      weekHeader: 'Sm'
+      firstDay: 1
+      isRTL: false
+      showMonthAfterYear: false
+    datetime_picker_options:
+      timeText: 'Hora'
+    errors:
+      template:
+        header:
+          one: "1 error prohibited this %{model} from being saved."
+          other: "%{count} errors prohibited this %{model} from being saved"
+        body: "There were problems with the following fields:"
 
     # error_messages
     cant_destroy_record: "No se pudo borrar %{record}"
