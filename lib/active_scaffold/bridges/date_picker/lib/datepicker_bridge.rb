@@ -76,9 +76,11 @@ module ActiveScaffold
           :changeYear => true,
           :changeMonth => true,
         }
-        if as_(:date_picker_options).is_a? Hash
-          date_picker_options.merge!(as_(:date_picker_options))
-        else
+
+        begin
+          as_date_picker_options = I18n.translate! 'active_scaffold.date_picker_options'
+          date_picker_options.merge!(as_date_picker_options) if as_date_picker_options.is_a? Hash
+        rescue
           Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{I18n.locale}"
         end
 
@@ -95,10 +97,11 @@ module ActiveScaffold
 				  :minuteText => datetime_options[:minute],
 				  :secondText => datetime_options[:second],
         }
-
-        if as_(:datetime_picker_options).is_a? Hash
-          datetime_picker_options.merge!(as_(:datetime_picker_options))
-        else
+        
+        begin
+          as_datetime_picker_options = I18n.translate! 'active_scaffold.datetime_picker_options'
+          datetime_picker_options.merge!(as_datetime_picker_options) if as_datetime_picker_options.is_a? Hash
+        rescue
           Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{I18n.locale}"
         end
         
