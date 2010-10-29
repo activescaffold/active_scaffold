@@ -75,7 +75,13 @@ module ActiveScaffold
           :dayNamesMin => date_options[:abbr_day_names],
           :changeYear => true,
           :changeMonth => true,
-        }.merge(as_(:date_picker_options))
+        }
+        if as_(:date_picker_options).is_a? Hash
+          date_picker_options.merge!(as_(:date_picker_options))
+        else
+          Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{I18n.locale}"
+        end
+
         js_format = self.to_datepicker_format(date_options[:formats][:default])
         date_picker_options[:dateFormat] = js_format unless js_format.nil? 
         date_picker_options
@@ -88,7 +94,14 @@ module ActiveScaffold
           :hourText => datetime_options[:hour],
 				  :minuteText => datetime_options[:minute],
 				  :secondText => datetime_options[:second],
-        }.merge(as_(:datetime_picker_options))
+        }
+
+        if as_(:datetime_picker_options).is_a? Hash
+          datetime_picker_options.merge!(as_(:datetime_picker_options))
+        else
+          Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{I18n.locale}"
+        end
+        
         date_format, time_format = self.split_datetime_format(self.to_datepicker_format(rails_time_format))
         datetime_picker_options[:dateFormat] = date_format unless date_format.nil?
         unless time_format.nil?
