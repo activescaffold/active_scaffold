@@ -86,7 +86,7 @@
         :weekHeader => 'Wo',
 				:firstDay => 1,
 		    :isRTL => false,
-		    :showMonthAfterYear => false,
+		    :showMonthAfterYear => false
       },
       :datetime_picker_options => {
         :timeText => 'Uhrzeit'
