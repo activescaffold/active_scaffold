@@ -35,9 +35,15 @@ module ActiveScaffold
           def active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
             trend_controls = text_field_tag("search[#{column.name}][number]", current_search['number'], :class => 'text-input', :size => 10) << " " << 
             select_tag("search[#{column.name}][unit]", 
-             options_for_select( ActiveScaffold::Finder::DateUnits.collect{|date_unit| [as_(date_unit.downcase.to_sym), date_unit]}, current_search["unit"]), 
+             options_for_select(active_scaffold_search_date_bridge_trend_units(column), current_search["unit"]),
              :class => 'text-input')
             content_tag("span", trend_controls.html_safe, :id => "#{options[:id]}_trend", :style => "display:#{(current_search['opt'] == 'PAST' || current_search['opt'] == 'FUTURE') ? '' : 'none'}")
+          end
+
+          def active_scaffold_search_date_bridge_trend_units(column)
+             options = ActiveScaffold::Finder::DateUnits.collect{|unit| [as_(unit.downcase.to_sym), unit]}
+             options = ActiveScaffold::Finder::TimeUnits.collect{|unit| [as_(unit.downcase.to_sym), unit]} + options if column_datetime?(column)
+             options
           end
           
           def active_scaffold_search_date_bridge_range_tag(column, options, current_search)
@@ -99,10 +105,26 @@ module ActiveScaffold
               case value['opt']
               when "PAST"
                 trend_number = [value['number'].to_i,  1].max
-                return eval("Time.zone.now.beginning_of_#{value['unit'].downcase.singularize}.ago(#{trend_number - 1}.#{value['unit'].downcase.singularize})"), Time.zone.now.end_of_day
+                now = Time.zone.now
+                if date_bridge_column_date?(column)
+                  from = now.beginning_of_day.ago((trend_number).send(value['unit'].downcase.singularize.to_sym))
+                  to = now.end_of_day
+                else
+                  from = now.ago((trend_number).send(value['unit'].downcase.singularize.to_sym))
+                  to = now
+                end
+                return from, to
               when "FUTURE"
-                trend_number = [search_criterion['number'].to_i,  1].max
-                return Time.zone.now.beginning_of_day, eval("Time.zone.now.end_of_#{value['unit'].downcase.singularize}.in(#{trend_number - 1}.#{value['unit'].downcase.singularize})")
+                trend_number = [value['number'].to_i,  1].max
+                now = Time.zone.now
+                if date_bridge_column_date?(column)
+                  from = now.beginning_of_day
+                  to = now.end_of_day.in((trend_number).send(value['unit'].downcase.singularize.to_sym))
+                else
+                  from = now
+                  to = now.in((trend_number).send(value['unit'].downcase.singularize.to_sym))
+                end
+                return from, to
               end
             end
             
@@ -129,6 +151,14 @@ module ActiveScaffold
                 end
               end
             end
+
+            def date_bridge_column_date?(column)
+              if [:date_picker, :datetime_picker].include? column.form_ui
+                column.form_ui == :date_picker
+              else
+                (!column.column.nil? && [:date].include?(column.column.type))
+              end
+            end
           end
         end
       end
@@ -138,6 +168,7 @@ end
 
 ActiveScaffold::Finder.const_set('DateComparators', ["PAST", "FUTURE", "RANGE"])
 ActiveScaffold::Finder.const_set('DateUnits', ["DAYS", "WEEKS", "MONTHS", "YEARS"])
+ActiveScaffold::Finder.const_set('TimeUnits', ["SECONDS", "MINUTES", "HOURS"])
 ActiveScaffold::Finder.const_set('DateRanges', ["TODAY", "YESTERDAY", "TOMORROW",
                                                 "THIS_WEEK", "PREV_WEEK", "NEXT_WEEK",
                                                 "THIS_MONTH", "PREV_MONTH", "NEXT_MONTH",
