@@ -17,8 +17,13 @@ module ActiveScaffold
           # fallback: we get to make the decision
           else
             if column.association
-              # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
-              raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
+              if column.form_ui.nil?
+                # its an association and nothing is specified, we will assume form_ui :select
+                active_scaffold_input_select(column, options)
+              else
+                # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
+                raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
+              end
             elsif column.virtual?
               active_scaffold_input_virtual(column, options)
 
