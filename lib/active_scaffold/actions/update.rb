@@ -71,9 +71,13 @@ module ActiveScaffold::Actions
     # If you want to customize this algorithm, consider using the +before_update_save+ callback
     def do_update
       do_edit
+      @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
+      update_save
+    end
+
+    def update_save
       begin
         active_scaffold_config.model.transaction do
-          @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
           before_update_save(@record)
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
           if successful?
