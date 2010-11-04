@@ -99,41 +99,49 @@ module ActiveScaffold
     def column_value_from_param_value(parent_record, column, value)
       # convert the value, possibly by instantiating associated objects
       if value.is_a?(Hash)
-        # this is just for backwards compatibility. we should clean this up in 2.0.
-        if column.form_ui == :select
-          ids = if column.singular_association?
-            value[:id]
-          else
-            value.values.collect {|hash| hash[:id]}
-          end
-          (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
-
-        elsif column.singular_association?
-          manage_nested_record_from_params(parent_record, column, value)
-        elsif column.plural_association?
-          value.collect {|key_value_pair| manage_nested_record_from_params(parent_record, column, key_value_pair[1])}.compact
-        else
-          value
-        end
+        column_value_from_param_hash_value(parent_record, column, value)
       else
-        if column.singular_association?
-          # it's a single id
-          column.association.klass.find(value) if value and not value.empty?
-        elsif column.plural_association?
-          # it's an array of ids
-          if value and not value.empty?
-            ids = value.select {|id| id.respond_to?(:empty?) ? !id.empty? : true}
-            ids.empty? ? [] : column.association.klass.find(ids) 
-          end
-        elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
-          self.class.i18n_number_to_native_format(value)
-        else
-          # convert empty strings into nil. this works better with 'null => true' columns (and validations),
-          # and 'null => false' columns should just convert back to an empty string.
-          # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
-          value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
-          value
+        column_value_from_param_simple_value(parent_record, column, value)
+      end
+    end
+
+    def column_value_from_param_simple_value(parent_record, column, value)
+      if column.singular_association?
+        # it's a single id
+        column.association.klass.find(value) if value and not value.empty?
+      elsif column.plural_association?
+        # it's an array of ids
+        if value and not value.empty?
+          ids = value.select {|id| id.respond_to?(:empty?) ? !id.empty? : true}
+          ids.empty? ? [] : column.association.klass.find(ids)
         end
+      elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
+        self.class.i18n_number_to_native_format(value)
+      else
+        # convert empty strings into nil. this works better with 'null => true' columns (and validations),
+        # and 'null => false' columns should just convert back to an empty string.
+        # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
+        value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
+        value
+      end
+    end
+
+    def column_value_from_param_hash_value(parent_record, column, value)
+      # this is just for backwards compatibility. we should clean this up in 2.0.
+      if column.form_ui == :select
+        ids = if column.singular_association?
+          value[:id]
+        else
+          value.values.collect {|hash| hash[:id]}
+        end
+        (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
+
+      elsif column.singular_association?
+        manage_nested_record_from_params(parent_record, column, value)
+      elsif column.plural_association?
+        value.collect {|key_value_pair| manage_nested_record_from_params(parent_record, column, key_value_pair[1])}.compact
+      else
+        value
       end
     end
 
