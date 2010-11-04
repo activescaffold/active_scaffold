@@ -11,10 +11,10 @@ module Rails
         plugin 'verification', :git => 'git://github.com/rails/verification.git'
         plugin 'render_component', :git => 'git://github.com/vhochstein/render_component.git'
         if js_lib == 'prototype'
-          get "http://github.com/vhochstein/prototype-ujs/raw/master/src/rails.js", "public/javascripts/rails.js" 
+          get "https://github.com/vhochstein/prototype-ujs/raw/master/src/rails.js", "public/javascripts/rails.js"
         elsif js_lib == 'jquery'
-          get "http://github.com/vhochstein/jquery-ujs/raw/master/src/rails.js", "public/javascripts/rails_jquery.js"
-          get "http://github.com/vhochstein/jQuery-Timepicker-Addon/raw/master/jquery-ui-timepicker-addon.js", "public/javascripts/jquery-ui-timepicker-addon.js"
+          get "https://github.com/vhochstein/jquery-ujs/raw/master/src/rails.js", "public/javascripts/rails_jquery.js"
+          get "https://github.com/vhochstein/jQuery-Timepicker-Addon/raw/master/jquery-ui-timepicker-addon.js", "public/javascripts/jquery-ui-timepicker-addon.js"
         end
       end
       
