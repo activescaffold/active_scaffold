@@ -260,7 +260,14 @@ document.observe("dom:loaded", function() {
     Element[(element.value == 'PAST' || element.value == 'FUTURE') ? 'show' : 'hide'](element.id.sub('_opt', '_trend'));
     Element[element.value == 'RANGE' ? 'show' : 'hide'](element.id.sub('_opt', '_range'));
     return true;
-  });  
+  });
+  document.on('change', 'select.as_update_date_operator', function(event) {
+    var element = event.findElement();
+    Element[element.value == 'REPLACE' ? 'show' : 'hide'](element.next());
+    Element[element.value == 'REPLACE' ? 'show' : 'hide'](element.next().next());
+    Element[element.value == 'REPLACE' ? 'hide' : 'show'](element.next('span'));
+    return true;
+  });
 });
 
 
