@@ -241,6 +241,12 @@ $(document).ready(function() {
     ActiveScaffold[(element.val() == 'RANGE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_range'));
     return true;
   });
+
+  $('select.as_update_date_operator').live('change', function(event) {
+    ActiveScaffold[$(this).val() == 'REPLACE' ? 'show' : 'hide']($(this).next());
+    ActiveScaffold[$(this).val() == 'REPLACE' ? 'hide' : 'show']($(this).next().next());
+    return true;
+  });
   
 });
 
