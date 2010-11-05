@@ -29,7 +29,7 @@ module ActiveScaffold::Actions
     end
 
     def do_search
-      unless search_params.nil?
+      unless search_params.blank?
         text_search = active_scaffold_config.field_search.text_search
         search_conditions = []
         columns = active_scaffold_config.field_search.columns
