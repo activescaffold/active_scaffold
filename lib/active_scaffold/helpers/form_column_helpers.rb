@@ -5,9 +5,15 @@ module ActiveScaffold
       # This method decides which input to use for the given column.
       # It does not do any rendering. It only decides which method is responsible for rendering.
       def active_scaffold_input_for(column, scope = nil, options = {})
+        options = active_scaffold_input_options(column, scope, options)
+        options = update_columns_options(column, scope, options)
+        active_scaffold_render_input(column, options)
+      end
+
+      alias form_column active_scaffold_input_for
+
+      def active_scaffold_render_input(column, options)
         begin
-          options = active_scaffold_input_options(column, scope, options)
-          options = update_columns_options(column, scope, options)
           # first, check if the dev has created an override for this specific field
           if override_form_field?(column)
             send(override_form_field(column), @record, options)
@@ -51,8 +57,6 @@ module ActiveScaffold
           raise e
         end
       end
-
-      alias form_column active_scaffold_input_for
 
       # the standard active scaffold options used for textual inputs
       def active_scaffold_input_text_options(options = {})
