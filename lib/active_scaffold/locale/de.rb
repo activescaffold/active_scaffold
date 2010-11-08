@@ -83,8 +83,8 @@
       :months => 'Monate',
       :years => 'Jahre',
       :optional_attributes => 'Weitere',
-      :null => 'Definiert',
-      :not_null => 'Undefiniert',
+      :null => 'Undefiniert',
+      :not_null => 'Definiert',
       :date_picker_options => {
         :weekHeader => 'Wo',
 				:firstDay => 1,
