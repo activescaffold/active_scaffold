@@ -41,13 +41,13 @@ module ActiveScaffold::Actions
       end
     end
     def list_respond_to_xml
-      render :xml => response_object.to_xml(:only => active_scaffold_config.list.columns.names), :content_type => Mime::XML, :status => response_status
+      render :xml => response_object.to_xml(:only => list_columns_names), :content_type => Mime::XML, :status => response_status
     end
     def list_respond_to_json
-      render :text => response_object.to_json(:only => active_scaffold_config.list.columns.names), :content_type => Mime::JSON, :status => response_status
+      render :text => response_object.to_json(:only => list.columns.names), :content_type => Mime::JSON, :status => response_status
     end
     def list_respond_to_yaml
-      render :text => Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.list.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :text => Hash.from_xml(response_object.to_xml(:only => list_columns_names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
     # The actual algorithm to prepare for the list view
     def do_list
@@ -95,15 +95,15 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_xml
-      render :xml => successful? ? "" : response_object.to_xml(:only => active_scaffold_config.list.columns.names), :content_type => Mime::XML, :status => response_status
+      render :xml => successful? ? "" : response_object.to_xml(:only => list_columns_names), :content_type => Mime::XML, :status => response_status
     end
 
     def action_update_respond_to_json
-      render :text => successful? ? "" : response_object.to_json(:only => active_scaffold_config.list.columns.names), :content_type => Mime::JSON, :status => response_status
+      render :text => successful? ? "" : response_object.to_json(:only => list_columns_names), :content_type => Mime::JSON, :status => response_status
     end
 
     def action_update_respond_to_yaml
-      render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.list.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => list_columns_names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
      
     private
@@ -119,6 +119,10 @@ module ActiveScaffold::Actions
 
     def list_columns
       active_scaffold_config.list.columns.collect_visible
+    end
+
+    def list_columns_names
+      list_columns.collect(&:name)
     end
   end
 end
