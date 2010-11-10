@@ -20,8 +20,9 @@ end -%>
 
   <div id="<%= element_messages_id(:action => form_action) %>" class="messages-container">
 <% if request.xhr? -%>
-    <% if @record -%>
-      <%= error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
+    <% records = @error_records || Array(@record)
+       records.each do |record| %>
+       <%= error_messages_for record, :object_name => "#{record.class.model_name.human.downcase}#{record.new_record? ? '' : ": #{record.to_label}"}" %>
     <% end   %>
 <% else -%>
     <%= render :partial => 'form_messages' %>
