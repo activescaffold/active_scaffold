@@ -1,10 +1,13 @@
 <dl>
 <% columns.each :for => @record do |column| %>
   <dt><%= column.label -%></dt>
-  <dd<%= " class=\"#{column.name}-view #{column.css_class}\"" unless column.is_a? ActiveScaffold::DataStructures::ActionColumns %>>
 <% if column.is_a? ActiveScaffold::DataStructures::ActionColumns -%>
+  <dd>
     <%= render :partial => 'show_columns', :locals => {:columns => column} %>
 <% else -%>
+    <% css_class = "#{column.name}-view"
+     css_class.concat(" #{column.css_class}") unless column.css_class.nil? %>
+    <dd class="<%= css_class.strip %>">
     <%= show_column_value(@record, column) -%> &nbsp;
 <% end -%>
   </dd>
