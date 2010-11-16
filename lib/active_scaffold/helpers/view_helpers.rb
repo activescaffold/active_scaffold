@@ -212,7 +212,7 @@ module ActiveScaffold
         classes << 'empty' if column_empty? column_value
         classes << 'sorted' if active_scaffold_config.list.user.sorting.sorts_on?(column)
         classes << 'numeric' if column.column and [:decimal, :float, :integer].include?(column.column.type)
-        classes.join(' ')
+        classes.join(' ').rstrip
       end
       
       def column_heading_class(column, sorting)
