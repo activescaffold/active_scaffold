@@ -4,7 +4,7 @@ columns ||= list_columns
 tr_class = cycle("", "even-record")
 tr_class += " #{list_row_class(record)}" if respond_to? :list_row_class
 url_options = params_for(:action => :list, :id => record.id)
-action_links ||= active_scaffold_config.action_links.collect_by_type(:member)
+action_links ||= active_scaffold_config.action_links.member.collect
 -%>
 
 <tr class="record <%= tr_class %>" id="<%= element_row_id(:action => :list, :id => record.id) %>" data-refresh="<%= url_for(params_for(:action => :row, :id => record.id, :_method => :get, :escape => false)).html_safe %>">

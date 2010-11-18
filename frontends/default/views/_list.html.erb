@@ -8,7 +8,7 @@
   <%= render :partial => 'list_messages', :locals => {:columns => columns} %>
   <tbody class="records" id="<%= active_scaffold_tbody_id %>">
     <% if !@records.empty? -%>
-      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.collect_by_type(:member)} %>
+      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.member} %>
     <% end -%>
     <% if columns.any? {|c| c.calculation?} -%>
       <%= render :partial => 'list_calculations', :locals => {:columns => columns} %>

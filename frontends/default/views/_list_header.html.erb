@@ -1,4 +1,4 @@
-<% action_links = active_scaffold_config.action_links.collect_by_type(:collection) 
+<% action_links = active_scaffold_config.action_links.collection.collect
   unless action_links.empty? -%>
   <div class="actions">
     <% new_params = params_for %>
