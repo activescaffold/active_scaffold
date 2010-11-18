@@ -21,7 +21,7 @@
       record = active_scaffold_config.model.new
       record.id = 0
       action_links.add(search_link)  -%>
-      <%= render :partial => 'list_actions', :locals => {:record => record, :url_options => params_for(:escape => false, :search => ''), :action_links => action_links} %>
+      <%= render :partial => 'list_actions', :locals => {:record => record, :url_options => params_for(:escape => false, :search => ''), :action_links => action_links.member} %>
     <% else %>
       <td class='actions'><%= '<p class="empty-message">&nbsp;</p>'.html_safe if @page.items.empty? %></td>
     <% end -%>
