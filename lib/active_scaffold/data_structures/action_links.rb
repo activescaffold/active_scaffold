@@ -82,7 +82,6 @@ module ActiveScaffold::DataStructures
       group = @set.find do |item|
         name == item.name if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
       end
-
       if group.nil?
         group = ActiveScaffold::DataStructures::ActionLinks.new
         group.label = label
@@ -99,7 +98,12 @@ module ActiveScaffold::DataStructures
     end
 
     def method_missing(name, *args)
-      subgroup(name, name)
+      class_eval %{
+        def #{name}
+          @#{name} ||= subgroup('#{name}'.to_sym)
+        end
+      }
+      send(name)
     end
 
     attr_accessor :name
