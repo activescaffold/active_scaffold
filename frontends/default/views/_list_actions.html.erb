@@ -8,8 +8,8 @@
       <% action_links.traverse(controller, {:record => record}) do |parent, link, options| -%>
         <% tag = (level == 0 ? 'td' : 'li') %>
         <% if (options[:node] == :finished_traversing) -%>
-          <%= "</ul></#{tag}>".html_safe %>
           <% level -= 1 %>
+          <%= "</ul></#{(level == 0 ? 'td' : 'li')}>".html_safe %>
         <% elsif (options[:node] == :start_traversing) -%>
           <%= "<#{tag} #{"class=\"action_list\"" if tag == 'td'}> #{content_tag('span', parent.name)}<ul>".html_safe %>
           <% level += 1 %>
