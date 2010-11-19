@@ -330,7 +330,7 @@ module ActiveScaffold
 
       def column_heading_value(column, sorting, sort_direction)
         if column.sortable?
-          options = {:id => search_form_id, :class => "as_sort",
+          options = {:id => nil, :class => "as_sort",
                      'data-page-history' => controller_id,
                      :remote => true, :method => :get}
           url_options = params_for(:action => :index, :page => 1,
