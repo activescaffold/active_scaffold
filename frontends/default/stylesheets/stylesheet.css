@@ -273,32 +273,6 @@ line-height: 16px;
 white-space: nowrap;
 }
 
-.active-scaffold tr.record td.action_list ul {
-  display: none;
-  margin: 0;
-  border: 0 none;
-  padding: 0;
-  list-style: none;
-  height: 22px;
-  width: 160px;
-  position: absolute;
-  left: 0;
-  top: 22px;
-}
-
-.active-scaffold tr.record td.action_list ul li {
-  margin: 0;
-  border: 0 none;
-  padding: 0;
-  float: none; /*For Gecko*/
-  display: block !important;
-  display: inline; /*For IE*/
-  list-style: none;
-  position: relative;
-  height: 22px;
-  z-index: 2;
-}
-
 /* Table :: Inline Adapter
    ============================= */
 
