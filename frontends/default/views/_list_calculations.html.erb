@@ -2,7 +2,7 @@
    columns ||= list_columns -%>
 <tr id="<%= active_scaffold_calculations_id %>" class="active-scaffold-calculations">
   <% columns.each do |column| -%>
-    <td id="<%= active_scaffold_calculations_id(column) if column.calculation? %>">
+    <td <%= "id=#{active_scaffold_calculations_id(column)}" if column.calculation? %>>
       <% if column.calculation? -%>
         <%= render_column_calculation(column) %>
       <% else -%>
