@@ -274,13 +274,13 @@ line-height: 16px;
 white-space: nowrap;
 }
 
-.active-scaffold tr.record td.actions td.action_list {
+.active-scaffold tr.record td.actions td.action_group {
   position:relative;
   text-align: left;
   color: #0066CC;
 }
 
-.active-scaffold tr.record td.actions .action_list ul {
+.active-scaffold tr.record td.actions .action_group ul {
 border:medium none;
 list-style-type:none;
 margin:0;
@@ -291,7 +291,7 @@ display: none;
 width:100%;
 }
 
-.active-scaffold tr.record td.actions .action_list ul li {
+.active-scaffold tr.record td.actions .action_group ul li {
 background:none repeat scroll 0 0 #FFF;
 border-bottom:1px solid #AFD0F5;
 border-left:1px solid #AFD0F5;
@@ -304,7 +304,7 @@ width:160px;
 z-index: 2;
 }
 
-.active-scaffold tr.record td.actions td.action_list:hover ul {
+.active-scaffold tr.record td.actions .action_group:hover ul {
 display:block;
 }
 
