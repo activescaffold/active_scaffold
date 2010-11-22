@@ -264,7 +264,8 @@ text-align: right;
 padding: 0 2px;
 }
 
-.active-scaffold tr.record td.actions a {
+.active-scaffold tr.record td.actions a,
+.active-scaffold tr.record td.actions span {
 font: bold 11px verdana, sans-serif;
 letter-spacing: -1px;
 padding: 2px;
@@ -272,6 +273,43 @@ margin: 0 2px;
 line-height: 16px;
 white-space: nowrap;
 }
+
+.active-scaffold tr.record td.actions td.action_list {
+  position:relative;
+  text-align: left;
+  color: #0066CC;
+}
+
+.active-scaffold tr.record td.actions .action_list ul {
+border:medium none;
+list-style-type:none;
+margin:0;
+padding:0;
+position:absolute;
+line-height:200%;
+display: none;
+width:100%;
+}
+
+.active-scaffold tr.record td.actions .action_list ul li {
+background:none repeat scroll 0 0 #FFF;
+border-bottom:1px solid #AFD0F5;
+border-left:1px solid #AFD0F5;
+border-right:1px solid #AFD0F5;
+color:#000000;
+display:block;
+padding-bottom:5px;
+position:relative;
+width:160px;
+z-index: 2;
+}
+
+.active-scaffold tr.record td.actions td.action_list:hover ul {
+display:block;
+}
+
+
+
 
 /* Table :: Inline Adapter
    ============================= */
