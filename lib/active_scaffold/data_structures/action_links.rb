@@ -73,12 +73,13 @@ module ActiveScaffold::DataStructures
     end
 
     def traverse(controller, options = {}, &block)
-      @set.each do |link|
+      traverse_method = options.delete(:reverse).nil? ? :each : :reverse_each
+      @set.send(traverse_method) do |link|
         if link.is_a?(ActiveScaffold::DataStructures::ActionLinks)
           # add top node only if there is anything in the list
           #yield({:kind => :node, :level => 1, :last => false, :link => link})
           yield(link, nil, {:node => :start_traversing})
-          link.traverse(options, &block)
+          link.traverse(controller,options, &block)
           yield(link, nil, {:node => :finished_traversing})
           #yield({:kind => :completed_group, :level => 1, :last => false, :link => link})
         elsif controller.nil? || !skip_action_link(controller, link, options[:record])
