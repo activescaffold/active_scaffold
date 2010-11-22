@@ -11,7 +11,7 @@
           <% level -= 1 %>
           <%= "</ul></#{(level == 0 ? 'td' : 'li')}>".html_safe %>
         <% elsif (options[:node] == :start_traversing) -%>
-          <%= "<#{tag} #{"class=\"action_list\"" if tag == 'td'}> #{content_tag('span', parent.name)}<ul>".html_safe %>
+          <%= "<#{tag} #{"class=\"action_group\"" if tag == 'td'}> #{content_tag('span', parent.name)}<ul>".html_safe %>
           <% level += 1 %>
         <% else -%>
           <%= content_tag(tag, options[:authorized] ? render_action_link(link, url_options, record) : action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"})) %>
