@@ -89,7 +89,7 @@ module ActiveScaffold::DataStructures
     end
 
     def collect
-      @set.collect
+      @set
     end
 
     def empty?
