@@ -86,7 +86,8 @@ color: #fff;
 padding: 2px 5px 4px 5px;
 }
 
-.active-scaffold-header div.actions a {
+.active-scaffold-header div.actions a,
+.active-scaffold-header div.actions span {
 float: right;
 font: bold 14px arial;
 letter-spacing: -1px;
@@ -98,7 +99,24 @@ background-position: 1px 50%;
 background-repeat: no-repeat;
 }
 
-.view .active-scaffold-header div.actions a {
+.active-scaffold-header div.actions div.action_group {
+display: inline;
+float: right;
+}
+
+.active-scaffold-header div.actions div.action_group a {
+float: none;
+margin: 0 2px;
+padding: 2px;
+}
+
+.active-scaffold-header div.actions .action_group ul {
+line-height: 130%;
+top: 14px;
+}
+
+.view .active-scaffold-header div.actions a,
+.view .active-scaffold-header div.actions div.action_group {
 float: left;
 }
 
