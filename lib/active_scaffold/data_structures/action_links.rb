@@ -82,7 +82,7 @@ module ActiveScaffold::DataStructures
           link.traverse(controller,options, &block)
           yield(link, nil, {:node => :finished_traversing})
           #yield({:kind => :completed_group, :level => 1, :last => false, :link => link})
-        elsif controller.nil? || !skip_action_link(controller, link, options[:record])
+        elsif controller.nil? || !skip_action_link(controller, link, *(Array(options[:record])))
           authorized = options[:for].nil? ? true : options[:for].authorized_for?(:crud_type => link.crud_type, :action => link.action)
           yield(self, link, {:authorized => authorized})
         end
