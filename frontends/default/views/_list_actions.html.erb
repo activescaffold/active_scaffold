@@ -9,9 +9,13 @@
         <% tag = (level == 0 ? 'td' : 'li') %>
         <% if (options[:node] == :finished_traversing) -%>
           <% level -= 1 %>
-          <%= "</ul></#{(level == 0 ? 'td' : 'li')}>".html_safe %>
+          <%= "</ul></#{(level == 0 ? 'div></td' : 'li')}>".html_safe %>
         <% elsif (options[:node] == :start_traversing) -%>
-          <%= "<#{tag} #{"class=\"action_group\"" if tag == 'td'}> #{content_tag('span', parent.name)}<ul>".html_safe %>
+          <% if tag == 'td' %>
+             <%= "<td><div class=\"action_group\"> #{content_tag('span', parent.name)}<ul>".html_safe %>
+          <% else %>
+             <%= "<li>#{content_tag('span', parent.name)}<ul>".html_safe %>
+          <% end %>
           <% level += 1 %>
         <% else -%>
           <%= content_tag(tag, options[:authorized] ? render_action_link(link, url_options, record) : action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"})) %>
