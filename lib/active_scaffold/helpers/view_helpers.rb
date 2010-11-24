@@ -128,11 +128,11 @@ module ActiveScaffold
         action_link_html(link, url_options, html_options)
       end
 
-      def render_member_action_link(link, url_options, record, authorized = true)
-        if authorized
-          render_action_link(link, url_options, record)
-        else
+      def render_group_action_link(link, url_options, options, record = nil)
+        if link.type == :member && !options[:authorized]
           action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"})
+        else
+          render_action_link(link, url_options, record)
         end
       end
       
