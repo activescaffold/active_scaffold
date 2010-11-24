@@ -4,6 +4,7 @@ module ActiveScaffold::DataStructures
 
     def initialize
       @set = []
+      @name = :root
     end
 
     # adds an ActionLink, creating one from the arguments if need be
@@ -16,7 +17,10 @@ module ActiveScaffold::DataStructures
       # NOTE: this duplicate check should be done by defining the comparison operator for an Action data structure
       existing = find_duplicate(link)
       unless existing
-        subgroup(link.type, link.type).add_to_set(link)
+        # That s for backwards compatibility if we are in root of action_links
+        # we have to move actionlink into members or collection subgroup
+        group = (name == :root ? subgroup(link.type, link.type) : self)
+        group.add_to_set(link)
         link
       else
         existing
