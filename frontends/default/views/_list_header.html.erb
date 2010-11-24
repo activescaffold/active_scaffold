@@ -18,9 +18,9 @@
         <% end %>
       <% else -%>
         <% if options[:level] == 0 %>
-          <%= "#{start_level_0_tag}#{h(render_action_link(link, url_options))}#{end_level_0_tag}".html_safe %>
+          <%= "#{start_level_0_tag}#{h(render_group_action_link(link, url_options, options))}#{end_level_0_tag}".html_safe %>
         <% else %>
-          <%= content_tag('li', render_action_link(link, url_options), options[:first_action] ? {:class => 'top'}: {}) %>
+          <%= content_tag('li', render_group_action_link(link, url_options, options), options[:first_action] ? {:class => 'top'}: {}) %>
         <% end %>
       <% end -%>
     <% end -%>
