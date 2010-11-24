@@ -104,7 +104,8 @@ display: inline;
 float: right;
 }
 
-.active-scaffold-header div.actions div.action_group a {
+.active-scaffold-header div.actions div.action_group a,
+.active-scaffold-header div.actions div.action_group span {
 float: none;
 margin: 0 2px;
 padding: 2px;
