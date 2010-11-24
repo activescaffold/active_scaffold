@@ -127,6 +127,14 @@ module ActiveScaffold
         html_options = action_link_html_options(link, url_options, record, html_options)
         action_link_html(link, url_options, html_options)
       end
+
+      def render_member_action_link(link, url_options, record, authorized = true)
+        if authorized
+          render_action_link(link, url_options, record)
+        else
+          action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"})
+        end
+      end
       
       def action_link_url_options(link, url_options, record, options = {})
         url_options = url_options.clone
@@ -161,6 +169,7 @@ module ActiveScaffold
         html_options[:class] += " #{link.html_options[:class]}" unless link.html_options[:class].blank?
         html_options
       end
+
       def get_action_link_id(url_options, record = nil, column = nil)
         id = url_options[:id] || url_options[:parent_id]
         id = "#{column.association.name}-#{record.id}" if column && column.plural_association?
