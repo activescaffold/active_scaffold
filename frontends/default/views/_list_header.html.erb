@@ -1,29 +1,9 @@
 <% action_links = active_scaffold_config.action_links.collection
   unless action_links.empty? -%>
   <div class="actions">
-    <% url_options = params_for
-       traverse_options = {}
-       traverse_options[:reverse] = true unless nested.nil?
-       start_level_0_tag = ''
-       end_level_0_tag = ''
-       %>
-    <% action_links.traverse(controller, traverse_options) do |parent, link, options| -%>
-      <% if (options[:node] == :finished_traversing) -%>
-        <%= "</ul>#{(options[:level] == 0 ? "</div>#{end_level_0_tag}": '</li>')}".html_safe %>
-      <% elsif (options[:node] == :start_traversing) -%>
-        <% if options[:level] == 0 %>
-           <%= "#{start_level_0_tag}<div class=\"action_group\"> #{content_tag('span', parent.name)}<ul>".html_safe %>
-        <% else %>
-           <%= "<li #{"class=\"top\"" if options[:first_action]}>#{content_tag('span', parent.name)}<ul>".html_safe %>
-        <% end %>
-      <% else -%>
-        <% if options[:level] == 0 %>
-          <%= "#{start_level_0_tag}#{h(render_group_action_link(link, url_options, options))}#{end_level_0_tag}".html_safe %>
-        <% else %>
-          <%= content_tag('li', render_group_action_link(link, url_options, options), options[:first_action] ? {:class => 'top'}: {}) %>
-        <% end %>
-      <% end -%>
-    <% end -%>
+    <%= render :partial => 'action_group', :locals => {:action_links => action_links,
+                                                       :url_options => params_for,
+                                                       :traverse_options => nested.nil? ? {} : {:reverse => true}} %>
     <%= loading_indicator_tag(:action => :table) %>
   </div>
 <% end %>
