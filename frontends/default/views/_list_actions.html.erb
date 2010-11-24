@@ -4,21 +4,17 @@
     <td class="indicator-container">
       <%= loading_indicator_tag(:action => :record, :id => record.id) %>
     </td>
-      <% level = 0 %>
       <% action_links.traverse(controller, {:record => record}) do |parent, link, options| -%>
-        <% tag = (level == 0 ? 'td' : 'li') %>
         <% if (options[:node] == :finished_traversing) -%>
-          <% level -= 1 %>
-          <%= "</ul></#{(level == 0 ? 'div></td' : 'li')}>".html_safe %>
+          <%= "</ul></#{(options[:level] == 0 ? 'div></td' : 'li')}>".html_safe %>
         <% elsif (options[:node] == :start_traversing) -%>
-          <% if tag == 'td' %>
+          <% if options[:level] == 0 %>
              <%= "<td><div class=\"action_group\"> #{content_tag('span', parent.name)}<ul>".html_safe %>
           <% else %>
              <%= "<li #{"class=\"top\"" if options[:first_action]}>#{content_tag('span', parent.name)}<ul>".html_safe %>
           <% end %>
-          <% level += 1 %>
         <% else -%>
-          <%= content_tag(tag, options[:authorized] ? render_action_link(link, url_options, record) : action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"}), options[:first_action] ? {:class => 'top'}: {}) %>
+          <%= content_tag((options[:level] == 0 ? 'td' : 'li'), options[:authorized] ? render_action_link(link, url_options, record) : action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"}), options[:first_action] ? {:class => 'top'}: {}) %>
         <% end -%>
       <% end -%>
   </tr>
