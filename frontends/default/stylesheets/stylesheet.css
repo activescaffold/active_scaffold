@@ -323,14 +323,18 @@ left: -120px;
 
 .active-scaffold .actions .action_group ul li {
 background: none repeat scroll 0 0 #FFF;
-border-bottom: 1px solid #AFD0F5;
-border-left: 1px solid #AFD0F5;
-border-right: 1px solid #AFD0F5;
+border-bottom: 2px solid #005CB8;
+border-left: 2px solid #005CB8;
+border-right: 2px solid #005CB8;
 display: block;
 padding-bottom: 5px;
 position: relative;
 width: 120px;
 z-index: 2;
+}
+
+.active-scaffold .actions .action_group ul li.top {
+border-top: 1px solid #005CB8;
 }
 
 .active-scaffold .actions .action_group:hover ul ul,

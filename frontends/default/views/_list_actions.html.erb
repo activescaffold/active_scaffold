@@ -14,11 +14,11 @@
           <% if tag == 'td' %>
              <%= "<td><div class=\"action_group\"> #{content_tag('span', parent.name)}<ul>".html_safe %>
           <% else %>
-             <%= "<li>#{content_tag('span', parent.name)}<ul>".html_safe %>
+             <%= "<li #{"class=\"top\"" if options[:first_action]}>#{content_tag('span', parent.name)}<ul>".html_safe %>
           <% end %>
           <% level += 1 %>
         <% else -%>
-          <%= content_tag(tag, options[:authorized] ? render_action_link(link, url_options, record) : action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"})) %>
+          <%= content_tag(tag, options[:authorized] ? render_action_link(link, url_options, record) : action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"}), options[:first_action] ? {:class => 'top'}: {}) %>
         <% end -%>
       <% end -%>
   </tr>
