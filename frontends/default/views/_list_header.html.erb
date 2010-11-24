@@ -1,28 +1,24 @@
 <% action_links = active_scaffold_config.action_links.collection
   unless action_links.empty? -%>
   <div class="actions">
-    <% level = 0
-       new_params = params_for
+    <% new_params = params_for
        traverse_options = {}
        traverse_options[:reverse] = true unless nested.nil?
        %>
     <% action_links.traverse(controller, traverse_options) do |parent, link, options| -%>
-      <% tag = (level == 0 ? 'div' : 'li') %>
       <% if (options[:node] == :finished_traversing) -%>
-        <% level -= 1 %>
-        <%= "</ul></#{(level == 0 ? 'div': 'li')}>".html_safe %>
+        <%= "</ul></#{(options[:level] == 0 ? 'div': 'li')}>".html_safe %>
       <% elsif (options[:node] == :start_traversing) -%>
-        <% if tag == 'div' %>
+        <% if options[:level] == 0 %>
            <%= "<div class=\"action_group\"> #{content_tag('span', parent.name)}<ul>".html_safe %>
         <% else %>
            <%= "<li #{"class=\"top\"" if options[:first_action]}>#{content_tag('span', parent.name)}<ul>".html_safe %>
         <% end %>
-        <% level += 1 %>
       <% else -%>
-        <% if tag == 'li' %>
-          <%= content_tag('li', render_action_link(link, new_params), options[:first_action] ? {:class => 'top'}: {}) %>
-        <% else %>
+        <% if options[:level] == 0 %>
           <%= render_action_link(link, new_params) %>
+        <% else %>
+          <%= content_tag('li', render_action_link(link, new_params), options[:first_action] ? {:class => 'top'}: {}) %>
         <% end %>
       <% end -%>
     <% end -%>
