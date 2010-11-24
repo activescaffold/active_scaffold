@@ -104,8 +104,8 @@ display: inline;
 float: right;
 }
 
-.active-scaffold-header div.actions div.action_group a,
-.active-scaffold-header div.actions div.action_group span {
+.active-scaffold-header div.actions div.action_group li a,
+.active-scaffold-header div.actions div.action_group li span {
 float: none;
 margin: 0 2px;
 padding: 2px;
@@ -117,6 +117,7 @@ top: 14px;
 }
 
 .view .active-scaffold-header div.actions a,
+.view .active-scaffold-header div.actions span,
 .view .active-scaffold-header div.actions div.action_group {
 float: left;
 }
@@ -405,7 +406,8 @@ top: 0px;
 right: 0px;
 }
 
-.active-scaffold .active-scaffold .active-scaffold-header div.actions a {
+.active-scaffold .active-scaffold .active-scaffold-header div.actions a,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions span {
 font: bold 11px verdana, sans-serif;
 padding: 0 2px 1px 17px;
 }
