@@ -6,9 +6,9 @@
     <%= "</ul>#{(options[:level] == 0 ? "</div>#{end_level_0_tag}": '</li>')}".html_safe %>
   <% elsif (options[:node] == :start_traversing) -%>
     <% if options[:level] == 0 %>
-       <%= "#{start_level_0_tag}<div class=\"action_group\"> #{content_tag('span', parent.name)}<ul>".html_safe %>
+       <%= "#{start_level_0_tag}<div class=\"action_group\"> #{content_tag('span', as_(parent.name))}<ul>".html_safe %>
     <% else %>
-       <%= "<li #{"class=\"top\"" if options[:first_action]}>#{content_tag('span', parent.name)}<ul>".html_safe %>
+       <%= "<li #{"class=\"top\"" if options[:first_action]}>#{content_tag('span', as_(parent.name))}<ul>".html_safe %>
     <% end %>
   <% else -%>
     <% if options[:level] == 0 %>
