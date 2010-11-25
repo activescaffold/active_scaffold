@@ -644,6 +644,10 @@ ActiveScaffold.ActionLink = {
     var element = $(element);
     if (typeof(element.retrieve('action_link')) === 'undefined' && !element.hasClassName('as_adapter')) {
       var parent = element.up('.actions');
+      if (typeof(parent) === 'undefined') {
+        // maybe an column action_link
+        parent = element.up();
+      }
       if (parent && parent.nodeName.toUpperCase() == 'TD') {
         // record action
         parent = parent.up('tr.record')

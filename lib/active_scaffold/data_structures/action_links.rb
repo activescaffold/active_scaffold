@@ -32,6 +32,17 @@ module ActiveScaffold::DataStructures
       @set << link
     end
 
+    # adds a link to a specific group
+    # groups are represented as a string separated by a dot
+    # eg member.crud
+    def add_to_group(link, group = nil)
+      if group
+        group.split('.').inject(root){|group, group_name| group.send(group_name)}.add link
+      else
+        root << link
+      end
+    end
+
     # finds an ActionLink by matching the action
     def [](val)
       @set.find do |item|
@@ -64,9 +75,13 @@ module ActiveScaffold::DataStructures
     end
 
     # iterates over the links, possibly by type
-    def each(type = nil)
+    def each(type = nil, &block)
       @set.each {|item|
-        yield item
+        if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
+          item.each(type, &block)
+        else
+          yield item
+        end
       }
     end
     
