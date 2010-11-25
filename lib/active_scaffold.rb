@@ -101,7 +101,11 @@ module ActiveScaffold
 
           # sneak the action links from the actions into the main set
           if link = active_scaffold_config.send(mod).link rescue nil
-            active_scaffold_config.action_links << link
+            if action_group = active_scaffold_config.send(mod).action_group
+              action_group.split('.').inject(active_scaffold_config.action_links){|group, group_name| group.send(group_name)}.add link
+            else
+              active_scaffold_config.action_links << link
+            end
           end
         end
       end
