@@ -56,7 +56,7 @@ module ActiveScaffold::DataStructures
     def delete(val)
       @set.delete_if do |item|
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
-          delete(val)
+          item.delete(val)
         else
           item.action == val.to_s
         end
