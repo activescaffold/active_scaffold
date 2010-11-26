@@ -344,8 +344,9 @@ display: none;
 }
 
 .active-scaffold .actions .action_group:hover ul,
-.active-scaffold .actions .action_group ul li:hover ul {
-display:block;
+.active-scaffold .actions .action_group ul li:hover > ul,
+.active-scaffold .actions .action_group ul ul li:hover ul {
+display: block;
 }
 
 
