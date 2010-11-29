@@ -740,9 +740,9 @@ ActiveScaffold.ActionLink = {
       element.data(); // jquery 1.4.2 workaround
       if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
         var parent = element.closest('.actions');
-        if (typeof(parent) === 'undefined') {
+        if (parent.length === 0) {
           // maybe an column action_link
-          parent = elment.parent();
+          parent = element.parent();
         }
         if (parent && parent.is('td')) {
           // record action
