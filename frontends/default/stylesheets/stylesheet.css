@@ -185,7 +185,7 @@ background-color: #555;
 
 .active-scaffold th a, .active-scaffold th a:visited {
 color: #fff;
-padding: 2px 15px 2px 5px;
+padding: 2px 2px 2px 5px;
 }
 
 .active-scaffold th p {
@@ -200,6 +200,10 @@ color: #ff8;
 
 .active-scaffold th.sorted {
 background-color: #333;
+}
+
+.active-scaffold th.sorted a {
+padding-right: 18px;
 }
 
 .active-scaffold th.asc a,
