@@ -101,7 +101,12 @@ module ActiveScaffold
 
           # sneak the action links from the actions into the main set
           if link = active_scaffold_config.send(mod).link rescue nil
-            active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
+            if link.is_a? Array
+              link.each {|current| active_scaffold_config.action_links.add_to_group(current, active_scaffold_config.send(mod).action_group)}
+            else
+              active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
+            end
+            
           end
         end
       end
