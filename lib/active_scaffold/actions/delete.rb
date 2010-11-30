@@ -46,7 +46,7 @@ module ActiveScaffold::Actions
     # A simple method to handle the actual destroying of a record
     # May be overridden to customize the behavior
     def do_destroy
-      destroy_find_record
+      @record ||= destroy_find_record
       begin
         self.successful = @record.destroy
       rescue
