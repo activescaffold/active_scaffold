@@ -92,7 +92,9 @@
 		    :showMonthAfterYear => false
       },
       :datetime_picker_options => {
-        :timeText => 'Uhrzeit'
+        :timeText => 'Uhrzeit',
+        :currentText => 'Jetzt',
+        :closeText => 'Schließen'
       },
       :errors => {
         :template => {

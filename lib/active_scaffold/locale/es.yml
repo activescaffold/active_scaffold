@@ -99,6 +99,8 @@ es:
       showMonthAfterYear: false
     datetime_picker_options:
       timeText: 'Hora'
+      currentText: 'Ahora'
+      closeText: 'Cerrar'
     errors:
       template:
         header:
