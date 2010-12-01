@@ -164,7 +164,7 @@ module ActiveScaffold
         column.options[:options].inject('') do |html, (text, value)|
           text, value = active_scaffold_translated_option(column, text, value)
           html << content_tag(:label, radio_button(:record, column.name, value, html_options.merge(:id => html_options[:id] + '-' + value.to_s)) + text)
-        end
+        end.html_safe
       end
 
       # requires RecordSelect plugin to be installed and configured.
