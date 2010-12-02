@@ -247,6 +247,11 @@ $(document).ready(function() {
     ActiveScaffold[$(this).val() == 'REPLACE' ? 'hide' : 'show']($(this).next().next());
     return true;
   });
+
+  $('a[data-popup]').live('click', function(e) {
+      window.open($(this).attr('href'));
+      e.preventDefault();
+   });
   
 });
 

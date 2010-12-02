@@ -268,6 +268,11 @@ document.observe("dom:loaded", function() {
     Element[element.value == 'REPLACE' ? 'hide' : 'show'](element.next('span'));
     return true;
   });
+  document.on("click", "a[data-popup]", function(event, element) {
+     if (event.stopped) return;
+     window.open($(element).href);
+     event.stop();
+   });
 });
 
 
