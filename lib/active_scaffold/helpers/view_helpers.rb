@@ -157,9 +157,9 @@ module ActiveScaffold
         html_options['data-confirm'] = link.confirm(record.try(:to_label)) if link.confirm?
         html_options['data-position'] = link.position if link.position and link.inline?
         html_options[:class] += ' as_action' if link.inline?
-        html_options[:popup] = true if link.popup?
+        html_options['data-popup'] = true if link.popup?
         html_options[:id] = link_id
-        html_options[:remote] = true unless link.page?
+        html_options[:remote] = true unless link.page? || link.popup?
         if link.dhtml_confirm?
           html_options[:class] += ' as_action' if !link.inline?
           html_options[:page_link] = 'true' if !link.inline?
