@@ -109,7 +109,8 @@
       :cant_destroy_record => "%{record} can't be destroyed",
       :internal_error => 'Erreur de la requête (code 500, Erreur interne)',
       :version_inconsistency => "Version incomplète - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer.",
-      :record_not_saved => 'Failed to save record cause of an unknown error'
+      :record_not_saved => 'Failed to save record cause of an unknown error',
+      :no_authorization_for_action => "No Authorization for action %{action}"
     }
   }
 }
