@@ -45,23 +45,29 @@ module ActiveScaffold::DataStructures
 
     # finds an ActionLink by matching the action
     def [](val)
-      @set.find do |item|
+      links = []
+      @set.each do |item|
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
-          item[val]
+          collected = item[val]
+          links << collected unless collected.nil?
         else
-          item.action == val.to_s
+          links << item if item.action == val.to_s
         end
       end
+      links.first
     end
 
     def find_duplicate(link)
-      @set.find do |item|
+      links = []
+      @set.each do |item|
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
-          item.find_duplicate(link)
+          collected = item.find_duplicate(link)
+          links << collected unless collected.nil?
         else
-          item.action == link.action and item.controller == link.controller and item.parameters == link.parameters
+          links << item if item.action == link.action and item.controller == link.controller and item.parameters == link.parameters
         end
       end
+      links.first
     end
 
     def delete(val)

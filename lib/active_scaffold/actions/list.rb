@@ -90,10 +90,43 @@ module ActiveScaffold::Actions
       authorized_for?(:crud_type => :read)
     end
 
+    # call this method in your action_link action to simplify processing of actions
+    # eg for member action_link :fire
+    # process_action_link_action do |record|
+    #   record.update_attributes(:fired => true)
+    #   self.successful = true
+    #   flash[:info] = 'Player fired'
+    # end
+    def process_action_link_action
+      if request.get?
+        # someone has disabled javascript, we have to show confirmation form first
+        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
+        respond_to_action(:action_confirmation)
+      else
+        if params[:id] && params[:id] && params[:id].to_i > 0
+          @record = find_if_allowed(params[:id], (request.post? || request.put?) ? :update : :delete)
+          unless @record.nil?
+            yield @record
+          else
+            self.successful = false
+            flash[:error] = as_(:no_authorization_for_action, :action => action_name)
+          end
+        else
+          yield
+        end
+        respond_to_action(:action_update)
+      end
+    end
+
+    def action_confirmation_respond_to_html
+      link = active_scaffold_config.action_links[action_name.to_sym]
+      render :action => 'action_confirmation', :locals => {:record => @record, :link => link}
+    end
+
     def action_update_respond_to_html
       do_search if respond_to? :do_search
       do_list
-      render :action => 'list'
+      redirect_to :action => 'index'
     end
 
     def action_update_respond_to_js
@@ -116,10 +149,16 @@ module ActiveScaffold::Actions
     def list_authorized_filter
       raise ActiveScaffold::ActionNotAllowed unless list_authorized?
     end
+
     def list_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
     end
+
     def action_update_formats
+      (default_formats + active_scaffold_config.formats).uniq
+    end
+
+    def action_confirmation_formats
       (default_formats + active_scaffold_config.formats).uniq
     end
 

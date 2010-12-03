@@ -143,7 +143,7 @@ module ActiveScaffold
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters
         url_options_for_nested_link(link.column, record, link, url_options, options) if link.nested_link?
-        url_options[:_method] = link.method if link.inline? && link.method != :get
+        url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get
         url_options
       end
       
@@ -152,7 +152,7 @@ module ActiveScaffold
         html_options.reverse_merge! link.html_options.merge(:class => link.action)
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
-        html_options[:method] = link.method if !link.inline? && link.method != :get
+        html_options[:method] = link.method if link.method != :get
 
         html_options['data-confirm'] = link.confirm(record.try(:to_label)) if link.confirm?
         html_options['data-position'] = link.position if link.position and link.inline?
