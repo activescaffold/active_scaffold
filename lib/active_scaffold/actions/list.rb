@@ -75,7 +75,7 @@ module ActiveScaffold::Actions
 
     def each_record_in_scope
       do_search if respond_to? :do_search
-      finder_options = { :order => "#{active_scaffold_config.model.primary_key} ASC",
+      finder_options = { :order => "#{active_scaffold_config.model.connection.quote_table_name(active_scaffold_config.model.table_name)}.#{active_scaffold_config.model.primary_key} ASC",
                          :conditions => all_conditions,
                          :joins => joins_for_finder}
       finder_options.merge! custom_finder_options
