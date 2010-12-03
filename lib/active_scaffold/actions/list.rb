@@ -89,7 +89,13 @@ module ActiveScaffold::Actions
     def list_authorized?
       authorized_for?(:crud_type => :read)
     end
-    
+
+    def action_update_respond_to_html
+      do_search if respond_to? :do_search
+      do_list
+      render :action => 'list'
+    end
+
     def action_update_respond_to_js
       render(:action => 'on_action_update')
     end
