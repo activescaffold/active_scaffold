@@ -118,8 +118,8 @@ module ActiveScaffold::Actions
       end
     end
 
-    def action_confirmation_respond_to_html
-      link = active_scaffold_config.action_links[action_name.to_sym]
+    def action_confirmation_respond_to_html(confirm_action = action_name.to_sym)
+      link = active_scaffold_config.action_links[confirm_action]
       render :action => 'action_confirmation', :locals => {:record => @record, :link => link}
     end
 

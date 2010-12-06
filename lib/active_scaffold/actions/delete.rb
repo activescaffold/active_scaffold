@@ -1,20 +1,18 @@
 module ActiveScaffold::Actions
   module Delete
     def self.included(base)
-      base.before_filter :delete_authorized_filter, :only => [:delete, :destroy]
-    end
-
-    # this method is for html mode. it provides "the missing action" (http://thelucid.com/articles/2006/07/26/simply-restful-the-missing-action).
-    # it also gives us delete confirmation for html mode. woo!
-    def delete
-      destroy_find_record
-      render :action => 'delete'
+      base.before_filter :delete_authorized_filter, :only => [:destroy]
     end
 
     def destroy
-      return redirect_to(params.merge(:action => :delete)) if request.get?
-      do_destroy
-      respond_to_action(:destroy)
+      if request.get?
+        # someone has disabled javascript, we have to show confirmation form first
+        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
+        respond_to_action(:action_confirmation)
+      else
+        do_destroy
+        respond_to_action(:destroy)
+      end
     end
 
     protected
