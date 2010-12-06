@@ -97,7 +97,7 @@ module ActiveScaffold::Actions
     #   self.successful = true
     #   flash[:info] = 'Player fired'
     # end
-    def process_action_link_action
+    def process_action_link_action(render_action = :action_update)
       if request.get?
         # someone has disabled javascript, we have to show confirmation form first
         @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
@@ -114,7 +114,7 @@ module ActiveScaffold::Actions
         else
           yield
         end
-        respond_to_action(:action_update)
+        respond_to_action(render_action)
       end
     end
 
