@@ -671,25 +671,11 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
   initialize: function(a, target, loading_indicator) {
     this.tag = $(a);
     this.url = this.tag.href;
-    this.method = 'get';
-    
-    if(this.url.match('_method=delete')){
-      this.method = 'delete';
-      // action delete is special case cause in ajax world it will be destroy
-    } else if(this.url.match('/delete')){
-      this.url = this.url.replace('/delete', '');
-      this.tag.href = this.url;
-      this.method = 'delete';
-    } else if(this.url.match('_method=post')){
-      this.method = 'post';
-    } else if(this.url.match('_method=put')){
-      this.method = 'put';
-    }
-    if (this.method != 'get') this.tag.writeAttribute('data-method', this.method);
+    this.method = this.tag.readAttribute('data-method') || 'get';
     this.target = target;
     this.loading_indicator = loading_indicator;
     this.hide_target = false;
-    this.position = this.tag.getAttribute('data-position');
+    this.position = this.tag.readAttribute('data-position');
 		
     this.tag.store('action_link', this);
   },
