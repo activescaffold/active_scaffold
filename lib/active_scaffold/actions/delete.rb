@@ -5,13 +5,8 @@ module ActiveScaffold::Actions
     end
 
     def destroy
-      if request.get?
-        # someone has disabled javascript, we have to show confirmation form first
-        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
-        respond_to_action(:action_confirmation)
-      else
+      process_action_link_action(:destroy) do |record|
         do_destroy
-        respond_to_action(:destroy)
       end
     end
 
