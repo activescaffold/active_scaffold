@@ -2,7 +2,7 @@ module ActionDispatch
   module Routing
     ACTIVE_SCAFFOLD_CORE_ROUTING = {
         :collection => {:show_search => :get, :render_field => :get},
-        :member => {:row => :get, :update_column => :post, :render_field => :get, :delete => :get}
+        :member => {:row => :get, :update_column => :post, :render_field => :get}
     }
     ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING = {
         :collection => {:edit_associated => :get, :new_existing => :get, :add_existing => :post},
