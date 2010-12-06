@@ -741,11 +741,6 @@ ActiveScaffold.Actions.Record = Class.create(ActiveScaffold.Actions.Abstract, {
     var l = new ActiveScaffold.ActionLink.Record(link, this.target, this.loading_indicator);
     if (!this.target.readAttribute('data-refresh').blank()) l.refresh_url = this.target.readAttribute('data-refresh');
     
-    if (link.hasClassName('delete')) {
-      l.url = l.url.replace(/\/delete(\?.*)?$/, '$1');
-      l.url = l.url.replace(/\/delete\/(.*)/, '/destroy/$1');
-      l.tag.href = l.url;
-    }
     if (l.position) {
       l.url = l.url.append_params({adapter: '_list_inline_adapter'});
       l.tag.href = l.url;

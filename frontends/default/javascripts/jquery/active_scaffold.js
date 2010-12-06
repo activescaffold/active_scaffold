@@ -830,7 +830,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
     this.adapter = element;
     this.adapter.addClass('as_adapter');
     this.adapter.data('action_link', this);
-  },
+  }
 });
 
 /**
@@ -842,11 +842,6 @@ ActiveScaffold.Actions.Record = ActiveScaffold.Actions.Abstract.extend({
     var refresh = this.target.attr('data-refresh');
     if (refresh) l.refresh_url = refresh;
     
-    if ($(link).hasClass('delete')) {
-      l.url = l.url.replace(/\/delete(\?.*)?$/, '$1');
-      l.url = l.url.replace(/\/delete\/(.*)/, '/destroy/$1');
-      l.tag.attr('href', l.url);
-    }
     if (l.position) {
       l.url = l.url.append_params({adapter: '_list_inline_adapter'});
       l.tag.attr('href', l.url);
