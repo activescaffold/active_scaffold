@@ -4,7 +4,7 @@
       <h4><%= link.confirm(record.try(:to_label)) -%></h4>
 
       <p class="form-footer">
-        <%= submit_tag as_(link.action), :class => 'submit' %>
+        <%= submit_tag as_(link.label), :class => 'submit' %>
         <%= link_to as_(:cancel), main_path_to_return, :class => 'cancel' %>
       </p>
 
