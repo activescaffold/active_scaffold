@@ -62,7 +62,6 @@ module ActiveScaffold
           return link if polymorphic_controller.nil?
           link.controller = polymorphic_controller
         end
-
         configure_column_link(link, associated, column.actions_for_association_links)
       end
 
@@ -79,7 +78,6 @@ module ActiveScaffold
           link.action = 'show'
           link.crud_type = :read
         elsif actions.include?(:list)
-          link.parameters[:id] = associated.id
           link.action = 'index'
           link.crud_type = :read
         end
