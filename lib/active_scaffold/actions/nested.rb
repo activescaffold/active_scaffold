@@ -19,7 +19,7 @@ module ActiveScaffold::Actions
       @nested ||= ActiveScaffold::DataStructures::NestedInfo.get(active_scaffold_config.model, active_scaffold_session_storage)
       if !@nested.nil? && @nested.new_instance?
         register_constraints_with_action_columns(@nested.constrained_fields)
-        active_scaffold_constraints[:id] = nested.parent_id if @nested.belongs_to?
+        active_scaffold_constraints[:id] = params[:id] if @nested.belongs_to?
       end
       @nested
     end
