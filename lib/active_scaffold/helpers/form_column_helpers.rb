@@ -107,13 +107,13 @@ module ActiveScaffold
         select_options = options_for_association(column.association)
         select_options.unshift([ associated.to_label, associated.id ]) unless associated.nil? or select_options.find {|label, id| id == associated.id}
 
-        selected = associated.nil? ? nil : associated.id
         method = column.name
         #html_options[:name] += '[id]'
-        options = {:selected => selected, :include_blank => as_(:_select_)}
+        options = {:include_blank => as_(:_select_)}
 
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
+        options[:selected] = associated.id unless associated.nil?
         select(:record, method, select_options.uniq, options, html_options)
       end
 
