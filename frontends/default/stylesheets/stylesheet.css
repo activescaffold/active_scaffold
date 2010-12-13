@@ -221,6 +221,10 @@ background: #333 url(../../../images/active_scaffold/default/arrow_down.gif) rig
 background: #333 url(../../../images/active_scaffold/default/indicator-small.gif) right 50% no-repeat;
 }
 
+.active-scaffold th .mark_heading {
+margin-left: 5px;
+}
+
 /* Table :: Record Rows
    ============================= */
 
