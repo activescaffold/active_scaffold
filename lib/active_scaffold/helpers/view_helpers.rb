@@ -243,11 +243,15 @@ module ActiveScaffold
       end
 
       def column_calculation(column)
-        conditions = controller.send(:all_conditions)
-        includes = active_scaffold_config.list.count_includes
-        includes ||= controller.send(:active_scaffold_includes) unless conditions.nil?
-        calculation = beginning_of_chain.calculate(column.calculate, column.name, :conditions => conditions,
-         :joins => controller.send(:joins_for_collection), :include => includes)
+        unless column.calculate.instance_of? Proc
+          conditions = controller.send(:all_conditions)
+          includes = active_scaffold_config.list.count_includes
+          includes ||= controller.send(:active_scaffold_includes) unless conditions.nil?
+          calculation = beginning_of_chain.calculate(column.calculate, column.name, :conditions => conditions,
+           :joins => controller.send(:joins_for_collection), :include => includes)
+        else
+          column.calculate.call(@records)
+        end
       end
 
       def render_column_calculation(column)
@@ -255,7 +259,7 @@ module ActiveScaffold
         override_formatter = "render_#{column.name}_#{column.calculate}"
         calculation = send(override_formatter, calculation) if respond_to? override_formatter
 
-        "#{as_(column.calculate)}: #{format_column_value nil, column, calculation}"
+        "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
       end
 
       def column_show_add_existing(column)
