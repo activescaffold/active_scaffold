@@ -62,7 +62,9 @@ module ActiveScaffold::Actions
           active_scaffold_config.action_links.add('new_existing', :label => :add_existing, :type => :collection, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
           if active_scaffold_config.nested.shallow_delete
             active_scaffold_config.action_links.add('destroy_existing', :label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy_existing']
-            active_scaffold_config.action_links.delete("delete") if active_scaffold_config.action_links['delete']
+            if active_scaffold_config.actions.include?(:delete)
+              active_scaffold_config.action_links.delete("delete") if active_scaffold_config.action_links['delete']
+            end
           end
         else
           # Production mode is caching this link into a non nested scaffold
@@ -70,7 +72,9 @@ module ActiveScaffold::Actions
           
           if active_scaffold_config.nested.shallow_delete
             active_scaffold_config.action_links.delete("destroy_existing") if active_scaffold_config.action_links['destroy_existing']
-            active_scaffold_config.action_links.add(ActiveScaffold::Config::Delete.link) unless active_scaffold_config.action_links['delete']
+            if active_scaffold_config.actions.include?(:delete)
+              active_scaffold_config.action_links.add(ActiveScaffold::Config::Delete.link) unless active_scaffold_config.action_links['delete']
+            end
           end
         end
       end
