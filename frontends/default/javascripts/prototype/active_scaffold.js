@@ -177,6 +177,13 @@ document.observe("dom:loaded", function() {
       if (record_id) options.url = options.url.sub('__id__', record_id);
        
       if (csrf_param) options['params'] = csrf_param.readAttribute('content') + '=' + csrf_token.readAttribute('content');
+
+      if (span.up('div.active-scaffold').readAttribute('data-eid')) {
+        if (options['params'].length > 0) {
+          options['params'] += ";";
+        }
+        options['params'] += ("eid=" + span.up('div.active-scaffold').readAttribute('data-eid'));
+      }
             
       if (mode === 'clone') {
         options.nodeIdSuffix = record_id;
