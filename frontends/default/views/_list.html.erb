@@ -6,7 +6,7 @@
   </thead>
   <tbody class="messages">
     <tr>
-      <td colspan="<%= active_scaffold_config.list.columns.length + 1 -%>" class="messages-container">
+      <td colspan="<%= active_scaffold_config.list.columns.length + (active_scaffold_config.list.mark_records ? 2 : 1) -%>" class="messages-container">
         <%= render :partial => 'list_messages' %>
       </td>
     </tr>
