@@ -162,7 +162,14 @@ $(document).ready(function() {
       }
       
       if (csrf_param) options['params'] = csrf_param.attr('content') + '=' + csrf_token.attr('content');
-            
+
+      if (span.closest('div.active-scaffold').attr('data-eid')) {
+        if (options['params'].length > 0) {
+          options['params'] += ";";
+        }
+        options['params'] += ("eid=" + span.closest('div.active-scaffold').attr('data-eid'));
+      }
+
       if (mode === 'clone') {
         options.clone_id_suffix = record_id;
         options.clone_selector = '#' + column_heading.attr('id') + ' .as_inplace_pattern';
