@@ -100,7 +100,10 @@ module ActiveScaffold::Actions
       if @record.authorized_for?(:crud_type => :update, :column => params[:column])
         column = active_scaffold_config.columns[params[:column].to_sym]
         params[:value] ||= @record.column_for_attribute(params[:column]).default unless @record.column_for_attribute(params[:column]).nil? || @record.column_for_attribute(params[:column]).null
-        params[:value] = column_value_from_param_value(@record, column, params[:value]) unless column.nil?
+        unless column.nil?
+          params[:value] = column_value_from_param_value(@record, column, params[:value])
+          params[:value] = [] if params[:value].nil? && column.form_ui && column.plural_association?
+        end
         @record.send("#{params[:column]}=", params[:value])
         before_update_save(@record)
         @record.save
