@@ -123,8 +123,13 @@ module ActiveScaffold
 
       def active_scaffold_search_range(column, options)
         opt_value, from_value, to_value = field_search_params_range_values(column)
+
+        text_field_size = 10
         select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
-        select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]} if column.column && column.column.text?
+        if column.column && column.column.text?
+          select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]}
+          text_field_size = 15
+        end
         from_value = controller.class.condition_value_for_numeric(column, from_value)
         to_value = controller.class.condition_value_for_numeric(column, to_value)
         from_value = format_number_value(from_value, column.options) if from_value.is_a?(Numeric)
@@ -133,9 +138,9 @@ module ActiveScaffold
               options_for_select(select_options, opt_value),
               :id => "#{options[:id]}_opt",
               :class => "as_search_range_option")
-        html << ' ' << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => 10))
+        html << ' ' << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size))
         html << ' ' << content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
-              active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => 10))).html_safe,
+              active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))).html_safe,
               :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => "display:#{(opt_value == 'BETWEEN') ? '' : 'none'}")
         html
       end
