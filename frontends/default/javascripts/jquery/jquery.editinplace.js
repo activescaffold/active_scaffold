@@ -455,6 +455,7 @@ $.extend(InlineEditor.prototype, {
 			return;
 		
 		var editor = this.dom.find(':input');
+
 		var enteredText = editor.val();
 		enteredText = this.triggerDelegateCall('willCloseEditInPlace', enteredText);
 		
@@ -468,8 +469,16 @@ $.extend(InlineEditor.prototype, {
 	handleSaveEditor: function(anEvent) {
 		if (false === this.triggerDelegateCall('shouldCloseEditInPlace', true, anEvent))
 			return;
-		
-		var enteredText = this.dom.find(':input').val();
+
+    var editor = this.dom.find(':input:not(:button)').not('input:checkbox:not(:checked)');
+    var enteredText = '';
+    if (editor.length > 1) {
+      enteredText = jQuery.map(editor, function(item, index) {
+        return $(item).val();
+      });
+    } else {
+		  enteredText = editor.val();
+    }
 		enteredText = this.triggerDelegateCall('willCloseEditInPlace', enteredText);
 		
 		if (this.isDisabledDefaultSelectChoice()
@@ -545,8 +554,16 @@ $.extend(InlineEditor.prototype, {
 	},
 	
 	handleSubmitToServer: function(enteredText) {
-		var data = this.settings.update_value + '=' + encodeURIComponent(enteredText) 
-			+ '&' + this.settings.element_id + '=' + this.dom.attr("id") 
+		var data = '';
+    if (typeof(enteredText) === 'string') {
+      data += this.settings.update_value + '=' + encodeURIComponent(enteredText) + '&';
+    } else {
+      for(var i = 0;i < enteredText.length; i++) {
+        data += this.settings.update_value + '[]=' + encodeURIComponent(enteredText[i]) + '&';
+      }
+    }
+
+    data += this.settings.element_id + '=' + this.dom.attr("id")
 			+ ((this.settings.params) ? '&' + this.settings.params : '')
 			+ '&' + this.settings.original_html + '=' + encodeURIComponent(this.originalValue) /* DEPRECATED in 2.2.0 */
 			+ '&' + this.settings.original_value + '=' + encodeURIComponent(this.originalValue);
