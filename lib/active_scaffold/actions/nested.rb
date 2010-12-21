@@ -91,7 +91,7 @@ module ActiveScaffold::Actions
     end
 
     def nested_parent_record(crud = :read)
-      find_if_allowed(nested.parent_id, crud, nested.parent_model)
+      @nested_parent_record ||= find_if_allowed(nested.parent_id, crud, nested.parent_model)
     end
        
     def create_association_with_parent(record)
