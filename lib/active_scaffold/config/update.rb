@@ -18,7 +18,7 @@ module ActiveScaffold::Config
     end
     @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => :edit, :type => :member, :security_method => :update_authorized?)
 
-    # whether we should refresh list after create or not
+    # whether we should refresh list after update or not
     cattr_accessor :refresh_list_after_update
     @@refresh_list_after_update = false
 
@@ -39,7 +39,7 @@ module ActiveScaffold::Config
       @hide_nested_column.nil? ? true : @hide_nested_column
     end
 
-    # whether we should refresh list after create or not
+    # whether we should refresh list after update or not
     attr_accessor :refresh_list_after_update
  
   end
