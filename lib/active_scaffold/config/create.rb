@@ -26,6 +26,10 @@ module ActiveScaffold::Config
     cattr_accessor :edit_after_create
     @@edit_after_create = false
 
+    # whether we should refresh list after create or not
+    cattr_accessor :refresh_list_after_create
+    @@refresh_list_after_create = false
+
     # instance-level configuration
     # ----------------------------
     # the label= method already exists in the Form base class
@@ -39,5 +43,8 @@ module ActiveScaffold::Config
 
     # whether the form stays open after a create or not
     attr_accessor :edit_after_create
+
+    # whether we should refresh list after create or not
+    attr_accessor :refresh_list_after_create
   end
 end
