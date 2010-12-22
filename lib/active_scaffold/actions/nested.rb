@@ -12,6 +12,7 @@ module ActiveScaffold::Actions
       end
       base.before_filter :include_habtm_actions
       base.helper_method :nested
+      base.helper_method :nested_parent_record
     end
 
     protected
