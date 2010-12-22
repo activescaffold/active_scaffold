@@ -2,13 +2,17 @@ form_selector = "#{element_form_id(:action => :update)}"
 
 page << "ActiveScaffold.find_action_link('#{form_selector}').update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
-  updated_row = if nested? && nested.belongs_to?
-    nil
+  if (active_scaffold_config.update.refresh_list_after_update)
+    page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
   else
-    render :partial => 'list_record', :locals => {:record => @record}
+    updated_row = if nested? && nested.belongs_to?
+      nil
+    else
+      render :partial => 'list_record', :locals => {:record => @record}
+    end
+    page << "ActiveScaffold.find_action_link('#{form_selector}').close('#{escape_javascript(updated_row)}');"
+    page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
   end
-  page << "ActiveScaffold.find_action_link('#{form_selector}').close('#{escape_javascript(updated_row)}');"
-  page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
 else
   page.call 'ActiveScaffold.replace', form_selector, render(:partial => 'update_form', :locals => {:xhr => true})
   page.call 'ActiveScaffold.scroll_to', form_selector
