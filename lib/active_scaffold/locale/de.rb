@@ -7,6 +7,7 @@
       :are_you_sure_to_delete => 'Sind Sie sicher?',
       :cancel => 'Abbrechen',
       :click_to_edit => 'Zum Editieren anklicken',
+      :click_to_reset => 'Reset',
       :close => 'Schliessen',
       :config_list => 'Konfigurieren',
       :config_list_model => 'Konfiguriere Spalten für %{model}',
