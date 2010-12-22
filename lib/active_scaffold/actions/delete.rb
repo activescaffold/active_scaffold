@@ -5,6 +5,7 @@ module ActiveScaffold::Actions
     end
 
     def destroy
+      params.delete :destroy_action
       process_action_link_action(:destroy) do |record|
         do_destroy
       end
