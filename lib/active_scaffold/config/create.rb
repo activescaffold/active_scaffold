@@ -5,6 +5,7 @@ module ActiveScaffold::Config
       super
       self.persistent = self.class.persistent
       self.edit_after_create = self.class.edit_after_create
+      self.refresh_list_after_create = self.class.refresh_list_after_create
     end
 
     # global level configuration
