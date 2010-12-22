@@ -62,6 +62,10 @@ module ActiveScaffold::Actions
     end
 
     def create_respond_to_js
+      if active_scaffold_config.create.refresh_list_after_create && successful?
+        do_search if respond_to? :do_search
+        do_list
+      end
       render :action => 'on_create'
     end
 

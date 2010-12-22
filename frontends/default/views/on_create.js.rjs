@@ -2,7 +2,9 @@ form_selector = "#{element_form_id(:action => :create)}"
 
 page << "ActiveScaffold.find_action_link('#{form_selector}').update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
-  if @insert_row
+  if (active_scaffold_config.create.refresh_list_after_create)
+    page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
+  elsif @insert_row
     new_row = render :partial => 'list_record', :locals => {:record => @record}
     insert_at ||= :top
     page << "ActiveScaffold.create_record_row('#{active_scaffold_tbody_id}','#{escape_javascript(new_row)}', #{{:insert_at => insert_at}.to_json});"
