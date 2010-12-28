@@ -6,7 +6,7 @@
       <%= render :partial => 'action_group', :locals => {:action_links => action_links || active_scaffold_config.action_links.member,
                                                          :url_options => url_options,
                                                          :record => record,
-                                                         :traverse_options => {:record => record},
+                                                         :traverse_options => {:for => record},
                                                          :start_level_0_tag => '<td>',
                                                          :end_level_0_tag => '</td>'} %>
   </tr>
