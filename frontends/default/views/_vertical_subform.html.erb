@@ -3,7 +3,7 @@
   <% @record = associated[index] -%>
   <% if @record.errors.count -%>
   <div class="association-record-errors" id="<%= element_messages_id :action => @record.class.name.underscore, :id => "#{parent_record.id}-#{index}" %>">
-    <%= error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
+    <%= active_scaffold_error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
   </div>
   <% end %>
   <%= render :partial => 'vertical_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => @record.new_record? && @record == associated.last} %>
