@@ -22,7 +22,7 @@ end -%>
 <% if request.xhr? -%>
     <% records = @error_records || Array(@record)
        records.each do |record| %>
-       <%= error_messages_for record, :object_name => "#{record.class.model_name.human.downcase}#{record.new_record? ? '' : ": #{record.to_label}"}" %>
+       <%= active_scaffold_error_messages_for record, :object_name => "#{record.class.model_name.human.downcase}#{record.new_record? ? '' : ": #{record.to_label}"}" %>
     <% end   %>
 <% else -%>
     <%= render :partial => 'form_messages' %>

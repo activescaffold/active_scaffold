@@ -272,7 +272,7 @@ module ActiveScaffold
         value
       end
       
-      def error_messages_for(*params)
+      def active_scaffold_error_messages_for(*params)
         options = params.extract_options!.symbolize_keys
 
         objects = Array.wrap(options.delete(:object) || params).map do |object|
