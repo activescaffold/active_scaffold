@@ -364,7 +364,7 @@ var ActiveScaffold = {
   replace: function(element, html) {
     element = $(element)
     Element.replace(element, html);
-    element = $(element.read_attribute('id'));
+    element = $(element.readAttribute('id'));
     return element;
   },
     
