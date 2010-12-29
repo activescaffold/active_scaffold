@@ -5,7 +5,7 @@ if controller.send :successful?
   if (active_scaffold_config.update.refresh_list_after_update)
     page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
   else
-    updated_row = if nested? && nested.belongs_to?
+    updated_row = if nested? && (nested.belongs_to? || nested.has_one?)
       nil
     else
       render :partial => 'list_record', :locals => {:record => @record}

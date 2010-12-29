@@ -38,6 +38,10 @@ module ActiveScaffold::DataStructures
     def belongs_to?
       false
     end
+
+    def has_one?
+      false
+    end
     
     def readonly?
       false
@@ -61,6 +65,10 @@ module ActiveScaffold::DataStructures
     
     def belongs_to?
       association.belongs_to?
+    end
+
+    def has_one?
+      association.macro == :has_one
     end
     
     def readonly?
