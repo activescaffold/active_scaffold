@@ -6,7 +6,10 @@ ru:
     are_you_sure_to_delete: 'Вы уверены?'
     cancel: 'Отмена'
     click_to_edit: 'Нажмите для редактирования'
+    click_to_reset: 'Pulsa para restaurar'
     close: 'Закрыть'
+    config_list: 'Configure'
+    config_list_model: 'Configure Columns for %{model}'
     create: 'Создать запись'
     create_model: 'Создать запись %{model}'
     create_another: 'Создать другую запись'
@@ -22,12 +25,15 @@ ru:
     nested_for_model: '%{parent_model} / %{nested_model}'
     nested_of_model: '%{nested_model} of %{parent_model}'
     filtered: '(Найденное)'
-    found: 'Найдено'
+    found: 
+      one: 'Найдено'
+      other: 'Найдено'
     hide: 'Скрыть'
     live_search: 'Поиск'
     loading: 'Загрузка...'
     next: 'Следующее'
     no_entries: 'Нет записей'
+    no_options: 'sin opciones'
     omit_header: 'Omit Header'
     options: 'Настройки'
     pdf: 'PDF'
@@ -56,6 +62,49 @@ ru:
     '<': '<'
     '!=': '!='
     between: 'Между'
+    contains: 'Contiene'
+    begins_with: 'Empieza con'
+    ends_with: 'Termina con'
+    today: 'Today'
+    yesterday: 'Yesterday'
+    tomorrow: 'Tommorrow'
+    this_week: 'This Week'
+    prev_week: 'Last Week'
+    next_week: 'Next Week'
+    this_month: 'This Month'
+    prev_month: 'Last Month'
+    next_month: 'Next Month'
+    this_year: 'This Year'
+    prev_year: 'Last Year'
+    next_year: 'Next Year'
+    past: 'Past'
+    future: 'Future'
+    range: 'Range'
+    seconds: 'Seconds'
+    minutes: 'Minutes'
+    hours: 'Hours'
+    days: 'Days'
+    weeks: 'Weeks'
+    months: 'Months'
+    years: 'Years'
+    optional_attributes: 'Further Options'
+    null: 'Null'
+    not_null: 'Not Null'
+    date_picker_options:
+      weekHeader: 'Нед'
+      firstDay: 1
+      isRTL: false
+      showMonthAfterYear: false
+    datetime_picker_options:
+      timeText: 'Hora'
+      currentText: 'Ahora'
+      closeText: 'Cerrar'
+    errors:
+      template:
+        header:
+          one: "1 error prohibited this %{model} from being saved."
+          other: "%{count} errors prohibited this %{model} from being saved"
+        body: "There were problems with the following fields:"
 
     # error_messages
     internal_error: 'Внутренняя ошибка сервера.'
