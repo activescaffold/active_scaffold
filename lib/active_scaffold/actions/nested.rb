@@ -96,14 +96,18 @@ module ActiveScaffold::Actions
     end
        
     def create_association_with_parent(record)
-      if nested? && nested.belongs_to? && nested.child_association 
-        parent = nested_parent_record(:read)
-        case nested.child_association.macro
-        when :has_one
-          record.send("#{nested.child_association.name}=", parent)
-        when :has_many
-          record.send("#{nested.child_association.name}").send(:<<, parent)
-        end unless parent.nil?
+      if nested?
+        if (nested.belongs_to? || nested.has_one?) && nested.child_association
+          parent = nested_parent_record(:read)
+          case nested.child_association.macro
+          when :has_one
+            record.send("#{nested.child_association.name}=", parent)
+          when :belongs_to
+            record.send("#{nested.child_association.name}=", parent)
+          when :has_many
+            record.send("#{nested.child_association.name}").send(:<<, parent)
+          end unless parent.nil?
+        end
       end
     end
     
