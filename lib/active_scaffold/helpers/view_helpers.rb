@@ -274,6 +274,7 @@ module ActiveScaffold
       
       def active_scaffold_error_messages_for(*params)
         options = params.extract_options!.symbolize_keys
+        options.reverse_merge!(:container_tag => :div, :list_type => :ul)
 
         objects = Array.wrap(options.delete(:object) || params).map do |object|
           object = instance_variable_get("@#{object}") unless object.respond_to?(:to_model)
@@ -311,17 +312,21 @@ module ActiveScaffold
 
           error_messages = objects.sum do |object|
             object.errors.full_messages.map do |msg|
-              content_tag(:li, msg)
+              options[:list_type] != :br ? content_tag(:li, msg) : msg
             end
-          end.join.html_safe
+          end
+          error_messages = if options[:list_type] == :br
+            error_messages.join('<br/>').html_safe
+          else
+            content_tag(options[:list_type], error_messages.join.html_safe)
+          end
 
-          contents = ''
+          contents = []
           contents << content_tag(options[:header_tag] || :h2, header_message) unless header_message.blank?
           contents << content_tag(:p, message) unless message.blank?
-          contents << content_tag(:ul, error_messages)
-
-          content_tag(:div, contents.html_safe, html)
-
+          contents << error_messages
+          contents = contents.join.html_safe
+          options[:container_tag] ? content_tag(options[:container_tag], contents, html) : contents
         else
           ''
         end
