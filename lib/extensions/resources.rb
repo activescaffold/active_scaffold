@@ -9,7 +9,7 @@ module ActionController
       # by overwriting the attr_reader :options, we can parse out a special :active_scaffold flag just-in-time.
       def options_with_active_scaffold
         if @options.delete :active_scaffold
-          logger.info "ActiveScaffold: extending RESTful routes for #{@plural}"
+          logger.debug "ActiveScaffold: extending RESTful routes for #{@plural}"
           @options[:collection] ||= {}
           @options[:collection].merge! ACTIVE_SCAFFOLD_ROUTING[:collection]
           @options[:member] ||= {}
