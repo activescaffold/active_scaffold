@@ -9,10 +9,15 @@ options = {:onsubmit => onsubmit,
            :class => "as_form #{form_action.to_s}",
            :method => method,
            'data-loading' => true}
+cancel_options = {:class => 'as_cancel', 'data-refresh' => false}
+
 if xhr && as_action_config.multipart? # file_uploads
   form_remote_upload_tag url_options.merge({:iframe => true}), options
 else
-  options[:remote] = true if xhr && !as_action_config.multipart?
+  if xhr && !as_action_config.multipart?
+    options[:remote] = true
+    cancel_options[:remote] = true
+  end
   form_tag url_options, options
 end -%>
 
@@ -33,7 +38,7 @@ end -%>
 
   <p class="form-footer">
     <%= submit_tag as_(form_action), :class => "submit" %>
-    <%= link_to(as_(:cancel), main_path_to_return, :class => 'as_cancel', :remote => true, 'data-refresh' => false) if cancel_link %>
+    <%= link_to(as_(:cancel), main_path_to_return, cancel_options) if cancel_link %>
     <%= loading_indicator_tag(:action => form_action, :id => params[:id]) %>
   </p>
 
