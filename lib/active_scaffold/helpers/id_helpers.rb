@@ -38,10 +38,6 @@ module ActiveScaffold
         "#{controller_id}-search-container"
       end
 
-      def search_form_id
-        "#{controller_id}-search-form"
-      end
-
       def search_input_id
         "#{controller_id}-search-input"
       end

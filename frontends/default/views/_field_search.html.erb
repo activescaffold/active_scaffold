@@ -1,6 +1,6 @@
 <% url_options = params_for(:action => :index, :escape => false, :search => nil) -%>
 <%=
-options = {:id => search_form_id,
+options = {:id => element_form_id(:action => 'search'),
            :class => "as_form search",
            :remote => true,
            :method => :get,
@@ -29,4 +29,4 @@ form_tag url_options, options %>
     <%= loading_indicator_tag(:action => :search) %>
   </p>
 </form>
-<%= javascript_tag("ActiveScaffold.focus_first_element_of_form('#{search_form_id}');") %>
+<%= javascript_tag("ActiveScaffold.focus_first_element_of_form('#{element_form_id(:action => 'search')}');") %>
