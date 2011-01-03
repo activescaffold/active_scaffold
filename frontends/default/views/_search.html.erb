@@ -1,7 +1,7 @@
 <% live_search = active_scaffold_config.search.live? -%>
 <% url_options =  params_for(:action => :index, :escape => false).delete_if{|k,v| k == 'search'} -%>
 <%=
-options = {:id => search_form_id,
+options = {:id => element_form_id(:action => 'search'),
            :class => "as_form search",
            :remote => true,
            :method => :get}
@@ -29,6 +29,6 @@ options['data-loading'] = true unless live_search
   $(<%= "##{search_input_id}".to_json.html_safe %>).delayedObserver(0.5, function() {
      $(<%= "##{search_input_id}".to_json.html_safe %>).parent().trigger("submit");});
 <% end -%>
-ActiveScaffold.focus_first_element_of_form('<%= search_form_id %>');
+ActiveScaffold.focus_first_element_of_form('<%= element_form_id(:action => 'search') %>');
 //]]>
 </script>
