@@ -122,7 +122,7 @@ module ActiveScaffold::Actions
         params = params[:record] || {} unless params[model.inheritance_column] # in create action must be inside record key
         model = params.delete(model.inheritance_column).camelize.constantize if params[model.inheritance_column]
       end
-      model.new
+      model.respond_to?(:build) ? model.build : model.new
     end
 
     # override this method if you want to inject data in the record (or its associated objects) before the save
