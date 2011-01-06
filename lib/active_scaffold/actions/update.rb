@@ -91,10 +91,10 @@ module ActiveScaffold::Actions
         end
       rescue ActiveRecord::RecordInvalid
       rescue ActiveRecord::StaleObjectError
-        @record.errors.add_to_base as_(:version_inconsistency)
+        @record.errors.add(:base, as_(:version_inconsistency))
         self.successful=false
       rescue ActiveRecord::RecordNotSaved
-        @record.errors.add_to_base as_(:record_not_saved) if @record.errors.empty?
+        @record.errors.add(:base, as_(:record_not_saved)) if @record.errors.empty?
         self.successful = false
       end
     end
