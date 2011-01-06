@@ -1,6 +1,6 @@
 module ActiveScaffold::DataStructures
   # A set of columns. These structures can be nested for organization.
-  class ActionColumns < Set
+  class ActionColumns < ActiveScaffold::DataStructures::Set
     include ActiveScaffold::Configurable
 
     # this lets us refer back to the action responsible for this link, if it exists.
