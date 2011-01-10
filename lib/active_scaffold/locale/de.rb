@@ -78,7 +78,7 @@
       :next_year => 'Nächstes Jahr',
       :past => 'Letzten', 
       :future => 'Nächsten',
-      :range => 'Spanne',
+      :range => 'Zeitraum',
       :seconds => 'Sekunden',
       :minutes => 'Minuten',
       :hours => 'Stunden',
