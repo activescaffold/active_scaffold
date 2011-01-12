@@ -32,10 +32,9 @@ $(document).ready(function() {
       if (action_link.is_disabled()) {
         return false;
       } else {
-        // hack: rails jquery defaults to dataType script
-        // but activescaffold is returning html content
-        // which chrome does nt like
-        if (action_link.position) event.data_type = 'dummy';
+        // hack: jquery requires if you request for javascript that javascript
+        // is coming back, however rails has a different mantra
+        if (action_link.position) event.data_type = 'rails';
         if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','visible');
         action_link.disable();
       }
