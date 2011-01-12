@@ -277,6 +277,7 @@ module ActiveScaffold::DataStructures
     end
 
     def number_to_native(value)
+      return value if value.blank? || !value.is_a?(String)
       native = '.' # native ruby separator
       format = {:separator => '', :delimiter => ''}.merge! I18n.t('number.format', :default => {})
       specific = case self.options[:format]
