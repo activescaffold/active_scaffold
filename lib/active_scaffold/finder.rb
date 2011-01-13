@@ -125,7 +125,7 @@ module ActiveScaffold
         native = '.'
         delimiter = I18n.t('number.format.delimiter')
         separator = I18n.t('number.format.separator')
-
+        return value if value.blank? || !value.is_a?(String)
         unless delimiter == native && !value.include?(separator) && value !~ /\.\d{3}$/
           value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
         else
