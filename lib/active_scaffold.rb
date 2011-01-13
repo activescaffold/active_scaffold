@@ -128,7 +128,13 @@ module ActiveScaffold
     
     def link_for_association(column, options = {})
       begin
-        controller = column.polymorphic_association? ? :polymorph : active_scaffold_controller_for(column.association.klass) 
+        controller = if column.polymorphic_association?
+          :polymorph
+        elsif options.include?(:controller)
+          "#{options[:controller].to_s.camelize}Controller".constantize
+        else
+          active_scaffold_controller_for(column.association.klass)
+        end
       rescue ActiveScaffold::ControllerNotFound
         controller = nil        
       end
