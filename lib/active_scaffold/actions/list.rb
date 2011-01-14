@@ -11,7 +11,9 @@ module ActiveScaffold::Actions
 
     # get just a single row
     def row
-      render :partial => 'row', :locals => {:record => find_if_allowed(params[:id], :read)}
+      Rails.logger.info("row params: #{params.inspect}")
+      @record = find_if_allowed(params[:id], :read)
+      respond_to_action(:row)
     end
 
     def list
@@ -49,6 +51,15 @@ module ActiveScaffold::Actions
     def list_respond_to_yaml
       render :text => Hash.from_xml(response_object.to_xml(:only => list_columns_names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
+    
+    def row_respond_to_html
+      render :action => 'row', :locals => {:record => find_if_allowed(params[:id], :read)}
+    end
+
+    def row_respond_to_js
+      render(:partial => 'row', :locals => {:record => find_if_allowed(params[:id], :read)})
+    end
+
     # The actual algorithm to prepare for the list view
     def do_list
       includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
@@ -153,6 +164,7 @@ module ActiveScaffold::Actions
     def list_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
     end
+    alias_method :row_formats, :list_formats
 
     def action_update_formats
       (default_formats + active_scaffold_config.formats).uniq
