@@ -5,20 +5,27 @@ module ActiveScaffold::DataStructures
         nil
       else
         session_info = session_storage[:nested].clone
-        session_info[:association] = session_info[:parent_model].reflect_on_association(session_info[:name])
-        unless session_info[:association].nil?
-          ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, session_info)
-        else
-          ActiveScaffold::DataStructures::NestedInfoScope.new(model, session_info)
+        begin
+          session_info[:parent_scaffold] = "#{session_info[:parent_scaffold].to_s.camelize}Controller".constantize
+          session_info[:parent_model] = session_info[:parent_scaffold].active_scaffold_config.model
+          session_info[:association] = session_info[:parent_model].reflect_on_association(session_info[:name])
+          unless session_info[:association].nil?
+            ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, session_info)
+          else
+            ActiveScaffold::DataStructures::NestedInfoScope.new(model, session_info)
+          end
+        rescue ActiveScaffold::ControllerNotFound
+          nil
         end
       end
     end
     
-    attr_accessor :association, :child_association, :parent_model, :parent_id, :constrained_fields, :scope
+    attr_accessor :association, :child_association, :parent_model, :parent_scaffold, :parent_id, :constrained_fields, :scope
         
     def initialize(model, session_info)
       @parent_model = session_info[:parent_model]
       @parent_id = session_info[:parent_id]
+      @parent_scaffold = session_info[:parent_scaffold]
     end
     
     def new_instance?
