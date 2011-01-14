@@ -30,12 +30,16 @@ module ActiveScaffold::Actions
     end
     
     def set_nested
-      if params[:parent_model] && ((params[:association] && params[:assoc_id]) || params[:named_scope])
+      if params[:parent_scaffold] && ((params[:association] && params[:assoc_id]) || params[:named_scope])
         @nested = nil
-        active_scaffold_session_storage[:nested] = {:parent_model => params[:parent_model].camelize.constantize,
+        begin
+          parent_scaffold = "#{params[:parent_scaffold].to_s.camelize}Controller".constantize
+          active_scaffold_session_storage[:nested] = {:parent_model => parent_scaffold.active_scaffold_config.model,
                                                                   :name => (params[:association] || params[:named_scope]).to_sym,
                                                                   :parent_id => params[:assoc_id]}
-        params.delete_if {|key, value| [:parent_model, :association, :named_scope, :assoc_id].include? key.to_sym}
+        rescue ActiveScaffold::ControllerNotFound
+        end
+        params.delete_if {|key, value| [:parent_scaffold, :association, :named_scope, :assoc_id].include? key.to_sym}
       end
     end
     
