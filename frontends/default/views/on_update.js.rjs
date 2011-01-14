@@ -6,7 +6,7 @@ if controller.send :successful?
     page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
   else
     updated_row = if nested? && (nested.belongs_to? || nested.has_one?)
-      nil
+      respond_to?(:render_component) ? render_component({:controller => nested.parent_scaffold.controller_path, :action => :row, :id => nested.parent_id}) : nil
     else
       render :partial => 'list_record', :locals => {:record => @record}
     end
