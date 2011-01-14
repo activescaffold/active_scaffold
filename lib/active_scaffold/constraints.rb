@@ -120,10 +120,15 @@ module ActiveScaffold
 
       condition = constraint_condition_for("#{table}.#{field}", value)
       if association.options[:polymorphic]
-        condition = merge_conditions(
-          condition,
-          constraint_condition_for("#{table}.#{association.name}_type", params[:parent_model].to_s)
-        )
+        begin
+          parent_scaffold = "#{session_info[:parent_scaffold].to_s.camelize}Controller".constantize
+          condition = merge_conditions(
+            condition,
+            constraint_condition_for("#{table}.#{association.name}_type", parent_scaffold.active_scaffold_config.model_id.to_s)
+          )
+        rescue ActiveScaffold::ControllerNotFound
+          nil
+        end
       end
 
       condition
