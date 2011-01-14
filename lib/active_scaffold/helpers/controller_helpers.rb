@@ -33,6 +33,8 @@ module ActiveScaffold
         parameters[:parent_id] = nil
         parameters[:action] = "index"
         parameters[:id] = nil
+        parameters[:associated_id] = nil
+        parameters[:utf8] = nil
         params_for(parameters)
       end
     end
