@@ -4,21 +4,27 @@ page << "ActiveScaffold.find_action_link('#{form_selector}').update_flash_messag
 if controller.send :successful?
   if (active_scaffold_config.create.refresh_list_after_create)
     page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
-  elsif @insert_row
+  elsif nested? && (nested.belongs_to? || nested.has_one?) && respond_to?(:render_component)
+    updated_parent_row = render_component({:controller => nested.parent_scaffold.controller_path, :action => :row, :id => nested.parent_id})
+    page << "ActiveScaffold.find_action_link('#{form_selector}').close('#{escape_javascript(updated_parent_row)}');"
+    page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
+  elsif params[:parent_controller].nil?
     new_row = render :partial => 'list_record', :locals => {:record => @record}
     insert_at ||= :top
     page << "ActiveScaffold.create_record_row('#{active_scaffold_tbody_id}','#{escape_javascript(new_row)}', #{{:insert_at => insert_at}.to_json});"
     page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
   end
 
-  if (active_scaffold_config.create.persistent)
-    page << "ActiveScaffold.find_action_link('#{form_selector}').reload();"
-  else
-    page << "ActiveScaffold.find_action_link('#{form_selector}').close();"
-  end
-  if (active_scaffold_config.create.edit_after_create)
-    page << "var link = $('#{action_link_id 'edit', @record.id}');"
-    page << "if (link) (function() { link.action_link.open() }).defer();"
+  unless nested? && (nested.belongs_to? || nested.has_one?)
+    if (active_scaffold_config.create.persistent)
+      page << "ActiveScaffold.find_action_link('#{form_selector}').reload();"
+    else
+      page << "ActiveScaffold.find_action_link('#{form_selector}').close();"
+    end
+    if (active_scaffold_config.create.edit_after_create)
+      page << "var link = $('#{action_link_id 'edit', @record.id}');"
+      page << "if (link) (function() { link.action_link.open() }).defer();"
+    end
   end
 else
   page.call 'ActiveScaffold.replace', form_selector, render(:partial => 'create_form', :locals => {:xhr => true})
