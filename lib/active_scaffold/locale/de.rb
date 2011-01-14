@@ -14,7 +14,7 @@
       :create => 'Anlegen',
       :create_model => 'Lege %{model} an',
       :create_another => 'Weitere anlegen',
-      :created_model => '%{model} anlegen',
+      :created_model => '%{model} angelegt',
       :create_new => 'Neu anlegen',
       :customize => 'Anpassen',
       :delete => 'Löschen',
