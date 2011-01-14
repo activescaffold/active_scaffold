@@ -53,11 +53,11 @@ module ActiveScaffold::Actions
     end
     
     def row_respond_to_html
-      render :action => 'row', :locals => {:record => find_if_allowed(params[:id], :read)}
+      render(:partial => 'row', :locals => {:record => @record})
     end
 
     def row_respond_to_js
-      render(:partial => 'row', :locals => {:record => find_if_allowed(params[:id], :read)})
+      render(:partial => 'row', :locals => {:record => @record})
     end
 
     # The actual algorithm to prepare for the list view
