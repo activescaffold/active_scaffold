@@ -643,8 +643,9 @@ var ActiveScaffold = {
         element.append(content);
       }
     } else {
-      if (current = $('#' + element.attr('id') + ' tr.association-record')[0]) {
-        this.replace(current, content);
+      var current = $('#' + element.attr('id') + ' tr.association-record')
+      if (current[0]) {
+        this.replace(current[0], content);
       } else {
         element.prepend(content);
       }

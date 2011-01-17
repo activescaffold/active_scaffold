@@ -521,8 +521,9 @@ var ActiveScaffold = {
         element.insert(content);
       }
     } else {
-      if (current = $$('#' + element.readAttribute('id') + ' tr.association-record')[0]) {
-        this.replace(current, content);
+      var current = $$('#' + element.readAttribute('id') + ' tr.association-record');
+      if (current[0]) {
+        this.replace(current[0], content);
       } else {
         element.insert({top: content});
       }
