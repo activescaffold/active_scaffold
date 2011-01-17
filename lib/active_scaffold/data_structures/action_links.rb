@@ -71,11 +71,9 @@ module ActiveScaffold::DataStructures
     end
 
     def delete(val)
-      @set.delete_if do |item|
-        if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
-          item.delete(val)
-        else
-          item.action == val.to_s
+      self.each do |link, set|
+        if link.action == val.to_s
+          set.delete_if {|item|item.action == val.to_s}
         end
       end
     end
@@ -86,7 +84,7 @@ module ActiveScaffold::DataStructures
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
           item.each(type, &block)
         else
-          yield item
+          yield item, @set
         end
       }
     end
