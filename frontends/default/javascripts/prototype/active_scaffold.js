@@ -408,8 +408,9 @@ var ActiveScaffold = {
     Form.focusFirstElement(form_element);
   },  
   
-  create_record_row: function(tbody, html, options) {
-    tbody = $(tbody);
+  create_record_row: function(active_scaffold_id, html, options) {
+    tbody = $(active_scaffold_id).down('tbody.records');
+
     var new_row = null;
     
     if (options.insert_at == 'top') {
@@ -727,6 +728,10 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
 
   scaffold_id: function() {
     return this.tag.up('div.active-scaffold').readAttribute('id');
+  },
+
+  scaffold: function() {
+    return this.tag.up('div.active-scaffold');
   },
   
   update_flash_messages: function(messages) {
