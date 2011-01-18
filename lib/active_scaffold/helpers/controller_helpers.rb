@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ControllerHelpers
       def self.included(controller)
-        controller.class_eval { helper_method :params_for, :main_path_to_return }
+        controller.class_eval { helper_method :params_for, :main_path_to_return, :render_parent?, :render_parent_options }
       end
       
       include ActiveScaffold::Helpers::IdHelpers
@@ -43,6 +43,18 @@ module ActiveScaffold
           parameters[:associated_id] = nil
           parameters[:utf8] = nil
           params_for(parameters)
+        end
+      end
+
+      def render_parent?
+        (nested? && (nested.belongs_to? || nested.has_one?) || params[:parent_sti])
+      end
+
+      def render_parent_options
+        if nested?
+          {:controller => nested.parent_scaffold.controller_path, :action => :row, :id => nested.parent_id}
+        elsif params[:parent_sti]
+          {:controller => params[:parent_sti], :action => :row, :id => @record.id}
         end
       end
     end
