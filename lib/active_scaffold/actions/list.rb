@@ -11,7 +11,6 @@ module ActiveScaffold::Actions
 
     # get just a single row
     def row
-      Rails.logger.info("row params: #{params.inspect}")
       @record = find_if_allowed(params[:id], :read)
       respond_to_action(:row)
     end
