@@ -1,13 +1,14 @@
 form_selector = "#{element_form_id(:action => :create)}"
 insert_at ||= :top
-page << "ActiveScaffold.find_action_link('#{form_selector}').update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
+page << "var action_link = ActiveScaffold.find_action_link('#{form_selector}');"
+page << "action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
   if (active_scaffold_config.create.refresh_list_after_create)
     page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
   elsif render_parent? && respond_to?(:render_component)
     parent_row = render_component(render_parent_options)
     if nested?
-      page << "ActiveScaffold.find_action_link('#{form_selector}').close('#{escape_javascript(parent_row)}');"
+      page << "action_link.close('#{escape_javascript(parent_row)}');"
     else
       page << "ActiveScaffold.create_record_row('#{active_scaffold_tbody_id}','#{escape_javascript(parent_row)}', #{{:insert_at => insert_at}.to_json});"
     end
@@ -20,9 +21,9 @@ if controller.send :successful?
 
   unless render_parent?
     if (active_scaffold_config.create.persistent)
-      page << "ActiveScaffold.find_action_link('#{form_selector}').reload();"
+      page << "action_link.reload();"
     else
-      page << "ActiveScaffold.find_action_link('#{form_selector}').close();"
+      page << "action_link.close();"
     end
     if (active_scaffold_config.create.edit_after_create)
       page << "var link = $('#{action_link_id 'edit', @record.id}');"

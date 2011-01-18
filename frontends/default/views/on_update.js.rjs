@@ -1,6 +1,7 @@
 form_selector = "#{element_form_id(:action => :update)}"
 
-page << "ActiveScaffold.find_action_link('#{form_selector}').update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
+page << "var action_link = ActiveScaffold.find_action_link('#{form_selector}');"
+page << "action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
   if (active_scaffold_config.update.refresh_list_after_update)
     page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
@@ -10,7 +11,7 @@ if controller.send :successful?
     else
       render :partial => 'list_record', :locals => {:record => @record}
     end
-    page << "ActiveScaffold.find_action_link('#{form_selector}').close('#{escape_javascript(updated_row)}');"
+    page << "action_link.close('#{escape_javascript(updated_row)}');"
     page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
   end
 else
