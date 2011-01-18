@@ -1,5 +1,5 @@
 new_row = render :partial => 'list_record', :locals => {:record => @record}
-page << "ActiveScaffold.create_record_row('#{active_scaffold_tbody_id}','#{escape_javascript(new_row)}', #{{:insert_at => :top}.to_json});"
+page << "ActiveScaffold.create_record_row('#{active_scaffold_id}','#{escape_javascript(new_row)}', #{{:insert_at => :top}.to_json});"
 page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
 
 if (form_stays_open = true)
