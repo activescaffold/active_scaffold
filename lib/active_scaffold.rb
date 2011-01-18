@@ -113,7 +113,22 @@ module ActiveScaffold
       active_scaffold_paths.each do |path|
         self.append_view_path(ActionView::ActiveScaffoldResolver.new(path))
       end
-      self.active_scaffold_config._add_sti_create_links if self.active_scaffold_config.add_sti_create_links?
+      self._add_sti_create_links if self.active_scaffold_config.add_sti_create_links?
+    end
+
+    # To be called after include action modules
+    def _add_sti_create_links
+      new_action_link = active_scaffold_config.action_links.collection['new']
+      unless new_action_link.nil?
+        active_scaffold_config.action_links.collection.delete('new')
+        active_scaffold_config.sti_children.each do |child|
+          new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
+          new_sti_link.label = child.to_s.camelize.constantize.model_name.human
+          new_sti_link.parameters = {:parent_sti => controller_path, :return_to => :referrer}
+          new_sti_link.controller = active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path
+          active_scaffold_config.action_links.collection.create.add(new_sti_link)
+        end
+      end
     end
 
     # Create the automatic column links. Note that this has to happen when configuration is *done*, because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?

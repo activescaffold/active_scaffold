@@ -156,20 +156,6 @@ module ActiveScaffold::Config
       end
     end
 
-    # To be called after include action modules
-    def _add_sti_create_links
-      new_action_link = @action_links.collection['new']
-      unless new_action_link.nil?
-        @action_links.collection.delete('new')
-        self.sti_children.each do |child|
-          new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
-          new_sti_link.label = as_(:create_model, :model => child.to_s.camelize.constantize.model_name.human)
-          new_sti_link.parameters = {model.inheritance_column => child}
-          @action_links.collection.add(new_sti_link)
-        end
-      end
-    end
-
     # configuration routing.
     # we want to route calls named like an activated action to that action's global or local Config class.
     # ---------------------------

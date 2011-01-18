@@ -58,7 +58,7 @@ module ActiveScaffold
       def action_link_to_inline_form(column, record, associated)
         link = column.link.clone
         if column.polymorphic_association?
-          polymorphic_controller = polymorphic_controller_for_nested_link(column, record)
+          polymorphic_controller = controller_path_for_activerecord(record.send(column.association.name).class)
           return link if polymorphic_controller.nil?
           link.controller = polymorphic_controller
         end
@@ -98,15 +98,6 @@ module ActiveScaffold
           authorized
         else
           record.authorized_for?(:crud_type => link.crud_type)
-        end
-      end
-
-      def polymorphic_controller_for_nested_link(column, record)
-        begin
-          controller = active_scaffold_controller_for(record.send(column.association.name).class)
-          controller.controller_path
-        rescue ActiveScaffold::ControllerNotFound
-          controller = nil
         end
       end
 

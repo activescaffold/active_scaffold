@@ -34,6 +34,15 @@ module ActiveScaffold
       ## Uncategorized
       ##
 
+      def controller_path_for_activerecord(klass)
+        begin
+          controller = active_scaffold_controller_for(klass)
+          controller.controller_path
+        rescue ActiveScaffold::ControllerNotFound
+          controller = nil
+        end
+      end
+
       def generate_temporary_id
         (Time.now.to_f*1000).to_i.to_s
       end
@@ -143,6 +152,7 @@ module ActiveScaffold
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters
         url_options_for_nested_link(link.column, record, link, url_options, options) if link.nested_link?
+        url_options_for_sti_link(link.column, record, link, url_options, options) unless record.nil? || active_scaffold_config.sti_children.nil?
         url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get
         url_options
       end
@@ -208,6 +218,17 @@ module ActiveScaffold
           url_options[:assoc_id] = url_options.delete(:id)
           link.eid = "#{controller_id.from(3)}_#{record.id}_#{link.parameters[:named_scope]}" unless options.has_key?(:reuse_eid)
           url_options[:eid] = link.eid
+        end
+      end
+
+      def url_options_for_sti_link(column, record, link, url_options, options = {})
+        #need to find out controller of current record type
+        #and set parameters
+        sti_controller_path = controller_path_for_activerecord(record.class)
+        if sti_controller_path
+          url_options[:controller] = sti_controller_path
+          url_options[:parent_sti] = controller_path
+          url_options[:return_to] = :referrer
         end
       end
 
