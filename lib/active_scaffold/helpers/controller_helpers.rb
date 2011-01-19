@@ -67,7 +67,7 @@ module ActiveScaffold
         begin
           @parent_action = :row
           parent_controller = "#{controller_path.to_s.camelize}Controller".constantize
-          @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list_after_create == true
+          @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list == true
           @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list_after_update == true
         rescue ActiveScaffold::ControllerNotFound
         end if @parent_action.nil?
