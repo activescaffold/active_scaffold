@@ -3,16 +3,24 @@ form_selector = "#{element_form_id(:action => :update)}"
 page << "var action_link = ActiveScaffold.find_action_link('#{form_selector}');"
 page << "action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
-  if (active_scaffold_config.update.refresh_list_after_update)
+  if render_parent? && respond_to?(:render_component)
+    parent_rendered = render_component(render_parent_options)
+    if nested?
+      page << "action_link.close('#{escape_javascript(parent_rendered)}');"
+    else
+      if render_parent_action == :row
+        page << "action_link.close('#{escape_javascript(parent_rendered)}');"
+      elsif render_parent_action == :index
+        page << parent_rendered
+      end
+    end
+    #page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
+  elsif (active_scaffold_config.update.refresh_list_after_update)
     page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
   else
-    updated_row = if render_parent?
-      respond_to?(:render_component) ? render_component(render_parent_options) : nil
-    else
-      render :partial => 'list_record', :locals => {:record => @record}
-    end
+    render :partial => 'list_record', :locals => {:record => @record}
     page << "action_link.close('#{escape_javascript(updated_row)}');"
-    page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?} && !render_parent?
+    page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
   end
 else
   page.call 'ActiveScaffold.replace', form_selector, render(:partial => 'update_form', :locals => {:xhr => true})
