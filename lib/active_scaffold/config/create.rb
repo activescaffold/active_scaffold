@@ -5,7 +5,7 @@ module ActiveScaffold::Config
       super
       self.persistent = self.class.persistent
       self.edit_after_create = self.class.edit_after_create
-      self.refresh_list_after_create = self.class.refresh_list_after_create
+      self.refresh_list = self.class.refresh_list
     end
 
     # global level configuration
@@ -28,8 +28,8 @@ module ActiveScaffold::Config
     @@edit_after_create = false
 
     # whether we should refresh list after create or not
-    cattr_accessor :refresh_list_after_create
-    @@refresh_list_after_create = false
+    cattr_accessor :refresh_list
+    @@refresh_list = false
 
     # instance-level configuration
     # ----------------------------
@@ -46,6 +46,6 @@ module ActiveScaffold::Config
     attr_accessor :edit_after_create
 
     # whether we should refresh list after create or not
-    attr_accessor :refresh_list_after_create
+    attr_accessor :refresh_list
   end
 end
