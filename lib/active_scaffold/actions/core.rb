@@ -11,7 +11,7 @@ module ActiveScaffold::Actions
       @record ||= if params[:in_place_editing]
         active_scaffold_config.model.find params[:id]
       else
-        active_scaffold_config.model.new
+        new_model
       end
       column = active_scaffold_config.columns[params[:column]]
       if params[:in_place_editing]
@@ -127,6 +127,17 @@ module ActiveScaffold::Actions
       end
       conditions
     end
+
+    def new_model
+      model = beginning_of_chain
+      if model.columns_hash[model.inheritance_column]
+        params = self.params # in new action inheritance_column must be in params
+        params = params[:record] || {} unless params[model.inheritance_column] # in create action must be inside record key
+        model = params.delete(model.inheritance_column).camelize.constantize if params[model.inheritance_column]
+      end
+      model.respond_to?(:build) ? model.build : model.new
+    end
+
     private
     def respond_to_action(action)
       respond_to do |type|
