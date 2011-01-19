@@ -228,7 +228,6 @@ module ActiveScaffold
         if sti_controller_path
           url_options[:controller] = sti_controller_path
           url_options[:parent_sti] = controller_path
-          url_options[:return_to] = :referrer
         end
       end
 

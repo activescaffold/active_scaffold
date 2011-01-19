@@ -24,26 +24,26 @@ module ActiveScaffold
 
       # Parameters to generate url to the main page (override if the ActiveScaffold is used as a component on another controllers page)
       def main_path_to_return
-        if params[:return_to]
-          params[:return_to] == 'referrer' ? request.referrer : params[:return_to]
-        else
-          parameters = {}
-          if params[:parent_controller]
-            parameters[:controller] = params[:parent_controller]
-            parameters[:eid] = params[:parent_controller]
-          end
-          if nested?
-            parameters[:controller] = nested.parent_scaffold.controller_path
-            parameters[:eid] = nil
-          end
-          parameters[:parent_column] = nil
-          parameters[:parent_id] = nil
-          parameters[:action] = "index"
-          parameters[:id] = nil
-          parameters[:associated_id] = nil
-          parameters[:utf8] = nil
-          params_for(parameters)
+        parameters = {}
+        if params[:parent_controller]
+          parameters[:controller] = params[:parent_controller]
+          parameters[:eid] = params[:parent_controller]
         end
+        if nested?
+          parameters[:controller] = nested.parent_scaffold.controller_path
+          parameters[:eid] = nil
+        end
+        if params[:parent_sti]
+          parameters[:controller] = params[:parent_sti]
+          parameters[:eid] = nil
+        end
+        parameters[:parent_column] = nil
+        parameters[:parent_id] = nil
+        parameters[:action] = "index"
+        parameters[:id] = nil
+        parameters[:associated_id] = nil
+        parameters[:utf8] = nil
+        params_for(parameters)
       end
 
       def render_parent?
