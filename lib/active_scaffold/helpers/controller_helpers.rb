@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ControllerHelpers
       def self.included(controller)
-        controller.class_eval { helper_method :params_for, :main_path_to_return, :render_parent?, :render_parent_options }
+        controller.class_eval { helper_method :params_for, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action}
       end
       
       include ActiveScaffold::Helpers::IdHelpers
@@ -54,8 +54,24 @@ module ActiveScaffold
         if nested?
           {:controller => nested.parent_scaffold.controller_path, :action => :row, :id => nested.parent_id}
         elsif params[:parent_sti]
-          {:controller => params[:parent_sti], :action => :row, :id => @record.id}
+          options = {:controller => params[:parent_sti], :action => render_parent_action(params[:parent_sti])}
+          if render_parent_action(params[:parent_sti]) == :index
+            options
+          else
+            options.merge({:id => @record.id})
+          end
         end
+      end
+
+      def render_parent_action(controller_path = nil)
+        begin
+          @parent_action = :row
+          parent_controller = "#{controller_path.to_s.camelize}Controller".constantize
+          @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list_after_create == true
+          @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list_after_update == true
+        rescue ActiveScaffold::ControllerNotFound
+        end if @parent_action.nil?
+        @parent_action
       end
     end
   end
