@@ -4,7 +4,7 @@ module ActiveScaffold::Config
     def initialize(*args)
       super
       self.nested_links = self.class.nested_links
-      self.refresh_list_after_update = self.class.refresh_list_after_update
+      self.refresh_list = self.class.refresh_list
     end
 
     # global level configuration
@@ -19,8 +19,8 @@ module ActiveScaffold::Config
     @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => :edit, :type => :member, :security_method => :update_authorized?)
 
     # whether we should refresh list after update or not
-    cattr_accessor :refresh_list_after_update
-    @@refresh_list_after_update = false
+    cattr_accessor :refresh_list
+    @@refresh_list = false
 
     # instance-level configuration
     # ----------------------------
@@ -40,7 +40,7 @@ module ActiveScaffold::Config
     end
 
     # whether we should refresh list after update or not
-    attr_accessor :refresh_list_after_update
+    attr_accessor :refresh_list
  
   end
 end
