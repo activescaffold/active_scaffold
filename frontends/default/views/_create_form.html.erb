@@ -1,7 +1,8 @@
-<% form_action ||= :create %>
+<% form_action ||= :create
+   cancel_link = true if cancel_link.nil? %>
 <%= render :partial => "base_form", :locals => {:xhr => xhr ||= nil,
                                                 :form_action => form_action,
                                                 :method => method ||= :post,
-                                                :cancel_link => cancel_link ||= true,
+                                                :cancel_link => cancel_link,
                                                 :headline => headline ||= active_scaffold_config.send(form_action).label(active_scaffold_config.sti_create_links ? @record.class.model_name.human(:count => 1) : nil)} %>
 

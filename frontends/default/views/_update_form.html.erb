@@ -1,5 +1,6 @@
+<% cancel_link = true if cancel_link.nil? %>
 <%= render :partial => "base_form", :locals => {:xhr => xhr ||= nil,
                                                 :form_action => form_action ||= :update,
                                                 :method => method ||= :put,
-                                                :cancel_link => cancel_link ||= true,
+                                                :cancel_link => cancel_link,
                                                 :headline => headline ||= @record.to_label.nil? ? active_scaffold_config.update.label : as_(:update_model, :model => clean_column_value(@record.to_label))} %>
