@@ -5,7 +5,7 @@ ActiveRecord::Reflection::AssociationReflection.class_eval do
     col = klass.inheritance_column.to_sym
     if !col.nil? && opts.first.is_a?(Hash) && (opts.first.symbolize_keys[col])
       sti_model = opts.first.delete(col)
-      sti_model.to_s.constantize.new(*opts)
+      sti_model.to_s.camelize.constantize.new(*opts)
     else
       klass.new(*opts)
     end
