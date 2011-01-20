@@ -64,7 +64,7 @@ module ActiveScaffold::DataStructures
           collected = item.find_duplicate(link)
           links << collected unless collected.nil?
         else
-          links << item if item.action == link.action and item.controller == link.controller and item.parameters == link.parameters
+          links << item if item.action == link.action and item.static_controller? && item.controller == link.controller and item.parameters == link.parameters
         end
       end
       links.first

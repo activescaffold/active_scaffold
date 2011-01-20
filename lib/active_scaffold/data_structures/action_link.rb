@@ -29,7 +29,16 @@ module ActiveScaffold::DataStructures
     attr_accessor :action
     
     # the controller for this action link. if nil, the current controller should be assumed.
-    attr_accessor :controller
+    attr_writer :controller
+
+    def controller
+      @controller = @controller.call if @controller.is_a?(Proc)
+      @controller
+    end
+
+    def static_controller?
+      !(@controller.is_a?(Proc) || (@controller == :polymorph))
+    end
 
     # a hash of request parameters
     attr_accessor :parameters
