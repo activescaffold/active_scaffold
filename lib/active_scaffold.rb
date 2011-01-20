@@ -120,7 +120,7 @@ module ActiveScaffold
     # To be called after include action modules
     def _add_sti_create_links
       new_action_link = active_scaffold_config.action_links.collection['new']
-      unless new_action_link.nil?
+      unless new_action_link.nil? || active_scaffold_config.sti_children.empty?
         active_scaffold_config.action_links.collection.delete('new')
         active_scaffold_config.sti_children.each do |child|
           new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
