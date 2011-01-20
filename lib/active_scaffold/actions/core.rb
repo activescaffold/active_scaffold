@@ -9,7 +9,8 @@ module ActiveScaffold::Actions
     end
     def render_field
       @record ||= if params[:in_place_editing]
-        active_scaffold_config.model.find params[:id]
+        register_constraints_with_action_columns(nested.constrained_fields, active_scaffold_config.update.hide_nested_column ? [] : [:update]) if nested?
+        find_if_allowed(params[:id], :update)
       else
         new_model
       end
