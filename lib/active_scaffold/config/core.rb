@@ -58,6 +58,7 @@ module ActiveScaffold::Config
 
     # lets you specify whether add a create link for each sti child
     cattr_accessor :sti_create_links
+    @@sti_create_links = true
 
     # instance-level configuration
     # ----------------------------

@@ -82,6 +82,7 @@ module ActiveScaffold
       @active_scaffold_custom_paths = []
 
       self.active_scaffold_superclasses_blocks.each {|superblock| self.active_scaffold_config.configure &superblock}
+      self.active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
       self.active_scaffold_config.configure &block if block_given?
       self.active_scaffold_config._configure_sti unless self.active_scaffold_config.sti_children.nil?
       self.active_scaffold_config._load_action_columns
@@ -125,7 +126,7 @@ module ActiveScaffold
           new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
           new_sti_link.label = child.to_s.camelize.constantize.model_name.human
           new_sti_link.parameters = {:parent_sti => controller_path}
-          new_sti_link.controller = active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path
+          new_sti_link.controller = Proc.new { active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path }
           active_scaffold_config.action_links.collection.create.add(new_sti_link)
         end
       end
