@@ -8,20 +8,10 @@ module ActiveScaffold::Actions
       base.helper_method :beginning_of_chain
     end
     def render_field
-      @record ||= if params[:in_place_editing]
-        register_constraints_with_action_columns(nested.constrained_fields, active_scaffold_config.update.hide_nested_column ? [] : [:update]) if nested?
-        find_if_allowed(params[:id], :update)
-      else
-        new_model
-      end
-      column = active_scaffold_config.columns[params[:column]]
       if params[:in_place_editing]
-        render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
-      elsif !column.nil?
-        value = column_value_from_param_value(@record, column, params[:value])
-        @record.send "#{column.name}=", value
-        after_render_field(@record, column)
-        render :partial => "render_field", :collection => Array(params[:update_columns]), :content_type => 'text/javascript' 
+        render_field_for_inplace_editing
+      else
+        render_field_for_update_columns
       end
     end
     
@@ -29,6 +19,23 @@ module ActiveScaffold::Actions
 
     def nested?
       false
+    end
+
+    def render_field_for_inplace_editing
+      register_constraints_with_action_columns(nested.constrained_fields, active_scaffold_config.update.hide_nested_column ? [] : [:update]) if nested?
+      @record = find_if_allowed(params[:id], :update)
+      render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
+    end
+
+    def render_field_for_update_columns
+      @record = new_model
+      column = active_scaffold_config.columns[params[:column]]
+      unless column.nil?
+        value = column_value_from_param_value(@record, column, params[:value])
+        @record.send "#{column.name}=", value
+        after_render_field(@record, column)
+        render :partial => "render_field", :collection => Array(params[:update_columns]), :content_type => 'text/javascript'
+      end
     end
     
     # override this method if you want to do something after render_field
