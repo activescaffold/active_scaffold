@@ -1,3 +1,30 @@
+= 3.0.5
+
+- switch from explicit requires to autoloading
+- get nested action links up and running
+
+= 3.0.4
+
+- Fix a typo that made 3.0.3 unusable.
+
+= 3.0.3
+
+- Fixing 'require' ordering
+- Code for nested and subgrouped action links
+- bugfixes for better html generation
+
+= 3.0.2
+
+- Two bug fixes and a deprecation silencing.
+
+= 3.0.1
+
+- Fixing the requiring of files.
+
+= 3.0.0
+
+- Packaging up vhochstein's fork for Rails 3.0 as a gem.
+
 = 1.2RC1
 
 == FEATURES

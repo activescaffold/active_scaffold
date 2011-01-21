@@ -15,7 +15,7 @@ module ActiveScaffold::Config
 
     # configures where the ActiveScaffold plugin itself is located. there is no instance version of this.
     cattr_accessor :plugin_directory
-    @@plugin_directory = File.expand_path(__FILE__).match(/vendor\/plugins\/([^\/]*)/)[1]
+    @@plugin_directory = File.expand_path(__FILE__).match(%{(^.*)/lib/active_scaffold/config/core.rb})[1]
 
     # lets you specify a global ActiveScaffold frontend.
     cattr_accessor :frontend

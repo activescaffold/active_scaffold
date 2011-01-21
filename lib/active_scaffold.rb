@@ -1,4 +1,59 @@
+unless Rails::VERSION::MAJOR == 3 && Rails::VERSION::MINOR >= 0
+  raise "This version of ActiveScaffold requires Rails 3.0 or higher.  Please use an earlier version."
+end
+
+begin
+  require 'render_component'
+rescue LoadError
+end
+begin
+  require 'verification'
+rescue LoadError
+end
+
+require 'active_record_permissions'
+require 'dhtml_confirm'
+require 'paginator'
+require 'responds_to_parent'
+
+require 'active_scaffold/version'
+
 module ActiveScaffold
+  autoload :AttributeParams, 'active_scaffold/attribute_params'
+  autoload :Configurable, 'active_scaffold/configurable'
+  autoload :Constraints, 'active_scaffold/constraints'
+  autoload :Finder, 'active_scaffold/finder'
+  autoload :MarkedModel, 'active_scaffold/marked_model'
+
+  def self.active_scaffold_autoload_subdir(dir, mod=self)
+    Dir["#{File.dirname(__FILE__)}/active_scaffold/#{dir}/*.rb"].each { |file|
+      basename = File.basename(file, ".rb")
+      mod.module_eval {
+        autoload basename.camelcase.to_sym, "active_scaffold/#{dir}/#{basename}"
+      }
+    }
+  end
+
+  module Actions
+    ActiveScaffold.active_scaffold_autoload_subdir('actions', self)
+  end
+
+  module Bridges
+    autoload :Bridge, 'active_scaffold/bridges/bridge'
+  end
+
+  module Config
+    ActiveScaffold.active_scaffold_autoload_subdir('config', self)
+  end
+
+  module DataStructures
+    ActiveScaffold.active_scaffold_autoload_subdir('data_structures', self)
+  end
+
+  module Helpers
+    ActiveScaffold.active_scaffold_autoload_subdir('helpers', self)
+  end
+
   class ControllerNotFound < RuntimeError; end
   class DependencyFailure < RuntimeError; end
   class MalformedConstraint < RuntimeError; end
@@ -53,6 +108,10 @@ module ActiveScaffold
     @@js_framework ||= :prototype
   end
 
+  def self.root
+    File.dirname(__FILE__) + "/.."
+  end
+
   module ClassMethods
     def active_scaffold(model_id = nil, &block)
       # initialize bridges here
@@ -74,10 +133,10 @@ module ActiveScaffold
       @active_scaffold_overrides.uniq! # Fix rails duplicating some view_paths
       @active_scaffold_frontends = []
       if active_scaffold_config.frontend.to_sym != :default
-        active_scaffold_custom_frontend_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views')
+        active_scaffold_custom_frontend_path = File.join(ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views')
         @active_scaffold_frontends << active_scaffold_custom_frontend_path
       end
-      active_scaffold_default_frontend_path = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', 'default' , 'views')
+      active_scaffold_default_frontend_path = File.join(ActiveScaffold::Config::Core.plugin_directory, 'frontends', 'default' , 'views')
       @active_scaffold_frontends << active_scaffold_default_frontend_path
       @active_scaffold_custom_paths = []
 
@@ -268,3 +327,18 @@ module ActiveScaffold
     end
   end
 end
+
+require 'environment'
+
+##
+## Run the install assets script, too, just to make sure
+## But at least rescue the action in production
+##
+Rails::Application.initializer("active_scaffold.install_assets") do
+  begin
+    ActiveScaffoldAssets.copy_to_public(ActiveScaffold.root, {:clean_up_destination => true})
+  rescue
+    raise $! unless Rails.env == 'production'
+  end
+end unless defined?(ACTIVE_SCAFFOLD_PLUGIN) && ACTIVE_SCAFFOLD_PLUGIN == true
+
