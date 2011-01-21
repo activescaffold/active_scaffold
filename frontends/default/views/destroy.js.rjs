@@ -1,6 +1,10 @@
 if controller.send(:successful?)
-  page << "ActiveScaffold.delete_record_row('#{element_row_id(:action => 'list', :id => params[:id])}','#{url_for(params_for(:action => :index, :id => nil, :page => [active_scaffold_config.list.user.page.to_i - 1, 1].max, :escape => false))}');"
-  page.call 'ActiveScaffold.replace',  active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
+  if (active_scaffold_config.delete.refresh_list)
+    page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
+  else
+    page << "ActiveScaffold.delete_record_row('#{element_row_id(:action => 'list', :id => params[:id])}','#{url_for(params_for(:action => :index, :id => nil, :page => [active_scaffold_config.list.user.page.to_i - 1, 1].max, :escape => false))}');"
+    page.call 'ActiveScaffold.replace',  active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
+  end
 else
   flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br)
 end
