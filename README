@@ -29,16 +29,22 @@ Rails < 2.1: Active Scaffold 1-1-stable (no guarantees)
 Since Rails 2.3, render_component plugin is needed for nested and embbeded scaffolds. It works with rails-2.3 branch from ewildgoose repository:
 script/plugin install git://github.com/ewildgoose/render_component.git -r rails-2.3
 
-Rails 3.0 compatible fork of activesaffold by Volker Hochstein:
+== Rails 3.0 compatible fork of activesaffold by Volker Hochstein:
 
-Since Rails 3.0 render_component is nt used for nesting, but optional for embedded scaffolds
-Rails 3.0 version of render_component:
-rails plugin install git://github.com/vhochstein/render_component.git
+Since Rails 3.0 render_component is not used for nesting, but is optional for embedded scaffolds.
+Since Rails 3.0, https://github.com/rails/verification.git is also needed.
 
-Since Rails 3.0, the following is needed:
-rails plugin install git://github.com/rails/verification.git
+If you want to install as plugins under vendor/plugins, install these versions:
+  rails plugin install git://github.com/vhochstein/render_component.git
+  rails plugin install git://github.com/rails/verification.git
+  rails plugin install git://github.com/vhochstein/active_scaffold.git
 
-Fork uses unobtrusive Javascript, so you are basically free to pick your javascript framework
+If you want to use the gem, add to your Gemfile:
+  gem "active_scaffold"
+
+== Pick your own javascript framework
+
+The Rails 3.0 version uses unobtrusive Javascript, so you are free to pick your javascript framework.
 Out of the box Prototype or JQuery are supported:
 
 Prototype 1.7 (default js framework)
@@ -46,6 +52,12 @@ rails.js in git://github.com/vhochstein/prototype-ujs.git
 
 JQuery 1.4.1
 rails.js in git://github.com/vhochstein/jquery-ujs.git
-uncomment last line in ...plugins/active_scaffold/environment.rb in order tu use jquery instead of prototype
+
+To configure the javascript framework when installed under vendor/plugins/
+uncomment last line in ...plugins/active_scaffold/environment.rb in order to use jquery instead of prototype
+
+To configure the javascript framework when installed as a gem:
+Add a config/initializers/active_scaffold.rb containing:
+ActiveScaffold.js_framework = :jquery # :prototype is the default
 
 Released under the MIT license (included)
