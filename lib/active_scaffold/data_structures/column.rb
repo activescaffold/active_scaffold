@@ -114,8 +114,22 @@ module ActiveScaffold::DataStructures
       @options ||= {}
     end
 
-    # associate an action_link with this column
-    attr_reader :link
+    def link
+      @link = @link.call(self) if @link.is_a? Proc
+      @link
+    end
+
+     # associate an action_link with this column
+    def set_link(action, options = {})
+      if action.is_a?(ActiveScaffold::DataStructures::ActionLink) || (action.is_a? Proc)
+        @link = action
+      else
+        options[:label] ||= self.label
+        options[:position] ||= :after unless options.has_key?(:position)
+        options[:type] ||= :member
+        @link = ActiveScaffold::DataStructures::ActionLink.new(action, options)
+      end
+    end
 
     # set an action_link to nested list or inline form in this column
     def autolink?
@@ -126,17 +140,6 @@ module ActiveScaffold::DataStructures
     def clear_link
       @link = nil
       @autolink = false
-    end
-
-    def set_link(action, options = {})
-      if action.is_a? ActiveScaffold::DataStructures::ActionLink
-        @link = action
-      else
-        options[:label] ||= self.label
-        options[:position] ||= :after unless options.has_key?(:position)
-        options[:type] ||= :member
-        @link = ActiveScaffold::DataStructures::ActionLink.new(action, options)
-      end
     end
 
     # define a calculation for the column. anything that ActiveRecord::Calculations::ClassMethods#calculate accepts will do.
