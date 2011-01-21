@@ -1,8 +1,7 @@
 ##
 ## Install ActiveScaffold assets into /public 
 ##
-
-require File.dirname(__FILE__) + '/install_assets'
+ActiveScaffoldAssets.copy_to_public(File.dirname(__FILE__), {:clean_up_destination => true})
 
 ##
 ## Install Counter
