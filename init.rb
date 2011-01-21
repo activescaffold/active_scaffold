@@ -12,7 +12,7 @@ require File.dirname(__FILE__) + '/environment'
 ## But at least rescue the action in production
 ##
 begin
-  require File.dirname(__FILE__) + '/install_assets'
+  ActiveScaffoldAssets.copy_to_public(File.dirname(__FILE__), {:clean_up_destination => true})
 rescue
   raise $! unless Rails.env == 'production'
 end
