@@ -45,9 +45,8 @@ end
 
 desc 'Generate documentation for ActiveScaffold.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'ActiveScaffold #{version}'
+  rdoc.title    = 'ActiveScaffold #{ActiveScaffold::Version::STRING}'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
