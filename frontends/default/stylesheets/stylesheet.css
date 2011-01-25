@@ -341,6 +341,7 @@ right: 0px;
 display: none;
 position: absolute;
 top: 0;
+right: 150px;
 }
 
 .active-scaffold .actions .action_group ul li {
