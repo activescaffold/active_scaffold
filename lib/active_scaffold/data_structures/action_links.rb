@@ -36,11 +36,9 @@ module ActiveScaffold::DataStructures
     # groups are represented as a string separated by a dot
     # eg member.crud
     def add_to_group(link, group = nil)
-      if group
-        group.split('.').inject(root){|group, group_name| group.send(group_name)}.add link
-      else
-        root << link
-      end
+      add_to = root
+      add_to = group.split('.').inject(root){|group, group_name| group.send(group_name)} if group
+      add_to << link unless link.nil?
     end
 
     # finds an ActionLink by matching the action
