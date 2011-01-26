@@ -251,7 +251,7 @@ module ActiveScaffold
         classes = []
         classes << "#{column.name}-column_heading"
         classes << "sorted #{sorting.direction_of(column).downcase}" if sorting.sorts_on? column
-        classes << column.css_class unless column.css_class.nil?
+        classes << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
         classes.join(' ')
       end
 
