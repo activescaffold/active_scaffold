@@ -49,7 +49,7 @@ module ActiveScaffold::Actions
       end
     end
     def update_respond_to_js
-      if active_scaffold_config.update.refresh_list && successful?
+      if successful? && active_scaffold_config.update.refresh_list && !render_parent?
         do_search if respond_to? :do_search
         do_list
       end
