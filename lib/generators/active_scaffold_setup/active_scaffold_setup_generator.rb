@@ -8,8 +8,10 @@ module Rails
       end
 
       def install_plugins
-        plugin 'verification', :git => 'git://github.com/rails/verification.git'
-        plugin 'render_component', :git => 'git://github.com/vhochstein/render_component.git'
+        unless defined?(ACTIVE_SCAFFOLD_INSTALLED) && ACTIVE_SCAFFOLD_INSTALLED == :gem
+          plugin 'verification', :git => 'git://github.com/rails/verification.git'
+          plugin 'render_component', :git => 'git://github.com/vhochstein/render_component.git'
+        end
         if js_lib == 'prototype'
           get "https://github.com/vhochstein/prototype-ujs/raw/master/src/rails.js", "public/javascripts/rails.js"
         elsif js_lib == 'jquery'
@@ -19,8 +21,14 @@ module Rails
       end
       
       def configure_active_scaffold
-        if js_lib == 'jquery'
-          gsub_file 'vendor/plugins/active_scaffold/lib/environment.rb', /#ActiveScaffold.js_framework = :jquery/, 'ActiveScaffold.js_framework = :jquery'
+        unless defined?(ACTIVE_SCAFFOLD_INSTALLED) && ACTIVE_SCAFFOLD_INSTALLED == :gem
+          if js_lib == 'jquery'
+            gsub_file 'vendor/plugins/active_scaffold/lib/environment.rb', /#ActiveScaffold.js_framework = :jquery/, 'ActiveScaffold.js_framework = :jquery'
+          end
+        else
+          if js_lib == 'jquery'
+            create_file "config/initializers/active_scaffold.rb", "ActiveScaffold.js_framework = :jquery"
+          end
         end
       end
       
