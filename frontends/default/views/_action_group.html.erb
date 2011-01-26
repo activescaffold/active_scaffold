@@ -5,11 +5,11 @@
   <% if (options[:node] == :finished_traversing) -%>
     <%= "</ul>#{(options[:level] == 0 ? "</div>#{end_level_0_tag}": '</li>')}".html_safe %>
   <% elsif (options[:node] == :start_traversing) -%>
-    <% if options[:level] == 0 %>
-       <%= "#{start_level_0_tag}<div class=\"action_group\"> #{content_tag('span', as_(parent.name))}<ul>".html_safe %>
-    <% else %>
-       <%= "<li #{"class=\"top\"" if options[:first_action]}>#{content_tag('span', as_(parent.name))}<ul>".html_safe %>
-    <% end %>
+	<% if options[:level] == 0 %>
+	   <%= "#{start_level_0_tag}<div class=\"action_group\"> #{content_tag(:div, as_(parent.name), :class => (parent.name.to_s).downcase)}<ul>".html_safe %>
+	<% else %>
+	   <%= "<li #{"class=\"top\"" if options[:first_action]}>#{content_tag(:div, as_(parent.name), :class => (parent.name.to_s).downcase)}<ul>".html_safe %>
+	<% end %>
   <% else -%>
     <% if options[:level] == 0 %>
       <%= "#{start_level_0_tag}#{h(render_group_action_link(link, url_options, options, record))}#{end_level_0_tag}".html_safe %>
