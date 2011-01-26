@@ -18,7 +18,7 @@ require './lib/active_scaffold/version.rb'
 
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "active_scaffold"
+  gem.name = "active_scaffold_vho"
   gem.version = ActiveScaffold::Version::STRING
   gem.homepage = "http://github.com/vhochstein/active_scaffold"
   gem.license = "MIT"
@@ -26,7 +26,7 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, leaving you more time to focus on more challenging (and interesting!) problems.}
   gem.email = "activescaffold@googlegroups.com"
   gem.authors = ["Many, see README"]
-  gem.add_runtime_dependency 'render_component'
+  gem.add_runtime_dependency 'render_component_vho'
   gem.add_runtime_dependency 'verification'
   gem.add_runtime_dependency 'rails', '~> 3.0.0'
   # Include your dependencies below. Runtime dependencies are required when using your gem,
