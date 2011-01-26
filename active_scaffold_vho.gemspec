@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{active_scaffold_vho}
-  s.version = "3.0.6"
+  s.version = "3.0.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Many, see README"]
@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
     "MIT-LICENSE",
     "README",
     "Rakefile",
+    "active_scaffold_vho.gemspec",
     "frontends/default/images/add.gif",
     "frontends/default/images/arrow_down.gif",
     "frontends/default/images/arrow_up.gif",
@@ -196,6 +197,7 @@ Gem::Specification.new do |s|
     "lib/active_scaffold/marked_model.rb",
     "lib/active_scaffold/version.rb",
     "lib/active_scaffold_assets.rb",
+    "lib/active_scaffold_vho.rb",
     "lib/dhtml_confirm.rb",
     "lib/environment.rb",
     "lib/extensions/action_controller_rendering.rb",
