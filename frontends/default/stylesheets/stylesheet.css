@@ -107,7 +107,7 @@ float: right;
 .active-scaffold-header div.actions div.action_group li a,
 .active-scaffold-header div.actions div.action_group li div {
 float: none;
-margin: 0 2px;
+margin: 0;
 }
 
 .active-scaffold-header div.actions .action_group ul {
@@ -140,16 +140,13 @@ opacity: 0.5;
 .active-scaffold-header div.actions a.show_search,
 .active-scaffold-header div.actions a.show_config_list,
 .active-scaffold-header div.actions div.action_group div {
-padding-left: 19px;
+margin:0;  
+padding: 1px 5px 1px 20px;
 background-position: 1px 50%;
 background-repeat: no-repeat;
 }
 
 .active-scaffold-header div.actions div.action_group div {
-  padding: 1px 2px 1px 19px;
-  background-position: 1px 50%;
-  background-repeat: no-repeat;
-  margin-left: 5px;
   background-image: url(../../../images/active_scaffold/default/gears.png); /* default icon for actions or override with css */
 }
 
@@ -346,23 +343,31 @@ right: 150px;
 
 .active-scaffold .actions .action_group ul li {
 background: none repeat scroll 0 0 #EEE;
-border-bottom: 1px dashed #222;
+border-top: 1px dashed #222;
 display: block;
-padding-bottom: 5px;
 position: relative;
 width: auto;
 z-index: 2;
 }
 
-.active-scaffold .actions .action_group ul li.top {
-border-top: 1px solid #005CB8;
+.active-scaffold .actions .action_group ul li div {
+  margin: 0;
+  padding: 5px 5px 5px 25px;
+  background-position: 5px 50%;
+  background-repeat: no-repeat;
 }
 
 .active-scaffold .actions .action_group ul li a {
   display: block;
   color: #333;
   margin: 0;
-  padding: 3px 5px 3px 25px;
+  padding: 5px 5px 5px 25px;
+  background-position: 5px 50%;
+  background-repeat: no-repeat;
+}
+
+.active-scaffold .actions .action_group ul li.top {
+border-top: 0px solid #005CB8;
 }
 
 .active-scaffold .actions .action_group:hover ul ul,
@@ -375,9 +380,6 @@ display: none;
 .active-scaffold .actions .action_group ul ul li:hover ul {
 display: block;
 }
-
-
-
 
 /* Table :: Inline Adapter
    ============================= */
