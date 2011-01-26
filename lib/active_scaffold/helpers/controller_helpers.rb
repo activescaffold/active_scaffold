@@ -55,7 +55,7 @@ module ActiveScaffold
       end
 
       def render_parent_options
-        if nested?
+        if nested? && (nested.belongs_to? || nested.has_one?)
           {:controller => nested.parent_scaffold.controller_path, :action => :row, :id => nested.parent_id}
         elsif params[:parent_sti]
           options = {:controller => params[:parent_sti], :action => render_parent_action(params[:parent_sti])}
