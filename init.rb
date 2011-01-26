@@ -1,4 +1,4 @@
-ACTIVE_SCAFFOLD_PLUGIN = true
+ACTIVE_SCAFFOLD_INSTALLED = :plugin
 
 require 'active_scaffold'
 
