@@ -26,8 +26,8 @@ module ActiveScaffold
   autoload :Finder, 'active_scaffold/finder'
   autoload :MarkedModel, 'active_scaffold/marked_model'
 
-  def self.active_scaffold_autoload_subdir(dir, mod=self)
-    Dir["#{File.dirname(__FILE__)}/active_scaffold/#{dir}/*.rb"].each { |file|
+  def self.autoload_subdir(dir, mod=self, root = File.dirname(__FILE__))
+    Dir["#{root}/active_scaffold/#{dir}/*.rb"].each { |file|
       basename = File.basename(file, ".rb")
       mod.module_eval {
         autoload basename.camelcase.to_sym, "active_scaffold/#{dir}/#{basename}"
@@ -36,7 +36,7 @@ module ActiveScaffold
   end
 
   module Actions
-    ActiveScaffold.active_scaffold_autoload_subdir('actions', self)
+    ActiveScaffold.autoload_subdir('actions', self)
   end
 
   module Bridges
@@ -44,15 +44,15 @@ module ActiveScaffold
   end
 
   module Config
-    ActiveScaffold.active_scaffold_autoload_subdir('config', self)
+    ActiveScaffold.autoload_subdir('config', self)
   end
 
   module DataStructures
-    ActiveScaffold.active_scaffold_autoload_subdir('data_structures', self)
+    ActiveScaffold.autoload_subdir('data_structures', self)
   end
 
   module Helpers
-    ActiveScaffold.active_scaffold_autoload_subdir('helpers', self)
+    ActiveScaffold.autoload_subdir('helpers', self)
   end
 
   class ControllerNotFound < RuntimeError; end
