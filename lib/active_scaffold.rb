@@ -11,6 +11,7 @@ begin
 rescue LoadError
 end
 
+require 'active_scaffold_assets'
 require 'active_record_permissions'
 require 'dhtml_confirm'
 require 'paginator'
@@ -341,5 +342,5 @@ Rails::Application.initializer("active_scaffold.install_assets") do
   rescue
     raise $! unless Rails.env == 'production'
   end
-end unless defined?(ACTIVE_SCAFFOLD_PLUGIN) && ACTIVE_SCAFFOLD_PLUGIN == true
+end unless defined?(ACTIVE_SCAFFOLD_INSTALLED) && ACTIVE_SCAFFOLD_INSTALLED == :plugin
 
