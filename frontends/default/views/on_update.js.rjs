@@ -3,8 +3,8 @@ form_selector = "#{element_form_id(:action => :update)}"
 page << "var action_link = ActiveScaffold.find_action_link('#{form_selector}');"
 page << "action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');"
 if controller.send :successful?
-  if render_parent? && respond_to?(:render_component)
-    parent_rendered = render_component(render_parent_options)
+  if render_parent? && controller.respond_to?(:render_component_into_view)
+    parent_rendered = controller.send(:render_component_into_view, render_parent_options)
     if nested?
       page << "action_link.close('#{escape_javascript(parent_rendered)}');"
     else
