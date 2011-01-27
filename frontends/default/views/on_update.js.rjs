@@ -5,7 +5,7 @@ page << "action_link.update_flash_messages('#{escape_javascript(render(:partial 
 if controller.send :successful?
   if render_parent? && controller.respond_to?(:render_component_into_view)
     parent_rendered = controller.send(:render_component_into_view, render_parent_options)
-    if nested?
+    if nested? && (nested.belongs_to? || nested.has_one?)
       page << "action_link.close('#{escape_javascript(parent_rendered)}');"
     else
       if render_parent_action == :row
