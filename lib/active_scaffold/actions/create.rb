@@ -61,7 +61,7 @@ module ActiveScaffold::Actions
     end
 
     def create_respond_to_js
-      if active_scaffold_config.create.refresh_list && successful?
+      if successful? && active_scaffold_config.create.refresh_list && !render_parent?
         do_search if respond_to? :do_search
         do_list
       end
