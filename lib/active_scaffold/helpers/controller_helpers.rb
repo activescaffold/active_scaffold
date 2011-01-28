@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ControllerHelpers
       def self.included(controller)
-        controller.class_eval { helper_method :params_for, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action}
+        controller.class_eval { helper_method :params_for, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?}
       end
       
       include ActiveScaffold::Helpers::IdHelpers
@@ -50,12 +50,16 @@ module ActiveScaffold
         end
       end
 
+      def nested_singular_association?
+        nested? && (nested.belongs_to? || nested.has_one?)
+      end
+
       def render_parent?
-        (nested? && (nested.belongs_to? || nested.has_one?) || params[:parent_sti])
+        nested_singular_association? || params[:parent_sti]
       end
 
       def render_parent_options
-        if nested? && (nested.belongs_to? || nested.has_one?)
+        if nested_singular_association?
           {:controller => nested.parent_scaffold.controller_path, :action => :row, :id => nested.parent_id}
         elsif params[:parent_sti]
           options = {:controller => params[:parent_sti], :action => render_parent_action(params[:parent_sti])}
