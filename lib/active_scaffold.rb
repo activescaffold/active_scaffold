@@ -12,10 +12,9 @@ rescue LoadError
 end
 
 require 'active_scaffold_assets'
-require 'active_record_permissions'
-require 'dhtml_confirm'
-require 'paginator'
-require 'responds_to_parent'
+require 'active_scaffold/active_record_permissions'
+require 'active_scaffold/paginator'
+require 'active_scaffold/responds_to_parent'
 
 require 'active_scaffold/version'
 
