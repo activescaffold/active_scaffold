@@ -1,5 +1,3 @@
-ACTIVE_SCAFFOLD_INSTALLED = :plugin
-
 require 'active_scaffold'
 
 begin

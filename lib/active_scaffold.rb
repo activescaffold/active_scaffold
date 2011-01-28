@@ -336,11 +336,12 @@ require 'environment'
 ## Run the install assets script, too, just to make sure
 ## But at least rescue the action in production
 ##
+
 Rails::Application.initializer("active_scaffold.install_assets") do
   begin
     ActiveScaffoldAssets.copy_to_public(ActiveScaffold.root, {:clean_up_destination => true})
   rescue
     raise $! unless Rails.env == 'production'
   end
-end unless defined?(ACTIVE_SCAFFOLD_INSTALLED) && ACTIVE_SCAFFOLD_INSTALLED == :plugin
+end if defined?(ACTIVE_SCAFFOLD_GEM)
 
