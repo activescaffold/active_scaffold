@@ -8,7 +8,7 @@ module Rails
       end
 
       def install_plugins
-        unless defined?(ACTIVE_SCAFFOLD_INSTALLED) && ACTIVE_SCAFFOLD_INSTALLED == :gem
+        unless defined?(ACTIVE_SCAFFOLD_GEM)
           plugin 'verification', :git => 'git://github.com/rails/verification.git'
           plugin 'render_component', :git => 'git://github.com/vhochstein/render_component.git'
         end
@@ -21,7 +21,7 @@ module Rails
       end
       
       def configure_active_scaffold
-        unless defined?(ACTIVE_SCAFFOLD_INSTALLED) && ACTIVE_SCAFFOLD_INSTALLED == :gem
+        unless defined?(ACTIVE_SCAFFOLD_GEM)
           if js_lib == 'jquery'
             gsub_file 'vendor/plugins/active_scaffold/lib/environment.rb', /#ActiveScaffold.js_framework = :jquery/, 'ActiveScaffold.js_framework = :jquery'
           end

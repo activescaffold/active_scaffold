@@ -1,2 +1,2 @@
-ACTIVE_SCAFFOLD_INSTALLED = :gem
+ACTIVE_SCAFFOLD_GEM = true
 require 'active_scaffold'
