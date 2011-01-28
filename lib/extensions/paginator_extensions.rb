@@ -1,4 +1,4 @@
-require 'paginator'
+require 'active_scaffold/paginator'
 
 class Paginator
 
