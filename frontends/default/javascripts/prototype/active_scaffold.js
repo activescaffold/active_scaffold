@@ -512,6 +512,7 @@ var ActiveScaffold = {
       var element = event.element();
       toggable.toggle(); 
       element.innerHTML = (toggable.style.display == 'none') ? options.show_label : options.hide_label;
+      return false;
     });
   },
   
