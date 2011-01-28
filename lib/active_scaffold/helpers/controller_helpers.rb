@@ -60,7 +60,7 @@ module ActiveScaffold
         elsif params[:parent_sti]
           options = {:controller => params[:parent_sti], :action => render_parent_action(params[:parent_sti])}
           if render_parent_action(params[:parent_sti]) == :index
-            options
+            options.merge(params.slice(:eid))
           else
             options.merge({:id => @record.id})
           end
