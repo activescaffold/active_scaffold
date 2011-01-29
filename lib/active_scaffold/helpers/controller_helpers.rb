@@ -77,6 +77,7 @@ module ActiveScaffold
           parent_controller = "#{controller_path.to_s.camelize}Controller".constantize
           @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list == true
           @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list == true
+          @parent_action = :index if action_name == 'destroy' && parent_controller.active_scaffold_config.actions.include?(:delete) && parent_controller.active_scaffold_config.delete.refresh_list == true
         rescue ActiveScaffold::ControllerNotFound
         end if @parent_action.nil?
         @parent_action
