@@ -312,6 +312,11 @@ line-height: 16px;
 white-space: nowrap;
 }
 
+.active-scaffold tr.record td.actions a.disabled {
+color: #666;
+opacity: 0.5;
+}
+
 .active-scaffold .actions .action_group div:hover {
 background-color: #ff8;
 }
