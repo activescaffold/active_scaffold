@@ -445,6 +445,7 @@ var ActiveScaffold = {
       }
     }
     row.remove();
+    tbody = $(tbody);
     this.stripe(tbody);
     this.decrement_record_count(tbody.up('div.active-scaffold'));
     this.reload_if_empty(tbody, page_reload_url);
