@@ -6,8 +6,8 @@ module ActiveScaffold
         controller.to_s.gsub("/", "__")
       end
 
-      def controller_id
-        controller_id ||= 'as_' + id_from_controller(params[:eid] || params[:parent_controller] || params[:controller])
+      def controller_id(controller = (params[:eid] || params[:parent_controller] || params[:controller]))
+        controller_id ||= 'as_' + id_from_controller(controller)
       end
 
       def active_scaffold_id
@@ -22,8 +22,8 @@ module ActiveScaffold
         "#{controller_id}-tbody"
       end
 
-      def active_scaffold_messages_id
-        "#{controller_id}-messages"
+      def active_scaffold_messages_id(options = {})
+        "#{options[:controller_id] || controller_id}-messages"
       end
 
       def active_scaffold_calculations_id(column = nil)
@@ -59,7 +59,7 @@ module ActiveScaffold
         options[:action] ||= params[:action]
         options[:id] ||= params[:id]
         options[:id] ||= params[:parent_id]
-        clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-row"
+        clean_id "#{options[:controller_id] || controller_id}-#{options[:action]}-#{options[:id]}-row"
       end
 
       def element_cell_id(options = {})
