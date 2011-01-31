@@ -632,6 +632,7 @@ var ActiveScaffold = {
     toggler.children('a').click(function() {
       toggable.toggle(); 
       $(this).html((toggable.is(':hidden')) ? options.show_label : options.hide_label);
+      return false;
     });
   },
   
