@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{active_scaffold_vho}
-  s.version = "3.0.9"
+  s.version = "3.0.10"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Many, see README"]
-  s.date = %q{2011-01-27}
+  s.date = %q{2011-02-01}
   s.description = %q{Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, leaving you more time to focus on more challenging (and interesting!) problems.}
   s.email = %q{activescaffold@googlegroups.com}
   s.extra_rdoc_files = [
@@ -102,7 +102,6 @@ Gem::Specification.new do |s|
     "frontends/default/views/update_column.js.rjs",
     "frontends/default/views/update_row.js.rjs",
     "init.rb",
-    "lib/active_record_permissions.rb",
     "lib/active_scaffold.rb",
     "lib/active_scaffold/actions/common_search.rb",
     "lib/active_scaffold/actions/core.rb",
@@ -116,6 +115,7 @@ Gem::Specification.new do |s|
     "lib/active_scaffold/actions/show.rb",
     "lib/active_scaffold/actions/subform.rb",
     "lib/active_scaffold/actions/update.rb",
+    "lib/active_scaffold/active_record_permissions.rb",
     "lib/active_scaffold/attribute_params.rb",
     "lib/active_scaffold/bridges/ancestry/bridge.rb",
     "lib/active_scaffold/bridges/ancestry/lib/ancestry_bridge.rb",
@@ -195,11 +195,12 @@ Gem::Specification.new do |s|
     "lib/active_scaffold/locale/ja.yml",
     "lib/active_scaffold/locale/ru.yml",
     "lib/active_scaffold/marked_model.rb",
+    "lib/active_scaffold/paginator.rb",
+    "lib/active_scaffold/responds_to_parent.rb",
     "lib/active_scaffold/version.rb",
     "lib/active_scaffold_assets.rb",
+    "lib/active_scaffold_env.rb",
     "lib/active_scaffold_vho.rb",
-    "lib/dhtml_confirm.rb",
-    "lib/environment.rb",
     "lib/extensions/action_controller_rendering.rb",
     "lib/extensions/action_view_rendering.rb",
     "lib/extensions/action_view_resolver.rb",
@@ -223,8 +224,6 @@ Gem::Specification.new do |s|
     "lib/generators/active_scaffold_controller/templates/controller.rb",
     "lib/generators/active_scaffold_setup/USAGE",
     "lib/generators/active_scaffold_setup/active_scaffold_setup_generator.rb",
-    "lib/paginator.rb",
-    "lib/responds_to_parent.rb",
     "public/blank.html",
     "shoulda_macros/macros.rb",
     "test/bridges/bridge_test.rb",
