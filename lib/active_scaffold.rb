@@ -329,7 +329,7 @@ module ActiveScaffold
   end
 end
 
-require 'environment'
+require 'active_scaffold_env'
 
 ##
 ## Run the install assets script, too, just to make sure
