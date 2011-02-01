@@ -49,14 +49,18 @@ module ActiveScaffold
       end
   
       module ViewHelpers
+        def self.included(base)
+          base.alias_method_chain :active_scaffold_stylesheets, :calendar_date_select
+          base.alias_method_chain :active_scaffold_javascripts, :calendar_date_select
+        end
         # Provides stylesheets to include with +stylesheet_link_tag+
-        def active_scaffold_stylesheets(frontend = :default)
-          super + [calendar_date_select_stylesheets]
+        def active_scaffold_stylesheets_with_calendar_date_select(frontend = :default)
+          active_scaffold_stylesheets_without_calendar_date_select + [calendar_date_select_stylesheets]
         end
   
         # Provides stylesheets to include with +stylesheet_link_tag+
-        def active_scaffold_javascripts(frontend = :default)
-          super + [calendar_date_select_javascripts]
+        def active_scaffold_javascripts_with_calendar_date_select(frontend = :default)
+          active_scaffold_javascripts_without_calendar_date_select + [calendar_date_select_javascripts]
         end
       end
     end
