@@ -23,7 +23,7 @@ module Rails
       def configure_active_scaffold
         unless defined?(ACTIVE_SCAFFOLD_GEM)
           if js_lib == 'jquery'
-            gsub_file 'vendor/plugins/active_scaffold/lib/environment.rb', /#ActiveScaffold.js_framework = :jquery/, 'ActiveScaffold.js_framework = :jquery'
+            gsub_file 'vendor/plugins/active_scaffold/lib/active_scaffold_env.rb', /#ActiveScaffold.js_framework = :jquery/, 'ActiveScaffold.js_framework = :jquery'
           end
         else
           if js_lib == 'jquery'
