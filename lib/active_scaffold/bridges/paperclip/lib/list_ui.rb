@@ -9,7 +9,7 @@ module ActiveScaffold
         else
           paperclip.original_filename
         end
-        link_to(content, paperclip.url, :popup => true)
+        link_to(content, paperclip.url, {'data-popup' => true, :target => '_blank'})
       end
     end
   end
