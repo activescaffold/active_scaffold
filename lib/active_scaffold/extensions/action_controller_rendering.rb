@@ -1,4 +1,3 @@
-puts "juhu was called"
 # wrap the action rendering for ActiveScaffold controllers
 module ActionController #:nodoc:
   class Base
