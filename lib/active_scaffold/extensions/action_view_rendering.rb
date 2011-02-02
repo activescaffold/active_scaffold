@@ -38,15 +38,19 @@ module ActionView::Rendering #:nodoc:
   #
   def render_with_active_scaffold(*args, &block)
     if args.first == :super
+      last_view = @view_stack.last
       options = args[1] || {}
       options[:locals] ||= {}
-      options[:locals].reverse_merge!(@last_view[:locals] || {})
-      if @last_view[:templates].nil?
-        @last_view[:templates] = lookup_context.find_all_templates(@last_view[:view], controller_path, !@last_view[:is_template])
-        @last_view[:templates].shift
+      options[:locals].reverse_merge!(last_view[:locals] || {})
+      if last_view[:templates].nil?
+        last_view[:templates] = lookup_context.find_all_templates(last_view[:view], controller_path, !last_view[:is_template])
+        last_view[:templates].shift
       end
-      options[:template] = @last_view[:templates].shift
-      render_without_active_scaffold options
+      options[:template] = last_view[:templates].shift
+      @view_stack << last_view
+      result = render_without_active_scaffold options
+      @view_stack.pop
+      result
     elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
       require 'digest/md5'
       options = args.first
@@ -79,11 +83,17 @@ module ActionView::Rendering #:nodoc:
     else
       options = args.first
       if options.is_a?(Hash)
-        @last_view = {:view => options[:partial], :is_template => false} if options[:partial]
-        @last_view = {:view => options[:template], :is_template => !!options[:template]} if @last_view.nil? && options[:template]
-        @last_view[:locals] = options[:locals] if !@last_view.nil? && options[:locals]
+        current_view = {:view => options[:partial], :is_template => false} if options[:partial]
+        current_view = {:view => options[:template], :is_template => !!options[:template]} if current_view.nil? && options[:template]
+        current_view[:locals] = options[:locals] if !current_view.nil? && options[:locals]
+        if current_view.present?
+          @view_stack ||= []
+          @view_stack << current_view
+        end
       end
-      render_without_active_scaffold(*args, &block)
+      result = render_without_active_scaffold(*args, &block)
+      @view_stack.pop if current_view.present?
+      result
     end
   end
   alias_method_chain :render, :active_scaffold
