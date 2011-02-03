@@ -39,10 +39,10 @@ module Rails
                     :after => "<%= javascript_include_tag :defaults %>\n"
         elsif js_lib == 'jquery'
           inject_into_file "app/views/layouts/application.html.erb", 
-"  <%= stylesheet_link_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/themes/ui-lightness/jquery-ui.css' %>
-  <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js' %>
+"  <%= stylesheet_link_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/ui-lightness/jquery-ui.css' %>
+  <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js' %>
   <%= javascript_include_tag 'rails_jquery.js' %>
-  <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.js' %>
+  <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.js' %>
   <%= javascript_include_tag 'jquery-ui-timepicker-addon.js' %>
   <%= javascript_include_tag 'application.js' %>
   <%= active_scaffold_includes %>\n",

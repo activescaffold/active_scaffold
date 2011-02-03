@@ -54,7 +54,10 @@ Prototype 1.7 (default js framework)
 rails.js in git://github.com/vhochstein/prototype-ujs.git
 
 JQuery 1.4.1, 1.4.2
-rails.js in git://github.com/vhochstein/jquery-ujs.git
+https://github.com/vhochstein/jquery-ujs/raw/jquery1_4_2/src/rails.js
+
+JQuery > 1.4.2
+https://github.com/vhochstein/jquery-ujs/raw/master/src/rails.js
 
 To configure the javascript framework when installed under vendor/plugins/
 uncomment last line in ...plugins/active_scaffold/lib/active_scaffold_env.rb in order to use jquery instead of prototype
