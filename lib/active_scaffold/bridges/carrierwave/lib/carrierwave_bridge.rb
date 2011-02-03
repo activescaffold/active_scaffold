@@ -25,6 +25,7 @@ module ActiveScaffold
           def configure_carrierwave_field(field)
             self.columns << field
             self.columns[field].form_ui ||= :carrierwave
+            self.columns[field].params.add "#{field}_cache"
             self.columns[field].params.add "delete_#{field}"
       
 #            [:file_name, :content_type, :file_size, :updated_at].each do |f|
