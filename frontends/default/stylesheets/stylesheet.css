@@ -35,7 +35,7 @@ text-decoration: none;
 color: #999;
 }
 
-.active-scaffold a:hover, .active-scaffold div.hover {
+.active-scaffold a:hover, .active-scaffold div.hover, .active-scaffold td span.hover {
 background-color: #ff8;
 }
 
