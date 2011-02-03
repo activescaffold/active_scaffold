@@ -2,7 +2,7 @@
 ** For all documentation see the project website: http://github.com/vhochstein/active_scaffold/wiki **
 ******************************************************************************************************
 
-ActiveScaffold plugin by Scott Rutherford (scott@caronsoftware.com), Richard White (rrwhite@gmail.com), Lance Ivy (lance@cainlevy.net), Ed Moss, Tim Harper and Sergio Cambra (sergio@entrecables.com)
+ActiveScaffold Gem/Plugin by Scott Rutherford (scott@caronsoftware.com), Richard White (rrwhite@gmail.com), Lance Ivy (lance@cainlevy.net), Ed Moss, Tim Harper and Sergio Cambra (sergio@entrecables.com)
 
 Uses DhtmlHistory by Brad Neuberg (bkn3@columbia.edu)
 http://codinginparadise.org
@@ -40,7 +40,10 @@ If you want to install as plugins under vendor/plugins, install these versions:
   rails plugin install git://github.com/vhochstein/active_scaffold.git
 
 If you want to use the gem, add to your Gemfile:
-  gem "active_scaffold"
+  gem "active_scaffold_vho"
+
+In case you would like to use most recent commit:
+  gem 'active_scaffold_vho', :git => 'git://github.com/vhochstein/active_scaffold.git'
 
 == Pick your own javascript framework
 
@@ -50,11 +53,11 @@ Out of the box Prototype or JQuery are supported:
 Prototype 1.7 (default js framework)
 rails.js in git://github.com/vhochstein/prototype-ujs.git
 
-JQuery 1.4.1
+JQuery 1.4.1, 1.4.2
 rails.js in git://github.com/vhochstein/jquery-ujs.git
 
 To configure the javascript framework when installed under vendor/plugins/
-uncomment last line in ...plugins/active_scaffold/environment.rb in order to use jquery instead of prototype
+uncomment last line in ...plugins/active_scaffold/lib/active_scaffold_env.rb in order to use jquery instead of prototype
 
 To configure the javascript framework when installed as a gem:
 Add a config/initializers/active_scaffold.rb containing:
