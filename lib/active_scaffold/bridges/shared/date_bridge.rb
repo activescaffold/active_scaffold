@@ -108,12 +108,16 @@ module ActiveScaffold
                 ['from', 'to'].collect { |field| condition_value_for_datetime(value[field], conversion)}
               end
             end
+
+            def date_bridge_now
+              Time.zone.now
+            end
             
             def date_bridge_from_to_for_trend(column, value)
               case value['opt']
               when "PAST"
                 trend_number = [value['number'].to_i,  1].max
-                now = Time.zone.now
+                now = date_bridge_now
                 if date_bridge_column_date?(column)
                   from = now.beginning_of_day.ago((trend_number).send(value['unit'].downcase.singularize.to_sym))
                   to = now.end_of_day
@@ -124,7 +128,7 @@ module ActiveScaffold
                 return from, to
               when "FUTURE"
                 trend_number = [value['number'].to_i,  1].max
-                now = Time.zone.now
+                now = date_bridge_now
                 if date_bridge_column_date?(column)
                   from = now.beginning_of_day
                   to = now.end_of_day.in((trend_number).send(value['unit'].downcase.singularize.to_sym))
@@ -139,21 +143,21 @@ module ActiveScaffold
             def date_bridge_from_to_for_range(column, value)
               case value[:range]
               when 'TODAY'
-                return Time.zone.now.beginning_of_day, Time.zone.now.end_of_day
+                return date_bridge_now.beginning_of_day, date_bridge_now.end_of_day
               when 'YESTERDAY'
-                return Time.zone.now.ago(1.day).beginning_of_day, Time.zone.now.ago(1.day).end_of_day
+                return date_bridge_now.ago(1.day).beginning_of_day, date_bridge_now.ago(1.day).end_of_day
               when 'TOMMORROW'
-                return Time.zone.now.in(1.day).beginning_of_day, Time.zone.now.in(1.day).end_of_day
+                return date_bridge_now.in(1.day).beginning_of_day, date_bridge_now.in(1.day).end_of_day
               else
                 range_type, range = value[:range].downcase.split('_')
                 raise ArgumentError unless ['week', 'month', 'year'].include?(range)
                 case range_type
                 when 'this'
-                  return Time.zone.now.send("beginning_of_#{range}".to_sym), Time.zone.now.send("end_of_#{range}")
+                  return date_bridge_now.send("beginning_of_#{range}".to_sym), date_bridge_now.send("end_of_#{range}")
                 when 'prev'
-                  return Time.zone.now.ago(1.send(range.to_sym)).send("beginning_of_#{range}".to_sym), Time.zone.now.ago(1.send(range.to_sym)).send("end_of_#{range}".to_sym)
+                  return date_bridge_now.ago(1.send(range.to_sym)).send("beginning_of_#{range}".to_sym), date_bridge_now.ago(1.send(range.to_sym)).send("end_of_#{range}".to_sym)
                 when 'next'
-                  return Time.zone.now.in(1.send(range.to_sym)).send("beginning_of_#{range}".to_sym), Time.zone.now.in(1.send(range.to_sym)).send("end_of_#{range}".to_sym)
+                  return date_bridge_now.in(1.send(range.to_sym)).send("beginning_of_#{range}".to_sym), date_bridge_now.in(1.send(range.to_sym)).send("end_of_#{range}".to_sym)
                 else
                   return nil, nil    
                 end
