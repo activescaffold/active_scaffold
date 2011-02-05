@@ -43,7 +43,7 @@ module ActiveScaffold
           def active_scaffold_date_bridge_trend_tag(column, options, trend_options)
             trend_controls = text_field_tag("#{trend_options[:name_prefix]}[#{column.name}][number]", trend_options[:number_value], :class => 'text-input', :size => 10, :autocomplete => 'off') << " " <<
             select_tag("#{trend_options[:name_prefix]}[#{column.name}][unit]",
-             options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:name_prefix]),
+             options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:unit_value]),
              :class => 'text-input')
             content_tag("span", trend_controls.html_safe, :id => "#{options[:id]}_trend", :style => "display:#{trend_options[:show] ? '' : 'none'}")
           end
