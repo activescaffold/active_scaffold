@@ -292,7 +292,10 @@ module ActiveScaffold
     def append_to_query(query, options)
       options.assert_valid_keys :where, :select, :group, :order, :limit, :offset, :joins, :includes, :lock, :readonly, :from
       options.reject{|k, v| v.blank?}.inject(query) do |query, (k, v)|
-        query = query.except(:order) if k.to_sym == :order
+        # default ordering of model has a higher priority than current queries ordering
+        # fix this by removing existing ordering from arel
+        # will not work if order part is first one which is iterated
+        query = query.except(:order) if k.to_sym == :order && query.is_a?(ActiveRecord::Relation)
         query.send((k.to_sym), v) 
       end
     end
