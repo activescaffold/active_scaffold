@@ -214,7 +214,8 @@ $(document).ready(function() {
       var as_form = element.closest('form.as_form');
       $.ajax({
         url: element.attr('data-update_url'),
-        data: {value: element.val()},
+        data: {value: element.val(),
+               source_id: element.attr('id')},
         beforeSend: function(event) {
           element.nextAll('img.loading-indicator').css('visibility','visible');
           $('input[type=submit]', as_form).attr('disabled', 'disabled');
@@ -653,13 +654,21 @@ var ActiveScaffold = {
     }
   },
   
-  render_form_field: function(element, content, options) {
-    if (typeof(element) == 'string') element = '#' + element;
-    var element = $(element);
-    if (options.is_subform == false) {
-      this.replace(element.closest('dl'), content);
-    } else {
-      this.replace_html(element, content);
+  render_form_field: function(source, content, options) {
+    if (typeof(source) == 'string') source = '#' + source;
+    var source = $(source);
+    var element = source.closest('tr.association-record');
+    if (element.length == 0) {
+      element = source.closest('ol.form');
+    }
+    element = element.find('.' + options.field_class);
+
+    if (element) {
+      if (options.is_subform == false) {
+        this.replace(element.closest('dl'), content);
+      } else {
+        this.replace_html(element, content);
+      }
     }
   },
   

@@ -34,7 +34,8 @@ module ActiveScaffold::Actions
         value = column_value_from_param_value(@record, column, params[:value])
         @record.send "#{column.name}=", value
         after_render_field(@record, column)
-        render :partial => "render_field", :collection => Array(params[:update_columns]), :content_type => 'text/javascript'
+        source_id = params.delete(:source_id)
+        render :partial => "render_field", :collection => Array(params[:update_columns]), :content_type => 'text/javascript', :locals => {:source_id => source_id}
       end
     end
     
