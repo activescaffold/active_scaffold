@@ -238,7 +238,7 @@ document.observe("dom:loaded", function() {
     
     new Ajax.Request(element.readAttribute('data-update_url'), {
       method: 'get',
-      parameters: {value: element.getValue()},
+      parameters: {value: element.getValue(), source_id: element.readAttribute('id')},
       onLoading: function(response) {
         element.next('img.loading-indicator').style.visibility = 'visible';
         as_form.disable();
@@ -533,12 +533,20 @@ var ActiveScaffold = {
     }
   },
   
-  render_form_field: function(element, content, options) {
-    var element = $(element);
-    if (options.is_subform == false) {
-      this.replace(element.up('dl'), content);
-    } else {
-      this.replace_html(element, content);
+  render_form_field: function(source, content, options) {
+    var source = $(source);
+    var element = source.up('tr.association-record');
+    if (typeof(element) === 'undefined') {
+      element = source.up('ol.form');
+    }
+    element = element.down('.' + options.field_class);
+
+    if (element) {
+      if (options.is_subform == false) {
+        this.replace(element.up('dl'), content);
+      } else {
+        this.replace_html(element, content);
+      }
     }
   },
 
