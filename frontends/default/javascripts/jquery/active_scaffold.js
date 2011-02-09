@@ -657,7 +657,7 @@ var ActiveScaffold = {
   render_form_field: function(source, content, options) {
     if (typeof(source) == 'string') source = '#' + source;
     var source = $(source);
-    var element = source.closest('tr.association-record');
+    var element = source.closest('.association-record');
     if (element.length == 0) {
       element = source.closest('ol.form');
     }
