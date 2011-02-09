@@ -26,7 +26,7 @@
   <td class="actions">
     <% if record_column.plural_association? and (@record.authorized_for?(:crud_type => :delete) or not [:destroy, :delete_all].include?(record_column.association.options[:dependent])) %>
       <% destroy_id = "#{options[:id]}-destroy" %>
-      <%= link_to as_(:remove), '#', :class => 'destroy', :id => destroy_id , :onclick => "ActiveScaffold.remove(\"#{tr_id}\"); return false;", :style=> "display: none;" %>
+      <%= link_to as_(:remove), '#', :class => 'destroy', :id => destroy_id , :onclick => "ActiveScaffold.delete_subform_record(\"#{tr_id}\"); return false;", :style=> "display: none;" %>
       <%= javascript_tag("ActiveScaffold.show('#{destroy_id}');") if !locked %>
     <% end %>
     <% unless @record.new_record? %>

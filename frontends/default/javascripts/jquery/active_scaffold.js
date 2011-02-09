@@ -563,6 +563,15 @@ var ActiveScaffold = {
     this.reload_if_empty(tbody, page_reload_url);
   },
 
+  delete_subform_record: function(record) {
+    if (typeof(record) == 'string') record = '#' + record;
+    var errors = $(record).prev();
+    if (errors.hasClass('association-record-errors')) {
+      this.replace_html(errors, '');
+    }
+    this.remove(record);
+  },
+
   report_500_response: function(active_scaffold_id) {
     server_error = $(active_scaffold_id).find('td.messages-container p.server-error');
     if (!$(server_error).is(':visible')) {

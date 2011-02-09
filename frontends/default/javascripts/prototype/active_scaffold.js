@@ -451,6 +451,14 @@ var ActiveScaffold = {
     this.reload_if_empty(tbody, page_reload_url);
   },
 
+  delete_subform_record: function(record) {
+    var errors = $(record).previous();
+    if (errors.hasClassName('association-record-errors')) {
+      this.replace_html(errors, '');
+    }
+    this.remove(record);
+  },
+
   report_500_response: function(active_scaffold_id) {
     server_error = $(active_scaffold_id).down('td.messages-container p.server-error');
     if (server_error.visible()) {
