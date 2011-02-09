@@ -535,7 +535,7 @@ var ActiveScaffold = {
   
   render_form_field: function(source, content, options) {
     var source = $(source);
-    var element = source.up('tr.association-record');
+    var element = source.up('.association-record');
     if (typeof(element) === 'undefined') {
       element = source.up('ol.form');
     }
