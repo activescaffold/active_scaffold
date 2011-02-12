@@ -75,7 +75,8 @@ module ActiveScaffold
               from, to = controller.class.date_bridge_from_to(column, value)
               "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value[:range].downcase).downcase} (#{I18n.l(from, :format => format)})"
             when 'PAST', 'FUTURE'
-              "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{as_(value[:number])} #{as_(value[:unit].downcase)}"
+              from, to = controller.class.date_bridge_from_to(column, value)
+              "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{as_(value[:number])} #{as_(value[:unit].downcase)} (#{I18n.l(from)} - #{I18n.l(to)})"
             else
               from, to = controller.class.date_bridge_from_to(column, value)
               "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"
