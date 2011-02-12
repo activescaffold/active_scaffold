@@ -70,12 +70,33 @@ module ActiveScaffold
           def active_scaffold_human_condition_date_bridge(column, value)
             case value[:opt]
             when 'RANGE'
-              "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value[:range].downcase).downcase}"
+              range_type, range = value[:range].downcase.split('_')
+              format = active_scaffold_human_condition_date_bridge_range_format(range_type, range)
+              from, to = controller.class.date_bridge_from_to(column, value)
+              "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value[:range].downcase).downcase} (#{I18n.l(from, :format => format)})"
             when 'PAST', 'FUTURE'
               "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{as_(value[:number])} #{as_(value[:unit].downcase)}"
             else
               from, to = controller.class.date_bridge_from_to(column, value)
               "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"
+            end
+          end
+
+          def active_scaffold_human_condition_date_bridge_range_format(range_type, range)
+            case range
+            when 'week'
+              first_day_of_week = I18n.translate 'active_scaffold.date_picker_options.firstDay'
+              if first_day_of_week == 1
+                '%W %Y'
+              else
+                '%U %Y'
+              end
+            when 'month'
+              '%b %Y'
+            when 'year'
+              '%Y'
+            else
+              I18n.translate 'date.formats.default'
             end
           end
         end
@@ -146,7 +167,7 @@ module ActiveScaffold
                 return date_bridge_now.beginning_of_day, date_bridge_now.end_of_day
               when 'YESTERDAY'
                 return date_bridge_now.ago(1.day).beginning_of_day, date_bridge_now.ago(1.day).end_of_day
-              when 'TOMMORROW'
+              when 'TOMORROW'
                 return date_bridge_now.in(1.day).beginning_of_day, date_bridge_now.in(1.day).end_of_day
               else
                 range_type, range = value[:range].downcase.split('_')
@@ -185,7 +206,3 @@ ActiveScaffold::Finder.const_set('DateRanges', ["TODAY", "YESTERDAY", "TOMORROW"
                                                 "THIS_WEEK", "PREV_WEEK", "NEXT_WEEK",
                                                 "THIS_MONTH", "PREV_MONTH", "NEXT_MONTH",
                                                 "THIS_YEAR", "PREV_YEAR", "NEXT_YEAR"])
-
-
-
-
