@@ -15,7 +15,7 @@ module ActiveScaffold
                 return unless value
         
                 # passing nil to the file column causes the file to be deleted. Don't delete if we just uploaded a file!
-                self.remove_#{field}! unless new_record?
+                self.remove_#{field}! unless self.#{field}.cached?.present?
               end
             EOF
           end
