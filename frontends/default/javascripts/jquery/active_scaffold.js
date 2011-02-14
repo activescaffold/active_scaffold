@@ -563,7 +563,8 @@ var ActiveScaffold = {
 
   delete_subform_record: function(record) {
     if (typeof(record) == 'string') record = '#' + record;
-    var errors = $(record).prev();
+    record = $(record);
+    var errors = record.prev();
     if (errors.hasClass('association-record-errors')) {
       this.replace_html(errors, '');
     }
