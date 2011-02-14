@@ -66,8 +66,8 @@ module ActionView::Rendering #:nodoc:
       id = "as_#{eid}-content"
       url_options = {:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params])
       
-      if respond_to? :render_component
-        render_component url_options
+      if controller.respond_to?(:render_component_into_view)
+        controller.send(:render_component_into_view, url_options)
       else
         content_tag(:div, {:id => id}) do
           url = url_for(url_options)
