@@ -12,8 +12,6 @@ module ActiveScaffold
       
             self.model.uploaders.keys.each do |field|
               configure_carrierwave_field(field.to_sym)
-              # define the "delete" helper for use with active scaffold, unless it's already defined
-              ActiveScaffold::Bridges::Carrierwave::Lib::CarrierwaveBridgeHelpers.generate_delete_helper(self.model, field)
             end
           end
       
@@ -24,13 +22,9 @@ module ActiveScaffold
           private
           def configure_carrierwave_field(field)
             self.columns << field
-            self.columns[field].form_ui ||= :carrierwave
+            self.columns[field].form_ui ||= :carrierwave # :TODO thumbnail
             self.columns[field].params.add "#{field}_cache"
-            self.columns[field].params.add "delete_#{field}"
-      
-#            [:file_name, :content_type, :file_size, :updated_at].each do |f|
-#              self.columns.exclude("#{field}_#{f}".to_sym)
-#            end
+            self.columns[field].params.add "remove_#{field}"
           end
         end
       end
