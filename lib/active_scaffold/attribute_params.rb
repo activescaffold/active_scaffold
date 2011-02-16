@@ -110,11 +110,7 @@ module ActiveScaffold
         # it's a single id
         column.association.klass.find(value) if value and not value.empty?
       elsif column.plural_association?
-        # it's an array of ids
-        if value and not value.empty?
-          ids = value.select {|id| id.respond_to?(:empty?) ? !id.empty? : true}
-          ids.empty? ? [] : column.association.klass.find(ids)
-        end
+        column_plural_assocation_value_from_value(column, value)
       elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
         self.class.i18n_number_to_native_format(value)
       else
@@ -123,6 +119,14 @@ module ActiveScaffold
         # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
         value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
         value
+      end
+    end
+
+    def column_plural_assocation_value_from_value(column, value)
+      # it's an array of ids
+      if value and not value.empty?
+        ids = value.select {|id| id.respond_to?(:empty?) ? !id.empty? : true}
+        ids.empty? ? [] : column.association.klass.find(ids)
       end
     end
 
