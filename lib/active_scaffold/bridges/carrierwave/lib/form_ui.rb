@@ -26,9 +26,9 @@ module ActiveScaffold
           content_tag( :div,
             content_tag(:div, (
                 get_column_value(@record, column) + " | " +
-                  content_tag(:a, as_(:remove_file), {:href => '#', :onclick => js_remove_file_code}) +
+                  hidden_field(:record, "#{column.name}_cache", cache_field_options) +
                   hidden_field(:record, "remove_#{column.name}", remove_field_options) +
-                  hidden_field(:record, "#{column.name}_cache", cache_field_options)
+                  content_tag(:a, as_(:remove_file), {:href => '#', :onclick => js_remove_file_code})
               ).html_safe
             ) + content_tag(:div, input, :style => "display: none")
           )
