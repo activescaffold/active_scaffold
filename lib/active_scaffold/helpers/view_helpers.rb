@@ -151,6 +151,9 @@ module ActiveScaffold
         url_options[:controller] = link.controller if link.controller
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters
+        @link_record = record
+        url_options.merge! self.instance_eval(&(link.dynamic_parameters)) if link.dynamic_parameters.is_a?(Proc)
+        @link_record = nil
         url_options_for_nested_link(link.column, record, link, url_options, options) if link.nested_link?
         url_options_for_sti_link(link.column, record, link, url_options, options) unless record.nil? || active_scaffold_config.sti_children.nil?
         url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get

@@ -17,6 +17,7 @@ module ActiveScaffold::DataStructures
       self.html_options = {}
       self.column = nil
       self.image = nil
+      self.dynamic_parameters = nil
 
       # apply quick properties
       options.each_pair do |k, v|
@@ -42,6 +43,9 @@ module ActiveScaffold::DataStructures
 
     # a hash of request parameters
     attr_accessor :parameters
+
+    # a block for dynamic_parameters
+    attr_accessor :dynamic_parameters
 
     # the RESTful method
     attr_accessor :method
