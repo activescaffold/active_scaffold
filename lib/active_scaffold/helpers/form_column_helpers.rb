@@ -107,6 +107,7 @@ module ActiveScaffold
 
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
+        html_options[:name] = "#{html_options[:name]}[]" if (html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]"))
         select(:record, method, select_options.uniq, options, html_options)
       end
 
@@ -171,7 +172,9 @@ module ActiveScaffold
       # ... maybe this should be provided in a bridge?
       def active_scaffold_input_record_select(column, options)
         if column.singular_association?
-          active_scaffold_record_select(column, options, @record.send(column.name), false)
+          multiple = false
+          multiple = column.options[:html_options][:multiple] if column.options[:html_options] &&  column.options[:html_options][:multiple]
+          active_scaffold_record_select(column, options, @record.send(column.name), multiple)
         elsif column.plural_association?
           active_scaffold_record_select(column, options, @record.send(column.name), true)
         end
