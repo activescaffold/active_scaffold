@@ -24,7 +24,7 @@ module ActiveScaffold::Actions
 
     def mark_all_respond_to_js
       do_list
-      render :action => 'list.js'
+      render :action => 'on_mark_all', :locals => {:mark_all => mark_all?}
     end
  
     # We need to give the ActiveRecord classes a handle to currently marked records. We don't want to just pass the object,

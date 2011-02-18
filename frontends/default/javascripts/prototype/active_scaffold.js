@@ -568,7 +568,31 @@ var ActiveScaffold = {
         }
       }
     );
+  },
+
+  // element is tbody id
+  mark_records: function(element, options) {
+    var element = $(element);
+    var mark_checkboxes = $$('#' + element.readAttribute('id') + ' > tr.record td.marked-column input[type="checkbox"]');
+    mark_checkboxes.each(function(item) {
+     if(options.checked === true) {
+       item.writeAttribute({ checked: 'checked' });
+     } else {
+       item.removeAttribute('checked');
+     }
+     item.writeAttribute('value', ('' + !options.checked));
+    });
+    if(options.include_mark_all === true) {
+      var mark_all_checkbox = element.previous('thead').down('th.marked-column_heading span input[type="checkbox"]');
+      if(options.checked === true) {
+        mark_all_checkbox.writeAttribute({ checked: 'checked' }); 
+      } else {
+        mark_all_checkbox.removeAttribute('checked');
+      }
+      mark_all_checkbox.writeAttribute('value', ('' + !options.checked));
+    }
   }
+
 }
 
 /*

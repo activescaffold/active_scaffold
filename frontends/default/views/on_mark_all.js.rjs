@@ -1,0 +1,4 @@
+options = {:checked => mark_all,
+           :include_mark_all => true}
+page << "ActiveScaffold.mark_records('#{active_scaffold_tbody_id}', #{options.to_json});"
+
