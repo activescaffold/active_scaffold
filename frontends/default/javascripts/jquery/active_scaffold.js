@@ -702,6 +702,31 @@ var ActiveScaffold = {
         ActiveScaffold.report_500_response(active_scaffold_id)
       }
     });
+  },
+
+  // element is tbody id
+  mark_records: function(element, options) {
+    if (typeof(element) == 'string') element = '#' + element;
+    var element = $(element);
+    var mark_checkboxes = $('#' + element.attr('id') + ' > tr.record td.marked-column input[type="checkbox"]');
+    mark_checkboxes.each(function (index) {
+      var item = $(this);
+     if(options.checked === true) {
+       item.attr('checked', 'checked');
+     } else {
+       item.removeAttr('checked');
+     }
+     item.attr('value', ('' + !options.checked));
+    });
+    if(options.include_mark_all === true) {
+      var mark_all_checkbox = element.prev('thead').find('th.marked-column_heading span input[type="checkbox"]');
+      if(options.checked === true) {
+        mark_all_checkbox.attr('checked', 'checked');
+      } else {
+        mark_all_checkbox.removeAttr('checked');
+      }
+      mark_all_checkbox.attr('value', ('' + !options.checked));
+    }
   }
 }
 
