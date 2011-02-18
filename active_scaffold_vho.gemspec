@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{active_scaffold_vho}
-  s.version = "3.0.12"
+  s.version = "3.0.13"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Many, see README"]
-  s.date = %q{2011-02-11}
+  s.date = %q{2011-02-18}
   s.description = %q{Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, leaving you more time to focus on more challenging (and interesting!) problems.}
   s.email = %q{activescaffold@googlegroups.com}
   s.extra_rdoc_files = [
@@ -95,6 +95,7 @@ Gem::Specification.new do |s|
     "frontends/default/views/list.js.rjs",
     "frontends/default/views/on_action_update.js.rjs",
     "frontends/default/views/on_create.js.rjs",
+    "frontends/default/views/on_mark_all.js.rjs",
     "frontends/default/views/on_update.js.rjs",
     "frontends/default/views/search.html.erb",
     "frontends/default/views/show.html.erb",
@@ -122,6 +123,8 @@ Gem::Specification.new do |s|
     "lib/active_scaffold/bridges/bridge.rb",
     "lib/active_scaffold/bridges/calendar_date_select/bridge.rb",
     "lib/active_scaffold/bridges/calendar_date_select/lib/as_cds_bridge.rb",
+    "lib/active_scaffold/bridges/cancan/bridge.rb",
+    "lib/active_scaffold/bridges/cancan/lib/cancan_bridge.rb",
     "lib/active_scaffold/bridges/carrierwave/bridge.rb",
     "lib/active_scaffold/bridges/carrierwave/lib/carrierwave_bridge.rb",
     "lib/active_scaffold/bridges/carrierwave/lib/carrierwave_bridge_helpers.rb",
