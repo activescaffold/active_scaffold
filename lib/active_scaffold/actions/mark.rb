@@ -13,10 +13,19 @@ module ActiveScaffold::Actions
       else
         do_demark_all
       end
-      do_list
-      respond_to_action(:list) 
+      respond_to_action(:mark_all)
     end
  protected
+
+    def mark_all_respond_to_html
+      do_list
+      list_respond_to_html
+    end
+
+    def mark_all_respond_to_js
+      do_list
+      render :action => 'list.js'
+    end
  
     # We need to give the ActiveRecord classes a handle to currently marked records. We don't want to just pass the object,
     # because the object may change. So we give ActiveRecord a proc that ties to the
@@ -45,6 +54,10 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     def mark_authorized?
       authorized_for?(:action => :read)
+    end
+
+    def mark_all_formats
+      (default_formats + active_scaffold_config.formats).uniq
     end
   end
 end
