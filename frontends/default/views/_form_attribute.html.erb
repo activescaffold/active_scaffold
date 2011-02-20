@@ -4,7 +4,7 @@
     <label for="<%= active_scaffold_input_options(column, scope)[:id] %>"><%= column.label %></label>
   </dt>
   <dd>
-    <%= active_scaffold_input_for column, scope %>
+    <%=raw active_scaffold_input_for column, scope %>
     <% if column.update_columns -%>
       <%= loading_indicator_tag(:action => :render_field, :id => params[:id]) %>
     <% end -%>
