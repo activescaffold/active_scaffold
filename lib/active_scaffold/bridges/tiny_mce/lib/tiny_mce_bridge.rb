@@ -2,7 +2,18 @@ module ActiveScaffold
   module TinyMceBridge
     module ViewHelpers
       def active_scaffold_includes(*args)
-        tiny_mce_js = javascript_tag(%|
+        if ActiveScaffold.js_framework == :jquery
+          tiny_mce_js = javascript_tag(%|
+var action_link_close = ActiveScaffold.ActionLink.Abstract.prototype.close;
+ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
+  $(this.adapter).find('textarea.mceEditor').each(function(index, elem) {
+    tinyMCE.execCommand('mceRemoveControl', false, $(elem).attr('id'));
+  });
+  action_link_close.apply(this);
+};
+          |) if using_tiny_mce?
+        else
+          tiny_mce_js = javascript_tag(%|
 var action_link_close = ActiveScaffold.ActionLink.Abstract.prototype.close;
 ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
   this.adapter.select('textarea.mceEditor').each(function(elem) {
@@ -10,7 +21,8 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
   });
   action_link_close.apply(this);
 };
-        |) if using_tiny_mce?
+          |) if using_tiny_mce?
+        end
         super(*args) + (include_tiny_mce_if_needed || '') + (tiny_mce_js || '')
       end
     end
@@ -25,7 +37,11 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
       end
 
       def onsubmit
-        submit_js = 'tinyMCE.triggerSave();this.select("textarea.mceEditor").each(function(elem) { tinyMCE.execCommand("mceRemoveControl", false, elem.id); });' if using_tiny_mce?
+        if ActiveScaffold.js_framework == :jquery
+          submit_js = 'tinyMCE.triggerSave();$(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, $(elem).attr(\'id\')); });' if using_tiny_mce?
+        else
+          submit_js = 'tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, elem.id); });' if using_tiny_mce?
+        end
         [super, submit_js].compact.join ';'
       end
     end
