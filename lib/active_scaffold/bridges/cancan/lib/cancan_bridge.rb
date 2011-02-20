@@ -69,7 +69,7 @@ module ActiveScaffold
         def authorized_for_with_cancan?(options = {})
           raise InvalidArgument if options[:crud_type].blank? and options[:action].blank?
           crud_type_result = options[:crud_type].nil? ? true : current_ability.can?(options[:crud_type], self)
-          action_result = options[:action].nil? ? true : current_ability.can?(options[:action], self)
+          action_result = options[:action].nil? ? true : current_ability.can?(options[:action].to_sym, self)
           default_result = authorized_for_without_cancan?(options)
           result = (crud_type_result and action_result) or default_result
           return result
