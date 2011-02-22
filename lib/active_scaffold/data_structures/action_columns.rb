@@ -38,6 +38,10 @@ module ActiveScaffold::DataStructures
       self.collect(&:name)
     end
 
+    def names_without_auth_check
+      Array(@set)
+    end
+
     protected
 
     def collect_columns
