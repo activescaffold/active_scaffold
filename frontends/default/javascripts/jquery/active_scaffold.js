@@ -140,7 +140,11 @@ $(document).ready(function() {
           csrf_token = $('meta[name=csrf-token]').first(),
           my_parent = span.parent(),
           column_heading = null;
-      
+
+      if(!(my_parent.is('td') || my_parent.is('th'))){
+          my_parent = span.parents('td').eq(0);
+      }
+
       if (my_parent.is('td')) {
         var column_no = my_parent.prevAll('td').length;
         column_heading = my_parent.closest('.active-scaffold').find('th:eq(' + column_no + ')');
