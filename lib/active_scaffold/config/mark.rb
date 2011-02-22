@@ -16,7 +16,7 @@ module ActiveScaffold::Config
       @core.columns[:marked].form_ui = :checkbox
       @core.columns[:marked].inplace_edit = true
       @core.columns[:marked].sort = false
-      @core.list.columns = [:marked] + @core.list.columns.names unless @core.list.columns.include? :marked 
+      @core.list.columns = [:marked] + @core.list.columns.names_without_auth_check unless @core.list.columns.include? :marked
     end
   end
 end
