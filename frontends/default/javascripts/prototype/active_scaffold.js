@@ -155,6 +155,10 @@ document.observe("dom:loaded", function() {
           csrf_token = $$('meta[name=csrf-token]')[0],
           my_parent = span.up(),
           column_heading = null;
+
+      if(!(my_parent.nodeName.toLowerCase() === 'td' || my_parent.nodeName.toLowerCase() === 'th')){
+          my_parent = span.up('td');
+      }
           
       if (my_parent.nodeName.toLowerCase() === 'td') {
         var heading_selector = '.' + span.up().readAttribute('class').split(' ')[0] + '_heading';
