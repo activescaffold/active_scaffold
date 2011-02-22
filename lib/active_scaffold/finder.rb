@@ -1,5 +1,9 @@
 module ActiveScaffold
   module Finder
+    def self.like_operator
+      @@like_operator ||= ::ActiveRecord::Base.connection.adapter_name == "PostgreSQL" ? "ILIKE" : "LIKE"
+    end
+
     module ClassMethods
       # Takes a collection of search terms (the tokens) and creates SQL that
       # searches all specified ActiveScaffold columns. A row will match if each
@@ -13,13 +17,13 @@ module ActiveScaffold
 
         where_clauses = []
         columns.each do |column|
-          where_clauses << ((column.column.nil? || column.column.text?) ? "LOWER(#{column.search_sql}) LIKE ?" : "#{column.search_sql} = ?")
+          where_clauses << ((column.column.nil? || column.column.text?) ? "#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?" : "#{column.search_sql} = ?")
         end
         phrase = "(#{where_clauses.join(' OR ')})"
 
         sql = ([phrase] * tokens.length).join(' AND ')
         tokens = tokens.collect do |value|
-          columns.collect {|column| (column.column.nil? || column.column.text?) ? like_pattern.sub('?', value.downcase) : column.column.type_cast(value)}
+          columns.collect {|column| (column.column.nil? || column.column.text?) ? like_pattern.sub('?', value) : column.column.type_cast(value)}
         end.flatten
 
         [sql, *tokens]
@@ -52,7 +56,7 @@ module ActiveScaffold
                 ["#{column.search_sql} in (?)", Array(value)]
                 else
                   if column.column.nil? || column.column.text?
-                    ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
+                    ["#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
                   else
                     ["#{column.search_sql} = ?", column.column.type_cast(value)]
                   end
@@ -82,7 +86,7 @@ module ActiveScaffold
       def condition_for_range(column, value, like_pattern = nil)
         if !value.is_a?(Hash)
           if column.column.nil? || column.column.text?
-            ["LOWER(#{column.search_sql}) LIKE ?", like_pattern.sub('?', value.downcase)]
+            ["#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
           else
             ["#{column.search_sql} = ?", column.column.type_cast(value)]
           end
