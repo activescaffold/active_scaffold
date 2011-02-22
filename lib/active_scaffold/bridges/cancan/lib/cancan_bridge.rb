@@ -68,10 +68,14 @@ module ActiveScaffold
         # if cancan says "no", it delegates to default AS behavior
         def authorized_for_with_cancan?(options = {})
           raise InvalidArgument if options[:crud_type].blank? and options[:action].blank?
-          crud_type_result = options[:crud_type].nil? ? true : current_ability.can?(options[:crud_type], self)
-          action_result = options[:action].nil? ? true : current_ability.can?(options[:action].to_sym, self)
+          if current_ability.present?
+            crud_type_result = options[:crud_type].nil? ? true : current_ability.can?(options[:crud_type], self)
+            action_result = options[:action].nil? ? true : current_ability.can?(options[:action].to_sym, self)
+          else
+            crud_type_result, action_result = false, false
+          end
           default_result = authorized_for_without_cancan?(options)
-          result = (crud_type_result and action_result) or default_result
+          result = (crud_type_result && action_result) || default_result
           return result
         end
       end
