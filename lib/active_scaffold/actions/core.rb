@@ -6,6 +6,7 @@ module ActiveScaffold::Actions
       end
       base.helper_method :nested?
       base.helper_method :beginning_of_chain
+      base.helper_method :new_model
     end
     def render_field
       if params[:in_place_editing]

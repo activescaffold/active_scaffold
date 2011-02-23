@@ -11,7 +11,7 @@ module ActiveScaffold::Actions
     # FieldSearch uses params[:search] and not @record because search conditions do not always pass the Model's validations.
     # This facilitates for example, textual searches against associations via .search_sql
     def show_search
-      @record = active_scaffold_config.model.new
+      @record = new_model
       respond_to_action(:field_search)
     end
 
