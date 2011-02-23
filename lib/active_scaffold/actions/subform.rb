@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Subform
     def edit_associated
-      @parent_record = params[:id].nil? ? active_scaffold_config.model.new : find_if_allowed(params[:id], :update)
+      @parent_record = params[:id].nil? ? new_model : find_if_allowed(params[:id], :update)
       @column = active_scaffold_config.columns[params[:association]]
 
       # NOTE: we don't check whether the user is allowed to update this record, because if not, we'll still let them associate the record. we'll just refuse to do more than associate, is all.

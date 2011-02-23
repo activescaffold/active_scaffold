@@ -275,7 +275,7 @@ module ActiveScaffold
 
       def inplace_edit_control(column)
         if inplace_edit?(active_scaffold_config.model, column) and inplace_edit_cloning?(column)
-          @record = active_scaffold_config.model.new
+          @record = new_model
           column = column.clone
           column.options = column.options.clone
           column.form_ui = :select if (column.association && column.form_ui.nil?)

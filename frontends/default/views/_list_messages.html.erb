@@ -18,7 +18,7 @@
     <% if active_scaffold_config.list.show_search_reset && @filtered -%>
       <% search_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :member, :position => false)
       action_links = ActiveScaffold::DataStructures::ActionLinks.new
-      record = active_scaffold_config.model.new
+      record = new_model
       record.id = 0
       action_links.add(search_link)  -%>
       <%= render :partial => 'list_actions', :locals => {:record => record, :url_options => params_for(:escape => false, :search => ''), :action_links => action_links.member} %>
