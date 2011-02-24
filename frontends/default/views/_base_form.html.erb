@@ -1,21 +1,27 @@
 <% url_options ||= params_for(:action => form_action)
    xhr = request.xhr? if xhr.nil?
-   as_action_config = active_scaffold_config.send(form_action)
+   if active_scaffold_config.actions.include? form_action
+     multipart ||= active_scaffold_config.send(form_action).multipart?
+     columns ||= active_scaffold_config.send(form_action).columns
+   else
+     multipart ||= false
+     columns ||= nil
+   end
    body_partial ||= 'form' %>
 <%=
 options = {:onsubmit => onsubmit,
            :id => element_form_id(:action => form_action),
-           :multipart => as_action_config.multipart?,
+           :multipart => multipart,
            :class => "as_form #{form_action.to_s}",
            :method => method,
            'data-loading' => true}
 cancel_options = {:class => 'as_cancel', 'data-refresh' => false}
 
 cancel_options[:remote] = true if xhr #cancel link does nt have to care about multipart forms
-if xhr && as_action_config.multipart? # file_uploads
+if xhr && multipart # file_uploads
   form_remote_upload_tag url_options.merge({:iframe => true}), options
 else
-  options[:remote] = true if xhr && !as_action_config.multipart?
+  options[:remote] = true if xhr && !multipart
   form_tag url_options, options
 end
 -%>
@@ -33,7 +39,7 @@ end
 <% end -%>
   </div>
 
-  <%= render :partial => body_partial, :locals => { :columns => as_action_config.columns } %>
+  <%= render :partial => body_partial, :locals => { :columns => columns } %>
 
   <p class="form-footer">
     <%= submit_tag as_(form_action), :class => "submit" %>
