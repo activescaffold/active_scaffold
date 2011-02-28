@@ -1,6 +1,6 @@
 <% record_column = column -%>
 <% readonly = (@record.readonly? or not @record.authorized_for?(:action => :update)) -%>
-<% action = @record.new_record? ? :create : (readonly ? :read : nil) -%>
+<% action = @record.new_record? ? :create : (readonly ? :read : :update) -%>
 <% show_actions = false -%>
 <tr class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
 <% active_scaffold_config_for(@record.class).subform.columns.each :for => @record.class, :action => action, :flatten => true do |column| %>

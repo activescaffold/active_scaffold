@@ -1,7 +1,7 @@
 <%
   record_column = column
   readonly = (@record.readonly? or not @record.authorized_for?(:action => :update))
-  action = @record.new_record? ? :create : (readonly ? :read : nil)
+  action = @record.new_record? ? :create : (readonly ? :read : :update)
   show_actions = false
 -%>
 <ol class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
