@@ -662,8 +662,11 @@ padding: 2px;
 }
 
 .active-scaffold .fieldWithErrors input,
+.active-scaffold .field_with_errors input,
 .active-scaffold .fieldWithErrors textarea,
-.active-scaffold .fieldWithErrors select {
+.active-scaffold .field_with_errors textarea,
+.active-scaffold .fieldWithErrors select,
+.active-scaffold .field_with_errors select {
 border: solid 1px #f00;
 }
 
