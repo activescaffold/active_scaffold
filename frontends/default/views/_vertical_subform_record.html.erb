@@ -1,7 +1,7 @@
 <%
   record_column = column
   readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
-  crud_type = @record.new_record? ? :create : (readonly ? :read : nil)
+  crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
   show_actions = false
   config = active_scaffold_config_for(@record.class)
   options = active_scaffold_input_options(config.columns[@record.class.primary_key], scope)
