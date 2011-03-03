@@ -75,18 +75,22 @@ module ActiveScaffold::Actions
     # If you want to customize this algorithm, consider using the +before_update_save+ callback
     def do_update
       do_edit
-      @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
       update_save
     end
 
     def update_save
       begin
         active_scaffold_config.model.transaction do
+          @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record]) unless options[:no_record_param_update]
           before_update_save(@record)
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
           if successful?
             @record.save! and @record.save_associated!
             after_update_save(@record)
+          else
+            # some associations such as habtm are saved before saved is called on parent object
+            # we have to revert these changes if validation fails
+            raise ActiveRecord::Rollback, "don't save habtm associations unless record is valid"
           end
         end
       rescue ActiveRecord::RecordInvalid
