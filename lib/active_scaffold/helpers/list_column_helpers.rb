@@ -247,7 +247,7 @@ module ActiveScaffold
       def inplace_edit?(record, column)
         if column.inplace_edit
           editable = controller.send(:update_authorized?, record) if controller.respond_to?(:update_authorized?)
-          editable = record.authorized_for?(:action => :update, :column => column.name) if editable.nil? || editable == true
+          editable = record.authorized_for?(:crud_type => :update, :column => column.name) if editable.nil? || editable == true
           editable
         end
       end
