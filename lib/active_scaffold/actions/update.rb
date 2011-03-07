@@ -78,7 +78,7 @@ module ActiveScaffold::Actions
       update_save
     end
 
-    def update_save
+    def update_save(options = {})
       begin
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record]) unless options[:no_record_param_update]
