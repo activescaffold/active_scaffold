@@ -153,7 +153,10 @@ module ActiveScaffold::DataStructures
     # a collection of associations to pre-load when finding the records on a page
     attr_reader :includes
     def includes=(value)
-      @includes = value.is_a?(Array) ? value : [value] # automatically convert to an array
+      @includes = case value
+        when Array, Hash then value 
+        else [value] # automatically convert to an array
+      end
     end
 
     # a collection of columns to load when eager loading is disabled, if it's nil all columns will be loaded
