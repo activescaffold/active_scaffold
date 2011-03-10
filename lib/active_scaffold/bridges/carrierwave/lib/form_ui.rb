@@ -4,7 +4,7 @@ module ActiveScaffold
       def active_scaffold_input_carrierwave(column, options)
         options = active_scaffold_input_text_options(options)
         carrierwave = @record.send("#{column.name}")
-        if carrierwave.file.present? && !carrierwave.file.empty?
+        if !carrierwave.file.blank?
 
           remove_field_options = {
             :name => options[:name].gsub(/\[#{column.name}\]$/, "[remove_#{column.name}]"),
