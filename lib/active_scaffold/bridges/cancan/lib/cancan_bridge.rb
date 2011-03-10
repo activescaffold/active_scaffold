@@ -1,14 +1,35 @@
 module ActiveScaffold
   module CancanBridge
 
-    module Core
+    # controller level authorization
+    # As already has callbacks to ensure authorization at controller method via "authorization_method"
+    # but let's include this too, just in case, no sure how performance is affected tough :TODO benchmark
+    module ClassMethods
       extend ActiveSupport::Concern
       included do
-        alias_method_chain :beginning_of_chain, :cancan
+        alias_method_chain :active_scaffold, :cancan
       end
-      # :TODO can this be expanded more ?
-      def beginning_of_chain_with_cancan
-        beginning_of_chain_without_cancan.accessible_by(current_ability)
+
+      def active_scaffold_with_cancan(model_id = nil, &block)
+        active_scaffold_without_cancan(model_id, &block)
+        authorize_resource(
+          :class => active_scaffold_config.model,
+          :instance => :record
+        )
+      end
+    end
+
+    # beginning of chain integration
+    module Actions
+      module Core
+        extend ActiveSupport::Concern
+        included do
+          alias_method_chain :beginning_of_chain, :cancan
+        end
+        # :TODO can this be expanded more ?
+        def beginning_of_chain_with_cancan
+          beginning_of_chain_without_cancan.accessible_by(current_ability)
+        end
       end
     end
 
@@ -47,6 +68,7 @@ module ActiveScaffold
     end
 
 
+    # plug into AS#authorized_for calls
     module ActiveRecord
       extend ActiveSupport::Concern
       included do
