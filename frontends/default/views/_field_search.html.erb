@@ -14,7 +14,7 @@ form_tag url_options, options %>
     <% unless hiddens.empty?  -%>
       <li class="sub-section">
       <h5><%= as_(:optional_attributes) %></h5>
-      <ol id ="<%= sub_section_id(:sub_section => 'further_options') %>" class="form" 'style="display: none;"'>
+      <ol id ="<%= sub_section_id(:sub_section => 'further_options') %>" class="form" style="display:none;">
       <% hiddens.each do |column| -%>
         <%= render :partial => 'search_attribute', :locals => {:column => column} %>
       <% end -%>

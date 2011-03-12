@@ -1,5 +1,5 @@
 <% subsection_id ||= nil %>
-<ol class="form" <%= "id=#{subsection_id}" unless subsection_id.nil? %>  <%= 'style="display: none;"' if columns.collapsed -%>>
+<ol class="form" <%= "id=#{subsection_id}" unless subsection_id.nil? %> <%= "style=\"display: none;\"" if columns.collapsed %>>
   <% columns.each :for => @record do |column| %>
   <% renders_as = column_renders_as(column) %>
   <% if renders_as == :subsection -%>
