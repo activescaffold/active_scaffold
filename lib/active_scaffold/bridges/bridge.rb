@@ -49,5 +49,11 @@ end
 
 require File.join(File.dirname(__FILE__), 'shared', 'date_bridge.rb')
 Dir[File.join(File.dirname(__FILE__), "*/bridge.rb")].each{|bridge_require|
-  require bridge_require
+  load_bridge = true
+  unless ActiveScaffold.exclude_bridges.empty?
+    match = bridge_require.match('bridges\/(.*)\/bridge.rb')
+    bridge_name = match[1] ? match[1] : nil
+    load_bridge = ActiveScaffold.exclude_bridges.exclude?(bridge_name.to_sym) if bridge_name
+  end
+  require bridge_require if load_bridge == true
 } 
