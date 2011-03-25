@@ -168,7 +168,7 @@ $(document).ready(function() {
 
       if (span.closest('div.active-scaffold').attr('data-eid')) {
         if (options['params'].length > 0) {
-          options['params'] += ";";
+          options['params'] += "&";
         }
         options['params'] += ("eid=" + span.closest('div.active-scaffold').attr('data-eid'));
       }
