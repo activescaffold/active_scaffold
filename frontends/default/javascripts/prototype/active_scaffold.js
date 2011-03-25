@@ -184,7 +184,7 @@ document.observe("dom:loaded", function() {
 
       if (span.up('div.active-scaffold').readAttribute('data-eid')) {
         if (options['params'].length > 0) {
-          options['params'] += ";";
+          options['params'] += "&";
         }
         options['params'] += ("eid=" + span.up('div.active-scaffold').readAttribute('data-eid'));
       }
