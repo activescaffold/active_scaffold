@@ -134,12 +134,12 @@ module ActiveScaffold
       def render_action_link(link, url_options, record = nil, html_options = {})
         url_options = action_link_url_options(link, url_options, record)
         html_options = action_link_html_options(link, url_options, record, html_options)
-        action_link_html(link, url_options, html_options)
+        action_link_html(link, url_options, html_options, record)
       end
 
       def render_group_action_link(link, url_options, options, record = nil)
         if link.type == :member && !options[:authorized]
-          action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"})
+          action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"}, record)
         else
           render_action_link(link, url_options, record)
         end
@@ -198,7 +198,7 @@ module ActiveScaffold
         action_link_id(action_id, id)
       end
       
-      def action_link_html(link, url, html_options)
+      def action_link_html(link, url, html_options, record)
         # issue 260, use url_options[:link] if it exists. This prevents DB data from being localized.
         label = url.delete(:link) if url.is_a?(Hash) 
         label ||= link.label
