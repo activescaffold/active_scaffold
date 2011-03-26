@@ -5,6 +5,7 @@ module ActiveScaffold::Actions
       base.verify :method => [:post, :put],
                   :only => :update,
                   :redirect_to => { :action => :index }
+      base.helper_method :update_refresh_list?
     end
 
     def edit
@@ -49,7 +50,7 @@ module ActiveScaffold::Actions
       end
     end
     def update_respond_to_js
-      if successful? && active_scaffold_config.update.refresh_list && !render_parent?
+      if successful? && update_refresh_list? && !render_parent?
         do_search if respond_to? :do_search
         do_list
       end
@@ -124,6 +125,11 @@ module ActiveScaffold::Actions
 
     # override this method if you want to do something after the save
     def after_update_save(record); end
+
+    # should we refresh whole list after update operation
+    def update_refresh_list?
+      active_scaffold_config.update.refresh_list
+    end
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
