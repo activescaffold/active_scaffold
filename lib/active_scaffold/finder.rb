@@ -298,8 +298,10 @@ module ActiveScaffold
       options.reject{|k, v| v.blank?}.inject(query) do |query, (k, v)|
         # default ordering of model has a higher priority than current queries ordering
         # fix this by removing existing ordering from arel
-        # will not work if order part is first one which is iterated
-        query = query.except(:order) if k.to_sym == :order && query.is_a?(ActiveRecord::Relation)
+        if k.to_sym == :order
+          query = query.where('1=1') unless query.is_a?(ActiveRecord::Relation)
+          query = query.except(:order)
+        end
         query.send((k.to_sym), v) 
       end
     end
