@@ -316,7 +316,7 @@ module ActiveScaffold
         all_marked = (marked_records.length >= @page.pager.count)
         tag_options = {:id => "#{controller_id}_mark_heading", :class => "mark_heading in_place_editor_field"}
         tag_options['data-ie_url'] = url_for({:controller => params_for[:controller], :action => 'mark_all', :eid => params[:eid]})
-        content_tag(:span, check_box_tag(nil, !all_marked, all_marked), tag_options)
+        content_tag(:span, check_box_tag("#{controller_id}_mark_heading_span_input", !all_marked, all_marked), tag_options)
       end
 
       def render_column_heading(column, sorting, sort_direction)
