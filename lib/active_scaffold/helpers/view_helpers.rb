@@ -190,7 +190,7 @@ module ActiveScaffold
         id = url_options[:id] || url_options[:parent_id]
         id = "#{column.association.name}-#{record.id}" if column && column.plural_association?
         if record.try(column.association.name.to_sym).present?
-          id = "#{column.association.name}-#{record.send(column.association.name).id}"
+          id = "#{column.association.name}-#{record.send(column.association.name).id}-#{record.id}"
         else
           id = "#{column.association.name}-#{record.id}" unless record.nil?
         end if column && column.singular_association?
