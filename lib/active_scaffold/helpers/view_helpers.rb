@@ -194,6 +194,7 @@ module ActiveScaffold
         else
           id = "#{column.association.name}-#{record.id}" unless record.nil?
         end if column && column.singular_association?
+        id = "#{id}-#{url_options[:batch_scope].downcase}" if url_options[:batch_scope]
         action_id = "#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}#{url_options[:action].to_s}"
         action_link_id(action_id, id)
       end
