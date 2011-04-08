@@ -239,10 +239,18 @@ document.observe("dom:loaded", function() {
   document.on('change', 'input.update_form, select.update_form', function(event) {
     var element = event.findElement();
     var as_form = element.up('form.as_form');
-    
+    var params = null;
+
+    if (element.hasAttribute('data-update_send_form')) {
+        params = as_form.serialize(true);
+    } else {
+        params = {value: element.getValue()};
+    }
+    params.source_id = element.readAttribute('id');
+
     new Ajax.Request(element.readAttribute('data-update_url'), {
       method: 'get',
-      parameters: {value: element.getValue(), source_id: element.readAttribute('id')},
+      parameters: params,
       onLoading: function(response) {
         element.next('img.loading-indicator').style.visibility = 'visible';
         as_form.disable();

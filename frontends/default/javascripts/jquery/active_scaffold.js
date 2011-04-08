@@ -216,10 +216,19 @@ $(document).ready(function() {
   $('input.update_form, select.update_form').live('change', function(event) {
       var element = $(this);
       var as_form = element.closest('form.as_form');
+      var params = null;
+
+      if (element.attr('data-update_send_form')) {
+        params = as_form.serialize();
+        params += '&' + $.param({source_id: element.attr('id')});
+      } else {
+        params = {value: element.val()};
+        params.source_id = element.attr('id');
+      }
+
       $.ajax({
         url: element.attr('data-update_url'),
-        data: {value: element.val(),
-               source_id: element.attr('id')},
+        data: params,
         beforeSend: function(event) {
           element.nextAll('img.loading-indicator').css('visibility','visible');
           ActiveScaffold.disable_form(as_form)
