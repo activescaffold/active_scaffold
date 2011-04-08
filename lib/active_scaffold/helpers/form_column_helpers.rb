@@ -86,6 +86,7 @@ module ActiveScaffold
 
           options[:class] = "#{options[:class]} update_form".strip
           options['data-update_url'] = url_for(url_params)
+          options['data-update_send_form'] = true if column.send_form_on_update_column
         end
         options
       end

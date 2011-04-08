@@ -62,6 +62,10 @@ module ActiveScaffold::DataStructures
       @update_columns = Array(column_names)
     end
 
+    # send all the form instead of only new value when this column change
+    cattr_accessor :send_form_on_update_column
+    attr_accessor :send_form_on_update_column
+
     # sorting on a column can be configured four ways:
     #   sort = true               default, uses intelligent sorting sql default
     #   sort = false              sometimes sorting doesn't make sense
