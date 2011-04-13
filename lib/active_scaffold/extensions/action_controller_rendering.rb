@@ -5,8 +5,9 @@ module ActionController #:nodoc:
       if self.class.uses_active_scaffold? and params[:adapter] and @rendering_adapter.nil?
         @rendering_adapter = true # recursion control
         # if we need an adapter, then we render the actual stuff to a string and insert it into the adapter template
+        opts = args.blank? ? Hash.new : args.first
         render :partial => params[:adapter][1..-1],
-        :locals => {:payload => render_to_string(args.first.merge(:layout => false), &block)},
+        :locals => {:payload => render_to_string(opts.merge(:layout => false), &block)},
                :use_full_path => true, :layout => false
         @rendering_adapter = nil # recursion control
       else
@@ -18,3 +19,4 @@ module ActionController #:nodoc:
     # Rails 2.x implementation is post-initialization on :active_scaffold method
   end
 end
+
