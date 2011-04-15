@@ -267,10 +267,27 @@ $(document).ready(function() {
   });
 
   $('a[data-popup]').live('click', function(e) {
-      window.open($(this).attr('href'));
-      e.preventDefault();
-   });
-  
+    window.open($(this).attr('href'));
+    e.preventDefault();
+  });
+
+  $('.hover_click').live("click", function(event) {
+    var element = $(this);
+    var ul_element = element.children('ul').first();
+    if (ul_element.is(':visible')) {
+      element.find('ul').hide();
+    } else {
+      ul_element.show();
+    }
+    return false;
+  });
+  $('.hover_click a.as_action').live('click', function(event) {
+    var element = $(this).closest('.hover_click');
+    if (element) {
+      element.find('ul').hide();
+    }
+    return true;
+  });
 });
 
 /* Simple Inheritance

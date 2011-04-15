@@ -288,10 +288,27 @@ document.observe("dom:loaded", function() {
     return true;
   });
   document.on("click", "a[data-popup]", function(event, element) {
-     if (event.stopped) return;
-     window.open($(element).href);
-     event.stop();
-   });
+    if (event.stopped) return;
+    window.open($(element).href);
+    event.stop();
+  });
+  document.on("click", ".hover_click", function(event, element) {
+    var ul_element = element.down('ul');
+    if (ul_element.getStyle('display') === 'none') {
+      ul_element.style.display = 'block';
+    } else {
+      ul_element.style.display = 'none';
+    }
+     
+    return true;
+  });
+  document.on("click", ".hover_click a.as_action", function(event, element) {
+    var element = element.up('.hover_click').down('ul');
+    if (element) {
+      element.style.display = 'none';
+    }
+    return true;
+  });
 });
 
 
