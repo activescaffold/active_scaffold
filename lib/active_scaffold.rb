@@ -66,7 +66,11 @@ module ActiveScaffold
     base.module_eval do
       # TODO: these should be in actions/core
       before_filter :handle_user_settings
+      before_filter :check_input_device
     end
+
+    base.helper_method :touch_device?
+    base.helper_method :hover_via_click?
   end
 
   def self.set_defaults(&block)
@@ -97,6 +101,24 @@ module ActiveScaffold
         conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, active_scaffold_session_storage[action_name], params)
       end
     end
+  end
+
+  def check_input_device
+    if request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"][/(iPhone|iPod|iPad)/i]
+      session[:input_device_type] = 'TOUCH'
+      session[:hover_supported] = false
+    else
+      session[:input_device_type] = 'MOUSE'
+      session[:hover_supported] = true
+    end if session[:input_device_type].nil?
+   end
+
+  def touch_device?
+    session[:input_device_type] == 'TOUCH'
+  end
+
+  def hover_via_click?
+    session[:hover_supported] == false
   end
   
   def self.js_framework=(framework)

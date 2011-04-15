@@ -5,10 +5,14 @@
   <% if (options[:node] == :finished_traversing) -%>
     <%= "</ul>#{(options[:level] == 0 ? "</div>#{end_level_0_tag}": '</li>')}".html_safe %>
   <% elsif (options[:node] == :start_traversing) -%>
+        <% html_classes = []
+           html_classes << 'hover_click' if hover_via_click? %>
 	<% if options[:level] == 0 %>
-	   <%= "#{start_level_0_tag}<div class=\"action_group\"> #{content_tag(:div, as_(parent.name), :class => (parent.name.to_s).downcase)}<ul>".html_safe %>
+           <% html_classes << 'action_group' %>
+	   <%= "#{start_level_0_tag}<div class=\"#{html_classes.join(' ')}\" #{"onclick=\"\"" if hover_via_click?}> #{content_tag(:div, as_(parent.name), :class => (parent.name.to_s).downcase)}<ul>".html_safe %>
 	<% else %>
-	   <%= "<li #{"class=\"top\"" if options[:first_action]}>#{content_tag(:div, as_(parent.name), :class => (parent.name.to_s).downcase)}<ul>".html_safe %>
+           <% html_classes << 'top' if options[:first_action] %>
+	   <%= "<li #{"class=\"#{html_classes.join(' ')}\"" unless html_classes.empty?} #{"onclick=\"\"" if hover_via_click?}>#{content_tag(:div, as_(parent.name), :class => (parent.name.to_s).downcase)}<ul>".html_safe %>
 	<% end %>
   <% else -%>
     <% if options[:level] == 0 %>
