@@ -53,18 +53,6 @@ window.dhtmlHistory = {
 
                var that = this;
                
-               /*Set up the historyStorage object; pass in options bundle*/
-               window.historyStorage.setup(options);
-               
-               /*Set up our base title if one is passed in*/
-               if (options && options.baseTitle) {
-                       if (options.baseTitle.indexOf("@@@") < 0 && historyStorage.debugMode) {
-                               throw new Error("Programmer error: options.baseTitle must contain the replacement parameter"
-                               + " '@@@' to be useful.");
-                       }
-                       this.baseTitle = options.baseTitle;
-               }
-               
                /*set user-agent flags*/
                var UA = navigator.userAgent.toLowerCase();
                var platform = navigator.platform.toLowerCase();
@@ -80,77 +68,92 @@ window.dhtmlHistory = {
                        this.isSupported = true;
                } else if (vendor.indexOf("Apple Computer, Inc.") > -1) {
                        this.isSafari = true;
-                       this.isSupported = (platform.indexOf("mac") > -1);
+                       //this.isSupported = (platform.indexOf("mac") > -1);
+                       this.isSupported = false;
                } else if (UA.indexOf("gecko") != -1) {
                        this.isGecko = true;
                        this.isSupported = true;
                }
 
-               /*Create Safari/Opera-specific code*/
-               if (this.isSafari) {
-                       this.createSafari();
-               } else if (this.isOpera) {
-                       this.createOpera();
+               if (this.isSupported) {
+                   /*Set up the historyStorage object; pass in options bundle*/
+                   window.historyStorage.setup(options);
+
+                   /*Set up our base title if one is passed in*/
+                   if (options && options.baseTitle) {
+                           if (options.baseTitle.indexOf("@@@") < 0 && historyStorage.debugMode) {
+                                   throw new Error("Programmer error: options.baseTitle must contain the replacement parameter"
+                                   + " '@@@' to be useful.");
+                           }
+                           this.baseTitle = options.baseTitle;
+                   }
+
+                   /*Create Safari/Opera-specific code*/
+                   if (this.isSafari && this.isSupported) {
+                           this.createSafari();
+                   } else if (this.isOpera) {
+                           this.createOpera();
+                   }
+
+                   /*Get our initial location*/
+                   var initialHash = this.getCurrentLocation();
+
+                   /*Save it as our current location*/
+                   this.currentLocation = initialHash;
+
+                   /*Now that we have a hash, create IE-specific code*/
+                   if (this.isIE) {
+                           /*Optionally override the URL of IE's blank HTML file*/
+                           if (options && options.blankURL) {
+                                   var u = options.blankURL;
+                                   /*assign the value, adding the trailing ? if it's not passed in*/
+                                   this.blankURL = (u.indexOf("?") != u.length - 1
+                                           ? u + "?"
+                                           : u
+                                   );
+                           }
+                           this.createIE(initialHash);
+                   }
+
+                   /*Add an unload listener for the page; this is needed for FF 1.5+ because this browser caches all dynamic updates to the
+                   page, which can break some of our logic related to testing whether this is the first instance a page has loaded or whether
+                   it is being pulled from the cache*/
+
+                   var unloadHandler = function() {
+                           that.firstLoad = null;
+                   };
+
+                   this.addEventListener(window,'unload',unloadHandler);
+
+                   /*Determine if this is our first page load; for IE, we do this in this.iframeLoaded(), which is fired on pageload. We do it
+                   there because we have no historyStorage at this point, which only exists after the page is finished loading in IE*/
+                   if (this.isIE) {
+                           /*The iframe will get loaded on page load, and we want to ignore this fact*/
+                           this.ignoreLocationChange = true;
+                   } else if (this.isSupported) {
+                           if (!historyStorage.hasKey(this.PAGELOADEDSTRING)) {
+                                   /*This is our first page load, so ignore the location change and add our special history entry*/
+                                   this.ignoreLocationChange = true;
+                                   this.firstLoad = true;
+                                   historyStorage.put(this.PAGELOADEDSTRING, true);
+                           } else {
+                                   /*This isn't our first page load, so indicate that we want to pay attention to this location change*/
+                                   this.ignoreLocationChange = false;
+                                   this.firstLoad = false;
+                                   /*For browsers other than IE, fire a history change event; on IE, the event will be thrown automatically when its
+                                   hidden iframe reloads on page load. Unfortunately, we don't have any listeners yet; indicate that we want to fire
+                                   an event when a listener is added.*/
+                                   this.fireOnNewListener = true;
+                           }
+                   }
+
+                   /*Other browsers can use a location handler that checks at regular intervals as their primary mechanism; we use it for IE as
+                   well to handle an important edge case; see checkLocation() for details*/
+                   var locationHandler = function() {
+                           that.checkLocation();
+                   };
+                   setInterval(locationHandler, 100);
                }
-               
-               /*Get our initial location*/
-               var initialHash = this.getCurrentLocation();
-
-               /*Save it as our current location*/
-               this.currentLocation = initialHash;
-
-               /*Now that we have a hash, create IE-specific code*/
-               if (this.isIE) {
-                       /*Optionally override the URL of IE's blank HTML file*/
-                       if (options && options.blankURL) {
-                               var u = options.blankURL;
-                               /*assign the value, adding the trailing ? if it's not passed in*/
-                               this.blankURL = (u.indexOf("?") != u.length - 1
-                                       ? u + "?"
-                                       : u
-                               );
-                       }
-                       this.createIE(initialHash);
-               }
-
-               /*Add an unload listener for the page; this is needed for FF 1.5+ because this browser caches all dynamic updates to the
-               page, which can break some of our logic related to testing whether this is the first instance a page has loaded or whether
-               it is being pulled from the cache*/
-
-               var unloadHandler = function() {
-                       that.firstLoad = null;
-               };
-               
-               this.addEventListener(window,'unload',unloadHandler);          
-
-               /*Determine if this is our first page load; for IE, we do this in this.iframeLoaded(), which is fired on pageload. We do it
-               there because we have no historyStorage at this point, which only exists after the page is finished loading in IE*/
-               if (this.isIE) {
-                       /*The iframe will get loaded on page load, and we want to ignore this fact*/
-                       this.ignoreLocationChange = true;
-               } else {
-                       if (!historyStorage.hasKey(this.PAGELOADEDSTRING)) {
-                               /*This is our first page load, so ignore the location change and add our special history entry*/
-                               this.ignoreLocationChange = true;
-                               this.firstLoad = true;
-                               historyStorage.put(this.PAGELOADEDSTRING, true);
-                       } else {
-                               /*This isn't our first page load, so indicate that we want to pay attention to this location change*/
-                               this.ignoreLocationChange = false;
-                               this.firstLoad = false;
-                               /*For browsers other than IE, fire a history change event; on IE, the event will be thrown automatically when its
-                               hidden iframe reloads on page load. Unfortunately, we don't have any listeners yet; indicate that we want to fire
-                               an event when a listener is added.*/
-                               this.fireOnNewListener = true;
-                       }
-               }
-
-               /*Other browsers can use a location handler that checks at regular intervals as their primary mechanism; we use it for IE as
-               well to handle an important edge case; see checkLocation() for details*/
-               var locationHandler = function() {
-                       that.checkLocation();
-               };
-               setInterval(locationHandler, 100);
        },      
        
        /*Public: Initialize our DHTML history. You must call this after the page is finished loading. Optionally, you can pass your listener in
