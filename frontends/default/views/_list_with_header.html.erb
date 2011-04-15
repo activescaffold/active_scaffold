@@ -1,4 +1,4 @@
-<div id="<%= active_scaffold_id -%>" class="active-scaffold active-scaffold-<%= controller_id %> <%= "#{params[:controller]}-view" %> <%= active_scaffold_config.theme %>-theme" <%= "data-eid=#{id_from_controller(params[:eid])}" if params[:eid]%>>
+<div id="<%= active_scaffold_id -%>" class="<%= as_main_div_class %>" <%= "data-eid=#{id_from_controller(params[:eid])}" if params[:eid]%>>
   <div class="active-scaffold-header">
     <%= render :partial => 'list_header' %>
   </div>

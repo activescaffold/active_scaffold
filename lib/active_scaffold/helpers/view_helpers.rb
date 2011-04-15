@@ -259,6 +259,12 @@ module ActiveScaffold
         classes.join(' ')
       end
 
+      def as_main_div_class
+        classes = ["active-scaffold", "active-scaffold-#{controller_id}", "#{params[:controller]}-view", "#{active_scaffold_config.theme}-theme"]
+        classes << "as_touch" if touch_device?
+        classes.join(' ')
+      end
+
       def column_empty?(column_value)
         empty = column_value.nil?
         empty ||= column_value.empty? if column_value.respond_to? :empty?
