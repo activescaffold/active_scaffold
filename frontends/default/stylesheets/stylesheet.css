@@ -971,3 +971,9 @@ font-size: 100%;
 .active-scaffold-found {
   float:left;
 }
+
+.as_touch a.inline-adapter-close {
+width: 32px;
+height: 34px;
+background: url(../../../images/active_scaffold/default/close_touch.png) 0 0 no-repeat;
+}
