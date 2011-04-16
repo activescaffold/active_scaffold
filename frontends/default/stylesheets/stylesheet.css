@@ -99,6 +99,11 @@ background-position: 1px 50%;
 background-repeat: no-repeat;
 }
 
+.active-scaffold-header div.actions a {
+padding: 5px 5px;
+margin-left: 0px;
+}
+
 .active-scaffold-header div.actions div.action_group {
 display: inline;
 float: right;
@@ -112,7 +117,7 @@ margin: 0;
 
 .active-scaffold-header div.actions .action_group ul {
 line-height: 130%;
-top: 14px;
+top: 19px;
 }
 
 .view .active-scaffold-header div.actions a,
@@ -141,8 +146,8 @@ opacity: 0.5;
 .active-scaffold-header div.actions a.show_config_list,
 .active-scaffold-header div.actions div.action_group div {
 margin:0;  
-padding: 1px 5px 1px 20px;
-background-position: 1px 50%;
+padding: 5px 5px 5px 25px;
+background-position: 5px 50%;
 background-repeat: no-repeat;
 }
 
