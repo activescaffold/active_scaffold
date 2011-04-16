@@ -1026,3 +1026,6 @@ color: #fff;
 padding: 5px 2px 5px 5px;
 }
 
+.as_touch tr.record td {
+padding: 5px 10px;
+}
