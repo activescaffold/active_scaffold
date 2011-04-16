@@ -1016,3 +1016,7 @@ padding: 7px 5px 7px 25px;
 .as_touch .active-scaffold-header h2 {
 padding: 4px 0px;
 }
+
+.as_touch tr.record {
+line-height: 130%;
+}
