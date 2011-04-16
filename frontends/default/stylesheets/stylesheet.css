@@ -1020,3 +1020,9 @@ padding: 4px 0px;
 .as_touch tr.record {
 line-height: 130%;
 }
+
+.as_touch th a, .as_touch th a:visited {
+color: #fff;
+padding: 5px 2px 5px 5px;
+}
+
