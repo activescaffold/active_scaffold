@@ -30,7 +30,7 @@
       :hide => 'Verstecken',
       :live_search => 'Live-Suche',
       :loading => 'Lade…',
-      :next => 'Vorwärts',
+      :next => 'Vor',
       :no_entries => 'Keine Einträge',
       :no_options => 'Keine Optionen',
       :omit_header => 'Lasse Header weg',
