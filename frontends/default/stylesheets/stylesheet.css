@@ -1017,6 +1017,14 @@ padding: 7px 5px 7px 25px;
 padding: 4px 0px;
 }
 
+.as_touch .active-scaffold .active-scaffold-header div.actions a, .active-scaffold .active-scaffold .active-scaffold-header div.actions div {
+  font: bold 14px arial;
+}
+
+.as_touch .active-scaffold .active-scaffold-header div.actions {
+  right: 15px;
+}
+
 .as_touch tr.record {
 line-height: 130%;
 }
