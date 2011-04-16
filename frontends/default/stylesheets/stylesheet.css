@@ -987,3 +987,32 @@ background: url(../../../images/active_scaffold/default/close_touch.png) 0 0 no-
 font-size: 20px;
 padding: 3px 10px;
 }
+
+.as_touch .active-scaffold-header div.actions a {
+padding: 7px 5px;
+}
+
+.as_touch .active-scaffold-header div.actions .action_group ul {
+line-height: 130%;
+top: 23px;
+}
+
+.as_touch .active-scaffold-header div.actions a.new,
+.as_touch .active-scaffold-header div.actions a.new_existing,
+.as_touch .active-scaffold-header div.actions a.show_search,
+.as_touch .active-scaffold-header div.actions a.show_config_list,
+.as_touch .active-scaffold-header div.actions div.action_group div {
+padding: 7px 5px 7px 25px;
+}
+
+.as_touch .actions .action_group ul li div {
+padding: 7px 5px 7px 25px;
+}
+
+.as_touch .actions .action_group ul li a {
+padding: 7px 5px 7px 25px;
+}
+
+.as_touch .active-scaffold-header h2 {
+padding: 4px 0px;
+}
