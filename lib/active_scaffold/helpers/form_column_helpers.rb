@@ -262,13 +262,17 @@ module ActiveScaffold
         "#{column.name}_form_column"
       end
 
-      def override_form_field?(column)
-        respond_to?(override_form_field(column))
+      def override_form_field(column)
+        method_with_class = override_form_field_name(column, true)
+        return method_with_class if respond_to?(method_with_class)
+        method = override_form_field_name(column)
+        method if respond_to?(method)
       end
+      alias_method :override_form_field?, :override_form_field
 
       # the naming convention for overriding form fields with helpers
-      def override_form_field(column)
-        "#{column.name}_form_column"
+      def override_form_field_name(column, class_prefix = false)
+        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_form_column"
       end
 
       def override_input?(form_ui)

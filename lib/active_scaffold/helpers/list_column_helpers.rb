@@ -86,7 +86,7 @@ module ActiveScaffold
 
       def column_link_authorized?(link, column, record, associated)
         if column.association
-          associated_for_authorized = if associated.nil? || (associated.respond_to?(:empty?) && associated.empty?)
+          associated_for_authorized = if associated.nil? || (associated.respond_to?(:blank?) && associated.blank?)
             column.association.klass
           elsif [:has_many, :has_and_belongs_to_many].include? column.association.macro
             associated.first
@@ -136,13 +136,17 @@ module ActiveScaffold
         check_box(:record, column.name, options)
       end
 
-      def column_override(column)
-        "#{column.name.to_s.gsub('?', '')}_column" # parse out any question marks (see issue 227)
+      def column_override_name(column, class_prefix = false)
+        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_column"
       end
 
-      def column_override?(column)
-        respond_to?(column_override(column))
+      def column_override(column)
+        method_with_class = column_override_name(column, true)
+        return method_with_class if respond_to?(method_with_class)
+        method = column_override_name(column)
+        method if respond_to?(method)
       end
+      alias_method :column_override?, :column_override
 
       def override_column_ui?(list_ui)
         respond_to?(override_column_ui(list_ui))
@@ -208,7 +212,7 @@ module ActiveScaffold
             if column.associated_limit == 0
               size if column.associated_number?
             else
-              joined_associated = format_value(firsts.join(', '))
+              joined_associated = format_value(firsts.join(active_scaffold_config.list.association_join_text))
               joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
               joined_associated
             end

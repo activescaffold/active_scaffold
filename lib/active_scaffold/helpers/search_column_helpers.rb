@@ -126,10 +126,22 @@ module ActiveScaffold
         (column.column && column.column.text?) || column.search_ui == :string
       end
 
+      def include_null_comparators?(column)
+        return column.options[:null_comparators] if column.options.has_key? :null_comparators
+        if column.association
+          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.primary_key_name].column.try(:null)
+        else
+          column.column.try(:null)
+        end
+      end
+
       def active_scaffold_search_range_comparator_options(column)
         select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
         if active_scaffold_search_range_string?(column)
           select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]}
+        end
+        if include_null_comparators? column
+          select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
         end
         select_options
       end
@@ -211,13 +223,17 @@ module ActiveScaffold
       ## Search column override signatures
       ##
 
-      def override_search_field?(column)
-        respond_to?(override_search_field(column))
+      def override_search_field(column)
+        method_with_class = override_search_field_name(column, true)
+        return method_with_class if respond_to?(method_with_class)
+        method = override_search_field_name(column)
+        method if respond_to?(method)
       end
+      alias_method :override_search_field?, :override_search_field
 
       # the naming convention for overriding form fields with helpers
-      def override_search_field(column)
-        "#{column.name}_search_column"
+      def override_search_field_name(column, class_prefix = false)
+        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_search_column"
       end
 
       def override_search?(search_ui)
