@@ -169,41 +169,6 @@ module ActiveScaffold
         end.html_safe
       end
 
-      # requires RecordSelect plugin to be installed and configured.
-      # ... maybe this should be provided in a bridge?
-      def active_scaffold_input_record_select(column, options)
-        if column.singular_association?
-          multiple = false
-          multiple = column.options[:html_options][:multiple] if column.options[:html_options] &&  column.options[:html_options][:multiple]
-          active_scaffold_record_select(column, options, @record.send(column.name), multiple)
-        elsif column.plural_association?
-          active_scaffold_record_select(column, options, @record.send(column.name), true)
-        end
-      end
-
-      def active_scaffold_record_select(column, options, value, multiple)
-        unless column.association
-          raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
-        end
-        remote_controller = active_scaffold_controller_for(column.association.klass).controller_path
-
-        # if the opposite association is a :belongs_to (in that case association in this class must be has_one or has_many)
-        # then only show records that have not been associated yet
-        if [:has_one, :has_many].include?(column.association.macro)
-          params.merge!({column.association.primary_key_name => ''})
-        end
- 
-        record_select_options = {:controller => remote_controller, :id => options[:id]}
-        record_select_options.merge!(active_scaffold_input_text_options)
-        record_select_options.merge!(column.options)
-
-        if multiple
-          record_multi_select_field(options[:name], value || [], record_select_options)
-        else
-          record_select_field(options[:name], value || column.association.klass.new, record_select_options)
-        end
-      end
-
       def active_scaffold_input_checkbox(column, options)
         check_box(:record, column.name, options)
       end
