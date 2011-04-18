@@ -294,7 +294,7 @@ module ActiveScaffold
 
       def column_empty?(column_value)
         empty = column_value.nil?
-        empty ||= column_value.empty? if column_value.respond_to? :empty?
+        empty ||= column_value.blank? if column_value.respond_to? :blank?
         empty ||= ['&nbsp;', active_scaffold_config.list.empty_field_text].include? column_value if String === column_value
         return empty
       end
@@ -328,7 +328,15 @@ module ActiveScaffold
         value = false unless record.class.authorized_for?(:crud_type => :create)
         value
       end
-      
+ 
+      def clean_column_name(name)
+        name.to_s.gsub('?', '')
+      end
+
+      def clean_class_name(name)
+        name.underscore.gsub('/', '_')
+      end
+     
       def active_scaffold_error_messages_for(*params)
         options = params.extract_options!.symbolize_keys
         options.reverse_merge!(:container_tag => :div, :list_type => :ul)
