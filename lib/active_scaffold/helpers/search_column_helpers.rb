@@ -177,27 +177,6 @@ module ActiveScaffold
       alias_method :active_scaffold_search_float, :active_scaffold_search_range
       alias_method :active_scaffold_search_string, :active_scaffold_search_range
 
-      def active_scaffold_search_record_select(column, options)
-        value = field_search_record_select_value(column)
-        active_scaffold_record_select(column, options, value, column.options[:multiple])
-      end
-      
-      def field_search_record_select_value(column)
-        begin 
-          value = field_search_params[column.name]
-          unless value.blank?
-            if column.options[:multiple]
-              column.association.klass.find value.collect!(&:to_i)
-            else
-              column.association.klass.find(value.to_i)
-            end
-          end
-        rescue Exception => e
-          logger.error Time.now.to_s + "Sorry, we are not that smart yet. Attempted to restore search values to search fields but instead got -- #{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-          raise e
-        end
-      end
-
       def field_search_datetime_value(value)
         DateTime.new(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
       end
