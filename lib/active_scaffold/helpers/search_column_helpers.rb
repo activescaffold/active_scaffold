@@ -122,9 +122,13 @@ module ActiveScaffold
         
       end
 
+      def active_scaffold_search_range_string?(column)
+        (column.column && column.column.text?) || column.search_ui == :string
+      end
+
       def active_scaffold_search_range_comparator_options(column)
         select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
-        if column.column && column.column.text?
+        if active_scaffold_search_range_string?(column)
           select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]}
         end
         select_options
@@ -134,7 +138,7 @@ module ActiveScaffold
         opt_value, from_value, to_value = field_search_params_range_values(column)
 
         select_options = active_scaffold_search_range_comparator_options(column)
-        if column.column && column.column.text?
+        if active_scaffold_search_range_string?(column)
           text_field_size = 15
           opt_value ||= '%?%'
         else
