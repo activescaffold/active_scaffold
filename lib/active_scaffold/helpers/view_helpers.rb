@@ -228,10 +228,15 @@ module ActiveScaffold
       def url_options_for_sti_link(column, record, link, url_options, options = {})
         #need to find out controller of current record type
         #and set parameters
-        sti_controller_path = controller_path_for_activerecord(record.class)
-        if sti_controller_path
-          url_options[:controller] = sti_controller_path
-          url_options[:parent_sti] = controller_path
+        # its quite difficult to detect an sti link
+        # if link.column.nil? we are sure that it is nt an singular association inline autolink
+        # howver that will not work if a sti parent is an singular association inline autolink
+        if link.column.nil?
+          sti_controller_path = controller_path_for_activerecord(record.class)
+          if sti_controller_path
+            url_options[:controller] = sti_controller_path
+            url_options[:parent_sti] = controller_path
+          end
         end
       end
 
