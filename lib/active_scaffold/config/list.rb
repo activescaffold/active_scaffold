@@ -114,6 +114,12 @@ module ActiveScaffold::Config
     def always_show_create
       @always_show_create && @core.actions.include?(:create)
     end
+
+    # if list view is nested hide nested_column
+    attr_writer :hide_nested_column
+    def hide_nested_column
+      @hide_nested_column.nil? ? true : @hide_nested_column
+    end
     
     # might be set to open nested_link automatically in view
     # conf.nested.add_link(:players)
