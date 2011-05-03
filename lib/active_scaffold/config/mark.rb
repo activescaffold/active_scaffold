@@ -4,8 +4,12 @@ module ActiveScaffold::Config
     
     def initialize(core_config)
       @core = core_config
-      @core.model.send(:include, ActiveScaffold::MarkedModel) unless @core.model.ancestors.include?(ActiveScaffold::MarkedModel)
-      add_mark_column
+      if core_config.actions.include?(:update)
+        @core.model.send(:include, ActiveScaffold::MarkedModel) unless @core.model.ancestors.include?(ActiveScaffold::MarkedModel)
+        add_mark_column
+      else
+        raise "Mark action requires update action in controller for model: #{core_config.model.to_s}"
+      end
     end
     
     protected
