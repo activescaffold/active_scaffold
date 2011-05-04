@@ -8,8 +8,8 @@ es:
     click_to_edit: 'Pulsa para editar'
     click_to_reset: 'Pulsa para restaurar'
     close: 'Cerrar'
-    config_list: 'Configure'
-    config_list_model: 'Configure Columns for %{model}'
+    config_list: 'Configurar'
+    config_list_model: 'Configurar columnas de %{model}'
     create: 'Crear'
     create_model: 'Crear %{model}'
     create_another: 'Crear Otro %{model}'
@@ -31,7 +31,7 @@ es:
     live_search: 'Buscar en Vivo'
     loading: 'Cargando…'
     nested_for_model: '%{nested_model} de %{parent_model}'
-    nested_of_model: '%{nested_model} of %{parent_model}'
+    nested_of_model: '%{nested_model} de %{parent_model}'
     next: 'Siguiente'
     no_entries: 'Sin entradas'
     no_options: 'sin opciones'
@@ -67,31 +67,31 @@ es:
     contains: 'Contiene'
     begins_with: 'Empieza con'
     ends_with: 'Termina con'
-    today: 'Today'
-    yesterday: 'Yesterday'
-    tomorrow: 'Tommorrow'
-    this_week: 'This Week'
-    prev_week: 'Last Week'
-    next_week: 'Next Week'
-    this_month: 'This Month'
-    prev_month: 'Last Month'
-    next_month: 'Next Month'
-    this_year: 'This Year'
-    prev_year: 'Last Year'
-    next_year: 'Next Year'
-    past: 'Past'
-    future: 'Future'
-    range: 'Range'
-    seconds: 'Seconds'
-    minutes: 'Minutes'
-    hours: 'Hours'
-    days: 'Days'
-    weeks: 'Weeks'
-    months: 'Months'
-    years: 'Years'
-    optional_attributes: 'Further Options'
-    null: 'Null'
-    not_null: 'Not Null'
+    today: 'Hoy'
+    yesterday: 'Ayer'
+    tomorrow: 'Mañana'
+    this_week: 'Esta semana'
+    prev_week: 'Semana pasada'
+    next_week: 'Próxima semana'
+    this_month: 'Este mes'
+    prev_month: 'Mes pasado'
+    next_month: 'Próximo mes'
+    this_year: 'Este año'
+    prev_year: 'Año pasado'
+    next_year: 'Próximo año'
+    past: 'Pasado'
+    future: 'Futuro'
+    range: 'Rango'
+    seconds: 'Segundos'
+    minutes: 'Minutos'
+    hours: 'Horas'
+    days: 'Días'
+    weeks: 'Semanas'
+    months: 'Meses'
+    years: 'Años'
+    optional_attributes: 'Más opciones'
+    null: 'Nulo'
+    not_null: 'No Nulo'
     date_picker_options:
       weekHeader: 'Sm'
       firstDay: 1
@@ -104,12 +104,12 @@ es:
     errors:
       template:
         header:
-          one: "1 error prohibited this %{model} from being saved."
-          other: "%{count} errors prohibited this %{model} from being saved"
-        body: "There were problems with the following fields:"
+          one: "No se pudo guardar debido a un error."
+          other: "No se pudo guardar debido a %{count} errores."
+        body: "Hubo problemas con los siguientes campos:"
 
     # error_messages
     cant_destroy_record: "No se pudo borrar %{record}"
     internal_error: 'Petición fallida (código 500, error interno)'
     version_inconsistency: 'Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo.'
-    no_authorization_for_action: "No Authorization for action %{action}"
+    no_authorization_for_action: "No dispone de autorización para la acción %{action}"
