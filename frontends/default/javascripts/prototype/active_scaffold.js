@@ -230,7 +230,7 @@ document.observe("dom:loaded", function() {
     if(loading_indicator) loading_indicator.style.visibility = 'hidden';  
     return true;
   });
-  document.on('ajax:before', 'input[type=button].as_add_existing', function(event) {
+  document.on('ajax:before', 'input[type=button].as_add_existing, input[type=button].as_replace_existing', function(event) {
     var button = event.findElement();
     var url =  button.readAttribute('href').sub('--ID--', button.previous().getValue());
     event.memo.url = url;
@@ -561,7 +561,7 @@ var ActiveScaffold = {
         element.insert(content);
       }
     } else {
-      var current = $$('#' + element.readAttribute('id') + ' tr.association-record');
+      var current = $$('#' + element.readAttribute('id') + ' .association-record');
       if (current[0]) {
         this.replace(current[0], content);
       } else {
