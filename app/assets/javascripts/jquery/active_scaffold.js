@@ -152,7 +152,7 @@ $(document).ready(function() {
     $(this).prevAll('img.loading-indicator').css('visibility','hidden');
     return true;
   });
-  $('input[type=button].as_add_existing').live('ajax:before', function(event) {
+  $('input[type=button].as_add_existing, input[type=button].as_replace_existing').live('ajax:before', function(event) {
     var url = $(this).attr('href').replace('--ID--', $(this).prev().val());
     event.data_url = url;
     return true;
@@ -631,7 +631,7 @@ var ActiveScaffold = {
         element.append(content);
       }
     } else {
-      var current = $('#' + element.attr('id') + ' tr.association-record')
+      var current = $('#' + element.attr('id') + ' .association-record')
       if (current[0]) {
         this.replace(current[0], content);
       } else {
