@@ -6,6 +6,7 @@ module ActiveScaffold::Config
     
     def initialize(core_config)
       @core = core_config
+      @mark_all_mode = self.class.mark_all_mode
       if core_config.actions.include?(:update)
         @core.model.send(:include, ActiveScaffold::MarkedModel) unless @core.model.ancestors.include?(ActiveScaffold::MarkedModel)
         add_mark_column
