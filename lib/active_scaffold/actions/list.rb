@@ -65,14 +65,14 @@ module ActiveScaffold::Actions
       self.active_scaffold_includes.concat includes_for_list_columns
 
       options = { :sorting => active_scaffold_config.list.user.sorting,
-                  :count_includes => active_scaffold_config.list.user.count_includes }
+        :count_includes => active_scaffold_config.list.user.count_includes }
       paginate = (params[:format].nil?) ? (accepts? :html, :js) : ['html', 'js'].include?(params[:format])
       if paginate
         options.merge!({
-          :per_page => active_scaffold_config.list.user.per_page,
-          :page => active_scaffold_config.list.user.page, 
-          :pagination => active_scaffold_config.list.pagination
-        })
+            :per_page => active_scaffold_config.list.user.per_page,
+            :page => active_scaffold_config.list.user.page,
+            :pagination => active_scaffold_config.list.pagination
+          })
       end
 
       page = find_page(options);
@@ -84,14 +84,39 @@ module ActiveScaffold::Actions
     end
 
     def each_record_in_scope
+      _page = active_scaffold_config.list.user.page
       do_search if respond_to? :do_search
-      finder_options = { :order => "#{active_scaffold_config.model.connection.quote_table_name(active_scaffold_config.model.table_name)}.#{active_scaffold_config.model.primary_key} ASC",
-                         :conditions => all_conditions,
-                         :joins => joins_for_finder}
-      finder_options.merge! custom_finder_options
-      finder_options.merge! :include => (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
-      klass = beginning_of_chain
-      klass.all(finder_options).each {|record| yield record}
+      active_scaffold_config.list.user.page = _page
+      if active_scaffold_config.mark.mark_all_mode == :page then
+        includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
+        self.active_scaffold_includes.concat includes_for_list_columns
+
+        options = { :sorting => active_scaffold_config.list.user.sorting,
+          :count_includes => active_scaffold_config.list.user.count_includes }
+        paginate = (params[:format].nil?) ? (accepts? :html, :js) : ['html', 'js'].include?(params[:format])
+        if paginate
+          options.merge!({
+              :per_page => active_scaffold_config.list.user.per_page,
+              :page => active_scaffold_config.list.user.page,
+              :pagination => active_scaffold_config.list.pagination
+            })
+        end
+
+        page = find_page(options);
+        if page.items.blank? && !page.pager.infinite?
+          page = page.pager.last
+          active_scaffold_config.list.user.page = page.number
+        end
+        page.items.each {|record| yield record}
+      else
+        finder_options = { :order => "#{active_scaffold_config.model.connection.quote_table_name(active_scaffold_config.model.table_name)}.#{active_scaffold_config.model.primary_key} ASC",
+          :conditions => all_conditions,
+          :joins => joins_for_finder}
+        finder_options.merge! custom_finder_options
+        finder_options.merge! :include => (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
+        klass = beginning_of_chain
+        klass.all(finder_options).each {|record| yield record}
+      end
     end
 
     # The default security delegates to ActiveRecordPermissions.
