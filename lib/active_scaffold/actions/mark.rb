@@ -15,7 +15,7 @@ module ActiveScaffold::Actions
       end
       respond_to_action(:mark_all)
     end
- protected
+    protected
 
     def mark_all_respond_to_html
       do_list
@@ -43,11 +43,19 @@ module ActiveScaffold::Actions
     end
 
     def do_mark_all
-      each_record_in_scope {|record| marked_records << record.id}
+      if active_scaffold_config.mark.mark_all_mode == :page then
+        each_record_in_page {|record| marked_records << record.id}
+      else
+        each_record_in_scope {|record| marked_records << record.id}
+      end
     end
 
     def do_demark_all
-      each_record_in_scope {|record| marked_records.delete(record.id)}
+      if active_scaffold_config.mark.mark_all_mode == :page then
+        each_record_in_page {|record| marked_records.delete(record.id)}
+      else
+        each_record_in_scope {|record| marked_records.delete(record.id)}
+      end
     end
     
     # The default security delegates to ActiveRecordPermissions.
