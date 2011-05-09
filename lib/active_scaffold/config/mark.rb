@@ -1,8 +1,10 @@
 module ActiveScaffold::Config
   class Mark < Base
     self.crud_type = :read
-    attr_accessor :mark_all_mode
+    cattr_accessor :mark_all_mode
     @@mark_all_mode = :search
+
+    attr_accessor :mark_all_mode
     
     def initialize(core_config)
       @core = core_config
