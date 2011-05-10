@@ -160,7 +160,11 @@ $(document).ready(function() {
         params = as_form.serialize();
         params += '&' + $.param({source_id: element.attr('id')});
       } else {
-        params = {value: element.val()};
+        if (element.is("input:checkbox")) {
+          params = {value: element.is(":checked")};
+        } else {
+          params = {value: element.val()};
+        }
         params.source_id = element.attr('id');
       }
 
