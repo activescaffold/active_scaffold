@@ -1,6 +1,10 @@
 module ActiveScaffold::Config
   class Mark < Base
     self.crud_type = :read
+
+    # What kind of mark all mode to use:
+    # * :search: de-/mark all records using current search conditions
+    # * :page: de-/mark all records on current page
     cattr_accessor :mark_all_mode
     @@mark_all_mode = :search
 
