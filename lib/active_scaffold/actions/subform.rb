@@ -2,7 +2,7 @@ module ActiveScaffold::Actions
   module Subform
     def edit_associated
       do_edit_associated
-      render :action => 'edit_associated'
+      render :action => 'edit_associated.js'
     end
 
     protected
