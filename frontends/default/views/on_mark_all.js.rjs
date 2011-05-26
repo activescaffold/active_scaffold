@@ -1,4 +1,12 @@
 options = {:checked => mark_all,
            :include_mark_all => true}
 page << "ActiveScaffold.mark_records('#{active_scaffold_tbody_id}', #{options.to_json});"
-
+if !@marked_records_count.nil? && @marked_records_count>0 then
+  if @marked_records_count < @page.pager.count then
+    page.call 'ActiveScaffold.replace_html', active_scaffold_messages_id, @marked_records_count.to_s + " records marked. Press <a href=\""+url_for(:action=>"mark_all",:target=>"scope")+"\">here</a> to select all #{@page.pager.count} records.".html_safe
+  else
+    page.call 'ActiveScaffold.replace_html', active_scaffold_messages_id, "All #{@page.pager.count} records marked"
+  end
+else
+  page.call 'ActiveScaffold.replace_html', active_scaffold_messages_id, ""
+end
