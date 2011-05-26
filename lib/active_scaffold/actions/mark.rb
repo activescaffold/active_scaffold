@@ -8,7 +8,7 @@ module ActiveScaffold::Actions
     end
 
     def mark_all
-      if mark_all?
+      if mark_all? || (!params[:target].nil? && params[:target] == 'scope')
         do_mark_all
       else
         do_demark_all
@@ -43,11 +43,12 @@ module ActiveScaffold::Actions
     end
 
     def do_mark_all
-      if active_scaffold_config.mark.mark_all_mode == :page then
+      if active_scaffold_config.mark.mark_all_mode == :page && (params[:target].nil? || params[:target]!='scope') then
         each_record_in_page {|record| marked_records << record.id}
       else
         each_record_in_scope {|record| marked_records << record.id}
       end
+      @marked_records_count = marked_records.length
     end
 
     def do_demark_all
