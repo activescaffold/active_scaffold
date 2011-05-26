@@ -237,9 +237,9 @@ module ActiveScaffold
       end
     end
     
-    def link_for_association(column, options = {})
+    def active_scaffold_controller_for_column(column, options = {})
       begin
-        controller = if column.polymorphic_association?
+        if column.polymorphic_association?
           :polymorph
         elsif options.include?(:controller)
           "#{options[:controller].to_s.camelize}Controller".constantize
@@ -247,8 +247,12 @@ module ActiveScaffold
           active_scaffold_controller_for(column.association.klass)
         end
       rescue ActiveScaffold::ControllerNotFound
-        controller = nil        
+        nil        
       end
+    end
+    
+    def link_for_association(column, options = {})
+      controller = active_scaffold_controller_for_column(column, options)
       
       unless controller.nil?
         options.reverse_merge! :label => column.label, :position => :after, :type => :member, :controller => (controller == :polymorph ? controller : controller.controller_path), :column => column
