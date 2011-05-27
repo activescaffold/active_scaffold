@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{active_scaffold_vho}
-  s.version = "3.0.20"
+  s.version = "3.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Many, see README"]
@@ -305,7 +305,7 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
-  s.summary = %q{Rails 3 Version of activescaffold supporting prototype and jquery}
+  s.summary = %q{Rails 3.1 Version of activescaffold supporting prototype and jquery}
   s.test_files = [
     "test/bridges/bridge_test.rb",
     "test/config/base_test.rb",
@@ -366,7 +366,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_runtime_dependency(%q<render_component_vho>, [">= 0"])
       s.add_runtime_dependency(%q<verification>, [">= 0"])
-      s.add_runtime_dependency(%q<rails>, ["~> 3.0.0"])
+      s.add_runtime_dependency(%q<rails>, ["~> 3.1.0"])
     else
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
@@ -374,7 +374,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<render_component_vho>, [">= 0"])
       s.add_dependency(%q<verification>, [">= 0"])
-      s.add_dependency(%q<rails>, ["~> 3.0.0"])
+      s.add_dependency(%q<rails>, ["~> 3.1.0"])
     end
   else
     s.add_dependency(%q<shoulda>, [">= 0"])
@@ -383,7 +383,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rcov>, [">= 0"])
     s.add_dependency(%q<render_component_vho>, [">= 0"])
     s.add_dependency(%q<verification>, [">= 0"])
-    s.add_dependency(%q<rails>, ["~> 3.0.0"])
+    s.add_dependency(%q<rails>, ["~> 3.1.0"])
   end
 end
 
