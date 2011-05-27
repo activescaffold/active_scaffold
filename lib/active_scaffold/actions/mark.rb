@@ -8,7 +8,7 @@ module ActiveScaffold::Actions
     end
 
     def mark_all
-      if mark_all? || (!params[:target].nil? && params[:target] == 'scope')
+      if mark_all? || mark_all_scope_forced?
         do_mark_all
       else
         do_demark_all
@@ -42,13 +42,16 @@ module ActiveScaffold::Actions
       @mark_all ||= [true, 'true', 1, '1', 'T', 't'].include?(params[:value].class == String ? params[:value].downcase : params[:value])
     end
 
+    def mark_all_scope_forced?
+      !params[:mark_target].nil? && params[:mark_target]=='scope'
+    end
+    
     def do_mark_all
-      if active_scaffold_config.mark.mark_all_mode == :page && (params[:target].nil? || params[:target]!='scope') then
+      if active_scaffold_config.mark.mark_all_mode == :page && !mark_all_scope_forced? then
         each_record_in_page {|record| marked_records << record.id}
       else
         each_record_in_scope {|record| marked_records << record.id}
       end
-      @marked_records_count = marked_records.length
     end
 
     def do_demark_all
