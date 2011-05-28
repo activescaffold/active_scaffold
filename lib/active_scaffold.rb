@@ -126,7 +126,7 @@ module ActiveScaffold
   end
   
   def self.js_framework
-    @@js_framework ||= :prototype
+    @@js_framework ||= :jquery
   end
 
   # exclude bridges you do not need
