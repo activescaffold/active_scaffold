@@ -26,7 +26,7 @@ module ActiveScaffold::Config
 
     # define a default action_group for this action
     # e.g. 'members.crud'
-    class_inheritable_accessor :action_group
+    class_attribute :action_group
 
     # action_group this action should belong to
     attr_accessor :action_group
