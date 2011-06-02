@@ -35,7 +35,7 @@ Rails 2.2.*: Active Scaffold rails-2.2
 Rails 2.1.*: Active Scaffold rails-2.1
 Rails < 2.1: Active Scaffold 1-1-stable (no guarantees)
 
-Since Rails 2.3, render_component plugin is needed for nested and embbeded scaffolds. It works with rails-2.3 branch from ewildgoose repository:
+Since Rails 2.3, render_component plugin is needed for nested and embedded scaffolds. It works with rails-2.3 branch from ewildgoose repository:
 script/plugin install git://github.com/ewildgoose/render_component.git -r rails-2.3
 
 Released under the MIT license (included)
