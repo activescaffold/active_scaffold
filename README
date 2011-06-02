@@ -37,13 +37,13 @@ Since Rails 3.0, https://github.com/rails/verification.git is also needed.
 If you want to install as plugins under vendor/plugins, install these versions:
   rails plugin install git://github.com/vhochstein/render_component.git
   rails plugin install git://github.com/rails/verification.git
-  rails plugin install git://github.com/vhochstein/active_scaffold.git
+  rails plugin install git://github.com/vhochstein/active_scaffold.git -r 'rails-3.0'
 
 If you want to use the gem, add to your Gemfile:
   gem "active_scaffold_vho"
 
-In case you would like to use most recent commit:
-  gem 'active_scaffold_vho', :git => 'git://github.com/vhochstein/active_scaffold.git'
+In case you would like to use most recent commit with rails 3.0:
+  gem 'active_scaffold_vho', :git => 'git://github.com/vhochstein/active_scaffold.git, :branch => 'rails-3.0'
 
 == Pick your own javascript framework
 
