@@ -40,7 +40,7 @@ module ActiveScaffold::Actions
         end
         after_render_field(@record, column)
         source_id = params.delete(:source_id)
-        render :partial => "render_field", :collection => Array(params[:update_columns]), :content_type => 'text/javascript', :locals => {:source_id => source_id}
+        render :partial => "render_field", :collection => column.update_columns, :content_type => 'text/javascript', :locals => {:source_id => source_id}
       end
     end
     
