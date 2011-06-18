@@ -1,11 +1,9 @@
-// This is a manifest file that'll be compiled into including all the files listed below.
-// Add new JavaScript/Coffee code in separate files in this directory and they'll automatically
-// be included in the compiled file accessible from http://example.com/assets/application.js
-// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
-// the compiled file.
-//
 <% if ActiveScaffold.js_framework == :jquery %>
-//= require jquery/active_scaffold
+<% require_asset "jquery/active_scaffold" %>
+<% require_asset "jquery/jquery.editinplace" %>
 <% else %>
-//= require prototype/active_scaffold
+<% require_asset "prototype/active_scaffold" %>
+<% require_asset "prototype/dhtml_history" %>
+<% require_asset "prototype/form_enhancements" %>
+<% require_asset "prototype/rico_corner" %>
 <% end %>
