@@ -245,7 +245,7 @@ module ActiveScaffold
       # add functionality for overriding subform partials from association class path
       def override_subform_partial?(column, subform_partial)
         path, partial_name = partial_pieces(override_subform_partial(column, subform_partial))
-        template_exists?(partial_name, path, true)
+        template_exists?(partial_name, path)
       end
 
       def override_subform_partial(column, subform_partial)
@@ -254,7 +254,7 @@ module ActiveScaffold
 
       def override_form_field_partial?(column)
         path, partial_name = partial_pieces(override_form_field_partial(column))
-        template_exists?(partial_name, path, true)
+        template_exists?(partial_name, path)
       end
 
       # the naming convention for overriding form fields with partials
