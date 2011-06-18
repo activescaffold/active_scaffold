@@ -100,27 +100,5 @@ module ActionView #:nodoc:
     end
     alias_method_chain :render, :active_scaffold
 
-
-    def partial_pieces(partial_path)
-      if partial_path.include?('/')
-        return File.dirname(partial_path), File.basename(partial_path)
-      else
-        return controller.class.controller_path, partial_path
-      end
-    end
-
-    # This is the template finder logic, keep it updated with however we find stuff in rails
-    # currently this very similar to the logic in ActionBase::Base.render for options file
-    # TODO: Work with rails core team to find a better way to check for this.
-    def template_exists?(template_name, lookup_overrides = false)
-      begin
-        method = 'find_template'
-        method << '_without_active_scaffold' unless lookup_overrides
-        self.view_paths.send(method, template_name, @template_format)
-        return true
-      rescue ActionView::MissingTemplate => e
-        return false
-      end
-    end
   end
 end
