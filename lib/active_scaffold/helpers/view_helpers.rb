@@ -114,7 +114,7 @@ module ActiveScaffold
 
       # a general-use loading indicator (the "stuff is happening, please wait" feedback)
       def loading_indicator_tag(options)
-        image_tag "/images/active_scaffold/default/indicator.gif", :style => "visibility:hidden;", :id => loading_indicator_id(options), :alt => "loading indicator", :class => "loading-indicator"
+        image_tag "indicator.gif", :style => "visibility:hidden;", :id => loading_indicator_id(options), :alt => "loading indicator", :class => "loading-indicator"
       end
 
       # Creates a javascript-based link that toggles the visibility of some element on the page.
