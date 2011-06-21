@@ -22,7 +22,7 @@
       </td>
     </tr>
     <% end %>
-    <%= render :partial => 'horizontal_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => @record.new_record? && @record == associated.last} %>
+    <%= render :partial => 'horizontal_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => show_blank_record && @record.new_record? && @record == associated.last} %>
     <% end -%>
   </tbody>
 </table>
