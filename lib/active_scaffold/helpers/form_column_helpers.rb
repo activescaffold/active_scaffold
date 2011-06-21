@@ -83,7 +83,7 @@ module ActiveScaffold
           url_params = {:action => 'render_field', :id => params[:id], :column => column.name}
           url_params[:eid] = params[:eid] if params[:eid]
           url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
-          url_params[:scope] = params[:scope] if scope
+          url_params[:scope] = scope if scope
 
           options[:class] = "#{options[:class]} update_form".strip
           options['data-update_url'] = url_for(url_params)
