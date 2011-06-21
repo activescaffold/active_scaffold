@@ -4,9 +4,9 @@
     options[:is_subform] = true
   end %>
 
-ActiveScaffold.render_form_field('<%source_id%>','<%=escape_javascript(render(:partial => form_partial_for_column(column), :locals => { :column => column, :scope => params[:scope] }))%>', options.to_json.html_safe);
+ActiveScaffold.render_form_field('<%source_id%>','<%=escape_javascript(render(:partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope }))%>', options.to_json.html_safe);
 <%if column.update_columns && !column.update_columns.empty?%>
-  <%=  render(:partial => "render_field", :collection => column.update_columns)%>
+  <%=  render(:partial => "render_field", :collection => column.update_columns, :locals => {:source_id => source_id, :scope => scope})%>
 <%end%>
 
     
