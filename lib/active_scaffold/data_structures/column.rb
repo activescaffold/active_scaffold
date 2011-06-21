@@ -248,6 +248,11 @@ module ActiveScaffold::DataStructures
     def virtual?
       column.nil? && association.nil?
     end
+    
+    attr_writer :number
+    def number?
+      @number
+    end
 
     # this is so that array.delete and array.include?, etc., will work by column name
     def ==(other) #:nodoc:
@@ -275,7 +280,9 @@ module ActiveScaffold::DataStructures
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
-      @options = {:format => :i18n_number} if @column.try(:number?)
+      
+      self.number = @column.try(:number?)
+      @options = {:format => :i18n_number} if self.number?
       @form_ui = :checkbox if @column and @column.type == :boolean
       @form_ui = :textarea if @column and @column.type == :text
       @allow_add_existing = true
