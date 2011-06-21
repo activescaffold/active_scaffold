@@ -647,7 +647,7 @@ var ActiveScaffold = {
     if (element.length == 0) {
       element = source.closest('ol.form');
     }
-    element = element.find('.' + options.field_class);
+    element = element.find('.' + options.field_class + ":first");
 
     if (element) {
       if (options.is_subform == false) {
