@@ -112,7 +112,7 @@ module ActiveScaffold
         column.association.klass.find(value) if value and not value.empty?
       elsif column.plural_association?
         column_plural_assocation_value_from_value(column, value)
-      elsif column.column && column.column.number? && [:i18n_number, :currency].include?(column.options[:format])
+      elsif column.column && column.number? && [:i18n_number, :currency].include?(column.options[:format])
         self.class.i18n_number_to_native_format(value)
       else
         # convert empty strings into nil. this works better with 'null => true' columns (and validations),
