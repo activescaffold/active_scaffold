@@ -33,14 +33,21 @@ module ActiveScaffold::Actions
       column = active_scaffold_config.columns[params[:column]]
       unless column.nil?
         if column.send_form_on_update_column
-          @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
+          hash = if params[:scope]
+            hash = params[:scope].gsub('[','').split(']').inject(params[:record]) do |hash, index|
+              hash[index]
+            end
+          else
+            params[:record]
+          end
+          @record = update_record_from_params(@record, active_scaffold_config.update.columns, hash)
         else
           value = column_value_from_param_value(@record, column, params[:value])
           @record.send "#{column.name}=", value
         end
         after_render_field(@record, column)
         source_id = params.delete(:source_id)
-        render :partial => "render_field", :collection => column.update_columns, :content_type => 'text/javascript', :locals => {:source_id => source_id}
+        render :locals => {:source_id => source_id, :columns => column.update_columns, :scope => params[:scope]}
       end
     end
     
