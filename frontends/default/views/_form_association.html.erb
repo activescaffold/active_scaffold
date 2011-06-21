@@ -2,7 +2,7 @@
 parent_record = @record
 associated = column.singular_association? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a
 associated = associated.sort_by {|r| r.new_record? ? 99999999999 : r.id} unless column.association.options.has_key?(:order)
-if column.show_blank_record? associated
+if show_blank_record = column.show_blank_record?(associated)
   associated << if column.singular_association?
     parent_record.send("build_#{column.name}".to_sym)
   else
@@ -13,7 +13,7 @@ subform_div_id = "#{sub_form_id({:association => column.name, :id => parent_reco
 -%>
 <h5><%= column.label -%></h5>
 <div id ="<%= subform_div_id %>" <%= 'style="display: none;"'.html_safe if column.collapsed -%>>
-<%= render :partial => subform_partial_for_column(column), :locals => {:column => column, :parent_record => parent_record, :associated => associated} %>
+<%= render :partial => subform_partial_for_column(column), :locals => {:column => column, :parent_record => parent_record, :associated => associated, :show_blank_record => show_blank_record} %>
 </div>
 <%= link_to_visibility_toggle(subform_div_id, {:default_visible => !column.collapsed}) -%>
 <% @record = parent_record -%>
