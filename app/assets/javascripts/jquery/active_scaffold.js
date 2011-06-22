@@ -179,16 +179,16 @@ $(document).ready(function() {
         data: params,
         beforeSend: function(event) {
           element.nextAll('img.loading-indicator').css('visibility','visible');
-          ActiveScaffold.disable_form(as_form)
+          ActiveScaffold.disable_form(as_form);
         },
         complete: function(event) {
           element.nextAll('img.loading-indicator').css('visibility','hidden');
-          ActiveScaffold.enable_form(as_form)
+          ActiveScaffold.enable_form(as_form);
         },
         error: function (xhr, status, error) {
           var as_div = element.closest("div.active-scaffold");
           if (as_div) {
-            ActiveScaffold.report_500_response(as_div)
+            ActiveScaffold.report_500_response(as_div);
           }
         }
       });
