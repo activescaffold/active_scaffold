@@ -231,7 +231,7 @@ module ActiveScaffold
           html = link_to(image_tag(link.image[:name] , :size => link.image[:size], :alt => label), url, html_options)
         end
         # if url is nil we would like to generate an anchor without href attribute
-        url.nil? ? html.sub(/href=".*?"/, '') : html 
+        url.nil? ? html.sub(/href=".*?"/, '').html_safe : html.html_safe
       end
       
       def url_options_for_nested_link(column, record, link, url_options, options = {})
