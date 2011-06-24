@@ -10,7 +10,6 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::ShowColumnHelpers
       include ActiveScaffold::Helpers::FormColumnHelpers
       include ActiveScaffold::Helpers::SearchColumnHelpers
-      include ActiveScaffold::Helpers::CountryHelpers
       include ActiveScaffold::Helpers::HumanConditionHelpers
 
       ##
