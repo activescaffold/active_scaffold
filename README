@@ -20,7 +20,8 @@ http://code.google.com/p/recordselect/
 
 Please note the following list of Active Scaffold branches and Rails versions. Master will not work with Rails < 2.2
 
-Active Scaffold master currently supports rails-2.3.5, but incompatible changes can be introduced, if you want an stable version, use rails-2.3
+Active Scaffold master currently supports rails-3.1, but incompatible changes can be introduced, if you want an stable version, use rails-2.3
+Rails 3.0.*: Active Scaffold rails-3.0
 Rails 2.3.*: Active Scaffold rails-2.3
 Rails 2.2.*: Active Scaffold rails-2.2
 Rails 2.1.*: Active Scaffold rails-2.1
@@ -42,8 +43,8 @@ If you want to install as plugins under vendor/plugins, install these versions:
 If you want to use the gem, add to your Gemfile:
   gem "active_scaffold_vho"
 
-In case you would like to use most recent commit with rails 3.0:
-  gem 'active_scaffold_vho', :git => 'git://github.com/vhochstein/active_scaffold.git, :branch => 'rails-3.0'
+In case you would like to use most recent commit:
+  gem 'active_scaffold_vho', :git => 'git://github.com/vhochstein/active_scaffold.git', :branch => 'rails-3.0'
 
 == Pick your own javascript framework
 
@@ -65,5 +66,9 @@ uncomment last line in ...plugins/active_scaffold/lib/active_scaffold_env.rb in 
 To configure the javascript framework when installed as a gem:
 Add a config/initializers/active_scaffold.rb containing:
 ActiveScaffold.js_framework = :jquery # :prototype is the default
+
+== Rails 3.1 compatible fork of activesaffold by Volker Hochstein:
+under construction
+
 
 Released under the MIT license (included)
