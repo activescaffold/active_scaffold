@@ -128,7 +128,7 @@ module ActiveScaffold::DataStructures
 
     def set_sorting_from_order_clause(order_clause, model_table_name = nil)
       clear
-      order_clause.split(',').each do |criterion|
+      order_clause.to_s.split(',').each do |criterion|
         unless criterion.blank?
           order_parts = extract_order_parts(criterion)
           add(order_parts[:column_name], order_parts[:direction]) unless different_table?(model_table_name, order_parts[:table_name])
