@@ -7,7 +7,7 @@
 -%>
 <ol class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
 <% if @record.errors.count -%>
-  <div class="association-record-errors" id="<%= element_messages_id :action => @record.class.name.underscore, :id => "#{parent_record.id}-#{index}" %>">
+  <div class="association-record-errors" id="<%= element_messages_id :action => @record.class.name.underscore, :id => "#{parent_record.id}" %>">
     <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
   </div>
 <% end %>
