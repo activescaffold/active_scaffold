@@ -1,8 +1,10 @@
-<% record_column = column -%>
-<% readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update)) -%>
-<% crud_type = @record.new_record? ? :create : (readonly ? :read : :update) -%>
-<% show_actions = false -%>
-<% config = active_scaffold_config_for(@record.class) -%>
+<%
+  record_column = column
+  readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
+  crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
+  show_actions = false
+  config = active_scaffold_config_for(@record.class)
+-%>
 <tr class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
 <% config.subform.columns.each :for => @record.class, :crud_type => crud_type, :flatten => true do |column| %>
 <%
