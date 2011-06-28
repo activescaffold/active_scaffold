@@ -12,7 +12,7 @@
   <% elsif column.readonly_association?
     next %>
   <% elsif renders_as == :subform and !override_form_field?(column) -%>
-  <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %>" id="<%= sub_form_id(:association => column.name) %>">
+  <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %> <%=column.name%>-sub-form" id="<%= sub_form_id(:association => column.name) %>">
     <%=raw render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column } -%>
   </li>
   <% else -%>

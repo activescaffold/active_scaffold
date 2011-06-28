@@ -1,8 +1,11 @@
-<%column = active_scaffold_config.columns[render_field.to_sym]
-  options = {:is_subform => false, :field_class => "#{column.name}-input"}
+<%
+  column = active_scaffold_config.columns[render_field.to_sym]
   if column_renders_as(column) == :subform
-    options[:is_subform] = true
-  end %>
+    options = {:is_subform => true, :field_class => "#{column.name}-sub-form"}
+  else
+    options = {:is_subform => false, :field_class => "#{column.name}-input"}
+  end
+-%>
 
 ActiveScaffold.render_form_field('<%source_id%>','<%=escape_javascript(render(:partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope }))%>', options.to_json.html_safe);
 <%if column.update_columns && !column.update_columns.empty?%>
