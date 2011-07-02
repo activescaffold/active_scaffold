@@ -218,7 +218,6 @@ Gem::Specification.new do |s|
     "lib/active_scaffold/paginator.rb",
     "lib/active_scaffold/responds_to_parent.rb",
     "lib/active_scaffold/version.rb",
-    "lib/active_scaffold_assets.rb",
     "lib/active_scaffold_env.rb",
     "lib/active_scaffold_vho.rb",
     "lib/generators/active_scaffold/USAGE",
