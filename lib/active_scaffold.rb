@@ -370,17 +370,3 @@ module ActiveScaffold
 end
 
 require 'active_scaffold_env'
-
-##
-## Run the install assets script, too, just to make sure
-## But at least rescue the action in production
-##
-
-Rails::Application.initializer("active_scaffold.install_assets") do
-  begin
-    ActiveScaffoldAssets.copy_to_public(ActiveScaffold.root, {:clean_up_destination => true})
-  rescue
-    raise $! unless Rails.env == 'production'
-  end
-end if defined?(ACTIVE_SCAFFOLD_GEM)
-
