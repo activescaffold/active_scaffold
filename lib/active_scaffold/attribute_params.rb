@@ -39,6 +39,7 @@ module ActiveScaffold
       crud_type = parent_record.new_record? ? :create : :update
       return parent_record unless parent_record.authorized_for?(:crud_type => crud_type)
 
+      attributes = {} unless attributes.is_a?(Hash)
       multi_parameter_attributes = {}
       attributes.each do |k, v|
         next unless k.include? '('
