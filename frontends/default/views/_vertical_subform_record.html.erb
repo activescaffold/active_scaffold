@@ -6,11 +6,6 @@
   config = active_scaffold_config_for(@record.class)
 -%>
 <ol class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
-<% if @record.errors.count -%>
-  <div class="association-record-errors" id="<%= element_messages_id :action => @record.class.name.underscore, :id => "#{parent_record.id}-#{index}" %>">
-    <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
-  </div>
-<% end %>
 <% config.subform.columns.each :for => @record, :crud_type => crud_type, :flatten => true do |column| %>
 <%
   next unless in_subform?(column, parent_record)
@@ -19,7 +14,7 @@
   column.form_ui ||= :select if column.association
 -%>
   <li class="form-element <%= 'required' if column.required? %> <%= column.css_class unless column.css_class.nil? %>">
-    <% unless readonly -%>
+    <% unless readonly and not @record.new_record? -%>
       <%= render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope } -%>
     <% else -%>
       <p><%= get_column_value(@record, column) -%></p>
