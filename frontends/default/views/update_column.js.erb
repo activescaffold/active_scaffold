@@ -1,13 +1,16 @@
-column_span_id ||= element_cell_id(:id => @record.id.to_s, :action => 'update_column', :name => params[:column])
-unless controller.send :successful?
-  page.call 'alert', @record.errors.full_messages.join("\n")
-  @record.reload
-end
-column = active_scaffold_config.columns[params[:column]]
-if column.inplace_edit
-  page.call 'ActiveScaffold.replace_html', column_span_id, format_inplace_edit_column(@record, column)
-else
-  formatted_value = get_column_value(@record, column)
-  page.call 'ActiveScaffold.replace_html', column_span_id, formatted_value
-end
-page.call 'ActiveScaffold.replace_html', active_scaffold_calculations_id(column), render_column_calculation(column) if column.calculation?
+<% column_span_id ||= element_cell_id(:id => @record.id.to_s, :action => 'update_column', :name => params[:column])%>
+<% unless controller.send :successful?%>
+  alert('<%= escape_javascript(@record.errors.full_messages.join("\n"))%>');
+  <% @record.reload%>
+<% end%>
+<% column = active_scaffold_config.columns[params[:column]]%>
+<% if column.inplace_edit%>
+  ActiveScaffold.replace_html('<%=column_span_id%>','<%=escape_javascript(format_inplace_edit_column(@record, column))%>');
+<% else%>
+  <% formatted_value = get_column_value(@record, column)%>
+  ActiveScaffold.replace_html('<%=column_span_id%>','<%=escape_javascript(formatted_value)%>');
+<% end%>
+<% if column.calculation?%>
+ ActiveScaffold.replace_html('<%=active_scaffold_calculations_id(column)%>', '<%=escape_javascript(render_column_calculation(column))%>');
+<% end%>
+
