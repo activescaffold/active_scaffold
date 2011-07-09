@@ -1,10 +1,13 @@
-if controller.send :successful?
-  page.call 'ActiveScaffold.replace_html', active_scaffold_messages_id, render(:partial => 'messages')
-  page.call 'ActiveScaffold.update_row', element_row_id(:action => :list, :id => @record.id), render(:partial => 'list_record', :locals => {:record => @record}) if @record
-  page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}
-else
-  flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br)
-  page.call 'ActiveScaffold.replace_html', active_scaffold_messages_id, render(:partial => 'messages')
-  page.call 'ActiveScaffold.scroll_to', active_scaffold_messages_id
-end
-
+<%if controller.send :successful?%>
+  ActiveScaffold.replace_html('<%=active_scaffold_messages_id%>','<%=escape_javascript(render(:partial => 'messages'))%>');
+  <%if @record%>
+  ActiveScaffold.update_row('<%=element_row_id(:action => :list, :id => @record.id)%>','<%=escape_javascript(render(:partial => 'list_record', :locals => {:record => @record}))%>');
+  <%end%>
+  <% if active_scaffold_config.list.columns.any? {|c| c.calculation?}%>
+      ActiveScaffold.replace('<%=active_scaffold_calculations_id%>', '<%=escape_javascript(render(:partial => 'list_calculations'))%>');
+    <% end %>
+<%else%>
+  <%flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br)%>
+  ActiveScaffold.replace_html('<%=active_scaffold_messages_id%>','<%=escape_javascript(render(:partial => 'messages'))%>');
+  ActiveScaffold.scroll_to('<%=active_scaffold_messages_id%>');
+<%end%>
