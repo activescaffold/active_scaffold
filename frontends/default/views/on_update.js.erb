@@ -16,7 +16,7 @@ action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'mess
     <% end %>
     <%#page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}%>
   <% elsif update_refresh_list? %>
-    ActiveScaffold.replace_html(<%= active_scaffold_content_id%>, <%= escape_javascript(render(:partial => 'list', :layout => false)) %>);
+    ActiveScaffold.replace_html('<%= active_scaffold_content_id%>', '<%= escape_javascript(render(:partial => 'list', :layout => false))%>');
    <% else %>
     <% updated_row = render :partial => 'list_record', :locals => {:record => @record}%>
     action_link.close('<%= escape_javascript(updated_row)%>');
