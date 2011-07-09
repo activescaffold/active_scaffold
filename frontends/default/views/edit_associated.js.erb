@@ -1,3 +1,4 @@
+<%
 associated_form = render :partial => "#{subform_partial_for_column(@column)}_record", :locals => {:scope => @scope, :parent_record => @parent_record, :column => @column, :locked => @record.new_record? && @column.singular_association?}
 options = {:singular => false}
 if @column.singular_association?
@@ -7,5 +8,5 @@ else
     column = active_scaffold_config_for(@record.class).columns[@record.class.primary_key]
     options[:id] = active_scaffold_input_options(column, @scope)[:id]
   end
-end
-page.call 'ActiveScaffold.create_associated_record_form', sub_form_list_id(:association => @column.name), associated_form, options
+end %>
+ActiveScaffold.create_associated_record_form('<%=sub_form_list_id(:association => @column.name)%>','<%=escape_javascript(associated_form)%>', options.to_json.html_safe);
