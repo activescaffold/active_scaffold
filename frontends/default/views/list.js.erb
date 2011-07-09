@@ -1,1 +1,1 @@
-page.call 'ActiveScaffold.replace_html', active_scaffold_content_id, render(:partial => 'list', :layout => false)
+ActiveScaffold.replace_html('<%=active_scaffold_content_id%>','<%=escape_javascript(render(:partial => 'list', :layout => false))%>');
