@@ -57,7 +57,7 @@ $(document).ready(function() {
       } else {
         action_link.enable();
       }
-      return true;
+      $(this).trigger('as:action_success', action_link);
     }
     return true;
   });
@@ -870,6 +870,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
     this.loading_indicator = loading_indicator;
     this.hide_target = false;
     this.position = this.tag.attr('data-position');
+    this.action = this.tag.attr('data-action');
 		
     this.tag.data('action_link', this);
     return this;
