@@ -238,34 +238,7 @@ document.observe("dom:loaded", function() {
   });
   document.on('change', 'input.update_form, select.update_form', function(event) {
     var element = event.findElement();
-    var as_form = element.up('form.as_form');
-    var params = null;
-
-    if (element.hasAttribute('data-update_send_form')) {
-        params = as_form.serialize(true);
-    } else {
-        params = {value: element.getValue()};
-    }
-    params.source_id = element.readAttribute('id');
-
-    new Ajax.Request(element.readAttribute('data-update_url'), {
-      method: 'get',
-      parameters: params,
-      onLoading: function(response) {
-        element.next('img.loading-indicator').style.visibility = 'visible';
-        as_form.disable();
-      },
-      onComplete: function(response) {
-        element.next('img.loading-indicator').style.visibility = 'hidden';
-        as_form.enable();
-      },
-      onFailure:  function(request) { 
-        var as_div = event.findElement('div.active-scaffold');
-        if (as_div) {
-          ActiveScaffold.report_500_response(as_div)
-        }
-      }
-    });
+    ActiveScaffold.update_column(element, element.readAttribute('data-update_url'), element.hasAttribute('data-update_send_form'), element.readAttribute('id'), element.getValue());
     return true;
   });
   document.on('change', 'select.as_search_range_option', function(event) {
@@ -620,8 +593,38 @@ var ActiveScaffold = {
       }
       mark_all_checkbox.writeAttribute('value', ('' + !options.checked));
     }
-  }
+  },
 
+  update_column: function(element, url, send_form, source_id, val) {
+    var as_form = element.up('form.as_form');
+    var params = null;
+
+    if (send_form) {
+        params = as_form.serialize(true);
+    } else {
+        params = {value: val};
+    }
+    params.source_id = source_id;
+
+    new Ajax.Request(url, {
+      method: 'get',
+      parameters: params,
+      onLoading: function(response) {
+        element.next('img.loading-indicator').style.visibility = 'visible';
+        as_form.disable();
+      },
+      onComplete: function(response) {
+        element.next('img.loading-indicator').style.visibility = 'hidden';
+        as_form.enable();
+      },
+      onFailure:  function(request) { 
+        var as_div = event.findElement('div.active-scaffold');
+        if (as_div) {
+          ActiveScaffold.report_500_response(as_div)
+        }
+      }
+    });
+  }
 }
 
 /*
