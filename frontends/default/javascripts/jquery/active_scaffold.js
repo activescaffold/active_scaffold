@@ -159,40 +159,9 @@ $(document).ready(function() {
     return true;
   });
   $('input.update_form, select.update_form').live('change', function(event) {
-      var element = $(this);
-      var as_form = element.closest('form.as_form');
-      var params = null;
-
-      if (element.attr('data-update_send_form')) {
-        params = as_form.serialize();
-        params += '&' + $.param({source_id: element.attr('id')});
-      } else {
-        if (element.is("input:checkbox")) {
-          params = {value: element.is(":checked")};
-        } else {
-          params = {value: element.val()};
-        }
-        params.source_id = element.attr('id');
-      }
-
-      $.ajax({
-        url: element.attr('data-update_url'),
-        data: params,
-        beforeSend: function(event) {
-          element.nextAll('img.loading-indicator').css('visibility','visible');
-          ActiveScaffold.disable_form(as_form);
-        },
-        complete: function(event) {
-          element.nextAll('img.loading-indicator').css('visibility','hidden');
-          ActiveScaffold.enable_form(as_form);
-        },
-        error: function (xhr, status, error) {
-          var as_div = element.closest("div.active-scaffold");
-          if (as_div) {
-            ActiveScaffold.report_500_response(as_div);
-          }
-        }
-      });
+    var element = $(this);
+    var value = element.is("input:checkbox") ? element.is(":checked") : element.val();
+    ActiveScaffold.update_column(element, element.attr('data-update_url'), element.attr('data-update_send_form'), element.attr('id'), value);
     return true;
   });
   
@@ -771,6 +740,38 @@ var ActiveScaffold = {
         ActiveScaffold.create_inplace_editor(span, options);
       }
     }
+  },
+  
+  update_column: function(element, url, send_form, source_id, val) {
+    var as_form = element.closest('form.as_form');
+    var params = null;
+
+    if (send_form) {
+      params = as_form.serialize();
+      params += '&' + $.param({"source_id": source_id});
+    } else {
+      params = {value: val};
+      params.source_id = source_id;
+    }
+
+    $.ajax({
+      url: url,
+      data: params,
+      beforeSend: function(event) {
+        element.nextAll('img.loading-indicator').css('visibility','visible');
+        ActiveScaffold.disable_form(as_form);
+      },
+      complete: function(event) {
+        element.nextAll('img.loading-indicator').css('visibility','hidden');
+        ActiveScaffold.enable_form(as_form);
+      },
+      error: function (xhr, status, error) {
+        var as_div = element.closest("div.active-scaffold");
+        if (as_div) {
+          ActiveScaffold.report_500_response(as_div);
+        }
+      }
+    });
   }
 }
 
