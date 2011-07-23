@@ -20,7 +20,7 @@ module ActiveRecord
         def reverse_matches_for(klass)
           reverse_matches = []
 
-          # stage 1 filter: collect associations that point back to this model and use the same primary_key_name
+          # stage 1 filter: collect associations that point back to this model and use the same foreign_key
           klass.reflect_on_all_associations.each do |assoc|
             if self.options[:through]
               # only iterate has_many :through associations
@@ -40,9 +40,9 @@ module ActiveRecord
                 when 1
                 next
 
-                # otherwise, match them based on the primary_key_name
+                # otherwise, match them based on the foreign_key
                 when 0
-                next unless assoc.primary_key_name.to_sym == self.primary_key_name.to_sym
+                next unless assoc.foreign_key.to_sym == self.foreign_key.to_sym
               end
             end
 

@@ -74,7 +74,7 @@ module ActiveScaffold
         associated = html_options.delete :value
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
-          method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
+          method = column.association.macro == :belongs_to ? column.association.foreign_key : column.name
           select_options = options_for_association(column.association, true)
         else
           method = column.name

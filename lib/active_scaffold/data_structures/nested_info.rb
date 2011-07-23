@@ -98,13 +98,13 @@ module ActiveScaffold::DataStructures
     
     def iterate_model_associations(model)
       @constrained_fields = [] 
-      @constrained_fields << association.primary_key_name.to_sym unless association.belongs_to?
+      @constrained_fields << association.foreign_key.to_sym unless association.belongs_to?
       model.reflect_on_all_associations.each do |current|
-        if !current.belongs_to? && association.primary_key_name == current.association_foreign_key
+        if !current.belongs_to? && association.foreign_key == current.association_foreign_key
           constrained_fields << current.name.to_sym
           @child_association = current if current.klass == @parent_model
         end
-        if association.primary_key_name == current.primary_key_name
+        if association.foreign_key == current.foreign_key
           # show columns for has_many and has_one child associationes
           constrained_fields << current.name.to_sym if current.belongs_to? 
           @child_association = current
