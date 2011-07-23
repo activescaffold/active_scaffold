@@ -29,7 +29,7 @@ module ActiveScaffold
         case association.macro
           when :has_one, :has_many
             # Find only orphaned objects
-            "#{association.primary_key_name} IS NULL"
+            "#{association.foreign_key} IS NULL"
           when :belongs_to, :has_and_belongs_to_many
             # Find all
             nil

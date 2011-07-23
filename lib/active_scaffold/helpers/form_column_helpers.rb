@@ -190,7 +190,7 @@ module ActiveScaffold
         # if the opposite association is a :belongs_to (in that case association in this class must be has_one or has_many)
         # then only show records that have not been associated yet
         if [:has_one, :has_many].include?(column.association.macro)
-          params.merge!({column.association.primary_key_name => ''})
+          params.merge!({column.association.foreign_key => ''})
         end
  
         record_select_options = {:controller => remote_controller, :id => options[:id]}
