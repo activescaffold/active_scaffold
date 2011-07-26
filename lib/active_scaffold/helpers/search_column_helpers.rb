@@ -170,7 +170,7 @@ module ActiveScaffold
         html << ' ' << content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
               active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))).html_safe,
               :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => "display:#{(opt_value == 'BETWEEN') ? '' : 'none'}")
-        html
+        content_tag :span, html, :class => 'search_range'
       end
       alias_method :active_scaffold_search_integer, :active_scaffold_search_range
       alias_method :active_scaffold_search_decimal, :active_scaffold_search_range
