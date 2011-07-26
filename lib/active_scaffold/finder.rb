@@ -66,7 +66,7 @@ module ActiveScaffold
             end
           end
         rescue Exception => e
-          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{@controller.class}"
+          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{self.name}"
           raise e
         end
       end
