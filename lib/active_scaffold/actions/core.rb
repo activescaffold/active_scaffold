@@ -170,7 +170,7 @@ module ActiveScaffold::Actions
     end
 
     def action_formats
-      @action_formats ||= if respond_to? "#{action_name}_formats"
+      @action_formats ||= if respond_to? "#{action_name}_formats", true
         send("#{action_name}_formats")
       else
         (default_formats + active_scaffold_config.formats).uniq
