@@ -90,6 +90,8 @@ module ActiveScaffold
           else
             ["#{column.search_sql} = ?", column.column.type_cast(value)]
           end
+        elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
+          condition_for_null_type(column, value[:opt], like_pattern)
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::StringComparators.values.include?(value[:opt])
