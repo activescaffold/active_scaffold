@@ -141,7 +141,7 @@ module ActiveScaffold
           select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]}
         end
         if include_null_comparators? column
-          select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
+          select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp), comp]}
         end
         select_options
       end
