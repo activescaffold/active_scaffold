@@ -39,7 +39,7 @@ end
 <% end -%>
   </div>
 
-  <%= render :partial => body_partial, :locals => { :columns => columns } %>
+  <%= render :partial => body_partial, :locals => { :columns => columns, :form_action => form_action } %>
 
   <p class="form-footer">
     <%= submit_tag as_(form_action), :class => "submit" %>
