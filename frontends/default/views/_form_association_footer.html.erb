@@ -7,7 +7,7 @@ end
 @record = parent_record
 
 show_add_existing = column_show_add_existing(column)
-show_add_new = column_show_add_new(column, associated)
+show_add_new = column_show_add_new(column, associated, @record)
 
 return unless show_add_new or show_add_existing
 
