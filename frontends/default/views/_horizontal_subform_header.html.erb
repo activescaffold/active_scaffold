@@ -1,7 +1,7 @@
 <thead>
   <tr>
     <%
-    active_scaffold_config_for(@record.class).subform.columns.each :for => @record, :flatten => true do |column|
+    active_scaffold_config_for(@record.class).subform.columns.each :for => @record.class, :flatten => true do |column|
       next unless in_subform?(column, parent_record) and column_renders_as(column) != :hidden
       -%>
       <th<%= ' class="required"' if column.required? %>><label><%= column.label %></label></th>
