@@ -1,4 +1,5 @@
-<% record_column = column 
+<%
+   record_column = column 
    readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
    crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
    show_actions = false 
@@ -15,7 +16,7 @@
   column.form_ui ||= :select if column.association
 -%>
   <td>
-    <% unless readonly and not @record.new_record? -%>
+    <% unless readonly and not @record.new_record? or not @record.authorized_for?(:crud_type => crud_type, :column => column.name) -%>
       <%= render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope } -%>
     <% else -%>
       <p><%= get_column_value(@record, column) -%></p>
