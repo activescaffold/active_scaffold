@@ -1,22 +1,17 @@
 <table cellpadding="0" cellspacing="0">
   <thead>
     <tr>
-      <%= render :partial => 'list_column_headings' %>
+      <% columns = list_columns %>
+      <%= render :partial => 'list_column_headings', :locals => {:columns => columns} %>
     </tr>
   </thead>
-  <tbody class="messages">
-    <tr>
-      <td colspan="<%= active_scaffold_config.list.columns.length + (active_scaffold_config.list.mark_records ? 2 : 1) -%>" class="messages-container">
-        <%= render :partial => 'list_messages' %>
-      </td>
-    </tr>
-  </tbody>
+  <%= render :partial => 'list_messages', :locals => {:columns => columns} %>
   <tbody class="records" id="<%= active_scaffold_tbody_id %>">
     <% if !@records.empty? -%>
-      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false } %>
+      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.member} %>
     <% end -%>
-    <% if active_scaffold_config.list.columns.any? {|c| c.calculation?} -%>
-      <%= render :partial => 'list_calculations' %>
+    <% if columns.any? {|c| c.calculation?} -%>
+      <%= render :partial => 'list_calculations', :locals => {:columns => columns} %>
     <% end -%>
   </tbody>
 </table>

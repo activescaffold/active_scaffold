@@ -4,29 +4,52 @@ module ActiveScaffold::Actions
       base.class_eval do
         after_filter :clear_flashes
       end
+      base.helper_method :nested?
+      base.helper_method :beginning_of_chain
+      base.helper_method :new_model
     end
     def render_field
-      @record = if params[:in_place_editing]
-        active_scaffold_config.model.find params[:id]
-      else
-        active_scaffold_config.model.new
-      end
-      column = active_scaffold_config.columns[params[:column]]
       if params[:in_place_editing]
-        render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
-      elsif !column.nil?
+        render_field_for_inplace_editing
+      else
+        render_field_for_update_columns
+      end
+    end
+    
+    protected
+
+    def nested?
+      false
+    end
+
+    def render_field_for_inplace_editing
+      register_constraints_with_action_columns(nested.constrained_fields, active_scaffold_config.update.hide_nested_column ? [] : [:update]) if nested?
+      @record = find_if_allowed(params[:id], :update)
+      render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
+    end
+
+    def render_field_for_update_columns
+      @record = new_model
+      column = active_scaffold_config.columns[params[:column]]
+      unless column.nil?
         if column.send_form_on_update_column
-          @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
+          hash = if params[:scope]
+            hash = params[:scope].gsub('[','').split(']').inject(params[:record]) do |hash, index|
+              hash[index]
+            end
+          else
+            params[:record]
+          end
+          @record = update_record_from_params(@record, active_scaffold_config.update.columns, hash)
         else
           value = column_value_from_param_value(@record, column, params[:value])
           @record.send "#{column.name}=", value
         end
-        @update_columns = Array(params[:update_column])
         after_render_field(@record, column)
+        source_id = params.delete(:source_id)
+        render :locals => {:source_id => source_id, :columns => column.update_columns, :scope => params[:scope]}
       end
     end
-
-    protected
     
     # override this method if you want to do something after render_field
     def after_render_field(record, column); end
@@ -129,12 +152,32 @@ module ActiveScaffold::Actions
       end
       conditions
     end
+
+    def new_model
+      model = beginning_of_chain
+      if model.columns_hash[model.inheritance_column]
+        build_options = {model.inheritance_column.to_sym => active_scaffold_config.model_id} if nested? && nested.association && nested.association.collection?
+        params = self.params # in new action inheritance_column must be in params
+        params = params[:record] || {} unless params[model.inheritance_column] # in create action must be inside record key
+        model = params.delete(model.inheritance_column).camelize.constantize if params[model.inheritance_column]
+      end
+      model.respond_to?(:build) ? model.build(build_options || {}) : model.new
+    end
+
     private
     def respond_to_action(action)
       respond_to do |type|
-        send("#{action}_formats").each do |format|
+        action_formats.each do |format|
           type.send(format){ send("#{action}_respond_to_#{format}") }
         end
+      end
+    end
+
+    def action_formats
+      @action_formats ||= if respond_to? "#{action_name}_formats", true
+        send("#{action_name}_formats")
+      else
+        (default_formats + active_scaffold_config.formats).uniq
       end
     end
 

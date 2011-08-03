@@ -15,6 +15,9 @@ module ActiveScaffold::DataStructures
       self.crud_type ||= :read
       self.parameters = {}
       self.html_options = {}
+      self.column = nil
+      self.image = nil
+      self.dynamic_parameters = nil
 
       # apply quick properties
       options.each_pair do |k, v|
@@ -27,10 +30,22 @@ module ActiveScaffold::DataStructures
     attr_accessor :action
     
     # the controller for this action link. if nil, the current controller should be assumed.
-    attr_accessor :controller
+    attr_writer :controller
+
+    def controller
+      @controller = @controller.call if @controller.is_a?(Proc)
+      @controller
+    end
+
+    def static_controller?
+      !(@controller.is_a?(Proc) || (@controller == :polymorph))
+    end
 
     # a hash of request parameters
     attr_accessor :parameters
+
+    # a block for dynamic_parameters
+    attr_accessor :dynamic_parameters
 
     # the RESTful method
     attr_accessor :method
@@ -40,6 +55,9 @@ module ActiveScaffold::DataStructures
     def label
       @label.is_a?(Symbol) ? as_(@label) : @label
     end
+    
+    # image to use {:name => 'arrow.png', :size => '16x16'}
+    attr_accessor :image
 
     # if the action requires confirmation
     def confirm=(value)
@@ -73,7 +91,9 @@ module ActiveScaffold::DataStructures
     def security_method_set?
       !!@security_method
     end
-
+    
+    attr_accessor :ignore_method
+    
     # the crud type of the (eventual?) action. different than :method, because this crud action may not be imminent.
     # this is used to determine record-level authorization (e.g. record.authorized_for?(:crud_type => link.crud_type).
     # options are :create, :read, :update, and :delete
@@ -142,5 +162,18 @@ module ActiveScaffold::DataStructures
 
     # html options for the link
     attr_accessor :html_options
+    
+    # nested action_links are referencing a column
+    attr_accessor :column
+    
+    # indicates that this a nested_link
+    def nested_link?
+      @column || (parameters && parameters[:named_scope])
+    end
+    
+    # Internal use: generated eid for this action_link
+    attr_accessor :eid
+    
+    
   end
 end

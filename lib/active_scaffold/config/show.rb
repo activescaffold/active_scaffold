@@ -6,7 +6,7 @@ module ActiveScaffold::Config
       super
       # start with the ActionLink defined globally
       @link = self.class.link.clone
-      @label = :show_model
+      @action_group = self.class.action_group.clone if self.class.action_group
     end
 
     # global level configuration

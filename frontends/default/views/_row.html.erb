@@ -1,0 +1,12 @@
+<%= render :partial => 'list_record', :locals => {:record => record}%>
+<% if active_scaffold_config.list.columns.any? {|c| c.calculation?} %>
+<script type="text/javascript">
+//<![CDATA[
+  <%= update_page do |page|
+    page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations')
+  end %>
+//]]>
+</script>
+<% end %>
+
+

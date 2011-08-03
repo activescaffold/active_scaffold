@@ -5,9 +5,16 @@ module ActiveScaffold::Actions
     end
 
     def show
-      do_show
-      successful?
-      respond_to_action(:show)
+      # rest destroy falls back to rest show in case of disabled javascript
+      # just render action_confirmation message for destroy
+      unless params.delete :destroy_action
+        do_show
+        successful?
+        respond_to_action(:show)
+      else
+        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
+        action_confirmation_respond_to_html(:destroy)
+      end
     end
 
     protected
@@ -39,7 +46,7 @@ module ActiveScaffold::Actions
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
-    def show_authorized?
+    def show_authorized?(record = nil)
       authorized_for?(:crud_type => :read)
     end
     private 

@@ -6,8 +6,8 @@ module ActiveScaffold
         controller.to_s.gsub("/", "__").html_safe
       end
 
-      def controller_id
-        @controller_id ||= 'as_' + id_from_controller(params[:eid] || params[:parent_controller] || params[:controller])
+      def controller_id(controller = (params[:eid] || params[:parent_controller] || params[:controller]))
+        controller_id ||= 'as_' + id_from_controller(controller)
       end
 
       def active_scaffold_id
@@ -22,8 +22,8 @@ module ActiveScaffold
         "#{controller_id}-tbody"
       end
 
-      def active_scaffold_messages_id
-        "#{controller_id}-messages"
+      def active_scaffold_messages_id(options = {})
+        "#{options[:controller_id] || controller_id}-messages"
       end
 
       def active_scaffold_calculations_id(column = nil)
@@ -36,10 +36,6 @@ module ActiveScaffold
 
       def before_header_id
         "#{controller_id}-search-container"
-      end
-
-      def search_form_id
-        "#{controller_id}-search-form"
       end
 
       def search_input_id
@@ -59,7 +55,7 @@ module ActiveScaffold
         options[:action] ||= params[:action]
         options[:id] ||= params[:id]
         options[:id] ||= params[:parent_id]
-        clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-row"
+        clean_id "#{options[:controller_id] || controller_id}-#{options[:action]}-#{options[:id]}-row"
       end
 
       def element_cell_id(options = {})
@@ -84,11 +80,13 @@ module ActiveScaffold
 
       def loading_indicator_id(options = {})
         options[:action] ||= params[:action]
-        unless options[:id]
-          clean_id "#{controller_id}-#{options[:action]}-loading-indicator"
-        else
-          clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
-        end
+        clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
+      end
+      
+      def sub_section_id(options = {})
+        options[:id] ||= params[:id]
+        options[:id] ||= params[:parent_id]
+        clean_id "#{controller_id}-#{options[:id]}-#{options[:sub_section]}-subsection"
       end
 
       def sub_form_id(options = {})
@@ -96,7 +94,7 @@ module ActiveScaffold
         options[:id] ||= params[:parent_id]
         clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform"
       end
-
+      
       def sub_form_list_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= params[:parent_id]

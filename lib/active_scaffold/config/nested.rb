@@ -6,33 +6,33 @@ module ActiveScaffold::Config
       super
       @label = :add_existing_model
       self.shallow_delete = self.class.shallow_delete
+      @action_group = self.class.action_group.clone if self.class.action_group
     end
 
     # global level configuration
     # --------------------------
     cattr_accessor :shallow_delete
-    @@shallow_delete = false
+    @@shallow_delete = true
 
     # instance-level configuration
     # ----------------------------
     attr_accessor :shallow_delete
 
     # Add a nested ActionLink
-    def add_link(label, association, options = {})
-      if association.is_a? Array
-        msg = "config.nested.add_link with multiple associations is not already supported. "
-        if association.size == 1
-          ::ActiveSupport::Deprecation.warn(msg + "Remove array", caller)
-        else
-          ::ActiveSupport::Deprecation.warn(msg + "The first model will be used", caller)
-        end
-        association = association.first
+    def add_link(attribute, options = {})
+      column = @core.columns[attribute.to_sym]
+      unless column.nil? || column.association.nil?
+        options.reverse_merge! :security_method => :nested_authorized?, :label => column.association.klass.model_name.human({:count => 2, :default => column.association.klass.name.pluralize}) 
+        action_link = @core.link_for_association(column, options)
+        @core.action_links.add_to_group(action_link, action_group) unless action_link.nil?
+      else
+        
       end
-      options.reverse_merge! :security_method => :nested_authorized?, :position => :after
-      options.merge! :label => label, :type => :member, :parameters => {:associations => association}
-      options[:html_options] ||= {}
-      options[:html_options][:class] = [options[:html_options][:class], association].compact.join(' ')
-      @core.action_links.add('nested', options)
+    end
+    
+    def add_scoped_link(named_scope, options = {})
+      action_link = @core.link_for_association_as_scope(named_scope.to_sym, options)
+      @core.action_links.add_to_group(action_link, action_group) unless action_link.nil?
     end
 
     # the label for this Nested action. used for the header.

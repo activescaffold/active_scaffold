@@ -94,39 +94,53 @@ module ActiveScaffold
     def column_value_from_param_value(parent_record, column, value)
       # convert the value, possibly by instantiating associated objects
       if value.is_a?(Hash)
-        # this is just for backwards compatibility. we should clean this up in 2.0.
-        if column.form_ui == :select
-          ids = if column.singular_association?
-            value[:id]
-          else
-            value.values.collect {|hash| hash[:id]}
-          end
-          (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
-
-        elsif column.singular_association?
-          manage_nested_record_from_params(parent_record, column, value)
-        elsif column.plural_association?
-          # sort by id or temporary id so new records are created in the same order as user write them
-          value.sort.collect {|key_value_pair| manage_nested_record_from_params(parent_record, column, key_value_pair[1])}.compact
-        else
-          value
-        end
+        column_value_from_param_hash_value(parent_record, column, value)
       else
-        if column.singular_association?
-          # it's a single id
-          column.association.klass.find(value) if value and not value.empty?
-        elsif column.plural_association?
-          # it's an array of ids
-          column.association.klass.find(value) if value and not value.empty?
-        elsif column.column && column.column.number? && column.options[:format]
-          column.number_to_native(value)
+        column_value_from_param_simple_value(parent_record, column, value)
+      end
+    end
+
+    def column_value_from_param_simple_value(parent_record, column, value)
+      if column.singular_association?
+        # it's a single id
+        column.association.klass.find(value) if value and not value.empty?
+      elsif column.plural_association?
+        column_plural_assocation_value_from_value(column, value)
+      elsif column.column && column.number? && [:i18n_number, :currency].include?(column.options[:format])
+        self.class.i18n_number_to_native_format(value)
+      else
+        # convert empty strings into nil. this works better with 'null => true' columns (and validations),
+        # and 'null => false' columns should just convert back to an empty string.
+        # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
+        value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
+        value
+      end
+    end
+
+    def column_plural_assocation_value_from_value(column, value)
+      # it's an array of ids
+      if value and not value.empty?
+        ids = value.select {|id| id.respond_to?(:empty?) ? !id.empty? : true}
+        ids.empty? ? [] : column.association.klass.find(ids)
+      end
+    end
+
+    def column_value_from_param_hash_value(parent_record, column, value)
+      # this is just for backwards compatibility. we should clean this up in 2.0.
+      if column.form_ui == :select
+        ids = if column.singular_association?
+          value[:id]
         else
-          # convert empty strings into nil. this works better with 'null => true' columns (and validations),
-          # and 'null => false' columns should just convert back to an empty string.
-          # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
-          value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
-          value
+          value.values.collect {|hash| hash[:id]}
         end
+        (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
+
+      elsif column.singular_association?
+        manage_nested_record_from_params(parent_record, column, value)
+      elsif column.plural_association?
+        value.collect {|key_value_pair| manage_nested_record_from_params(parent_record, column, key_value_pair[1])}.compact
+      else
+        value
       end
     end
 
@@ -164,20 +178,26 @@ module ActiveScaffold
     # Determines whether the given attributes hash is "empty".
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
+      ignore_column_types = [:boolean]
       hash.all? do |key,value|
         # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
-        column_name = key.to_s.split('(').first
+        parts = key.to_s.split('(')
+        #old style date form management... ignore them too
+        ignore_column_types = [:boolean, :datetime, :date, :time] if parts.length > 1
+        column_name = parts.first
         column = klass.columns_hash[column_name]
 
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
-        next true if column and [:boolean, :datetime, :date, :time].include?(column.type)
+        next true if column and ignore_column_types.include?(column.type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
         next true if column and value == column.default.to_s
 
         if value.is_a?(Hash)
           attributes_hash_is_empty?(value, klass)
+        elsif value.is_a?(Array)
+          value.any? {|id| id.respond_to?(:empty?) ? !id.empty? : true}
         else
           value.respond_to?(:empty?) ? value.empty? : false
         end

@@ -1,5 +1,8 @@
 module ActiveScaffold::Config
+  # to fix the ckeditor bridge problem
   class Core < ActiveScaffold::Config::Base
+  # code commented out (see above)
+  #class Core < Base
     # global level configuration
     # --------------------------
 
@@ -12,7 +15,7 @@ module ActiveScaffold::Config
 
     # configures where the ActiveScaffold plugin itself is located. there is no instance version of this.
     cattr_accessor :plugin_directory
-    @@plugin_directory = File.expand_path(__FILE__).match(/vendor\/plugins\/([^\/]*)/)[1]
+    @@plugin_directory = File.expand_path(__FILE__).match(%{(^.*)/lib/active_scaffold/config/core.rb})[1]
 
     # lets you specify a global ActiveScaffold frontend.
     cattr_accessor :frontend
@@ -55,6 +58,7 @@ module ActiveScaffold::Config
 
     # lets you specify whether add a create link for each sti child
     cattr_accessor :sti_create_links
+    @@sti_create_links = true
 
     # instance-level configuration
     # ----------------------------
@@ -91,7 +95,7 @@ module ActiveScaffold::Config
     # a generally-applicable name for this ActiveScaffold ... will be used for generating page/section headers
     attr_writer :label
     def label(options={})
-      as_(@label, options) || model.human_name(options.merge(:default => options[:count].to_i == 1 ? model.name : model.name.pluralize))
+      as_(@label, options) || model.model_name.human(options.merge(options[:count].to_i == 1 ? {} : {:default => model.name.pluralize}))
     end
 
     # STI children models, use an array of model names
@@ -148,21 +152,7 @@ module ActiveScaffold::Config
         self.columns[column].form_ui ||= :select
         self.columns[column].options ||= {}
         self.columns[column].options[:options] = self.sti_children.collect do |model_name|
-          [model_name.to_s.camelize.constantize.human_name, model_name.to_s.camelize]
-        end
-      end
-    end
-
-    # To be called after include action modules
-    def _add_sti_create_links
-      new_action_link = @action_links['new']
-      unless new_action_link.nil?
-        @action_links.delete('new')
-        self.sti_children.each do |child| 
-          new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
-          new_sti_link.label = as_(:create_model, :model => child.to_s.camelize.constantize.human_name)
-          new_sti_link.parameters = {model.inheritance_column => child}
-          @action_links.add(new_sti_link)
+          [model_name.to_s.camelize.constantize.model_name.human, model_name.to_s.camelize]
         end
       end
     end
@@ -227,3 +217,4 @@ module ActiveScaffold::Config
     end
   end
 end
+

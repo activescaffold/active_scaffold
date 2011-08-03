@@ -1,2 +1,0 @@
-page.call 'ActiveScaffold.update_row', element_row_id(:action => 'list', :id => @record.id), render(:partial => 'list_record', :locals => {:record => @record})
-page.replace active_scaffold_calculations_id, :partial => 'list_calculations' if active_scaffold_config.list.columns.any? {|c| c.calculation?}

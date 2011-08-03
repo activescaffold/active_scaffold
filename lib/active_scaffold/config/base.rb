@@ -21,6 +21,7 @@ module ActiveScaffold::Config
         end
       end
     end
+
     # delegate
     def crud_type; self.class.crud_type end
 
@@ -30,6 +31,13 @@ module ActiveScaffold::Config
     
     # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
     attr_accessor :user
+
+    # define a default action_group for this action
+    # e.g. 'members.crud'
+    class_attribute :action_group
+
+    # action_group this action should belong to
+    attr_accessor :action_group
 
     class UserSettings
       def initialize(conf, storage, params)

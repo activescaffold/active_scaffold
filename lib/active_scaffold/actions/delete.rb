@@ -1,29 +1,32 @@
 module ActiveScaffold::Actions
   module Delete
     def self.included(base)
-      base.before_filter :delete_authorized_filter, :only => [:delete, :destroy]
-    end
-
-    # this method is for html mode. it provides "the missing action" (http://thelucid.com/articles/2006/07/26/simply-restful-the-missing-action).
-    # it also gives us delete confirmation for html mode. woo!
-    def delete
-      destroy_find_record
-      render :action => 'delete'
+      base.before_filter :delete_authorized_filter, :only => [:destroy]
     end
 
     def destroy
-      return redirect_to(params.merge(:action => :delete)) if request.get?
-      do_destroy
-      respond_to_action(:destroy)
+      params.delete :destroy_action
+      process_action_link_action(:destroy) do |record|
+        do_destroy
+      end
     end
 
     protected
     def destroy_respond_to_html
-      flash[:info] = as_(:deleted_model, :model => @record.to_label) if self.successful?
+      if self.successful?
+        flash[:info] = as_(:deleted_model, :model => @record.to_label)
+      else
+        #error_message_for not available in controller...
+        #flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br)
+      end
       return_to_main
     end
 
     def destroy_respond_to_js
+      if successful? && active_scaffold_config.delete.refresh_list && !render_parent?
+        do_search if respond_to? :do_search
+        do_list
+      end
       render(:action => 'destroy')
     end
 
@@ -46,7 +49,7 @@ module ActiveScaffold::Actions
     # A simple method to handle the actual destroying of a record
     # May be overridden to customize the behavior
     def do_destroy
-      destroy_find_record
+      @record ||= destroy_find_record
       begin
         self.successful = @record.destroy
         marked_records.delete @record.id.to_s if successful?
@@ -58,8 +61,8 @@ module ActiveScaffold::Actions
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
-    def delete_authorized?
-      authorized_for?(:crud_type => :delete)
+    def delete_authorized?(record = nil)
+      (!nested? || !nested.readonly?) && authorized_for?(:crud_type => :delete)
     end
     private
     def delete_authorized_filter

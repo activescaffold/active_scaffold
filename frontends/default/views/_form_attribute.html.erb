@@ -4,8 +4,13 @@
     <label for="<%= active_scaffold_input_options(column, scope)[:id] %>"><%= column.label %></label>
   </dt>
   <dd>
-    <%= active_scaffold_input_for column, scope %>
-    <% if column.options.is_a?(Hash) && column.options[:update_column] -%>
+    <% unless local_assigns[:only_value] %>
+    <%=raw active_scaffold_input_for column, scope %>
+    <% else %>
+    <%= get_column_value(@record, column) %>
+    <%= hidden_field :record, column.association ? column.association.primary_key_name : column.name, active_scaffold_input_options(column, scope) -%>
+    <% end %>
+    <% if column.update_columns -%>
       <%= loading_indicator_tag(:action => :render_field, :id => params[:id]) %>
     <% end -%>
     <% if column.description.present? -%>

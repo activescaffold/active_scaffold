@@ -1,0 +1,24 @@
+<%messages_id = active_scaffold_messages_id%>
+<%if controller.send(:successful?)%>
+  <%if render_parent? && controller.respond_to?(:render_component_into_view)%>
+    <%render_parent_options%>
+    <%if render_parent_action == :row%>
+      <%# TODO: That s not working with delete....%>
+      ActiveScaffold.delete_record_row('<%=element_row_id(:controller_id => "as_#{id_from_controller(params[:eid] || params[:parent_sti])}", :action => 'list', :id => params[:id])%>', '<%=url_for(params_for(:action => :index, :id => nil, :page => [active_scaffold_config.list.user.page.to_i - 1, 1].max, :escape => false))%>');
+      <%messages_id = active_scaffold_messages_id(:controller_id => "as_#{id_from_controller(params[:eid] || params[:parent_sti])}")%>
+    <%elsif render_parent_action == :index%>
+      <%= escape_javascript(controller.send(:render_component_into_view, render_parent_options))%>
+    <%end%>
+    <%#page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}%>
+  <%elsif (active_scaffold_config.delete.refresh_list)%>
+    ActiveScaffold.replace('<%=active_scaffold_content_id%>', '<%=escape_javascript(render(:partial => 'list', :layout => false))%>');
+  <%else%>
+    ActiveScaffold.delete_record_row('<%=element_row_id(:action => 'list', :id => params[:id])%>', '<%=url_for(params_for(:action => :index, :id => nil, :page => [active_scaffold_config.list.user.page.to_i - 1, 1].max, :escape => false))%>');
+    <% if active_scaffold_config.list.columns.any? {|c| c.calculation?}%>
+      ActiveScaffold.replace('<%=active_scaffold_calculations_id%>', '<%=escape_javascript(render(:partial => 'list_calculations'))%>');
+    <% end %>
+  <%end%>
+<%else%>
+  <%flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br)%>
+<%end%>
+ActiveScaffold.replace_html('<%=messages_id%>', '<%=escape_javascript(render(:partial => 'messages'))%>');

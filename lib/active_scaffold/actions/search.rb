@@ -3,8 +3,8 @@ module ActiveScaffold::Actions
     include ActiveScaffold::Actions::CommonSearch
     def self.included(base)
       base.before_filter :search_authorized_filter, :only => :show_search
-      base.before_filter :store_search_params_into_session, :only => [:list, :index]
-      base.before_filter :do_search, :only => [:list, :index]
+      base.before_filter :store_search_params_into_session, :only => [:index]
+      base.before_filter :do_search, :only => [:index]
       base.helper_method :search_params
     end
 
@@ -21,7 +21,6 @@ module ActiveScaffold::Actions
     end
     def do_search
       query = search_params.to_s.strip rescue ''
-
       unless query.empty?
         columns = active_scaffold_config.search.columns
         text_search = active_scaffold_config.search.text_search
@@ -37,11 +36,6 @@ module ActiveScaffold::Actions
       end
     end
 
-    # The default security delegates to ActiveRecordPermissions.
-    # You may override the method to customize.
-    def search_authorized?
-      authorized_for?(:crud_type => :read)
-    end
     private
     def search_authorized_filter
       link = active_scaffold_config.search.link || active_scaffold_config.search.class.link

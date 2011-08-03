@@ -3,6 +3,6 @@
 <%= render :partial => 'show_columns', :locals => {:columns => active_scaffold_config.show.columns} -%>
 
 <p class="form-footer">
-  <%= link_to as_(:close), main_path_to_return, :class => 'cancel' %>
+  <%= link_to as_(:close), main_path_to_return, :class => 'as_cancel', :remote => request.xhr?, 'data-refresh' => false %>
   <%= loading_indicator_tag(:action => :create, :id => params[:id]) %>
 </p>

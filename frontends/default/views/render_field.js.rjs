@@ -1,1 +1,0 @@
-page << render(:partial => 'render_fields.js', :object => @update_columns)
