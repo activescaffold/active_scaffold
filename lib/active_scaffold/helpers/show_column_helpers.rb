@@ -25,18 +25,15 @@ module ActiveScaffold
         simple_format(clean_column_value(record.send(column.name)))
       end
 
-      def show_column_override_name(column, old = false)
-        "#{clean_class_name(column.active_record_class.name) + '_' unless old}#{clean_column_name(column.name)}_show_column"
+      def show_column_override_name(column, class_prefix = false)
+        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_show_column"
       end
 
       def show_column_override(column)
+        method_with_class = show_column_override_name(column, true)
+        return method_with_class if respond_to?(method_with_class)
         method = show_column_override_name(column)
-        return method if respond_to?(method)
-        old_method = show_column_override_name(column, true)
-        if respond_to?(old_method)
-          ActiveSupport::Deprecation.warn("You are using an old naming schema for overrides, you should name the helper #{method} instead of #{old_method}")
-          old_method
-        end
+        method if respond_to?(method)
       end
       alias_method :show_column_override?, :show_column_override
 

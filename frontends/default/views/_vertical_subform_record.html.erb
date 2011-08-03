@@ -4,13 +4,10 @@
   crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
   show_actions = false
   config = active_scaffold_config_for(@record.class)
+  options = active_scaffold_input_options(config.columns[@record.class.primary_key], scope)
+  tr_id = "association-#{options[:id]}"
 -%>
-<ol class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
-<% if @record.errors.count -%>
-  <div class="association-record-errors" id="<%= element_messages_id :action => @record.class.name.underscore, :id => "#{parent_record.id}-#{index}" %>">
-    <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
-  </div>
-<% end %>
+<ol id="<%= tr_id %>" class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
 <% config.subform.columns.each :for => @record, :crud_type => crud_type, :flatten => true do |column| %>
 <%
   next unless in_subform?(column, parent_record)
@@ -28,10 +25,13 @@
 <% end -%>
 <% if show_actions -%>
   <li class="actions">
-    <%= link_to_function as_(:remove), '$(this).up(".association-record").remove()', { :class => "destroy" } if record_column.plural_association? and (@record.authorized_for?(:crud_type => :delete) or not [:destroy, :delete_all].include?(record_column.association.options[:dependent])) %>
+    <% if record_column.plural_association? and (@record.authorized_for?(:crud_type => :delete) or not [:destroy, :delete_all].include?(record_column.association.options[:dependent])) %>
+      <% destroy_id = "#{options[:id]}-destroy" %>
+      <%= link_to as_(:remove), '#', :class => 'destroy', :id => destroy_id , :onclick => "ActiveScaffold.delete_subform_record(\"#{tr_id}\"); return false;", :style=> "display: none;" %>
+      <%= javascript_tag("ActiveScaffold.show('#{destroy_id}');") if !locked %>
+    <% end %> 
     <% unless @record.new_record? %>
-    <% options = active_scaffold_input_options(config.columns[@record.class.primary_key], scope) -%>
-    <input type="hidden" name="<%= options[:name] -%>" id="<%= options[:id] -%>" value="<%= @record.id -%>" />
+      <input type="hidden" name="<%= options[:name] -%>" id="<%= options[:id] -%>" value="<%= @record.id -%>" />
     <% end -%>
   </li>
 <% end -%>

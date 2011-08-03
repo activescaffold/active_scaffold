@@ -10,13 +10,10 @@ module ActiveScaffold
             # we only pass the record as the argument. we previously also passed the formatted_value,
             # but mike perham pointed out that prohibited the usage of overrides to improve on the
             # performance of our default formatting. see issue #138.
-            send(column_override(column), record)
+            send(column_override(column), column, record)
           # second, check if the dev has specified a valid list_ui for this column
           elsif column.list_ui and override_column_ui?(column.list_ui)
             send(override_column_ui(column.list_ui), column, record)
-
-          elsif inplace_edit?(record, column)
-            active_scaffold_inplace_edit(record, column)
           elsif column.column and override_column_ui?(column.column.type)
             send(override_column_ui(column.column.type), column, record)
           else
@@ -26,73 +23,82 @@ module ActiveScaffold
           value = '&nbsp;'.html_safe if value.nil? or (value.respond_to?(:empty?) and value.empty?) # fix for IE 6
           return value
         rescue Exception => e
-          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{@controller.class}"
+          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
           raise e
         end
       end
-      
+
       # TODO: move empty_field_text and &nbsp; logic in here?
-      # TODO: move active_scaffold_inplace_edit in here?
       # TODO: we need to distinguish between the automatic links *we* create and the ones that the dev specified. some logic may not apply if the dev specified the link.
       def render_list_column(text, column, record)
         if column.link
           link = column.link
           associated = record.send(column.association.name) if column.association
           url_options = params_for(:action => nil, :id => record.id, :link => text)
-          url_options[:parent_controller] = params[:controller] if link.controller and link.controller.to_s != params[:controller]
-          url_options[:id] = associated.id if associated and link.controller and link.controller.to_s != params[:controller]
 
           # setup automatic link
-          if column.autolink? # link to nested scaffold or inline form
-            link = action_link_to_inline_form(column, associated) if link.crud_type.nil? # automatic link to inline form (singular association)
+          if column.autolink? && column.singular_association? # link to inline form
+            link = action_link_to_inline_form(column, record, associated)
             return text if link.crud_type.nil?
-            if link.crud_type == :create
-              url_options[:link] = as_(link.label, :model => column.association.klass.human_name, :parent => column.association.active_record.human_name)
-              url_options[:parent_id] = record.id
-              url_options[:parent_column] = column.association.reverse
-              url_options[:parent_model] = record.class.name # needed for polymorphic associations
-              url_options.delete :id
-            end
+            url_options[:link] = as_(:create_new) if link.crud_type == :create
           end
 
-          # check authorization
-          if column.association
-            associated_for_authorized = if associated.nil? || (associated.respond_to?(:blank?) && associated.blank?)
-              column.association.klass
-            elsif column.plural_association?
-              associated.first
-            else
-              associated
-            end
-            authorized = associated_for_authorized.authorized_for?(:crud_type => link.crud_type)
-            authorized = authorized and record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
+          if column_link_authorized?(link, column, record, associated)
+            render_action_link(link, url_options, record)
           else
-            authorized = record.authorized_for?(:crud_type => link.crud_type)
+            "<a class='disabled'>#{text}</a>".html_safe
           end
-          return "<a class='disabled'>#{text}</a>" unless authorized
-
-          render_action_link(link, url_options, record)
         else
+          text = active_scaffold_inplace_edit(record, column, {:formatted_column => text}) if inplace_edit?(record, column)
           text
         end
       end
 
       # setup the action link to inline form
-      def action_link_to_inline_form(column, associated)
+      def action_link_to_inline_form(column, record, associated)
         link = column.link.clone
+        if column.polymorphic_association?
+          polymorphic_controller = controller_path_for_activerecord(record.send(column.association.name).class)
+          return link if polymorphic_controller.nil?
+          link.controller = polymorphic_controller
+        end
+        configure_column_link(link, associated, column.actions_for_association_links)
+      end
+
+      def configure_column_link(link, associated, actions)
         if column_empty?(associated) # if association is empty, we only can link to create form
-          if column.actions_for_association_links.include?(:new)
+          if actions.include?(:new)
             link.action = 'new'
             link.crud_type = :create
           end
-        elsif column.actions_for_association_links.include?(:edit)
+        elsif actions.include?(:edit)
           link.action = 'edit'
           link.crud_type = :update
-        elsif column.actions_for_association_links.include?(:show)
+        elsif actions.include?(:show)
           link.action = 'show'
+          link.crud_type = :read
+        elsif actions.include?(:list)
+          link.action = 'index'
           link.crud_type = :read
         end
         link
+      end
+
+      def column_link_authorized?(link, column, record, associated)
+        if column.association
+          associated_for_authorized = if associated.nil? || (associated.respond_to?(:blank?) && associated.blank?)
+            column.association.klass
+          elsif [:has_many, :has_and_belongs_to_many].include? column.association.macro
+            associated.first
+          else
+            associated
+          end
+          authorized = associated_for_authorized.authorized_for?(:crud_type => link.crud_type)
+          authorized = authorized and record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
+          authorized
+        else
+          record.authorized_for?(:crud_type => link.crud_type)
+        end
       end
 
       # There are two basic ways to clean a column's value: h() and sanitize(). The latter is useful
@@ -114,27 +120,20 @@ module ActiveScaffold
       end
 
       def active_scaffold_column_checkbox(column, record)
-        if inplace_edit?(record, column)
-          id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
-          tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field"}
-          content_tag(:span, format_column_checkbox(record, column), tag_options)
-        else
-          check_box(:record, column.name, :disabled => true, :id => nil, :object => record)
-        end
+        options = {:disabled => true, :id => nil, :object => record}
+        options.delete(:disabled) if inplace_edit?(record, column)
+        check_box(:record, column.name, options)
       end
 
-      def column_override_name(column, old = false)
-        "#{clean_class_name(column.active_record_class.name) + '_' unless old}#{clean_column_name(column.name)}_column"
+      def column_override_name(column, class_prefix = false)
+        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_column"
       end
 
       def column_override(column)
+        method_with_class = column_override_name(column, true)
+        return method_with_class if respond_to?(method_with_class)
         method = column_override_name(column)
-        return method if respond_to?(method)
-        old_method = column_override_name(column, true)
-        if respond_to?(old_method)
-          ActiveSupport::Deprecation.warn("You are using an old naming schema for overrides, you should name the helper #{method} instead of #{old_method}")
-          old_method
-        end
+        method if respond_to?(method)
       end
       alias_method :column_override?, :column_override
 
@@ -150,13 +149,6 @@ module ActiveScaffold
       ##
       ## Formatting
       ##
-
-      def format_column_checkbox(record, column)
-        checked = ActionView::Helpers::InstanceTag.check_box_checked?(record.send(column.name), '1')
-        script = remote_function(:method => 'POST', :url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s, :value => checked ? false : 1, :eid => params[:eid]})
-        check_box(:record, column.name, :onclick => script, :id => nil, :object => record)
-      end
-
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
         if value && column.association # cache association size before calling column_empty?
@@ -177,7 +169,7 @@ module ActiveScaffold
           format_association_value(value, column, associated_size)
         end
       end
-      
+
       def format_number_value(value, options = {})
         value = case options[:format]
           when :size
@@ -193,11 +185,15 @@ module ActiveScaffold
         end
         clean_column_value(value)
       end
-      
+
       def format_association_value(value, column, size)
         case column.association.macro
           when :has_one, :belongs_to
-            format_value(value.to_label)
+            if column.polymorphic_association?
+              format_value("#{value.class.model_name.human}: #{value.to_label}")
+            else
+              format_value(value.to_label)
+            end
           when :has_many, :has_and_belongs_to_many
             if column.associated_limit.nil?
               firsts = value.collect { |v| clean_column_value(v.to_label) }
@@ -209,13 +205,13 @@ module ActiveScaffold
             if column.associated_limit == 0
               size if column.associated_number?
             else
-              joined_associated = firsts.join(active_scaffold_config.list.association_join_text)
+              joined_associated = format_value(firsts.join(active_scaffold_config.list.association_join_text))
               joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
               joined_associated
             end
         end
       end
-      
+
       def format_value(column_value, options = {})
         value = if column_empty?(column_value)
           active_scaffold_config.list.empty_field_text
@@ -228,7 +224,7 @@ module ActiveScaffold
         end
         clean_column_value(value)
       end
-      
+
       def cache_association(value, column)
         # we are not using eager loading, cache firsts records in order not to query the database in a future
         unless value.loaded?
@@ -244,128 +240,126 @@ module ActiveScaffold
       # ==========
       # = Inline Edit =
       # ==========
-      
+
       def inplace_edit?(record, column)
-        column.inplace_edit and record.authorized_for?(:crud_type => :update, :column => column.name)
+        if column.inplace_edit
+          editable = controller.send(:update_authorized?, record) if controller.respond_to?(:update_authorized?)
+          editable = record.authorized_for?(:crud_type => :update, :column => column.name) if editable.nil? || editable == true
+          editable
+        end
       end
-      
+
       def inplace_edit_cloning?(column)
          column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
       end
-      
+
       def format_inplace_edit_column(record,column)
         if column.list_ui == :checkbox
-          format_column_checkbox(record, column)
+          active_scaffold_column_checkbox(column, record)
         else
           format_column_value(record, column)
         end
       end
-      
+
       def active_scaffold_inplace_edit(record, column, options = {})
         formatted_column = options[:formatted_column] || format_column_value(record, column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
-        tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field"}
-        in_place_editor_options = {
-          :url => {:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => record.id.to_s},
-          :with => params[:eid] ? "Form.serialize(form) + '&eid=#{params[:eid]}'" : nil,
-          :click_to_edit_text => as_(:click_to_edit),
-          :cancel_text => as_(:cancel),
-          :loading_text => as_(:loading),
-          :save_text => as_(:update),
-          :saving_text => as_(:saving),
-          :ajax_options => "{method: 'post'}",
-          :script => true
-        }
+        tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
+                       :title => as_(:click_to_edit), 'data-ie_id' => record.id.to_s}
 
-        if inplace_edit_cloning?(column)
-          in_place_editor_options.merge!(
-            :inplace_pattern_selector => "##{active_scaffold_column_header_id(column)} .#{inplace_edit_control_css_class}",
-            :node_id_suffix => record.id.to_s,
-            :form_customization => 'element.clonePatternField();'
-          )
-        elsif column.inplace_edit == :ajax
-          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => record.id, :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
-          plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
-          in_place_editor_options[:form_customization] = "element.setFieldFromAjax('#{escape_javascript(url)}', {plural: #{!!plural}});"
-        elsif column.column.try(:type) == :text
-          in_place_editor_options[:rows] = column.options[:rows] || 5
-        end
-
-        in_place_editor_options.merge!(column.options)
-        content_tag(:span, formatted_column, tag_options) + active_scaffold_in_place_editor(tag_options[:id], in_place_editor_options)
+        content_tag(:span, formatted_column, tag_options)
       end
-      
+
       def inplace_edit_control(column)
         if inplace_edit?(active_scaffold_config.model, column) and inplace_edit_cloning?(column)
-          @record = active_scaffold_config.model.new
+          @record = new_model
           column = column.clone
-          column.update_column = nil
+          column.options = column.options.clone
           column.form_ui = :select if (column.association && column.form_ui.nil?)
           content_tag(:div, active_scaffold_input_for(column), {:style => "display:none;", :class => inplace_edit_control_css_class})
         end
       end
-      
+
       def inplace_edit_control_css_class
         "as_inplace_pattern"
       end
-      
-      def active_scaffold_in_place_editor(field_id, options = {})
-        function =  "new ActiveScaffold.InPlaceEditor("
-        function << "'#{field_id}', "
-        function << "'#{url_for(options[:url])}'"
-    
-        js_options = {}
-    
-        if protect_against_forgery?
-          options[:with] ||= "Form.serialize(form)"
-          options[:with] += " + '&authenticity_token=' + encodeURIComponent('#{form_authenticity_token}')"
+
+      def inplace_edit_tag_attributes(column)
+        tag_options = {}
+        tag_options['data-ie_url'] = url_for({:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => '__id__'})
+        tag_options['data-ie_cancel_text'] = column.options[:cancel_text] || as_(:cancel)
+        tag_options['data-ie_loading_text'] = column.options[:loading_text] || as_(:loading)
+        tag_options['data-ie_save_text'] = column.options[:save_text] || as_(:update)
+        tag_options['data-ie_saving_text'] = column.options[:saving_text] || as_(:saving)
+        tag_options['data-ie_rows'] = column.options[:rows] || 5 if column.column.try(:type) == :text
+        tag_options['data-ie_cols'] = column.options[:cols] if column.options[:cols]
+        tag_options['data-ie_size'] = column.options[:size] if column.options[:size]
+
+        if column.list_ui == :checkbox
+          tag_options['data-ie_mode'] = :inline_checkbox
+        elsif inplace_edit_cloning?(column)
+          tag_options['data-ie_mode'] = :clone
+        elsif column.inplace_edit == :ajax
+          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
+          plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
+          tag_options['data-ie_render_url'] = url
+          tag_options['data-ie_mode'] = :ajax
+          tag_options['data-ie_plural'] = plural
         end
-    
-        js_options['cancelText'] = %('#{options[:cancel_text]}') if options[:cancel_text]
-        js_options['okText'] = %('#{options[:save_text]}') if options[:save_text]
-        js_options['okControl'] = %('#{options[:save_control_type]}') if options[:save_control_type]
-        js_options['cancelControl'] = %('#{options[:cancel_control_type]}') if options[:cancel_control_type]
-        js_options['loadingText'] = %('#{options[:loading_text]}') if options[:loading_text]
-        js_options['savingText'] = %('#{options[:saving_text]}') if options[:saving_text]
-        js_options['rows'] = options[:rows] if options[:rows]
-        js_options['cols'] = options[:cols] if options[:cols]
-        js_options['size'] = options[:size] if options[:size]
-        js_options['externalControl'] = "'#{options[:external_control]}'" if options[:external_control]
-        js_options['externalControlOnly'] = "true" if options[:external_control_only]
-        js_options['submitOnBlur'] = "'#{options[:submit_on_blur]}'" if options[:submit_on_blur]
-        js_options['loadTextURL'] = "'#{url_for(options[:load_text_url])}'" if options[:load_text_url]        
-        js_options['ajaxOptions'] = options[:ajax_options] if options[:ajax_options]
-        js_options['htmlResponse'] = !options[:script] if options[:script]
-        js_options['callback']   = "function(form) { return #{options[:with]} }" if options[:with]
-        js_options['clickToEditText'] = %('#{options[:click_to_edit_text]}') if options[:click_to_edit_text]
-        js_options['textBetweenControls'] = %('#{options[:text_between_controls]}') if options[:text_between_controls]
-        js_options['highlightcolor'] = %('#{options[:highlight_color]}') if options[:highlight_color]
-        js_options['highlightendcolor'] = %('#{options[:highlight_end_color]}') if options[:highlight_end_color]
-        js_options['onFailure'] = "function(element, transport) { #{options[:failure]} }" if options[:failure]
-        js_options['onComplete'] = "function(transport, element) { #{options[:complete]} }" if options[:complete]
-        js_options['onEnterEditMode'] = "function(element) { #{options[:enter_editing]} }" if options[:enter_editing]
-        js_options['onLeaveEditMode'] = "function(element) { #{options[:exit_editing]} }" if options[:exit_editing]
-        js_options['onFormCustomization'] = "function(element, form) { #{options[:form_customization]} }" if options[:form_customization]
-        js_options['inplacePatternSelector'] = %('#{options[:inplace_pattern_selector]}') if options[:inplace_pattern_selector]
-        js_options['nodeIdSuffix'] = %('#{options[:node_id_suffix]}') if options[:node_id_suffix]
-        function << (', ' + options_for_javascript(js_options)) unless js_options.empty?
-        
-        function << ')'
-    
-        javascript_tag(function)
-      end
-      
-      def mark_record(checked, url_params = {})
-        url_params.reverse_merge!(:controller => params_for[:controller], :action => 'mark', :eid => params[:eid])
-        ajax_options = {:method => :put,
-                        :url => url_for(url_params),
-                        :with => "'value=' + this.checked",
-                        :after => "var checkbox = this; this.disable();",
-                        :complete => "checkbox.enable();"}
-        script = remote_function(ajax_options)
-        check_box_tag('mark', '1', checked, :onclick => script, :class => 'mark_record')
+        tag_options
       end
 
+      def mark_column_heading
+        if active_scaffold_config.mark.mark_all_mode == :page then
+          all_marked = true
+          @page.items.each do |record|
+            all_marked = false if !marked_records.entries.include?(record.id)
+          end
+        else
+          all_marked = (marked_records.length >= @page.pager.count)
+        end
+        tag_options = {:id => "#{controller_id}_mark_heading", :class => "mark_heading in_place_editor_field"}
+        tag_options['data-ie_url'] = url_for({:controller => params_for[:controller], :action => 'mark_all', :eid => params[:eid]})
+        content_tag(:span, check_box_tag("#{controller_id}_mark_heading_span_input", !all_marked, all_marked), tag_options)
+      end
+
+      def render_column_heading(column, sorting, sort_direction)
+        tag_options = {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => column.description}
+        tag_options.merge!(inplace_edit_tag_attributes(column)) if column.inplace_edit
+        content_tag(:th, column_heading_value(column, sorting, sort_direction) + inplace_edit_control(column), tag_options)
+      end
+
+
+      def column_heading_value(column, sorting, sort_direction)
+        if column.sortable?
+          options = {:id => nil, :class => "as_sort",
+                     'data-page-history' => controller_id,
+                     :remote => true, :method => :get}
+          url_options = params_for(:action => :index, :page => 1,
+                           :sort => column.name, :sort_direction => sort_direction)
+          link_to column.label, url_options, options
+        else
+          if column.name != :marked
+            content_tag(:p, column.label)
+          else
+            mark_column_heading
+          end
+        end
+      end
+      
+      def render_nested_view(action_links, url_options, record)
+        rendered = []
+        action_links.member.each do |link|
+          if link.nested_link? && link.column && @nested_auto_open[link.column.name] && @records.length <= @nested_auto_open[link.column.name] && controller.respond_to?(:render_component_into_view)
+            link_url_options = {:adapter => '_list_inline_adapter', :format => :js}.merge(action_link_url_options(link, url_options, record, options = {:reuse_eid => true})) 
+            link_id = get_action_link_id(link_url_options, record, link.column)
+            rendered << (controller.send(:render_component_into_view, link_url_options) + javascript_tag("ActiveScaffold.ActionLink.get('#{link_id}').set_opened();"))
+          end 
+        end
+        rendered.join(' ').html_safe
+      end  
+      
     end
   end
 end
+

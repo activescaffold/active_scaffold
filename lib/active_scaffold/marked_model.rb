@@ -4,7 +4,7 @@ module ActiveScaffold
     
     def self.included(base)
       base.extend ClassMethods
-      base.named_scope :marked, lambda {{:conditions => {:id => base.marked_records.to_a}}}
+      base.scope :marked, lambda {{:conditions => {:id => base.marked_records.to_a}}}
     end
     
     def marked
@@ -12,7 +12,7 @@ module ActiveScaffold
     end
     
     def marked=(value)
-      value = (value.downcase == 'true') if value.is_a? String 
+      value = [true, 'true', 1, '1', 'T', 't'].include?(value.class == String ? value.downcase : value)
       if value == true
         marked_records << self.id if !marked
       else
@@ -21,12 +21,12 @@ module ActiveScaffold
     end
   
     module ClassMethods
-      # The proc to call that retrieves the marked_records from the ApplicationController.
-      attr_accessor :marked_records_proc
-  
-      # Class-level access to the marked_records
       def marked_records
-        (marked_records_proc.call || Set.new) if marked_records_proc
+        Thread.current[:marked_records] ||= Set.new
+      end
+
+      def marked_records=(marked)
+        Thread.current[:marked_records] = marked 
       end
     end
   

@@ -1,5 +1,5 @@
 <%= render :partial => 'messages' %>
 
 <% unless @record.nil? %>
-    <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
+    <%= active_scaffold_error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
 <% end %>

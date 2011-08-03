@@ -40,7 +40,7 @@ module ActiveScaffold
               # for textual fields we pass different options
               text_types = [:text, :string, :integer, :float, :decimal]
               options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
-              input(:record, column.name, options.merge(column.options))
+              text_field(:record, column.name, options.merge(column.options))
             end
           end
         end
@@ -59,37 +59,26 @@ module ActiveScaffold
         associated = options.delete :value
         associated = [associated].compact unless associated.is_a? Array
         associated.collect!(&:to_i)
-        select_options = options_for_association(column.association, true)
+        
+        if column.association
+          select_options = options_for_association(column.association, false)
+        else
+          select_options = Array(column.options[:options])
+        end
         return as_(:no_options) if select_options.empty?
 
-        html = "<ul class=\"checkbox-list\" id=\"#{options[:id]}\">"
-
-        options[:name] += '[]'
-        select_options.each_with_index do |option, i|
-          label, id = option
-          this_id = "#{options[:id]}_#{i}_id"
-          html << "<li>"
-          html << check_box_tag(options[:name], id, associated.include?(id), :id => this_id)
-          html << "<label for='#{this_id}'>"
-          html << label
-          html << "</label>"
-          html << "</li>"
-        end
-
-        html << '</ul>'
-        html << javascript_tag("new DraggableLists('#{options[:id]}')") if column.options[:draggable_lists]
-        html
+        active_scaffold_checkbox_list(column, select_options, associated, options)
       end
 
       def active_scaffold_search_select(column, html_options)
         associated = html_options.delete :value
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
-          method = column.association.macro == :belongs_to ? column.association.primary_key_name : column.name
-          options_for_select = options_for_association(column.association, true)
+          method = column.association.macro == :belongs_to ? column.association.foreign_key : column.name
+          select_options = options_for_association(column.association, true)
         else
           method = column.name
-          options_for_select = active_scaffold_translated_options(column)
+          select_options = Array(column.options[:options])
         end
 
         options = { :selected => associated }.merge! column.options
@@ -118,11 +107,43 @@ module ActiveScaffold
       end
       # we can't use checkbox ui because it's not possible to decide whether search for this field or not
       alias_method :active_scaffold_search_checkbox, :active_scaffold_search_boolean
+      
+      def active_scaffold_search_null(column, options)
+        select_options = []
+        select_options << [as_(:_select_), nil]
+        select_options.concat ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp), comp]}
+        select_tag(options[:name], options_for_select(select_options, field_search_params[column.name]))
+      end
 
       def field_search_params_range_values(column)
         values = field_search_params[column.name]
         return nil if values.nil?
-        return values[:opt], values[:from], values[:to]
+        return values[:opt], (values[:from].blank? ? nil : values[:from]), (values[:to].blank? ? nil : values[:to])
+        
+      end
+
+      def active_scaffold_search_range_string?(column)
+        (column.column && column.column.text?) || column.search_ui == :string
+      end
+
+      def include_null_comparators?(column)
+        return column.options[:null_comparators] if column.options.has_key? :null_comparators
+        if column.association
+          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.primary_key_name].column.try(:null)
+        else
+          column.column.try(:null)
+        end
+      end
+
+      def active_scaffold_search_range_comparator_options(column)
+        select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
+        if active_scaffold_search_range_string?(column)
+          select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]}
+        end
+        if include_null_comparators? column
+          select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp), comp]}
+        end
+        select_options
       end
 
       def include_null_comparators?(column)
@@ -136,20 +157,29 @@ module ActiveScaffold
 
       def active_scaffold_search_range(column, options)
         opt_value, from_value, to_value = field_search_params_range_values(column)
-        select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
-        select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]} if column.options[:string_comparators] || column.column.try(:text?)
-        select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]} if include_null_comparators? column
 
-        html = []
-        html << select_tag("#{options[:name]}[opt]",
+        select_options = active_scaffold_search_range_comparator_options(column)
+        if active_scaffold_search_range_string?(column)
+          text_field_size = 15
+          opt_value ||= '%?%'
+        else
+          text_field_size = 10
+          opt_value ||= '='
+        end
+        
+        from_value = controller.class.condition_value_for_numeric(column, from_value)
+        to_value = controller.class.condition_value_for_numeric(column, to_value)
+        from_value = format_number_value(from_value, column.options) if from_value.is_a?(Numeric)
+        to_value = format_number_value(to_value, column.options) if to_value.is_a?(Numeric)
+        html = select_tag("#{options[:name]}[opt]",
               options_for_select(select_options, opt_value),
               :id => "#{options[:id]}_opt",
-              :onchange => "Element[this.value == 'BETWEEN' ? 'show' : 'hide']('#{options[:id]}_between');")
-        html << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => 10))
-        html << content_tag(:span, ' - ' + text_field_tag("#{options[:name]}[to]", to_value,
-              active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => 10)),
-              :id => "#{options[:id]}_between", :style => "display:none")
-        html * ' '
+              :class => "as_search_range_option")
+        html << ' ' << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size))
+        html << ' ' << content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
+              active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))).html_safe,
+              :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => "display:#{(opt_value == 'BETWEEN') ? '' : 'none'}")
+        content_tag :span, html, :class => 'search_range'
       end
       alias_method :active_scaffold_search_integer, :active_scaffold_search_range
       alias_method :active_scaffold_search_decimal, :active_scaffold_search_range
@@ -164,10 +194,9 @@ module ActiveScaffold
         opt_value, from_value, to_value = field_search_params_range_values(column)
         options = column.options.merge(options)
         helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
-        html = []
-        html << send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options))
-        html << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
-        html * ' - '
+        
+        send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options)) << 
+        ' - '.html_safe << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
       end
 
       def active_scaffold_search_date(column, options)
@@ -183,19 +212,16 @@ module ActiveScaffold
       ##
 
       def override_search_field(column)
+        method_with_class = override_search_field_name(column, true)
+        return method_with_class if respond_to?(method_with_class)
         method = override_search_field_name(column)
-        return method if respond_to?(method)
-        old_method = override_search_field_name(column, true)
-        if respond_to?(old_method)
-          ActiveSupport::Deprecation.warn("You are using an old naming schema for overrides, you should name the helper #{method} instead of #{old_method}")
-          old_method
-        end
+        method if respond_to?(method)
       end
       alias_method :override_search_field?, :override_search_field
 
       # the naming convention for overriding form fields with helpers
-      def override_search_field_name(column, old = false)
-        "#{clean_class_name(column.active_record_class.name) + '_' unless old}#{clean_column_name(column.name)}_search_column"
+      def override_search_field_name(column, class_prefix = false)
+        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_search_column"
       end
 
       def override_search?(search_ui)
@@ -205,6 +231,32 @@ module ActiveScaffold
       # the naming convention for overriding search input types with helpers
       def override_search(form_ui)
         "active_scaffold_search_#{form_ui}"
+      end
+      
+      def visibles_and_hiddens(search_config)
+        visibles = [] 
+        hiddens = []
+        search_config.columns.each do |column|
+          next unless column.search_sql
+          if search_config.optional_columns.include?(column.name) && !searched_by?(column)
+            hiddens << column
+          else
+            visibles << column
+          end
+        end
+        return visibles, hiddens
+      end
+      
+      def searched_by?(column)
+        value = field_search_params[column.name]
+        case value
+        when Hash
+          !value['from'].blank?
+        when String
+          !value.blank?
+        else
+          false
+        end
       end
     end
   end

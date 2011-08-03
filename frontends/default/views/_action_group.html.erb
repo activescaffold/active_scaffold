@@ -1,0 +1,24 @@
+<% record ||= nil
+   start_level_0_tag ||= ''
+   end_level_0_tag ||= ''%>
+<% action_links.traverse(controller, traverse_options) do |parent, link, options| -%>
+  <% if (options[:node] == :finished_traversing) -%>
+    <%= "</ul>#{(options[:level] == 0 ? "</div>#{end_level_0_tag}": '</li>')}".html_safe %>
+  <% elsif (options[:node] == :start_traversing) -%>
+        <% html_classes = []
+           html_classes << 'hover_click' if hover_via_click? %>
+	<% if options[:level] == 0 %>
+           <% html_classes << 'action_group' %>
+	   <%= "#{start_level_0_tag}<div class=\"#{html_classes.join(' ')}\" #{"onclick=\"\"" if hover_via_click?}> #{content_tag(:div, as_(parent.name), :class => (parent.name.to_s).downcase)}<ul>".html_safe %>
+	<% else %>
+           <% html_classes << 'top' if options[:first_action] %>
+	   <%= "<li #{"class=\"#{html_classes.join(' ')}\"" unless html_classes.empty?} #{"onclick=\"\"" if hover_via_click?}>#{content_tag(:div, as_(parent.name), :class => (parent.name.to_s).downcase)}<ul>".html_safe %>
+	<% end %>
+  <% else -%>
+    <% if options[:level] == 0 %>
+      <%= "#{start_level_0_tag}#{h(render_group_action_link(link, url_options, options, record))}#{end_level_0_tag}".html_safe %>
+    <% else %>
+      <%= content_tag('li', render_group_action_link(link, url_options, options, record), options[:first_action] ? {:class => 'top'}: {}) %>
+    <% end %>
+  <% end -%>
+<% end -%>

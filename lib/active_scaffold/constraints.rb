@@ -1,28 +1,34 @@
 module ActiveScaffold
   module Constraints
-    def self.included(base)
-      base.module_eval do
-        before_filter :register_constraints_with_action_columns
-      end
-    end
 
     protected
 
     # Returns the current constraints
     def active_scaffold_constraints
-      return active_scaffold_session_storage[:constraints] || {}
+      @active_scaffold_constraints ||= active_scaffold_session_storage[:constraints] || {}
+    end
+
+    def set_active_scaffold_constraints
+      associations_by_params = {}
+      active_scaffold_config.model.reflect_on_all_associations.each do |association|
+        associations_by_params[association.klass.name.foreign_key] = association.name unless association.options[:polymorphic]
+      end
+      params.each do |key, value|
+        active_scaffold_constraints[associations_by_params[key]] = value if associations_by_params.include? key
+      end
     end
 
     # For each enabled action, adds the constrained columns to the ActionColumns object (if it exists).
     # This lets the ActionColumns object skip constrained columns.
     #
     # If the constraint value is a Hash, then we assume the constraint is a multi-level association constraint (the reverse of a has_many :through) and we do NOT register the constraint column.
-    def register_constraints_with_action_columns
+    def register_constraints_with_action_columns(association_constrained_fields = [], exclude_actions = [])
       constrained_fields = active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect{|k| k.to_sym}
-
+      constrained_fields = constrained_fields | association_constrained_fields
       if self.class.uses_active_scaffold?
         # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
         active_scaffold_config.actions.each do |action_name|
+          next if exclude_actions.include?(action_name)
           action = active_scaffold_config.send(action_name)
           next unless action.respond_to? :columns
           action.columns.constraint_columns = constrained_fields
@@ -114,10 +120,15 @@ module ActiveScaffold
 
       condition = constraint_condition_for("#{table}.#{field}", value)
       if association.options[:polymorphic]
-        condition = merge_conditions(
-          condition,
-          constraint_condition_for("#{table}.#{association.name}_type", params[:parent_model].to_s)
-        )
+        begin
+          parent_scaffold = "#{session_info[:parent_scaffold].to_s.camelize}Controller".constantize
+          condition = merge_conditions(
+            condition,
+            constraint_condition_for("#{table}.#{association.name}_type", parent_scaffold.active_scaffold_config.model_id.to_s)
+          )
+        rescue ActiveScaffold::ControllerNotFound
+          nil
+        end
       end
 
       condition

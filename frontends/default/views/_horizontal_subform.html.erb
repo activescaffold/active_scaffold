@@ -1,5 +1,15 @@
 <table cellpadding="0" cellspacing="0">
-  <% @record = column.association.klass.new -%>
+  <%
+    if associated.empty?
+      @record = if column.singular_association?
+        parent_record.send("build_#{column.name}".to_sym)
+      else
+        parent_record.send(column.name).build
+      end
+    else
+      @record = associated.last
+    end
+  -%>
   <%= render :partial => 'horizontal_subform_header', :locals => {:parent_record => parent_record} %>
 
   <tbody id="<%= sub_form_list_id(:association => column.name) %>">
@@ -8,11 +18,11 @@
     <% if @record.errors.count -%>
     <tr class="association-record-errors">
       <td colspan="<%= active_scaffold_config_for(@record.class).subform.columns.length + 1 %>" id="<%= element_messages_id :action => @record.class.name.underscore, :id => "#{parent_record.id}-#{index}" %>">
-        <%= error_messages_for :record, :object_name => @record.class.human_name.downcase %>
+        <%= active_scaffold_error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
       </td>
     </tr>
     <% end %>
-    <%= render :partial => 'horizontal_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => @record == locked} %>
+    <%= render :partial => 'horizontal_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => show_blank_record && @record.new_record? && @record == associated.last} %>
     <% end -%>
   </tbody>
 </table>

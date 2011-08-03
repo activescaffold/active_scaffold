@@ -43,56 +43,48 @@ module ActiveScaffold
           if search_ui && self.respond_to?("condition_for_#{search_ui}_type")
             self.send("condition_for_#{search_ui}_type", column, value, like_pattern)
           else
-            case search_ui
-              when :boolean, :checkbox
-              ["#{column.search_sql} = ?", column.column.type_cast(value)]
-              when :select, :multi_select, :country, :usa_state
-              ["#{column.search_sql} in (?)", value]
-              else
-                if column.column.nil? || column.column.text?
-                  ["#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
-                else
+            unless column.search_sql.instance_of? Proc
+              case search_ui
+                when :boolean, :checkbox
                   ["#{column.search_sql} = ?", column.column.type_cast(value)]
-                end
+                when :integer, :decimal, :float
+                  condition_for_numeric(column, value)
+                when :string, :range
+                  condition_for_range(column, value, like_pattern)
+                when :date, :time, :datetime, :timestamp
+                  condition_for_datetime(column, value)
+                when :select, :multi_select, :country, :usa_state
+                ["#{column.search_sql} in (?)", Array(value)]
+                else
+                  if column.column.nil? || column.column.text?
+                    ["#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
+                  else
+                    ["#{column.search_sql} = ?", column.column.type_cast(value)]
+                  end
+              end
+            else
+              column.search_sql.call(value)
             end
           end
         rescue Exception => e
-          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{@controller.class}"
+          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{self.name}"
           raise e
         end
       end
 
-      def condition_for_integer_type(column, value, like_pattern = nil)
-        if column.options[:format]
-          if value.is_a?(Hash)
-            value[:from] = column.number_to_native(value[:from])
-            value[:to] = column.number_to_native(value[:to])
-          else
-            value = column.number_to_native(value)
-          end
-        end
-
+      def condition_for_numeric(column, value)
         if !value.is_a?(Hash)
-          ["#{column.search_sql} = ?", column.column.nil? ? value.to_f : column.column.type_cast(value)]
-        elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
-          condition = "#{column.search_sql} #{value[:opt].humanize}"
-        elsif value[:from].blank?
+          ["#{column.search_sql} = ?", condition_value_for_numeric(column, value)]
+        elsif value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
-          condition = "#{column.search_sql} BETWEEN ? AND ?"
-          if column.column.nil?
-            [condition, value[:from].to_f, value[:to].to_f]
-          else
-            [condition, column.column.type_cast(value[:from]), column.column.type_cast(value[:to])]
-          end
-        elsif ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
-          ["#{column.search_sql} #{value[:opt]} ?", column.column.nil? ? value[:from].to_f : column.column.type_cast(value[:from])]
+          ["#{column.search_sql} BETWEEN ? AND ?", condition_value_for_numeric(column, value[:from]), condition_value_for_numeric(column, value[:to])]
+         else
+          ["#{column.search_sql} #{value[:opt]} ?", condition_value_for_numeric(column, value[:from])]
         end
       end
-      alias_method :condition_for_decimal_type, :condition_for_integer_type
-      alias_method :condition_for_float_type, :condition_for_integer_type
 
-      def condition_for_range_type(column, value, like_pattern = nil)
+      def condition_for_range(column, value, like_pattern = nil)
         if !value.is_a?(Hash)
           if column.column.nil? || column.column.text?
             ["#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
@@ -100,7 +92,7 @@ module ActiveScaffold
             ["#{column.search_sql} = ?", column.column.type_cast(value)]
           end
         elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
-          condition = "#{column.search_sql} #{value[:opt].humanize}"
+          condition_for_null_type(column, value[:opt], like_pattern)
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::StringComparators.values.include?(value[:opt])
@@ -113,33 +105,73 @@ module ActiveScaffold
           nil
         end
       end
-      alias_method :condition_for_string_type, :condition_for_range_type
-
-      def condition_for_datetime_type(column, value, like_pattern = nil)
-        conversion = value[:from][:hour].blank? && value[:to][:hour].blank? ? :to_date : :to_time
-        from_value, to_value = [:from, :to].collect do |field|
+      
+      def condition_value_for_datetime(value, conversion = :to_time)
+        if value.is_a? Hash
           Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[field][part].to_i}) rescue nil
+        elsif value.respond_to?(:strftime)
+          value.send(conversion)
+        else
+          Time.zone.parse(value).in_time_zone.send(conversion) rescue nil
+        end unless value.nil? || value.blank?
+      end
+
+      def condition_value_for_numeric(column, value)
+        return value if value.nil?
+        value = i18n_number_to_native_format(value) if [:i18n_number, :currency].include?(column.options[:format])
+        case (column.search_ui || column.column.type)
+        when :integer   then value.to_i rescue value ? 1 : 0
+        when :float     then value.to_f
+        when :decimal   then ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
+        else
+          value
         end
+      end
+
+      def i18n_number_to_native_format(value)
+        native = '.'
+        delimiter = I18n.t('number.format.delimiter')
+        separator = I18n.t('number.format.separator')
+        return value if value.blank? || !value.is_a?(String)
+        unless delimiter == native && !value.include?(separator) && value !~ /\.\d{3}$/
+          value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
+        else
+          value
+        end
+      end
+            
+      def condition_for_datetime(column, value, like_pattern = nil)
+        conversion = column.column.type == :date ? :to_date : :to_time
+        from_value = condition_value_for_datetime(value[:from], conversion)
+        to_value = condition_value_for_datetime(value[:to], conversion)
 
         if from_value.nil? and to_value.nil?
           nil
         elsif !from_value
-          ["#{column.search_sql} <= ?", to_value.send(conversion).to_s(:db)]
+          ["#{column.search_sql} <= ?", to_value.to_s(:db)]
         elsif !to_value
-          ["#{column.search_sql} >= ?", from_value.send(conversion).to_s(:db)]
+          ["#{column.search_sql} >= ?", from_value.to_s(:db)]
         else
-          ["#{column.search_sql} BETWEEN ? AND ?", from_value.send(conversion).to_s(:db), to_value.send(conversion).to_s(:db)]
+          ["#{column.search_sql} BETWEEN ? AND ?", from_value.to_s(:db), to_value.to_s(:db)]
         end
       end
-      alias_method :condition_for_date_type, :condition_for_datetime_type
-      alias_method :condition_for_time_type, :condition_for_datetime_type
-      alias_method :condition_for_timestamp_type, :condition_for_datetime_type
 
       def condition_for_record_select_type(column, value, like_pattern = nil)
         if value.is_a?(Array)
           ["#{column.search_sql} IN (?)", value]
         else
           ["#{column.search_sql} = ?", value]
+        end
+      end
+      
+      def condition_for_null_type(column, value, like_pattern = nil)
+        case value.to_sym
+        when :null
+          ["#{column.search_sql} is null"]
+        when :not_null
+          ["#{column.search_sql} is not null"]
+        else
+          nil
         end
       end
 
@@ -162,13 +194,17 @@ module ActiveScaffold
       '!=',
       'BETWEEN'
     ]
-    StringComparators = ActiveSupport::OrderedHash[
-      :contains,    '%?%',
-      :begins_with, '?%',
-      :ends_with,   '%?'
+    StringComparators = {
+      :contains    => '%?%',
+      :begins_with => '?%',
+      :ends_with   => '%?'
+    }
+    NullComparators = [
+      :null,
+      :not_null
     ]
-
-    NullComparators = ['is_null', 'is_not_null']
+    
+    
 
     def self.included(klass)
       klass.extend ClassMethods
@@ -223,9 +259,9 @@ module ActiveScaffold
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :order => options[:sorting].try(:clause),
-                         :conditions => search_conditions,
+                         :where => search_conditions,
                          :joins => joins_for_finder,
-                         :include => full_includes}
+                         :includes => options[:count_includes]}
                          
       finder_options.merge! custom_finder_options
       finder_options
@@ -251,27 +287,41 @@ module ActiveScaffold
       klass = beginning_of_chain
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count = klass.count(count_options(find_options, options[:count_includes])) if options[:pagination] && options[:pagination] != :infinite
-
+      count_query = append_to_query(klass, finder_options.reject{|k, v| [:select, :order].include?(k)})
+      count = count_query.count unless options[:pagination] == :infinite
+  
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
       count = count.length if count.is_a? ActiveSupport::OrderedHash
+      finder_options.merge! :includes => full_includes
 
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          sorted_collection = sort_collection_by_column(klass.all(find_options), *options[:sorting].first)
+          sorted_collection = sort_collection_by_column(append_to_query(klass, finder_options).all, *options[:sorting].first)
           sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
           sorted_collection
         end
       else
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          find_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
-          klass.all(find_options)
+          finder_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
+          append_to_query(klass, finder_options).all
         end
       end
-
       pager.page(options[:page])
+    end
+    
+    def append_to_query(query, options)
+      options.assert_valid_keys :where, :select, :group, :order, :limit, :offset, :joins, :includes, :lock, :readonly, :from
+      options.reject{|k, v| v.blank?}.inject(query) do |query, (k, v)|
+        # default ordering of model has a higher priority than current queries ordering
+        # fix this by removing existing ordering from arel
+        if k.to_sym == :order
+          query = query.where('1=1') unless query.is_a?(ActiveRecord::Relation)
+          query = query.except(:order)
+        end
+        query.send((k.to_sym), v) 
+      end
     end
 
     def joins_for_finder
@@ -286,7 +336,14 @@ module ActiveScaffold
     end
     
     def merge_conditions(*conditions)
-      active_scaffold_config.model.merge_conditions(*conditions)
+      segments = []
+      conditions.each do |condition|
+        unless condition.blank?
+          sql = active_scaffold_config.model.send(:sanitize_sql, condition)
+          segments << sql unless sql.blank?
+        end
+      end
+      "(#{segments.join(') AND (')})" unless segments.empty?
     end
 
     # TODO: this should reside on the column, not the controller

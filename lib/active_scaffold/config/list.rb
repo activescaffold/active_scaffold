@@ -128,6 +128,18 @@ module ActiveScaffold::Config
     def always_show_create
       @always_show_create && @core.actions.include?(:create)
     end
+
+    # if list view is nested hide nested_column
+    attr_writer :hide_nested_column
+    def hide_nested_column
+      @hide_nested_column.nil? ? true : @hide_nested_column
+    end
+    
+    # might be set to open nested_link automatically in view
+    # conf.nested.add_link(:players)
+    # conf.list.nested_auto_open = {:players => 2}
+    # will open nested players view if there are 2 or less records in parent
+    attr_accessor :nested_auto_open
     
     class UserSettings < UserSettings
       # This label has alread been localized.
@@ -149,6 +161,17 @@ module ActiveScaffold::Config
         @session['page'] = value
       end
 
+      attr_reader :nested_default_sorting
+
+      def nested_default_sorting=(options)
+        @nested_default_sorting ||= @conf.sorting.clone
+        @nested_default_sorting.set_nested_sorting(options[:table_name], options[:default_sorting])
+      end
+
+      def default_sorting
+        nested_default_sorting.nil? ? @conf.sorting : nested_default_sorting
+      end
+
       def sorting
         # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
         @session['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
@@ -159,7 +182,7 @@ module ActiveScaffold::Config
           sorting.set(*@session['sort'])
           return sorting
         else
-          return @conf.sorting
+          return default_sorting
         end
       end
       

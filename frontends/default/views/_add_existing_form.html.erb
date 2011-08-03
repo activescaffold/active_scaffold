@@ -1,21 +1,16 @@
 <% url_options = params_for(:action => :add_existing) -%>
-<% if request.xhr? -%>
-<%= form_remote_tag :url => url_options,
-                    :after => "$('#{loading_indicator_id(:action => :add_existing, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => :add_existing)}');",
-                    :complete => "$('#{loading_indicator_id(:action => :add_existing, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => :add_existing)}');",
-                    :failure => "ActiveScaffold.report_500_response('#{active_scaffold_id}')",
-                    :html => { :href => url_for(url_options),
-                    :id => element_form_id(:action => :add_existing),
-                    :class => 'create' } %>
-<% else -%>
-<%= form_tag url_options,
-             :id => element_form_id(:action => :add_existing),
-             :class => 'create' %>
-<% end -%>
+<% xhr = request.xhr? -%>
+<%=
+options = {:id => element_form_id(:action => :add_existing),
+           :class => "as_form create",
+           :method => :post,
+           'data-loading' => true}
+  options[:remote] = true if xhr
+  form_tag url_options, options -%>
 
   <h4><%= active_scaffold_config.nested.label -%></h4>
 
-  <% if request.xhr? -%>
+  <% if xhr -%>
     <div id="<%= element_messages_id(:action => :add_existing) %>" class="messages-container"></div>
   <% else -%>
     <%= render :partial => 'form_messages' %>
@@ -26,11 +21,10 @@
 
   <p class="form-footer">
     <%= submit_tag as_(:add), :class => "submit" %>
-    <%= link_to as_(:cancel), main_path_to_return, :class => 'cancel' %>
+    <%= link_to as_(:cancel), main_path_to_return, :class => 'as_cancel', :remote => true %>
     <%= loading_indicator_tag(:action => :add_existing, :id => params[:id]) %>
   </p>
 
 </form>
-<script type="text/javascript">
-Form.focusFirstElement('<%= element_form_id(:action => :add_existing) -%>');
-</script>
+<%= javascript_tag("ActiveScaffold.focus_first_element_of_form('#{element_form_id(:action => :add_existing)}');") %>
+

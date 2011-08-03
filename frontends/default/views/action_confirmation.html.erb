@@ -1,0 +1,13 @@
+<div class="active-scaffold">
+  <div class="delete-view view">
+    <%= form_tag params_for(:action => link.action, :id => params[:id]), { :method => link.method } %>
+      <h4><%= link.confirm(record.try(:to_label)) -%></h4>
+
+      <p class="form-footer">
+        <%= submit_tag as_(link.label), :class => 'submit' %>
+        <%= link_to as_(:cancel), main_path_to_return, :class => 'cancel' %>
+      </p>
+
+    </form>
+  </div>
+</div>

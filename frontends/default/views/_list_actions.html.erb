@@ -3,24 +3,13 @@
     <td class="indicator-container">
       <%= loading_indicator_tag(:action => :record, :id => record.id) %>
     </td>
-    <% active_scaffold_config.action_links.each :member do |link| -%>
-      <% next if skip_action_link(link) -%>
-      <td>
-        <%= record.authorized_for?(:crud_type => link.crud_type, :action => link.action) ? render_action_link(link, url_options, record) : "<a class='disabled #{link.action}'>#{link.label}</a>".html_safe -%>
-      </td>
-    <% end -%>
+      <%= render :partial => 'action_group', :locals => {:action_links => action_links || active_scaffold_config.action_links.member,
+                                                         :url_options => url_options,
+                                                         :record => record,
+                                                         :traverse_options => {:for => record},
+                                                         :start_level_0_tag => '<td>',
+                                                         :end_level_0_tag => '</td>'} %>
   </tr>
 </table>
-
-<% target_id = element_row_id(:action => :list, :id => record.id) -%>
-<script type="text/javascript">
-//<![CDATA[
-new ActiveScaffold.Actions.Record(
-  $$('#<%= target_id -%> a.action'),
-  $('<%= target_id -%>'),
-  $('<%= loading_indicator_id(:action => :record, :id => record.id) -%>'),
-  {refresh_url: '<%= url_for params_for(:action => :row, :id => record.id, :_method => :get, :escape => true) -%>'}
-);
-//]]>
-</script>
 </td>
+
