@@ -1,11 +1,10 @@
 <% scope ||= nil %>
-<% authorized = true unless local_assigns.has_key? :authorized %>
 <dl>
   <dt>
     <label for="<%= active_scaffold_input_options(column, scope)[:id] %>"><%= column.label %></label>
   </dt>
   <dd>
-    <% if authorized %>
+    <% unless local_assigns[:only_value] %>
     <%=raw active_scaffold_input_for column, scope %>
     <% else %>
     <%= get_column_value(@record, column) %>
