@@ -18,19 +18,17 @@ http://code.google.com/p/recordselect/
 
 == Version Information
 
-Please note the following list of Active Scaffold branches and Rails versions. Master will not work with Rails < 2.2
+Please note the following list of Active Scaffold branches and Rails versions. Master will not work with Rails < 3.1
 
-Active Scaffold master currently supports rails-3.1, but incompatible changes can be introduced, if you want an stable version, use rails-2.3
+Active Scaffold master currently supports rails-3.1, but incompatible changes can be introduced, if you want an stable version, use rails-3.0
 Rails 3.0.*: Active Scaffold rails-3.0
-Rails 2.3.*: Active Scaffold rails-2.3
+Rails 2.3.*: Active Scaffold rails-2.3 and v2.4
 Rails 2.2.*: Active Scaffold rails-2.2
 Rails 2.1.*: Active Scaffold rails-2.1
 Rails < 2.1: Active Scaffold 1-1-stable (no guarantees)
 
-Since Rails 2.3, render_component plugin is needed for nested and embbeded scaffolds. It works with rails-2.3 branch from ewildgoose repository:
+Since Rails 2.3, render_component plugin is needed for nested and embedded scaffolds. It works with rails-2.3 branch from ewildgoose repository:
 script/plugin install git://github.com/ewildgoose/render_component.git -r rails-2.3
-
-== Rails 3.0 compatible fork of activesaffold by Volker Hochstein:
 
 Since Rails 3.0 render_component is not used for nesting, but is optional for embedded scaffolds.
 Since Rails 3.0, https://github.com/rails/verification.git is also needed.
@@ -38,13 +36,13 @@ Since Rails 3.0, https://github.com/rails/verification.git is also needed.
 If you want to install as plugins under vendor/plugins, install these versions:
   rails plugin install git://github.com/vhochstein/render_component.git
   rails plugin install git://github.com/rails/verification.git
-  rails plugin install git://github.com/vhochstein/active_scaffold.git -r 'rails-3.0'
+  rails plugin install git://github.com/activescaffold/active_scaffold.git -r 'rails-3.0'
 
 If you want to use the gem, add to your Gemfile:
   gem "active_scaffold_vho"
 
 In case you would like to use most recent commit:
-  gem 'active_scaffold_vho', :git => 'git://github.com/vhochstein/active_scaffold.git', :branch => 'rails-3.0'
+  gem 'active_scaffold_vho', :git => 'git://github.com/active_scaffold/active_scaffold.git', :branch => 'rails-3.0'
 
 == Pick your own javascript framework
 
@@ -67,7 +65,7 @@ To configure the javascript framework when installed as a gem:
 Add a config/initializers/active_scaffold.rb containing:
 ActiveScaffold.js_framework = :jquery # :prototype is the default
 
-== Rails 3.1 compatible fork of activesaffold by Volker Hochstein:
+== Rails 3.1 compatible branch: 
 under construction
 
 
