@@ -69,10 +69,12 @@ module ActionView::Rendering #:nodoc:
       if controller.respond_to?(:render_component_into_view)
         controller.send(:render_component_into_view, url_options)
       else
-        content_tag(:div, {:id => id}) do
+        content_tag(:div, :id => id, :class => 'active-scaffold-component') do
           url = url_for(url_options)
-          link_to(remote_controller.to_s, url, {:remote => true, :id => id}) <<
-            if ActiveScaffold.js_framework == :prototype
+          content_tag(:div, :class => 'active-scaffold-header') do
+            content_tag :h2, link_to(active_scaffold_config_for(remote_controller).list.label, url, :remote => true, :id => id)
+          end <<
+          if ActiveScaffold.js_framework == :prototype
             javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true});")
           elsif ActiveScaffold.js_framework == :jquery
             javascript_tag("$('##{id}').load('#{url}');")

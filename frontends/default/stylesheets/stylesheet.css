@@ -996,6 +996,18 @@ font-size: 100%;
   float:left;
 }
 
+
+.active-scaffold-component > .active-scaffold-header h2 {
+border: none;
+}
+.active-scaffold-component > .active-scaffold-header h2 a,
+.active-scaffold-component > .active-scaffold-header h2 a:active,
+.active-scaffold-component > .active-scaffold-header h2 a:visited {
+text-decoration: none;
+color: inherit;
+}
+
+
 .as_touch a.inline-adapter-close {
 width: 25px;
 height: 27px;
