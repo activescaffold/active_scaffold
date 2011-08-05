@@ -341,6 +341,7 @@ module ActiveScaffold
     def active_scaffold_controller_for(klass)
       controller_namespace = self.to_s.split('::')[0...-1].join('::') + '::'
       error_message = []
+      klass = klass.to_s.singularize.camelize.constantize unless klass.is_a? Class
       [controller_namespace, ''].each do |namespace|
         ["#{klass.to_s.underscore.pluralize}", "#{klass.to_s.underscore.pluralize.singularize}"].each do |controller_name|
           begin
