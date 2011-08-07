@@ -77,7 +77,7 @@ fr:
     this_year: 'Cette Année'
     prev_year: 'Année dernière'
     next_year: 'Année prochaine'
-    past: 'Passé', 
+    past: 'Passé'
     future: 'Futur'
     range: 'Intervale'
     seconds: 'Secondes'
