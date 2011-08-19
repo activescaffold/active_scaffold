@@ -59,7 +59,8 @@ JQuery > 1.4.2
 https://github.com/vhochstein/jquery-ujs/raw/master/src/rails.js
 
 To configure the javascript framework when installed under vendor/plugins/
-uncomment last line in ...plugins/active_scaffold/lib/active_scaffold_env.rb in order to use jquery instead of prototype
+uncomment last line in config/initializers/active_scaffold.rb in order to use jquery instead of prototype.
+That file is created when you install ActiveScaffold as a plugin.
 
 To configure the javascript framework when installed as a gem:
 Add a config/initializers/active_scaffold.rb containing:
