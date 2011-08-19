@@ -382,5 +382,5 @@ Rails::Application.initializer("active_scaffold.install_assets") do
   rescue
     raise $! unless Rails.env == 'production'
   end
-end if defined?(ACTIVE_SCAFFOLD_GEM)
+end
 
