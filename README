@@ -39,10 +39,10 @@ If you want to install as plugins under vendor/plugins, install these versions:
   rails plugin install git://github.com/activescaffold/active_scaffold.git -r 'rails-3.0'
 
 If you want to use the gem, add to your Gemfile:
-  gem "active_scaffold_vho"
+  gem "active_scaffold"
 
 In case you would like to use most recent commit:
-  gem 'active_scaffold_vho', :git => 'git://github.com/active_scaffold/active_scaffold.git', :branch => 'rails-3.0'
+  gem 'active_scaffold', :git => 'git://github.com/activescaffold/active_scaffold.git', :branch => 'rails-3.0'
 
 == Pick your own javascript framework
 
