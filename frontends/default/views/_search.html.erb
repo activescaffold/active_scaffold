@@ -4,7 +4,10 @@
 options = {:id => element_form_id(:action => 'search'),
            :class => "as_form search",
            :remote => true,
-           :method => :get}
+           :method => :get,
+           'data-as_load' => 'form',
+           'data-as_action' => 'search'
+           }
 options['data-loading'] = true unless live_search
   form_tag url_options, options %>
   <%= text_field_tag :search, search_params, :class => 'text-input', :id => search_input_id, :size => 50, :autocomplete => :off %>

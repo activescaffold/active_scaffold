@@ -1,6 +1,6 @@
 <% display_class = ( @records.kind_of?(Array) ? @records.first : @records ) 
    columns ||= list_columns -%>
-<tr id="<%= active_scaffold_calculations_id %>" class="active-scaffold-calculations">
+<tr id="<%= active_scaffold_calculations_id %>" class="active-scaffold-calculations" data-as_load="tr">
   <% columns.each do |column| -%>
     <td <%= "id=#{active_scaffold_calculations_id(column)}" if column.calculation? %>>
       <% if column.calculation? -%>

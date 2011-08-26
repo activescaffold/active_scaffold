@@ -309,6 +309,7 @@ document.observe("dom:loaded", function() {
     }
     return true;
   });
+  ActiveScaffold.trigger_load_events($$('[data-as_load]'));
 });
 
 
@@ -394,12 +395,16 @@ var ActiveScaffold = {
     element = $(element)
     Element.replace(element, html);
     element = $(element.readAttribute('id'));
+    var elements = element.select('[data-as_load]');
+    elements.unshift(element);
+    ActiveScaffold.trigger_load_events(elements);
     return element;
   },
     
   replace_html: function(element, html) {
     element = $(element);
     element.update(html);
+    ActiveScaffold.trigger_load_events(element.select('[data-as_load]'));
     return element;
   },
   
@@ -454,7 +459,7 @@ var ActiveScaffold = {
       }
       new_row = Selector.findChildElements(tbody, ['tr.record']).last();
     }
-    
+    ActiveScaffold.trigger_load_events(new Array(new_row));
     this.stripe(tbody);
     this.hide_empty_message(tbody);
     this.increment_record_count(tbody.up('div.active-scaffold'));
@@ -620,6 +625,19 @@ var ActiveScaffold = {
       }
       mark_all_checkbox.writeAttribute('value', ('' + !options.checked));
     }
+  },
+
+  trigger_load_events: function(elements){
+    elements.each(function(element) {
+      switch (element.readAttribute('data-as_load')) {
+      case 'tr':
+       element.fire('as:list_row_loaded');
+       break;
+      case 'form':
+       element.fire('as:form_loaded');
+       break;
+      }
+    });
   }
 
 }
@@ -854,10 +872,12 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
 
     if (this.position == 'after') {
       this.target.insert({after:content});
+      ActiveScaffold.trigger_load_events(this.target.next().select('[data-as_load]'));
       this.set_adapter(this.target.next());
     }
     else if (this.position == 'before') {
       this.target.insert({before:content});
+      ActiveScaffold.trigger_load_events(this.target.previous().select('[data-as_load]'));
       this.set_adapter(this.target.previous());
     }
     else {
@@ -916,6 +936,7 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
   insert: function(content) {
     if (this.position == 'top') {
       this.target.insert({top:content});
+      ActiveScaffold.trigger_load_events(this.target.immediateDescendants().first().select('[data-as_load]'));
       this.set_adapter(this.target.immediateDescendants().first());
     }
     else {

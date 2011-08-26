@@ -236,6 +236,8 @@ $(document).ready(function() {
     }
     return true;
   });
+  ActiveScaffold.trigger_load_events($('[data-as_load]'));
+  
 });
 
 /* Simple Inheritance
@@ -445,6 +447,7 @@ var ActiveScaffold = {
     if (element.attr('id')) {
       element = $('#' + element.attr('id'));
     }
+    ActiveScaffold.trigger_load_events(element.find('[data-as_load]').andSelf());
     return element;
   },
   
@@ -452,6 +455,7 @@ var ActiveScaffold = {
     if (typeof(element) == 'string') element = '#' + element; 
     element = $(element);
     element.html(html);
+    ActiveScaffold.trigger_load_events(element.find('[data-as_load]'));
     return element;
   },
   
@@ -504,15 +508,18 @@ var ActiveScaffold = {
     
     if (options.insert_at == 'top') {
       tbody.prepend(html);
+      ActiveScaffold.trigger_load_events(tbody.children().first().find('[data-as_load]'));
       var new_row = tbody.children('tr.record:first-child');
     } else if (options.insert_at == 'bottom') {
       var rows = tbody.children('tr.record, tr.inline-adapter');
       var new_row = null;
       if (rows.length > 0) {
         new_row = rows.last().after(html).next();
+
       } else {
         new_row = tbody.append(html).children().last();
       }
+      ActiveScaffold.trigger_load_events(new_row);
     }
     this.stripe(tbody);
     this.hide_empty_message(tbody);
@@ -770,6 +777,19 @@ var ActiveScaffold = {
         ActiveScaffold.create_inplace_editor(span, options);
       }
     }
+  },
+
+  trigger_load_events: function(elements){
+    elements.each(function(index) {
+      switch ($(this).attr('data-as_load')) {
+      case 'tr':
+       $(this).trigger('as:list_row_loaded');
+       break;
+      case 'form':
+       $(this).trigger('as:form_loaded');
+       break;
+      }
+    });
   }
 }
 
@@ -970,10 +990,12 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
 
     if (this.position == 'after') {
       this.target.after(content);
+      ActiveScaffold.trigger_load_events(this.target.next().find('[data-as_load]'));
       this.set_adapter(this.target.next());
     }
     else if (this.position == 'before') {
       this.target.before(content);
+      ActiveScaffold.trigger_load_events(this.target.prev().find('[data-as_load]'));
       this.set_adapter(this.target.prev());
     }
     else {
@@ -1034,6 +1056,7 @@ ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
   insert: function(content) {
     if (this.position == 'top') {
       this.target.prepend(content);
+      ActiveScaffold.trigger_load_events(this.target.children().first().find('[data-as_load]'));
       this.set_adapter(this.target.children().first());
     }
     else {
