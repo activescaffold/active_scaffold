@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{active_scaffold_vho}
-  s.version = "3.1.0"
+  s.version = "3.1.0.rc1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Many, see README"]
@@ -365,7 +365,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_runtime_dependency(%q<render_component_vho>, [">= 0"])
       s.add_runtime_dependency(%q<verification>, [">= 0"])
-      s.add_runtime_dependency(%q<rails>, ["~> 3.1.0"])
+      s.add_runtime_dependency(%q<rails>, ["~> 3.1.0.rc1"])
     else
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
@@ -373,7 +373,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<render_component_vho>, [">= 0"])
       s.add_dependency(%q<verification>, [">= 0"])
-      s.add_dependency(%q<rails>, ["~> 3.1.0"])
+      s.add_dependency(%q<rails>, ["~> 3.1.0.rc1"])
     end
   else
     s.add_dependency(%q<shoulda>, [">= 0"])
@@ -382,7 +382,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rcov>, [">= 0"])
     s.add_dependency(%q<render_component_vho>, [">= 0"])
     s.add_dependency(%q<verification>, [">= 0"])
-    s.add_dependency(%q<rails>, ["~> 3.1.0"])
+    s.add_dependency(%q<rails>, ["~> 3.1.0.rc1"])
   end
 end
 
