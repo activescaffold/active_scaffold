@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{active_scaffold_vho}
-  s.version = "3.1.0.rc1"
+  s.version = "3.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Many, see README"]
