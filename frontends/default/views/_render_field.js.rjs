@@ -1,4 +1,7 @@
 column = active_scaffold_config.columns[render_field.to_sym]
+@rendered ||= Set.new
+return if @rendered.include? column.name
+@rendered << column.name
 if column_renders_as(column) == :subform
   options = {:is_subform => true, :field_class => "#{column.name}-sub-form"}
 else
