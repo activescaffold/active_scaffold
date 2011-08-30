@@ -40,7 +40,7 @@ module ActiveScaffold::Actions
           else
             params[:record]
           end
-          @record = update_record_from_params(@record, active_scaffold_config.update.columns, hash)
+          @record = update_record_from_params(@record, active_scaffold_config.send(params[:id] ? :update : :create).columns, hash)
         else
           value = column_value_from_param_value(@record, column, params[:value])
           @record.send "#{column.name}=", value
