@@ -29,8 +29,8 @@ module ActiveScaffold::Actions
     end
 
     def render_field_for_update_columns
-      @record = new_model
       column = active_scaffold_config.columns[params[:column]]
+      @record = params[:id] && column.send_form_on_update_column ? find_if_allowed(params[:id], :update) : new_model
       unless column.nil?
         if column.send_form_on_update_column
           hash = if params[:scope]
