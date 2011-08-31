@@ -42,8 +42,11 @@ module ActiveScaffold
           params.merge!({column.association.primary_key_name => ''})
         end
  
-        record_select_options = {:controller => remote_controller, :id => options[:id]}
-        record_select_options.merge!(active_scaffold_input_text_options)
+        record_select_options = active_scaffold_input_text_options(
+          :controller => remote_controller,
+          :id => options[:id],
+          :class => options[:class]
+        )
         record_select_options.merge!(column.options)
         if options['data-update_url']
           record_select_options[:onchange] = %|function(id, label) {
