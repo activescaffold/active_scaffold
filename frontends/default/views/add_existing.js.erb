@@ -1,20 +1,20 @@
 <% new_row = render :partial => 'list_record', :locals => {:record => @record}%>
-ActiveScaffold.create_record_row('#{active_scaffold_id}','#{escape_javascript(new_row)}', #{{:insert_at => :top}.to_json.html_safe});
-<%%>
+ActiveScaffold.create_record_row('<%=active_scaffold_id%>','<%=escape_javascript(new_row)%>', <%={:insert_at => :top}.to_json.html_safe%>);
+
 <% if active_scaffold_config.list.columns.any? {|c| c.calculation?} %>
   ActiveScaffold.replace('<%=active_scaffold_calculations_id%>', '<%=escape_javascript(render(:partial => 'list_calculations'))%>');
-<%end%>
-<%%>
+<% end %>
+
 <% if(form_stays_open == true)%>
   <%# why not just re-render the form? that wouldn't utilize a possible do_new override which sets default values.%>
-  ActiveScaffold.reset_form('<%element_form_id%>');
-  ActiveScaffold.replace_html('<%element_messages_id(:action => :add_existing)%>', '<%=escape_javascript(render(:partial => 'form_messages'))%>');
+  ActiveScaffold.reset_form('<%=element_form_id%>');
+  ActiveScaffold.replace_html('<%=element_messages_id(:action => :add_existing)%>', '<%=escape_javascript(render(:partial => 'form_messages'))%>');
   <%# have to delay the focus, because there's no "firstElement" in prototype until at least one element is not disabled%>
-  <%if ActiveScaffold.js_framework == :prototype%>
+  <% if ActiveScaffold.js_framework == :prototype %>
     page.delay 0.1 do
-      page << "ActiveScaffold.focus_first_element_of_form('#{element_form_id}');"
+      page << "ActiveScaffold.focus_first_element_of_form('<%=element_form_id%>');"
     end
-  <%end%>
-<%else%>
-  ActiveScaffold.find_action_link('<%element_form_id(:action => :new_existing)%>').close();
-<%end%>
+  <% end %>
+<% else %>
+  ActiveScaffold.find_action_link('<%=element_form_id(:action => :new_existing)%>').close();
+<% end %>
