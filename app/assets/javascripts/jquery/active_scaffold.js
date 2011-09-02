@@ -177,11 +177,14 @@ $(document).ready(function() {
       $.ajax({
         url: element.attr('data-update_url'),
         data: params,
-        beforeSend: function(event) {
+        beforeSend: function(xhr, settings) {
           element.nextAll('img.loading-indicator').css('visibility','visible');
-          ActiveScaffold.disable_form(as_form)
+          ActiveScaffold.disable_form(as_form);
+          if (settings.dataType === undefined || settings.dataType === 'text') {
+            xhr.setRequestHeader('accept', '*/*;q=0.5, ' + settings.accepts.script);
+          }
         },
-        complete: function(event) {
+        complete: function(xhr, status) {
           element.nextAll('img.loading-indicator').css('visibility','hidden');
           ActiveScaffold.enable_form(as_form)
         },
@@ -493,8 +496,8 @@ var ActiveScaffold = {
     as_form = $(as_form)
     var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (loading_indicator) loading_indicator.css('visibility','hidden');
-    $('input[type=submit]', as_form).attr('disabled', '');
-    $("input:disabled,select:disabled,textarea:disabled", as_form).attr('disabled', '');
+    $('input[type=submit]', as_form).removeAttr('disabled');
+    $("input:disabled,select:disabled,textarea:disabled", as_form).removeAttr('disabled');
   },  
   
   focus_first_element_of_form: function(form_element) {
@@ -588,7 +591,7 @@ var ActiveScaffold = {
         checkbox.attr('disabled', 'disabled');
       },
       complete: function(request){
-        checkbox.attr('disabled', '');
+        checkbox.removeAttr('disabled');
       }
     });
   },
