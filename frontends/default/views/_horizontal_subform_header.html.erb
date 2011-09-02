@@ -2,9 +2,10 @@
   <tr>
     <%
     active_scaffold_config_for(@record.class).subform.columns.each :for => @record.class, :flatten => true do |column|
-      next unless in_subform?(column, parent_record) and column_renders_as(column) != :hidden
+      hidden = column_renders_as(column) == :hidden
+      next unless in_subform?(column, parent_record)
       -%>
-      <th<%= ' class="required"' if column.required? %>><label><%= column.label %></label></th>
+      <th class="<%= "#{'required' if column.required?} #{'hidden' if hidden}" %>"><label><%= column.label unless hidden %></label></th>
     <% end -%>
   </tr>
 </thead>
