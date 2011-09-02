@@ -229,15 +229,16 @@ module ActiveScaffold
       end
 
       def cache_association(value, column)
+        # loaded? and target seems to be gone in rails 3.1
         # we are not using eager loading, cache firsts records in order not to query the database in a future
-        unless value.loaded?
+        #unless value.loaded?
           # load at least one record, is needed for column_empty? and checking permissions
-          if column.associated_limit.nil?
-            Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
-          else
-            value.target = value.find(:all, :limit => column.associated_limit + 1, :select => column.select_columns)
-          end
-        end
+        #  if column.associated_limit.nil?
+        #    Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
+        #  else
+        #    value.target = value.find(:all, :limit => column.associated_limit + 1, :select => column.select_columns)
+        #  end
+        #end
       end
 
       # ==========
