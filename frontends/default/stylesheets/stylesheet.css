@@ -260,6 +260,10 @@ background: #333 url(../../../images/active_scaffold/default/indicator-small.gif
 margin-left: 5px;
 }
 
+.active-scaffold th.hidden, .active-scaffold td.hidden {
+display: none;
+}
+
 /* Table :: Record Rows
    ============================= */
 
