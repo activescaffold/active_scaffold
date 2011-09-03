@@ -5,7 +5,7 @@ ActiveScaffold.create_record_row('<%=active_scaffold_id%>','<%=escape_javascript
   ActiveScaffold.replace('<%=active_scaffold_calculations_id%>', '<%=escape_javascript(render(:partial => 'list_calculations'))%>');
 <% end %>
 
-<% if(form_stays_open == true)%>
+<% if(form_stays_open = true)%>
   <%# why not just re-render the form? that wouldn't utilize a possible do_new override which sets default values.%>
   ActiveScaffold.reset_form('<%=element_form_id%>');
   ActiveScaffold.replace_html('<%=element_messages_id(:action => :add_existing)%>', '<%=escape_javascript(render(:partial => 'form_messages'))%>');
