@@ -239,6 +239,11 @@ $(document).ready(function() {
     }
     return true;
   });
+  $('form.as_form').live('as:form_loaded', function(event) {
+    var as_form = $(this).closest("form");
+    ActiveScaffold.focus_first_element_of_form(as_form);
+    return true;
+  });
   ActiveScaffold.trigger_load_events($('[data-as_load]'));
   
 });

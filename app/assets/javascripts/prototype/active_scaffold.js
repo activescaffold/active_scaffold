@@ -309,6 +309,11 @@ document.observe("dom:loaded", function() {
     }
     return true;
   });
+  document.on('as:form_loaded', 'form.as_form', function(event) {
+      var as_form = event.findElement('form');
+      ActiveScaffold.focus_first_element_of_form(as_form);
+      return true;
+  });
   ActiveScaffold.trigger_load_events($$('[data-as_load]'));
 });
 

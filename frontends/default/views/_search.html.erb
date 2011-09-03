@@ -32,6 +32,5 @@ options['data-loading'] = true unless live_search
   $(<%= "##{search_input_id}".to_json.html_safe %>).delayedObserver(0.5, function() {
      $(<%= "##{search_input_id}".to_json.html_safe %>).parent().trigger("submit");});
 <% end -%>
-ActiveScaffold.focus_first_element_of_form('<%= element_form_id(:action => 'search') %>');
 //]]>
 </script>
