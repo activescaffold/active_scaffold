@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    active_scaffold (3.0.22)
+    active_scaffold (3.0.23)
       rails (~> 3.0.0)
       render_component_vho
       verification
