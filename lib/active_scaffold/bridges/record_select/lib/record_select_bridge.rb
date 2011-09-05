@@ -54,11 +54,13 @@ module ActiveScaffold
             }|
         end
  
-        if multiple
+        html = if multiple
           record_multi_select_field(options[:name], value || [], record_select_options)
         else
           record_select_field(options[:name], value || column.association.klass.new, record_select_options)
         end
+        html = self.class.field_error_proc.call(html, self) if @record.errors[column.name].any?
+        html
       end
     end
 
