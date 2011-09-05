@@ -16,7 +16,7 @@
 	<% end %>
   <% else -%>
     <% if options[:level] == 0 %>
-      <%= "#{start_level_0_tag}#{h(render_group_action_link(link, url_options, options, record))}#{end_level_0_tag}".html_safe %>
+      <%= "#{start_level_0_tag}#{render_group_action_link(link, url_options, options, record)}#{end_level_0_tag}".html_safe %>
     <% else %>
       <%= content_tag('li', render_group_action_link(link, url_options, options, record), options[:first_action] ? {:class => 'top'}: {}) %>
     <% end %>
