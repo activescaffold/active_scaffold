@@ -9,7 +9,7 @@ rescue Bundler::BundlerError => e
 end
 Bundler::GemHelper.install_tasks
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc/task'
 require 'find'
 
 desc 'Test ActiveScaffold.'
