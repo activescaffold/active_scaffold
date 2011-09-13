@@ -123,9 +123,6 @@ module ActiveScaffold::Actions::Nested
 
     def self.included(base)
       super
-      base.verify :method => :post,
-                  :only => :add_existing,
-                  :redirect_to => { :action => :index }
     end
 
     def new_existing
