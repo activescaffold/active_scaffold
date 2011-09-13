@@ -1,44 +1,6 @@
-class File #:nodoc:
-
-  unless File.respond_to?(:binread)
-    def self.binread(file)
-      File.open(file, 'rb') { |f| f.read }
-    end
-  end
-
-end 
-
-ActiveScaffold::Config::Core.class_eval do
-  def initialize_with_date_picker(model_id)
-    initialize_without_date_picker(model_id)
-    
-    date_picker_fields = self.model.columns.collect{|c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
-    # check to see if file column was used on the model
-    return if date_picker_fields.empty?
-    
-    # automatically set the forum_ui to a file column
-    date_picker_fields.each{|field|
-      col_config = self.columns[field[:name]] 
-      col_config.form_ui = (field[:type] == :date ? :date_picker : :datetime_picker)
-    }
-  end
-  
-  alias_method_chain :initialize, :date_picker
-end
-
-ActiveRecord::ConnectionAdapters::Column.class_eval do
-  class << self
-    def fallback_string_to_date_with_date_picker(string)
-      Date.strptime(string, I18n.t('date.formats.default')) rescue fallback_string_to_date_without_date_picker(string)
-    end
-    alias_method_chain :fallback_string_to_date, :date_picker
-  end
-end
-
-
-module ActiveScaffold
-  module Bridges
-    module DatePickerBridge
+module ActiveScaffold::Bridges
+  class DatePicker
+    module Helper
       DATE_FORMAT_CONVERSION = {
         '%a' => 'D',
         '%A' => 'DD',
@@ -57,19 +19,6 @@ module ActiveScaffold
         '%S' => 'ss'
       }
       
-      def self.localization
-        "jQuery(function($){
-  if (typeof($.datepicker) === 'object') {
-    #{date_options_for_locales}
-    $.datepicker.setDefaults($.datepicker.regional['#{I18n.locale}']);
-  }
-  if (typeof($.timepicker) === 'object') {
-    #{datetime_options_for_locales}
-    $.timepicker.setDefaults($.timepicker.regional['#{I18n.locale}']);
-  }
-});\n"        
-      end
-
       def self.date_options_for_locales
         I18n.available_locales.collect do |locale|
           locale_date_options = date_options(locale)
@@ -108,11 +57,7 @@ module ActiveScaffold
           date_picker_options[:dateFormat] = js_format unless js_format.nil?
           date_picker_options
         rescue
-          if locale == I18n.locale
-            raise
-          else
-            nil
-          end
+          raise if locale == I18n.locale
         end
       end
 
@@ -152,18 +97,14 @@ module ActiveScaffold
           end
           datetime_picker_options
         rescue
-          if locale == I18n.locale
-            raise
-          else
-            nil
-          end
+          raise if locale == I18n.locale
         end
       end
       
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
         if rails_format =~ /%[cUWwxXZz]/
-          Rails.logger.warn("AS DatePickerBridge: Can t convert rails date format: #{rails_format} to jquery datepicker format. Options %c, %U, %W, %w, %x %X, %z, %Z are not supported by datepicker]")
+          Rails.logger.warn("AS DatePicker::Helper: Can t convert rails date format: #{rails_format} to jquery datepicker format. Options %c, %U, %W, %w, %x %X, %z, %Z are not supported by datepicker]")
           nil
         else
           js_format = rails_format.dup
@@ -191,11 +132,11 @@ module ActiveScaffold
       
       module DatepickerColumnHelpers
         def datepicker_split_datetime_format(datetime_format)
-          ActiveScaffold::Bridges::DatePickerBridge.split_datetime_format(datetime_format)
+          ActiveScaffold::Bridges::DatePicker::Helper.split_datetime_format(datetime_format)
         end
         
         def to_datepicker_format(rails_format)
-          ActiveScaffold::Bridges::DatePickerBridge.to_datepicker_format(rails_format)
+          ActiveScaffold::Bridges::DatePicker::Helper.to_datepicker_format(rails_format)
         end
         
         def datepicker_format_options(column, format, options)
@@ -244,22 +185,4 @@ module ActiveScaffold
       end
     end
   end
-end
-
-ActionView::Base.class_eval do
-  include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
-  alias_method :active_scaffold_search_date_picker, :active_scaffold_search_date_bridge
-  alias_method :active_scaffold_search_datetime_picker, :active_scaffold_search_date_bridge
-  include ActiveScaffold::Bridges::Shared::DateBridge::HumanConditionHelpers
-  alias_method :active_scaffold_human_condition_date_picker, :active_scaffold_human_condition_date_bridge
-  alias_method :active_scaffold_human_condition_datetime_picker, :active_scaffold_human_condition_date_bridge
-  include ActiveScaffold::Bridges::DatePickerBridge::SearchColumnHelpers
-  include ActiveScaffold::Bridges::DatePickerBridge::FormColumnHelpers
-  alias_method :active_scaffold_input_datetime_picker, :active_scaffold_input_date_picker
-  include ActiveScaffold::Bridges::DatePickerBridge::DatepickerColumnHelpers
-end
-ActiveScaffold::Finder::ClassMethods.module_eval do
-  include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
-  alias_method :condition_for_date_picker_type, :condition_for_date_bridge_type
-  alias_method :condition_for_datetime_picker_type, :condition_for_date_picker_type
 end

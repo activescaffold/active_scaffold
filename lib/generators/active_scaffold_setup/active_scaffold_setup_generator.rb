@@ -9,7 +9,6 @@ module Rails
 
       def install_plugins
         if defined?(ACTIVE_SCAFFOLD_PLUGIN)
-          plugin 'verification', :git => 'git://github.com/rails/verification.git'
           plugin 'render_component', :git => 'git://github.com/vhochstein/render_component.git'
         end
         if js_lib == 'prototype'
