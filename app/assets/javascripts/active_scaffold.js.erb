@@ -1,8 +1,11 @@
 <% if ActiveScaffold.js_framework == :jquery %>
+<% require_asset "jquery-ui" %>
 <% require_asset "jquery/active_scaffold" %>
 <% require_asset "jquery/jquery.editinplace" %>
 <% require_asset "jquery/date_picker_bridge" %>
 <% else %>
+<% require_asset "effects" %>
+<% require_asset "controls" %>
 <% require_asset "prototype/active_scaffold" %>
 <% require_asset "prototype/dhtml_history" %>
 <% require_asset "prototype/form_enhancements" %>

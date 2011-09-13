@@ -24,6 +24,8 @@ module ActiveScaffold
   autoload :Constraints, 'active_scaffold/constraints'
   autoload :Finder, 'active_scaffold/finder'
   autoload :MarkedModel, 'active_scaffold/marked_model'
+  autoload :Bridge, 'active_scaffold/bridge'
+  autoload :Bridges, 'active_scaffold/bridges'
 
   def self.autoload_subdir(dir, mod=self, root = File.dirname(__FILE__))
     Dir["#{root}/active_scaffold/#{dir}/*.rb"].each { |file|
@@ -36,10 +38,6 @@ module ActiveScaffold
 
   module Actions
     ActiveScaffold.autoload_subdir('actions', self)
-  end
-
-  module Bridges
-    autoload :Bridge, 'active_scaffold/bridges/bridge'
   end
 
   module Config
