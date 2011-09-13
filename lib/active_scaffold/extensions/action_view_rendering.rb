@@ -14,8 +14,8 @@ module ActionView
 end
 
 # wrap the action rendering for ActiveScaffold views
-module ActionView #:nodoc:
-  class Renderer
+module ActionView::Helpers #:nodoc:
+  module RenderingHelper
   #
   # Adds two rendering options.
   #
@@ -40,7 +40,7 @@ module ActionView #:nodoc:
   #
     def render_with_active_scaffold(*args, &block)
       if args.first == :super
-        last_view = @view_stack.last
+        last_view = @_view_stack.last
         options = args[1] || {}
         options[:locals] ||= {}
         options[:locals].reverse_merge!(last_view[:locals] || {})
@@ -49,11 +49,11 @@ module ActionView #:nodoc:
           last_view[:templates].shift
         end
         options[:template] = last_view[:templates].shift
-        @view_stack << last_view
+        @_view_stack << last_view
         result = render_without_active_scaffold options
-        @view_stack.pop
+        @_view_stack.pop
         result
-      elsif args.first.is_a?(Hash) and args.first[:active_scaffold]
+      elsif args.first.is_a? Hash and args.first[:active_scaffold]
         require 'digest/md5'
         options = args.first
 
@@ -89,12 +89,12 @@ module ActionView #:nodoc:
           current_view = {:view => options[:template], :is_template => !!options[:template]} if current_view.nil? && options[:template]
           current_view[:locals] = options[:locals] if !current_view.nil? && options[:locals]
           if current_view.present?
-            @view_stack ||= []
-            @view_stack << current_view
+            @_view_stack ||= []
+            @_view_stack << current_view
           end
         end
         result = render_without_active_scaffold(*args, &block)
-        @view_stack.pop if current_view.present?
+        @_view_stack.pop if current_view.present?
         result
       end
     end
