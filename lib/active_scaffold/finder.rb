@@ -261,7 +261,7 @@ module ActiveScaffold
       finder_options = { :order => options[:sorting].try(:clause),
                          :where => search_conditions,
                          :joins => joins_for_finder,
-                         :includes => options[:count_includes]}
+                         :includes => full_includes}
                          
       finder_options.merge! custom_finder_options
       finder_options
@@ -270,9 +270,9 @@ module ActiveScaffold
     # Returns a hash with options to count records, rejecting select and order options
     # See finder_options for valid options
     def count_options(find_options = {}, count_includes = nil)
-      count_includes ||= find_options[:include] unless find_options[:conditions].nil?
+      count_includes ||= find_options[:includes] unless find_options[:conditions].nil?
       options = find_options.reject{|k,v| [:select, :order].include? k}
-      options[:include] = count_includes
+      options[:includes] = count_includes
       options
     end
 
@@ -287,25 +287,26 @@ module ActiveScaffold
       klass = beginning_of_chain
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count_query = append_to_query(klass, finder_options.reject{|k, v| [:select, :order].include?(k)})
-      count = count_query.count unless options[:pagination] == :infinite
+      if options[:pagination] && options[:pagination] != :infinite
+        count_query = append_to_query(klass, count_options(find_options, options[:count_includes]))
+        count = count_query.count unless options[:pagination] == :infinite
+      end
   
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
       count = count.length if count.is_a? ActiveSupport::OrderedHash
-      finder_options.merge! :includes => full_includes
 
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          sorted_collection = sort_collection_by_column(append_to_query(klass, finder_options).all, *options[:sorting].first)
+          sorted_collection = sort_collection_by_column(append_to_query(klass, find_options).all, *options[:sorting].first)
           sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
           sorted_collection
         end
       else
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          finder_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
-          append_to_query(klass, finder_options).all
+          find_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
+          append_to_query(klass, find_options).all
         end
       end
       pager.page(options[:page])
