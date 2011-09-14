@@ -32,14 +32,6 @@ module ActiveScaffold::Config
     cattr_accessor :refresh_list
     @@refresh_list = false
 
-    # instance-level configuration
-    # ----------------------------
-    # the label= method already exists in the Form base class
-    def label(model = nil)
-      model ||= @core.label(:count => 1)
-      @label ? as_(@label) : as_(:create_model, :model => model)
-    end
-    
     # whether the form stays open after a create or not
     attr_accessor :persistent
 
