@@ -8,9 +8,9 @@ module ActiveScaffold::Config
     def initialize_with_file_column(model_id)
       initialize_without_file_column(model_id)
       
-      return unless ActiveScaffold::Bridges::Paperclip::Lib::FileColumnHelpers.klass_has_file_column_fields?(self.model)
+      return unless ActiveScaffold::Bridges::FileColumn::FileColumnHelpers.klass_has_file_column_fields?(self.model)
       
-      self.model.send :extend, ActiveScaffold::Bridges::Paperclip::Lib::FileColumnHelpers
+      self.model.send :extend, ActiveScaffold::Bridges::FileColumn::FileColumnHelpers
       
       # include the "delete" helpers for use with active scaffold, unless they are already included
       self.model.generate_delete_helpers

@@ -1,5 +1,5 @@
-ActiveScaffold::Bridges.bridge "CalendarDateSelect" do
-  install do
+class ActiveScaffold::Bridges::CalendarDateSelect < ActiveScaffold::DataStructures::Bridge
+  def self.install
     # check to see if the old bridge was installed.  If so, warn them
     # we can detect this by checking to see if the bridge was installed before calling this code
        
@@ -7,10 +7,10 @@ ActiveScaffold::Bridges.bridge "CalendarDateSelect" do
       raise RuntimeError, "We've detected that you have active_scaffold_calendar_date_select_bridge installed.  This plugin has been moved to core.  Please remove active_scaffold_calendar_date_select_bridge to prevent any conflicts"
     end
     
-    require File.join(File.dirname(__FILE__), "lib/as_cds_bridge.rb")
+    require File.join(File.dirname(__FILE__), "calendar_date_select/as_cds_bridge.rb")
   end
   
-  install? do
+  def self.install?
     Object.const_defined?(name) && ActiveScaffold.js_framework == :prototype
   end
 end

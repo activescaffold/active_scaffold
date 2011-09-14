@@ -24,7 +24,6 @@ module ActiveScaffold
   autoload :Constraints, 'active_scaffold/constraints'
   autoload :Finder, 'active_scaffold/finder'
   autoload :MarkedModel, 'active_scaffold/marked_model'
-  autoload :Bridge, 'active_scaffold/bridge'
   autoload :Bridges, 'active_scaffold/bridges'
 
   def self.autoload_subdir(dir, mod=self, root = File.dirname(__FILE__))
@@ -148,7 +147,7 @@ module ActiveScaffold
   module ClassMethods
     def active_scaffold(model_id = nil, &block)
       # initialize bridges here
-      ActiveScaffold::Bridges::Bridge.run_all
+      ActiveScaffold::Bridges.run_all
 
       # converts Foo::BarController to 'bar' and FooBarsController to 'foo_bar' and AddressController to 'address'
       model_id = self.to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore unless model_id
