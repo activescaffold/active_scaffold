@@ -33,8 +33,8 @@ action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'mess
     <% else %>
       action_link.close();
     <% end %>
-    <% if (active_scaffold_config.create.edit_after_create) %>
-      var link = $('<%=action_link_id 'edit', @record.id%>');
+    <% if (active_scaffold_config.create.action_after_create) %>
+      var link = $('<%=action_link_id active_scaffold_config.create.action_after_create, @record.id%>');
       if (link) (function() { link.action_link.open() }).defer();
     <% end %>
   <% end %>

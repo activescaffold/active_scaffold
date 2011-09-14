@@ -5,7 +5,7 @@ module ActiveScaffold::Config
       super
       @label = :create_model
       self.persistent = self.class.persistent
-      self.edit_after_create = self.class.edit_after_create
+      self.action_after_create = self.class.action_after_create
       self.refresh_list = self.class.refresh_list
     end
 
@@ -44,7 +44,7 @@ module ActiveScaffold::Config
     attr_accessor :persistent
 
     # whether the form stays open after a create or not
-    attr_accessor :edit_after_create
+    attr_accessor :action_after_create
 
     # whether we should refresh list after create or not
     attr_accessor :refresh_list
