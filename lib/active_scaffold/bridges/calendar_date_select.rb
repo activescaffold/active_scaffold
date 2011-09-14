@@ -11,6 +11,6 @@ class ActiveScaffold::Bridges::CalendarDateSelect < ActiveScaffold::DataStructur
   end
   
   def self.install?
-    Object.const_defined?(name) && ActiveScaffold.js_framework == :prototype
+    super && ActiveScaffold.js_framework == :prototype
   end
 end
