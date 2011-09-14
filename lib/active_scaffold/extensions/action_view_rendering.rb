@@ -1,13 +1,12 @@
 module ActionView
   class LookupContext
     module ViewPaths
-      def find_all_templates(name, prefix = nil, partial = false)
-        templates = []
-        @view_paths.each do |resolver|
-          template = resolver.find_all(*args_for_lookup(name, prefix, partial)).first
-          templates << template unless template.nil?
-        end
-        templates
+      def find_all_templates(name, partial = false, locals = {})
+        prefixes.collect do |prefix|
+          view_paths.collect do |resolver|
+            resolver.find_all(*args_for_lookup(name, prefix, partial, locals))
+          end
+        end.flatten!
       end
     end
   end
@@ -45,7 +44,7 @@ module ActionView::Helpers #:nodoc:
         options[:locals] ||= {}
         options[:locals].reverse_merge!(last_view[:locals] || {})
         if last_view[:templates].nil?
-          last_view[:templates] = lookup_context.find_all_templates(last_view[:view], controller_path, !last_view[:is_template])
+          last_view[:templates] = lookup_context.find_all_templates(last_view[:view], !last_view[:is_template], options[:locals])
           last_view[:templates].shift
         end
         options[:template] = last_view[:templates].shift
