@@ -33,11 +33,25 @@ module ActiveScaffold
       
     def self.run_all
       return false if self.bridges_run
-      self.bridges.keys.each{|bridge_name|
+      self.bridges.keys.each do |bridge_name|
         bridge = self[bridge_name]
         bridge.run if bridge
-      }
+      end
       self.bridges_run = true
+    end
+
+    def self.all_stylesheets
+      self.bridges.keys.collect do |bridge_name|
+        bridge = self[bridge_name]
+        bridge.stylesheets if bridge and bridge.install?
+      end.compact.flatten
+    end
+
+    def self.all_javascripts
+      self.bridges.keys.collect do |bridge_name|
+        bridge = self[bridge_name]
+        bridge.javascripts if bridge and bridge.install?
+      end.compact.flatten
     end
   end
 end

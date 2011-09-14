@@ -4,17 +4,6 @@ class ActiveScaffold::Bridges::RecordSelect
       base.class_eval do
         include FormColumnHelpers
         include SearchColumnHelpers
-        include ViewHelpers
-      end
-    end
-
-    module ViewHelpers
-      def self.included(base)
-        base.alias_method_chain :active_scaffold_includes, :record_select
-      end
-
-      def active_scaffold_includes_with_record_select(*args)
-        active_scaffold_includes_without_record_select(*args) + record_select_includes
       end
     end
 

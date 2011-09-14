@@ -84,39 +84,6 @@ module ActiveScaffold
         (output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>").html_safe
       end
 
-      # Provides list of javascripts to include with +javascript_include_tag+
-      # You can use this with your javascripts like
-      #   <%= javascript_include_tag :defaults, 'your_own_cool_script', active_scaffold_javascripts, :cache => true %>
-      def active_scaffold_javascripts(frontend = :default)
-        ActiveScaffold::Config::Core.javascripts(frontend).collect do |name|
-          ActiveScaffold::Config::Core.asset_path(name, frontend)
-        end
-      end
-      
-      # Provides stylesheets to include with +stylesheet_link_tag+
-      def active_scaffold_stylesheets(frontend = :default)
-        [ActiveScaffold::Config::Core.asset_path("stylesheet.css", frontend)]
-      end
-
-      # Provides stylesheets for IE to include with +stylesheet_link_tag+ 
-      def active_scaffold_ie_stylesheets(frontend = :default)
-        [ActiveScaffold::Config::Core.asset_path("stylesheet-ie.css", frontend)]
-      end
-
-      # easy way to include ActiveScaffold assets
-      def active_scaffold_includes(*args)
-        frontend = args.first.is_a?(Symbol) ? args.shift : :default
-        options = args.first.is_a?(Hash) ? args.shift : {}
-        js = javascript_include_tag(*active_scaffold_javascripts(frontend).push(options))
-
-        css = stylesheet_link_tag(*active_scaffold_stylesheets(frontend).push(options))
-        options[:cache] += '_ie' if options[:cache].is_a? String
-        options[:concat] += '_ie' if options[:concat].is_a? String
-        ie_css = stylesheet_link_tag(*active_scaffold_ie_stylesheets(frontend).push(options))
-
-        js + "\n" + css + "\n<!--[if IE]>".html_safe + ie_css + "<![endif]-->\n".html_safe
-      end
-
       # a general-use loading indicator (the "stuff is happening, please wait" feedback)
       def loading_indicator_tag(options)
         image_tag "indicator.gif", :style => "visibility:hidden;", :id => loading_indicator_id(options), :alt => "loading indicator", :class => "loading-indicator"

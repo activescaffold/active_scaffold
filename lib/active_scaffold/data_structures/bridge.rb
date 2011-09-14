@@ -12,5 +12,11 @@ module ActiveScaffold::DataStructures
     def self.run
       install if install?
     end
+
+    def self.stylesheets
+    end
+
+    def self.javascripts
+    end
   end
 end

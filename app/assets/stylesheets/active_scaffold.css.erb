@@ -1,4 +1,4 @@
-<%= require_asset "jquery-ui" %>
+<% require_asset "jquery-ui" %>
 /*
  ActiveScaffold
  (c) 2007 Richard White <rrwhite@gmail.com>
@@ -1093,3 +1093,5 @@ padding: 5px 2px 5px 5px;
 .as_touch tr.record td {
 padding: 5px 10px;
 }
+
+<% ActiveScaffold::Bridges.all_stylesheets.each {|css| require_asset css} %>
