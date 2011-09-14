@@ -1,6 +1,6 @@
 module ActiveScaffold
   module Bridges
-    module Dragonfly
+    class Dragonfly
       module DragonflyBridgeHelpers
         mattr_accessor :thumbnail_style
         self.thumbnail_style = 'x30>'

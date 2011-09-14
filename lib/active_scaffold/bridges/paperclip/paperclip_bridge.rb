@@ -1,6 +1,6 @@
 module ActiveScaffold
   module Bridges
-    module Paperclip
+    class Paperclip
       module PaperclipBridge
         def initialize_with_paperclip(model_id)
           initialize_without_paperclip(model_id)

@@ -1,6 +1,6 @@
 module ActiveScaffold
   module Bridges
-    module Paperclip
+    class Paperclip
       module PaperclipBridgeHelpers
         mattr_accessor :thumbnail_style
         self.thumbnail_style = :thumbnail

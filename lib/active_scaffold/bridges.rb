@@ -1,6 +1,9 @@
 module ActiveScaffold
   module Bridges
     ActiveScaffold.autoload_subdir('bridges', self)
+    module Shared
+      autoload :DateBridge, 'active_scaffold/bridges/shared/date_bridge'
+    end
 
     mattr_accessor :bridges
     mattr_accessor :bridges_run
@@ -39,7 +42,6 @@ module ActiveScaffold
   end
 end
 
-require File.join(File.dirname(__FILE__), 'bridges/shared/date_bridge.rb')
 (Dir[File.join(File.dirname(__FILE__), "bridges/*.rb")] - [__FILE__]).each{|bridge_require|
   ActiveScaffold::Bridges.register bridge_require
 } 

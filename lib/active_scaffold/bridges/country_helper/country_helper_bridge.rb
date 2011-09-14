@@ -1,5 +1,5 @@
-module ActiveScaffold
-  module CountryHelperBridge
+module ActiveScaffold::Bridges
+  class CountryHelper
     module CountryHelpers
       # Return select and option tags for the given object and method, using country_options_for_select to generate the list of option tags.
       def country_select(object, method, priority_countries = nil, options = {}, html_options = {})
@@ -352,7 +352,7 @@ module ActiveScaffold
 end
 
 ActionView::Base.class_eval do
-  include ActiveScaffold::CountryHelperBridge::CountryHelpers
-  include ActiveScaffold::CountryHelperBridge::FormColumnHelpers
-  include ActiveScaffold::CountryHelperBridge::SearchColumnHelpers
+  include ActiveScaffold::Bridges::CountryHelper::CountryHelpers
+  include ActiveScaffold::Bridges::CountryHelper::FormColumnHelpers
+  include ActiveScaffold::Bridges::CountryHelper::SearchColumnHelpers
 end

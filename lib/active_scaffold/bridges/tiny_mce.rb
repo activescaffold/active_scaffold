@@ -1,5 +1,5 @@
-class ActiveScaffold::Bridges::TinyMCE < ActiveScaffold::DataStructures::Bridge
+class ActiveScaffold::Bridges::TinyMce < ActiveScaffold::DataStructures::Bridge
   def self.install
-    require File.join(File.dirname(__FILE__), "tiny_mce/tiny_mce_bridge.rb")
+    require File.join(File.dirname(__FILE__), "tiny_mce/helpers.rb")
   end
 end

@@ -1,5 +1,5 @@
-module ActiveScaffold
-  module CancanBridge
+module ActiveScaffold::Bridges
+  class Cancan
 
     # controller level authorization
     # As already has callbacks to ensure authorization at controller method via "authorization_method"
