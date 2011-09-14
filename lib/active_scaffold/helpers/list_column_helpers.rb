@@ -10,7 +10,7 @@ module ActiveScaffold
             # we only pass the record as the argument. we previously also passed the formatted_value,
             # but mike perham pointed out that prohibited the usage of overrides to improve on the
             # performance of our default formatting. see issue #138.
-            send(column_override(column), column, record)
+            send(column_override(column), record)
           # second, check if the dev has specified a valid list_ui for this column
           elsif column.list_ui and override_column_ui?(column.list_ui)
             send(override_column_ui(column.list_ui), column, record)
