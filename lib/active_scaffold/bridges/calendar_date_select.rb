@@ -13,4 +13,12 @@ class ActiveScaffold::Bridges::CalendarDateSelect < ActiveScaffold::DataStructur
   def self.install?
     super && ActiveScaffold.js_framework == :prototype
   end
+
+  def self.stylesheets
+    calendar_date_select_stylesheets
+  end
+
+  def self.javascripts
+    calendar_date_select_javascripts
+  end
 end
