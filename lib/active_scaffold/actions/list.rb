@@ -60,7 +60,7 @@ module ActiveScaffold::Actions
     end
 
     # The actual algorithm to prepare for the list view
-    def do_list
+    def set_includes_for_list_columns
       includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
       self.active_scaffold_includes.concat includes_for_list_columns
     end
