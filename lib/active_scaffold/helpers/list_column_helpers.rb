@@ -153,7 +153,7 @@ module ActiveScaffold
         value ||= record.send(column.name) unless record.nil?
         if value && column.association # cache association size before calling column_empty?
           associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
-          cache_association(value, column)
+          cache_association(value, column) if column.plural_association?
         end
         if column.association.nil? or column_empty?(value)
           if column.form_ui == :select && column.options[:options]
