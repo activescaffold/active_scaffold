@@ -1,5 +1,5 @@
 module ActiveScaffold::Bridges
-  class DatePicker < ActiveScaffold::Bridge
+  class DatePicker < ActiveScaffold::DataStructures::Bridge
     autoload :Helper, 'active_scaffold/bridges/date_picker/helper'
     def self.install
       require File.join(File.dirname(__FILE__), "ext.rb")
