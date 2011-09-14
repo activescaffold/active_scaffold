@@ -1,6 +1,6 @@
 module ActiveScaffold
   module Bridges
-    module Carrierwave
+    class Carrierwave
       module CarrierwaveBridgeHelpers
         mattr_accessor :thumbnail_style
         self.thumbnail_style = :thumbnail

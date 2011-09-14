@@ -1,5 +1,5 @@
-module ActiveScaffold
-  module SemanticAttributesBridge
+class ActiveScaffold::Bridges::SemanticAttributes
+  module Column
     def self.included(base)
       base.class_eval { alias_method_chain :initialize, :semantic_attributes }
     end
@@ -16,5 +16,5 @@ module ActiveScaffold
   end
 end
 ActiveScaffold::DataStructures::Column.class_eval do
-  include ActiveScaffold::SemanticAttributesBridge
+  include ActiveScaffold::Bridges::SemanticAttributes::Column
 end

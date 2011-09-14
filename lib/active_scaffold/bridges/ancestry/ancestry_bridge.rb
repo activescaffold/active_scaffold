@@ -14,8 +14,8 @@ ActiveScaffold::Config::Core.class_eval do
   alias_method_chain :initialize, :ancestry
 end
 
-module ActiveScaffold
-  module AncestryBridge
+module ActiveScaffold::Bridges
+  class Ancestry
     module FormColumnHelpers
       def active_scaffold_input_ancestry(column, options)
         select_options = []
@@ -35,5 +35,5 @@ module ActiveScaffold
 end
 
 ActionView::Base.class_eval do
-  include ActiveScaffold::AncestryBridge::FormColumnHelpers
+  include ActiveScaffold::Bridges::Ancestry::FormColumnHelpers
 end

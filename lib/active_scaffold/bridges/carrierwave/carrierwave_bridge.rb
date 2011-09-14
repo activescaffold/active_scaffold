@@ -1,6 +1,6 @@
 module ActiveScaffold
   module Bridges
-    module Carrierwave
+    class Carrierwave
       module CarrierwaveBridge
         def initialize_with_carrierwave(model_id)
           initialize_without_carrierwave(model_id)

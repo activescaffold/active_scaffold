@@ -1,5 +1,5 @@
-module ActiveScaffold
-  module RecordSelectBridge
+class ActiveScaffold::Bridges::RecordSelect
+  module Helpers
     def self.included(base)
       base.class_eval do
         include FormColumnHelpers
@@ -89,4 +89,4 @@ module ActiveScaffold
   end
 end
 
-ActionView::Base.class_eval { include ActiveScaffold::RecordSelectBridge }
+ActionView::Base.class_eval { include ActiveScaffold::Bridges::RecordSelect::Helpers }

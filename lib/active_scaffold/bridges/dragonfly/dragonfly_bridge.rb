@@ -1,6 +1,6 @@
 module ActiveScaffold
   module Bridges
-    module Dragonfly
+    class Dragonfly
       module DragonflyBridge
         def initialize_with_dragonfly(model_id)
           initialize_without_dragonfly(model_id)

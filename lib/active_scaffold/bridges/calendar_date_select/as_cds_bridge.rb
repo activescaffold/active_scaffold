@@ -22,7 +22,7 @@ end
 
 module ActiveScaffold
   module Bridges
-    module CalendarDateSelectBridge
+    class CalendarDateSelect
       # Helpers that assist with the rendering of a Form Column
       module FormColumnHelpers
         def active_scaffold_input_calendar_date_select(column, options)
@@ -68,13 +68,13 @@ module ActiveScaffold
 end
 
 ActionView::Base.class_eval do
-  include ActiveScaffold::Bridges::CalendarDateSelectBridge::FormColumnHelpers
+  include ActiveScaffold::Bridges::CalendarDateSelect::FormColumnHelpers
   include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
   alias_method :active_scaffold_search_calendar_date_select, :active_scaffold_search_date_bridge
   include ActiveScaffold::Bridges::Shared::DateBridge::HumanConditionHelpers
   alias_method :active_scaffold_human_condition_calendar_date_select, :active_scaffold_human_condition_date_bridge
-  include ActiveScaffold::Bridges::CalendarDateSelectBridge::SearchColumnHelpers
-  include ActiveScaffold::Bridges::CalendarDateSelectBridge::ViewHelpers
+  include ActiveScaffold::Bridges::CalendarDateSelect::SearchColumnHelpers
+  include ActiveScaffold::Bridges::CalendarDateSelect::ViewHelpers
 end
 
 ActiveScaffold::Finder::ClassMethods.module_eval do
