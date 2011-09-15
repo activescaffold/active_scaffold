@@ -2,21 +2,22 @@ module ActiveScaffold::Bridges
   class DatePicker
     module Helper
       DATE_FORMAT_CONVERSION = {
-        '%a' => 'D',
-        '%A' => 'DD',
-        '%b' => 'M',
-        '$B' => 'MM',
-        '%d' => 'dd',
-        '%e' => 'd',
-        '%j' => 'oo',
-        '%m' => 'mm',
-        '%y' => 'y',
-        '%Y' => 'yy',
-        '%H' => 'hh', # options ampm => false
-        '%I' => 'hh', # options ampm => true
-        '%M' => 'mm',
-        '%p' => 'tt',
-        '%S' => 'ss'
+        /%a/ => 'D',
+        /%A/ => 'DD',
+        /%b/ => 'M',
+        /%B/ => 'MM',
+        /%d/ => 'dd',
+        /%e/ => 'd',
+        /%j/ => 'oo',
+        /%m/ => 'mm',
+        /%y/ => 'y',
+        /%Y/ => 'yy',
+        /%H/ => 'hh', # options ampm => false
+        /%I/ => 'hh', # options ampm => true
+        /%M/ => 'mm',
+        /%p/ => 'tt',
+        /%S/ => 'ss',
+        /%[cUWwxXZz]/ => ''
       }
       
       def self.date_options_for_locales
@@ -74,7 +75,7 @@ module ActiveScaffold::Bridges
       
       def self.datetime_options(locale)
         begin
-          rails_time_format = I18n.translate! 'time.formats.default', :locale => locale
+          rails_time_format = I18n.translate! 'time.formats.picker', :locale => locale
           datetime_options = I18n.translate! 'datetime.prompts', :locale => locale
           datetime_picker_options = {:ampm => false,
             :hourText => datetime_options[:hour],
@@ -104,15 +105,14 @@ module ActiveScaffold::Bridges
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
         if rails_format =~ /%[cUWwxXZz]/
-          Rails.logger.warn("AS DatePicker::Helper: Can t convert rails date format: #{rails_format} to jquery datepicker format. Options %c, %U, %W, %w, %x %X, %z, %Z are not supported by datepicker]")
+          Rails.logger.warn("AS DatePicker::Helper: rails date format #{rails_format} includes options which can't be converted to jquery datepicker format. Options %c, %U, %W, %w, %x %X, %z, %Z are not supported by datepicker and will be removed")
           nil
-        else
-          js_format = rails_format.dup
-          DATE_FORMAT_CONVERSION.each do |key, value|
-            js_format.gsub!(Regexp.new("#{key}"), value)
-          end
-          js_format
         end
+        js_format = rails_format.dup
+        DATE_FORMAT_CONVERSION.each do |key, value|
+          js_format.gsub!(key, value)
+        end
+        js_format
       end
       
       def self.split_datetime_format(datetime_format)
