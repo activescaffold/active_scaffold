@@ -124,7 +124,11 @@ module ActiveScaffold
   end
   
   def self.js_framework
-    @@js_framework ||= :jquery
+    @@js_framework ||= if defined? Jquery
+      :jquery
+    elsif defined? PrototypeRails
+      :prototype
+    end
   end
 
   # exclude bridges you do not need

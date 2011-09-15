@@ -9,4 +9,3 @@ class ActiveScaffold::Bridges::RecordSelect < ActiveScaffold::DataStructures::Br
     'record_select'
   end
 end
-RecordSelect::Config.js_framework = ActiveScaffold.js_framework
