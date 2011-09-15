@@ -6,17 +6,13 @@ begin
   require 'render_component'
 rescue LoadError
 end
-begin
-  require 'verification'
-rescue LoadError
-end
 
 require 'active_scaffold/active_record_permissions'
 require 'active_scaffold/paginator'
 require 'active_scaffold/responds_to_parent'
 
 require 'active_scaffold/version'
-require 'active_scaffold/engine'
+require 'active_scaffold/engine' unless defined? ACTIVE_SCAFFOLD_PLUGIN
 
 module ActiveScaffold
   autoload :AttributeParams, 'active_scaffold/attribute_params'
@@ -25,6 +21,11 @@ module ActiveScaffold
   autoload :Finder, 'active_scaffold/finder'
   autoload :MarkedModel, 'active_scaffold/marked_model'
   autoload :Bridges, 'active_scaffold/bridges'
+
+  mattr_accessor :stylesheets
+  self.stylesheets = []
+  mattr_accessor :javascripts
+  self.javascripts = []
 
   def self.autoload_subdir(dir, mod=self, root = File.dirname(__FILE__))
     Dir["#{root}/active_scaffold/#{dir}/*.rb"].each { |file|

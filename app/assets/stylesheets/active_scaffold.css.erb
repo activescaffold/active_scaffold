@@ -1,4 +1,3 @@
-<% require_asset "jquery-ui" %>
 /*
  ActiveScaffold
  (c) 2007 Richard White <rrwhite@gmail.com>
@@ -1094,4 +1093,6 @@ padding: 5px 2px 5px 5px;
 padding: 5px 10px;
 }
 
+<% require_asset "jquery-ui" %>
+<% ActiveScaffold.stylesheets.each {|css| require_asset css} %>
 <% ActiveScaffold::Bridges.all_stylesheets.each {|css| require_asset css} %>
