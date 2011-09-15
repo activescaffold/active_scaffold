@@ -1,4 +1,7 @@
 fr: 
+  time:
+    formats:
+      picker: "%a, %d %b %Y %H:%M:%S"
   active_scaffold: 
     add: 'Ajouter'
     add_existing: 'Ajouter un(e) existant(e)'

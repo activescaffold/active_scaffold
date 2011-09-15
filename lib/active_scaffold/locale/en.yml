@@ -1,4 +1,7 @@
 en:
+  time:
+    formats:
+      picker: "%a, %d %b %Y %H:%M:%S"
   active_scaffold:
     add: 'Add'
     add_existing: 'Add Existing'

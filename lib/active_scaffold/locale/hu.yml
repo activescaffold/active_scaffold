@@ -1,4 +1,7 @@
 hu:
+  time:
+    formats:
+      picker: "%a, %d %b %Y %H:%M:%S"
   active_scaffold:
     add: 'Hozzáadás'
     add_existing: 'Meglevő hozzáadása'
