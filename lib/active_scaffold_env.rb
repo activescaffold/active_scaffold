@@ -9,5 +9,3 @@ ActionView::Base.send(:include, ActiveScaffold::Helpers::ViewHelpers)
 ActionController::Base.class_eval {include ActiveRecordPermissions::ModelUserAccess::Controller}
 ActiveRecord::Base.class_eval     {include ActiveRecordPermissions::ModelUserAccess::Model}
 ActiveRecord::Base.class_eval     {include ActiveRecordPermissions::Permissions}
-
-I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'active_scaffold', 'locale', '*.{rb,yml}')]
