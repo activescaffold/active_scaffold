@@ -139,12 +139,13 @@ module ActiveScaffold
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
         html_options[:method] = link.method if link.method != :get
 
-        html_options['data-confirm'] = link.confirm(record.try(:to_label)) if link.confirm?
-        html_options['data-position'] = link.position if link.position and link.inline?
         html_options[:class] += ' as_action' if link.inline?
-        html_options['data-action'] = link.action if link.inline?
+        html_options[:data] = {}
+        html_options[:data][:confirm] = link.confirm(record.try(:to_label)) if link.confirm?
+        html_options[:data][:position] = link.position if link.position and link.inline?
+        html_options[:data][:action] = link.action if link.inline?
         if link.popup?
-          html_options['data-popup'] = true
+          html_options[:data][:popup] = true
           html_options[:target] = '_blank'
         end
         html_options[:id] = link_id

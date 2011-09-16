@@ -32,15 +32,6 @@ $(document).ready(function() {
       if (action_link.is_disabled()) {
         return false;
       } else {
-        // hack: jquery requires if you request for javascript that javascript
-        // is coming back, however rails has a different mantra
-        if (action_link.position) {
-          if (parseFloat($.fn.jquery) >= 1.5) {
-            event.data_type = 'text';
-          } else {
-            event.data_type = 'rails';
-          }
-        }
         if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','visible');
         action_link.disable();
       }
