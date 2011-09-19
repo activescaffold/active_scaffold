@@ -6,8 +6,8 @@ class ActiveScaffold::Bridges::Cancan < ActiveScaffold::DataStructures::Bridge
     ActiveScaffold::Actions::Core.send :include, ActiveScaffold::Bridges::Cancan::Actions::Core
     ActiveScaffold::Actions::Nested.send :include, ActiveScaffold::Bridges::Cancan::Actions::Core
     ActionController::Base.send :include, ActiveScaffold::Bridges::Cancan::ModelUserAccess::Controller
-    ActiveRecord::Base.send :include, ActiveScaffold::Bridges::Cancan::ModelUserAccess::Model
-    ActiveRecord::Base.send :include, ActiveScaffold::Bridges::Cancan::ActiveRecord
+    ::ActiveRecord::Base.send :include, ActiveScaffold::Bridges::Cancan::ModelUserAccess::Model
+    ::ActiveRecord::Base.send :include, ActiveScaffold::Bridges::Cancan::ActiveRecord
   end
   def self.install?
     Object.const_defined? 'CanCan'
