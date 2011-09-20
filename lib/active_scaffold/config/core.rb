@@ -107,7 +107,7 @@ module ActiveScaffold::Config
 
     def initialize(model_id)
       # model_id is the only absolutely required configuration value. it is also not publicly accessible.
-      @model_id = model_id.to_s.pluralize.singularize
+      @model_id = model_id
 
       # inherit the actions list directly from the global level
       @actions = self.class.actions.clone
