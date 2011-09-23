@@ -14,7 +14,7 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # show value of unauthorized columns instead of skip them
-    class_inheritable_accessor :show_unauthorized_columns
+    class_attribute :show_unauthorized_columns
 
     # instance-level configuration
     # ----------------------------
