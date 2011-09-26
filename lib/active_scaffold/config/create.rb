@@ -24,8 +24,8 @@ module ActiveScaffold::Config
     @@persistent = false
 
     # whether update form is opened after a create or not
-    cattr_accessor :edit_after_create
-    @@edit_after_create = false
+    cattr_accessor :action_after_create
+    @@action_after_create = false
 
     # whether we should refresh list after create or not
     cattr_accessor :refresh_list
