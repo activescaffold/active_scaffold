@@ -104,7 +104,7 @@ module ActiveScaffold
 
         method = column.name
         #html_options[:name] += '[id]'
-        options = {:include_blank => as_(:_select_)}
+        options = {:selected => associated.try(:id), :include_blank => as_(:_select_)}
 
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
