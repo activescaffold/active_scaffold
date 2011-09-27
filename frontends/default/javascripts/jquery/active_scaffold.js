@@ -153,10 +153,13 @@ $(document).ready(function() {
     $(this).prevAll('img.loading-indicator').css('visibility','hidden');
     return true;
   });
-  $('input[type=button].as_add_existing, input[type=button].as_replace_existing').live('ajax:before', function(event) {
-    var url = $(this).attr('href').replace('--ID--', $(this).prev().val());
-    event.data_url = url;
-    return true;
+  $('a.as_add_existing, a.as_replace_existing').live('ajax:before', function(event) {
+    var id = $(this).prev().val();
+    if (id) {
+      if (!$(this).data('href')) $(this).data('href', $(this).attr('href'));
+      $(this).attr('href', $(this).data('href').replace('--ID--', id));
+      return true;
+    } else return false;
   });
   $('input.update_form, select.update_form').live('change', function(event) {
     var element = $(this);
