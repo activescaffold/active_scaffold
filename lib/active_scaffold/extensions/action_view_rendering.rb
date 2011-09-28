@@ -4,7 +4,7 @@ module ActionView
       def find_all_templates(name, partial = false, locals = {})
         prefixes.collect do |prefix|
           view_paths.collect do |resolver|
-            resolver.find_all(*args_for_lookup(name, prefix, partial, locals))
+            resolver.find_all(*args_for_lookup(name, [prefix], partial, locals))
           end
         end.flatten!
       end
