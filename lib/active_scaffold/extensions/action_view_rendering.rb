@@ -15,42 +15,42 @@ end
 # wrap the action rendering for ActiveScaffold views
 module ActionView::Helpers #:nodoc:
   module RenderingHelper
-  #
-  # Adds two rendering options.
-  #
-  # ==render :super
-  #
-  # This syntax skips all template overrides and goes directly to the provided ActiveScaffold templates.
-  # Useful if you want to wrap an existing template. Just call super!
-  #
-  # ==render :active_scaffold => #{controller.to_s}, options = {}+
-  #
-  # Lets you embed an ActiveScaffold by referencing the controller where it's configured.
-  #
-  # You may specify options[:constraints] for the embedded scaffold. These constraints have three effects:
-  #   * the scaffold's only displays records matching the constraint
-  #   * all new records created will be assigned the constrained values
-  #   * constrained columns will be hidden (they're pretty boring at this point)
-  #
-  # You may also specify options[:conditions] for the embedded scaffold. These only do 1/3 of what
-  # constraints do (they only limit search results). Any format accepted by ActiveRecord::Base.find is valid.
-  #
-  # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
-  #
+    #
+    # Adds two rendering options.
+    #
+    # ==render :super
+    #
+    # This syntax skips all template overrides and goes directly to the provided ActiveScaffold templates.
+    # Useful if you want to wrap an existing template. Just call super!
+    #
+    # ==render :active_scaffold => #{controller.to_s}, options = {}+
+    #
+    # Lets you embed an ActiveScaffold by referencing the controller where it's configured.
+    #
+    # You may specify options[:constraints] for the embedded scaffold. These constraints have three effects:
+    #   * the scaffold's only displays records matching the constraint
+    #   * all new records created will be assigned the constrained values
+    #   * constrained columns will be hidden (they're pretty boring at this point)
+    #
+    # You may also specify options[:conditions] for the embedded scaffold. These only do 1/3 of what
+    # constraints do (they only limit search results). Any format accepted by ActiveRecord::Base.find is valid.
+    #
+    # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
+    #
     def render_with_active_scaffold(*args, &block)
       if args.first == :super
-        last_view = @_view_stack.last
+        last_view = view_stack.last || {:view => instance_variable_get(:@virtual_path).split('/').last}
         options = args[1] || {}
         options[:locals] ||= {}
         options[:locals].reverse_merge!(last_view[:locals] || {})
         if last_view[:templates].nil?
-          last_view[:templates] = lookup_context.find_all_templates(last_view[:view], !last_view[:is_template], options[:locals])
+          last_view[:templates] = lookup_context.find_all_templates(last_view[:view], last_view[:partial], options[:locals])
           last_view[:templates].shift
         end
         options[:template] = last_view[:templates].shift
-        @_view_stack << last_view
+        view_stack << last_view
         result = render_without_active_scaffold options
-        @_view_stack.pop
+        view_stack.pop
         result
       elsif args.first.is_a? Hash and args.first[:active_scaffold]
         require 'digest/md5'
@@ -86,20 +86,21 @@ module ActionView::Helpers #:nodoc:
       else
         options = args.first
         if options.is_a?(Hash)
-          current_view = {:view => options[:partial], :is_template => false} if options[:partial]
-          current_view = {:view => options[:template], :is_template => !!options[:template]} if current_view.nil? && options[:template]
+          current_view = {:view => options[:partial], :partial => true} if options[:partial]
+          current_view = {:view => options[:template], :partial => false} if current_view.nil? && options[:template]
           current_view[:locals] = options[:locals] if !current_view.nil? && options[:locals]
-          if current_view.present?
-            @_view_stack ||= []
-            @_view_stack << current_view
-          end
+          view_stack << current_view if current_view.present?
         end
         result = render_without_active_scaffold(*args, &block)
-        @_view_stack.pop if current_view.present?
+        view_stack.pop if current_view.present?
         result
       end
     end
     alias_method_chain :render, :active_scaffold
+    
+    def view_stack
+      @_view_stack ||= []
+    end
 
   end
 end
