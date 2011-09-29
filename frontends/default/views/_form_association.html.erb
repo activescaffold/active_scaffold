@@ -3,11 +3,18 @@ parent_record = @record
 associated = column.singular_association? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a
 associated = associated.sort_by {|r| r.new_record? ? 99999999999 : r.id} unless column.association.options.has_key?(:order)
 if show_blank_record = column.show_blank_record?(associated)
-  associated << if column.singular_association?
-    parent_record.send("build_#{column.name}".to_sym)
-  else
-    parent_record.send(column.name).build
+  child = column.singular_association? ? parent_record.send(:"build_#{column.name}") : parent_record.send(column.name).build
+  reflection = parent_record.class.reflect_on_association(column.name)
+  if reflection && reflection.reverse && parent_record.new_record?
+    reverse_macro = child.class.reflect_on_association(reflection.reverse).macro
+    if [:has_one, :belongs_to].include?(reverse_macro) # singular
+      child.send(:"#{reflection.reverse}=", parent_record)
+    # TODO: Might want to extend with this branch in the future
+    # else # plural
+    #  child.send(:"#{reflection.reverse}") << parent_record
+    end
   end
+  associated << child
 end
 subform_div_id = "#{sub_form_id({:association => column.name, :id => parent_record.id || 99999999999})}-div" 
 -%>
