@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ControllerHelpers
       def self.included(controller)
-        controller.class_eval { helper_method :params_for, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?}
+        controller.class_eval { helper_method :params_for, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated}
       end
       
       include ActiveScaffold::Helpers::IdHelpers
@@ -81,6 +81,20 @@ module ActiveScaffold
         rescue ActiveScaffold::ControllerNotFound
         end if @parent_action.nil?
         @parent_action
+      end
+      
+      def build_associated(column, parent_record)
+        child = column.singular_association? ? parent_record.send(:"build_#{column.name}") : parent_record.send(column.name).build
+        if parent_record.new_record? && (reflection = parent_record.class.reflect_on_association(column.name)).try(:reverse)
+          reverse_macro = child.class.reflect_on_association(reflection.reverse).macro
+          if [:has_one, :belongs_to].include?(reverse_macro) # singular
+            child.send(:"#{reflection.reverse}=", parent_record)
+          # TODO: Might want to extend with this branch in the future
+          # else # plural
+          #  child.send(:"#{reflection.reverse}") << parent_record
+          end
+        end
+        child
       end
     end
   end
