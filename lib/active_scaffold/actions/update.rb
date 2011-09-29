@@ -32,7 +32,7 @@ module ActiveScaffold::Actions
     def edit_respond_to_js
       render(:partial => 'update_form')
     end
-    def update_respond_to_html  
+    def update_respond_to_html
       if params[:iframe]=='true' # was this an iframe post ?
         responds_to_parent do
           render :action => 'on_update.js', :layout => false
