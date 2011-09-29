@@ -55,10 +55,6 @@ module ActiveScaffold::Actions
       render(:partial => 'row', :locals => {:record => @record})
     end
 
-    def row_respond_to_js
-      render(:partial => 'row', :locals => {:record => @record})
-    end
-
     # The actual algorithm to prepare for the list view
     def set_includes_for_list_columns
       includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
@@ -178,7 +174,10 @@ module ActiveScaffold::Actions
       (default_formats + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
     end
     alias_method :index_formats, :list_formats
-    alias_method :row_formats, :list_formats
+
+    def row_formats
+      ([:html] + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
+    end
 
     def action_update_formats
       (default_formats + active_scaffold_config.formats).uniq

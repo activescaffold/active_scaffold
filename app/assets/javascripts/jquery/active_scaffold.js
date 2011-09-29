@@ -72,11 +72,7 @@ $(document).ready(function() {
     
     if (action_link) {
       var cancel_url = as_cancel.attr('href');
-      var refresh_data = as_cancel.attr('data-refresh');
-      if (refresh_data === 'true' && action_link.refresh_url) {
-        event.data_url = action_link.refresh_url;
-        if (action_link.position) event.data_type = 'html' 
-      } else if (refresh_data === 'false' || typeof(cancel_url) == 'undefined' || cancel_url.length == 0) {
+      if (typeof(cancel_url) == 'undefined' || cancel_url.length == 0) {
         action_link.close();
         return false;
       }
@@ -923,6 +919,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
     this.adapter = element;
     this.adapter.addClass('as_adapter');
     this.adapter.data('action_link', this);
+    if (this.refresh_url) $('.as_cancel[data-refresh=true]', this.adapter).attr('href', this.refresh_url);
   }
 });
 
