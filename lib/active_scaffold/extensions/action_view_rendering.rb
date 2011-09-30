@@ -46,7 +46,7 @@ module ActionView::Helpers #:nodoc:
         options[:locals] ||= {}
         options[:locals].reverse_merge!(last_view[:locals] || {})
         if last_view[:templates].nil?
-          last_view[:templates] = lookup_context.find_all_templates(last_view[:view], last_view[:partial], options[:locals])
+          last_view[:templates] = lookup_context.find_all_templates(last_view[:view], last_view[:partial], options[:locals].keys)
           last_view[:templates].shift
         end
         options[:template] = last_view[:templates].shift
