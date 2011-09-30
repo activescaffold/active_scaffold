@@ -46,8 +46,10 @@ module ActiveScaffold::Actions
           @record.send "#{column.name}=", value
         end
         after_render_field(@record, column)
-        source_id = params.delete(:source_id)
-        render :locals => {:source_id => source_id, :columns => column.update_columns, :scope => params[:scope]}
+        
+        @source_id = params.delete(:source_id)
+        @columns = column.update_columns
+        @scope = params[:scope]
       end
     end
     
