@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $('form.as_form').live('ajax:loading', function(event) {
+  $('form.as_form').live('ajax:beforeSend', function(event) {
     var as_form = $(this).closest("form");
     if (as_form && as_form.attr('data-loading') == 'true') {
       ActiveScaffold.disable_form(as_form);
@@ -448,8 +448,8 @@ var ActiveScaffold = {
     as_form = $(as_form)
     var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (loading_indicator) loading_indicator.css('visibility','hidden');
-    $('input[type=submit]', as_form).attr('disabled', '');
-    as_form[0].disabled_fields.removeAttr("disabled");
+    $('input[type=submit]', as_form).removeAttr('disabled');
+    as_form[0].disabled_fields.removeAttr('disabled');
   },  
   
   focus_first_element_of_form: function(form_element) {
@@ -540,7 +540,7 @@ var ActiveScaffold = {
         checkbox.attr('disabled', 'disabled');
       },
       complete: function(request){
-        checkbox.attr('disabled', '');
+        checkbox.removeAttr('disabled');
       }
     });
   },
