@@ -440,7 +440,7 @@ var ActiveScaffold = {
     var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (loading_indicator) loading_indicator.css('visibility','visible');
     $('input[type=submit]', as_form).attr('disabled', 'disabled');
-    $("input:enabled,select:enabled,textarea:enabled", as_form).attr('disabled', 'disabled');
+    as_form[0].disabled_fields = $("input:enabled,select:enabled,textarea:enabled", as_form).attr('disabled', 'disabled');
   },
   
   enable_form: function(as_form) {
@@ -449,7 +449,7 @@ var ActiveScaffold = {
     var loading_indicator = $('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (loading_indicator) loading_indicator.css('visibility','hidden');
     $('input[type=submit]', as_form).attr('disabled', '');
-    $("input:disabled,select:disabled,textarea:disabled", as_form).attr('disabled', '');
+    as_form[0].disabled_fields.removeAttr("disabled");
   },  
   
   focus_first_element_of_form: function(form_element) {
