@@ -1,16 +1,16 @@
 <table cellpadding="0" cellspacing="0">
   <%
-    if associated.empty?
-      @record = if column.singular_association?
+    record = if associated.empty?
+      if column.singular_association?
         parent_record.send("build_#{column.name}".to_sym)
       else
         parent_record.send(column.name).build
       end
     else
-      @record = associated.last
+      associated.last
     end
   -%>
-  <%= render :partial => 'horizontal_subform_header', :locals => {:parent_record => parent_record} %>
+  <%= render :partial => 'horizontal_subform_header', :locals => {:parent_record => parent_record, :record => record} %>
 
   <tbody id="<%= sub_form_list_id(:association => column.name) %>">
     <% associated.each_index do |index| %>

@@ -88,7 +88,7 @@ module ActiveScaffold
         else
           options[:include_blank] ||= as_(:_select_) 
         end
-        select(:record, method, options_for_select, options, html_options)
+        select(:record, method, select_options, options, html_options)
       end
 
       def active_scaffold_search_text(column, options)
