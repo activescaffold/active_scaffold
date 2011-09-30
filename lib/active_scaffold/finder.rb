@@ -270,7 +270,7 @@ module ActiveScaffold
     # Returns a hash with options to count records, rejecting select and order options
     # See finder_options for valid options
     def count_options(find_options = {}, count_includes = nil)
-      count_includes ||= find_options[:includes] unless find_options[:conditions].nil?
+      count_includes ||= find_options[:includes] unless find_options[:where].nil?
       options = find_options.reject{|k,v| [:select, :order].include? k}
       options[:includes] = count_includes
       options
