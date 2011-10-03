@@ -45,11 +45,11 @@ module ActiveScaffold::Actions
           value = column_value_from_param_value(@record, column, params[:value])
           @record.send "#{column.name}=", value
         end
-        after_render_field(@record, column)
         
         @source_id = params.delete(:source_id)
         @columns = column.update_columns
         @scope = params[:scope]
+        after_render_field(@record, column)
       end
     end
     
