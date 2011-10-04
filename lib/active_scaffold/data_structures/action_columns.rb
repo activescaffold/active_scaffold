@@ -12,6 +12,9 @@ module ActiveScaffold::DataStructures
     def label
       as_(@label) if @label
     end
+    def css_class
+      @label.to_s.underscore
+    end
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed

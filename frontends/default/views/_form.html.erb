@@ -6,7 +6,7 @@
   <% renders_as = column_renders_as(column) %>
   <% if renders_as == :subsection -%>
     <% subsection_id = sub_section_id(:sub_section => column.label) %>
-  <li class="sub-section">
+  <li class="sub-section <%= column.css_class %>">
     <h5><%= column.label %></h5>
     <%= render :partial => 'form', :locals => { :columns => column, :subsection_id => subsection_id, :form_action => form_action } %>
     <%= link_to_visibility_toggle(subsection_id, {:default_visible => !column.collapsed}) -%>
