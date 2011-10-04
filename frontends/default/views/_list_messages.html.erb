@@ -19,7 +19,7 @@
       <% search_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :member, :position => false)
       action_links = ActiveScaffold::DataStructures::ActionLinks.new
       action_links.add(search_link)  -%>
-      <%= render :partial => 'list_actions', :locals => {:record => active_scaffold_config.model, :url_options => params_for(:escape => false, :search => ''), :action_links => action_links.member} %>
+      <%= render :partial => 'list_actions', :locals => {:record => new_model, :url_options => params_for(:escape => false, :search => ''), :action_links => action_links.member} %>
     <% else %>
       <td class='actions'><%= '<p class="empty-message">&nbsp;</p>'.html_safe if @page.items.empty? %></td>
     <% end -%>
