@@ -70,7 +70,7 @@ module ActiveScaffold
         return false if column.polymorphic_association?
 
         # A column shouldn't be in the subform if it's the reverse association to the parent
-        return false if column.association.reverse_for?(parent_record.class)
+        return false if column.association.inverse_for?(parent_record.class)
 
         return true
       end

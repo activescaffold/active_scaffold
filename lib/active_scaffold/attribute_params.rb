@@ -157,22 +157,16 @@ module ActiveScaffold
         # modifying the current object of a singular association
         pk_val = params[pk] 
         if current and current.is_a? ActiveRecord::Base and current.id.to_s == pk_val
-          return current
+          current
         # modifying one of the current objects in a plural association
         elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == pk_val}
-          return current.detect {|o| o.id.to_s == pk_val}
+          current.detect {|o| o.id.to_s == pk_val}
         # attaching an existing but not-current object
         else
-          return klass.find(pk_val)
+          klass.find(pk_val)
         end
       else
-        if klass.authorized_for?(:crud_type => :create)
-          if parent_column.singular_association?
-            return parent_record.send("build_#{parent_column.name}")
-          else
-            return parent_record.send(parent_column.name).build
-          end
-        end
+        build_associated(parent_column, parent_record) if klass.authorized_for?(:crud_type => :create)
       end
     end
     # Determines whether the given attributes hash is "empty".
