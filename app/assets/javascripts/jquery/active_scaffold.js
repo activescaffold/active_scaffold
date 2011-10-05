@@ -604,7 +604,7 @@ var ActiveScaffold = {
     var source = $(source);
     var element = source.closest('.association-record');
     if (element.length == 0) {
-      element = source.closest('ol.form');
+      element = source.closest('form > ol.form');
     }
     element = element.find('.' + options.field_class + ":first");
 
