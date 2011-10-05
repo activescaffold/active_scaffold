@@ -36,8 +36,8 @@ module ActiveScaffold::Actions
         @scope = params[:scope]
         
         if column.send_form_on_update_column
-          hash = if params[:scope]
-            params[:scope].gsub('[','').split(']').inject(params[:record]) do |hash, index|
+          hash = if @scope
+            @scope.gsub('[','').split(']').inject(params[:record]) do |hash, index|
               hash[index]
             end
           else
