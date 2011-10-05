@@ -1,5 +1,9 @@
 <%
-  column = active_scaffold_config.columns[render_field.to_sym]
+  column = if render_field.is_a? ActiveScaffold::DataStructures::Column
+    render_field
+  else
+    active_scaffold_config.columns[render_field.to_sym] unless render_field.is_a? ActiveScaffold::DataStructures::Column
+  end
   @rendered ||= Set.new
   return if @rendered.include? column.name
   @rendered << column.name
