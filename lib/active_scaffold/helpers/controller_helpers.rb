@@ -83,18 +83,12 @@ module ActiveScaffold
         @parent_action
       end
       
-      def build_associated(column, parent_record)
-        child = column.singular_association? ? parent_record.send(:"build_#{column.name}") : parent_record.send(column.name).build
-        if parent_record.new_record? && (reflection = parent_record.class.reflect_on_association(column.name)).try(:reverse)
-          reverse_macro = child.class.reflect_on_association(reflection.reverse).macro
-          if [:has_one, :belongs_to].include?(reverse_macro) # singular
-            child.send(:"#{reflection.reverse}=", parent_record)
-          # TODO: Might want to extend with this branch in the future
-          # else # plural
-          #  child.send(:"#{reflection.reverse}") << parent_record
-          end
+      def build_associated(column, record)
+        if column.singular_association?
+          record.send(:"build_#{column.name}")
+        else
+          record.send(column.name).build
         end
-        child
       end
     end
   end
