@@ -1,11 +1,8 @@
 module ActiveRecord
   class Relation
     def target=(records)
-      debugger
       @loaded = true
       @records = records
-      puts loaded?.inspect
-      puts self.object_id
       @records
     end
   end
