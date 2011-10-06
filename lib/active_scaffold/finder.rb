@@ -108,11 +108,18 @@ module ActiveScaffold
       
       def condition_value_for_datetime(value, conversion = :to_time)
         if value.is_a? Hash
-          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[field][part].to_i}) rescue nil
+          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[part].to_i}) rescue nil
         elsif value.respond_to?(:strftime)
           value.send(conversion)
+        elsif conversion == :to_date
+          Date.strptime(value, I18n.t('date.formats.default')) rescue nil
         else
-          Time.zone.parse(value).in_time_zone.send(conversion) rescue nil
+          parts = Date._parse(value)
+          time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect {|part, format_part| format_part if parts[part].present?}.compact
+          format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
+          time = DateTime.strptime(value, format)
+          time = Time.zone.local_to_utc(time) unless parts[:offset]
+          time.in_time_zone.send(conversion) rescue nil
         end unless value.nil? || value.blank?
       end
 
