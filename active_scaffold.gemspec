@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.summary = %q{Rails 3.1 Version of activescaffold supporting prototype and jquery}
   s.description = %q{Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, leaving you more time to focus on more challenging (and interesting!) problems.}
   s.require_paths = ["lib"]
-  s.files = Dir["{app,config,frontends,lib,public,shoulda_macros}/**/*"] + %w[MIT-LICENSE CHANGELOG README]
+  s.files = Dir["{app,config,frontends,lib,public,shoulda_macros,vendor}/**/*"] + %w[MIT-LICENSE CHANGELOG README]
   s.extra_rdoc_files = [
     "README"
   ]
