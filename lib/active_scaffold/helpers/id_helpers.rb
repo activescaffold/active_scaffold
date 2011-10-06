@@ -111,6 +111,10 @@ module ActiveScaffold
       def action_iframe_id(options)
         "#{controller_id}-#{options[:action]}-#{options[:id]}-iframe"
       end
+      
+      def scope_id(scope)
+        scope.gsub(/(\[|\])/, '_').gsub('__', '_').gsub(/_$/, '')
+      end
 
       private
 
