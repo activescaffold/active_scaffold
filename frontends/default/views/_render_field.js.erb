@@ -18,6 +18,3 @@ ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(rende
 <%if column.update_columns && !column.update_columns.empty?%>
   <%=  render(:partial => "render_field", :collection => column.update_columns, :locals => {:source_id => source_id, :scope => scope})%>
 <%end%>
-
-    
-
