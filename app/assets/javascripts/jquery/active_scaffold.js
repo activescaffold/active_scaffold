@@ -149,7 +149,7 @@ $(document).ready(function() {
   });
   $('input.update_form, select.update_form').live('change', function(event) {
     var element = $(this);
-    var value = element.is("input:checkbox") ? element.is(":checked") : element.val();
+    var value = element.is("input:checkbox:not(:checked)") ? null : element.val();
     ActiveScaffold.update_column(element, element.attr('data-update_url'), element.attr('data-update_send_form'), element.attr('id'), value);
     return true;
   });
@@ -732,6 +732,7 @@ var ActiveScaffold = {
   },
   
   update_column: function(element, url, send_form, source_id, val) {
+    if (!element) element = $('#' + source_id);
     var as_form = element.closest('form.as_form');
     var params = null;
 

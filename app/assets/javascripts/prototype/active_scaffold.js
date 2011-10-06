@@ -596,6 +596,8 @@ var ActiveScaffold = {
   },
 
   update_column: function(element, url, send_form, source_id, val) {
+    if (!element) element = $(source_id);
+    
     var as_form = element.up('form.as_form');
     var params = null;
 

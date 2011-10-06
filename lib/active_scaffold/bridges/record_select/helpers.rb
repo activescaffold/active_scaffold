@@ -39,7 +39,7 @@ class ActiveScaffold::Bridges::RecordSelect
         record_select_options.merge!(column.options)
         if options['data-update_url']
           record_select_options[:onchange] = %|function(id, label) {
-              ActiveScaffold.update_column($("##{options[:id]}"), "#{options['data-update_url']}", #{options['data-update_send_form'].to_json}, "#{options[:id]}", id);
+              ActiveScaffold.update_column(null, "#{options['data-update_url']}", #{options['data-update_send_form'].to_json}, "#{options[:id]}", id);
             }|
         end
  
