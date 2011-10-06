@@ -115,25 +115,26 @@ module ActiveScaffold
       def active_scaffold_input_plural_association(column, options)
         associated_options = @record.send(column.association.name).collect {|r| [r.to_label, r.id]}
         select_options = associated_options | options_for_association(column.association)
-        return content_tag(:span, as_(:no_options), :id => options[:id]) if select_options.empty?
+        return content_tag(:span, as_(:no_options), :class => options[:class], :id => options[:id]) if select_options.empty?
 
         active_scaffold_checkbox_list(column, select_options, associated_options.collect {|a| a[1]}, options)
       end
       
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
-        html = "<ul class=\"checkbox-list\" id=\"#{options[:id]}\">"
-        
-        select_options.each_with_index do |option, i|
-          label, id = option
-          this_id = "#{options[:id]}_#{i}_id"
-          html << content_tag(:li) do 
-            check_box_tag("#{options[:name]}[]", id, associated_ids.include?(id), :id => this_id) <<
-            content_tag(:label, h(label), :for => this_id)
+        html = content_tag :ul, :class => "#{options[:class]} checkbox-list", :id => options[:id] do
+          content = "".html_safe
+          select_options.each_with_index do |option, i|
+            label, id = option
+            this_id = "#{options[:id]}_#{i}_id"
+            content << content_tag(:li) do 
+              check_box_tag("#{options[:name]}[]", id, associated_ids.include?(id), :id => this_id) <<
+              content_tag(:label, h(label), :for => this_id)
+            end
           end
+          content
         end
-        html << '</ul>'
         html << javascript_tag("new DraggableLists('#{options[:id]}')") if column.options[:draggable_lists]
-        html.html_safe
+        html
       end
 
       def active_scaffold_translated_option(column, text, value = nil)
