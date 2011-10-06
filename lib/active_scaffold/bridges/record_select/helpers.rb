@@ -34,7 +34,7 @@ class ActiveScaffold::Bridges::RecordSelect
         record_select_options = active_scaffold_input_text_options(
           :controller => remote_controller,
           :id => options[:id],
-          :class => options[:class]
+          :class => options[:class].gsub(/update_form/, '')
         )
         record_select_options.merge!(column.options)
         if options['data-update_url']
