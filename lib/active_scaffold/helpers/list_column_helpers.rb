@@ -34,13 +34,14 @@ module ActiveScaffold
         if column.link
           link = column.link
           associated = record.send(column.association.name) if column.association
-          url_options = params_for(:action => nil, :id => record.id, :link => text)
+          url_options = params_for(:action => nil, :id => record.id)
 
           # setup automatic link
           if column.autolink? && column.singular_association? # link to inline form
-            link = action_link_to_inline_form(column, record, associated)
-            return text if link.crud_type.nil?
-            url_options[:link] = as_(:create_new) if link.crud_type == :create
+            link = action_link_to_inline_form(column, record, associated, text)
+            return text if link.nil?
+          else
+            url_options[:link] = text
           end
 
           if column_link_authorized?(link, column, record, associated)
@@ -55,8 +56,9 @@ module ActiveScaffold
       end
 
       # setup the action link to inline form
-      def action_link_to_inline_form(column, record, associated)
+      def action_link_to_inline_form(column, record, associated, text)
         link = column.link.clone
+        link.label = text
         if column.polymorphic_association?
           polymorphic_controller = controller_path_for_activerecord(record.send(column.association.name).class)
           return link if polymorphic_controller.nil?
@@ -70,6 +72,7 @@ module ActiveScaffold
           if actions.include?(:new)
             link.action = 'new'
             link.crud_type = :create
+            link.label = as_(:create_new)
           end
         elsif actions.include?(:edit)
           link.action = 'edit'
@@ -81,7 +84,7 @@ module ActiveScaffold
           link.action = 'index'
           link.crud_type = :read
         end
-        link
+        link if link.action.present?
       end
 
       def column_link_authorized?(link, column, record, associated)

@@ -268,7 +268,7 @@ module ActiveScaffold
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update
           column.actions_for_association_links.delete :show unless actions.include? :show
-          ActiveScaffold::DataStructures::ActionLink.new(:none, options.merge({:crud_type => nil, :html_options => {:class => column.name}}))
+          ActiveScaffold::DataStructures::ActionLink.new(nil, options.merge(:html_options => {:class => column.name}))
         end 
       end
     end
