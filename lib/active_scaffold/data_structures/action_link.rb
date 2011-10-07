@@ -3,15 +3,15 @@ module ActiveScaffold::DataStructures
     # provides a quick way to set any property of the object from a hash
     def initialize(action, options = {})
       # set defaults
-      self.action = action.to_s
+      self.action = action
       self.label = action
       self.confirm = false
       self.type = :collection
       self.inline = true
       self.method = :get
-      self.crud_type = :delete if [:destroy].include?(action.to_sym)
-      self.crud_type = :create if [:create, :new].include?(action.to_sym)
-      self.crud_type = :update if [:edit, :update].include?(action.to_sym)
+      self.crud_type = :delete if [:destroy].include?(action.try(:to_sym))
+      self.crud_type = :create if [:create, :new].include?(action.try(:to_sym))
+      self.crud_type = :update if [:edit, :update].include?(action.try(:to_sym))
       self.crud_type ||= :read
       self.parameters = {}
       self.html_options = {}
