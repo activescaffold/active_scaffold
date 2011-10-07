@@ -134,7 +134,7 @@ module ActiveScaffold
       
       def action_link_html_options(link, url_options, record, html_options)
         link_id = get_action_link_id(url_options, record, link.column)
-        html_options.reverse_merge! link.html_options.merge(:class => link.action)
+        html_options.reverse_merge! link.html_options.merge(:class => link.action.to_s)
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
         html_options[:method] = link.method if link.method != :get
