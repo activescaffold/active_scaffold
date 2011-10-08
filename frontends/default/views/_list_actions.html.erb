@@ -1,7 +1,7 @@
 <td class="actions"><table cellpadding="0" cellspacing="0">
   <tr>
     <td class="indicator-container">
-      <%= loading_indicator_tag(:action => :record, :id => record.id) %>
+      <%= loading_indicator_tag(:action => :record, :id => (record.respond_to?(:id) ? record.id : 0)) %>
     </td>
       <%= render :partial => 'action_group', :locals => {:action_links => action_links || active_scaffold_config.action_links.member,
                                                          :url_options => url_options,

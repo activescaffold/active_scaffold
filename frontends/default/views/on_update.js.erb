@@ -1,7 +1,7 @@
 try {
 <% form_selector = "#{element_form_id(:action => :update)}" %>
 var action_link = ActiveScaffold.find_action_link('<%= form_selector%>');
-action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'messages').strip)%>');
+action_link.update_flash_messages('<%=raw escape_javascript(render(:partial => 'messages').strip)%>');
 <% if controller.send :successful? %>
   <% if render_parent? && controller.respond_to?(:render_component_into_view) %>
     <% parent_rendered = controller.send(:render_component_into_view, render_parent_options) %>
