@@ -26,7 +26,8 @@ module ActiveScaffold::Config
     def crud_type; self.class.crud_type end
 
     def label(model = nil)
-      as_(@label, :model => model || @core.label(:count => 1))
+      model ||= @core.label(:count => 1)
+      @label.nil? ? model : as_(@label, :model => model)
     end
     
     # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
