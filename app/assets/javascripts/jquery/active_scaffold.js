@@ -762,6 +762,10 @@ var ActiveScaffold = {
         }
       }
     });
+  },
+  
+  draggable_lists: function(element) {
+    $('#' + element).draggable_lists();
   }
 }
 
