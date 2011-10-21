@@ -265,7 +265,7 @@ module ActiveScaffold
 
       def render_column_calculation(column)
         calculation = column_calculation(column)
-        override_formatter = "render_#{column.name}_#{column.calculate}"
+        override_formatter = "render_#{column.name}_#{column.calculate.is_a?(Proc) ? :calculate : column.calculate}"
         calculation = send(override_formatter, calculation) if respond_to? override_formatter
 
         "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
