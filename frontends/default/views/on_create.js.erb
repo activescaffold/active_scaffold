@@ -16,9 +16,11 @@ action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'mess
       <% end %>
       action_link.close();
     <% end %>
-    <%#page.call 'ActiveScaffold.replace', active_scaffold_calculations_id, render(:partial => 'list_calculations') if active_scaffold_config.list.columns.any? {|c| c.calculation?}%>
+    <% if active_scaffold_config.list.columns.any? {|c| c.calculation?}%>
+      ActiveScaffold.replace('<%=active_scaffold_calculations_id%>', '<%=escape_javascript(render(:partial => 'list_calculations'))%>');
+    <% end %>
   <% elsif (active_scaffold_config.create.refresh_list) %>
-    ActiveScaffold.replace_html(<%= active_scaffold_content_id%>, <%= escape_javascript(render(:partial => 'list', :layout => false)) %>);
+    ActiveScaffold.replace_html('<%= active_scaffold_content_id%>', '<%= escape_javascript(render(:partial => 'list', :layout => false)) %>');
   <% elsif params[:parent_controller].nil? %>
     <% new_row = render :partial => 'list_record', :locals => {:record => @record} %>
     ActiveScaffold.create_record_row(action_link.scaffold(),'<%=escape_javascript(new_row)%>', <%={:insert_at => insert_at}.to_json.html_safe%>);
