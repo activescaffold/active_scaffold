@@ -165,7 +165,7 @@ module ActiveScaffold::Actions
         params = params[:record] || {} unless params[model.inheritance_column] # in create action must be inside record key
         model = params.delete(model.inheritance_column).camelize.constantize if params[model.inheritance_column]
       end
-      model.new(build_options || {})
+      model.respond_to?(:build) ? model.build(build_options || {}) : model.new
     end
 
     private
