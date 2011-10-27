@@ -84,8 +84,8 @@ ru:
     this_year: 'В этом году'
     prev_year: 'В прошлом году'
     next_year: 'В следующем году'
-    past: 'Прошлое'
-    future: 'Будущее'
+    past: 'Прошедшие'
+    future: 'Будущие'
     range: 'Интервал'
     seconds: 'секунд'
     minutes: 'минут'
@@ -102,10 +102,9 @@ ru:
       firstDay: 1
       isRTL: false
       showMonthAfterYear: false
+      
     datetime_picker_options:
-      timeText: 'Время'
-      currentText: 'Сегодня'
-      closeText: 'Закрыть'
+      
     errors:
       template:
         header:
@@ -117,6 +116,8 @@ ru:
 
     # error_messages
     cant_destroy_record: 'Запись %{record} не может быть удалена'
-    failed_to_save_record: 'Запись  не может быть сохранена из-за неизвестной ошибки'
     internal_error: '500 Внутренняя ошибка сервера'
     version_inconsistency: 'Эта запись была обновлена с того момента, как вы начали ее редактировать'
+    record_not_saved: 'Запись  не может быть сохранена из-за неизвестной ошибки'
+    no_authorization_for_action: 'Нет прав на выполнение действия "%{action}"'
+
