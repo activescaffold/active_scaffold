@@ -503,9 +503,15 @@ var ActiveScaffold = {
     record = $(record);
     var errors = record.prev();
     if (errors.hasClass('association-record-errors')) {
-      this.replace_html(errors, '');
+      this.remove(errors);
     }
+    var associated = $(record).next();
     this.remove(record);
+    while (associated.hasClass('associated-record')) {
+      record = associated;
+      associated = $(record).next();
+      this.remove(record);
+    }
   },
 
   report_500_response: function(active_scaffold_id) {

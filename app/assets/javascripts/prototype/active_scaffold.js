@@ -456,9 +456,15 @@ var ActiveScaffold = {
   delete_subform_record: function(record) {
     var errors = $(record).previous();
     if (errors.hasClassName('association-record-errors')) {
-      this.replace_html(errors, '');
+      this.remove(errors);
     }
+    var associated = $(record).next();
     this.remove(record);
+    while (associated && associated.hasClassName('associated-record')) {
+      record = associated;
+      associated = $(record).next();
+      this.remove(record);
+    }
   },
 
   report_500_response: function(active_scaffold_id) {
