@@ -16,6 +16,8 @@ class ActiveScaffold::Bridges::RecordSelect
           active_scaffold_record_select(column, options, @record.send(column.name), multiple)
         elsif column.plural_association?
           active_scaffold_record_select(column, options, @record.send(column.name), true)
+        else
+          active_scaffold_record_select_autocomplete(column, options)
         end
       end
 
@@ -48,6 +50,23 @@ class ActiveScaffold::Bridges::RecordSelect
         else
           record_select_field(options[:name], value || column.association.klass.new, record_select_options)
         end
+        html = self.class.field_error_proc.call(html, self) if @record.errors[column.name].any?
+        html
+      end
+      
+      def active_scaffold_record_select_autocomplete(column, options)
+        record_select_options = active_scaffold_input_text_options(
+          :controller => active_scaffold_controller_for(@record.class).controller_path,
+          :id => options[:id],
+          :class => options[:class].gsub(/update_form/, '')
+        )
+        if options['data-update_url']
+          record_select_options[:onchange] = %|function(id, label) {
+              ActiveScaffold.update_column(null, "#{options['data-update_url']}", #{options['data-update_send_form'].to_json}, "#{options[:id]}", id);
+            }|
+        end
+
+        html = record_select_autocomplete(options[:name], @record, record_select_options)
         html = self.class.field_error_proc.call(html, self) if @record.errors[column.name].any?
         html
       end
