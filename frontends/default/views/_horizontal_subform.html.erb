@@ -25,8 +25,8 @@
     <%= render :partial => 'horizontal_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => show_blank_record && @record.new_record? && @record == associated.last} %>
     <% end -%>
   </tbody>
-  <tfooter>
+  <tfoot>
     <%= render :partial => 'horizontal_subform_footer', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column} %>
-  </tfooter>
+  </tfoot>
 </table>
 <%= render :partial => 'form_association_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated} -%>
