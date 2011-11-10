@@ -67,6 +67,24 @@ $(document).ready(function() {
     return true;
   });
   $('a.as_cancel').live('ajax:before', function(event) {
+    /* implementation from vhochstein, solves tiny_mce issue */
+    var as_cancel = $(this);
+    var action_link = ActiveScaffold.find_action_link(as_cancel);
+    
+    if (action_link) {
+      var cancel_url = as_cancel.attr('href');
+      var refresh_data = as_cancel.attr('data-refresh');
+      if (refresh_data === 'true' && action_link.refresh_url) {
+        event.data_url = action_link.refresh_url;
+        if (action_link.position) event.data_type = 'html'
+      } else if (refresh_data === 'false' || typeof(cancel_url) == 'undefined' || cancel_url.length == 0) {
+        action_link.close();
+        return false;
+      }
+    }
+    return true;
+
+    /*
     var as_cancel = $(this);
     var action_link = ActiveScaffold.find_action_link(as_cancel);  
     
@@ -78,6 +96,7 @@ $(document).ready(function() {
       }
     }
     return true;
+    */
   });
   $('a.as_cancel').live('ajax:success', function(event, response) {
     var action_link = ActiveScaffold.find_action_link($(this));
