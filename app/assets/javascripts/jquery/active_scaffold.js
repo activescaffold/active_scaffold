@@ -153,6 +153,11 @@ $(document).ready(function() {
     ActiveScaffold.update_column(element, element.attr('data-update_url'), element.attr('data-update_send_form'), element.attr('id'), value);
     return true;
   });
+  $('input.recordselect.update_form').live('recordselect:change', function(event, id, label) {
+    var element = $(this);
+    ActiveScaffold.update_column(element, element.attr('data-update_url'), element.attr('data-update_send_form'), element.attr('id'), id);
+    return true;
+  });
   
   $('select.as_search_range_option').live('change', function(event) {
     ActiveScaffold[$(this).val() == 'BETWEEN' ? 'show' : 'hide']($(this).parent().find('.as_search_range_between'));

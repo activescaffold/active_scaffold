@@ -33,17 +33,10 @@ class ActiveScaffold::Bridges::RecordSelect
           params.merge!({column.association.primary_key_name => ''})
         end
  
-        record_select_options = active_scaffold_input_text_options(
-          :controller => remote_controller,
-          :id => options[:id],
-          :class => options[:class].gsub(/update_form/, '')
+        record_select_options = active_scaffold_input_text_options(options).merge(
+          :controller => remote_controller
         )
         record_select_options.merge!(column.options)
-        if options['data-update_url']
-          record_select_options[:onchange] = %|function(id, label) {
-              ActiveScaffold.update_column(null, "#{options['data-update_url']}", #{options['data-update_send_form'].to_json}, "#{options[:id]}", id);
-            }|
-        end
  
         html = if multiple
           record_multi_select_field(options[:name], value || [], record_select_options)
@@ -55,17 +48,9 @@ class ActiveScaffold::Bridges::RecordSelect
       end
       
       def active_scaffold_record_select_autocomplete(column, options)
-        record_select_options = active_scaffold_input_text_options(
-          :controller => active_scaffold_controller_for(@record.class).controller_path,
-          :id => options[:id],
-          :class => options[:class].gsub(/update_form/, '')
+        record_select_options = active_scaffold_input_text_options(options).merge(
+          :controller => remote_controller
         )
-        if options['data-update_url']
-          record_select_options[:onchange] = %|function(id, label) {
-              ActiveScaffold.update_column(null, "#{options['data-update_url']}", #{options['data-update_send_form'].to_json}, "#{options[:id]}", id);
-            }|
-        end
-
         html = record_select_autocomplete(options[:name], @record, record_select_options)
         html = self.class.field_error_proc.call(html, self) if @record.errors[column.name].any?
         html
