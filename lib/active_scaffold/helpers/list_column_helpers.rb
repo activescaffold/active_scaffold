@@ -256,14 +256,6 @@ module ActiveScaffold
          column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
       end
 
-      def format_inplace_edit_column(record,column)
-        if column.list_ui == :checkbox
-          active_scaffold_column_checkbox(column, record)
-        else
-          format_column_value(record, column)
-        end
-      end
-
       def active_scaffold_inplace_edit(record, column, options = {})
         formatted_column = options[:formatted_column] || format_column_value(record, column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
