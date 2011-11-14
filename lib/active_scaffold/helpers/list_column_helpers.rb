@@ -190,25 +190,25 @@ module ActiveScaffold
       end
 
       def format_association_value(value, column, size)
-        case column.association.macro
+        format_value case column.association.macro
           when :has_one, :belongs_to
             if column.polymorphic_association?
-              format_value("#{value.class.model_name.human}: #{value.to_label}")
+              "#{value.class.model_name.human}: #{value.to_label}"
             else
-              format_value(value.to_label)
+              value.to_label
             end
           when :has_many, :has_and_belongs_to_many
             if column.associated_limit.nil?
-              firsts = value.collect { |v| clean_column_value(v.to_label) }
+              firsts = value.collect { |v| v.to_label }
             else
               firsts = value.first(column.associated_limit)
-              firsts.collect! { |v| clean_column_value(v.to_label) }
+              firsts.collect! { |v| v.to_label }
               firsts[column.associated_limit] = '…' if value.size > column.associated_limit
             end
             if column.associated_limit == 0
               size if column.associated_number?
             else
-              joined_associated = format_value(firsts.join(active_scaffold_config.list.association_join_text))
+              joined_associated = firsts.join('&')
               joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
               joined_associated
             end
