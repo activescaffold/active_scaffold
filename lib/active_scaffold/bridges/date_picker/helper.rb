@@ -33,29 +33,25 @@ module ActiveScaffold::Bridges
       
       def self.date_options(locale)
         begin
-          date_options = I18n.translate! 'date', :locale => locale
           date_picker_options = { :closeText => as_(:close),
             :prevText => as_(:previous),
             :nextText => as_(:next),
             :currentText => as_(:today),
-            :monthNames => date_options[:month_names][1, (date_options[:month_names].length - 1)],
-            :monthNamesShort => date_options[:abbr_month_names][1, (date_options[:abbr_month_names].length - 1)],
-            :dayNames => date_options[:day_names],
-            :dayNamesShort => date_options[:abbr_day_names],
-            :dayNamesMin => date_options[:abbr_day_names],
+            :monthNames => I18n.translate!('date.month_names', :locale => locale)[1..-1],
+            :monthNamesShort => I18n.translate!('date.abbr_month_names', :locale => locale)[1..-1],
+            :dayNames => I18n.translate!('date.day_names', :locale => locale),
+            :dayNamesShort => I18n.translate!('date.abbr_day_names', :locale => locale),
+            :dayNamesMin => I18n.translate!('date.abbr_day_names', :locale => locale),
             :changeYear => true,
             :changeMonth => true,
           }
 
-          begin
-            as_date_picker_options = I18n.translate! 'active_scaffold.date_picker_options'
-            date_picker_options.merge!(as_date_picker_options) if as_date_picker_options.is_a? Hash
-          rescue
-            Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}"
-          end
+          as_date_picker_options = I18n.translate! :date_picker_options, :scope => :active_scaffold, :locale => locale, :default => ''
+          date_picker_options.merge!(as_date_picker_options) if as_date_picker_options.is_a? Hash
+          Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}" if as_date_picker_options.blank?
 
-          js_format = self.to_datepicker_format(date_options[:formats][:default])
-          date_picker_options[:dateFormat] = js_format unless js_format.nil?
+          js_format = self.to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
+          date_picker_options[:dateFormat] = js_format unless js_format.blank?
           date_picker_options
         rescue
           raise if locale == I18n.locale
@@ -76,19 +72,15 @@ module ActiveScaffold::Bridges
       def self.datetime_options(locale)
         begin
           rails_time_format = I18n.translate! 'time.formats.picker', :locale => locale
-          datetime_options = I18n.translate! 'datetime.prompts', :locale => locale
           datetime_picker_options = {:ampm => false,
-            :hourText => datetime_options[:hour],
-            :minuteText => datetime_options[:minute],
-            :secondText => datetime_options[:second],
+            :hourText => I18n.translate!('datetime.prompts.hour', :locale => locale),
+            :minuteText => I18n.translate!('datetime.prompts.minute', :locale => locale),
+            :secondText => I18n.translate!('datetime.prompts.second', :locale => locale)
           }
 
-          begin
-            as_datetime_picker_options = I18n.translate! 'active_scaffold.datetime_picker_options'
-            datetime_picker_options.merge!(as_datetime_picker_options) if as_datetime_picker_options.is_a? Hash
-          rescue
-            Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{locale}"
-          end
+          as_datetime_picker_options = I18n.translate! :datetime_picker_options, :scope => :active_scaffold, :locale => locale, :default => ''
+          datetime_picker_options.merge!(as_datetime_picker_options) if as_datetime_picker_options.is_a? Hash
+          Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{locale}" if as_datetime_picker_options.blank?
 
           date_format, time_format = self.split_datetime_format(self.to_datepicker_format(rails_time_format))
           datetime_picker_options[:dateFormat] = date_format unless date_format.nil?
