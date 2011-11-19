@@ -236,9 +236,14 @@ document.observe("dom:loaded", function() {
     event.memo.url = url;
     return true;
   });
-  document.on('change', 'input.update_form, select.update_form', function(event) {
+  document.on('change', 'input.update_form, textarea.update_form, select.update_form', function(event) {
     var element = event.findElement();
     ActiveScaffold.update_column(element, element.readAttribute('data-update_url'), element.hasAttribute('data-update_send_form'), element.readAttribute('id'), element.getValue());
+    return true;
+  });
+  document.on('recordselect:change', 'input.recordselect.update_form', function(event) {
+    var element = event.findElement();
+    ActiveScaffold.update_column(element, element.readAttribute('data-update_url'), element.hasAttribute('data-update_send_form'), element.readAttribute('id'), element.memo.id);
     return true;
   });
   document.on('change', 'select.as_search_range_option', function(event) {
