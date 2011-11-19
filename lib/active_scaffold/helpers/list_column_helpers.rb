@@ -119,7 +119,7 @@ module ActiveScaffold
       ## Overrides
       ##
       def active_scaffold_column_text(column, record)
-        truncate(clean_column_value(record.send(column.name)), :length => column.options[:truncate] || 50)
+        clean_column_value(truncate(record.send(column.name), :length => column.options[:truncate] || 50))
       end
 
       def active_scaffold_column_checkbox(column, record)
@@ -190,25 +190,25 @@ module ActiveScaffold
       end
 
       def format_association_value(value, column, size)
-        case column.association.macro
+        format_value case column.association.macro
           when :has_one, :belongs_to
             if column.polymorphic_association?
-              format_value("#{value.class.model_name.human}: #{value.to_label}")
+              "#{value.class.model_name.human}: #{value.to_label}"
             else
-              format_value(value.to_label)
+              value.to_label
             end
           when :has_many, :has_and_belongs_to_many
             if column.associated_limit.nil?
-              firsts = value.collect { |v| clean_column_value(v.to_label) }
+              firsts = value.collect { |v| v.to_label }
             else
               firsts = value.first(column.associated_limit)
-              firsts.collect! { |v| clean_column_value(v.to_label) }
+              firsts.collect! { |v| v.to_label }
               firsts[column.associated_limit] = '…' if value.size > column.associated_limit
             end
             if column.associated_limit == 0
               size if column.associated_number?
             else
-              joined_associated = format_value(firsts.join(active_scaffold_config.list.association_join_text))
+              joined_associated = firsts.join(active_scaffold_config.list.association_join_text)
               joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
               joined_associated
             end
@@ -254,14 +254,6 @@ module ActiveScaffold
 
       def inplace_edit_cloning?(column)
          column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
-      end
-
-      def format_inplace_edit_column(record,column)
-        if column.list_ui == :checkbox
-          active_scaffold_column_checkbox(column, record)
-        else
-          format_column_value(record, column)
-        end
       end
 
       def active_scaffold_inplace_edit(record, column, options = {})

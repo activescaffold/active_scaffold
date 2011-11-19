@@ -166,10 +166,15 @@ $(document).ready(function() {
       return true;
     } else return false;
   });
-  $('input.update_form, select.update_form').live('change', function(event) {
+  $('input.update_form, textarea.update_form, select.update_form').live('change', function(event) {
     var element = $(this);
     var value = element.is("input:checkbox:not(:checked)") ? null : element.val();
     ActiveScaffold.update_column(element, element.attr('data-update_url'), element.attr('data-update_send_form'), element.attr('id'), value);
+    return true;
+  });
+  $('input.recordselect.update_form').live('recordselect:change', function(event, id, label) {
+    var element = $(this);
+    ActiveScaffold.update_column(element, element.attr('data-update_url'), element.attr('data-update_send_form'), element.attr('id'), id);
     return true;
   });
   
