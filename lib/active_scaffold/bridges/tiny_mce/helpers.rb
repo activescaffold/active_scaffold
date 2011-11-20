@@ -4,34 +4,6 @@ class ActiveScaffold::Bridges::TinyMce
       base.class_eval do
         include FormColumnHelpers
         include SearchColumnHelpers
-        include ViewHelpers
-      end
-    end
-
-    module ViewHelpers
-      def active_scaffold_includes(*args)
-        if ActiveScaffold.js_framework == :jquery
-          tiny_mce_js = javascript_tag(%|
-var action_link_close = ActiveScaffold.ActionLink.Abstract.prototype.close;
-ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
-  $(this.adapter).find('textarea.mceEditor').each(function(index, elem) {
-    tinyMCE.execCommand('mceRemoveControl', false, $(elem).attr('id'));
-  });
-  action_link_close.apply(this);
-};
-          |) #if using_tiny_mce? TODO check if tiny mce is included
-        else
-          tiny_mce_js = javascript_tag(%|
-var action_link_close = ActiveScaffold.ActionLink.Abstract.prototype.close;
-ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
-  this.adapter.select('textarea.mceEditor').each(function(elem) {
-    tinyMCE.execCommand('mceRemoveControl', false, elem.id);
-  });
-  action_link_close.apply(this);
-};
-          |) #if using_tiny_mce? TODO check if tiny mce is included
-        end
-        super(*args) + (include_tiny_mce_if_needed || '') + (tiny_mce_js || '')
       end
     end
 
@@ -50,9 +22,9 @@ ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
 
       def onsubmit_with_tiny_mce
         if ActiveScaffold.js_framework == :jquery
-          submit_js = 'tinyMCE.triggerSave();$(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, $(elem).attr(\'id\')); });' #if using_tiny_mce? TODO check if tine mce is included
+          submit_js = 'if (tinyMCE) {tinyMCE.triggerSave();$(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, $(elem).attr(\'id\')); });}'
         else
-          submit_js = 'tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, elem.id); });' #if using_tiny_mce? TODO check if tiny mce is included
+          submit_js = 'if (tinyMCE) {tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, elem.id); });}'
         end
         [onsubmit_without_tiny_mce, submit_js].compact.join ';'
       end

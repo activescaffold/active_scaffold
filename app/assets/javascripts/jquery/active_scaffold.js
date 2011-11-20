@@ -67,7 +67,6 @@ $(document).ready(function() {
     return true;
   });
   $('a.as_cancel').live('ajax:before', function(event) {
-    /* implementation from vhochstein, solves tiny_mce issue */
     var as_cancel = $(this);
     var action_link = ActiveScaffold.find_action_link(as_cancel);
     
@@ -83,20 +82,6 @@ $(document).ready(function() {
       }
     }
     return true;
-
-    /*
-    var as_cancel = $(this);
-    var action_link = ActiveScaffold.find_action_link(as_cancel);  
-    
-    if (action_link) {
-      var cancel_url = as_cancel.attr('href');
-      if (typeof(cancel_url) == 'undefined' || cancel_url.length == 0) {
-        action_link.close();
-        return false;
-      }
-    }
-    return true;
-    */
   });
   $('a.as_cancel').live('ajax:success', function(event, response) {
     var action_link = ActiveScaffold.find_action_link($(this));
