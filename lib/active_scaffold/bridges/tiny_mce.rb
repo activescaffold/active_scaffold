@@ -4,6 +4,14 @@ class ActiveScaffold::Bridges::TinyMce < ActiveScaffold::DataStructures::Bridge
   end
 
   def self.install?
-    true # TODO check if tinymce-rails ist installed
+    Object.const_defined? "TinyMCE"
+  end
+ 
+  def self.javascripts
+    if ActiveScaffold.js_framework == :jquery
+      ['tinymce-jquery', 'jquery/tiny_mce_bridge']
+    else
+      ['tinymce', 'prototype/tiny_mce_bridge']
+    end
   end
 end
