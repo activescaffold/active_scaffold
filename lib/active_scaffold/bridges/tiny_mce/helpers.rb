@@ -22,9 +22,9 @@ class ActiveScaffold::Bridges::TinyMce
 
       def onsubmit_with_tiny_mce
         if ActiveScaffold.js_framework == :jquery
-          submit_js = 'if (tinyMCE) {tinyMCE.triggerSave();$(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, $(elem).attr(\'id\')); });}'
+          submit_js = 'tinyMCE.triggerSave();$(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, $(elem).attr(\'id\')); });'
         else
-          submit_js = 'if (tinyMCE) {tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, elem.id); });}'
+          submit_js = 'tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, elem.id); });'
         end
         [onsubmit_without_tiny_mce, submit_js].compact.join ';'
       end
