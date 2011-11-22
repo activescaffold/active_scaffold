@@ -1,6 +1,0 @@
-if params[:id]
-  # FIXME: It isn't right when there are filtered records by a search
-  page << "$('#{active_scaffold_id}').down('.mark_record').checked = #{@mark ? true : false};"
-else
-  page << "$$('##{active_scaffold_tbody_id} > tr > td > .mark_record').each(function(checkbox) { checkbox.checked = #{@mark ? true : false};});"
-end
