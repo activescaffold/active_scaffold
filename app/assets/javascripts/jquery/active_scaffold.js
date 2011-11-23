@@ -72,7 +72,8 @@ $(document).ready(function() {
     
     if (action_link) {
       var cancel_url = as_cancel.attr('href');
-      if (typeof(cancel_url) == 'undefined' || cancel_url.length == 0) {
+      var refresh_data = as_cancel.attr('data-refresh');
+      if (refresh_data !== 'true' || !cancel_url) {
         action_link.close();
         return false;
       }
