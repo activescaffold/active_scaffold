@@ -42,7 +42,7 @@ module ActiveScaffold::Actions
       else
         if successful?
           flash[:info] = as_(:created_model, :model => @record.to_label)
-          if active_scaffold_config.create.edit_after_create
+          if active_scaffold_config.create.action_after_create
             redirect_to params_for(:action => "edit", :id => @record.id)
           elsif active_scaffold_config.create.persistent
             redirect_to params_for(:action => "new")
