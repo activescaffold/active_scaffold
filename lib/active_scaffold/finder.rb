@@ -95,7 +95,7 @@ module ActiveScaffold
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::StringComparators.values.include?(value[:opt])
-          ["#{column.search_sql} LIKE ?", value[:opt].sub('?', value[:from])]
+          ["#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?", value[:opt].sub('?', value[:from])]
         elsif value[:opt] == 'BETWEEN'
           ["#{column.search_sql} BETWEEN ? AND ?", value[:from], value[:to]]
         elsif ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
