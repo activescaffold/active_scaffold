@@ -1,7 +1,7 @@
 de:
   time:
     formats:
-      picker: "%a, %d %b %Y %H:%M:%S"
+      picker: "%d.%m.%y %H:%M"
   active_scaffold:
     add: 'Hinzufügen'
     add_existing: 'Existierenden Eintrag hinzufügen'
@@ -65,7 +65,7 @@ de:
     between: 'Zwischen'
     contains: 'Enthält'
     begins_with: 'Beginnt'
-    ends_with: 'Ended'
+    ends_with: 'Endet'
     today: 'Heute'
     yesterday: 'Gestern'
     tomorrow: 'Morgen'
