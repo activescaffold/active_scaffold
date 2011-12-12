@@ -92,9 +92,11 @@ module ActiveScaffold::Actions
           end
         end
       rescue ActiveRecord::RecordInvalid
+        flash[:error] = $!.message
+        self.successful = false
       rescue ActiveRecord::StaleObjectError
         @record.errors.add(:base, as_(:version_inconsistency))
-        self.successful=false
+        self.successful = false
       rescue ActiveRecord::RecordNotSaved
         @record.errors.add(:base, as_(:record_not_saved)) if @record.errors.empty?
         self.successful = false
