@@ -28,6 +28,10 @@ module ActiveScaffold::DataStructures
       @parent_scaffold = session_info[:parent_scaffold]
     end
     
+    def to_params
+      {:parent_scaffold => parent_scaffold.controller_path}
+    end
+    
     def new_instance?
       result = @new_instance.nil?
       @new_instance = false
@@ -94,6 +98,10 @@ module ActiveScaffold::DataStructures
       association.options[:order]
     end
     
+    def to_params
+      super.merge(:association => @association.name, :assoc_id => parent_id)
+    end
+    
     protected
     
     def iterate_model_associations(model)
@@ -118,6 +126,10 @@ module ActiveScaffold::DataStructures
       super(model, session_info)
       @scope = session_info[:name]
       @constrained_fields = [] 
+    end
+    
+    def to_params
+      super.merge(:named_scope => @scope)
     end
   end
 end
