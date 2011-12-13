@@ -32,10 +32,7 @@ module ActiveScaffold
             parameters[:controller] = params[:parent_controller]
             parameters[:eid] = params[:parent_controller]
           end
-          if nested?
-            parameters[:controller] = nested.parent_scaffold.controller_path
-            parameters[:eid] = nil
-          end
+          parameters.merge! nested.to_params if nested?
           if params[:parent_sti]
             parameters[:controller] = params[:parent_sti]
             parameters[:eid] = nil
