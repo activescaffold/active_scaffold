@@ -78,7 +78,9 @@ module ActiveScaffold
           select_options = options_for_association(column.association, true)
         else
           method = column.name
-          select_options = Array(column.options[:options])
+          select_options = column.options[:options].collect do |text, value|
+            active_scaffold_translated_option(column, text, value)
+          end
         end
 
         options = { :selected => associated }.merge! column.options
