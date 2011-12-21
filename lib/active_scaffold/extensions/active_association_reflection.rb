@@ -5,7 +5,7 @@
 ActiveRecord::Reflection::AssociationReflection.class_eval do
   def klass_with_sti(*opts)
     sti_col = klass.inheritance_column
-    if (h = opts.first).is_a? Hash and (passed_type = ( h[sti_col] || h[sti_col.to_sym] )) and (new_klass = active_record.send(:compute_type, passed_type)) < klass
+    if sti_col and (h = opts.first).is_a? Hash and (passed_type = ( h[sti_col] || h[sti_col.to_sym] )) and (new_klass = active_record.send(:compute_type, passed_type)) < klass
       new_klass
     else
       klass
