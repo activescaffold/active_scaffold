@@ -115,7 +115,7 @@ module ActiveScaffold::DataStructures
         if association.foreign_key == current.foreign_key
           # show columns for has_many and has_one child associationes
           constrained_fields << current.name.to_sym if current.belongs_to? 
-          @child_association = current
+          @child_association = current if current.klass == @parent_model
         end
       end
     end
