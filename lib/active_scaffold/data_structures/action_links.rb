@@ -173,7 +173,7 @@ module ActiveScaffold::DataStructures
     protected
 
     def skip_action_link(controller, link, *args)
-      (!link.ignore_method.nil? and controller.try(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
+      (!link.ignore_method.nil? && controller.respond_to?(link.ignore_method) && controller.send(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
     end
 
     # called during clone or dup. makes the clone/dup deeper.
