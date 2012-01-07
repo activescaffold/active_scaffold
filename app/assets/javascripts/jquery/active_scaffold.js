@@ -894,6 +894,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
     this.enable();
     this.adapter.remove();
     if (this.hide_target) this.target.show();
+    ActiveScaffold.scroll_to(this.target);
   },
 
   reload: function() {
