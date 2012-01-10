@@ -266,6 +266,9 @@ jQuery(document).ready(function($) {
   };
 })();
 
+
+(function($){
+  
 /*
  jQuery delayed observer
  (c) 2007 - Maxime Haineault (max@centdessin.com)
@@ -1051,3 +1054,5 @@ ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
     ActiveScaffold.highlight(this.adapter.find('td').first().children());
   }
 });
+
+})(jQuery);
