@@ -1,3 +1,5 @@
+(function($){
+
 jQuery.fn.draggable_lists = function() {
   this.addClass('draggable-list');
   var list_selected = $(this.get(0).cloneNode(false)).addClass('selected');
@@ -25,3 +27,5 @@ jQuery.fn.draggable_lists = function() {
   });
   return this;
 };
+
+})(jQuery);
