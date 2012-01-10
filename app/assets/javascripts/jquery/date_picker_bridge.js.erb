@@ -1,6 +1,6 @@
 <%= ActiveScaffold::Bridges[:date_picker].localization %>
 
-$(document).ready(function() {
+jQuery(document).ready(function($) {
   $('input.date_picker').live('focus', function(event) {
     var date_picker = $(this);
     if (typeof(date_picker.datepicker) == 'function') {
