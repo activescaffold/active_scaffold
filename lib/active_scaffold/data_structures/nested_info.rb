@@ -70,6 +70,10 @@ module ActiveScaffold::DataStructures
       iterate_model_associations(model)
     end
     
+    def name
+      self.association.name
+    end
+    
     def habtm?
       association.macro == :has_and_belongs_to_many 
     end
@@ -130,6 +134,10 @@ module ActiveScaffold::DataStructures
     
     def to_params
       super.merge(:named_scope => @scope)
+    end
+    
+    def name
+      self.scope
     end
   end
 end

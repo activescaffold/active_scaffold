@@ -239,7 +239,7 @@ module ActiveScaffold
       end
 
       def as_main_div_class
-        classes = ["active-scaffold", "active-scaffold-#{controller_id}", "#{params[:controller]}-view", "#{active_scaffold_config.theme}-theme"]
+        classes = ["active-scaffold", "active-scaffold-#{controller_id}", "#{id_from_controller params[:controller]}-view", "#{active_scaffold_config.theme}-theme"]
         classes << "as_touch" if touch_device?
         classes.join(' ')
       end
