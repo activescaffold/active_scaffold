@@ -1,7 +1,7 @@
 <%# nested_id, allows us to remove a nested scaffold programmatically %>
 <tr class="inline-adapter" id="<%= element_row_id :action => :nested %>">
   <td colspan="99" class="inline-adapter-cell">
-    <div class="<%= "#{params[:action]}-view" if params[:action] %> <%= "#{params[:associations] ? params[:associations] : params[:controller]}-view" %> view">
+    <div class="<%= "#{params[:action]}-view" if params[:action] %> <%= "#{nested? ? nested.name : id_from_controller(params[:controller])}-view" %> view">
       <%= link_to(as_(:close), '', :class => 'inline-adapter-close as_cancel', :remote => true, :title => as_(:close), 'data-refresh' => (action_name == 'index' ? true : false)) -%>
       <%= payload -%>
     </div>
