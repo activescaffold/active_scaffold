@@ -15,7 +15,7 @@ module ActiveScaffold::Config
 
     # the ActionLink for this action
     cattr_accessor :link
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('destroy', :label => :delete, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :crud_type => :delete, :position => false, :parameters => {:destroy_action => true}, :security_method => :delete_authorized?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('destroy', :label => :delete, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :crud_type => :delete, :position => false, :parameters => {:destroy_action => true}, :security_method => :delete_authorized?, :ignore_method => :delete_ignore?)
 
     # whether we should refresh list after destroy or not
     cattr_accessor :refresh_list

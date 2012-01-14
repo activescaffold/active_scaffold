@@ -100,7 +100,7 @@ module ActiveScaffold
       end
 
       def skip_action_link(link, *args)
-        (!link.ignore_method.nil? and controller.try(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
+        (!link.ignore_method.nil? && controller.respond_to?(link.ignore_method) && controller.send(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
       end
 
       def render_action_link(link, url_options, record = nil, html_options = {})
@@ -239,7 +239,7 @@ module ActiveScaffold
       end
 
       def as_main_div_class
-        classes = ["active-scaffold", "active-scaffold-#{controller_id}", "#{params[:controller]}-view", "#{active_scaffold_config.theme}-theme"]
+        classes = ["active-scaffold", "active-scaffold-#{controller_id}", "#{id_from_controller params[:controller]}-view", "#{active_scaffold_config.theme}-theme"]
         classes << "as_touch" if touch_device?
         classes.join(' ')
       end
