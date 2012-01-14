@@ -13,6 +13,7 @@ require 'active_scaffold/responds_to_parent'
 
 require 'active_scaffold/version'
 require 'active_scaffold/engine' unless defined? ACTIVE_SCAFFOLD_PLUGIN
+require 'json'  # for js_config
 
 module ActiveScaffold
   autoload :AttributeParams, 'active_scaffold/attribute_params'
@@ -129,6 +130,14 @@ module ActiveScaffold
     elsif defined? PrototypeRails
       :prototype
     end
+  end
+
+  def self.js_config=(config)
+    @@js_config = config
+  end
+
+  def self.js_config
+    @@js_config ||= {:scroll_on_close => true}
   end
 
   # exclude bridges you do not need
