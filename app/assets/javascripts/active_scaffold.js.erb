@@ -14,5 +14,6 @@
 <% require_asset "prototype/form_enhancements" %>
 <% require_asset "prototype/rico_corner" %>
 <% end %>
+ActiveScaffold.config = <%= ActiveScaffold.js_config.to_json %>;
 <% ActiveScaffold.javascripts.each {|js| require_asset js} %>
 <% ActiveScaffold::Bridges.all_javascripts.each {|js| require_asset js} %>
