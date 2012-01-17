@@ -823,7 +823,7 @@ ActiveScaffold.Actions.Abstract = Class.extend({
     this.loading_indicator = jQuery(loading_indicator);
     this.options = options;
     var _this = this; 
-    this.links = $.map(links, function(link) {
+    this.links = jQuery.map(links, function(link) {
       var my_link = _this.instantiate_link(link);
       return my_link;
     });
