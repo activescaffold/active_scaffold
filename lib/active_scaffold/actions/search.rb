@@ -17,7 +17,7 @@ module ActiveScaffold::Actions
       render(:action => "search")
     end
     def search_respond_to_js
-      render(:partial => "search")
+      render(:partial => "search").html_safe
     end
     def do_search
       query = search_params.to_s.strip rescue ''
