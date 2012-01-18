@@ -1,31 +1,28 @@
 module ActiveScaffold::DataStructures
   class NestedInfo
-    def self.get(model, session_storage)
-      if session_storage[:nested].nil? 
-        nil
-      else
-        session_info = session_storage[:nested].clone
-        begin
-          session_info[:parent_scaffold] = "#{session_info[:parent_scaffold].to_s.camelize}Controller".constantize
-          session_info[:parent_model] = session_info[:parent_scaffold].active_scaffold_config.model
-          session_info[:association] = session_info[:parent_model].reflect_on_association(session_info[:name])
-          unless session_info[:association].nil?
-            ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, session_info)
-          else
-            ActiveScaffold::DataStructures::NestedInfoScope.new(model, session_info)
-          end
-        rescue ActiveScaffold::ControllerNotFound
-          nil
+    def self.get(model, params)
+      nested_info = {}
+      begin
+        nested_info[:name] = (params[:association] || params[:named_scope]).to_sym
+        nested_info[:parent_scaffold] = "#{params[:parent_scaffold].to_s.camelize}Controller".constantize
+        nested_info[:parent_model] = nested_info[:parent_scaffold].active_scaffold_config.model
+        nested_info[:parent_id] = params[:assoc_id]
+        unless nested_info[:association].nil?
+          ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, nested_info)
+        else
+          ActiveScaffold::DataStructures::NestedInfoScope.new(model, nested_info)
         end
+      rescue ActiveScaffold::ControllerNotFound
+        nil
       end
     end
     
     attr_accessor :association, :child_association, :parent_model, :parent_scaffold, :parent_id, :constrained_fields, :scope
         
-    def initialize(model, session_info)
-      @parent_model = session_info[:parent_model]
-      @parent_id = session_info[:parent_id]
-      @parent_scaffold = session_info[:parent_scaffold]
+    def initialize(model, nested_info)
+      @parent_model = nested_info[:parent_model]
+      @parent_id = nested_info[:parent_id]
+      @parent_scaffold = nested_info[:parent_scaffold]
     end
     
     def to_params
@@ -64,9 +61,9 @@ module ActiveScaffold::DataStructures
   end
   
   class NestedInfoAssociation < NestedInfo
-    def initialize(model, session_info)
-      super(model, session_info)
-      @association = session_info[:association]
+    def initialize(model, nested_info)
+      super(model, nested_info)
+      @association = parent_model.reflect_on_association(nested_info[:name])
       iterate_model_associations(model)
     end
     
@@ -126,9 +123,9 @@ module ActiveScaffold::DataStructures
   end
   
   class NestedInfoScope < NestedInfo
-    def initialize(model, session_info)
-      super(model, session_info)
-      @scope = session_info[:name]
+    def initialize(model, nested_info)
+      super(model, nested_info)
+      @scope = nested_info[:name]
       @constrained_fields = [] 
     end
     
