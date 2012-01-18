@@ -28,6 +28,20 @@ module ActionDispatch
             ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:member].each {|name, type| send(type, name)}
           end
         end
+        
+        def as_nested_resources(*resources)
+          options = resources.extract_options!
+          resources.each do |resource|
+            resources(resource, options.merge(:parent_scaffold => merge_module_scope(@scope[:module], parent_resource.plural), :association => resource)) { yield if block_given? }
+          end
+        end
+        
+        def as_scoped_routes(*scopes)
+          options = scopes.extract_options!
+          scopes.each do |scope|
+            resources(scope, options.merge(:parent_scaffold => merge_module_scope(@scope[:module], parent_resource.plural), :named_scope => scope, :controller => parent_resource.plural)) { yield if block_given? }
+          end
+        end
       end
     end
   end
