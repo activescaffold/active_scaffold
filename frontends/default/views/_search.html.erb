@@ -1,5 +1,5 @@
 <% live_search = active_scaffold_config.search.live? -%>
-<% url_options =  params_for(:action => :index, :escape => false).delete_if{|k,v| k == 'search'} -%>
+<% url_options =  params_for(:action => :index).delete_if{|k,v| k == 'search'} -%>
 <%=
 options = {:id => element_form_id(:action => 'search'),
            :class => "as_form search",

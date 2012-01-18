@@ -297,7 +297,7 @@ module ActiveScaffold
         elsif inplace_edit_cloning?(column)
           tag_options['data-ie_mode'] = :clone
         elsif column.inplace_edit == :ajax
-          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
+          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :column => column.name, :update_column => column.name, :in_place_editing => true)
           plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
           tag_options['data-ie_render_url'] = url
           tag_options['data-ie_mode'] = :ajax

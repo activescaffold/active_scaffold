@@ -190,12 +190,8 @@ module ActiveScaffold
         if column && column.association 
           url_options[:assoc_id] = url_options.delete(:id)
           url_options[:id] = record.send(column.association.name).id if column.singular_association? && record.send(column.association.name).present?
-          link.eid = "#{controller_id.from(3)}_#{record.id}_#{column.association.name}" unless options.has_key?(:reuse_eid)
-          url_options[:eid] = link.eid
         elsif link.parameters && link.parameters[:named_scope]
           url_options[:assoc_id] = url_options.delete(:id)
-          link.eid = "#{controller_id.from(3)}_#{record.id}_#{link.parameters[:named_scope]}" unless options.has_key?(:reuse_eid)
-          url_options[:eid] = link.eid
         end
       end
 

@@ -30,12 +30,12 @@ module ActiveScaffold
           parameters = {}
           if params[:parent_controller]
             parameters[:controller] = params[:parent_controller]
-            parameters[:eid] = params[:parent_controller]
+            #parameters[:eid] = params[:parent_controller]
           end
           parameters.merge! nested.to_params if nested?
           if params[:parent_sti]
             parameters[:controller] = params[:parent_sti]
-            parameters[:eid] = nil
+            #parameters[:eid] = nil
           end
           parameters[:parent_column] = nil
           parameters[:parent_id] = nil
