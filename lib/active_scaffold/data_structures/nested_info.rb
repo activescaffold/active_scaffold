@@ -7,10 +7,12 @@ module ActiveScaffold::DataStructures
         nested_info[:parent_scaffold] = "#{params[:parent_scaffold].to_s.camelize}Controller".constantize
         nested_info[:parent_model] = nested_info[:parent_scaffold].active_scaffold_config.model
         nested_info[:parent_id] = params[nested_info[:parent_model].name.foreign_key]
-        unless nested_info[:association].nil?
-          ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, nested_info)
-        else
-          ActiveScaffold::DataStructures::NestedInfoScope.new(model, nested_info)
+        if nested_info[:parent_id]
+          unless nested_info[:association].nil?
+            ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, nested_info)
+          else
+            ActiveScaffold::DataStructures::NestedInfoScope.new(model, nested_info)
+          end
         end
       rescue ActiveScaffold::ControllerNotFound
         nil
