@@ -74,8 +74,11 @@ module ActionView::Helpers #:nodoc:
         else
           content_tag(:div, :id => id, :class => 'active-scaffold-component') do
             url = url_for(url_options)
+            # parse the ActiveRecord model name from the controller path, which
+            # might be a namespaced controller (e.g., 'admin/admins')
+            model = remote_controller.to_s.sub(/.*\//, '').singularize
             content_tag(:div, :class => 'active-scaffold-header') do
-              content_tag :h2, link_to(args.first[:label] || active_scaffold_config_for(remote_controller.to_s.singularize).list.label, url, :remote => true)
+              content_tag :h2, link_to(args.first[:label] || active_scaffold_config_for(model).list.label, url, :remote => true)
             end <<
             if ActiveScaffold.js_framework == :prototype
               javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true});")
