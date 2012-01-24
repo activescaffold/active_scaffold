@@ -150,7 +150,7 @@ module ActiveScaffold::Bridges
       module SearchColumnHelpers
         def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
           if current_search.is_a? Hash
-            value = controller.class.condition_value_for_datetime(current_search[name], column.form_ui == :date_picker ? :to_date : :to_time)
+            value = controller.class.condition_value_for_datetime(current_search[name], column.search_ui == :date_picker ? :to_date : :to_time)
           else
             value = current_search
           end
