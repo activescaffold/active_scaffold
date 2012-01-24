@@ -8,7 +8,7 @@ module ActiveScaffold::DataStructures
         nested_info[:parent_model] = nested_info[:parent_scaffold].active_scaffold_config.model
         nested_info[:parent_id] = params[nested_info[:parent_model].name.foreign_key]
         if nested_info[:parent_id]
-          unless nested_info[:association].nil?
+          unless params[:association].nil?
             ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, nested_info)
           else
             ActiveScaffold::DataStructures::NestedInfoScope.new(model, nested_info)
@@ -108,7 +108,7 @@ module ActiveScaffold::DataStructures
     protected
     
     def iterate_model_associations(model)
-      @constrained_fields = [] 
+      @constrained_fields = []
       @constrained_fields << association.foreign_key.to_sym unless association.belongs_to?
       model.reflect_on_all_associations.each do |current|
         if !current.belongs_to? && association.foreign_key == current.association_foreign_key
