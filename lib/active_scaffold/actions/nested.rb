@@ -5,8 +5,8 @@ module ActiveScaffold::Actions
     def self.included(base)
       super
       base.module_eval do
-        before_filter :register_constraints_with_action_columns
-        before_filter :set_nested
+        #before_filter :register_constraints_with_action_columns
+        prepend_before_filter :set_nested
         before_filter :configure_nested
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
       end
