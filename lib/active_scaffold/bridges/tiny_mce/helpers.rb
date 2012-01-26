@@ -15,7 +15,7 @@ class ActiveScaffold::Bridges::TinyMce
       def active_scaffold_input_text_editor(column, options)
         options[:class] = "#{options[:class]} mceEditor #{column.options[:class]}".strip
 				
-				settings = column.options[:tinymce] || { theme: 'simple' }
+				settings = { :theme => 'simple' }.merge(column.options[:tinymce] || {})
 				settings = settings.to_s.gsub(/:(.+?)\=\>/, '\1:')
 				settings = "tinyMCE.settings = #{settings};"
 
