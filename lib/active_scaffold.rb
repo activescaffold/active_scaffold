@@ -84,7 +84,8 @@ module ActiveScaffold
     self.class.active_scaffold_config_for(klass)
   end
 
-  def active_scaffold_session_storage(id = (params[:eid] || params[:controller]))
+  def active_scaffold_session_storage(id = nil)
+    id ||= params[:eid] || "#{params[:controller]}#{"_#{nested.parent_id}" if nested?}"
     session_index = "as:#{id}"
     session[session_index] ||= {}
     session[session_index]
