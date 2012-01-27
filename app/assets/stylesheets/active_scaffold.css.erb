@@ -7,6 +7,82 @@
  For details, see the ActiveScaffold web site: http://www.activescaffold.com/
 
 */
+<%
+  @disabled_color ||= '#999'
+  @actions_disabled_color ||= '#666'
+  @link_color ||= '#06c'
+  @hover_bg ||= '#ff8'
+  @header_color ||= '#555'
+  
+  @column_header_bg ||= @header_color
+  @column_header_link_color ||= '#fff'
+  @column_header_link_hover_bg ||= '#000'
+  @column_header_link_hover_color ||= '#ff8'
+  @column_header_color ||= '#eee'
+  @column_header_sorted_bg ||= '#333'
+  
+  @column_bg ||= '#E6F2FF'
+  @column_even_bg ||= '#fff'
+  @column_color ||= '#333'
+  @column_empty_color ||= '#999'
+  @column_border_color ||= '#C5DBF7'
+  @column_even_border_color ||= '#ddd'
+  @column_actions_border_color ||= '#ccc'
+  
+  @column_sorted_bg ||= '#B9DCFF'
+  @column_sorted_border_color ||= '#AFD0F5'
+  @column_even_sorted_bg ||= '#E6F2FF'
+  @column_even_sorted_border_color ||= '#AFD0F5'
+  
+  @calculations_bg ||= '#eee'
+  @calculations_border_color ||= '#005CB8'
+  
+  @action_group_color ||= '#0066CC'
+  @action_group_hover_bg ||= '#ff8'
+  @action_group_border_color ||= '#005CB8'
+  @action_group_items_bg ||= '#EEE'
+  @action_group_items_border_color ||= '#222'
+  @action_group_link_color ||= @column_color
+  
+  @nested_bg ||= '#DAFFCD'
+  @nested_border_color ||= '#7FCF00'
+  @nested_footer_color ||= '#444'
+  @nested_column_bg ||= '#ECFFE7'
+  @nested_column_border_color ||= @column_border_color
+  
+  @second_nested_bg ||= '#FFFFBB'
+  @second_nested_border_color ||= '#DDDF37'
+  
+  @third_nested_bg ||= @nested_bg
+  @third_nested_border_color ||= @nested_border_color
+  
+  @pagination_border_color ||= '#ccc'
+  @msg_color ||= '#333'
+  @msg_error_bg ||= '#fbb'
+  @msg_error_border_color ||= '#f66'
+  @msg_warning_bg ||= '#ffb'
+  @msg_warning_border_color ||= '#ff6'
+  @msg_info_bg ||= '#bbf'
+  @msg_info_border_color ||= '#66f'
+  @msg_filtered_bg ||= '#e8e8e8'
+  @msg_filtered_color ||= '#666'
+  
+  @form_title_color ||= '#1F7F00'
+  @label_color ||= @header_color
+  @description_color ||= '#999'
+  @placeholder_color ||= '#aaa'
+  @input_border_color ||= @form_title_color
+  @input_error_border_color ||= '#f00'
+  @input_focus_bg ||= '#ffc'
+  
+  @draggable_list_bg ||= '#FFFF88'
+  @draggable_list_selected_bg ||= '#7FCF00'
+  @checkbox_list_bg ||= '#fff'
+  
+  @subform_color ||= '#999'
+  @subform_header_color ||= @header_color
+  @subform_footer_color ||= @subform_color
+%>
 
 .active-scaffold form,
 .active-scaffold table,
@@ -28,16 +104,16 @@ border-collapse: separate;
 
 .active-scaffold a,
 .active-scaffold a:visited {
-color: #06c;
+color: <%= @link_color %>;
 text-decoration: none;
 }
 
 .active-scaffold a.disabled {
-color: #999;
+color: <%= @disabled_color %>;
 }
 
 .active-scaffold a:hover, .active-scaffold div.hover, .active-scaffold td span.hover {
-background-color: #ff8;
+background-color: <%= @hover_bg %>;
 }
 
 .active-scaffold div.actions a img,
@@ -56,12 +132,12 @@ clear: both;
 }
 
 noscript.active-scaffold {
-border-left: solid 5px #f66;
-background-color: #fbb;
+border-left: solid 5px <%= @msg_error_border_color %>;
+background-color: <%= @msg_error_bg %>;
 font-size: 11px;
 font-weight: bold;
 padding: 5px 20px 5px 5px;
-color: #333;
+color: <%= @column_color %>;
 }
 
 .active-scaffold .mark_record_column {
@@ -75,20 +151,11 @@ color: #333;
 position: relative;
 }
 
-.blue-theme .active-scaffold-header {
-background-color: #005CB8;
-}
-
 .active-scaffold-header h2 {
 padding: 2px 0px;
 margin: 0;
-color: #555;
+color: <%= @header_color %>;
 font: bold 160% arial, sans-serif;
-}
-
-.blue-theme .active-scaffold-header h2 {
-color: #fff;
-padding: 2px 5px 4px 5px;
 }
 
 .active-scaffold-header div.actions a,
@@ -139,17 +206,8 @@ top: 14px;
 float: left;
 }
 
-.blue-theme .active-scaffold-header div.actions a {
-color: #fff;
-}
-
 .active-scaffold-header div.actions a.disabled {
-color: #666;
-opacity: 0.5;
-}
-
-.blue-theme .active-scaffold-header div.actions a.disabled {
-color: #fff;
+color: <%= @actions_disabled_color %>;
 opacity: 0.5;
 }
 
@@ -193,10 +251,6 @@ background-image: url(<%= asset_path 'active_scaffold/add.gif' %>);
 background-image: url(<%= asset_path 'active_scaffold/magnifier.png' %>);
 }
 
-.blue-theme .active-scaffold-header div.actions a:hover {
-background-color: #378CDF;
-}
-
 .active-scaffold-header div.actions a.disabled:hover {
 background-color: transparent;
 cursor: default;
@@ -213,7 +267,7 @@ text-align: right;
    ============================= */
 
 .active-scaffold th {
-background-color: #555;
+background-color: <%= @column_header_bg %>;
 text-align: left;
 }
 
@@ -221,26 +275,26 @@ text-align: left;
 .active-scaffold th p {
 font: bold 11px arial, sans-serif;
 display: block;
-background-color: #555;
+background-color: <%= @column_header_bg %>;
 }
 
 .active-scaffold th a, .active-scaffold th a:visited {
-color: #fff;
+color: <%= @column_header_link_color %>;
 padding: 2px 2px 2px 5px;
 }
 
 .active-scaffold th p {
-color: #eee;
+color: <%= @column_header_color %>;
 padding: 2px 5px;
 }
 
 .active-scaffold th a:hover {
-background-color: #000;
-color: #ff8;
+background-color: <%= @column_header_link_hover_bg %>;
+color: <%= @column_header_link_hover_color %>;
 }
 
 .active-scaffold th.sorted {
-background-color: #333;
+background-color: <%= @column_header_sorted_bg %>;
 }
 
 .active-scaffold th.sorted a {
@@ -249,17 +303,17 @@ padding-right: 18px;
 
 .active-scaffold th.asc a,
 .active-scaffold th.asc a:hover {
-background: #333 url(<%= asset_path 'active_scaffold/arrow_up.gif' %>) right 50% no-repeat;
+background: <%= @column_header_sorted_bg %> url(<%= asset_path 'active_scaffold/arrow_up.gif' %>) right 50% no-repeat;
 }
 
 .active-scaffold th.desc a,
 .active-scaffold th.desc a:hover {
-background: #333 url(<%= asset_path 'active_scaffold/arrow_down.gif' %>) right 50% no-repeat;
+background: <%= @column_header_sorted_bg %> url(<%= asset_path 'active_scaffold/arrow_down.gif' %>) right 50% no-repeat;
 }
 
 .active-scaffold th.loading a,
 .active-scaffold th.loading a:hover {
-background: #333 url(<%= asset_path 'active_scaffold/indicator-small.gif' %>) right 50% no-repeat;
+background: <%= @column_header_sorted_bg %> url(<%= asset_path 'active_scaffold/indicator-small.gif' %>) right 50% no-repeat;
 }
 
 .active-scaffold th .mark_heading {
@@ -274,15 +328,15 @@ display: none;
    ============================= */
 
 .active-scaffold tr.record {
-  background-color: #E6F2FF;
+  background-color: <%= @column_bg %>;
 }
 .active-scaffold tr.record td {
 padding: 5px 4px;
-color: #333;
+color: <%= @column_color %>;
 font-family: Verdana, sans-serif;
 font-size: 11px;
-border-bottom: solid 1px #C5DBF7;
-border-left: solid 1px #C5DBF7;
+border: solid 1px <%= @column_border_color %>;
+border-width: 0 0 1px 1px;
 }
 
 .active-scaffold tr.record td.messages-container {
@@ -290,24 +344,24 @@ padding: 0px;
 }
 
 .active-scaffold tr.even-record {
-background-color: #fff;
+background-color: <%= @column_even_bg %>;
 }
 .active-scaffold tr.even-record td {
-border-left-color: #ddd;
+border-left-color: <%= @column_even_border_color %>;
 }
 
 .active-scaffold tr.record td.sorted {
-background-color: #B9DCFF;
-border-bottom-color: #AFD0F5;
+background-color: <%= @column_sorted_bg %>;
+border-bottom-color: <%= @column_sorted_border_color %>;
 }
 
 .active-scaffold tr.even-record td.sorted {
-background-color: #E6F2FF;
-border-bottom-color: #AFD0F5;
+background-color: <%= @column_even_sorted_bg %>;
+border-bottom-color: <%= @column_even_sorted_border_color %>;
 }
 
 .active-scaffold tbody.records td.empty {
-color: #999;
+color: <%= @column_empty_color %>;
 text-align: center;
 }
 
@@ -319,7 +373,7 @@ text-align: right;
 /* Table :: Actions (Edit, Delete)
    ============================= */
 .active-scaffold tr.record td.actions {
-border-right: solid 1px #ccc;
+border-right: solid 1px <%= @column_actions_border_color %>;
 padding: 0;
 min-width: 1%;
 }
@@ -347,22 +401,22 @@ white-space: nowrap;
 }
 
 .active-scaffold tr.record td.actions a.disabled {
-color: #666;
+color: <%= @actions_disabled_color %>;
 opacity: 0.5;
 }
 
 .active-scaffold .actions .action_group div:hover {
-background-color: #ff8;
+background-color: <%= @action_group_hover_bg %>;
 }
 
 .active-scaffold .actions .action_group {
 position: relative;
 text-align: left;
-color: #0066CC;
+color: <%= @action_group_color %>;
 }
 
 .active-scaffold .actions .action_group ul {
-border: 2px solid #005CB8;
+border: 2px solid <%= @action_group_border_color %>;
 list-style-type: none;
 margin: 0;
 padding: 0;
@@ -381,8 +435,8 @@ right: 150px;
 }
 
 .active-scaffold .actions .action_group ul li {
-background: none repeat scroll 0 0 #EEE;
-border-top: 1px dashed #222;
+background: none repeat scroll 0 0 <%= @action_group_items_bg %>;
+border-top: 1px dashed <%= @action_group_items_border_color %>;
 display: block;
 position: relative;
 width: auto;
@@ -398,7 +452,7 @@ z-index: 2;
 
 .active-scaffold .actions .action_group ul li a {
   display: block;
-  color: #333;
+  color: <%= @action_group_link_color %>;
   margin: 0;
   padding: 5px 5px 5px 25px;
   background-position: 5px 50%;
@@ -406,7 +460,7 @@ z-index: 2;
 }
 
 .active-scaffold .actions .action_group ul li.top {
-border-top: 0px solid #005CB8;
+border-top-width: 0px;
 }
 
 .active-scaffold .actions .action_group:hover ul ul,
@@ -424,9 +478,9 @@ display: block;
    ============================= */
 
 .active-scaffold .view {
-background-color: #DAFFCD;
+background-color: <%= @nested_bg %>;
 padding: 4px;
-border: solid 1px #7FcF00;
+border: solid 1px <%= @nested_border_color %>;
 }
 
 .active-scaffold tbody.records td.inline-adapter-cell .view {
@@ -448,13 +502,6 @@ background: url(<%= asset_path 'active_scaffold/close.gif' %>) 0 0 no-repeat;
 /* Nested
    ======================== */
 
-.blue-theme .active-scaffold .active-scaffold-header,
-.blue-theme .active-scaffold .active-scaffold-footer {
-background-color: #1F7F00;
-
-background: transparent;
-}
-
 .active-scaffold .active-scaffold .active-scaffold-header {
 margin-right: 25px;
 }
@@ -464,9 +511,8 @@ font-size: 12px;
 font-weight: bold;
 }
 
-.blue-theme .active-scaffold .active-scaffold-header h2,
 .active-scaffold .active-scaffold .active-scaffold-footer {
-color: #444;
+color: <%= @nested_footer_color %>;
 }
 
 .active-scaffold .active-scaffold .active-scaffold-header div.actions {
@@ -479,15 +525,6 @@ right: 0px;
 font: bold 11px verdana, sans-serif;
 }
 
-.blue-theme .active-scaffold .active-scaffold-header div.actions a,
-.blue-theme .active-scaffold .active-scaffold-header div.actions a:visited {
-color: #06c;
-}
-
-.blue-theme .active-scaffold .active-scaffold-header div.actions a:hover {
-background-color: #ff8;
-}
-
 .active-scaffold .active-scaffold .view {
 background-color: transparent;
 padding: 0px;
@@ -495,22 +532,22 @@ border: none;
 }
 
 .active-scaffold .active-scaffold  td {
-background-color: #ECFFE7;
-border-bottom: solid 1px #CDF7C5;
-border-left: solid 1px #CDF7C5;
+background-color: <%= @nested_column_bg %>;
+border-bottom: solid 1px <%= @nested_column_border_color %>;
+border-left: solid 1px <%= @nested_column_border_color %>;
 }
 
 .active-scaffold .active-scaffold td.inline-adapter-cell {
-background-color: #FFFFBB;
+background-color: <%= @second_nested_bg %>;
 padding: 4px;
-border: solid 1px #DDDF37;
+border: solid 1px <%= @second_nested_border_color %>;
 border-top: none;
 }
 
 .active-scaffold .active-scaffold .active-scaffold td.inline-adapter-cell {
-background-color: #DAFFCD;
+background-color: <%= @third_nested_bg %>;
 padding: 4px;
-border: solid 1px #7FcF00;
+border: solid 1px <%= @third_nested_border_color %>;
 border-top: none;
 }
 
@@ -522,8 +559,8 @@ font-size: 11px;
    ========================== */
 
 .active-scaffold-calculations td {
-background-color: #eee;
-border-top: 2px solid #005CB8;
+background-color: <%= @calculations_bg %>;
+border-top: 2px solid <%= @calculations_border_color %>;
 font: bold 12px arial, sans-serif;
 }
 
@@ -533,19 +570,10 @@ border-bottom: none;
 font: bold 12px arial, sans-serif;
 }
 
-.blue-theme .active-scaffold-footer {
-background-color: #005CB8;
-color: #ccc;
-}
-
 .active-scaffold-footer .active-scaffold-pagination {
 float: right;
 white-space: nowrap;
 margin-right: 5px;
-}
-
-.blue-theme .active-scaffold-footer .active-scaffold-records {
-margin-left: 5px;
 }
 
 .active-scaffold-footer a {
@@ -556,25 +584,16 @@ margin: 0 -2px;
 font: bold 12px arial, sans-serif;
 }
 
-.blue-theme .active-scaffold-footer a,
-.blue-theme .active-scaffold-footer a:visited {
-color: #fff;
-}
-
-.blue-theme .active-scaffold-footer a:hover {
-background-color: #378CDF;
-}
-
 .active-scaffold-footer .next {
 margin-left: 0;
 padding-left: 5px;
-border-left: solid 1px #ccc;
+border-left: solid 1px <%= @pagination_border_color %>;
 }
 
 .active-scaffold-footer .previous {
 margin-right: 0;
 padding-right: 5px;
-border-right: solid 1px #ccc;
+border-right: solid 1px <%= @pagination_border_color %>;
 }
 
 /* Messages
@@ -588,17 +607,17 @@ border: none;
 }
 
 .active-scaffold .empty-message, .active-scaffold .filtered-message {
-background-color: #e8e8e8;
+background-color: <%= @msg_filtered_bg %>;
 padding: 4px;
 text-align: center;
-color: #666;
+color: <%= @msg_filtered_color %>;
 }
 
 .active-scaffold .message {
 font-size: 11px;
 font-weight: bold;
 padding: 5px 20px 5px 5px;
-color: #333;
+color: <%= @msg_color %>;
 position: relative;
 margin: 2px 7px;
 line-height: 12px;
@@ -618,27 +637,27 @@ margin: 0;
 }
 
 .active-scaffold .error-message {
-border-left: solid 5px #f66;
-background-color: #fbb;
+border-left: solid 5px <%= @msg_error_border_color %>;
+background-color: <%= @msg_error_bg %>;
 }
 
 .active-scaffold .warning-message {
-border-left: solid 5px #ff6;
-background-color: #ffb;
+border-left: solid 5px <%= @msg_warning_border_color %>;
+background-color: <%= @msg_warning_bg %>;
 }
 
 .active-scaffold .info-message {
-border-left: solid 5px #66f;
-background-color: #bbf;
+border-left: solid 5px <%= @msg_info_border_color %>;
+background-color: <%= @msg_info_bg %>;
 }
 
 /* Error Styling
    ========================== */
 
 .active-scaffold .errorExplanation {
-background-color: #fcc;
+background-color: <%= @msg_error_bg %>;
 margin: 2px 0;
-border: solid 1px #f66;
+border: solid 1px <%= @msg_error_border_color %>;
 }
 
 .active-scaffold fieldset {
@@ -647,12 +666,12 @@ clear: both;
 
 .active-scaffold .errorExplanation h2 {
 padding: 2px 5px;
-color: #333;
+color: <%= @msg_color %>;
 font-size: 11px;
 margin: 0;
 letter-spacing: 0;
 font-family: Verdana;
-background-color: #f66;
+background-color: <%= @msg_error_border_color %>;
 }
 
 .active-scaffold .errorExplanation ul {
@@ -704,7 +723,7 @@ width: 12em;
 float: left;
 clear: left;
 font: normal 11px verdana, sans-serif;
-color: #555;
+color: <%= @label_color %>;
 line-height: 16px;
 }
 
@@ -744,7 +763,7 @@ border: none;
 padding: 2px;
 margin: 0;
 text-transform: none;
-color: #1F7F00;
+color: <%= @form_title_color %>;
 letter-spacing: -1px;
 font: bold 16px arial;
 }
@@ -783,7 +802,7 @@ clear: both;
 
 .active-scaffold label {
 font: normal 11px verdana, sans-serif;
-color: #555;
+color: <%= @label_color %>;
 }
 
 .active-scaffold li.form-element dt {
@@ -808,7 +827,7 @@ margin: 0;
 
 .active-scaffold .description {
 display: inline-block;
-color: #999;
+color: <%= @description_color %>;
 font-size: 10px;
 margin-left: 5px;
 }
@@ -820,14 +839,14 @@ font-weight: bold;
 .active-scaffold label.example {
 font-size: 11px;
 font-family: arial;
-color: #888;
+color: <%= @placeholder_color %>;
 }
 
 .active-scaffold input.text-input,
 .active-scaffold select {
 font: bold 16px arial;
 letter-spacing: -1px;
-border: solid 1px #1F7F00;
+border: solid 1px <%= @input_border_color %>;
 }
 
 .active-scaffold input.text-input {
@@ -840,7 +859,7 @@ padding: 2px;
 .active-scaffold .field_with_errors textarea,
 .active-scaffold .fieldWithErrors select,
 .active-scaffold .field_with_errors select {
-border: solid 1px #f00;
+border: solid 1px <%= @input_error_border_color %>;
 }
 
 .active-scaffold select {
@@ -848,19 +867,19 @@ padding: 1px;
 }
 
 .active-scaffold input.example {
-color: #aaa;
+color: <%= @placeholder_color %>;
 }
 
 .active-scaffold select:focus,
 .active-scaffold input.text-input:focus {
-background-color: #ffc;
+background-color: <%= @input_focus_bg %>;
 }
 
 .active-scaffold textarea {
 font-family: Arial, sans-serif;
 font-size: 12px;
 padding: 1px;
-border: solid 1px #1F7F00;
+border: solid 1px <%= @input_border_color %>;
 }
 
 .active-scaffold .checkbox-list {
@@ -883,7 +902,7 @@ margin-right: 15px;
 min-height: 30px;
 max-height: 100px;
 overflow: auto;
-background-color: #FFFF88;
+background-color: <%= @draggable_list_bg %>;
 }
 
 .active-scaffold .draggable-list.hover {
@@ -891,7 +910,7 @@ opacity: 0.5;
 }
 
 .active-scaffold .draggable-list.selected {
-background-color: #7FCF00;
+background-color: <%= @draggable_list_selected_bg %>;
 }
 
 .active-scaffold .draggable-list li {
@@ -936,7 +955,7 @@ background: none;
 
 .active-scaffold .sub-form table th {
 font: normal 10px verdana, sans-serif;
-color: #555;
+color: <%= @subform_header_color %>;
 padding: 0 5px 0 1px;
 background: none;
 }
@@ -947,8 +966,8 @@ display: none;
 
 .active-scaffold .sub-form .checkbox-list {
 padding: 0 2px 2px 2px;
-background-color: #fff;
-border: solid 1px #1F7F00;
+background-color: <%= @checkbox_list_bg %>;
+border: solid 1px <%= @input_border_color %>;
 }
 
 .active-scaffold .sub-form .checkbox-list label {
@@ -960,7 +979,7 @@ border: none;
 background-color: transparent;
 padding: 1px;
 vertical-align: top;
-color: #999;
+color: <%= @subform_color %>;
 }
 
 .active-scaffold .sub-form .actions {
@@ -999,7 +1018,7 @@ margin-right: 10px;
 }
 
 .active-scaffold .sub-form .footer {
-color: #999;
+color: <%= @subform_footer_color %>;
 padding: 3px 5px;
 }
 
@@ -1089,7 +1108,7 @@ line-height: 130%;
 }
 
 .as_touch th a, .as_touch th a:visited {
-color: #fff;
+color: <%= @column_header_link_color %>;
 padding: 5px 2px 5px 5px;
 }
 
