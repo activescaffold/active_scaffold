@@ -1,0 +1,74 @@
+/*
+ ActiveScaffold Blue Theme
+ (c) 2007 Richard White <rrwhite@gmail.com>
+
+ ActiveScaffold is freely distributable under the terms of an MIT-style license.
+
+ For details, see the ActiveScaffold web site: http://www.activescaffold.com/
+
+*/
+
+/* Header
+   ======================== */
+
+.blue-theme .active-scaffold-header {
+background-color: #005CB8;
+}
+
+.blue-theme .active-scaffold-header h2 {
+color: #fff;
+padding: 2px 5px 4px 5px;
+}
+
+.blue-theme .active-scaffold-header div.actions a {
+color: #fff;
+}
+
+.blue-theme .active-scaffold-header div.actions a.disabled {
+color: #fff;
+opacity: 0.5;
+}
+
+.blue-theme .active-scaffold-header div.actions a:hover {
+background-color: #378CDF;
+}
+
+.blue-theme .active-scaffold .active-scaffold-header,
+.blue-theme .active-scaffold .active-scaffold-footer {
+background-color: #1F7F00;
+background: transparent;
+}
+
+.blue-theme .active-scaffold .active-scaffold-header h2 {
+color: #444;
+}
+
+.blue-theme .active-scaffold .active-scaffold-header div.actions a,
+.blue-theme .active-scaffold .active-scaffold-header div.actions a:visited {
+color: #06c;
+}
+
+.blue-theme .active-scaffold .active-scaffold-header div.actions a:hover {
+background-color: #ff8;
+}
+
+/* Footer
+   ========================== */
+
+.blue-theme .active-scaffold-footer {
+background-color: #005CB8;
+color: #ccc;
+}
+
+.blue-theme .active-scaffold-footer .active-scaffold-records {
+margin-left: 5px;
+}
+
+.blue-theme .active-scaffold-footer a,
+.blue-theme .active-scaffold-footer a:visited {
+color: #fff;
+}
+
+.blue-theme .active-scaffold-footer a:hover {
+background-color: #378CDF;
+}
