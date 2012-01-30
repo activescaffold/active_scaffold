@@ -4,7 +4,7 @@ module ActionView
       def find_all_templates(name, partial = false, locals = {})
         prefixes.collect do |prefix|
           view_paths.collect do |resolver|
-            if Rails.version < '3.2.0'
+            if Rails.version < '3.2.0' # FIXME: remove when rails 3.1 support is dropped
               temp_args = *args_for_lookup(name, [prefix], partial, locals)
             else
               temp_args = *args_for_lookup(name, [prefix], partial, locals, {})
