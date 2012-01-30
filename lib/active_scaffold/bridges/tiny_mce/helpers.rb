@@ -14,9 +14,14 @@ class ActiveScaffold::Bridges::TinyMce
 
       def active_scaffold_input_text_editor(column, options)
         options[:class] = "#{options[:class]} mceEditor #{column.options[:class]}".strip
+				
+				settings = { :theme => 'simple' }.merge(column.options[:tinymce] || {})
+				settings = settings.to_s.gsub(/:(.+?)\=\>/, '\1:')
+				settings = "tinyMCE.settings = #{settings};"
+
         html = []
         html << send(override_input(:textarea), column, options)
-        html << javascript_tag("tinyMCE.execCommand('mceAddControl', false, '#{options[:id]}');") if request.xhr? || params[:iframe]
+        html << javascript_tag(settings + "tinyMCE.execCommand('mceAddControl', false, '#{options[:id]}');") if request.xhr? || params[:iframe]
         html.join "\n"
       end
 
