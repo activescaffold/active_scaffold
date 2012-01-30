@@ -13,9 +13,11 @@ ActiveRecord::Reflection::AssociationReflection.class_eval do
     end
   end
   def build_association(*opts, &block)
+    @original_build_association_called = true # FIXME: remove when 3.1 support is dropped
     klass_with_sti(*opts).new(*opts, &block)
   end
   def create_association(*opts, &block)
+    @original_build_association_called = true # FIXME: remove when 3.1 support is dropped
     klass_with_sti(*opts).create(*opts, &block)
   end
 end
