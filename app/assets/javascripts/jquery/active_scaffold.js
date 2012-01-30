@@ -275,7 +275,7 @@ jQuery(document).ready(function() {
  Slight modifications by Elliot Winkler
 */
 
-if (typeof($.fn.delayedObserver) === 'undefined') { 
+if (typeof(jQuery.fn.delayedObserver) === 'undefined') { 
   (function() {
     var delayedObserverStack = [];
     var observed;
@@ -303,7 +303,7 @@ if (typeof($.fn.delayedObserver) === 'undefined') {
       );
     }
    
-    $.fn.extend({
+    jQuery.fn.extend({
       delayedObserver:function(delay, callback){
         $this = jQuery(this);
        
@@ -362,7 +362,7 @@ var ActiveScaffold = {
   },
   reload_if_empty: function(tbody, url) {
     if (this.records_for(tbody).length == 0) {
-      $.getScript(url);
+      jQuery.getScript(url);
     }
   },
   removeSortClasses: function(scaffold) {
@@ -543,7 +543,7 @@ var ActiveScaffold = {
   process_checkbox_inplace_edit: function(checkbox, options) {
     var checked = checkbox.is(':checked');
     if (checked === true) options['params'] += '&value=1';
-    $.ajax({
+    jQuery.ajax({
       url: options.url,
       type: "POST",
       data: options['params'],
@@ -638,14 +638,14 @@ var ActiveScaffold = {
       sortable_options.update = function(event, ui) {
          var url = controller + '/' + options.action + '?'
          url += jQuery(this).sortable('serialize',{key: encodeURIComponent(jQuery(this).attr('id') + '[]'), expression:/^[^_-](?:[A-Za-z0-9_-]*)-(.*)-row$/});
-         $.post(url.append_params(url_params));
+         jQuery.post(url.append_params(url_params));
        }
     }
     element.sortable(sortable_options);
   },
 
   record_select_onselect: function(edit_associated_url, active_scaffold_id, id){
-    $.ajax({
+    jQuery.ajax({
       url: edit_associated_url.split('--ID--').join(id),
       error: function(xhr, textStatus, errorThrown){
         ActiveScaffold.report_500_response(active_scaffold_id)
@@ -750,13 +750,13 @@ var ActiveScaffold = {
 
     if (send_form) {
       params = as_form.serialize();
-      params += '&' + $.param({"source_id": source_id});
+      params += '&' + jQuery.param({"source_id": source_id});
     } else {
       params = {value: val};
       params.source_id = source_id;
     }
 
-    $.ajax({
+    jQuery.ajax({
       url: url,
       data: params,
       beforeSend: function(event) {
@@ -962,7 +962,7 @@ ActiveScaffold.Actions.Record = ActiveScaffold.Actions.Abstract.extend({
 ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
   close_previous_adapter: function() {
     var _this = this;
-    $.each(this.set.links, function(index, item) {
+    jQuery.each(this.set.links, function(index, item) {
       if (item.url != _this.url && item.is_disabled() && item.adapter) {
         item.enable();
         item.adapter.remove();
@@ -1001,7 +1001,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
 
   enable: function() {
     var _this = this;
-    $.each(this.set.links, function(index, item) {
+    jQuery.each(this.set.links, function(index, item) {
       if (item.url != _this.url) return;
       item.tag.removeClass('disabled');
     });
@@ -1009,7 +1009,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
 
   disable: function() {
     var _this = this;
-    $.each(this.set.links, function(index, item) {
+    jQuery.each(this.set.links, function(index, item) {
       if (item.url != _this.url) return;
       item.tag.addClass('disabled');
     });
