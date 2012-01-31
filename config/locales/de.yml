@@ -10,7 +10,7 @@ de:
     cancel: 'Abbrechen'
     click_to_edit: 'Zum Editieren anklicken'
     click_to_reset: 'Reset'
-    close: 'Schliessen'
+    close: 'Schließen'
     config_list: 'Konfigurieren'
     config_list_model: 'Konfiguriere Spalten für %{model}'
     create: 'Anlegen'
