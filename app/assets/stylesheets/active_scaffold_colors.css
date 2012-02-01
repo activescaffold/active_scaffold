@@ -1,0 +1,244 @@
+/*
+ ActiveScaffold
+ (c) 2007 Richard White <rrwhite@gmail.com>
+
+ ActiveScaffold is freely distributable under the terms of an MIT-style license.
+
+ For details, see the ActiveScaffold web site: http://www.activescaffold.com/
+
+*/
+.active-scaffold a.disabled {
+  color: #999999; }
+
+.active-scaffold a:hover, .active-scaffold div.hover, .active-scaffold td span.hover {
+  background-color: #ffff88; }
+
+noscript.active-scaffold {
+  border-color: #ff6666;
+  background-color: #ffbbbb;
+  color: #333333; }
+
+/* Header
+   ======================== */
+.active-scaffold-header h2 {
+  color: #555555; }
+
+.active-scaffold-header div.actions a.disabled {
+  color: #666666; }
+
+/* Table :: Column Headers
+   ============================= */
+.active-scaffold th {
+  background-color: #555555; }
+
+.active-scaffold th a,
+.active-scaffold th p {
+  background-color: #555555; }
+
+.active-scaffold th a, .active-scaffold th a:visited {
+  color: white; }
+
+.active-scaffold th p {
+  color: #eeeeee; }
+
+.active-scaffold th a:hover {
+  background-color: black;
+  color: #ffff88; }
+
+.active-scaffold th.sorted {
+  background-color: #333333; }
+
+.active-scaffold th.asc a,
+.active-scaffold th.asc a:hover,
+.active-scaffold th.desc a,
+.active-scaffold th.desc a:hover,
+.active-scaffold th.loading a,
+.active-scaffold th.loading a:hover {
+  background-color: #333333; }
+
+/* Table :: Record Rows
+   ============================= */
+.active-scaffold tr.record {
+  background-color: #e6f2ff; }
+
+.active-scaffold tr.record td {
+  color: #333333;
+  border-color: #c5dbf7; }
+
+.active-scaffold tr.even-record {
+  background-color: white; }
+
+.active-scaffold tr.even-record td {
+  border-left-color: #dddddd; }
+
+.active-scaffold tr.record td.sorted {
+  background-color: #b9dcff;
+  border-bottom-color: #afd0f5; }
+
+.active-scaffold tr.even-record td.sorted {
+  background-color: #e6f2ff;
+  border-bottom-color: #afd0f5; }
+
+.active-scaffold tbody.records td.empty {
+  color: #999999; }
+
+/* Table :: Actions (Edit, Delete)
+   ============================= */
+.active-scaffold tr.record td.actions {
+  border-color: #cccccc; }
+
+.active-scaffold tr.record td.actions a.disabled {
+  color: #666666; }
+
+.active-scaffold .actions .action_group div:hover {
+  background-color: #ffff88; }
+
+.active-scaffold .actions .action_group {
+  color: #0066cc; }
+
+.active-scaffold .actions .action_group ul {
+  border-color: #005cb8; }
+
+.active-scaffold .actions .action_group ul li {
+  background-color: #eeeeee;
+  border-color: #222222; }
+
+.active-scaffold .actions .action_group ul li a {
+  color: #333333; }
+
+/* Table :: Inline Adapter
+   ============================= */
+.active-scaffold .view {
+  background-color: #daffcd;
+  border-color: #7fcf00; }
+
+/* Nested
+   ======================== */
+.active-scaffold .active-scaffold .active-scaffold-footer {
+  color: #444444; }
+
+.active-scaffold .active-scaffold td {
+  background-color: #ecffe7;
+  border-color: #c5dbf7; }
+
+.active-scaffold .active-scaffold td.inline-adapter-cell {
+  background-color: #ffffbb;
+  border-color: #dddf37; }
+
+.active-scaffold .active-scaffold .active-scaffold td.inline-adapter-cell {
+  background-color: #daffcd;
+  border-color: #7fcf00; }
+
+/* Footer
+   ========================== */
+.active-scaffold-calculations td {
+  background-color: #eeeeee;
+  border-color: #005cb8; }
+
+.active-scaffold-footer .next {
+  border-color: #cccccc; }
+
+.active-scaffold-footer .previous {
+  border-color: #cccccc; }
+
+/* Messages
+   ========================= */
+.active-scaffold .empty-message, .active-scaffold .filtered-message {
+  background-color: #e8e8e8;
+  color: #666666; }
+
+.active-scaffold .message {
+  color: #333333; }
+
+.active-scaffold .error-message {
+  border-color: #ff6666;
+  background-color: #ffbbbb; }
+
+.active-scaffold .warning-message {
+  border-color: #ffff66;
+  background-color: #ffffbb; }
+
+.active-scaffold .info-message {
+  border-color: #6666ff;
+  background-color: #bbbbff; }
+
+/* Error Styling
+   ========================== */
+.active-scaffold .errorExplanation {
+  background-color: #ffbbbb;
+  border-color: #ff6666; }
+
+.active-scaffold .errorExplanation h2 {
+  color: #333333;
+  background-color: #ff6666; }
+
+/* Show
+   ============================= */
+.active-scaffold .show-view dt {
+  color: #555555; }
+
+/* Form
+   ============================== */
+.active-scaffold h4,
+.active-scaffold h5 {
+  color: #1f7f00; }
+
+/* Form :: Fields
+   ============================== */
+.active-scaffold label {
+  color: #555555; }
+
+.active-scaffold .description {
+  color: #999999; }
+
+.active-scaffold label.example {
+  color: #aaaaaa; }
+
+.active-scaffold input.text-input,
+.active-scaffold select {
+  border-color: #1f7f00; }
+
+.active-scaffold .fieldWithErrors input,
+.active-scaffold .field_with_errors input,
+.active-scaffold .fieldWithErrors textarea,
+.active-scaffold .field_with_errors textarea,
+.active-scaffold .fieldWithErrors select,
+.active-scaffold .field_with_errors select {
+  border-color: red; }
+
+.active-scaffold input.example {
+  color: #aaaaaa; }
+
+.active-scaffold select:focus,
+.active-scaffold input.text-input:focus {
+  background-color: #ffffcc; }
+
+.active-scaffold textarea {
+  border-color: #1f7f00; }
+
+.active-scaffold .draggable-list {
+  background-color: #ffff88; }
+
+.active-scaffold .draggable-list.selected {
+  background-color: #7fcf00; }
+
+/* Form :: Association Sub-Forms
+   ============================== */
+.active-scaffold .sub-form table th {
+  color: #555555; }
+
+.active-scaffold .sub-form .checkbox-list {
+  background-color: white;
+  border-color: #1f7f00; }
+
+.active-scaffold .sub-form .checkbox-list label {
+  display: block; }
+
+.active-scaffold .sub-form table td {
+  color: #999999; }
+
+.active-scaffold .sub-form .footer {
+  color: #999999; }
+
+.as_touch th a, .as_touch th a:visited {
+  color: white; }

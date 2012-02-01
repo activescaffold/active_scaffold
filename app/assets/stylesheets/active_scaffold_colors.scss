@@ -1,0 +1,391 @@
+/*
+ ActiveScaffold
+ (c) 2007 Richard White <rrwhite@gmail.com>
+
+ ActiveScaffold is freely distributable under the terms of an MIT-style license.
+
+ For details, see the ActiveScaffold web site: http://www.activescaffold.com/
+
+*/
+
+$disabled_color: #999 !default;
+$actions_disabled_color: #666 !default;
+$link_color: #06c !default;
+$hover_bg: #ff8 !default;
+$header_color: #555 !default;
+
+$column_header_bg: $header_color !default;
+$column_header_link_color: #fff !default;
+$column_header_link_hover_bg: #000 !default;
+$column_header_link_hover_color: #ff8 !default;
+$column_header_color: #eee !default;
+$column_header_sorted_bg: #333 !default;
+
+$column_bg: #E6F2FF !default;
+$column_even_bg: #fff !default;
+$column_color: #333 !default;
+$column_empty_color: #999 !default;
+$column_border_color: #C5DBF7 !default;
+$column_even_border_color: #ddd !default;
+$column_actions_border_color: #ccc !default;
+
+$column_sorted_bg: #B9DCFF !default;
+$column_sorted_border_color: #AFD0F5 !default;
+$column_even_sorted_bg: #E6F2FF !default;
+$column_even_sorted_border_color: #AFD0F5 !default;
+
+$calculations_bg: #eee !default;
+$calculations_border_color: #005CB8 !default;
+
+$action_group_color: #0066CC !default;
+$action_group_hover_bg: #ff8 !default;
+$action_group_border_color: #005CB8 !default;
+$action_group_items_bg: #EEE !default;
+$action_group_items_border_color: #222 !default;
+$action_group_link_color: $column_color !default;
+
+$nested_bg: #DAFFCD !default;
+$nested_border_color: #7FCF00 !default;
+$nested_footer_color: #444 !default;
+$nested_column_bg: #ECFFE7 !default;
+$nested_column_border_color: $column_border_color !default;
+
+$second_nested_bg: #FFFFBB !default;
+$second_nested_border_color: #DDDF37 !default;
+
+$third_nested_bg: $nested_bg !default;
+$third_nested_border_color: $nested_border_color !default;
+
+$pagination_border_color: #ccc !default;
+$msg_color: #333 !default;
+$msg_error_bg: #fbb !default;
+$msg_error_border_color: #f66 !default;
+$msg_warning_bg: #ffb !default;
+$msg_warning_border_color: #ff6 !default;
+$msg_info_bg: #bbf !default;
+$msg_info_border_color: #66f !default;
+$msg_filtered_bg: #e8e8e8 !default;
+$msg_filtered_color: #666 !default;
+
+$form_title_color: #1F7F00 !default;
+$label_color: $header_color !default;
+$description_color: #999 !default;
+$placeholder_color: #aaa !default;
+$input_border_color: $form_title_color !default;
+$input_error_border_color: #f00 !default;
+$input_focus_bg: #ffc !default;
+
+$draggable_list_bg: #FFFF88 !default;
+$draggable_list_selected_bg: #7FCF00 !default;
+$checkbox_list_bg: #fff !default;
+
+$subform_color: #999 !default;
+$subform_header_color: $header_color !default;
+$subform_footer_color: $subform_color !default;
+
+.active-scaffold a.disabled {
+color: $disabled_color;
+}
+
+.active-scaffold a:hover, .active-scaffold div.hover, .active-scaffold td span.hover {
+background-color: $hover_bg;
+}
+
+noscript.active-scaffold {
+border-color: $msg_error_border_color;
+background-color: $msg_error_bg;
+color: $column_color;
+}
+
+/* Header
+   ======================== */
+
+.active-scaffold-header h2 {
+color: $header_color;
+}
+
+.active-scaffold-header div.actions a.disabled {
+color: $actions_disabled_color;
+}
+
+/* Table :: Column Headers
+   ============================= */
+
+.active-scaffold th {
+background-color: $column_header_bg;
+}
+
+.active-scaffold th a,
+.active-scaffold th p {
+background-color: $column_header_bg;
+}
+
+.active-scaffold th a, .active-scaffold th a:visited {
+color: $column_header_link_color;
+}
+
+.active-scaffold th p {
+color: $column_header_color;
+}
+
+.active-scaffold th a:hover {
+background-color: $column_header_link_hover_bg;
+color: $column_header_link_hover_color;
+}
+
+.active-scaffold th.sorted {
+background-color: $column_header_sorted_bg;
+}
+
+.active-scaffold th.asc a,
+.active-scaffold th.asc a:hover,
+.active-scaffold th.desc a,
+.active-scaffold th.desc a:hover,
+.active-scaffold th.loading a,
+.active-scaffold th.loading a:hover {
+  background-color: $column_header_sorted_bg;
+}
+
+/* Table :: Record Rows
+   ============================= */
+
+.active-scaffold tr.record {
+  background-color: $column_bg;
+}
+.active-scaffold tr.record td {
+color: $column_color;
+border-color: $column_border_color;
+}
+
+.active-scaffold tr.even-record {
+background-color: $column_even_bg;
+}
+.active-scaffold tr.even-record td {
+border-left-color: $column_even_border_color;
+}
+
+.active-scaffold tr.record td.sorted {
+background-color: $column_sorted_bg;
+border-bottom-color: $column_sorted_border_color;
+}
+
+.active-scaffold tr.even-record td.sorted {
+background-color: $column_even_sorted_bg;
+border-bottom-color: $column_even_sorted_border_color;
+}
+
+.active-scaffold tbody.records td.empty {
+color: $column_empty_color;
+}
+
+/* Table :: Actions (Edit, Delete)
+   ============================= */
+.active-scaffold tr.record td.actions {
+border-color: $column_actions_border_color;
+}
+
+.active-scaffold tr.record td.actions a.disabled {
+color: $actions_disabled_color;
+}
+
+.active-scaffold .actions .action_group div:hover {
+background-color: $action_group_hover_bg;
+}
+
+.active-scaffold .actions .action_group {
+color: $action_group_color;
+}
+
+.active-scaffold .actions .action_group ul {
+border-color: $action_group_border_color;
+}
+
+.active-scaffold .actions .action_group ul li {
+background-color: $action_group_items_bg;
+border-color: $action_group_items_border_color;
+}
+
+.active-scaffold .actions .action_group ul li a {
+  color: $action_group_link_color;
+}
+
+/* Table :: Inline Adapter
+   ============================= */
+
+.active-scaffold .view {
+background-color: $nested_bg;
+border-color: $nested_border_color;
+}
+
+/* Nested
+   ======================== */
+
+.active-scaffold .active-scaffold .active-scaffold-footer {
+color: $nested_footer_color;
+}
+
+.active-scaffold .active-scaffold  td {
+background-color: $nested_column_bg;
+border-color: $nested_column_border_color;
+}
+
+.active-scaffold .active-scaffold td.inline-adapter-cell {
+background-color: $second_nested_bg;
+border-color: $second_nested_border_color;
+}
+
+.active-scaffold .active-scaffold .active-scaffold td.inline-adapter-cell {
+background-color: $third_nested_bg;
+border-color: $third_nested_border_color;
+}
+
+/* Footer
+   ========================== */
+
+.active-scaffold-calculations td {
+background-color: $calculations_bg;
+border-color: $calculations_border_color;
+}
+
+.active-scaffold-footer .next {
+border-color: $pagination_border_color;
+}
+
+.active-scaffold-footer .previous {
+border-color: $pagination_border_color;
+}
+
+/* Messages
+   ========================= */
+
+
+.active-scaffold .empty-message, .active-scaffold .filtered-message {
+background-color: $msg_filtered_bg;
+color: $msg_filtered_color;
+}
+
+.active-scaffold .message {
+color: $msg_color;
+}
+
+.active-scaffold .error-message {
+border-color: $msg_error_border_color;
+background-color: $msg_error_bg;
+}
+
+.active-scaffold .warning-message {
+border-color: $msg_warning_border_color;
+background-color: $msg_warning_bg;
+}
+
+.active-scaffold .info-message {
+border-color: $msg_info_border_color;
+background-color: $msg_info_bg;
+}
+
+/* Error Styling
+   ========================== */
+
+.active-scaffold .errorExplanation {
+background-color: $msg_error_bg;
+border-color: $msg_error_border_color;
+}
+
+.active-scaffold .errorExplanation h2 {
+color: $msg_color;
+background-color: $msg_error_border_color;
+}
+
+/* Show
+   ============================= */
+
+.active-scaffold .show-view dt {
+color: $label_color;
+}
+
+/* Form
+   ============================== */
+
+.active-scaffold h4,
+.active-scaffold h5 {
+color: $form_title_color;
+}
+
+/* Form :: Fields
+   ============================== */
+
+.active-scaffold label {
+color: $label_color;
+}
+
+.active-scaffold .description {
+color: $description_color;
+}
+
+.active-scaffold label.example {
+color: $placeholder_color;
+}
+
+.active-scaffold input.text-input,
+.active-scaffold select {
+border-color: $input_border_color;
+}
+
+.active-scaffold .fieldWithErrors input,
+.active-scaffold .field_with_errors input,
+.active-scaffold .fieldWithErrors textarea,
+.active-scaffold .field_with_errors textarea,
+.active-scaffold .fieldWithErrors select,
+.active-scaffold .field_with_errors select {
+border-color: $input_error_border_color;
+}
+
+.active-scaffold input.example {
+color: $placeholder_color;
+}
+
+.active-scaffold select:focus,
+.active-scaffold input.text-input:focus {
+background-color: $input_focus_bg;
+}
+
+.active-scaffold textarea {
+border-color: $input_border_color;
+}
+
+.active-scaffold .draggable-list {
+background-color: $draggable_list_bg;
+}
+
+.active-scaffold .draggable-list.selected {
+background-color: $draggable_list_selected_bg;
+}
+
+
+/* Form :: Association Sub-Forms
+   ============================== */
+
+.active-scaffold .sub-form table th {
+color: $subform_header_color;
+}
+
+.active-scaffold .sub-form .checkbox-list {
+background-color: $checkbox_list_bg;
+border-color: $input_border_color;
+}
+
+.active-scaffold .sub-form .checkbox-list label {
+display: block;
+}
+
+.active-scaffold .sub-form table td {
+color: $subform_color;
+}
+
+.active-scaffold .sub-form .footer {
+color: $subform_footer_color;
+}
+
+.as_touch th a, .as_touch th a:visited {
+color: $column_header_link_color;
+}
