@@ -87,7 +87,7 @@ module ActionView::Helpers #:nodoc:
             if ActiveScaffold.js_framework == :prototype
               javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true});")
             elsif ActiveScaffold.js_framework == :jquery
-              javascript_tag("$('##{id}').load('#{url}');")
+              javascript_tag("jQuery('##{id}').load('#{url}');")
             end
           end
         end
