@@ -83,6 +83,10 @@ $subform_color: #999 !default;
 $subform_header_color: $header_color !default;
 $subform_footer_color: $subform_color !default;
 
+.active-scaffold a, .active-scaffold a:visited {
+color: $link_color;
+}
+
 .active-scaffold a.disabled {
 color: $disabled_color;
 }
