@@ -6,6 +6,9 @@
 
  For details, see the ActiveScaffold web site: http://www.activescaffold.com/
  *= require active_scaffold_layout
- *= require active_scaffold_default
+ *= require active_scaffold_images
 */
 @import 'active_scaffold_colors';
+<% require_asset "jquery-ui" %>
+<% ActiveScaffold.stylesheets.each {|css| require_asset css} %>
+<% ActiveScaffold::Bridges.all_stylesheets.each {|css| require_asset css} %>
