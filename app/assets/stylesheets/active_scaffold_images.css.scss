@@ -1,0 +1,43 @@
+.active-scaffold-header div.actions div.action_group div {
+  background-image: image-url('active_scaffold/gears.png'); /* default icon for actions or override with css */
+}
+
+.active-scaffold-header div.actions a.show_config_list {
+  background-image: image-url('active_scaffold/config.png');
+}
+
+.active-scaffold-header div.actions a.new,
+.active-scaffold-header div.actions a.new_existing {
+background-image: image-url('active_scaffold/add.gif');
+}
+
+.active-scaffold-header div.actions a.show_search {
+background-image: image-url('active_scaffold/magnifier.png');
+}
+
+.active-scaffold th.asc a,
+.active-scaffold th.asc a:hover {
+background-image: image-url('active_scaffold/arrow_up.gif');
+}
+
+.active-scaffold th.desc a,
+.active-scaffold th.desc a:hover {
+background-image: image-url('active_scaffold/arrow_down.gif');
+}
+
+.active-scaffold th.loading a,
+.active-scaffold th.loading a:hover {
+background-image: image-url('active_scaffold/indicator-small.gif');
+}
+
+.active-scaffold a.inline-adapter-close {
+background-image: image-url('active_scaffold/close.gif');
+}
+
+.active-scaffold .sub-form .association-record a.destroy {
+background-image: image-url('active_scaffold/cross.png');
+}
+
+.as_touch a.inline-adapter-close {
+background-image: image-url('active_scaffold/close_touch.png');
+}
