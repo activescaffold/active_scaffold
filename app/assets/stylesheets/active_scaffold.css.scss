@@ -5,10 +5,10 @@
  ActiveScaffold is freely distributable under the terms of an MIT-style license.
 
  For details, see the ActiveScaffold web site: http://www.activescaffold.com/
- *= require active_scaffold_layout
- *= require active_scaffold_images
 */
+
+@import 'active_scaffold_layout';
+@import 'active_scaffold_images';
+@import 'jquery-ui';
+@import 'active_scaffold_extensions';
 @import 'active_scaffold_colors';
-<% require_asset "jquery-ui" %>
-<% ActiveScaffold.stylesheets.each {|css| require_asset css} %>
-<% ActiveScaffold::Bridges.all_stylesheets.each {|css| require_asset css} %>
