@@ -142,6 +142,11 @@ module ActiveScaffold::Config
     attr_accessor :nested_auto_open
     
     class UserSettings < UserSettings
+      def initialize(conf, storage, params)
+        super(conf,storage,params)
+        @sorting = nil
+      end
+      
       # This label has alread been localized.
       def label
         @session[:label] ? @session[:label] : @conf.label
@@ -173,17 +178,20 @@ module ActiveScaffold::Config
       end
 
       def sorting
-        # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
-        @session['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
-        @session['sort'] = nil if @params['sort_direction'] == 'reset'
+        if @sorting.nil?
+          # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
+          @session['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
+          @session['sort'] = nil if @params['sort_direction'] == 'reset'
 
-        if @session['sort']
-          sorting = @conf.sorting.clone
-          sorting.set(*@session['sort'])
-          return sorting
-        else
-          return default_sorting
+          if @session['sort']
+            sorting = @conf.sorting.clone
+            sorting.set(*@session['sort'])
+            @sorting = sorting
+          else
+            @sorting = default_sorting
+          end
         end
+        @sorting
       end
       
       def count_includes
