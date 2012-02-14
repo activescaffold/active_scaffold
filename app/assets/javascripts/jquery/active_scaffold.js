@@ -749,7 +749,10 @@ var ActiveScaffold = {
     var params = null;
 
     if (send_form) {
-      params = as_form.serialize();
+      var selector;
+      if (selector = element.data('update_send_form_selector'))
+        params = as_form.find(selector).serialize();
+      else params = as_form.serialize();
       params += '&' + jQuery.param({"source_id": source_id});
     } else {
       params = {value: val};

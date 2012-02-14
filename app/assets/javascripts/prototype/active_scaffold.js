@@ -613,7 +613,10 @@ var ActiveScaffold = {
     var params = null;
 
     if (send_form) {
-        params = as_form.serialize(true);
+      var selector;
+      if (selector = element.readAttribute('data-update_send_form_selector'))
+        params = Form.serializeElements(as_form.getElementsBySelector(selector), true);
+      else params = as_form.serialize(true);
     } else {
         params = {value: val};
     }
