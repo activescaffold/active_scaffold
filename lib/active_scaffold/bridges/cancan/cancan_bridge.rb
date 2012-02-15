@@ -1,3 +1,23 @@
+# Allow users to easily define aliases for AS actions.
+# Ability#as_action_aliases should be called by the user in his ability class
+# 
+#     class Ability < CanCan::Ability
+#       def initialize(user)
+#         as_action_aliases
+#       end
+#     end
+#
+module CanCan
+  module Ability
+    def as_action_aliases
+      alias_action :list, :row, :show_search, :render_field, :to => :read
+      alias_action :update_column, :add_association, :edit_associated, 
+        :edit_associated, :new_existing, :add_existing, :to => :update
+      alias_action :delete, :destroy_existing, :to => :destroy
+    end
+  end
+end
+
 module ActiveScaffold::Bridges
   class Cancan
 
