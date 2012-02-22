@@ -271,8 +271,8 @@ module ActiveScaffold
           
           ActiveScaffold::DataStructures::ActionLink.new('index', options) #unless column.through_association?
         else
-          actions = [:create, :update, :show] 
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
+          actions ||= [:create, :update, :show] 
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update
           column.actions_for_association_links.delete :show unless actions.include? :show
