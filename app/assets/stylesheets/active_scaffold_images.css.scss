@@ -8,7 +8,7 @@
 
 .active-scaffold-header div.actions a.new,
 .active-scaffold-header div.actions a.new_existing {
-background-image: image-url('active_scaffold/add.gif');
+background-image: image-url('active_scaffold/add.png');
 }
 
 .active-scaffold-header div.actions a.show_search {
@@ -17,12 +17,12 @@ background-image: image-url('active_scaffold/magnifier.png');
 
 .active-scaffold th.asc a,
 .active-scaffold th.asc a:hover {
-background-image: image-url('active_scaffold/arrow_up.gif');
+background-image: image-url('active_scaffold/arrow_up.png');
 }
 
 .active-scaffold th.desc a,
 .active-scaffold th.desc a:hover {
-background-image: image-url('active_scaffold/arrow_down.gif');
+background-image: image-url('active_scaffold/arrow_down.png');
 }
 
 .active-scaffold th.loading a,
@@ -31,7 +31,7 @@ background-image: image-url('active_scaffold/indicator-small.gif');
 }
 
 .active-scaffold a.inline-adapter-close {
-background-image: image-url('active_scaffold/close.gif');
+background-image: image-url('active_scaffold/close.png');
 }
 
 .active-scaffold .sub-form .association-record a.destroy {
