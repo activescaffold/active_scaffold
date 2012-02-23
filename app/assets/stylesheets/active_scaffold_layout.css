@@ -172,11 +172,8 @@ padding-right: 18px;
 }
 
 .active-scaffold th.asc a,
-.active-scaffold th.asc a:hover,
 .active-scaffold th.desc a,
-.active-scaffold th.desc a:hover,
-.active-scaffold th.loading a,
-.active-scaffold th.loading a:hover {
+.active-scaffold th.loading a {
   background: right 50% no-repeat;
 }
 
