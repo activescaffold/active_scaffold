@@ -133,7 +133,7 @@ module ActiveScaffold
       def include_null_comparators?(column)
         return column.options[:null_comparators] if column.options.has_key? :null_comparators
         if column.association
-          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.primary_key_name].column.try(:null)
+          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
         else
           column.column.try(:null)
         end
@@ -153,7 +153,7 @@ module ActiveScaffold
       def include_null_comparators?(column)
         return column.options[:null_comparators] if column.options.has_key? :null_comparators
         if column.association
-          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.primary_key_name].column.try(:null)
+          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
         else
           column.column.try(:null)
         end

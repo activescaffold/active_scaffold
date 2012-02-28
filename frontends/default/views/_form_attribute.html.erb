@@ -8,7 +8,7 @@
     <%=raw active_scaffold_input_for column, scope %>
     <% else %>
     <%= get_column_value(@record, column) %>
-    <%= hidden_field :record, column.association ? column.association.primary_key_name : column.name, active_scaffold_input_options(column, scope) -%>
+    <%= hidden_field :record, column.association ? column.association.foreign_key : column.name, active_scaffold_input_options(column, scope) -%>
     <% end %>
     <% if column.update_columns -%>
       <%= loading_indicator_tag(:action => :render_field, :id => params[:id]) %>
