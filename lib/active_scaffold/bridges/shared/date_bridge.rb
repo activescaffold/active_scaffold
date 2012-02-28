@@ -28,8 +28,8 @@ module ActiveScaffold
             numeric_controls = "" << 
             active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'from') <<
             content_tag(:span, (" - " + active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'to')).html_safe,
-              :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => "display:#{current_search['opt'] == 'BETWEEN' ? '' : 'none'}")  
-            content_tag("span", numeric_controls.html_safe, :id => "#{options[:id]}_numeric", :style => "display:#{ActiveScaffold::Finder::NumericComparators.include?(current_search['opt']) ? '' : 'none'}")
+              :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => current_search['opt'] == 'BETWEEN' ? nil : "display: none")
+            content_tag("span", numeric_controls.html_safe, :id => "#{options[:id]}_numeric", :style => ActiveScaffold::Finder::NumericComparators.include?(current_search['opt']) ? nil : "display: none")
           end
   
           def active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
@@ -45,7 +45,7 @@ module ActiveScaffold
             select_tag("#{trend_options[:name_prefix]}[#{column.name}][unit]",
              options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:unit_value]),
              :class => 'text-input')
-            content_tag("span", trend_controls.html_safe, :id => "#{options[:id]}_trend", :style => "display:#{trend_options[:show] ? '' : 'none'}")
+            content_tag("span", trend_controls.html_safe, :id => "#{options[:id]}_trend", :style => trend_options[:show] ? nil : "display: none")
           end
 
           def active_scaffold_search_date_bridge_trend_units(column)
@@ -58,7 +58,7 @@ module ActiveScaffold
             range_controls = select_tag("search[#{column.name}][range]", 
               options_for_select( ActiveScaffold::Finder::DateRanges.collect{|range| [as_(range.downcase.to_sym), range]}, current_search["range"]), 
              :class => 'text-input')
-            content_tag("span", range_controls.html_safe, :id => "#{options[:id]}_range", :style => "display:#{(current_search['opt'] == 'RANGE') ? '' : 'none'}")
+            content_tag("span", range_controls.html_safe, :id => "#{options[:id]}_range", :style => (current_search['opt'] == 'RANGE') ? nil : "display: none")
           end
           
           def column_datetime?(column)
