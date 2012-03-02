@@ -2,7 +2,8 @@
 record = list_record if list_record # compat with render :partial :collection
 columns ||= list_columns
 tr_class = cycle("", "even-record")
-tr_class += " #{list_row_class(record)}" if respond_to? :list_row_class
+class_override_helper = :"#{clean_class_name(record.class.name)}_list_row_class"
+tr_class += " #{send(class_override_helper, record)}" if respond_to? class_override_helper
 url_options = params_for(:action => :list, :id => record.id)
 action_links ||= active_scaffold_config.action_links.member
 -%>
