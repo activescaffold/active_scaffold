@@ -44,7 +44,7 @@ module ActiveScaffold
              :class => 'text-input',
              :id => "#{options[:id]}_#{name}",
              :time => column_datetime?(column) ? true : false,
-             :style => "display:#{(options[:show].nil? || options[:show]) ? '' : 'none'}"})
+             :style => (options[:show].nil? || options[:show]) ? nil : "display: none"})
         end
       end
     end

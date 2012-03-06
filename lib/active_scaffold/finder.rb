@@ -265,7 +265,7 @@ module ActiveScaffold
       full_includes = (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
 
       # create a general-use options array that's compatible with Rails finders
-      finder_options = { :order => options[:sorting].try(:clause),
+      finder_options = { :reorder => options[:sorting].try(:clause),
                          :where => search_conditions,
                          :joins => joins_for_finder,
                          :includes => full_includes}
@@ -278,7 +278,7 @@ module ActiveScaffold
     # See finder_options for valid options
     def count_options(find_options = {}, count_includes = nil)
       count_includes ||= find_options[:includes] unless find_options[:where].nil?
-      options = find_options.reject{|k,v| [:select, :order].include? k}
+      options = find_options.reject{|k,v| [:select, :reorder].include? k}
       options[:includes] = count_includes
       options
     end
@@ -320,14 +320,8 @@ module ActiveScaffold
     end
     
     def append_to_query(query, options)
-      options.assert_valid_keys :where, :select, :group, :order, :limit, :offset, :joins, :includes, :lock, :readonly, :from
+      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :includes, :lock, :readonly, :from
       options.reject{|k, v| v.blank?}.inject(query) do |query, (k, v)|
-        # default ordering of model has a higher priority than current queries ordering
-        # fix this by removing existing ordering from arel
-        if k.to_sym == :order
-          query = query.where('1=1') unless query.is_a?(ActiveRecord::Relation)
-          query = query.except(:order)
-        end
         query.send((k.to_sym), v) 
       end
     end

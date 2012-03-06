@@ -182,7 +182,7 @@ module ActiveScaffold
         html << ' ' << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size))
         html << ' ' << content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
               active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))).html_safe,
-              :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => "display:#{(opt_value == 'BETWEEN') ? '' : 'none'}")
+              :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => (opt_value == 'BETWEEN') ? nil : "display: none")
         content_tag :span, html, :class => 'search_range'
       end
       alias_method :active_scaffold_search_integer, :active_scaffold_search_range
