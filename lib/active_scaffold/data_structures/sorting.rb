@@ -95,7 +95,7 @@ module ActiveScaffold::DataStructures
         sql = sort_column.sort[:sql]
         next if sql.nil? or sql.empty?
 
-        order << "#{sql} #{sort_direction}"
+        order << Array(sql).map {|column| "#{column} #{sort_direction}"}.join(', ')
       end
 
       order.join(', ') unless order.empty?
