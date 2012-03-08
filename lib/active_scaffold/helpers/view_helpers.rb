@@ -210,6 +210,11 @@ module ActiveScaffold
         end
       end
 
+      def list_row_class(record)
+        class_override_helper = :"#{clean_class_name(record.class.name)}_list_row_class"
+        respond_to?(class_override_helper) ? send(class_override_helper, record) : ''
+      end
+      
       def column_class(column, column_value, record)
         classes = []
         classes << "#{column.name}-column"
