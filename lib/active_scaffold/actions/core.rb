@@ -36,15 +36,17 @@ module ActiveScaffold::Actions
         @scope = params[:scope]
         
         if column.send_form_on_update_column
-          hash = if @scope
-            @scope.gsub('[','').split(']').inject(params[:record]) do |hash, index|
+          if @scope
+            hash = @scope.gsub('[','').split(']').inject(params[:record]) do |hash, index|
               hash[index]
             end
+            id = hash[:id]
           else
-            params[:record]
+            hash = params[:record]
+            id = params[:id]
           end
-          @record = hash[:id] ? find_if_allowed(hash[:id], :update) : new_model
-          @record = update_record_from_params(@record, active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns, hash)
+          @record = id ? find_if_allowed(id, :update) : new_model
+          @record = update_record_from_params(@record, active_scaffold_config.send(@scope ? :subform : (id ? :update : :create)).columns, hash)
         else
           @record = new_model
           value = column_value_from_param_value(@record, column, params[:value])
