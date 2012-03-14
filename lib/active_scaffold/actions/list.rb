@@ -36,7 +36,7 @@ module ActiveScaffold::Actions
         params.delete(:embedded)
         render(:partial => 'list_with_header')
       else
-        render :action => 'refresh_list', :format => [:js]
+        render :action => 'refresh_list', :formats => [:js]
       end
     end
     def list_respond_to_xml
