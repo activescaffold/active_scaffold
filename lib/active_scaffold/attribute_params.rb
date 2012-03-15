@@ -60,9 +60,6 @@ module ActiveScaffold
 
           # we avoid assigning a value that already exists because otherwise has_one associations will break (AR bug in has_one_association.rb#replace)
           parent_record.send("#{column.name}=", value) unless parent_record.send(column.name) == value
-          
-        elsif column.plural_association?
-          parent_record.send("#{column.name}=", [])
         end
       end
 
@@ -139,7 +136,8 @@ module ActiveScaffold
       elsif column.singular_association?
         manage_nested_record_from_params(parent_record, column, value)
       elsif column.plural_association?
-        value.collect {|key_value_pair| manage_nested_record_from_params(parent_record, column, key_value_pair[1])}.compact
+        # HACK to be able to delete all associated records, hash will include "0" => ""
+        value.collect {|key, value| manage_nested_record_from_params(parent_record, column, value) unless value == ""}.compact
       else
         value
       end
