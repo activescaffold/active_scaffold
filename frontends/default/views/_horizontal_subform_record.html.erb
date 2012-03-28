@@ -1,12 +1,12 @@
 <%
-   record_column = column 
-   readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
-   crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
-   show_actions = false 
-   config = active_scaffold_config_for(@record.class)
-   options = active_scaffold_input_options(config.columns[@record.class.primary_key], scope)
-   tr_id = "association-#{options[:id]}"
-%>
+  record_column = column 
+  readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
+  crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
+  show_actions = false 
+  config = active_scaffold_config_for(@record.class)
+  options = active_scaffold_input_options(config.columns[@record.class.primary_key], scope)
+  tr_id = "association-#{options[:id]}"
+-%>
 <tr id="<%= tr_id %>" class="association-record <%= 'association-record-new' if @record.new_record? -%> <%= 'locked' if locked -%>">
 <% config.subform.columns.each :for => @record.class, :crud_type => :read, :flatten => true do |column| %>
 <%
@@ -14,8 +14,13 @@
   show_actions = true
   column = column.clone
   column.form_ui ||= :select if column.association
+  
+  col_class = []
+  col_class << 'required' if column.required?
+  col_class << column.css_class unless column.css_class.nil?
+  col_class = 'hidden' if column_renders_as(column) == :hidden
 -%>
-  <td<%= ' class="hidden"'.html_safe if column_renders_as(column) == :hidden %>>
+  <td class="<%= col_class.join(' ') %>">
     <% unless readonly and not @record.new_record? or not @record.authorized_for?(:crud_type => crud_type, :column => column.name) -%>
       <%= render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope } -%>
     <% else -%>
