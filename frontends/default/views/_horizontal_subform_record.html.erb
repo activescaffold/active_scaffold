@@ -18,7 +18,7 @@
   col_class = []
   col_class << 'required' if column.required?
   col_class << column.css_class unless column.css_class.nil?
-  col_class = 'hidden' if column_renders_as(column) == :hidden
+  col_class << 'hidden' if column_renders_as(column) == :hidden
 -%>
   <td class="<%= col_class.join(' ') %>">
     <% unless readonly and not @record.new_record? or not @record.authorized_for?(:crud_type => crud_type, :column => column.name) -%>
