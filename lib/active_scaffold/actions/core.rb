@@ -108,16 +108,16 @@ module ActiveScaffold::Actions
       @response_object = successful? ? (@record || @records) : @record.errors
     end
 
-    # Success is the existence of certain variables and the absence of errors (when applicable).
-    # Success can also be defined.
+    # Success is the existence of one or more model objects. Most actions
+    # circumvent this method by setting @success directly.
     def successful?
       if @successful.nil?
-        @records or (@record and @record.errors.count == 0 and @record.no_errors_in_associated?)
+        @record || @records
       else
         @successful
       end
     end
-
+    
     def successful=(val)
       @successful = (val) ? true : false
     end
