@@ -44,7 +44,7 @@ If you want to install as plugins under vendor/plugins, install these versions:
 == Pick your own javascript framework
 
 The Rails 3.0 version uses unobtrusive Javascript, so you are free to pick your javascript framework.
-Out of the box Prototype or JQuery are supported:
+Out of the box Prototype or JQuery are supported for rails 3.1 and later. For rails 3.0 pick a JS file:
 
 Prototype 1.7 (default js framework)
 rails.js in git://github.com/vhochstein/prototype-ujs.git
