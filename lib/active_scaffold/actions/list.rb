@@ -23,7 +23,7 @@ module ActiveScaffold::Actions
     
     protected
     def list_respond_to_html
-      if params.delete(:embedded)
+      if embedded?
         render :action => 'list', :layout => false
       else
         render :action => 'list'
@@ -32,8 +32,7 @@ module ActiveScaffold::Actions
     def list_respond_to_js
       if params[:adapter]
         render(:partial => 'list_with_header')
-      elsif params[:embedded]
-        params.delete(:embedded)
+      elsif embedded?
         render(:partial => 'list_with_header')
       else
         render :action => 'refresh_list', :formats => [:js]
