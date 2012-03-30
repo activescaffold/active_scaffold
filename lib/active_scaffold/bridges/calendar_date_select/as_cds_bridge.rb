@@ -58,7 +58,6 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::HumanConditionHelpers
   alias_method :active_scaffold_human_condition_calendar_date_select, :active_scaffold_human_condition_date_bridge
   include ActiveScaffold::Bridges::CalendarDateSelect::SearchColumnHelpers
-  include ActiveScaffold::Bridges::CalendarDateSelect::ViewHelpers
 end
 
 ActiveScaffold::Finder::ClassMethods.module_eval do
