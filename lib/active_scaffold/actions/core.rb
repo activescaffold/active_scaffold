@@ -2,6 +2,7 @@ module ActiveScaffold::Actions
   module Core
     def self.included(base)
       base.class_eval do
+        before_filter :register_constraints_with_action_columns, :if => :embedded?
         after_filter :clear_flashes
       end
       base.helper_method :nested?
@@ -17,6 +18,9 @@ module ActiveScaffold::Actions
     end
     
     protected
+    def embedded?
+      @embedded ||= params.delete(:embedded)
+    end
 
     def nested?
       false
