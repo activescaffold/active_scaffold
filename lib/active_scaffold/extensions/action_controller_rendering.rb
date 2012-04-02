@@ -2,7 +2,7 @@
 module ActionController #:nodoc:
   class Base
     def render_with_active_scaffold(*args, &block)
-      if self.class.uses_active_scaffold? and params[:adapter] and @rendering_adapter.nil?
+      if self.class.uses_active_scaffold? and params[:adapter] and @rendering_adapter.nil? and request.xhr?
         @rendering_adapter = true # recursion control
         # if we need an adapter, then we render the actual stuff to a string and insert it into the adapter template
         opts = args.blank? ? Hash.new : args.first
