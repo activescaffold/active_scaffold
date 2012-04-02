@@ -107,7 +107,13 @@ module ActiveScaffold::Actions
       @record = active_scaffold_config.model.find(params[:id])
       if @record.authorized_for?(:crud_type => :update, :column => params[:column])
         column = active_scaffold_config.columns[params[:column].to_sym]
-        params[:value] ||= @record.column_for_attribute(params[:column]).default unless @record.column_for_attribute(params[:column]).nil? || @record.column_for_attribute(params[:column]).null
+        unless @record.column_for_attribute(params[:column]).nil? || @record.column_for_attribute(params[:column]).null
+          if @record.column_for_attribute(params[:column]).default == true
+            params[:value] ||= false
+          else
+            params[:value] ||= @record.column_for_attribute(params[:column]).default
+          end
+        end
         unless column.nil?
           params[:value] = column_value_from_param_value(@record, column, params[:value])
           params[:value] = [] if params[:value].nil? && column.form_ui && column.plural_association?
