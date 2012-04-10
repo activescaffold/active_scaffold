@@ -190,8 +190,10 @@ module ActiveScaffold
         if column && column.association 
           url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:id] = record.send(column.association.name).id if column.singular_association? && record.send(column.association.name).present?
+          url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
         elsif link.parameters && link.parameters[:named_scope]
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
+          url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
         end
       end
 
