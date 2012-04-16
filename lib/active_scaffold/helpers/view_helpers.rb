@@ -195,6 +195,7 @@ module ActiveScaffold
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
         end
+        nested.constrained_fields.each { |field| url_options.delete field } if nested?
       end
 
       def url_options_for_sti_link(column, record, link, url_options, options = {})
