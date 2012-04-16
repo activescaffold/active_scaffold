@@ -1,3 +1,14 @@
+= 3.2.4
+- don't break on custom SQL sorting (e.g. sorting with functions)
+- fix cancel inplace edit with jquery
+- fix nested scaffolds inside nested and embedded scaffolds
+- fix collapsed subgroups
+- fix inplace edit for checkboxes columns with true as default value
+- fix calendar date select bridge
+
+= 3.0.6 .. 3.2.3
+- many changes
+
 = 3.0.5
 
 - switch from explicit requires to autoloading
