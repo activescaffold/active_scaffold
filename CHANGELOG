@@ -1,4 +1,5 @@
 = 3.2.4
+- use core config label when is set and STI is not used
 - don't break on custom SQL sorting (e.g. sorting with functions)
 - fix cancel inplace edit with jquery
 - fix nested scaffolds inside nested and embedded scaffolds
