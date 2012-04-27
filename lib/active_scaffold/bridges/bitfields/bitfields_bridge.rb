@@ -19,7 +19,7 @@ module ActiveScaffold
           self.model.bitfields.each do |column_name, options|
             columns = options.keys.sort_by { |column| self.columns[column].weight }
             [:create, :update, :show, :subform].each do |action|
-              self.send(action).columns.add_subgroup(column_name) { |group| group.add *columns }
+              self.send(action).columns.add_subgroup(column_name) { |group| group.add *columns } if self.actions.included? action
             end
           end if self.model.respond_to?(:bitfields) and self.model.bitfields.present?
           
