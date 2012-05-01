@@ -16,7 +16,7 @@ ActiveScaffold::Config::Core.class_eval do
     # check to see if file column was used on the model
     return if date_picker_fields.empty?
     
-    # automatically set the forum_ui to a file column
+    # automatically set the forum_ui to a date_picker or datetime_picker
     date_picker_fields.each{|field|
       col_config = self.columns[field[:name]] 
       col_config.form_ui = (field[:type] == :date ? :date_picker : :datetime_picker)

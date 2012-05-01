@@ -110,7 +110,13 @@ module ActiveScaffold
         if value.is_a? Hash
           Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[part].to_i}) rescue nil
         elsif value.respond_to?(:strftime)
-          value.send(conversion)
+          if conversion == :to_time
+            # Explicitly get the localtime, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
+            # https://github.com/rails/rails/pull/2453
+            value.to_time.localtime
+          else
+            value.send(conversion)
+          end
         elsif conversion == :to_date
           Date.strptime(value, I18n.t('date.formats.default')) rescue nil
         else
