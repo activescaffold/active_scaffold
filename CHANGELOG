@@ -1,9 +1,11 @@
-= 3.2.4
+= 3.2.5
 - add outer window for pagination links
 - workaround rails 3.2.3 bug in TimeWithZone#to_time
 - fix date picker format for datetime fields
 - fix bitfields bridge when some actions are not used
 - use core config label when is set and STI is not used
+
+= 3.2.4
 - don't break on custom SQL sorting (e.g. sorting with functions)
 - fix cancel inplace edit with jquery
 - fix nested scaffolds inside nested and embedded scaffolds
