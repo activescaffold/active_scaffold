@@ -7,7 +7,8 @@ module ActiveScaffold::Config
       # inherit from global scope
       # full configuration path is: defaults => global table => local table
       @per_page = self.class.per_page
-      @page_links_window = self.class.page_links_window
+      @page_links_inner_window = self.class.page_links_inner_window
+      @page_links_outer_window = self.class.page_links_outer_window
       
       # originates here
       @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns)
@@ -28,8 +29,19 @@ module ActiveScaffold::Config
     @@per_page = 15
 
     # how many page links around current page to show
-    cattr_accessor :page_links_window
-    @@page_links_window = 2
+    cattr_accessor :page_links_inner_window
+    @@page_links_inner_window = 2
+
+    # how many page links around first and last page to show
+    cattr_accessor :page_links_outer_window
+    @@page_links_outer_window = 0
+    
+    class << self
+      def page_links_window=(value)
+        ActiveSupport::Deprecation.warn("Use page_links_inner_window", caller(1))
+        self.page_links_inner_window = value
+      end
+    end
 
     # what string to use when a field is empty
     cattr_accessor :empty_field_text
@@ -64,7 +76,15 @@ module ActiveScaffold::Config
     attr_accessor :per_page
 
     # how many page links around current page to show
-    attr_accessor :page_links_window
+    attr_accessor :page_links_inner_window
+
+    # how many page links around current page to show
+    attr_accessor :page_links_outer_window
+    
+    def page_links_window=(value)
+      ActiveSupport::Deprecation.warn("Use page_links_inner_window", caller(1))
+      self.page_links_inner_window = value
+    end
 
     # What kind of pagination to use:
     # * true: The usual pagination
