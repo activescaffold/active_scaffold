@@ -27,7 +27,7 @@ ru:
     export: 'Экспорт'
     nested_for_model: '%{parent_model} / %{nested_model}'
     nested_of_model: '%{nested_model} @ %{parent_model}'
-    false: 'Нет'
+    'false': 'Нет'
     filtered: '(Найденное)'
     found: 
       one: 'запись'
@@ -58,7 +58,7 @@ ru:
     show: 'Показать'
     show_model: '%{model}: показать запись'
     _to_ : ' to '
-    true: 'Да'
+    'true': 'Да'
     update: 'Обновить запись'
     update_model: '%{model}: обновить запись'
     updated_model: '%{model}: запись обновлена'
@@ -104,6 +104,10 @@ ru:
       showMonthAfterYear: false
       
     datetime_picker_options:
+    
+    human_conditions:
+      boolean: "%{column} = %{value}"
+      association: "%{column} = %{value}"
       
     errors:
       template:

@@ -67,8 +67,6 @@ es:
     '<': 'Menor'
     '!=': 'Distinto'
     between: 'Entre'
-    is_null: 'Es nulo'
-    is_not_null: 'No es nulo'
     contains: 'Contiene'
     begins_with: 'Empieza con'
     ends_with: 'Termina con'
@@ -106,6 +104,9 @@ es:
       timeText: 'Hora'
       currentText: 'Ahora'
       closeText: 'Cerrar'
+    human_conditions:
+      boolean: "%{column} = %{value}"
+      association: "%{column} = %{value}"
     errors:
       template:
         header:
@@ -117,4 +118,5 @@ es:
     cant_destroy_record: "No se pudo borrar %{record}"
     internal_error: 'Petición fallida (código 500, error interno)'
     version_inconsistency: 'Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo.'
+    record_not_saved: 'Fallo guardando el registro debido a un error desconocido'
     no_authorization_for_action: "No dispone de autorización para la acción %{action}"
