@@ -26,7 +26,15 @@ module ActiveScaffold
           when :select, :multi_select, :record_select
             associated = value
             associated = [associated].compact unless associated.is_a? Array
-            associated = column.association.klass.where(["id in (?)", associated.map(&:to_i)]).collect(&:to_label) if column.association
+            if column.association
+              associated = column.association.klass.where(:id => associated.map(&:to_i)).collect(&:to_label)
+            elsif column.options[:options]
+              associated = associated.collect do |value|
+                text, val = column.options[:options].find {|text, val| (val.nil? ? text : val).to_s == value.to_s}
+                value = active_scaffold_translated_option(column, text, val).first if text
+                value
+              end
+            end
             as_(:association, :scope => :human_conditions, :column => column.active_record_class.human_attribute_name(column.name), :value => associated.join(', '))
           when :boolean, :checkbox
             label = column.column.type_cast(value) ? as_(:true) : as_(:false)

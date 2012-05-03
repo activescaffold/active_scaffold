@@ -1,3 +1,6 @@
+= 3.2.6 (not released)
+- allow to override some human condition strings in i18n, and translate select values for non-association columns
+
 = 3.2.5
 - add outer window for pagination links
 - workaround rails 3.2.3 bug in TimeWithZone#to_time
