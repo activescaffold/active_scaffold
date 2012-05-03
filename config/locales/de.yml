@@ -27,6 +27,7 @@ de:
     export: 'Exportieren'
     nested_for_model: '%{nested_model} für %{parent_model}'
     nested_of_model: '%{nested_model} von %{parent_model}'
+    'false': 'False'
     filtered: '(Gefiltert)'
     found: 'Gefunden'
     hide: 'Verstecken'
@@ -53,6 +54,7 @@ de:
     show: 'Anzeigen'
     show_model: 'Zeige %{model} an'
     _to_ : ' zu '
+    'true': 'True'
     update: 'Speichern'
     update_model: 'Editiere %{model}'
     updated_model: '%{model} aktualisiert'
@@ -100,6 +102,9 @@ de:
       timeText: 'Uhrzeit'
       currentText: 'Jetzt'
       closeText: 'Schließen'
+    human_conditions:
+      boolean: "%{column} = %{value}"
+      association: "%{column} = %{value}"
     errors:
       template:
         header:

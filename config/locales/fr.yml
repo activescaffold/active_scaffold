@@ -104,6 +104,10 @@ fr:
       currentText: 'Maintenant'
       closeText: 'Fermer'
       
+    human_conditions:
+      boolean: "%{column} = %{value}"
+      association: "%{column} = %{value}"
+
     errors: 
       template: 
         header: 
