@@ -97,7 +97,7 @@ module ActiveScaffold::DataStructures
         order << Array(sql).map {|column| "#{column} #{sort_direction}"}.join(', ')
       end
 
-      order.join(', ') unless order.empty?
+      order unless order.empty?
     end
 
     protected
