@@ -100,6 +100,10 @@ en:
       showMonthAfterYear: false
       
     datetime_picker_options:
+    
+    human_conditions:
+      boolean: "%{column} = %{value}"
+      association: "%{column} = %{value}"
       
     errors:
       template:
@@ -109,8 +113,7 @@ en:
           
         body: "There were problems with the following fields:"
         
-      
-      # error_messages
+    # error_messages
     cant_destroy_record: "%{record} can't be destroyed"
     internal_error: 'Request Failed (code 500, Internal Error)'
     version_inconsistency: 'Version inconsistency - this record has been modified since you started editing it.'

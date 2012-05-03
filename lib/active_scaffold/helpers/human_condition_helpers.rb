@@ -27,10 +27,10 @@ module ActiveScaffold
             associated = value
             associated = [associated].compact unless associated.is_a? Array
             associated = column.association.klass.where(["id in (?)", associated.map(&:to_i)]).collect(&:to_label) if column.association
-            "#{column.active_record_class.human_attribute_name(column.name)} = #{associated.join(', ')}"
+            as_(:association, :scope => :human_conditions, :column => column.active_record_class.human_attribute_name(column.name), :value => associated.join(', '))
           when :boolean, :checkbox
             label = column.column.type_cast(value) ? as_(:true) : as_(:false)
-            "#{column.active_record_class.human_attribute_name(column.name)} = #{label}"
+            as_(:boolean, :scope => :human_conditions, :column => column.active_record_class.human_attribute_name(column.name), :value => label)
           when :null
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value.to_sym)}"
           end
