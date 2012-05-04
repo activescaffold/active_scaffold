@@ -1,3 +1,6 @@
+= 3.2.7 (not released)
+- restore missing update.persistent feature
+
 = 3.2.6
 - fix ordering with DISTINCT call
 - allow to override some human condition strings in i18n, and translate select values for non-association columns
