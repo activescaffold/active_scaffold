@@ -356,8 +356,7 @@ var ActiveScaffold = {
   },
   hide_empty_message: function(tbody) {
     if (this.records_for(tbody).length != 0) {
-      var empty_message_node = jQuery(tbody).parent().find('tbody.messages p.empty-message')
-      if (empty_message_node) empty_message_node.hide();
+      jQuery(tbody).parent().find('tbody.messages p.empty-message').hide();
     }
   },
   reload_if_empty: function(tbody, url) {
@@ -380,14 +379,14 @@ var ActiveScaffold = {
   decrement_record_count: function(scaffold) {
     // decrement the last record count, firsts record count are in nested lists
     if (typeof(scaffold) == 'string') scaffold = '#' + scaffold; 
-    scaffold = jQuery(scaffold)
+    scaffold = jQuery(scaffold);
     count = scaffold.find('span.active-scaffold-records').last();
     if (count) count.html(parseInt(count.html(), 10) - 1);
   },
   increment_record_count: function(scaffold) {
     // increment the last record count, firsts record count are in nested lists
     if (typeof(scaffold) == 'string') scaffold = '#' + scaffold;
-    scaffold = jQuery(scaffold)
+    scaffold = jQuery(scaffold);
     count = scaffold.find('span.active-scaffold-records').last();
     if (count) count.html(parseInt(count.html(), 10) + 1);
   },
@@ -465,7 +464,7 @@ var ActiveScaffold = {
     
   create_record_row: function(active_scaffold_id, html, options) {
     if (typeof(active_scaffold_id) == 'string') active_scaffold_id = '#' + active_scaffold_id;
-    tbody = jQuery(active_scaffold_id).find('tbody.records');
+    tbody = jQuery(active_scaffold_id).find('tbody.records').first();
     
     if (options.insert_at == 'top') {
       tbody.prepend(html);
@@ -618,7 +617,7 @@ var ActiveScaffold = {
     if (element.length == 0) {
       element = source.closest('form > ol.form');
     }
-    element = element.find('.' + options.field_class + ":first");
+    element = element.find('.' + options.field_class).first();
 
     if (element) {
       if (options.is_subform == false) {
@@ -861,7 +860,7 @@ ActiveScaffold.ActionLink = {
           new ActiveScaffold.Actions.Record(target, parent, loading_indicator);
         } else if (parent && parent.is('div')) {
           //table action
-          new ActiveScaffold.Actions.Table(parent.find('a.as_action'), parent.closest('div.active-scaffold').find('tbody.before-header'), parent.find('.loading-indicator'));
+          new ActiveScaffold.Actions.Table(parent.find('a.as_action'), parent.closest('div.active-scaffold').find('tbody.before-header').first(), parent.find('.loading-indicator').first());
         }
         element = jQuery(element);
       }
