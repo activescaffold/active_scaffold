@@ -27,7 +27,7 @@ module ActiveScaffold::Actions
     end
 
     def render_field_for_inplace_editing
-      register_constraints_with_action_columns(nested.constrained_fields, active_scaffold_config.update.hide_nested_column ? [] : [:update]) if nested?
+      register_constraints_with_action_columns(active_scaffold_config.update.hide_nested_column ? [] : [:update]) if nested?
       @record = find_if_allowed(params[:id], :update)
       render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
     end

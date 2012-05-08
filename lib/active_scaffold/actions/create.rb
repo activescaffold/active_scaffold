@@ -84,7 +84,7 @@ module ActiveScaffold::Actions
       apply_constraints_to_record(@record)
       if nested?
         create_association_with_parent(@record)
-        register_constraints_with_action_columns(nested.constrained_fields)
+        register_constraints_with_action_columns
       end
       @record
     end
@@ -98,7 +98,7 @@ module ActiveScaffold::Actions
           apply_constraints_to_record(@record, :allow_autosave => true)
           if nested?
             create_association_with_parent(@record) 
-            register_constraints_with_action_columns(nested.constrained_fields)
+            register_constraints_with_action_columns
           end
           create_save
         end
