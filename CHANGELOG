@@ -2,6 +2,7 @@
 - restore missing update.persistent feature
 - fix create.persistent
 - add new record in first scaffold, not in all nested scaffolds
+- fix deleting all in habtm with select_ui
 
 = 3.2.6
 - fix ordering with DISTINCT call
