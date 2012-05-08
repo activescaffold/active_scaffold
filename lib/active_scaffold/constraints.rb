@@ -13,9 +13,7 @@ module ActiveScaffold
     #
     # If the constraint value is a Hash, then we assume the constraint is a multi-level association constraint (the reverse of a has_many :through) and we do NOT register the constraint column.
     def register_constraints_with_action_columns(exclude_actions = [])
-Rails.logger.debug "CONSTRAINTS: "+active_scaffold_constraints.inspect
       constrained_fields = active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect{|k| k.to_sym}
-Rails.logger.debug "CONSTRAINTS: "+constrained_fields.inspect
       exclude_actions << :list unless active_scaffold_config.list.hide_nested_column
       if self.class.uses_active_scaffold?
         # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
