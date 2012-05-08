@@ -1,4 +1,7 @@
-= 3.2.7 (not released)
+= 3.2.8 (not released)
+- add deprecation for update_column, update_columns should be used instead
+
+= 3.2.7
 - restore missing update.persistent feature
 - fix create.persistent
 - add new record in first scaffold, not in all nested scaffolds
