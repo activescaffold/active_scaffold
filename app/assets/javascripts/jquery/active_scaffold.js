@@ -886,6 +886,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
   },
 
   open: function(event) {
+    this.tag.click();
   },
   
   insert: function(content) {
@@ -897,11 +898,6 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
     this.adapter.remove();
     if (this.hide_target) this.target.show();
     if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target);
-  },
-
-  reload: function() {
-    this.close();
-    this.open();
   },
 
   get_new_adapter_id: function() {
@@ -1052,5 +1048,10 @@ ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
       throw 'Unknown position "' + this.position + '"'
     }
     ActiveScaffold.highlight(this.adapter.find('td').first().children());
-  }
+  },
+
+  reload: function() {
+    this.close();
+    this.open();
+  },
 });

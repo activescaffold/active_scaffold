@@ -1,5 +1,7 @@
 = 3.2.7 (not released)
 - restore missing update.persistent feature
+- fix create.persistent
+- add new record in first scaffold, not in all nested scaffolds
 
 = 3.2.6
 - fix ordering with DISTINCT call
