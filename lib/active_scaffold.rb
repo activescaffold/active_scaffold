@@ -138,7 +138,7 @@ module ActiveScaffold
   end
 
   def self.js_config
-    @@js_config ||= {:scroll_on_close => true}
+    @@js_config ||= {:scroll_on_close => :checkInViewport}
   end
 
   # exclude bridges you do not need

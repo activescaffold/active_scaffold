@@ -485,7 +485,14 @@ var ActiveScaffold = {
     return ActiveScaffold.ActionLink.get($(element).up('.as_adapter')); 
   },
   
-  scroll_to: function(element) {
+  scroll_to: function(element, checkInView) {
+    var form_offset = $(element).viewportOffset().top;
+    if (ActiveScaffold.config.scroll_on_close == 'checkInViewport') {
+        var docViewTop = document.viewport.getScrollOffsets().top,
+            docViewBottom = docViewTop + document.viewport.getHeight();
+        // If it's in viewport , don't scroll;
+        if (form_offset + $(element).getHeight() <= docViewBottom && form_offset >= docViewTop) return;
+    }
     $(element).scrollTo();
   },
   
