@@ -534,9 +534,15 @@ var ActiveScaffold = {
   
   scroll_to: function(element) {
     if (typeof(element) == 'string') element = '#' + element;
-    var form_offset = jQuery(element).offset(),
-        destination = form_offset.top;
-    jQuery(document).scrollTop(destination);    
+    var form_offset = jQuery(element).offset().top;
+    if (ActiveScaffold.config.scroll_on_close == 'checkInViewport') {
+        var docViewTop = jQuery(window).scrollTop(),
+            docViewBottom = docViewTop + jQuery(window).height();
+        // If it's in viewport , don't scroll;
+        if (form_offset + jQuery(element).height() <= docViewBottom && form_offset >= docViewTop) return;
+    }
+    
+    jQuery(document).scrollTop(form_offset);
   },
   
   process_checkbox_inplace_edit: function(checkbox, options) {
