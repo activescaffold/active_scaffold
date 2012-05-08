@@ -168,7 +168,7 @@ module ActiveScaffold::DataStructures
     attr_reader :includes
     def includes=(value)
       @includes = case value
-        when Array, Hash then value 
+        when Array then value 
         else [value] # automatically convert to an array
       end
     end

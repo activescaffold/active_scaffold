@@ -1,6 +1,7 @@
 = 3.2.8 (not released)
 - add deprecation for update_column, update_columns should be used instead
 - fix constraints with hide_nested_column disabled in list and embedded scaffolds which are nested too
+- fix setting a hash as includes, cannot be concat in finder
 
 = 3.2.7
 - restore missing update.persistent feature
