@@ -48,10 +48,7 @@ module ActiveScaffold::Actions
     end
     def update_respond_to_js
       if successful?
-        if update_refresh_list? && !render_parent?
-          do_search if respond_to? :do_search
-          do_list
-        end
+        do_refresh_list if update_refresh_list? && !render_parent?
         flash.now[:info] = as_(:updated_model, :model => @record.to_label) if active_scaffold_config.update.persistent
       end
       render :action => 'on_update'
