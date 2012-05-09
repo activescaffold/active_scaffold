@@ -78,6 +78,11 @@ module ActiveScaffold::Actions
       end
       @page, @records = page, page.items
     end
+    
+    def do_refresh_list
+      do_search if respond_to? :do_search
+      do_list
+    end
 
     def each_record_in_page
       _page = active_scaffold_config.list.user.page

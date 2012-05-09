@@ -13,17 +13,16 @@ module ActiveScaffold::Actions
       else
         do_unmark
       end
+      do_list
       respond_to_action(:mark_all)
     end
     protected
 
     def mark_all_respond_to_html
-      do_list
       list_respond_to_html
     end
 
     def mark_all_respond_to_js
-      do_list
       render :action => 'on_mark_all', :locals => {:mark_all => mark_all?}
     end
  

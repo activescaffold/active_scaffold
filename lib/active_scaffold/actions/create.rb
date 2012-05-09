@@ -48,8 +48,7 @@ module ActiveScaffold::Actions
           end
         else
           if !nested? && active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
-            do_list
-            render(:action => 'list')
+            list
           else
             render(:action => 'create')
           end
@@ -58,10 +57,7 @@ module ActiveScaffold::Actions
     end
 
     def create_respond_to_js
-      if successful? && active_scaffold_config.create.refresh_list && !render_parent?
-        do_search if respond_to? :do_search
-        do_list
-      end
+      do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
       render :action => 'on_create'
     end
 
