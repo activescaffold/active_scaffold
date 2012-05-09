@@ -997,10 +997,10 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
   },
 
   close: function(refreshed_content) {
+    this._super();
     if (refreshed_content) {
       ActiveScaffold.update_row(this.target, refreshed_content);
     }
-    this._super();
   },
 
   enable: function() {

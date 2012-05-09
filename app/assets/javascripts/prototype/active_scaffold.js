@@ -894,10 +894,10 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
   },
 
   close: function($super, refreshed_content) {
+    $super();
     if (refreshed_content) {
       ActiveScaffold.update_row(this.target, refreshed_content);
     }
-    $super();
   },
 
   enable: function() {
