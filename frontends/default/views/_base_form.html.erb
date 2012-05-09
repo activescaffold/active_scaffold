@@ -7,6 +7,7 @@
      multipart ||= false
      columns ||= nil
    end
+   submit_text ||= form_action
    body_partial ||= 'form' %>
 <%=
 options = {:onsubmit => onsubmit,
@@ -42,7 +43,7 @@ end
   <%= render :partial => body_partial, :locals => { :columns => columns, :form_action => form_action } %>
 
   <p class="form-footer">
-    <%= submit_tag as_(form_action), :class => "submit" %>
+    <%= submit_tag as_(submit_text), :class => "submit" %>
     <%= link_to(as_(:cancel), main_path_to_return, cancel_options) if cancel_link %>
     <%= loading_indicator_tag(:action => form_action, :id => params[:id]) %>
   </p>
