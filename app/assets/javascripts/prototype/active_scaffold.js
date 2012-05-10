@@ -287,6 +287,10 @@ document.observe("dom:loaded", function() {
     }
     return true;
   });
+  document.on('click', '.messages a.close', function(event, element) {
+    ActiveScaffold.hide(element.up('.message'));
+    event.stop();
+  });
 });
 
 

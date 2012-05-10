@@ -19,6 +19,7 @@ module ActiveScaffold::Config
       @association_join_text = self.class.association_join_text
       @pagination = self.class.pagination
       @show_search_reset = true
+      @reset_link = self.class.reset_link.clone
       @mark_records = self.class.mark_records
     end
 
@@ -61,6 +62,10 @@ module ActiveScaffold::Config
     # Add a checkbox in front of each record to mark them and use them with a batch action later
     cattr_accessor :mark_records
 
+    # the ActionLink to reset search
+    cattr_accessor :reset_link
+    @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :collection, :position => false)
+
     # instance-level configuration
     # ----------------------------
 
@@ -100,6 +105,9 @@ module ActiveScaffold::Config
 
     # show a link to reset the search next to filtered message
     attr_accessor :show_search_reset
+
+    # the ActionLink to reset search
+    attr_reader :reset_link
 
     # Add a checkbox in front of each record to mark them and use them with a batch action later
     attr_accessor :mark_records

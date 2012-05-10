@@ -201,6 +201,11 @@ jQuery(document).ready(function() {
     }
     return true;
   });
+
+  jQuery('.message a.close').live('click', function(e) {
+    ActiveScaffold.hide(jQuery(this).closest('.message'));
+    e.preventDefault();
+  });
 });
 
 /* Simple Inheritance

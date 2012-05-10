@@ -433,6 +433,7 @@ border: none;
 .active-scaffold .empty-message, .active-scaffold .filtered-message {
 padding: 4px;
 text-align: center;
+position: relative;
 }
 
 .active-scaffold .message {
@@ -444,7 +445,15 @@ margin: 2px 7px;
 line-height: 12px;
 }
 
-.active-scaffold .message a {
+.active-scaffold .filtered-message .reset {
+position: absolute;
+display: inline;
+right: 10px;
+top: 4px;
+padding: 0;
+}
+
+.active-scaffold .message a.close {
 position: absolute;
 right: 10px;
 top: 4px;
