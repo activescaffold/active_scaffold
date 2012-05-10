@@ -7,6 +7,8 @@
      multipart ||= false
      columns ||= nil
    end
+   method ||= :post
+   cancel_link = true if cancel_link.nil?
    submit_text ||= form_action
    body_partial ||= 'form' %>
 <%=
