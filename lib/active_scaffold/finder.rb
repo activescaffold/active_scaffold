@@ -265,8 +265,6 @@ module ActiveScaffold
     # * :per_page
     # * :page
     def finder_options(options = {})
-      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination, :select
-
       search_conditions = all_conditions
       full_includes = (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
 
@@ -291,8 +289,8 @@ module ActiveScaffold
 
     # returns a Paginator::Page (not from ActiveRecord::Paginator) for the given parameters
     # See finder_options for valid options
-    # TODO: this should reside on the model, not the controller
     def find_page(options = {})
+      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination
       options[:per_page] ||= 999999999
       options[:page] ||= 1
 
