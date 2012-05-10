@@ -1,13 +1,24 @@
-<%if controller.send :successful?%>
-  ActiveScaffold.replace_html('<%=active_scaffold_messages_id%>','<%=escape_javascript(render(:partial => 'messages'))%>');
-  <%if @record%>
-  ActiveScaffold.update_row('<%=element_row_id(:action => :list, :id => @record.id)%>','<%=escape_javascript(render(:partial => 'list_record', :locals => {:record => @record}))%>');
-  <%end%>
-  <% if active_scaffold_config.list.columns.any? {|c| c.calculation?}%>
-      ActiveScaffold.replace('<%=active_scaffold_calculations_id%>', '<%=escape_javascript(render(:partial => 'list_calculations'))%>');
+<% if controller.send :successful? %>
+  <% if @record %>
+    ActiveScaffold.replace_html('<%= active_scaffold_messages_id %>','<%= escape_javascript(render(:partial => 'messages')) %>');
+    var row = '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>';
+    <% if @action_link.nil? || @action_link.position %>
+      ActiveScaffold.find_action_link('<%= element_row_id(:action => :list, :id => @record.id) %>').close(row);
+    <% else %>
+      ActiveScaffold.update_row('<%= element_row_id(:action => :list, :id => @record.id) %>', row);
+      ActiveScaffold.scroll_to('<%= element_row_id(:action => :list, :id => @record.id) %>', true);
     <% end %>
-<%else%>
-  <%flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br)%>
-  ActiveScaffold.replace_html('<%=active_scaffold_messages_id%>','<%=escape_javascript(render(:partial => 'messages'))%>');
-  ActiveScaffold.scroll_to('<%=active_scaffold_messages_id%>');
-<%end%>
+    <% if active_scaffold_config.list.columns.any? {|c| c.calculation?} %>
+       ActiveScaffold.replace('<%= active_scaffold_calculations_id %>', '<%= escape_javascript(render(:partial => 'list_calculations')) %>');
+    <% end %>
+  <% else %>
+    <% if @action_link.nil? || @action_link.position %>
+      ActiveScaffold.find_action_link('<%= element_row_id(:action => action_name) %>').close();
+    <% end %>
+    <%= render :partial => 'refresh_list' %>
+  <% end %>
+<% else %>
+  <% flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br) %>
+  ActiveScaffold.replace_html('<%= active_scaffold_messages_id %>','<%= escape_javascript(render(:partial => 'messages')) %>');
+  ActiveScaffold.scroll_to('<%= active_scaffold_messages_id %>', true);
+<% end %>

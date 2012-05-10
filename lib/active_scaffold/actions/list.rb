@@ -16,7 +16,11 @@ module ActiveScaffold::Actions
     end
 
     def list
-      do_list
+      if %w(index list).include? action_name
+        do_list
+      else
+        do_refresh_list
+      end
       @nested_auto_open = active_scaffold_config.list.nested_auto_open
       respond_to_action(:list)
     end
@@ -33,7 +37,7 @@ module ActiveScaffold::Actions
       if params[:adapter] || embedded?
         render(:partial => 'list_with_header')
       else
-        render :action => 'refresh_list', :formats => [:js]
+        render :partial => 'refresh_list', :formats => [:js]
       end
     end
     def list_respond_to_xml
@@ -94,13 +98,7 @@ module ActiveScaffold::Actions
 
     def each_record_in_scope
       do_search if respond_to? :do_search
-      finder_options = { :order => "#{active_scaffold_config.model.connection.quote_table_name(active_scaffold_config.model.table_name)}.#{active_scaffold_config.model.primary_key} ASC",
-        :conditions => all_conditions,
-        :joins => joins_for_finder}
-      finder_options.merge! custom_finder_options
-      finder_options.merge! :include => (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
-      klass = beginning_of_chain
-      klass.all(finder_options).each {|record| yield record}
+      append_to_query(beginning_of_chain, finder_options).all.each {|record| yield record}
     end
 
     # The default security delegates to ActiveRecordPermissions.
@@ -122,6 +120,7 @@ module ActiveScaffold::Actions
         @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
         respond_to_action(:action_confirmation)
       else
+        @action_link = active_scaffold_config.action_links[action_name]
         if params[:id] && params[:id] && params[:id].to_i > 0
           crud_type ||= (request.post? || request.put?) ? :update : :delete
           @record = find_if_allowed(params[:id], crud_type)
@@ -144,12 +143,11 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_html
-      do_search if respond_to? :do_search
-      do_list
       redirect_to :action => 'index'
     end
 
     def action_update_respond_to_js
+      do_refresh_list unless @record.present?
       render(:action => 'on_action_update')
     end
 

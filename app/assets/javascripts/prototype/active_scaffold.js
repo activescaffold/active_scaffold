@@ -485,9 +485,10 @@ var ActiveScaffold = {
     return ActiveScaffold.ActionLink.get($(element).up('.as_adapter')); 
   },
   
-  scroll_to: function(element, checkInView) {
+  scroll_to: function(element, checkInViewport) {
+    if (typeof checkInViewport == 'undefined') checkInViewport = true;
     var form_offset = $(element).viewportOffset().top;
-    if (ActiveScaffold.config.scroll_on_close == 'checkInViewport') {
+    if (checkInViewport) {
         var docViewTop = document.viewport.getScrollOffsets().top,
             docViewBottom = docViewTop + document.viewport.getHeight();
         // If it's in viewport , don't scroll;
@@ -802,7 +803,7 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     this.enable();
     this.adapter.remove();
     if (this.hide_target) this.target.show();
-    if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target);
+    if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
   },
 
   get_new_adapter_id: function() {
