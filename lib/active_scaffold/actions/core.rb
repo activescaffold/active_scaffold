@@ -178,7 +178,11 @@ module ActiveScaffold::Actions
     def respond_to_action(action)
       respond_to do |type|
         action_formats.each do |format|
-          type.send(format){ send("#{action}_respond_to_#{format}") }
+          type.send(format) do
+            if respond_to?(method_name = "#{action}_respond_to_#{format}")
+              send(method_name)
+            end
+          end
         end
       end
     end
