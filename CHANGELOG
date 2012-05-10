@@ -3,6 +3,7 @@
 - fix constraints with hide_nested_column disabled in list and embedded scaffolds which are nested too
 - fix setting a hash as includes, cannot be concat in finder
 - add option to scroll on close only if element is not visible in viewport (default now)
+- fix create and edit singular associations without render_component
 
 = 3.2.7
 - restore missing update.persistent feature

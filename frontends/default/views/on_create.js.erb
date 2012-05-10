@@ -4,19 +4,26 @@ insert_at ||= :top %>
 var action_link = ActiveScaffold.find_action_link('<%= form_selector%>');
 action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'messages'))%>');
 <% if controller.send :successful? %>
-  <% if render_parent? && controller.respond_to?(:render_component_into_view) %>
-    <% parent_rendered = controller.send(:render_component_into_view, render_parent_options) %>
-    <% if nested_singular_association? %>
-      action_link.close('<%= escape_javascript(parent_rendered)%>');
-    <% else %>
-      <% if render_parent_action == :row %>
-        ActiveScaffold.create_record_row(action_link.scaffold(),'<%= escape_javascript(parent_rendered) %>', <%= {:insert_at => insert_at}.to_json.html_safe %>);
-      <% elsif render_parent_action == :index %>
-        <%= escape_javascript(parent_rendered) %>
+  <% if render_parent? %>
+    <% if controller.respond_to?(:render_component_into_view) %>
+      <% parent_rendered = controller.send(:render_component_into_view, render_parent_options) %>
+      <% if nested_singular_association? %>
+        action_link.close('<%= escape_javascript(parent_rendered)%>');
+      <% else %>
+        <% if render_parent_action == :row %>
+          ActiveScaffold.create_record_row(action_link.scaffold(),'<%= escape_javascript(parent_rendered) %>', <%= {:insert_at => insert_at}.to_json.html_safe %>);
+        <% elsif render_parent_action == :index %>
+          <%= escape_javascript(parent_rendered) %>
+        <% end %>
+        action_link.close();
       <% end %>
-      action_link.close();
+      <%= render :partial => 'update_calculations', :locals => {:calculations_id => active_scaffold_calculations_id(:controller_id => render_parent_controller)} unless render_parent_action == :index %>
+    <% else %>
+      <% if nested_singular_association? || render_parent_action == :row %>
+        action_link.close();
+      <% end %>
+      ActiveScaffold.reload('<%= url_for render_parent_options %>');
     <% end %>
-    <%= render :partial => 'update_calculations', :locals => {:calculations_id => active_scaffold_calculations_id(:controller_id => render_parent_controller)} unless render_parent_action == :index %>
   <% elsif (active_scaffold_config.create.refresh_list) %>
     <%= render :partial => 'refresh_list' %>
   <% elsif params[:parent_controller].nil? %>

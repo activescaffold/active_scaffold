@@ -4,13 +4,20 @@ var action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
 action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
 <% if controller.send :successful? %>
   <% if !active_scaffold_config.update.persistent %>
-    <% if render_parent? && controller.respond_to?(:render_component_into_view) %>
-      <% parent_rendered = controller.send(:render_component_into_view, render_parent_options) %>
-      <% if nested_singular_association? || render_parent_action == :row %>
-        action_link.close('<%= escape_javascript(parent_rendered) %>');
-        <%= render :partial => 'update_calculations', :locals => {:calculations_id => active_scaffold_calculations_id(:controller_id => render_parent_controller)} %>
-      <% elsif render_parent_action == :index %>
-        <%= escape_javascript(parent_rendered) %>
+    <% if render_parent? %>
+      <% if controller.respond_to?(:render_component_into_view) %>
+        <% parent_rendered = controller.send(:render_component_into_view, render_parent_options) %>
+        <% if nested_singular_association? || render_parent_action == :row %>
+          action_link.close('<%= escape_javascript(parent_rendered) %>');
+          <%= render :partial => 'update_calculations', :locals => {:calculations_id => active_scaffold_calculations_id(:controller_id => render_parent_controller)} %>
+        <% elsif render_parent_action == :index %>
+          <%= escape_javascript(parent_rendered) %>
+        <% end %>
+      <% else %>
+        <% if nested_singular_association? || render_parent_action == :row %>
+          action_link.close();
+	<% end %>
+	ActiveScaffold.reload('<%= url_for render_parent_options %>');
       <% end %>
     <% elsif update_refresh_list? %>
       <%= render :partial => 'refresh_list' %>
