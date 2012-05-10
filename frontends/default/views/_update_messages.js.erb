@@ -1,0 +1,2 @@
+<% messages_id ||= active_scaffold_messages_id -%>
+ActiveScaffold.replace_html('<%= messages_id %>', '<%= escape_javascript(render(:partial => 'messages')) %>');

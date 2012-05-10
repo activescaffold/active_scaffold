@@ -59,7 +59,7 @@ module ActiveScaffold
         if nested_singular_association?
           {:controller => nested.parent_scaffold.controller_path, :action => :row, :id => nested.parent_id}
         elsif params[:parent_sti]
-          options = {:controller => params[:parent_sti], :action => render_parent_action(params[:parent_sti])}
+          options = {:controller => params[:parent_sti], :action => render_parent_action}
           if render_parent_action(params[:parent_sti]) == :index
             options.merge(params.slice(:eid))
           else
@@ -68,16 +68,26 @@ module ActiveScaffold
         end
       end
 
-      def render_parent_action(controller_path = nil)
+      def render_parent_action
         begin
           @parent_action = :row
-          parent_controller = "#{controller_path.to_s.camelize}Controller".constantize
-          @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list == true
-          @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list == true
-          @parent_action = :index if action_name == 'destroy' && parent_controller.active_scaffold_config.actions.include?(:delete) && parent_controller.active_scaffold_config.delete.refresh_list == true
+          if params[:parent_sti]
+            parent_controller = "#{params[:parent_sti].to_s.camelize}Controller".constantize
+            @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list == true
+            @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list == true
+            @parent_action = :index if action_name == 'destroy' && parent_controller.active_scaffold_config.actions.include?(:delete) && parent_controller.active_scaffold_config.delete.refresh_list == true
+          end
         rescue ActiveScaffold::ControllerNotFound
         end if @parent_action.nil?
         @parent_action
+      end
+
+      def render_parent_controller
+        if nested_singular_association?
+          nested.parent_scaffold.controller_path
+        else
+          params[:parent_sti]
+        end
       end
       
       def build_associated(column, record)
