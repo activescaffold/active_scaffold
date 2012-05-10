@@ -1,6 +1,6 @@
 <%= render :partial => 'list_record', :locals => {:record => record}%>
 <%= javascript_tag do %>
-ActiveScaffold.replace('<%= active_scaffold_calculations_id %>', '<%= escape_javascript render(:partial => 'list_calculations') %>');
-<% end if active_scaffold_config.list.columns.any? {|c| c.calculation?} %>
+  <%= render :partial => 'update_calculations', :formats => [:js] %>
+<% end %>
 
 

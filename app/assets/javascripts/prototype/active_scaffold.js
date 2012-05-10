@@ -482,7 +482,8 @@ var ActiveScaffold = {
   },
   
   find_action_link: function(element) {
-    return ActiveScaffold.ActionLink.get($(element).up('.as_adapter')); 
+    element = $(element);
+    return ActiveScaffold.ActionLink.get(element.match('a') ? element : element.up('.as_adapter')); 
   },
   
   scroll_to: function(element, checkInViewport) {

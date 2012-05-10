@@ -26,8 +26,8 @@ module ActiveScaffold
         "#{options[:controller_id] || controller_id}-messages"
       end
 
-      def active_scaffold_calculations_id(column = nil)
-        "#{controller_id}-calculations#{'-' + column.name.to_s if column}"
+      def active_scaffold_calculations_id(options = {})
+        "#{options[:controller_id] || controller_id}-calculations#{'-' + options[:column].name.to_s if options[:column]}"
       end
 
       def empty_message_id

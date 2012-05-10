@@ -1,16 +1,14 @@
 <% if controller.send :successful? %>
   <% if @record %>
-    ActiveScaffold.replace_html('<%= active_scaffold_messages_id %>','<%= escape_javascript(render(:partial => 'messages')) %>');
-    var row = '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>';
+    <%= render :partial => 'update_messages' %>
+    <% row = escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) -%>
     <% if @action_link.nil? || @action_link.position %>
-      ActiveScaffold.find_action_link('<%= element_row_id(:action => :list, :id => @record.id) %>').close(row);
+      ActiveScaffold.find_action_link('<%= element_row_id(:action => :list, :id => @record.id) %>').close('<%= row %>');
     <% else %>
-      ActiveScaffold.update_row('<%= element_row_id(:action => :list, :id => @record.id) %>', row);
+      ActiveScaffold.update_row('<%= element_row_id(:action => :list, :id => @record.id) %>', '<%= row %>');
       ActiveScaffold.scroll_to('<%= element_row_id(:action => :list, :id => @record.id) %>', true);
     <% end %>
-    <% if active_scaffold_config.list.columns.any? {|c| c.calculation?} %>
-       ActiveScaffold.replace('<%= active_scaffold_calculations_id %>', '<%= escape_javascript(render(:partial => 'list_calculations')) %>');
-    <% end %>
+    <%= render :partial => 'update_calculations' %>
   <% else %>
     <% if @action_link.nil? || @action_link.position %>
       ActiveScaffold.find_action_link('<%= element_row_id(:action => action_name) %>').close();

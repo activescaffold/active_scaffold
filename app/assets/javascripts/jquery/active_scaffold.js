@@ -528,8 +528,8 @@ var ActiveScaffold = {
   
   find_action_link: function(element) {
     if (typeof(element) == 'string') element = '#' + element;
-    var as_adapter = jQuery(element).closest('.as_adapter');
-    return ActiveScaffold.ActionLink.get(as_adapter);
+    element = jQuery(element);
+    return ActiveScaffold.ActionLink.get(element.is('a') ? element : element.closest('.as_adapter'));
   },
   
   scroll_to: function(element, checkInViewport) {
