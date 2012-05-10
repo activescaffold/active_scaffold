@@ -331,12 +331,15 @@ var ActiveScaffold = {
   },
   reload_if_empty: function(tbody, url) {
     if (this.records_for(tbody).length == 0) {
-      new Ajax.Request(url, {
-        method: 'get',
-        asynchronous: true,
-        evalScripts: true
-      });
+      this.reload(url);
     }
+  },
+  reload: function(url) {
+    new Ajax.Request(url, {
+      method: 'get',
+      asynchronous: true,
+      evalScripts: true
+    });
   },
   removeSortClasses: function(scaffold) {
     scaffold = $(scaffold)
@@ -483,7 +486,7 @@ var ActiveScaffold = {
   
   find_action_link: function(element) {
     element = $(element);
-    return ActiveScaffold.ActionLink.get(element.match('a') ? element : element.up('.as_adapter')); 
+    return ActiveScaffold.ActionLink.get(element.match('.actions a') ? element : element.up('.as_adapter')); 
   },
   
   scroll_to: function(element, checkInViewport) {

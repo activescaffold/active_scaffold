@@ -361,8 +361,11 @@ var ActiveScaffold = {
   },
   reload_if_empty: function(tbody, url) {
     if (this.records_for(tbody).length == 0) {
-      jQuery.getScript(url);
+      this.reload(url);
     }
+  },
+  reload: function(url) {
+    jQuery.getScript(url);
   },
   removeSortClasses: function(scaffold) {
     if (typeof(scaffold) == 'string') scaffold = '#' + scaffold;
@@ -529,7 +532,7 @@ var ActiveScaffold = {
   find_action_link: function(element) {
     if (typeof(element) == 'string') element = '#' + element;
     element = jQuery(element);
-    return ActiveScaffold.ActionLink.get(element.is('a') ? element : element.closest('.as_adapter'));
+    return ActiveScaffold.ActionLink.get(element.is('.actions a') ? element : element.closest('.as_adapter'));
   },
   
   scroll_to: function(element, checkInViewport) {
