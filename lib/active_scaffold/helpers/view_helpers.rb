@@ -217,7 +217,13 @@ module ActiveScaffold
         class_override_helper = :"#{clean_class_name(record.class.name)}_list_row_class"
         respond_to?(class_override_helper) ? send(class_override_helper, record) : ''
       end
-      
+
+      def column_attributes(column, record)
+        method = override_helper column, 'column_attributes'
+        return send(class_override_helper, record) if method
+        {}
+      end
+
       def column_class(column, column_value, record)
         classes = []
         classes << "#{column.name}-column"
@@ -293,6 +299,18 @@ module ActiveScaffold
         name.underscore.gsub('/', '_')
       end
      
+      # the naming convention for overriding with helpers
+      def override_helper_name(column, suffix, class_prefix = false)
+        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_#{suffix}"
+      end
+
+      def override_helper(column, suffix)
+        method_with_class = override_helper_name(column, suffix, true)
+        return method_with_class if respond_to?(method_with_class)
+        method = override_helper_name(column, suffix)
+        method if respond_to?(method)
+      end
+
       def active_scaffold_error_messages_for(*params)
         options = params.extract_options!.symbolize_keys
         options.reverse_merge!(:container_tag => :div, :list_type => :ul)

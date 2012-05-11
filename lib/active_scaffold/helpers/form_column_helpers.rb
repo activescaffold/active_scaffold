@@ -15,11 +15,11 @@ module ActiveScaffold
       def active_scaffold_render_input(column, options)
         begin
           # first, check if the dev has created an override for this specific field
-          if override_form_field?(column)
-            send(override_form_field(column), @record, options)
+          if (method = override_form_field(column))
+            send(method, @record, options)
           # second, check if the dev has specified a valid form_ui for this column
-          elsif column.form_ui and override_input?(column.form_ui)
-            send(override_input(column.form_ui), column, options)
+          elsif column.form_ui and (method = override_input(column.form_ui))
+            send(method, column, options)
           # fallback: we get to make the decision
           else
             if column.association
@@ -36,8 +36,8 @@ module ActiveScaffold
 
             else # regular model attribute column
               # if we (or someone else) have created a custom render option for the column type, use that
-              if override_input?(column.column.type)
-                send(override_input(column.column.type), column, options)
+              if (method = override_input(column.column.type))
+                send(method, column, options)
               # final ultimate fallback: use rails' generic input method
               else
                 # for textual fields we pass different options
@@ -229,26 +229,16 @@ module ActiveScaffold
       end
 
       def override_form_field(column)
-        method_with_class = override_form_field_name(column, true)
-        return method_with_class if respond_to?(method_with_class)
-        method = override_form_field_name(column)
-        method if respond_to?(method)
+        override_helper column, 'form_column'
       end
       alias_method :override_form_field?, :override_form_field
 
-      # the naming convention for overriding form fields with helpers
-      def override_form_field_name(column, class_prefix = false)
-        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_form_column"
-      end
-
-      def override_input?(form_ui)
-        respond_to?(override_input(form_ui))
-      end
-
       # the naming convention for overriding form input types with helpers
       def override_input(form_ui)
-        "active_scaffold_input_#{form_ui}"
+        method = "active_scaffold_input_#{form_ui}"
+        method if respond_to? method
       end
+      alias_method :override_input?, :override_input
 
       def form_partial_for_column(column, renders_as = nil)
         renders_as ||= column_renders_as(column)
