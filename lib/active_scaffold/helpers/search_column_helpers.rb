@@ -8,20 +8,20 @@ module ActiveScaffold
         options = active_scaffold_search_options(column)
 
         # first, check if the dev has created an override for this specific field for search
-        if override_search_field?(column)
-          send(override_search_field(column), @record, options)
+        if (method = override_search_field(column))
+          send(method, @record, options)
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
-        elsif column.search_ui and override_search?(column.search_ui)
-          send(override_search(column.search_ui), column, options)
+        elsif column.search_ui and (method = override_search(column.search_ui))
+          send(method, column, options)
 
         # third, check if the dev has specified a valid search_ui for this column, using generic ui for forms
-        elsif column.search_ui and override_input?(column.search_ui)
-          send(override_input(column.search_ui), column, options)
+        elsif column.search_ui and (method = override_input(column.search_ui))
+          send(method, column, options)
 
         # fourth, check if the dev has created an override for this specific field
-        elsif override_form_field?(column)
-          send(override_form_field(column), @record, options)
+        elsif (method = override_form_field(column))
+          send(method, @record, options)
 
         # fallback: we get to make the decision
         else
@@ -30,11 +30,11 @@ module ActiveScaffold
 
           else # regular model attribute column
             # if we (or someone else) have created a custom render option for the column type, use that
-            if override_search?(column.column.type)
-              send(override_search(column.column.type), column, options)
+            if (method = override_search(column.column.type))
+              send(method, column, options)
             # if we (or someone else) have created a custom render option for the column type, use that
-            elsif override_input?(column.column.type)
-              send(override_input(column.column.type), column, options)
+            elsif (method = override_input(column.column.type))
+              send(method, column, options)
             # final ultimate fallback: use rails' generic input method
             else
               # for textual fields we pass different options
@@ -216,25 +216,13 @@ module ActiveScaffold
       ##
 
       def override_search_field(column)
-        method_with_class = override_search_field_name(column, true)
-        return method_with_class if respond_to?(method_with_class)
-        method = override_search_field_name(column)
-        method if respond_to?(method)
-      end
-      alias_method :override_search_field?, :override_search_field
-
-      # the naming convention for overriding form fields with helpers
-      def override_search_field_name(column, class_prefix = false)
-        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_search_column"
-      end
-
-      def override_search?(search_ui)
-        respond_to?(override_search(search_ui))
+        override_helper column, 'search_column'
       end
 
       # the naming convention for overriding search input types with helpers
       def override_search(form_ui)
-        "active_scaffold_search_#{form_ui}"
+        method = "active_scaffold_search_#{form_ui}"
+        method if respond_to? method
       end
       
       def visibles_and_hiddens(search_config)

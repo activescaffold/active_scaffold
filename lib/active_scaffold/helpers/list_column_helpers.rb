@@ -6,16 +6,16 @@ module ActiveScaffold
       def get_column_value(record, column)
         begin
           # check for an override helper
-          value = if column_override? column
+          value = if (method = column_override(column))
             # we only pass the record as the argument. we previously also passed the formatted_value,
             # but mike perham pointed out that prohibited the usage of overrides to improve on the
             # performance of our default formatting. see issue #138.
-            send(column_override(column), record)
+            send(method, record)
           # second, check if the dev has specified a valid list_ui for this column
-          elsif column.list_ui and override_column_ui?(column.list_ui)
-            send(override_column_ui(column.list_ui), column, record)
-          elsif column.column and override_column_ui?(column.column.type)
-            send(override_column_ui(column.column.type), column, record)
+          elsif column.list_ui and (method = override_column_ui(column.list_ui))
+            send(method, column, record)
+          elsif column.column and (method = override_column_ui(column.column.type))
+            send(method, column, record)
           else
             format_column_value(record, column)
           end
@@ -128,26 +128,17 @@ module ActiveScaffold
         check_box(:record, column.name, options)
       end
 
-      def column_override_name(column, class_prefix = false)
-        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_column"
-      end
-
       def column_override(column)
-        method_with_class = column_override_name(column, true)
-        return method_with_class if respond_to?(method_with_class)
-        method = column_override_name(column)
-        method if respond_to?(method)
+        override_helper column, 'column'
       end
       alias_method :column_override?, :column_override
 
-      def override_column_ui?(list_ui)
-        respond_to?(override_column_ui(list_ui))
-      end
-
       # the naming convention for overriding column types with helpers
       def override_column_ui(list_ui)
-        "active_scaffold_column_#{list_ui}"
+        method = "active_scaffold_column_#{list_ui}"
+        method if respond_to? method
       end
+      alias_method :override_column_ui?, :override_column_ui
 
       ##
       ## Formatting
