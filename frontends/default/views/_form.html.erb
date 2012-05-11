@@ -11,8 +11,6 @@
     <%= render :partial => 'form', :locals => { :columns => column, :subsection_id => subsection_id, :form_action => form_action } %>
     <%= link_to_visibility_toggle(subsection_id, {:default_visible => !column.collapsed}) -%>
   </li>
-  <% elsif column.readonly_association?
-    next %>
   <% elsif renders_as == :subform and !override_form_field?(column) and authorized -%>
   <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %> <%=column.name%>-sub-form" id="<%= sub_form_id(:association => column.name) %>">
     <%=raw render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column } -%>
