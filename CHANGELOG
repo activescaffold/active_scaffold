@@ -5,6 +5,7 @@
 - add option to scroll on close only if element is not visible in viewport (default now)
 - fix create and edit singular associations without render_component
 - messages go across all table
+- display readonly associations in forms, it was ready to display them but it was skipping them
 
 = 3.2.7
 - restore missing update.persistent feature
