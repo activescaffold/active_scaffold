@@ -111,18 +111,23 @@ jQuery(document).ready(function() {
     ActiveScaffold.report_500_response(as_scaffold);
     return true;
   });
-  jQuery('span.in_place_editor_field').live('hover', function(event) {
-    jQuery(this).data(); // $ 1.4.2 workaround
+  jQuery('td.in_place_editor_field').live('hover', function(event) {
+    var td = jQuery(this), span = td.find('span.in_place_editor_field');
+    span.data(); // $ 1.4.2 workaround
     if (event.type == 'mouseenter') {
-      if (typeof(jQuery(this).data('editInPlace')) === 'undefined') jQuery(this).addClass("hover");
+      if (td.hasClass('empty') || typeof(span.data('editInPlace')) === 'undefined') td.find('span').addClass("hover");
      }
     if (event.type == 'mouseleave') {
-      if (typeof(jQuery(this).data('editInPlace')) === 'undefined') jQuery(this).removeClass("hover");
+      if (td.hasClass('empty') || typeof(span.data('editInPlace')) === 'undefined') td.find('span').removeClass("hover");
     }
     return true;
   });
-  jQuery('span.in_place_editor_field').live('click', function(event) {
-    ActiveScaffold.in_place_editor_field_clicked(jQuery(this));
+  jQuery('td.in_place_editor_field').live('click', function(event) {
+    var span = jQuery(this).find('span.in_place_editor_field');
+    span.data('addEmptyOnCancel', jQuery(this).hasClass('empty'));
+    jQuery(this).removeClass('empty');
+    if (span.data('editInPlace')) span.trigger('click.editInPlace');
+    else ActiveScaffold.in_place_editor_field_clicked(span);
   });
   jQuery('a.as_paginate').live('ajax:before',function(event) {
     var as_paginate = jQuery(this);
@@ -431,6 +436,12 @@ var ActiveScaffold = {
     if (typeof(element) == 'string') element = '#' + element; 
     jQuery(element).remove();
   },
+
+  update_inplace_edit: function(element, value, empty) {
+    if (typeof(element) == 'string') element = '#' + element;
+    this.replace_html(jQuery(element), value);
+    if (empty) jQuery(element).closest('td').addClass('empty');
+  },
   
   hide: function(element) {
     if (typeof(element) == 'string') element = '#' + element;
@@ -700,6 +711,11 @@ var ActiveScaffold = {
                      hover_class: 'hover',
                      element_id: 'editor_id',
                      ajax_data_type: "script",
+                     delegate: {
+                       willCloseEditInPlace: function(span, options, enteredText) {
+                         if (span.data('addEmptyOnCancel')) span.closest('td').addClass('empty');
+                       }
+                     },
                      update_value: 'value'},
           csrf_param = jQuery('meta[name=csrf-param]').first(),
           csrf_token = jQuery('meta[name=csrf-token]').first(),
@@ -707,7 +723,7 @@ var ActiveScaffold = {
           column_heading = null;
 
       if(!(my_parent.is('td') || my_parent.is('th'))){
-          my_parent = span.parents('td').eq(0);
+        my_parent = span.parents('td').eq(0);
       }
 
       if (my_parent.is('td')) {
