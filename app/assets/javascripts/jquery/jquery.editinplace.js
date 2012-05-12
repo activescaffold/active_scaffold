@@ -470,10 +470,10 @@ $.extend(InlineEditor.prototype, {
 		if (false === this.triggerDelegateCall('shouldCloseEditInPlace', true, anEvent))
 			return;
 
-    var editor = this.dom.find(':input:not(:button)');
+    var editor = this.dom.find(':input:not(:button)').not('input:checkbox:not(:checked)').not('input:radio:not(:checked)');
     var enteredText = '';
     if (editor.length > 1) {
-      enteredText = jQuery.map(editor.not('input:checkbox:not(:checked)').not('input:radio:not(:checked)'), function(item, index) {
+      enteredText = jQuery.map(editor, function(item, index) {
         return $(item).val();
       });
     } else {

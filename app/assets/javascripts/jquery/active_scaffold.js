@@ -694,6 +694,7 @@ var ActiveScaffold = {
 
   in_place_editor_field_clicked: function(span) {
     span.data(); // $ 1.4.2 workaround
+    // test editor is open
     if (typeof(span.data('editInPlace')) === 'undefined') {
       var options = {show_buttons: true,
                      hover_class: 'hover',

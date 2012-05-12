@@ -6,6 +6,7 @@
 - fix create and edit singular associations without render_component
 - messages go across all table
 - display readonly associations in forms, it was ready to display them but it was skipping them
+- Some fixes for inplace editors (cloning form overrides, ajax and radiobuttons)
 
 = 3.2.7
 - restore missing update.persistent feature
