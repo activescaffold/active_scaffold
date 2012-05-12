@@ -262,7 +262,7 @@ module ActiveScaffold
           column = column.clone
           column.options = column.options.clone
           column.form_ui = :select if (column.association && column.form_ui.nil?)
-          content_tag(:div, active_scaffold_input_for(column).html_safe, :style => "display:none;", :class => inplace_edit_control_css_class).tap do
+          content_tag(:div, active_scaffold_input_for(column), :style => "display:none;", :class => inplace_edit_control_css_class).tap do
             @record = old_record
           end
         end
