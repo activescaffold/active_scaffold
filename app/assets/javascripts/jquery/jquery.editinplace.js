@@ -312,7 +312,7 @@ $.extend(InlineEditor.prototype, {
 
     var editorNode = patternNodes.editNode.clone();
     var clonedNodes = null;
-    if (editorNode.attr('id').length > 0) editorNode.attr('id', editorNode.attr('id') + this.settings.clone_id_suffix);
+    if (editorNode.attr('id')) editorNode.attr('id', editorNode.attr('id') + this.settings.clone_id_suffix);
     editorNode.attr('name', 'inplace_value');
     editorNode.addClass('editor_field');
     this.setValue(editorNode, this.originalValue);
@@ -321,7 +321,7 @@ $.extend(InlineEditor.prototype, {
     if (patternNodes.additionalNodes) {
       patternNodes.additionalNodes.each(function (index, node) {
         var patternNode = $(node).clone();
-        if (patternNode.attr('id').length > 0) {
+        if (patternNode.attr('id')) {
           patternNode.attr('id', patternNode.attr('id') + this.settings.clone_id_suffix);
         }
         clonedNodes = clonedNodes.after(patternNode);
@@ -342,8 +342,7 @@ $.extend(InlineEditor.prototype, {
         selectedNodes = firstNode.children();
       }
       nodes.editNode = selectedNodes.first();
-      // buggy...
-      //nodes.additionalNodes = selectedNodes.find(':gt(0)');
+      nodes.additionalNodes = selectedNodes.slice(1);
     }
     return nodes;
   },
