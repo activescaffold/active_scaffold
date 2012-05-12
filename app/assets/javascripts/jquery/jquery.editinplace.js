@@ -285,6 +285,7 @@ $.extend(InlineEditor.prototype, {
 	},
 	
   setInitialValue: function() {
+    if (this.settings.field_type == 'remote') return; // remote generated editor doesn't need initial value
     var initialValue = this.triggerDelegateCall('willOpenEditInPlace', this.originalValue);
     var editor = this.dom.find(':input');
     editor.val(initialValue);
@@ -472,7 +473,7 @@ $.extend(InlineEditor.prototype, {
     var editor = this.dom.find(':input:not(:button)');
     var enteredText = '';
     if (editor.length > 1) {
-      enteredText = jQuery.map(editor.not('input:checkbox:not(:checked)'), function(item, index) {
+      enteredText = jQuery.map(editor.not('input:checkbox:not(:checked)').not('input:radio:not(:checked)'), function(item, index) {
         return $(item).val();
       });
     } else {
