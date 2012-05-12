@@ -135,14 +135,16 @@ document.observe("dom:loaded", function() {
     ActiveScaffold.report_500_response(as_scaffold);
     return true;
   });
-  document.on('mouseover', 'span.in_place_editor_field', function(event) {
-      event.findElement().addClassName('hover');
+  document.on('mouseover', 'td.in_place_editor_field', function(event) {
+      event.findElement('td.in_place_editor_field').select('span').invoke('addClassName', 'hover');
   });
-  document.on('mouseout', 'span.in_place_editor_field', function(event) {
-      event.findElement().removeClassName('hover');
+  document.on('mouseout', 'td.in_place_editor_field', function(event) {
+      event.findElement('td.in_place_editor_field').select('span').invoke('removeClassName', 'hover');
   });
-  document.on('click', 'span.in_place_editor_field', function(event) {
-    var span = event.findElement('span.in_place_editor_field');
+  document.on('click', 'td.in_place_editor_field', function(event) {
+    var td = event.findElement('td.in_place_editor_field'),
+        span = td.down('span.in_place_editor_field');
+    td.removeClassName('empty');
     
     if (typeof(span.inplace_edit) === 'undefined') {
       var options = {htmlResponse: false,
@@ -150,6 +152,7 @@ document.observe("dom:loaded", function() {
                      onLeaveHover: null,
                      onComplete: null,
                      params: '',
+                     externalControl: td.down('.handle'),
                      ajaxOptions: {method: 'post'}},
           csrf_param = $$('meta[name=csrf-param]')[0],
           csrf_token = $$('meta[name=csrf-token]')[0],
@@ -390,6 +393,11 @@ var ActiveScaffold = {
   
   remove: function(element) {
     $(element).remove();
+  },
+  
+  update_inplace_edit: function(element, value, empty) {
+    this.replace_html(element, value);
+    if (empty) $(element).up('td').addClassName('empty');
   },
   
   hide: function(element) {

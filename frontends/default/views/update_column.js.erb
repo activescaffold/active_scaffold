@@ -4,9 +4,9 @@
   <% @record.reload %>
 <% end %>
 <% column = active_scaffold_config.columns[params[:column]] %>
-<% formatted_value = get_column_value(@record, column)%>
-<% if column.inplace_edit%>
-  ActiveScaffold.replace_html('<%= @column_span_id %>','<%= escape_javascript(formatted_value) %>');
+<% formatted_value = get_column_value(@record, column) %>
+<% if column.inplace_edit %>
+  ActiveScaffold.update_inplace_edit('<%= @column_span_id %>','<%= escape_javascript(formatted_value) %>', <%= column_empty?(formatted_value).to_json %>);
 <% else %>
   ActiveScaffold.replace_html('<%= @column_span_id %>','<%= escape_javascript(formatted_value) %>');
 <% end %>

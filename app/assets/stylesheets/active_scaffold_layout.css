@@ -203,6 +203,12 @@ padding: 0px;
 .active-scaffold tbody.records td.empty {
 text-align: center;
 }
+.active-scaffold tbody.records td.in_place_editor_field .handle {
+display:none;
+}
+.active-scaffold tbody.records td.in_place_editor_field.empty .handle {
+display:inline;
+}
 
 .active-scaffold td.numeric,
 .active-scaffold-calculations td {
