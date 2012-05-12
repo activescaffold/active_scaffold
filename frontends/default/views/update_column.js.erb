@@ -4,10 +4,10 @@
   <% @record.reload %>
 <% end %>
 <% column = active_scaffold_config.columns[params[:column]] %>
+<% formatted_value = get_column_value(@record, column)%>
 <% if column.inplace_edit%>
-  ActiveScaffold.replace_html('<%= @column_span_id %>','<%= escape_javascript(get_column_value(@record, column)) %>');
+  ActiveScaffold.replace_html('<%= @column_span_id %>','<%= escape_javascript(formatted_value) %>');
 <% else %>
-  <% formatted_value = get_column_value(@record, column)%>
   ActiveScaffold.replace_html('<%= @column_span_id %>','<%= escape_javascript(formatted_value) %>');
 <% end %>
 <% if column.calculation? %>
