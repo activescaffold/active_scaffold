@@ -220,7 +220,7 @@ module ActiveScaffold
 
       def column_attributes(column, record)
         method = override_helper column, 'column_attributes'
-        return send(class_override_helper, record) if method
+        return send(method, record) if method
         {}
       end
 
