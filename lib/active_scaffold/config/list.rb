@@ -21,6 +21,7 @@ module ActiveScaffold::Config
       @show_search_reset = true
       @reset_link = self.class.reset_link.clone
       @mark_records = self.class.mark_records
+      @wrap_tag = self.class.wrap_tag
     end
 
     # global level configuration
@@ -65,6 +66,11 @@ module ActiveScaffold::Config
     # the ActionLink to reset search
     cattr_accessor :reset_link
     @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :collection, :position => false)
+
+    # wrap normal cells (not inplace editable columns or with link) with a tag
+    # it allows for more css styling
+    cattr_accessor :wrap_tag
+    @@wrap_tag = nil
 
     # instance-level configuration
     # ----------------------------
@@ -168,6 +174,10 @@ module ActiveScaffold::Config
     # conf.list.nested_auto_open = {:players => 2}
     # will open nested players view if there are 2 or less records in parent
     attr_accessor :nested_auto_open
+    
+    # wrap normal cells (not inplace editable columns or with link) with a tag
+    # it allows for more css styling
+    attr_accessor :wrap_tag
     
     class UserSettings < UserSettings
       def initialize(conf, storage, params)
