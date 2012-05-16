@@ -10,6 +10,7 @@
 - add wrap_tag to list so cells content can be wrapped in a tag for better styling
 - fix date picker parsing for datetime fields when jquery is used
 - add as:element_updated js event when replace or replace_html is called
+- rescue database exceptions so you get error messages for it insted of error 500, for example in case you forgot to check uniqueness for a unique index
 
 = 3.2.7
 - restore missing update.persistent feature
