@@ -7,6 +7,9 @@
 - messages go across all table
 - display readonly associations in forms, it was ready to display them but it was skipping them
 - Some fixes for inplace editors (cloning form overrides, ajax and radiobuttons). Add handlers for empty columns
+- add wrap_tag to list so cells content can be wrapped in a tag for better styling
+- fix date picker parsing for datetime fields when jquery is used
+- add as:element_updated js event when replace or replace_html is called
 
 = 3.2.7
 - restore missing update.persistent feature
