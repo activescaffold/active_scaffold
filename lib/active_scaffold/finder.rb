@@ -121,11 +121,17 @@ module ActiveScaffold
           Date.strptime(value, I18n.t('date.formats.default')) rescue nil
         else
           parts = Date._parse(value)
-          time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect {|part, format_part| format_part if parts[part].present?}.compact
-          format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
+          format = I18n.translate 'time.formats.picker', :default => '' if ActiveScaffold.js_framework == :jquery
+          if format.blank?
+            time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect {|part, format_part| format_part if parts[part].present?}.compact
+            format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
+          else
+            format += ' %z' if parts[:offset].present? && format !~ /%z/i
+          end
           time = DateTime.strptime(value, format)
-          time = Time.zone.local_to_utc(time) unless parts[:offset]
-          time.in_time_zone.send(conversion) rescue nil
+          time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
+          time = time.send(conversion) unless conversion == :to_time
+          time
         end unless value.nil? || value.blank?
       end
 
