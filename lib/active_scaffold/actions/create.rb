@@ -87,10 +87,11 @@ module ActiveScaffold::Actions
 
     # A somewhat complex method to actually create a new record. The complexity is from support for subforms and associated records.
     # If you want to customize this behavior, consider using the +before_create_save+ and +after_create_save+ callbacks.
-    def do_create
+    def do_create(hash = nil)
+      hash ||= params[:record]
       begin
         active_scaffold_config.model.transaction do
-          @record = update_record_from_params(new_model, active_scaffold_config.create.columns, params[:record])
+          @record = update_record_from_params(new_model, active_scaffold_config.create.columns, hash)
           apply_constraints_to_record(@record, :allow_autosave => true)
           if nested?
             create_association_with_parent(@record) 

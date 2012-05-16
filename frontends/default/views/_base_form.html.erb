@@ -1,4 +1,6 @@
-<% url_options ||= params_for(:action => form_action)
+<% scope ||= nil
+   footer_extension ||= nil
+   url_options ||= params_for(:action => form_action)
    xhr = request.xhr? if xhr.nil?
    if active_scaffold_config.actions.include? form_action
      multipart ||= active_scaffold_config.send(form_action).multipart?
@@ -32,22 +34,16 @@ end
   <h4><%= headline -%></h4>
 
   <div id="<%= element_messages_id(:action => form_action) %>" class="messages-container">
-<% if request.xhr? -%>
-    <% records = @error_records || Array(@record)
-       records.each do |record| %>
-       <%= active_scaffold_error_messages_for record, :object_name => "#{record.class.model_name.human.downcase}#{record.new_record? ? '' : ": #{record.to_label}"}" %>
-    <% end   %>
-<% else -%>
     <%= render :partial => 'form_messages' %>
-<% end -%>
   </div>
 
-  <%= render :partial => body_partial, :locals => { :columns => columns, :form_action => form_action } %>
+  <%= render :partial => body_partial, :locals => { :columns => columns, :form_action => form_action, :scope => scope } %>
 
   <p class="form-footer">
     <%= submit_tag as_(submit_text), :class => "submit" %>
     <%= link_to(as_(:cancel), main_path_to_return, cancel_options) if cancel_link %>
     <%= loading_indicator_tag(:action => form_action, :id => params[:id]) %>
+    <%= render :partial => footer_extension, :locals => { :form_action => form_action } if footer_extension %>
   </p>
 
 </form>
