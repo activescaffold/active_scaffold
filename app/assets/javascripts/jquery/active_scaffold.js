@@ -422,6 +422,7 @@ var ActiveScaffold = {
     if (element.attr('id')) {
       element = jQuery('#' + element.attr('id'));
     }
+    element.trigger('as:element_updated');
     return element;
   },
   
@@ -429,6 +430,7 @@ var ActiveScaffold = {
     if (typeof(element) == 'string') element = '#' + element; 
     element = jQuery(element);
     element.html(html);
+    element.trigger('as:element_updated');
     return element;
   },
   
