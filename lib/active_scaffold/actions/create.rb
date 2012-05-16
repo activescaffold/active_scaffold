@@ -99,8 +99,8 @@ module ActiveScaffold::Actions
           end
           create_save
         end
-      rescue ActiveRecord::RecordInvalid
-        flash[:error] = $!.message
+      rescue ActiveRecord::ActiveRecordError => ex
+        flash[:error] = ex.message
         self.successful = false
       end
     end
