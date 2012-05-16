@@ -609,6 +609,14 @@ padding: 2px;
 margin-left: 5px;
 list-style: none;
 }
+.active-scaffold ol:after {
+content: '.';
+visibility: hidden;
+line-height: 0;
+height: 0;
+display: block;
+clear: both;
+}
 
 .active-scaffold p.form-footer {
 clear: both;
