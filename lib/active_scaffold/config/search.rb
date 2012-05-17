@@ -10,7 +10,6 @@ module ActiveScaffold::Config
 
       # start with the ActionLink defined globally
       @link = self.class.link.clone
-      @action_group = self.class.action_group.clone if self.class.action_group
     end
 
 
@@ -35,6 +34,9 @@ module ActiveScaffold::Config
       @@live
     end
 
+    cattr_accessor :split_terms
+    @@split_terms = " "
+
     # instance-level configuration
     # ----------------------------
 
@@ -57,8 +59,6 @@ module ActiveScaffold::Config
     # Default is :full
     attr_accessor :text_search
 
-    @@split_terms = " "
-    cattr_accessor :split_terms
     attr_accessor :split_terms
 
     # the ActionLink for this action
