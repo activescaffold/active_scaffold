@@ -6,8 +6,7 @@ module ActiveScaffold::Config
       super
       # start with the ActionLink defined globally
       @link = self.class.link.clone
-      @action_group = self.class.action_group.clone if self.class.action_group
-      self.refresh_list = self.class.refresh_list
+      @refresh_list = self.class.refresh_list
     end
 
     # global level configuration

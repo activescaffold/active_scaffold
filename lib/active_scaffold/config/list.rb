@@ -18,10 +18,12 @@ module ActiveScaffold::Config
       @empty_field_text = self.class.empty_field_text
       @association_join_text = self.class.association_join_text
       @pagination = self.class.pagination
-      @show_search_reset = true
+      @show_search_reset = self.class.show_search_reset
       @reset_link = self.class.reset_link.clone
       @mark_records = self.class.mark_records
       @wrap_tag = self.class.wrap_tag
+      @always_show_search = self.class.always_show_search
+      @always_show_create = self.class.always_show_create
     end
 
     # global level configuration
@@ -62,15 +64,28 @@ module ActiveScaffold::Config
 
     # Add a checkbox in front of each record to mark them and use them with a batch action later
     cattr_accessor :mark_records
+    @@mark_records = false
+
+    # show a link to reset the search next to filtered message
+    cattr_accessor :show_search_reset
+    @@show_search_reset = true
 
     # the ActionLink to reset search
-    cattr_accessor :reset_link
+    cattr_reader :reset_link
     @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :collection, :position => false)
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling
     cattr_accessor :wrap_tag
     @@wrap_tag = nil
+
+    # Show search form in the list header instead of display the link
+    cattr_accessor :always_show_search
+    @@always_show_search = false
+    
+    # Show create form in the list header instead of display the link
+    cattr_accessor :always_show_create
+    @@always_show_create = false
 
     # instance-level configuration
     # ----------------------------

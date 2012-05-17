@@ -5,10 +5,10 @@ module ActiveScaffold::Config
     def initialize(core_config)
       super
       @text_search = self.class.text_search
+      @human_conditions = self.class.human_conditions
 
       # start with the ActionLink defined globally
       @link = self.class.link.clone
-      @action_group = self.class.action_group.clone if self.class.action_group
     end
 
 
@@ -27,6 +27,11 @@ module ActiveScaffold::Config
     cattr_accessor :text_search
     @@text_search = :full
 
+    # human conditions
+    # instead of just filtered you may show the user a humanized search condition statment
+    cattr_accessor :human_conditions
+    @@human_conditions = false
+    
     # instance-level configuration
     # ----------------------------
 
@@ -54,8 +59,8 @@ module ActiveScaffold::Config
     attr_accessor :link
     
     # rarely searched columns may be placed in a hidden subgroup
-     def optional_columns=(optionals)
-      @optional_columns= Array(optionals)
+    def optional_columns=(optionals)
+      @optional_columns = Array(optionals)
     end
     
     def optional_columns

@@ -5,8 +5,7 @@ module ActiveScaffold::Config
     def initialize(core_config)
       super
       @label = :add_existing_model
-      self.shallow_delete = self.class.shallow_delete
-      @action_group = self.class.action_group.clone if self.class.action_group
+      @shallow_delete = self.class.shallow_delete
     end
 
     # global level configuration

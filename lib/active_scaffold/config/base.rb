@@ -5,6 +5,7 @@ module ActiveScaffold::Config
 
     def initialize(core_config)
       @core = core_config
+      @action_group = self.class.action_group.clone if self.class.action_group
     end
 
     def self.inherited(subclass)
