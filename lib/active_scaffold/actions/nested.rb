@@ -86,7 +86,7 @@ module ActiveScaffold::Actions
       elsif nested? && nested.scope
         nested.parent_scope.send(nested.scope)
       else
-        active_scaffold_config.model
+        super
       end
     end
 
