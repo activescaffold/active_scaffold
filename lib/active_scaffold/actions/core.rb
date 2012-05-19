@@ -151,14 +151,11 @@ module ActiveScaffold::Actions
         
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
     def conditions_from_params
-      conditions = nil
+      conditions = {}
       params.reject {|key, value| [:controller, :action, :id, :page, :sort, :sort_direction].include?(key.to_sym)}.each do |key, value|
-        next unless active_scaffold_config.model.column_names.include?(key)
-        if value.is_a?(Array)
-          conditions = merge_conditions(conditions, ["#{active_scaffold_config.model.table_name}.#{key.to_s} in (?)", value])
-        else
-          conditions = merge_conditions(conditions, ["#{active_scaffold_config.model.table_name}.#{key.to_s} = ?", value])
-        end
+        next unless active_scaffold_config.model.columns_hash[key.to_s]
+        next if active_scaffold_constraints[key.to_sym]
+        conditions[key] = value
       end
       conditions
     end

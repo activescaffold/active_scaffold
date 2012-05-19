@@ -19,14 +19,13 @@ module ActiveScaffold
         columns.each do |column|
           where_clauses << ((column.column.nil? || column.column.text?) ? "#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?" : "#{column.search_sql} = ?")
         end
-        phrase = "(#{where_clauses.join(' OR ')})"
+        phrase = where_clauses.join(' OR ')
 
-        sql = ([phrase] * tokens.length).join(' AND ')
-        tokens = tokens.collect do |value|
-          columns.collect {|column| (column.column.nil? || column.column.text?) ? like_pattern.sub('?', value) : column.column.type_cast(value)}
-        end.flatten
-
-        [sql, *tokens]
+        tokens.collect do |value|
+          columns.inject([phrase]) do |condition, column|
+            condition.push((column.column.nil? || column.column.text?) ? like_pattern.sub('?', value) : column.column.type_cast(value))
+          end
+        end
       end
 
       # Generates an SQL condition for the given ActiveScaffold column based on
@@ -247,13 +246,13 @@ module ActiveScaffold
     end
     
     def all_conditions
-      merge_conditions(
+      [
         active_scaffold_conditions,                   # from the search modules
         conditions_for_collection,                    # from the dev
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
         conditions_from_constraints,                  # from any constraints (embedded scaffolds)
         active_scaffold_session_storage[:conditions] # embedding conditions (weaker constraints)
-      )
+      ]
     end
     
     # returns a single record (the given id) but only if it's allowed for the specified action.
@@ -264,8 +263,6 @@ module ActiveScaffold
       raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for?(:crud_type => crud_type.to_sym)
       return record
     end
-
-    # returns a hash with options to find records
     # valid options may include:
     # * :sorting - a Sorting DataStructure (basically an array of hashes of field => direction, e.g. [{:field1 => 'asc'}, {:field2 => 'desc'}]). please note that multi-column sorting has some limitations: if any column in a multi-field sort uses method-based sorting, it will be ignored. method sorting only works for single-column sorting.
     # * :per_page
@@ -276,10 +273,10 @@ module ActiveScaffold
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :reorder => options[:sorting].try(:clause),
-                         :where => search_conditions,
+                         :conditions => search_conditions,
                          :joins => joins_for_finder,
                          :includes => full_includes}
-                         
+    
       finder_options.merge! custom_finder_options
       finder_options
     end
@@ -330,7 +327,8 @@ module ActiveScaffold
     end
     
     def append_to_query(query, options)
-      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :includes, :lock, :readonly, :from
+      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :includes, :lock, :readonly, :from, :conditions
+      query = apply_conditions(query, *options.delete(:conditions)) if options[:conditions]
       options.reject{|k, v| v.blank?}.inject(query) do |query, (k, v)|
         query.send((k.to_sym), v) 
       end
@@ -347,15 +345,14 @@ module ActiveScaffold
       end + active_scaffold_habtm_joins
     end
     
-    def merge_conditions(*conditions)
-      segments = []
-      conditions.each do |condition|
-        unless condition.blank?
-          sql = active_scaffold_config.model.send(:sanitize_sql, condition)
-          segments << sql unless sql.blank?
+    def apply_conditions(query, *conditions)
+      conditions.reject(&:blank?).inject(query) do |query, condition|
+        if condition.is_a?(Array) && !condition.first.is_a?(String) # multiple conditions
+          apply_conditions(query, *condition)
+        else
+          query.where(condition)
         end
       end
-      "(#{segments.join(') AND (')})" unless segments.empty?
     end
 
     # TODO: this should reside on the column, not the controller
