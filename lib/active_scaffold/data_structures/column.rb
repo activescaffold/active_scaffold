@@ -317,7 +317,7 @@ module ActiveScaffold::DataStructures
     # just the field (not table.field)
     def field_name
       return nil if virtual?
-      column ? @active_record_class.connection.quote_column_name(column.name) : association.foreign_key
+      @field_name ||= column ? @active_record_class.connection.quote_column_name(column.name) : association.foreign_key
     end
 
     def <=>(other_column)
@@ -356,7 +356,7 @@ module ActiveScaffold::DataStructures
           self.sort = {:method => "#{self.name}.to_s"}
         elsif self.plural_association?
           self.sort = {:method => "#{self.name}.join(',')"}
-        else
+        elsif @active_record_class.connection
           self.sort = {:sql => self.field}
         end
       end
@@ -365,11 +365,9 @@ module ActiveScaffold::DataStructures
     def initialize_search_sql
       self.search_sql = unless self.virtual?
         if association.nil?
-          self.field.to_s
+          self.field.to_s unless @active_record_class.connection.nil?
         elsif !self.polymorphic_association?
-          [association.klass.table_name, association.klass.primary_key].collect! do |str|
-            association.klass.connection.quote_column_name str
-          end.join('.')
+          [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass.connection.nil?
         end
       end
     end
@@ -379,7 +377,7 @@ module ActiveScaffold::DataStructures
 
     # the table.field name for this column, if applicable
     def field
-      @field ||= [@active_record_class.connection.quote_table_name(@table), field_name].join('.')
+      @field ||= [@active_record_class.quoted_table_name, field_name].join('.')
     end
     
     def estimate_weight
