@@ -50,9 +50,11 @@ module ActiveScaffold::Actions
       begin
         self.successful = @record.destroy
         marked_records.delete @record.id.to_s if successful?
-      rescue
+      rescue Exception => ex
         flash[:warning] = as_(:cant_destroy_record, :record => @record.to_label)
         self.successful = false
+        logger.debug ex.message
+        logger.debug ex.backtrace.join("\n")
       end
     end
 
