@@ -358,6 +358,8 @@ module ActiveScaffold::DataStructures
           self.sort = {:method => "#{self.name}.join(',')"}
         elsif @active_record_class.connection
           self.sort = {:sql => self.field}
+        else
+          self.sort = false
         end
       end
     end

@@ -103,8 +103,6 @@ module ActiveScaffold::DataStructures
         result = false
         # skip if this matches a constrained column
         result = true if constraint_columns.include?(column.name.to_sym)
-        # skip if this matches the field_name of a constrained column
-        result = true if column.field_name and constraint_columns.include?(column.field_name.to_sym)
         # skip this field if it's not authorized
         unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || self.action.crud_type, :column => column.name)
           self.unauthorized_columns << column.name.to_sym
