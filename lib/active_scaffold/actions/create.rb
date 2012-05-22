@@ -78,10 +78,7 @@ module ActiveScaffold::Actions
     def do_new
       @record = new_model
       apply_constraints_to_record(@record)
-      if nested?
-        create_association_with_parent(@record)
-        register_constraints_with_action_columns
-      end
+      create_association_with_parent(@record) if nested?
       @record
     end
 
@@ -93,10 +90,7 @@ module ActiveScaffold::Actions
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(new_model, active_scaffold_config.create.columns, hash)
           apply_constraints_to_record(@record, :allow_autosave => true)
-          if nested?
-            create_association_with_parent(@record) 
-            register_constraints_with_action_columns
-          end
+          create_association_with_parent(@record) if nested?
           create_save
         end
       rescue ActiveRecord::ActiveRecordError => ex

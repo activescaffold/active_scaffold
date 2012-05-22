@@ -4,6 +4,10 @@ module ActiveScaffold::DataStructures
     include ActiveScaffold::Configurable
 
     def initialize(*args)
+      set_values(*args)
+    end
+
+    def set_values(*args)
       @set = []
       self.add *args
     end

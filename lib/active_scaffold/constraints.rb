@@ -12,9 +12,13 @@ module ActiveScaffold
     # This lets the ActionColumns object skip constrained columns.
     #
     # If the constraint value is a Hash, then we assume the constraint is a multi-level association constraint (the reverse of a has_many :through) and we do NOT register the constraint column.
-    def register_constraints_with_action_columns(exclude_actions = [])
-      constrained_fields = active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect{|k| k.to_sym}
+    def register_constraints_with_action_columns(constrained_fields = nil)
+      constrained_fields ||= []
+      constrained_fields |= active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect(&:to_sym)
+      exclude_actions = []
       exclude_actions << :list unless active_scaffold_config.list.hide_nested_column
+      exclude_actions << :update unless active_scaffold_config.update.hide_nested_column
+
       if self.class.uses_active_scaffold?
         # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
         active_scaffold_config.actions.each do |action_name|
@@ -108,15 +112,15 @@ module ActiveScaffold
 
       condition = {"#{table}.#{field}" => value}
       if association.options[:polymorphic]
-        begin
-          parent_scaffold = "#{session_info[:parent_scaffold].to_s.camelize}Controller".constantize
-          condition["#{table}.#{association.name}_type"] = parent_scaffold.active_scaffold_config.model_id.to_s
-        rescue ActiveScaffold::ControllerNotFound
-          nil
-        end
+        raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller unless params[:parent_model]
+        condition["#{table}.#{association.name}_type"] = params[:parent_model].constantize.model.to_s
       end
 
       condition
+    end
+
+    def polymorphic_constraint_error(association)
+      "Malformed constraint. You have added a constraint for #{association.name} polymorphic association but parent_model is not set."
     end
 
     def constraint_error(klass, column_name)
@@ -140,6 +144,7 @@ module ActiveScaffold
           if column.plural_association?
             record.send("#{k}").send(:<<, column.association.klass.find(v))
           elsif column.association.options[:polymorphic]
+            raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller unless params[:parent_model]
             record.send("#{k}=", params[:parent_model].constantize.find(v))
           else # regular singular association
             record.send("#{k}=", column.association.klass.find(v))

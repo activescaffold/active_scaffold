@@ -63,9 +63,12 @@ module ActiveScaffold::Config
     private
     
     def columns=(val)
-      @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
-      @columns.action = self
-      @columns.set_columns(@core.columns) if @columns.respond_to?(:set_columns)
+      @columns.set_values(*val) if @column
+      @columns ||= ActiveScaffold::DataStructures::ActionColumns.new(*val).tap do |columns|
+        columns.action = self
+        columns.set_columns(@core.columns) if @columns.respond_to?(:set_columns)
+        columns
+      end
       @columns
     end
   end

@@ -26,11 +26,7 @@ module ActiveScaffold::Actions
     def set_nested
       if params[:parent_scaffold] && (params[:association] || params[:named_scope])
         @nested = ActiveScaffold::DataStructures::NestedInfo.get(active_scaffold_config.model, params)
-        unless @nested.nil?
-          active_scaffold_constraints.merge! @nested.constraints  
-          active_scaffold_constraints[:id] = params[:id] if @nested.belongs_to?
-          register_constraints_with_action_columns
-        end
+        register_constraints_with_action_columns(@nested.constrained_fields) unless @nested.nil?
       end
     end
     
