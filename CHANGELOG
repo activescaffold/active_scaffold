@@ -1,4 +1,7 @@
-= 3.2.9 (not released)
+= 3.2.10 (not released yet)
+- fix nested scaffolds with update action disabled
+
+= 3.2.9
 - remove duplicated conditions with constraints
 - fix constraints for polymorphic associations
 
