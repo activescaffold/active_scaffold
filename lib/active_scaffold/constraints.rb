@@ -16,8 +16,11 @@ module ActiveScaffold
       constrained_fields ||= []
       constrained_fields |= active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect(&:to_sym)
       exclude_actions = []
-      exclude_actions << :list unless active_scaffold_config.list.hide_nested_column
-      exclude_actions << :update unless active_scaffold_config.update.hide_nested_column
+      [:list, :update].each do |action_name|
+	if active_scaffold_config.actions.include? action_name
+          exclude_actions << action_name unless active_scaffold_config.send(action_name).hide_nested_column
+        end
+      end
 
       if self.class.uses_active_scaffold?
         # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
