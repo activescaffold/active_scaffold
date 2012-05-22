@@ -27,7 +27,6 @@ module ActiveScaffold::Actions
     end
 
     def render_field_for_inplace_editing
-      register_constraints_with_action_columns(active_scaffold_config.update.hide_nested_column ? [] : [:update]) if nested?
       @record = find_if_allowed(params[:id], :update)
       render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
     end
@@ -162,11 +161,11 @@ module ActiveScaffold::Actions
 
     def new_model
       model = beginning_of_chain
-      if model.columns_hash[model.inheritance_column]
-        build_options = {model.inheritance_column.to_sym => active_scaffold_config.model_id} if nested? && nested.association && nested.association.collection?
-        params = self.params # in new action inheritance_column must be in params
-        params = params[:record] || {} unless params[model.inheritance_column] # in create action must be inside record key
-        model = params.delete(model.inheritance_column).camelize.constantize if params[model.inheritance_column]
+      if model.columns_hash[column = model.inheritance_column]
+        build_options = {column.to_sym => active_scaffold_config.model_id} if nested? && nested.association && nested.association.collection?
+        model_name = params.delete(column) # in new action inheritance_column must be in params
+        model_name ||= params[:record].delete(column) unless params[:record].blank? # in create action must be inside record key
+        model = model_name.camelize.constantize if model_name
       end
       model.respond_to?(:build) ? model.build(build_options || {}) : model.new
     end

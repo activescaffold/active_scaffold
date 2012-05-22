@@ -19,7 +19,7 @@ module ActiveScaffold::DataStructures
       end
     end
     
-    attr_accessor :association, :child_association, :parent_model, :parent_scaffold, :parent_id, :constrained_fields, :constraints, :scope
+    attr_accessor :association, :child_association, :parent_model, :parent_scaffold, :parent_id, :constrained_fields, :scope
         
     def initialize(model, nested_info)
       @parent_model = nested_info[:parent_model]
@@ -108,16 +108,16 @@ module ActiveScaffold::DataStructures
     protected
     
     def iterate_model_associations(model)
-      @constraints = {}
-      @constraints[association.foreign_key.to_sym] = parent_id unless association.belongs_to?
+      @constrained_fields = Set.new
+      constrained_fields << association.foreign_key.to_sym unless association.belongs_to?
       model.reflect_on_all_associations.each do |current|
         if !current.belongs_to? && association.foreign_key == current.association_foreign_key
-          constraints[current.name.to_sym] = parent_id
+          constrained_fields << current.name.to_sym
           @child_association = current if current.klass == @parent_model
         end
         if association.foreign_key == current.foreign_key
           # show columns for has_many and has_one child associationes
-          constraints[current.name.to_sym] = parent_id if current.belongs_to?
+          constrained_fields << current.name.to_sym if current.belongs_to?
           if association.options[:as] and current.options[:polymorphic]
             @child_association = current if association.options[:as].to_sym == current.name
           else
@@ -125,7 +125,7 @@ module ActiveScaffold::DataStructures
           end
         end
       end
-      @constrained_fields = @constraints.keys
+      @constrained_fields = @constrained_fields.to_a
     end
   end
   
