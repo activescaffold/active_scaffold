@@ -176,9 +176,9 @@ module ActiveScaffold::Config
     end
 
     def self.method_missing(name, *args)
-      klass = "ActiveScaffold::Config::#{name.to_s.titleize}".constantize rescue nil
+      klass = "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize rescue nil
       if @@actions.include? name.to_s.underscore and klass
-        return eval("ActiveScaffold::Config::#{name.to_s.titleize}")
+        return eval("ActiveScaffold::Config::#{name.to_s.camelcase}")
       end
       super
     end

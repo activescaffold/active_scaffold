@@ -84,14 +84,16 @@ module ActiveScaffold::Actions
 
     # A somewhat complex method to actually create a new record. The complexity is from support for subforms and associated records.
     # If you want to customize this behavior, consider using the +before_create_save+ and +after_create_save+ callbacks.
-    def do_create(hash = nil)
-      hash ||= params[:record]
+    def do_create(options = {})
+      attributes = options[:attributes] || params[:record]
       begin
         active_scaffold_config.model.transaction do
-          @record = update_record_from_params(new_model, active_scaffold_config.create.columns, hash)
+          @record = update_record_from_params(new_model, active_scaffold_config.create.columns, attributes)
           apply_constraints_to_record(@record, :allow_autosave => true)
           create_association_with_parent(@record) if nested?
-          create_save
+          before_create_save(@record)
+          self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
+          create_save(@record) unless options[:skip_save]
         end
       rescue ActiveRecord::ActiveRecordError => ex
         flash[:error] = ex.message
@@ -99,12 +101,10 @@ module ActiveScaffold::Actions
       end
     end
 
-    def create_save
-      before_create_save(@record)
-      self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
+    def create_save(record)
       if successful?
-        @record.save! and @record.save_associated!
-        after_create_save(@record)
+        record.save! and record.save_associated!
+        after_create_save(record)
       end
     end
 
