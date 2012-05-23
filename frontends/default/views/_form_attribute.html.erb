@@ -10,7 +10,7 @@
     <% unless local_assigns[:only_value] %>
     <%=raw active_scaffold_input_for column, scope %>
     <% else %>
-    <%= content_tag :span, get_column_value(@record, column), options.except(:name) %>
+    <%= content_tag :span, get_column_value(@record, column), column_options.except(:name) %>
     <%= hidden_field :record, column.association ? column.association.foreign_key : column.name, active_scaffold_input_options(column, scope) -%>
     <% end %>
     <% if column.update_columns -%>
