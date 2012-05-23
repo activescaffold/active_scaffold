@@ -154,6 +154,7 @@ module ActiveScaffold::Actions
       params.reject {|key, value| [:controller, :action, :id, :page, :sort, :sort_direction].include?(key.to_sym)}.each do |key, value|
         next unless active_scaffold_config.model.columns_hash[key.to_s]
         next if active_scaffold_constraints[key.to_sym]
+        next if nested? and nested.constrained_fields.include? key.to_sym
         conditions[key] = value
       end
       conditions
