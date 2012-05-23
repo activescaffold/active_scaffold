@@ -6,7 +6,7 @@ module ActiveScaffold::Actions
         after_filter :clear_flashes
       end
       base.helper_method :nested?
-      base.helper_method :beginning_of_chain
+      base.helper_method :calculate
       base.helper_method :new_model
     end
     def render_field
