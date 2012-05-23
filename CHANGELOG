@@ -2,7 +2,7 @@
 - fix nested scaffolds with update action disabled
 - initial work for tableless support (index with limited options)
 - fix scrolling on closing nested scaffolds
-- fix calculations which were broken in 3.2.9
+- fix calculations and count includes which were broken in 3.2.9
 
 = 3.2.9
 - remove duplicated conditions with constraints
