@@ -1,6 +1,7 @@
 = 3.2.10 (not released yet)
 - fix nested scaffolds with update action disabled
-= initial work for tableless support (index with limited options)
+- initial work for tableless support (index with limited options)
+- fix scrolling on closing nested scaffolds
 
 = 3.2.9
 - remove duplicated conditions with constraints

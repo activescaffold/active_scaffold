@@ -109,7 +109,7 @@ document.observe("dom:loaded", function() {
     var action_link = ActiveScaffold.find_action_link(event.findElement());
     if (action_link) {
       if (action_link.position) {
-        action_link.close(event.memo.request.responseText);
+        action_link.close();
       } else {
         event.memo.request.evalResponse(); 
       }
@@ -819,7 +819,7 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     this.enable();
     this.adapter.remove();
     if (this.hide_target) this.target.show();
-    if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+    if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target.id, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
   },
 
   get_new_adapter_id: function() {
