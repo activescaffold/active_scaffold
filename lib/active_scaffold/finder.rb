@@ -325,6 +325,14 @@ module ActiveScaffold
       end
       pager.page(options[:page])
     end
+
+    def calculate(column)
+      conditions = all_conditions
+      includes = active_scaffold_config.list.count_includes
+      includes ||= active_scaffold_includes unless conditions.nil?
+      append_to_query(beginning_of_chain, :conditions => conditions, :includes => includes,
+        :joins => joins_for_collection).calculate(column.calculate, column.name)
+    end
     
     def append_to_query(query, options)
       options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :includes, :lock, :readonly, :from, :conditions
