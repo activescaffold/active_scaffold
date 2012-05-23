@@ -76,9 +76,10 @@ module ActiveScaffold::Actions
     end
 
     def update_save(options = {})
+      attributes = options[:attributes] || params[:record]
       begin
         active_scaffold_config.model.transaction do
-          @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record]) unless options[:no_record_param_update]
+          @record = update_record_from_params(@record, active_scaffold_config.update.columns, attributes) unless options[:no_record_param_update]
           before_update_save(@record)
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
           if successful?
