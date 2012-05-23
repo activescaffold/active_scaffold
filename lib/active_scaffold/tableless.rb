@@ -32,6 +32,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     def find_one(id)
       @klass.find_one(id, self)
     end
+
+    def count
+      @klass.count(self)
+    end
   end
 
   def self.columns; @columns ||= []; end
@@ -58,6 +62,14 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
 
   def self.find_one(id, relation)
     raise 'self.find_one must be implemented in a Tableless model'
+  end
+
+  def self.count(*args)
+    if args.size == 1 && args.first.is_a?(Relation)
+      find_all(args.first).size
+    else
+      scoped.count(*args)
+    end
   end
 
   def destroy
