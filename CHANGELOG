@@ -1,8 +1,15 @@
-= 3.2.10 (not released yet)
+= 3.2.12 (not released yet)
+
+= 3.2.11
+- improve support for tableless models and active_scaffold_batch
+- fix count includes which were broken in 3.2.9
+- remove duplicated conditions in nested scaffolds, added by conditions_from_params
+
+= 3.2.10
 - fix nested scaffolds with update action disabled
 - initial work for tableless support (index with limited options)
 - fix scrolling on closing nested scaffolds
-- fix calculations and count includes which were broken in 3.2.9
+- fix calculations which were broken in 3.2.9
 
 = 3.2.9
 - remove duplicated conditions with constraints

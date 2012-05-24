@@ -25,6 +25,12 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       end
     end
 
+    def except(*skips)
+      super.tap do |new_relation|
+        new_relation.conditions = conditions unless skips.include? :where
+      end
+    end
+
     def to_a
       @klass.find_all(self)
     end
@@ -33,8 +39,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       @klass.find_one(id, self)
     end
 
-    def count
-      @klass.count(self)
+    def execute_simple_calculation(operation, column_name, distinct)
+      @klass.execute_simple_calculation(self, operation, column_name, distinct)
     end
   end
 
@@ -64,11 +70,11 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     raise 'self.find_one must be implemented in a Tableless model'
   end
 
-  def self.count(*args)
-    if args.size == 1 && args.first.is_a?(Relation)
-      find_all(args.first).size
+  def self.execute_simple_calculation(relation, operation, column_name, distinct)
+    if operation == 'count' && column_name == :all && !distinct
+      find_all(relation).size
     else
-      scoped.count(*args)
+      raise "self.execute_simple_calculation must be implemented in a Tableless model to support #{operation} #{column_name} #{' distinct' if distinct} columns"
     end
   end
 
