@@ -278,11 +278,11 @@ module ActiveScaffold
         end
       end
 
-      def column_scope(column)
+      def column_scope(column, scope = nil)
         if column.plural_association?
-          "[#{column.name}][#{@record.id || generate_temporary_id}]"
+          "#{scope}[#{column.name}][#{@record.id || generate_temporary_id}]"
         else
-          "[#{column.name}]"
+          "#{scope}[#{column.name}]"
         end
       end
 
