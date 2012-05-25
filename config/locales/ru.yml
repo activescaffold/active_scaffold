@@ -35,6 +35,7 @@ ru:
       many: 'записей'
       other: 'записи'
     hide: 'Скрыть'
+    inplace_edit_handle: '--'
     live_search: 'Поиск'
     loading: 'Загрузка…'
     next: 'Следующее'
