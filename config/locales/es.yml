@@ -31,6 +31,7 @@ es:
       one: 'encontrado'
       other: 'encontrados'
     hide: 'Ocultar'
+    inplace_edit_handle: '--'
     live_search: 'Buscar en Vivo'
     loading: 'Cargando…'
     nested_for_model: '%{nested_model} de %{parent_model}'

@@ -256,7 +256,7 @@ module ActiveScaffold
         tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
                        :title => as_(:click_to_edit), 'data-ie_id' => record.id.to_s}
 
-        content_tag(:span, as_(:click_to_edit), :class => 'handle') <<
+        content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<
         content_tag(:span, formatted_column, tag_options)
       end
 
