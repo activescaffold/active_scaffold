@@ -6,8 +6,12 @@ module ActiveScaffold
         controller.to_s.gsub("/", "__").html_safe
       end
 
-      def controller_id(controller = (params[:eid] || params[:parent_controller] || params[:controller]))
+      def controller_id(controller = (params[:eid] || nested_id || params[:parent_controller] || params[:controller]))
         controller_id ||= 'as_' + id_from_controller(controller)
+      end
+
+      def nested_id
+        "#{nested.parent_scaffold.controller_path}-#{nested.parent_id}-#{params[:controller]}" if nested?
       end
 
       def active_scaffold_id
