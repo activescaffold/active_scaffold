@@ -1,7 +1,7 @@
 <% for name in [:info, :warning, :error] %>
   <% if flash[name] %>
     <div class="<%= "#{name}-message message" %>">
-      <%= h flash[name] %>
+      <%= display_message flash[name] %>
       <% if request.xhr? %>
         <a href="#" class="close" title="<%= as_(:close) %>"><%= as_(:close) %></a>
       <% end %>

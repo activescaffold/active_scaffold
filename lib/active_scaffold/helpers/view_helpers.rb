@@ -308,6 +308,19 @@ module ActiveScaffold
         method if respond_to?(method)
       end
 
+      def display_message(message)
+        if (highlights = active_scaffold_config.highlight_messages)
+          message = highlights.inject(message) do |msg, (phrases, highlighter)|
+            highlight(msg, phrases, highlighter)
+          end
+        end
+        if (format = active_scaffold_config.timestamped_messages)
+          format = :short if format == true
+          message = "#{content_tag :div, l(Time.current, :format => format), :class => 'timestamp'} #{content_tag :div, message, :class => 'message-content'}".html_safe
+        end
+        message
+      end
+
       def active_scaffold_error_messages_for(*params)
         options = params.extract_options!.symbolize_keys
         options.reverse_merge!(:container_tag => :div, :list_type => :ul)
