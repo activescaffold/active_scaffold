@@ -488,7 +488,7 @@ var ActiveScaffold = {
   },
 
   report_500_response: function(active_scaffold_id) {
-    server_error = $(active_scaffold_id).down('td.messages-container p.server-error');
+    var server_error = $(active_scaffold_id).down('td.messages-container p.server-error');
     if (server_error.visible()) {
       server_error.highlight();
     } else {
