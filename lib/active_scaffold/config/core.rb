@@ -60,6 +60,14 @@ module ActiveScaffold::Config
     cattr_accessor :sti_create_links
     @@sti_create_links = true
 
+    # prefix messages with current timestamp, set the format to display (you can use I18n keys) or true and :short will be used
+    cattr_accessor :timestamped_messages
+    @@timestamped_messages = false
+
+    # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use highlight rails helper
+    cattr_accessor :highlight_messages
+    @@highlight_messages = nil
+
     # instance-level configuration
     # ----------------------------
 
@@ -101,6 +109,12 @@ module ActiveScaffold::Config
     # STI children models, use an array of model names
     attr_accessor :sti_children
 
+    # prefix messages with current timestamp, set the format to display (you can use I18n keys) or true and :short will be used
+    attr_accessor :timestamped_messages
+
+    # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use highlight rails helper
+    attr_accessor :highlight_messages
+
     ##
     ## internal usage only below this point
     ## ------------------------------------
@@ -129,6 +143,8 @@ module ActiveScaffold::Config
 
       # inherit from the global set of action links
       @action_links = self.class.action_links.clone
+      @timestamped_messages = self.class.timestamped_messages
+      @highlight_messages = self.class.highlight_messages
     end
 
     # To be called after your finished configuration
