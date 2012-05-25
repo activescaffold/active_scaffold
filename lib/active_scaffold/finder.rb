@@ -19,14 +19,13 @@ module ActiveScaffold
         columns.each do |column|
           where_clauses << ((column.column.nil? || column.column.text?) ? "#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?" : "#{column.search_sql} = ?")
         end
-        phrase = "(#{where_clauses.join(' OR ')})"
+        phrase = where_clauses.join(' OR ')
 
-        sql = ([phrase] * tokens.length).join(' AND ')
-        tokens = tokens.collect do |value|
-          columns.collect {|column| (column.column.nil? || column.column.text?) ? like_pattern.sub('?', value) : column.column.type_cast(value)}
-        end.flatten
-
-        [sql, *tokens]
+        tokens.collect do |value|
+          columns.inject([phrase]) do |condition, column|
+            condition.push((column.column.nil? || column.column.text?) ? like_pattern.sub('?', value) : column.column.type_cast(value))
+          end
+        end
       end
 
       # Generates an SQL condition for the given ActiveScaffold column based on
@@ -34,12 +33,13 @@ module ActiveScaffold
       # TODO: this should reside on the column, not the controller
       def condition_for_column(column, value, text_search = :full)
         like_pattern = like_pattern(text_search)
+        if self.respond_to?("condition_for_#{column.name}_column")
+          return self.send("condition_for_#{column.name}_column", column, value, like_pattern)
+        end
         return unless column and column.search_sql and not value.blank?
-        search_ui = column.search_ui || column.column.type
+        search_ui = column.search_ui || column.column.try(:type)
         begin
-          if self.respond_to?("condition_for_#{column.name}_column")
-            self.send("condition_for_#{column.name}_column", column, value, like_pattern)
-          elsif self.respond_to?("condition_for_#{search_ui}_type")
+          if search_ui && self.respond_to?("condition_for_#{search_ui}_type")
             self.send("condition_for_#{search_ui}_type", column, value, like_pattern)
           else
             unless column.search_sql.instance_of? Proc
@@ -66,7 +66,7 @@ module ActiveScaffold
             end
           end
         rescue Exception => e
-          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{@controller.class}"
+          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{self.name}"
           raise e
         end
       end
@@ -90,6 +90,8 @@ module ActiveScaffold
           else
             ["#{column.search_sql} = ?", column.column.type_cast(value)]
           end
+        elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
+          condition_for_null_type(column, value[:opt], like_pattern)
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::StringComparators.values.include?(value[:opt])
@@ -105,11 +107,30 @@ module ActiveScaffold
       
       def condition_value_for_datetime(value, conversion = :to_time)
         if value.is_a? Hash
-          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[field][part].to_i}) rescue nil
+          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[part].to_i}) rescue nil
         elsif value.respond_to?(:strftime)
-          value.send(conversion)
+          if conversion == :to_time
+            # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
+            # https://github.com/rails/rails/pull/2453
+            value.to_time.in_time_zone
+          else
+            value.send(conversion)
+          end
+        elsif conversion == :to_date
+          Date.strptime(value, I18n.t('date.formats.default')) rescue nil
         else
-          Time.zone.parse(value).in_time_zone.send(conversion) rescue nil
+          parts = Date._parse(value)
+          format = I18n.translate 'time.formats.picker', :default => '' if ActiveScaffold.js_framework == :jquery
+          if format.blank?
+            time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect {|part, format_part| format_part if parts[part].present?}.compact
+            format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
+          else
+            format += ' %z' if parts[:offset].present? && format !~ /%z/i
+          end
+          time = DateTime.strptime(value, format)
+          time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
+          time = time.send(conversion) unless conversion == :to_time
+          time
         end unless value.nil? || value.blank?
       end
 
@@ -225,13 +246,13 @@ module ActiveScaffold
     end
     
     def all_conditions
-      merge_conditions(
+      [
         active_scaffold_conditions,                   # from the search modules
         conditions_for_collection,                    # from the dev
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
         conditions_from_constraints,                  # from any constraints (embedded scaffolds)
         active_scaffold_session_storage[:conditions] # embedding conditions (weaker constraints)
-      )
+      ]
     end
     
     # returns a single record (the given id) but only if it's allowed for the specified action.
@@ -242,66 +263,81 @@ module ActiveScaffold
       raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for?(:crud_type => crud_type.to_sym)
       return record
     end
-
-    # returns a Paginator::Page (not from ActiveRecord::Paginator) for the given parameters
-    # options may include:
+    # valid options may include:
     # * :sorting - a Sorting DataStructure (basically an array of hashes of field => direction, e.g. [{:field1 => 'asc'}, {:field2 => 'desc'}]). please note that multi-column sorting has some limitations: if any column in a multi-field sort uses method-based sorting, it will be ignored. method sorting only works for single-column sorting.
     # * :per_page
     # * :page
-    # TODO: this should reside on the model, not the controller
-    def find_page(options = {})
-      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination
-
+    def finder_options(options = {})
       search_conditions = all_conditions
       full_includes = (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
+
+      # create a general-use options array that's compatible with Rails finders
+      finder_options = { :reorder => options[:sorting].try(:clause),
+                         :conditions => search_conditions,
+                         :joins => joins_for_finder,
+                         :includes => full_includes}
+    
+      finder_options.merge! custom_finder_options
+      finder_options
+    end
+
+    # Returns a hash with options to count records, rejecting select and order options
+    # See finder_options for valid options
+    def count_options(find_options = {}, count_includes = nil)
+      count_includes ||= find_options[:includes] unless find_options[:conditions].nil?
+      options = find_options.reject{|k,v| [:select, :reorder].include? k}
+      options[:includes] = count_includes
+      options
+    end
+
+    # returns a Paginator::Page (not from ActiveRecord::Paginator) for the given parameters
+    # See finder_options for valid options
+    def find_page(options = {})
+      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination
       options[:per_page] ||= 999999999
       options[:page] ||= 1
-      options[:count_includes] ||= full_includes unless search_conditions.nil?
 
+      find_options = finder_options(options)
       klass = beginning_of_chain
       
-      # create a general-use options array that's compatible with Rails finders
-      finder_options = { :order => options[:sorting].try(:clause),
-                         :where => search_conditions,
-                         :joins => joins_for_finder,
-                         :includes => options[:count_includes]}
-                         
-      finder_options.merge! custom_finder_options
-
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count_query = append_to_query(klass, finder_options.reject{|k, v| [:select, :order].include?(k)})
-      count = count_query.count unless options[:pagination] == :infinite
+      if options[:pagination] && options[:pagination] != :infinite
+        count_query = append_to_query(klass, count_options(find_options, options[:count_includes]))
+        count = count_query.count unless options[:pagination] == :infinite
+      end
   
       # Converts count to an integer if ActiveRecord returned an OrderedHash
-      # that happens when finder_options contains a :group key
+      # that happens when find_options contains a :group key
       count = count.length if count.is_a? ActiveSupport::OrderedHash
-      finder_options.merge! :includes => full_includes
 
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          sorted_collection = sort_collection_by_column(append_to_query(klass, finder_options).all, *options[:sorting].first)
+          sorted_collection = sort_collection_by_column(append_to_query(klass, find_options).all, *options[:sorting].first)
           sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
           sorted_collection
         end
       else
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          finder_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
-          append_to_query(klass, finder_options).all
+          find_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
+          append_to_query(klass, find_options).all
         end
       end
       pager.page(options[:page])
     end
+
+    def calculate(column)
+      conditions = all_conditions
+      includes = active_scaffold_config.list.count_includes
+      includes ||= active_scaffold_includes unless conditions.nil?
+      append_to_query(beginning_of_chain, :conditions => conditions, :includes => includes,
+        :joins => joins_for_collection).calculate(column.calculate, column.name)
+    end
     
     def append_to_query(query, options)
-      options.assert_valid_keys :where, :select, :group, :order, :limit, :offset, :joins, :includes, :lock, :readonly, :from
+      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :includes, :lock, :readonly, :from, :conditions
+      query = apply_conditions(query, *options.delete(:conditions)) if options[:conditions]
       options.reject{|k, v| v.blank?}.inject(query) do |query, (k, v)|
-        # default ordering of model has a higher priority than current queries ordering
-        # fix this by removing existing ordering from arel
-        if k.to_sym == :order
-          query = query.where('1=1') unless query.is_a?(ActiveRecord::Relation)
-          query = query.except(:order)
-        end
         query.send((k.to_sym), v) 
       end
     end
@@ -317,15 +353,14 @@ module ActiveScaffold
       end + active_scaffold_habtm_joins
     end
     
-    def merge_conditions(*conditions)
-      segments = []
-      conditions.each do |condition|
-        unless condition.blank?
-          sql = active_scaffold_config.model.send(:sanitize_sql, condition)
-          segments << sql unless sql.blank?
+    def apply_conditions(query, *conditions)
+      conditions.reject(&:blank?).inject(query) do |query, condition|
+        if condition.is_a?(Array) && !condition.first.is_a?(String) # multiple conditions
+          apply_conditions(query, *condition)
+        else
+          query.where(condition)
         end
       end
-      "(#{segments.join(') AND (')})" unless segments.empty?
     end
 
     # TODO: this should reside on the column, not the controller

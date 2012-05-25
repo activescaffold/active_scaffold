@@ -42,26 +42,10 @@ module ActiveScaffold
         end
       end
 
-      def partial_pieces(partial_path)
-        if partial_path.include?('/')
-          return File.dirname(partial_path), File.basename(partial_path)
-        else
-          return controller.class.controller_path, partial_path
-        end
-      end
-
       # This is the template finder logic, keep it updated with however we find stuff in rails
       # currently this very similar to the logic in ActionBase::Base.render for options file
-      # TODO: Work with rails core team to find a better way to check for this.
-      # Not working so far for rais 3.1
-      def template_exists?(template_name, path)
-        begin
-          method = 'find_template'
-          #self.view_paths.send(method, template_name)
-          return false
-        rescue ActionView::MissingTemplate => e
-          return false
-        end
+      def template_exists?(template_name, partial = false)
+        lookup_context.exists? template_name, '', partial
       end
 
       def generate_temporary_id
@@ -86,7 +70,7 @@ module ActiveScaffold
         return false if column.polymorphic_association?
 
         # A column shouldn't be in the subform if it's the reverse association to the parent
-        return false if column.association.reverse_for?(parent_record.class)
+        return false if column.association.inverse_for?(parent_record.class)
 
         return true
       end
@@ -100,42 +84,9 @@ module ActiveScaffold
         (output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>").html_safe
       end
 
-      # Provides list of javascripts to include with +javascript_include_tag+
-      # You can use this with your javascripts like
-      #   <%= javascript_include_tag :defaults, 'your_own_cool_script', active_scaffold_javascripts, :cache => true %>
-      def active_scaffold_javascripts(frontend = :default)
-        ActiveScaffold::Config::Core.javascripts(frontend).collect do |name|
-          ActiveScaffold::Config::Core.asset_path(name, frontend)
-        end
-      end
-      
-      # Provides stylesheets to include with +stylesheet_link_tag+
-      def active_scaffold_stylesheets(frontend = :default)
-        [ActiveScaffold::Config::Core.asset_path("stylesheet.css", frontend)]
-      end
-
-      # Provides stylesheets for IE to include with +stylesheet_link_tag+ 
-      def active_scaffold_ie_stylesheets(frontend = :default)
-        [ActiveScaffold::Config::Core.asset_path("stylesheet-ie.css", frontend)]
-      end
-
-      # easy way to include ActiveScaffold assets
-      def active_scaffold_includes(*args)
-        frontend = args.first.is_a?(Symbol) ? args.shift : :default
-        options = args.first.is_a?(Hash) ? args.shift : {}
-        js = javascript_include_tag(*active_scaffold_javascripts(frontend).push(options))
-
-        css = stylesheet_link_tag(*active_scaffold_stylesheets(frontend).push(options))
-        options[:cache] += '_ie' if options[:cache].is_a? String
-        options[:concat] += '_ie' if options[:concat].is_a? String
-        ie_css = stylesheet_link_tag(*active_scaffold_ie_stylesheets(frontend).push(options))
-
-        js + "\n" + css + "\n<!--[if IE]>".html_safe + ie_css + "<![endif]-->\n".html_safe
-      end
-
       # a general-use loading indicator (the "stuff is happening, please wait" feedback)
       def loading_indicator_tag(options)
-        image_tag "indicator.gif", :style => "visibility:hidden;", :id => loading_indicator_id(options), :alt => "loading indicator", :class => "loading-indicator"
+        image_tag "active_scaffold/indicator.gif", :style => "visibility:hidden;", :id => loading_indicator_id(options), :alt => "loading indicator", :class => "loading-indicator"
       end
 
       # Creates a javascript-based link that toggles the visibility of some element on the page.
@@ -149,7 +100,7 @@ module ActiveScaffold
       end
 
       def skip_action_link(link, *args)
-        (!link.ignore_method.nil? and controller.try(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
+        (!link.ignore_method.nil? && controller.respond_to?(link.ignore_method) && controller.send(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
       end
 
       def render_action_link(link, url_options, record = nil, html_options = {})
@@ -183,17 +134,18 @@ module ActiveScaffold
       
       def action_link_html_options(link, url_options, record, html_options)
         link_id = get_action_link_id(url_options, record, link.column)
-        html_options.reverse_merge! link.html_options.merge(:class => link.action)
+        html_options.reverse_merge! link.html_options.merge(:class => link.action.to_s)
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
         html_options[:method] = link.method if link.method != :get
 
-        html_options['data-confirm'] = link.confirm(record.try(:to_label)) if link.confirm?
-        html_options['data-position'] = link.position if link.position and link.inline?
         html_options[:class] += ' as_action' if link.inline?
-        html_options['data-action'] = link.action if link.inline?
+        html_options[:data] = {}
+        html_options[:data][:confirm] = link.confirm(record.try(:to_label)) if link.confirm?
+        html_options[:data][:position] = link.position if link.position and link.inline?
+        html_options[:data][:action] = link.action if link.inline?
         if link.popup?
-          html_options['data-popup'] = true
+          html_options[:data][:popup] = true
           html_options[:target] = '_blank'
         end
         html_options[:id] = link_id
@@ -236,15 +188,14 @@ module ActiveScaffold
       
       def url_options_for_nested_link(column, record, link, url_options, options = {})
         if column && column.association 
-          url_options[:assoc_id] = url_options.delete(:id)
+          url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:id] = record.send(column.association.name).id if column.singular_association? && record.send(column.association.name).present?
-          link.eid = "#{controller_id.from(3)}_#{record.id}_#{column.association.name}" unless options.has_key?(:reuse_eid)
-          url_options[:eid] = link.eid
+          url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
         elsif link.parameters && link.parameters[:named_scope]
-          url_options[:assoc_id] = url_options.delete(:id)
-          link.eid = "#{controller_id.from(3)}_#{record.id}_#{link.parameters[:named_scope]}" unless options.has_key?(:reuse_eid)
-          url_options[:eid] = link.eid
+          url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
+          url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
         end
+        nested.constrained_fields.each { |field| url_options.delete field } if nested?
       end
 
       def url_options_for_sti_link(column, record, link, url_options, options = {})
@@ -262,6 +213,17 @@ module ActiveScaffold
         end
       end
 
+      def list_row_class(record)
+        class_override_helper = :"#{clean_class_name(record.class.name)}_list_row_class"
+        respond_to?(class_override_helper) ? send(class_override_helper, record) : ''
+      end
+
+      def column_attributes(column, record)
+        method = override_helper column, 'column_attributes'
+        return send(method, record) if method
+        {}
+      end
+
       def column_class(column, column_value, record)
         classes = []
         classes << "#{column.name}-column"
@@ -275,6 +237,7 @@ module ActiveScaffold
         classes << 'empty' if column_empty? column_value
         classes << 'sorted' if active_scaffold_config.list.user.sorting.sorts_on?(column)
         classes << 'numeric' if column.column and [:decimal, :float, :integer].include?(column.column.type)
+        classes << 'in_place_editor_field' if inplace_edit?(record, column)
         classes.join(' ').rstrip
       end
       
@@ -287,25 +250,21 @@ module ActiveScaffold
       end
 
       def as_main_div_class
-        classes = ["active-scaffold", "active-scaffold-#{controller_id}", "#{params[:controller]}-view", "#{active_scaffold_config.theme}-theme"]
+        classes = ["active-scaffold", "active-scaffold-#{controller_id}", "#{id_from_controller params[:controller]}-view", "#{active_scaffold_config.theme}-theme"]
         classes << "as_touch" if touch_device?
         classes.join(' ')
       end
 
       def column_empty?(column_value)
         empty = column_value.nil?
-        empty ||= column_value.empty? if column_value.respond_to? :empty?
+        empty ||= column_value.blank? if column_value.respond_to? :blank?
         empty ||= ['&nbsp;', active_scaffold_config.list.empty_field_text].include? column_value if String === column_value
         return empty
       end
 
       def column_calculation(column)
         unless column.calculate.instance_of? Proc
-          conditions = controller.send(:all_conditions)
-          includes = active_scaffold_config.list.count_includes
-          includes ||= controller.send(:active_scaffold_includes) unless conditions.nil?
-          calculation = beginning_of_chain.calculate(column.calculate, column.name, :conditions => conditions,
-           :joins => controller.send(:joins_for_collection), :include => includes)
+          calculate(column)
         else
           column.calculate.call(@records)
         end
@@ -313,7 +272,7 @@ module ActiveScaffold
 
       def render_column_calculation(column)
         calculation = column_calculation(column)
-        override_formatter = "render_#{column.name}_#{column.calculate}"
+        override_formatter = "render_#{column.name}_#{column.calculate.is_a?(Proc) ? :calculate : column.calculate}"
         calculation = send(override_formatter, calculation) if respond_to? override_formatter
 
         "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
@@ -325,10 +284,30 @@ module ActiveScaffold
 
       def column_show_add_new(column, associated, record)
         value = (column.plural_association? && !column.readonly_association?) || (column.singular_association? and not associated.empty?)
-        value = false unless record.class.authorized_for?(:crud_type => :create)
+        value = false unless column.association.klass.authorized_for?(:crud_type => :create)
         value
       end
-      
+ 
+      def clean_column_name(name)
+        name.to_s.gsub('?', '')
+      end
+
+      def clean_class_name(name)
+        name.underscore.gsub('/', '_')
+      end
+     
+      # the naming convention for overriding with helpers
+      def override_helper_name(column, suffix, class_prefix = false)
+        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_#{suffix}"
+      end
+
+      def override_helper(column, suffix)
+        method_with_class = override_helper_name(column, suffix, true)
+        return method_with_class if respond_to?(method_with_class)
+        method = override_helper_name(column, suffix)
+        method if respond_to?(method)
+      end
+
       def active_scaffold_error_messages_for(*params)
         options = params.extract_options!.symbolize_keys
         options.reverse_merge!(:container_tag => :div, :list_type => :ul)

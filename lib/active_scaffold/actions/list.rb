@@ -16,29 +16,28 @@ module ActiveScaffold::Actions
     end
 
     def list
-      do_list
-      do_new if active_scaffold_config.list.always_show_create
-      @record ||= new_model if active_scaffold_config.list.always_show_search
+      if %w(index list).include? action_name
+        do_list
+      else
+        do_refresh_list
+      end
       @nested_auto_open = active_scaffold_config.list.nested_auto_open
       respond_to_action(:list)
     end
     
     protected
     def list_respond_to_html
-      if params.delete(:embedded)
+      if embedded?
         render :action => 'list', :layout => false
       else
         render :action => 'list'
       end
     end
     def list_respond_to_js
-      if params[:adapter]
-        render(:partial => 'list_with_header')
-      elsif params[:embedded]
-        params.delete(:embedded)
+      if params[:adapter] || embedded?
         render(:partial => 'list_with_header')
       else
-        render :action => 'list.js'
+        render :partial => 'refresh_list', :formats => [:js]
       end
     end
     def list_respond_to_xml
@@ -55,14 +54,15 @@ module ActiveScaffold::Actions
       render(:partial => 'row', :locals => {:record => @record})
     end
 
-    def row_respond_to_js
-      render(:partial => 'row', :locals => {:record => @record})
+    # The actual algorithm to prepare for the list view
+    def set_includes_for_list_columns
+      includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
+      self.active_scaffold_includes.concat includes_for_list_columns
     end
 
     # The actual algorithm to prepare for the list view
     def do_list
-      includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
-      self.active_scaffold_includes.concat includes_for_list_columns
+      set_includes_for_list_columns
 
       options = { :sorting => active_scaffold_config.list.user.sorting,
         :count_includes => active_scaffold_config.list.user.count_includes }
@@ -75,12 +75,17 @@ module ActiveScaffold::Actions
           })
       end
 
-      page = find_page(options);
+      page = find_page(options)
       if page.items.blank? && !page.pager.infinite?
         page = page.pager.last
         active_scaffold_config.list.user.page = page.number
       end
       @page, @records = page, page.items
+    end
+    
+    def do_refresh_list
+      do_search if respond_to? :do_search
+      do_list
     end
 
     def each_record_in_page
@@ -93,13 +98,7 @@ module ActiveScaffold::Actions
 
     def each_record_in_scope
       do_search if respond_to? :do_search
-      finder_options = { :order => "#{active_scaffold_config.model.connection.quote_table_name(active_scaffold_config.model.table_name)}.#{active_scaffold_config.model.primary_key} ASC",
-        :conditions => all_conditions,
-        :joins => joins_for_finder}
-      finder_options.merge! custom_finder_options
-      finder_options.merge! :include => (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
-      klass = beginning_of_chain
-      klass.all(finder_options).each {|record| yield record}
+      append_to_query(beginning_of_chain, finder_options).all.each {|record| yield record}
     end
 
     # The default security delegates to ActiveRecordPermissions.
@@ -115,14 +114,16 @@ module ActiveScaffold::Actions
     #   self.successful = true
     #   flash[:info] = 'Player fired'
     # end
-    def process_action_link_action(render_action = :action_update)
+    def process_action_link_action(render_action = :action_update, crud_type = nil)
       if request.get?
         # someone has disabled javascript, we have to show confirmation form first
         @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
         respond_to_action(:action_confirmation)
       else
+        @action_link = active_scaffold_config.action_links[action_name]
         if params[:id] && params[:id] && params[:id].to_i > 0
-          @record = find_if_allowed(params[:id], (request.post? || request.put?) ? :update : :delete)
+          crud_type ||= (request.post? || request.put?) ? :update : :delete
+          @record = find_if_allowed(params[:id], crud_type)
           unless @record.nil?
             yield @record
           else
@@ -142,12 +143,11 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_html
-      do_search if respond_to? :do_search
-      do_list
       redirect_to :action => 'index'
     end
 
     def action_update_respond_to_js
+      do_refresh_list unless @record.present?
       render(:action => 'on_action_update')
     end
 
@@ -171,7 +171,11 @@ module ActiveScaffold::Actions
     def list_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
     end
-    alias_method :row_formats, :list_formats
+    alias_method :index_formats, :list_formats
+
+    def row_formats
+      ([:html, :js] + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
+    end
 
     def action_update_formats
       (default_formats + active_scaffold_config.formats).uniq

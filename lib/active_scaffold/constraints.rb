@@ -8,23 +8,20 @@ module ActiveScaffold
       @active_scaffold_constraints ||= active_scaffold_session_storage[:constraints] || {}
     end
 
-    def set_active_scaffold_constraints
-      associations_by_params = {}
-      active_scaffold_config.model.reflect_on_all_associations.each do |association|
-        associations_by_params[association.klass.name.foreign_key] = association.name unless association.options[:polymorphic]
-      end
-      params.each do |key, value|
-        active_scaffold_constraints[associations_by_params[key]] = value if associations_by_params.include? key
-      end
-    end
-
     # For each enabled action, adds the constrained columns to the ActionColumns object (if it exists).
     # This lets the ActionColumns object skip constrained columns.
     #
     # If the constraint value is a Hash, then we assume the constraint is a multi-level association constraint (the reverse of a has_many :through) and we do NOT register the constraint column.
-    def register_constraints_with_action_columns(association_constrained_fields = [], exclude_actions = [])
-      constrained_fields = active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect{|k| k.to_sym}
-      constrained_fields = constrained_fields | association_constrained_fields
+    def register_constraints_with_action_columns(constrained_fields = nil)
+      constrained_fields ||= []
+      constrained_fields |= active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect(&:to_sym)
+      exclude_actions = []
+      [:list, :update].each do |action_name|
+	if active_scaffold_config.actions.include? action_name
+          exclude_actions << action_name unless active_scaffold_config.send(action_name).hide_nested_column
+        end
+      end
+
       if self.class.uses_active_scaffold?
         # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
         active_scaffold_config.actions.each do |action_name|
@@ -44,10 +41,11 @@ module ActiveScaffold
     # All of this work is primarily to support nested scaffolds in a manner generally useful for other
     # embedded scaffolds.
     def conditions_from_constraints
-      conditions = nil
+      hash_conditions = {}
+      conditions = [hash_conditions]
       active_scaffold_constraints.each do |k, v|
         column = active_scaffold_config.columns[k]
-        constraint_condition = if column
+        if column
           # Assume this is a multi-level association constraint.
           # example:
           #   data model: Park -> Den -> Bear
@@ -57,8 +55,8 @@ module ActiveScaffold
             field = far_association.klass.primary_key
             table = far_association.table_name
 
-            active_scaffold_includes.concat([{k => v.keys.first}]) # e.g. {:den => :park}
-            constraint_condition_for("#{table}.#{field}", v.values.first)
+            active_scaffold_includes.concat([{k => far_association.name}]) # e.g. {:den => :park}
+            hash_conditions.merge!("#{table}.#{field}" => v.values.first)
 
           # association column constraint
           elsif column.association
@@ -67,23 +65,20 @@ module ActiveScaffold
             else
               active_scaffold_includes.concat column.includes
             end
-            condition_from_association_constraint(column.association, v)
+            hash_conditions.merge!(condition_from_association_constraint(column.association, v))
 
           # regular column constraints
-          elsif column.searchable?
+          elsif column.searchable? && params[column.name] != v
             active_scaffold_includes.concat column.includes
-            constraint_condition_for(column.search_sql, v)
+            conditions << ["#{column.search_sql} = ?", v]
           end
         # unknown-to-activescaffold-but-real-database-column constraint
-        elsif active_scaffold_config.model.column_names.include? k.to_s
-          constraint_condition_for(k.to_s, v)
+        elsif active_scaffold_config.model.columns_hash[k.to_s] && params[column.name] != v
+          hash_conditions.merge!(k => v)
         else
           raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
         end
-
-        conditions = merge_conditions(conditions, constraint_condition)
       end
-
       conditions
     end
 
@@ -118,20 +113,17 @@ module ActiveScaffold
         value = association.klass.find(value).send(association.options[:primary_key])
       end
 
-      condition = constraint_condition_for("#{table}.#{field}", value)
+      condition = {"#{table}.#{field}" => value}
       if association.options[:polymorphic]
-        begin
-          parent_scaffold = "#{session_info[:parent_scaffold].to_s.camelize}Controller".constantize
-          condition = merge_conditions(
-            condition,
-            constraint_condition_for("#{table}.#{association.name}_type", parent_scaffold.active_scaffold_config.model_id.to_s)
-          )
-        rescue ActiveScaffold::ControllerNotFound
-          nil
-        end
+        raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller unless params[:parent_model]
+        condition["#{table}.#{association.name}_type"] = params[:parent_model].constantize.model.to_s
       end
 
       condition
+    end
+
+    def polymorphic_constraint_error(association)
+      "Malformed constraint. You have added a constraint for #{association.name} polymorphic association but parent_model is not set."
     end
 
     def constraint_error(klass, column_name)
@@ -155,6 +147,7 @@ module ActiveScaffold
           if column.plural_association?
             record.send("#{k}").send(:<<, column.association.klass.find(v))
           elsif column.association.options[:polymorphic]
+            raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller unless params[:parent_model]
             record.send("#{k}=", params[:parent_model].constantize.find(v))
           else # regular singular association
             record.send("#{k}=", column.association.klass.find(v))
@@ -173,12 +166,6 @@ module ActiveScaffold
           record.send("#{k}=", v)
         end
       end
-    end
-
-    private
-
-    def constraint_condition_for(sql, value)
-      value.nil? ? "#{sql} IS NULL" : ["#{sql} = ?", value]
     end
   end
 end

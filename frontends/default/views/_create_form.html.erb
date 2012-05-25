@@ -4,5 +4,5 @@
                                                 :form_action => form_action,
                                                 :method => method ||= :post,
                                                 :cancel_link => cancel_link,
-                                                :headline => headline ||= active_scaffold_config.send(form_action).label(active_scaffold_config.sti_create_links ? @record.class.model_name.human(:count => 1) : nil)} %>
+                                                :headline => headline ||= active_scaffold_config.send(form_action).label(active_scaffold_config.add_sti_create_links? ? @record.class.model_name.human(:count => 1) : nil)} %>
 

@@ -3,6 +3,11 @@ module ActiveScaffold::Config
     include ActiveScaffold::Configurable
     extend ActiveScaffold::Configurable
 
+    def initialize(core_config)
+      @core = core_config
+      @action_group = self.class.action_group.clone if self.class.action_group
+    end
+
     def self.inherited(subclass)
       class << subclass
         # the crud type of the action. possible values are :create, :read, :update, :delete, and nil.
@@ -21,6 +26,11 @@ module ActiveScaffold::Config
     # delegate
     def crud_type; self.class.crud_type end
 
+    def label(model = nil)
+      model ||= @core.label(:count => 1)
+      @label.nil? ? model : as_(@label, :model => model)
+    end
+    
     # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
     attr_accessor :user
 
@@ -53,9 +63,12 @@ module ActiveScaffold::Config
     private
     
     def columns=(val)
-      @columns = ActiveScaffold::DataStructures::ActionColumns.new(*val)
-      @columns.action = self
-      @columns.set_columns(@core.columns) if @columns.respond_to?(:set_columns)
+      @columns.set_values(*val) if @columns
+      @columns ||= ActiveScaffold::DataStructures::ActionColumns.new(*val).tap do |columns|
+        columns.action = self
+        columns.set_columns(@core.columns) if @columns.respond_to?(:set_columns)
+        columns
+      end
       @columns
     end
   end

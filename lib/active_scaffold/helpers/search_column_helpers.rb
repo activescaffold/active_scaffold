@@ -8,20 +8,20 @@ module ActiveScaffold
         options = active_scaffold_search_options(column)
 
         # first, check if the dev has created an override for this specific field for search
-        if override_search_field?(column)
-          send(override_search_field(column), @record, options)
+        if (method = override_search_field(column))
+          send(method, @record, options)
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
-        elsif column.search_ui and override_search?(column.search_ui)
-          send(override_search(column.search_ui), column, options)
+        elsif column.search_ui and (method = override_search(column.search_ui))
+          send(method, column, options)
 
         # third, check if the dev has specified a valid search_ui for this column, using generic ui for forms
-        elsif column.search_ui and override_input?(column.search_ui)
-          send(override_input(column.search_ui), column, options)
+        elsif column.search_ui and (method = override_input(column.search_ui))
+          send(method, column, options)
 
         # fourth, check if the dev has created an override for this specific field
-        elsif override_form_field?(column)
-          send(override_form_field(column), @record, options)
+        elsif (method = override_form_field(column))
+          send(method, @record, options)
 
         # fallback: we get to make the decision
         else
@@ -30,11 +30,11 @@ module ActiveScaffold
 
           else # regular model attribute column
             # if we (or someone else) have created a custom render option for the column type, use that
-            if override_search?(column.column.type)
-              send(override_search(column.column.type), column, options)
+            if (method = override_search(column.column.type))
+              send(method, column, options)
             # if we (or someone else) have created a custom render option for the column type, use that
-            elsif override_input?(column.column.type)
-              send(override_input(column.column.type), column, options)
+            elsif (method = override_input(column.column.type))
+              send(method, column, options)
             # final ultimate fallback: use rails' generic input method
             else
               # for textual fields we pass different options
@@ -63,7 +63,9 @@ module ActiveScaffold
         if column.association
           select_options = options_for_association(column.association, false)
         else
-          select_options = Array(column.options[:options])
+          select_options = column.options[:options].collect do |text, value|
+            active_scaffold_translated_option(column, text, value)
+          end
         end
         return as_(:no_options) if select_options.empty?
 
@@ -78,7 +80,9 @@ module ActiveScaffold
           select_options = options_for_association(column.association, true)
         else
           method = column.name
-          select_options = Array(column.options[:options])
+          select_options = column.options[:options].collect do |text, value|
+            active_scaffold_translated_option(column, text, value)
+          end
         end
 
         options = { :selected => associated }.merge! column.options
@@ -126,12 +130,33 @@ module ActiveScaffold
         (column.column && column.column.text?) || column.search_ui == :string
       end
 
+      def include_null_comparators?(column)
+        return column.options[:null_comparators] if column.options.has_key? :null_comparators
+        if column.association
+          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
+        else
+          column.column.try(:null)
+        end
+      end
+
       def active_scaffold_search_range_comparator_options(column)
         select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
         if active_scaffold_search_range_string?(column)
           select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]}
         end
+        if include_null_comparators? column
+          select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp), comp]}
+        end
         select_options
+      end
+
+      def include_null_comparators?(column)
+        return column.options[:null_comparators] if column.options.has_key? :null_comparators
+        if column.association
+          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
+        else
+          column.column.try(:null)
+        end
       end
 
       def active_scaffold_search_range(column, options)
@@ -157,34 +182,13 @@ module ActiveScaffold
         html << ' ' << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size))
         html << ' ' << content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
               active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))).html_safe,
-              :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => "display:#{(opt_value == 'BETWEEN') ? '' : 'none'}")
-        html
+              :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => (opt_value == 'BETWEEN') ? nil : "display: none")
+        content_tag :span, html, :class => 'search_range'
       end
       alias_method :active_scaffold_search_integer, :active_scaffold_search_range
       alias_method :active_scaffold_search_decimal, :active_scaffold_search_range
       alias_method :active_scaffold_search_float, :active_scaffold_search_range
       alias_method :active_scaffold_search_string, :active_scaffold_search_range
-
-      def active_scaffold_search_record_select(column, options)
-        value = field_search_record_select_value(column)
-        active_scaffold_record_select(column, options, value, column.options[:multiple])
-      end
-      
-      def field_search_record_select_value(column)
-        begin 
-          value = field_search_params[column.name]
-          unless value.blank?
-            if column.options[:multiple]
-              column.association.klass.find value.collect!(&:to_i)
-            else
-              column.association.klass.find(value.to_i)
-            end
-          end
-        rescue Exception => e
-          logger.error Time.now.to_s + "Sorry, we are not that smart yet. Attempted to restore search values to search fields but instead got -- #{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-          raise e
-        end
-      end
 
       def field_search_datetime_value(value)
         DateTime.new(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
@@ -211,22 +215,14 @@ module ActiveScaffold
       ## Search column override signatures
       ##
 
-      def override_search_field?(column)
-        respond_to?(override_search_field(column))
-      end
-
-      # the naming convention for overriding form fields with helpers
       def override_search_field(column)
-        "#{column.name}_search_column"
-      end
-
-      def override_search?(search_ui)
-        respond_to?(override_search(search_ui))
+        override_helper column, 'search_column'
       end
 
       # the naming convention for overriding search input types with helpers
       def override_search(form_ui)
-        "active_scaffold_search_#{form_ui}"
+        method = "active_scaffold_search_#{form_ui}"
+        method if respond_to? method
       end
       
       def visibles_and_hiddens(search_config)

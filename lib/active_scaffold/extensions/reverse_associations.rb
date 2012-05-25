@@ -1,23 +1,25 @@
 module ActiveRecord
   module Reflection
     class AssociationReflection #:nodoc:
-      def reverse_for?(klass)
-        reverse_matches_for(klass).empty? ? false : true
+      def inverse_for?(klass)
+        inverse_class = inverse_of.try(:active_record)
+        inverse_class.present? && (inverse_class == klass || klass < inverse_class)
       end
 
       attr_writer :reverse
       def reverse
-        if @reverse.nil? and not self.options[:polymorphic]
-          reverse_matches = reverse_matches_for(self.class_name.constantize) rescue nil
-          # grab first association, or make a wild guess
-          @reverse = reverse_matches.blank? ? false : reverse_matches.first.name
-        end
-        @reverse
+        @reverse ||= inverse_of.try(:name)
       end
 
+      def inverse_of_with_autodetect
+        inverse_of_without_autodetect || autodetect_inverse
+      end
+      alias_method_chain :inverse_of, :autodetect
+      
       protected
 
-        def reverse_matches_for(klass)
+        def autodetect_inverse
+          return nil if options[:polymorphic]
           reverse_matches = []
 
           # stage 1 filter: collect associations that point back to this model and use the same foreign_key
@@ -54,7 +56,7 @@ module ActiveRecord
             self.active_record.to_s.underscore.include? assoc.name.to_s.pluralize.singularize
           end if reverse_matches.length > 1
 
-          reverse_matches
+          reverse_matches.first
         end
 
     end

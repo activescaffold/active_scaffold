@@ -1,0 +1,54 @@
+/* IE hacks
+   ==================================== */
+
+* html .active-scaffold-header,
+.active-scaffold li.form-element,
+.active-scaffold li.sub-section {
+zoom: 1;
+}
+
+* html .active-scaffold td .messages-container {
+border-top: solid 1px #DAFFCD;
+}
+
+* html .active-scaffold-header div.actions a.show_search {
+background-image: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{image_path('active_scaffold/magnifier.png')}', sizingMethod='crop');
+}
+
+* html .active-scaffold .sub-form .association-record a.destroy {
+background-image: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{image_path('active_scaffold/cross.png')}', sizingMethod='crop');
+}
+* html .active-scaffold-header div.actions a.new,
+* html .active-scaffold-header div.actions a.new_existing {
+background-image: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{image_path('active_scaffold/add.png')}', sizingMethod='crop');
+}
+* html .active-scaffold-header th.asc a,
+* html .active-scaffold-header th.asc a:hover {
+background-image: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{image_path('active_scaffold/arrow_up.png')}', sizingMethod='crop');
+}
+* html .active-scaffold-header th.desc a,
+* html .active-scaffold-header th.desc a:hover {
+background-image: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{image_path('active_scaffold/arrow_down.png')}', sizingMethod='crop');
+}
+* html .active-scaffold-header a.inline-adapter-close {
+background-image: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{image_path('active_scaffold/close.png')}', sizingMethod='crop');
+}
+
+.active-scaffold-header div.actions a.disabled {
+filter: alpha(opacity=50);
+}
+
+.active-scaffold .show-view dd,
+.active-scaffold li.form-element dd {
+float: none;
+}
+
+.active-scaffold li.form-element dt {
+padding: 4px 0;
+}

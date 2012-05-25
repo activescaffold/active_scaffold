@@ -1,7 +1,7 @@
 module ActiveScaffold::Config
   class Subform < Base
     def initialize(core_config)
-      @core = core_config
+      super
       @layout = self.class.layout # default layout
     end
 

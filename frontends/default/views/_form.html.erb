@@ -1,23 +1,26 @@
-<% subsection_id ||= nil %>
-<ol class="form" <%= "id=#{subsection_id}" unless subsection_id.nil? %> <%= "style=\"display: none;\"" if columns.collapsed %>>
-  <% columns.each :for => @record do |column| %>
+<%
+  scope ||= nil
+  subsection_id ||= nil
+  show_unauthorized_columns = active_scaffold_config.send(form_action).show_unauthorized_columns
+%>
+<ol class="form" <%= "id=#{subsection_id}" unless subsection_id.nil? %> <%= "style=\"display: none;\"".html_safe if columns.collapsed %>>
+  <% columns.each :for => @record, :crud_type => (:read if show_unauthorized_columns) do |column| %>
+  <% authorized = show_unauthorized_columns ? @record.authorized_for?(:crud_type => form_action, :column => column.name) : true %>
   <% renders_as = column_renders_as(column) %>
   <% if renders_as == :subsection -%>
     <% subsection_id = sub_section_id(:sub_section => column.label) %>
-  <li class="sub-section">
+  <li class="sub-section <%= column.css_class %>">
     <h5><%= column.label %></h5>
-    <%= render :partial => 'form', :locals => { :columns => column, :subsection_id => subsection_id} %>
+    <%= render :partial => 'form', :locals => { :columns => column, :subsection_id => subsection_id, :form_action => form_action, :scope => scope } %>
     <%= link_to_visibility_toggle(subsection_id, {:default_visible => !column.collapsed}) -%>
   </li>
-  <% elsif column.readonly_association?
-    next %>
-  <% elsif renders_as == :subform and !override_form_field?(column) -%>
-  <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %>" id="<%= sub_form_id(:association => column.name) %>">
-    <%=raw render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column } -%>
+  <% elsif renders_as == :subform and !override_form_field?(column) and authorized -%>
+  <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %> <%=column.name%>-sub-form" id="<%= sub_form_id(:association => column.name) %>">
+    <%=raw render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column, :scope => scope } -%>
   </li>
   <% else -%>
   <li class="form-element <%= 'required' if column.required? %> <%= column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %>">
-    <%=raw render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column } -%>
+    <%=raw render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column, :only_value => !authorized, :scope => scope } -%>
   </li>
   <% end -%>
   <% end -%>

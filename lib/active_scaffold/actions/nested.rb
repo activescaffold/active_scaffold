@@ -5,8 +5,7 @@ module ActiveScaffold::Actions
     def self.included(base)
       super
       base.module_eval do
-        before_filter :register_constraints_with_action_columns
-        before_filter :set_nested
+        prepend_before_filter :set_nested
         before_filter :configure_nested
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
       end
@@ -17,11 +16,6 @@ module ActiveScaffold::Actions
 
     protected
     def nested
-      @nested ||= ActiveScaffold::DataStructures::NestedInfo.get(active_scaffold_config.model, active_scaffold_session_storage)
-      if !@nested.nil? && @nested.new_instance?
-        register_constraints_with_action_columns(@nested.constrained_fields,  active_scaffold_config.list.hide_nested_column ? [] : [:list])
-        active_scaffold_constraints[:id] = params[:id] if @nested.belongs_to?
-      end
       @nested
     end
     
@@ -30,12 +24,9 @@ module ActiveScaffold::Actions
     end
     
     def set_nested
-      if params[:parent_scaffold] && ((params[:association] && params[:assoc_id]) || params[:named_scope])
-        @nested = nil
-        active_scaffold_session_storage[:nested] = {:parent_scaffold => params[:parent_scaffold].to_s,
-                                                                  :name => (params[:association] || params[:named_scope]).to_sym,
-                                                                  :parent_id => params[:assoc_id]}
-        params.delete_if {|key, value| [:parent_scaffold, :association, :named_scope, :assoc_id].include? key.to_sym}
+      if params[:parent_scaffold] && (params[:association] || params[:named_scope])
+        @nested = ActiveScaffold::DataStructures::NestedInfo.get(active_scaffold_config.model, params)
+        register_constraints_with_action_columns(@nested.constrained_fields) unless @nested.nil?
       end
     end
     
@@ -82,12 +73,16 @@ module ActiveScaffold::Actions
     end
     
     def beginning_of_chain
-      if nested? && nested.association && nested.association.collection?
-        nested.parent_scope.send(nested.association.name)
+      if nested? && nested.association && !nested.association.belongs_to?
+        if nested.association.collection?
+          nested.parent_scope.send(nested.association.name)
+        elsif nested.child_association.belongs_to?
+          active_scaffold_config.model.where(nested.child_association.foreign_key => nested.parent_scope)
+        end
       elsif nested? && nested.scope
         nested.parent_scope.send(nested.scope)
       else
-        active_scaffold_config.model
+        super
       end
     end
 
@@ -123,9 +118,6 @@ module ActiveScaffold::Actions::Nested
 
     def self.included(base)
       super
-      base.verify :method => :post,
-                  :only => :add_existing,
-                  :redirect_to => { :action => :index }
     end
 
     def new_existing

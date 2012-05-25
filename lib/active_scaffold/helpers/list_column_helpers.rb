@@ -6,16 +6,16 @@ module ActiveScaffold
       def get_column_value(record, column)
         begin
           # check for an override helper
-          value = if column_override? column
+          value = if (method = column_override(column))
             # we only pass the record as the argument. we previously also passed the formatted_value,
             # but mike perham pointed out that prohibited the usage of overrides to improve on the
             # performance of our default formatting. see issue #138.
-            send(column_override(column), column, record)
+            send(method, record)
           # second, check if the dev has specified a valid list_ui for this column
-          elsif column.list_ui and override_column_ui?(column.list_ui)
-            send(override_column_ui(column.list_ui), column, record)
-          elsif column.column and override_column_ui?(column.column.type)
-            send(override_column_ui(column.column.type), column, record)
+          elsif column.list_ui and (method = override_column_ui(column.list_ui))
+            send(method, column, record)
+          elsif column.column and (method = override_column_ui(column.column.type))
+            send(method, column, record)
           else
             format_column_value(record, column)
           end
@@ -34,13 +34,14 @@ module ActiveScaffold
         if column.link
           link = column.link
           associated = record.send(column.association.name) if column.association
-          url_options = params_for(:action => nil, :id => record.id, :link => text)
+          url_options = params_for(:action => nil, :id => record.id)
 
           # setup automatic link
           if column.autolink? && column.singular_association? # link to inline form
-            link = action_link_to_inline_form(column, record, associated)
-            return text if link.crud_type.nil?
-            url_options[:link] = as_(:create_new) if link.crud_type == :create
+            link = action_link_to_inline_form(column, record, associated, text)
+            return text if link.nil?
+          else
+            url_options[:link] = text
           end
 
           if column_link_authorized?(link, column, record, associated)
@@ -48,15 +49,19 @@ module ActiveScaffold
           else
             "<a class='disabled'>#{text}</a>".html_safe
           end
+        elsif inplace_edit?(record, column)
+          active_scaffold_inplace_edit(record, column, {:formatted_column => text})
+        elsif active_scaffold_config.list.wrap_tag
+          content_tag active_scaffold_config.list.wrap_tag, text
         else
-          text = active_scaffold_inplace_edit(record, column, {:formatted_column => text}) if inplace_edit?(record, column)
           text
         end
       end
 
       # setup the action link to inline form
-      def action_link_to_inline_form(column, record, associated)
+      def action_link_to_inline_form(column, record, associated, text)
         link = column.link.clone
+        link.label = text
         if column.polymorphic_association?
           polymorphic_controller = controller_path_for_activerecord(record.send(column.association.name).class)
           return link if polymorphic_controller.nil?
@@ -70,6 +75,7 @@ module ActiveScaffold
           if actions.include?(:new)
             link.action = 'new'
             link.crud_type = :create
+            link.label = as_(:create_new)
           end
         elsif actions.include?(:edit)
           link.action = 'edit'
@@ -81,12 +87,12 @@ module ActiveScaffold
           link.action = 'index'
           link.crud_type = :read
         end
-        link
+        link if link.action.present?
       end
 
       def column_link_authorized?(link, column, record, associated)
         if column.association
-          associated_for_authorized = if associated.nil? || (associated.respond_to?(:empty?) && associated.empty?)
+          associated_for_authorized = if associated.nil? || (associated.respond_to?(:blank?) && associated.blank?)
             column.association.klass
           elsif [:has_many, :has_and_belongs_to_many].include? column.association.macro
             associated.first
@@ -116,18 +122,7 @@ module ActiveScaffold
       ## Overrides
       ##
       def active_scaffold_column_text(column, record)
-        truncate(clean_column_value(record.send(column.name)), :length => column.options[:truncate] || 50)
-      end
-
-      def active_scaffold_column_select(column, record)
-        if column.association
-          format_column_value(record, column)
-        else
-          value = record.send(column.name)
-          text, val = column.options[:options].find {|text, val| (val || text).to_s == value}
-          value = active_scaffold_translated_option(column, text, val).first if text
-          format_column_value(record, column, value)
-        end
+        clean_column_value(truncate(record.send(column.name), :length => column.options[:truncate] || 50))
       end
 
       def active_scaffold_column_checkbox(column, record)
@@ -137,21 +132,16 @@ module ActiveScaffold
       end
 
       def column_override(column)
-        "#{column.name.to_s.gsub('?', '')}_column" # parse out any question marks (see issue 227)
+        override_helper column, 'column'
       end
-
-      def column_override?(column)
-        respond_to?(column_override(column))
-      end
-
-      def override_column_ui?(list_ui)
-        respond_to?(override_column_ui(list_ui))
-      end
+      alias_method :column_override?, :column_override
 
       # the naming convention for overriding column types with helpers
       def override_column_ui(list_ui)
-        "active_scaffold_column_#{list_ui}"
+        method = "active_scaffold_column_#{list_ui}"
+        method if respond_to? method
       end
+      alias_method :override_column_ui?, :override_column_ui
 
       ##
       ## Formatting
@@ -160,9 +150,13 @@ module ActiveScaffold
         value ||= record.send(column.name) unless record.nil?
         if value && column.association # cache association size before calling column_empty?
           associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
-          cache_association(value, column)
+          cache_association(value, column) if column.plural_association?
         end
         if column.association.nil? or column_empty?(value)
+          if column.form_ui == :select && column.options[:options]
+            text, val = column.options[:options].find {|text, val| (val.nil? ? text : val).to_s == value.to_s}
+            value = active_scaffold_translated_option(column, text, val).first if text
+          end
           if value.is_a? Numeric
             format_number_value(value, column.options)
           else
@@ -182,7 +176,7 @@ module ActiveScaffold
           when :currency
             number_to_currency(value, options[:i18n_options] || {})
           when :i18n_number
-            send("number_with_#{value.is_a?(Integer) ? 'delimiter' : 'precision'}", value, options[:i18n_options] || {})
+            number_with_delimiter(value, options[:i18n_options] || {})
           else
             value
         end
@@ -190,12 +184,12 @@ module ActiveScaffold
       end
 
       def format_association_value(value, column, size)
-        case column.association.macro
+        format_value case column.association.macro
           when :has_one, :belongs_to
             if column.polymorphic_association?
-              format_value("#{value.class.model_name.human}: #{value.to_label}")
+              "#{value.class.model_name.human}: #{value.to_label}"
             else
-              format_value(value.to_label)
+              value.to_label
             end
           when :has_many, :has_and_belongs_to_many
             if column.associated_limit.nil?
@@ -208,7 +202,7 @@ module ActiveScaffold
             if column.associated_limit == 0
               size if column.associated_number?
             else
-              joined_associated = format_value(firsts.join(', '))
+              joined_associated = firsts.join(active_scaffold_config.list.association_join_text)
               joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
               joined_associated
             end
@@ -257,30 +251,25 @@ module ActiveScaffold
          column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
       end
 
-      def format_inplace_edit_column(record,column)
-        if column.list_ui == :checkbox
-          active_scaffold_column_checkbox(column, record)
-        else
-          format_column_value(record, column)
-        end
-      end
-
       def active_scaffold_inplace_edit(record, column, options = {})
         formatted_column = options[:formatted_column] || format_column_value(record, column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
         tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
                        :title => as_(:click_to_edit), 'data-ie_id' => record.id.to_s}
 
+        content_tag(:span, as_(:click_to_edit), :class => 'handle') <<
         content_tag(:span, formatted_column, tag_options)
       end
 
       def inplace_edit_control(column)
         if inplace_edit?(active_scaffold_config.model, column) and inplace_edit_cloning?(column)
-          @record = new_model
+          old_record, @record = @record, new_model
           column = column.clone
           column.options = column.options.clone
           column.form_ui = :select if (column.association && column.form_ui.nil?)
-          content_tag(:div, active_scaffold_input_for(column), {:style => "display:none;", :class => inplace_edit_control_css_class})
+          content_tag(:div, active_scaffold_input_for(column), :style => "display:none;", :class => inplace_edit_control_css_class).tap do
+            @record = old_record
+          end
         end
       end
 
@@ -304,7 +293,7 @@ module ActiveScaffold
         elsif inplace_edit_cloning?(column)
           tag_options['data-ie_mode'] = :clone
         elsif column.inplace_edit == :ajax
-          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :column => column.name, :update_column => column.name, :in_place_editing => true, :escape => false)
+          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :column => column.name, :update_column => column.name, :in_place_editing => true)
           plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
           tag_options['data-ie_render_url'] = url
           tag_options['data-ie_mode'] = :ajax

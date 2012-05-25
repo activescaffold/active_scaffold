@@ -3,15 +3,15 @@ module ActiveScaffold::DataStructures
     # provides a quick way to set any property of the object from a hash
     def initialize(action, options = {})
       # set defaults
-      self.action = action.to_s
+      self.action = action
       self.label = action
       self.confirm = false
       self.type = :collection
       self.inline = true
       self.method = :get
-      self.crud_type = :delete if [:destroy].include?(action.to_sym)
-      self.crud_type = :create if [:create, :new].include?(action.to_sym)
-      self.crud_type = :update if [:edit, :update].include?(action.to_sym)
+      self.crud_type = :delete if [:destroy].include?(action.try(:to_sym))
+      self.crud_type = :create if [:create, :new].include?(action.try(:to_sym))
+      self.crud_type = :update if [:edit, :update].include?(action.try(:to_sym))
       self.crud_type ||= :read
       self.parameters = {}
       self.html_options = {}
@@ -60,21 +60,25 @@ module ActiveScaffold::DataStructures
     attr_accessor :image
 
     # if the action requires confirmation
-    attr_writer :confirm
+    def confirm=(value)
+      @dhtml_confirm = nil if value
+      @confirm = value
+    end
     def confirm(label = '')
       @confirm.is_a?(String) ? @confirm : as_(@confirm, :label => label)
     end
     def confirm?
-      @confirm ? true : false
+      !!@confirm
     end
     
     # if the action uses a DHTML based (i.e. 2-phase) confirmation
-    attr_writer :dhtml_confirm
-    def dhtml_confirm
-      @dhtml_confirm
+    attr_accessor :dhtml_confirm
+    def dhtml_confirm=(value)
+      @confirm = nil if value
+      @dhtml_confirm = value
     end
     def dhtml_confirm?
-      @dhtml_confirm
+      !!@dhtml_confirm
     end
 
     # what method to call on the controller to see if this action_link should be visible

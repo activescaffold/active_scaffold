@@ -1,16 +1,6 @@
 <table cellpadding="0" cellspacing="0">
-  <%
-    if associated.empty?
-      @record = if column.singular_association?
-        parent_record.send("build_#{column.name}".to_sym)
-      else
-        parent_record.send(column.name).build
-      end
-    else
-      @record = associated.last
-    end
-  -%>
-  <%= render :partial => 'horizontal_subform_header', :locals => {:parent_record => parent_record} %>
+  <% @record = associated.empty? ? build_associated(column, parent_record) : associated.last -%>
+  <%= render :partial => 'horizontal_subform_header', :locals => {:parent_record => parent_record, :record => @record} %>
 
   <tbody id="<%= sub_form_list_id(:association => column.name) %>">
     <% associated.each_index do |index| %>
@@ -22,8 +12,11 @@
       </td>
     </tr>
     <% end %>
-    <%= render :partial => 'horizontal_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => @record.new_record? && @record == associated.last} %>
+    <%= render :partial => 'horizontal_subform_record', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column, :locked => show_blank_record && @record.new_record? && @record == associated.last} %>
     <% end -%>
   </tbody>
+  <tfoot>
+    <%= render :partial => 'horizontal_subform_footer', :locals => {:scope => column_scope(column), :parent_record => parent_record, :column => column} %>
+  </tfoot>
 </table>
 <%= render :partial => 'form_association_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated} -%>

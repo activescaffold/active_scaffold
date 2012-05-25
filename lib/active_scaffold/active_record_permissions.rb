@@ -41,6 +41,7 @@ module ActiveRecordPermissions
     module Model
       def self.included(base)
         base.extend ClassMethods
+        base.send :include, ActiveRecordPermissions::Permissions
       end
 
       module ClassMethods

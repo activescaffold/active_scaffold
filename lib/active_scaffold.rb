@@ -1,13 +1,9 @@
-unless Rails::VERSION::MAJOR == 3 && Rails::VERSION::MINOR >= 0
-  raise "This version of ActiveScaffold requires Rails 3.0 or higher.  Please use an earlier version."
+unless Rails::VERSION::MAJOR == 3 && Rails::VERSION::MINOR >= 1
+  raise "This version of ActiveScaffold requires Rails 3.1 or higher.  Please use an earlier version."
 end
 
 begin
   require 'render_component'
-rescue LoadError
-end
-begin
-  require 'verification'
 rescue LoadError
 end
 
@@ -16,7 +12,8 @@ require 'active_scaffold/paginator'
 require 'active_scaffold/responds_to_parent'
 
 require 'active_scaffold/version'
-require 'active_scaffold/engine'
+require 'active_scaffold/engine' unless defined? ACTIVE_SCAFFOLD_PLUGIN
+require 'json'  # for js_config
 
 module ActiveScaffold
   autoload :AttributeParams, 'active_scaffold/attribute_params'
@@ -24,6 +21,12 @@ module ActiveScaffold
   autoload :Constraints, 'active_scaffold/constraints'
   autoload :Finder, 'active_scaffold/finder'
   autoload :MarkedModel, 'active_scaffold/marked_model'
+  autoload :Bridges, 'active_scaffold/bridges'
+
+  mattr_accessor :stylesheets
+  self.stylesheets = []
+  mattr_accessor :javascripts
+  self.javascripts = []
 
   def self.autoload_subdir(dir, mod=self, root = File.dirname(__FILE__))
     Dir["#{root}/active_scaffold/#{dir}/*.rb"].each { |file|
@@ -36,10 +39,6 @@ module ActiveScaffold
 
   module Actions
     ActiveScaffold.autoload_subdir('actions', self)
-  end
-
-  module Bridges
-    autoload :Bridge, 'active_scaffold/bridges/bridge'
   end
 
   module Config
@@ -85,7 +84,8 @@ module ActiveScaffold
     self.class.active_scaffold_config_for(klass)
   end
 
-  def active_scaffold_session_storage(id = (params[:eid] || params[:controller]))
+  def active_scaffold_session_storage(id = nil)
+    id ||= params[:eid] || "#{params[:controller]}#{"_#{nested.parent_id}" if nested?}"
     session_index = "as:#{id}"
     session[session_index] ||= {}
     session[session_index]
@@ -126,7 +126,19 @@ module ActiveScaffold
   end
   
   def self.js_framework
-    @@js_framework ||= :jquery
+    @@js_framework ||= if defined? Jquery
+      :jquery
+    elsif defined? PrototypeRails
+      :prototype
+    end
+  end
+
+  def self.js_config=(config)
+    @@js_config = config
+  end
+
+  def self.js_config
+    @@js_config ||= {:scroll_on_close => :checkInViewport}
   end
 
   # exclude bridges you do not need
@@ -150,7 +162,7 @@ module ActiveScaffold
   module ClassMethods
     def active_scaffold(model_id = nil, &block)
       # initialize bridges here
-      ActiveScaffold::Bridges::Bridge.run_all
+      ActiveScaffold::Bridges.run_all
 
       # converts Foo::BarController to 'bar' and FooBarsController to 'foo_bar' and AddressController to 'address'
       model_id = self.to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore unless model_id
@@ -160,12 +172,6 @@ module ActiveScaffold
       @active_scaffold_config_block = block
       self.links_for_associations
 
-      @active_scaffold_overrides = []
-      ActionController::Base.view_paths.each do |dir|
-        active_scaffold_overrides_dir = File.join(dir.to_s,"active_scaffold_overrides")
-        @active_scaffold_overrides << active_scaffold_overrides_dir if File.exists?(active_scaffold_overrides_dir)
-      end
-      @active_scaffold_overrides.uniq! # Fix rails duplicating some view_paths
       @active_scaffold_frontends = []
       if active_scaffold_config.frontend.to_sym != :default
         active_scaffold_custom_frontend_path = File.join(ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views')
@@ -204,10 +210,12 @@ module ActiveScaffold
           end
         end
       end
-      active_scaffold_paths.each do |path|
-        self.append_view_path(ActionView::ActiveScaffoldResolver.new(path))
-      end
+      self.append_view_path active_scaffold_paths
       self._add_sti_create_links if self.active_scaffold_config.add_sti_create_links?
+    end
+
+    def parent_prefixes
+      @parent_prefixes ||= super << 'active_scaffold_overrides' << ''
     end
 
     # To be called after include action modules
@@ -263,12 +271,12 @@ module ActiveScaffold
           
           ActiveScaffold::DataStructures::ActionLink.new('index', options) #unless column.through_association?
         else
-          actions = [:create, :update, :show] 
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
+          actions ||= [:create, :update, :show] 
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update
           column.actions_for_association_links.delete :show unless actions.include? :show
-          ActiveScaffold::DataStructures::ActionLink.new(:none, options.merge({:crud_type => nil, :html_options => {:class => column.name}}))
+          ActiveScaffold::DataStructures::ActionLink.new(nil, options.merge(:html_options => {:class => column.name}))
         end 
       end
     end
@@ -285,17 +293,10 @@ module ActiveScaffold
       @active_scaffold_custom_paths << path
     end
 
-    def add_active_scaffold_override_path(path)
-      @active_scaffold_paths = nil # Force active_scaffold_paths to rebuild
-      @active_scaffold_overrides.unshift path
-    end
-
     def active_scaffold_paths
       return @active_scaffold_paths unless @active_scaffold_paths.nil?
 
-      #@active_scaffold_paths = ActionView::PathSet.new
       @active_scaffold_paths = []
-      @active_scaffold_paths.concat @active_scaffold_overrides unless @active_scaffold_overrides.nil?
       @active_scaffold_paths.concat @active_scaffold_custom_paths unless @active_scaffold_custom_paths.nil?
       @active_scaffold_paths.concat @active_scaffold_frontends unless @active_scaffold_frontends.nil?
       @active_scaffold_paths
@@ -355,7 +356,7 @@ module ActiveScaffold
             end
           end
           raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
-          raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model == klass
+          raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model.to_s == klass.to_s
           return controller
         end
       end

@@ -3,7 +3,7 @@ module ActiveScaffold
     # A bunch of helper methods to produce the common view ids
     module IdHelpers
       def id_from_controller(controller)
-        controller.to_s.gsub("/", "__")
+        controller.to_s.gsub("/", "__").html_safe
       end
 
       def controller_id(controller = (params[:eid] || params[:parent_controller] || params[:controller]))
@@ -26,8 +26,8 @@ module ActiveScaffold
         "#{options[:controller_id] || controller_id}-messages"
       end
 
-      def active_scaffold_calculations_id(column = nil)
-        "#{controller_id}-calculations#{'-' + column.name.to_s if column}"
+      def active_scaffold_calculations_id(options = {})
+        "#{options[:controller_id] || controller_id}-calculations#{'-' + options[:column].name.to_s if options[:column]}"
       end
 
       def empty_message_id
@@ -40,10 +40,6 @@ module ActiveScaffold
 
       def search_input_id
         "#{controller_id}-search-input"
-      end
-
-      def table_action_id(name)
-        "#{controller_id}-action-table-#{name}"
       end
 
       def action_link_id(link_action,link_id)
@@ -114,6 +110,10 @@ module ActiveScaffold
 
       def action_iframe_id(options)
         "#{controller_id}-#{options[:action]}-#{options[:id]}-iframe"
+      end
+      
+      def scope_id(scope)
+        scope.gsub(/(\[|\])/, '_').gsub('__', '_').gsub(/_$/, '')
       end
 
       private

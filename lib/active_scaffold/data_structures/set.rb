@@ -3,12 +3,11 @@ module ActiveScaffold::DataStructures
     include Enumerable
     include ActiveScaffold::Configurable
 
-    attr_writer :label
-    def label
-      as_(@label)
+    def initialize(*args)
+      set_values(*args)
     end
 
-    def initialize(*args)
+    def set_values(*args)
       @set = []
       self.add *args
     end

@@ -3,12 +3,12 @@ module ActiveScaffold::Config
     self.crud_type = :read
 
     def initialize(core_config)
-      @core = core_config
-
+      super
       # inherit from global scope
       # full configuration path is: defaults => global table => local table
       @per_page = self.class.per_page
-      @page_links_window = self.class.page_links_window
+      @page_links_inner_window = self.class.page_links_inner_window
+      @page_links_outer_window = self.class.page_links_outer_window
       
       # originates here
       @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns)
@@ -16,8 +16,14 @@ module ActiveScaffold::Config
 
       # inherit from global scope
       @empty_field_text = self.class.empty_field_text
+      @association_join_text = self.class.association_join_text
       @pagination = self.class.pagination
-      @show_search_reset = true
+      @show_search_reset = self.class.show_search_reset
+      @reset_link = self.class.reset_link.clone
+      @mark_records = self.class.mark_records
+      @wrap_tag = self.class.wrap_tag
+      @always_show_search = self.class.always_show_search
+      @always_show_create = self.class.always_show_create
     end
 
     # global level configuration
@@ -27,12 +33,27 @@ module ActiveScaffold::Config
     @@per_page = 15
 
     # how many page links around current page to show
-    cattr_accessor :page_links_window
-    @@page_links_window = 2
+    cattr_accessor :page_links_inner_window
+    @@page_links_inner_window = 2
+
+    # how many page links around first and last page to show
+    cattr_accessor :page_links_outer_window
+    @@page_links_outer_window = 0
+    
+    class << self
+      def page_links_window=(value)
+        ActiveSupport::Deprecation.warn("Use page_links_inner_window", caller(1))
+        self.page_links_inner_window = value
+      end
+    end
 
     # what string to use when a field is empty
     cattr_accessor :empty_field_text
     @@empty_field_text = '-'
+
+    # what string to use to join records from plural associations
+    cattr_accessor :association_join_text
+    @@association_join_text = ', '
 
     # What kind of pagination to use:
     # * true: The usual pagination
@@ -40,6 +61,31 @@ module ActiveScaffold::Config
     # * false: Disable pagination
     cattr_accessor :pagination
     @@pagination = true
+
+    # Add a checkbox in front of each record to mark them and use them with a batch action later
+    cattr_accessor :mark_records
+    @@mark_records = false
+
+    # show a link to reset the search next to filtered message
+    cattr_accessor :show_search_reset
+    @@show_search_reset = true
+
+    # the ActionLink to reset search
+    cattr_reader :reset_link
+    @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :collection, :position => false)
+
+    # wrap normal cells (not inplace editable columns or with link) with a tag
+    # it allows for more css styling
+    cattr_accessor :wrap_tag
+    @@wrap_tag = nil
+
+    # Show search form in the list header instead of display the link
+    cattr_accessor :always_show_search
+    @@always_show_search = false
+    
+    # Show create form in the list header instead of display the link
+    cattr_accessor :always_show_create
+    @@always_show_create = false
 
     # instance-level configuration
     # ----------------------------
@@ -56,7 +102,15 @@ module ActiveScaffold::Config
     attr_accessor :per_page
 
     # how many page links around current page to show
-    attr_accessor :page_links_window
+    attr_accessor :page_links_inner_window
+
+    # how many page links around current page to show
+    attr_accessor :page_links_outer_window
+    
+    def page_links_window=(value)
+      ActiveSupport::Deprecation.warn("Use page_links_inner_window", caller(1))
+      self.page_links_inner_window = value
+    end
 
     # What kind of pagination to use:
     # * true: The usual pagination
@@ -67,8 +121,17 @@ module ActiveScaffold::Config
     # what string to use when a field is empty
     attr_accessor :empty_field_text
 
+    # what string to use to join records from plural associations
+    attr_accessor :association_join_text
+
     # show a link to reset the search next to filtered message
     attr_accessor :show_search_reset
+
+    # the ActionLink to reset search
+    attr_reader :reset_link
+
+    # Add a checkbox in front of each record to mark them and use them with a batch action later
+    attr_accessor :mark_records
 
     # the default sorting. should be an array of hashes of {column_name => direction}, e.g. [{:a => 'desc'}, {:b => 'asc'}]. to just sort on one column, you can simply provide a hash, though, e.g. {:a => 'desc'}.
     def sorting=(val)
@@ -127,7 +190,16 @@ module ActiveScaffold::Config
     # will open nested players view if there are 2 or less records in parent
     attr_accessor :nested_auto_open
     
+    # wrap normal cells (not inplace editable columns or with link) with a tag
+    # it allows for more css styling
+    attr_accessor :wrap_tag
+    
     class UserSettings < UserSettings
+      def initialize(conf, storage, params)
+        super(conf,storage,params)
+        @sorting = nil
+      end
+      
       # This label has alread been localized.
       def label
         @session[:label] ? @session[:label] : @conf.label
@@ -159,17 +231,20 @@ module ActiveScaffold::Config
       end
 
       def sorting
-        # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
-        @session['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
-        @session['sort'] = nil if @params['sort_direction'] == 'reset'
+        if @sorting.nil?
+          # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
+          @session['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
+          @session['sort'] = nil if @params['sort_direction'] == 'reset'
 
-        if @session['sort']
-          sorting = @conf.sorting.clone
-          sorting.set(*@session['sort'])
-          return sorting
-        else
-          return default_sorting
+          if @session['sort']
+            sorting = @conf.sorting.clone
+            sorting.set(*@session['sort'])
+            @sorting = sorting
+          else
+            @sorting = default_sorting
+          end
         end
+        @sorting
       end
       
       def count_includes

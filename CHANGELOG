@@ -1,3 +1,63 @@
+= 3.2.12 (not released yet)
+
+= 3.2.11
+- improve support for tableless models and active_scaffold_batch
+- fix count includes which were broken in 3.2.9
+- remove duplicated conditions in nested scaffolds, added by conditions_from_params
+
+= 3.2.10
+- fix nested scaffolds with update action disabled
+- initial work for tableless support (index with limited options)
+- fix scrolling on closing nested scaffolds
+- fix calculations which were broken in 3.2.9
+
+= 3.2.9
+- remove duplicated conditions with constraints
+- fix constraints for polymorphic associations
+
+= 3.2.8
+- add deprecation for update_column, update_columns should be used instead
+- fix constraints with hide_nested_column disabled in list and embedded scaffolds which are nested too
+- fix setting a hash as includes, cannot be concat in finder
+- add option to scroll on close only if element is not visible in viewport (default now)
+- fix create and edit singular associations without render_component
+- messages go across all table
+- display readonly associations in forms, it was ready to display them but it was skipping them
+- Some fixes for inplace editors (cloning form overrides, ajax and radiobuttons). Add handlers for empty columns
+- add wrap_tag to list so cells content can be wrapped in a tag for better styling
+- fix date picker parsing for datetime fields when jquery is used
+- add as:element_updated js event when replace or replace_html is called
+- rescue database exceptions so you get error messages for it insted of error 500, for example in case you forgot to check uniqueness for a unique index
+- add class attribute for displayed unauthorized columns in forms, so they get same styling
+
+= 3.2.7
+- restore missing update.persistent feature
+- fix create.persistent
+- add new record in first scaffold, not in all nested scaffolds
+- fix deleting all in habtm with select_ui
+
+= 3.2.6
+- fix ordering with DISTINCT call
+- allow to override some human condition strings in i18n, and translate select values for non-association columns
+
+= 3.2.5
+- add outer window for pagination links
+- workaround rails 3.2.3 bug in TimeWithZone#to_time
+- fix date picker format for datetime fields
+- fix bitfields bridge when some actions are not used
+- use core config label when is set and STI is not used
+
+= 3.2.4
+- don't break on custom SQL sorting (e.g. sorting with functions)
+- fix cancel inplace edit with jquery
+- fix nested scaffolds inside nested and embedded scaffolds
+- fix collapsed subgroups
+- fix inplace edit for checkboxes columns with true as default value
+- fix calendar date select bridge
+
+= 3.0.6 .. 3.2.3
+- many changes
+
 = 3.0.5
 
 - switch from explicit requires to autoloading

@@ -3,7 +3,7 @@
     <div class="<%= "#{name}-message message" %>">
       <%= h flash[name] %>
       <% if request.xhr? %>
-        <a href="#" onclick="ActiveScaffold.remove(this.parentNode); return false;" title="<%= as_(:close) %>"><%= as_(:close) %></a>
+        <a href="#" class="close" title="<%= as_(:close) %>"><%= as_(:close) %></a>
       <% end %>
     </div>
   <% end %>

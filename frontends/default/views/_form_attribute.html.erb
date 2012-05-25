@@ -1,14 +1,22 @@
-<% scope ||= nil %>
+<%
+  scope ||= nil
+  column_options = active_scaffold_input_options(column, scope)
+%>
 <dl>
   <dt>
-    <label for="<%= active_scaffold_input_options(column, scope)[:id] %>"><%= column.label %></label>
+    <label for="<%= column_options[:id] %>"><%= column.label %></label>
   </dt>
   <dd>
+    <% unless local_assigns[:only_value] %>
     <%=raw active_scaffold_input_for column, scope %>
+    <% else %>
+    <%= content_tag :span, get_column_value(@record, column), column_options.except(:name) %>
+    <%= hidden_field :record, column.association ? column.association.foreign_key : column.name, active_scaffold_input_options(column, scope) -%>
+    <% end %>
     <% if column.update_columns -%>
       <%= loading_indicator_tag(:action => :render_field, :id => params[:id]) %>
     <% end -%>
-    <% if column.description -%>
+    <% if column.description.present? -%>
       <span class="description"><%= column.description %></span>
     <% end -%>
   </dd>

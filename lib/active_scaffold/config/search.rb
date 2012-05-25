@@ -3,14 +3,13 @@ module ActiveScaffold::Config
     self.crud_type = :read
 
     def initialize(core_config)
-      @core = core_config
-
+      super
       @text_search = self.class.text_search
       @live = self.class.live?
+      @split_terms = self.class.split_terms
 
       # start with the ActionLink defined globally
       @link = self.class.link.clone
-      @action_group = self.class.action_group.clone if self.class.action_group
     end
 
 
@@ -35,6 +34,9 @@ module ActiveScaffold::Config
       @@live
     end
 
+    cattr_accessor :split_terms
+    @@split_terms = " "
+
     # instance-level configuration
     # ----------------------------
 
@@ -56,6 +58,8 @@ module ActiveScaffold::Config
     # * false: LIKE ?
     # Default is :full
     attr_accessor :text_search
+
+    attr_accessor :split_terms
 
     # the ActionLink for this action
     attr_accessor :link

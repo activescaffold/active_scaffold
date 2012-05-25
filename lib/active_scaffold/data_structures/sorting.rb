@@ -32,9 +32,8 @@ module ActiveScaffold::DataStructures
       direction ||= 'ASC'
       direction = direction.to_s.upcase
       column = get_column(column_name)
-      raise ArgumentError, "Could not find column #{column_name}" if column.nil?
       raise ArgumentError, "Sorting direction unknown" unless [:ASC, :DESC].include? direction.to_sym
-      @clauses << [column, direction] if column.sortable?
+      @clauses << [column, direction.untaint] if column and column.sortable?
       raise ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
     end
 
@@ -95,10 +94,10 @@ module ActiveScaffold::DataStructures
         sql = sort_column.sort[:sql]
         next if sql.nil? or sql.empty?
 
-        order << "#{sql} #{sort_direction}"
+        order << Array(sql).map {|column| "#{column} #{sort_direction}"}.join(', ')
       end
 
-      order.join(', ') unless order.empty?
+      order unless order.empty?
     end
 
     protected

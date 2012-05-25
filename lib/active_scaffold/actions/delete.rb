@@ -23,10 +23,7 @@ module ActiveScaffold::Actions
     end
 
     def destroy_respond_to_js
-      if successful? && active_scaffold_config.delete.refresh_list && !render_parent?
-        do_search if respond_to? :do_search
-        do_list
-      end
+      do_refresh_list if successful? && active_scaffold_config.delete.refresh_list && !render_parent?
       render(:action => 'destroy')
     end
 
@@ -52,9 +49,12 @@ module ActiveScaffold::Actions
       @record ||= destroy_find_record
       begin
         self.successful = @record.destroy
-      rescue
+        marked_records.delete @record.id.to_s if successful?
+      rescue Exception => ex
         flash[:warning] = as_(:cant_destroy_record, :record => @record.to_label)
         self.successful = false
+        logger.debug ex.message
+        logger.debug ex.backtrace.join("\n")
       end
     end
 

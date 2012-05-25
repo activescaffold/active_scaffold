@@ -52,6 +52,10 @@ padding: 5px 20px 5px 5px;
 color: #333;
 }
 
+.active-scaffold .mark_record_column {
+  width: 1px;
+}
+
 /* Header
    ======================== */
 
@@ -85,10 +89,6 @@ white-space: nowrap;
 margin-left: 5px;
 background-position: 1px 50%;
 background-repeat: no-repeat;
-}
-
-.view .active-scaffold-header div.actions a {
-float: left;
 }
 
 .blue-theme .active-scaffold-header div.actions a {
@@ -295,7 +295,7 @@ background: transparent;
 }
 
 .active-scaffold .active-scaffold .active-scaffold-header {
-margin-right: 15px;
+margin-right: 25px;
 }
 
 .active-scaffold .active-scaffold .active-scaffold-header h2 {
@@ -315,7 +315,6 @@ right: 0px;
 
 .active-scaffold .active-scaffold .active-scaffold-header div.actions a {
 font: bold 11px verdana, sans-serif;
-padding: 0 2px 1px 17px;
 }
 
 .blue-theme .active-scaffold .active-scaffold-header div.actions a,
@@ -525,7 +524,7 @@ margin: 0;
 }
 
 .active-scaffold .active-scaffold-header .loading-indicator {
-margin-bottom: 3px;
+margin-top: 3px;
 }
 
 /* Show
@@ -533,6 +532,9 @@ margin-bottom: 3px;
 
 .active-scaffold .show-view dl {
 margin-left: 5px;
+}
+.active-scaffold .show-view dl dl {
+margin-left: 0px;
 }
 
 .active-scaffold .show-view dt {
@@ -553,6 +555,10 @@ margin-bottom: 5px;
 
 /* Form
    ============================== */
+
+.active-scaffold dl {
+margin: 0;
+}
 
 .active-scaffold .submit {
 font-weight: bold;

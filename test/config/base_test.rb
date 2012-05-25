@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), '../test_helper.rb')
 
 class Config::BaseTest < Test::Unit::TestCase
   def setup
-    @base = ActiveScaffold::Config::Base.new
+    @base = ActiveScaffold::Config::Base.new(ActiveScaffold::Config::Core.new(:model_stub))
   end
   
   def test_formats

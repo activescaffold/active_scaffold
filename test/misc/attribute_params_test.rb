@@ -19,6 +19,12 @@ class AttributeParamsTest < Test::Unit::TestCase
       :delimiter => '.',
       :separator => ','
     }}
+    I18n.backend.store_translations :ru, :number => {:currency => {
+      :format => {
+        :separator => ',',
+        :delimiter => ''
+      }
+    }}
 
     @config = config_for('number_model')
     class << @config.list.columns
@@ -101,9 +107,39 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal 1234000.1, convert_number('1.234.000,100')
   end
 
+  def test_english_currency_format_with_decimal_separator_using_russian_language
+    I18n.locale = :ru
+    assert_equal 0.1, convert_number('.1', :currency)
+    assert_equal 0.1, convert_number('0.1', :currency)
+    assert_equal 0.12, convert_number('+0.12', :currency)
+    assert_equal -0.12, convert_number('-0.12', :currency)
+    assert_equal 9.1, convert_number('9.1', :currency)
+    assert_equal 90.1, convert_number('90.1', :currency)
+  end
+
+  def test_russian_currency_format_with_decimal_separator_using_russian_language
+    I18n.locale = :ru
+    assert_equal 0.1, convert_number(',1', :currency)
+    assert_equal 0.1, convert_number(',100', :currency)
+    assert_equal 0.1, convert_number('0,1', :currency)
+    assert_equal 0.345, convert_number('0,345', :currency)
+    assert_equal 0.345, convert_number('+0,345', :currency)
+    assert_equal -0.345, convert_number('-0,345', :currency)
+    assert_equal 9.1, convert_number('9,1', :currency)
+    assert_equal 90.1, convert_number('90,1', :currency)
+    assert_equal 9.1, convert_number('9,100', :currency)
+  end
+
+  def test_english_format_with_decimal_separator_with_no_localized_format
+    I18n.locale = :ru
+    assert_equal 0.1, convert_number('.1')
+    assert_equal 0.1, convert_number('0.1')
+  end
+
   private
-  def convert_number(value)
+  def convert_number(value, format = nil)
     record = NumberModel.new
+    @config.columns[:number].options[:format] = format unless format.nil?
     update_record_from_params(record, @config.list.columns, HashWithIndifferentAccess.new({:number => value}))
     record.number
   end

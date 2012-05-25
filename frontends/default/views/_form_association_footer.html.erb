@@ -4,22 +4,29 @@ begin
 rescue ActiveScaffold::ControllerNotFound
   remote_controller = nil
 end
+@record = parent_record
 
 show_add_existing = column_show_add_existing(column)
 show_add_new = column_show_add_new(column, associated, @record)
 
 return unless show_add_new or show_add_existing
 
-edit_associated_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :escape => false, :eid => params[:eid], :parent_controller => params[:parent_controller], :parent_id => params[:parent_id]) if show_add_existing
-add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :escape => false, :eid => params[:eid], :parent_controller => params[:parent_controller], :parent_id => params[:parent_id]) if show_add_new
+edit_associated_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :eid => params[:eid], :parent_controller => params[:parent_controller], :parent_id => params[:parent_id]) if show_add_existing
+add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :eid => params[:eid], :parent_controller => params[:parent_controller], :parent_id => params[:parent_id]) if show_add_new
 
 -%>
 <div class="footer-wrapper">
   <div class="footer">
     <% if show_add_new -%>
-    <% add_label = column.plural_association? ? as_(:create_another, :model => column.association.klass.model_name.human) : as_(:replace_with_new) 
+    <% if column.plural_association?
+         add_label = as_(:create_another, :model => column.association.klass.model_name.human)
+         add_class = 'as_create_another'
+       else
+         add_label = as_(:replace_with_new)
+         add_class = 'as_replace_with_new'
+       end
        create_another_id = "#{sub_form_id(:association => column.name)}-create-another" %>
-    <%= tag(:input, {:id => create_another_id, :type => 'button', :value => add_label, :href => add_new_url.html_safe, 'data-remote' => true, :style=> "display: none;"}) %>
+    <%= link_to add_label, add_new_url, :id => create_another_id, :remote => true, :class => add_class, :style=> "display: none;" %>
     <%= javascript_tag("ActiveScaffold.show('#{create_another_id}');") %>
     <% end -%>
 
@@ -32,7 +39,7 @@ add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :as
         <% select_options = options_for_select(options_for_association(column.association)) 
            add_existing_id = "#{sub_form_id(:association => column.name)}-add-existing" %>
         <%= select_tag 'associated_id', '<option value="">'.html_safe + as_(:_select_) + '</option>'.html_safe + select_options %>
-        <%= tag(:input, {:id => add_existing_id, :type => 'button', :value => as_(:add_existing), :href => edit_associated_url.html_safe, 'data-remote' => true, :class=> 'as_add_existing', :style => "display: none;"}) %>
+        <%= link_to as_(:add_existing), edit_associated_url, :id => add_existing_id, :remote => true, :class=> column.plural_association? ? 'as_add_existing' : 'as_replace_existing', :style => "display: none;" %>
         <%= javascript_tag("ActiveScaffold.show('#{add_existing_id}');") %>
       <% end -%>
     <% end -%>

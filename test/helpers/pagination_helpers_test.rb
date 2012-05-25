@@ -52,4 +52,8 @@ class PaginationHelpersTest < Test::Unit::TestCase
     current_page = stub(:number => current, :pager => paginator)
     pagination_ajax_links(current_page, {}, window_size)
   end
+
+  def content_tag(tag, text)
+    text
+  end
 end

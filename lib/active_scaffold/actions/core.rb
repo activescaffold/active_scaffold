@@ -2,10 +2,11 @@ module ActiveScaffold::Actions
   module Core
     def self.included(base)
       base.class_eval do
+        before_filter :register_constraints_with_action_columns, :if => :embedded?
         after_filter :clear_flashes
       end
       base.helper_method :nested?
-      base.helper_method :beginning_of_chain
+      base.helper_method :calculate
       base.helper_method :new_model
     end
     def render_field
@@ -17,30 +18,45 @@ module ActiveScaffold::Actions
     end
     
     protected
+    def embedded?
+      @embedded ||= params.delete(:embedded)
+    end
 
     def nested?
       false
     end
 
     def render_field_for_inplace_editing
-      register_constraints_with_action_columns(nested.constrained_fields, active_scaffold_config.update.hide_nested_column ? [] : [:update]) if nested?
       @record = find_if_allowed(params[:id], :update)
       render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
     end
 
     def render_field_for_update_columns
-      @record = new_model
       column = active_scaffold_config.columns[params[:column]]
       unless column.nil?
+        @source_id = params.delete(:source_id)
+        @columns = column.update_columns
+        @scope = params[:scope]
+        
         if column.send_form_on_update_column
-          @record = update_record_from_params(@record, active_scaffold_config.update.columns, params[:record])
+          if @scope
+            hash = @scope.gsub('[','').split(']').inject(params[:record]) do |hash, index|
+              hash[index]
+            end
+            id = hash[:id]
+          else
+            hash = params[:record]
+            id = params[:id]
+          end
+          @record = id ? find_if_allowed(id, :update) : new_model
+          @record = update_record_from_params(@record, active_scaffold_config.send(@scope ? :subform : (id ? :update : :create)).columns, hash)
         else
+          @record = new_model
           value = column_value_from_param_value(@record, column, params[:value])
           @record.send "#{column.name}=", value
         end
+        
         after_render_field(@record, column)
-        source_id = params.delete(:source_id)
-        render :partial => "render_field", :collection => Array(params[:update_columns]), :content_type => 'text/javascript', :locals => {:source_id => source_id}
       end
     end
     
@@ -59,6 +75,10 @@ module ActiveScaffold::Actions
       end
     end
 
+    def marked_records
+      active_scaffold_session_storage[:marked_records] ||= Set.new
+    end
+    
     def default_formats
       [:html, :js, :json, :xml, :yaml]
     end
@@ -91,16 +111,16 @@ module ActiveScaffold::Actions
       @response_object = successful? ? (@record || @records) : @record.errors
     end
 
-    # Success is the existence of certain variables and the absence of errors (when applicable).
-    # Success can also be defined.
+    # Success is the existence of one or more model objects. Most actions
+    # circumvent this method by setting @success directly.
     def successful?
       if @successful.nil?
-        @records or (@record and @record.errors.count == 0 and @record.no_errors_in_associated?)
+        @record || @records
       else
         @successful
       end
     end
-
+    
     def successful=(val)
       @successful = (val) ? true : false
     end
@@ -130,25 +150,23 @@ module ActiveScaffold::Actions
         
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
     def conditions_from_params
-      conditions = nil
+      conditions = {}
       params.reject {|key, value| [:controller, :action, :id, :page, :sort, :sort_direction].include?(key.to_sym)}.each do |key, value|
-        next unless active_scaffold_config.model.column_names.include?(key)
-        if value.is_a?(Array)
-          conditions = merge_conditions(conditions, ["#{active_scaffold_config.model.table_name}.#{key.to_s} in (?)", value])
-        else
-          conditions = merge_conditions(conditions, ["#{active_scaffold_config.model.table_name}.#{key.to_s} = ?", value])
-        end
+        next unless active_scaffold_config.model.columns_hash[key.to_s]
+        next if active_scaffold_constraints[key.to_sym]
+        next if nested? and nested.constrained_fields.include? key.to_sym
+        conditions[key] = value
       end
       conditions
     end
 
     def new_model
       model = beginning_of_chain
-      if model.columns_hash[model.inheritance_column]
-        build_options = {model.inheritance_column.to_sym => active_scaffold_config.model_id} if nested? && nested.association && nested.association.collection?
-        params = self.params # in new action inheritance_column must be in params
-        params = params[:record] || {} unless params[model.inheritance_column] # in create action must be inside record key
-        model = params.delete(model.inheritance_column).camelize.constantize if params[model.inheritance_column]
+      if model.columns_hash[column = model.inheritance_column]
+        build_options = {column.to_sym => active_scaffold_config.model_id} if nested? && nested.association && nested.association.collection?
+        model_name = params.delete(column) # in new action inheritance_column must be in params
+        model_name ||= params[:record].delete(column) unless params[:record].blank? # in create action must be inside record key
+        model = model_name.camelize.constantize if model_name
       end
       model.respond_to?(:build) ? model.build(build_options || {}) : model.new
     end
@@ -157,13 +175,17 @@ module ActiveScaffold::Actions
     def respond_to_action(action)
       respond_to do |type|
         action_formats.each do |format|
-          type.send(format){ send("#{action}_respond_to_#{format}") }
+          type.send(format) do
+            if respond_to?(method_name = "#{action}_respond_to_#{format}")
+              send(method_name)
+            end
+          end
         end
       end
     end
 
     def action_formats
-      @action_formats ||= if respond_to? "#{action_name}_formats"
+      @action_formats ||= if respond_to? "#{action_name}_formats", true
         send("#{action_name}_formats")
       else
         (default_formats + active_scaffold_config.formats).uniq

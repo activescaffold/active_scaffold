@@ -1,31 +1,26 @@
 <tbody class="messages">
   <tr class="record even-record">
-    <td colspan="<%= columns.length -%>" class="messages-container">
+    <td colspan="<%= columns.length + 1 -%>" class="messages-container">
       <p class="error-message message server-error" style="display:none;">
         <%= as_(:internal_error).html_safe %>
-        <a href="#" onclick="ActiveScaffold.hide(this.parentNode); return false;" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
+        <a href="#" class="close" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
       </p>
       <div id="<%= active_scaffold_messages_id -%>">
         <%= render :partial => 'messages' %>
       </div>
-      <p class="filtered-message" <%= ' style="display:none;" '.html_safe unless @filtered %>>
+      <div class="filtered-message" <%= ' style="display:none;" '.html_safe unless @filtered %>>
         <%= @filtered.is_a?(Array) ? render(:partial => 'human_conditions', :locals => {:columns => @filtered}) : as_(active_scaffold_config.list.filtered_message) %>
-      </p>
+        <% if active_scaffold_config.list.show_search_reset && @filtered -%>
+        <div class="reset">
+          <%= loading_indicator_tag(:action => :record, :id => nil) %>
+          <%= render_action_link(active_scaffold_config.list.reset_link, params_for(:search => '')) %>
+        </div>
+        <% end -%>
+      </div>
       <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" '.html_safe unless @page.items.empty? %>>
         <%= as_(active_scaffold_config.list.no_entries_message) %>
       </p>
     </td>
-    <% if active_scaffold_config.list.show_search_reset && @filtered -%>
-      <% search_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :member, :position => false)
-      action_links = ActiveScaffold::DataStructures::ActionLinks.new
-      record = new_model
-      record.id = 0
-      action_links.add(search_link)  -%>
-      <%= render :partial => 'list_actions', :locals => {:record => record, :url_options => params_for(:escape => false, :search => ''), :action_links => action_links.member} %>
-    <% else %>
-      <td class='actions'><%= '<p class="empty-message">&nbsp;</p>'.html_safe if @page.items.empty? %></td>
-    <% end -%>
-
   </tr>
 </tbody>    
 
