@@ -133,7 +133,7 @@ module ActiveScaffold::Config
 
     # To be called after your finished configuration
     def _load_action_columns
-      ActiveScaffold::DataStructures::ActionColumns.class_eval {include ActiveScaffold::DataStructures::ActionColumns::AfterConfiguration}
+      #ActiveScaffold::DataStructures::ActionColumns.class_eval {include ActiveScaffold::DataStructures::ActionColumns::AfterConfiguration}
 
       # then, register the column objects
       self.actions.each do |action_name|
