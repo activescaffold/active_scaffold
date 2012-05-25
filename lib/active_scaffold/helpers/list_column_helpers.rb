@@ -92,7 +92,7 @@ module ActiveScaffold
 
       def column_link_authorized?(link, column, record, associated)
         if column.association
-          associated_for_authorized = if associated.nil? || (associated.respond_to?(:blank?) && associated.blank?)
+          associated_for_authorized = if associated.nil? || (column.plural_association? && !associated.loaded?) || (associated.respond_to?(:blank?) && associated.blank?)
             column.association.klass
           elsif [:has_many, :has_and_belongs_to_many].include? column.association.macro
             associated.first
