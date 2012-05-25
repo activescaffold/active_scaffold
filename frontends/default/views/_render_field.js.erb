@@ -1,0 +1,20 @@
+<%
+  column = if render_field.is_a? ActiveScaffold::DataStructures::Column
+    render_field
+  else
+    active_scaffold_config.columns[render_field.to_sym] unless render_field.is_a? ActiveScaffold::DataStructures::Column
+  end
+  @rendered ||= Set.new
+  return if @rendered.include? column.name
+  @rendered << column.name
+  if column_renders_as(column) == :subform
+    options = {:is_subform => true, :field_class => "#{column.name}-sub-form"}
+  else
+    options = {:is_subform => false, :field_class => "#{column.name}-input"}
+  end
+-%>
+
+ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(render(:partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope })) %>', <%= options.to_json.html_safe %>);
+<%if column.update_columns && !column.update_columns.empty?%>
+  <%=  render(:partial => "render_field", :collection => column.update_columns, :locals => {:source_id => source_id, :scope => scope})%>
+<%end%>
