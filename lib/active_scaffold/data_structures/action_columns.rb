@@ -38,27 +38,20 @@ module ActiveScaffold::DataStructures
     end
 
     def names
-      self.collect(&:name)
+      if @columns
+        self.collect(&:name)
+      else
+        names_without_auth_check
+      end
     end
 
     def names_without_auth_check
       Array(@set)
     end
 
-    protected
-
-    def collect_columns
-      @set.collect {|col| col.is_a?(ActiveScaffold::DataStructures::ActionColumns) ? col.collect_columns : col}
-    end
-
-    # called during clone or dup. makes the clone/dup deeper.
-    def initialize_copy(from)
-      @set = from.instance_variable_get('@set').clone
-    end
-
     # A package of stuff to add after the configuration block. This is an attempt at making a certain level of functionality inaccessible during configuration, to reduce possible breakage from misuse.
     # The bulk of the package is a means of connecting the referential column set (ActionColumns) with the actual column objects (Columns). This lets us iterate over the set and yield real column objects.
-    module AfterConfiguration
+    #module AfterConfiguration
       # Redefine the each method to yield actual Column objects.
       # It will skip constrained and unauthorized columns.
       #
@@ -66,10 +59,10 @@ module ActiveScaffold::DataStructures
       #  * :flatten - whether to recursively iterate on nested sets. default is false.
       #  * :for - the record (or class) being iterated over. used for column-level security. default is the class.
       def each(options = {}, &proc)
-        options[:for] ||= @columns.active_record_class
+        options[:for] ||= @columns.active_record_class unless @columns.nil?
         self.unauthorized_columns = []
         @set.each do |item|
-          unless item.is_a? ActiveScaffold::DataStructures::ActionColumns
+          unless item.is_a?(ActiveScaffold::DataStructures::ActionColumns) || @columns.nil?
             item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
             next if self.skip_column?(item, options)
           end
@@ -133,6 +126,17 @@ module ActiveScaffold::DataStructures
       def length
         ((@set - self.constraint_columns) - self.unauthorized_columns).length
       end
+    #end
+
+    protected
+
+    def collect_columns
+      @set.collect {|col| col.is_a?(ActiveScaffold::DataStructures::ActionColumns) ? col.collect_columns : col}
+    end
+
+    # called during clone or dup. makes the clone/dup deeper.
+    def initialize_copy(from)
+      @set = from.instance_variable_get('@set').clone
     end
   end
 end

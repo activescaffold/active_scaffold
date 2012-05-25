@@ -42,13 +42,9 @@ module ActiveScaffold::Bridges
     # beginning of chain integration
     module Actions
       module Core
-        extend ActiveSupport::Concern
-        included do
-          alias_method_chain :beginning_of_chain, :cancan
-        end
         # :TODO can this be expanded more ?
-        def beginning_of_chain_with_cancan
-          beginning_of_chain_without_cancan.accessible_by(current_ability)
+        def beginning_of_chain
+          super.accessible_by(current_ability)
         end
       end
     end

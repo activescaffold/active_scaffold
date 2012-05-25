@@ -450,6 +450,10 @@ position: relative;
 margin: 2px 7px;
 line-height: 12px;
 }
+.active-scaffold .message .timestamp,
+.active-scaffold .message .message-content {
+display: inline;
+}
 
 .active-scaffold .filtered-message .reset {
 position: absolute;
