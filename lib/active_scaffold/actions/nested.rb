@@ -77,7 +77,7 @@ module ActiveScaffold::Actions
         if nested.association.collection?
           nested.parent_scope.send(nested.association.name)
         elsif nested.child_association.belongs_to?
-          super.model.where(nested.child_association.foreign_key => nested.parent_scope)
+          super.where(nested.child_association.foreign_key => nested.parent_scope)
         end
       elsif nested? && nested.scope
         nested.parent_scope.send(nested.scope)
