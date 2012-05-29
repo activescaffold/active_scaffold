@@ -76,7 +76,8 @@ module ActiveScaffold::Actions
       end
 
       page = find_page(options)
-      if page.items.blank? && !page.pager.infinite?
+      total_pages = page.pager.number_of_pages
+      if !page.pager.infinite? && !total_pages.zero? && page.number > total_pages
         page = page.pager.last
         active_scaffold_config.list.user.page = page.number
       end
