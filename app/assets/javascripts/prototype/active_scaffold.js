@@ -673,7 +673,7 @@ var ActiveScaffold = {
   highlight: function(element) {
     element = $(element);
     if (typeof(element.highlight) == 'function') {
-      element.highlight(Object.extend({duration: 3}, ActiveScaffold.js_config.highlight));
+      element.highlight(Object.extend({duration: 3}, ActiveScaffold.config.highlight));
     }
   }
 }
