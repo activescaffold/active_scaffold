@@ -9,7 +9,7 @@ module ActiveScaffold::Actions
 
     def do_edit_associated
       @parent_record = params[:id].nil? ? new_model : find_if_allowed(params[:id], :update)
-      @column = active_scaffold_config.columns[params[:association]]
+      @column = active_scaffold_config.columns[params[:child_association]]
 
       # NOTE: we don't check whether the user is allowed to update this record, because if not, we'll still let them associate the record. we'll just refuse to do more than associate, is all.
       @record = @column.association.klass.find(params[:associated_id]) if params[:associated_id]

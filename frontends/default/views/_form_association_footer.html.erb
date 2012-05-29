@@ -11,8 +11,8 @@ show_add_new = column_show_add_new(column, associated, @record)
 
 return unless show_add_new or show_add_existing
 
-edit_associated_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :associated_id => '--ID--', :eid => params[:eid], :parent_controller => params[:parent_controller], :parent_id => params[:parent_id]) if show_add_existing
-add_new_url = url_for(:action => 'edit_associated', :id => parent_record.id, :association => column.name, :eid => params[:eid], :parent_controller => params[:parent_controller], :parent_id => params[:parent_id]) if show_add_new
+edit_associated_url = params_for(:action => 'edit_associated', :child_association => column.name, :associated_id => '--ID--') if show_add_existing
+add_new_url = params_for(:action => 'edit_associated', :child_association => column.name) if show_add_new
 
 -%>
 <div class="footer-wrapper">
