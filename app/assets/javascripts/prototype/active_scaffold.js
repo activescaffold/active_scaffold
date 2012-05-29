@@ -375,7 +375,7 @@ var ActiveScaffold = {
     row = $(row);
     var new_row = this.replace(row, html)
     if (row.hasClassName('even-record')) new_row.addClassName('even-record');
-    new_row.highlight();
+    ActiveScaffold.highlight(new_row);
   },
   
   replace: function(element, html) {
@@ -451,7 +451,7 @@ var ActiveScaffold = {
     this.stripe(tbody);
     this.hide_empty_message(tbody);
     this.increment_record_count(tbody.up('div.active-scaffold'));
-    new_row.highlight();
+    ActiveScaffold.highlight(new_row);
   },
   
   delete_record_row: function(row, page_reload_url) {
@@ -490,7 +490,7 @@ var ActiveScaffold = {
   report_500_response: function(active_scaffold_id) {
     var server_error = $(active_scaffold_id).down('td.messages-container p.server-error');
     if (server_error.visible()) {
-      server_error.highlight();
+      ActiveScaffold.highlight(server_error);
     } else {
       server_error.show();
     }
@@ -668,6 +668,13 @@ var ActiveScaffold = {
   
   draggable_lists: function(element) {
     new DraggableLists(element);
+  },
+
+  highlight: function(element) {
+    element = $(element);
+    if (typeof(element.highlight) == 'function') {
+      element.highlight(Object.extend({duration: 3}, ActiveScaffold.js_config.highlight));
+    }
   }
 }
 
@@ -907,7 +914,7 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
     else {
       return false;
     }
-    this.adapter.down('td').down().highlight();
+    ActiveScaffold.highlight(this.adapter.down('td').down());
   },
 
   close: function($super, refreshed_content) {
@@ -965,7 +972,7 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
     else {
       throw 'Unknown position "' + this.position + '"'
     }
-    this.adapter.down('td').down().highlight();
+    ActiveScaffold.highlight(this.adapter.down('td').down());
   },
 
   reload: function() {

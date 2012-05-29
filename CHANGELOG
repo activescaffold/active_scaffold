@@ -5,6 +5,7 @@
 - Improve performance using class to check authorization for plural associations which are not loaded
 - Fix using a scope in main form, it wasn't working for associations (for create multiple from active_scaffold_batch)
 - Fix searches with no results, it was loading first page without conditions
+- Allow to change highlight options with ActiveScaffold.js_config
 
 = 3.2.11
 - improve support for tableless models and active_scaffold_batch
