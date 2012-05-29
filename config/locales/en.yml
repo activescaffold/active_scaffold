@@ -31,6 +31,7 @@ en:
     filtered: '(Filtered)'
     found: 'Found'
     hide: 'Hide'
+    inplace_edit_handle: '--'
     live_search: 'Live Search'
     loading: 'Loading…'
     next: 'Next'

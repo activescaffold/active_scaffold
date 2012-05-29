@@ -2,6 +2,8 @@
 - improve support for tableless models, add support for count
 - fix div id for nested scaffolds
 - add config.timestamped_messages and config.highlight_messages
+- Improve performance using class to check authorization for plural associations which are not loaded
+- Fix using a scope in main form, it wasn't working for associations (for create multiple from active_scaffold_batch)
 
 = 3.2.11
 - improve support for tableless models and active_scaffold_batch

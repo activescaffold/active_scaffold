@@ -92,7 +92,7 @@ module ActiveScaffold
 
       def column_link_authorized?(link, column, record, associated)
         if column.association
-          associated_for_authorized = if associated.nil? || (associated.respond_to?(:blank?) && associated.blank?)
+          associated_for_authorized = if associated.nil? || (column.plural_association? && !associated.loaded?) || (associated.respond_to?(:blank?) && associated.blank?)
             column.association.klass
           elsif [:has_many, :has_and_belongs_to_many].include? column.association.macro
             associated.first
@@ -257,7 +257,7 @@ module ActiveScaffold
         tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
                        :title => as_(:click_to_edit), 'data-ie_id' => record.id.to_s}
 
-        content_tag(:span, as_(:click_to_edit), :class => 'handle') <<
+        content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<
         content_tag(:span, formatted_column, tag_options)
       end
 

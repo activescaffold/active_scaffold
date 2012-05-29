@@ -1,7 +1,7 @@
 jQuery(document).ready(function() {
   jQuery('form.as_form').live('ajax:beforeSend', function(event) {
     var as_form = jQuery(this).closest("form");
-    if (as_form && as_form.attr('data-loading') == 'true') {
+    if (as_form.attr('data-loading') == 'true') {
       ActiveScaffold.disable_form(as_form);
     }
     return true;
@@ -9,19 +9,19 @@ jQuery(document).ready(function() {
   
   jQuery('form.as_form').live('ajax:complete', function(event) {
     var as_form = jQuery(this).closest("form");
-    if (as_form && as_form.attr('data-loading') == 'true') {
+    if (as_form.attr('data-loading') == 'true') {
       ActiveScaffold.enable_form(as_form);
     }
   });
   jQuery('form.as_form').live('ajax:error', function(event, xhr, status, error) {
     var as_div = jQuery(this).closest("div.active-scaffold");
-    if (as_div) {
-      ActiveScaffold.report_500_response(as_div)
+    if (as_div.length) {
+      ActiveScaffold.report_500_response(as_div);
     }
   });
   jQuery('form.as_form.as_remote_upload').live('submit', function(event) {
     var as_form = jQuery(this).closest("form");
-    if (as_form && as_form.attr('data-loading') == 'true') {
+    if (as_form.attr('data-loading') == 'true') {
       setTimeout("ActiveScaffold.disable_form('" + as_form.attr('id') + "')", 10);
     }
     return true;
@@ -541,8 +541,10 @@ var ActiveScaffold = {
   },
 
   report_500_response: function(active_scaffold_id) {
-    server_error = jQuery(active_scaffold_id).find('td.messages-container p.server-error');
-    if (!jQuery(server_error).is(':visible')) {
+    var server_error = jQuery(active_scaffold_id).find('td.messages-container p.server-error').first();
+    if (server_error.is(':visible')) {
+      ActiveScaffold.highlight(server_error);
+    } else {
       server_error.show();
     }
   },

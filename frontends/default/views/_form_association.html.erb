@@ -11,7 +11,7 @@ subform_div_id = "#{sub_form_id({:association => column.name, :id => parent_reco
 <div id ="<%= subform_div_id %>" <%= 'style="display: none;"'.html_safe if column.collapsed -%>>
 <%# HACK to be able to delete all associated records %>
 <%= hidden_field_tag "#{active_scaffold_input_options(column)[:name]}[0]", '' if column.plural_association? %>
-<%= render :partial => subform_partial_for_column(column), :locals => {:column => column, :parent_record => parent_record, :associated => associated, :show_blank_record => show_blank_record} %>
+<%= render :partial => subform_partial_for_column(column), :locals => {:column => column, :parent_record => parent_record, :associated => associated, :show_blank_record => show_blank_record, :scope => scope} %>
 </div>
 <%= link_to_visibility_toggle(subform_div_id, {:default_visible => !column.collapsed}) -%>
 <% @record = parent_record -%>
