@@ -661,7 +661,7 @@ var ActiveScaffold = {
   sortable: function(element, controller, options, url_params) {
     if (typeof(element) == 'string') element = '#' + element;
     var element = jQuery(element);
-    var sortable_options = {};
+    var sortable_options = jQuery.extend({}, options);
     if (options.update === true) {
       url_params.authenticity_token = jQuery('meta[name=csrf-param]').attr('content');
       sortable_options.update = function(event, ui) {
