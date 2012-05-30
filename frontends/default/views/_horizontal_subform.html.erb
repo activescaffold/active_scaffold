@@ -19,4 +19,4 @@
     <%= render :partial => 'horizontal_subform_footer', :locals => {:scope => column_scope(column, scope), :parent_record => parent_record, :column => column} %>
   </tfoot>
 </table>
-<%= render :partial => 'form_association_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated} -%>
+<%= render :partial => 'form_association_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated, :scope => scope} -%>
