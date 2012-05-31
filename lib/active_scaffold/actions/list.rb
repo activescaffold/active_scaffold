@@ -11,9 +11,7 @@ module ActiveScaffold::Actions
 
     # get just a single row
     def row
-      set_includes_for_list_columns
-      klass = beginning_of_chain.includes(active_scaffold_includes)
-      @record = find_if_allowed(params[:id], :read, klass)
+      get_row
       respond_to_action(:row)
     end
 
@@ -60,6 +58,12 @@ module ActiveScaffold::Actions
     def set_includes_for_list_columns
       includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
       self.active_scaffold_includes.concat includes_for_list_columns
+    end
+    
+    def get_row
+      set_includes_for_list_columns
+      klass = beginning_of_chain.includes(active_scaffold_includes)
+      @record = find_if_allowed(params[:id], :read, klass)
     end
 
     # The actual algorithm to prepare for the list view
