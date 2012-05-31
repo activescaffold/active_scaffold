@@ -1,5 +1,5 @@
 <%
-  column_count = if nested? and action_name == 'index'
+  column_count ||= if nested? and action_name == 'index'
     active_scaffold_config_for(nested.parent_model).list.columns.count + 1
   else
     active_scaffold_config.list.columns.count + 1
