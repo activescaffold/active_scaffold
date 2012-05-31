@@ -6,6 +6,7 @@
 - Fix using a scope in main form, it wasn't working for associations (for create multiple from active_scaffold_batch)
 - Fix searches with no results, it was loading first page without conditions
 - Allow to change highlight options with ActiveScaffold.js_config
+- allow to override column count calculation for colspan
 
 = 3.2.11
 - improve support for tableless models and active_scaffold_batch
