@@ -2,7 +2,7 @@
 - improve support for tableless models, add support for count
 - fix div id for nested scaffolds
 - add config.timestamped_messages and config.highlight_messages
-- Improve performance using class to check authorization for plural associations which are not loaded
+- Improve performance using class to check authorization for plural associations which are not loaded, and avoiding to load associations if it's not needed
 - Fix using a scope in main form, it wasn't working for associations (for create multiple from active_scaffold_batch)
 - Fix searches with no results, it was loading first page without conditions
 - Allow to change highlight options with ActiveScaffold.js_config
