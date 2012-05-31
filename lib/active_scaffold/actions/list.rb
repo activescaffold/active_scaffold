@@ -11,7 +11,8 @@ module ActiveScaffold::Actions
 
     # get just a single row
     def row
-      @record = find_if_allowed(params[:id], :read)
+      klass = beginning_of_chain.includes(active_scaffold_includes)
+      @record = find_if_allowed(params[:id], :read, klass)
       respond_to_action(:row)
     end
 
