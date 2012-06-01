@@ -123,9 +123,11 @@ module ActiveScaffold
         url_options[:controller] = link.controller.to_s if link.controller
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters
-        @link_record = record
-        url_options.merge! self.instance_eval(&(link.dynamic_parameters)) if link.dynamic_parameters.is_a?(Proc)
-        @link_record = nil
+        if link.dynamic_parameters.is_a?(Proc)
+          @link_record = record
+          url_options.merge! self.instance_eval(&(link.dynamic_parameters)) 
+          @link_record = nil
+        end
         url_options_for_nested_link(link.column, record, link, url_options, options) if link.nested_link?
         url_options_for_sti_link(link.column, record, link, url_options, options) unless record.nil? || active_scaffold_config.sti_children.nil?
         url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get
@@ -195,7 +197,8 @@ module ActiveScaffold
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
         end
-        nested.constrained_fields.each { |field| url_options.delete field } if nested?
+        url_options.except! *params_conditions
+        url_options.except! *nested.constrained_fields if nested?
       end
 
       def url_options_for_sti_link(column, record, link, url_options, options = {})
