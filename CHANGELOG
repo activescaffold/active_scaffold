@@ -7,6 +7,7 @@
 - Fix searches with no results, it was loading first page without conditions
 - Allow to change highlight options with ActiveScaffold.js_config
 - allow to override column count calculation for colspan
+- Remove conditions_from_params from nested links
 
 = 3.2.11
 - improve support for tableless models and active_scaffold_batch
