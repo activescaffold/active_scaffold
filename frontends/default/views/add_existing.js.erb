@@ -1,7 +1,7 @@
 <% new_row = render :partial => 'list_record', :locals => {:record => @record} %>
 ActiveScaffold.create_record_row('<%= active_scaffold_id %>', '<%= escape_javascript(new_row) %>', <%= {:insert_at => :top}.to_json.html_safe %>);
 
-<%= render :partial => 'update_calculations' %>
+<%= render :partial => 'update_calculations', :formats => [:js] %>
 
 <% if form_stays_open ||= true %>
   <%# why not just re-render the form? that wouldn't utilize a possible do_new override which sets default values.%>
