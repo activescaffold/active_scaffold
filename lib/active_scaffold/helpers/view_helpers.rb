@@ -182,7 +182,7 @@ module ActiveScaffold
         if link.image.nil?
           html = link_to(label, url, html_options)
         else
-          html = link_to(image_tag(link.image[:name] , :size => link.image[:size], :alt => label), url, html_options)
+          html = link_to(image_tag(link.image[:name], :size => link.image[:size], :alt => label, :title => label), url, html_options)
         end
         # if url is nil we would like to generate an anchor without href attribute
         url.nil? ? html.sub(/href=".*?"/, '').html_safe : html.html_safe
