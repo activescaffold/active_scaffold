@@ -17,7 +17,7 @@ action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'mess
         <% end %>
         action_link.close();
       <% end %>
-      <%= render :partial => 'update_calculations', :locals => {:calculations_id => active_scaffold_calculations_id(:controller_id => render_parent_controller)} unless render_parent_action == :index %>
+      <%= render :partial => 'update_calculations', :locals => {:calculations_id => active_scaffold_calculations_id(:controller_id => render_parent_controller)}, :formats => [:js] unless render_parent_action == :index %>
     <% else %>
       <% if nested_singular_association? || render_parent_action == :row %>
         action_link.close();
@@ -29,7 +29,7 @@ action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'mess
   <% elsif params[:parent_controller].nil? %>
     <% new_row = render :partial => 'list_record', :locals => {:record => @record} %>
     ActiveScaffold.create_record_row(action_link.scaffold(),'<%= escape_javascript(new_row) %>', <%= {:insert_at => insert_at}.to_json.html_safe %>);
-    <%= render :partial => 'update_calculations' %>
+    <%= render :partial => 'update_calculations', :formats => [:js] %>
   <% end %>
 
   <% unless render_parent? %>

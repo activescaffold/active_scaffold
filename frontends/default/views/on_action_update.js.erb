@@ -8,7 +8,7 @@
       ActiveScaffold.update_row('<%= element_row_id(:action => :list, :id => @record.id) %>', '<%= row %>');
       ActiveScaffold.scroll_to('<%= element_row_id(:action => :list, :id => @record.id) %>', true);
     <% end %>
-    <%= render :partial => 'update_calculations' %>
+    <%= render :partial => 'update_calculations', :formats => [:js] %>
   <% else %>
     <% if @action_link.nil? || @action_link.position %>
       ActiveScaffold.find_action_link('<%= element_row_id(:action => action_name) %>').close();
