@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ControllerHelpers
       def self.included(controller)
-        controller.class_eval { helper_method :params_for, :params_conditions, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_controller, :render_parent_action, :nested_singular_association?, :build_associated}
+        controller.class_eval { helper_method :params_for, :params_conditions, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated}
       end
       
       include ActiveScaffold::Helpers::IdHelpers
@@ -84,14 +84,6 @@ module ActiveScaffold
         rescue ActiveScaffold::ControllerNotFound
         end if @parent_action.nil?
         @parent_action
-      end
-
-      def render_parent_controller
-        if nested_singular_association?
-          nested.parent_scaffold.controller_path
-        else
-          params[:parent_sti]
-        end
       end
       
       def build_associated(column, record)
