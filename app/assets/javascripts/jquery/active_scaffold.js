@@ -1026,10 +1026,17 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
     ActiveScaffold.highlight(this.adapter.find('td'));
   },
 
-  close: function(refreshed_content) {
+  close: function(refreshed_content_or_reload) {
     this._super();
-    if (refreshed_content) {
-      ActiveScaffold.update_row(this.target, refreshed_content);
+    if (refreshed_content_or_reload) {
+      if (typeof refreshed_content_or_reload == 'string') {
+        ActiveScaffold.update_row(this.target, refreshed_content);
+      } else if (this.refresh_url) {
+        var target = this.target;
+        jQuery.get(this.refresh_url, function(e, status, response) {
+          ActiveScaffold.update_row(target, response.responseText);
+        });
+      }
     }
   },
 
