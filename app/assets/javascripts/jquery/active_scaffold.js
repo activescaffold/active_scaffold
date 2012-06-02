@@ -1030,7 +1030,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
     this._super();
     if (refreshed_content_or_reload) {
       if (typeof refreshed_content_or_reload == 'string') {
-        ActiveScaffold.update_row(this.target, refreshed_content);
+        ActiveScaffold.update_row(this.target, refreshed_content_or_reload);
       } else if (this.refresh_url) {
         var target = this.target;
         jQuery.get(this.refresh_url, function(e, status, response) {
