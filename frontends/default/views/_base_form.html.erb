@@ -19,7 +19,10 @@ options = {:onsubmit => onsubmit,
            :multipart => multipart,
            :class => "as_form #{form_action.to_s}",
            :method => method,
-           'data-loading' => true}
+           'data-loading' => true,
+           'data-as_load' => 'form',
+           'data-as_action' => form_action
+           }
 cancel_options = {:class => 'as_cancel', 'data-refresh' => false}
 
 cancel_options[:remote] = true if xhr #cancel link does nt have to care about multipart forms
@@ -47,4 +50,3 @@ end
   </p>
 
 </form>
-<%= javascript_tag("ActiveScaffold.focus_first_element_of_form('#{element_form_id(:action => form_action)}');") %>

@@ -4,7 +4,10 @@ options = {:id => element_form_id(:action => 'search'),
            :class => "as_form search",
            :remote => true,
            :method => :get,
-           'data-loading' => true}
+           'data-loading' => true,
+           'data-as_load' => 'form',
+           'data-as_action' => 'search'
+           }
 form_tag url_options, options %>
   <ol class="form">
    <% visibles, hiddens = visibles_and_hiddens(active_scaffold_config.field_search) %>
@@ -29,4 +32,3 @@ form_tag url_options, options %>
     <%= loading_indicator_tag(:action => :search) %>
   </p>
 </form>
-<%= javascript_tag("ActiveScaffold.focus_first_element_of_form('#{element_form_id(:action => 'search')}');") %>
