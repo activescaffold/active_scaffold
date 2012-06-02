@@ -44,13 +44,25 @@ module ActiveScaffold::DataStructures
     def habtm?
       false 
     end
-    
+
+    def has_many?
+      false
+    end
+
     def belongs_to?
       false
     end
 
     def has_one?
       false
+    end
+
+    def singular_association?
+      belongs_to? || has_one?
+    end
+
+    def plural_association?
+      has_many? || habtm?
     end
     
     def readonly?
@@ -71,6 +83,10 @@ module ActiveScaffold::DataStructures
     
     def name
       self.association.name
+    end
+    
+    def has_many?
+      association.macro == :has_many 
     end
     
     def habtm?
