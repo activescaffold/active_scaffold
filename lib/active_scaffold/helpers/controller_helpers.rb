@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ControllerHelpers
       def self.included(controller)
-        controller.class_eval { helper_method :params_for, :params_conditions, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated}
+        controller.class_eval { helper_method :params_for, :params_conditions, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_controller, :render_parent_action, :nested_singular_association?, :build_associated}
       end
       
       include ActiveScaffold::Helpers::IdHelpers
