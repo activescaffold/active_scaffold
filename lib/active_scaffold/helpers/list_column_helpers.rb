@@ -92,11 +92,10 @@ module ActiveScaffold
 
       def column_link_authorized?(link, column, record, associated)
         if column.association
-          associated_for_authorized = if associated.nil? || (column.plural_association? && !associated.loaded?) || (associated.respond_to?(:blank?) && associated.blank?)
+          associated_for_authorized = if associated.nil? || (associated.respond_to?(:blank?) && associated.blank?)
             column.association.klass
           elsif [:has_many, :has_and_belongs_to_many].include? column.association.macro
-            # may be cached with [] or [nil] to avoid some queries
-            associated.first || column.association.klass
+            associated.first
           else
             associated
           end
@@ -151,7 +150,7 @@ module ActiveScaffold
         value ||= record.send(column.name) unless record.nil?
         if value && column.association # cache association size before calling column_empty?
           associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
-          cache_association(value, column, associated_size) if column.plural_association?
+          cache_association(value, column) if column.plural_association?
         end
         if column.association.nil? or column_empty?(value)
           if column.form_ui == :select && column.options[:options]
@@ -223,20 +222,6 @@ module ActiveScaffold
         clean_column_value(value)
       end
 
-<<<<<<< HEAD
-      def cache_association(value, column, size)
-        # we are not using eager loading, cache firsts records in order not to query the database in a future
-        unless value.loaded?
-          # load at least one record, is needed to display '...'
-          if column.associated_limit.nil?
-            Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
-          elsif column.associated_limit > 0
-            value.target = value.find(:all, :limit => column.associated_limit + 1, :select => column.select_columns)
-          else
-            value.target = size.to_i.zero? ? [] : [nil]
-          end
-        end
-=======
       def cache_association(value, column)
         # loaded? and target seems to be gone in rails 3.1
         # we are not using eager loading, cache firsts records in order not to query the database in a future
@@ -248,7 +233,6 @@ module ActiveScaffold
         #    value.target = value.find(:all, :limit => column.associated_limit + 1, :select => column.select_columns)
         #  end
         #end
->>>>>>> 8be805ee05b32a7840331fe1ede3da72dd6936e1
       end
 
       # ==========
@@ -273,7 +257,7 @@ module ActiveScaffold
         tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
                        :title => as_(:click_to_edit), 'data-ie_id' => record.id.to_s}
 
-        content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<
+        content_tag(:span, as_(:click_to_edit), :class => 'handle') <<
         content_tag(:span, formatted_column, tag_options)
       end
 
