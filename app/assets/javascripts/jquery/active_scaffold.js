@@ -80,7 +80,7 @@ jQuery(document).ready(function() {
     }
     return true;
   });
-  jQuery('a.as_cancel').live('ajax:complete', function(event, response) {
+  jQuery('a.as_cancel').live('ajax:success', function(event, response) {
     var action_link = ActiveScaffold.find_action_link(jQuery(this));
 
     if (action_link) {
