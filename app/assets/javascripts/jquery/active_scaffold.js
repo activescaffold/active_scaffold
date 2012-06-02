@@ -418,12 +418,10 @@ var ActiveScaffold = {
   replace: function(element, html) {
     if (typeof(element) == 'string') element = '#' + element; 
     element = jQuery(element);
-    element.replaceWith(html);
-    if (element.attr('id')) {
-      element = jQuery('#' + element.attr('id'));
-    }
-    element.trigger('as:element_updated');
-    return element;
+    var new_element = jQuery(html);
+    element.replaceWith(new_element);
+    new_element.trigger('as:element_updated');
+    return new_element;
   },
   
   replace_html: function(element, html) {
