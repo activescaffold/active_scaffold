@@ -917,10 +917,20 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
     ActiveScaffold.highlight(this.adapter.down('td').down());
   },
 
-  close: function($super, refreshed_content) {
+  close: function($super, refreshed_content_or_reload) {
     $super();
-    if (refreshed_content) {
-      ActiveScaffold.update_row(this.target, refreshed_content);
+    if (refreshed_content_or_reload) {
+      if (typeof refreshed_content_or_reload == 'string') {
+        ActiveScaffold.update_row(this.target, refreshed_content);
+      } else if (this.refresh_url) {
+        var target = this.target;
+        new Ajax.Request(this.refresh_url, {
+          method: 'get',
+          onComplete: function(response) {
+            ActiveScaffold.update_row(target, response.responseText);
+          }
+        });
+      }
     }
   },
 
