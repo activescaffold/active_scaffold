@@ -70,6 +70,7 @@ module ActiveScaffold
 
     base.helper_method :touch_device?
     base.helper_method :hover_via_click?
+    base.helper_method :active_scaffold_constraints
   end
 
   def self.set_defaults(&block)

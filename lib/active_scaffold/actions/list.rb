@@ -50,8 +50,8 @@ module ActiveScaffold::Actions
       render :text => Hash.from_xml(response_object.to_xml(:only => list_columns_names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
     
-    def row_respond_to_html
-      render(:partial => 'row', :locals => {:record => @record})
+    def row_respond_to_js
+      render
     end
 
     # The actual algorithm to prepare for the list view
