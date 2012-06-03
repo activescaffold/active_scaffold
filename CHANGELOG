@@ -10,6 +10,7 @@
 - Remove conditions_from_params from nested links
 - Fix nested forms for singular associations
 - enable to get constraints in helpers, so can be used in options_for_association_conditions, for example
+- Allow to edit has_one :through association in nested forms
 
 = 3.2.11
 - improve support for tableless models and active_scaffold_batch
