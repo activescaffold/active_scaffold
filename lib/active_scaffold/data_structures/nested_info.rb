@@ -64,6 +64,10 @@ module ActiveScaffold::DataStructures
     def plural_association?
       has_many? || habtm?
     end
+
+    def through_association?
+      false
+    end
     
     def readonly?
       false
@@ -101,12 +105,12 @@ module ActiveScaffold::DataStructures
       association.macro == :has_one
     end
     
+    def through_association?
+      association.options[:through]
+    end
+    
     def readonly?
-      if association.options.has_key? :readonly
-        association.options[:readonly]
-      else
-        association.options.has_key? :through
-      end
+      association.options[:readonly]
     end
 
     def sorted?

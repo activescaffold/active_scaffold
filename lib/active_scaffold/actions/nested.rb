@@ -76,6 +76,8 @@ module ActiveScaffold::Actions
       if nested? && nested.association && !nested.association.belongs_to?
         if nested.association.collection?
           nested.parent_scope.send(nested.association.name)
+        elsif nested.association.options[:through] # has_one :through doesn't need conditions
+          super
         elsif nested.child_association.belongs_to?
           super.where(nested.child_association.foreign_key => nested.parent_scope)
         end
