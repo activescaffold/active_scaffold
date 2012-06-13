@@ -56,9 +56,9 @@ module ActiveScaffold::Actions
       if params[:id]
         find_if_allowed(params[:id], :read).as_marked = true
       elsif active_scaffold_config.mark.mark_all_mode == :page && !mark_all_scope_forced?
-        each_record_in_page {|record| marked_records << record.id}
+        each_record_in_page { |record| record.as_marked = true }
       else
-        each_record_in_scope {|record| marked_records << record.id}
+        each_record_in_scope { |record| record.as_marked = true }
       end
     end
 
@@ -66,9 +66,9 @@ module ActiveScaffold::Actions
       if params[:id]
         find_if_allowed(params[:id], :read).as_marked = false
       elsif active_scaffold_config.mark.mark_all_mode == :page
-        each_record_in_page {|record| marked_records.delete(record.id)}
+        each_record_in_page { |record| record.as_marked = false }
       else
-        each_record_in_scope {|record| marked_records.delete(record.id)}
+        each_record_in_scope { |record| record.as_marked = false }
       end
     end
     
