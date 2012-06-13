@@ -20,7 +20,6 @@ module ActiveScaffold::Config
       @pagination = self.class.pagination
       @show_search_reset = self.class.show_search_reset
       @reset_link = self.class.reset_link.clone
-      @mark_records = self.class.mark_records
       @wrap_tag = self.class.wrap_tag
       @always_show_search = self.class.always_show_search
       @always_show_create = self.class.always_show_create
@@ -61,10 +60,6 @@ module ActiveScaffold::Config
     # * false: Disable pagination
     cattr_accessor :pagination
     @@pagination = true
-
-    # Add a checkbox in front of each record to mark them and use them with a batch action later
-    cattr_accessor :mark_records
-    @@mark_records = false
 
     # show a link to reset the search next to filtered message
     cattr_accessor :show_search_reset
@@ -129,9 +124,6 @@ module ActiveScaffold::Config
 
     # the ActionLink to reset search
     attr_reader :reset_link
-
-    # Add a checkbox in front of each record to mark them and use them with a batch action later
-    attr_accessor :mark_records
 
     # the default sorting. should be an array of hashes of {column_name => direction}, e.g. [{:a => 'desc'}, {:b => 'asc'}]. to just sort on one column, you can simply provide a hash, though, e.g. {:a => 'desc'}.
     def sorting=(val)

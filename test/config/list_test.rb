@@ -25,7 +25,6 @@ class Config::ListTest < Test::Unit::TestCase
     assert_equal :filtered, @config.list.filtered_message
     assert !@config.list.always_show_create
     assert !@config.list.always_show_search
-    assert !@config.list.mark_records
     assert @config.list.count_includes.nil?
     assert_equal 'ModelStubs', @config.list.label
     assert @config.list.sorting.sorts_on?(:id)
@@ -71,11 +70,6 @@ class Config::ListTest < Test::Unit::TestCase
     assert @config.list.sorting.sorts_on?(:b)
     assert_equal 'DESC', @config.list.sorting.direction_of(:b)
     assert !@config.list.sorting.sorts_on?(:id)
-  end
-  
-  def test_mark_records
-    @config.list.mark_records = true
-    assert @config.list.mark_records
   end
   
   def test_per_page

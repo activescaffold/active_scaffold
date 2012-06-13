@@ -240,7 +240,7 @@ module ActiveScaffold
         classes << 'empty' if column_empty? column_value
         classes << 'sorted' if active_scaffold_config.list.user.sorting.sorts_on?(column)
         classes << 'numeric' if column.column and [:decimal, :float, :integer].include?(column.column.type)
-        classes << 'in_place_editor_field' if inplace_edit?(record, column)
+        classes << 'in_place_editor_field' if inplace_edit?(record, column) or column.list_ui == :marked
         classes.join(' ').rstrip
       end
       

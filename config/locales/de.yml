@@ -34,6 +34,7 @@ de:
     inplace_edit_handle: '--'
     live_search: 'Live-Suche'
     loading: 'Lade…'
+    mark_all_records: "Mark all"
     next: 'Vor'
     no_entries: 'Keine Einträge'
     no_options: 'Keine Optionen'
@@ -42,6 +43,9 @@ de:
     pdf: 'PDF'
     previous: 'Zurück'
     print: 'Drucken'
+    records_marked:
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
     refresh: 'Neu laden'
     remove: 'Entfernen'
     remove_file: 'Entferne oder Ersetze Datei'

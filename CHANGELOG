@@ -12,6 +12,7 @@
 - enable to get constraints in helpers, so can be used in options_for_association_conditions, for example
 - Allow to edit has_one :through association in nested forms
 - Fix cancan bridge broken in a previous release
+- Fix mark action
 
 = 3.2.11
 - improve support for tableless models and active_scaffold_batch

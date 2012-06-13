@@ -122,7 +122,7 @@ jQuery(document).ready(function() {
     }
     return true;
   });
-  jQuery('td.in_place_editor_field').live('click', function(event) {
+  jQuery('td.in_place_editor_field, th.as_marked-column_heading').live('click', function(event) {
     var span = jQuery(this).find('span.in_place_editor_field');
     span.data('addEmptyOnCancel', jQuery(this).hasClass('empty'));
     jQuery(this).removeClass('empty');
@@ -585,13 +585,13 @@ var ActiveScaffold = {
   },
   
   read_inplace_edit_heading_attributes: function(column_heading, options) {
-    if (column_heading.attr('data-ie_cancel_text')) options.cancel_button = '<button class="inplace_cancel">' + column_heading.attr('data-ie_cancel_text') + "</button>";
-    if (column_heading.attr('data-ie_loading_text')) options.loading_text = column_heading.attr('data-ie_loading_text');
-    if (column_heading.attr('data-ie_saving_text')) options.saving_text = column_heading.attr('data-ie_saving_text');
-    if (column_heading.attr('data-ie_save_text')) options.save_button = '<button class="inplace_save">' + column_heading.attr('data-ie_save_text') + "</button>";
-    if (column_heading.attr('data-ie_rows')) options.textarea_rows = column_heading.attr('data-ie_rows');
-    if (column_heading.attr('data-ie_cols')) options.textarea_cols = column_heading.attr('data-ie_cols');
-    if (column_heading.attr('data-ie_size')) options.text_size = column_heading.attr('data-ie_size');
+    if (column_heading.data('ie-cancel-text')) options.cancel_button = '<button class="inplace_cancel">' + column_heading.data('ie-cancel-text') + "</button>";
+    if (column_heading.data('ie-loading-text')) options.loading_text = column_heading.data('ie-loading-text');
+    if (column_heading.data('ie-saving-text')) options.saving_text = column_heading.data('ie-saving-text');
+    if (column_heading.data('ie-save-text')) options.save_button = '<button class="inplace_save">' + column_heading.data('ie-save-text') + "</button>";
+    if (column_heading.data('ie-rows')) options.textarea_rows = column_heading.data('ie-rows');
+    if (column_heading.data('ie-cols')) options.textarea_cols = column_heading.data('ie-cols');
+    if (column_heading.data('ie-size')) options.text_size = column_heading.data('ie-size');
   }, 
   
   create_inplace_editor: function(span, options) {
@@ -684,19 +684,21 @@ var ActiveScaffold = {
   mark_records: function(element, options) {
     if (typeof(element) == 'string') element = '#' + element;
     var element = jQuery(element);
-    var mark_checkboxes = jQuery('#' + element.attr('id') + ' > tr.record td.marked-column input[type="checkbox"]');
-    mark_checkboxes.each(function (index) {
-      var item = jQuery(this);
-     if(options.checked === true) {
-       item.attr('checked', 'checked');
-     } else {
-       item.removeAttr('checked');
-     }
-     item.attr('value', ('' + !options.checked));
-    });
-    if(options.include_mark_all === true) {
-      var mark_all_checkbox = element.prev('thead').find('th.marked-column_heading span input[type="checkbox"]');
-      if(options.checked === true) {
+    if (options.include_checkboxes) {
+      var mark_checkboxes = jQuery('#' + element.attr('id') + ' > tr.record td.as_marked-column input[type="checkbox"]');
+      mark_checkboxes.each(function (index) {
+        var item = jQuery(this);
+        if(options.checked) {
+          item.attr('checked', 'checked');
+        } else {
+          item.removeAttr('checked');
+        }
+        item.attr('value', ('' + !options.checked));
+      });
+    }
+    if(options.include_mark_all) {
+      var mark_all_checkbox = element.prevAll('thead').find('th.as_marked-column_heading span input[type="checkbox"]');
+      if(options.checked) {
         mark_all_checkbox.attr('checked', 'checked');
       } else {
         mark_all_checkbox.removeAttr('checked');
@@ -735,16 +737,16 @@ var ActiveScaffold = {
         column_heading = my_parent;
       }
 
-      var render_url = column_heading.attr('data-ie_render_url'),
-          mode = column_heading.attr('data-ie_mode'),
-          record_id = span.attr('data-ie_id');
+      var render_url = column_heading.data('ie-render-url'),
+          mode = column_heading.data('ie-mode'),
+          record_id = span.data('ie-id') || '';
 
       ActiveScaffold.read_inplace_edit_heading_attributes(column_heading, options);
 
-      if (span.attr('data-ie_url')) {
-        options.url = span.attr('data-ie_url').replace(/__id__/, record_id);
+      if (span.data('ie-url')) {
+        options.url = span.data('ie-url').replace(/__id__/, record_id);
       } else {
-        options.url = column_heading.attr('data-ie_url').replace(/__id__/, record_id);
+        options.url = column_heading.data('ie-url').replace(/__id__/, record_id);
       }
 
       if (csrf_param) options['params'] = csrf_param.attr('content') + '=' + csrf_token.attr('content');
@@ -764,7 +766,7 @@ var ActiveScaffold = {
 
       if (render_url) {
         var plural = false;
-        if (column_heading.attr('data-ie_plural')) plural = true;
+        if (column_heading.data('ie-plural')) plural = true;
         options.field_type = 'remote';
         options.editor_url = render_url.replace(/__id__/, record_id)
       }
