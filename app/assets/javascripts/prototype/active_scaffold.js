@@ -170,18 +170,18 @@ document.observe("dom:loaded", function() {
         column_heading = my_parent;
       }
           
-      var render_url = column_heading.readAttribute('data-ie_render_url'),
-          mode = column_heading.readAttribute('data-ie_mode'),
-          record_id = span.readAttribute('data-ie_id');
+      var render_url = column_heading.readAttribute('data-ie-render-url'),
+          mode = column_heading.readAttribute('data-ie-mode'),
+          record_id = span.readAttribute('data-ie-id') || '';
         
       ActiveScaffold.read_inplace_edit_heading_attributes(column_heading, options);
       
-      if (span.readAttribute('data-ie_url')) {
-        options.url = span.readAttribute('data-ie_url');
+      if (span.readAttribute('data-ie-url')) {
+        options.url = span.readAttribute('data-ie-url');
       } else {
-        options.url = column_heading.readAttribute('data-ie_url');
+        options.url = column_heading.readAttribute('data-ie-url');
       }
-      if (record_id) options.url = options.url.sub('__id__', record_id);
+      options.url = options.url.sub('__id__', record_id);
        
       if (csrf_param) options['params'] = csrf_param.readAttribute('content') + '=' + csrf_token.readAttribute('content');
 
@@ -200,7 +200,7 @@ document.observe("dom:loaded", function() {
       
       if (render_url) {
         var plural = false;
-        if (column_heading.readAttribute('data-ie_plural')) plural = true;
+        if (column_heading.readAttribute('data-ie-plural')) plural = true;
         options['onFormCustomization'] = new Function('element', 'form', 'element.setFieldFromAjax(' + "'" + render_url.sub('__id__', record_id) + "', {plural: " + plural + '});');
       }
       
@@ -530,13 +530,13 @@ var ActiveScaffold = {
   },
   
   read_inplace_edit_heading_attributes: function(column_heading, options) {
-    if (column_heading.readAttribute('data-ie_cancel_text')) options.cancelText = column_heading.readAttribute('data-ie_cancel_text');
-    if (column_heading.readAttribute('data-ie_loading_text')) options.loadingText = column_heading.readAttribute('data-ie_loading_text');
-    if (column_heading.readAttribute('data-ie_saving_text')) options.savingText = column_heading.readAttribute('data-ie_saving_text');
-    if (column_heading.readAttribute('data-ie_save_text')) options.okText = column_heading.readAttribute('data-ie_save_text');
-    if (column_heading.readAttribute('data-ie_rows')) options.rows = column_heading.readAttribute('data-ie_rows');
-    if (column_heading.readAttribute('data-ie_cols')) options.cols = column_heading.readAttribute('data-ie_cols');
-    if (column_heading.readAttribute('data-ie_size')) options.size = column_heading.readAttribute('data-ie_size');
+    if (column_heading.readAttribute('data-ie-cancel-text')) options.cancelText = column_heading.readAttribute('data-ie-cancel-text');
+    if (column_heading.readAttribute('data-ie-loading-text')) options.loadingText = column_heading.readAttribute('data-ie-loading-text');
+    if (column_heading.readAttribute('data-ie-saving-text')) options.savingText = column_heading.readAttribute('data-ie-saving-text');
+    if (column_heading.readAttribute('data-ie-save-text')) options.okText = column_heading.readAttribute('data-ie-save-text');
+    if (column_heading.readAttribute('data-ie-rows')) options.rows = column-heading.readAttribute('data-ie-rows');
+    if (column_heading.readAttribute('data-ie-cols')) options.cols = column-heading.readAttribute('data-ie-cols');
+    if (column_heading.readAttribute('data-ie-size')) options.size = column-heading.readAttribute('data-ie-size');
   }, 
   
   create_inplace_editor: function(span, options) {
@@ -610,18 +610,20 @@ var ActiveScaffold = {
   // element is tbody id
   mark_records: function(element, options) {
     var element = $(element);
-    var mark_checkboxes = $$('#' + element.readAttribute('id') + ' > tr.record td.marked-column input[type="checkbox"]');
-    mark_checkboxes.each(function(item) {
-     if(options.checked === true) {
-       item.writeAttribute({ checked: 'checked' });
-     } else {
-       item.removeAttribute('checked');
-     }
-     item.writeAttribute('value', ('' + !options.checked));
-    });
-    if(options.include_mark_all === true) {
+    if (options.include_checkboxes) {
+      var mark_checkboxes = $$('#' + element.readAttribute('id') + ' > tr.record td.marked-column input[type="checkbox"]');
+      mark_checkboxes.each(function(item) {
+       if(options.checked) {
+         item.writeAttribute({ checked: 'checked' });
+       } else {
+         item.removeAttribute('checked');
+       }
+       item.writeAttribute('value', ('' + !options.checked));
+      });
+    }
+    if(options.include_mark_all) {
       var mark_all_checkbox = element.previous('thead').down('th.marked-column_heading span input[type="checkbox"]');
-      if(options.checked === true) {
+      if(options.checked) {
         mark_all_checkbox.writeAttribute({ checked: 'checked' }); 
       } else {
         mark_all_checkbox.removeAttribute('checked');

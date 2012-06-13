@@ -1,0 +1,6 @@
+<%
+  checked = all_marked? unless local_assigns.has_key? :checked
+  options = {:checked => checked, :include_mark_all => true, :include_checkboxes => params[:id].nil?}
+%>
+ActiveScaffold.mark_records('<%= active_scaffold_tbody_id %>',<%= options.to_json.html_safe %>);
+<%= render :partial => 'update_messages' %>

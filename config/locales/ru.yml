@@ -38,6 +38,7 @@ ru:
     inplace_edit_handle: '--'
     live_search: 'Поиск'
     loading: 'Загрузка…'
+    mark_all_records: "Mark all"
     next: 'Следующее'
     no_entries: 'Нет записей'
     no_options: 'Нет вариантов'
@@ -46,6 +47,9 @@ ru:
     pdf: 'PDF'
     previous: 'Предыдущее'
     print: 'Печать'
+    records_marked:
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
     refresh: 'Обновить'
     remove: 'Удалить'
     remove_file: 'Удалить или заменить файл'

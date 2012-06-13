@@ -34,6 +34,7 @@ hu:
     inplace_edit_handle: '--'
     live_search: 'Élő keresés'
     loading: 'Betöltés…'
+    mark_all_records: "Mark all"
     next: 'Következő'
     no_entries: 'Nincs elem'
     no_options: 'nincsenek opciók'
@@ -42,6 +43,9 @@ hu:
     pdf: 'PDF'
     previous: 'Előző'
     print: 'Nyomtatás'
+    records_marked:
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
     refresh: 'Frissítés'
     remove: 'Törlés'
     remove_file: 'Fájl törlése, vagy cseréje'

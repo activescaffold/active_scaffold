@@ -34,6 +34,7 @@ en:
     inplace_edit_handle: '--'
     live_search: 'Live Search'
     loading: 'Loading…'
+    mark_all_records: "Mark all"
     next: 'Next'
     no_entries: 'No Entries'
     no_options: 'no options'
@@ -42,6 +43,9 @@ en:
     pdf: 'PDF'
     previous: 'Previous'
     print: 'Print'
+    records_marked:
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
     refresh: 'Refresh'
     remove: 'Remove'
     remove_file: 'Remove or Replace file'

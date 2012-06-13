@@ -281,13 +281,19 @@ module ActiveScaffold
       finder_options
     end
 
-    # Returns a hash with options to count records, rejecting select and order options
-    # See finder_options for valid options
-    def count_options(find_options = {}, count_includes = nil)
+    def count_items(find_options = {}, count_includes = nil)
       count_includes ||= find_options[:includes] unless find_options[:conditions].nil?
       options = find_options.reject{|k,v| [:select, :reorder].include? k}
       options[:includes] = count_includes
-      options
+      
+      # NOTE: we must use :include in the count query, because some conditions may reference other tables
+      count_query = append_to_query(beginning_of_chain, options)
+      count = count_query.count
+  
+      # Converts count to an integer if ActiveRecord returned an OrderedHash
+      # that happens when find_options contains a :group key
+      count = count.length if count.is_a? ActiveSupport::OrderedHash
+      count
     end
 
     # returns a Paginator::Page (not from ActiveRecord::Paginator) for the given parameters
@@ -298,18 +304,13 @@ module ActiveScaffold
       options[:page] ||= 1
 
       find_options = finder_options(options)
-      klass = beginning_of_chain
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       if options[:pagination] && options[:pagination] != :infinite
-        count_query = append_to_query(klass, count_options(find_options, options[:count_includes]))
-        count = count_query.count unless options[:pagination] == :infinite
+        count = count_items(find_options, options[:count_includes])
       end
-  
-      # Converts count to an integer if ActiveRecord returned an OrderedHash
-      # that happens when find_options contains a :group key
-      count = count.length if count.is_a? ActiveSupport::OrderedHash
 
+      klass = beginning_of_chain
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|

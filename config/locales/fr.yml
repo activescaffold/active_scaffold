@@ -34,6 +34,7 @@ fr:
     inplace_edit_handle: '--'
     live_search: 'Recherche en temps réel'
     loading: 'Chargement…'
+    mark_all_records: "Mark all"
     next: 'Suivant'
     no_entries: "Pas d'entrée"
     no_options: "pas d'option"
@@ -42,6 +43,9 @@ fr:
     pdf: 'PDF'
     previous: 'Précédent'
     print: 'Imprimer'
+    records_marked:
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
     refresh: 'Rafraîchir'
     remove: 'Supprimer'
     remove_file: 'Supprimer et remplacer le fichier'
