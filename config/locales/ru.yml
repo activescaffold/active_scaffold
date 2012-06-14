@@ -38,7 +38,7 @@ ru:
     inplace_edit_handle: '--'
     live_search: 'Поиск'
     loading: 'Загрузка…'
-    mark_all_records: "Mark all"
+    mark_all_records: "Отметить все"
     next: 'Следующее'
     no_entries: 'Нет записей'
     no_options: 'Нет вариантов'
@@ -48,8 +48,10 @@ ru:
     previous: 'Предыдущее'
     print: 'Печать'
     records_marked:
-      one: "1 marked %{model}"
-      other: "%{count} marked %{model}"
+      one: "Отмечена 1 запись"
+      few: "Отмечено %{count} записи"
+      many: "Отмечено %{count} записей"
+      other: "Отмечено %{count} записи"
     refresh: 'Обновить'
     remove: 'Удалить'
     remove_file: 'Удалить или заменить файл'
