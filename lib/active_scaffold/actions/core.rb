@@ -75,6 +75,10 @@ module ActiveScaffold::Actions
       end
     end
 
+    def each_marked_record(&block)
+      active_scaffold_config.model.find(marked_records.to_a).each &block
+    end
+
     def marked_records
       active_scaffold_session_storage[:marked_records] ||= Set.new
     end
