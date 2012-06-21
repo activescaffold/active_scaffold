@@ -72,6 +72,11 @@ module ActiveScaffold::Actions
       end
     end
     
+    def do_destroy
+      super
+      @record.as_marked = false if successful?
+    end
+    
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def mark_authorized?
