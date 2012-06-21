@@ -1,4 +1,7 @@
-= 3.2.12 (not released yet)
+= 3.2.13 (not released yet)
+- Fix destroy action, was broken in 3.2.12
+
+= 3.2.12
 - improve support for tableless models, add support for count
 - fix div id for nested scaffolds
 - add config.timestamped_messages and config.highlight_messages
