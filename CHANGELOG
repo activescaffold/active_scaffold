@@ -1,5 +1,6 @@
 = 3.2.13 (not released yet)
 - Fix destroy action, was broken in 3.2.12
+- Remove default :method sorting for associations, it wasn't useful and can be slow
 
 = 3.2.12
 - improve support for tableless models, add support for count
