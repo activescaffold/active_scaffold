@@ -352,11 +352,7 @@ module ActiveScaffold::DataStructures
         # we don't automatically enable method sorting for virtual columns because it's slow, and we expect fewer complaints this way.
         self.sort = false
       else
-        if self.singular_association?
-          self.sort = {:method => "#{self.name}.to_s"}
-        elsif self.plural_association?
-          self.sort = {:method => "#{self.name}.join(',')"}
-        elsif @active_record_class.connection
+        if column && @active_record_class.connection
           self.sort = {:sql => self.field}
         else
           self.sort = false
