@@ -4,6 +4,7 @@ module ActiveScaffold::Actions
       base.class_eval do
         before_filter :register_constraints_with_action_columns, :if => :embedded?
         after_filter :clear_flashes
+        rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
       base.helper_method :nested?
       base.helper_method :calculate
@@ -195,17 +196,6 @@ module ActiveScaffold::Actions
         send("#{action_name}_formats")
       else
         (default_formats + active_scaffold_config.formats).uniq
-      end
-    end
-
-    def response_code_for_rescue(exception)
-      case exception
-        when ActiveScaffold::RecordNotAllowed
-          "403 Record Not Allowed"
-        when ActiveScaffold::ActionNotAllowed
-          "403 Action Not Allowed"
-        else
-          super
       end
     end
   end
