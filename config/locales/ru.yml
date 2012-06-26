@@ -102,7 +102,7 @@ ru:
     months: 'месяцев'
     years: 'лет'
     optional_attributes: 'Дополнительные настройки'
-    null: 'Пусто'
+    :null: 'Пусто'
     not_null: 'Не пусто'
     date_picker_options:
       weekHeader: 'Нед.'
