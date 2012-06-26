@@ -17,13 +17,18 @@ module ActiveScaffold
 
         where_clauses = []
         columns.each do |column|
-          where_clauses << ((column.column.nil? || column.column.text?) ? "#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?" : "#{column.search_sql} = ?")
+          Array(column.search_sql).each do |search_sql|
+            where_clauses << "#{search_sql} #{(column.column.nil? || column.column.text?) ? ActiveScaffold::Finder.like_operator : '='} ?"
+          end
         end
         phrase = where_clauses.join(' OR ')
 
         tokens.collect do |value|
           columns.inject([phrase]) do |condition, column|
-            condition.push((column.column.nil? || column.column.text?) ? like_pattern.sub('?', value) : column.column.type_cast(value))
+            Array(column.search_sql).size.times do
+              condition.push((column.column.nil? || column.column.text?) ? like_pattern.sub('?', value) : column.column.type_cast(value))
+            end
+            condition
           end
         end
       end
@@ -39,32 +44,37 @@ module ActiveScaffold
         return unless column and column.search_sql and not value.blank?
         search_ui = column.search_ui || column.column.try(:type)
         begin
-          if search_ui && self.respond_to?("condition_for_#{search_ui}_type")
+          sql, *values = if search_ui && self.respond_to?("condition_for_#{search_ui}_type")
             self.send("condition_for_#{search_ui}_type", column, value, like_pattern)
           else
-            unless column.search_sql.instance_of? Proc
-              case search_ui
-                when :boolean, :checkbox
-                  ["#{column.search_sql} = ?", column.column.type_cast(value)]
-                when :integer, :decimal, :float
-                  condition_for_numeric(column, value)
-                when :string, :range
-                  condition_for_range(column, value, like_pattern)
-                when :date, :time, :datetime, :timestamp
-                  condition_for_datetime(column, value)
-                when :select, :multi_select, :country, :usa_state
-                ["#{column.search_sql} in (?)", Array(value)]
-                else
-                  if column.column.nil? || column.column.text?
-                    ["#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
-                  else
-                    ["#{column.search_sql} = ?", column.column.type_cast(value)]
-                  end
-              end
-            else
+            if column.search_sql.instance_of? Proc
               column.search_sql.call(value)
+            else
+              case search_ui
+              when :boolean, :checkbox
+                ["%{search_sql} = ?", column.column ? column.column.type_cast(value) : value]
+              when :integer, :decimal, :float
+                condition_for_numeric(column, value)
+              when :string, :range
+                condition_for_range(column, value, like_pattern)
+              when :date, :time, :datetime, :timestamp
+                condition_for_datetime(column, value)
+              when :select, :multi_select, :country, :usa_state
+                ["%{search_sql} in (?)", [Array(value)]]
+              else
+                if column.column.nil? || column.column.text?
+                  ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
+                else
+                  ["%{search_sql} = ?", column.column.type_cast(value)]
+                end
+              end
             end
           end
+          return nil unless sql
+
+          conditions = [column.search_sql.collect { |search_sql| sql % {:search_sql => search_sql} }.join ' OR ']
+          conditions += values*column.search_sql.size if values.present?
+          conditions
         rescue Exception => e
           logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{self.name}"
           raise e
@@ -73,33 +83,33 @@ module ActiveScaffold
 
       def condition_for_numeric(column, value)
         if !value.is_a?(Hash)
-          ["#{column.search_sql} = ?", condition_value_for_numeric(column, value)]
+          ["%{search_sql} = ?", condition_value_for_numeric(column, value)]
         elsif value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
-          ["#{column.search_sql} BETWEEN ? AND ?", condition_value_for_numeric(column, value[:from]), condition_value_for_numeric(column, value[:to])]
-         else
-          ["#{column.search_sql} #{value[:opt]} ?", condition_value_for_numeric(column, value[:from])]
+          ["(%{search_sql} BETWEEN ? AND ?)", condition_value_for_numeric(column, value[:from]), condition_value_for_numeric(column, value[:to])]
+        else
+          ["%{search_sql} #{value[:opt]} ?", condition_value_for_numeric(column, value[:from])]
         end
       end
 
       def condition_for_range(column, value, like_pattern = nil)
         if !value.is_a?(Hash)
           if column.column.nil? || column.column.text?
-            ["#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
+            ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
           else
-            ["#{column.search_sql} = ?", column.column.type_cast(value)]
+            ["%{search_sql} = ?", column.column.type_cast(value)]
           end
         elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
           condition_for_null_type(column, value[:opt], like_pattern)
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::StringComparators.values.include?(value[:opt])
-          ["#{column.search_sql} #{ActiveScaffold::Finder.like_operator} ?", value[:opt].sub('?', value[:from])]
+          ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", value[:opt].sub('?', value[:from])]
         elsif value[:opt] == 'BETWEEN'
-          ["#{column.search_sql} BETWEEN ? AND ?", value[:from], value[:to]]
+          ["(%{search_sql} BETWEEN ? AND ?)", value[:from], value[:to]]
         elsif ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
-          ["#{column.search_sql} #{value[:opt]} ?", value[:from]]
+          ["%{search_sql} #{value[:opt]} ?", value[:from]]
         else
           nil
         end
@@ -157,37 +167,45 @@ module ActiveScaffold
           value
         end
       end
+      
+      def datetime_conversion_for_condition(column)
+        if column.column
+          column.column.type == :date ? :to_date : :to_time
+        else
+          :to_time
+        end
+      end
             
       def condition_for_datetime(column, value, like_pattern = nil)
-        conversion = column.column.type == :date ? :to_date : :to_time
+        conversion = datetime_conversion_for_condition(column)
         from_value = condition_value_for_datetime(value[:from], conversion)
         to_value = condition_value_for_datetime(value[:to], conversion)
 
         if from_value.nil? and to_value.nil?
           nil
         elsif !from_value
-          ["#{column.search_sql} <= ?", to_value.to_s(:db)]
+          ["%{search_sql} <= ?", to_value.to_s(:db)]
         elsif !to_value
-          ["#{column.search_sql} >= ?", from_value.to_s(:db)]
+          ["%{search_sql} >= ?", from_value.to_s(:db)]
         else
-          ["#{column.search_sql} BETWEEN ? AND ?", from_value.to_s(:db), to_value.to_s(:db)]
+          ["%{search_sql} BETWEEN ? AND ?", from_value.to_s(:db), to_value.to_s(:db)]
         end
       end
 
       def condition_for_record_select_type(column, value, like_pattern = nil)
         if value.is_a?(Array)
-          ["#{column.search_sql} IN (?)", value]
+          ["%{search_sql} IN (?)", value]
         else
-          ["#{column.search_sql} = ?", value]
+          ["%{search_sql} = ?", value]
         end
       end
       
       def condition_for_null_type(column, value, like_pattern = nil)
         case value.to_sym
         when :null
-          ["#{column.search_sql} is null"]
+          ["%{search_sql} is null", []]
         when :not_null
-          ["#{column.search_sql} is not null"]
+          ["%{search_sql} is not null", []]
         else
           nil
         end
@@ -218,8 +236,8 @@ module ActiveScaffold
       :ends_with   => '%?'
     }
     NullComparators = [
-      :null,
-      :not_null
+      'null',
+      'not_null'
     ]
     
     

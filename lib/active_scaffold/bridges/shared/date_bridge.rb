@@ -112,15 +112,15 @@ module ActiveScaffold
                 column.search_sql.call(from_value, to_value, operator)
               else
                 unless operator.nil?
-                  ["#{column.search_sql} #{value[:opt]} ?", from_value.to_s(:db)] unless from_value.nil?
+                  ["%{search_sql} #{value[:opt]} ?", from_value.to_s(:db)] unless from_value.nil?
                 else
-                  ["#{column.search_sql} BETWEEN ? AND ?", from_value.to_s(:db), to_value.to_s(:db)] unless from_value.nil? && to_value.nil?  
+                  ["%{search_sql} BETWEEN ? AND ?", from_value.to_s(:db), to_value.to_s(:db)] unless from_value.nil? && to_value.nil?  
                 end
               end
             end
             
             def date_bridge_from_to(column, value)
-              conversion = column.column.type == :date ? :to_date : :to_time
+              conversion = datetime_conversion_for_condition(column)
               case value[:opt]
               when 'RANGE'
                 date_bridge_from_to_for_range(column, value).collect(&conversion)
