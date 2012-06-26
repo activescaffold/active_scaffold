@@ -166,11 +166,13 @@ jQuery(document).ready(function() {
   });
   
   jQuery('select.as_search_range_option').live('change', function(event) {
-    ActiveScaffold[jQuery(this).val() == 'BETWEEN' ? 'show' : 'hide'](jQuery(this).parent().find('.as_search_range_between'));
+    var element = jQuery(this);
+    ActiveScaffold[element.val() == 'BETWEEN' ? 'show' : 'hide'](element.closest('dd').find('.as_search_range_between'));
+    ActiveScaffold[(element.val() == 'null' || element.val() == 'not_null') ? 'hide' : 'show'](element.attr('id').replace(/_opt/, '_numeric'));
     return true;
   });
   
-  jQuery('select.as_search_range_option').live('change', function(event) {
+  jQuery('select.as_search_date_time_option').live('change', function(event) {
     var element = jQuery(this);
     ActiveScaffold[!(element.val() == 'PAST' || element.val() == 'FUTURE' || element.val() == 'RANGE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_numeric'));
     ActiveScaffold[(element.val() == 'PAST' || element.val() == 'FUTURE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_trend'));

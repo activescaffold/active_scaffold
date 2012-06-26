@@ -252,6 +252,7 @@ document.observe("dom:loaded", function() {
   document.on('change', 'select.as_search_range_option', function(event) {
     var element = event.findElement();
     Element[element.value == 'BETWEEN' ? 'show' : 'hide'](element.readAttribute('id').sub('_opt', '_between'));
+    Element[(element.value == 'null' || element.value == 'not_null') ? 'hide' : 'show'](element.readAttribute('id').sub('_opt', '_numeric'));
     return true;
   });
   document.on('change', 'select.as_search_date_time_option', function(event) {
