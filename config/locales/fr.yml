@@ -96,7 +96,7 @@ fr:
     months: 'Mois'
     years: 'Années'
     optional_attributes: 'Options additionnelles'
-    null: 'Nulle'
+    :null: 'Nulle'
     not_null: 'Non Nulle'
     date_picker_options: 
       weekHeader: 'Sm'

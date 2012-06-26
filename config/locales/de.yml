@@ -96,7 +96,7 @@ de:
     months: 'Monate'
     years: 'Jahre'
     optional_attributes: 'Weitere'
-    null: 'Null'
+    :null: 'Null'
     not_null: 'Nicht Null'
     date_picker_options:
       weekHeader: 'Wo'

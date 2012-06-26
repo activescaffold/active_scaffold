@@ -96,7 +96,7 @@ hu:
     months: 'Months'
     years: 'Years'
     optional_attributes: 'Further Options'
-    null: 'Null'
+    :null: 'Null'
     not_null: 'Not Null'
     date_picker_options:
       weekHeader: 'Wk'
