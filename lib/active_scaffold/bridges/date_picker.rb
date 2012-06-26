@@ -8,7 +8,7 @@ module ActiveScaffold::Bridges
       ActiveScaffold.js_framework == :jquery
     end
     def self.localization
-        "jQuery(function($){
+      "jQuery(function($){
   if (typeof($.datepicker) === 'object') {
     #{Helper.date_options_for_locales}
     $.datepicker.setDefaults($.datepicker.regional['#{::I18n.locale}']);

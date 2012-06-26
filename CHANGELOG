@@ -2,6 +2,7 @@
 - Fix destroy action, was broken in 3.2.12
 - Remove default :method sorting for associations, it wasn't useful and can be slow
 - Rescue from ActiveScaffold::ActionNotAllowed and ActiveScaffold::RecordNotAllowed with 401 response, it can be overrided with deny_access method in ApplicationController.
+- Allow to set arrays in search_sql so one column can search in multiple db columns, resulting sql chunks will be OR'ed
 
 = 3.2.12
 - improve support for tableless models, add support for count
