@@ -21,7 +21,7 @@ module ActiveScaffold::Config
     def add_link(attribute, options = {})
       column = @core.columns[attribute.to_sym]
       unless column.nil? || column.association.nil?
-        options.reverse_merge! :security_method => :nested_authorized?, :label => column.association.klass.model_name.human({:count => 2, :default => column.association.klass.name.pluralize}) 
+        options.reverse_merge! :security_method => :nested_authorized?, :label => column.association.klass.model_name.human({:count => 2, :default => column.association.klass.name.pluralize})
         action_link = @core.link_for_association(column, options)
         action_link.action ||= :index
         @core.action_links.add_to_group(action_link, action_group) unless action_link.nil?
