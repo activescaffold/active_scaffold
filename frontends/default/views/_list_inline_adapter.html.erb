@@ -1,4 +1,5 @@
 <%
+debugger
   column_count ||= begin
     config = if nested? and (nested.singular_association? || action_name == 'index')
       active_scaffold_config_for(nested.parent_model)

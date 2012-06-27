@@ -189,11 +189,13 @@ module ActiveScaffold
       end
       
       def url_options_for_nested_link(column, record, link, url_options, options = {})
-        if column && column.association 
+        if column && column.association
+          url_options[:parent_scaffold] = controller_path
           url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:id] = record.send(column.association.name).id if column.singular_association? && record.send(column.association.name).present?
           url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
         elsif link.parameters && link.parameters[:named_scope]
+          url_options[:parent_scaffold] = controller_path
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
         end
