@@ -7,6 +7,7 @@
 - Add some classes to forms to improve CSS customization
 - Fix nested links for STI controllers with common configuration in a base controller
 - Fix adding routes twice in active_scaffold generator
+- Restore old behavior for action_link's security_method, ignore_method already hides the link 
 
 = 3.2.12
 - improve support for tableless models, add support for count

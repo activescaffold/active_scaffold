@@ -121,7 +121,12 @@ module ActiveScaffold::DataStructures
             first_action = false
           end
         elsif controller.nil? || !skip_action_link(controller, link, *(Array(options[:for])))
-          authorized = options[:for].nil? ? true : options[:for].authorized_for?(:crud_type => link.crud_type, :action => link.action)
+          security_method = link.security_method_set? || controller.respond_to?(link.security_method)
+          authorized = if security_method
+            controller.send(link.security_method, *args)
+          else
+            options[:for].nil? ? true : options[:for].authorized_for?(:crud_type => link.crud_type, :action => link.action)
+          end
           yield(self, link, {:authorized => authorized, :first_action => first_action, :level => options[:level]})
           first_action = false
         end
@@ -173,7 +178,7 @@ module ActiveScaffold::DataStructures
     protected
 
     def skip_action_link(controller, link, *args)
-      (!link.ignore_method.nil? && controller.respond_to?(link.ignore_method) && controller.send(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
+      !link.ignore_method.nil? && controller.respond_to?(link.ignore_method) && controller.send(link.ignore_method, *args)
     end
 
     # called during clone or dup. makes the clone/dup deeper.
