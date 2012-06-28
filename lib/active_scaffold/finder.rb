@@ -72,7 +72,7 @@ module ActiveScaffold
           end
           return nil unless sql
 
-          conditions = [column.search_sql.collect { |search_sql| sql % {:search_sql => search_sql} }.join ' OR ']
+          conditions = [column.search_sql.collect { |search_sql| sql % {:search_sql => search_sql} }.join(' OR ')]
           conditions += values*column.search_sql.size if values.present?
           conditions
         rescue Exception => e
