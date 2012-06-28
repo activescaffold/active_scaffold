@@ -6,6 +6,7 @@
 - Hide text input on searching for null or not null
 - Add some classes to forms to improve CSS customization
 - Fix nested links for STI controllers with common configuration in a base controller
+- Fix adding routes twice in active_scaffold generator
 
 = 3.2.12
 - improve support for tableless models, add support for count
