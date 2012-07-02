@@ -8,6 +8,7 @@
 - Fix nested links for STI controllers with common configuration in a base controller
 - Fix adding routes twice in active_scaffold generator
 - Restore old behavior for action_link's security_method, ignore_method already hides the link 
+- Add data-cancel-refresh to action links, so nested scaffold's behaviour can be applied to other action links and when adapter is closed row will be refreshed.
 
 = 3.2.12
 - improve support for tableless models, add support for count

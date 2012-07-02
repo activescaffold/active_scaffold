@@ -20,7 +20,7 @@ options = {:onsubmit => onsubmit,
            :class => "as_form #{form_action.to_s}",
            :method => method,
            'data-loading' => true}
-cancel_options = {:class => 'as_cancel', 'data-refresh' => false}
+cancel_options = {:class => 'as_cancel'}
 
 cancel_options[:remote] = true if xhr #cancel link does nt have to care about multipart forms
 if xhr && multipart # file_uploads

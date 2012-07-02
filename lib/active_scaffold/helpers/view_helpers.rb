@@ -146,6 +146,7 @@ module ActiveScaffold
         html_options[:data][:confirm] = link.confirm(record.try(:to_label)) if link.confirm?
         html_options[:data][:position] = link.position if link.position and link.inline?
         html_options[:data][:action] = link.action if link.inline?
+        html_options[:data][:'cancel-refresh'] = true if link.inline? and link.refresh_on_close
         if link.popup?
           html_options[:data][:popup] = true
           html_options[:target] = '_blank'
