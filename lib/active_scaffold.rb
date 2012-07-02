@@ -270,7 +270,7 @@ module ActiveScaffold
         if column.plural_association?
           # note: we can't create nested scaffolds on :through associations because there's no reverse association.
           
-          ActiveScaffold::DataStructures::ActionLink.new('index', options) #unless column.through_association?
+          ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(:refresh_on_close => true)) #unless column.through_association?
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
           actions ||= [:create, :update, :show] 
