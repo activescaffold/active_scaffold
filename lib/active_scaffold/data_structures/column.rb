@@ -284,6 +284,7 @@ module ActiveScaffold::DataStructures
     # instantiation is handled internally through the DataStructures::Columns object
     def initialize(name, active_record_class) #:nodoc:
       self.name = name.to_sym
+      @tableless = active_record_class < ActiveScaffold::Tableless
       @column = active_record_class.columns_hash[self.name.to_s]
       @association = active_record_class.reflect_on_association(self.name)
       @autolink = !@association.nil?
@@ -355,7 +356,7 @@ module ActiveScaffold::DataStructures
         # we don't automatically enable method sorting for virtual columns because it's slow, and we expect fewer complaints this way.
         self.sort = false
       else
-        if column && @active_record_class.connection
+        if column && @tableless
           self.sort = {:sql => self.field}
         else
           self.sort = false
@@ -366,9 +367,9 @@ module ActiveScaffold::DataStructures
     def initialize_search_sql
       self.search_sql = unless self.virtual?
         if association.nil?
-          self.field.to_s unless @active_record_class.connection.nil?
+          self.field.to_s unless @tableless
         elsif !self.polymorphic_association?
-          [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass.connection.nil?
+          [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
         end
       end
     end
