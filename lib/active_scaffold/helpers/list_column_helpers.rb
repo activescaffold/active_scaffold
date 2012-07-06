@@ -5,27 +5,37 @@ module ActiveScaffold
     module ListColumnHelpers
       def get_column_value(record, column)
         begin
-          # check for an override helper
-          value = if (method = column_override(column))
+          method = get_column_method(record, column)
+          value = send(method, record, column)
+          value = '&nbsp;'.html_safe if value.nil? or value.blank? # fix for IE 6
+          return value
+        rescue Exception => e
+          logger.error "#{Time.now.to_s} #{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+          raise e
+        end
+      end
+
+
+      def get_column_method(record, column)
+        # check for an override helper
+        method = column.list_method
+        unless method
+          method = if (method = column_override(column))
             # we only pass the record as the argument. we previously also passed the formatted_value,
             # but mike perham pointed out that prohibited the usage of overrides to improve on the
             # performance of our default formatting. see issue #138.
-            send(method, record)
+            method
           # second, check if the dev has specified a valid list_ui for this column
           elsif column.list_ui and (method = override_column_ui(column.list_ui))
-            send(method, column, record)
+            method
           elsif column.column and (method = override_column_ui(column.column.type))
-            send(method, column, record)
+            method
           else
-            format_column_value(record, column)
+            :format_column_value
           end
-
-          value = '&nbsp;'.html_safe if value.nil? or (value.respond_to?(:empty?) and value.empty?) # fix for IE 6
-          return value
-        rescue Exception => e
-          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-          raise e
+          column.list_method = method
         end
+        method
       end
 
       # TODO: move empty_field_text and &nbsp; logic in here?
@@ -122,16 +132,16 @@ module ActiveScaffold
       ##
       ## Overrides
       ##
-      def active_scaffold_column_text(column, record)
+      def active_scaffold_column_text(record, column)
         clean_column_value(truncate(record.send(column.name), :length => column.options[:truncate] || 50))
       end
 
-      def active_scaffold_column_marked(column, record)
+      def active_scaffold_column_marked(record, column)
         options = {:id => nil, :object => record}
         content_tag(:span, check_box(:record, column.name, options), :class => 'in_place_editor_field', :data => {:ie_id => record.id.to_s})
       end
 
-      def active_scaffold_column_checkbox(column, record)
+      def active_scaffold_column_checkbox(record, column)
         options = {:disabled => true, :id => nil, :object => record}
         options.delete(:disabled) if inplace_edit?(record, column)
         check_box(:record, column.name, options)
@@ -144,8 +154,10 @@ module ActiveScaffold
 
       # the naming convention for overriding column types with helpers
       def override_column_ui(list_ui)
+        @_column_ui_overrides ||= {}
+        return @_column_ui_overrides[list_ui] if @_column_ui_overrides.include? list_ui
         method = "active_scaffold_column_#{list_ui}"
-        method if respond_to? method
+        @_column_ui_overrides[list_ui] = (method if respond_to? method)
       end
       alias_method :override_column_ui?, :override_column_ui
 

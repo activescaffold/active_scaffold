@@ -141,12 +141,14 @@ module ActiveScaffold
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
         html_options[:method] = link.method if link.method != :get
 
-        html_options[:class] += ' as_action' if link.inline?
         html_options[:data] = {}
         html_options[:data][:confirm] = link.confirm(record.try(:to_label)) if link.confirm?
-        html_options[:data][:position] = link.position if link.position and link.inline?
-        html_options[:data][:action] = link.action if link.inline?
-        html_options[:data][:'cancel-refresh'] = true if link.inline? and link.refresh_on_close
+        if link.inline?
+          html_options[:class] += ' as_action'
+          html_options[:data][:position] = link.position if link.position
+          html_options[:data][:action] = link.action
+          html_options[:data][:'cancel-refresh'] = true if link.refresh_on_close
+        end
         if link.popup?
           html_options[:data][:popup] = true
           html_options[:target] = '_blank'
@@ -154,8 +156,10 @@ module ActiveScaffold
         html_options[:id] = link_id
         html_options[:remote] = true unless link.page? || link.popup?
         if link.dhtml_confirm?
-          html_options[:class] += ' as_action' if !link.inline?
-          html_options[:page_link] = 'true' if !link.inline?
+          unless link.inline?
+            html_options[:class] += ' as_action'
+            html_options[:page_link] = 'true'
+          end
           html_options[:dhtml_confirm] = link.dhtml_confirm.value
           html_options[:onclick] = link.dhtml_confirm.onclick_function(controller, link_id)
         end
@@ -165,12 +169,15 @@ module ActiveScaffold
 
       def get_action_link_id(url_options, record = nil, column = nil)
         id = url_options[:id] || url_options[:parent_id]
-        id = "#{column.association.name}-#{record.id}" if column && column.plural_association?
-        if record.try(column.association.name.to_sym).present?
-          id = "#{column.association.name}-#{record.send(column.association.name).id}-#{record.id}"
-        else
-          id = "#{column.association.name}-#{record.id}" unless record.nil?
-        end if column && column.singular_association?
+        if column && column.plural_association?
+          id = "#{column.association.name}-#{record.id}"
+        elsif column && column.singular_association?
+          if record.try(column.association.name.to_sym).present?
+            id = "#{column.association.name}-#{record.send(column.association.name).id}-#{record.id}"
+          else
+            id = "#{column.association.name}-#{record.id}" unless record.nil?
+          end
+        end
         id = "#{id}-#{url_options[:batch_scope].downcase}" if url_options[:batch_scope]
         action_id = "#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}#{url_options[:action].to_s}"
         action_link_id(action_id, id)
@@ -178,15 +185,14 @@ module ActiveScaffold
       
       def action_link_html(link, url, html_options, record)
         # issue 260, use url_options[:link] if it exists. This prevents DB data from being localized.
-        label = url.delete(:link) if url.is_a?(Hash) 
+        label = url.delete(:link) if url.is_a?(Hash)
         label ||= link.label
-        if link.image.nil?
-          html = link_to(label, url, html_options)
+        label = image_tag(link.image[:name], :size => link.image[:size], :alt => label, :title => label) if link.image
+        if url.nil?
+          content_tag(:a, label, html_options)
         else
-          html = link_to(image_tag(link.image[:name], :size => link.image[:size], :alt => label, :title => label), url, html_options)
+          link_to(label, url, html_options)
         end
-        # if url is nil we would like to generate an anchor without href attribute
-        url.nil? ? html.sub(/href=".*?"/, '').html_safe : html.html_safe
       end
       
       def url_options_for_nested_link(column, record, link, url_options, options = {})
@@ -219,9 +225,15 @@ module ActiveScaffold
         end
       end
 
-      def list_row_class(record)
+      def list_row_class_method(record)
+        return @_list_row_class_method if defined? @_list_row_class_method
         class_override_helper = :"#{clean_class_name(record.class.name)}_list_row_class"
-        respond_to?(class_override_helper) ? send(class_override_helper, record) : ''
+        @_list_row_class_method = (class_override_helper if respond_to?(class_override_helper))
+      end
+
+      def list_row_class(record)
+        class_override_helper = list_row_class_method(record)
+        class_override_helper ? send(class_override_helper, record) : ''
       end
 
       def column_attributes(column, record)
@@ -231,39 +243,39 @@ module ActiveScaffold
       end
 
       def column_class(column, column_value, record)
-        classes = []
-        classes << "#{column.name}-column"
+        @_column_classes ||= {}
+        @_column_classes[column.name] ||= begin
+          classes = "#{column.name}-column "
+          classes << 'sorted ' if active_scaffold_config.list.user.sorting.sorts_on?(column)
+          classes << 'numeric ' if column.column and [:decimal, :float, :integer].include?(column.column.type)
+          classes << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
+        end
+        classes = "#{@_column_classes[column.name]} "
+        classes << 'empty ' if column_empty? column_value
+        classes << 'in_place_editor_field ' if inplace_edit?(record, column) or column.list_ui == :marked
         if column.css_class.is_a?(Proc)
           css_class = column.css_class.call(column_value, record)
           classes << css_class unless css_class.nil?
-        else
-          classes << column.css_class
-        end unless column.css_class.nil?
-         
-        classes << 'empty' if column_empty? column_value
-        classes << 'sorted' if active_scaffold_config.list.user.sorting.sorts_on?(column)
-        classes << 'numeric' if column.column and [:decimal, :float, :integer].include?(column.column.type)
-        classes << 'in_place_editor_field' if inplace_edit?(record, column) or column.list_ui == :marked
-        classes.join(' ').rstrip
+        end
+        classes
       end
       
       def column_heading_class(column, sorting)
-        classes = []
-        classes << "#{column.name}-column_heading"
-        classes << "sorted #{sorting.direction_of(column).downcase}" if sorting.sorts_on? column
+        classes = "#{column.name}-column_heading "
+        classes << "sorted #{sorting.direction_of(column).downcase} " if sorting.sorts_on? column
         classes << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
-        classes.join(' ')
+        classes
       end
 
       def as_main_div_class
-        classes = ["active-scaffold", "active-scaffold-#{controller_id}", "#{id_from_controller params[:controller]}-view", "#{active_scaffold_config.theme}-theme"]
-        classes << "as_touch" if touch_device?
-        classes.join(' ')
+        classes = "active-scaffold active-scaffold-#{controller_id}  #{id_from_controller params[:controller]}-view #{active_scaffold_config.theme}-theme"
+        classes << " as_touch" if touch_device?
+        classes
       end
 
       def column_empty?(column_value)
         empty = column_value.nil?
-        empty ||= column_value.blank? if column_value.respond_to? :blank?
+        empty ||= column_value.blank?
         empty ||= ['&nbsp;', active_scaffold_config.list.empty_field_text].include? column_value if String === column_value
         return empty
       end
@@ -308,10 +320,18 @@ module ActiveScaffold
       end
 
       def override_helper(column, suffix)
-        method_with_class = override_helper_name(column, suffix, true)
-        return method_with_class if respond_to?(method_with_class)
-        method = override_helper_name(column, suffix)
-        method if respond_to?(method)
+        @_override_helpers ||= {}
+        @_override_helpers[suffix] ||= {}
+        return @_override_helpers[suffix][column.name] if @_override_helpers[suffix].include? column.name
+        @_override_helpers[suffix][column.name] = begin
+          method_with_class = override_helper_name(column, suffix, true)
+          if respond_to?(method_with_class)
+            method_with_class
+          else
+            method = override_helper_name(column, suffix)
+            method if respond_to?(method)
+          end
+        end
       end
 
       def display_message(message)

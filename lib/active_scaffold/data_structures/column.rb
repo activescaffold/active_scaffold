@@ -349,6 +349,9 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    # to cache method to get value in list
+    attr_accessor :list_method
+
     protected
 
     def initialize_sort
