@@ -6,7 +6,11 @@ module ActiveScaffold
       def get_column_value(record, column)
         begin
           method = get_column_method(record, column)
-          value = send(method, record, column)
+          value = if method(method).arity == 1
+            send(method, record)
+          else
+            send(method, record, column)
+          end
           value = '&nbsp;'.html_safe if value.nil? or value.blank? # fix for IE 6
           return value
         rescue Exception => e
