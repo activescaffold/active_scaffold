@@ -7,6 +7,7 @@ module ActiveScaffold
         begin
           method = get_column_method(record, column)
           value = if method(method).arity == 1
+            ActiveSupport::Deprecation.warn("Add column argument to field override, signature is unified with list_ui")
             send(method, record)
           else
             send(method, record, column)
