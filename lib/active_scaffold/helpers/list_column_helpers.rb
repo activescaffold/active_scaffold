@@ -10,7 +10,12 @@ module ActiveScaffold
             # we only pass the record as the argument. we previously also passed the formatted_value,
             # but mike perham pointed out that prohibited the usage of overrides to improve on the
             # performance of our default formatting. see issue #138.
-            send(method, record)
+            if method(method).arity == 1
+              ActiveSupport::Deprecation.warn("Add column argument to field override, signature is unified with list_ui")
+              send(method, record)
+            else
+              send(method, record, column)
+            end
           # second, check if the dev has specified a valid list_ui for this column
           elsif column.list_ui and (method = override_column_ui(column.list_ui))
             send(method, column, record)
