@@ -14,7 +14,7 @@
         <% if active_scaffold_config.list.show_search_reset && @filtered -%>
         <div class="reset">
           <%= loading_indicator_tag(:action => :record, :id => nil) %>
-          <%= render_action_link(active_scaffold_config.list.reset_link, params_for(:search => '')) %>
+          <%= render_action_link(active_scaffold_config.list.reset_link) %>
         </div>
         <% end -%>
       </div>

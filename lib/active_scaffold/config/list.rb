@@ -67,7 +67,7 @@ module ActiveScaffold::Config
 
     # the ActionLink to reset search
     cattr_reader :reset_link
-    @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :collection, :position => false)
+    @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :collection, :position => false, :parameters => {:search => ''})
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling

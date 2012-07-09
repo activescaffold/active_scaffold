@@ -17,9 +17,9 @@
 
   <% else -%>
     <% if options[:level] == 0 %>
-      <%= "#{start_level_0_tag}#{render_group_action_link(link, url_options, options, record)}#{end_level_0_tag}".html_safe %>
+      <%= "#{start_level_0_tag}#{render_group_action_link(link, options, record)}#{end_level_0_tag}".html_safe %>
     <% else %>
-      <li<%= ' class="top"'.html_safe %>><%= render_group_action_link(link, url_options, options, record) %></li>
+      <li<%= ' class="top"'.html_safe %>><%= render_group_action_link(link, options, record) %></li>
     <% end %>
   <% end -%>
 <% end -%>
