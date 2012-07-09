@@ -72,7 +72,7 @@ jQuery(document).ready(function() {
     
     if (action_link) {
       var cancel_url = as_cancel.attr('href');
-      var refresh_data = action_link.tag.data('cancel-refresh');
+      var refresh_data = action_link.tag.data('cancel-refresh') || as_cancel.data('refresh');
       if (!refresh_data || !cancel_url) {
         action_link.close();
         return false;
