@@ -49,18 +49,18 @@ module ActiveScaffold
         if column.link
           link = column.link
           associated = record.send(column.association.name) if column.association
-          url_options = params_for(:action => nil, :id => record.id)
+          html_options = {}
 
           # setup automatic link
           if column.autolink? && column.singular_association? # link to inline form
             link = action_link_to_inline_form(column, record, associated, text)
             return text if link.nil?
           else
-            url_options[:link] = text
+            html_options[:link] = text
           end
 
           if column_link_authorized?(link, column, record, associated)
-            render_action_link(link, url_options, record)
+            render_action_link(link, record, html_options)
           else
             "<a class='disabled'>#{text}</a>".html_safe
           end
@@ -371,12 +371,12 @@ module ActiveScaffold
         end
       end
       
-      def render_nested_view(action_links, url_options, record)
+      def render_nested_view(action_links, record)
         rendered = []
         action_links.member.each do |link|
           if link.nested_link? && link.column && @nested_auto_open[link.column.name] && @records.length <= @nested_auto_open[link.column.name] && controller.respond_to?(:render_component_into_view)
-            link_url_options = {:adapter => '_list_inline_adapter', :format => :js}.merge(action_link_url_options(link, url_options, record, options = {:reuse_eid => true})) 
-            link_id = get_action_link_id(link_url_options, record, link.column)
+            link_url_options = {:adapter => '_list_inline_adapter', :format => :js}.merge(action_link_url_options(link, record))
+            link_id = get_action_link_id(link, record)
             rendered << (controller.send(:render_component_into_view, link_url_options) + javascript_tag("ActiveScaffold.ActionLink.get('#{link_id}').set_opened();"))
           end 
         end

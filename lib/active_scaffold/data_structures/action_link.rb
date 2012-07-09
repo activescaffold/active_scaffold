@@ -177,8 +177,8 @@ module ActiveScaffold::DataStructures
       @column || (parameters && parameters[:named_scope])
     end
     
-    # Internal use: generated eid for this action_link
-    attr_accessor :eid
+    # Internal use: generated url for this action_link
+    attr_accessor :cached_url
     
     
   end

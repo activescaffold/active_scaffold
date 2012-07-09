@@ -103,39 +103,92 @@ module ActiveScaffold
         (!link.ignore_method.nil? && controller.respond_to?(link.ignore_method) && controller.send(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
       end
 
-      def render_action_link(link, url_options, record = nil, html_options = {})
-        url_options = action_link_url_options(link, url_options, record)
-        html_options = action_link_html_options(link, url_options, record, html_options)
-        action_link_html(link, url_options, html_options, record)
+      def render_action_link(link, record = nil, html_options = {})
+        url = action_link_url(link, record)
+        html_options = action_link_html_options(link, record, html_options)
+        action_link_html(link, url, html_options, record)
       end
 
-      def render_group_action_link(link, url_options, options, record = nil)
+      def render_group_action_link(link, options, record = nil)
         if link.type == :member && !options[:authorized]
           action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"}, record)
         else
-          render_action_link(link, url_options, record)
+          render_action_link(link, record)
         end
       end
       
-      def action_link_url_options(link, url_options, record, options = {})
-        url_options = url_options.clone
-        url_options[:action] = link.action
+      def action_link_url(link, record)
+        url = if link.cached_url
+          link.cached_url
+        else
+          url = url_for(action_link_url_options(link, record))
+          link.cached_url = url unless link.dynamic_parameters.is_a?(Proc)
+          url
+        end
+        
+        url = record ? url.sub('--ID--', record.id.to_s) : url
+        query_string, non_nested_query_string = query_string_for_action_links(link)
+        if query_string || (!link.nested_link? && non_nested_query_string)
+          url << (url.include?('?') ? '&' : '?')
+          url << query_string if query_string
+          url << non_nested_query_string if !link.nested_link? && non_nested_query_string
+        end
+        url
+      end
+
+      def query_string_for_action_links(link)
+        if defined?(@query_string) && link.parameters.none? { |k, v| @query_string_params.include? k }
+          return [@query_string, @non_nested_query_string]
+        end
+        keep = true
+        @query_string_params = Set.new
+        query_string_for_all = nil
+        query_string_options = []
+        non_nested_query_string_options = []
+        
+        params_for.except(:controller, :action, :id).each do |key, value|
+          if link.parameters.include? key
+            keep = false
+            next
+          end
+          @query_string_params << key
+          qs = "#{key}=#{value}"
+          if key == :eid || conditions_from_params.include?(key) || (nested? && nested.constrained_fields.include?(key))
+            non_nested_query_string_options << qs
+          else
+            query_string_options << qs
+          end
+        end
+        
+        query_string = URI.escape(query_string_options.join('&')) if query_string_options.present?
+        if non_nested_query_string_options.present?
+          non_nested_query_string = "#{'&' if query_string}#{URI.escape(non_nested_query_string_options.join('&'))}"
+        end
+        if keep
+          @query_string = query_string
+          @non_nested_query_string = non_nested_query_string
+        end
+        [query_string, non_nested_query_string]
+      end
+      
+      def action_link_url_options(link, record)
+        url_options = {:action => link.action}
+        url_options[:id] = '--ID--' unless record.nil?
         url_options[:controller] = link.controller.to_s if link.controller
-        url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters
         if link.dynamic_parameters.is_a?(Proc)
           @link_record = record
           url_options.merge! self.instance_eval(&(link.dynamic_parameters)) 
           @link_record = nil
         end
-        url_options_for_nested_link(link.column, record, link, url_options, options) if link.nested_link?
-        url_options_for_sti_link(link.column, record, link, url_options, options) unless record.nil? || active_scaffold_config.sti_children.nil?
+        url_options_for_nested_link(link.column, record, link, url_options) if link.nested_link?
+        url_options_for_sti_link(link.column, record, link, url_options) unless record.nil? || active_scaffold_config.sti_children.nil?
         url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get
         url_options
       end
       
-      def action_link_html_options(link, url_options, record, html_options)
-        link_id = get_action_link_id(url_options, record, link.column)
+      def action_link_html_options(link, record, html_options)
+        link_id = get_action_link_id(link, record)
         html_options.reverse_merge! link.html_options.merge(:class => link.action.to_s)
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
@@ -167,8 +220,9 @@ module ActiveScaffold
         html_options
       end
 
-      def get_action_link_id(url_options, record = nil, column = nil)
-        id = url_options[:id] || url_options[:parent_id]
+      def get_action_link_id(link, record = nil, column = nil)
+        column ||= link.column
+        id = record ? record.id.to_s : (nested? ? nested.parent_id : '')
         if column && column.plural_association?
           id = "#{column.association.name}-#{record.id}"
         elsif column && column.singular_association?
@@ -178,14 +232,12 @@ module ActiveScaffold
             id = "#{column.association.name}-#{record.id}" unless record.nil?
           end
         end
-        id = "#{id}-#{url_options[:batch_scope].downcase}" if url_options[:batch_scope]
-        action_id = "#{id_from_controller(url_options[:controller]) + '-' if url_options[:parent_controller]}#{url_options[:action].to_s}"
+        action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller]}#{link.action}"
         action_link_id(action_id, id)
       end
       
       def action_link_html(link, url, html_options, record)
-        # issue 260, use url_options[:link] if it exists. This prevents DB data from being localized.
-        label = url.delete(:link) if url.is_a?(Hash)
+        label = html_options.delete(:link)
         label ||= link.label
         label = image_tag(link.image[:name], :size => link.image[:size], :alt => label, :title => label) if link.image
         if url.nil?
@@ -195,22 +247,18 @@ module ActiveScaffold
         end
       end
       
-      def url_options_for_nested_link(column, record, link, url_options, options = {})
+      def url_options_for_nested_link(column, record, link, url_options)
         if column && column.association
           url_options[:parent_scaffold] = controller_path
           url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
-          url_options[:id] = record.send(column.association.name).id if column.singular_association? && record.send(column.association.name).present?
-          url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
+          #url_options[:id] = record.send(column.association.name).id if column.singular_association? && record.send(column.association.name).present? FIXME on fixing singular nested links
         elsif link.parameters && link.parameters[:named_scope]
           url_options[:parent_scaffold] = controller_path
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
-          url_options[:eid] = nil # needed for nested scaffolds open from an embedded scaffold
         end
-        url_options.except! *params_conditions
-        url_options.except! *nested.constrained_fields if nested?
       end
 
-      def url_options_for_sti_link(column, record, link, url_options, options = {})
+      def url_options_for_sti_link(column, record, link, url_options)
         #need to find out controller of current record type
         #and set parameters
         # its quite difficult to detect an sti link
