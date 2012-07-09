@@ -200,7 +200,8 @@ module ActiveScaffold
           html_options[:class] += ' as_action'
           html_options[:data][:position] = link.position if link.position
           html_options[:data][:action] = link.action
-          html_options[:data][:'cancel-refresh'] = true if link.refresh_on_close
+          html_options[:data][:cancel_refresh] = true if link.refresh_on_close
+          html_options[:data][:keep_open] = true if link.keep_open?
         end
         if link.popup?
           html_options[:data][:popup] = true

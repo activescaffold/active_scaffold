@@ -974,6 +974,9 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
     this.adapter.addClass('as_adapter');
     this.adapter.data('action_link', this);
     if (this.refresh_url) jQuery('.as_cancel', this.adapter).attr('href', this.refresh_url);
+  },
+  keep_open: function() {
+    return this.tag.data('keep-open');
   }
 });
 
@@ -999,7 +1002,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
   close_previous_adapter: function() {
     var _this = this;
     jQuery.each(this.set.links, function(index, item) {
-      if (item.url != _this.url && item.is_disabled() && item.adapter) {
+      if (item.url != _this.url && item.is_disabled() && !item.keep_open() && item.adapter) {
         item.enable();
         item.adapter.remove();
       }
