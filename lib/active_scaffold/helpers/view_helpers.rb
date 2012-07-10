@@ -126,7 +126,7 @@ module ActiveScaffold
           url
         end
         
-        url = record ? url.sub('--ID--', record.id.to_s) : url
+        url = record ? url.sub('--ID--', record.id.to_s) : url.clone
         query_string, non_nested_query_string = query_string_for_action_links(link)
         if query_string || (!link.nested_link? && non_nested_query_string)
           url << (url.include?('?') ? '&' : '?')
