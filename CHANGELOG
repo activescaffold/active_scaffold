@@ -1,4 +1,10 @@
-= 3.2.13 (not released yet)
+= 3.2.15 (not released yet)
+- Prepare to unify field overrides and list_ui method signatures
+
+= 3.2.14
+- Fix default sorting, it was broken in 3.2.13
+
+= 3.2.13
 - Fix destroy action, was broken in 3.2.12
 - Remove default :method sorting for associations, it wasn't useful and can be slow
 - Rescue from ActiveScaffold::ActionNotAllowed and ActiveScaffold::RecordNotAllowed with 401 response, it can be overrided with deny_access method in ApplicationController.
