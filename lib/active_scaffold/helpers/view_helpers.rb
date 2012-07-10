@@ -153,7 +153,7 @@ module ActiveScaffold
           end
           @query_string_params << key
           qs = "#{key}=#{value}"
-          if key == :eid || conditions_from_params.include?(key) || (nested? && nested.constrained_fields.include?(key))
+          if [:eid, :parent_scaffold].include?(key) || conditions_from_params.include?(key) || (nested? && nested.constrained_fields.include?(key))
             non_nested_query_string_options << qs
           else
             query_string_options << qs
