@@ -31,7 +31,7 @@ class ActiveRecord::Base
   # only those associations will be traversed.
   #
   # Otherwise the default behaviour of traversing all associations will be preserved.
-  def associations_for_update(columns)
+  def associations_for_update
     if self.respond_to?( :scaffold_update_nofollow )
       self.class.reflect_on_all_associations.reject { |association| self.scaffold_update_nofollow.include?( association.name ) }
     elsif self.respond_to?( :scaffold_update_follow )
