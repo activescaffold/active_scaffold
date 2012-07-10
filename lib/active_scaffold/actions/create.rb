@@ -92,7 +92,7 @@ module ActiveScaffold::Actions
           apply_constraints_to_record(@record, :allow_autosave => true)
           create_association_with_parent(@record) if nested?
           before_create_save(@record)
-          self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
+          self.successful = [@record.valid?, @record.associated_valid?].all? # this syntax avoids a short-circuit
           create_save(@record) unless options[:skip_save]
         end
       rescue ActiveRecord::ActiveRecordError => ex

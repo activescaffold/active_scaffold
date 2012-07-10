@@ -4,7 +4,7 @@ class ActiveRecord::Base
     return true if path.include?(self) # prevent recursion (if associated and parent are new records)
     path << self
     # using [].all? syntax to avoid a short-circuit
-    with_unsaved_associated { |a| [a.valid?, a.associated_valid?(path)].all? {|v| v == true} }
+    with_unsaved_associated { |a| [a.valid?, a.associated_valid?(path)].all? }
   end
 
   def save_associated
@@ -31,7 +31,7 @@ class ActiveRecord::Base
   # only those associations will be traversed.
   #
   # Otherwise the default behaviour of traversing all associations will be preserved.
-  def associations_for_update
+  def associations_for_update(columns)
     if self.respond_to?( :scaffold_update_nofollow )
       self.class.reflect_on_all_associations.reject { |association| self.scaffold_update_nofollow.include?( association.name ) }
     elsif self.respond_to?( :scaffold_update_follow )
