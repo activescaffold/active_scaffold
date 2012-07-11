@@ -6,6 +6,7 @@ ru:
     add: 'Добавить запись'
     add_existing: 'Добавить существующую запись'
     add_existing_model: '%{model}: добавить существующую запись'
+    apply: 'Apply'
     are_you_sure_to_delete: 'Удалить %{label}?'
     cancel: 'Отмена'
     click_to_edit: 'Нажмите для редактирования'

@@ -6,6 +6,7 @@ de:
     add: 'Hinzufügen'
     add_existing: 'Existierenden Eintrag hinzufügen'
     add_existing_model: 'Existierende %{model} hinzufügen'
+    apply: 'Apply'
     are_you_sure_to_delete: 'Sind Sie sicher?'
     cancel: 'Abbrechen'
     click_to_edit: 'Zum Editieren anklicken'

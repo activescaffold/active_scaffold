@@ -6,6 +6,7 @@ fr:
     add: 'Ajouter'
     add_existing: 'Ajouter un(e) existant(e)'
     add_existing_model: 'Ajouter un(e) %{model} existant(e)'
+    apply: 'Apply'
     are_you_sure_to_delete: 'Êtes vous sûr?'
     cancel: 'Annuler'
     click_to_edit: 'Cliquer pour éditer'
