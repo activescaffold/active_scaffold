@@ -6,6 +6,7 @@ ja:
     add: '追加'
     add_existing: '既存のものを追加'
     add_existing_model: '既存の%{model}を追加'
+    apply: 'Apply'
     are_you_sure_to_delete: '本当によいですか？'
     cancel: 'キャンセル'
     click_to_edit: 'クリックして編集'
