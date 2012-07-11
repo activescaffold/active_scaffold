@@ -1,5 +1,6 @@
 = 3.2.15 (not released yet)
 - Prepare to unify field overrides and list_ui method signatures
+- Add :optional to update.persistent
 
 = 3.2.14
 - Fix default sorting, it was broken in 3.2.13
