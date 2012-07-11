@@ -2,7 +2,6 @@
 record = list_record if list_record # compat with render :partial :collection
 columns ||= list_columns
 tr_class = cycle("", "even-record") + ' ' + list_row_class(record)
-url_options = params_for(:action => :list, :id => '--ID--')
 action_links ||= active_scaffold_config.action_links.member
 data_refresh ||= url_for(params_for(:action => :row, :id => '--ID--', :_method => :get))
 -%>
