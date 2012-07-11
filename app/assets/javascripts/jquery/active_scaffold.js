@@ -547,6 +547,7 @@ var ActiveScaffold = {
     } else {
       server_error.show();
     }
+    ActiveScaffold.scroll_to(server_error, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
   },
   
   find_action_link: function(element) {

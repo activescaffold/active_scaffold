@@ -3,7 +3,12 @@ try {
 var action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
 action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
 <% if controller.send :successful? %>
-  <% if !active_scaffold_config.update.persistent %>
+  <% if params[:dont_close] %>
+    <% row_selector = element_row_id(:action => :list, :id => @record.id) %>
+    ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
+    <%= render :partial => 'update_calculations', :formats => [:js] %>
+    ActiveScaffold.scroll_to('<%= row_selector %>', true);
+  <% else %>
     <% if render_parent? %>
       <% if nested_singular_association? || render_parent_action == :row %>
         action_link.close(true);
@@ -13,8 +18,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
     <% elsif update_refresh_list? %>
       <%= render :partial => 'refresh_list' %>
     <% else %>
-      <% updated_row = render :partial => 'list_record', :locals => {:record => @record} %>
-      action_link.close('<%= escape_javascript(updated_row) %>');
+      action_link.close('<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
       <%= render :partial => 'update_calculations', :formats => [:js] %>
     <% end %>
   <% end %>
