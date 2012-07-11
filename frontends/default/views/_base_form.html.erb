@@ -5,9 +5,11 @@
    if active_scaffold_config.actions.include? form_action
      multipart ||= active_scaffold_config.send(form_action).multipart?
      columns ||= active_scaffold_config.send(form_action).columns
+     persistent ||= active_scaffold_config.send(form_action).persistent
    else
      multipart ||= false
      columns ||= nil
+     persistent ||= false
    end
    method ||= :post
    cancel_link = true if cancel_link.nil?
@@ -40,7 +42,8 @@ end
   <%= render :partial => body_partial, :locals => { :columns => columns, :form_action => form_action, :scope => scope } %>
 
   <p class="form-footer">
-    <%= submit_tag as_(submit_text), :class => "submit" %>
+    <%= submit_tag as_(submit_text), :class => "submit" if !persistent || persistent == :optional %>
+    <%= submit_tag as_(:apply), :class => "submit", :name => 'dont_close' if persistent %>
     <%= link_to(as_(:cancel), main_path_to_return, cancel_options) if cancel_link %>
     <%= loading_indicator_tag(:action => form_action, :id => params[:id]) %>
     <%= render :partial => footer_extension, :locals => { :form_action => form_action } if footer_extension %>

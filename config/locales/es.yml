@@ -6,6 +6,7 @@ es:
     add: 'Añadir'
     add_existing: 'Añadir Existente'
     add_existing_model: 'Añadir %{model} Existente'
+    apply: 'Aplicar'
     are_you_sure_to_delete: '¿Estás seguro de que quieres borrar %{label}?'
     cancel: 'Cancelar'
     click_to_edit: 'Pulsa para editar'
