@@ -43,6 +43,12 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    # A placeholder text, to be used inside blank text fields to describe, what should be typed in
+    attr_writer :placeholder
+    def placeholder
+      @placeholder || I18n.t(name, :scope => [:activerecord, :placeholder, active_record_class.to_s.underscore.to_sym], :default => '')
+    end
+
     # this will be /joined/ to the :name for the td's class attribute. useful if you want to style columns on different ActiveScaffolds the same way, but the columns have different names.
     attr_accessor :css_class
 
