@@ -16,10 +16,10 @@ module ActiveScaffold
           end
         # second, check if the dev has specified a valid list_ui for this column
         elsif column.list_ui and (method = override_show_column_ui(column.list_ui))
-          send(method, column, record)
+          send(method, record, column)
         else
           if column.column and (method = override_show_column_ui(column.column.type))
-            send(method, column, record)
+            send(method, record, column)
           else
             get_column_value(record, column)
           end
