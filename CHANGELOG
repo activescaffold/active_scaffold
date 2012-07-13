@@ -2,6 +2,7 @@
 - Unify field overrides and list_ui method signatures
 - Improve performance removing some partials and adding some caching for helper overrides and UIs, and caching url generation for lists
 - Drop support for rails 3.1
+- Add HTML5 form fields
 
 = 3.2.15 (not released yet)
 - Prepare to unify field overrides and list_ui method signatures
