@@ -70,6 +70,10 @@ module ActiveScaffold
       def active_scaffold_input_options(column, scope = nil, options = {})
         name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
 
+        # Add some HTML5 attributes for in-browser validation and better user experience
+        options[:required]    = true               if column.required?
+        options[:placeholder] = column.placeholder if column.placeholder
+
         # Fix for keeping unique IDs in subform
         id_control = "record_#{column.name}_#{[params[:eid], params[:id]].compact.join '_'}"
         id_control += scope_id(scope) if scope
