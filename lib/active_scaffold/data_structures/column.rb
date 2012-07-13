@@ -306,6 +306,7 @@ module ActiveScaffold::DataStructures
       @options = {:format => :i18n_number} if self.number?
       @form_ui = :checkbox if @column and @column.type == :boolean
       @form_ui = :textarea if @column and @column.type == :text
+      @form_ui = :number   if @column and self.number?
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
       
