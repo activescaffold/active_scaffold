@@ -627,9 +627,11 @@ var ActiveScaffold = {
   create_associated_record_form: function(element, content, options) {
     if (typeof(element) == 'string') element = '#' + element;
     var element = jQuery(element);
+    content = jQuery(content);
     if (options.singular == false) {
       if (!(options.id && jQuery('#' + options.id).size() > 0)) {
-        element.append(content);
+        var new_element = element.append(content);
+        content.trigger('as:element_updated');
       }
     } else {
       var current = jQuery('#' + element.attr('id') + ' .association-record')
@@ -637,6 +639,7 @@ var ActiveScaffold = {
         this.replace(current[0], content);
       } else {
         element.prepend(content);
+        content.trigger('as:element_updated');
       }
     }
   },
