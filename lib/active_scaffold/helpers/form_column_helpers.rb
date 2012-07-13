@@ -192,6 +192,39 @@ module ActiveScaffold
         text_field :record, column.name, options.merge(column.options)
       end
 
+      # Some fields from HTML5 (primarily for using in-browser validation)
+      # Sadly, many of them lacks browser support
+
+      # A text box, that accepts only valid email address (in-browser validation)
+      def active_scaffold_input_email(column, options)
+        options = active_scaffold_input_text_options(options)
+        email_field :record, column.name, options.merge(column.options)
+      end
+
+      # A text box, that accepts only valid URI (in-browser validation)
+      def active_scaffold_input_url(column, options)
+        options = active_scaffold_input_text_options(options)
+        url_field :record, column.name, options.merge(column.options)
+      end
+
+      # A text box, that accepts only valid phone-number (in-browser validation)
+      def active_scaffold_input_telephone(column, options)
+        options = active_scaffold_input_text_options(options)
+        telephone_field :record, column.name, options.merge(column.options)
+      end
+
+      # A spinbox control for number values (in-browser validation)
+      def active_scaffold_input_number(column, options)
+        options = active_scaffold_input_text_options(options)
+        number_field :record, column.name, options.merge(column.options)
+      end
+
+      # A slider control for number values (in-browser validation)
+      def active_scaffold_input_range(column, options)
+        options = active_scaffold_input_text_options(options)
+        range_field :record, column.name, options.merge(column.options)
+      end
+
       #
       # Column.type-based inputs
       #
