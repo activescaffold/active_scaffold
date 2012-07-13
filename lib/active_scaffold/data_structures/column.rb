@@ -43,6 +43,12 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    # A placeholder text, to be used inside blank text fields to describe, what should be typed in
+    attr_writer :placeholder
+    def placeholder
+      @placeholder || I18n.t(name, :scope => [:activerecord, :placeholder, active_record_class.to_s.underscore.to_sym], :default => '')
+    end
+
     # this will be /joined/ to the :name for the td's class attribute. useful if you want to style columns on different ActiveScaffolds the same way, but the columns have different names.
     attr_accessor :css_class
 
@@ -300,6 +306,7 @@ module ActiveScaffold::DataStructures
       @options = {:format => :i18n_number} if self.number?
       @form_ui = :checkbox if @column and @column.type == :boolean
       @form_ui = :textarea if @column and @column.type == :text
+      @form_ui = :number   if @column and self.number?
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
       
@@ -351,6 +358,9 @@ module ActiveScaffold::DataStructures
 
     # to cache method to get value in list
     attr_accessor :list_method
+
+    # cache constraints for numeric columns (get in ActiveScaffold::Helpers::FormColumnHelpers::numerical_constraints_for_column)
+    attr_accessor :numerical_constraints
 
     protected
 
