@@ -215,12 +215,14 @@ module ActiveScaffold
 
       # A spinbox control for number values (in-browser validation)
       def active_scaffold_input_number(column, options)
+        options = numerical_constraints_for_column(column, options)
         options = active_scaffold_input_text_options(options)
         number_field :record, column.name, options.merge(column.options)
       end
 
       # A slider control for number values (in-browser validation)
       def active_scaffold_input_range(column, options)
+        options = numerical_constraints_for_column(column, options)
         options = active_scaffold_input_text_options(options)
         range_field :record, column.name, options.merge(column.options)
       end
@@ -341,6 +343,45 @@ module ActiveScaffold
         else
           active_scaffold_config.model.model_name.human
         end
+      end
+
+      # Try to get numerical constraints from model's validators
+      def numerical_constraints_for_column(column, options)
+        validators = column.active_record_class.validators.select do |v|
+          v.is_a? ActiveModel::Validations::NumericalityValidator and v.attributes.include? column.name
+        end
+        equal_to = validators.map{ |v| v.options[:equal_to] }.compact.first
+        # If there is equal_to constraint - use it (unless otherwise specified by user)
+        if equal_to and not (options[:min] or options[:max])
+          options[:min] = options[:max] = equal_to
+        else # find minimum and maximum from validators
+          # we can safely modify :min and :max by 1 for :greater_tnan or :less_than value only for integer values
+          only_integer = validators.map{ |v| v.options[:only_integer] }.compact.any?
+          margin = only_integer ? 1 : 0
+          # Minimum
+          unless options[:min]
+            min = validators.map{ |v| v.options[:greater_than_or_equal] }.compact.max
+            greater_than = validators.map{ |v| v.options[:greater_than] }.compact.max
+            options[:min] = [min, (greater_than.nil?? nil : greater_than+margin)].compact.max
+          end
+          # Maximum
+          unless options[:max]
+            max = validators.map{ |v| v.options[:less_than_or_equal] }.compact.min
+            less_than = validators.map{ |v| v.options[:less_than] }.compact.min
+            options[:max] = [max, (less_than.nil?? nil : less_than-margin)].compact.min
+          end
+          # Set step = 2 for column values restricted to be odd or even (but only if minimum is set)
+          unless options[:step]
+            only_odd_valid  = validators.map{ |v| v.options[:odd] }.compact.any?
+            only_even_valid = validators.map{ |v| v.options[:even] }.compact.any?
+            if options[:min] and options[:min].respond_to? "even?" and (only_odd_valid or only_even_valid)
+              options[:step] = 2
+              options[:min] += 1 if only_odd_valid  and not options[:min].odd?
+              options[:min] += 1 if only_even_valid and not options[:min].even?
+            end
+          end
+        end
+        return options
       end
     end
   end
