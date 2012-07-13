@@ -359,6 +359,9 @@ module ActiveScaffold::DataStructures
     # to cache method to get value in list
     attr_accessor :list_method
 
+    # cache constraints for numeric columns (get in ActiveScaffold::Helpers::FormColumnHelpers::numerical_constraints_for_column)
+    attr_accessor :numerical_constraints
+
     protected
 
     def initialize_sort
