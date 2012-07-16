@@ -335,6 +335,9 @@ color: $placeholder_color;
 border-color: $input_border_color;
 }
 
+.active-scaffold input:invalid,
+.active-scaffold textarea:invalid,
+.active-scaffold select:invalid,
 .active-scaffold .fieldWithErrors input,
 .active-scaffold .field_with_errors input,
 .active-scaffold .fieldWithErrors textarea,
