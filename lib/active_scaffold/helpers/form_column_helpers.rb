@@ -389,6 +389,7 @@ module ActiveScaffold
                 numerical_constraints[:min] += 1 if only_odd_valid  and not options[:min].odd?
                 numerical_constraints[:min] += 1 if only_even_valid and not options[:min].even?
               end
+              numerical_constraints[:step] ||= 'any' unless only_integer
             end
           end
           
