@@ -5,6 +5,7 @@ associated = associated.sort_by {|r| r.new_record? ? 99999999999 : r.id} unless 
 if show_blank_record = column.show_blank_record?(associated)
   associated << build_associated(column, parent_record)
 end
+@disable_required_for_new = show_blank_record unless (column.singular_association? && column.required?)
 subform_div_id = "#{sub_form_id({:association => column.name, :id => parent_record.id || 99999999999})}-div" 
 -%>
 <h5><%= column.label -%></h5>
@@ -14,4 +15,7 @@ subform_div_id = "#{sub_form_id({:association => column.name, :id => parent_reco
 <%= render :partial => subform_partial_for_column(column), :locals => {:column => column, :parent_record => parent_record, :associated => associated, :show_blank_record => show_blank_record, :scope => scope} %>
 </div>
 <%= link_to_visibility_toggle(subform_div_id, {:default_visible => !column.collapsed}) -%>
-<% @record = parent_record -%>
+<%
+  @record = parent_record
+  @disable_required_for_new = nil
+-%>

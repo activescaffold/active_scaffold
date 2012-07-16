@@ -71,7 +71,9 @@ module ActiveScaffold
         name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
 
         # Add some HTML5 attributes for in-browser validation and better user experience
-        options[:required]    = true               if column.required?
+        if column.required? && (!@disable_required_for_new || scope.nil? || @record.persisted?)
+          options[:required] = true
+        end
         options[:placeholder] = column.placeholder if column.placeholder.present?
 
         # Fix for keeping unique IDs in subform
