@@ -72,7 +72,7 @@ module ActiveScaffold
 
         # Add some HTML5 attributes for in-browser validation and better user experience
         options[:required]    = true               if column.required?
-        options[:placeholder] = column.placeholder if column.placeholder
+        options[:placeholder] = column.placeholder if column.placeholder.present?
 
         # Fix for keeping unique IDs in subform
         id_control = "record_#{column.name}_#{[params[:eid], params[:id]].compact.join '_'}"
