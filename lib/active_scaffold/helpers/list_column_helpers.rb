@@ -141,6 +141,10 @@ module ActiveScaffold
         clean_column_value(truncate(record.send(column.name), :length => column.options[:truncate] || 50))
       end
 
+      def active_scaffold_column_fulltext(record, column)
+        clean_column_value(record.send(column.name))
+      end
+
       def active_scaffold_column_marked(record, column)
         options = {:id => nil, :object => record}
         content_tag(:span, check_box(:record, column.name, options), :class => 'in_place_editor_field', :data => {:ie_id => record.id.to_s})

@@ -51,7 +51,7 @@ module ActiveScaffold::Actions
     end
     
     def row_respond_to_js
-      render
+      render :action => 'row'
     end
 
     # The actual algorithm to prepare for the list view
