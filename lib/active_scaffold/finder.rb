@@ -59,8 +59,8 @@ module ActiveScaffold
                 condition_for_range(column, value, like_pattern)
               when :date, :time, :datetime, :timestamp
                 condition_for_datetime(column, value)
-              when :select, :multi_select, :country, :usa_state
-                ["%{search_sql} in (?)", [Array(value)]]
+              when :select, :multi_select, :country, :usa_state, :chosen, :multi_chosen
+                ["%{search_sql} in (?)", Array(value)]
               else
                 if column.column.nil? || column.column.text?
                   ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
