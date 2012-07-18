@@ -213,6 +213,17 @@ jQuery(document).ready(function() {
     ActiveScaffold.hide(jQuery(this).closest('.message'));
     e.preventDefault();
   });
+  
+  jQuery(document).on('as:element_updated', function(event) {
+    jQuery('select.chosen', event.target).chosen();
+  });
+  jQuery(document).on('as:action_success', 'a.as_action', function(event, action_link) {
+    if (action_link.adapter) {
+      jQuery('select.chosen', action_link.adapter).chosen();
+    }
+  });
+  jQuery('select.chosen').chosen();
+
 });
 
 /* Simple Inheritance
@@ -775,6 +786,8 @@ var ActiveScaffold = {
         if (column_heading.data('ie-plural')) plural = true;
         options.field_type = 'remote';
         options.editor_url = render_url.replace(/__id__/, record_id)
+        if (!options.delegate) options.delegate = {}
+        options.delegate.didOpenEditInPlace = function(dom) { dom.trigger('as:element_updated'); }
       }
       if (mode === 'inline_checkbox') {
         ActiveScaffold.process_checkbox_inplace_edit(span.find('input:checkbox'), options);
