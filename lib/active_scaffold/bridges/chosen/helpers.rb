@@ -1,0 +1,33 @@
+class ActiveScaffold::Bridges::Chosen
+  module Helpers
+    def self.included(base)
+      base.class_eval do
+        include FormColumnHelpers
+        include SearchColumnHelpers
+      end
+    end
+
+    module FormColumnHelpers
+      # requires RecordSelect plugin to be installed and configured.
+      def active_scaffold_input_chosen(column, options)
+        options[:class] << ' chosen'
+        active_scaffold_input_select(column, options)
+      end
+    end
+
+    module SearchColumnHelpers
+      def active_scaffold_search_chosen(column, options)
+        options[:class] << ' chosen'
+        active_scaffold_search_select(column, options)
+      end
+      
+      def active_scaffold_search_multi_chosen(column, options)
+        options[:class] << ' chosen'
+        options[:multiple] = true
+        active_scaffold_search_select(column, options)
+      end
+    end
+  end
+end
+
+ActionView::Base.class_eval { include ActiveScaffold::Bridges::Chosen::Helpers }
