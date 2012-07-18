@@ -113,18 +113,21 @@ module ActiveScaffold
         select_options.unshift([ associated.to_label, associated.id ]) unless associated.nil? or select_options.find {|label, id| id == associated.id}
 
         method = column.name
-        #html_options[:name] += '[id]'
         options = {:selected => associated.try(:id), :include_blank => as_(:_select_)}
 
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
-        html_options[:name] = "#{html_options[:name]}[]" if (html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]"))
+        html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]")
         select(:record, method, select_options.uniq, options, html_options)
       end
 
-      def active_scaffold_input_plural_association(column, options)
+      def active_scaffold_plural_association_options(column)
         associated_options = @record.send(column.association.name).collect {|r| [r.to_label, r.id]}
-        select_options = associated_options | options_for_association(column.association)
+        [associated_options, associated_options | options_for_association(column.association)]
+      end
+
+      def active_scaffold_input_plural_association(column, options)
+        associated_options, select_options = active_scaffold_plural_association_options(column)
         return content_tag(:span, as_(:no_options), :class => options[:class], :id => options[:id]) if select_options.empty?
 
         active_scaffold_checkbox_list(column, select_options, associated_options.collect {|a| a[1]}, options)

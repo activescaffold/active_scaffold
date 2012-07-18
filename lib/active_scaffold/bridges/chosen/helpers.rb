@@ -9,9 +9,19 @@ class ActiveScaffold::Bridges::Chosen
 
     module FormColumnHelpers
       # requires RecordSelect plugin to be installed and configured.
-      def active_scaffold_input_chosen(column, options)
-        options[:class] << ' chosen'
-        active_scaffold_input_select(column, options)
+      def active_scaffold_input_chosen(column, html_options)
+        html_options[:class] << ' chosen'
+        if column.plural_association?
+          associated_options, select_options = active_scaffold_plural_association_options(column)
+          options = {:selected => associated_options.collect {|a| a[1]}, :include_blank => as_(:_select_)}
+
+          html_options.update(:multiple => true).update(column.options[:html_options] || {})
+          options.update(column.options)
+          html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]")
+          select(:record, column.name, select_options, options, html_options)
+        else
+          active_scaffold_input_select(column, html_options)
+        end
       end
     end
 
