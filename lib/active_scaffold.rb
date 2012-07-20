@@ -264,7 +264,7 @@ module ActiveScaffold
       controller = active_scaffold_controller_for_column(column, options)
       
       unless controller.nil?
-        options.reverse_merge! :label => column.label, :position => :after, :type => :member, :controller => (controller == :polymorph ? controller : controller.controller_path), :column => column
+        options.reverse_merge! :position => :after, :type => :member, :controller => (controller == :polymorph ? controller : controller.controller_path), :column => column
         options[:parameters] ||= {}
         options[:parameters].reverse_merge! :association => column.association.name
         if column.plural_association?

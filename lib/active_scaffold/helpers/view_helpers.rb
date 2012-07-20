@@ -104,8 +104,12 @@ module ActiveScaffold
       end
 
       def render_action_link(link, record = nil, html_options = {})
-        url = action_link_url(link, record)
-        html_options = action_link_html_options(link, record, html_options)
+        if link.action.nil?
+          link = action_link_to_inline_form(link, record, html_options)
+          html_options.delete :link if link.crud_type == :create
+        end
+        url = action_link_url(link, record) unless link.action.nil?
+        html_options = action_link_html_options(link, record, html_options) unless link.action.nil?
         action_link_html(link, url, html_options, record)
       end
 
@@ -114,6 +118,65 @@ module ActiveScaffold
           action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"}, record)
         else
           render_action_link(link, record)
+        end
+      end
+
+      # setup the action link to inline form
+      def action_link_to_inline_form(link, record, html_options)
+        link = link.clone
+        associated = record.send(link.column.association.name)
+        if link.column.polymorphic_association?
+          link.controller = controller_path_for_activerecord(associated.class)
+          return link if link.controller.nil?
+        end
+        configure_column_link(link, record, associated)
+      end
+
+      def configure_column_link(link, record, associated, actions = nil)
+        actions ||= link.column.actions_for_association_links
+        if column_empty?(associated) # if association is empty, we only can link to create form
+          if actions.include?(:new)
+            link.action = 'new'
+            link.crud_type = :create
+            link.label ||= as_(:create_new)
+          end
+        elsif actions.include?(:edit)
+          link.action = 'edit'
+          link.crud_type = :update
+        elsif actions.include?(:show)
+          link.action = 'show'
+          link.crud_type = :read
+        elsif actions.include?(:list)
+          link.action = 'index'
+          link.crud_type = :read
+        end
+        
+        unless column_link_authorized?(link, record, associated)
+          link.action = nil
+          # if action is edit and is not authorized, fallback to show if it's enabled
+          if link.crud_type == :update && actions.include?(:show)
+            link = configure_column_link(link, record, associated, [:show])
+          end
+        end
+        link
+      end
+
+      def column_link_authorized?(link, record, associated)
+        column = link.column
+        if column.association
+          associated_for_authorized = if associated.nil? || (column.plural_association? && !associated.loaded?) || (associated.respond_to?(:blank?) && associated.blank?)
+            column.association.klass
+          elsif [:has_many, :has_and_belongs_to_many].include? column.association.macro
+            # may be cached with [] or [nil] to avoid some queries
+            associated.first || column.association.klass
+          else
+            associated
+          end
+          authorized = associated_for_authorized.authorized_for?(:crud_type => link.crud_type)
+          authorized = authorized and record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
+          authorized
+        else
+          record.authorized_for?(:crud_type => link.crud_type)
         end
       end
       
@@ -253,7 +316,9 @@ module ActiveScaffold
         if column && column.association
           url_options[:parent_scaffold] = controller_path
           url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
-          url_options[:id] = '--CHILD_ID--' if column.singular_association? && record.send(column.association.name).present? # FIXME on fixing singular nested links
+          if column.singular_association? && url_options[:action].to_sym != :index
+            url_options[:id] = '--CHILD_ID--' if record.send(column.association.name).present?
+          end
         elsif link.parameters && link.parameters[:named_scope]
           url_options[:parent_scaffold] = controller_path
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
