@@ -151,7 +151,7 @@ module ActiveScaffold
           link.crud_type = :read
         end
         
-        unless column_link_authorized?(link, record, associated)
+        unless column_link_authorized?(link, link.column, record, associated)
           link.action = nil
           # if action is edit and is not authorized, fallback to show if it's enabled
           if link.crud_type == :update && actions.include?(:show)
@@ -161,8 +161,7 @@ module ActiveScaffold
         link
       end
 
-      def column_link_authorized?(link, record, associated)
-        column = link.column
+      def column_link_authorized?(link, column, record, associated)
         if column.association
           associated_for_authorized = if associated.nil? || (column.plural_association? && !associated.loaded?) || (associated.respond_to?(:blank?) && associated.blank?)
             column.association.klass
