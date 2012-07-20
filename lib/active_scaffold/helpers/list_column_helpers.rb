@@ -49,18 +49,9 @@ module ActiveScaffold
         if column.link
           link = column.link
           associated = record.send(column.association.name) if column.association
-          html_options = {}
 
-          # setup automatic link
-          if column.autolink? && column.singular_association? # link to inline form
-            link = action_link_to_inline_form(column, record, associated, text)
-            return text if link.nil?
-          else
-            html_options[:link] = text
-          end
-
-          if column_link_authorized?(link, column, record, associated)
-            render_action_link(link, record, html_options)
+          if link.action.nil? || column_link_authorized?(link, column, record, associated)
+            render_action_link(link, record, {:link => text})
           else
             "<a class='disabled'>#{text}</a>".html_safe
           end
@@ -70,56 +61,6 @@ module ActiveScaffold
           content_tag active_scaffold_config.list.wrap_tag, text
         else
           text
-        end
-      end
-
-      # setup the action link to inline form
-      def action_link_to_inline_form(column, record, associated, text)
-        link = column.link.clone
-        link.label = text
-        if column.polymorphic_association?
-          polymorphic_controller = controller_path_for_activerecord(record.send(column.association.name).class)
-          return link if polymorphic_controller.nil?
-          link.controller = polymorphic_controller
-        end
-        configure_column_link(link, associated, column.actions_for_association_links)
-      end
-
-      def configure_column_link(link, associated, actions)
-        if column_empty?(associated) # if association is empty, we only can link to create form
-          if actions.include?(:new)
-            link.action = 'new'
-            link.crud_type = :create
-            link.label = as_(:create_new)
-          end
-        elsif actions.include?(:edit)
-          link.action = 'edit'
-          link.crud_type = :update
-        elsif actions.include?(:show)
-          link.action = 'show'
-          link.crud_type = :read
-        elsif actions.include?(:list)
-          link.action = 'index'
-          link.crud_type = :read
-        end
-        link if link.action.present?
-      end
-
-      def column_link_authorized?(link, column, record, associated)
-        if column.association
-          associated_for_authorized = if associated.nil? || (column.plural_association? && !associated.loaded?) || (associated.respond_to?(:blank?) && associated.blank?)
-            column.association.klass
-          elsif [:has_many, :has_and_belongs_to_many].include? column.association.macro
-            # may be cached with [] or [nil] to avoid some queries
-            associated.first || column.association.klass
-          else
-            associated
-          end
-          authorized = associated_for_authorized.authorized_for?(:crud_type => link.crud_type)
-          authorized = authorized and record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
-          authorized
-        else
-          record.authorized_for?(:crud_type => link.crud_type)
         end
       end
 
