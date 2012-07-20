@@ -3,6 +3,7 @@
 - Add :optional to update.persistent
 - Add missing triggering of as:element_updated in new subform rows
 - Fix conditions for :select in field_search
+- Fix datetime field search
 
 = 3.2.14
 - Fix default sorting, it was broken in 3.2.13

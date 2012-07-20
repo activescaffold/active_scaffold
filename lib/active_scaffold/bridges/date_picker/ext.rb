@@ -49,13 +49,15 @@ ActionView::Base.class_eval do
 end
 ActiveScaffold::Finder::ClassMethods.module_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
-  def datetime_conversion_for_condition(column)
+  def datetime_conversion_for_condition_with_datepicker(column)
     if column.search_ui == :date_picker
       :to_date
     else
-      super
+      datetime_conversion_for_condition_without_datepicker
     end
   end
+  alias_method_chain :datetime_conversion_for_condition, :datepicker
+  
   alias_method :condition_for_date_picker_type, :condition_for_date_bridge_type
   alias_method :condition_for_datetime_picker_type, :condition_for_date_picker_type
 end
