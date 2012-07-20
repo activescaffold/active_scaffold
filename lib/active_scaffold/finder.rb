@@ -146,7 +146,7 @@ module ActiveScaffold
 
       def condition_value_for_numeric(column, value)
         return value if value.nil?
-        value = i18n_number_to_native_format(value) if [:i18n_number, :currency].include?(column.options[:format])
+        value = i18n_number_to_native_format(value) if [:i18n_number, :currency].include?(column.options[:format]) && column.search_ui != :number
         case (column.search_ui || column.column.type)
         when :integer   then value.to_i rescue value ? 1 : 0
         when :float     then value.to_f
