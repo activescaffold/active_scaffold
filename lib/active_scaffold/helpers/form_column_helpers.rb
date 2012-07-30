@@ -105,12 +105,19 @@ module ActiveScaffold
       ##
       ## Form input methods
       ##
+      
+      def grouped_options_for_select(select_options, optgroup)
+        group_label = active_scaffold_config.columns[optgroup].try(:association) ? :to_label : :to_s
+        select_options.group_by(&optgroup.to_sym).collect do |group, options|
+          [group.send(group_label), options.collect {|r| [r.to_label, r.id]}]
+        end
+      end
 
       def active_scaffold_input_singular_association(column, html_options)
         associated = @record.send(column.association.name)
 
-        select_options = options_for_association(column.association)
-        select_options.unshift([ associated.to_label, associated.id ]) unless associated.nil? or select_options.find {|label, id| id == associated.id}
+        select_options = sorted_association_options_find(column.association)
+        select_options.unshift(associated) unless associated.nil? || select_options.include?(associated)
 
         method = column.name
         options = {:selected => associated.try(:id), :include_blank => as_(:_select_)}
@@ -118,19 +125,24 @@ module ActiveScaffold
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
         html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]")
-        select(:record, method, select_options.uniq, options, html_options)
+
+        if optgroup = options.delete(:optgroup)
+          select(:record, method, grouped_options_for_select(select_options, optgroup), options, html_options)
+        else
+          collection_select(:record, method, select_options, :id, :to_label, options, html_options)
+        end
       end
 
       def active_scaffold_plural_association_options(column)
-        associated_options = @record.send(column.association.name).collect {|r| [r.to_label, r.id]}
-        [associated_options, associated_options | options_for_association(column.association)]
+        associated_options = @record.send(column.association.name)
+        [associated_options, associated_options | sorted_association_options_find(column.association)]
       end
 
       def active_scaffold_input_plural_association(column, options)
         associated_options, select_options = active_scaffold_plural_association_options(column)
         return content_tag(:span, as_(:no_options), :class => options[:class], :id => options[:id]) if select_options.empty?
 
-        active_scaffold_checkbox_list(column, select_options, associated_options.collect {|a| a[1]}, options)
+        active_scaffold_checkbox_list(column, select_options.collect {|r| [r.to_label, r.id]}, associated_options.collect(&:id), options)
       end
       
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
@@ -340,8 +352,9 @@ module ActiveScaffold
           options.merge!(active_scaffold_input_text_options)
           record_select_field(options[:name], @record, options)
         else
-          select_options = options_for_select(options_for_association(nested.association)) #unless column.through_association?
-          select_options ||= options_for_select(active_scaffold_config.model.all.collect {|c| [h(c.to_label), c.id]})
+          select_options = sorted_association_options_find(nested.association) #unless column.through_association?
+          select_options ||= active_scaffold_config.model.all
+          select_options = options_from_collection_for_select(select_options, :id, :to_label)
           select_tag 'associated_id', ('<option value="">' + as_(:_select_) + '</option>' + select_options).html_safe unless select_options.empty?
         end
       end

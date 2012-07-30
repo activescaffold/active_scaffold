@@ -18,7 +18,12 @@ class ActiveScaffold::Bridges::Chosen
           html_options.update(:multiple => true).update(column.options[:html_options] || {})
           options.update(column.options)
           html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]")
-          select(:record, column.name, select_options, options, html_options)
+
+          if optgroup = options.delete(:optgroup)
+            select(:record, column.name, grouped_options_for_select(select_options, optgroup), options, html_options)
+          else
+            collection_select(:record, column.name, select_options, :id, :to_label, options, html_options)
+          end
         else
           active_scaffold_input_select(column, html_options)
         end
