@@ -20,7 +20,7 @@ class ActiveScaffold::Bridges::Chosen
           html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]")
 
           if optgroup = options.delete(:optgroup)
-            select(:record, column.name, grouped_options_for_select(select_options, optgroup), options, html_options)
+            select(:record, column.name, grouped_options_for_select(column, select_options, optgroup), options, html_options)
           else
             collection_select(:record, column.name, select_options, :id, :to_label, options, html_options)
           end
