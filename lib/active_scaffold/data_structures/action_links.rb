@@ -123,7 +123,7 @@ module ActiveScaffold::DataStructures
         elsif controller.nil? || !skip_action_link(controller, link, *(Array(options[:for])))
           security_method = link.security_method_set? || controller.respond_to?(link.security_method)
           authorized = if security_method
-            controller.send(link.security_method, *args)
+            controller.send(link.security_method, *(Array(options[:for])))
           else
             options[:for].nil? ? true : options[:for].authorized_for?(:crud_type => link.crud_type, :action => link.action)
           end

@@ -60,7 +60,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def delete_authorized?(record = nil)
-      (!nested? || !nested.readonly?) && authorized_for?(:crud_type => :delete)
+      (!nested? || !nested.readonly?) && (record || self).send(:authorized_for?, :crud_type => :delete)
     end
     private
     def delete_authorized_filter
