@@ -47,7 +47,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def show_authorized?(record = nil)
-      authorized_for?(:crud_type => :read)
+      (record || self).send(:authorized_for?, :crud_type => :read)
     end
     private 
     def show_authorized_filter
