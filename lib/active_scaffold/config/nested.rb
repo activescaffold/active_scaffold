@@ -6,16 +6,21 @@ module ActiveScaffold::Config
       super
       @label = :add_existing_model
       @shallow_delete = self.class.shallow_delete
+      @ignore_order_from_association = self.class.ignore_order_from_association
     end
 
     # global level configuration
     # --------------------------
     cattr_accessor :shallow_delete
     @@shallow_delete = true
+    
+    cattr_accessor :ignore_order_from_association
 
     # instance-level configuration
     # ----------------------------
     attr_accessor :shallow_delete
+    
+    attr_accessor :ignore_order_from_association
 
     # Add a nested ActionLink
     def add_link(attribute, options = {})
