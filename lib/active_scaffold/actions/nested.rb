@@ -37,7 +37,7 @@ module ActiveScaffold::Actions
         else
           as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label)
         end
-        if nested.sorted?
+        if nested.sorted? && !active_scaffold_config.nested.ignore_order_from_association
           active_scaffold_config.list.user.nested_default_sorting = {:table_name => active_scaffold_config.model.model_name, :default_sorting => nested.default_sorting}
         end
       end
