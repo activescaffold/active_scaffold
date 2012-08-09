@@ -7,7 +7,10 @@
 - Fix nested with has_one associations
 - Support optgroup in :select and :chosen form_ui
 
-= 3.2.15 (not released yet)
+= 3.2.16
+- Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
+
+= 3.2.15
 - Prepare to unify field overrides and list_ui method signatures
 - Add :optional to update.persistent
 - Add missing triggering of as:element_updated in new subform rows
