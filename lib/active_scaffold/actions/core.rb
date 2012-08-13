@@ -33,11 +33,11 @@ module ActiveScaffold::Actions
     end
 
     def render_field_for_update_columns
-      column = active_scaffold_config.columns[params[:column]]
+      column = active_scaffold_config.columns[params.delete(:column)]
       unless column.nil?
         @source_id = params.delete(:source_id)
         @columns = column.update_columns
-        @scope = params[:scope]
+        @scope = params.delete(:scope)
         
         if column.send_form_on_update_column
           if @scope
@@ -53,7 +53,7 @@ module ActiveScaffold::Actions
           @record = update_record_from_params(@record, active_scaffold_config.send(@scope ? :subform : (id ? :update : :create)).columns, hash)
         else
           @record = new_model
-          value = column_value_from_param_value(@record, column, params[:value])
+          value = column_value_from_param_value(@record, column, params.delete(:value))
           @record.send "#{column.name}=", value
         end
         
