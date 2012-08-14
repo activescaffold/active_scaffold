@@ -46,3 +46,4 @@ pkg
 #
 # For kdevelop:
 *.kdev4
+.project

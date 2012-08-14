@@ -28,22 +28,17 @@ module ActiveScaffold
           params[:return_to]
         else
           parameters = {}
-          if params[:parent_controller]
-            parameters[:controller] = params[:parent_controller]
-            #parameters[:eid] = params[:parent_controller] # not neeeded anymore?
+          if params[:parent_scaffold] && nested? && nested.singular_association?
+            parameters[:controller] = params[:parent_scaffold]
+            #parameters[:eid] = params[:parent_scaffold] # not neeeded anymore?
           end
           parameters.merge! nested.to_params if nested?
           if params[:parent_sti]
             parameters[:controller] = params[:parent_sti]
             #parameters[:eid] = nil # not neeeded anymore?
           end
-          parameters[:parent_column] = nil
-          parameters[:parent_id] = nil
           parameters[:action] = "index"
-          parameters[:id] = nil
-          parameters[:associated_id] = nil
-          parameters[:utf8] = nil
-          params_for(parameters)
+          params_for(parameters).except(:parent_column, :parent_id, :id, :associated_id, :utf8)
         end
       end
 
