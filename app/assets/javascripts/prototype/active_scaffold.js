@@ -928,7 +928,7 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
     $super();
     if (refreshed_content_or_reload) {
       if (typeof refreshed_content_or_reload == 'string') {
-        ActiveScaffold.update_row(this.target, refreshed_content_or_update);
+        ActiveScaffold.update_row(this.target, refreshed_content_or_reload);
       } else if (this.refresh_url) {
         var target = this.target;
         new Ajax.Request(this.refresh_url, {
