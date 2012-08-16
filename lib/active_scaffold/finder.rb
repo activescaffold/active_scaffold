@@ -169,9 +169,7 @@ module ActiveScaffold
       end
       
       def datetime_conversion_for_condition(column)
-        if respond_to? :date_bridge_column_date?
-          date_bridge_column_date?(column) ? :to_date : :to_time
-        elsif column.column
+        if column.column
           column.column.type == :date ? :to_date : :to_time
         else
           :to_time
