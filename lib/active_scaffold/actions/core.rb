@@ -2,7 +2,7 @@ module ActiveScaffold::Actions
   module Core
     def self.included(base)
       base.class_eval do
-        before_filter :register_constraints_with_action_columns, :if => :embedded?
+        prepend_before_filter :register_constraints_with_action_columns, :unless => :nested?
         after_filter :clear_flashes
         rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
