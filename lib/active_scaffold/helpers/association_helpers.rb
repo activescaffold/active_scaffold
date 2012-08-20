@@ -6,6 +6,7 @@ module ActiveScaffold
         conditions = options_for_association_conditions(association) if conditions.nil?
         relation = association.klass.where(conditions).where(association.options[:conditions])
         relation = relation.includes(association.options[:include]) if association.options[:include]
+        relation = yield(relation) if block_given?
         relation.all
       end
 
