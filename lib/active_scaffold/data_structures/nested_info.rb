@@ -135,11 +135,11 @@ module ActiveScaffold::DataStructures
       @constrained_fields = Set.new
       constrained_fields << association.foreign_key.to_sym unless association.belongs_to?
       model.reflect_on_all_associations.each do |current|
-        if !current.belongs_to? && association.foreign_key == current.association_foreign_key
+        if !current.belongs_to? && association != current && association.foreign_key.to_s == current.association_foreign_key.to_s
           constrained_fields << current.name.to_sym
           @child_association = current if current.klass == @parent_model
         end
-        if association.foreign_key == current.foreign_key
+        if association.foreign_key.to_s == current.foreign_key.to_s
           # show columns for has_many and has_one child associationes
           constrained_fields << current.name.to_sym if current.belongs_to?
           if association.options[:as] and current.options[:polymorphic]
