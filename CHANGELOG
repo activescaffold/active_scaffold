@@ -11,6 +11,7 @@
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
 - Fix constraints and colspan in self-referential associations
 - Fix rendering parent row after creating or updating in a nested form (singular associations)
+- Translate include_blank and prompt in form_ui :select
 
 = 3.2.15
 - Prepare to unify field overrides and list_ui method signatures
