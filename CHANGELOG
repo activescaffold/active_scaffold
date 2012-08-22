@@ -6,6 +6,7 @@
 - Add :chosen form_ui, and :chosen and :multi_chosen search_ui
 - Fix nested with has_one associations
 - Support optgroup in :select and :chosen form_ui
+- Support render_form_field with multiple rows (rows with associated-record class)
 
 = 3.2.16 (not released)
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group

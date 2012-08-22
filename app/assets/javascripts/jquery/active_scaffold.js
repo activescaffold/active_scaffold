@@ -532,13 +532,8 @@ var ActiveScaffold = {
     if (errors.hasClass('association-record-errors')) {
       this.remove(errors);
     }
-    var associated = jQuery(record).next();
+    record = jQuery(record).nextUntil('.association-record').andSelf();
     this.remove(record);
-    while (associated.hasClass('associated-record')) {
-      record = associated;
-      associated = jQuery(record).next();
-      this.remove(record);
-    }
   },
 
   report_500_response: function(active_scaffold_id) {
@@ -648,7 +643,7 @@ var ActiveScaffold = {
   render_form_field: function(source, content, options) {
     if (typeof(source) == 'string') source = '#' + source;
     var source = jQuery(source);
-    var element = source.closest('.association-record');
+    var element = source.closest('.association-record').nextUntil('.association-record').andSelf();
     if (element.length == 0) {
       element = source.closest('form > ol.form');
     }
