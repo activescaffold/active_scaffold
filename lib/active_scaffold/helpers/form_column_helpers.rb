@@ -100,6 +100,12 @@ module ActiveScaffold
       ## Form input methods
       ##
 
+      def active_scaffold_translate_select_options(options)
+        options[:include_blank] = as_(options[:include_blank]) if options[:include_blank].is_a? Symbol
+        options[:prompt] = as_(options[:prompt]) if options[:prompt].is_a? Symbol
+        options
+      end
+      
       def active_scaffold_input_singular_association(column, html_options)
         associated = @record.send(column.association.name)
 
@@ -113,6 +119,7 @@ module ActiveScaffold
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
         html_options[:name] = "#{html_options[:name]}[]" if (html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]"))
+        active_scaffold_translate_select_options(options)
         select(:record, method, select_options.uniq, options, html_options)
       end
 
@@ -153,6 +160,7 @@ module ActiveScaffold
         end
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
+        active_scaffold_translate_select_options(options)
         select(:record, column.name, options_for_select, options, html_options)
       end
 
