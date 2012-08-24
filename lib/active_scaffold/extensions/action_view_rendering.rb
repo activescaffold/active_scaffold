@@ -1,16 +1,13 @@
 module ActionView
   class LookupContext
-    module ViewPaths
-      def find_all_templates(name, partial = false, locals = {})
-        prefixes.collect do |prefix|
-          view_paths.collect do |resolver|
-            temp_args = *args_for_lookup(name, [prefix], partial, locals, {})
-            temp_args[1] = temp_args[1][0]
-            resolver.find_all(*temp_args)
-          end
-        end.flatten!
-      end
+    register_detail(:active_scaffold_view_paths) { nil }
+    def find(name, prefixes = [], partial = false, keys = [], options = {})
+      template = @view_paths.find_all(*args_for_lookup(name, prefixes, partial, keys, options)).first
+      template ||= active_scaffold_view_paths.find(*args_for_lookup(name, '', partial, keys, options)) if active_scaffold_view_paths
+      raise(MissingTemplate.new(@view_paths, *args)) unless template
+      template
     end
+    alias :find_template :find
   end
 end
 
@@ -40,21 +37,7 @@ module ActionView::Helpers #:nodoc:
     # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
     #
     def render_with_active_scaffold(*args, &block)
-      if args.first == :super
-        last_view = view_stack.last || {:view => instance_variable_get(:@virtual_path).split('/').last}
-        options = args[1] || {}
-        options[:locals] ||= {}
-        options[:locals].reverse_merge!(last_view[:locals] || {})
-        if last_view[:templates].nil?
-          last_view[:templates] = lookup_context.find_all_templates(last_view[:view], last_view[:partial], options[:locals].keys)
-          last_view[:templates].shift
-        end
-        options[:template] = last_view[:templates].shift
-        view_stack << last_view
-        result = render_without_active_scaffold options
-        view_stack.pop
-        result
-      elsif args.first.is_a? Hash and args.first[:active_scaffold]
+      if args.first.is_a? Hash and args.first[:active_scaffold]
         require 'digest/md5'
         options = args.first
 
@@ -88,14 +71,19 @@ module ActionView::Helpers #:nodoc:
           end
         end
 
+      elsif args.first == :super
+        prefix, template = @virtual_path.split('/')
+        last_view = view_stack.last || {}
+        options = args[1] || {}
+        options[:locals] ||= {}
+        options[:locals].reverse_merge!(last_view[:locals] || {})
+        options[:template] = template
+        options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
+        render_without_active_scaffold options
       else
         options = args.first
-        if options.is_a?(Hash)
-          current_view = {:view => options[:partial], :partial => true} if options[:partial]
-          current_view = {:view => options[:template], :partial => false} if current_view.nil? && options[:template]
-          current_view[:locals] = options[:locals] if !current_view.nil? && options[:locals]
-          view_stack << current_view if current_view.present?
-        end
+        current_view = {:locals => options[:locals]} if options.is_a?(Hash)
+        view_stack << current_view if current_view.present?
         result = render_without_active_scaffold(*args, &block)
         view_stack.pop if current_view.present?
         result

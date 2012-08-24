@@ -159,9 +159,14 @@ module ActiveScaffold
   def self.root
     File.dirname(__FILE__) + "/.."
   end
+  
+  def details_for_lookup
+    super.merge(:active_scaffold_view_paths => self.class.active_scaffold_paths)
+  end
 
   module ClassMethods
     def active_scaffold(model_id = nil, &block)
+      extend Prefixes
       # initialize bridges here
       ActiveScaffold::Bridges.run_all
 
@@ -211,12 +216,13 @@ module ActiveScaffold
           end
         end
       end
-      self.append_view_path active_scaffold_paths
       self._add_sti_create_links if self.active_scaffold_config.add_sti_create_links?
     end
 
-    def parent_prefixes
-      @parent_prefixes ||= super << 'active_scaffold_overrides' << ''
+    module Prefixes
+      def parent_prefixes
+        @parent_prefixes ||= super << 'active_scaffold_overrides'
+      end
     end
 
     # To be called after include action modules
@@ -300,7 +306,7 @@ module ActiveScaffold
       @active_scaffold_paths = []
       @active_scaffold_paths.concat @active_scaffold_custom_paths unless @active_scaffold_custom_paths.nil?
       @active_scaffold_paths.concat @active_scaffold_frontends unless @active_scaffold_frontends.nil?
-      @active_scaffold_paths
+      @active_scaffold_paths = ActionView::PathSet.new(@active_scaffold_paths)
     end
 
     def active_scaffold_config
