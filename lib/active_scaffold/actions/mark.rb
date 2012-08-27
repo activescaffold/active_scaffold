@@ -30,7 +30,7 @@ module ActiveScaffold::Actions
     def mark_respond_to_js
       if params[:id]
         do_search if respond_to? :do_search
-        set_includes_for_list_columns
+        set_includes_for_columns if active_scaffold_config.actions.include? :list
         @page = find_page(:pagination => active_scaffold_config.mark.mark_all_mode != :page)
         render :action => 'on_mark'
       else

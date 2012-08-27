@@ -59,21 +59,21 @@ module ActiveScaffold::Actions
     end
 
     # The actual algorithm to prepare for the list view
-    def set_includes_for_list_columns
+    def set_includes_for_columns(action = :list)
       @cache_associations = true
-      includes_for_list_columns = active_scaffold_config.list.columns.collect{ |c| c.includes }.flatten.uniq.compact
+      includes_for_list_columns = active_scaffold_config.send(action).columns.collect{ |c| c.includes }.flatten.uniq.compact
       self.active_scaffold_includes.concat includes_for_list_columns
     end
     
     def get_row
-      set_includes_for_list_columns
+      set_includes_for_columns
       klass = beginning_of_chain.includes(active_scaffold_includes)
       @record = find_if_allowed(params[:id], :read, klass)
     end
 
     # The actual algorithm to prepare for the list view
     def do_list
-      set_includes_for_list_columns
+      set_includes_for_columns
 
       options = { :sorting => active_scaffold_config.list.user.sorting,
         :count_includes => active_scaffold_config.list.user.count_includes }
@@ -135,7 +135,9 @@ module ActiveScaffold::Actions
         @action_link = active_scaffold_config.action_links[action_name]
         if params[:id] && params[:id] && params[:id].to_i > 0
           crud_type ||= (request.post? || request.put?) ? :update : :delete
-          @record = find_if_allowed(params[:id], crud_type)
+          set_includes_for_columns
+          klass = beginning_of_chain.includes(active_scaffold_includes)
+          @record = find_if_allowed(params[:id], crud_type, klass)
           unless @record.nil?
             yield @record
           else
