@@ -124,9 +124,16 @@ module ActiveScaffold
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters
         if link.dynamic_parameters.is_a?(Proc)
-          @link_record = record
-          url_options.merge! self.instance_eval(&(link.dynamic_parameters)) 
-          @link_record = nil
+          if record.nil?
+            url_options.merge! link.dynamic_parameters.call
+          elsif link.dynamic_parameters.arity == 0
+            ActiveSupport::Deprecation.warn("dynamic_parameters must be a block with an argument for member action links, instead of using @link_record")
+            @link_record = record
+            url_options.merge! self.instance_eval(&(link.dynamic_parameters))
+            @link_record = nil
+          else
+            url_options.merge! link.dynamic_parameters.call(record)
+          end
         end
         url_options_for_nested_link(link.column, record, link, url_options, options) if link.nested_link?
         url_options_for_sti_link(link.column, record, link, url_options, options) unless record.nil? || active_scaffold_config.sti_children.nil?
