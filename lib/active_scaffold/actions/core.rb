@@ -26,6 +26,10 @@ module ActiveScaffold::Actions
     def nested?
       false
     end
+  
+    def details_for_lookup
+      super.merge(:active_scaffold_view_paths => self.class.active_scaffold_paths)
+    end
 
     def render_field_for_inplace_editing
       @record = find_if_allowed(params[:id], :update)
