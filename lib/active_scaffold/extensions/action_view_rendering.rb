@@ -1,11 +1,18 @@
 module ActionView
   class LookupContext
+    attr_accessor :last_template
     register_detail(:active_scaffold_view_paths) { nil }
+    
     def find(name, prefixes = [], partial = false, keys = [], options = {})
-      template = @view_paths.find_all(*args_for_lookup(name, prefixes, partial, keys, options)).first
-      template ||= active_scaffold_view_paths.find(*args_for_lookup(name, '', partial, keys, options)) if active_scaffold_view_paths
+      unless prefixes.one? && prefixes.first.blank?
+        template = @view_paths.find_all(*args_for_lookup(name, prefixes, partial, keys, options)).first
+      end
+      if active_scaffold_view_paths && template.nil?
+        view_paths = active_scaffold_view_paths.is_a?(ActionView::PathSet) ? active_scaffold_view_paths : ActionView::PathSet.new(active_scaffold_view_paths)
+        template = view_paths.find(*args_for_lookup(name, '', partial, keys, options)) 
+      end
       raise(MissingTemplate.new(@view_paths, *args)) unless template
-      template
+      self.last_template = template
     end
     alias :find_template :find
   end
@@ -77,9 +84,19 @@ module ActionView::Helpers #:nodoc:
         options = args[1] || {}
         options[:locals] ||= {}
         options[:locals].reverse_merge!(last_view[:locals] || {})
-        options[:template] = template
-        options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
-        render_without_active_scaffold options
+        options[:template] = template || prefix
+        # if template is nil we are rendering an active_scaffold (or active_scaffold's plugin) view
+        if template
+          options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
+        else
+          options[:prefixes] = ['']
+          active_scaffold_view_paths = lookup_context.active_scaffold_view_paths
+          last_view_path = File.dirname(lookup_context.last_template.inspect)
+          lookup_context.active_scaffold_view_paths = active_scaffold_view_paths.drop(active_scaffold_view_paths.find_index {|path| path.to_s == last_view_path} + 1)
+        end
+        result = render_without_active_scaffold options
+        lookup_context.active_scaffold_view_paths = active_scaffold_view_paths unless template
+        result
       else
         options = args.first
         current_view = {:locals => options[:locals]} if options.is_a?(Hash)

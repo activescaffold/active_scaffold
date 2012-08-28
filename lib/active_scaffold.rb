@@ -159,10 +159,6 @@ module ActiveScaffold
   def self.root
     File.dirname(__FILE__) + "/.."
   end
-  
-  def details_for_lookup
-    super.merge(:active_scaffold_view_paths => self.class.active_scaffold_paths)
-  end
 
   module ClassMethods
     def active_scaffold(model_id = nil, &block)
