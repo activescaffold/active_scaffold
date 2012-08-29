@@ -4,7 +4,7 @@ module ActionView
     register_detail(:active_scaffold_view_paths) { nil }
     
     def find(name, prefixes = [], partial = false, keys = [], options = {})
-      unless prefixes.one? && prefixes.first.blank?
+      unless active_scaffold_view_paths && prefixes && prefixes.one? && prefixes.first.blank?
         template = @view_paths.find_all(*args_for_lookup(name, prefixes, partial, keys, options)).first
       end
       if active_scaffold_view_paths && template.nil?
