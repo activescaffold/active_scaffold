@@ -5,13 +5,16 @@ module ActionView
     
     def find(name, prefixes = [], partial = false, keys = [], options = {})
       unless active_scaffold_view_paths && prefixes && prefixes.one? && prefixes.first.blank?
-        template = @view_paths.find_all(*args_for_lookup(name, prefixes, partial, keys, options)).first
+        args = args_for_lookup(name, prefixes, partial, keys, options)
+        view_paths = @view_paths
+        template = @view_paths.find_all(*args).first
       end
       if active_scaffold_view_paths && template.nil?
         view_paths = active_scaffold_view_paths.is_a?(ActionView::PathSet) ? active_scaffold_view_paths : ActionView::PathSet.new(active_scaffold_view_paths)
+        args ||= args_for_lookup(name, '', partial, keys, options)
         template = view_paths.find(*args_for_lookup(name, '', partial, keys, options)) 
       end
-      raise(MissingTemplate.new(@view_paths, *args)) unless template
+      raise(MissingTemplate.new(view_paths, *args)) unless template
       self.last_template = template
     end
     alias :find_template :find
