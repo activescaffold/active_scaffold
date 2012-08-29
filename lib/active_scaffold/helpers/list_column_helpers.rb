@@ -292,7 +292,7 @@ module ActiveScaffold
         if column.name == :as_marked
           tag_options[:data] = {
             :ie_mode => :inline_checkbox,
-            :ie_url => url_for(:controller => params_for[:controller], :action => 'mark', :id => '__id__', :eid => params[:eid])
+            :ie_url => url_for(params_for(:action => 'mark', :id => '__id__'))
           }
         else
           tag_options[:data] = inplace_edit_data(column) if column.inplace_edit
