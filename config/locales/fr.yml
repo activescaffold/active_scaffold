@@ -6,6 +6,7 @@ fr:
     add: 'Ajouter'
     add_existing: 'Ajouter un(e) existant(e)'
     add_existing_model: 'Ajouter un(e) %{model} existant(e)'
+    apply: 'Apply'
     are_you_sure_to_delete: 'Êtes vous sûr?'
     cancel: 'Annuler'
     click_to_edit: 'Cliquer pour éditer'
@@ -34,6 +35,7 @@ fr:
     inplace_edit_handle: '--'
     live_search: 'Recherche en temps réel'
     loading: 'Chargement…'
+    mark_all_records: "Mark all"
     next: 'Suivant'
     no_entries: "Pas d'entrée"
     no_options: "pas d'option"
@@ -42,6 +44,9 @@ fr:
     pdf: 'PDF'
     previous: 'Précédent'
     print: 'Imprimer'
+    records_marked:
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
     refresh: 'Rafraîchir'
     remove: 'Supprimer'
     remove_file: 'Supprimer et remplacer le fichier'
@@ -92,7 +97,7 @@ fr:
     months: 'Mois'
     years: 'Années'
     optional_attributes: 'Options additionnelles'
-    null: 'Nulle'
+    :null: 'Nulle'
     not_null: 'Non Nulle'
     date_picker_options: 
       weekHeader: 'Sm'

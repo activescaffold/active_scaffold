@@ -65,6 +65,10 @@ module ActiveRecordPermissions
     def self.included(base)
       base.extend SecurityMethods
       base.send :include, SecurityMethods
+      class << base
+        attr_accessor :class_security_methods
+        attr_accessor :instance_security_methods
+      end
     end
 
     # Because any class-level queries get delegated to the instance level via a new record,
@@ -85,34 +89,47 @@ module ActiveRecordPermissions
       def authorized_for?(options = {})
         raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] and ![:create, :read, :update, :delete].include?(options[:crud_type])
 
+        # collect other possibly-related methods that actually exist
+        methods = cached_authorized_for_methods(options)
+        return ActiveRecordPermissions.default_permission if methods.empty?
+        return send(methods.first) if methods.one?
+
+        # if any method returns false, then return false
+        return false if methods.any? {|m| !send(m)}
+        true
+      end
+      
+      def cached_authorized_for_methods(options)
+        key = "#{options[:crud_type]}##{options[:column]}##{options[:action]}"
+        if self.is_a? Class
+          self.class_security_methods ||= {}
+          self.class_security_methods[key] ||= authorized_for_methods(options)
+        else
+          self.class.instance_security_methods ||= {}
+          self.class.instance_security_methods[key] ||= authorized_for_methods(options)
+        end
+      end
+
+      def authorized_for_methods(options)
         # column_authorized_for_crud_type? has the highest priority over other methods,
         # you can disable a crud verb and enable that verb for a column
         # (for example, disable update and enable inplace_edit in a column)
         method = column_and_crud_type_security_method(options[:column], options[:crud_type])
-        return send(method) if method and respond_to?(method)
+        return [method] if method and respond_to?(method)
 
         # authorized_for_action? has higher priority than other methods,
         # you can disable a crud verb and enable an action with that crud verb
         # (for example, disable update and enable an action with update as crud type)
         method = action_security_method(options[:action])
-        return send(method) if method and respond_to?(method)
+        return [method] if method and respond_to?(method)
 
         # collect other possibly-related methods that actually exist
         methods = [
           column_security_method(options[:column]),
           crud_type_security_method(options[:crud_type]),
         ].compact.select {|m| respond_to?(m)}
-
-        # if any method returns false, then return false
-        return false if methods.any? {|m| !send(m)}
-
-        # if any method actually exists then it must've returned true, so return true
-        return true unless methods.empty?
-
-        # if no method exists, return the default permission
-        return ActiveRecordPermissions.default_permission
       end
-
+      
       private
 
       def column_security_method(column)

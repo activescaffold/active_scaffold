@@ -139,13 +139,6 @@ background-color: transparent;
 cursor: default;
 }
 
-.active-scaffold-header div.actions {
-position: absolute;
-right: 5px;
-top: 5px;
-text-align: right;
-}
-
 /* Table :: Column Headers
    ============================= */
 

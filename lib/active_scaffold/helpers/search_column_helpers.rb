@@ -61,7 +61,7 @@ module ActiveScaffold
         associated.collect!(&:to_i)
         
         if column.association
-          select_options = options_for_association(column.association, false)
+          select_options = sorted_association_options_find(column.association).collect {|r| [r.to_label, r.id]}
         else
           select_options = column.options[:options].collect do |text, value|
             active_scaffold_translated_option(column, text, value)
@@ -77,7 +77,7 @@ module ActiveScaffold
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
           method = column.association.macro == :belongs_to ? column.association.foreign_key : column.name
-          select_options = options_for_association(column.association, true)
+          select_options = sorted_association_options_find(column.association, false)
         else
           method = column.name
           select_options = column.options[:options].collect do |text, value|
@@ -92,7 +92,14 @@ module ActiveScaffold
         else
           options[:include_blank] ||= as_(:_select_) 
         end
-        select(:record, method, select_options, options, html_options)
+        
+        if optgroup = options.delete(:optgroup)
+          select(:record, method, grouped_options_for_select(column, select_options, optgroup), options, html_options)
+        elsif column.association
+          collection_select(:record, method, select_options, :id, :to_label, options, html_options)
+        else
+          select(:record, method, select_options, options, html_options)
+        end
       end
 
       def active_scaffold_search_text(column, options)
@@ -179,10 +186,12 @@ module ActiveScaffold
               options_for_select(select_options, opt_value),
               :id => "#{options[:id]}_opt",
               :class => "as_search_range_option")
-        html << ' ' << text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size))
-        html << ' ' << content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
+        html << content_tag("span", :id => "#{options[:id]}_numeric", :style => ActiveScaffold::Finder::NullComparators.include?(opt_value) ? "display: none" : nil) do
+          text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size)) <<
+          content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
               active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))).html_safe,
               :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => (opt_value == 'BETWEEN') ? nil : "display: none")
+        end
         content_tag :span, html, :class => 'search_range'
       end
       alias_method :active_scaffold_search_integer, :active_scaffold_search_range

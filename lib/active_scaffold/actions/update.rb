@@ -65,7 +65,9 @@ module ActiveScaffold::Actions
     # A simple method to find and prepare a record for editing
     # May be overridden to customize the record (set default values, etc.)
     def do_edit
-      @record = find_if_allowed(params[:id], :update)
+      set_includes_for_columns if active_scaffold_config.actions.include? :list
+      klass = beginning_of_chain.includes(active_scaffold_includes)
+      @record = find_if_allowed(params[:id], :update, klass)
     end
 
     # A complex method to update a record. The complexity comes from the support for subforms, and saving associated records.
@@ -81,7 +83,7 @@ module ActiveScaffold::Actions
         active_scaffold_config.model.transaction do
           @record = update_record_from_params(@record, active_scaffold_config.update.columns, attributes) unless options[:no_record_param_update]
           before_update_save(@record)
-          self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
+          self.successful = [@record.valid?, @record.associated_valid?].all? # this syntax avoids a short-circuit
           if successful?
             @record.save! and @record.save_associated!
             after_update_save(@record)
@@ -104,7 +106,7 @@ module ActiveScaffold::Actions
     end
 
     def do_update_column
-      @record = active_scaffold_config.model.find(params[:id])
+      @record = find_if_allowed(params[:id], :read)
       if @record.authorized_for?(:crud_type => :update, :column => params[:column])
         column = active_scaffold_config.columns[params[:column].to_sym]
         unless @record.column_for_attribute(params[:column]).nil? || @record.column_for_attribute(params[:column]).null
@@ -139,7 +141,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def update_authorized?(record = nil)
-      (!nested? || !nested.readonly?) && authorized_for?(:crud_type => :update)
+      (!nested? || !nested.readonly?) && (record || self).send(:authorized_for?, :crud_type => :update)
     end
     private
     def update_authorized_filter

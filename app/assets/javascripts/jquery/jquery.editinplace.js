@@ -470,7 +470,7 @@ $.extend(InlineEditor.prototype, {
 		if (false === this.triggerDelegateCall('shouldCloseEditInPlace', true, anEvent))
 			return;
 
-    var editor = this.dom.find(':input:not(:button)').not('input:checkbox:not(:checked)').not('input:radio:not(:checked)');
+    var editor = this.dom.find('[name]:input:not(:button,[name=""])').not('input:checkbox:not(:checked)').not('input:radio:not(:checked)');
     var enteredText = '';
     if (editor.length > 1) {
       enteredText = jQuery.map(editor, function(item, index) {

@@ -15,8 +15,6 @@ module ActionController #:nodoc:
       end
     end
     alias_method_chain :render, :active_scaffold
-
-    # Rails 2.x implementation is post-initialization on :active_scaffold method
   end
 end
 

@@ -48,6 +48,7 @@ $nested_bg: #DAFFCD !default;
 $nested_border_color: #7FCF00 !default;
 $nested_footer_color: #444 !default;
 $nested_column_bg: #ECFFE7 !default;
+$nested_column_even_bg: #fff !default;
 $nested_column_border_color: $column_border_color !default;
 
 $second_nested_bg: #FFFFBB !default;
@@ -228,9 +229,12 @@ border-color: $nested_border_color;
 color: $nested_footer_color;
 }
 
-.active-scaffold .active-scaffold  td {
+.active-scaffold .active-scaffold tr.record {
 background-color: $nested_column_bg;
 border-color: $nested_column_border_color;
+}
+.active-scaffold .active-scaffold tr.even-record {
+background-color: $nested_column_even_bg;
 }
 
 .active-scaffold .active-scaffold td.inline-adapter-cell {
@@ -335,6 +339,9 @@ color: $placeholder_color;
 border-color: $input_border_color;
 }
 
+.active-scaffold input:invalid,
+.active-scaffold textarea:invalid,
+.active-scaffold select:invalid,
 .active-scaffold .fieldWithErrors input,
 .active-scaffold .field_with_errors input,
 .active-scaffold .fieldWithErrors textarea,

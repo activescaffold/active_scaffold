@@ -70,17 +70,27 @@ module ActiveScaffold
       def active_scaffold_input_options(column, scope = nil, options = {})
         name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
 
+        # Add some HTML5 attributes for in-browser validation and better user experience
+        if column.required? && (!@disable_required_for_new || scope.nil? || @record.persisted?)
+          options[:required] = true
+        end
+        options[:placeholder] = column.placeholder if column.placeholder.present?
+
         # Fix for keeping unique IDs in subform
         id_control = "record_#{column.name}_#{[params[:eid], params[:id]].compact.join '_'}"
         id_control += scope_id(scope) if scope
+        
+        classes = "#{column.name}-input"
+        classes += ' numeric-input' if column.number?
 
-        { :name => name, :class => "#{column.name}-input", :id => id_control}.merge(options)
+        { :name => name, :class => classes, :id => id_control}.merge(options)
       end
 
       def update_columns_options(column, scope, options)
         if column.update_columns
           form_action = params[:action] == 'edit' ? :update : :create
-          url_params = {:action => 'render_field', :id => params[:id], :column => column.name}
+          url_params = {:action => 'render_field', :column => column.name}
+          url_params[:id] = @record.id if column.send_form_on_update_column
           url_params[:eid] = params[:eid] if params[:eid]
           url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
           url_params[:scope] = scope if scope
@@ -96,29 +106,51 @@ module ActiveScaffold
       ##
       ## Form input methods
       ##
+      
+      def grouped_options_for_select(column, select_options, optgroup)
+        group_label = active_scaffold_config_for(column.association.klass).columns[optgroup].try(:association) ? :to_label : :to_s
+        select_options.group_by(&optgroup.to_sym).collect do |group, options|
+          [group.send(group_label), options.collect {|r| [r.to_label, r.id]}]
+        end
+      end
 
+      def active_scaffold_translate_select_options(options)
+        options[:include_blank] = as_(options[:include_blank]) if options[:include_blank].is_a? Symbol
+        options[:prompt] = as_(options[:prompt]) if options[:prompt].is_a? Symbol
+        options
+      end
+      
       def active_scaffold_input_singular_association(column, html_options)
         associated = @record.send(column.association.name)
 
-        select_options = options_for_association(column.association)
-        select_options.unshift([ associated.to_label, associated.id ]) unless associated.nil? or select_options.find {|label, id| id == associated.id}
+        select_options = sorted_association_options_find(column.association)
+        select_options.unshift(associated) unless associated.nil? || select_options.include?(associated)
 
         method = column.name
-        #html_options[:name] += '[id]'
         options = {:selected => associated.try(:id), :include_blank => as_(:_select_)}
 
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
-        html_options[:name] = "#{html_options[:name]}[]" if (html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]"))
-        select(:record, method, select_options.uniq, options, html_options)
+        html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]")
+        active_scaffold_translate_select_options(options)
+
+        if optgroup = options.delete(:optgroup)
+          select(:record, method, grouped_options_for_select(column, select_options, optgroup), options, html_options)
+        else
+          collection_select(:record, method, select_options, :id, :to_label, options, html_options)
+        end
+      end
+
+      def active_scaffold_plural_association_options(column)
+        associated_options = @record.send(column.association.name)
+        [associated_options, associated_options | sorted_association_options_find(column.association)]
       end
 
       def active_scaffold_input_plural_association(column, options)
-        associated_options = @record.send(column.association.name).collect {|r| [r.to_label, r.id]}
-        select_options = associated_options | options_for_association(column.association)
+        associated_options, select_options = active_scaffold_plural_association_options(column)
         return content_tag(:span, as_(:no_options), :class => options[:class], :id => options[:id]) if select_options.empty?
 
-        active_scaffold_checkbox_list(column, select_options, associated_options.collect {|a| a[1]}, options)
+        active_scaffold_checkbox_list(column, select_options.collect {|r| [r.to_label, r.id]}, associated_options.collect(&:id), options)
       end
       
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
@@ -150,6 +182,7 @@ module ActiveScaffold
         end
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
+        active_scaffold_translate_select_options(options)
         select(:record, column.name, options_for_select, options, html_options)
       end
 
@@ -187,6 +220,41 @@ module ActiveScaffold
       def active_scaffold_input_virtual(column, options)
         options = active_scaffold_input_text_options(options)
         text_field :record, column.name, options.merge(column.options)
+      end
+
+      # Some fields from HTML5 (primarily for using in-browser validation)
+      # Sadly, many of them lacks browser support
+
+      # A text box, that accepts only valid email address (in-browser validation)
+      def active_scaffold_input_email(column, options)
+        options = active_scaffold_input_text_options(options)
+        email_field :record, column.name, options.merge(column.options)
+      end
+
+      # A text box, that accepts only valid URI (in-browser validation)
+      def active_scaffold_input_url(column, options)
+        options = active_scaffold_input_text_options(options)
+        url_field :record, column.name, options.merge(column.options)
+      end
+
+      # A text box, that accepts only valid phone-number (in-browser validation)
+      def active_scaffold_input_telephone(column, options)
+        options = active_scaffold_input_text_options(options)
+        telephone_field :record, column.name, options.merge(column.options)
+      end
+
+      # A spinbox control for number values (in-browser validation)
+      def active_scaffold_input_number(column, options)
+        options = numerical_constraints_for_column(column, options)
+        options = active_scaffold_input_text_options(options)
+        number_field :record, column.name, options.merge(column.options)
+      end
+
+      # A slider control for number values (in-browser validation)
+      def active_scaffold_input_range(column, options)
+        options = numerical_constraints_for_column(column, options)
+        options = active_scaffold_input_text_options(options)
+        range_field :record, column.name, options.merge(column.options)
       end
 
       #
@@ -293,8 +361,9 @@ module ActiveScaffold
           options.merge!(active_scaffold_input_text_options)
           record_select_field(options[:name], @record, options)
         else
-          select_options = options_for_select(options_for_association(nested.association)) #unless column.through_association?
-          select_options ||= options_for_select(active_scaffold_config.model.all.collect {|c| [h(c.to_label), c.id]})
+          select_options = sorted_association_options_find(nested.association) #unless column.through_association?
+          select_options ||= active_scaffold_config.model.all
+          select_options = options_from_collection_for_select(select_options, :id, :to_label)
           select_tag 'associated_id', ('<option value="">' + as_(:_select_) + '</option>' + select_options).html_safe unless select_options.empty?
         end
       end
@@ -305,6 +374,58 @@ module ActiveScaffold
         else
           active_scaffold_config.model.model_name.human
         end
+      end
+
+      # Try to get numerical constraints from model's validators
+      def numerical_constraints_for_column(column, options)
+        if column.numerical_constraints.nil?
+          numerical_constraints = {}
+          validators = column.active_record_class.validators.select do |v|
+            v.is_a? ActiveModel::Validations::NumericalityValidator and v.attributes.include? column.name
+          end
+          equal_to = (v = validators.find{ |v| v.options[:equal_to] }) ? v.options[:equal_to] : nil
+          
+          # If there is equal_to constraint - use it (unless otherwise specified by user)
+          if equal_to and not (options[:min] or options[:max])
+            numerical_constraints[:min] = numerical_constraints[:max] = equal_to
+          else # find minimum and maximum from validators
+            # we can safely modify :min and :max by 1 for :greater_tnan or :less_than value only for integer values
+            only_integer = column.column.type == :integer if column.column
+            only_integer ||= !!validators.find{ |v| v.options[:only_integer] }
+            margin = only_integer ? 1 : 0
+            
+            # Minimum
+            unless options[:min]
+              min = validators.map{ |v| v.options[:greater_than_or_equal] }.compact.max
+              greater_than = validators.map{ |v| v.options[:greater_than] }.compact.max
+              numerical_constraints[:min] = [min, (greater_than+margin if greater_than)].compact.max
+            end
+            
+            # Maximum
+            unless options[:max]
+              max = validators.map{ |v| v.options[:less_than_or_equal] }.compact.min
+              less_than = validators.map{ |v| v.options[:less_than] }.compact.min
+              numerical_constraints[:max] = [max, (less_than-margin if less_than)].compact.min
+            end
+            
+            # Set step = 2 for column values restricted to be odd or even (but only if minimum is set)
+            unless options[:step]
+              only_odd_valid  = validators.any?{ |v| v.options[:odd] }
+              only_even_valid = validators.any?{ |v| v.options[:even] } unless only_odd_valid
+              if !only_integer
+                numerical_constraints[:step] ||= "0.#{'0'*(column.column.scale-1)}1" if column.column && column.column.scale.to_i > 0
+              elsif options[:min] and options[:min].respond_to? :even? and (only_odd_valid or only_even_valid)
+                numerical_constraints[:step] = 2
+                numerical_constraints[:min] += 1 if only_odd_valid  and not options[:min].odd?
+                numerical_constraints[:min] += 1 if only_even_valid and not options[:min].even?
+              end
+              numerical_constraints[:step] ||= 'any' unless only_integer
+            end
+          end
+          
+          column.numerical_constraints = numerical_constraints
+        end
+        return column.numerical_constraints.merge(options)
       end
     end
   end

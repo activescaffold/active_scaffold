@@ -5,6 +5,7 @@ module Rails
   module Generators
     class ActiveScaffoldGenerator < ResourceGenerator #metagenerator
       remove_hook_for :resource_controller
+      remove_hook_for :resource_route
       remove_class_option :actions
       
       def add_resource_route

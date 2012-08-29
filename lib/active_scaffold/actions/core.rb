@@ -2,8 +2,9 @@ module ActiveScaffold::Actions
   module Core
     def self.included(base)
       base.class_eval do
-        before_filter :register_constraints_with_action_columns, :if => :embedded?
+        prepend_before_filter :register_constraints_with_action_columns, :unless => :nested?
         after_filter :clear_flashes
+        rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
       base.helper_method :nested?
       base.helper_method :calculate
@@ -25,6 +26,10 @@ module ActiveScaffold::Actions
     def nested?
       false
     end
+  
+    def details_for_lookup
+      super.merge(:active_scaffold_view_paths => self.class.active_scaffold_paths)
+    end
 
     def render_field_for_inplace_editing
       @record = find_if_allowed(params[:id], :update)
@@ -32,11 +37,11 @@ module ActiveScaffold::Actions
     end
 
     def render_field_for_update_columns
-      column = active_scaffold_config.columns[params[:column]]
+      column = active_scaffold_config.columns[params.delete(:column)]
       unless column.nil?
         @source_id = params.delete(:source_id)
         @columns = column.update_columns
-        @scope = params[:scope]
+        @scope = params.delete(:scope)
         
         if column.send_form_on_update_column
           if @scope
@@ -52,7 +57,7 @@ module ActiveScaffold::Actions
           @record = update_record_from_params(@record, active_scaffold_config.send(@scope ? :subform : (id ? :update : :create)).columns, hash)
         else
           @record = new_model
-          value = column_value_from_param_value(@record, column, params[:value])
+          value = column_value_from_param_value(@record, column, params.delete(:value))
           @record.send "#{column.name}=", value
         end
         
@@ -73,6 +78,10 @@ module ActiveScaffold::Actions
           flash[flash_key] = nil
         end
       end
+    end
+
+    def each_marked_record(&block)
+      active_scaffold_config.model.find(marked_records.to_a).each &block
     end
 
     def marked_records
@@ -191,17 +200,6 @@ module ActiveScaffold::Actions
         send("#{action_name}_formats")
       else
         (default_formats + active_scaffold_config.formats).uniq
-      end
-    end
-
-    def response_code_for_rescue(exception)
-      case exception
-        when ActiveScaffold::RecordNotAllowed
-          "403 Record Not Allowed"
-        when ActiveScaffold::ActionNotAllowed
-          "403 Action Not Allowed"
-        else
-          super
       end
     end
   end

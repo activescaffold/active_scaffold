@@ -158,7 +158,7 @@ module ActiveScaffold::Bridges
           options = active_scaffold_input_text_options(options.merge(column.options))
           options[:class] << " #{column.search_ui.to_s}"
           options[:style] = (options[:show].nil? || options[:show]) ? nil : "display: none"
-          format = options.delete(:format) || column.form_ui == :date_picker ? :default : :picker
+          format = options.delete(:format) || column.search_ui == :date_picker ? :default : :picker
           datepicker_format_options(column, format, options)
           text_field_tag("#{options[:name]}[#{name}]", value ? l(value, :format => format) : nil, options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]"))
         end

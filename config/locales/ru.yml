@@ -6,6 +6,7 @@ ru:
     add: 'Добавить запись'
     add_existing: 'Добавить существующую запись'
     add_existing_model: '%{model}: добавить существующую запись'
+    apply: 'Apply'
     are_you_sure_to_delete: 'Удалить %{label}?'
     cancel: 'Отмена'
     click_to_edit: 'Нажмите для редактирования'
@@ -38,6 +39,7 @@ ru:
     inplace_edit_handle: '--'
     live_search: 'Поиск'
     loading: 'Загрузка…'
+    mark_all_records: "Отметить все"
     next: 'Следующее'
     no_entries: 'Нет записей'
     no_options: 'Нет вариантов'
@@ -46,6 +48,11 @@ ru:
     pdf: 'PDF'
     previous: 'Предыдущее'
     print: 'Печать'
+    records_marked:
+      one: "Отмечена 1 запись"
+      few: "Отмечено %{count} записи"
+      many: "Отмечено %{count} записей"
+      other: "Отмечено %{count} записи"
     refresh: 'Обновить'
     remove: 'Удалить'
     remove_file: 'Удалить или заменить файл'
@@ -96,7 +103,7 @@ ru:
     months: 'месяцев'
     years: 'лет'
     optional_attributes: 'Дополнительные настройки'
-    null: 'Пусто'
+    :null: 'Пусто'
     not_null: 'Не пусто'
     date_picker_options:
       weekHeader: 'Нед.'

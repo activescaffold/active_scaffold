@@ -41,13 +41,15 @@ module ActiveScaffold::Actions
     # A simple method to retrieve and prepare a record for showing.
     # May be overridden to customize show routine
     def do_show
-      @record = find_if_allowed(params[:id], :read)
+      set_includes_for_columns(:show) if active_scaffold_config.actions.include? :list
+      klass = beginning_of_chain.includes(active_scaffold_includes)
+      @record = find_if_allowed(params[:id], :read, klass)
     end
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def show_authorized?(record = nil)
-      authorized_for?(:crud_type => :read)
+      (record || self).send(:authorized_for?, :crud_type => :read)
     end
     private 
     def show_authorized_filter

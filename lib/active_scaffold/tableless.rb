@@ -46,7 +46,6 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
 
   def self.columns; @columns ||= []; end
   def self.table_name; @table_name ||= ActiveModel::Naming.plural(self); end
-  def self.connection; nil; end
   def self.table_exists?; true; end
   self.abstract_class = true
   class << self

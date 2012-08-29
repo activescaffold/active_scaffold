@@ -162,6 +162,7 @@ module ActiveScaffold
 
   module ClassMethods
     def active_scaffold(model_id = nil, &block)
+      extend Prefixes
       # initialize bridges here
       ActiveScaffold::Bridges.run_all
 
@@ -211,12 +212,13 @@ module ActiveScaffold
           end
         end
       end
-      self.append_view_path active_scaffold_paths
       self._add_sti_create_links if self.active_scaffold_config.add_sti_create_links?
     end
 
-    def parent_prefixes
-      @parent_prefixes ||= super << 'active_scaffold_overrides' << ''
+    module Prefixes
+      def parent_prefixes
+        @parent_prefixes ||= super << 'active_scaffold_overrides'
+      end
     end
 
     # To be called after include action modules
@@ -264,13 +266,13 @@ module ActiveScaffold
       controller = active_scaffold_controller_for_column(column, options)
       
       unless controller.nil?
-        options.reverse_merge! :label => column.label, :position => :after, :type => :member, :controller => (controller == :polymorph ? controller : controller.controller_path), :column => column
+        options.reverse_merge! :position => :after, :type => :member, :controller => (controller == :polymorph ? controller : controller.controller_path), :column => column
         options[:parameters] ||= {}
-        options[:parameters].reverse_merge! :parent_scaffold => controller_path, :association => column.association.name
+        options[:parameters].reverse_merge! :association => column.association.name
         if column.plural_association?
           # note: we can't create nested scaffolds on :through associations because there's no reverse association.
           
-          ActiveScaffold::DataStructures::ActionLink.new('index', options) #unless column.through_association?
+          ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(:refresh_on_close => true)) #unless column.through_association?
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
           actions ||= [:create, :update, :show] 
@@ -285,7 +287,7 @@ module ActiveScaffold
     def link_for_association_as_scope(scope, options = {})
       options.reverse_merge! :label => scope, :position => :after, :type => :member, :controller => controller_path
       options[:parameters] ||= {}
-      options[:parameters].reverse_merge! :parent_scaffold => controller_path, :named_scope => scope
+      options[:parameters].reverse_merge! :named_scope => scope
       ActiveScaffold::DataStructures::ActionLink.new('index', options)
     end
 
@@ -300,7 +302,7 @@ module ActiveScaffold
       @active_scaffold_paths = []
       @active_scaffold_paths.concat @active_scaffold_custom_paths unless @active_scaffold_custom_paths.nil?
       @active_scaffold_paths.concat @active_scaffold_frontends unless @active_scaffold_frontends.nil?
-      @active_scaffold_paths
+      @active_scaffold_paths = ActionView::PathSet.new(@active_scaffold_paths)
     end
 
     def active_scaffold_config

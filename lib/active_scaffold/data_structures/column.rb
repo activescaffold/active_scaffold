@@ -43,6 +43,12 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    # A placeholder text, to be used inside blank text fields to describe, what should be typed in
+    attr_writer :placeholder
+    def placeholder
+      @placeholder || I18n.t(name, :scope => [:activerecord, :placeholder, active_record_class.to_s.underscore.to_sym], :default => '')
+    end
+
     # this will be /joined/ to the :name for the td's class attribute. useful if you want to style columns on different ActiveScaffolds the same way, but the columns have different names.
     attr_accessor :css_class
 
@@ -179,7 +185,10 @@ module ActiveScaffold::DataStructures
     # describes how to search on a column
     #   search = true           default, uses intelligent search sql
     #   search = "CONCAT(a, b)" define your own sql for searching. this should be the "left-side" of a WHERE condition. the operator and value will be supplied by ActiveScaffold.
-    attr_writer :search_sql
+    #   search = [:a, :b]       searches in both fields
+    def search_sql=(value)
+      @search_sql = (value == true || value.is_a?(Proc)) ? value : Array(value)
+    end
     def search_sql
       self.initialize_search_sql if @search_sql === true
       @search_sql
@@ -281,6 +290,7 @@ module ActiveScaffold::DataStructures
     # instantiation is handled internally through the DataStructures::Columns object
     def initialize(name, active_record_class) #:nodoc:
       self.name = name.to_sym
+      @tableless = active_record_class < ActiveScaffold::Tableless
       @column = active_record_class.columns_hash[self.name.to_s]
       @association = active_record_class.reflect_on_association(self.name)
       @autolink = !@association.nil?
@@ -296,6 +306,7 @@ module ActiveScaffold::DataStructures
       @options = {:format => :i18n_number} if self.number?
       @form_ui = :checkbox if @column and @column.type == :boolean
       @form_ui = :textarea if @column and @column.type == :text
+      @form_ui = :number   if @column and self.number?
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
       
@@ -345,6 +356,12 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    # to cache method to get value in list
+    attr_accessor :list_method
+
+    # cache constraints for numeric columns (get in ActiveScaffold::Helpers::FormColumnHelpers::numerical_constraints_for_column)
+    attr_accessor :numerical_constraints
+
     protected
 
     def initialize_sort
@@ -352,11 +369,7 @@ module ActiveScaffold::DataStructures
         # we don't automatically enable method sorting for virtual columns because it's slow, and we expect fewer complaints this way.
         self.sort = false
       else
-        if self.singular_association?
-          self.sort = {:method => "#{self.name}.to_s"}
-        elsif self.plural_association?
-          self.sort = {:method => "#{self.name}.join(',')"}
-        elsif @active_record_class.connection
+        if column && !@tableless
           self.sort = {:sql => self.field}
         else
           self.sort = false
@@ -367,9 +380,9 @@ module ActiveScaffold::DataStructures
     def initialize_search_sql
       self.search_sql = unless self.virtual?
         if association.nil?
-          self.field.to_s unless @active_record_class.connection.nil?
+          self.field.to_s unless @tableless
         elsif !self.polymorphic_association?
-          [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass.connection.nil?
+          [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
         end
       end
     end

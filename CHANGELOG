@@ -1,4 +1,44 @@
-= 3.2.12 (not released yet)
+= master
+- Unify field overrides and list_ui method signatures
+- Improve performance removing some partials and adding some caching for helper overrides and UIs, and caching url generation for lists
+- Drop support for rails 3.1
+- Add HTML5 form fields
+- Add :chosen form_ui, and :chosen and :multi_chosen search_ui
+- Fix nested with has_one associations
+- Support optgroup in :select and :chosen form_ui
+- Support render_form_field with multiple rows (rows with associated-record class)
+
+= 3.2.16 (not released)
+- Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
+- Fix constraints and colspan in self-referential associations
+- Fix rendering parent row after creating or updating in a nested form (singular associations)
+- Translate include_blank and prompt in form_ui :select
+
+= 3.2.15
+- Prepare to unify field overrides and list_ui method signatures
+- Add :optional to update.persistent
+- Add missing triggering of as:element_updated in new subform rows
+- Fix conditions for :select in field_search
+- Fix datetime field search
+- Fix authorization checking in member action links
+
+= 3.2.14
+- Fix default sorting, it was broken in 3.2.13
+
+= 3.2.13
+- Fix destroy action, was broken in 3.2.12
+- Remove default :method sorting for associations, it wasn't useful and can be slow
+- Rescue from ActiveScaffold::ActionNotAllowed and ActiveScaffold::RecordNotAllowed with 401 response, it can be overrided with deny_access method in ApplicationController.
+- Allow to set arrays in search_sql so one column can search in multiple db columns, resulting sql chunks will be OR'ed
+- Hide text input on searching for null or not null
+- Add some classes to forms to improve CSS customization
+- Fix nested links for STI controllers with common configuration in a base controller
+- Fix adding routes twice in active_scaffold generator
+- Restore old behavior for action_link's security_method, ignore_method already hides the link 
+- Add data-cancel-refresh to action links, so nested scaffold's behaviour can be applied to other action links and when adapter is closed row will be refreshed.
+- fix support for tableless models in rails >= 3.2.5
+
+= 3.2.12
 - improve support for tableless models, add support for count
 - fix div id for nested scaffolds
 - add config.timestamped_messages and config.highlight_messages
@@ -11,6 +51,8 @@
 - Fix nested forms for singular associations
 - enable to get constraints in helpers, so can be used in options_for_association_conditions, for example
 - Allow to edit has_one :through association in nested forms
+- Fix cancan bridge broken in a previous release
+- Fix mark action
 
 = 3.2.11
 - improve support for tableless models and active_scaffold_batch

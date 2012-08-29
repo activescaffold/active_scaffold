@@ -6,6 +6,7 @@ en:
     add: 'Add'
     add_existing: 'Add Existing'
     add_existing_model: 'Add Existing %{model}'
+    apply: 'Apply'
     are_you_sure_to_delete: 'Are you sure you want to delete %{label}?'
     cancel: 'Cancel'
     click_to_edit: 'Click to edit'
@@ -34,6 +35,7 @@ en:
     inplace_edit_handle: '--'
     live_search: 'Live Search'
     loading: 'Loading…'
+    mark_all_records: "Mark all"
     next: 'Next'
     no_entries: 'No Entries'
     no_options: 'no options'
@@ -42,6 +44,9 @@ en:
     pdf: 'PDF'
     previous: 'Previous'
     print: 'Print'
+    records_marked:
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
     refresh: 'Refresh'
     remove: 'Remove'
     remove_file: 'Remove or Replace file'
@@ -92,7 +97,7 @@ en:
     months: 'Months'
     years: 'Years'
     optional_attributes: 'Further Options'
-    null: 'Null'
+    :null: 'Null'
     not_null: 'Not Null'
     date_picker_options:
       weekHeader: 'Wk'

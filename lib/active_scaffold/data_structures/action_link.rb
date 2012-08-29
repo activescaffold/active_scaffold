@@ -82,6 +82,7 @@ module ActiveScaffold::DataStructures
     end
 
     # what method to call on the controller to see if this action_link should be visible
+    # if method return false, link will be disabled
     # note that this is only the UI part of the security. to prevent URL hax0rz, you also need security on requests (e.g. don't execute update method unless authorized).
     attr_writer :security_method
     def security_method
@@ -91,7 +92,12 @@ module ActiveScaffold::DataStructures
     def security_method_set?
       !!@security_method
     end
+
+    # enable it to refresh the parent row when the view is closed
+    attr_accessor :refresh_on_close
     
+    # what method to call on the controller to see if this action_link should be visible
+    # if method return true, link won't be displayed
     attr_accessor :ignore_method
     
     # the crud type of the (eventual?) action. different than :method, because this crud action may not be imminent.
@@ -166,13 +172,19 @@ module ActiveScaffold::DataStructures
     # nested action_links are referencing a column
     attr_accessor :column
     
+    # don't close the panel when another action link is open 
+    attr_writer :keep_open
+    def keep_open?
+      @keep_open
+    end
+    
     # indicates that this a nested_link
     def nested_link?
       @column || (parameters && parameters[:named_scope])
     end
     
-    # Internal use: generated eid for this action_link
-    attr_accessor :eid
+    # Internal use: generated url for this action_link
+    attr_accessor :cached_url
     
     
   end

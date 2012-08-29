@@ -6,6 +6,7 @@ es:
     add: 'Añadir'
     add_existing: 'Añadir Existente'
     add_existing_model: 'Añadir %{model} Existente'
+    apply: 'Aplicar'
     are_you_sure_to_delete: '¿Estás seguro de que quieres borrar %{label}?'
     cancel: 'Cancelar'
     click_to_edit: 'Pulsa para editar'
@@ -34,6 +35,7 @@ es:
     inplace_edit_handle: '--'
     live_search: 'Buscar en Vivo'
     loading: 'Cargando…'
+    mark_all_records: "Seleccionar todos"
     nested_for_model: '%{nested_model} de %{parent_model}'
     nested_of_model: '%{nested_model} de %{parent_model}'
     next: 'Siguiente'
@@ -44,6 +46,9 @@ es:
     pdf: 'PDF'
     previous: 'Anterior'
     print: 'Imprimir'
+    records_marked:
+      one: "1 %{model} seleccionado"
+      other: "%{count} %{model} seleccionados"
     refresh: 'Recargar'
     remove: 'Eliminar'
     remove_file: 'Eliminar o Reemplazar archivo'
@@ -94,7 +99,7 @@ es:
     months: 'Meses'
     years: 'Años'
     optional_attributes: 'Más opciones'
-    null: 'Nulo'
+    :null: 'Nulo'
     not_null: 'No Nulo'
     date_picker_options:
       weekHeader: 'Sm'

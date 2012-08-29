@@ -2,7 +2,6 @@
   unless action_links.empty? -%>
   <div class="actions">
     <%= render :partial => 'action_group', :locals => {:action_links => action_links,
-                                                       :url_options => params_for,
                                                        :traverse_options => nested? ? {:reverse => true} : {}} %>
     <%= loading_indicator_tag(:action => :table) %>
   </div>

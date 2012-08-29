@@ -20,12 +20,11 @@ module ActiveScaffold::Config
     protected
     
     def add_mark_column
-      @core.columns.add :marked
-      @core.columns[:marked].label = 'M'
-      @core.columns[:marked].form_ui = :checkbox
-      @core.columns[:marked].inplace_edit = true
-      @core.columns[:marked].sort = false
-      @core.list.columns = [:marked] + @core.list.columns.names_without_auth_check unless @core.list.columns.include? :marked
+      @core.columns.add :as_marked
+      @core.columns[:as_marked].label = 'M'
+      @core.columns[:as_marked].list_ui = :marked
+      @core.columns[:as_marked].sort = false
+      @core.list.columns = [:as_marked] + @core.list.columns.names_without_auth_check unless @core.list.columns.include? :as_marked
     end
   end
 end

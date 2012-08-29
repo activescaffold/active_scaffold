@@ -101,10 +101,10 @@ module ActiveScaffold
     def column_value_from_param_simple_value(parent_record, column, value)
       if column.singular_association?
         # it's a single id
-        column.association.klass.find(value) if value and not value.empty?
+        column.association.klass.find(value) if value.present?
       elsif column.plural_association?
         column_plural_assocation_value_from_value(column, value)
-      elsif column.number? && [:i18n_number, :currency].include?(column.options[:format])
+      elsif column.number? && [:i18n_number, :currency].include?(column.options[:format]) && column.form_ui != :number
         self.class.i18n_number_to_native_format(value)
       else
         # convert empty strings into nil. this works better with 'null => true' columns (and validations),
@@ -118,7 +118,7 @@ module ActiveScaffold
     def column_plural_assocation_value_from_value(column, value)
       # it's an array of ids
       if value and not value.empty?
-        ids = value.select {|id| id.respond_to?(:empty?) ? !id.empty? : true}
+        ids = value.select {|id| id.present?}
         ids.empty? ? [] : column.association.klass.find(ids)
       end
     end

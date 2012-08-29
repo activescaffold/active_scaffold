@@ -72,8 +72,8 @@ jQuery(document).ready(function() {
     
     if (action_link) {
       var cancel_url = as_cancel.attr('href');
-      var refresh_data = as_cancel.attr('data-refresh');
-      if (refresh_data !== 'true' || !cancel_url) {
+      var refresh_data = action_link.tag.data('cancel-refresh') || as_cancel.data('refresh');
+      if (!refresh_data || !cancel_url) {
         action_link.close();
         return false;
       }
@@ -122,7 +122,7 @@ jQuery(document).ready(function() {
     }
     return true;
   });
-  jQuery('td.in_place_editor_field').live('click', function(event) {
+  jQuery('td.in_place_editor_field, th.as_marked-column_heading').live('click', function(event) {
     var span = jQuery(this).find('span.in_place_editor_field');
     span.data('addEmptyOnCancel', jQuery(this).hasClass('empty'));
     jQuery(this).removeClass('empty');
@@ -166,11 +166,13 @@ jQuery(document).ready(function() {
   });
   
   jQuery('select.as_search_range_option').live('change', function(event) {
-    ActiveScaffold[jQuery(this).val() == 'BETWEEN' ? 'show' : 'hide'](jQuery(this).parent().find('.as_search_range_between'));
+    var element = jQuery(this);
+    ActiveScaffold[element.val() == 'BETWEEN' ? 'show' : 'hide'](element.closest('dd').find('.as_search_range_between'));
+    ActiveScaffold[(element.val() == 'null' || element.val() == 'not_null') ? 'hide' : 'show'](element.attr('id').replace(/_opt/, '_numeric'));
     return true;
   });
   
-  jQuery('select.as_search_range_option').live('change', function(event) {
+  jQuery('select.as_search_date_time_option').live('change', function(event) {
     var element = jQuery(this);
     ActiveScaffold[!(element.val() == 'PAST' || element.val() == 'FUTURE' || element.val() == 'RANGE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_numeric'));
     ActiveScaffold[(element.val() == 'PAST' || element.val() == 'FUTURE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_trend'));
@@ -211,6 +213,7 @@ jQuery(document).ready(function() {
     ActiveScaffold.hide(jQuery(this).closest('.message'));
     e.preventDefault();
   });
+  
 });
 
 /* Simple Inheritance
@@ -440,7 +443,7 @@ var ActiveScaffold = {
   update_inplace_edit: function(element, value, empty) {
     if (typeof(element) == 'string') element = '#' + element;
     this.replace_html(jQuery(element), value);
-    if (empty) jQuery(element).closest('td').addClass('empty');
+    jQuery(element).closest('td')[empty ? 'addClass' : 'removeClass']('empty');
   },
   
   hide: function(element) {
@@ -529,13 +532,8 @@ var ActiveScaffold = {
     if (errors.hasClass('association-record-errors')) {
       this.remove(errors);
     }
-    var associated = jQuery(record).next();
+    record = jQuery(record).nextUntil('.association-record').andSelf();
     this.remove(record);
-    while (associated.hasClass('associated-record')) {
-      record = associated;
-      associated = jQuery(record).next();
-      this.remove(record);
-    }
   },
 
   report_500_response: function(active_scaffold_id) {
@@ -545,6 +543,7 @@ var ActiveScaffold = {
     } else {
       server_error.show();
     }
+    ActiveScaffold.scroll_to(server_error, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
   },
   
   find_action_link: function(element) {
@@ -585,13 +584,13 @@ var ActiveScaffold = {
   },
   
   read_inplace_edit_heading_attributes: function(column_heading, options) {
-    if (column_heading.attr('data-ie_cancel_text')) options.cancel_button = '<button class="inplace_cancel">' + column_heading.attr('data-ie_cancel_text') + "</button>";
-    if (column_heading.attr('data-ie_loading_text')) options.loading_text = column_heading.attr('data-ie_loading_text');
-    if (column_heading.attr('data-ie_saving_text')) options.saving_text = column_heading.attr('data-ie_saving_text');
-    if (column_heading.attr('data-ie_save_text')) options.save_button = '<button class="inplace_save">' + column_heading.attr('data-ie_save_text') + "</button>";
-    if (column_heading.attr('data-ie_rows')) options.textarea_rows = column_heading.attr('data-ie_rows');
-    if (column_heading.attr('data-ie_cols')) options.textarea_cols = column_heading.attr('data-ie_cols');
-    if (column_heading.attr('data-ie_size')) options.text_size = column_heading.attr('data-ie_size');
+    if (column_heading.data('ie-cancel-text')) options.cancel_button = '<button class="inplace_cancel">' + column_heading.data('ie-cancel-text') + "</button>";
+    if (column_heading.data('ie-loading-text')) options.loading_text = column_heading.data('ie-loading-text');
+    if (column_heading.data('ie-saving-text')) options.saving_text = column_heading.data('ie-saving-text');
+    if (column_heading.data('ie-save-text')) options.save_button = '<button class="inplace_save">' + column_heading.data('ie-save-text') + "</button>";
+    if (column_heading.data('ie-rows')) options.textarea_rows = column_heading.data('ie-rows');
+    if (column_heading.data('ie-cols')) options.textarea_cols = column_heading.data('ie-cols');
+    if (column_heading.data('ie-size')) options.text_size = column_heading.data('ie-size');
   }, 
   
   create_inplace_editor: function(span, options) {
@@ -624,9 +623,11 @@ var ActiveScaffold = {
   create_associated_record_form: function(element, content, options) {
     if (typeof(element) == 'string') element = '#' + element;
     var element = jQuery(element);
+    content = jQuery(content);
     if (options.singular == false) {
       if (!(options.id && jQuery('#' + options.id).size() > 0)) {
-        element.append(content);
+        var new_element = element.append(content);
+        content.trigger('as:element_updated');
       }
     } else {
       var current = jQuery('#' + element.attr('id') + ' .association-record')
@@ -634,6 +635,7 @@ var ActiveScaffold = {
         this.replace(current[0], content);
       } else {
         element.prepend(content);
+        content.trigger('as:element_updated');
       }
     }
   },
@@ -641,7 +643,7 @@ var ActiveScaffold = {
   render_form_field: function(source, content, options) {
     if (typeof(source) == 'string') source = '#' + source;
     var source = jQuery(source);
-    var element = source.closest('.association-record');
+    var element = source.closest('.association-record').nextUntil('.association-record').andSelf();
     if (element.length == 0) {
       element = source.closest('form > ol.form');
     }
@@ -684,19 +686,21 @@ var ActiveScaffold = {
   mark_records: function(element, options) {
     if (typeof(element) == 'string') element = '#' + element;
     var element = jQuery(element);
-    var mark_checkboxes = jQuery('#' + element.attr('id') + ' > tr.record td.marked-column input[type="checkbox"]');
-    mark_checkboxes.each(function (index) {
-      var item = jQuery(this);
-     if(options.checked === true) {
-       item.attr('checked', 'checked');
-     } else {
-       item.removeAttr('checked');
-     }
-     item.attr('value', ('' + !options.checked));
-    });
-    if(options.include_mark_all === true) {
-      var mark_all_checkbox = element.prev('thead').find('th.marked-column_heading span input[type="checkbox"]');
-      if(options.checked === true) {
+    if (options.include_checkboxes) {
+      var mark_checkboxes = jQuery('#' + element.attr('id') + ' > tr.record td.as_marked-column input[type="checkbox"]');
+      mark_checkboxes.each(function (index) {
+        var item = jQuery(this);
+        if(options.checked) {
+          item.attr('checked', 'checked');
+        } else {
+          item.removeAttr('checked');
+        }
+        item.attr('value', ('' + !options.checked));
+      });
+    }
+    if(options.include_mark_all) {
+      var mark_all_checkbox = element.prevAll('thead').find('th.as_marked-column_heading span input[type="checkbox"]');
+      if(options.checked) {
         mark_all_checkbox.attr('checked', 'checked');
       } else {
         mark_all_checkbox.removeAttr('checked');
@@ -735,16 +739,16 @@ var ActiveScaffold = {
         column_heading = my_parent;
       }
 
-      var render_url = column_heading.attr('data-ie_render_url'),
-          mode = column_heading.attr('data-ie_mode'),
-          record_id = span.attr('data-ie_id');
+      var render_url = column_heading.data('ie-render-url'),
+          mode = column_heading.data('ie-mode'),
+          record_id = span.data('ie-id') || '';
 
       ActiveScaffold.read_inplace_edit_heading_attributes(column_heading, options);
 
-      if (span.attr('data-ie_url')) {
-        options.url = span.attr('data-ie_url').replace(/__id__/, record_id);
+      if (span.data('ie-url')) {
+        options.url = span.data('ie-url').replace(/__id__/, record_id);
       } else {
-        options.url = column_heading.attr('data-ie_url').replace(/__id__/, record_id);
+        options.url = column_heading.data('ie-url').replace(/__id__/, record_id);
       }
 
       if (csrf_param) options['params'] = csrf_param.attr('content') + '=' + csrf_token.attr('content');
@@ -764,9 +768,11 @@ var ActiveScaffold = {
 
       if (render_url) {
         var plural = false;
-        if (column_heading.attr('data-ie_plural')) plural = true;
+        if (column_heading.data('ie-plural')) plural = true;
         options.field_type = 'remote';
         options.editor_url = render_url.replace(/__id__/, record_id)
+        if (!options.delegate) options.delegate = {}
+        options.delegate.didOpenEditInPlace = function(dom) { dom.trigger('as:element_updated'); }
       }
       if (mode === 'inline_checkbox') {
         ActiveScaffold.process_checkbox_inplace_edit(span.find('input:checkbox'), options);
@@ -969,7 +975,10 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
     this.adapter = element;
     this.adapter.addClass('as_adapter');
     this.adapter.data('action_link', this);
-    if (this.refresh_url) jQuery('.as_cancel[data-refresh=true]', this.adapter).attr('href', this.refresh_url);
+    if (this.refresh_url) jQuery('.as_cancel', this.adapter).attr('href', this.refresh_url);
+  },
+  keep_open: function() {
+    return this.tag.data('keep-open');
   }
 });
 
@@ -995,7 +1004,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
   close_previous_adapter: function() {
     var _this = this;
     jQuery.each(this.set.links, function(index, item) {
-      if (item.url != _this.url && item.is_disabled() && item.adapter) {
+      if (item.url != _this.url && item.is_disabled() && !item.keep_open() && item.adapter) {
         item.enable();
         item.adapter.remove();
       }

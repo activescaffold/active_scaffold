@@ -12,7 +12,7 @@ module ActiveScaffold
             js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show(); return false;";
           end
           
-          content = active_scaffold_column_paperclip(column, @record)
+          content = active_scaffold_column_paperclip(@record, column)
           content_tag(:div,
             content + " | " +
               hidden_field(:record, "delete_#{column.name}", :value => "false") +
