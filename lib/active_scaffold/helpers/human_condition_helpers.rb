@@ -14,7 +14,7 @@ module ActiveScaffold
         else
           case search_ui
           when :integer, :decimal, :float
-            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{format_number_value(controller.class.condition_value_for_numeric(column, value[:from]), column.options)} #{value[:opt] == 'BETWEEN' ? '- ' + format_number_value(controller.class.condition_value_for_numeric(column, value[:to]), column.options).to_s : ''}"
+            "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{format_number_value(controller.class.condition_value_for_numeric(column, value[:from]), column.options) if value[:from].present?} #{value[:opt] == 'BETWEEN' ? '- ' + format_number_value(controller.class.condition_value_for_numeric(column, value[:to]), column.options).to_s : ''}"
           when :string
             opt = ActiveScaffold::Finder::StringComparators.index(value[:opt]) || value[:opt]
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(opt).downcase} '#{value[:from]}' #{opt == 'BETWEEN' ? '- ' + value[:to].to_s : ''}"

@@ -84,6 +84,8 @@ module ActiveScaffold
       def condition_for_numeric(column, value)
         if !value.is_a?(Hash)
           ["%{search_sql} = ?", condition_value_for_numeric(column, value)]
+        elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
+          condition_for_null_type(column, value[:opt])
         elsif value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
