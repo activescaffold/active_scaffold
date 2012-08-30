@@ -204,17 +204,17 @@ module ActiveScaffold
           return [@query_string, @non_nested_query_string]
         end
         keep = true
-        @query_string_params = Set.new
+        @query_string_params ||= Set.new
         query_string_for_all = nil
         query_string_options = []
         non_nested_query_string_options = []
         
         params_for.except(:controller, :action, :id).each do |key, value|
+          @query_string_params << key
           if link.parameters.include? key
             keep = false
             next
           end
-          @query_string_params << key
           qs = "#{key}=#{value}"
           if [:eid, :association, :parent_scaffold].include?(key) || conditions_from_params.include?(key) || (nested? && nested.constrained_fields.include?(key))
             non_nested_query_string_options << qs
