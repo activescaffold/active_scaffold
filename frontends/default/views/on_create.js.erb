@@ -5,8 +5,10 @@ var action_link = ActiveScaffold.find_action_link('<%= form_selector%>');
 action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'messages'))%>');
 <% if controller.send :successful? %>
   <% if render_parent? %>
-    <% if nested_singular_association? || render_parent_action == :row %>
+    <% if nested_singular_association? %>
       action_link.close(true);
+    <% elsif params[:parent_sti] && render_parent_action == :row %>
+      ActiveScaffold.create_record_row_from_url(action_link,'<%= url_for(render_parent_options) %>', <%= {:insert_at => insert_at}.to_json.html_safe %>);
     <% else %>
       ActiveScaffold.reload('<%= url_for render_parent_options %>');
     <% end %>
