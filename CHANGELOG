@@ -15,6 +15,7 @@
 - Translate include_blank and prompt in form_ui :select
 - Fix mark for nested scaffolds
 - Fix STI creation
+- Fix null search for numeric columns
 
 = 3.2.15
 - Prepare to unify field overrides and list_ui method signatures
