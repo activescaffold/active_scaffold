@@ -504,6 +504,13 @@ var ActiveScaffold = {
     this.increment_record_count(tbody.closest('div.active-scaffold'));
     ActiveScaffold.highlight(new_row);
   },
+    
+  create_record_row_from_url: function(active_scaffold_id, url, options) {
+    jQuery.get(url, function(row) {
+      ActiveScaffold.create_record_row(action_link.scaffold(), row, options);
+      action_link.close();
+    });
+  },
   
   delete_record_row: function(row, page_reload_url) {
     if (typeof(row) == 'string') row = '#' + row;
