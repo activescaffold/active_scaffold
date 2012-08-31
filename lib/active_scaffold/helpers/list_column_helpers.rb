@@ -225,6 +225,7 @@ module ActiveScaffold
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
         tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
                        :title => as_(:click_to_edit), :data => {:ie_id => record.id.to_s}}
+        tag_options[:data][:ie_update] = column.inplace_edit if column.inplace_edit != true
 
         content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<
         content_tag(:span, formatted_column, tag_options)
