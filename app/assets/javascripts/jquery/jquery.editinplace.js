@@ -84,6 +84,7 @@ $.fn.editInPlace.defaults = {
 	
 	callback:			null, // function: function to be called when editing is complete; cancels ajax submission to the url param. Prototype: function(idOfEditor, enteredText, orinalHTMLContent, settingsParams, callbacks). The function needs to return the value that should be shown in the dom. Returning undefined means cancel and will restore the dom and trigger an error. callbacks is a dictionary with two functions didStartSaving and didEndSaving() that you can use to tell the inline editor that it should start and stop any saving animations it has configured. /* DEPRECATED in 2.1.0 */ Parameter idOfEditor, use $(this).attr('id') instead
 	callback_skip_dom_reset: false, // boolean: set this to true if the callback should handle replacing the editor with the new value to show
+  beforeSend:   null, // function: this function gets called before sending new value to server. Prototype: function(request, requestSettings)
 	success:			null, // function: this function gets called if server responds with a success. Prototype: function(newEditorContentString)
 	error:				null, // function: this function gets called if server responds with an error. Prototype: function(request)
 	error_sink:			function(idOfEditor, errorString) { alert(errorString); }, // function: gets id of the editor and the error. Make sure the editor has an id, or it will just be undefined. If set to null, no error will be reported. /* DEPRECATED in 2.1.0 */ Parameter idOfEditor, use $(this).attr('id') instead
@@ -576,6 +577,9 @@ $.extend(InlineEditor.prototype, {
 			type: "POST",
 			data: data,
 			dataType: that.settings.ajax_data_type,
+      beforeSend: function(request, settings) {
+        that.triggerCallback(that.settings.beforeSend, request, settings);
+      },
 			complete: function(request){
 				that.didEndSaving();
 			},
