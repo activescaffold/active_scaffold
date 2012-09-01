@@ -1,4 +1,4 @@
-= 3.2.16 (not released)
+= 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
 - Fix constraints and colspan in self-referential associations
 - Fix rendering parent row after creating or updating in a nested form (singular associations)
