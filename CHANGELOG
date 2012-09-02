@@ -7,7 +7,8 @@
 - Fix nested with has_one associations
 - Support optgroup in :select and :chosen form_ui
 - Support render_form_field with multiple rows (rows with associated-record class)
-- keep order for records in plural subforms, so new records are saved in same order as form order
+- Keep order for records in plural subforms, so new records are saved in same order as form order
+- Support add_subgroup in horizontal subforms
 
 = 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
