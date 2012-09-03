@@ -244,7 +244,7 @@ module ActiveScaffold
 
       def inplace_edit_data(column)
         data = {}
-        data[:ie_url] = url_for({:controller => params_for[:controller], :action => "update_column", :column => column.name, :id => '__id__'})
+        data[:ie_url] = url_for(params_for(:action => "update_column", :column => column.name, :id => '__id__'))
         data[:ie_cancel_text] = column.options[:cancel_text] || as_(:cancel)
         data[:ie_loading_text] = column.options[:loading_text] || as_(:loading)
         data[:ie_save_text] = column.options[:save_text] || as_(:update)
