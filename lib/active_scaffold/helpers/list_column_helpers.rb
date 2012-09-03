@@ -6,12 +6,7 @@ module ActiveScaffold
       def get_column_value(record, column)
         begin
           method = get_column_method(record, column)
-          value = if method(method).arity == 1
-            ActiveSupport::Deprecation.warn("Add column argument to field override, signature is unified with list_ui")
-            send(method, record)
-          else
-            send(method, record, column)
-          end
+          value = send(method, record, column)
           value = '&nbsp;'.html_safe if value.nil? or value.blank? # fix for IE 6
           return value
         rescue Exception => e
