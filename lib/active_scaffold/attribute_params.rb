@@ -103,7 +103,7 @@ module ActiveScaffold
         # it's a single id
         column.association.klass.find(value) if value.present?
       elsif column.plural_association?
-        column_plural_assocation_value_from_value(column, value)
+        column_plural_assocation_value_from_value(column, Array(value))
       elsif column.number? && [:i18n_number, :currency].include?(column.options[:format]) && column.form_ui != :number
         self.class.i18n_number_to_native_format(value)
       else
@@ -137,7 +137,7 @@ module ActiveScaffold
         manage_nested_record_from_params(parent_record, column, value)
       elsif column.plural_association?
         # HACK to be able to delete all associated records, hash will include "0" => ""
-        value.collect {|key, value| manage_nested_record_from_params(parent_record, column, value) unless value == ""}.compact
+        value.sort.collect {|key, value| manage_nested_record_from_params(parent_record, column, value) unless value == ""}.compact
       else
         value
       end
