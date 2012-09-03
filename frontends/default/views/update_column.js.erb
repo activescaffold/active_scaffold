@@ -6,7 +6,7 @@
 <% end -%>
 <% if @column.inplace_edit
      update_row = @column.inplace_edit_update if controller.send :successful? -%>
-  <% case @column.inplace_edit
+  <% case update_row
      when :update_row -%>
        ActiveScaffold.update_row('<%= element_row_id(:action => :list) %>', '<%= escape_javascript render('row', :record => @record) %>');
   <% when :update_table -%>
