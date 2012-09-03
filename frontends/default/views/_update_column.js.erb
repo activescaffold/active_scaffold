@@ -10,5 +10,5 @@
 -%>
 ActiveScaffold.replace_html('<%= row_id %> .<%= column.name %>-column','<%= escape_javascript(get_column_value(@record, column)) %>');
 <% if column.update_columns && !column.update_columns.empty? %>
-  <%=  render(:partial => 'update_column', :collection => column.update_columns, :locals => {:row_id => row_id})%>
+  <%=  render(:partial => 'update_column', :collection => column.update_columns & active_scaffold_config.list.columns.names, :locals => {:row_id => row_id})%>
 <% end %>

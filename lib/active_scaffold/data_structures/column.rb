@@ -13,6 +13,8 @@ module ActiveScaffold::DataStructures
       self.clear_link if value
       @inplace_edit = value
     end
+    
+    attr_accessor :inplace_edit_update
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
