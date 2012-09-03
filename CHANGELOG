@@ -7,7 +7,7 @@
 - Fix nested with has_one associations
 - Support optgroup in :select and :chosen form_ui
 - Support render_form_field with multiple rows (rows with associated-record class)
-- Support for updating row or table after updating a column with inplace_edit
+- Support for updating columns, row or table after updating a column with inplace_edit
 - Keep order for records in plural subforms, so new records are saved in same order as form order
 - Support add_subgroup in horizontal subforms
 
