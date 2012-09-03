@@ -6,14 +6,18 @@
 <% end -%>
 <% if @column.inplace_edit
      update_row = @column.inplace_edit if controller.send :successful? -%>
-  <% case update_row
+  <% case @column.inplace_edit
      when :update_row -%>
        ActiveScaffold.update_row('<%= element_row_id(:action => :list) %>', '<%= escape_javascript render('row', :record => @record) %>');
   <% when :update_table -%>
        ActiveScaffold.replace_html('<%= active_scaffold_content_id %>', '<%= escape_javascript(render('list')) %>');
   <% else
        formatted_value = get_column_value(@record, @column) -%>
-       ActiveScaffold.update_inplace_edit('<%= @column_span_id %>','<%= escape_javascript(get_column_value(@record, @column)) %>', <%= column_empty?(formatted_value).to_json %>);
+       ActiveScaffold.update_inplace_edit('<%= @column_span_id %>','<%= escape_javascript(formatted_value) %>', <%= column_empty?(formatted_value).to_json %>);
+    <% if update_row == :update_columns && @column.update_columns
+         @rendered = Set.new([@column.name]) -%>
+         <%= render :partial => 'update_column', :collection => Array(@column.update_columns), :locals => {:row_id => element_row_id(:action => :list, :id => @record.id)} %>
+    <% end %>
   <% end -%>
 <% else -%>
   ActiveScaffold.replace_html('<%= @column_span_id %>','<%= escape_javascript(get_column_value(@record, @column)) %>');

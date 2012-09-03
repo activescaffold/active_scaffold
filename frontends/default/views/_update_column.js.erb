@@ -1,0 +1,14 @@
+<%
+  column = if update_column.is_a? ActiveScaffold::DataStructures::Column
+    update_column
+  else
+    active_scaffold_config.columns[update_column.to_sym]
+  end
+  @rendered ||= Set.new
+  return if @rendered.include? column.name
+  @rendered << column.name
+-%>
+ActiveScaffold.replace_html('<%= row_id %> .<%= column.name %>-column','<%= escape_javascript(get_column_value(@record, column)) %>');
+<% if column.update_columns && !column.update_columns.empty? %>
+  <%=  render(:partial => 'update_column', :collection => column.update_columns, :locals => {:row_id => row_id})%>
+<% end %>
