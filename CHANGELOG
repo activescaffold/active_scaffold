@@ -4,7 +4,7 @@
 - Drop support for rails 3.1
 - Add HTML5 form fields
 - Add :chosen form_ui, and :chosen and :multi_chosen search_ui
-- Fix nested with has_one associations
+- Fix nested with has_one associations, and belongs_to associations with :list action
 - Support optgroup in :select and :chosen form_ui
 - Support render_form_field with multiple rows (rows with associated-record class)
 - Support for updating columns, row or table after updating a column with inplace_edit
