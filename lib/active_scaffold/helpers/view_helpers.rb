@@ -216,7 +216,7 @@ module ActiveScaffold
             next
           end
           qs = "#{key}=#{value}"
-          if [:eid, :association, :parent_scaffold].include?(key) || conditions_from_params.include?(key) || (nested? && nested.constrained_fields.include?(key))
+          if [:eid, :association, :parent_scaffold].include?(key) || conditions_from_params.include?(key) || (nested? && nested.param_name == key)
             non_nested_query_string_options << qs
           else
             query_string_options << qs
