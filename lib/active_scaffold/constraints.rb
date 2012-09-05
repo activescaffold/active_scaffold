@@ -17,7 +17,7 @@ module ActiveScaffold
       constrained_fields |= active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect(&:to_sym)
       exclude_actions = []
       [:list, :update].each do |action_name|
-	if active_scaffold_config.actions.include? action_name
+        if active_scaffold_config.actions.include? action_name
           exclude_actions << action_name unless active_scaffold_config.send(action_name).hide_nested_column
         end
       end
@@ -70,7 +70,7 @@ module ActiveScaffold
           # regular column constraints
           elsif column.searchable? && params[column.name] != v
             active_scaffold_includes.concat column.includes
-            conditions << ["#{column.search_sql} = ?", v]
+            conditions << [column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR '), *([v] * column.search_sql.size)]
           end
         # unknown-to-activescaffold-but-real-database-column constraint
         elsif active_scaffold_config.model.columns_hash[k.to_s] && params[column.name] != v
