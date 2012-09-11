@@ -1,5 +1,6 @@
 = 3.2.17 (not released yet)
 - fix constraints for columns with multiple columns in search_sql
+- remove unauthorized collection links
 
 = 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
