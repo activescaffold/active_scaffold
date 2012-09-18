@@ -123,19 +123,12 @@ module ActiveScaffold::DataStructures
     protected
     
     def iterate_model_associations(model)
-      @constrained_fields = Set.new
+      @constrained_fields = []
       constrained_fields << association.foreign_key.to_sym unless association.belongs_to?
-      model.reflect_on_all_associations.each do |current|
-        if association != current && association.foreign_key.to_s == current.foreign_key.to_s
-          if current.belongs_to? && current.options[:polymorphic] && association.options[:as]
-            @child_association = current if association.options[:as].to_sym == current.name
-          elsif current.klass == @parent_model
-            @child_association = current
-          end
-        end
+      if association.reverse
+        @child_association = model.reflect_on_association(association.reverse)
+        constrained_fields << @child_association.name unless @child_association == association
       end
-      constrained_fields << @child_association.name.to_sym
-      @constrained_fields = @constrained_fields.to_a
     end
   end
   
