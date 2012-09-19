@@ -15,6 +15,7 @@
 - fix constraints for columns with multiple columns in search_sql
 - remove unauthorized collection links
 - copy parameters and html_options on cloning action link
+- fix missing argument in datepicker conditions
 
 = 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
