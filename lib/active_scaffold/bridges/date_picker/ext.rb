@@ -53,7 +53,7 @@ ActiveScaffold::Finder::ClassMethods.module_eval do
     if column.search_ui == :date_picker
       :to_date
     else
-      datetime_conversion_for_condition_without_datepicker
+      datetime_conversion_for_condition_without_datepicker(column)
     end
   end
   alias_method_chain :datetime_conversion_for_condition, :datepicker
