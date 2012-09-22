@@ -39,7 +39,7 @@ module ActiveScaffold::DataStructures
 
     def names
       if @columns
-        self.collect(&:name)
+        self.collect_visible(:flatten => true) { |c| c.name }
       else
         names_without_auth_check
       end
@@ -84,9 +84,9 @@ module ActiveScaffold::DataStructures
             next if self.skip_column?(item, options)
           end
           if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.has_key?(:flatten) and options[:flatten]
-            columns = columns + item.collect(options, &proc)
+            columns += item.collect_visible(options, &proc)
           else
-            columns << item
+            columns << (block_given? ? yield(item) : item)
           end
         end
         columns

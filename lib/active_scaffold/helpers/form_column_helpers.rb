@@ -95,8 +95,8 @@ module ActiveScaffold
       end
 
       def update_columns_options(column, scope, options)
-        if column.update_columns
-          form_action = params[:action] == 'edit' ? :update : :create
+        form_action = params[:action] == 'edit' ? :update : :create
+        if column.update_columns && (column.update_columns & active_scaffold_config.send(form_action).columns.names).present?
           url_params = {:action => 'render_field', :column => column.name}
           url_params[:id] = @record.id if column.send_form_on_update_column
           url_params[:eid] = params[:eid] if params[:eid]
