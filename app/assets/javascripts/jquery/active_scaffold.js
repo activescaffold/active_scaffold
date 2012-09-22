@@ -574,7 +574,7 @@ var ActiveScaffold = {
   },
   
   process_checkbox_inplace_edit: function(checkbox, options) {
-    var checked = checkbox.is(':checked');
+    var checked = checkbox.is(':checked'), td = checkbox.closest('td');
     if (checked === true) options['params'] += '&value=1';
     jQuery.ajax({
       url: options.url,
@@ -583,12 +583,14 @@ var ActiveScaffold = {
       dataType: options.ajax_data_type,
       beforeSend: function(request, settings) {
         if (options.beforeSend) options.beforeSend.call(checkbox, request, settings);
-      },
-      after: function(request){
         checkbox.attr('disabled', 'disabled');
+        td.closest('tr').find('td.actions .loading-indicator').css('visibility','visible');
       },
       complete: function(request){
         checkbox.removeAttr('disabled');
+      },
+      success: function(request){
+        td.closest('tr').find('td.actions .loading-indicator').css('visibility','hidden');
       }
     });
   },
@@ -730,6 +732,10 @@ var ActiveScaffold = {
                      delegate: {
                        willCloseEditInPlace: function(span, options) {
                          if (span.data('addEmptyOnCancel')) span.closest('td').addClass('empty');
+                         span.closest('tr').find('td.actions .loading-indicator').css('visibility','visible');
+                       },
+                       didCloseEditInPlace: function(span, options) {
+                         span.closest('tr').find('td.actions .loading-indicator').css('visibility','hidden');
                        }
                      },
                      update_value: 'value'},
