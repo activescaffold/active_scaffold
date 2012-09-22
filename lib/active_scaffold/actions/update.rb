@@ -123,7 +123,7 @@ module ActiveScaffold::Actions
         @record.send("#{@column.name}=", params[:value])
         before_update_save(@record)
         self.successful = @record.save
-        do_list if self.successful? && @column.inplace_edit == :update_table
+        do_list if self.successful? && @column.inplace_edit_update == :table
         after_update_save(@record)
       end
     end
