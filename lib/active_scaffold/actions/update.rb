@@ -108,21 +108,22 @@ module ActiveScaffold::Actions
     def do_update_column
       @record = find_if_allowed(params[:id], :read)
       if @record.authorized_for?(:crud_type => :update, :column => params[:column])
-        column = active_scaffold_config.columns[params[:column].to_sym]
-        unless @record.column_for_attribute(params[:column]).nil? || @record.column_for_attribute(params[:column]).null
-          if @record.column_for_attribute(params[:column]).default == true
+        @column = active_scaffold_config.columns[params[:column].to_sym]
+        unless @column.column.nil? || @column.column.null
+          if @column.column.default == true
             params[:value] ||= false
           else
-            params[:value] ||= @record.column_for_attribute(params[:column]).default
+            params[:value] ||= @column.column.default
           end
         end
-        unless column.nil?
-          params[:value] = column_value_from_param_value(@record, column, params[:value])
-          params[:value] = [] if params[:value].nil? && column.form_ui && column.plural_association?
+        unless @column.nil?
+          params[:value] = column_value_from_param_value(@record, @column, params[:value])
+          params[:value] = [] if params[:value].nil? && @column.form_ui && @column.plural_association?
         end
-        @record.send("#{params[:column]}=", params[:value])
+        @record.send("#{@column.name}=", params[:value])
         before_update_save(@record)
-        @record.save
+        self.successful = @record.save
+        do_list if self.successful? && @column.inplace_edit_update == :table
         after_update_save(@record)
       end
     end

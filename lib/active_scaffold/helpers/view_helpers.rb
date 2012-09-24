@@ -204,19 +204,19 @@ module ActiveScaffold
           return [@query_string, @non_nested_query_string]
         end
         keep = true
-        @query_string_params = Set.new
+        @query_string_params ||= Set.new
         query_string_for_all = nil
         query_string_options = []
         non_nested_query_string_options = []
         
         params_for.except(:controller, :action, :id).each do |key, value|
+          @query_string_params << key
           if link.parameters.include? key
             keep = false
             next
           end
-          @query_string_params << key
           qs = "#{key}=#{value}"
-          if [:eid, :association, :parent_scaffold].include?(key) || conditions_from_params.include?(key) || (nested? && nested.constrained_fields.include?(key))
+          if [:eid, :association, :parent_scaffold].include?(key) || conditions_from_params.include?(key) || (nested? && nested.param_name == key)
             non_nested_query_string_options << qs
           else
             query_string_options << qs
@@ -298,7 +298,7 @@ module ActiveScaffold
             id = "#{column.association.name}-#{record.id}" unless record.nil?
           end
         end
-        action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller]}#{link.action}"
+        action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || link.controller != controller.controller_path}#{link.action}"
         action_link_id(action_id, id)
       end
       

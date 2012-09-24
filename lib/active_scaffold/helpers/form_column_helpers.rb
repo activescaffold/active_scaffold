@@ -58,6 +58,14 @@ module ActiveScaffold
           raise e
         end
       end
+      
+      def active_scaffold_render_subform_column(column, scope, crud_type, readonly)
+        unless readonly and not @record.new_record? or not @record.authorized_for?(:crud_type => crud_type, :column => column.name)
+          render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope }
+        else
+          content_tag :span, get_column_value(@record, column), active_scaffold_input_options(column, scope).except(:name)
+        end
+      end
 
       # the standard active scaffold options used for textual inputs
       def active_scaffold_input_text_options(options = {})
@@ -87,8 +95,8 @@ module ActiveScaffold
       end
 
       def update_columns_options(column, scope, options)
-        if column.update_columns
-          form_action = params[:action] == 'edit' ? :update : :create
+        form_action = params[:action] == 'edit' ? :update : :create
+        if column.update_columns && (column.update_columns & active_scaffold_config.send(form_action).columns.names).present?
           url_params = {:action => 'render_field', :column => column.name}
           url_params[:id] = @record.id if column.send_form_on_update_column
           url_params[:eid] = params[:eid] if params[:eid]

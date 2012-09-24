@@ -127,6 +127,7 @@ module ActiveScaffold::DataStructures
           else
             options[:for].nil? ? true : options[:for].authorized_for?(:crud_type => link.crud_type, :action => link.action)
           end
+          next unless authorized || link.type == :member
           yield(self, link, {:authorized => authorized, :first_action => first_action, :level => options[:level]})
           first_action = false
         end

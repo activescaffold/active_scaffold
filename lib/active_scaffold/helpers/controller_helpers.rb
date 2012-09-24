@@ -12,7 +12,7 @@ module ActiveScaffold
         # :sort, :sort_direction, and :page are arguments that stored in the session. they need not propagate.
         # and wow. no we don't want to propagate :record.
         # :commit is a special rails variable for form buttons
-        blacklist = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :authenticity_token, :iframe]
+        blacklist = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :authenticity_token, :iframe, :associated_id]
         unless @params_for
           @params_for = {}
           params.select { |key, value| blacklist.exclude? key.to_sym if key }.each {|key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value}
@@ -54,12 +54,8 @@ module ActiveScaffold
         if nested_singular_association?
           {:controller => nested.parent_scaffold.controller_path, :action => :row, :id => nested.parent_id}
         elsif params[:parent_sti]
-          options = {:controller => params[:parent_sti], :action => render_parent_action}
-          if render_parent_action(params[:parent_sti]) == :index
-            options.merge(params.slice(:eid))
-          else
-            options.merge({:id => @record.id})
-          end
+          options = params_for(:controller => params[:parent_sti], :action => render_parent_action, :parent_sti => nil)
+          options.merge(:id => @record.id) if render_parent_action == :row
         end
       end
 

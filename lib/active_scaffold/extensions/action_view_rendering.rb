@@ -94,7 +94,7 @@ module ActionView::Helpers #:nodoc:
         else
           options[:prefixes] = ['']
           active_scaffold_view_paths = lookup_context.active_scaffold_view_paths
-          last_view_path = File.dirname(lookup_context.last_template.inspect)
+          last_view_path = File.expand_path(File.dirname(lookup_context.last_template.inspect), Rails.root)
           lookup_context.active_scaffold_view_paths = active_scaffold_view_paths.drop(active_scaffold_view_paths.find_index {|path| path.to_s == last_view_path} + 1)
         end
         result = render_without_active_scaffold options

@@ -461,22 +461,22 @@ var ActiveScaffold = {
     jQuery(element).get(0).reset();
   },
   
-  disable_form: function(as_form) {
+  disable_form: function(as_form, skip_loading_indicator) {
     if (typeof(as_form) == 'string') as_form = '#' + as_form;
     as_form = jQuery(as_form)
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
-    if (loading_indicator) loading_indicator.css('visibility','visible');
+    if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','visible');
     jQuery('input[type=submit]', as_form).attr('disabled', 'disabled');
-    as_form[0].disabled_fields = jQuery("input:enabled,select:enabled,textarea:enabled", as_form).attr('disabled', 'disabled');
+    jQuery("input:enabled,select:enabled,textarea:enabled", as_form).attr('disabled', 'disabled').attr('data-remove-disabled', true);
   },
   
-  enable_form: function(as_form) {
+  enable_form: function(as_form, skip_loading_indicator) {
     if (typeof(as_form) == 'string') as_form = '#' + as_form;
     as_form = jQuery(as_form)
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
-    if (loading_indicator) loading_indicator.css('visibility','hidden');
+    if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','hidden');
     jQuery('input[type=submit]', as_form).removeAttr('disabled');
-    as_form[0].disabled_fields.removeAttr('disabled');
+    jQuery("input[data-remove-disabled],select[data-remove-disabled],textarea[data-remove-disabled]", as_form).removeAttr('disabled data-remove-disabled');
   },  
   
   focus_first_element_of_form: function(form_element) {
@@ -504,6 +504,13 @@ var ActiveScaffold = {
     this.hide_empty_message(tbody);
     this.increment_record_count(tbody.closest('div.active-scaffold'));
     ActiveScaffold.highlight(new_row);
+  },
+    
+  create_record_row_from_url: function(active_scaffold_id, url, options) {
+    jQuery.get(url, function(row) {
+      ActiveScaffold.create_record_row(action_link.scaffold(), row, options);
+      action_link.close();
+    });
   },
   
   delete_record_row: function(row, page_reload_url) {
@@ -567,18 +574,23 @@ var ActiveScaffold = {
   },
   
   process_checkbox_inplace_edit: function(checkbox, options) {
-    var checked = checkbox.is(':checked');
+    var checked = checkbox.is(':checked'), td = checkbox.closest('td');
     if (checked === true) options['params'] += '&value=1';
     jQuery.ajax({
       url: options.url,
       type: "POST",
       data: options['params'],
       dataType: options.ajax_data_type,
-      after: function(request){
+      beforeSend: function(request, settings) {
+        if (options.beforeSend) options.beforeSend.call(checkbox, request, settings);
         checkbox.attr('disabled', 'disabled');
+        td.closest('tr').find('td.actions .loading-indicator').css('visibility','visible');
       },
       complete: function(request){
         checkbox.removeAttr('disabled');
+      },
+      success: function(request){
+        td.closest('tr').find('td.actions .loading-indicator').css('visibility','hidden');
       }
     });
   },
@@ -718,8 +730,12 @@ var ActiveScaffold = {
                      element_id: 'editor_id',
                      ajax_data_type: "script",
                      delegate: {
-                       willCloseEditInPlace: function(span, options, enteredText) {
+                       willCloseEditInPlace: function(span, options) {
                          if (span.data('addEmptyOnCancel')) span.closest('td').addClass('empty');
+                         span.closest('tr').find('td.actions .loading-indicator').css('visibility','visible');
+                       },
+                       didCloseEditInPlace: function(span, options) {
+                         span.closest('tr').find('td.actions .loading-indicator').css('visibility','hidden');
                        }
                      },
                      update_value: 'value'},
@@ -773,6 +789,24 @@ var ActiveScaffold = {
         options.editor_url = render_url.replace(/__id__/, record_id)
         if (!options.delegate) options.delegate = {}
         options.delegate.didOpenEditInPlace = function(dom) { dom.trigger('as:element_updated'); }
+      }
+      var actions, forms;
+      options.beforeSend = function(xhr, settings) {
+        switch (span.data('ie-update')) {
+          case 'update_row':
+            actions = span.closest('tr').find('.actions a:not(.disabled)').addClass('disabled');
+            break;
+          case 'update_table':
+            var table = span.closest('.as_content');
+            actions = table.find('.actions a:not(.disabled)').addClass('disabled');
+            forms = table.find('.as_form');
+            ActiveScaffold.disable_form(forms);
+            break;
+        }
+      }
+      options.error = options.success = function() {
+        if (actions) actions.removeClass('disabled');
+        if (forms) ActiveScaffold.enable_form(forms);
       }
       if (mode === 'inline_checkbox') {
         ActiveScaffold.process_checkbox_inplace_edit(span.find('input:checkbox'), options);

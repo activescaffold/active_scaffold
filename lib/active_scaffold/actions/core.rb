@@ -164,7 +164,7 @@ module ActiveScaffold::Actions
         params.reject {|key, value| [:controller, :action, :id, :page, :sort, :sort_direction].include?(key.to_sym)}.each do |key, value|
           next unless active_scaffold_config.model.columns_hash[key.to_s]
           next if active_scaffold_constraints[key.to_sym]
-          next if nested? and nested.constrained_fields.include? key.to_sym
+          next if nested? and nested.param_name == key.to_sym
           conditions[key.to_sym] = value
         end
         conditions
@@ -173,11 +173,12 @@ module ActiveScaffold::Actions
 
     def new_model
       model = beginning_of_chain
-      if model.columns_hash[column = model.inheritance_column]
-        build_options = {column.to_sym => active_scaffold_config.model_id} if nested? && nested.association && nested.association.collection?
+      if nested? && nested.association && nested.association.collection? && model.columns_hash[column = model.inheritance_column]
         model_name = params.delete(column) # in new action inheritance_column must be in params
         model_name ||= params[:record].delete(column) unless params[:record].blank? # in create action must be inside record key
-        model = model_name.camelize.constantize if model_name
+        model_name = model_name.camelize if model_name
+        model_name ||= active_scaffold_config.model.name
+        build_options = {column.to_sym => model_name} if model_name
       end
       model.respond_to?(:build) ? model.build(build_options || {}) : model.new
     end

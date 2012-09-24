@@ -4,15 +4,28 @@
 - Drop support for rails 3.1
 - Add HTML5 form fields
 - Add :chosen form_ui, and :chosen and :multi_chosen search_ui
-- Fix nested with has_one associations
+- Fix nested with has_one associations, and belongs_to associations with :list action
 - Support optgroup in :select and :chosen form_ui
 - Support render_form_field with multiple rows (rows with associated-record class)
+- Support for updating columns, row or table after updating a column with inplace_edit
+- Keep order for records in plural subforms, so new records are saved in same order as form order
+- Support add_subgroup in horizontal subforms
 
-= 3.2.16 (not released)
+= 3.2.17 (not released yet)
+- fix constraints for columns with multiple columns in search_sql
+- remove unauthorized collection links
+- copy parameters and html_options on cloning action link
+- fix missing argument in datepicker conditions
+
+= 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
 - Fix constraints and colspan in self-referential associations
 - Fix rendering parent row after creating or updating in a nested form (singular associations)
 - Translate include_blank and prompt in form_ui :select
+- Fix mark for nested scaffolds
+- Fix STI creation
+- Fix null search for numeric columns
+- Fix recordselect inplace_edit with plural associations in ruby 1.9
 
 = 3.2.15
 - Prepare to unify field overrides and list_ui method signatures
