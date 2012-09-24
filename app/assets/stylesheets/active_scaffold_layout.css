@@ -780,6 +780,11 @@ background: none;
 display: none;
 }
 
+.active-scaffold .horizontal-sub-form .associated-record dl {
+float: left;
+margin-right: 5px;
+}
+
 .active-scaffold .sub-form .checkbox-list {
 padding: 0 2px 2px 2px;
 border: solid 1px;
