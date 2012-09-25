@@ -10,6 +10,7 @@
 - Support for updating columns, row or table after updating a column with inplace_edit
 - Keep order for records in plural subforms, so new records are saved in same order as form order
 - Support add_subgroup in horizontal subforms
+- Allow to set action_group in nested.add_link
 
 = 3.2.17 (not released yet)
 - fix constraints for columns with multiple columns in search_sql

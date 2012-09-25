@@ -27,10 +27,11 @@ module ActiveScaffold::Config
       column = @core.columns[attribute.to_sym]
       unless column.nil? || column.association.nil?
         options.reverse_merge! :security_method => :nested_authorized?, :label => column.association.klass.model_name.human({:count => column.singular_association? ? 1 : 2, :default => column.association.klass.name.pluralize})
+        action_group = options.delete(:action_group) || self.action_group
         action_link = @core.link_for_association(column, options)
         @core.action_links.add_to_group(action_link, action_group) unless action_link.nil?
       else
-        
+        # TODO: raise exception
       end
     end
     
