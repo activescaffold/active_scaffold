@@ -3,6 +3,7 @@
 - remove unauthorized collection links
 - copy parameters and html_options on cloning action link
 - fix missing argument in datepicker conditions
+- check authorization in model for plural associations nested links
 
 = 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
