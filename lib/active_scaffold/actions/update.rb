@@ -48,7 +48,13 @@ module ActiveScaffold::Actions
     end
     def update_respond_to_js
       if successful?
-        do_refresh_list if update_refresh_list? && !render_parent?
+        if !render_parent? && active_scaffold_config.actions.include?(:list)
+          if update_refresh_list?
+            do_refresh_list
+          else
+            get_row
+          end
+        end
         flash.now[:info] = as_(:updated_model, :model => @record.to_label) if active_scaffold_config.update.persistent
       end
       render :action => 'on_update'
@@ -62,12 +68,11 @@ module ActiveScaffold::Actions
     def update_respond_to_yaml
       render :text => Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.update.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
+
     # A simple method to find and prepare a record for editing
     # May be overridden to customize the record (set default values, etc.)
     def do_edit
-      set_includes_for_columns if active_scaffold_config.actions.include? :list
-      klass = beginning_of_chain.includes(active_scaffold_includes)
-      @record = find_if_allowed(params[:id], :update, klass)
+      @record = find_if_allowed(params[:id], :update)
     end
 
     # A complex method to update a record. The complexity comes from the support for subforms, and saving associated records.
@@ -123,7 +128,13 @@ module ActiveScaffold::Actions
         @record.send("#{@column.name}=", params[:value])
         before_update_save(@record)
         self.successful = @record.save
-        do_list if self.successful? && @column.inplace_edit_update == :table
+        if self.successful? && active_scaffold_config.actions.include?(:list)
+          if @column.inplace_edit_update == :table
+            do_list
+          elsif @column.inplace_edit_update
+            get_row
+          end
+        end
         after_update_save(@record)
       end
     end
