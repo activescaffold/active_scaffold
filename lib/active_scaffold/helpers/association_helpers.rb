@@ -2,9 +2,10 @@ module ActiveScaffold
   module Helpers
     module AssociationHelpers
       # Provides a way to honor the :conditions on an association while searching the association's klass
-      def association_options_find(association, conditions = nil)
+      def association_options_find(association, conditions = nil, klass = nil)
+        klass ||= association.klass
         conditions = options_for_association_conditions(association) if conditions.nil?
-        relation = association.klass.where(conditions).where(association.options[:conditions])
+        relation = klass.where(conditions).where(association.options[:conditions])
         relation = relation.includes(association.options[:include]) if association.options[:include]
         relation = yield(relation) if block_given?
         relation.all
