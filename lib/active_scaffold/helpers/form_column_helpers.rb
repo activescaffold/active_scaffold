@@ -369,7 +369,7 @@ module ActiveScaffold
           options.merge!(active_scaffold_input_text_options)
           record_select_field(options[:name], @record, options)
         else
-          select_options = sorted_association_options_find(nested.association) #unless column.through_association?
+          select_options = sorted_association_options_find(nested.association)
           select_options ||= active_scaffold_config.model.all
           select_options = options_from_collection_for_select(select_options, :id, :to_label)
           select_tag 'associated_id', ('<option value="">' + as_(:_select_) + '</option>' + select_options).html_safe unless select_options.empty?
