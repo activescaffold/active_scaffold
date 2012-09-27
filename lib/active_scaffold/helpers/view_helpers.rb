@@ -103,7 +103,7 @@ module ActiveScaffold
         (!link.ignore_method.nil? && controller.respond_to?(link.ignore_method) && controller.send(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
       end
 
-      def render_action_link(link, record = nil, html_options = {})
+      def render_action_link(link, record = nil, options = {})
         if link.action.nil?
           link = action_link_to_inline_form(link, record, html_options)
           options[:authorized] = false if link.action.nil?
