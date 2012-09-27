@@ -58,6 +58,10 @@ module ActiveScaffold::DataStructures
       has_many? || habtm?
     end
 
+    def readonly_through_association?
+      false
+    end
+
     def through_association?
       false
     end
@@ -98,6 +102,12 @@ module ActiveScaffold::DataStructures
 
     def has_one?
       association.macro == :has_one
+    end
+    
+    # A through association with has_one or has_many as source association
+    # create cannot be called in such through association
+    def readonly_through_association?
+      association.options[:through] && association.source_reflection.macro != :belongs_to
     end
     
     def through_association?
