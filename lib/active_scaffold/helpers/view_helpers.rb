@@ -110,7 +110,7 @@ module ActiveScaffold
           options.delete :link if link.crud_type == :create
         end
         if link.action.nil? || (link.type == :member && options.has_key?(:authorized) && !options[:authorized])
-          action_link_html(link, nil, html_options.merge(:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"), record)
+          action_link_html(link, nil, options.merge(:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"), record)
         else
           url = action_link_url(link, record)
           html_options = action_link_html_options(link, record, options)
