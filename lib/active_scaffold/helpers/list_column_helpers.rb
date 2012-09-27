@@ -44,12 +44,7 @@ module ActiveScaffold
         if column.link
           link = column.link
           associated = record.send(column.association.name) if column.association
-
-          if link.action.nil? || column_link_authorized?(link, column, record, associated)
-            render_action_link(link, record, {:link => text})
-          else
-            "<a class='disabled'>#{text}</a>".html_safe
-          end
+          render_action_link(link, record, :link => text, :authorized => link.action.nil? || column_link_authorized?(link, column, record, associated))
         elsif inplace_edit?(record, column)
           active_scaffold_inplace_edit(record, column, {:formatted_column => text})
         elsif active_scaffold_config.list.wrap_tag
