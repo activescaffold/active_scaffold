@@ -106,18 +106,15 @@ module ActiveScaffold
       def render_action_link(link, record = nil, html_options = {})
         if link.action.nil?
           link = action_link_to_inline_form(link, record, html_options)
-          html_options.delete :link if link.crud_type == :create
+          options[:authorized] = false if link.action.nil?
+          options.delete :link if link.crud_type == :create
         end
-        url = action_link_url(link, record) unless link.action.nil?
-        html_options = action_link_html_options(link, record, html_options) unless link.action.nil?
-        action_link_html(link, url, html_options, record)
-      end
-
-      def render_group_action_link(link, options, record = nil)
-        if link.type == :member && !options[:authorized]
-          action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"}, record)
+        if link.action.nil? || (link.type == :member && options.has_key?(:authorized) && !options[:authorized])
+          action_link_html(link, nil, html_options.merge(:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"), record)
         else
-          render_action_link(link, record)
+          url = action_link_url(link, record)
+          html_options = action_link_html_options(link, record, options)
+          action_link_html(link, url, html_options, record)
         end
       end
 
