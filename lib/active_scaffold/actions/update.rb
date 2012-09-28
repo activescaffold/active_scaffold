@@ -18,7 +18,7 @@ module ActiveScaffold::Actions
     # for inline (inlist) editing
     def update_column
       do_update_column
-      @column_span_id = params[:editor_id] || params[:editorId]
+      @column_span_id = params.delete(:editor_id) || params.delete(:editorId)
     end
 
     protected
@@ -111,21 +111,23 @@ module ActiveScaffold::Actions
     end
 
     def do_update_column
+      # delete from params so update :table won't break urls, also they shouldn't be used in sort links too
+      value = params.delete(:value)
+      column = params.delete(:column).to_sym
+      params.delete(:original_html)
+      params.delete(:original_value)
+
       @record = find_if_allowed(params[:id], :read)
-      if @record.authorized_for?(:crud_type => :update, :column => params[:column])
-        @column = active_scaffold_config.columns[params[:column].to_sym]
-        unless @column.column.nil? || @column.column.null
-          if @column.column.default == true
-            params[:value] ||= false
-          else
-            params[:value] ||= @column.column.default
-          end
+      if @record.authorized_for?(:crud_type => :update, :column => column)
+        @column = active_scaffold_config.columns[column]
+        value ||= unless @column.column.nil? || @column.column.null
+          @column.column.default == true ? false : @column.column.default
         end
         unless @column.nil?
-          params[:value] = column_value_from_param_value(@record, @column, params[:value])
-          params[:value] = [] if params[:value].nil? && @column.form_ui && @column.plural_association?
+          value = column_value_from_param_value(@record, @column, value)
+          value = [] if value.nil? && @column.form_ui && @column.plural_association?
         end
-        @record.send("#{@column.name}=", params[:value])
+        @record.send("#{@column.name}=", value)
         before_update_save(@record)
         self.successful = @record.save
         if self.successful? && active_scaffold_config.actions.include?(:list)
