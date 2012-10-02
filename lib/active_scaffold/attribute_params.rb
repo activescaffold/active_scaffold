@@ -100,8 +100,15 @@ module ActiveScaffold
 
     def column_value_from_param_simple_value(parent_record, column, value)
       if column.singular_association?
-        # it's a single id
-        column.association.klass.find(value) if value.present?
+        if value.present?
+          if column.polymorphic_association?
+            class_name = parent_record.send(column.association.foreign_type)
+            class_name.constantize.find(value) if class_name
+          else
+            # it's a single id
+            column.association.klass.find(value)
+          end
+        end
       elsif column.plural_association?
         column_plural_assocation_value_from_value(column, Array(value))
       elsif column.number? && [:i18n_number, :currency].include?(column.options[:format]) && column.form_ui != :number
