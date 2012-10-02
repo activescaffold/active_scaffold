@@ -10,7 +10,7 @@
 - Support for updating columns, row or table after updating a column with inplace_edit
 - Keep order for records in plural subforms, so new records are saved in same order as form order
 - Support add_subgroup in horizontal subforms
-- Improve support in helpers for using :select form_ui with polimorphy associations (needs to use a select to choose the class)
+- Improve support in helpers for using :select form_ui with polymorphic associations (needs to use a select to choose the class)
 - Allow to create in nested has_many :through associations, when source association is a belongs_to
 
 = 3.2.17 (not released yet)
