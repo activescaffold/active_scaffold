@@ -16,10 +16,14 @@ module ActiveScaffold
         end
 
         html = []
-        last_page = 1
-        last_page.upto(last_page + outer_window) do |num|
-          html << pagination_ajax_link(num, url_options, options)
-          last_page = num
+        if current_page.number == 1
+          last_page = 0
+        else
+          last_page = 1
+          last_page.upto([last_page + outer_window, current_page.number - 1].min) do |num|
+            html << pagination_ajax_link(num, url_options, options)
+            last_page = num
+          end
         end
         if current_page.pager.infinite?
           offsets.reverse.each do |offset|
