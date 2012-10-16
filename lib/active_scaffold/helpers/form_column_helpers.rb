@@ -95,13 +95,20 @@ module ActiveScaffold
       end
 
       def update_columns_options(column, scope, options)
-        form_action = params[:action] == 'edit' ? :update : :create
-        if column.update_columns && (column.update_columns & active_scaffold_config.send(form_action).columns.names).present?
+        form_action = if scope
+          subform_controller = controller.class.active_scaffold_controller_for(@record.class)
+          subform_controller.active_scaffold_config.subform
+        else
+          active_scaffold_config.send(params[:action] == 'edit' ? :update : :create)
+        end
+        if column.update_columns && (column.update_columns & form_action.columns.names).present?
           url_params = {:action => 'render_field', :column => column.name}
           url_params[:id] = @record.id if column.send_form_on_update_column
           url_params[:eid] = params[:eid] if params[:eid]
-          url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
-          url_params[:scope] = scope if scope
+          if scope
+            url_params[:controller] = subform_controller.controller_path
+            url_params[:scope] = scope
+          end
 
           options[:class] = "#{options[:class]} update_form".strip
           options['data-update_url'] = url_for(url_params)
