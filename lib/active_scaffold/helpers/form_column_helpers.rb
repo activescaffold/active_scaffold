@@ -98,10 +98,12 @@ module ActiveScaffold
         form_action = if scope
           subform_controller = controller.class.active_scaffold_controller_for(@record.class)
           subform_controller.active_scaffold_config.subform
-        else
-          active_scaffold_config.send(params[:action] == 'edit' ? :update : :create)
+        elsif [:new, :create].include? params[:action].to_sym
+          active_scaffold_config.create
+        elsif [:edit, :update].include? params[:action].to_sym
+          active_scaffold_config.update
         end
-        if column.update_columns && (column.update_columns & form_action.columns.names).present?
+        if form_action && column.update_columns && (column.update_columns & form_action.columns.names).present?
           url_params = {:action => 'render_field', :column => column.name}
           url_params[:id] = @record.id if column.send_form_on_update_column
           url_params[:eid] = params[:eid] if params[:eid]
