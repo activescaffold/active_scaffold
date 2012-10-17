@@ -354,6 +354,11 @@ module ActiveScaffold::DataStructures
     # cache constraints for numeric columns (get in ActiveScaffold::Helpers::FormColumnHelpers::numerical_constraints_for_column)
     attr_accessor :numerical_constraints
 
+    # the table.field name for this column, if applicable
+    def field
+      @field ||= [@active_record_class.quoted_table_name, field_name].join('.')
+    end
+
     protected
 
     def initialize_sort
@@ -381,11 +386,6 @@ module ActiveScaffold::DataStructures
 
     # the table name from the ActiveRecord class
     attr_reader :table
-
-    # the table.field name for this column, if applicable
-    def field
-      @field ||= [@active_record_class.quoted_table_name, field_name].join('.')
-    end
     
     def estimate_weight
       if singular_association?

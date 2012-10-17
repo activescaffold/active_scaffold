@@ -12,6 +12,7 @@
 - Support add_subgroup in horizontal subforms
 - Improve support in helpers for using :select form_ui with polymorphic associations (needs to use a select to choose the class)
 - Allow to create in nested has_many :through associations, when source association is a belongs_to
+- Fix calculations using field_search with has_many includes
 
 = 3.2.17 (not released yet)
 - fix constraints for columns with multiple columns in search_sql

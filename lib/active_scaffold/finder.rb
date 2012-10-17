@@ -351,8 +351,14 @@ module ActiveScaffold
       conditions = all_conditions
       includes = active_scaffold_config.list.count_includes
       includes ||= active_scaffold_includes unless conditions.nil?
-      append_to_query(beginning_of_chain, :conditions => conditions, :includes => includes,
-        :joins => joins_for_collection).calculate(column.calculate, column.name)
+      primary_key = active_scaffold_config.model.primary_key
+      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_collection)
+      subquery = subquery.select(active_scaffold_config.columns[primary_key].field)
+      if includes
+        includes_relation = beginning_of_chain.includes(includes)
+        subquery = subquery.send(:apply_join_dependency, subquery, includes_relation.send(:construct_join_dependency_for_association_find))
+      end
+      beginning_of_chain.where(primary_key => subquery).calculate(column.calculate, column.name)
     end
     
     def append_to_query(query, options)
