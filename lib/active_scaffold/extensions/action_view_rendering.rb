@@ -1,23 +1,11 @@
 module ActionView
   class LookupContext
     attr_accessor :last_template
-    register_detail(:active_scaffold_view_paths) { nil }
     
-    def find(name, prefixes = [], partial = false, keys = [], options = {})
-      unless active_scaffold_view_paths && prefixes && prefixes.one? && prefixes.first.blank?
-        args = args_for_lookup(name, prefixes, partial, keys, options)
-        view_paths = @view_paths
-        template = @view_paths.find_all(*args).first
-      end
-      if active_scaffold_view_paths && template.nil?
-        view_paths = active_scaffold_view_paths.is_a?(ActionView::PathSet) ? active_scaffold_view_paths : ActionView::PathSet.new(active_scaffold_view_paths)
-        args ||= args_for_lookup(name, '', partial, keys, options)
-        template = view_paths.find(*args_for_lookup(name, '', partial, keys, options)) 
-      end
-      raise(MissingTemplate.new(view_paths, *args)) unless template
-      self.last_template = template
+    def find_template_with_last_template(name, prefixes = [], partial = false, keys = [], options = {})
+      self.last_template = find_template_without_last_template(name, prefixes, partial, keys, options)
     end
-    alias :find_template :find
+    alias_method_chain :find_template, :last_template
   end
 end
 
@@ -83,29 +71,31 @@ module ActionView::Helpers #:nodoc:
 
       elsif args.first == :super
         prefix, template = @virtual_path.split('/')
-        last_view = view_stack.last || {}
         options = args[1] || {}
         options[:locals] ||= {}
-        options[:locals].reverse_merge!(last_view[:locals] || {})
-        options[:template] = template || prefix
-        # if template is nil we are rendering an active_scaffold (or active_scaffold's plugin) view
-        if template
+        options[:locals] = view_stack.last[:locals].merge!(options[:locals]) if view_stack.last && view_stack.last[:locals]
+        options[:template] = template
+        # if prefix is active_scaffold_overrides we must try to render with this prefix in following paths
+        if prefix != 'active_scaffold_overrides'
           options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
         else
-          options[:prefixes] = ['']
-          active_scaffold_view_paths = lookup_context.active_scaffold_view_paths
-          last_view_path = File.expand_path(File.dirname(lookup_context.last_template.inspect), Rails.root)
-          lookup_context.active_scaffold_view_paths = active_scaffold_view_paths.drop(active_scaffold_view_paths.find_index {|path| path.to_s == last_view_path} + 1)
+          options[:prefixes] = ['active_scaffold_overrides']
+          view_paths = lookup_context.view_paths
+          last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
+          lookup_context.view_paths = view_paths.drop(view_paths.find_index {|path| path.to_s == last_view_path} + 1)
         end
         result = render_without_active_scaffold options
-        lookup_context.active_scaffold_view_paths = active_scaffold_view_paths unless template
+        lookup_context.view_paths = view_paths if view_paths
         result
       else
-        options = args.first
-        current_view = {:locals => options[:locals]} if options.is_a?(Hash)
-        view_stack << current_view if current_view.present?
+        last_template = lookup_context.last_template
+        if args.first.is_a?(Hash)
+          current_view = {:locals => args.first[:locals]}
+          view_stack << current_view
+        end
         result = render_without_active_scaffold(*args, &block)
         view_stack.pop if current_view.present?
+        lookup_context.last_template = last_template
         result
       end
     end
