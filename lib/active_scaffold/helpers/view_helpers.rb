@@ -107,7 +107,7 @@ module ActiveScaffold
       def render_action_link(link, record = nil, options = {})
         if link.action.nil? || link.column.try(:polymorphic_association?)
           link = action_link_to_inline_form(link, record)
-          options[:authorized] = false if link.action.nil?
+          options[:authorized] = false if link.action.nil? || link.controller.nil?
           options.delete :link if link.crud_type == :create
         end
         if link.action.nil? || (link.type == :member && options.has_key?(:authorized) && !options[:authorized])
