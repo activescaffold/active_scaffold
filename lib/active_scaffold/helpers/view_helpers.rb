@@ -3,6 +3,7 @@ module ActiveScaffold
     # All extra helpers that should be included in the View.
     # Also a dumping ground for uncategorized helpers.
     module ViewHelpers
+      NESTED_PARAMS = [:eid, :association, :parent_scaffold]
       include ActiveScaffold::Helpers::IdHelpers
       include ActiveScaffold::Helpers::AssociationHelpers
       include ActiveScaffold::Helpers::PaginationHelpers
@@ -210,7 +211,7 @@ module ActiveScaffold
             next
           end
           qs = "#{key}=#{value}"
-          if [:eid, :association, :parent_scaffold].include?(key) || conditions_from_params.include?(key) || (nested? && nested.param_name == key)
+          if NESTED_PARAMS.include?(key) || conditions_from_params.include?(key) || (nested? && nested.param_name == key)
             non_nested_query_string_options << qs
           else
             query_string_options << qs
