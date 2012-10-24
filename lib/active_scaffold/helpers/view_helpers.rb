@@ -105,7 +105,7 @@ module ActiveScaffold
       end
 
       def render_action_link(link, record = nil, options = {})
-        if link.action.nil?
+        if link.action.nil? || link.column.try(:polymorphic_association?)
           link = action_link_to_inline_form(link, record)
           options[:authorized] = false if link.action.nil?
           options.delete :link if link.crud_type == :create
@@ -127,7 +127,8 @@ module ActiveScaffold
           link.controller = controller_path_for_activerecord(associated.class)
           return link if link.controller.nil?
         end
-        configure_column_link(link, record, associated)
+        link = configure_column_link(link, record, associated) if link.action.nil?
+        link
       end
 
       def configure_column_link(link, record, associated, actions = nil)
