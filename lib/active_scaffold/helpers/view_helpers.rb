@@ -315,6 +315,8 @@ module ActiveScaffold
           url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
           if column.singular_association? && url_options[:action].to_sym != :index
             url_options[:id] = '--CHILD_ID--' if record.send(column.association.name).present?
+          else
+            url_options[:id] = nil
           end
         elsif link.parameters && link.parameters[:named_scope]
           url_options[:parent_scaffold] = controller_path
