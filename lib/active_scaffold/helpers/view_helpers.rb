@@ -185,7 +185,7 @@ module ActiveScaffold
         end
         
         url = record ? url.sub('--ID--', record.id.to_s) : url.clone
-        url = url.sub('--CHILD_ID--', record.send(link.column.association.name).id.to_s) if link.column.try(:singular_association?) && record.send(link.column.association.name).present?
+        url = url.sub('--CHILD_ID--', record.send(link.column.association.name).try(:id).to_s) if link.column.try(:singular_association?)
         query_string, non_nested_query_string = query_string_for_action_links(link)
         if query_string || (!link.nested_link? && non_nested_query_string)
           url << (url.include?('?') ? '&' : '?')
@@ -314,7 +314,7 @@ module ActiveScaffold
           url_options[:parent_scaffold] = controller_path
           url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
           if column.singular_association? && url_options[:action].to_sym != :index
-            url_options[:id] = '--CHILD_ID--' if record.send(column.association.name).present?
+            url_options[:id] = '--CHILD_ID--'
           else
             url_options[:id] = nil
           end
