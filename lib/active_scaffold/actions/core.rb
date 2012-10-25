@@ -157,7 +157,7 @@ module ActiveScaffold::Actions
     def conditions_from_params
       @conditions_from_params ||= begin
         conditions = {}
-        params.reject {|key, value| [:controller, :action, :id, :page, :sort, :sort_direction].include?(key.to_sym)}.each do |key, value|
+        params.except(:controller, :action, :page, :sort, :sort_direction).each do |key, value|
           next unless active_scaffold_config.model.columns_hash[key.to_s]
           next if active_scaffold_constraints[key.to_sym]
           next if nested? and nested.param_name == key.to_sym

@@ -15,7 +15,7 @@ module ActiveScaffold
         blacklist = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :authenticity_token, :iframe, :associated_id, :dont_close]
         unless @params_for
           @params_for = {}
-          params.select { |key, value| blacklist.exclude? key.to_sym if key }.each {|key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value}
+          params.except(*blacklist).each {|key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value}
           @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end
