@@ -499,6 +499,19 @@ var ActiveScaffold = {
       } else {
         new_row = tbody.append(html).children().last();
       }
+    } else if (typeof options.insert_at == 'object') {
+      var insert_method, get_method, row, id;
+      if (options.insert_at.after) {
+        insert_method = 'after';
+        get_method = 'next';
+      } else {
+        insert_method = 'before';
+        get_method = 'prev';
+      }
+      if (id = options.insert_at[insert_method]) row = tbody.children('#' + id);
+      if (row && row.length) {
+        new_row = row[insert_method](html)[get_method]();
+      }
     }
     this.stripe(tbody);
     this.hide_empty_message(tbody);
