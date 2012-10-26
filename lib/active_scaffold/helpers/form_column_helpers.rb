@@ -130,8 +130,8 @@ module ActiveScaffold
       end
 
       def active_scaffold_translate_select_options(options)
-        options[:include_blank] = as_(options[:include_blank]) if options[:include_blank].is_a? Symbol
-        options[:prompt] = as_(options[:prompt]) if options[:prompt].is_a? Symbol
+        options[:include_blank] = as_(options[:include_blank].to_s) if options[:include_blank].is_a? Symbol
+        options[:prompt] = as_(options[:prompt].to_s) if options[:prompt].is_a? Symbol
         options
       end
       
