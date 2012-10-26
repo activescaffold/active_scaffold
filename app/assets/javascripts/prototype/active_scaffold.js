@@ -447,6 +447,20 @@ var ActiveScaffold = {
         tbody.insert({bottom: html});
       }
       new_row = Selector.findChildElements(tbody, ['tr.record']).last();
+    } else if (typeof options.insert_at == 'object') {
+      var insert_method, get_method, row, id;
+      if (options.insert_at.after) {
+        insert_method = 'after';
+        get_method = 'next';
+      } else {
+        insert_method = 'before';
+        get_method = 'previous';
+      }
+      if (id = options.insert_at[insert_method]) row = $(id);
+      if (row) {
+        row.insert({insert_method: html});
+        new_row = row[get_method]();
+      }
     }
     
     this.stripe(tbody);
