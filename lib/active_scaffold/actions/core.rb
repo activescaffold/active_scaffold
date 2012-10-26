@@ -38,6 +38,7 @@ module ActiveScaffold::Actions
         @source_id = params.delete(:source_id)
         @columns = column.update_columns
         @scope = params.delete(:scope)
+        @main_columns = active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns
         
         if column.send_form_on_update_column
           if @scope
@@ -50,7 +51,7 @@ module ActiveScaffold::Actions
             id = params[:id]
           end
           @record = id ? find_if_allowed(id, :update) : new_model
-          @record = update_record_from_params(@record, active_scaffold_config.send(@scope ? :subform : (id ? :update : :create)).columns, hash)
+          @record = update_record_from_params(@record, @main_columns, hash)
         else
           @record = new_model
           value = column_value_from_param_value(@record, column, params.delete(:value))
