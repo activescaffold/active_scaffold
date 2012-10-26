@@ -25,7 +25,14 @@ class ActiveScaffold::Bridges::RecordSelect
         unless column.association
           raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
         end
-        remote_controller = active_scaffold_controller_for(column.association.klass).controller_path
+        klass = if column.polymorphic_association?
+          @record.send(column.association.foreign_type).constantize rescue nil
+        else
+          column.association.klass
+        end
+        return content_tag :span, '', :class => options[:class] unless klass
+
+        remote_controller = active_scaffold_controller_for(klass).controller_path
 
         # if the opposite association is a :belongs_to (in that case association in this class must be has_one or has_many)
         # then only show records that have not been associated yet
@@ -41,7 +48,7 @@ class ActiveScaffold::Bridges::RecordSelect
         html = if multiple
           record_multi_select_field(options[:name], value || [], record_select_options)
         else
-          record_select_field(options[:name], value || column.association.klass.new, record_select_options)
+          record_select_field(options[:name], value || klass.new, record_select_options)
         end
         html = self.class.field_error_proc.call(html, self) if @record.errors[column.name].any?
         html
