@@ -23,6 +23,7 @@
 - check authorization in model for plural associations nested links
 - Allow to set action_group in nested.add_link
 - fix current page when is inside outer window
+- Support record select with polymorphic associations
 
 = 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
