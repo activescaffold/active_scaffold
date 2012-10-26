@@ -4,6 +4,7 @@
   else
     active_scaffold_config.columns[render_field.to_sym]
   end
+  return unless @main_columns.include? column.name
   @rendered ||= Set.new
   return if @rendered.include? column.name
   @rendered << column.name
