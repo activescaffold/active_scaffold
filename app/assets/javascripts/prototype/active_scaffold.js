@@ -12,6 +12,10 @@ if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFu
 
 
 document.observe("dom:loaded", function() {
+  document.on('click', function(event) {
+    var group = event.findElement().up('.action_group.dyn ul');
+    $$('.action_group.dyn ul').reject(function(i) { i == group}).invoke('remove');
+  });
   document.on('ajax:create', 'form.as_form', function(event) {
     var source = event.findElement();
     var as_form = event.findElement('form');
@@ -524,6 +528,13 @@ var ActiveScaffold = {
   find_action_link: function(element) {
     element = $(element);
     return ActiveScaffold.ActionLink.get(element.match('.actions a') ? element : element.up('.as_adapter')); 
+  },
+
+  display_dynamic_action_group: function(link, html) {
+    link = $(link);
+    link.next('ul').remove();
+    link.up('td').addClassName('action_group dyn');
+    link.insert({after: html});
   },
   
   scroll_to: function(element, checkInViewport) {

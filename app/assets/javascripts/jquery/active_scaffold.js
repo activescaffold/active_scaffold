@@ -1,4 +1,8 @@
 jQuery(document).ready(function() {
+  jQuery(document).click(function(event) {
+    var group = jQuery(event.target).closest('.action_group.dyn ul');
+    jQuery('.action_group.dyn ul').not(group).remove();
+  });
   jQuery('form.as_form').live('ajax:beforeSend', function(event) {
     var as_form = jQuery(this).closest("form");
     if (as_form.attr('data-loading') == 'true') {
@@ -570,6 +574,13 @@ var ActiveScaffold = {
     if (typeof(element) == 'string') element = '#' + element;
     element = jQuery(element);
     return ActiveScaffold.ActionLink.get(element.is('.actions a') ? element : element.closest('.as_adapter'));
+  },
+
+  display_dynamic_action_group: function(link, html) {
+    if (typeof(link) == 'string') link = jQuery('#' + link);
+    link.next('ul').remove();
+    link.closest('td').addClass('action_group dyn');
+    link.after(html);
   },
   
   scroll_to: function(element, checkInViewport) {
