@@ -394,7 +394,7 @@ module ActiveScaffold
     def sort_collection_by_column(collection, column, order)
       sorter = column.sort[:method]
       collection = collection.sort_by { |record|
-        value = (sorter.is_a? Proc) ? record.instance_eval(&sorter) : record.instance_eval(sorter)
+        value = (sorter.is_a? Proc) ? record.instance_eval(&sorter) : record.instance_eval(sorter.to_s)
         value = '' if value.nil?
         value
       }
