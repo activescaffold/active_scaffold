@@ -935,11 +935,11 @@ ActiveScaffold.ActionLink = {
       element.data(); // $ 1.4.2 workaround
       if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
         var parent = element.closest('.actions');
-        if (parent.length === 0) {
+        if (parent.length === 0 || parent.is('td')) {
           // maybe an column action_link
           parent = element.closest('tr.record');
         }
-        if (parent && parent.is('tr')) {
+        if (parent.is('tr')) {
           // record action
           var target = parent.find('a.as_action');
           var loading_indicator = parent.find('td.actions .loading-indicator');
