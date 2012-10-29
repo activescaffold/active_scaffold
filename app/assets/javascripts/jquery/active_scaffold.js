@@ -937,11 +937,10 @@ ActiveScaffold.ActionLink = {
         var parent = element.closest('.actions');
         if (parent.length === 0) {
           // maybe an column action_link
-          parent = element.parent();
+          parent = element.closest('tr.record');
         }
-        if (parent && parent.is('td')) {
+        if (parent && parent.is('tr')) {
           // record action
-          parent = parent.closest('tr.record');
           var target = parent.find('a.as_action');
           var loading_indicator = parent.find('td.actions .loading-indicator');
           new ActiveScaffold.Actions.Record(target, parent, loading_indicator);
