@@ -6,7 +6,7 @@
       active_scaffold_config
     end
     # increment in 1 for self-associations, parent_model config will have constraints too
-    config.list.columns.count + 1 + (config == active_scaffold_config ? 1 : 0)
+    config.list.columns.count + 1 + (config == active_scaffold_config && action_name == 'index' ? 1 : 0)
   end
 %>
 <%# nested_id, allows us to remove a nested scaffold programmatically %>
