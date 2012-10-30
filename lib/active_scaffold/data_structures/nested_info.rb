@@ -30,10 +30,6 @@ module ActiveScaffold::DataStructures
       result
     end
     
-    def parent_scope
-      @parent_scope ||= parent_model.find(parent_id)
-    end
-    
     def habtm?
       false 
     end
