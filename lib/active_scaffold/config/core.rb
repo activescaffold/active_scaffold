@@ -25,6 +25,10 @@ module ActiveScaffold::Config
     cattr_accessor :theme
     @@theme = :default
 
+    # enable caching of action link urls
+    cattr_accessor :cache_action_link_urls
+    @@cache_action_link_urls = true
+
     # lets you disable the DHTML history
     def self.dhtml_history=(val)
       @@dhtml_history = val
@@ -91,6 +95,9 @@ module ActiveScaffold::Config
     # lets you override the global ActiveScaffold theme for a specific controller
     attr_accessor :theme
 
+    # enable caching of action link urls
+    attr_accessor :cache_action_link_urls
+
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
     def add_sti_create_links?
@@ -139,6 +146,7 @@ module ActiveScaffold::Config
       # inherit the global frontend
       @frontend = self.class.frontend
       @theme = self.class.theme
+      @cache_action_link_urls = self.class.cache_action_link_urls
       @sti_create_links = self.class.sti_create_links
 
       # inherit from the global set of action links
