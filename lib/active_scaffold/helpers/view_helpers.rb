@@ -185,7 +185,11 @@ module ActiveScaffold
         end
         
         url = record ? url.sub('--ID--', record.id.to_s) : url.clone
-        url = url.sub('--CHILD_ID--', record.send(link.column.association.name).try(:id).to_s) if link.column.try(:singular_association?)
+        if link.column.try(:singular_association?)
+          url = url.sub('--CHILD_ID--', record.send(link.column.association.name).try(:id).to_s) 
+        elsif nested?
+          url = url.sub('--CHILD_ID--', params[nested.param_name])
+        end
         query_string, non_nested_query_string = query_string_for_action_links(link)
         if query_string || (!link.nested_link? && non_nested_query_string)
           url << (url.include?('?') ? '&' : '?')
@@ -242,7 +246,11 @@ module ActiveScaffold
             url_options.merge! link.dynamic_parameters.call(record)
           end
         end
-        url_options_for_nested_link(link.column, record, link, url_options) if link.nested_link?
+        if link.nested_link?
+          url_options_for_nested_link(link.column, record, link, url_options)
+        elsif nested?
+          url_options[nested.param_name] = '--CHILD_ID--'
+        end
         url_options_for_sti_link(link.column, record, link, url_options) unless record.nil? || active_scaffold_config.sti_children.nil?
         url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get
         url_options
