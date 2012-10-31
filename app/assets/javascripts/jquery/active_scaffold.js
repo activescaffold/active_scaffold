@@ -1,7 +1,6 @@
 jQuery(document).ready(function() {
   jQuery(document).click(function(event) {
-    var group = jQuery(event.target).closest('.action_group.dyn ul');
-    jQuery('.action_group.dyn ul').not(group).remove();
+    jQuery('.action_group.dyn ul').remove();
   });
   jQuery('form.as_form').live('ajax:beforeSend', function(event) {
     var as_form = jQuery(this).closest("form");
