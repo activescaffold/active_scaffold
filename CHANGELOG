@@ -1,6 +1,6 @@
 = master
 - Unify field overrides and list_ui method signatures
-- Improve performance removing some partials and adding some caching for helper overrides and UIs, and caching url generation for lists
+- Improve performance removing some partials and adding some caching for helper overrides and UIs, and caching url generation for lists (optional)
 - Drop support for rails 3.1
 - Add HTML5 form fields
 - Add :chosen form_ui, and :chosen and :multi_chosen search_ui
@@ -25,6 +25,7 @@
 - Allow to set action_group in nested.add_link
 - fix current page when is inside outer window
 - Support record select with polymorphic associations
+- Fix column count in inline adapter for forms and views
 
 = 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
