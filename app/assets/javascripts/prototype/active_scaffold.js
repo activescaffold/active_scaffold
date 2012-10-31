@@ -13,8 +13,7 @@ if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFu
 
 document.observe("dom:loaded", function() {
   document.on('click', function(event) {
-    var group = event.findElement().up('.action_group.dyn ul');
-    $$('.action_group.dyn ul').reject(function(i) { i == group}).invoke('remove');
+    $$('.action_group.dyn ul').invoke('remove');
   });
   document.on('ajax:create', 'form.as_form', function(event) {
     var source = event.findElement();
