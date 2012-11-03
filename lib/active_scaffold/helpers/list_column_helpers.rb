@@ -266,7 +266,7 @@ module ActiveScaffold
         if active_scaffold_config.mark.mark_all_mode == :page
           all_marked = @page.items.detect { |record| !marked_records.include?(record.id) }.nil?
         else
-          all_marked = (marked_records.length >= @page.pager.count)
+          all_marked = (marked_records.length >= @page.pager.count.to_i)
         end
       end
 
