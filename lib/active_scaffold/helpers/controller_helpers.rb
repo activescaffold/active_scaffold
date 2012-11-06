@@ -75,7 +75,11 @@ module ActiveScaffold
       
       def build_associated(column, record)
         if column.singular_association?
-          record.send(:"build_#{column.name}")
+          if column.association.options[:through]
+            record.send(:"build_#{column.association.through_reflection.name}").send(:"build_#{column.name}")
+          else
+            record.send(:"build_#{column.name}")
+          end
         else
           record.send(column.name).build
         end
