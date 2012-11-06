@@ -193,7 +193,7 @@ module ActiveScaffold
         if link.column.try(:singular_association?)
           url = url.sub('--CHILD_ID--', record.send(link.column.association.name).try(:id).to_s) 
         elsif nested?
-          url = url.sub('--CHILD_ID--', params[nested.param_name])
+          url = url.sub('--CHILD_ID--', params[nested.param_name].to_s)
         end
 
         if active_scaffold_config.cache_action_link_urls
