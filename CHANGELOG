@@ -15,7 +15,6 @@
 - Fix calculations using field_search with has_many includes
 - Add support to ActiveScaffold.create_record_row to insert after or before of an element
 - Add support for dynamic action group
-- Add support for class prefix on human condition helpers
 
 = 3.2.17 (not released yet)
 - fix constraints for columns with multiple columns in search_sql
@@ -27,6 +26,7 @@
 - fix current page when is inside outer window
 - Support record select with polymorphic associations
 - Fix column count in inline adapter for forms and views
+- Add support for class prefix on human condition helpers
 
 = 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group
