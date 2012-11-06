@@ -16,6 +16,7 @@ module ActionDispatch
           end
           member do
             ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each {|name, type| match(name, :via => type)}
+            get 'list', :action => :index
           end
           as_association_routes if options[:association]
         end
