@@ -38,7 +38,8 @@ module ActiveScaffold
             #parameters[:eid] = nil # not neeeded anymore?
           end
           parameters[:action] = "index"
-          params_for(parameters).except(:parent_column, :parent_id, :id, :associated_id, :utf8)
+          parameters[:id] = nil
+          params_for(parameters).except(:parent_column, :parent_id, :associated_id, :utf8)
         end
       end
 
