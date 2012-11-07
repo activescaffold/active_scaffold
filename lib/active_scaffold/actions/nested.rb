@@ -81,7 +81,7 @@ module ActiveScaffold::Actions
         elsif nested.child_association.belongs_to?
           active_scaffold_config.model.where(nested.child_association.foreign_key => nested_parent_record)
         elsif nested.association.belongs_to?
-          active_scaffold_config.model.joins(nested.child_association.name).where(nested.association.active_record.table_name => {nested.association.active_record.primary_key => nested_parent_record})
+          active_scaffold_config.model.joins(nested.child_association.name).where(nested.association.active_record.table_name => {nested.association.active_record.primary_key => nested_parent_record}).readonly(false)
         end
       elsif nested? && nested.scope
         nested_parent_record.send(nested.scope)
