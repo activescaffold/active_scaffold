@@ -183,8 +183,9 @@ module ActiveScaffold::DataStructures
       @column || (parameters && parameters[:named_scope])
     end
     
-    # Internal use: generated url for this action_link
-    attr_accessor :cached_url
+    def name_to_cache_link_url
+      @name_to_cache_link_url ||= :"@#{controller || 'self'}_#{action}#{'_' if parameters.present?}#{parameters.map{|k,v| "#{k}_#{v}"}.join('_')}_link_url"
+    end
     
     
   end

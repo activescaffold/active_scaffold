@@ -1,4 +1,7 @@
 jQuery(document).ready(function() {
+  jQuery(document).click(function(event) {
+    jQuery('.action_group.dyn ul').remove();
+  });
   jQuery('form.as_form').live('ajax:beforeSend', function(event) {
     var as_form = jQuery(this).closest("form");
     if (as_form.attr('data-loading') == 'true') {
@@ -461,22 +464,22 @@ var ActiveScaffold = {
     jQuery(element).get(0).reset();
   },
   
-  disable_form: function(as_form) {
+  disable_form: function(as_form, skip_loading_indicator) {
     if (typeof(as_form) == 'string') as_form = '#' + as_form;
     as_form = jQuery(as_form)
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
-    if (loading_indicator) loading_indicator.css('visibility','visible');
+    if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','visible');
     jQuery('input[type=submit]', as_form).attr('disabled', 'disabled');
-    as_form[0].disabled_fields = jQuery("input:enabled,select:enabled,textarea:enabled", as_form).attr('disabled', 'disabled');
+    jQuery("input:enabled,select:enabled,textarea:enabled", as_form).attr('disabled', 'disabled').attr('data-remove-disabled', true);
   },
   
-  enable_form: function(as_form) {
+  enable_form: function(as_form, skip_loading_indicator) {
     if (typeof(as_form) == 'string') as_form = '#' + as_form;
     as_form = jQuery(as_form)
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
-    if (loading_indicator) loading_indicator.css('visibility','hidden');
+    if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','hidden');
     jQuery('input[type=submit]', as_form).removeAttr('disabled');
-    as_form[0].disabled_fields.removeAttr('disabled');
+    jQuery("input[data-remove-disabled],select[data-remove-disabled],textarea[data-remove-disabled]", as_form).removeAttr('disabled data-remove-disabled');
   },  
   
   focus_first_element_of_form: function(form_element) {
@@ -498,6 +501,19 @@ var ActiveScaffold = {
         new_row = rows.last().after(html).next();
       } else {
         new_row = tbody.append(html).children().last();
+      }
+    } else if (typeof options.insert_at == 'object') {
+      var insert_method, get_method, row, id;
+      if (options.insert_at.after) {
+        insert_method = 'after';
+        get_method = 'next';
+      } else {
+        insert_method = 'before';
+        get_method = 'prev';
+      }
+      if (id = options.insert_at[insert_method]) row = tbody.children('#' + id);
+      if (row && row.length) {
+        new_row = row[insert_method](html)[get_method]();
       }
     }
     this.stripe(tbody);
@@ -558,6 +574,13 @@ var ActiveScaffold = {
     element = jQuery(element);
     return ActiveScaffold.ActionLink.get(element.is('.actions a') ? element : element.closest('.as_adapter'));
   },
+
+  display_dynamic_action_group: function(link, html) {
+    if (typeof(link) == 'string') link = jQuery('#' + link);
+    link.next('ul').remove();
+    link.closest('td').addClass('action_group dyn');
+    link.after(html);
+  },
   
   scroll_to: function(element, checkInViewport) {
     if (typeof checkInViewport == 'undefined') checkInViewport = true;
@@ -574,18 +597,23 @@ var ActiveScaffold = {
   },
   
   process_checkbox_inplace_edit: function(checkbox, options) {
-    var checked = checkbox.is(':checked');
+    var checked = checkbox.is(':checked'), td = checkbox.closest('td');
     if (checked === true) options['params'] += '&value=1';
     jQuery.ajax({
       url: options.url,
       type: "POST",
       data: options['params'],
       dataType: options.ajax_data_type,
-      after: function(request){
+      beforeSend: function(request, settings) {
+        if (options.beforeSend) options.beforeSend.call(checkbox, request, settings);
         checkbox.attr('disabled', 'disabled');
+        td.closest('tr').find('td.actions .loading-indicator').css('visibility','visible');
       },
       complete: function(request){
         checkbox.removeAttr('disabled');
+      },
+      success: function(request){
+        td.closest('tr').find('td.actions .loading-indicator').css('visibility','hidden');
       }
     });
   },
@@ -725,8 +753,12 @@ var ActiveScaffold = {
                      element_id: 'editor_id',
                      ajax_data_type: "script",
                      delegate: {
-                       willCloseEditInPlace: function(span, options, enteredText) {
+                       willCloseEditInPlace: function(span, options) {
                          if (span.data('addEmptyOnCancel')) span.closest('td').addClass('empty');
+                         span.closest('tr').find('td.actions .loading-indicator').css('visibility','visible');
+                       },
+                       didCloseEditInPlace: function(span, options) {
+                         span.closest('tr').find('td.actions .loading-indicator').css('visibility','hidden');
                        }
                      },
                      update_value: 'value'},
@@ -780,6 +812,24 @@ var ActiveScaffold = {
         options.editor_url = render_url.replace(/__id__/, record_id)
         if (!options.delegate) options.delegate = {}
         options.delegate.didOpenEditInPlace = function(dom) { dom.trigger('as:element_updated'); }
+      }
+      var actions, forms;
+      options.beforeSend = function(xhr, settings) {
+        switch (span.data('ie-update')) {
+          case 'update_row':
+            actions = span.closest('tr').find('.actions a:not(.disabled)').addClass('disabled');
+            break;
+          case 'update_table':
+            var table = span.closest('.as_content');
+            actions = table.find('.actions a:not(.disabled)').addClass('disabled');
+            forms = table.find('.as_form');
+            ActiveScaffold.disable_form(forms);
+            break;
+        }
+      }
+      options.error = options.success = function() {
+        if (actions) actions.removeClass('disabled');
+        if (forms) ActiveScaffold.enable_form(forms);
       }
       if (mode === 'inline_checkbox') {
         ActiveScaffold.process_checkbox_inplace_edit(span.find('input:checkbox'), options);
@@ -895,13 +945,12 @@ ActiveScaffold.ActionLink = {
       element.data(); // $ 1.4.2 workaround
       if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
         var parent = element.closest('.actions');
-        if (parent.length === 0) {
+        if (parent.length === 0 || parent.is('td')) {
           // maybe an column action_link
-          parent = element.parent();
+          parent = element.closest('tr.record');
         }
-        if (parent && parent.is('td')) {
+        if (parent.is('tr')) {
           // record action
-          parent = parent.closest('tr.record');
           var target = parent.find('a.as_action');
           var loading_indicator = parent.find('td.actions .loading-indicator');
           new ActiveScaffold.Actions.Record(target, parent, loading_indicator);
@@ -945,6 +994,11 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
     this.adapter.remove();
     if (this.hide_target) this.target.show();
     if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target.attr('id'), ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+  },
+
+  reload: function() {
+    this.close();
+    this.open();
   },
 
   get_new_adapter_id: function() {
@@ -1105,10 +1159,5 @@ ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
       throw 'Unknown position "' + this.position + '"'
     }
     ActiveScaffold.highlight(this.adapter.find('td').first().children());
-  },
-
-  reload: function() {
-    this.close();
-    this.open();
   },
 });

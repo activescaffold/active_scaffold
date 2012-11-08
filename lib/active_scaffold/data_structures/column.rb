@@ -13,6 +13,8 @@ module ActiveScaffold::DataStructures
       self.clear_link if value
       @inplace_edit = value
     end
+    
+    attr_accessor :inplace_edit_update
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
@@ -66,16 +68,6 @@ module ActiveScaffold::DataStructures
     #  update_columns = [:name, :age]
     def update_columns=(column_names)
       @update_columns = Array(column_names)
-    end
-
-    # send all the form instead of only new value when this column change
-    cattr_accessor :send_form_on_update_column
-    attr_accessor :send_form_on_update_column
-
-    # column to be updated in a form when this column changes
-    def update_column=(column_name)
-      ActiveSupport::Deprecation.warn "Use update_columns= instead of update_column="
-      self.update_columns = column_name
     end
 
     # send all the form instead of only new value when this column change
@@ -362,6 +354,11 @@ module ActiveScaffold::DataStructures
     # cache constraints for numeric columns (get in ActiveScaffold::Helpers::FormColumnHelpers::numerical_constraints_for_column)
     attr_accessor :numerical_constraints
 
+    # the table.field name for this column, if applicable
+    def field
+      @field ||= [@active_record_class.quoted_table_name, field_name].join('.')
+    end
+
     protected
 
     def initialize_sort
@@ -389,11 +386,6 @@ module ActiveScaffold::DataStructures
 
     # the table name from the ActiveRecord class
     attr_reader :table
-
-    # the table.field name for this column, if applicable
-    def field
-      @field ||= [@active_record_class.quoted_table_name, field_name].join('.')
-    end
     
     def estimate_weight
       if singular_association?

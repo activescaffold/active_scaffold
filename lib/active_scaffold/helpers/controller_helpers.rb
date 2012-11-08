@@ -12,10 +12,10 @@ module ActiveScaffold
         # :sort, :sort_direction, and :page are arguments that stored in the session. they need not propagate.
         # and wow. no we don't want to propagate :record.
         # :commit is a special rails variable for form buttons
-        blacklist = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :authenticity_token, :iframe]
+        blacklist = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :authenticity_token, :iframe, :associated_id, :dont_close]
         unless @params_for
           @params_for = {}
-          params.select { |key, value| blacklist.exclude? key.to_sym if key }.each {|key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value}
+          params.except(*blacklist).each {|key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value}
           @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end
@@ -38,7 +38,8 @@ module ActiveScaffold
             #parameters[:eid] = nil # not neeeded anymore?
           end
           parameters[:action] = "index"
-          params_for(parameters).except(:parent_column, :parent_id, :id, :associated_id, :utf8)
+          parameters[:id] = nil
+          params_for(parameters).except(:parent_column, :parent_id, :associated_id, :utf8)
         end
       end
 
@@ -75,7 +76,11 @@ module ActiveScaffold
       
       def build_associated(column, record)
         if column.singular_association?
-          record.send(:"build_#{column.name}")
+          if column.association.options[:through]
+            record.send(:"build_#{column.association.through_reflection.name}").send(:"build_#{column.name}")
+          else
+            record.send(:"build_#{column.name}")
+          end
         else
           record.send(column.name).build
         end

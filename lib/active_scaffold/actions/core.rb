@@ -26,10 +26,6 @@ module ActiveScaffold::Actions
     def nested?
       false
     end
-  
-    def details_for_lookup
-      super.merge(:active_scaffold_view_paths => self.class.active_scaffold_paths)
-    end
 
     def render_field_for_inplace_editing
       @record = find_if_allowed(params[:id], :update)
@@ -42,6 +38,7 @@ module ActiveScaffold::Actions
         @source_id = params.delete(:source_id)
         @columns = column.update_columns
         @scope = params.delete(:scope)
+        @main_columns = active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns
         
         if column.send_form_on_update_column
           if @scope
@@ -54,7 +51,7 @@ module ActiveScaffold::Actions
             id = params[:id]
           end
           @record = id ? find_if_allowed(id, :update) : new_model
-          @record = update_record_from_params(@record, active_scaffold_config.send(@scope ? :subform : (id ? :update : :create)).columns, hash)
+          @record = update_record_from_params(@record, @main_columns, hash)
         else
           @record = new_model
           value = column_value_from_param_value(@record, column, params.delete(:value))
@@ -161,10 +158,10 @@ module ActiveScaffold::Actions
     def conditions_from_params
       @conditions_from_params ||= begin
         conditions = {}
-        params.reject {|key, value| [:controller, :action, :id, :page, :sort, :sort_direction].include?(key.to_sym)}.each do |key, value|
+        params.except(:controller, :action, :page, :sort, :sort_direction).each do |key, value|
           next unless active_scaffold_config.model.columns_hash[key.to_s]
           next if active_scaffold_constraints[key.to_sym]
-          next if nested? and nested.constrained_fields.include? key.to_sym
+          next if nested? and nested.param_name == key.to_sym
           conditions[key.to_sym] = value
         end
         conditions

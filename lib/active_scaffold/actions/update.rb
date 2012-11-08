@@ -18,7 +18,7 @@ module ActiveScaffold::Actions
     # for inline (inlist) editing
     def update_column
       do_update_column
-      @column_span_id = params[:editor_id] || params[:editorId]
+      @column_span_id = params.delete(:editor_id) || params.delete(:editorId)
     end
 
     protected
@@ -48,7 +48,13 @@ module ActiveScaffold::Actions
     end
     def update_respond_to_js
       if successful?
-        do_refresh_list if update_refresh_list? && !render_parent?
+        if !render_parent? && active_scaffold_config.actions.include?(:list)
+          if update_refresh_list?
+            do_refresh_list
+          else
+            get_row
+          end
+        end
         flash.now[:info] = as_(:updated_model, :model => @record.to_label) if active_scaffold_config.update.persistent
       end
       render :action => 'on_update'
@@ -62,12 +68,12 @@ module ActiveScaffold::Actions
     def update_respond_to_yaml
       render :text => Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.update.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
+
     # A simple method to find and prepare a record for editing
     # May be overridden to customize the record (set default values, etc.)
     def do_edit
-      set_includes_for_columns if active_scaffold_config.actions.include? :list
-      klass = beginning_of_chain.includes(active_scaffold_includes)
-      @record = find_if_allowed(params[:id], :update, klass)
+      debugger
+      @record = find_if_allowed(params[:id], :update)
     end
 
     # A complex method to update a record. The complexity comes from the support for subforms, and saving associated records.
@@ -106,23 +112,33 @@ module ActiveScaffold::Actions
     end
 
     def do_update_column
+      # delete from params so update :table won't break urls, also they shouldn't be used in sort links too
+      value = params.delete(:value)
+      column = params.delete(:column).to_sym
+      params.delete(:original_html)
+      params.delete(:original_value)
+
       @record = find_if_allowed(params[:id], :read)
-      if @record.authorized_for?(:crud_type => :update, :column => params[:column])
-        column = active_scaffold_config.columns[params[:column].to_sym]
-        unless @record.column_for_attribute(params[:column]).nil? || @record.column_for_attribute(params[:column]).null
-          if @record.column_for_attribute(params[:column]).default == true
-            params[:value] ||= false
-          else
-            params[:value] ||= @record.column_for_attribute(params[:column]).default
+      if @record.authorized_for?(:crud_type => :update, :column => column)
+        @column = active_scaffold_config.columns[column]
+        value ||= unless @column.column.nil? || @column.column.null
+          @column.column.default == true ? false : @column.column.default
+        end
+        unless @column.nil?
+          value = column_value_from_param_value(@record, @column, value)
+          value = [] if value.nil? && @column.form_ui && @column.plural_association?
+        end
+        @record.send("#{@column.name}=", value)
+        before_update_save(@record)
+        self.successful = @record.save
+        if self.successful? && active_scaffold_config.actions.include?(:list)
+          if @column.inplace_edit_update == :table
+            params.delete(:id)
+            do_list
+          elsif @column.inplace_edit_update
+            get_row
           end
         end
-        unless column.nil?
-          params[:value] = column_value_from_param_value(@record, column, params[:value])
-          params[:value] = [] if params[:value].nil? && column.form_ui && column.plural_association?
-        end
-        @record.send("#{params[:column]}=", params[:value])
-        before_update_save(@record)
-        @record.save
         after_update_save(@record)
       end
     end
@@ -141,7 +157,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def update_authorized?(record = nil)
-      (!nested? || !nested.readonly?) && (record || self).send(:authorized_for?, :crud_type => :update)
+      (!nested? || !nested.readonly?) && (record || self).authorized_for?(:crud_type => :update)
     end
     private
     def update_authorized_filter

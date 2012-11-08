@@ -6,6 +6,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
   <% if params[:dont_close] %>
     <% row_selector = element_row_id(:action => :list, :id => @record.id) %>
     ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
+    action_link.target = $('#<%= row_selector %>');
     <%= render :partial => 'update_calculations', :formats => [:js] %>
   <% else %>
     <% if render_parent? %>

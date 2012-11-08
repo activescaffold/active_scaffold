@@ -45,14 +45,11 @@ module ActiveScaffold
         end unless value.nil?
       end
 
-      def override_human_condition_column?(column)
-        respond_to?(override_human_condition_column(column))
-      end
-
       # the naming convention for overriding form fields with helpers
       def override_human_condition_column(column)
-        "#{column.name}_human_condition_column"
+        override_helper column, 'human_condition_column'
       end
+      alias_method :override_human_condition_column?, :override_human_condition_column
 
       def override_human_condition?(search_ui)
         respond_to?(override_human_condition(search_ui))

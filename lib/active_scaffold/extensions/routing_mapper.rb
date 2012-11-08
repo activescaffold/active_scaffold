@@ -12,10 +12,11 @@ module ActionDispatch
       module Base
         def as_routes(options = {:association => true})
           collection do
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each {|name, type| send(type, name)}
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each {|name, type| match(name, :via => type)}
           end
           member do
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each {|name, type| send(type, name)}
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each {|name, type| match(name, :via => type)}
+            get 'list', :action => :index
           end
           as_association_routes if options[:association]
         end

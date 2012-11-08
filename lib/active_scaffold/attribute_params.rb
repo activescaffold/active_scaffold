@@ -66,7 +66,7 @@ module ActiveScaffold
       if parent_record.new_record?
         parent_record.class.reflect_on_all_associations.each do |a|
           next unless [:has_one, :has_many].include?(a.macro) and not (a.options[:through] || a.options[:finder_sql])
-          next unless association_proxy = parent_record.send(a.name)
+          next unless (association_proxy = parent_record.send(a.name)).present?
 
           raise ActiveScaffold::ReverseAssociationRequired, "Association #{a.name} in class #{parent_record.class.name}: In order to support :has_one and :has_many where the parent record is new and the child record(s) validate the presence of the parent, ActiveScaffold requires the reverse association (the belongs_to)." unless a.reverse
 
@@ -100,10 +100,17 @@ module ActiveScaffold
 
     def column_value_from_param_simple_value(parent_record, column, value)
       if column.singular_association?
-        # it's a single id
-        column.association.klass.find(value) if value.present?
+        if value.present?
+          if column.polymorphic_association?
+            class_name = parent_record.send(column.association.foreign_type)
+            class_name.constantize.find(value) if class_name
+          else
+            # it's a single id
+            column.association.klass.find(value)
+          end
+        end
       elsif column.plural_association?
-        column_plural_assocation_value_from_value(column, value)
+        column_plural_assocation_value_from_value(column, Array(value))
       elsif column.number? && [:i18n_number, :currency].include?(column.options[:format]) && column.form_ui != :number
         self.class.i18n_number_to_native_format(value)
       else
@@ -137,7 +144,7 @@ module ActiveScaffold
         manage_nested_record_from_params(parent_record, column, value)
       elsif column.plural_association?
         # HACK to be able to delete all associated records, hash will include "0" => ""
-        value.collect {|key, value| manage_nested_record_from_params(parent_record, column, value) unless value == ""}.compact
+        value.sort.collect {|key, value| manage_nested_record_from_params(parent_record, column, value) unless value == ""}.compact
       else
         value
       end

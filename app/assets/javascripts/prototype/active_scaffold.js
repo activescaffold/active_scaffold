@@ -12,6 +12,9 @@ if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFu
 
 
 document.observe("dom:loaded", function() {
+  document.on('click', function(event) {
+    $$('.action_group.dyn ul').invoke('remove');
+  });
   document.on('ajax:create', 'form.as_form', function(event) {
     var source = event.findElement();
     var as_form = event.findElement('form');
@@ -95,7 +98,7 @@ document.observe("dom:loaded", function() {
     var action_link = ActiveScaffold.find_action_link(as_cancel);
     
     if (action_link) {
-      var refresh_data = action_link.readAttribute('data-cancel-refresh') || as_cancel.readAttribute('data-refresh');
+      var refresh_data = action_link.tag.readAttribute('data-cancel-refresh') || as_cancel.readAttribute('data-refresh');
       if (refresh_data && action_link.refresh_url) {
         event.memo.url = action_link.refresh_url;
       } else if (!refresh_data || as_cancel.readAttribute('href').blank()) {
@@ -447,6 +450,20 @@ var ActiveScaffold = {
         tbody.insert({bottom: html});
       }
       new_row = Selector.findChildElements(tbody, ['tr.record']).last();
+    } else if (typeof options.insert_at == 'object') {
+      var insert_method, get_method, row, id;
+      if (options.insert_at.after) {
+        insert_method = 'after';
+        get_method = 'next';
+      } else {
+        insert_method = 'before';
+        get_method = 'previous';
+      }
+      if (id = options.insert_at[insert_method]) row = $(id);
+      if (row) {
+        row.insert({insert_method: html});
+        new_row = row[get_method]();
+      }
     }
     
     this.stripe(tbody);
@@ -510,6 +527,13 @@ var ActiveScaffold = {
   find_action_link: function(element) {
     element = $(element);
     return ActiveScaffold.ActionLink.get(element.match('.actions a') ? element : element.up('.as_adapter')); 
+  },
+
+  display_dynamic_action_group: function(link, html) {
+    link = $(link);
+    link.next('ul').remove();
+    link.up('td').addClassName('action_group dyn');
+    link.insert({after: html});
   },
   
   scroll_to: function(element, checkInViewport) {
@@ -842,6 +866,11 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target.id, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
   },
 
+  reload: function() {
+    this.close();
+    this.open();
+  },
+
   get_new_adapter_id: function() {
     var id = 'adapter_';
     var i = 0;
@@ -1000,11 +1029,6 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
       throw 'Unknown position "' + this.position + '"'
     }
     ActiveScaffold.highlight(this.adapter.down('td').down());
-  },
-
-  reload: function() {
-    this.close();
-    this.open();
   },
 });
 

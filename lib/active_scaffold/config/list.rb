@@ -39,13 +39,6 @@ module ActiveScaffold::Config
     cattr_accessor :page_links_outer_window
     @@page_links_outer_window = 0
     
-    class << self
-      def page_links_window=(value)
-        ActiveSupport::Deprecation.warn("Use page_links_inner_window", caller(1))
-        self.page_links_inner_window = value
-      end
-    end
-
     # what string to use when a field is empty
     cattr_accessor :empty_field_text
     @@empty_field_text = '-'
@@ -102,11 +95,6 @@ module ActiveScaffold::Config
     # how many page links around current page to show
     attr_accessor :page_links_outer_window
     
-    def page_links_window=(value)
-      ActiveSupport::Deprecation.warn("Use page_links_inner_window", caller(1))
-      self.page_links_inner_window = value
-    end
-
     # What kind of pagination to use:
     # * true: The usual pagination
     # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for large tables where counting is slow and we don't really care anyway)
