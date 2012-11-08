@@ -17,7 +17,7 @@
       <% else %>
       <tr><td></td></tr>
       <% end %>
-      <% if !nested? && active_scaffold_config.list.always_show_create %>
+      <% if active_scaffold_config.list.always_show_create %>
       <% old_record, @record = @record, new_model %>
         <tr> 
           <td> 

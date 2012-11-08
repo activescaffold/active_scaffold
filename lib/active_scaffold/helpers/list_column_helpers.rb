@@ -118,7 +118,7 @@ module ActiveScaffold
         value ||= record.send(column.name) unless record.nil?
         if value && column.association # cache association size before calling column_empty?
           associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
-          cache_association(value, column, associated_size) if column.plural_association?
+          cache_association(value, column) if column.plural_association?
         end
         if column.association.nil? or column_empty?(value)
           if column.form_ui == :select && column.options[:options]
@@ -190,7 +190,8 @@ module ActiveScaffold
         clean_column_value(value)
       end
 
-      def cache_association(value, column, size)
+      def cache_association(value, column)
+        # loaded? and target seems to be gone in rails 3.1
         # we are not using eager loading, cache firsts records in order not to query the database in a future
         unless value.loaded?
           # load at least one record, is needed to display '...'
@@ -226,7 +227,7 @@ module ActiveScaffold
         tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
                        :title => as_(:click_to_edit), :data => {:ie_id => record.id.to_s}}
 
-        content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<
+        content_tag(:span, as_(:click_to_edit), :class => 'handle') <<
         content_tag(:span, formatted_column, tag_options)
       end
 
