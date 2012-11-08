@@ -866,6 +866,11 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
     if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target.id, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
   },
 
+  reload: function() {
+    this.close();
+    this.open();
+  },
+
   get_new_adapter_id: function() {
     var id = 'adapter_';
     var i = 0;
@@ -1024,11 +1029,6 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
       throw 'Unknown position "' + this.position + '"'
     }
     ActiveScaffold.highlight(this.adapter.down('td').down());
-  },
-
-  reload: function() {
-    this.close();
-    this.open();
   },
 });
 

@@ -22,7 +22,7 @@ action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'mess
 
   <% unless render_parent? %>
     <% if (active_scaffold_config.create.persistent) %>
-      if (action_link.reload) action_link.reload();
+      action_link.reload();
     <% else %>
       action_link.close();
     <% end %>
