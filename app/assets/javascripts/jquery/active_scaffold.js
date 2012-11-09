@@ -2,8 +2,10 @@ jQuery(document).ready(function() {
   jQuery(document).click(function(event) {
     jQuery('.action_group.dyn ul').remove();
   });
-  jQuery(document).on('ajax:beforeSend', '.action_group.dyn a', function() {
-    jQuery('.action_group.dyn ul').remove();
+  jQuery(document).on('ajax:complete', '.action_group.dyn ul a', function(event) {
+    var action_link = ActiveScaffold.find_action_link(event.target);
+    if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
+    jQuery(event.target).closest('.action_group.dyn ul').remove();
   });
   jQuery('form.as_form').live('ajax:beforeSend', function(event) {
     var as_form = jQuery(this).closest("form");

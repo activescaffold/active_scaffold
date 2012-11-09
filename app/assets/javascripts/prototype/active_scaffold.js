@@ -15,8 +15,11 @@ document.observe("dom:loaded", function() {
   document.on('click', function(event) {
     $$('.action_group.dyn ul').invoke('remove');
   });
-  document.on('ajax:beforeSend', '.action_group.dyn a', function() {
-    $$('.action_group.dyn ul').invoke('remove');
+  document.on('ajax:complete', '.action_group.dyn ul a', function() {
+    var source = event.findElement();
+    var action_link = ActiveScaffold.find_action_link(source);
+    if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
+    $(source).up('.action_group.dyn ul').remove();
   });
   document.on('ajax:create', 'form.as_form', function(event) {
     var source = event.findElement();
