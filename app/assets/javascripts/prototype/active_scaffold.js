@@ -15,6 +15,9 @@ document.observe("dom:loaded", function() {
   document.on('click', function(event) {
     $$('.action_group.dyn ul').invoke('remove');
   });
+  document.on('ajax:beforeSend', '.action_group.dyn a', function() {
+    $$('.action_group.dyn ul').invoke('remove');
+  });
   document.on('ajax:create', 'form.as_form', function(event) {
     var source = event.findElement();
     var as_form = event.findElement('form');
