@@ -50,7 +50,6 @@ module ActiveScaffold::Actions
       if successful?
         if !render_parent? && active_scaffold_config.actions.include?(:list)
           if update_refresh_list?
-            params.delete(:id) # needed to get right list
             do_refresh_list
           else
             get_row
