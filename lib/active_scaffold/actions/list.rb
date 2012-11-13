@@ -96,6 +96,7 @@ module ActiveScaffold::Actions
     end
     
     def do_refresh_list
+      params.delete(:id)
       do_search if respond_to? :do_search
       do_list
     end
