@@ -169,8 +169,9 @@ module ActiveScaffold
       end
       
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
-        html = content_tag :ul, :class => "#{options[:class]} checkbox-list", :id => options[:id] do
-          content = hidden_field_tag("#{options[:name]}[]", '')
+        html = hidden_field_tag("#{options[:name]}[]", '')
+        html << content_tag(:ul, :class => "#{options[:class]} checkbox-list", :id => options[:id]) do
+          content = ''.html_safe
           select_options.each_with_index do |option, i|
             label, id = option
             this_id = "#{options[:id]}_#{i}_id"
