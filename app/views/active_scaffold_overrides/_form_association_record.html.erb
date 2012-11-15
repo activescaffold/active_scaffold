@@ -63,7 +63,7 @@
 <%= content_tag row_tag, :class => 'associated-record' do %>
   <%= content_tag column_tag, :colspan => columns_length do %>
   <% column.each :for => @record.class, :crud_type => :read, :flatten => true do |col| %>
-    <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly) %>
+    <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, true) %>
   <% end %>
   <% end %>
 <% end %>

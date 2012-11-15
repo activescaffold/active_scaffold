@@ -59,11 +59,21 @@ module ActiveScaffold
         end
       end
       
-      def active_scaffold_render_subform_column(column, scope, crud_type, readonly)
+      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false)
+        if add_class
+          col_class = []
+          col_class << 'required' if column.required?
+          col_class << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
+          col_class << 'hidden' if column_renders_as(column) == :hidden
+          col_class << 'checkbox' if column.form_ui == :checkbox
+          col_class = col_class.join(' ')
+        end
         unless readonly and not @record.new_record? or not @record.authorized_for?(:crud_type => crud_type, :column => column.name)
-          render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope }
+          render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope, :col_class => col_class }
         else
-          content_tag :span, get_column_value(@record, column), active_scaffold_input_options(column, scope).except(:name)
+          options = active_scaffold_input_options(column, scope).except(:name)
+          options[:class] = "#{options[:class]} #{col_class}" if col_class
+          content_tag :span, get_column_value(@record, column), options
         end
       end
 
