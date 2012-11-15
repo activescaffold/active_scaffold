@@ -2,7 +2,7 @@
   scope ||= nil
   column_options = active_scaffold_input_options(column, scope)
 %>
-<dl>
+<dl<%= " class=\"#{col_class}\"".html_safe if local_assigns[:col_class].present? %>>
   <dt>
     <label for="<%= column_options[:id] %>"><%= column.label %></label>
   </dt>
