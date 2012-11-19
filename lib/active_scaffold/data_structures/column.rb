@@ -315,6 +315,7 @@ module ActiveScaffold::DataStructures
       
       @weight = estimate_weight
 
+      self.clear_link if self.polymorphic_association?
       self.includes = (association and not polymorphic_association?) ? [association.name] : []
     end
 
