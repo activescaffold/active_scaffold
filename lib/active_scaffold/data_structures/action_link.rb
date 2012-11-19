@@ -184,7 +184,7 @@ module ActiveScaffold::DataStructures
     end
     
     def name_to_cache_link_url
-      @name_to_cache_link_url ||= "@#{controller || 'self'}_#{action}#{'_' if parameters.present?}#{parameters.map{|k,v| "#{k}_#{v}"}.join('_')}_link_url".gsub('/', '_').to_sym
+      @name_to_cache_link_url ||= :"#{controller || 'self'}_#{action}#{'_' if parameters.present?}#{parameters.map{|k,v| "#{k}_#{v}"}.join('_')}_link_url"
     end
     
     

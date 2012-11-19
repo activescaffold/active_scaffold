@@ -176,12 +176,12 @@ module ActiveScaffold
       end
 
       def action_link_url(link, record)
-        url = instance_variable_get(link.name_to_cache_link_url)
+        url = (@action_links_urls ||= {})[link.name_to_cache_link_url]
         url ||= begin
           url_options = action_link_url_options(link, record)
           if active_scaffold_config.cache_action_link_urls
             url = url_for(url_options)
-            instance_variable_set(link.name_to_cache_link_url, url) unless link.dynamic_parameters.is_a?(Proc)
+            @action_links_urls[link.name_to_cache_link_url] = url unless link.dynamic_parameters.is_a?(Proc)
             url
           else
             url_for(params_for(url_options))
