@@ -50,6 +50,7 @@ de:
     refresh: 'Neu laden'
     remove: 'Entfernen'
     remove_file: 'Entferne oder Ersetze Datei'
+    replace_existing: 'Existierenden ersetzen'
     replace_with_new: 'Mit Neuer ersetzen'
     revisions_for_model: 'Revisionen für %{model}'
     reset: 'Zurücksetzen'

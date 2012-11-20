@@ -50,6 +50,7 @@ en:
     refresh: 'Refresh'
     remove: 'Remove'
     remove_file: 'Remove or Replace file'
+    replace_existing: 'Replace Existing'
     replace_with_new: 'Replace With New'
     revisions_for_model: 'Revisions for %{model}'
     reset: 'Reset'

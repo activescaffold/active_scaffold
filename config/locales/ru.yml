@@ -56,6 +56,7 @@ ru:
     refresh: 'Обновить'
     remove: 'Удалить'
     remove_file: 'Удалить или заменить файл'
+    replace_existing: 'Replace existing'
     replace_with_new: 'Заменить новым'
     revisions_for_model: '%{model}: редакции'
     reset: 'Сброс'

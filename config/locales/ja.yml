@@ -50,6 +50,7 @@ ja:
     refresh: 'Refresh' # needed?
     remove: '削除'
     remove_file: 'ファイルを削除または置換'
+    replace_existing: 'Replace existing'
     replace_with_new: '新しいもので置換'
     revisions_for_model: 'Revisions for %{model}' # neede?
     reset: 'リセット'
