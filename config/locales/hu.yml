@@ -50,6 +50,7 @@ hu:
     refresh: 'Frissítés'
     remove: 'Törlés'
     remove_file: 'Fájl törlése, vagy cseréje'
+    replace_existing: 'Replace existing'
     replace_with_new: 'Csere újjal'
     revisions_for_model: '%{model} revíziói'
     reset: 'Alapállapot'
