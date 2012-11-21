@@ -58,14 +58,14 @@ module ActiveScaffold
       def element_row_id(options = {})
         options[:action] ||= params[:action]
         options[:id] ||= params[:id]
-        options[:id] ||= params[:parent_id]
+        options[:id] ||= nested.parent_id if nested?
         clean_id "#{options[:controller_id] || controller_id}-#{options[:action]}-#{options[:id]}-row"
       end
 
       def element_cell_id(options = {})
         options[:action] ||= params[:action]
         options[:id] ||= params[:id]
-        options[:id] ||= params[:parent_id]
+        options[:id] ||= nested.parent_id if nested?
         options[:name] ||= params[:name]
         clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-#{options[:name]}-cell"
       end
@@ -73,7 +73,7 @@ module ActiveScaffold
       def element_form_id(options = {})
         options[:action] ||= params[:action]
         options[:id] ||= params[:id]
-        options[:id] ||= params[:parent_id]
+        options[:id] ||= nested.parent_id if nested?
         clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-form"
       end
 
@@ -89,26 +89,26 @@ module ActiveScaffold
       
       def sub_section_id(options = {})
         options[:id] ||= params[:id]
-        options[:id] ||= params[:parent_id]
+        options[:id] ||= nested.parent_id if nested?
         clean_id "#{controller_id}-#{options[:id]}-#{options[:sub_section]}-subsection"
       end
 
       def sub_form_id(options = {})
         options[:id] ||= params[:id]
-        options[:id] ||= params[:parent_id]
+        options[:id] ||= nested.parent_id if nested?
         clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform"
       end
       
       def sub_form_list_id(options = {})
         options[:id] ||= params[:id]
-        options[:id] ||= params[:parent_id]
+        options[:id] ||= nested.parent_id if nested?
         clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform-list"
       end
 
       def element_messages_id(options = {})
         options[:action] ||= params[:action]
         options[:id] ||= params[:id]
-        options[:id] ||= params[:parent_id]
+        options[:id] ||= nested.parent_id if nested?
         clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-messages"
       end
 

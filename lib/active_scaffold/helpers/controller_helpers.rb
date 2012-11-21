@@ -27,9 +27,11 @@ module ActiveScaffold
         if params[:return_to]
           params[:return_to]
         else
+          exclude_parameters = [:utf8, :associated_id]
           parameters = {}
           if params[:parent_scaffold] && nested? && nested.singular_association?
             parameters[:controller] = params[:parent_scaffold]
+            exclude_parameters.concat [nested.param_name, :association, :parent_scaffold]
             #parameters[:eid] = params[:parent_scaffold] # not neeeded anymore?
           end
           parameters.merge! nested.to_params if nested?
@@ -39,7 +41,7 @@ module ActiveScaffold
           end
           parameters[:action] = "index"
           parameters[:id] = nil
-          params_for(parameters).except(:parent_column, :parent_id, :associated_id, :utf8)
+          params_for(parameters).except(*exclude_parameters)
         end
       end
 
