@@ -833,7 +833,9 @@ ActiveScaffold.ActionLink = {
       if (parent && parent.nodeName.toUpperCase() == 'TD') {
         // record action
         parent = parent.up('tr.record')
-        new ActiveScaffold.Actions.Record(parent.select('a.as_action'), parent, parent.down('td.actions .loading-indicator'));
+        var loading_indicator = parent.down('td.actions .loading-indicator');
+        if (!loading_indicator) loading_indicator = element.parent().find('.loading-indicator');
+        new ActiveScaffold.Actions.Record(parent.select('a.as_action'), parent, loading_indicator);
       } else if (parent && parent.nodeName.toUpperCase() == 'DIV') {
         //table action
         new ActiveScaffold.Actions.Table(parent.select('a.as_action'), parent.up('div.active-scaffold').down('tbody.before-header'), parent.down('.loading-indicator'));
