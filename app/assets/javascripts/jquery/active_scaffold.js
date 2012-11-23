@@ -958,6 +958,7 @@ ActiveScaffold.ActionLink = {
           // record action
           var target = parent.find('a.as_action');
           var loading_indicator = parent.find('td.actions .loading-indicator');
+          if (!loading_indicator.length) loading_indicator = element.parent().find('.loading-indicator');
           new ActiveScaffold.Actions.Record(target, parent, loading_indicator);
         } else if (parent && parent.is('div')) {
           //table action
