@@ -680,17 +680,21 @@ var ActiveScaffold = {
     var params = null;
 
     if (send_form) {
-      var selector;
+      var selector, base = as_form;
+      if (send_form == 'row') base = element.up('.association-record, form');
       if (selector = element.readAttribute('data-update_send_form_selector'))
-        params = Form.serializeElements(as_form.getElementsBySelector(selector), true);
+        params = Form.serializeElements(base.getElementsBySelector(selector), true);
+      else if (base != as_form)
+        params = Form.serializeElements(base.getElementsBySelector('input, textarea, select'), true);
       else params = as_form.serialize(true);
+      params['_method'] = '';
     } else {
         params = {value: val};
     }
     params.source_id = source_id;
 
     new Ajax.Request(url, {
-      method: 'get',
+      method: 'post',
       parameters: params,
       onLoading: function(response) {
         element.next('img.loading-indicator').style.visibility = 'visible';
