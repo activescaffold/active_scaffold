@@ -21,12 +21,7 @@ data_refresh ||= url_for(params_for(:action => :row, :id => '--ID--', :_method =
       <td class="indicator-container">
         <%= loading_indicator_tag(:action => :record, :id => record.id) %>
       </td>
-      <%= render :partial => 'action_group', :locals => { :action_links => action_links,
-                                                          :record => record,
-                                                          :traverse_options => {:for => record.persisted? ? record : record.class},
-                                                          :start_level_0_tag => '<td>',
-                                                          :end_level_0_tag => '</td>'
-                                                        } %>
+      <%= display_action_links(action_links, record, :level_0_tag => :td, :for => record.persisted? ? record : record.class) %>
     </tr>
   </table></td>
 
