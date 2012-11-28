@@ -2,8 +2,8 @@
   <div class="actions">
     <% active_scaffold_config.action_links.member.each do |link| -%>
       <% next unless link.action == 'index' -%>
-      <% next if skip_action_link(link) -%>
-      <%= render_action_link(link, record, :authorized => record.authorized_for?(:crud_type => link.crud_type, :action => link.action)) -%>
+      <% next if skip_action_link?(link, record) || !action_link_authorized?(link, record) -%>
+      <%= render_action_link(link, record, :authorized => true) -%>
     <% end -%>
   </div>
 </div>
