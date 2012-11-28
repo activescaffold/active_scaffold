@@ -112,7 +112,7 @@ module ActiveScaffold
           active_scaffold_config.send(@record.new_record? ? :create : :update)
         end
         if form_action && column.update_columns && (column.update_columns & form_action.columns.names).present?
-          url_params = {:action => 'render_field', :column => column.name}
+          url_params = {:action => 'render_field', :column => column.name, :id => nil}
           url_params[:id] = @record.id if column.send_form_on_update_column
           url_params[:eid] = params[:eid] if params[:eid]
           if scope
@@ -122,7 +122,7 @@ module ActiveScaffold
 
           options[:class] = "#{options[:class]} update_form".strip
           options['data-update_url'] = url_for(url_params)
-          options['data-update_send_form'] = true if column.send_form_on_update_column
+          options['data-update_send_form'] = column.send_form_on_update_column
           options['data-update_send_form_selector'] = column.options[:send_form_selector] if column.options[:send_form_selector]
         end
         options
