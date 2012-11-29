@@ -6,7 +6,7 @@
         <%= as_(:internal_error).html_safe %>
         <a href="#" class="close" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
       </p>
-      <div id="<%= active_scaffold_messages_id -%>">
+      <div id="<%= active_scaffold_messages_id -%>" class="action-messages">
         <%= render :partial => 'messages' %>
       </div>
       <div class="filtered-message" <%= ' style="display:none;" '.html_safe unless @filtered %>>
