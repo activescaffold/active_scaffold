@@ -443,9 +443,10 @@ var ActiveScaffold = {
     return element;
   },
   
-  remove: function(element) {
+  remove: function(element, callback) {
     if (typeof(element) == 'string') element = '#' + element; 
     jQuery(element).remove();
+    if (callback) callback();
   },
 
   update_inplace_edit: function(element, value, empty) {
@@ -524,7 +525,7 @@ var ActiveScaffold = {
     this.stripe(tbody);
     this.hide_empty_message(tbody);
     this.increment_record_count(tbody.closest('div.active-scaffold'));
-    ActiveScaffold.highlight(new_row);
+    this.highlight(new_row);
   },
     
   create_record_row_from_url: function(active_scaffold_id, url, options) {
@@ -547,10 +548,11 @@ var ActiveScaffold = {
       }
     }
     
-    row.remove();
-    this.stripe(tbody);
-    this.decrement_record_count(tbody.closest('div.active-scaffold'));
-    this.reload_if_empty(tbody, page_reload_url);
+    ActiveScaffold.remove(row, function() {
+      ActiveScaffold.stripe(tbody);
+      ActiveScaffold.decrement_record_count(tbody.closest('div.active-scaffold'));
+      ActiveScaffold.reload_if_empty(tbody, page_reload_url);
+    });
   },
 
   delete_subform_record: function(record) {
@@ -667,7 +669,7 @@ var ActiveScaffold = {
     if (options.singular == false) {
       if (!(options.id && jQuery('#' + options.id).size() > 0)) {
         var new_element = element.append(content);
-        content.trigger('as:element_updated');
+        content.trigger('as:element_created');
       }
     } else {
       var current = jQuery('#' + element.attr('id') + ' .association-record')
@@ -675,7 +677,7 @@ var ActiveScaffold = {
         this.replace(current[0], content);
       } else {
         element.prepend(content);
-        content.trigger('as:element_updated');
+        content.trigger('as:element_created');
       }
     }
   },
@@ -999,10 +1001,12 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
   },
 
   close: function() {
-    this.enable();
-    this.adapter.remove();
-    if (this.hide_target) this.target.show();
-    if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target.attr('id'), ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+    var link = this;
+    ActiveScaffold.remove(this.adapter, function() {
+      link.enable();
+      if (link.hide_target) link.target.show();
+      if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+    });
   },
 
   reload: function() {
@@ -1075,8 +1079,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
     var _this = this;
     jQuery.each(this.set.links, function(index, item) {
       if (item.url != _this.url && item.is_disabled() && !item.keep_open() && item.adapter) {
-        item.enable();
-        item.adapter.remove();
+        ActiveScaffold.remove(item.adapter, function () { item.enable(); });
       }
     });
   },
