@@ -1,3 +1,20 @@
+<% if active_scaffold_config.list.messages_above_header %>
+<table>
+  <tbody>
+    <tr>
+      <td class="messages-container">
+        <p class="error-message message server-error" style="display:none;">
+          <%= as_(:internal_error).html_safe %>
+          <a href="#" class="close" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
+        </p>
+        <div id="<%= active_scaffold_messages_id -%>" class="action-messages">
+          <%= render :partial => 'messages' %>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<% end %>
 <table cellpadding="0" cellspacing="0">
   <thead>
     <tr>
