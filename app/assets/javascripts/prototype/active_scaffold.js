@@ -401,8 +401,9 @@ var ActiveScaffold = {
     return element;
   },
   
-  remove: function(element) {
+  remove: function(element, callback) {
     $(element).remove();
+    if (callback) callback();
   },
   
   update_inplace_edit: function(element, value, empty) {
@@ -500,11 +501,12 @@ var ActiveScaffold = {
         action_link.close_previous_adapter();
       }
     }
-    row.remove();
-    tbody = $(tbody);
-    this.stripe(tbody);
-    this.decrement_record_count(tbody.up('div.active-scaffold'));
-    this.reload_if_empty(tbody, page_reload_url);
+    ActiveScaffold.remove(row, function() {
+      tbody = $(tbody);
+      ActiveScaffold.stripe(tbody);
+      ActiveScaffold.decrement_record_count(tbody.up('div.active-scaffold'));
+      ActiveScaffold.reload_if_empty(tbody, page_reload_url);
+    });
   },
 
   delete_subform_record: function(record) {
@@ -872,10 +874,12 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
   },
 
   close: function() {
-    this.enable();
-    this.adapter.remove();
-    if (this.hide_target) this.target.show();
-    if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target.id, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+    var link = this;
+    ActiveScaffold.remove(this.adapter, function() {
+      link.enable();
+      if (link.hide_target) link.target.show();
+      if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(link.target.id, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+    });
   },
 
   reload: function() {
@@ -947,8 +951,7 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
   close_previous_adapter: function() {
     this.set.links.each(function(item) {
       if (item.url != this.url && item.is_disabled() && !item.keep_open() && item.adapter) {
-        item.enable();
-        item.adapter.remove();
+        ActiveScaffold.remove(item.adapter, function () { item.enable(); });
       }
     }.bind(this));
   },
