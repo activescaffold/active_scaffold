@@ -200,10 +200,14 @@ module ActiveScaffold
         value = text if value.nil?
         [(text.is_a?(Symbol) ? column.active_record_class.human_attribute_name(text) : text), value]
       end
+      
+      def active_scaffold_enum_options(column)
+        column.options[:options]
+      end
 
       def active_scaffold_input_enum(column, html_options)
         options = { :selected => @record.send(column.name) }
-        options_for_select = column.options[:options].collect do |text, value|
+        options_for_select = active_scaffold_enum_options(column).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
         end
         html_options.update(column.options[:html_options] || {})
