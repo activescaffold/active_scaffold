@@ -11,7 +11,7 @@ module ActiveScaffold::Actions
       base.helper_method :new_model
     end
     def render_field
-      if params[:in_place_editing]
+      if request.get?
         render_field_for_inplace_editing
       else
         render_field_for_update_columns
@@ -28,7 +28,7 @@ module ActiveScaffold::Actions
     end
 
     def render_field_for_inplace_editing
-      @record = find_if_allowed(params[:id], :update)
+      @record = find_if_allowed(params[:id], :crud_type => :update, :column => params[:update_column])
       render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
     end
 
