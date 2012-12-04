@@ -51,7 +51,7 @@ document.observe("dom:loaded", function() {
       return false;
     }
   });
-  document.on('submit', 'form.as_form.as_remote_upload', function(event) {
+  document.on('submit', 'form.as_form:not([data-remote])', function(event) {
     var as_form = event.findElement('form');
     if (as_form && as_form.readAttribute('data-loading') == 'true') {
       setTimeout("ActiveScaffold.disable_form('" + as_form.readAttribute('id') + "')", 10);

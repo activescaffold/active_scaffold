@@ -7,34 +7,34 @@ jQuery(document).ready(function() {
     if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
     jQuery(event.target).closest('.action_group.dyn ul').remove();
   });
-  jQuery('form.as_form').live('ajax:beforeSend', function(event) {
+  jQuery(document).on('ajax:beforeSend', 'form.as_form', function(event) {
     var as_form = jQuery(this).closest("form");
-    if (as_form.attr('data-loading') == 'true') {
+    if (as_form.data('loading') == true) {
       ActiveScaffold.disable_form(as_form);
     }
     return true;
   });
   
-  jQuery('form.as_form').live('ajax:complete', function(event) {
+  jQuery(document).on('ajax:complete', 'form.as_form', function(event) {
     var as_form = jQuery(this).closest("form");
-    if (as_form.attr('data-loading') == 'true') {
+    if (as_form.data('loading') == true) {
       ActiveScaffold.enable_form(as_form);
     }
   });
-  jQuery('form.as_form').live('ajax:error', function(event, xhr, status, error) {
+  jQuery(document).on('ajax:error', 'form.as_form', function(event, xhr, status, error) {
     var as_div = jQuery(this).closest("div.active-scaffold");
     if (as_div.length) {
       ActiveScaffold.report_500_response(as_div);
     }
   });
-  jQuery('form.as_form.as_remote_upload').live('submit', function(event) {
+  jQuery(document).on('submit', 'form.as_form:not([data-remote])', function(event) {
     var as_form = jQuery(this).closest("form");
-    if (as_form.attr('data-loading') == 'true') {
+    if (as_form.data('loading') == true) {
       setTimeout("ActiveScaffold.disable_form('" + as_form.attr('id') + "')", 10);
     }
     return true;
   });
-  jQuery('a.as_action').live('ajax:before', function(event) {
+  jQuery(document).on('ajax:before', 'a.as_action', function(event) {
     var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
     if (action_link) {
       if (action_link.is_disabled()) {
@@ -46,7 +46,7 @@ jQuery(document).ready(function() {
     }
     return true;
   });
-  jQuery('a.as_action').live('ajax:success', function(event, response) {
+  jQuery(document).on('ajax:success', 'a.as_action', function(event, response) {
     var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
     if (action_link) {
       if (action_link.position) {
@@ -59,14 +59,14 @@ jQuery(document).ready(function() {
     }
     return true;
   });
-  jQuery('a.as_action').live('ajax:complete', function(event) {
+  jQuery(document).on('ajax:complete', 'a.as_action', function(event) {
     var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
     if (action_link) {
       if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
     }
     return true;
   });
-  jQuery('a.as_action').live('ajax:error', function(event, xhr, status, error) {
+  jQuery(document).on('ajax:error', 'a.as_action', function(event, xhr, status, error) {
     var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
     if (action_link) {
       ActiveScaffold.report_500_response(action_link.scaffold_id());
@@ -74,7 +74,7 @@ jQuery(document).ready(function() {
     }
     return true;
   });
-  jQuery('a.as_cancel').live('ajax:before', function(event) {
+  jQuery(document).on('ajax:before', 'a.as_cancel', function(event) {
     var as_cancel = jQuery(this);
     var action_link = ActiveScaffold.find_action_link(as_cancel);  
     
@@ -88,7 +88,7 @@ jQuery(document).ready(function() {
     }
     return true;
   });
-  jQuery('a.as_cancel').live('ajax:success', function(event, response) {
+  jQuery(document).on('ajax:success', 'a.as_cancel', function(event, response) {
     var action_link = ActiveScaffold.find_action_link(jQuery(this));
 
     if (action_link) {
@@ -100,28 +100,27 @@ jQuery(document).ready(function() {
     }
     return true;
   });
-  jQuery('a.as_cancel').live('ajax:error', function(event, xhr, status, error) {
+  jQuery(document).on('ajax:error', 'a.as_cancel', function(event, xhr, status, error) {
     var action_link = ActiveScaffold.find_action_link(jQuery(this));
     if (action_link) {
       ActiveScaffold.report_500_response(action_link.scaffold_id());
     }
     return true;
   });
-  jQuery('a.as_sort').live('ajax:before', function(event) {
+  jQuery(document).on('ajax:before', 'a.as_sort', function(event) {
     var as_sort = jQuery(this);
-    var history_controller_id = as_sort.attr('data-page-history');
+    var history_controller_id = as_sort.data('page-history');
     if (history_controller_id) addActiveScaffoldPageToHistory(as_sort.attr('href'), history_controller_id);
     as_sort.closest('th').addClass('loading');
     return true;
   });
-  jQuery('a.as_sort').live('ajax:error', function(event, xhr, status, error) {
+  jQuery(document).on('ajax:error', 'a.as_sort', function(event, xhr, status, error) {
     var as_scaffold = jQuery(this).closest('.active-scaffold');
     ActiveScaffold.report_500_response(as_scaffold);
     return true;
   });
-  jQuery('td.in_place_editor_field').live('hover', function(event) {
+  jQuery(document).on('hover', 'td.in_place_editor_field', function(event) {
     var td = jQuery(this), span = td.find('span.in_place_editor_field');
-    span.data(); // $ 1.4.2 workaround
     if (event.type == 'mouseenter') {
       if (td.hasClass('empty') || typeof(span.data('editInPlace')) === 'undefined') td.find('span').addClass("hover");
      }
@@ -130,30 +129,30 @@ jQuery(document).ready(function() {
     }
     return true;
   });
-  jQuery('td.in_place_editor_field, th.as_marked-column_heading').live('click', function(event) {
+  jQuery(document).on('click', 'td.in_place_editor_field, th.as_marked-column_heading', function(event) {
     var span = jQuery(this).find('span.in_place_editor_field');
     span.data('addEmptyOnCancel', jQuery(this).hasClass('empty'));
     jQuery(this).removeClass('empty');
     if (span.data('editInPlace')) span.trigger('click.editInPlace');
     else ActiveScaffold.in_place_editor_field_clicked(span);
   });
-  jQuery('a.as_paginate').live('ajax:before',function(event) {
+  jQuery(document).on('ajax:before', 'a.as_paginate',function(event) {
     var as_paginate = jQuery(this);
-    var history_controller_id = as_paginate.attr('data-page-history');
+    var history_controller_id = as_paginate.data('page-history');
     if (history_controller_id) addActiveScaffoldPageToHistory(as_paginate.attr('href'), history_controller_id);
     as_paginate.prevAll('img.loading-indicator').css('visibility','visible');
     return true;
   });
-  jQuery('a.as_paginate').live('ajax:error', function(event, xhr, status, error) {
+  jQuery(document).on('ajax:error', 'a.as_paginate', function(event, xhr, status, error) {
     var as_scaffold = jQuery(this).closest('.active-scaffold');
     ActiveScaffold.report_500_response(as_scaffold);
     return true;
   });
-  jQuery('a.as_paginate').live('ajax:complete', function(event) {
+  jQuery(document).on('ajax:complete', 'a.as_paginate', function(event) {
     jQuery(this).prevAll('img.loading-indicator').css('visibility','hidden');
     return true;
   });
-  jQuery('a.as_add_existing, a.as_replace_existing').live('ajax:before', function(event) {
+  jQuery(document).on('ajax:before', 'a.as_add_existing, a.as_replace_existing', function(event) {
     var id = jQuery(this).prev().val();
     if (id) {
       if (!jQuery(this).data('href')) jQuery(this).data('href', jQuery(this).attr('href'));
@@ -161,26 +160,26 @@ jQuery(document).ready(function() {
       return true;
     } else return false;
   });
-  jQuery('input.update_form:not(.recordselect), textarea.update_form, select.update_form').live('change', function(event) {
+  jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form', function(event) {
     var element = jQuery(this);
     var value = element.is("input:checkbox:not(:checked)") ? null : element.val();
-    ActiveScaffold.update_column(element, element.attr('data-update_url'), element.attr('data-update_send_form'), element.attr('id'), value);
+    ActiveScaffold.update_column(element, element.data('update_url'), element.data('update_send_form'), element.attr('id'), value);
     return true;
   });
-  jQuery('input.recordselect.update_form').live('recordselect:change', function(event, id, label) {
+  jQuery(document).on('recordselect:change', 'input.recordselect.update_form', function(event, id, label) {
     var element = jQuery(this);
-    ActiveScaffold.update_column(element, element.attr('data-update_url'), element.attr('data-update_send_form'), element.attr('id'), id);
+    ActiveScaffold.update_column(element, element.data('update_url'), element.data('update_send_form'), element.attr('id'), id);
     return true;
   });
   
-  jQuery('select.as_search_range_option').live('change', function(event) {
+  jQuery(document).on('change', 'select.as_search_range_option', function(event) {
     var element = jQuery(this);
     ActiveScaffold[element.val() == 'BETWEEN' ? 'show' : 'hide'](element.closest('dd').find('.as_search_range_between'));
     ActiveScaffold[(element.val() == 'null' || element.val() == 'not_null') ? 'hide' : 'show'](element.attr('id').replace(/_opt/, '_numeric'));
     return true;
   });
   
-  jQuery('select.as_search_date_time_option').live('change', function(event) {
+  jQuery(document).on('change', 'select.as_search_date_time_option', function(event) {
     var element = jQuery(this);
     ActiveScaffold[!(element.val() == 'PAST' || element.val() == 'FUTURE' || element.val() == 'RANGE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_numeric'));
     ActiveScaffold[(element.val() == 'PAST' || element.val() == 'FUTURE') ? 'show' : 'hide'](element.attr('id').replace(/_opt/, '_trend'));
@@ -188,18 +187,18 @@ jQuery(document).ready(function() {
     return true;
   });
 
-  jQuery('select.as_update_date_operator').live('change', function(event) {
+  jQuery(document).on('change', 'select.as_update_date_operator', function(event) {
     ActiveScaffold[jQuery(this).val() == 'REPLACE' ? 'show' : 'hide'](jQuery(this).next());
     ActiveScaffold[jQuery(this).val() == 'REPLACE' ? 'hide' : 'show'](jQuery(this).next().next());
     return true;
   });
 
-  jQuery('a[data-popup]').live('click', function(e) {
+  jQuery(document).on('click', 'a[data-popup]', function(e) {
     window.open(jQuery(this).attr('href'));
     e.preventDefault();
   });
 
-  jQuery('.hover_click').live("click", function(event) {
+  jQuery(document).on("click", '.hover_click', function(event) {
     var element = jQuery(this);
     var ul_element = element.children('ul').first();
     if (ul_element.is(':visible')) {
@@ -209,7 +208,7 @@ jQuery(document).ready(function() {
     }
     return false;
   });
-  jQuery('.hover_click a.as_action').live('click', function(event) {
+  jQuery(document).on('click', '.hover_click a.as_action', function(event) {
     var element = jQuery(this).closest('.hover_click');
     if (element) {
       element.find('ul').hide();
@@ -217,7 +216,7 @@ jQuery(document).ready(function() {
     return true;
   });
 
-  jQuery('.message a.close').live('click', function(e) {
+  jQuery(document).on('click', '.message a.close', function(e) {
     ActiveScaffold.hide(jQuery(this).closest('.message'));
     e.preventDefault();
   });
@@ -476,6 +475,7 @@ var ActiveScaffold = {
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','visible');
     jQuery('input[type=submit]', as_form).attr('disabled', 'disabled');
+    // data-remote-disabled attr instead of set data because is used to in selector later
     jQuery("input:enabled,select:enabled,textarea:enabled", as_form).attr('disabled', 'disabled').attr('data-remove-disabled', true);
   },
   
@@ -752,7 +752,6 @@ var ActiveScaffold = {
   },
 
   in_place_editor_field_clicked: function(span) {
-    span.data(); // $ 1.4.2 workaround
     // test editor is open
     if (typeof(span.data('editInPlace')) === 'undefined') {
       var options = {show_buttons: true,
@@ -799,11 +798,11 @@ var ActiveScaffold = {
 
       if (csrf_param) options['params'] = csrf_param.attr('content') + '=' + csrf_token.attr('content');
 
-      if (span.closest('div.active-scaffold').attr('data-eid')) {
+      if (span.closest('div.active-scaffold').data('eid')) {
         if (options['params'].length > 0) {
           options['params'] += "&";
         }
-        options['params'] += ("eid=" + span.closest('div.active-scaffold').attr('data-eid'));
+        options['params'] += ("eid=" + span.closest('div.active-scaffold').data('eid'));
       }
 
       if (mode === 'clone') {
@@ -981,12 +980,12 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
   init: function(a, target, loading_indicator) {
     this.tag = jQuery(a);
     this.url = this.tag.attr('href');
-    this.method = this.tag.attr('data-method') || 'get';
+    this.method = this.tag.data('method') || 'get';
     this.target = target;
     this.loading_indicator = loading_indicator;
     this.hide_target = false;
-    this.position = this.tag.attr('data-position');
-    this.action = this.tag.attr('data-action');
+    this.position = this.tag.data('position');
+    this.action = this.tag.data('action');
 
     this.tag.data('action_link', this);
     return this;
@@ -1062,7 +1061,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
 ActiveScaffold.Actions.Record = ActiveScaffold.Actions.Abstract.extend({
   instantiate_link: function(link) {
     var l = new ActiveScaffold.ActionLink.Record(link, this.target, this.loading_indicator);
-    var refresh = this.target.attr('data-refresh');
+    var refresh = this.target.data('refresh');
     if (refresh) l.refresh_url = refresh;
     
     if (l.position) {
