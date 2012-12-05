@@ -885,7 +885,7 @@ var ActiveScaffold = {
   },
   
   draggable_lists: function(element) {
-    jQuery('#' + element).draggable_lists();
+    jQuery('ul#' + element).draggable_lists();
   }
 }
 
