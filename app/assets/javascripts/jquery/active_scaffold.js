@@ -1,4 +1,4 @@
-jQuery(document).ready(function() {
+jQuery(document).ready(function($) {
   jQuery(document).click(function(event) {
     jQuery('.action_group.dyn ul').remove();
   });
@@ -296,7 +296,7 @@ jQuery(document).ready(function() {
 */
 
 if (typeof(jQuery.fn.delayedObserver) === 'undefined') { 
-  (function() {
+  (function($) {
     var delayedObserverStack = [];
     var observed;
    
@@ -342,7 +342,7 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
         });
       }
     });
-  })();
+  })(jQuery);
 };
 
 
