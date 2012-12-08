@@ -6,7 +6,7 @@ module ActionDispatch
     }
     ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING = {
         :collection => {:edit_associated => :get, :new_existing => :get, :add_existing => :post},
-        :member => {:edit_associated => :get, :add_association => :get, :destroy_existing => :delete}
+        :member => {:edit_associated => :get, :destroy_existing => :delete}
     }
     class Mapper
       module Base
