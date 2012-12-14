@@ -700,21 +700,6 @@ var ActiveScaffold = {
     }
   },
   
-  sortable: function(element, controller, options, url_params) {
-    if (typeof(element) == 'string') element = '#' + element;
-    var element = jQuery(element);
-    var sortable_options = jQuery.extend({}, options);
-    if (options.update === true) {
-      url_params.authenticity_token = jQuery('meta[name=csrf-param]').attr('content');
-      sortable_options.update = function(event, ui) {
-         var url = controller + '/' + options.action + '?'
-         url += jQuery(this).sortable('serialize',{key: encodeURIComponent(jQuery(this).attr('id') + '[]'), expression:/^[^_-](?:[A-Za-z0-9_-]*)-(.*)-row$/});
-         jQuery.post(url.append_params(url_params));
-       }
-    }
-    element.sortable(sortable_options);
-  },
-
   record_select_onselect: function(edit_associated_url, active_scaffold_id, id){
     jQuery.ajax({
       url: edit_associated_url.split('--ID--').join(id),
