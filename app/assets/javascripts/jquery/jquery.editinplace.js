@@ -286,7 +286,7 @@ $.extend(InlineEditor.prototype, {
 	},
 	
 	setInitialValue: function() {
-		if (this.settings.field_type == 'remote') return; // remote generated editor doesn't need initial value
+		if (this.settings.field_type == 'remote' || this.settings.field_type == 'clone') return; // remote and clone generated editor doesn't need initial value
 		var initialValue = this.triggerDelegateCall('willOpenEditInPlace', this.originalValue);
 		var editor = this.dom.find(':input');
 		editor.val(initialValue);
