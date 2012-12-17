@@ -16,6 +16,16 @@ module ActiveScaffold::DataStructures
       @label.to_s.underscore
     end
 
+    # this is so that array.delete and array.include?, etc., will work by column name
+    def ==(other) #:nodoc:
+      # another ActionColumns
+      if other.class == self.class
+        self.label == other.label
+      else
+        @label.to_s == other.to_s
+      end
+    end
+
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
     
