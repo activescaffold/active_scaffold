@@ -63,7 +63,7 @@ module ActiveScaffold::Actions
       (!nested? || !nested.readonly?) && (record || self).send(:authorized_for?, :crud_type => :delete)
     end
     def delete_ignore?(record = nil)
-      (!nested? || !nested.readonly?) && self.send(:authorized_for?, :crud_type => :delete)
+      (nested? && nested.readonly?) || !self.send(:authorized_for?, :crud_type => :delete)
     end
     private
     def delete_authorized_filter
