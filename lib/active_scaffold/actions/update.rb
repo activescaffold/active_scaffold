@@ -158,6 +158,9 @@ module ActiveScaffold::Actions
     def update_authorized?(record = nil)
       (!nested? || !nested.readonly?) && (record || self).authorized_for?(:crud_type => :update)
     end
+    def update_ignore?(record = nil)
+      self.authorized_for?(:crud_type => :update)
+    end
     private
     def update_authorized_filter
       link = active_scaffold_config.update.link || active_scaffold_config.update.class.link
