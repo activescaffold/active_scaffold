@@ -1,11 +1,8 @@
 <div id="<%= sub_form_list_id(:association => column.name) %>">
   <% associated.each_index do |index| %>
+  <div class="sub-form-record">
   <% @record = associated[index] -%>
-  <% if @record.errors.count -%>
-  <div class="association-record-errors" id="<%= element_messages_id :action => @record.class.name.underscore, :id => "#{parent_record.id}-#{index}" %>">
-    <%= active_scaffold_error_messages_for :record, :object_name => @record.class.model_name.human.downcase %>
+  <%= render :partial => 'form_association_record', :locals => {:scope => column_scope(column, scope), :parent_record => parent_record, :column => column, :locked => show_blank_record && @record.new_record? && @record == associated.last, :index => index} %>
   </div>
-  <% end %>
-  <%= render :partial => 'form_association_record', :locals => {:scope => column_scope(column, scope), :parent_record => parent_record, :column => column, :locked => show_blank_record && @record.new_record? && @record == associated.last} %>
   <% end -%>
 </div>

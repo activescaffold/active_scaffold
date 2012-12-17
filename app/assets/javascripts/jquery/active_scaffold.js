@@ -557,12 +557,7 @@ var ActiveScaffold = {
 
   delete_subform_record: function(record) {
     if (typeof(record) == 'string') record = '#' + record;
-    record = jQuery(record);
-    var errors = record.prev();
-    if (errors.hasClass('association-record-errors')) {
-      this.remove(errors);
-    }
-    record = jQuery(record).nextUntil('.association-record').andSelf();
+    record = jQuery(record).closest('.sub-form-record');
     this.remove(record);
   },
 
@@ -668,11 +663,13 @@ var ActiveScaffold = {
     content = jQuery(content);
     if (options.singular == false) {
       if (!(options.id && jQuery('#' + options.id).size() > 0)) {
-        var new_element = element.append(content);
+        var tfoot = element.find('tfoot');
+        if (tfoot.length) tfoot.before(content);
+        else element.append(content);
         content.trigger('as:element_created');
       }
     } else {
-      var current = jQuery('#' + element.attr('id') + ' .association-record')
+      var current = jQuery('#' + element.attr('id') + ' .sub-form-record')
       if (current[0]) {
         this.replace(current[0], content);
       } else {
