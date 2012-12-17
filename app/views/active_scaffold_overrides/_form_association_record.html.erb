@@ -8,20 +8,34 @@
   tr_id = "association-#{options[:id]}"
 
   if config.subform.layout == :vertical
+    record_tag ||= :div
     row_tag ||= :ol
     column_tag ||= :li
+    error_tag ||= :div
+    error_inner_tag ||= nil
     default_col_class = ['form-element']
     flatten = true unless local_assigns.has_key? :flatten
   else
+    record_tag ||= :tbody
     row_tag ||= :tr
     column_tag ||= :td
+    error_tag ||= :tr
+    error_inner_tag ||= :td
     default_col_class = []
     flatten ||= false
   end
+  index ||= nil
 
   columns_length = 0
   columns_groups = []
 -%>
+<<%= record_tag %> class="sub-form-record">
+<% unless @record.errors.empty? -%>
+<%= content_tag error_tag, :class => "association-record-errors", :id => element_messages_id(:action => @record.class.name.underscore, :id => "#{parent_record.id}-#{index}") do %>
+  <% errors = active_scaffold_error_messages_for(:record, :object_name => @record.class.model_name.human.downcase) %>
+  <%= error_inner_tag ? content_tag(error_inner_tag, errors, :colspan => (active_scaffold_config_for(@record.class).subform.columns.length + 1 if error_inner_tag == :td)) : errors %>
+<% end %>
+<% end %>
 <%= content_tag row_tag, :id => tr_id, :class => "association-record#{' association-record-new' if @record.new_record?}#{' locked' if locked}" do %>
 <% config.subform.columns.each :for => @record.class, :crud_type => :read, :flatten => flatten do |column| %>
 <%
@@ -61,10 +75,11 @@
 
 <% columns_groups.each do |column| %>
 <%= content_tag row_tag, :class => 'associated-record' do %>
-  <%= content_tag column_tag, :colspan => columns_length do %>
+  <%= content_tag column_tag, :colspan => (columns_length if column_tag == :td) do %>
   <% column.each :for => @record.class, :crud_type => :read, :flatten => true do |col| %>
     <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, true) %>
   <% end %>
   <% end %>
 <% end %>
 <% end %>
+</<%= record_tag %>>
