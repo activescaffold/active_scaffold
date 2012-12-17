@@ -52,7 +52,7 @@ module ActiveScaffold::Actions
       (record || self).send(:authorized_for?, :crud_type => :read)
     end
     def show_ignore?(record = nil)
-      self.send(:authorized_for?, :crud_type => :read)
+      !self.send(:authorized_for?, :crud_type => :read)
     end
     private 
     def show_authorized_filter

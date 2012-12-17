@@ -159,7 +159,7 @@ module ActiveScaffold::Actions
       (!nested? || !nested.readonly?) && (record || self).authorized_for?(:crud_type => :update)
     end
     def update_ignore?(record = nil)
-      self.authorized_for?(:crud_type => :update)
+      !self.authorized_for?(:crud_type => :update)
     end
     private
     def update_authorized_filter
