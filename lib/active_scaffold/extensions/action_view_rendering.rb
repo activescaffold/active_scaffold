@@ -80,19 +80,20 @@ module ActionView::Helpers #:nodoc:
           options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
         else
           options[:prefixes] = ['active_scaffold_overrides']
-          view_paths = lookup_context.view_paths
           last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
           lookup_context.view_paths = view_paths.drop(view_paths.find_index {|path| path.to_s == last_view_path} + 1)
         end
         result = render_without_active_scaffold options
-        lookup_context.view_paths = view_paths if view_paths
+        lookup_context.view_paths = @_view_paths if @_view_paths
         result
       else
+        @_view_paths ||= lookup_context.view_paths.clone
         last_template = lookup_context.last_template
         if args.first.is_a?(Hash)
           current_view = {:locals => args.first[:locals]}
           view_stack << current_view
         end
+        lookup_context.view_paths = @_view_paths # reset view_paths in case a view render :super, and then render :partial
         result = render_without_active_scaffold(*args, &block)
         view_stack.pop if current_view.present?
         lookup_context.last_template = last_template
