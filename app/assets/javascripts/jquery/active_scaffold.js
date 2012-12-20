@@ -153,7 +153,9 @@ jQuery(document).ready(function($) {
     return true;
   });
   jQuery(document).on('ajax:before', 'a.as_add_existing, a.as_replace_existing', function(event) {
-    var id = jQuery(this).prev().val();
+    var prev = jQuery(this).prev();
+    if (!prev.is(':input')) prev = prev.find(':input');
+    var id = prev.val();
     if (id) {
       if (!jQuery(this).data('href')) jQuery(this).data('href', jQuery(this).attr('href'));
       jQuery(this).attr('href', jQuery(this).data('href').replace('--ID--', id));
