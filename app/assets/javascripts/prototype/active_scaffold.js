@@ -244,9 +244,13 @@ document.observe("dom:loaded", function() {
   });
   document.on('ajax:before', 'a.as_add_existing, a.as_replace_existing', function(event) {
     var button = event.findElement();
-    var url =  button.readAttribute('href').sub('--ID--', button.previous().getValue());
-    event.memo.url = url;
-    return true;
+    var prev = button.previous();
+    if (!prev.match('input,select')) prev = prev.down('input,select');
+    var id = prev.getValue();
+    if (id) {
+      event.memo.url = button.readAttribute('href').sub('--ID--', id);
+      return true;
+    } else return false;
   });
   document.on('change', 'input.update_form, textarea.update_form, select.update_form', function(event) {
     var element = event.findElement();
