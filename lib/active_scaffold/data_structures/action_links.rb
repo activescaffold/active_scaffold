@@ -49,7 +49,7 @@ module ActiveScaffold::DataStructures
           collected = item[val]
           links << collected unless collected.nil?
         else
-          links << item if item.action == val.to_s
+          links << item if item.action.to_s == val.to_s
         end
       end
       links.first
