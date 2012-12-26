@@ -137,6 +137,11 @@ module ActiveScaffold
             time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect {|part, format_part| format_part if parts[part].present?}.compact
             format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
           else
+            if parts[:hour]
+              value += time_parts = [:min, :sec].collect {|part| ':00' unless parts[part].present?}.compact.join
+            else
+              value += ' 00:00:00'
+            end
             format += ' %z' if parts[:offset].present? && format !~ /%z/i
           end
           time = DateTime.strptime(value, format)
