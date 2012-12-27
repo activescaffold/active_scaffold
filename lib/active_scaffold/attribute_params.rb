@@ -91,11 +91,26 @@ module ActiveScaffold
     
     def column_value_from_param_value(parent_record, column, value)
       # convert the value, possibly by instantiating associated objects
-      if value.is_a?(Hash)
+      form_ui = column.form_ui || column.column.try(:type)
+      if form_ui && self.respond_to?("column_value_for#{form_ui}_type")
+        self.send("column_value_for#{form_ui}_type", parent_record, column, value)
+      elsif value.is_a?(Hash)
         column_value_from_param_hash_value(parent_record, column, value)
       else
         column_value_from_param_simple_value(parent_record, column, value)
       end
+    end
+    
+    def datetime_conversion_for_value(column)
+      if column.column
+        column.column.type == :date ? :to_date : :to_time
+      else
+        :to_time
+      end
+    end
+    
+    def column_value_for_datetime_type(parent_record, column, value)
+      self.class.condition_value_for_datetime(value, self.class.datetime_conversion_for_condition(column))
     end
 
     def column_value_from_param_simple_value(parent_record, column, value)
