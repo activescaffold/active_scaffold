@@ -70,6 +70,7 @@ module ActionView::Helpers #:nodoc:
         end
 
       elsif args.first == :super
+        @_view_paths ||= lookup_context.view_paths.clone
         prefix, template = @virtual_path.split('/')
         options = args[1] || {}
         options[:locals] ||= {}
