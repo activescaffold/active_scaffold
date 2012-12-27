@@ -92,8 +92,8 @@ module ActiveScaffold
     def column_value_from_param_value(parent_record, column, value)
       # convert the value, possibly by instantiating associated objects
       form_ui = column.form_ui || column.column.try(:type)
-      if form_ui && self.respond_to?("column_value_for#{form_ui}_type")
-        self.send("column_value_for#{form_ui}_type", parent_record, column, value)
+      if form_ui && self.respond_to?("column_value_for_#{form_ui}_type")
+        self.send("column_value_for_#{form_ui}_type", parent_record, column, value)
       elsif value.is_a?(Hash)
         column_value_from_param_hash_value(parent_record, column, value)
       else
