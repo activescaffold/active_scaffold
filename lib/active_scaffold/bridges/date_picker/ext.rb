@@ -61,3 +61,15 @@ ActiveScaffold::Finder::ClassMethods.module_eval do
   alias_method :condition_for_date_picker_type, :condition_for_date_bridge_type
   alias_method :condition_for_datetime_picker_type, :condition_for_date_picker_type
 end
+ActiveScaffold::AttributeParams.module_eval do
+  def datetime_conversion_for_value_with_datepicker(column)
+    if column.form_ui == :date_picker
+      :to_date
+    else
+      datetime_conversion_for_value_without_datepicker(column)
+    end
+  end
+  alias_method_chain :datetime_conversion_for_value, :datepicker
+  alias_method :column_value_for_date_picker_type, :column_value_for_datetime_type
+  alias_method :column_value_for_datetime_picker_type, :column_value_for_datetime_type
+end
