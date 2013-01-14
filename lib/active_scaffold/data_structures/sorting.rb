@@ -3,9 +3,12 @@ module ActiveScaffold::DataStructures
   class Sorting
     include Enumerable
 
+    attr_accessor :constraint_columns
+
     def initialize(columns)
       @columns = columns
       @clauses = []
+      @constraint_columns = []
     end
     
     def set_default_sorting(model)
@@ -91,6 +94,7 @@ module ActiveScaffold::DataStructures
       # unless the sorting is by method, create the sql string
       order = []
       each do |sort_column, sort_direction|
+        next if constraint_columns.include? sort_column.name
         sql = sort_column.sort[:sql]
         next if sql.nil? or sql.empty?
 

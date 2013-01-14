@@ -230,6 +230,10 @@ module ActiveScaffold::Config
             @sorting = sorting
           else
             @sorting = default_sorting
+            if @conf.columns.constraint_columns.present?
+              @sorting = @sorting.clone
+              @sorting.constraint_columns = @conf.columns.constraint_columns
+            end
           end
         end
         @sorting
