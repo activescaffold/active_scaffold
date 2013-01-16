@@ -15,6 +15,14 @@
 - Fix calculations using field_search with has_many includes
 - Add support to ActiveScaffold.create_record_row to insert after or before of an element
 - Add support for dynamic action group
+- Improve parsing of datetimes
+- Add support for lists filtered by id (one-item lists)
+- Fix update_columns with sending whole big forms
+- Improve update_columns on subforms
+- Support to override ActiveScaffold.remove so effects can be added on page elements deletion
+- Add support for conversion methods in controller, so form_uis can define how to convert params to values
+- Avoid sorting by contraint columns
+- Cosmetic fixes and improvements
 
 = 3.2.17 (not released yet)
 - fix constraints for columns with multiple columns in search_sql
