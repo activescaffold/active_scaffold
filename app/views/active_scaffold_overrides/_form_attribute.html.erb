@@ -1,8 +1,12 @@
 <%
   scope ||= nil
   column_options = active_scaffold_input_options(column, scope)
+  attributes = field_attributes(column, @record)
+  if local_assigns[:col_class].present?
+    attributes[:class] = "#{attributes[:class]} #{col_class}"
+  end
 %>
-<dl<%= " class=\"#{col_class}\"".html_safe if local_assigns[:col_class].present? %>>
+<%= tag :dl, attributes, true %>
   <dt>
     <label for="<%= column_options[:id] %>"><%= column.label %></label>
   </dt>

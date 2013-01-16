@@ -128,6 +128,10 @@ module ActiveScaffold
         options
       end
 
+      def field_attributes(column, record)
+        {}
+      end
+
       ##
       ## Form input methods
       ##
