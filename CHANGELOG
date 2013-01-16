@@ -24,7 +24,7 @@
 - Avoid sorting by contraint columns
 - Cosmetic fixes and improvements
 
-= 3.2.17 (not released yet)
+= 3.2.17
 - fix constraints for columns with multiple columns in search_sql
 - remove unauthorized collection links
 - copy parameters and html_options on cloning action link
