@@ -652,7 +652,8 @@ var ActiveScaffold = {
     var initial_label = (options.default_visible === true) ? options.hide_label : options.show_label;
     
     toggler.append(' (<a class="visibility-toggle" href="#">' + initial_label + '</a>)');
-    toggler.children('a').click(function() {
+    toggler.children('a').click(function(e) {
+      e.preventDefault();
       toggable.toggle(); 
       jQuery(this).html((toggable.is(':hidden')) ? options.show_label : options.hide_label);
       return false;
