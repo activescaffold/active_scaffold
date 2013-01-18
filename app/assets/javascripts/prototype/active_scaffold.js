@@ -603,6 +603,7 @@ var ActiveScaffold = {
     toggler.insert(' (<a class="visibility-toggle" href="#">' + initial_label + '</a>)');
     toggler.firstDescendant().observe('click', function(event) {
       var element = event.element();
+      event.stop();
       toggable.toggle(); 
       element.innerHTML = (toggable.style.display == 'none') ? options.show_label : options.hide_label;
       return false;
