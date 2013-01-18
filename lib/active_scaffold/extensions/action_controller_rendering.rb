@@ -6,7 +6,7 @@ module ActionController #:nodoc:
         @rendering_adapter = true # recursion control
         # if we need an adapter, then we render the actual stuff to a string and insert it into the adapter template
         opts = args.blank? ? Hash.new : args.first
-        unless opts[:js] || (opts[:formats] || lookup_context.formats).include?(:js)
+        unless opts[:js] || opts[:formats] == [:js] || opts[:partial].blank?
           render :partial => params[:adapter][1..-1],
             :locals => {:payload => render_to_string(opts.merge(:layout => false), &block).html_safe},
             :use_full_path => true, :layout => false, :content_type => :html
