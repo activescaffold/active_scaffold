@@ -278,7 +278,7 @@ module ActiveScaffold
       end
 
       def render_column_heading(column, sorting, sort_direction)
-        tag_options = {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => column.description}
+        tag_options = {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => strip_tags(column.description)}
         if column.name == :as_marked
           tag_options[:data] = {
             :ie_mode => :inline_checkbox,
