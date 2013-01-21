@@ -24,7 +24,7 @@ jQuery(document).ready(function($) {
   jQuery(document).on('ajax:error', 'form.as_form', function(event, xhr, status, error) {
     var as_div = jQuery(this).closest("div.active-scaffold");
     if (as_div.length) {
-      ActiveScaffold.report_500_response(as_div);
+      ActiveScaffold.report_500_response(as_div, xhr);
     }
   });
   jQuery(document).on('submit', 'form.as_form:not([data-remote])', function(event) {
@@ -69,7 +69,7 @@ jQuery(document).ready(function($) {
   jQuery(document).on('ajax:error', 'a.as_action', function(event, xhr, status, error) {
     var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
     if (action_link) {
-      ActiveScaffold.report_500_response(action_link.scaffold_id());
+      ActiveScaffold.report_500_response(action_link.scaffold_id(), xhr);
       action_link.enable();
     }
     return true;
@@ -103,7 +103,7 @@ jQuery(document).ready(function($) {
   jQuery(document).on('ajax:error', 'a.as_cancel', function(event, xhr, status, error) {
     var action_link = ActiveScaffold.find_action_link(jQuery(this));
     if (action_link) {
-      ActiveScaffold.report_500_response(action_link.scaffold_id());
+      ActiveScaffold.report_500_response(action_link.scaffold_id(), xhr);
     }
     return true;
   });
@@ -116,7 +116,7 @@ jQuery(document).ready(function($) {
   });
   jQuery(document).on('ajax:error', 'a.as_sort', function(event, xhr, status, error) {
     var as_scaffold = jQuery(this).closest('.active-scaffold');
-    ActiveScaffold.report_500_response(as_scaffold);
+    ActiveScaffold.report_500_response(as_scaffold, xhr);
     return true;
   });
   jQuery(document).on('hover', 'td.in_place_editor_field', function(event) {
@@ -145,7 +145,7 @@ jQuery(document).ready(function($) {
   });
   jQuery(document).on('ajax:error', 'a.as_paginate', function(event, xhr, status, error) {
     var as_scaffold = jQuery(this).closest('.active-scaffold');
-    ActiveScaffold.report_500_response(as_scaffold);
+    ActiveScaffold.report_500_response(as_scaffold, xhr);
     return true;
   });
   jQuery(document).on('ajax:complete', 'a.as_paginate', function(event) {
@@ -704,7 +704,7 @@ var ActiveScaffold = {
     jQuery.ajax({
       url: edit_associated_url.split('--ID--').join(id),
       error: function(xhr, textStatus, errorThrown){
-        ActiveScaffold.report_500_response(active_scaffold_id)
+        ActiveScaffold.report_500_response(active_scaffold_id, xhr)
       }
     });
   },
@@ -863,7 +863,7 @@ var ActiveScaffold = {
       error: function (xhr, status, error) {
         var as_div = element.closest("div.active-scaffold");
         if (as_div) {
-          ActiveScaffold.report_500_response(as_div);
+          ActiveScaffold.report_500_response(as_div, xhr);
         }
       }
     });
