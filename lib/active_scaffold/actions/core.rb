@@ -29,7 +29,7 @@ module ActiveScaffold::Actions
 
     def render_field_for_inplace_editing
       @record = find_if_allowed(params[:id], :crud_type => :update, :column => params[:update_column])
-      render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
+      render :action => 'render_field_inplace', :layout => false
     end
 
     def render_field_for_update_columns
