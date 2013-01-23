@@ -94,7 +94,7 @@ module ActiveScaffold
         end
         
         if optgroup = options.delete(:optgroup)
-          select(:record, method, grouped_options_for_select(column, select_options, optgroup), options, html_options)
+          select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
         elsif column.association
           collection_select(:record, method, select_options, :id, :to_label, options, html_options)
         else
