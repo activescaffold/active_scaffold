@@ -136,7 +136,7 @@ module ActiveScaffold
       ## Form input methods
       ##
       
-      def grouped_options_for_select(column, select_options, optgroup)
+      def active_scaffold_grouped_options(column, select_options, optgroup)
         group_label = active_scaffold_config_for(column.association.klass).columns[optgroup].try(:association) ? :to_label : :to_s
         select_options.group_by(&optgroup.to_sym).collect do |group, options|
           [group.send(group_label), options.collect {|r| [r.to_label, r.id]}]
@@ -164,7 +164,7 @@ module ActiveScaffold
         active_scaffold_translate_select_options(options)
 
         if optgroup = options.delete(:optgroup)
-          select(:record, method, grouped_options_for_select(column, select_options, optgroup), options, html_options)
+          select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
         else
           collection_select(:record, method, select_options, :id, :to_label, options, html_options)
         end
