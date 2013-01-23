@@ -28,6 +28,7 @@ module ActiveScaffold::Actions
     end
 
     def render_field_for_inplace_editing
+      @column = active_scaffold_config.columns[params[:update_column]]
       @record = find_if_allowed(params[:id], :crud_type => :update, :column => params[:update_column])
       render :action => 'render_field_inplace', :layout => false
     end
