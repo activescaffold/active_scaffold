@@ -71,11 +71,7 @@ module ActiveScaffold::Actions
     end
 
     def clear_flashes
-      if request.xhr?
-        flash.keys.each do |flash_key|
-          flash[flash_key] = nil
-        end
-      end
+      flash.clear if request.xhr?
     end
 
     def each_marked_record(&block)
