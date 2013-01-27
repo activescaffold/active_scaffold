@@ -110,7 +110,7 @@ module ActiveScaffold
     end
     
     def column_value_for_datetime_type(parent_record, column, value)
-      self.class.condition_value_for_datetime(value, self.class.datetime_conversion_for_condition(column))
+      self.class.condition_value_for_datetime(column, value, self.class.datetime_conversion_for_condition(column))
     end
 
     def column_value_from_param_simple_value(parent_record, column, value)

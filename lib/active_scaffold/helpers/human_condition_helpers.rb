@@ -20,8 +20,8 @@ module ActiveScaffold
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(opt).downcase} '#{value[:from]}' #{opt == 'BETWEEN' ? '- ' + value[:to].to_s : ''}"
           when :date, :time, :datetime, :timestamp
             conversion = column.column.type == :date ? :to_date : :to_time
-            from = controller.condition_value_for_datetime(value[:from], conversion)
-            to = controller.condition_value_for_datetime(value[:to], conversion)
+            from = controller.condition_value_for_datetime(column, value[:from], conversion)
+            to = controller.condition_value_for_datetime(column, value[:to], conversion)
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt])} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"
           when :select, :multi_select, :record_select
             associated = value

@@ -116,8 +116,24 @@ module ActiveScaffold
           nil
         end
       end
+
+      def translate_days_and_months(value, format)
+        keys = {
+          '%A' => 'date.day_names',
+          '%a' => 'date.abbr_day_names',
+          '%B' => 'date.month_names',
+          '%b' => 'date.abbr_month_names'
+        }
+        keys.each do |f, k|
+          if format.include? f
+            table = Hash[I18n.t(k).compact.zip(I18n.t(k, :locale => :en).compact)]
+            value.gsub!(Regexp.union(table.keys)) { |s| table[s] }
+          end
+        end
+        value
+      end
       
-      def condition_value_for_datetime(value, conversion = :to_time)
+      def condition_value_for_datetime(column, value, conversion = :to_time)
         if value.is_a? Hash
           Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[part].to_i}) rescue nil
         elsif value.respond_to?(:strftime)
@@ -129,10 +145,10 @@ module ActiveScaffold
             value.send(conversion)
           end
         elsif conversion == :to_date
-          Date.strptime(value, I18n.t('date.formats.default')) rescue nil
+          Date.strptime(value, I18n.t("date.formats.#{column.options[:format] || :default}")) rescue nil
         else
           parts = Date._parse(value)
-          format = I18n.translate 'time.formats.picker', :default => '' if ActiveScaffold.js_framework == :jquery
+          format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if ActiveScaffold.js_framework == :jquery
           if format.blank?
             time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect {|part, format_part| format_part if parts[part].present?}.compact
             format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
@@ -144,6 +160,7 @@ module ActiveScaffold
             end
             format += ' %z' if parts[:offset].present? && format !~ /%z/i
           end
+          value = translate_days_and_months(value, format) if I18n.locale != :en
           time = DateTime.strptime(value, format)
           time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
           time = time.send(conversion) unless conversion == :to_time
@@ -185,8 +202,8 @@ module ActiveScaffold
             
       def condition_for_datetime(column, value, like_pattern = nil)
         conversion = datetime_conversion_for_condition(column)
-        from_value = condition_value_for_datetime(value[:from], conversion)
-        to_value = condition_value_for_datetime(value[:to], conversion)
+        from_value = condition_value_for_datetime(column, value[:from], conversion)
+        to_value = condition_value_for_datetime(column, value[:to], conversion)
 
         if from_value.nil? and to_value.nil?
           nil

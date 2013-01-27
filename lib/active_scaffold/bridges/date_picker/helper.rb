@@ -151,7 +151,7 @@ module ActiveScaffold::Bridges
       module SearchColumnHelpers
         def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
           if current_search.is_a? Hash
-            value = controller.class.condition_value_for_datetime(current_search[name], column.search_ui == :date_picker ? :to_date : :to_time)
+            value = controller.class.condition_value_for_datetime(column, current_search[name], column.search_ui == :date_picker ? :to_date : :to_time)
           else
             value = current_search
           end
@@ -169,7 +169,7 @@ module ActiveScaffold::Bridges
         def active_scaffold_input_date_picker(column, options)
           options = active_scaffold_input_text_options(options.merge(column.options))
           options[:class] << " #{column.form_ui.to_s}"
-          value = controller.class.condition_value_for_datetime(@record.send(column.name), column.form_ui == :date_picker ? :to_date : :to_time)
+          value = controller.class.condition_value_for_datetime(column, @record.send(column.name), column.form_ui == :date_picker ? :to_date : :to_time)
           format = options.delete(:format) || (column.form_ui == :date_picker ? :default : :picker)
           datepicker_format_options(column, format, options)
           options[:value] = (value ? l(value, :format => format) : nil)
