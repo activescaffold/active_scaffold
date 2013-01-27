@@ -127,7 +127,7 @@ module ActiveScaffold
               when 'PAST', 'FUTURE'
                 date_bridge_from_to_for_trend(column, value).collect(&conversion)
               else
-                ['from', 'to'].collect { |field| condition_value_for_datetime(value[field], conversion)}
+                ['from', 'to'].collect { |field| condition_value_for_datetime(column, value[field], conversion)}
               end
             end
 
