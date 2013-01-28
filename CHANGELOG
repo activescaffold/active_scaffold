@@ -1,4 +1,8 @@
-= 3.2.17 (not released yet)
+= 3.2.18
+- Fix add existing record with record_select
+- Disable link for polymorphic associations in 3.2.x, it doesn't work
+
+= 3.2.17
 - fix constraints for columns with multiple columns in search_sql
 - remove unauthorized collection links
 - copy parameters and html_options on cloning action link
