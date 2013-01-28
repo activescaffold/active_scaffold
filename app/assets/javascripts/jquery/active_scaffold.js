@@ -1,4 +1,10 @@
 jQuery(document).ready(function($) {
+  if (jQuery().jquery < '1.8.0') {
+    var error = 'ActiveScaffold requires jquery 1.8.0 or greater, please use jquery-rails 2.1.x gem or greater';
+    if (typeof console != 'undefined') console.error(error);
+    else alert(error);
+  }
+
   jQuery(document).click(function(event) {
     jQuery('.action_group.dyn ul').remove();
   });
@@ -119,7 +125,7 @@ jQuery(document).ready(function($) {
     ActiveScaffold.report_500_response(as_scaffold, xhr);
     return true;
   });
-  jQuery(document).on('hover', 'td.in_place_editor_field', function(event) {
+  jQuery(document).on('mouseenter mouseleave', 'td.in_place_editor_field', function(event) {
     var td = jQuery(this), span = td.find('span.in_place_editor_field');
     if (event.type == 'mouseenter') {
       if (td.hasClass('empty') || typeof(span.data('editInPlace')) === 'undefined') td.find('span').addClass("hover");
@@ -685,7 +691,7 @@ var ActiveScaffold = {
   render_form_field: function(source, content, options) {
     if (typeof(source) == 'string') source = '#' + source;
     var source = jQuery(source);
-    var element = source.closest('.association-record').nextUntil('.association-record').andSelf();
+    var element = source.closest('.association-record').nextUntil('.association-record').addBack();
     if (element.length == 0) {
       element = source.closest('form > ol.form');
     }
@@ -715,24 +721,13 @@ var ActiveScaffold = {
     var element = jQuery(element);
     if (options.include_checkboxes) {
       var mark_checkboxes = jQuery('#' + element.attr('id') + ' > tr.record td.as_marked-column input[type="checkbox"]');
-      mark_checkboxes.each(function (index) {
-        var item = jQuery(this);
-        if(options.checked) {
-          item.attr('checked', 'checked');
-        } else {
-          item.removeAttr('checked');
-        }
-        item.attr('value', ('' + !options.checked));
-      });
+      mark_checkboxes.prop('checked', !!options.checked);
+      mark_checkboxes.val('' + !options.checked);
     }
     if(options.include_mark_all) {
       var mark_all_checkbox = element.prevAll('thead').find('th.as_marked-column_heading span input[type="checkbox"]');
-      if(options.checked) {
-        mark_all_checkbox.attr('checked', 'checked');
-      } else {
-        mark_all_checkbox.removeAttr('checked');
-      }
-      mark_all_checkbox.attr('value', ('' + !options.checked));
+      mark_all_checkbox.prop('checked', !!options.checked);
+      mark_all_checkbox.val('' + !options.checked);
     }
   },
 
