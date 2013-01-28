@@ -71,7 +71,10 @@ module ActionView::Helpers #:nodoc:
 
       elsif args.first == :super
         @_view_paths ||= lookup_context.view_paths.clone
-        prefix, template = @virtual_path.split('/')
+        parts = @virtual_path.split('/')
+        template = parts.pop
+        prefix = parts.join('/')
+
         options = args[1] || {}
         options[:locals] ||= {}
         options[:locals] = view_stack.last[:locals].merge!(options[:locals]) if view_stack.last && view_stack.last[:locals]
