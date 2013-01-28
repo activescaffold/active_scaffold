@@ -18,8 +18,7 @@ jQuery.fn.draggable_lists = function() {
     drop: function(event, ui) {
       jQuery(this).append(ui.draggable);
       var input = jQuery('input:checkbox', ui.draggable);
-      if (jQuery(this).hasClass('selected')) input.attr('checked', 'checked');
-      else input.removeAttr('checked');
+      input.prop('checked', jQuery(this).hasClass('selected'));
       ui.draggable.css({left: '0px', top: '0px'});
     }
   });
