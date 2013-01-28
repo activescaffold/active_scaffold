@@ -8,6 +8,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
     ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
     action_link.target = $('#<%= row_selector %>');
     <%= render :partial => 'update_calculations', :formats => [:js] %>
+    <%= "ActiveScaffold.enable_form('#{form_selector}');" if params[:iframe] == 'true' %>
   <% else %>
     <% if render_parent? %>
       <% if nested_singular_association? || render_parent_action == :row %>

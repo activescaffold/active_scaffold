@@ -23,6 +23,7 @@
 - Add support for conversion methods in controller, so form_uis can define how to convert params to values
 - Avoid sorting by contraint columns
 - Cosmetic fixes and improvements
+- Fix multipart persistent update form
 
 = 3.2.18
 - Fix add existing record with record_select
