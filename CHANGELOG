@@ -1,3 +1,6 @@
+= 3.2.19 (not released yet)
+- Avoid crashing when between is chosen and from or to is not filled
+
 = 3.2.18
 - Fix add existing record with record_select
 - Disable link for polymorphic associations in 3.2.x, it doesn't work
