@@ -24,6 +24,7 @@
 - Avoid sorting by contraint columns
 - Cosmetic fixes and improvements
 - Fix multipart persistent update form
+- Support jquery 1.9 (jquery-rails 2.2.0 gem)
 
 = 3.2.19 (not released yet)
 - Avoid crashing when between is chosen and from or to is not filled
