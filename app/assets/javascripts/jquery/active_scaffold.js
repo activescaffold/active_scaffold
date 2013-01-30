@@ -436,7 +436,7 @@ var ActiveScaffold = {
   replace: function(element, html) {
     if (typeof(element) == 'string') element = '#' + element; 
     element = jQuery(element);
-    var new_element = typeof(html) == 'string' ? jQuery.parseHTML(html) : html;
+    var new_element = typeof(html) == 'string' ? jQuery.parseHTML(html.trim()) : html;
     new_element = jQuery(new_element);
     element.replaceWith(new_element);
     new_element.trigger('as:element_updated');
