@@ -51,8 +51,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   class << self
     private
     def relation
-      @relation ||= ActiveScaffold::Tableless::Relation.new(self, arel_table)
-      super
+      ActiveScaffold::Tableless::Relation.new(self, arel_table)
     end
   end
 
