@@ -36,7 +36,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
 
     def find_one(id)
-      @klass.find_one(id, self)
+      @klass.find_one(id, self) or raise ActiveRecord::RecordNotFound
     end
 
     def execute_simple_calculation(operation, column_name, distinct)
