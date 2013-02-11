@@ -161,9 +161,11 @@ module ActiveScaffold
             format += ' %z' if parts[:offset].present? && format !~ /%z/i
           end
           value = translate_days_and_months(value, format) if I18n.locale != :en
-          time = DateTime.strptime(value, format)
-          time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
-          time = time.send(conversion) unless conversion == :to_time
+          time = DateTime.strptime(value, format) rescue nil
+          if time
+            time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
+            time = time.send(conversion) unless conversion == :to_time
+          end
           time
         end unless value.nil? || value.blank?
       end
