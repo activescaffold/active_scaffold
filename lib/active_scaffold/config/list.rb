@@ -184,27 +184,28 @@ module ActiveScaffold::Config
     
     class UserSettings < UserSettings
       def initialize(conf, storage, params)
-        super(conf,storage,params)
+        super(conf, storage, params, :list)
         @sorting = nil
       end
       
+      attr_writer :label
       # This label has alread been localized.
       def label
-        @session[:label] ? @session[:label] : @conf.label
+        @label || @conf.label
       end
 
       def per_page
-        @session['per_page'] = @params['limit'].to_i if @params.has_key? 'limit'
-        @session['per_page'] || @conf.per_page
+        self['per_page'] = @params['limit'].to_i if @params.has_key? 'limit'
+        self['per_page'] || @conf.per_page
       end
 
       def page
-        @session['page'] = @params['page'] if @params.has_key? 'page'
-        @session['page'] || 1
+        self['page'] = @params['page'] if @params.has_key? 'page'
+        self['page'] || 1
       end
 
       def page=(value = nil)
-        @session['page'] = value
+        self['page'] = value
       end
 
       attr_reader :nested_default_sorting
@@ -221,12 +222,12 @@ module ActiveScaffold::Config
       def sorting
         if @sorting.nil?
           # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
-          @session['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
-          @session['sort'] = nil if @params['sort_direction'] == 'reset'
+          self['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
+          self['sort'] = nil if @params['sort_direction'] == 'reset'
 
-          if @session['sort']
+          if self['sort']
             sorting = @conf.sorting.clone
-            sorting.set(*@session['sort'])
+            sorting.set(*self['sort'])
             @sorting = sorting
           else
             @sorting = default_sorting

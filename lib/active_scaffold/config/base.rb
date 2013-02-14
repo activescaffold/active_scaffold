@@ -42,14 +42,24 @@ module ActiveScaffold::Config
     attr_accessor :action_group
 
     class UserSettings
-      def initialize(conf, storage, params)
+      def initialize(conf, storage, params, action = :base)
         # the session hash relevant to this action
         @session = storage
         # all the request params
         @params = params
         # the configuration object for this action
         @conf = conf
+        @action = action
       end
+    end
+
+    def [](key)
+      @session[@action][key] if @action && @session[@action]
+    end
+
+    def []=(key, value)
+      @session[@action] ||= {}
+      @session[@action][key] = value
     end
     
     def formats
