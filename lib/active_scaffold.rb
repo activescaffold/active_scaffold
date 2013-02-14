@@ -85,11 +85,20 @@ module ActiveScaffold
     self.class.active_scaffold_config_for(klass)
   end
 
-  def active_scaffold_session_storage(id = nil)
+  def active_scaffold_session_storage_key(id = nil)
     id ||= params[:eid] || "#{params[:controller]}#{"_#{nested.parent_id}" if nested?}"
-    session_index = "as:#{id}"
+    "as:#{id}"
+  end
+
+  def active_scaffold_session_storage(id = nil)
+    session_index = active_scaffold_session_storage_key(id)
     session[session_index] ||= {}
     session[session_index]
+  end
+
+  def clear_storage
+    session_index = active_scaffold_session_storage_key
+    session.delete(session_index) unless session[session_index].present?
   end
 
   # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.
@@ -98,8 +107,7 @@ module ActiveScaffold
       active_scaffold_config.actions.each do |action_name|
         conf_instance = active_scaffold_config.send(action_name) rescue next
         next if conf_instance.class::UserSettings == ActiveScaffold::Config::Base::UserSettings # if it hasn't been extended, skip it
-        active_scaffold_session_storage[action_name] ||= {}
-        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, active_scaffold_session_storage[action_name], params)
+        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, active_scaffold_session_storage, params)
       end
     end
   end
