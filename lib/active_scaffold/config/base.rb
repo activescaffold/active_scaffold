@@ -51,15 +51,15 @@ module ActiveScaffold::Config
         @conf = conf
         @action = action
       end
-    end
 
-    def [](key)
-      @session[@action][key] if @action && @session[@action]
-    end
+      def [](key)
+        @session[@action][key] if @action && @session[@action]
+      end
 
-    def []=(key, value)
-      @session[@action] ||= {}
-      @session[@action][key] = value
+      def []=(key, value)
+        @session[@action] ||= {}
+        @session[@action][key] = value
+      end
     end
     
     def formats
