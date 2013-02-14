@@ -74,7 +74,8 @@ module ActiveScaffold
           association_proxy.each { |record| record.send("#{a.reverse}=", parent_record) }
         end
       end
-
+    
+      flash[:warning] = parent_record.errors.to_a.join("\n") if parent_record.errors.present?
       parent_record
     end
     
@@ -110,7 +111,11 @@ module ActiveScaffold
     end
     
     def column_value_for_datetime_type(parent_record, column, value)
-      self.class.condition_value_for_datetime(column, value, self.class.datetime_conversion_for_condition(column))
+      new_value = self.class.condition_value_for_datetime(column, value, self.class.datetime_conversion_for_condition(column))
+      if new_value.nil? && value.present?
+        parent_record.errors.add column.name, :invalid
+      end
+      new_value
     end
 
     def column_value_from_param_simple_value(parent_record, column, value)
