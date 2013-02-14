@@ -32,7 +32,7 @@ module ActiveScaffold::Actions
     
     def configure_nested
       if nested?
-        active_scaffold_session_storage[:list][:label] =  if nested.belongs_to?
+        active_scaffold_config.list.user.label = if nested.belongs_to?
           as_(:nested_of_model, :nested_model => active_scaffold_config.model.model_name.human, :parent_model => nested_parent_record.to_label)
         else
           as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label)
