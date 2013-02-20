@@ -692,7 +692,7 @@ var ActiveScaffold = {
   render_form_field: function(source, content, options) {
     if (typeof(source) == 'string') source = '#' + source;
     var source = jQuery(source);
-    var element = source.closest('.association-record').nextUntil('.association-record').addBack();
+    var element = source.closest('.sub-form-record');
     if (element.length == 0) {
       element = source.closest('form > ol.form');
     }
