@@ -512,8 +512,9 @@ module ActiveScaffold
       def override_helper(column, suffix)
         @_override_helpers ||= {}
         @_override_helpers[suffix] ||= {}
-        return @_override_helpers[suffix][column.name] if @_override_helpers[suffix].include? column.name
-        @_override_helpers[suffix][column.name] = begin
+        @_override_helpers[suffix][@record.class.name] ||= {}
+        return @_override_helpers[suffix][@record.class.name][column.name] if @_override_helpers[suffix][@record.class.name].include? column.name
+        @_override_helpers[suffix][@record.class.name][column.name] = begin
           method_with_class = override_helper_name(column, suffix, true)
           if respond_to?(method_with_class)
             method_with_class
