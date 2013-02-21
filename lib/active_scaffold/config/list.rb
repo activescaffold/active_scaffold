@@ -24,6 +24,7 @@ module ActiveScaffold::Config
       @always_show_search = self.class.always_show_search
       @always_show_create = self.class.always_show_create
       @messages_above_header = self.class.messages_above_header
+      @auto_select_columns = self.class.auto_select_columns
     end
 
     # global level configuration
@@ -79,6 +80,10 @@ module ActiveScaffold::Config
     # Show create form in the list header instead of display the link
     cattr_accessor :always_show_create
     @@always_show_create = false
+
+    # Enable auto select columns on list, so only columns needed for list columns are selected
+    cattr_accessor :auto_select_columns
+    @@auto_select_columns = true
 
     # instance-level configuration
     # ----------------------------
@@ -182,6 +187,9 @@ module ActiveScaffold::Config
     # it allows for more css styling
     attr_accessor :wrap_tag
     
+    # Enable auto select columns on list, so only columns needed for list columns are selected
+    attr_accessor :auto_select_columns
+
     class UserSettings < UserSettings
       def initialize(conf, storage, params)
         super(conf, storage, params, :list)
