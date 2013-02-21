@@ -83,7 +83,7 @@ module ActiveScaffold::Config
 
     # Enable auto select columns on list, so only columns needed for list columns are selected
     cattr_accessor :auto_select_columns
-    @@auto_select_columns = true
+    @@auto_select_columns = false
 
     # instance-level configuration
     # ----------------------------
