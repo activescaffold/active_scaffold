@@ -174,7 +174,11 @@ module ActiveScaffold::DataStructures
     end
 
     # a collection of columns to load when eager loading is disabled, if it's nil all columns will be loaded
-    attr_accessor :select_columns
+    attr_accessor :select_associated_columns
+    def select_columns=(value)
+      ActiveSupport::Deprecation.warn "Use select_associated_columns= instead of select_columns="
+      self.select_associated_columns = value
+    end
 
     # describes how to search on a column
     #   search = true           default, uses intelligent search sql
