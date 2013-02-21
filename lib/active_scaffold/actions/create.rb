@@ -47,7 +47,7 @@ module ActiveScaffold::Actions
             return_to_main
           end
         else
-          if !nested? && active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
+          if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
             list
           else
             render(:action => 'create')
@@ -118,7 +118,7 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     
     def create_ignore?
-      nested? && active_scaffold_config.list.always_show_create
+      active_scaffold_config.list.always_show_create
     end
     
     def create_authorized?
