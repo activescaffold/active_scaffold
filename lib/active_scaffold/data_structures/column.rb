@@ -22,6 +22,9 @@ module ActiveScaffold::DataStructures
     # Whether to enable add_existing for this column
     attr_accessor :allow_add_existing
     
+    # What columns load from main table
+    attr_accessor :auto_select_columns
+    
     # Any extra parameters this particular column uses.  This is for create/update purposes.
     def params
       # lazy initialize
@@ -293,6 +296,13 @@ module ActiveScaffold::DataStructures
       @show_blank_record = self.class.show_blank_record
       @send_form_on_update_column = self.class.send_form_on_update_column
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
+      @auto_select_columns = if @association.nil? && @column
+        [field]
+      elsif polymorphic_association?
+        [field, quoted_field(@active_record_class.connection.quote_column_name(@association.foreign_type))]
+      elsif @association && self.association.macro == :belongs_to
+        [field]
+      end
       
       self.number = @column.try(:number?)
       @options = {:format => :i18n_number} if self.number?
@@ -305,8 +315,8 @@ module ActiveScaffold::DataStructures
       # default all the configurable variables
       self.css_class = ''
       self.required = active_record_class.validators_on(self.name).any? do |val|
-        ActiveModel::Validations::PresenceValidator === val or (
-          ActiveModel::Validations::InclusionValidator === val and not val.options[:allow_nil] and not val.options[:allow_blank]
+        !val.options[:if] && !val.options[:unless] && (ActiveModel::Validations::PresenceValidator === val ||
+          (ActiveModel::Validations::InclusionValidator === val && !val.options[:allow_nil] && !val.options[:allow_blank])
         )
       end
       self.sort = true
@@ -356,10 +366,14 @@ module ActiveScaffold::DataStructures
 
     # the table.field name for this column, if applicable
     def field
-      @field ||= [@active_record_class.quoted_table_name, field_name].join('.')
+      @field ||= quoted_field(field_name)
     end
 
     protected
+
+    def quoted_field(name)
+      [@active_record_class.quoted_table_name, name].join('.')
+    end
 
     def initialize_sort
       if self.virtual?
