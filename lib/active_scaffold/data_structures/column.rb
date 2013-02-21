@@ -23,7 +23,7 @@ module ActiveScaffold::DataStructures
     attr_accessor :allow_add_existing
     
     # What columns load from main table
-    attr_accessor :auto_select_columns
+    attr_accessor :select_columns
     
     # Any extra parameters this particular column uses.  This is for create/update purposes.
     def params
@@ -175,7 +175,7 @@ module ActiveScaffold::DataStructures
     end
 
     # a collection of columns to load when eager loading is disabled, if it's nil all columns will be loaded
-    attr_accessor :select_columns
+    attr_accessor :select_associated_columns
 
     # describes how to search on a column
     #   search = true           default, uses intelligent search sql
@@ -296,7 +296,7 @@ module ActiveScaffold::DataStructures
       @show_blank_record = self.class.show_blank_record
       @send_form_on_update_column = self.class.send_form_on_update_column
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
-      @auto_select_columns = if @association.nil? && @column
+      @select_columns = if @association.nil? && @column
         [field]
       elsif polymorphic_association?
         [field, quoted_field(@active_record_class.connection.quote_column_name(@association.foreign_type))]
