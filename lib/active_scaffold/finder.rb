@@ -357,8 +357,8 @@ module ActiveScaffold
     
     def append_to_query(query, options)
       options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :includes, :lock, :readonly, :from, :conditions
-      query = apply_conditions(query, *options.delete(:conditions)) if options[:conditions]
-      options.reject{|k, v| v.blank?}.inject(query) do |query, (k, v)|
+      query = apply_conditions(query, *options[:conditions]) if options[:conditions]
+      options.reject{|k, v| k == :conditions || v.blank?}.inject(query) do |query, (k, v)|
         query.send((k.to_sym), v) 
       end
     end
