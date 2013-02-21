@@ -324,7 +324,8 @@ module ActiveScaffold
       finder_options = { :reorder => options[:sorting].try(:clause),
                          :conditions => search_conditions,
                          :joins => joins_for_finder,
-                         :includes => full_includes}
+                         :includes => full_includes,
+                         :select => options[:select]}
     
       finder_options.merge! custom_finder_options
       finder_options
@@ -348,7 +349,7 @@ module ActiveScaffold
     # returns a Paginator::Page (not from ActiveRecord::Paginator) for the given parameters
     # See finder_options for valid options
     def find_page(options = {})
-      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination
+      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination, :select
       options[:per_page] ||= 999999999
       options[:page] ||= 1
 
