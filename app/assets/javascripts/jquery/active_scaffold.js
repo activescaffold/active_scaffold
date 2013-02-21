@@ -200,6 +200,11 @@ jQuery(document).ready(function($) {
     ActiveScaffold[jQuery(this).val() == 'REPLACE' ? 'hide' : 'show'](jQuery(this).next().next());
     return true;
   });
+  
+  jQuery(document).on('click', '.active-scaffold .sub-form a.destroy', function(event) {
+  	event.preventDefault();
+  	ActiveScaffold.delete_subform_record($(this).data('delete-id'));
+  });
 
   jQuery(document).on('click', 'a[data-popup]', function(e) {
     window.open(jQuery(this).attr('href'));
