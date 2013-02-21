@@ -169,7 +169,7 @@ module ActiveScaffold
           options.delete :link if link.crud_type == :create
         end
         if link.action.nil? || (link.type == :member && options.has_key?(:authorized) && !options[:authorized])
-          action_link_html(link, nil, options.merge(:class => "disabled #{link.action}#{" #{link.html_options[:class]}" unless link.html_options[:class].blank?}"), record)
+          action_link_html(link, nil, {:class => "disabled #{link.action}#{" #{link.html_options[:class]}" unless link.html_options[:class].blank?}"}, record)
         else
           url = action_link_url(link, record)
           html_options = action_link_html_options(link, record, options)
@@ -321,9 +321,10 @@ module ActiveScaffold
         url_options
       end
       
-      def action_link_html_options(link, record, html_options)
+      def action_link_html_options(link, record, options)
         link_id = get_action_link_id(link, record)
-        html_options.reverse_merge! link.html_options.merge(:class => link.action.to_s)
+        html_options = link.html_options.merge(:class => [link.html_options[:class], link.action.to_s].compact.join(' '))
+        html_options[:link] = options[:link] if options[:link]
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
         html_options[:method] = link.method if link.method != :get
@@ -331,7 +332,7 @@ module ActiveScaffold
         html_options[:data] = {}
         html_options[:data][:confirm] = link.confirm(record.try(:to_label)) if link.confirm?
         if link.inline?
-          html_options[:class] += ' as_action'
+          html_options[:class] << ' as_action'
           html_options[:data][:position] = link.position if link.position
           html_options[:data][:action] = link.action
           html_options[:data][:cancel_refresh] = true if link.refresh_on_close
@@ -345,13 +346,12 @@ module ActiveScaffold
         html_options[:remote] = true unless link.page? || link.popup?
         if link.dhtml_confirm?
           unless link.inline?
-            html_options[:class] += ' as_action'
+            html_options[:class] << ' as_action'
             html_options[:page_link] = 'true'
           end
           html_options[:dhtml_confirm] = link.dhtml_confirm.value
           html_options[:onclick] = link.dhtml_confirm.onclick_function(controller, link_id)
         end
-        html_options[:class] += " #{link.html_options[:class]}" unless link.html_options[:class].blank?
         html_options
       end
 
