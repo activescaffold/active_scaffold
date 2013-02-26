@@ -303,8 +303,15 @@ module ActiveScaffold::DataStructures
       elsif @association
         if self.association.macro == :belongs_to
           [field]
-        elsif active_record_class.columns_hash[count_column = "#{@association.name}_count"]
-          [quoted_field(@active_record_class.connection.quote_column_name(count_column))]
+        else
+          columns = []
+          if active_record_class.columns_hash[count_column = "#{@association.name}_count"]
+            coumns << quoted_field(@active_record_class.connection.quote_column_name(count_column))]
+          end
+          if @association.through_reflection.try(:macro) == :belongs_to
+            columns << quoted_field(@active_record_class.connection.quote_column_name(@association.through_reflection.foreign_key))
+          end
+          columns
         end
       end
       
