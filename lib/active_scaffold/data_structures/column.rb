@@ -300,8 +300,12 @@ module ActiveScaffold::DataStructures
         [field]
       elsif polymorphic_association?
         [field, quoted_field(@active_record_class.connection.quote_column_name(@association.foreign_type))]
-      elsif @association && self.association.macro == :belongs_to
-        [field]
+      elsif @association
+        if self.association.macro == :belongs_to
+          [field]
+        elsif active_record_class.columns_hash[count_column = "#{@association.name}_count"]
+          [quoted_field(@active_record_class.connection.quote_column_name(count_column))]
+        end
       end
       
       self.number = @column.try(:number?)
