@@ -86,7 +86,7 @@ module ActiveScaffold::Actions
           })
       end
       if active_scaffold_config.list.auto_select_columns
-        options[:select] = active_scaffold_config.list.columns.map(&:auto_select_columns).compact.flatten + active_scaffold_config.columns[active_scaffold_config.model.primary_key].auto_select_columns
+        options[:select] = active_scaffold_config.list.columns.map(&:select_columns).compact.flatten + active_scaffold_config.columns[active_scaffold_config.model.primary_key].auto_select_columns
       end
 
       page = find_page(options)
