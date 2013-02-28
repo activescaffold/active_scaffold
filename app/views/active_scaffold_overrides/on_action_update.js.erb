@@ -16,7 +16,7 @@
     <%= render :partial => 'refresh_list' %>
   <% end %>
 <% else %>
-  <% flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br) if @record.errors.present? %>
+  <% flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br) if @record.try(:errors).present? %>
   ActiveScaffold.replace_html('<%= active_scaffold_messages_id %>','<%= escape_javascript(render(:partial => 'messages')) %>');
   ActiveScaffold.scroll_to('<%= active_scaffold_messages_id %>', true);
 <% end %>
