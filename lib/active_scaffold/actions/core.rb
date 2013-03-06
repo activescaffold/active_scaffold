@@ -119,7 +119,7 @@ module ActiveScaffold::Actions
     # circumvent this method by setting @success directly.
     def successful?
       if @successful.nil?
-        @record || @records
+        true
       else
         @successful
       end
