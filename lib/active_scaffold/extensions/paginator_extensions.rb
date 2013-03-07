@@ -20,6 +20,14 @@ class Paginator
       next_without_infinite?
     end
     alias_method_chain :next?, :infinite
+
+    def empty?
+      if @pager.infinite?
+        items.to_a.empty?
+      else
+        @pager.count == 0
+      end
+    end
   end
 
 end

@@ -20,7 +20,7 @@
         </div>
         <% end -%>
       </div>
-      <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" '.html_safe unless @page.items.empty? %>>
+      <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" '.html_safe unless @page.empty? %>>
         <%= as_(active_scaffold_config.list.no_entries_message) %>
       </p>
     </td>
