@@ -15,13 +15,13 @@
     <%= render :partial => 'form', :locals => { :columns => column, :subsection_id => subsection_id, :form_action => form_action, :scope => scope } %>
     <%= link_to_visibility_toggle(subsection_id, {:default_visible => !column.collapsed}) -%>
   </li>
-  <% elsif renders_as == :subform and !override_form_field?(column) and authorized -%>
+  <% elsif renders_as == :subform and authorized -%>
   <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column_css_class %> <%=column.name%>-sub-form" id="<%= sub_form_id(:association => column.name) %>">
-    <%=raw render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column, :scope => scope } -%>
+    <%= render_column(column, @record, renders_as, scope) %>
   </li>
   <% else -%>
   <li class="form-element <%= 'required' if column.required? %> <%= column_css_class %>">
-    <%=raw render :partial => form_partial_for_column(column, renders_as), :locals => { :column => column, :only_value => !authorized, :scope => scope } -%>
+    <%= render_column(column, @record, renders_as, scope, !authorized) %>
   </li>
   <% end -%>
   <% end -%>

@@ -8,7 +8,8 @@
   @rendered ||= Set.new
   return if @rendered.include? column.name
   @rendered << column.name
-  if column_renders_as(column) == :subform
+  renders_as = column_renders_as(column)
+  if renders_as == :subform
     options = {:is_subform => true, :field_class => "#{column.name}-sub-form"}
   else
     options = {:is_subform => false, :field_class => "#{column.name}-input"}
@@ -18,7 +19,7 @@
     crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
     active_scaffold_render_subform_column(column, scope, crud_type, readonly, !active_scaffold_config.subform.columns.names_without_auth_check.include?(column.name))
   else
-    render(:partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope })
+    render_column(column, @record, renders_as, scope)
   end
 -%>
 
