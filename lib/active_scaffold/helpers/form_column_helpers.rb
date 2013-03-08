@@ -4,13 +4,11 @@ module ActiveScaffold
     module FormColumnHelpers
       # This method decides which input to use for the given column.
       # It does not do any rendering. It only decides which method is responsible for rendering.
-      def active_scaffold_input_for(column, scope = nil, options = {})
-        options = active_scaffold_input_options(column, scope, options)
+      def active_scaffold_input_for(column, scope = nil, options = nil)
+        options ||= active_scaffold_input_options(column, scope)
         options = update_columns_options(column, scope, options)
         active_scaffold_render_input(column, options)
       end
-
-      alias form_column active_scaffold_input_for
 
       def active_scaffold_render_input(column, options)
         begin
@@ -69,7 +67,7 @@ module ActiveScaffold
           col_class = col_class.join(' ')
         end
         unless readonly and not @record.new_record? or not @record.authorized_for?(:crud_type => crud_type, :column => column.name)
-          render :partial => form_partial_for_column(column), :locals => { :column => column, :scope => scope, :col_class => col_class }
+          render_column(column, @record, column_renders_as(column), scope, false, col_class)
         else
           options = active_scaffold_input_options(column, scope).except(:name)
           options[:class] = "#{options[:class]} #{col_class}" if col_class
@@ -130,6 +128,43 @@ module ActiveScaffold
 
       def field_attributes(column, record)
         {}
+      end
+      
+      def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil)
+        if override_form_field_partial?(column)
+          render :partial => override_form_field_partial(column), :locals => { :column => column, :only_value => only_value, :scope => scope, :col_class => col_class }
+        elsif renders_as == :field || override_form_field?(column)
+          form_attribute(column, record, scope, only_value)
+        elsif renders_as == :subform
+          render :partial => 'form_association', :locals => { :column => column, :scope => scope }
+        else
+          form_hidden_attribute(column, record, scope)
+        end
+      end
+      
+      def form_attribute(column, record, scope = nil, only_value = false, col_class = nil)
+        column_options = active_scaffold_input_options(column, scope)
+        attributes = field_attributes(column, record)
+        attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
+        field = unless only_value
+          active_scaffold_input_for column, scope, column_options.merge(:object => record)
+        else
+          content_tag(:span, get_column_value(@record, column), column_options.except(:name)) <<
+          hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options.merge(:object => record))
+        end
+        
+        content_tag :dl, attributes do
+          %|<dt>#{label_tag column_options[:id], column.label}</dt><dd>#{field}
+#{loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns}
+#{content_tag :span, column.description, :class => 'description' if column.description.present?}
+</dd>|.html_safe
+        end
+      end
+      
+      def form_hidden_attribute(column, record, scope = nil)
+        %|<dl style="display: none;"><dt></dt><dd>
+#{hidden_field :record, column.name, active_scaffold_input_options(column, scope).merge(:object => record)}
+</dd></dl>|.html_safe
       end
 
       ##
@@ -342,19 +377,6 @@ module ActiveScaffold
       end
       alias_method :override_input?, :override_input
 
-      def form_partial_for_column(column, renders_as = nil)
-        renders_as ||= column_renders_as(column)
-        if override_form_field_partial?(column)
-          override_form_field_partial(column)
-        elsif renders_as == :field or override_form_field?(column)
-          "form_attribute"
-        elsif renders_as == :subform
-          "form_association"
-        elsif renders_as == :hidden
-          "form_hidden_attribute"
-        end
-      end
-
       def subform_partial_for_column(column)
         subform_partial = "#{active_scaffold_config_for(column.association.klass).subform.layout}_subform"
         if override_subform_partial?(column, subform_partial)
@@ -373,7 +395,7 @@ module ActiveScaffold
           return :subsection
         elsif column.active_record_class.locking_column.to_s == column.name.to_s or column.form_ui == :hidden
           return :hidden
-        elsif column.association.nil? or column.form_ui or !active_scaffold_config_for(column.association.klass).actions.include?(:subform)
+        elsif column.association.nil? or column.form_ui or !active_scaffold_config_for(column.association.klass).actions.include?(:subform) or override_form_field?(column)
           return :field
         else
           return :subform

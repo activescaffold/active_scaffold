@@ -43,11 +43,22 @@ module ActionView::Helpers #:nodoc:
         constraints = options[:constraints]
         conditions = options[:conditions]
         eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
-        eid_info = {}
-        eid_info[:constraints] = constraints if constraints
-        eid_info[:conditions] = conditions if conditions
-        eid_info[:list] = {:label => args.first[:label]} if args.first[:label]
-        session["as:#{eid}"] = eid_info
+        eid_info = session["as:#{eid}"] ||= {}
+        if constraints
+          eid_info[:constraints] = constraints 
+        else
+          eid_info.delete :constraints
+        end
+        if conditions
+          eid_info[:conditions] = conditions
+        else
+          eid_info.delete :conditions
+        end
+        if args.first[:label]
+          eid_info[:list] = {:label => args.first[:label]}
+        else
+          eid_info.delete :list
+        end
         options[:params] ||= {}
         options[:params].merge! :eid => eid, :embedded => true
 
