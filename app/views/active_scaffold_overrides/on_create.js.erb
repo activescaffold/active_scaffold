@@ -1,10 +1,11 @@
 try {
+var action_link;
 <% form_selector = "#{element_form_id(:action => :create)}"
 insert_at ||= :top -%>
 <% if active_scaffold_config.list.always_show_create -%>
 <%= render :partial => 'update_messages' %>
 <% else -%>
-var action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
+action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
 action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
 <% end -%>
 <% if controller.send :successful? -%>
