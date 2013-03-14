@@ -59,6 +59,7 @@ module ActionView::Helpers #:nodoc:
         else
           eid_info.delete :list
         end
+        session.delete "as:#{eid}" if eid_info.empty?
         options[:params] ||= {}
         options[:params].merge! :eid => eid, :embedded => true
 
