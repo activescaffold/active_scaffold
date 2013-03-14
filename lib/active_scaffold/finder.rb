@@ -292,6 +292,11 @@ module ActiveScaffold
       @active_scaffold_habtm_joins ||= []
     end
     
+    attr_writer :active_scaffold_outer_joins
+    def active_scaffold_outer_joins
+      @active_scaffold_outer_joins ||= []
+    end
+
     def all_conditions
       [
         active_scaffold_conditions,                   # from the search modules
@@ -324,6 +329,7 @@ module ActiveScaffold
       finder_options = { :reorder => options[:sorting].try(:clause),
                          :conditions => search_conditions,
                          :joins => joins_for_finder,
+                         :outer_joins => active_scaffold_outer_joins,
                          :includes => full_includes,
                          :select => options[:select]}
     
@@ -382,7 +388,7 @@ module ActiveScaffold
       includes = active_scaffold_config.list.count_includes
       includes ||= active_scaffold_includes unless conditions.nil?
       primary_key = active_scaffold_config.model.primary_key
-      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_collection)
+      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => active_scaffold_outer_joins)
       subquery = subquery.select(active_scaffold_config.columns[primary_key].field)
       if includes
         includes_relation = beginning_of_chain.includes(includes)
@@ -392,7 +398,7 @@ module ActiveScaffold
     end
     
     def append_to_query(query, options)
-      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :includes, :lock, :readonly, :from, :conditions
+      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions
       query = apply_conditions(query, *options[:conditions]) if options[:conditions]
       options.reject{|k, v| k == :conditions || v.blank?}.inject(query) do |query, (k, v)|
         query.send((k.to_sym), v) 
