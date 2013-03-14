@@ -1,1 +1,5 @@
+<% if active_scaffold_config.list.refresh_with_header -%>
+ActiveScaffold.replace('<%= active_scaffold_id %>', '<%= escape_javascript(render('list_with_header')) %>');
+<% else -%>
 ActiveScaffold.replace_html('<%= active_scaffold_content_id %>', '<%= escape_javascript(render('list')) %>');
+<% end -%>

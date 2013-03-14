@@ -26,6 +26,7 @@
 - Fix multipart persistent update form
 - Support jquery 1.9 (jquery-rails 2.2.0 gem)
 - Reduce usage of session
+- Allow to include header on list refreshing
 
 = 3.2.19 (not released yet)
 - Avoid crashing when between is chosen and from or to is not filled
