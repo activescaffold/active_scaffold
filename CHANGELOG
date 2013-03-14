@@ -27,6 +27,7 @@
 - Support jquery 1.9 (jquery-rails 2.2.0 gem)
 - Reduce usage of session
 - Allow to include header on list refreshing
+- Add search_joins to columns, so it's possible to do left joins without loading associations only for searching
 
 = 3.2.19 (not released yet)
 - Avoid crashing when between is chosen and from or to is not filled

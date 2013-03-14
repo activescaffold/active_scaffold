@@ -204,7 +204,7 @@ module ActiveScaffold::Actions
     end
 
     def list_columns
-      active_scaffold_config.list.columns.collect_visible
+      @list_columns ||= active_scaffold_config.list.columns.collect_visible
     end
 
     def list_columns_names

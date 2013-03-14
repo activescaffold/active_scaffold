@@ -174,6 +174,18 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    # a collection of associations to do left join when this column is included on search
+    def search_joins
+      @search_joins || @includes
+    end
+
+    def search_joins=(value)
+      @search_joins = case value
+        when Array then value 
+        else [value] # automatically convert to an array
+      end
+    end
+
     # a collection of columns to load when eager loading is disabled, if it's nil all columns will be loaded
     attr_accessor :select_associated_columns
 
@@ -335,7 +347,10 @@ module ActiveScaffold::DataStructures
       
       @weight = estimate_weight
 
-      self.includes = (association and not polymorphic_association?) ? [association.name] : []
+      if association && !polymorphic_association?
+        self.includes = [association.name]
+        self.search_joins = self.includes.clone
+      end
     end
 
     # just the field (not table.field)
