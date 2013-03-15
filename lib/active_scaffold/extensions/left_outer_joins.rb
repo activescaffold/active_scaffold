@@ -25,7 +25,7 @@ module ActiveScaffold
     end
   end
 end
-ActiveRecord::QueryMethods.send :include, ActiveScaffold::OuterJoins
+ActiveRecord::Relation.send :include, ActiveScaffold::OuterJoins
 module ActiveRecord::Querying
   delegate :outer_joins, :outer_joins_sql, :to => :scoped
 end
