@@ -324,7 +324,8 @@ module ActiveScaffold
       def action_link_html_options(link, record, options)
         link_id = get_action_link_id(link, record)
         html_options = link.html_options.merge(:class => [link.html_options[:class], link.action.to_s].compact.join(' '))
-        html_options[:link] = options[:link] if options[:link]
+        html_options[:link] = image_tag(link.image[:name], :size => link.image[:size], :alt => label, :title => label) if link.image
+        html_options[:link] ||= options[:link] if options[:link]
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
         html_options[:method] = link.method if link.method != :get
@@ -374,7 +375,6 @@ module ActiveScaffold
       def action_link_html(link, url, html_options, record)
         label = html_options.delete(:link)
         label ||= link.label
-        label = image_tag(link.image[:name], :size => link.image[:size], :alt => label, :title => label) if link.image
         if url.nil?
           content_tag(:a, label, html_options)
         else
