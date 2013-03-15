@@ -54,8 +54,8 @@ module ActionView::Helpers #:nodoc:
         else
           eid_info.delete :conditions
         end
-        if args.first[:label]
-          eid_info[:list] = {:label => args.first[:label]}
+        if options[:label]
+          eid_info[:list] = {:label => options[:label]}
         else
           eid_info.delete :list
         end
