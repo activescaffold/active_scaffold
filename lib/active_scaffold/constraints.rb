@@ -69,7 +69,7 @@ module ActiveScaffold
 
           # regular column constraints
           elsif column.searchable? && params[column.name] != v
-            active_scaffold_includes.concat column.includes
+            active_scaffold_includes.concat column.includes if column.includes.present?
             conditions << [column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR '), *([v] * column.search_sql.size)]
           end
         # unknown-to-activescaffold-but-real-database-column constraint
