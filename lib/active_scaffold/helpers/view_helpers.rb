@@ -169,7 +169,7 @@ module ActiveScaffold
           options.delete :link if link.crud_type == :create
         end
         if link.action.nil? || (link.type == :member && options.has_key?(:authorized) && !options[:authorized])
-          action_link_html(link, nil, {:link => options[:link], :class => "disabled #{link.action}#{" #{link.html_options[:class]}" unless link.html_options[:class].blank?}"}, record)
+          action_link_html(link, nil, {:link => action_link_text(link, options), :class => "disabled #{link.action}#{" #{link.html_options[:class]}" unless link.html_options[:class].blank?}"}, record)
         else
           url = action_link_url(link, record)
           html_options = action_link_html_options(link, record, options)
@@ -321,11 +321,15 @@ module ActiveScaffold
         url_options
       end
       
+      def action_link_text(link, options)
+        text = image_tag(link.image[:name], :size => link.image[:size], :alt => options[:link] || link.label, :title => options[:link] || link.label) if link.image
+        text || options[:link]
+      end
+      
       def action_link_html_options(link, record, options)
         link_id = get_action_link_id(link, record)
         html_options = link.html_options.merge(:class => [link.html_options[:class], link.action.to_s].compact.join(' '))
-        html_options[:link] = image_tag(link.image[:name], :size => link.image[:size], :alt => options[:link] || link.label, :title => options[:link] || link.label) if link.image
-        html_options[:link] ||= options[:link] if options[:link]
+        html_options[:link] = action_link_text(link, options)
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
         html_options[:method] = link.method if link.method != :get
