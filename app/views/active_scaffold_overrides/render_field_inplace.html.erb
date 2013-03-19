@@ -1,1 +1,6 @@
-<%= active_scaffold_input_for(active_scaffold_config.columns[@column.name]) %>
+<%
+  column = active_scaffold_config.columns[@column.name]
+  options = active_scaffold_input_options(column)
+  options[:class] = "#{options[:class]} inplace_field"
+-%>
+<%= active_scaffold_input_for(column, nil, options) %>
