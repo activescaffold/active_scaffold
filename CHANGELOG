@@ -1,4 +1,4 @@
-= master
+= 3.3.0 (not released yet)
 - Unify field overrides and list_ui method signatures
 - Improve performance removing some partials and adding some caching for helper overrides and UIs, and caching url generation for lists (caching url is optional)
 - Drop support for rails 3.1
@@ -31,7 +31,7 @@
 - Fix set focus for inplace edit clone and ajax
 - Allow to override label for list column headings with a new helper method column_heading_label
 
-= 3.2.19 (not released yet)
+= 3.2.19
 - Avoid crashing when between is chosen and from or to is not filled
 
 = 3.2.18
