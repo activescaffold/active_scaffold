@@ -1,4 +1,4 @@
-= 3.2.19 (not released yet)
+= 3.2.19
 - Avoid crashing when between is chosen and from or to is not filled
 
 = 3.2.18
