@@ -29,6 +29,7 @@
 - Allow to include header on list refreshing
 - Add search_joins to columns, so it's possible to do left joins without loading associations only for searching
 - Fix set focus for inplace edit clone and ajax
+- Allow to override label for list column headings with a new helper method column_heading_label
 
 = 3.2.19 (not released yet)
 - Avoid crashing when between is chosen and from or to is not filled

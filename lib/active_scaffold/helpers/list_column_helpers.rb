@@ -302,10 +302,14 @@ module ActiveScaffold
                      :remote => true, :method => :get}
           url_options = params_for(:action => :index, :page => 1,
                            :sort => column.name, :sort_direction => sort_direction)
-          link_to column.label, url_options, options
+          link_to column_heading_label(column), url_options, options
         else
-          content_tag(:p, column.label)
+          content_tag(:p, column_heading_label(column))
         end
+      end
+      
+      def column_heading_label(column)
+        column.label
       end
       
       def render_nested_view(action_links, record)
