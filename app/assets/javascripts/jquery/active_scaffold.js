@@ -5,6 +5,7 @@ jQuery(document).ready(function($) {
     else alert(error);
   }
 
+  jQuery(document).on('focus', function() { ActiveScaffold.last_focus = this; });
   jQuery(document).click(function(event) {
     jQuery('.action_group.dyn ul').remove();
   });
@@ -364,6 +365,7 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
  */
 
 var ActiveScaffold = {
+  last_focus: null,
   records_for: function(tbody_id) {
     if (typeof(tbody_id) == 'string') tbody_id = '#' + tbody_id;
     return jQuery(tbody_id).children('.record');
@@ -860,6 +862,7 @@ var ActiveScaffold = {
       complete: function(event) {
         element.nextAll('img.loading-indicator').css('visibility','hidden');
         ActiveScaffold.enable_form(as_form);
+        if (ActiveScaffold.last_focus) $(ActiveScaffold.last_focus).focus().select();
       },
       error: function (xhr, status, error) {
         var as_div = element.closest("div.active-scaffold");
