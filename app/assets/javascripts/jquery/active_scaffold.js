@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
     else alert(error);
   }
 
-  jQuery(document).on('focus', function() { ActiveScaffold.last_focus = this; });
+  jQuery(document).on('focus', ':input', function() { ActiveScaffold.last_focus = this; });
   jQuery(document).click(function(event) {
     jQuery('.action_group.dyn ul').remove();
   });
