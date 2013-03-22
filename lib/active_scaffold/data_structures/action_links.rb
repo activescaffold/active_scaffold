@@ -70,8 +70,8 @@ module ActiveScaffold::DataStructures
 
     def delete(val)
       self.each({:include_set => true}) do |link, set|
-        if link.action == val.to_s
-          set.delete_if {|item| item.is_a?(ActiveScaffold::DataStructures::ActionLink) && item.action == val.to_s}
+        if link.action.to_s == val.to_s
+          set.delete link
         end
       end
     end
@@ -79,7 +79,7 @@ module ActiveScaffold::DataStructures
     def delete_group(name)
       @set.each do |group|
         if group.name == name
-          @set.delete_if {|item| item.is_a?(ActiveScaffold::DataStructures::ActionLinks) && item.name == name}
+          @set.delete group
         else
           group.delete_group(name)
         end if group.is_a?(ActiveScaffold::DataStructures::ActionLinks)
