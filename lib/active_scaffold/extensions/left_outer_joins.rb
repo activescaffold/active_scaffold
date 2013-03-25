@@ -13,8 +13,10 @@ module ActiveScaffold
           assoc.collect do |key, val|
             [left_outer_join_sql(key), klass.reflect_on_association(key).klass.outer_joins_sql(*val)]
           end
-        else
-          left_outer_join_sql(assoc) if assoc
+        elsif assoc.is_a? Symbol
+          left_outer_join_sql(assoc)
+        elsif assoc
+          assoc
         end
       end.flatten.compact
     end
