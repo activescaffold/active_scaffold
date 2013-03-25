@@ -191,7 +191,7 @@ module ActiveScaffold
         select_options.unshift(associated) unless associated.nil? || select_options.include?(associated)
 
         method = column.name
-        options = {:selected => associated.try(:id), :include_blank => as_(:_select_)}
+        options = {:selected => associated.try(:id), :include_blank => as_(:_select_), :object => html_options.delete(:object)}
 
         html_options.update(column.options[:html_options] || {})
         options.update(column.options)
@@ -245,7 +245,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_enum(column, html_options)
-        options = { :selected => @record.send(column.name) }
+        options = { :selected => @record.send(column.name), :object => html_options.delete(:object) }
         options_for_select = active_scaffold_enum_options(column).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
         end
