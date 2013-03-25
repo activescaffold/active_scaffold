@@ -8,7 +8,7 @@ module ActiveScaffold::Actions
         rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
       base.helper_method :nested?
-      base.helper_method :calculate
+      base.helper_method :calculate_query
       base.helper_method :new_model
     end
     def render_field

@@ -79,7 +79,7 @@ module ActiveScaffold
           raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
         end
       end
-      conditions
+      conditions.reject(&:blank?)
     end
 
     # We do NOT want to use .search_sql. If anything, search_sql will refer

@@ -304,7 +304,7 @@ module ActiveScaffold
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
         conditions_from_constraints,                  # from any constraints (embedded scaffolds)
         active_scaffold_session_storage[:conditions] # embedding conditions (weaker constraints)
-      ]
+      ].reject(&:blank?)
     end
     
     # returns a single record (the given id) but only if it's allowed for the specified security options.
@@ -338,7 +338,7 @@ module ActiveScaffold
     end
 
     def count_items(find_options = {}, count_includes = nil)
-      count_includes ||= find_options[:includes] unless find_options[:conditions].nil?
+      count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
       options = find_options.reject{|k,v| [:select, :reorder].include? k}
       options[:includes] = count_includes
       
@@ -383,10 +383,10 @@ module ActiveScaffold
       pager.page(options[:page])
     end
 
-    def calculate(column)
+    def calculate_query
       conditions = all_conditions
       includes = active_scaffold_config.list.count_includes
-      includes ||= active_scaffold_includes unless conditions.nil?
+      includes ||= active_scaffold_includes unless conditions.blank?
       primary_key = active_scaffold_config.model.primary_key
       subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => active_scaffold_outer_joins)
       subquery = subquery.select(active_scaffold_config.columns[primary_key].field)
@@ -394,7 +394,7 @@ module ActiveScaffold
         includes_relation = beginning_of_chain.includes(includes)
         subquery = subquery.send(:apply_join_dependency, subquery, includes_relation.send(:construct_join_dependency_for_association_find))
       end
-      beginning_of_chain.where(primary_key => subquery).calculate(column.calculate, column.name)
+      active_scaffold_config.model.where(primary_key => subquery)
     end
     
     def append_to_query(query, options)
