@@ -473,7 +473,7 @@ module ActiveScaffold
 
       def column_calculation(column)
         unless column.calculate.instance_of? Proc
-          calculate(column)
+          calculate_query.calculate(column.calculate, column.name)
         else
           column.calculate.call(@records)
         end
