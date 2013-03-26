@@ -14,7 +14,7 @@ module ActiveScaffold
         begin
           # first, check if the dev has created an override for this specific field
           if (method = override_form_field(column))
-            send(method, @record, options)
+            send(method, options[:object] || @record, options)
           # second, check if the dev has specified a valid form_ui for this column
           elsif column.form_ui and (method = override_input(column.form_ui))
             send(method, column, options)
@@ -29,7 +29,7 @@ module ActiveScaffold
                 raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
               end
             elsif column.virtual?
-              options[:value] = format_number_value(@record.send(column.name), column.options) if column.number?
+              options[:value] = format_number_value((options[:object] || @record).send(column.name), column.options) if column.number?
               active_scaffold_input_virtual(column, options)
 
             else # regular model attribute column
@@ -46,7 +46,7 @@ module ActiveScaffold
                   options[:size] ||= ActionView::Helpers::InstanceTag::DEFAULT_FIELD_OPTIONS["size"]
                 end
                 options[:include_blank] = true if column.column.null and [:date, :datetime, :time].include?(column.column.type)
-                options[:value] = format_number_value(@record.send(column.name), column.options) if column.number?
+                options[:value] = format_number_value((options[:object] || @raecord).send(column.name), column.options) if column.number?
                 text_field(:record, column.name, options.merge(column.options))
               end
             end
