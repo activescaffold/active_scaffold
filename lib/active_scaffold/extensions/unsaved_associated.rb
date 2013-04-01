@@ -47,10 +47,10 @@ class ActiveRecord::Base
   # returns false if any yield returns false.
   # returns true otherwise, even when none of the associations have been instantiated. build wrapper methods accordingly.
   def with_unsaved_associated
-    associations_for_update.all? do |association|
-      association_proxy = send(association.name)
-      if association_proxy
-        records = association_proxy
+    associations_for_update.all? do |assoc|
+      association_proxy = self.association(assoc.name)
+      if association_proxy.target.present?
+        records = association_proxy.target
         records = [records] unless records.is_a? Array # convert singular associations into collections for ease of use
         records.select {|r| r.unsaved? and not r.readonly?}.all? {|r| yield r} # must use select instead of find_all, which Rails overrides on association proxies for db access
       else
