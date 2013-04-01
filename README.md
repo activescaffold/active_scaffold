@@ -4,7 +4,7 @@ ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, r
 
 Branch Details
 --------------
-This branch (rails-3.2) on Github supports Rails 3.1 & 3.2, and is the current source of the 3.2.x line of gems. The master branch has dropped support for Rails 3.1
+rails-3.2 branch on Github supports Rails 3.1 & 3.2, and is the current source of the 3.2.x line of gems. The master branch (3.3.x) has dropped support for Rails 3.1
 
 Quick Start
 -----------
@@ -37,11 +37,11 @@ See Wiki for instructions on customising ActiveScaffold and to find the full API
 
 Compatability Issues
 --------------------
-jQuery 1.9 deprecates some methods that this branch still uses (NB: jQuery 1.9 is supported in the master branch). You'll therefore need to ensure you use jQuery 1.8. You can do this by fixing version in your Gemfile:
+jQuery 1.9 deprecates some methods that rails-3.2 branch still uses (NB: jQuery 1.9 is supported in 3.3.x, the master branch). You'll therefore need to ensure you use jQuery 1.8. You can do this by fixing version in your Gemfile:
 
     gem 'jquery-rails', '2.1.4'
 
-active_scaffold_batch plugin gem (versions 3.2.x) require the master branch. Therefore if you wish to try using active_scaffold_batch with this branch, you'll need to fork the project and edit the runtime dependency in the gempsec file (use at your own discretion)
+active_scaffold_batch plugin gem (versions 3.2.x) require 3.3.x (master branch). Therefore if you wish to try using active_scaffold_batch with this branch, you'll need to fork the project and edit the runtime dependency in the gemspec file (use at your own discretion)
 
 Credits
 -------
