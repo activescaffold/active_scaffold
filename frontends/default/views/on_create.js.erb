@@ -17,7 +17,7 @@ action_link.update_flash_messages('<%=escape_javascript(render(:partial => 'mess
   <% elsif params[:parent_controller].nil? %>
     <% new_row = render :partial => 'list_record', :locals => {:record => @record} %>
     ActiveScaffold.create_record_row(action_link.scaffold(),'<%= escape_javascript(new_row) %>', <%= {:insert_at => insert_at}.to_json.html_safe %>);
-    <%= render :partial => 'update_calculations', :formats => [:js] %>
+    <%= render :partial => 'update_calculations.js' %>
   <% end %>
 
   <% unless render_parent? %>

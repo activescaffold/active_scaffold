@@ -6,7 +6,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
   <% if params[:dont_close] %>
     <% row_selector = element_row_id(:action => :list, :id => @record.id) %>
     ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
-    <%= render :partial => 'update_calculations', :formats => [:js] %>
+    <%= render :partial => 'update_calculations.js' %>
     ActiveScaffold.scroll_to('<%= row_selector %>', true);
   <% else %>
     <% if render_parent? %>
@@ -19,7 +19,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
       <%= render :partial => 'refresh_list' %>
     <% else %>
       action_link.close('<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
-      <%= render :partial => 'update_calculations', :formats => [:js] %>
+      <%= render :partial => 'update_calculations.js' %>
     <% end %>
   <% end %>
 <% else %>
