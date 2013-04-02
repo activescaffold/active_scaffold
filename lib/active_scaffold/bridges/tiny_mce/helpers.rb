@@ -16,7 +16,7 @@ class ActiveScaffold::Bridges::TinyMce
         options[:class] = "#{options[:class]} mceEditor #{column.options[:class]}".strip
 				
 				settings = { :theme => 'simple' }.merge(column.options[:tinymce] || {})
-				settings = settings.to_s.gsub(/:(.+?)\=\>/, '\1:')
+        settings = settings.to_json
 				settings = "tinyMCE.settings = #{settings};"
 
         html = []
