@@ -24,7 +24,7 @@ module ActiveScaffold::Config
       }
     end
     
-    alias_method_chain :initialize, :file_column unless self.instance_methods.include?("initialize_without_file_column".send(::ActiveScaffol::METHOD_CONVERSION))
+    alias_method_chain :initialize, :file_column unless self.instance_methods.include?("initialize_without_file_column".send(::ActiveScaffold::METHOD_CONVERSION))
     
     def configure_file_column_field(field)
       # set list_ui first because it gets its default value from form_ui

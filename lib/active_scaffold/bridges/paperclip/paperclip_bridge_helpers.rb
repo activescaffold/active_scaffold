@@ -6,7 +6,7 @@ module ActiveScaffold
         self.thumbnail_style = :thumbnail
 
         def self.generate_delete_helper(klass, field)
-          klass.class_eval <<-EOF, __FILE__, __LINE__ + 1 unless klass.instance_methods.include?("delete_#{field}=".send(::ActiveScaffol::METHOD_CONVERSION))
+          klass.class_eval <<-EOF, __FILE__, __LINE__ + 1 unless klass.instance_methods.include?("delete_#{field}=".send(::ActiveScaffold::METHOD_CONVERSION))
             attr_reader :delete_#{field}
 
             def delete_#{field}=(value)
