@@ -1,4 +1,4 @@
-<table cellpadding="0" cellspacing="0" id="<%= sub_form_list_id(:association => column.name) %>">
+<table cellpadding="0" cellspacing="0" id="<%= sub_form_list_id(:association => column.name, :id => parent_record.id || generated_id(parent_record) || 99999999999) %>">
   <% @record = associated.empty? ? build_associated(column, parent_record) : associated.last -%>
   <%= render :partial => 'horizontal_subform_header', :locals => {:parent_record => parent_record, :record => @record} %>
 

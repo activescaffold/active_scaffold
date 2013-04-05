@@ -49,10 +49,6 @@ module ActiveScaffold
         lookup_context.exists? template_name, '', partial
       end
 
-      def generate_temporary_id
-        (Time.now.to_f*1000).to_i.to_s
-      end
-
       # Turns [[label, value]] into <option> tags
       # Takes optional parameter of :include_blank
       def option_tags_for(select_options, options = {})

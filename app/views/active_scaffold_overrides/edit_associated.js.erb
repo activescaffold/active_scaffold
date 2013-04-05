@@ -9,4 +9,4 @@ else
     options[:id] = active_scaffold_input_options(column, @scope)[:id]
   end
 end %>
-ActiveScaffold.create_associated_record_form('<%=sub_form_list_id(:association => @column.name)%>','<%=escape_javascript(associated_form)%>', <%= options.to_json.html_safe %>);
+ActiveScaffold.create_associated_record_form('<%=sub_form_list_id(:association => @column.name, :id => @parent_record.id || generated_id(@parent_record) || 99999999999)%>','<%=escape_javascript(associated_form)%>', <%= options.to_json.html_safe %>);

@@ -32,6 +32,7 @@
 - Allow to override label for list column headings with a new helper method column_heading_label
 - Keep focus on last field when render_field is called
 - Add empty create and update methods to tableless
+- Allow multiple subform levels
 
 = 3.2.20
 - Some fixes for ruby 1.9
