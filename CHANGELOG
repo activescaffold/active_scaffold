@@ -33,6 +33,10 @@
 - Keep focus on last field when render_field is called
 - Add empty create and update methods to tableless
 
+= 3.2.20 (not released yet)
+- Some fixes for ruby 1.9
+- Some fixes for rails 3.1
+
 = 3.2.19
 - Avoid crashing when between is chosen and from or to is not filled
 
