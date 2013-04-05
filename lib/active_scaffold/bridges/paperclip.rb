@@ -1,6 +1,6 @@
 class ActiveScaffold::Bridges::Paperclip < ActiveScaffold::DataStructures::Bridge
   def self.install
-    if ActiveScaffold::Config::Core.instance_methods.include?("initialize_with_paperclip")
+    if ActiveScaffold::Config::Core.instance_methods.include?("initialize_with_paperclip".send(::ActiveScaffol::METHOD_CONVERSION))
       raise RuntimeError, "We've detected that you have active_scaffold_paperclip_bridge installed. This plugin has been moved to core. Please remove active_scaffold_paperclip_bridge to prevent any conflicts"
     end
     require File.join(File.dirname(__FILE__), "paperclip/form_ui")
