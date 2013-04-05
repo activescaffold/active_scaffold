@@ -36,6 +36,7 @@
 = 3.2.20 (not released yet)
 - Some fixes for ruby 1.9
 - Some fixes for rails 3.1
+- Fix detection of empty for has_and_belongs_to_many on subforms
 
 = 3.2.19
 - Avoid crashing when between is chosen and from or to is not filled
