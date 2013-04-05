@@ -110,8 +110,7 @@ module ActiveScaffold
           active_scaffold_config.send(@record.new_record? ? :create : :update)
         end
         if form_action && column.update_columns && (column.update_columns & form_action.columns.names).present?
-          url_params = params_for(:action => 'render_field', :column => column.name, :id => nil)
-          url_params[:id] = @record.id if column.send_form_on_update_column
+          url_params = params_for(:action => 'render_field', :column => column.name, :id => @record.id)
           url_params[:eid] = params[:eid] if params[:eid]
           if scope
             url_params[:controller] = subform_controller.controller_path
