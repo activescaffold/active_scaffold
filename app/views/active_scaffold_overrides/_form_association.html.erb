@@ -6,7 +6,7 @@ if show_blank_record = column.show_blank_record?(associated)
   associated << build_associated(column, parent_record)
 end
 @disable_required_for_new = show_blank_record unless (column.singular_association? && column.required?)
-subform_div_id = "#{sub_form_id({:association => column.name, :id => parent_record.id || 99999999999})}-div" 
+subform_div_id = "#{sub_form_id(:association => column.name, :id => parent_record.id || generated_id(parent_record) || 99999999999)}-div" 
 -%>
 <h5><%= column.label -%></h5>
 <div id ="<%= subform_div_id %>" <%= 'style="display: none;"'.html_safe if column.collapsed -%>>
