@@ -680,7 +680,7 @@ var ActiveScaffold = {
     content = jQuery(content);
     if (options.singular == false) {
       if (!(options.id && jQuery('#' + options.id).size() > 0)) {
-        var tfoot = element.find('tfoot');
+        var tfoot = element.children('tfoot');
         if (tfoot.length) tfoot.before(content);
         else element.append(content);
         content.trigger('as:element_created');
