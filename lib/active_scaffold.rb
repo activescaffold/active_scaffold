@@ -16,6 +16,7 @@ require 'active_scaffold/engine' unless defined? ACTIVE_SCAFFOLD_PLUGIN
 require 'json'  # for js_config
 
 module ActiveScaffold
+  METHOD_CONVERSION = RUBY_VERSION < '1.9' ? :to_s : :to_sym
   autoload :AttributeParams, 'active_scaffold/attribute_params'
   autoload :Configurable, 'active_scaffold/configurable'
   autoload :Constraints, 'active_scaffold/constraints'

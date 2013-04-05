@@ -4,12 +4,12 @@ module ActiveScaffold
       module FileColumnHelpers
         class << self
           def file_column_fields(klass)
-            klass.instance_methods.grep(/_just_uploaded\?$/).collect{|m| m[0..-16].to_sym }
+            klass.instance_methods.select{|m| m.to_s =~ /_just_uploaded\?$/}.collect{|m| m[0..-16].to_sym }
           end
           
           def generate_delete_helpers(klass)
             file_column_fields(klass).each { |field|
-              klass.send :class_eval, <<-EOF, __FILE__, __LINE__ + 1  unless klass.methods.include?("#{field}_with_delete=")
+              klass.send :class_eval, <<-EOF, __FILE__, __LINE__ + 1  unless klass.methods.include?("#{field}_with_delete=".send(::ActiveScaffol::METHOD_CONVERSION))
                 attr_reader :delete_#{field}
                 
                 def delete_#{field}=(value)
