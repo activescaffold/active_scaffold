@@ -212,7 +212,7 @@ module ActiveScaffold
         next true if column and ignore_column_types.include?(column.type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
-        next true if column and value == column.default.to_s
+        next true if value == column_default_value(column_name, klass, column)
 
         if value.is_a?(Hash)
           attributes_hash_is_empty?(value, klass)
@@ -222,6 +222,10 @@ module ActiveScaffold
           value.respond_to?(:empty?) ? value.empty? : false
         end
       end
+    end
+    
+    def column_default_value(column_name, klass, column)
+      column.default.to_s if column
     end
   end
 end
