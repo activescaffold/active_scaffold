@@ -61,7 +61,7 @@ module ActiveScaffold::Actions
     # The actual algorithm to prepare for the list view
     def set_includes_for_columns(action = :list)
       @cache_associations = true
-      includes_for_list_columns = active_scaffold_config.send(action).columns.collect{ |c| c.includes }.flatten.uniq.compact
+      includes_for_list_columns = active_scaffold_config.send(action).columns.collect_visible(:flatten => true){ |c| c.includes }.flatten.uniq.compact
       self.active_scaffold_includes.concat includes_for_list_columns
     end
     
