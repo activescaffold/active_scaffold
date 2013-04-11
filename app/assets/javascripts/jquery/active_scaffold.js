@@ -556,13 +556,10 @@ var ActiveScaffold = {
     row = jQuery(row);
     var tbody = row.closest('tbody.records');
     
-    var current_action_node = row.find('td.actions a.disabled').first();
-    if (current_action_node) {
-      var action_link = ActiveScaffold.ActionLink.get(current_action_node);
-      if (action_link) {
-        action_link.close_previous_adapter();
-      }
-    }
+    row.find('a.disabled').each(function() {;
+      var action_link = ActiveScaffold.ActionLink.get(this);
+      if (action_link) action_link.close();
+    });
     
     ActiveScaffold.remove(row, function() {
       ActiveScaffold.stripe(tbody);
