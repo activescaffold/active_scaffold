@@ -59,7 +59,7 @@ module ActiveScaffold::Actions
         end
         flash.now[:info] = as_(:updated_model, :model => @record.to_label) if active_scaffold_config.update.persistent
       end
-      render :action => 'on_update'
+      render :action => 'on_update', :layout => false
     end
     def update_respond_to_xml
       render :xml => response_object.to_xml(:only => active_scaffold_config.update.columns.names), :content_type => Mime::XML, :status => response_status

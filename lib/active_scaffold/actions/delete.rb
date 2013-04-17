@@ -24,7 +24,7 @@ module ActiveScaffold::Actions
 
     def destroy_respond_to_js
       do_refresh_list if successful? && active_scaffold_config.delete.refresh_list && !render_parent?
-      render(:action => 'destroy')
+      render(:action => 'destroy', :layout => false)
     end
 
     def destroy_respond_to_xml
