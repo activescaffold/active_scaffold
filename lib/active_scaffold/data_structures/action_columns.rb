@@ -93,7 +93,7 @@ module ActiveScaffold::DataStructures
         options[:for] ||= @columns.active_record_class
         self.unauthorized_columns = []
         @set.each do |item|
-          unless item.is_a? ActiveScaffold::DataStructures::ActionColumns
+          unless item.is_a? ActiveScaffold::DataStructures::ActionColumns || @columns.nil?
             item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
             next if self.skip_column?(item, options)
           end
@@ -111,7 +111,7 @@ module ActiveScaffold::DataStructures
         # skip if this matches a constrained column
         result = true if constraint_columns.include?(column.name.to_sym)
         # skip this field if it's not authorized
-        unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || self.action.crud_type, :column => column.name)
+        unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || self.action.try(:crud_type), :column => column.name)
           self.unauthorized_columns << column.name.to_sym
           result = true
         end
