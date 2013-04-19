@@ -24,7 +24,7 @@ module ActiveScaffold::Actions
       @nested_auto_open = active_scaffold_config.list.nested_auto_open
       respond_to_action(:list)
     end
-    
+
     protected
     def list_respond_to_html
       if embedded?
@@ -49,11 +49,11 @@ module ActiveScaffold::Actions
     def list_respond_to_yaml
       render :text => Hash.from_xml(response_object.to_xml(:only => list_columns_names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
-    
+
     def row_respond_to_html
       render(:partial => 'row', :locals => {:record => @record})
     end
-    
+
     def row_respond_to_js
       render :action => 'row'
     end
@@ -64,7 +64,7 @@ module ActiveScaffold::Actions
       includes_for_list_columns = active_scaffold_config.send(action).columns.collect_visible(:flatten => true){ |c| c.includes }.flatten.uniq.compact
       self.active_scaffold_includes.concat includes_for_list_columns
     end
-    
+
     def get_row
       set_includes_for_columns
       klass = beginning_of_chain.includes(active_scaffold_includes)
@@ -97,7 +97,7 @@ module ActiveScaffold::Actions
       end
       @page, @records = page, page.items
     end
-    
+
     def do_refresh_list
       params.delete(:id)
       do_search if respond_to? :do_search, true
@@ -133,11 +133,11 @@ module ActiveScaffold::Actions
     def process_action_link_action(render_action = :action_update, crud_type = nil)
       if request.get?
         # someone has disabled javascript, we have to show confirmation form first
-        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
+        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id].to_i > 0
         respond_to_action(:action_confirmation)
       else
         @action_link = active_scaffold_config.action_links[action_name]
-        if params[:id] && params[:id] && params[:id].to_i > 0
+        if params[:id] && params[:id].to_i > 0
           crud_type ||= (request.post? || request.put?) ? :update : :delete
           set_includes_for_columns
           klass = beginning_of_chain.includes(active_scaffold_includes)
@@ -180,7 +180,7 @@ module ActiveScaffold::Actions
     def action_update_respond_to_yaml
       render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => list_columns_names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
-     
+
     private
     def list_authorized_filter
       raise ActiveScaffold::ActionNotAllowed unless list_authorized?

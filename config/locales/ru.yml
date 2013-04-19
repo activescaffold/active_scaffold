@@ -6,7 +6,7 @@ ru:
     add: 'Добавить запись'
     add_existing: 'Добавить существующую запись'
     add_existing_model: '%{model}: добавить существующую запись'
-    apply: 'Apply'
+    apply: 'Применить'
     are_you_sure_to_delete: 'Удалить %{label}?'
     cancel: 'Отмена'
     click_to_edit: 'Нажмите для редактирования'
@@ -30,7 +30,7 @@ ru:
     nested_of_model: '%{nested_model} @ %{parent_model}'
     'false': 'Нет'
     filtered: '(Найденное)'
-    found: 
+    found:
       one: 'запись'
       few: 'записи'
       many: 'записей'
@@ -56,7 +56,7 @@ ru:
     refresh: 'Обновить'
     remove: 'Удалить'
     remove_file: 'Удалить или заменить файл'
-    replace_existing: 'Replace existing'
+    replace_existing: 'Заменить существующим'
     replace_with_new: 'Заменить новым'
     revisions_for_model: '%{model}: редакции'
     reset: 'Сброс'
@@ -111,13 +111,13 @@ ru:
       firstDay: 1
       isRTL: false
       showMonthAfterYear: false
-      
+
     datetime_picker_options:
-    
+
     human_conditions:
       boolean: "%{column} = %{value}"
       association: "%{column} = %{value}"
-      
+
     errors:
       template:
         header:
