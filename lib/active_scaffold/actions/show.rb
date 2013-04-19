@@ -11,13 +11,13 @@ module ActiveScaffold::Actions
         do_show
         respond_to_action(:show)
       else
-        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
+        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id].to_i > 0
         action_confirmation_respond_to_html(:destroy)
       end
     end
 
     protected
-    
+
     def show_respond_to_json
       render :text => response_object.to_json(:only => active_scaffold_config.show.columns.names), :content_type => Mime::JSON, :status => response_status
     end
@@ -53,7 +53,7 @@ module ActiveScaffold::Actions
     def show_ignore?(record = nil)
       !self.send(:authorized_for?, :crud_type => :read)
     end
-    private 
+    private
     def show_authorized_filter
       link = active_scaffold_config.show.link || active_scaffold_config.show.class.link
       raise ActiveScaffold::ActionNotAllowed unless self.send(link.security_method)
