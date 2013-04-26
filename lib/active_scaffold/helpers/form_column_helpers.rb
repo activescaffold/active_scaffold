@@ -93,7 +93,7 @@ module ActiveScaffold
         options[:placeholder] = column.placeholder if column.placeholder.present?
 
         # Fix for keeping unique IDs in subform
-        id_control = "record_#{column.name}_#{[params[:eid], params[:id]].compact.join '_'}"
+        id_control = "record_#{column.name}_#{[params[:eid], params[:parent_id] || params[:id]].compact.join '_'}"
         id_control += scope_id(scope) if scope
         
         classes = "#{column.name}-input"
@@ -116,6 +116,7 @@ module ActiveScaffold
           if scope
             url_params[:controller] = subform_controller.controller_path
             url_params[:scope] = scope
+            url_params[:parent_id] = params[:parent_id] || params[:id]
           end
 
           options[:class] = "#{options[:class]} update_form".strip
