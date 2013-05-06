@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module FormColumnHelpers
       def active_scaffold_input_carrierwave(column, options)
-        options = active_scaffold_input_text_options(options)
+        options = active_scaffold_input_text_options(options.merge(column.options))
         carrierwave = @record.send("#{column.name}")
         if !carrierwave.file.blank?
 
