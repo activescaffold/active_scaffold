@@ -111,7 +111,7 @@ module ActiveScaffold
         end
         if form_action && column.update_columns && (column.update_columns & form_action.columns.names).present?
           url_params = params_for(:action => 'render_field', :column => column.name, :id => @record.id)
-          url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested?
+          url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
           url_params[:eid] = params[:eid] if params[:eid]
           if scope
             url_params[:controller] = subform_controller.controller_path
