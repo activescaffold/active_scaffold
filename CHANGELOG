@@ -1,4 +1,4 @@
-= 3.3.0 (not released yet)
+= 3.3.0
 - Unify field overrides and list_ui method signatures
 - Improve performance removing some partials and adding some caching for helper overrides and UIs, and caching url generation for lists (caching url is optional)
 - Drop support for rails 3.1
