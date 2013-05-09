@@ -969,6 +969,7 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
       this.hide_target = true;
     }
 
+    var colspan = this.target.childElements().length;
     if (this.position == 'after') {
       this.target.insert({after:content});
       this.set_adapter(this.target.next());
@@ -980,6 +981,7 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
     else {
       return false;
     }
+    this.adapter.down('.inline-adapter-cell').writeAttribute('colspan', colspan);
     ActiveScaffold.highlight(this.adapter.down('td').down());
   },
 
