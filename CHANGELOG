@@ -1,5 +1,6 @@
 = 3.3.1 (not released)
 - Set adapter colspan (nested lists and forms) using javascript, fixed issue when active_scaffold_config_list is used
+- Fix bug saving default values when get method is overrided on model to return default value
 
 = 3.3.0
 - Unify field overrides and list_ui method signatures
