@@ -986,12 +986,14 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
   },
 
   close: function() {
-    var link = this;
-    ActiveScaffold.remove(this.adapter, function() {
-      link.enable();
-      if (link.hide_target) link.target.show();
-      if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close == 'checkInViewport');
-    });
+    if (this.adapter) {
+      var link = this;
+      ActiveScaffold.remove(this.adapter, function() {
+        link.enable();
+        if (link.hide_target) link.target.show();
+        if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+      });
+    }
   },
 
   reload: function() {
