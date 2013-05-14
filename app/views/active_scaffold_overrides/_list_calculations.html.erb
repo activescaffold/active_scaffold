@@ -2,13 +2,11 @@
    columns ||= list_columns -%>
 <tr id="<%= active_scaffold_calculations_id %>" class="active-scaffold-calculations">
   <% columns.each do |column| -%>
-    <td <%= "id=#{active_scaffold_calculations_id(:column => column)}" if column.calculation? %>>
-      <% if column.calculation? -%>
-        <%= render_column_calculation(column) %>
-      <% else -%>
-        &nbsp;
-      <% end -%>
-    </td>
+    <% if column.calculation? %>>
+    <td id="<%= active_scaffold_calculations_id(:column => column) %>"><%= render_column_calculation(column) %></td>
+    <% else %>
+    <td>&nbsp;</td>
+    <% end -%>
   <% end -%>
   <% unless active_scaffold_config.action_links.empty? -%>
     <td class="actions">&nbsp;</td>
