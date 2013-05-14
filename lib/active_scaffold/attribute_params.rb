@@ -57,9 +57,7 @@ module ActiveScaffold
           parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
         elsif attributes.has_key? column.name
           value = column_value_from_param_value(parent_record, column, attributes[column.name]) 
-
-          # we avoid assigning a value that already exists because otherwise has_one associations will break (AR bug in has_one_association.rb#replace)
-          parent_record.send("#{column.name}=", value) unless parent_record.send(column.name) == value
+          parent_record.send("#{column.name}=", value)
         end
       end
 
