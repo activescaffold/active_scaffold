@@ -135,7 +135,7 @@ module ActiveScaffold
         if override_form_field_partial?(column)
           render :partial => override_form_field_partial(column), :locals => { :column => column, :only_value => only_value, :scope => scope, :col_class => col_class }
         elsif renders_as == :field || override_form_field?(column)
-          form_attribute(column, record, scope, only_value)
+          form_attribute(column, record, scope, only_value, col_class)
         elsif renders_as == :subform
           render :partial => 'form_association', :locals => { :column => column, :scope => scope }
         else
