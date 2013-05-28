@@ -29,8 +29,8 @@ class PaperclipTest < ActionView::TestCase
     %w(logo_file_name logo_file_size logo_updated_at logo_content_type).each do |attr|
       assert !config.columns._inheritable.include?(attr.to_sym)
     end
-    assert Company.instance_methods.include?('delete_logo')
-    assert Company.instance_methods.include?('delete_logo=')
+    assert Company.method_defined?(:delete_logo)
+    assert Company.method_defined?(:'delete_logo=')
   end
 
   def test_delete
