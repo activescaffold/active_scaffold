@@ -9,7 +9,7 @@ module ActiveScaffold
           
           def generate_delete_helpers(klass)
             file_column_fields(klass).each { |field|
-              klass.send :class_eval, <<-EOF, __FILE__, __LINE__ + 1  unless klass.methods.include?("#{field}_with_delete=".send(::ActiveScaffold::METHOD_CONVERSION))
+              klass.send :class_eval, <<-EOF, __FILE__, __LINE__ + 1  unless klass.method_defined?(:"#{field}_with_delete=")
                 attr_reader :delete_#{field}
                 
                 def delete_#{field}=(value)
