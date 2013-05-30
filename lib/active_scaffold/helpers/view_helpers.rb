@@ -101,11 +101,11 @@ module ActiveScaffold
       end
 
       def skip_action_link?(link, *args)
-        !link.ignore_method.nil? && controller.respond_to?(link.ignore_method) && controller.send(link.ignore_method, *args)
+        !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *args)
       end
 
       def action_link_authorized?(link, *args)
-        security_method = link.security_method_set? || controller.respond_to?(link.security_method)
+        security_method = link.security_method_set? || controller.respond_to?(link.security_method, true)
         authorized = if security_method
           controller.send(link.security_method, *args)
         else

@@ -411,7 +411,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_add_existing_input(options)
-        if ActiveScaffold.js_framework == :prototype && controller.respond_to?(:record_select_config)
+        if ActiveScaffold.js_framework == :prototype && controller.respond_to?(:record_select_config, true)
           remote_controller = active_scaffold_controller_for(record_select_config.model).controller_path
           options.merge!(:controller => remote_controller)
           options.merge!(active_scaffold_input_text_options)
@@ -425,7 +425,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_add_existing_label
-        if controller.respond_to?(:record_select_config)
+        if controller.respond_to?(:record_select_config, true)
           record_select_config.model.model_name.human
         else
           active_scaffold_config.model.model_name.human

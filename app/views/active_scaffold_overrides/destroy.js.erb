@@ -8,7 +8,7 @@
       <% messages_id = active_scaffold_messages_id(:controller_id => current_id) %>
       <%= render :partial => 'update_calculations', :locals => {:calculations_id => active_scaffold_calculations_id(:controller_id => current_id)}, :formats => [:js] %>
     <% elsif render_parent_action == :index %>
-      <% if controller.respond_to?(:render_component_into_view) %>
+      <% if controller.respond_to?(:render_component_into_view, true) %>
         <%= escape_javascript(controller.send(:render_component_into_view, render_parent_options)) %>
       <% else %>
         ActiveScaffold.reload('<%= url_for render_parent_options %>');
