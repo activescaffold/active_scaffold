@@ -66,7 +66,7 @@ module ActionView::Helpers #:nodoc:
         id = "as_#{eid}-embedded"
         url_options = {:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params])
 
-        if controller.respond_to?(:render_component_into_view)
+        if controller.respond_to?(:render_component_into_view, true)
           controller.send(:render_component_into_view, url_options)
         else
           content_tag(:div, :id => id, :class => 'active-scaffold-component') do
