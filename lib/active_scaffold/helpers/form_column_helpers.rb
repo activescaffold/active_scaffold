@@ -46,7 +46,7 @@ module ActiveScaffold
                   options[:size] ||= ActionView::Helpers::InstanceTag::DEFAULT_FIELD_OPTIONS["size"]
                 end
                 options[:include_blank] = true if column.column.null and [:date, :datetime, :time].include?(column.column.type)
-                options[:value] = format_number_value((options[:object] || @raecord).send(column.name), column.options) if column.number?
+                options[:value] = format_number_value((options[:object] || @record).send(column.name), column.options) if column.number?
                 text_field(:record, column.name, options.merge(column.options))
               end
             end
