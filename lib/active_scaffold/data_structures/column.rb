@@ -226,7 +226,7 @@ module ActiveScaffold::DataStructures
     attr_writer :show_blank_record
     def show_blank_record?(associated)
       if @show_blank_record
-        return false unless self.association.klass.authorized_for?(:crud_type => :create)
+        return false unless self.association.klass.authorized_for?(:crud_type => :create) and not self.association.options[:readonly]
         self.plural_association? or (self.singular_association? and associated.blank?)
       end
     end
