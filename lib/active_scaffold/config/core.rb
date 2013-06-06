@@ -29,6 +29,10 @@ module ActiveScaffold::Config
     cattr_accessor :cache_action_link_urls
     @@cache_action_link_urls = true
 
+    # enable caching of association options
+    cattr_accessor :cache_association_options
+    @@cache_association_options = true
+
     # lets you disable the DHTML history
     def self.dhtml_history=(val)
       @@dhtml_history = val
@@ -98,6 +102,9 @@ module ActiveScaffold::Config
     # enable caching of action link urls
     attr_accessor :cache_action_link_urls
 
+    # enable caching of association options
+    attr_accessor :cache_association_options
+
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
     def add_sti_create_links?
@@ -147,6 +154,7 @@ module ActiveScaffold::Config
       @frontend = self.class.frontend
       @theme = self.class.theme
       @cache_action_link_urls = self.class.cache_action_link_urls
+      @cache_association_options = self.class.cache_association_options
       @sti_create_links = self.class.sti_create_links
 
       # inherit from the global set of action links

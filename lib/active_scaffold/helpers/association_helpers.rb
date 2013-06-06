@@ -1,6 +1,17 @@
 module ActiveScaffold
   module Helpers
     module AssociationHelpers
+      # Cache the optins for select
+      def cache_association_options(association, conditions, klass, cache = true)
+        if active_scaffold_config.cache_association_options && cache
+          @_associations_cache ||= Hash.new { |h,k| h[k] = {} }
+          key = [association.name, association.active_record.name, klass.name].join('/')
+          @_associations_cache[key][conditions] ||= yield
+        else
+          yield
+        end
+      end
+
       # Provides a way to honor the :conditions on an association while searching the association's klass
       def association_options_find(association, conditions = nil, klass = nil)
         if klass.nil? && association.options[:polymorphic]
@@ -10,18 +21,22 @@ module ActiveScaffold
           else
             return []
           end
+          cache = !block_given?
         else
+          cache = !block_given? && klass.nil?
           klass ||= association.klass
         end
 
         conditions = options_for_association_conditions(association) if conditions.nil?
-        relation = klass.where(conditions).where(association.options[:conditions])
-        relation = relation.includes(association.options[:include]) if association.options[:include]
-        relation = yield(relation) if block_given?
-        relation.all
+        cache_association_options(association, conditions, klass, cache) do
+          relation = klass.where(conditions).where(association.options[:conditions])
+          relation = relation.includes(association.options[:include]) if association.options[:include]
+          relation = yield(relation) if block_given?
+          relation.to_a
+        end
       end
 
-      # Provides a way to honor the :conditions on an association while searching the association's klass
+      # Sorts the options for select
       def sorted_association_options_find(association, conditions = nil)
         association_options_find(association, conditions).sort_by(&:to_label)
       end
