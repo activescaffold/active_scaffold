@@ -49,10 +49,6 @@ module ActiveScaffold
         lookup_context.exists? template_name, '', partial
       end
 
-      def generate_temporary_id
-        (Time.now.to_f*1000).to_i.to_s
-      end
-
       # Turns [[label, value]] into <option> tags
       # Takes optional parameter of :include_blank
       def option_tags_for(select_options, options = {})
@@ -372,7 +368,7 @@ module ActiveScaffold
             id = "#{column.association.name}-#{record.id}" unless record.nil?
           end
         end
-        action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || link.controller != controller.controller_path}#{link.action}"
+        action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
         action_link_id(action_id, id)
       end
       

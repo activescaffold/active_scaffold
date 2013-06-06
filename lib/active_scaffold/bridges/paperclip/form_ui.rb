@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module FormColumnHelpers
       def active_scaffold_input_paperclip(column, options)
-        options = active_scaffold_input_text_options(options)
+        options = active_scaffold_input_text_options(options.merge(column.options))
         input = file_field(:record, column.name, options)
         paperclip = @record.send("#{column.name}")
         if paperclip.file?

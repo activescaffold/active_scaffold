@@ -57,9 +57,7 @@ module ActiveScaffold
           parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
         elsif attributes.has_key? column.name
           value = column_value_from_param_value(parent_record, column, attributes[column.name]) 
-
-          # we avoid assigning a value that already exists because otherwise has_one associations will break (AR bug in has_one_association.rb#replace)
-          parent_record.send("#{column.name}=", value) unless parent_record.send(column.name) == value
+          parent_record.send("#{column.name}=", value)
         end
       end
 
@@ -212,16 +210,20 @@ module ActiveScaffold
         next true if column and ignore_column_types.include?(column.type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
-        next true if column and value == column.default.to_s
+        next true if value == column_default_value(column_name, klass, column)
 
         if value.is_a?(Hash)
           attributes_hash_is_empty?(value, klass)
         elsif value.is_a?(Array)
-          value.any? {|id| id.respond_to?(:empty?) ? !id.empty? : true}
+          value.all?(&:blank?)
         else
           value.respond_to?(:empty?) ? value.empty? : false
         end
       end
+    end
+    
+    def column_default_value(column_name, klass, column)
+      column.default.to_s if column
     end
   end
 end

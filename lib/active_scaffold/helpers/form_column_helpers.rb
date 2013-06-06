@@ -46,7 +46,7 @@ module ActiveScaffold
                   options[:size] ||= ActionView::Helpers::InstanceTag::DEFAULT_FIELD_OPTIONS["size"]
                 end
                 options[:include_blank] = true if column.column.null and [:date, :datetime, :time].include?(column.column.type)
-                options[:value] = format_number_value((options[:object] || @raecord).send(column.name), column.options) if column.number?
+                options[:value] = format_number_value((options[:object] || @record).send(column.name), column.options) if column.number?
                 text_field(:record, column.name, options.merge(column.options))
               end
             end
@@ -93,7 +93,7 @@ module ActiveScaffold
         options[:placeholder] = column.placeholder if column.placeholder.present?
 
         # Fix for keeping unique IDs in subform
-        id_control = "record_#{column.name}_#{[params[:eid], params[:id]].compact.join '_'}"
+        id_control = "record_#{column.name}_#{[params[:eid], params[:parent_id] || params[:id]].compact.join '_'}"
         id_control += scope_id(scope) if scope
         
         classes = "#{column.name}-input"
@@ -110,12 +110,13 @@ module ActiveScaffold
           active_scaffold_config.send(@record.new_record? ? :create : :update)
         end
         if form_action && column.update_columns && (column.update_columns & form_action.columns.names).present?
-          url_params = {:action => 'render_field', :column => column.name, :id => nil}
-          url_params[:id] = @record.id if column.send_form_on_update_column
+          url_params = params_for(:action => 'render_field', :column => column.name, :id => @record.id)
+          url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
           url_params[:eid] = params[:eid] if params[:eid]
           if scope
             url_params[:controller] = subform_controller.controller_path
             url_params[:scope] = scope
+            url_params[:parent_id] = params[:parent_id] || params[:id]
           end
 
           options[:class] = "#{options[:class]} update_form".strip
@@ -134,7 +135,7 @@ module ActiveScaffold
         if override_form_field_partial?(column)
           render :partial => override_form_field_partial(column), :locals => { :column => column, :only_value => only_value, :scope => scope, :col_class => col_class }
         elsif renders_as == :field || override_form_field?(column)
-          form_attribute(column, record, scope, only_value)
+          form_attribute(column, record, scope, only_value, col_class)
         elsif renders_as == :subform
           render :partial => 'form_association', :locals => { :column => column, :scope => scope }
         else
