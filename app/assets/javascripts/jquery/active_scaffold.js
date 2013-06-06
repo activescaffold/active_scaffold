@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-  if (jQuery().jquery < '1.8.0') {
+  if (/1\.[2-7]\..*/.test(jQuery().jquery)) {
     var error = 'ActiveScaffold requires jquery 1.8.0 or greater, please use jquery-rails 2.1.x gem or greater';
     if (typeof console != 'undefined') console.error(error);
     else alert(error);
