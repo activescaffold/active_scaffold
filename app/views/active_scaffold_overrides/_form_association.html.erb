@@ -1,5 +1,5 @@
 <%
-parent_record = @record # save @record, some partial can change @record
+parent_record ||= @record # save @record, some partial can change @record TODO remove when changing @record is removed
 associated = column.singular_association? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a
 associated = associated.sort_by {|r| r.new_record? ? 99999999999 : r.id} unless column.association.options.has_key?(:order)
 if column.show_blank_record?(associated)
@@ -18,6 +18,6 @@ subform_div_id = "#{sub_form_id(:association => column.name, :id => parent_recor
 </div>
 <%= link_to_visibility_toggle(subform_div_id, {:default_visible => !column.collapsed}) -%>
 <%
-  @record = parent_record # restore @record, some partials can change it
+  @record = parent_record # restore @record, some partials can change it TODO remove when changing @record is removed
   @disable_required_for_new = disable_required_for_new
 -%>
