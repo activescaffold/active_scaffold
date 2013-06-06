@@ -28,7 +28,7 @@ module ActiveScaffold::Actions
     protected
     def list_respond_to_html
       if embedded?
-        render :action => 'list', :layout => false
+        render :action => 'list', :formats => [:js], :layout => false
       else
         render :action => 'list'
       end
