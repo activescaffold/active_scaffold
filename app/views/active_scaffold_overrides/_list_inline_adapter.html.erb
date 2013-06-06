@@ -1,17 +1,6 @@
-<%
-  column_count ||= begin
-    config = if nested? and (nested.singular_association? || action_name == 'index')
-      active_scaffold_config_for(nested.parent_model)
-    else
-      active_scaffold_config
-    end
-    # increment in 1 for self-associations, parent_model config will have constraints too
-    config.list.columns.count + 1 + (config == active_scaffold_config && action_name == 'index' ? 1 : 0)
-  end
-%>
 <%# nested_id, allows us to remove a nested scaffold programmatically %>
 <tr class="inline-adapter" id="<%= element_row_id :action => :nested %>">
-  <td colspan="<%= column_count %>" class="inline-adapter-cell">
+  <td class="inline-adapter-cell">
 <% if controller.send(:successful?) %>
     <div class="<%= "#{params[:action]}-view" if params[:action] %> <%= "#{nested? ? nested.name : id_from_controller(params[:controller])}-view" %> view">
       <%= link_to(as_(:close), '', :class => 'inline-adapter-close as_cancel', :remote => true, :title => as_(:close)) -%>

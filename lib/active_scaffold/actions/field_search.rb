@@ -51,7 +51,7 @@ module ActiveScaffold::Actions
           column = active_scaffold_config.columns[key]
           search_condition = self.class.condition_for_column(column, value, text_search)
           unless search_condition.blank?
-            self.active_scaffold_outer_joins << column.search_joins unless column.includes.present? && list_columns.include?(column)
+            self.active_scaffold_outer_joins << column.search_joins unless active_scaffold_config.list.user.count_includes.nil? && column.includes.present? && list_columns.include?(column)
             self.active_scaffold_conditions << search_condition
             filtered_columns << column
           end

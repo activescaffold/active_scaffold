@@ -556,13 +556,10 @@ var ActiveScaffold = {
     row = jQuery(row);
     var tbody = row.closest('tbody.records');
     
-    var current_action_node = row.find('td.actions a.disabled').first();
-    if (current_action_node) {
-      var action_link = ActiveScaffold.ActionLink.get(current_action_node);
-      if (action_link) {
-        action_link.close_previous_adapter();
-      }
-    }
+    row.find('a.disabled').each(function() {;
+      var action_link = ActiveScaffold.ActionLink.get(this);
+      if (action_link) action_link.close();
+    });
     
     ActiveScaffold.remove(row, function() {
       ActiveScaffold.stripe(tbody);
@@ -680,7 +677,7 @@ var ActiveScaffold = {
     content = jQuery(content);
     if (options.singular == false) {
       if (!(options.id && jQuery('#' + options.id).size() > 0)) {
-        var tfoot = element.find('tfoot');
+        var tfoot = element.children('tfoot');
         if (tfoot.length) tfoot.before(content);
         else element.append(content);
         content.trigger('as:element_created');
@@ -989,12 +986,14 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
   },
 
   close: function() {
-    var link = this;
-    ActiveScaffold.remove(this.adapter, function() {
-      link.enable();
-      if (link.hide_target) link.target.show();
-      if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close == 'checkInViewport');
-    });
+    if (this.adapter) {
+      var link = this;
+      ActiveScaffold.remove(this.adapter, function() {
+        link.enable();
+        if (link.hide_target) link.target.show();
+        if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+      });
+    }
   },
 
   reload: function() {
@@ -1080,6 +1079,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
       this.hide_target = true;
     }
 
+    var colspan = this.target.children().length;
     if (this.position == 'after') {
       this.target.after(content);
       this.set_adapter(this.target.next());
@@ -1091,6 +1091,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       return false;
     }
+    this.adapter.find('.inline-adapter-cell:first').attr('colspan', colspan);
     ActiveScaffold.highlight(this.adapter.find('td'));
   },
 

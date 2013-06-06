@@ -71,7 +71,7 @@ module ActiveScaffold::Bridges
       
       def self.datetime_options(locale)
         begin
-          rails_time_format = I18n.translate! 'time.formats.picker', :locale => locale
+          rails_time_format = I18n.translate! 'time.formats.picker', :locale => locale, :default => '%a, %d %b %Y %H:%M:%S'
           datetime_picker_options = {:ampm => false,
             :hourText => I18n.translate!('datetime.prompts.hour', :locale => locale),
             :minuteText => I18n.translate!('datetime.prompts.minute', :locale => locale),

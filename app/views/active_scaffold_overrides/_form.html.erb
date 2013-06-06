@@ -1,7 +1,7 @@
 <%
   scope ||= nil
   subsection_id ||= nil
-  show_unauthorized_columns = active_scaffold_config.send(form_action).show_unauthorized_columns
+  show_unauthorized_columns = active_scaffold_config.send(form_action).show_unauthorized_columns if active_scaffold_config.actions.include? form_action
 %>
 <ol class="form" <%= "id=#{subsection_id}" unless subsection_id.nil? %> <%= "style=\"display: none;\"".html_safe if columns.collapsed %>>
   <% columns.each :for => @record, :crud_type => (:read if show_unauthorized_columns) do |column| %>
