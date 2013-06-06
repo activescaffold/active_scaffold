@@ -57,7 +57,9 @@ module ActiveScaffold
         end
       end
       
-      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false)
+      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil)
+        Rails.logger.warn "Relying on @record is deprecated, call active_scaffold_render_subform_column with record. Called from #{caller.first.gsub(/(.*:\d+):.*/, '\1')}" if record.nil? # TODO Remove when relying on @record is removed
+        record ||= @record # TODO Remove when relying on @record is removed
         if add_class
           col_class = []
           col_class << 'required' if column.required?
@@ -66,12 +68,12 @@ module ActiveScaffold
           col_class << 'checkbox' if column.form_ui == :checkbox
           col_class = col_class.join(' ')
         end
-        unless readonly and not @record.new_record? or not @record.authorized_for?(:crud_type => crud_type, :column => column.name)
-          render_column(column, @record, column_renders_as(column), scope, false, col_class)
+        unless readonly and not record.new_record? or not record.authorized_for?(:crud_type => crud_type, :column => column.name)
+          render_column(column, record, column_renders_as(column), scope, false, col_class)
         else
           options = active_scaffold_input_options(column, scope).except(:name)
           options[:class] = "#{options[:class]} #{col_class}" if col_class
-          content_tag :span, get_column_value(@record, column), options
+          content_tag :span, get_column_value(record, column), options
         end
       end
 
@@ -103,14 +105,17 @@ module ActiveScaffold
       end
 
       def update_columns_options(column, scope, options)
+        record = options[:object]
+        Rails.logger.warn "Relying on @record is deprecated, call update_columns_options with record. Called from #{caller.first.gsub(/(.*:\d+):.*/, '\1')}" if record.nil? # TODO Remove when relying on @record is removed
+        record ||= @record # TODO Remove when relying on @record is removed
         form_action = if scope
-          subform_controller = controller.class.active_scaffold_controller_for(@record.class)
+          subform_controller = controller.class.active_scaffold_controller_for(record.class)
           subform_controller.active_scaffold_config.subform
         elsif [:new, :create, :edit, :update, :render_field].include? params[:action].to_sym
-          active_scaffold_config.send(@record.new_record? ? :create : :update)
+          active_scaffold_config.send(record.new_record? ? :create : :update)
         end
         if form_action && column.update_columns && (column.update_columns & form_action.columns.names).present?
-          url_params = params_for(:action => 'render_field', :column => column.name, :id => @record.id)
+          url_params = params_for(:action => 'render_field', :column => column.name, :id => record.id)
           url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
           url_params[:eid] = params[:eid] if params[:eid]
           if scope
@@ -133,25 +138,25 @@ module ActiveScaffold
       
       def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil)
         if override_form_field_partial?(column)
-          render :partial => override_form_field_partial(column), :locals => { :column => column, :only_value => only_value, :scope => scope, :col_class => col_class }
+          render :partial => override_form_field_partial(column), :locals => { :column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record }
         elsif renders_as == :field || override_form_field?(column)
           form_attribute(column, record, scope, only_value, col_class)
         elsif renders_as == :subform
-          render :partial => 'form_association', :locals => { :column => column, :scope => scope }
+          render :partial => 'form_association', :locals => { :column => column, :scope => scope, :parent_record => record }
         else
           form_hidden_attribute(column, record, scope)
         end
       end
       
       def form_attribute(column, record, scope = nil, only_value = false, col_class = nil)
-        column_options = active_scaffold_input_options(column, scope)
+        column_options = active_scaffold_input_options(column, scope, :object => record)
         attributes = field_attributes(column, record)
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
         field = unless only_value
-          active_scaffold_input_for column, scope, column_options.merge(:object => record)
+          active_scaffold_input_for column, scope, column_options
         else
-          content_tag(:span, get_column_value(@record, column), column_options.except(:name)) <<
-          hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options.merge(:object => record))
+          content_tag(:span, get_column_value(record, column), column_options.except(:name, :object)) <<
+          hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
         end
         
         content_tag :dl, attributes do

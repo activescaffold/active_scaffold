@@ -60,7 +60,7 @@
   col_class << 'hidden' if column_renders_as(column) == :hidden
 -%>
   <%= content_tag column_tag, :class => col_class.join(' ') do %>
-    <%= active_scaffold_render_subform_column(column, scope, crud_type, readonly) %>
+    <%= active_scaffold_render_subform_column(column, scope, crud_type, readonly, false, record) %>
   <% end %>
 <% end -%>
 <% if show_actions -%>
@@ -79,7 +79,7 @@
 <%= content_tag row_tag, :class => 'associated-record' do %>
   <%= content_tag column_tag, :colspan => (columns_length if column_tag == :td) do %>
   <% column.each :for => @record.class, :crud_type => :read, :flatten => true do |col| %>
-    <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, true) %>
+    <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, true, record) %>
   <% end %>
   <% end %>
 <% end %>
