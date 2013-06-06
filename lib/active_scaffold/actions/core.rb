@@ -7,6 +7,7 @@ module ActiveScaffold::Actions
         after_filter :clear_storage
         rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
+      base.helper_method :successful?
       base.helper_method :nested?
       base.helper_method :calculate_query
       base.helper_method :new_model
