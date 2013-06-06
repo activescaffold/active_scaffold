@@ -1,10 +1,14 @@
 <%
   record_column = column
-  readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
-  crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
+  Rails.logger.warn "Relying on @record to render form_asssociation_record partial with no :object is deprecated, called from #{caller(1).detect {|l| l =~ /\.erb:/ }.gsub(/(.*:\d+):.*/, '\1')}" unless local_assigns[:form_association_record]
+  record = form_association_record ||= @record # TODO remove me, backwards compatibility, no :collection neither object in render
+  @record = record # TODO remove me, backward compatibility, helpers using @record
+  readonly = (record.readonly? or not record.authorized_for?(:crud_type => :update))
+  crud_type = record.new_record? ? :create : (readonly ? :read : :update)
   show_actions = false
-  config = active_scaffold_config_for(@record.class)
-  options = active_scaffold_input_options(config.columns[@record.class.primary_key], scope)
+  locked ||= false
+  config = active_scaffold_config_for(record.class)
+  options = active_scaffold_input_options(config.columns[record.class.primary_key], scope)
   tr_id = "association-#{options[:id]}"
 
   if config.subform.layout == :vertical
@@ -24,20 +28,20 @@
     default_col_class = []
     flatten ||= false
   end
-  index ||= nil
+  index ||= form_association_record_counter ||= nil
 
   columns_length = 0
   columns_groups = []
 -%>
 <<%= record_tag %> class="sub-form-record">
-<% unless @record.errors.empty? -%>
-<%= content_tag error_tag, :class => "association-record-errors", :id => element_messages_id(:action => @record.class.name.underscore, :id => "#{parent_record.id}-#{index}") do %>
-  <% errors = active_scaffold_error_messages_for(:record, :object_name => @record.class.model_name.human.downcase) %>
-  <%= error_inner_tag ? content_tag(error_inner_tag, errors, :colspan => (active_scaffold_config_for(@record.class).subform.columns.length + 1 if error_inner_tag == :td)) : errors %>
+<% unless record.errors.empty? -%>
+<%= content_tag error_tag, :class => "association-record-errors", :id => element_messages_id(:action => record.class.name.underscore, :id => "#{parent_record.id}-#{index}") do %>
+  <% errors = active_scaffold_error_messages_for(:record, :object_name => record.class.model_name.human.downcase) %>
+  <%= error_inner_tag ? content_tag(error_inner_tag, errors, :colspan => (active_scaffold_config_for(record.class).subform.columns.length + 1 if error_inner_tag == :td)) : errors %>
 <% end %>
 <% end %>
-<%= content_tag row_tag, :id => tr_id, :class => "association-record#{' association-record-new' if @record.new_record?}#{' locked' if locked}" do %>
-<% config.subform.columns.each :for => @record.class, :crud_type => :read, :flatten => flatten do |column| %>
+<%= content_tag row_tag, :id => tr_id, :class => "association-record#{' association-record-new' if record.new_record?}#{' locked' if locked}" do %>
+<% config.subform.columns.each :for => record.class, :crud_type => :read, :flatten => flatten do |column| %>
 <%
   if column.is_a? ActiveScaffold::DataStructures::ActionColumns
     columns_groups << column
@@ -61,11 +65,11 @@
 <% end -%>
 <% if show_actions -%>
   <%= content_tag column_tag, :class => "actions" do %>
-    <% if record_column.plural_association? and (@record.authorized_for?(:crud_type => :delete) or not [:destroy, :delete_all].include?(record_column.association.options[:dependent])) %>
+    <% if record_column.plural_association? and (record.authorized_for?(:crud_type => :delete) or not [:destroy, :delete_all].include?(record_column.association.options[:dependent])) %>
       <%= link_to as_(:remove), '#', :class => 'destroy', :id => "#{options[:id]}-destroy" , :data => {:delete_id => tr_id} unless locked %>
     <% end %>
-    <% unless @record.new_record? %>
-      <input type="hidden" name="<%= options[:name] -%>" id="<%= options[:id] -%>" value="<%= @record.id -%>" />
+    <% unless record.new_record? %>
+      <input type="hidden" name="<%= options[:name] -%>" id="<%= options[:id] -%>" value="<%= record.id -%>" />
     <% end -%>
   <% end %>
 <% end -%>
