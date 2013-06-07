@@ -1,5 +1,24 @@
 <%# encoding: utf-8 %>
 <%= ActiveScaffold::Bridges[:date_picker].localization %>
+$.datepicker.__proto__._attachDatepicker_without_inlineSettings = $.datepicker.__proto__._attachDatepicker;
+$.extend($.datepicker.__proto__, {
+  _attachDatepicker: function(target, settings) {
+    var inlineSettings = {}, $target = $(target);
+    for (var attrName in this._defaults) {
+      if(this._defaults.hasOwnProperty(attrName)){
+        var attrValue = $target.data(attrName.toLowerCase());
+        if (attrValue) {
+          try {
+            inlineSettings[attrName] = eval(attrValue);
+          } catch (err) {
+            inlineSettings[attrName] = attrValue;
+          }
+        }
+      }
+    }
+    this._attachDatepicker_without_inlineSettings(target, $.extend({}, settings || {}, inlineSettings));
+  }
+});
 jQuery(document).on("focus", "input.date_picker", function(){
   var date_picker = jQuery(this);
   if (typeof(date_picker.datepicker) == 'function') {

@@ -163,7 +163,7 @@
 
       for (var attrName in this._defaults) {
         if(this._defaults.hasOwnProperty(attrName)){
-          var attrValue = $input.attr('time:' + attrName);
+          var attrValue = $input.data(attrName.toLowerCase());
           if (attrValue) {
             try {
               inlineSettings[attrName] = eval(attrValue);
