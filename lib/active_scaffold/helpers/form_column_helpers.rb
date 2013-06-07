@@ -160,11 +160,15 @@ module ActiveScaffold
         end
         
         content_tag :dl, attributes do
-          %|<dt>#{label_tag column_options[:id], column.label}</dt><dd>#{field}
+          %|<dt>#{label_tag label_for(column, column_options), column.label}</dt><dd>#{field}
 #{loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns}
 #{content_tag :span, column.description, :class => 'description' if column.description.present?}
 </dd>|.html_safe
         end
+      end
+
+      def label_for(column, options)
+        options[:id] unless column.form_ui == :select && column.plural_association?
       end
       
       def form_hidden_attribute(column, record, scope = nil)
@@ -224,7 +228,7 @@ module ActiveScaffold
       end
       
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
-        html = hidden_field_tag("#{options[:name]}[]", '')
+        html = hidden_field_tag("#{options[:name]}[]", '', :id => nil)
         html << content_tag(:ul, :class => "#{options[:class]} checkbox-list", :id => options[:id]) do
           content = ''.html_safe
           select_options.each_with_index do |option, i|
