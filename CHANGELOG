@@ -7,6 +7,7 @@
 - Fix action_after_create
 - Cache associations options (for :select form_ui on associations), it can be disabled with config.cache_association_options = false
 - Clean some code so we can stop changing @record in partials and using @record in helpers
+- Support jquery-rails 3 gem and jquery-ui-rails gem
 
 = 3.3.0
 - Unify field overrides and list_ui method signatures
