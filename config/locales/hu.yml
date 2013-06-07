@@ -1,127 +1,126 @@
 hu:
   time:
     formats:
-      picker: "%a, %d %b %Y %H:%M:%S"
+      picker: ! '%a, %d %b %Y %H:%M:%S'
   active_scaffold:
-    add: 'Hozzáadás'
-    add_existing: 'Meglevő hozzáadása'
-    add_existing_model: 'Meglevő %{model} hozzáadása'
-    apply: 'Apply'
-    are_you_sure_to_delete: 'Biztos vagy benne?'
-    cancel: 'Mégse'
-    click_to_edit: 'Kattints a szerkesztéshez'
-    click_to_reset: 'Kattints az alapállapothoz'
-    close: 'Bezárás'
-    config_list: 'Configure'
-    config_list_model: 'Configure Columns for %{model}'
-    create: 'Létrehozás'
-    create_model: '%{model} létrehozása'
-    create_another: 'Mégegy hozzáadása'
-    created_model: '%{model} létrehozva'
-    create_new: 'Új létrehozása'
-    customize: 'Testreszabás'
-    delete: 'Törlés'
-    deleted_model: '%{model} törölve'
-    delimiter: 'Elválasztó'
-    download: 'Letöltés'
-    edit: 'Szerkesztés'
-    export: 'Exportálás'
-    nested_for_model: '%{nested_model} / %{parent_model}'
-    nested_of_model: '%{nested_model} of %{parent_model}'
+    add: Hozzáadás
+    add_existing: Meglevő hozzáadása
+    add_existing_model: Meglevő %{model} hozzáadása
+    apply: Apply
+    are_you_sure_to_delete: 
+    cancel: Mégse
+    click_to_edit: Kattints a szerkesztéshez
+    click_to_reset: Kattints az alapállapothoz
+    close: Bezárás
+    config_list: Configure
+    config_list_model: Configure Columns for %{model}
+    create: Létrehozás
+    create_model: ! '%{model} létrehozása'
+    create_another: 
+    created_model: ! '%{model} létrehozva'
+    create_new: Új létrehozása
+    customize: Testreszabás
+    delete: Törlés
+    deleted_model: ! '%{model} törölve'
+    delimiter: Elválasztó
+    download: Letöltés
+    edit: Szerkesztés
+    export: Exportálás
+    nested_for_model: ! '%{nested_model} / %{parent_model}'
+    nested_of_model: ! '%{nested_model} of %{parent_model}'
     'false': 'False'
-    filtered: '(Szűrt)'
-    found: 'Találat'
-    hide: 'Elrejtés'
-    inplace_edit_handle: '--'
-    live_search: 'Élő keresés'
-    loading: 'Betöltés…'
-    mark_all_records: "Mark all"
-    next: 'Következő'
-    no_entries: 'Nincs elem'
-    no_options: 'nincsenek opciók'
-    omit_header: 'Fejléc mellőzése'
-    options: 'Opciók'
-    pdf: 'PDF'
-    previous: 'Előző'
-    print: 'Nyomtatás'
+    filtered: (Szűrt)
+    found: Találat
+    hide: Elrejtés
+    inplace_edit_handle: --
+    live_search: Élő keresés
+    loading: Betöltés…
+    mark_all_records: Mark all
+    next: Következő
+    no_entries: Nincs elem
+    no_options: nincsenek opciók
+    omit_header: Fejléc mellőzése
+    options: Opciók
+    pdf: PDF
+    previous: Előző
+    print: Nyomtatás
     records_marked:
-      one: "1 marked %{model}"
-      other: "%{count} marked %{model}"
-    refresh: 'Frissítés'
-    remove: 'Törlés'
-    remove_file: 'Fájl törlése, vagy cseréje'
-    replace_existing: 'Replace existing'
-    replace_with_new: 'Csere újjal'
-    revisions_for_model: '%{model} revíziói'
-    reset: 'Alapállapot'
-    saving: 'Mentés…'
-    search: 'Keresés'
-    search_terms: 'Keresési kifejezések'
-    _select_: '- válassz -'
-    show: 'Mutatás'
-    show_model: '%{model} mutatása'
-    _to_ : ' – '
+      one: 1 marked %{model}
+      other: ! '%{count} marked %{model}'
+    refresh: Frissítés
+    remove: Törlés
+    remove_file: Fájl törlése, vagy cseréje
+    replace_existing: Replace existing
+    replace_with_new: Csere újjal
+    revisions_for_model: ! '%{model} revíziói'
+    reset: Alapállapot
+    saving: Mentés…
+    search: Keresés
+    search_terms: Keresési kifejezések
+    _select_: ! '- válassz -'
+    show: Mutatás
+    show_model: ! '%{model} mutatása'
+    _to_: ! ' – '
     'true': 'True'
-    update: 'Modosítás'
-    update_model: '%{model} modosítása'
-    updated_model: '%{model} módosítva'
-    '=': '='
-    '>=': '>='
-    '<=': '<='
-    '>': '>'
-    '<': '<'
-    '!=': '!='
-    between: 'Között'
-    contains: 'Contains'
-    begins_with: 'Begins with'
-    ends_with: 'Ends with'
-    today: 'Today'
-    yesterday: 'Yesterday'
-    tomorrow: 'Tommorrow'
-    this_week: 'This Week'
-    prev_week: 'Last Week'
-    next_week: 'Next Week'
-    this_month: 'This Month'
-    prev_month: 'Last Month'
-    next_month: 'Next Month'
-    this_year: 'This Year'
-    prev_year: 'Last Year'
-    next_year: 'Next Year'
-    past: 'Past'
-    future: 'Future'
-    range: 'Range'
-    seconds: 'Seconds'
-    minutes: 'Minutes'
-    hours: 'Hours'
-    days: 'Days'
-    weeks: 'Weeks'
-    months: 'Months'
-    years: 'Years'
-    optional_attributes: 'Further Options'
+    update: Modosítás
+    update_model: ! '%{model} modosítása'
+    updated_model: ! '%{model} módosítva'
+    =: =
+    ! '>=': ! '>='
+    <=: <=
+    ! '>': ! '>'
+    <: <
+    ! '!=': ! '!='
+    between: Között
+    contains: Contains
+    begins_with: Begins with
+    ends_with: Ends with
+    today: Today
+    yesterday: Yesterday
+    tomorrow: Tommorrow
+    this_week: This Week
+    prev_week: Last Week
+    next_week: Next Week
+    this_month: This Month
+    prev_month: Last Month
+    next_month: Next Month
+    this_year: This Year
+    prev_year: Last Year
+    next_year: Next Year
+    past: Past
+    future: Future
+    range: Range
+    seconds: Seconds
+    minutes: Minutes
+    hours: Hours
+    days: Days
+    weeks: Weeks
+    months: Months
+    years: Years
+    optional_attributes: Further Options
     :null: 'Null'
-    not_null: 'Not Null'
+    not_null: Not Null
     date_picker_options:
-      weekHeader: 'Wk'
+      weekHeader: Wk
       firstDay: 0
       isRTL: false
       showMonthAfterYear: false
-      
     datetime_picker_options:
-    
+      closeText: 
+      currentText: 
+      timeText: 
     human_conditions:
-      boolean: "%{column} = %{value}"
-      association: "%{column} = %{value}"
-      
+      boolean: ! '%{column} = %{value}'
+      association: ! '%{column} = %{value}'
     errors:
       template:
         header:
-          one:    "1 error prohibited this %{model} from being saved."
-          other:  "%{count} errors prohibited this %{model} from being saved"
-          
-        body: "There were problems with the following fields:"
-        
-    # error_messages
-    cant_destroy_record: "nem törölhető: %{record}"
-    internal_error: 'A lekérés sikertelen (code 500, Internal Error)'
-    version_inconsistency: 'Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni.'
-    failed_to_save_record: 'Failed to save record cause of an unknown error'
+          one: 1 error prohibited this %{model} from being saved.
+          other: ! '%{count} errors prohibited this %{model} from being saved'
+        body: ! 'There were problems with the following fields:'
+    cant_destroy_record: ! 'nem törölhető: %{record}'
+    internal_error: A lekérés sikertelen (code 500, Internal Error)
+    version_inconsistency: Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni.
+    no_authorization_for_action: 
+    'null': 'Null'
+    record_not_saved: 
