@@ -9,14 +9,14 @@ form_tag url_options, options %>
   <ol class="form">
    <% visibles, hiddens = visibles_and_hiddens(active_scaffold_config.field_search) %>
     <% visibles.each do |column| -%>
-      <%= render :partial => 'search_attribute', :locals => {:column => column} %>
+      <li class="form-element"><%= search_attribute(column, @record) %></li>
     <% end -%>
     <% unless hiddens.empty?  -%>
       <li class="sub-section">
       <h5><%= as_(:optional_attributes) %></h5>
       <ol id ="<%= sub_section_id(:sub_section => 'further_options') %>" class="form" style="display:none;">
       <% hiddens.each do |column| -%>
-        <%= render :partial => 'search_attribute', :locals => {:column => column} %>
+        <li class="form-element"><%= search_attribute(column, @record) %></li>
       <% end -%>
       </ol>
       <%= link_to_visibility_toggle(sub_section_id(:sub_section => 'further_options'), {:default_visible => false}) %>

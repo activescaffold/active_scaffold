@@ -4,12 +4,12 @@ module ActiveScaffold
     module SearchColumnHelpers
       # This method decides which input to use for the given column.
       # It does not do any rendering. It only decides which method is responsible for rendering.
-      def active_scaffold_search_for(column)
-        options = active_scaffold_search_options(column)
+      def active_scaffold_search_for(column, options = nil)
+        options ||= active_scaffold_search_options(column)
 
         # first, check if the dev has created an override for this specific field for search
         if (method = override_search_field(column))
-          send(method, @record, options)
+          send(method, options[:object] || @record, options)
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
         elsif column.search_ui and (method = override_search(column.search_ui))
@@ -21,7 +21,7 @@ module ActiveScaffold
 
         # fourth, check if the dev has created an override for this specific field
         elsif (method = override_form_field(column))
-          send(method, @record, options)
+          send(method, options[:object] || @record, options)
 
         # fallback: we get to make the decision
         else
@@ -51,6 +51,16 @@ module ActiveScaffold
         { :name => "search[#{column.name}]", :class => "#{column.name}-input", :id => "search_#{column.name}", :value => field_search_params[column.name] }
       end
 
+      def search_attribute(column, record)
+        column_options = active_scaffold_search_options(column).merge(:object => record)
+        field = active_scaffold_search_for column, column_options
+        %|<dl><dt>#{label_tag search_label_for(column, column_options), column.label}</dt><dd>#{field}</dd></dl>|.html_safe
+      end
+
+      def search_label_for(column, options)
+        options[:id] unless [:range, :integer, :decimal, :float, :string, :date_picker, :datetime_picker, :calendar_date_select].include? column.search_ui
+      end
+      
       ##
       ## Search input methods
       ##
@@ -114,7 +124,7 @@ module ActiveScaffold
         select_options << [as_(:true), true]
         select_options << [as_(:false), false]
 
-        select_tag(options[:name], options_for_select(select_options, column.column.type_cast(field_search_params[column.name])))
+        select_tag(options[:name], options_for_select(select_options, column.column.type_cast(field_search_params[column.name])), :id => options[:id])
       end
       # we can't use checkbox ui because it's not possible to decide whether search for this field or not
       alias_method :active_scaffold_search_checkbox, :active_scaffold_search_boolean
@@ -123,7 +133,7 @@ module ActiveScaffold
         select_options = []
         select_options << [as_(:_select_), nil]
         select_options.concat ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp), comp]}
-        select_tag(options[:name], options_for_select(select_options, field_search_params[column.name]))
+        select_tag(options[:name], options_for_select(select_options, field_search_params[column.name]), :id => options[:id])
       end
 
       def field_search_params_range_values(column)

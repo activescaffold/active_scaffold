@@ -161,7 +161,7 @@ module ActiveScaffold::Bridges
           options[:style] = (options[:show].nil? || options[:show]) ? nil : "display: none"
           format = options.delete(:format) || (column.search_ui == :date_picker ? :default : :picker)
           datepicker_format_options(column, format, options)
-          text_field_tag("#{options[:name]}[#{name}]", value ? l(value, :format => format) : nil, options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]"))
+          text_field_tag("#{options[:name]}[#{name}]", value ? l(value, :format => format) : nil, options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]", :object => nil))
         end
       end
       
