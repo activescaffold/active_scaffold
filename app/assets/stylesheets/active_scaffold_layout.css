@@ -401,6 +401,9 @@ padding: 3px 0px 2px 0px;
 border-bottom: none;
 font: bold 12px arial, sans-serif;
 }
+.active-scaffold .active-scaffold-footer > br {
+clear: both;
+}
 
 .active-scaffold-footer .active-scaffold-pagination {
 float: right;

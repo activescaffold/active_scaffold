@@ -6,6 +6,6 @@
   <div class="active-scaffold-pagination">
     <%= render :partial => 'list_pagination_links', :locals => { :current_page => @page } if @page.pager.infinite? || @page.pager.number_of_pages > 1 %>
   </div>
-  <br clear="both" /><%# a hack for the Rico Corner problem %>
+  <br /><!-- to clear this block -->
 </div>
 <% end -%>

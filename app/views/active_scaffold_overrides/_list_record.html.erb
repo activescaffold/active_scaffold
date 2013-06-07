@@ -5,7 +5,7 @@ tr_class = cycle("", "even-record") + ' ' + list_row_class(record)
 action_links ||= active_scaffold_config.action_links.member
 data_refresh ||= url_for(params_for(:action => :row, :id => '--ID--', :_method => :get))
 -%>
-<tr class="record <%= tr_class %>" id="<%= element_row_id(:action => :list, :id => record.id) %>" data-refresh="<%= data_refresh.sub('--ID--', record.id.to_s).html_safe %>">
+<tr class="record <%= tr_class %>" id="<%= element_row_id(:action => :list, :id => record.id) %>" data-refresh="<%= data_refresh.sub('--ID--', record.id.to_s) %>">
   <% columns.each do |column| %>
     <% authorized = record.authorized_for?(:crud_type => :read, :column => column.name) -%>
     <% column_value = authorized ? get_column_value(record, column) : active_scaffold_config.list.empty_field_text -%>
