@@ -57,7 +57,7 @@ module ActiveScaffold
           def active_scaffold_search_date_bridge_range_tag(column, options, current_search)
             range_controls = select_tag("search[#{column.name}][range]", 
               options_for_select( ActiveScaffold::Finder::DateRanges.collect{|range| [as_(range.downcase.to_sym), range]}, current_search["range"]), 
-             :class => 'text-input')
+             :class => 'text-input', :id => nil)
             content_tag("span", range_controls.html_safe, :id => "#{options[:id]}_range", :style => (current_search['opt'] == 'RANGE') ? nil : "display: none")
           end
           
