@@ -16,7 +16,7 @@ ru:
     config_list_model: ! '%{model}: настройки списка'
     create: Создать
     create_model: ! '%{model}: создать запись'
-    create_another: Создать другую запись
+    create_another: ! '%{model}: Создать другую запись'
     created_model: ! '%{model}: запись создана'
     create_new: Создать новую запись
     customize: Настроить
