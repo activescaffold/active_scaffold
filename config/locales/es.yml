@@ -1,129 +1,128 @@
 es:
   time:
     formats:
-      picker: "%a, %d %b %Y %H:%M:%S"
+      picker: ! '%a, %d %b %Y %H:%M:%S'
   active_scaffold:
-    add: 'Añadir'
-    add_existing: 'Añadir Existente'
-    add_existing_model: 'Añadir %{model} Existente'
-    apply: 'Aplicar'
-    are_you_sure_to_delete: '¿Estás seguro de que quieres borrar %{label}?'
-    cancel: 'Cancelar'
-    click_to_edit: 'Pulsa para editar'
-    click_to_reset: 'Pulsa para restaurar'
-    close: 'Cerrar'
-    config_list: 'Configurar'
-    config_list_model: 'Configurar columnas de %{model}'
-    create: 'Crear'
-    create_model: 'Crear %{model}'
-    create_another: 'Crear Otro %{model}'
-    created_model: '%{model} creado'
-    create_new: 'Crear Nuevo'
-    customize: 'Personalizar'
-    delete: 'Borrar'
-    deleted_model: '%{model} borrado'
-    delimiter: 'Delimitador'
-    download: 'Descargar'
-    edit: 'Editar'
-    export: 'Exportar'
+    add: Añadir
+    add_existing: Añadir Existente
+    add_existing_model: Añadir %{model} Existente
+    apply: Aplicar
+    are_you_sure_to_delete: ¿Estás seguro de que quieres borrar %{label}?
+    cancel: Cancelar
+    click_to_edit: Pulsa para editar
+    click_to_reset: Pulsa para restaurar
+    close: Cerrar
+    config_list: Configurar
+    config_list_model: Configurar columnas de %{model}
+    create: Crear
+    create_model: Crear %{model}
+    create_another: Crear Otro %{model}
+    created_model: ! '%{model} creado'
+    create_new: Crear Nuevo
+    customize: Personalizar
+    delete: Borrar
+    deleted_model: ! '%{model} borrado'
+    delimiter: Delimitador
+    download: Descargar
+    edit: Editar
+    export: Exportar
     'false': 'No'
-    filtered: '(Filtrado)'
+    filtered: (Filtrado)
     found:
-      one: 'encontrado'
-      other: 'encontrados'
-    hide: 'Ocultar'
-    inplace_edit_handle: '--'
-    live_search: 'Buscar en Vivo'
-    loading: 'Cargando…'
-    mark_all_records: "Seleccionar todos"
-    nested_for_model: '%{nested_model} de %{parent_model}'
-    nested_of_model: '%{nested_model} de %{parent_model}'
-    next: 'Siguiente'
-    no_entries: 'Sin entradas'
-    no_options: 'sin opciones'
-    omit_header: 'Omitir Cabecera'
-    options: 'Opciones'
-    pdf: 'PDF'
-    previous: 'Anterior'
-    print: 'Imprimir'
+      one: encontrado
+      other: encontrados
+    hide: Ocultar
+    inplace_edit_handle: --
+    live_search: Buscar en Vivo
+    loading: Cargando…
+    mark_all_records: Seleccionar todos
+    nested_for_model: ! '%{nested_model} de %{parent_model}'
+    nested_of_model: ! '%{nested_model} de %{parent_model}'
+    next: Siguiente
+    no_entries: Sin entradas
+    no_options: sin opciones
+    omit_header: Omitir Cabecera
+    options: Opciones
+    pdf: PDF
+    previous: Anterior
+    print: Imprimir
     records_marked:
-      one: "1 %{model} seleccionado"
-      other: "%{count} %{model} seleccionados"
-    refresh: 'Recargar'
-    remove: 'Eliminar'
-    remove_file: 'Eliminar o Reemplazar archivo'
-    replace_existing: 'Reemplazar existente'
-    replace_with_new: 'Reemplazar con Nuevo'
-    revisions_for_model: 'Revisiones de %{model}'
-    reset: 'Restaurar'
-    saving: 'Guardando…'
-    search: 'Buscar'
-    search_terms: 'Términos a buscar'
-    _select_: '- seleccionar -'
-    show: 'Ver'
-    show_model: 'Ver %{model}'
-    _to_ : ' a '
-    'true': 'Sí'
-    update: 'Actualizar'
-    update_model: 'Actualizar %{model}'
-    updated_model: '%{model} actualizado'
-    '=': 'Igual'
-    '>=': 'Mayor o igual'
-    '<=': 'Menor o igual'
-    '>': 'Mayor'
-    '<': 'Menor'
-    '!=': 'Distinto'
-    between: 'Entre'
-    contains: 'Contiene'
-    begins_with: 'Empieza con'
-    ends_with: 'Termina con'
-    today: 'Hoy'
-    yesterday: 'Ayer'
-    tomorrow: 'Mañana'
-    this_week: 'Esta semana'
-    prev_week: 'Semana pasada'
-    next_week: 'Próxima semana'
-    this_month: 'Este mes'
-    prev_month: 'Mes pasado'
-    next_month: 'Próximo mes'
-    this_year: 'Este año'
-    prev_year: 'Año pasado'
-    next_year: 'Próximo año'
-    past: 'Pasado'
-    future: 'Futuro'
-    range: 'Rango'
-    seconds: 'Segundos'
-    minutes: 'Minutos'
-    hours: 'Horas'
-    days: 'Días'
-    weeks: 'Semanas'
-    months: 'Meses'
-    years: 'Años'
-    optional_attributes: 'Más opciones'
-    :null: 'Nulo'
-    not_null: 'No Nulo'
+      one: 1 %{model} seleccionado
+      other: ! '%{count} %{model} seleccionados'
+    refresh: Recargar
+    remove: Eliminar
+    remove_file: Eliminar o Reemplazar archivo
+    replace_existing: Reemplazar existente
+    replace_with_new: Reemplazar con Nuevo
+    revisions_for_model: Revisiones de %{model}
+    reset: Restaurar
+    saving: Guardando…
+    search: Buscar
+    search_terms: Términos a buscar
+    _select_: ! '- seleccionar -'
+    show: Ver
+    show_model: Ver %{model}
+    _to_: ! ' a '
+    'true': Sí
+    update: Actualizar
+    update_model: Actualizar %{model}
+    updated_model: ! '%{model} actualizado'
+    =: Igual
+    ! '>=': Mayor o igual
+    <=: Menor o igual
+    ! '>': Mayor
+    <: Menor
+    ! '!=': Distinto
+    between: Entre
+    contains: Contiene
+    begins_with: Empieza con
+    ends_with: Termina con
+    today: Hoy
+    yesterday: Ayer
+    tomorrow: Mañana
+    this_week: Esta semana
+    prev_week: Semana pasada
+    next_week: Próxima semana
+    this_month: Este mes
+    prev_month: Mes pasado
+    next_month: Próximo mes
+    this_year: Este año
+    prev_year: Año pasado
+    next_year: Próximo año
+    past: Pasado
+    future: Futuro
+    range: Rango
+    seconds: Segundos
+    minutes: Minutos
+    hours: Horas
+    days: Días
+    weeks: Semanas
+    months: Meses
+    years: Años
+    optional_attributes: Más opciones
+    :null: Nulo
+    not_null: No Nulo
     date_picker_options:
-      weekHeader: 'Sm'
+      weekHeader: Sm
       firstDay: 1
       isRTL: false
       showMonthAfterYear: false
     datetime_picker_options:
-      timeText: 'Hora'
-      currentText: 'Ahora'
-      closeText: 'Cerrar'
+      timeText: Hora
+      currentText: Ahora
+      closeText: Cerrar
     human_conditions:
-      boolean: "%{column} = %{value}"
-      association: "%{column} = %{value}"
+      boolean: ! '%{column} = %{value}'
+      association: ! '%{column} = %{value}'
     errors:
       template:
         header:
-          one: "No se pudo guardar debido a un error."
-          other: "No se pudo guardar debido a %{count} errores."
-        body: "Hubo problemas con los siguientes campos:"
-
-    # error_messages
-    cant_destroy_record: "No se pudo borrar %{record}"
-    internal_error: 'Petición fallida (código 500, error interno)'
-    version_inconsistency: 'Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo.'
-    record_not_saved: 'Fallo guardando el registro debido a un error desconocido'
-    no_authorization_for_action: "No dispone de autorización para la acción %{action}"
+          one: No se pudo guardar %{model} debido a un error.
+          other: No se pudo guardar %{model} debido a %{count} errores.
+        body: ! 'Hubo problemas con los siguientes campos:'
+    cant_destroy_record: No se pudo borrar %{record}
+    internal_error: Petición fallida (código 500, error interno)
+    version_inconsistency: Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo.
+    record_not_saved: Fallo guardando el registro debido a un error desconocido
+    no_authorization_for_action: No dispone de autorización para la acción %{action}
+    'null': Nulo
