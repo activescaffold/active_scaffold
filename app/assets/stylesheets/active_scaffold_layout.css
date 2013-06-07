@@ -13,8 +13,9 @@ margin: 5px 0;
 
 .active-scaffold table {
 width: 100%;
-border-collapse: separate;
+border-collapse: collapse;
 }
+.active-scaffold td, .active-scaffold th { padding: 0; }
 
 .active-scaffold a,
 .active-scaffold a:visited {

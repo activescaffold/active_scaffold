@@ -1,4 +1,4 @@
-<table cellpadding="0" cellspacing="0" id="<%= sub_form_list_id(:association => column.name, :id => parent_record.try(:id) || generated_id(parent_record) || 99999999999) %>">
+<table id="<%= sub_form_list_id(:association => column.name, :id => parent_record.try(:id) || generated_id(parent_record) || 99999999999) %>">
 <%
   @record = show_blank_record || build_associated(column, parent_record)
   association_scope = column_scope(column, scope)
