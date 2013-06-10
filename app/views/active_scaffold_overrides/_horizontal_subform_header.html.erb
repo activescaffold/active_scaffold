@@ -1,7 +1,7 @@
 <thead>
   <tr>
     <%
-    active_scaffold_config_for(record.class).subform.columns.each :for => record.class, :crud_type => :read do |column|
+    active_scaffold_config_for(record_class).subform.columns.each :for => record_class, :crud_type => :read do |column|
       next if column.is_a? ActiveScaffold::DataStructures::ActionColumns
       next unless in_subform?(column, parent_record)
       hidden = column_renders_as(column) == :hidden
