@@ -8,6 +8,7 @@
   show_actions = false
   locked ||= false
   config = active_scaffold_config_for(record.class)
+  scope = column_scope(record_column, scope, record)
   options = active_scaffold_input_options(config.columns[record.class.primary_key], scope)
   tr_id = "association-#{options[:id]}"
 

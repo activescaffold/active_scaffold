@@ -6,7 +6,7 @@ if @column.singular_association?
 else
   unless @record.new_record?
     column = active_scaffold_config_for(@record.class).columns[@record.class.primary_key]
-    options[:id] = active_scaffold_input_options(column, @scope)[:id]
+    options[:id] = active_scaffold_input_options(column, column_scope(@column, @scope, @record))[:id]
   end
 end %>
 ActiveScaffold.create_associated_record_form('<%=sub_form_list_id(:association => @column.name, :id => @parent_record.id || generated_id(@parent_record) || 99999999999)%>','<%=escape_javascript(associated_form)%>', <%= options.to_json.html_safe %>);
