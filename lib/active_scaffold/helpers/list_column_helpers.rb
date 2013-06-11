@@ -302,6 +302,9 @@ module ActiveScaffold
                      :remote => true, :method => :get}
           url_options = params_for(:action => :index, :page => 1,
                            :sort => column.name, :sort_direction => sort_direction)
+          unless active_scaffold_config.store_user_settings
+            url_options.merge!(:search => search_params) if search_params.present?
+          end
           link_to column_heading_label(column), url_options, options
         else
           content_tag(:p, column_heading_label(column))

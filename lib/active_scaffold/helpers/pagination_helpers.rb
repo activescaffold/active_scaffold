@@ -6,6 +6,14 @@ module ActiveScaffold
       end
 
       def pagination_ajax_links(current_page, url_options, options, inner_window, outer_window)
+        unless active_scaffold_config.store_user_settings
+          url_options.merge!(:search => search_params) if search_params.present?
+          if active_scaffold_config.list.user.user_sorting?
+            column, direction = active_scaffold_config.list.user.sorting.first
+            url_options.merge!(:sort => column.name, :sort_direction => direction)
+          end
+        end
+
         start_number = current_page.number - inner_window
         end_number = current_page.number + inner_window
         start_number = 1 if start_number <= 0
