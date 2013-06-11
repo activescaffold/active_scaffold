@@ -222,11 +222,11 @@ module ActiveScaffold
 
       def inplace_edit_control(column)
         if inplace_edit?(active_scaffold_config.model, column) and inplace_edit_cloning?(column)
-          old_record, @record = @record, new_model
+          old_record, @record = @record, new_model # TODO remove when relying on @record is removed
           column = column.clone
           column.options = column.options.clone
           column.form_ui = :select if (column.association && column.form_ui.nil?)
-          options = active_scaffold_input_options(column)
+          options = active_scaffold_input_options(column).merge(:object => new_model)
           options[:class] = "#{options[:class]} inplace_field"
           content_tag(:div, active_scaffold_input_for(column, nil, options), :style => "display:none;", :class => inplace_edit_control_css_class).tap do
             @record = old_record
