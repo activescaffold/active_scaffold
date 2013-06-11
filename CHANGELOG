@@ -9,6 +9,7 @@
 - Clean some code so we can stop changing @record in partials and using @record in helpers
 - Support jquery-rails 3 gem and jquery-ui-rails gem
 - Clean some invalid HTML
+- Add store_user_settings option to enable storing sort, page and search params into session (enabled by default for backwards compatibility)
 
 = 3.3.0
 - Unify field overrides and list_ui method signatures

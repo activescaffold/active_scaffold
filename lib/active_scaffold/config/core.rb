@@ -33,6 +33,10 @@ module ActiveScaffold::Config
     cattr_accessor :cache_association_options
     @@cache_association_options = true
 
+    # enable saving user settings in session (per_page, limit, page, sort, search params)
+    cattr_accessor :store_user_settings
+    @@store_user_settings = true
+
     # lets you disable the DHTML history
     def self.dhtml_history=(val)
       @@dhtml_history = val
@@ -105,6 +109,9 @@ module ActiveScaffold::Config
     # enable caching of association options
     attr_accessor :cache_association_options
 
+    # enable saving user settings in session (per_page, limit, page, sort, search params)
+    attr_accessor :store_user_settings
+
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
     def add_sti_create_links?
@@ -155,6 +162,7 @@ module ActiveScaffold::Config
       @theme = self.class.theme
       @cache_action_link_urls = self.class.cache_action_link_urls
       @cache_association_options = self.class.cache_association_options
+      @store_user_settings = self.class.store_user_settings
       @sti_create_links = self.class.sti_create_links
 
       # inherit from the global set of action links

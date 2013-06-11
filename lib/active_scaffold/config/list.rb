@@ -235,6 +235,10 @@ module ActiveScaffold::Config
         nested_default_sorting.nil? ? @conf.sorting : nested_default_sorting
       end
 
+      def user_sorting?
+        @params['sort'] && @params['sort_direction'] != 'reset'
+      end
+
       def sorting
         if @sorting.nil?
           # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.

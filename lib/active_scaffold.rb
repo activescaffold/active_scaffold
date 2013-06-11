@@ -107,7 +107,8 @@ module ActiveScaffold
       active_scaffold_config.actions.each do |action_name|
         conf_instance = active_scaffold_config.send(action_name) rescue next
         next if conf_instance.class::UserSettings == ActiveScaffold::Config::Base::UserSettings # if it hasn't been extended, skip it
-        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, active_scaffold_session_storage, params)
+        storage = active_scaffold_config.store_user_settings ? active_scaffold_session_storage : {}
+        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, storage, params)
       end
     end
   end

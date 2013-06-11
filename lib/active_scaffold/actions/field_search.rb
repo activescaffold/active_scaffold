@@ -6,6 +6,7 @@ module ActiveScaffold::Actions
       base.before_filter :store_search_params_into_session, :only => [:index]
       base.before_filter :do_search, :only => [:index]
       base.helper_method :field_search_params
+      base.helper_method :search_params
     end
 
     # FieldSearch uses params[:search] and not @record because search conditions do not always pass the Model's validations.
