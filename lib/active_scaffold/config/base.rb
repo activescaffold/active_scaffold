@@ -58,7 +58,12 @@ module ActiveScaffold::Config
 
       def []=(key, value)
         @session[@action] ||= {}
-        @session[@action][key] = value
+        if value
+          @session[@action][key] = value
+        else
+          @session[@action].delete key
+          @session.delete @action if @session[@action].empty?
+        end
       end
     end
     
