@@ -54,7 +54,7 @@ module ActiveScaffold
       def search_attribute(column, record)
         column_options = active_scaffold_search_options(column).merge(:object => record)
         field = active_scaffold_search_for column, column_options
-        %|<dl><dt>#{label_tag search_label_for(column, column_options), column.label}</dt><dd>#{field}</dd></dl>|.html_safe
+        %|<dl><dt>#{label_tag search_label_for(column, column_options), search_column_label(column)}</dt><dd>#{field}</dd></dl>|.html_safe
       end
 
       def search_label_for(column, options)
@@ -233,6 +233,10 @@ module ActiveScaffold
       ##
       ## Search column override signatures
       ##
+          
+      def search_column_label(column)
+        column.label
+      end
 
       def override_search_field(column)
         override_helper column, 'search_column'
