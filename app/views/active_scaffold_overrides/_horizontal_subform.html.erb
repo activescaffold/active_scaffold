@@ -1,6 +1,6 @@
 <table id="<%= sub_form_list_id(:association => column.name, :id => parent_record.try(:id) || generated_id(parent_record) || 99999999999) %>">
 <%
-  header_record_class = show_blank_record.try(:class) || column.association.klass
+  header_record_class = (show_blank_record && show_blank_record.class) || column.association.klass
 -%>
   <%= render :partial => 'horizontal_subform_header', :locals => {:parent_record => parent_record, :record_class => header_record_class} %>
 
