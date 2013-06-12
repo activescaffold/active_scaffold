@@ -108,12 +108,19 @@ module ActiveScaffold::DataStructures
     # supported options:
     #   * for association columns
     #     * :select - displays a simple <select> or a collection of checkboxes to (dis)associate records
-    attr_writer :form_ui
+    def form_ui=(value)
+      self.list_method = nil if @list_ui.nil? && value != @form_ui
+      @form_ui = value
+    end
     def form_ui
       @form_ui
     end
 
-    attr_writer :list_ui
+    def list_ui=(value)
+      self.list_method = nil if value != @list_ui
+      @list_ui = value
+    end
+
     def list_ui
       @list_ui || @form_ui
     end
