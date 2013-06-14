@@ -1,7 +1,7 @@
 <%# encoding: utf-8 %>
 <%= ActiveScaffold::Bridges[:date_picker].localization %>
-$.datepicker.__proto__._attachDatepicker_without_inlineSettings = $.datepicker.__proto__._attachDatepicker;
-$.extend($.datepicker.__proto__, {
+Object.getPrototypeOf($.datepicker)._attachDatepicker_without_inlineSettings = Object.getPrototypeOf($.datepicker)._attachDatepicker;
+$.extend(Object.getPrototypeOf($.datepicker), {
   _attachDatepicker: function(target, settings) {
     var inlineSettings = {}, $target = $(target);
     for (var attrName in this._defaults) {
