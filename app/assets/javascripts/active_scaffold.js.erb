@@ -1,5 +1,6 @@
 <% case ActiveScaffold.js_framework %>
 <% when :jquery %>
+<% require_asset "getprototypeof" %>
 <% if Jquery::Rails.const_defined? 'JQUERY_UI_VERSION' %>
 <% require_asset "jquery-ui" %>
 <% require_asset "jquery-ui-timepicker-addon" %>
