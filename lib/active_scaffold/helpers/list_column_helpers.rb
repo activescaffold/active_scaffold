@@ -41,7 +41,7 @@ module ActiveScaffold
       # TODO: move empty_field_text and &nbsp; logic in here?
       # TODO: we need to distinguish between the automatic links *we* create and the ones that the dev specified. some logic may not apply if the dev specified the link.
       def render_list_column(text, column, record)
-        if column.link
+        if column.link && !skip_action_link?(column.link, record)
           link = column.link
           associated = record.send(column.association.name) if column.association
           render_action_link(link, record, :link => text, :authorized => link.action.nil? || column_link_authorized?(link, column, record, associated))
