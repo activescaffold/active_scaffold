@@ -93,7 +93,10 @@ module ActionView::Helpers #:nodoc:
 
         options = args[1] || {}
         options[:locals] ||= {}
-        options[:locals] = view_stack.last[:locals].merge!(options[:locals]) if view_stack.last && view_stack.last[:locals]
+        if view_stack.last
+          options[:locals] = view_stack.last[:locals].merge!(options[:locals]) if view_stack.last[:locals]
+          options[:object] ||= view_stack.last[:object] if view_stack.last[:object]
+        end
         options[:template] = template
         # if prefix is active_scaffold_overrides we must try to render with this prefix in following paths
         if prefix != 'active_scaffold_overrides'
@@ -109,10 +112,12 @@ module ActionView::Helpers #:nodoc:
       else
         @_view_paths ||= lookup_context.view_paths.clone
         last_template = lookup_context.last_template
-        if args.first.is_a?(Hash)
-          current_view = {:locals => args.first[:locals]}
-          view_stack << current_view
+        if args[0].is_a?(Hash)
+          current_view = {:locals => args[0][:locals], :object => args[0][:object]}
+        else # call is render 'partial', locals_hash
+          current_view = {:locals => args[1]}
         end
+        view_stack << current_view if current_view
         lookup_context.view_paths = @_view_paths # reset view_paths in case a view render :super, and then render :partial
         result = render_without_active_scaffold(*args, &block)
         view_stack.pop if current_view.present?
