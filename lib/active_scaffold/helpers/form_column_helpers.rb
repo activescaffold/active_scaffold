@@ -415,7 +415,7 @@ module ActiveScaffold
       def column_scope(column, scope = nil, record = nil)
         Rails.logger.warn "Relying on @record is deprecated, call column_scope with record. Called from #{caller.first.gsub(/(.*:\d+):.*/, '\1')}" if record.nil? # TODO Remove when relying on @record is removed
         if column.plural_association?
-          "#{scope}[#{column.name}][#{record.id || generate_temporary_id}]"
+          "#{scope}[#{column.name}][#{record.id || generate_temporary_id(record)}]"
         else
           "#{scope}[#{column.name}]"
         end
