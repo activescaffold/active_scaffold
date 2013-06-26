@@ -279,8 +279,12 @@ module ActiveScaffold
         content_tag(:span, check_box_tag("#{controller_id}_mark_heading_span_input", '1', all_marked?), tag_options)
       end
 
-      def render_column_heading(column, sorting, sort_direction)
+      def column_heading_attributes(column, sorting, sort_direction)
         tag_options = {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => strip_tags(column.description)}
+      end
+
+      def render_column_heading(column, sorting, sort_direction)
+        tag_options = column_heading_attributes(column, sorting, sort_direction)
         if column.name == :as_marked
           tag_options[:data] = {
             :ie_mode => :inline_checkbox,
