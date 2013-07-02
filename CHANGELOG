@@ -2,6 +2,7 @@
 - Fix subforms inside subforms
 - Fix draggable for jquery-rails 3 gem
 - Support to change attributes in list column headings with column_heading_attributes helper
+- Keep url for embedded in data-refresh attr of active-scaffold-component div
 
 = 3.3.1
 - Set adapter colspan (nested lists and forms) using javascript, fixed issue when active_scaffold_config_list is used
