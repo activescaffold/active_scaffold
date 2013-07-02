@@ -69,8 +69,8 @@ module ActionView::Helpers #:nodoc:
         if controller.respond_to?(:render_component_into_view, true)
           controller.send(:render_component_into_view, url_options)
         else
-          content_tag(:div, :id => id, :class => 'active-scaffold-component') do
-            url = url_for(url_options)
+          url = url_for(url_options)
+          content_tag(:div, :id => id, :class => 'active-scaffold-component', :data => {:refresh => url}) do
             # parse the ActiveRecord model name from the controller path, which
             # might be a namespaced controller (e.g., 'admin/admins')
             model = remote_controller.to_s.sub(/.*\//, '').singularize
