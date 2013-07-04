@@ -344,7 +344,7 @@ module ActiveScaffold
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       count_query = append_to_query(beginning_of_chain, options)
-      count = count_query.count
+      count = count_query.count(:distinct => true)
   
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
@@ -367,6 +367,7 @@ module ActiveScaffold
       end
 
       klass = beginning_of_chain
+      klass = klass.uniq if find_options[:outer_joins].present?
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
