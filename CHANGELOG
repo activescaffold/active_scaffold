@@ -1,4 +1,4 @@
-= 3.3.2 (not released)
+= 3.3.2
 - Fix subforms inside subforms
 - Fix draggable for jquery-rails 3 gem
 - Support to change attributes in list column headings with column_heading_attributes helper
