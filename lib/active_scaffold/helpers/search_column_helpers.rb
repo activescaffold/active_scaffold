@@ -82,7 +82,7 @@ module ActiveScaffold
         active_scaffold_checkbox_list(column, select_options, associated, options)
       end
 
-      def active_scaffold_search_select(column, html_options)
+      def active_scaffold_search_select(column, html_options, options = {})
         associated = html_options.delete :value
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
@@ -95,7 +95,7 @@ module ActiveScaffold
           end
         end
 
-        options = { :selected => associated }.merge! column.options
+        options = options.merge(:selected => associated).merge column.options
         html_options.merge! column.options[:html_options] || {}
         if html_options[:multiple]
           html_options[:name] += '[]'
