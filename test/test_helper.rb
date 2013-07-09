@@ -1,17 +1,13 @@
-require 'test/unit'
-require 'rubygems'
-require 'action_controller'
-require 'action_view/test_case'
-require 'mocha'
+ENV['RAILS_ENV'] = 'test'
+$:.unshift File.dirname(__FILE__)
+require "mock_app/config/environment"
+require 'rails/test_help'
+
+require 'mocha/setup'
 begin
   require 'redgreen'
 rescue LoadError
 end
-
-ENV['RAILS_ENV'] = 'test'
-ENV['RAILS_ROOT'] ||= File.join(File.dirname(__FILE__), 'mock_app')
-
-require File.expand_path(File.join(ENV['RAILS_ROOT'], 'config', 'environment.rb'))
 
 def load_schema
   stdout = $stdout
