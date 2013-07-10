@@ -367,7 +367,7 @@ module ActiveScaffold
       end
 
       klass = beginning_of_chain
-      klass = klass.uniq if find_options[:outer_joins].present?
+      klass = klass.where(nil).uniq if find_options[:outer_joins].present? # HACK: call where(nil) because calling uniq on associations (nested scaffolds) send SQL to DB
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
