@@ -8,7 +8,7 @@ require 'active_scaffold/paginator'
 require 'active_scaffold/responds_to_parent'
 
 require 'active_scaffold/version'
-require 'active_scaffold/engine' unless defined? ACTIVE_SCAFFOLD_PLUGIN
+require 'active_scaffold/engine'
 require 'json'  # for js_config
 
 module ActiveScaffold
