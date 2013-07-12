@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
+require 'test_helper'
 
 class Config::ShowTest < Test::Unit::TestCase
   def setup
@@ -37,7 +37,7 @@ class Config::ShowTest < Test::Unit::TestCase
     assert_equal label, @config.show.label
     I18n.backend.store_translations :en, :active_scaffold => {:view_model => 'View %{model}'}
     @config.show.label = :view_model
-    assert_equal 'View ModelStub', @config.show.label
+    assert_equal 'View Model stub', @config.show.label
     assert_equal 'View record', @config.show.label('record')
   end
 end
