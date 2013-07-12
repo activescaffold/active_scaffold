@@ -10,8 +10,8 @@ class ModelStub < ActiveRecord::Base
   @@nested_scope_calls = []
   cattr_accessor :nested_scope_calls
   
-  named_scope :a_is_defined, :conditions => "a is not null"
-  named_scope :b_like, lambda {|pattern| {:conditions => ["b like ?", pattern]}}
+  scope :a_is_defined, :conditions => "a is not null"
+  scope :b_like, lambda {|pattern| {:conditions => ["b like ?", pattern]}}
   
   def self.a_is_defined
     @@nested_scope_calls << :a_is_defined

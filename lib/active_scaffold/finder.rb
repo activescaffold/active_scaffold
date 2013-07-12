@@ -175,23 +175,11 @@ module ActiveScaffold
 
       def condition_value_for_numeric(column, value)
         return value if value.nil?
-        value = i18n_number_to_native_format(value) if [:i18n_number, :currency].include?(column.options[:format]) && column.search_ui != :number
+        value = column.number_to_native(value) if column.options[:format] && column.search_ui != :number
         case (column.search_ui || column.column.type)
         when :integer   then value.to_i rescue value ? 1 : 0
         when :float     then value.to_f
         when :decimal   then ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
-        else
-          value
-        end
-      end
-
-      def i18n_number_to_native_format(value)
-        native = '.'
-        delimiter = I18n.t('number.format.delimiter')
-        separator = I18n.t('number.format.separator')
-        return value if value.blank? || !value.is_a?(String)
-        unless delimiter == native && !value.include?(separator) && value !~ /\.\d{3}$/
-          value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
         else
           value
         end

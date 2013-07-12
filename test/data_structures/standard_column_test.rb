@@ -1,5 +1,4 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
-# require 'test/model_stub'
+require 'test_helper'
 
 class StandardColumnTest < Test::Unit::TestCase
   def setup
@@ -19,6 +18,6 @@ class StandardColumnTest < Test::Unit::TestCase
 
   def test_searching
     assert @standard_column.searchable?
-    assert_equal '"model_stubs"."a"', @standard_column.search_sql # check default
+    assert_equal ['"model_stubs"."a"'], @standard_column.search_sql # check default
   end
 end
