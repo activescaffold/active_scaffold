@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
+require 'test_helper'
 
 class Config::UpdateTest < Test::Unit::TestCase
   def setup
@@ -15,7 +15,7 @@ class Config::UpdateTest < Test::Unit::TestCase
   def test_default_options
     assert !@config.update.persistent
     assert !@config.update.nested_links
-    assert_equal 'Update ModelStub', @config.update.label
+    assert_equal 'Model stub', @config.update.label
   end
   
   def test_persistent
@@ -34,7 +34,7 @@ class Config::UpdateTest < Test::Unit::TestCase
     assert_equal label, @config.update.label
     I18n.backend.store_translations :en, :active_scaffold => {:change_model => 'Change %{model}'}
     @config.update.label = :change_model
-    assert_equal 'Change ModelStub', @config.update.label
+    assert_equal 'Change Model stub', @config.update.label
     assert_equal 'Change record', @config.update.label('record')
   end
 end

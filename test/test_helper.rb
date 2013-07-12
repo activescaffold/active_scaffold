@@ -28,6 +28,8 @@ for file in %w[model_stub const_mocker]
   require File.join(File.dirname(__FILE__), file)
 end
 
+I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))["en"]
+
 class Test::Unit::TestCase
   protected
   def config_for(klass, namespace = nil)
