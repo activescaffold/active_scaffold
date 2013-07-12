@@ -1,8 +1,9 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
+require 'test_helper'
 
 class ListColumnHelpersTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ListColumnHelpers
   include ActiveScaffold::Helpers::ViewHelpers
+  include ::ERB::Util
 
   def setup
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
@@ -32,6 +33,8 @@ class ListColumnHelpersTest < ActionView::TestCase
     value.each {|v| v.stubs(:to_label).returns(v)}
     assert_equal '1, 2, 3, … (4)', format_association_value(value, @association_column, value.size)
     @config.list.stubs(:association_join_text => ',<br/>')
+    assert_equal '1,&lt;br/&gt;2,&lt;br/&gt;3,&lt;br/&gt;… (4)', format_association_value(value, @association_column, value.size)
+    @config.list.stubs(:association_join_text => ',<br/>'.html_safe)
     assert_equal '1,<br/>2,<br/>3,<br/>… (4)', format_association_value(value, @association_column, value.size)
   end
 

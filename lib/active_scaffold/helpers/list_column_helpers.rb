@@ -160,7 +160,7 @@ module ActiveScaffold
             if column.associated_limit == 0
               size if column.associated_number?
             else
-              joined_associated = firsts.join(active_scaffold_config.list.association_join_text)
+              joined_associated = firsts.join(h(active_scaffold_config.list.association_join_text)).html_safe
               joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
               joined_associated
             end
