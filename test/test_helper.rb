@@ -2,6 +2,7 @@ ENV['RAILS_ENV'] = 'test'
 $:.unshift File.dirname(__FILE__)
 require "mock_app/config/environment"
 require 'rails/test_help'
+require 'active_scaffold'
 
 require 'mocha/setup'
 begin

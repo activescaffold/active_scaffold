@@ -1,5 +1,4 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
-# require 'test/model_stub'
+require 'test_helper'
 
 class ClassWithFinder
   include ActiveScaffold::Finder

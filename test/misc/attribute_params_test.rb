@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
+require 'test_helper'
 
 class NumberModel < ActiveRecord::Base
   abstract_class = true
@@ -9,6 +9,7 @@ end
 
 class AttributeParamsTest < Test::Unit::TestCase
   include ActiveScaffold::AttributeParams
+  include ActiveScaffold::Finder
 
   def setup
     I18n.backend.store_translations :en, :number => {:format => {
@@ -27,9 +28,7 @@ class AttributeParamsTest < Test::Unit::TestCase
     }}
 
     @config = config_for('number_model')
-    class << @config.list.columns
-      include ActiveScaffold::DataStructures::ActionColumns::AfterConfiguration
-    end
+    @config.columns[:number].form_ui = nil
     @config.list.columns.set_columns @config.columns
   end
 
