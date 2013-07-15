@@ -1,7 +1,5 @@
 require 'rubygems'
 require 'active_record'
-require 'active_record/reflection'
-require File.join(File.dirname(__FILE__), '../../lib/bridges/dependent_protect/lib/dependent_protect_bridge')
 
 # Mocking everything necesary to test the plugin.
 class Company
@@ -43,9 +41,6 @@ class Company
   def self.before_destroy(s=nil)
     @@before = s
   end
-  
-  include ActiveRecord::Reflection
-  include DependentProtectSecurity
   
   def self.has_many(association_id, options = {})
     reflection = create_reflection(:has_many, association_id, options, self)

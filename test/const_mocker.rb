@@ -1,30 +1,26 @@
 class ConstMocker
-  def initialize(*const_names)
-    @const_names = const_names
-    @const_states = {}
-    @const_names.each{|const_name|
-      @const_states[const_name] = Object.const_defined?(const_name) ? Object.const_get(const_name) : nil
-    }
+  def initialize(const_name, parent = Object)
+    @parent = parent
+    @const_name = const_name
+    @const_state = nil
+    @const_state = @parent.const_defined?(@const_name) ? @parent.const_get(@const_name) : nil
   end
   
   def remove
-    @const_names.each{|const_name|
-      Object.send :remove_const, const_name if Object.const_defined?(const_name)
-    }
+    @parent.send :remove_const, @const_name if @parent.const_defined?(@const_name)
   end
   
   def declare
-    @const_names.each{|const_name|
-      Object.class_eval "class #{const_name}; end;" unless Object.const_defined?(const_name)
-    }
+    @parent.const_set @const_name, Class.new unless @parent.const_defined?(@const_name)
   end
   
   def restore
     remove
-    
-    @const_states.each_pair{|const_name, const|
-      Object.const_set const_name, const if const
-    }
+    @parent.const_set @const_name, @const_state if @const_state
+  end
+
+  def const
+    @parent.const_get @const_name
   end
   
   def self.mock(*const_names, &block)
