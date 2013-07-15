@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
+require 'test_helper'
 
 class Config::ListTest < Test::Unit::TestCase
   def setup
@@ -16,7 +16,7 @@ class Config::ListTest < Test::Unit::TestCase
 
   def test_default_options
     assert_equal 15, @config.list.per_page
-    assert_equal 2, @config.list.page_links_window
+    assert_equal 2, @config.list.page_links_inner_window
     assert_equal '-', @config.list.empty_field_text
     assert_equal ', ', @config.list.association_join_text
     assert_equal true, @config.list.pagination
@@ -80,8 +80,8 @@ class Config::ListTest < Test::Unit::TestCase
   
   def test_page_links_window
     page_links_window = 3
-    @config.list.page_links_window = page_links_window
-    assert_equal page_links_window, @config.list.page_links_window
+    @config.list.page_links_inner_window = page_links_window
+    assert_equal page_links_window, @config.list.page_links_inner_window
   end
   
   def test_always_show_create
