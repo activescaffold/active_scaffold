@@ -129,8 +129,8 @@ module ActiveScaffold
         end
       elsif column.plural_association?
         column_plural_assocation_value_from_value(column, Array(value))
-      elsif column.number? && [:i18n_number, :currency].include?(column.options[:format]) && column.form_ui != :number
-        self.class.i18n_number_to_native_format(value)
+      elsif column.number? && column.options[:format] && column.form_ui != :number
+        column.number_to_native(value)
       else
         # convert empty strings into nil. this works better with 'null => true' columns (and validations),
         # and 'null => false' columns should just convert back to an empty string.

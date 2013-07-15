@@ -62,7 +62,7 @@ module ActiveScaffold
           elsif column.association
             if column.association.macro == :has_and_belongs_to_many
               active_scaffold_habtm_joins.concat column.includes
-            else
+            elsif !column.association.options[:polymorphic]
               active_scaffold_includes.concat column.includes
             end
             hash_conditions.merge!(condition_from_association_constraint(column.association, v))
@@ -116,7 +116,7 @@ module ActiveScaffold
       condition = {"#{table}.#{field}" => value}
       if association.options[:polymorphic]
         raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller unless params[:parent_model]
-        condition["#{table}.#{association.name}_type"] = params[:parent_model].constantize.model.to_s
+        condition["#{table}.#{association.name}_type"] = params[:parent_model].constantize.to_s
       end
 
       condition

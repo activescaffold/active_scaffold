@@ -2,6 +2,7 @@ ENV['RAILS_ENV'] = 'test'
 $:.unshift File.dirname(__FILE__)
 require "mock_app/config/environment"
 require 'rails/test_help'
+require 'active_scaffold'
 
 require 'mocha/setup'
 begin
@@ -26,6 +27,8 @@ end
 for file in %w[model_stub const_mocker]
   require File.join(File.dirname(__FILE__), file)
 end
+
+I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))["en"]
 
 class Test::Unit::TestCase
   protected
