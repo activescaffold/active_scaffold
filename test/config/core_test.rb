@@ -1,8 +1,10 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
+require 'test_helper'
 
 class Config::CoreTest < Test::Unit::TestCase
+  class ModelStubsController < ActionController::Base; end
   def setup
     @config = ActiveScaffold::Config::Core.new :model_stub
+    ModelStubsController.instance_variable_set :@active_scaffold_config, @config
   end
   
   def test_default_options
@@ -11,7 +13,7 @@ class Config::CoreTest < Test::Unit::TestCase
     assert_equal [:create, :list, :search, :update, :delete, :show, :nested, :subform], @config.actions.to_a
     assert_equal :default, @config.frontend
     assert_equal :default, @config.theme
-    assert_equal 'ModelStub', @config.label(:count => 1)
+    assert_equal 'Model stub', @config.label(:count => 1)
     assert_equal 'ModelStubs', @config.label
   end
   
@@ -37,10 +39,11 @@ class Config::CoreTest < Test::Unit::TestCase
   def test_form_ui_in_sti
     @config.columns << :type
     
+    @config.sti_create_links = false
     @config.sti_children = [:model_stub]
     @config._configure_sti
     assert_equal :select, @config.columns[:type].form_ui
-    assert_equal [['Modelstub', 'ModelStub']], @config.columns[:type].options[:options]
+    assert_equal [['Model stub', 'ModelStub']], @config.columns[:type].options[:options]
     
     @config.columns[:type].form_ui = nil
     @config.sti_create_links = true
@@ -52,7 +55,8 @@ class Config::CoreTest < Test::Unit::TestCase
     @config.sti_children = [:model_stub]
     @config.sti_create_links = true
     @config.action_links.add @config.create.link
-    @config._add_sti_create_links
-    assert_equal 'Create Modelstub', @config.action_links[:new].label
+    ModelStubsController.send(:_add_sti_create_links)
+    assert_equal 'Create Model stub', @config.action_links[:new].label
+    assert_equal 'config/core_test/model_stubs', @config.action_links[:new].parameters[:parent_sti]
   end
 end

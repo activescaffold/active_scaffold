@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
+require 'test_helper'
 
 class Config::DeleteTest < Test::Unit::TestCase
   def setup
@@ -15,7 +15,7 @@ class Config::DeleteTest < Test::Unit::TestCase
     assert !link.page?
     assert !link.popup?
     assert link.confirm?
-    assert_equal "delete", link.action
+    assert_equal "destroy", link.action
     assert_equal "Delete", link.label
     assert link.inline?
     blank = {}
