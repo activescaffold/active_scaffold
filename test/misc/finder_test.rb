@@ -32,16 +32,16 @@ class FinderTest < Test::Unit::TestCase
     ]
 
     expected_conditions = [
-			'("model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?) AND ("model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?)',
-		  '%foo%', '%foo%', '%bar%', '%bar%'
-		]
+		['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%foo%', '%foo%'],
+		['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%bar%', '%bar%']
+    ]
     assert_equal expected_conditions, ClassWithFinder.create_conditions_for_columns(tokens, columns)
 
     expected_conditions = [
-      '("model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?)',
+      '"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?',
       '%foo%', '%foo%'
     ]
-    assert_equal expected_conditions, ClassWithFinder.create_conditions_for_columns('foo', columns)
+    assert_equal [expected_conditions], ClassWithFinder.create_conditions_for_columns('foo', columns)
 
     assert_equal nil, ClassWithFinder.create_conditions_for_columns('foo', [])
   end
@@ -68,8 +68,9 @@ class FinderTest < Test::Unit::TestCase
 
   def test_count_with_group
     @klass.expects(:custom_finder_options).returns({:group => :a})
-    ModelStub.expects(:count).returns(ActiveSupport::OrderedHash['foo', 5])
-    ModelStub.expects(:find).with(:all, has_entries(:limit => 20, :offset => 0))
+    ActiveRecord::Relation.any_instance.expects(:count).returns(ActiveSupport::OrderedHash['foo', 5])
+    ActiveRecord::Relation.any_instance.expects(:limit).with(20).returns(ModelStub.where(nil))
+    ActiveRecord::Relation.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
     page = @klass.send :find_page, :per_page => 20, :pagination => true
     page.items
     
@@ -79,7 +80,10 @@ class FinderTest < Test::Unit::TestCase
   end
 
   def test_disabled_pagination
-    ModelStub.expects(:find).with(:all, Not(has_entries(:limit => 20, :offset => 0)))
+    ActiveRecord::Relation.any_instance.expects(:count).never
+    ActiveRecord::Relation.any_instance.expects(:limit).never
+    ActiveRecord::Relation.any_instance.expects(:offset).never
+    ModelStub.expects(:count).never
     page = @klass.send :find_page, :per_page => 20, :pagination => false
     page.items
   end
