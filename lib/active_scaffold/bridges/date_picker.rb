@@ -8,7 +8,7 @@ module ActiveScaffold::Bridges
       ActiveScaffold.js_framework == :jquery && jquery_ui_included?
     end
     def self.jquery_ui_included?
-      Jquery::Rails.const_defined?('JQUERY_UI_VERSION') || Jquery.const_defined?('Ui')
+      Jquery::Rails.const_defined?('JQUERY_UI_VERSION') || Jquery.const_defined?('Ui') if Object.const_defined?('Jquery')
     end
     def self.localization
       "jQuery(function($){
