@@ -1080,6 +1080,10 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
     }
 
     var colspan = this.target.children().length;
+    if (content && this.position) {
+      content = jQuery(content);
+      content.find('.inline-adapter-cell:first').attr('colspan', colspan);
+    }
     if (this.position == 'after') {
       this.target.after(content);
       this.set_adapter(this.target.next());
@@ -1091,7 +1095,6 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       return false;
     }
-    this.adapter.find('.inline-adapter-cell:first').attr('colspan', colspan);
     ActiveScaffold.highlight(this.adapter.find('td'));
   },
 
