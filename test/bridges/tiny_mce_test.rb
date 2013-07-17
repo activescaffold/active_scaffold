@@ -1,21 +1,21 @@
-require 'test/unit'
-require File.join(File.dirname(__FILE__), 'company')
-require File.join(File.dirname(__FILE__), '../../lib/bridges/tiny_mce/lib/tiny_mce_bridge')
+require 'test/test_helper'
+require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/tiny_mce/helpers')
 
 class TinyMceTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ViewHelpers
-  include ActiveScaffold::TinyMceBridge
+  include ActiveScaffold::Bridges::TinyMce::Helpers
 
   def test_includes
-    assert_match /.*<script type="text\/javascript">.*ActiveScaffold\.ActionLink\.Abstract\.prototype\.close = function\(\).*<\/script>.*/m, active_scaffold_includes
+    ActiveScaffold::Bridges::TinyMce.expects(:install?).returns(true)
+    assert ActiveScaffold::Bridges.all_javascripts.include?("tinymce-jquery")
   end
 
   def test_form_ui
-    config = PaperclipCore.new(:company)
+    config = ActiveScaffold::Config::Core.new(:company)
     @record = Company.new
     self.expects(:request).returns(stub(:xhr? => true))
 
-    assert_dom_equal "<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\"></textarea><script type=\"text/javascript\">\n//<![CDATA[\ntinyMCE.execCommand('mceAddControl', false, 'record_name');\n//]]>\n</script>", active_scaffold_input_text_editor(config.columns[:name], :name => 'record[name]', :id => 'record_name', :class => 'name-input')
+    assert_dom_equal "<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\">\n</textarea>\n<script type=\"text/javascript\">\n//<![CDATA[\ntinyMCE.settings = {\"theme\":\"simple\"};tinyMCE.execCommand('mceAddControl', false, 'record_name');\n//]]>\n</script>", active_scaffold_input_text_editor(config.columns[:name], :name => 'record[name]', :id => 'record_name', :class => 'name-input', :object => @record)
   end
 
   protected
