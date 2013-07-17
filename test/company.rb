@@ -1,8 +1,4 @@
-require 'rubygems'
-require 'active_record'
-
-# Mocking everything necesary to test the plugin.
-class Company
+class Company < ActiveRecord::Base
   def initialize(with_or_without = nil)
     @with_companies = with_or_without == :with_companies
     @with_company = with_or_without == :with_company
@@ -51,9 +47,9 @@ class Company
   def self.belongs_to(association_id, options = {})
     reflection = create_reflection(:belongs_to, association_id, options, self)
   end
-  has_many :companies, :dependent => :protect
-  has_one :company, :dependent => :protect
-  belongs_to :main_company, :dependent => :protect, :class_name => 'Company'
+  has_many :companies
+  has_one :company
+  belongs_to :main_company, :class_name => 'Company'
   
   def companies
     if @with_companies
