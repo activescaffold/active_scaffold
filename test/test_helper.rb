@@ -24,7 +24,7 @@ def silence_stderr(&block)
   $stderr = stderr
 end
 
-for file in %w[model_stub const_mocker]
+for file in %w[model_stub const_mocker company]
   require File.join(File.dirname(__FILE__), file)
 end
 
