@@ -177,7 +177,7 @@ module ActiveScaffold::DataStructures
     def includes=(value)
       @includes = case value
         when Array then value 
-        else Array(value) # automatically convert to an array
+        else value ? [value] : value # not convert nil to [nil]
       end
     end
 
