@@ -3,6 +3,8 @@ class Company < ActiveRecord::Base
     @with_companies = with_or_without == :with_companies
     @with_company = with_or_without == :with_company
     @with_main_company = with_or_without == :with_main_company
+    @attributes = {}
+    @attributes_cache = {}
   end
   
   def self.columns_hash
@@ -68,5 +70,13 @@ class Company < ActiveRecord::Base
   end
   
   def name
+  end
+
+  def date
+    Date.today
+  end
+
+  def datetime
+    Time.now
   end
 end
