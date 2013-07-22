@@ -1,4 +1,4 @@
-require 'test/test_helper'
+require 'test_helper'
 require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/tiny_mce/helpers')
 
 class TinyMceTest < ActionView::TestCase

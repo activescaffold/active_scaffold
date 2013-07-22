@@ -1,5 +1,7 @@
+require 'simplecov'
+SimpleCov.start
+
 ENV['RAILS_ENV'] = 'test'
-$:.unshift File.dirname(__FILE__)
 require "mock_app/config/environment"
 require 'rails/test_help'
 require 'active_scaffold'
@@ -36,3 +38,4 @@ class Test::Unit::TestCase
     ActiveScaffold::Config::Core.new("#{namespace}#{klass.to_s.underscore.downcase}")
   end
 end
+Object.send :remove_const, :Config
