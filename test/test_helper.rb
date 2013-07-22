@@ -1,5 +1,5 @@
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start { add_filter 'test' }
 
 ENV['RAILS_ENV'] = 'test'
 require "mock_app/config/environment"
