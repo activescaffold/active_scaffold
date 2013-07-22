@@ -1,4 +1,4 @@
-require 'test/test_helper'
+require 'test_helper'
 require File.expand_path('../../../lib/active_scaffold/bridges/paperclip/paperclip_bridge', __FILE__)
 require File.expand_path('../../../lib/active_scaffold/bridges/paperclip/paperclip_bridge_helpers', __FILE__)
 require File.expand_path('../../../lib/active_scaffold/bridges/paperclip/form_ui', __FILE__)
