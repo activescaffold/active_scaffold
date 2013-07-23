@@ -181,5 +181,9 @@ class ColumnTest < Test::Unit::TestCase
     # make sure that when a non-array comes in, an array comes out
     @column.includes = [:column_name]
     assert_equal([:column_name], @column.includes)
+
+    # make sure that when a non-array comes in, an array comes out
+    @column.includes = nil
+    assert_nil @column.includes
   end
 end
