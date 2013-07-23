@@ -1,7 +1,4 @@
-def dbg; require "ruby-debug"; debugger; end;
-
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
-
+require 'test_helper'
 
 class BridgeTest < Test::Unit::TestCase
   def setup
