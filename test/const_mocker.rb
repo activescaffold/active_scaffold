@@ -11,7 +11,7 @@ class ConstMocker
   end
   
   def declare
-    @parent.const_set @const_name, Class.new unless @parent.const_defined?(@const_name)
+    @parent.const_set @const_name, Class.new
   end
   
   def restore
@@ -20,11 +20,11 @@ class ConstMocker
   end
 
   def const
-    @parent.const_get @const_name
+    @parent.const_get @const_name if @parent.const_defined?(@const_name)
   end
   
-  def self.mock(*const_names, &block)
-    cm = new(*const_names)
+  def self.mock(const_name, parent = Object, &block)
+    cm = new(const_name, parent)
     yield(cm)
     cm.restore
     true
