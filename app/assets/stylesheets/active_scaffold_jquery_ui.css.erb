@@ -1,0 +1,5 @@
+<% if Jquery::Rails.const_defined? 'JQUERY_UI_VERSION' %>
+<% require_asset "jquery-ui" %>
+<% elsif Jquery.const_defined? 'Ui' %>
+<% require_asset "jquery.ui.datepicker" %>
+<% end %>
