@@ -282,11 +282,6 @@ document.observe("dom:loaded", function() {
     Element[element.value == 'REPLACE' ? 'hide' : 'show'](element.next('span'));
     return true;
   });
-  document.on("click", "a[data-popup]", function(event, element) {
-    if (event.stopped) return;
-    window.open($(element).href);
-    event.stop();
-  });
   document.on("click", ".hover_click", function(event, element) {
     var ul_element = element.down('ul');
     if (ul_element.getStyle('display') === 'none') {
