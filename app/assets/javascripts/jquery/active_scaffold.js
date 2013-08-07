@@ -207,11 +207,6 @@ jQuery(document).ready(function($) {
   	ActiveScaffold.delete_subform_record($(this).data('delete-id'));
   });
 
-  jQuery(document).on('click', 'a[data-popup]', function(e) {
-    window.open(jQuery(this).attr('href'));
-    e.preventDefault();
-  });
-
   jQuery(document).on("click", '.hover_click', function(event) {
     var element = jQuery(this);
     var ul_element = element.children('ul').first();
