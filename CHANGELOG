@@ -4,6 +4,8 @@
 - Fix searching on nested scaffolds (broken on 3.3.2)
 - Fix searching when includes is set to nil
 - Send parent_controller for render_field requests on subforms for persisted records, as new records were already sending it
+- Avoid loading some JS when jquery-ui is not available
+- Load CSS from jquery ui rails gem
 
 = 3.3.2
 - Fix subforms inside subforms
