@@ -2,6 +2,7 @@
 - Allow to override select options in active_scaffold_search_select
 - Load effects from jQuery UI when using jquery-rails 3 gem
 - Fix searching on nested scaffolds (broken on 3.3.2)
+- Fix searching when includes is set to nil
 
 = 3.3.2
 - Fix subforms inside subforms
