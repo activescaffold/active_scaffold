@@ -53,11 +53,12 @@ module ActiveScaffold::Actions
           if update_refresh_list?
             do_refresh_list
           else
+            @updated_record = @record
             # get_row so associations are cached like in list action
             @record = get_row rescue nil # if record doesn't fullfil current conditions remove it from list
           end
         end
-        flash.now[:info] = as_(:updated_model, :model => @record.to_label) if active_scaffold_config.update.persistent
+        flash.now[:info] = as_(:updated_model, :model => (@updated_record || @record).to_label) if active_scaffold_config.update.persistent
       end
       render :action => 'on_update'
     end

@@ -119,6 +119,7 @@ module ActiveScaffold
           url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
           url_params[:eid] = params[:eid] if params[:eid]
           if scope
+            url_params[:parent_controller] ||= url_params[:controller]
             url_params[:controller] = subform_controller.controller_path
             url_params[:scope] = scope
             url_params[:parent_id] = params[:parent_id] || params[:id]
