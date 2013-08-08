@@ -17,7 +17,7 @@ group :test do
   gem "shoulda", ">= 0"
   gem "simplecov", ">= 0"
   gem "mocha"
-  gem "rails", "~> 3.2.6"
+  gem "rails", "~> 4.0.0"
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
   end
