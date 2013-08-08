@@ -15,7 +15,7 @@ end
 
 group :test do
   gem "shoulda", ">= 0"
-  gem "rcov", ">= 0"
+  gem "simplecov", ">= 0"
   gem "mocha"
   gem "rails", "~> 3.2.6"
   platforms :jruby do
