@@ -68,9 +68,9 @@ class FinderTest < Test::Unit::TestCase
 
   def test_count_with_group
     @klass.expects(:custom_finder_options).returns({:group => :a})
-    ActiveRecord::Relation.any_instance.expects(:count).returns(ActiveSupport::OrderedHash['foo', 5])
-    ActiveRecord::Relation.any_instance.expects(:limit).with(20).returns(ModelStub.where(nil))
-    ActiveRecord::Relation.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
+    ActiveRecord::Relation::ActiveRecord_Relation_ModelStub.any_instance.expects(:count).returns({'foo' => 5})
+    ActiveRecord::Relation::ActiveRecord_Relation_ModelStub.any_instance.expects(:limit).with(20).returns(ModelStub.where(nil))
+    ActiveRecord::Relation::ActiveRecord_Relation_ModelStub.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
     page = @klass.send :find_page, :per_page => 20, :pagination => true
     page.items
     
