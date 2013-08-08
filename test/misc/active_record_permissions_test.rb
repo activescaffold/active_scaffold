@@ -2,6 +2,7 @@ require 'test_helper'
 
 class PermissionModel < ActiveRecord::Base
   def self.columns; [] end
+  def self.column_types; [] end
 
   def authorized_for_read?; true; end
   def authorized_for_update?; false; end
