@@ -4,6 +4,7 @@ SimpleCov.start { add_filter 'test' }
 ENV['RAILS_ENV'] = 'test'
 require "mock_app/config/environment"
 require 'rails/test_help'
+require 'test/unit/testcase'
 require 'active_scaffold'
 
 require 'mocha/setup'
