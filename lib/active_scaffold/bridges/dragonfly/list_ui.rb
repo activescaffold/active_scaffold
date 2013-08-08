@@ -9,7 +9,7 @@ module ActiveScaffold
         else
           attachment.name
         end
-        link_to(content, attachment.remote_url, {'data-popup' => true, :target => '_blank'})
+        link_to(content, attachment.remote_url, :target => '_blank')
       end
     end
   end
