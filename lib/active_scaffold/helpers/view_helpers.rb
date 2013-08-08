@@ -339,10 +339,7 @@ module ActiveScaffold
           html_options[:data][:cancel_refresh] = true if link.refresh_on_close
           html_options[:data][:keep_open] = true if link.keep_open?
         end
-        if link.popup?
-          html_options[:data][:popup] = true
-          html_options[:target] = '_blank'
-        end
+        html_options[:target] = '_blank' if link.popup?
         html_options[:id] = link_id
         html_options[:remote] = true unless link.page? || link.popup?
         if link.dhtml_confirm?
