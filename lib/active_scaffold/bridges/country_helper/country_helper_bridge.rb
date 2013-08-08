@@ -3,11 +3,11 @@ module ActiveScaffold::Bridges
     module CountryHelpers
       # Return select and option tags for the given object and method, using country_options_for_select to generate the list of option tags.
       def country_select(object, method, priority_countries = nil, options = {}, html_options = {})
-        ActionView::Helpers::InstanceTag.new(object, method, self, options.delete(:object)).to_country_select_tag(priority_countries, options, html_options)
+        ActionView::Helpers::Tags::CountrySelect.new(object, method, self, options).to_country_select_tag(priority_countries, options, html_options)
       end
 
       def usa_state_select(object, method, priority_states = nil, options = {}, html_options = {})
-        ActionView::Helpers::InstanceTag.new(object, method, self, options.delete(:object)).to_usa_state_select_tag(priority_states, options, html_options)
+        ActionView::Helpers::Tags::CountrySelect.new(object, method, self, options).to_usa_state_select_tag(priority_states, options, html_options)
       end
 
       # Returns a string of option tags for pretty much any country in the world. Supply a country name as +selected+ to
@@ -19,7 +19,7 @@ module ActiveScaffold::Bridges
         if priority_countries
           country_options = options_for_select(priority_countries.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s]} + [['-------------', '']], :selected => selected, :disabled => '')
         else
-          country_options = ""
+          country_options = options_for_select([])
         end
 
         return country_options + options_for_select(COUNTRIES.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s]}, :selected => selected)
@@ -33,7 +33,7 @@ module ActiveScaffold::Bridges
         if priority_states
           state_options = options_for_select(priority_states + [['-------------', '']], :selected => selected, :disabled => '')
         else
-          state_options = ""
+          state_options = options_for_select([])
         end
 
         if priority_states && priority_states.include?(selected)
@@ -295,7 +295,7 @@ module ActiveScaffold::Bridges
 
     	USASTATES = [["Alabama", "AL"], ["Alaska", "AK"], ["Arizona", "AZ"], ["Arkansas", "AR"], ["California", "CA"], ["Colorado", "CO"], ["Connecticut", "CT"], ["Delaware", "DE"], ["District of Columbia", "DC"], ["Florida", "FL"], ["Georgia", "GA"], ["Hawaii", "HI"], ["Idaho", "ID"], ["Illinois", "IL"], ["Indiana", "IN"], ["Iowa", "IA"], ["Kansas", "KS"], ["Kentucky", "KY"], ["Louisiana", "LA"], ["Maine", "ME"], ["Maryland", "MD"], ["Massachusetts", "MA"], ["Michigan", "MI"], ["Minnesota", "MN"], ["Mississippi", "MS"], ["Missouri", "MO"], ["Montana", "MT"], ["Nebraska", "NE"], ["Nevada", "NV"], ["New Hampshire", "NH"], ["New Jersey", "NJ"], ["New Mexico", "NM"], ["New York", "NY"], ["North Carolina", "NC"], ["North Dakota", "ND"], ["Ohio", "OH"], ["Oklahoma", "OK"], ["Oregon", "OR"], ["Pennsylvania", "PA"], ["Rhode Island", "RI"], ["South Carolina", "SC"], ["South Dakota", "SD"], ["Tennessee", "TN"], ["Texas", "TX"], ["Utah", "UT"], ["Vermont", "VT"], ["Virginia", "VA"], ["Washington", "WA"], ["Wisconsin", "WI"], ["West Virginia", "WV"], ["Wyoming", "WY"]] unless const_defined?("USASTATES")
 
-      class ActionView::Helpers::InstanceTag #:nodoc:
+      class ActionView::Helpers::Tags::CountrySelect < ActionView::Helpers::Tags::Base #:nodoc:
         include CountryHelpers
 
         def to_country_select_tag(priority_countries, options, html_options)
