@@ -90,6 +90,7 @@ module ActiveScaffold
       # we have to use the other model's primary_key.
       #
       # please see the relevant tests for concrete examples.
+
       field = if [:has_one, :has_many].include?(association.macro)
         association.klass.primary_key
       elsif [:has_and_belongs_to_many].include?(association.macro)
@@ -99,14 +100,9 @@ module ActiveScaffold
       end
 
       table = case association.macro
-        when :has_and_belongs_to_many
-        association.options[:join_table]
-
-        when :belongs_to
-        active_scaffold_config.model.table_name
-
-        else
-        association.table_name
+        when :has_and_belongs_to_many then association.join_table
+        when :belongs_to then active_scaffold_config.model.table_name
+        else association.table_name
       end
 
       if association.options[:primary_key]
