@@ -235,7 +235,11 @@ module ActiveScaffold
           url_options = action_link_url_options(link, record)
           if active_scaffold_config.cache_action_link_urls
             url = url_for(url_options)
-            @action_links_urls[link.name_to_cache_link_url] = url unless link.dynamic_parameters.is_a?(Proc)
+            inheritance_column = active_scaffold_config.model.inheritance_column
+            is_sti_record = record && model.columns_hash.include?(inheritance_column) && record[inheritance_column].present?
+            unless link.dynamic_parameters.is_a?(Proc) || is_sti_record
+              @action_links_urls[link.name_to_cache_link_url] = url 
+            end
             url
           else
             url_for(params_for(url_options))
