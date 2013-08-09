@@ -68,21 +68,21 @@ class FinderTest < Test::Unit::TestCase
 
   def test_count_with_group
     @klass.expects(:custom_finder_options).returns({:group => :a})
-    ActiveRecord::Relation::ActiveRecord_Relation_ModelStub.any_instance.expects(:count).returns({'foo' => 5})
-    ActiveRecord::Relation::ActiveRecord_Relation_ModelStub.any_instance.expects(:limit).with(20).returns(ModelStub.where(nil))
-    ActiveRecord::Relation::ActiveRecord_Relation_ModelStub.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
+    relation_class.any_instance.expects(:count).returns({'foo' => 5, 'bar' => 4})
+    relation_class.any_instance.expects(:limit).with(20).returns(ModelStub.where(nil))
+    relation_class.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
     page = @klass.send :find_page, :per_page => 20, :pagination => true
     page.items
     
     assert_kind_of Integer, page.pager.count
-    assert_equal 1, page.pager.count
+    assert_equal 2, page.pager.count
     assert_nothing_raised { page.pager.number_of_pages }
   end
 
   def test_disabled_pagination
-    ActiveRecord::Relation.any_instance.expects(:count).never
-    ActiveRecord::Relation.any_instance.expects(:limit).never
-    ActiveRecord::Relation.any_instance.expects(:offset).never
+    relation_class.any_instance.expects(:count).never
+    relation_class.any_instance.expects(:limit).never
+    relation_class.any_instance.expects(:offset).never
     ModelStub.expects(:count).never
     page = @klass.send :find_page, :per_page => 20, :pagination => false
     page.items
@@ -91,5 +91,10 @@ class FinderTest < Test::Unit::TestCase
   def test_infinite_pagination
     ModelStub.expects(:count).never
     page = @klass.send :find_page, :pagination => :infinite
+  end
+
+  private
+  def relation_class
+    Rails::VERSION::MAJOR < 4 ? ActiveRecord::Relation : ActiveRecord::Relation::ActiveRecord_Relation_ModelStub
   end
 end

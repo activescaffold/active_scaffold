@@ -332,11 +332,11 @@ module ActiveScaffold
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       count_query = append_to_query(beginning_of_chain, options)
-      count = count_query.distinct.count
+      count = Rails::VERSION::MAJOR < 4 ? count_query.count(:distinct => true) : count_query.distinct.count
   
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
-      count = count.length if count.is_a? Hash
+      count = count.length if count.is_a?(Hash) || count.is_a?(ActiveSupport::OrderedHash)
       count
     end
 

@@ -15,7 +15,7 @@ class TinyMceTest < ActionView::TestCase
     @record = Company.new
     self.expects(:request).returns(stub(:xhr? => true))
 
-    assert_dom_equal "<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\">\n</textarea>\n<script>\n//<![CDATA[\ntinyMCE.settings = {\"theme\":\"simple\"};tinyMCE.execCommand('mceAddControl', false, 'record_name');\n//]]>\n</script>", active_scaffold_input_text_editor(config.columns[:name], :name => 'record[name]', :id => 'record_name', :class => 'name-input', :object => @record)
+    assert_dom_equal %{<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\">\n</textarea>\n<script#{' type="text/javascript"' if Rails::VERSION::MAJOR < 4}>\n//<![CDATA[\ntinyMCE.settings = {\"theme\":\"simple\"};tinyMCE.execCommand('mceAddControl', false, 'record_name');\n//]]>\n</script>}, active_scaffold_input_text_editor(config.columns[:name], :name => 'record[name]', :id => 'record_name', :class => 'name-input', :object => @record)
   end
 
   protected
