@@ -100,7 +100,7 @@ module ActiveScaffold
       end
 
       table = case association.macro
-        when :has_and_belongs_to_many then association.join_table
+        when :has_and_belongs_to_many then association.respond_to?(:join_table) ? association.join_table : association.options[:join_table]
         when :belongs_to then active_scaffold_config.model.table_name
         else association.table_name
       end

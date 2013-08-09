@@ -59,7 +59,8 @@ class PaperclipTest < ActionView::TestCase
     @record = Company.new
 
     @record.stubs(:logo).returns(stub(:file? => true, :original_filename => 'file', :url => '/system/file', :styles => Company.attachment_definitions[:logo]))
-    assert_dom_equal '<div><a href="/system/file" target="_blank">file</a> | <input name="record[delete_logo]" type="hidden" id="record_delete_logo" value="false" /><a href="#" onclick="$(this).prev().val(&#39;true&#39;); $(this).parent().hide().next().show(); return false;">Remove or Replace file</a></div><div style="display: none"><input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" /></div>', active_scaffold_input_paperclip(config.columns[:logo], :name => 'record[logo]', :id => 'record_logo')
+    escaped_quote = Rails::VERSION::MAJOR < 4 ? '&#x27;' : '&#39;'
+    assert_dom_equal %{<div><a href="/system/file" target="_blank">file</a> | <input name="record[delete_logo]" type="hidden" id="record_delete_logo" value="false" /><a href="#" onclick="$(this).prev().val(#{escaped_quote}true#{escaped_quote}); $(this).parent().hide().next().show(); return false;">Remove or Replace file</a></div><div style="display: none"><input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" /></div>}, active_scaffold_input_paperclip(config.columns[:logo], :name => 'record[logo]', :id => 'record_logo')
 
     @record.stubs(:logo).returns(stub(:file? => false))
     assert_dom_equal '<input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" />', active_scaffold_input_paperclip(config.columns[:logo], :name => 'record[logo]', :id => 'record_logo')
