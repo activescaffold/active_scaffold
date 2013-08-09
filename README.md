@@ -1,5 +1,7 @@
 Overview
 ========
+[![travis tests](https://travis-ci.org/activescaffold/active_scaffold.png)](https://travis-ci.org/activescaffold/active_scaffold)
+
 ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control. 
 
 Branch Details
