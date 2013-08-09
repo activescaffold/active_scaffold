@@ -161,9 +161,9 @@ module ActiveScaffold::Actions::Nested
     end
     def add_existing_respond_to_js
       if successful?
-        render :action => 'add_existing'
+        render :action => 'add_existing', :content_type => Mime::JS, :layout => false
       else
-        render :action => 'form_messages'
+        render :action => 'form_messages', :content_type => Mime::JS, :layout => false
       end
     end
     def add_existing_respond_to_xml
@@ -181,7 +181,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     def destroy_existing_respond_to_js
-      render(:action => 'destroy')
+      render(:action => 'destroy', :content_type => Mime::JS, :layout => false)
     end
 
     def destroy_existing_respond_to_xml

@@ -59,7 +59,7 @@ module ActiveScaffold::Actions
 
     def create_respond_to_js
       do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
-      render :action => 'on_create'
+      render :action => 'on_create', :content_type => Mime::JS, :layout => false
     end
 
     def create_respond_to_xml
