@@ -39,15 +39,21 @@ class Company < ActiveRecord::Base
   def self.before_destroy(s=nil)
     @@before = s
   end
+
+  if method(:create_reflection).arity == 4
+    def self.create_reflection(macro, name, scope, options, active_record)
+      super(macro, name, options, active_record)
+    end
+  end
   
   def self.has_many(association_id, options = {})
-    reflection = create_reflection(:has_many, association_id, options, self)
+    reflection = create_reflection(:has_many, association_id, nil, options, self)
   end
   def self.has_one(association_id, options = {})
-    reflection = create_reflection(:has_one, association_id, options, self)
+    reflection = create_reflection(:has_one, association_id, nil, options, self)
   end
   def self.belongs_to(association_id, options = {})
-    reflection = create_reflection(:belongs_to, association_id, options, self)
+    reflection = create_reflection(:belongs_to, association_id, nil, options, self)
   end
   has_many :companies
   has_one :company
