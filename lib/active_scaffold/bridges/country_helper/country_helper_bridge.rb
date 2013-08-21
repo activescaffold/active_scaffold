@@ -1,15 +1,20 @@
 module ActiveScaffold::Bridges
   class CountryHelper
     module CountryHelpers
+      def country_select_class
+        defined?(ActionView::Helpers::InstanceTag) ? ActionView::Helpers::InstanceTag : ActionView::Helpers::Tags::CountrySelect
+      end
       # Return select and option tags for the given object and method, using country_options_for_select to generate the list of option tags.
       def country_select(object, method, priority_countries = nil, options = {}, html_options = {})
-        ActionView::Helpers::InstanceTag.new(object, method, self, options.delete(:object)).to_country_select_tag(priority_countries, options, html_options)
+        country_select_class.new(object, method, self, options).to_country_select_tag(priority_countries, options, html_options)
       end
 
       def usa_state_select(object, method, priority_states = nil, options = {}, html_options = {})
-        ActionView::Helpers::InstanceTag.new(object, method, self, options.delete(:object)).to_usa_state_select_tag(priority_states, options, html_options)
+        country_select_class.new(object, method, self, options).to_usa_state_select_tag(priority_states, options, html_options)
       end
+    end
 
+    module CountryOptionsHelpers
       # Returns a string of option tags for pretty much any country in the world. Supply a country name as +selected+ to
       # have it marked as the selected option tag. You can also supply an array of countries as +priority_countries+, so
       # that they will be listed above the rest of the (long) list.
@@ -19,7 +24,7 @@ module ActiveScaffold::Bridges
         if priority_countries
           country_options = options_for_select(priority_countries.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s]} + [['-------------', '']], :selected => selected, :disabled => '')
         else
-          country_options = ""
+          country_options = options_for_select([])
         end
 
         return country_options + options_for_select(COUNTRIES.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s]}, :selected => selected)
@@ -33,7 +38,7 @@ module ActiveScaffold::Bridges
         if priority_states
           state_options = options_for_select(priority_states + [['-------------', '']], :selected => selected, :disabled => '')
         else
-          state_options = ""
+          state_options = options_for_select([])
         end
 
         if priority_states && priority_states.include?(selected)
@@ -45,7 +50,7 @@ module ActiveScaffold::Bridges
         return state_options
       end
             # All the countries included in the country_options output.
-            COUNTRIES = [
+      COUNTRIES = [
       :afghanistan,                                    
       :aland_islands,                                  
       :albania,                                        
@@ -293,34 +298,32 @@ module ActiveScaffold::Bridges
       :zimbabwe] unless const_defined?("COUNTRIES")
 
 
-    	USASTATES = [["Alabama", "AL"], ["Alaska", "AK"], ["Arizona", "AZ"], ["Arkansas", "AR"], ["California", "CA"], ["Colorado", "CO"], ["Connecticut", "CT"], ["Delaware", "DE"], ["District of Columbia", "DC"], ["Florida", "FL"], ["Georgia", "GA"], ["Hawaii", "HI"], ["Idaho", "ID"], ["Illinois", "IL"], ["Indiana", "IN"], ["Iowa", "IA"], ["Kansas", "KS"], ["Kentucky", "KY"], ["Louisiana", "LA"], ["Maine", "ME"], ["Maryland", "MD"], ["Massachusetts", "MA"], ["Michigan", "MI"], ["Minnesota", "MN"], ["Mississippi", "MS"], ["Missouri", "MO"], ["Montana", "MT"], ["Nebraska", "NE"], ["Nevada", "NV"], ["New Hampshire", "NH"], ["New Jersey", "NJ"], ["New Mexico", "NM"], ["New York", "NY"], ["North Carolina", "NC"], ["North Dakota", "ND"], ["Ohio", "OH"], ["Oklahoma", "OK"], ["Oregon", "OR"], ["Pennsylvania", "PA"], ["Rhode Island", "RI"], ["South Carolina", "SC"], ["South Dakota", "SD"], ["Tennessee", "TN"], ["Texas", "TX"], ["Utah", "UT"], ["Vermont", "VT"], ["Virginia", "VA"], ["Washington", "WA"], ["Wisconsin", "WI"], ["West Virginia", "WV"], ["Wyoming", "WY"]] unless const_defined?("USASTATES")
+      USASTATES = [["Alabama", "AL"], ["Alaska", "AK"], ["Arizona", "AZ"], ["Arkansas", "AR"], ["California", "CA"], ["Colorado", "CO"], ["Connecticut", "CT"], ["Delaware", "DE"], ["District of Columbia", "DC"], ["Florida", "FL"], ["Georgia", "GA"], ["Hawaii", "HI"], ["Idaho", "ID"], ["Illinois", "IL"], ["Indiana", "IN"], ["Iowa", "IA"], ["Kansas", "KS"], ["Kentucky", "KY"], ["Louisiana", "LA"], ["Maine", "ME"], ["Maryland", "MD"], ["Massachusetts", "MA"], ["Michigan", "MI"], ["Minnesota", "MN"], ["Mississippi", "MS"], ["Missouri", "MO"], ["Montana", "MT"], ["Nebraska", "NE"], ["Nevada", "NV"], ["New Hampshire", "NH"], ["New Jersey", "NJ"], ["New Mexico", "NM"], ["New York", "NY"], ["North Carolina", "NC"], ["North Dakota", "ND"], ["Ohio", "OH"], ["Oklahoma", "OK"], ["Oregon", "OR"], ["Pennsylvania", "PA"], ["Rhode Island", "RI"], ["South Carolina", "SC"], ["South Dakota", "SD"], ["Tennessee", "TN"], ["Texas", "TX"], ["Utah", "UT"], ["Vermont", "VT"], ["Virginia", "VA"], ["Washington", "WA"], ["Wisconsin", "WI"], ["West Virginia", "WV"], ["Wyoming", "WY"]] unless const_defined?("USASTATES")
+    end
 
-      class ActionView::Helpers::InstanceTag #:nodoc:
-        include CountryHelpers
+    module InstanceTagMethods
+      def to_country_select_tag(priority_countries, options, html_options)
+        html_options = html_options.stringify_keys
+        add_default_name_and_id(html_options)
+        value = value(object)
+        selected_value = options.has_key?(:selected) ? options[:selected] : value
+        content_tag("select",
+          add_options(
+            country_options_for_select(selected_value, priority_countries),
+            options, selected_value
+          ), html_options
+        )
+      end
 
-        def to_country_select_tag(priority_countries, options, html_options)
-          html_options = html_options.stringify_keys
-          add_default_name_and_id(html_options)
-          value = value(object)
-          selected_value = options.has_key?(:selected) ? options[:selected] : value
-          content_tag("select",
-            add_options(
-              country_options_for_select(selected_value, priority_countries),
-              options, selected_value
-            ), html_options
-          )
-        end
-
-        def to_usa_state_select_tag(priority_states, options, html_options)
-          html_options = html_options.stringify_keys
-          add_default_name_and_id(html_options)
-          value = value(object)
-          selected_value = options.has_key?(:selected) ? options[:selected] : value
-          content_tag("select", add_options(usa_state_options_for_select(selected_value, priority_states), options, selected_value), html_options)
-        end
+      def to_usa_state_select_tag(priority_states, options, html_options)
+        html_options = html_options.stringify_keys
+        add_default_name_and_id(html_options)
+        value = value(object)
+        selected_value = options.has_key?(:selected) ? options[:selected] : value
+        content_tag("select", add_options(usa_state_options_for_select(selected_value, priority_states), options, selected_value), html_options)
       end
     end
-    
+
     module FormColumnHelpers
       def active_scaffold_input_country(column, options)
         select_options = {:prompt => as_(:_select_)}
@@ -353,6 +356,19 @@ end
 
 ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::CountryHelper::CountryHelpers
+  include ActiveScaffold::Bridges::CountryHelper::CountryOptionsHelpers
   include ActiveScaffold::Bridges::CountryHelper::FormColumnHelpers
   include ActiveScaffold::Bridges::CountryHelper::SearchColumnHelpers
 end
+if defined? ActionView::Helpers::InstanceTag
+  ActionView::Helpers::InstanceTag.class_eval do
+    include ActiveScaffold::Bridges::CountryHelper::CountryOptionsHelpers
+    include ActiveScaffold::Bridges::CountryHelper::InstanceTagMethods
+  end
+else
+  class ActionView::Helpers::Tags::CountrySelect < ActionView::Helpers::Tags::Base #:nodoc:
+    include ActiveScaffold::Bridges::CountryHelper::CountryOptionsHelpers
+    include ActiveScaffold::Bridges::CountryHelper::InstanceTagMethods
+  end
+end
+ 

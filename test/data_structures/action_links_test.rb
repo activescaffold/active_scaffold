@@ -69,7 +69,7 @@ class ActionLinksTest < Test::Unit::TestCase
     assert @links['foo'].nil?
     begin
       @links.delete :foo
-    @links.delete 'foo'
+      @links.delete 'foo'
     rescue
       assert false, "deleting from action links when item doesn't exist should not throw an error"
     end

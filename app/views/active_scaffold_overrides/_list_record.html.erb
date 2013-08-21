@@ -1,5 +1,5 @@
 <%
-record = list_record if list_record # compat with render :partial :collection
+record = list_record if defined? list_record # compat with render :partial :collection
 columns ||= list_columns
 tr_class = cycle("", "even-record") + ' ' + list_row_class(record)
 action_links ||= active_scaffold_config.action_links.member
