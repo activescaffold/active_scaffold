@@ -149,16 +149,7 @@ module ActiveScaffold
     end
 
     def column_value_from_param_hash_value(parent_record, column, value)
-      # this is just for backwards compatibility. we should clean this up in 2.0.
-      if column.form_ui == :select
-        ids = if column.singular_association?
-          value[:id]
-        else
-          value.values.collect {|hash| hash[:id]}
-        end
-        (ids and not ids.empty?) ? column.association.klass.find(ids) : nil
-
-      elsif column.singular_association?
+      if column.singular_association?
         manage_nested_record_from_params(parent_record, column, value)
       elsif column.plural_association?
         # HACK to be able to delete all associated records, hash will include "0" => ""
