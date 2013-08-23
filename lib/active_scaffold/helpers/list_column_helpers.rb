@@ -41,16 +41,21 @@ module ActiveScaffold
       # TODO: move empty_field_text and &nbsp; logic in here?
       # TODO: we need to distinguish between the automatic links *we* create and the ones that the dev specified. some logic may not apply if the dev specified the link.
       def render_list_column(text, column, record)
-        if column.link && !skip_action_link?(column.link, record)
-          link = column.link
-          associated = record.send(column.association.name) if column.association
-          render_action_link(link, record, :link => text, :authorized => link.action.nil? || column_link_authorized?(link, column, record, associated))
-        elsif inplace_edit?(record, column)
-          active_scaffold_inplace_edit(record, column, {:formatted_column => text})
-        elsif active_scaffold_config.list.wrap_tag
-          content_tag active_scaffold_config.list.wrap_tag, text
-        else
-          text
+        begin
+          if column.link && !skip_action_link?(column.link, record)
+            link = column.link
+            associated = record.send(column.association.name) if column.association
+            render_action_link(link, record, :link => text, :authorized => link.action.nil? || column_link_authorized?(link, column, record, associated))
+          elsif inplace_edit?(record, column)
+            active_scaffold_inplace_edit(record, column, {:formatted_column => text})
+          elsif active_scaffold_config.list.wrap_tag
+            content_tag active_scaffold_config.list.wrap_tag, text
+          else
+            text
+          end
+        rescue Exception => e
+          logger.error "#{Time.now.to_s} #{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+          raise e
         end
       end
 
