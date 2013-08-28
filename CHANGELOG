@@ -1,5 +1,6 @@
-= 3.4.0
+= 3.4.0 (not released yet)
 - Support rails4
+- Quote selected columns
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select
