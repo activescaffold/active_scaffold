@@ -91,7 +91,7 @@ module ActiveScaffold::Actions
           })
       end
       if active_scaffold_config.list.auto_select_columns
-        options[:select] = active_scaffold_config.list.columns.map { |c| quoted_select_columns(c.select_columns) }.compact.flatten + quoted_select_columns(active_scaffold_config.columns[active_scaffold_config.model.primary_key].select_columns)
+        options[:select] = active_scaffold_config.list.columns.map { |c| quoted_select_columns(c.select_columns) }.compact.flatten + (quoted_select_columns(active_scaffold_config.columns[active_scaffold_config.model.primary_key].select_columns) || [])
       end
 
       page = find_page(options)
@@ -104,7 +104,7 @@ module ActiveScaffold::Actions
     end
 
     def quoted_select_columns(columns)
-      columns.map { |c| active_scaffold_config.columns[c].try(:field) || c }
+      columns.map { |c| active_scaffold_config.columns[c].try(:field) || c } if columns
     end
 
     def do_refresh_list
