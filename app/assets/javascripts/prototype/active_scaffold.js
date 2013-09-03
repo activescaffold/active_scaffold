@@ -977,6 +977,7 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
       return false;
     }
     this.adapter.down('.inline-adapter-cell').writeAttribute('colspan', colspan);
+    ActiveScaffold.focus_first_element_of_form(this.adapter);
     ActiveScaffold.highlight(this.adapter.down('td').down());
   },
 
@@ -1045,6 +1046,7 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
     else {
       throw 'Unknown position "' + this.position + '"'
     }
+    ActiveScaffold.focus_first_element_of_form(this.adapter);
     ActiveScaffold.highlight(this.adapter.down('td').down());
   },
 });

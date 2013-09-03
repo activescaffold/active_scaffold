@@ -501,7 +501,7 @@ var ActiveScaffold = {
   
   focus_first_element_of_form: function(form_element) {
     if (typeof(form_element) == 'string') form_element = '#' + form_element;
-    jQuery(form_element + ":first *:input[type!=hidden]:first").focus();
+    jQuery(":input[type!=hidden]:first", $(form_element)).focus();
   },
     
   create_record_row: function(active_scaffold_id, html, options) {
@@ -1090,6 +1090,7 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       return false;
     }
+    ActiveScaffold.focus_first_element_of_form(this.adapter);
     ActiveScaffold.highlight(this.adapter.find('td'));
   },
 
@@ -1157,6 +1158,7 @@ ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       throw 'Unknown position "' + this.position + '"'
     }
+    ActiveScaffold.focus_first_element_of_form(this.adapter);
     ActiveScaffold.highlight(this.adapter.find('td').first().children());
   },
 });
