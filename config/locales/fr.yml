@@ -31,7 +31,7 @@ fr:
     'false': Faux
     filtered: (Filtré)
     found: Trouvé
-    hide: Cacher
+    hide: (Cacher)
     inplace_edit_handle: --
     live_search: Recherche en temps réel
     loading: Chargement…
@@ -58,7 +58,7 @@ fr:
     search: Rechercher
     search_terms: Recherche de termes
     _select_: ! '- sélectionner -'
-    show: Montrer
+    show: (Montrer)
     show_model: Montrer %{model}
     _to_: ! ' à '
     'true': Vrai

@@ -31,7 +31,7 @@ ja:
     'false': 'False'
     filtered: （フィルタ中）
     found: 個ありました
-    hide: 隠す
+    hide: (隠す)
     inplace_edit_handle: --
     live_search: その場で検索
     loading: 読み込み中…
@@ -58,7 +58,7 @@ ja:
     search: 検索
     search_terms: 検索単語
     _select_: ! '- 選択してください -'
-    show: 表示
+    show: (表示)
     show_model: ! '%{model}を表示'
     _to_: ! ' to '
     'true': 'True'

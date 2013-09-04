@@ -31,7 +31,7 @@ en:
     'false': 'False'
     filtered: (Filtered)
     found: Found
-    hide: Hide
+    hide: (Hide)
     inplace_edit_handle: --
     live_search: Live Search
     loading: Loading…
@@ -58,7 +58,7 @@ en:
     search: Search
     search_terms: Search Terms
     _select_: ! '- select -'
-    show: Show
+    show: (Show)
     show_model: Show %{model}
     _to_: ! ' to '
     'true': 'True'

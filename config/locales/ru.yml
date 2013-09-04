@@ -35,7 +35,7 @@ ru:
       few: записи
       many: записей
       other: записи
-    hide: Скрыть
+    hide: (Скрыть)
     inplace_edit_handle: --
     live_search: Поиск
     loading: Загрузка…
@@ -64,7 +64,7 @@ ru:
     search: Поиск
     search_terms: Ключевые слова
     _select_: ! '- выбрать -'
-    show: Показать
+    show: (Показать)
     show_model: ! '%{model}: показать запись'
     _to_: ! ' to '
     'true': Да

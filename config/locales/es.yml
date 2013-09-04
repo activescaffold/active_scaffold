@@ -31,7 +31,7 @@ es:
     found:
       one: encontrado
       other: encontrados
-    hide: Ocultar
+    hide: (Ocultar)
     inplace_edit_handle: --
     live_search: Buscar en Vivo
     loading: Cargando…
@@ -60,7 +60,7 @@ es:
     search: Buscar
     search_terms: Términos a buscar
     _select_: ! '- seleccionar -'
-    show: Ver
+    show: (Ver)
     show_model: Ver %{model}
     _to_: ! ' a '
     'true': Sí
