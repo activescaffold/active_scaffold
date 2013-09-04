@@ -60,7 +60,8 @@ es:
     search: Buscar
     search_terms: Términos a buscar
     _select_: ! '- seleccionar -'
-    show: (Ver)
+    show: Ver
+    show_block: (Ver)
     show_model: Ver %{model}
     _to_: ! ' a '
     'true': Sí

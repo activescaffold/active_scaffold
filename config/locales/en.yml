@@ -58,7 +58,8 @@ en:
     search: Search
     search_terms: Search Terms
     _select_: ! '- select -'
-    show: (Show)
+    show: Show
+    show_block: (Show)
     show_model: Show %{model}
     _to_: ! ' to '
     'true': 'True'

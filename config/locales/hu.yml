@@ -58,7 +58,8 @@ hu:
     search: Keresés
     search_terms: Keresési kifejezések
     _select_: ! '- válassz -'
-    show: (Mutatás)
+    show: Mutatás
+    show_block: (Mutatás)
     show_model: ! '%{model} mutatása'
     _to_: ! ' – '
     'true': 'True'
