@@ -58,7 +58,8 @@ de:
     search: Suche
     search_terms: Suchbegriffe
     _select_: ! '- Auswählen -'
-    show: (Anzeigen)
+    show: Anzeigen
+    show_block: (Anzeigen)
     show_model: Zeige %{model} an
     _to_: ! ' zu '
     'true': 'True'

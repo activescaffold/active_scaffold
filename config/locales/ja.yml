@@ -58,7 +58,8 @@ ja:
     search: 検索
     search_terms: 検索単語
     _select_: ! '- 選択してください -'
-    show: (表示)
+    show: 表示
+    show_block: (表示)
     show_model: ! '%{model}を表示'
     _to_: ! ' to '
     'true': 'True'
