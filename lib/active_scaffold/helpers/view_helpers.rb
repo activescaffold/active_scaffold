@@ -91,8 +91,8 @@ module ActiveScaffold
       # You may also flag whether the other element is visible by default or not, and the initial text will adjust accordingly.
       def link_to_visibility_toggle(id, options = {})
         options[:default_visible] = true if options[:default_visible].nil?
-        options[:hide_label] = as_(:hide) 
-        options[:show_label] = as_(:show)
+        options[:hide_label] ||= as_(:hide) 
+        options[:show_label] ||= as_(:show)
         javascript_tag("ActiveScaffold.create_visibility_toggle('#{id}', #{options.to_json});")
       end
 

@@ -31,7 +31,7 @@ hu:
     'false': 'False'
     filtered: (Szűrt)
     found: Találat
-    hide: Elrejtés
+    hide: (Elrejtés)
     inplace_edit_handle: --
     live_search: Élő keresés
     loading: Betöltés…
@@ -58,7 +58,7 @@ hu:
     search: Keresés
     search_terms: Keresési kifejezések
     _select_: ! '- válassz -'
-    show: Mutatás
+    show: (Mutatás)
     show_model: ! '%{model} mutatása'
     _to_: ! ' – '
     'true': 'True'
