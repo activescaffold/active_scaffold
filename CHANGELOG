@@ -3,6 +3,7 @@
 - Quote selected columns
 - More unobtrusive html views
 - Move () in visibility toggle links inside so they can be overrided
+- Extend datepicker to load settings from data attributes before onReady event is fired
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select
