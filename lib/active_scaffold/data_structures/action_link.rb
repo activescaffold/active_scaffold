@@ -18,6 +18,7 @@ module ActiveScaffold::DataStructures
       self.column = nil
       self.image = nil
       self.dynamic_parameters = nil
+      self.weight = 0
 
       # apply quick properties
       options.each_pair do |k, v|
@@ -25,6 +26,9 @@ module ActiveScaffold::DataStructures
         self.send(setter, v) if self.respond_to? setter
       end
     end
+
+    # the weight for this link in the action links collection, it will be used to sort the collection
+    attr_accessor :weight
 
     # the action-path for this link. what page to request? this is required!
     attr_accessor :action
