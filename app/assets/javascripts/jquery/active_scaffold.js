@@ -230,7 +230,11 @@ jQuery(document).ready(function($) {
     e.preventDefault();
   });
   
+  ActiveScaffold.live_search(document);
+  jQuery(document).on('as:element_updated', function(e) { ActiveScaffold.live_search(e.target); });
+  jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) { ActiveScaffold.live_search(action_link.adapter); });
 });
+
 
 /* Simple Inheritance
  http://ejohn.org/blog/simple-javascript-inheritance/
@@ -304,51 +308,28 @@ jQuery(document).ready(function($) {
  Slight modifications by Elliot Winkler
 */
 
-if (typeof(jQuery.fn.delayedObserver) === 'undefined') { 
-  (function($) {
-    var delayedObserverStack = [];
-    var observed;
-   
-    function delayedObserverCallback(stackPos) {
-      observed = delayedObserverStack[stackPos];
-      if (observed.timer) return;
-     
-      observed.timer = setTimeout(function(){
-        observed.timer = null;
-        observed.callback(observed.obj.val(), observed.obj);
-      }, observed.delay * 1000);
-  
-      observed.oldVal = observed.obj.val();
-    } 
-    
-    // going by
-    // <http://www.cambiaresearch.com/c4/702b8cd1-e5b0-42e6-83ac-25f0306e3e25/Javascript-Char-Codes-Key-Codes.aspx>
-    // I think these codes only work when using keyup or keydown
-    function isNonPrintableKey(event) {
-      var code = event.keyCode;
-      return (
-        event.metaKey ||
-        (code >= 9 && code <= 16) || (code >= 27 && code <= 40) || (code >= 91 && code <= 93) || (code >= 112 && code <= 145)
-      );
-    }
-   
-    jQuery.fn.extend({
-      delayedObserver:function(delay, callback){
-        $this = jQuery(this);
-       
-        delayedObserverStack.push({
-          obj: $this, timer: null, delay: delay,
-          oldVal: $this.val(), callback: callback
-        });
-         
-        stackPos = delayedObserverStack.length-1;
-       
-        $this.keyup(function(event) {
-          if (isNonPrintableKey(event)) return;
-          observed = delayedObserverStack[stackPos];
-            if (observed.obj.val() == observed.obj.oldVal) return;
-            else delayedObserverCallback(stackPos);
-        });
+if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
+  (function($){
+    $.extend($.fn, {
+      delayedObserver: function(callback, delay, options){
+        return this.each(function(){
+          var el = $(this);
+          var op = options || {};
+          el.data('oldval', el.val())
+            .data('delay', delay || 0.5)
+            .data('condition', op.condition || function() { return ($(this).data('oldval') == $(this).val()); })
+            .data('callback', callback)
+            [(op.event||'keyup')](function(){
+              if (el.data('condition').apply(el)) { return; }
+              else {
+                if (el.data('timer')) { clearTimeout(el.data('timer')); }
+                el.data('timer', setTimeout(function(){
+                  el.data('callback').apply(el);
+                }, el.data('delay') * 1000));
+                el.data('oldval', el.val());
+              }
+            });
+          });
       }
     });
   })(jQuery);
@@ -361,6 +342,11 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
 
 var ActiveScaffold = {
   last_focus: null,
+  live_search: function(element) {
+    jQuery('form.search.live input[type=search]').delayedObserver(function() {
+     jQuery(this).parent().trigger("submit");
+    }, 0.5);
+  },
   records_for: function(tbody_id) {
     if (typeof(tbody_id) == 'string') tbody_id = '#' + tbody_id;
     return jQuery(tbody_id).children('.record');
