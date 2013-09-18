@@ -6,6 +6,8 @@
 - Extend datepicker to load settings from data attributes before onReady event is fired
 - Add weight to action links
 - Add placeholder in search form
+- load existing record on render_field when id is present
+- Add helper to override subform label
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select
