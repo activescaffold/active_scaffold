@@ -56,7 +56,7 @@ module ActiveScaffold::Actions
           @record = id ? find_if_allowed(id, :update) : new_model
           @record = update_record_from_params(@record, @main_columns, hash)
         else
-          @record = new_model
+          @record = params[:id] ? find_if_allowed(params[:id], :update) : new_model
           value = column_value_from_param_value(@record, @column, params.delete(:value))
           @record.send "#{@column.name}=", value
         end
