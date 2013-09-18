@@ -7,7 +7,7 @@
       hidden = column_renders_as(column) == :hidden
       -%>
       <th class="<%= "#{column.name}-column #{'required' if column.required?} #{'hidden' if hidden}" %>">
-        <label><%= column.label unless hidden %></label>
+        <label><%= subform_label(column, hidden) %></label>
         <% if column.description.present? -%>
           <span class="description"><%= column.description %></span>
         <% end -%>

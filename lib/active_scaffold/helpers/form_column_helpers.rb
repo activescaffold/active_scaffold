@@ -171,6 +171,10 @@ module ActiveScaffold
       def label_for(column, options)
         options[:id] unless column.form_ui == :select && column.plural_association?
       end
+
+      def subform_label(column, hidden)
+        column.label unless hidden
+      end
       
       def form_hidden_attribute(column, record, scope = nil)
         %|<dl style="display: none;"><dt></dt><dd>
