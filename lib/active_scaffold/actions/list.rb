@@ -27,14 +27,14 @@ module ActiveScaffold::Actions
 
     protected
     def list_respond_to_html
-      if embedded?
+      if loading_embedded?
         render :action => 'list', :layout => false
       else
         render :action => 'list'
       end
     end
     def list_respond_to_js
-      if params[:adapter] || embedded?
+      if params[:adapter] || loading_embedded?
         render(:partial => 'list_with_header')
       else
         render :partial => 'refresh_list', :formats => [:js]
