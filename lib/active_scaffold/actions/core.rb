@@ -21,8 +21,12 @@ module ActiveScaffold::Actions
     end
     
     protected
+    def loading_embedded?
+      @loading_embedded ||= params.delete(:embedded)
+    end
+
     def embedded?
-      @embedded ||= params.delete(:embedded)
+      params[:eid]
     end
 
     def nested?
