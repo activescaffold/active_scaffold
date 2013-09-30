@@ -99,6 +99,7 @@ module ActiveScaffold::Actions
       rescue ActiveRecord::ActiveRecordError => ex
         flash[:error] = ex.message
         self.successful = false
+        @record ||= new_model # ensure @record exists or display form will fail
       end
     end
 
