@@ -1,5 +1,5 @@
 <% unless current_page.nil? -%>
-  <% url_options = params_for(:action => :index) -%>
+  <% url_options = pagination_url_options -%>
   <% options = {'data-page-history' => controller_id, :remote => true, :method => :get} -%>
 
   <%= loading_indicator_tag :action => :pagination %>
