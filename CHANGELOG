@@ -9,6 +9,7 @@
 - load existing record on render_field when id is present
 - Add helper to override subform label
 - embedded? checks that it is displayed embedded, add loading_embedded? to check first loading of embedded
+- Fix previous page link with search and sort options when they are not stored in session
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select
