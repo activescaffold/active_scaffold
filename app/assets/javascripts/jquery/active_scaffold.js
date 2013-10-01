@@ -681,7 +681,8 @@ var ActiveScaffold = {
     if (element.length == 0) {
       element = source.closest('form > ol.form');
     }
-    element = element.find('.' + options.field_class).first();
+    // find without entering new subforms
+    element = element.find('li:not(.sub-form) .' + options.field_class).first();
 
     if (element) {
       if (options.is_subform == false) {

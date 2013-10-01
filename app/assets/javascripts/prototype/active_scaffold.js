@@ -627,7 +627,8 @@ var ActiveScaffold = {
     if (typeof(element) === 'undefined') {
       element = source.up('ol.form');
     }
-    element = element.down('.' + options.field_class);
+    // find without entering new subforms
+    element = element.down('li:not(.sub-form) .' + options.field_class);
 
     if (element) {
       if (options.is_subform == false) {
