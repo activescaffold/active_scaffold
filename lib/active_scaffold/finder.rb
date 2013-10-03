@@ -359,7 +359,8 @@ module ActiveScaffold
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          sorted_collection = sort_collection_by_column(append_to_query(klass, find_options).to_a, *options[:sorting].first)
+          # where(nil) to ensure we have a relation to call to_a
+          sorted_collection = sort_collection_by_column(append_to_query(klass, find_options).where(nil).to_a, *options[:sorting].first)
           sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
           sorted_collection
         end
