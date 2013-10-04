@@ -61,7 +61,7 @@ module ActiveScaffold::Actions
     # The actual algorithm to prepare for the list view
     def set_includes_for_columns(action = :list)
       @cache_associations = true
-      columns = if respond_to?(:"#{action}_columns")
+      columns = if respond_to?(:"#{action}_columns", true)
         send(:"#{action}_columns")
       else
         active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
@@ -91,7 +91,8 @@ module ActiveScaffold::Actions
           })
       end
       if active_scaffold_config.list.auto_select_columns
-        options[:select] = active_scaffold_config.list.columns.map { |c| quoted_select_columns(c.select_columns) }.compact.flatten + (quoted_select_columns(active_scaffold_config.columns[active_scaffold_config.model.primary_key].select_columns) || [])
+        auto_select_columns = list_columns + [active_scaffold_config.columns[active_scaffold_config.model.primary_key]]
+        options[:select] = auto_select_columns.map { |c| quoted_select_columns(c.select_columns) }.compact.flatten
       end
 
       page = find_page(options)
@@ -189,6 +190,17 @@ module ActiveScaffold::Actions
 
     def action_update_respond_to_yaml
       render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => list_columns_names)).to_yaml, :content_type => Mime::YAML, :status => response_status
+    end
+
+    def objects_for_etag
+      objects = if @list_columns
+        if active_scaffold_config.list.calculate_etag
+          @records.to_a
+        elsif active_scaffold_config.list.user.sorting
+          {:etag => active_scaffold_config.list.user.sorting.clause}
+        end
+      end
+      objects.present? ? objects : @record
     end
 
     private

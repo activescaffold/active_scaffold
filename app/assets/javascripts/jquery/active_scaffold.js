@@ -1,4 +1,32 @@
 jQuery(document).ready(function($) {
+  jQuery.ajaxSettings.ifModified = true;
+  jQuery(document).on('ajax:beforeSend', function(event, xhr, settings){
+    xhr.cacheUrl = settings.url;
+  });
+  jQuery(document).on('ajax:success', function(event, data, status, xhr){
+    var etag=xhr.getResponseHeader("etag");
+    if (etag && xhr.status==304) {
+      var key = etag + xhr.cacheUrl;
+      xhr.responseText=jQuery(document).data(key);
+      var conv = jQuery(document).data('type-'+key);
+      if (conv) conv(xhr.responseText);
+    }
+  });
+  jQuery(document).ajaxComplete(function(event, xhr, settings){
+    var etag=xhr.getResponseHeader("etag");
+    if (etag && settings.ifModified && xhr.responseText) {
+      var key = etag + xhr.cacheUrl;
+      jQuery(document).data(key, xhr.responseText);
+      var contentType = xhr.getResponseHeader('Content-Type');
+      for(s in settings.contents) {
+        if (settings.contents[s].test(contentType)) {
+          var conv = settings.converters['text '+s];
+          if (typeof conv == 'function') jQuery(document).data('type-'+key, conv);
+          break;
+        }
+      }
+    }
+  });
   if (/1\.[2-7]\..*/.test(jQuery().jquery)) {
     var error = 'ActiveScaffold requires jquery 1.8.0 or greater, please use jquery-rails 2.1.x gem or greater';
     if (typeof console != 'undefined') console.error(error);
@@ -53,22 +81,16 @@ jQuery(document).ready(function($) {
     }
     return true;
   });
-  jQuery(document).on('ajax:success', 'a.as_action', function(event, response) {
+  jQuery(document).on('ajax:complete', 'a.as_action', function(event, xhr) {
     var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
     if (action_link) {
       if (action_link.position) {
-        action_link.insert(response);
+        action_link.insert(xhr.responseText);
         if (action_link.hide_target) action_link.target.hide();
       } else {
         action_link.enable();
       }
       jQuery(this).trigger('as:action_success', action_link);
-    }
-    return true;
-  });
-  jQuery(document).on('ajax:complete', 'a.as_action', function(event) {
-    var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
-    if (action_link) {
       if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
     }
     return true;
@@ -95,15 +117,11 @@ jQuery(document).ready(function($) {
     }
     return true;
   });
-  jQuery(document).on('ajax:success', 'a.as_cancel', function(event, response) {
+  jQuery(document).on('ajax:complete', 'a.as_cancel', function(event, xhr) {
     var action_link = ActiveScaffold.find_action_link(jQuery(this));
 
-    if (action_link) {
-      if (action_link.position) {
-        action_link.close();
-      } else {
-        response.evalResponse(); 
-      }
+    if (action_link && action_link.position) {
+      action_link.close();
     }
     return true;
   });

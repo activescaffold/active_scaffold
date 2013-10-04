@@ -185,8 +185,30 @@ module ActiveScaffold::Actions
       model.respond_to?(:build) ? model.build(build_options || {}) : model.new
     end
 
+    def objects_for_etag
+      @record
+    end
+
+    def view_stale?
+      objects = objects_for_etag
+      if objects.is_a?(Array)
+        args = {:etag => objects.to_a}
+        args[:last_modified] = @last_modified if @last_modified
+      elsif objects.is_a?(Hash)
+        args = {:last_modified => @last_modified}.merge(objects)
+      else
+        args = objects
+      end
+      stale?(args)
+    end
+
+    def conditional_get_support?
+      request.get? && active_scaffold_config.conditional_get_support
+    end
+
     private
     def respond_to_action(action)
+      return unless !conditional_get_support? || view_stale?
       respond_to do |type|
         action_formats.each do |format|
           type.send(format) do

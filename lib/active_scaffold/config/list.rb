@@ -26,6 +26,7 @@ module ActiveScaffold::Config
       @messages_above_header = self.class.messages_above_header
       @auto_select_columns = self.class.auto_select_columns
       @refresh_with_header = self.class.refresh_with_header
+      @calculate_etag = self.class.calculate_etag
     end
 
     # global level configuration
@@ -89,6 +90,10 @@ module ActiveScaffold::Config
     # Enable auto select columns on list, so only columns needed for list columns are selected
     cattr_accessor :auto_select_columns
     @@auto_select_columns = false
+
+    # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
+    cattr_accessor :calculate_etag
+    @@calculate_etag = false
 
     # instance-level configuration
     # ----------------------------
@@ -197,6 +202,9 @@ module ActiveScaffold::Config
     
     # Enable auto select columns on list, so only columns needed for list columns are selected
     attr_accessor :auto_select_columns
+
+    # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
+    attr_accessor :calculate_etag
 
     class UserSettings < UserSettings
       def initialize(conf, storage, params)
