@@ -354,23 +354,34 @@ module ActiveScaffold
         count = count_items(find_options, options[:count_includes])
       end
 
-      klass = beginning_of_chain
-      klass = klass.where(nil).uniq if find_options[:outer_joins].present? # HACK: call where(nil) because calling uniq on associations (nested scaffolds) send SQL to DB
+      # where(nil) is called to ensure we get a relation
+      # even when beginning_of_chain is overrided
+      # so we can call to_a in sort_by :method
+      # it's needed when using outer_joins because
+      # calling uniq on associations (nested scaffolds) send SQL to DB
+      query = beginning_of_chain.where(nil) 
+      query = query.uniq if find_options[:outer_joins].present? # where(nil) is needed because calling uniq on associations (nested scaffolds) send SQL to DB
+      query = append_to_query(query, find_options)
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          # where(nil) to ensure we have a relation to call to_a
-          sorted_collection = sort_collection_by_column(append_to_query(klass, find_options).where(nil).to_a, *options[:sorting].first)
+          calculate_last_modified(query)
+          sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)
           sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
           sorted_collection
         end
       else
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          find_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
-          append_to_query(klass, find_options)
+          query = append_to_query(query, :offset => offset, :limit => per_page) if options[:pagination]
+          calculate_last_modified(query)
+          query
         end
       end
       pager.page(options[:page])
+    end
+
+    def calculate_last_modified(query)
+      @last_modified = query.maximum(:updated_at) if conditional_get_support? && query.klass.columns_hash['updated_at']
     end
 
     def calculate_query

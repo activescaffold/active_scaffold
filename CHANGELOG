@@ -12,6 +12,7 @@
 - Fix previous page link with search and sort options when they are not stored in session
 - Fix updating column in main form when subform has column with same name
 - Fix sort_by :method without conditions
+- Add conditional_get_support and calculate_etag options to send etag and check it with stale? rails method, avoiding rendering views and loading all page items when page is cached
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select

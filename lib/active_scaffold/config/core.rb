@@ -33,6 +33,10 @@ module ActiveScaffold::Config
     cattr_accessor :cache_association_options
     @@cache_association_options = true
 
+    # enable setting ETag and LastModified on responses and using fresh_when/stale? to respond with 304 and avoid rendering views
+    cattr_accessor :conditional_get_support
+    @@conditional_get_support = false
+
     # enable saving user settings in session (per_page, limit, page, sort, search params)
     cattr_accessor :store_user_settings
     @@store_user_settings = true
@@ -109,6 +113,9 @@ module ActiveScaffold::Config
     # enable caching of association options
     attr_accessor :cache_association_options
 
+    # enable setting ETag and LastModified on responses and using fresh_when/stale? to respond with 304 and avoid rendering views
+    attr_accessor :conditional_get_support
+
     # enable saving user settings in session (per_page, limit, page, sort, search params)
     attr_accessor :store_user_settings
 
@@ -162,6 +169,7 @@ module ActiveScaffold::Config
       @theme = self.class.theme
       @cache_action_link_urls = self.class.cache_action_link_urls
       @cache_association_options = self.class.cache_association_options
+      @conditional_get_support = self.class.conditional_get_support
       @store_user_settings = self.class.store_user_settings
       @sti_create_links = self.class.sti_create_links
 
