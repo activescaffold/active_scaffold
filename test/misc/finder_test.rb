@@ -12,6 +12,7 @@ class ClassWithFinder
   def beginning_of_chain
     active_scaffold_config.model
   end
+  def conditional_get_support?; end
 end
 
 class FinderTest < Test::Unit::TestCase
