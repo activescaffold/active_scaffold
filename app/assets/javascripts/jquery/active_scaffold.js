@@ -695,12 +695,13 @@ var ActiveScaffold = {
   render_form_field: function(source, content, options) {
     if (typeof(source) == 'string') source = '#' + source;
     var source = jQuery(source);
-    var element = source.closest('.sub-form-record');
+    var element = source.closest('.sub-form-record'), subform_tag = '';
     if (element.length == 0) {
       element = source.closest('form > ol.form');
+      subform_tag = 'li'
     }
     // find without entering new subforms
-    element = element.find('li:not(.sub-form) .' + options.field_class).first();
+    element = element.find(subform_tag + ':not(.sub-form) .' + options.field_class).first();
 
     if (element) {
       if (options.is_subform == false) {
