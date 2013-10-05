@@ -623,12 +623,13 @@ var ActiveScaffold = {
   
   render_form_field: function(source, content, options) {
     var source = $(source);
-    var element = source.up('.association-record');
+    var element = source.up('.association-record'), subform_tag = '';
     if (typeof(element) === 'undefined') {
       element = source.up('ol.form');
+      subform_tag = 'li';
     }
     // find without entering new subforms
-    element = element.down('li:not(.sub-form) .' + options.field_class);
+    element = element.down(subform_tag + ':not(.sub-form) .' + options.field_class);
 
     if (element) {
       if (options.is_subform == false) {
