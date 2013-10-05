@@ -695,13 +695,14 @@ var ActiveScaffold = {
   render_form_field: function(source, content, options) {
     if (typeof(source) == 'string') source = '#' + source;
     var source = jQuery(source);
-    var element = source.closest('.sub-form-record'), subform_tag = '';
+    var element = source.closest('.sub-form-record'), selector = '';
     if (element.length == 0) {
       element = source.closest('form > ol.form');
-      subform_tag = 'li'
+      selector = 'li';
     }
     // find without entering new subforms
-    element = element.find(subform_tag + ':not(.sub-form) .' + options.field_class).first();
+    selector = options.is_subform ? '' : selector + ':not(.sub-form) ';
+    element = element.find(selector + '.' + options.field_class).first();
 
     if (element) {
       if (options.is_subform == false) {
