@@ -406,7 +406,7 @@ module ActiveScaffold
       ##
 
       def column_renders_as(column)
-        if column.is_a? ActiveScaffold::DataStructures::ActionColumns
+        if column.respond_to? :each
           return :subsection
         elsif column.active_record_class.locking_column.to_s == column.name.to_s or column.form_ui == :hidden
           return :hidden
