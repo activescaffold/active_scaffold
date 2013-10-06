@@ -1,7 +1,7 @@
 <dl>
 <% columns.each :for => @record do |column| %>
   <dt><%= column.label -%></dt>
-<% if column.is_a? ActiveScaffold::DataStructures::ActionColumns -%>
+<% if column.respond_to? :each -%>
   <dd>
     <%= render :partial => 'show_columns', :locals => {:columns => column} %>
 <% else -%>
