@@ -57,9 +57,14 @@ module ActiveScaffold::Actions
             hash = params[:record]
             id = params[:id]
           end
+
+          # check permissions and support overriding to_param
+          id = find_if_allowed(id, :update).id if id
+          # call update_record_from_params with new_model
+          # in other case some associations can be saved
           @record = new_model
           @record = update_record_from_params(@record, @main_columns, hash)
-          @record.id = id
+          @record.id = record_id
         else
           @record = params[:id] ? find_if_allowed(params[:id], :update) : new_model
           value = column_value_from_param_value(@record, @column, params.delete(:value))
