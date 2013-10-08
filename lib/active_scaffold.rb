@@ -1,8 +1,3 @@
-begin
-  require 'render_component'
-rescue LoadError
-end
-
 require 'active_scaffold/active_record_permissions'
 require 'active_scaffold/paginator'
 require 'active_scaffold/responds_to_parent'

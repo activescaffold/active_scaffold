@@ -249,9 +249,15 @@ module ActiveScaffold
         
         url = record ? url.sub('--ID--', record.to_param) : url.clone
         if link.column.try(:singular_association?)
-          url = url.sub('--CHILD_ID--', record.send(link.column.association.name).try(:to_param)) 
+          child_id = record.send(link.column.association.name).try(:to_param)
+          if child_id.present?
+            url.sub!('--CHILD_ID--', child_id)
+          else
+            url.sub!(/\w+=--CHILD_ID--&?/,'')
+            url.sub!(/\?$/, '')
+          end
         elsif nested?
-          url = url.sub('--CHILD_ID--', params[nested.param_name].to_s)
+          url.sub!('--CHILD_ID--', params[nested.param_name].to_s)
         end
 
         if active_scaffold_config.cache_action_link_urls
