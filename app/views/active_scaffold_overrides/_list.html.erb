@@ -23,9 +23,9 @@
     </tr>
   </thead>
   <%= render :partial => 'list_messages', :locals => {:columns => columns} %>
-  <tbody class="records" id="<%= active_scaffold_tbody_id %>">
+  <tbody class="records" id="<%= active_scaffold_tbody_id %>" data-refresh-record="<%= url_for(params_for(:action => :index, :id => '--ID--')) %>">
     <% if !@page.empty? -%>
-      <%= render :partial => 'list_record', :collection => @page.items, :locals => {:hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.member, :data_refresh => url_for(params_for(:action => :row, :id => '--ID--', :_method => :get))} %>
+      <%= render :partial => 'list_record', :collection => @page.items, :locals => {:hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.member} %>
     <% end -%>
     <% if columns.any? {|c| c.calculation?} -%>
       <%= render :partial => 'list_calculations', :locals => {:columns => columns} %>

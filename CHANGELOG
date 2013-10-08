@@ -13,6 +13,7 @@
 - Fix updating column in main form when subform has column with same name
 - Fix sort_by :method without conditions
 - Add conditional_get_support and calculate_etag options to send etag and check it with stale? rails method, avoiding rendering views and loading all page items when page is cached
+- Remove row action (method exists but not as action), index with id is enough
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select

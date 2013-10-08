@@ -1,14 +1,19 @@
 module ActiveScaffold::Actions
   module List
     def self.included(base)
-      base.before_filter :list_authorized_filter, :only => [:index, :row]
+      base.before_filter :list_authorized_filter, :only => :index
       base.helper_method :list_columns
     end
 
     def index
-      list
+      if params[:id] && !params[:id].is_a?(Array) && request.xhr?
+        row
+      else
+        list
+      end
     end
 
+    protected
     # get just a single row
     def row
       get_row
@@ -25,7 +30,6 @@ module ActiveScaffold::Actions
       respond_to_action(:list)
     end
 
-    protected
     def list_respond_to_html
       if loading_embedded?
         render :action => 'list', :layout => false
