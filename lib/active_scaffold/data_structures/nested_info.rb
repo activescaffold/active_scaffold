@@ -119,7 +119,11 @@ module ActiveScaffold::DataStructures
     end
 
     def default_sorting
-      association.options[:order]
+      if association.options[:order] # TODO remove when rails 3 compatibility is removed
+        association.options[:order]
+      elsif association.respond_to?(:scope) # rails 4
+        association.klass.class_eval(&association.scope).values[:order] if association.scope.is_a? Proc
+      end
     end
     
     def to_params
