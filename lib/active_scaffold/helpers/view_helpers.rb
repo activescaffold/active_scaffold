@@ -247,9 +247,9 @@ module ActiveScaffold
           end
         end
         
-        url = record ? url.sub('--ID--', record.id.to_s) : url.clone
+        url = record ? url.sub('--ID--', record.to_param) : url.clone
         if link.column.try(:singular_association?)
-          url = url.sub('--CHILD_ID--', record.send(link.column.association.name).try(:id).to_s) 
+          url = url.sub('--CHILD_ID--', record.send(link.column.association.name).try(:to_param)) 
         elsif nested?
           url = url.sub('--CHILD_ID--', params[nested.param_name].to_s)
         end
@@ -360,7 +360,6 @@ module ActiveScaffold
 
       def get_action_link_id(link, record = nil, column = nil)
         column ||= link.column
-        id = record ? record.id.to_s : (nested? ? nested.parent_id : '')
         if column && column.plural_association?
           id = "#{column.association.name}-#{record.id}"
         elsif column && column.singular_association?
@@ -370,6 +369,7 @@ module ActiveScaffold
             id = "#{column.association.name}-#{record.id}" unless record.nil?
           end
         end
+        id ||= record ? record.id : (nested? ? nested_parent_id : '')
         action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
         action_link_id(action_id, id)
       end

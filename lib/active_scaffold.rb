@@ -82,7 +82,7 @@ module ActiveScaffold
   end
 
   def active_scaffold_session_storage_key(id = nil)
-    id ||= params[:eid] || "#{params[:controller]}#{"_#{nested.parent_id}" if nested?}"
+    id ||= params[:eid] || "#{params[:controller]}#{"_#{nested_parent_id}" if nested?}"
     "as:#{id}"
   end
 

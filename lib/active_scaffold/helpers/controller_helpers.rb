@@ -68,7 +68,7 @@ module ActiveScaffold
           {:controller => nested.parent_scaffold.controller_path, :action => :index, :id => nested.parent_id}
         elsif params[:parent_sti]
           options = params_for(:controller => params[:parent_sti], :action => render_parent_action, :parent_sti => nil)
-          options.merge(:action => :index, :id => @record.id) if render_parent_action == :row
+          options.merge(:action => :index, :id => @record.to_param) if render_parent_action == :row
         end
       end
 
