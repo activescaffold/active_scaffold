@@ -83,7 +83,7 @@ module ActiveScaffold
 
       def active_scaffold_column_marked(record, column)
         options = {:id => nil, :object => record}
-        content_tag(:span, check_box(:record, column.name, options), :class => 'in_place_editor_field', :data => {:ie_id => record.id.to_s})
+        content_tag(:span, check_box(:record, column.name, options), :class => 'in_place_editor_field', :data => {:ie_id => record.to_param})
       end
 
       def active_scaffold_column_checkbox(record, column)
@@ -218,7 +218,7 @@ module ActiveScaffold
         formatted_column = options[:formatted_column] || format_column_value(record, column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
         tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
-                       :title => as_(:click_to_edit), :data => {:ie_id => record.id.to_s}}
+                       :title => as_(:click_to_edit), :data => {:ie_id => record.to_param}}
         tag_options[:data][:ie_update] = column.inplace_edit if column.inplace_edit != true
 
         content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<

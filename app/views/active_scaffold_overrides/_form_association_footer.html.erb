@@ -13,8 +13,8 @@ return unless show_add_new or show_add_existing
 
 temporary_id = generated_id(parent_record) if parent_record.new_record?
 controller_path = active_scaffold_controller_for(parent_record.class).controller_path
-edit_associated_url = params_for(:controller => controller_path, :action => 'edit_associated', :child_association => column.name, :associated_id => '--ID--', :scope => scope, :id => parent_record.id, :generated_id => temporary_id, :parent_controller => controller.controller_path) if show_add_existing
-add_new_url = params_for(:controller => controller_path, :action => 'edit_associated', :child_association => column.name, :scope => scope, :id => parent_record.id, :generated_id => temporary_id, :parent_controller => controller.controller_path) if show_add_new
+edit_associated_url = params_for(:controller => controller_path, :action => 'edit_associated', :child_association => column.name, :associated_id => '--ID--', :scope => scope, :id => parent_record.to_param, :generated_id => temporary_id, :parent_controller => controller.controller_path) if show_add_existing
+add_new_url = params_for(:controller => controller_path, :action => 'edit_associated', :child_association => column.name, :scope => scope, :id => parent_record.to_param, :generated_id => temporary_id, :parent_controller => controller.controller_path) if show_add_new
 
 -%>
 <div class="footer-wrapper">
@@ -38,7 +38,7 @@ add_new_url = params_for(:controller => controller_path, :action => 'edit_associ
       <% if remote_controller and remote_controller.respond_to? :uses_record_select? and remote_controller.uses_record_select? -%>
         <%= link_to_record_select as_(:add_existing), remote_controller.controller_path, :onselect => "ActiveScaffold.record_select_onselect(#{url_for(edit_associated_url).to_json}, #{active_scaffold_id.to_json}, id);" -%>
       <% else -%>
-        <% select_options = options_from_collection_for_select(sorted_association_options_find(column.association), :id, :to_label)
+        <% select_options = options_from_collection_for_select(sorted_association_options_find(column.association), :to_param, :to_label)
            add_existing_id = "#{sub_form_id(:association => column.name, :id => parent_record.id || temporary_id || 99999999999)}-add-existing"
            add_existing_label = column.plural_association? ? :add_existing : :replace_existing %>
         <%= select_tag 'associated_id', '<option value="">'.html_safe + as_(:_select_) + '</option>'.html_safe + select_options %>

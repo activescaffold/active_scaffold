@@ -3,7 +3,7 @@ record = list_record if local_assigns[:list_record] # compat with render :partia
 columns ||= list_columns
 tr_class = cycle("", "even-record") + ' ' + list_row_class(record)
 action_links ||= active_scaffold_config.action_links.member
-data_refresh ||= record.id
+data_refresh ||= record.to_param
 -%>
 <tr class="record <%= tr_class %>" id="<%= element_row_id(:action => :list, :id => record.id) %>" data-refresh="<%= data_refresh %>">
   <% columns.each do |column| %>

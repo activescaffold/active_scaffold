@@ -14,7 +14,7 @@ module ActiveScaffold
         begin
           # first, check if the dev has created an override for this specific field
           if (method = override_form_field(column))
-            send(method, options[:object] || @record, options)
+            send(method, options[:object] || @record, options.except(:object))
           # second, check if the dev has specified a valid form_ui for this column
           elsif column.form_ui and (method = override_input(column.form_ui))
             send(method, column, options)
@@ -115,7 +115,7 @@ module ActiveScaffold
           active_scaffold_config.send(record.new_record? ? :create : :update)
         end
         if form_action && column.update_columns && (column.update_columns & form_action.columns.names).present?
-          url_params = params_for(:action => 'render_field', :column => column.name, :id => record.id)
+          url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
           url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
           url_params[:eid] = params[:eid] if params[:eid]
           if scope
