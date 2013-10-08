@@ -530,7 +530,7 @@ module ActiveScaffold
       def display_message(message)
         if (highlights = active_scaffold_config.highlight_messages)
           message = highlights.inject(message) do |msg, (phrases, highlighter)|
-            highlight(msg, phrases, highlighter)
+            highlight(msg, phrases, highlighter || {})
           end
         end
         if (format = active_scaffold_config.timestamped_messages)
