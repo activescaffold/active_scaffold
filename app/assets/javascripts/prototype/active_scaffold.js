@@ -939,7 +939,7 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
 ActiveScaffold.Actions.Record = Class.create(ActiveScaffold.Actions.Abstract, {
   instantiate_link: function(link) {
     var l = new ActiveScaffold.ActionLink.Record(link, this.target, this.loading_indicator);
-    if (this.target.hasAttribute('data-refresh') && !this.target.readAttribute('data-refresh').blank()) l.refresh_url = this.target.readAttribute('data-refresh');
+    if (this.target.hasAttribute('data-refresh') && !this.target.readAttribute('data-refresh').blank()) l.refresh_url = this.target.up('.records').readAttribute('data-refresh-record').replace('--ID--', this.target.readAttribute('data-refresh'));
     
     if (l.position) {
       l.url = l.url.append_params({adapter: '_list_inline_adapter'});

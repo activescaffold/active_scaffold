@@ -715,7 +715,7 @@ var ActiveScaffold = {
   
   record_select_onselect: function(edit_associated_url, active_scaffold_id, id){
     jQuery.ajax({
-      url: edit_associated_url.split('--ID--').join(id),
+      url: edit_associated_url.replace('--ID--', id),
       error: function(xhr, textStatus, errorThrown){
         ActiveScaffold.report_500_response(active_scaffold_id, xhr)
       }
@@ -1052,7 +1052,7 @@ ActiveScaffold.Actions.Record = ActiveScaffold.Actions.Abstract.extend({
   instantiate_link: function(link) {
     var l = new ActiveScaffold.ActionLink.Record(link, this.target, this.loading_indicator);
     var refresh = this.target.data('refresh');
-    if (refresh) l.refresh_url = refresh;
+    if (refresh) l.refresh_url = this.target.closest('.records').data('refresh-record').replace('--ID--', refresh);
     
     if (l.position) {
       l.url = l.url.append_params({adapter: '_list_inline_adapter'});
