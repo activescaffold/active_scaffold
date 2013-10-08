@@ -104,7 +104,12 @@ module ActiveScaffold::Actions
       rescue ActiveRecord::StaleObjectError
         @record.errors.add(:base, as_(:version_inconsistency))
         self.successful = false
-      rescue ActiveRecord::RecordNotSaved
+      rescue ActiveRecord::RecordNotSaved => exception
+        logger.warn {
+          "\n\n#{exception.class} (#{exception.message}):\n    " +
+          Rails.backtrace_cleaner.clean(exception.backtrace).join("\n    ") +
+          "\n\n"
+        }
         @record.errors.add(:base, as_(:record_not_saved)) if @record.errors.empty?
         self.successful = false
       rescue ActiveRecord::ActiveRecordError => ex
