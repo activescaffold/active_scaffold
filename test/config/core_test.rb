@@ -2,7 +2,9 @@ require 'test_helper'
 
 module Config
   class CoreTest < Test::Unit::TestCase
-    class ModelStubsController < ActionController::Base; end
+    class ModelStubsController < ActionController::Base
+      include ActiveScaffold::Core
+    end
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       ModelStubsController.instance_variable_set :@active_scaffold_config, @config

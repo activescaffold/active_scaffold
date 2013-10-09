@@ -59,7 +59,7 @@ module ActiveScaffold::Config
     #  * current_user_method - what method on the controller returns the current user. default: :current_user
     #  * default_permission - what the default permission is. default: true
     def self.security
-      ActiveRecordPermissions
+      ActiveScaffold::ActiveRecordPermissions
     end
 
     # columns that should be ignored for every model. these should be metadata columns like change dates, versions, etc.
