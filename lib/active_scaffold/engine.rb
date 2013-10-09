@@ -5,7 +5,7 @@ module ActiveScaffold
         include ActiveScaffold::Core
         include ActiveScaffold::RespondsToParent
         include ActiveScaffold::Helpers::ControllerHelpers
-        include ActiveRecordPermissions::ModelUserAccess::Controller
+        include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Controller
       end
     end
 
@@ -17,7 +17,7 @@ module ActiveScaffold
 
     initializer "active_scaffold.active_record" do |app|
       ActiveSupport.on_load :active_record do
-        include ActiveRecordPermissions::ModelUserAccess::Model
+        include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
       end
     end
 

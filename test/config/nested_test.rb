@@ -3,6 +3,7 @@ require 'test_helper'
 module Config
   class NestedTest < Test::Unit::TestCase
     class ModelStubsController < ActionController::Base
+      include ActiveScaffold::Core
       active_scaffold
     end
 

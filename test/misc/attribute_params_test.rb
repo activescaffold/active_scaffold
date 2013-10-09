@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class NumberModel < ActiveRecord::Base
+  include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
   abstract_class = true
   def self.columns
     @columns ||= [ActiveRecord::ConnectionAdapters::Column.new('number', '', 'double(10,2)')]
