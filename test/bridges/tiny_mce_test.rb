@@ -1,5 +1,4 @@
 require 'test_helper'
-require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/tiny_mce/helpers')
 
 class TinyMceTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ViewHelpers
@@ -7,6 +6,7 @@ class TinyMceTest < ActionView::TestCase
 
   def test_includes
     ActiveScaffold::Bridges::TinyMce.expects(:install?).returns(true)
+    ActiveScaffold.js_framework = :jquery
     assert ActiveScaffold::Bridges.all_javascripts.include?("tinymce-jquery")
   end
 

@@ -26,9 +26,10 @@ class ActiveScaffold::Bridges::TinyMce
       end
 
       def onsubmit_with_tiny_mce
-        if ActiveScaffold.js_framework == :jquery
-          submit_js = 'tinyMCE.triggerSave();$(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, $(elem).attr(\'id\')); });'
-        else
+        case ActiveScaffold.js_framework
+        when :jquery
+          submit_js = 'tinyMCE.triggerSave();jQuery(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, jQuery(elem).attr(\'id\')); });'
+        when :prototype
           submit_js = 'tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, elem.id); });'
         end
         [onsubmit_without_tiny_mce, submit_js].compact.join ';'
@@ -42,5 +43,3 @@ class ActiveScaffold::Bridges::TinyMce
     end
   end
 end
-
-ActionView::Base.class_eval { include ActiveScaffold::Bridges::TinyMce::Helpers }
