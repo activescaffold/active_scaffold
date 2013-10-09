@@ -5,6 +5,7 @@ module ActiveScaffold
   autoload :Configurable, 'active_scaffold/configurable'
   autoload :Constraints, 'active_scaffold/constraints'
   autoload :Core, 'active_scaffold/core'
+  autoload :DelayedSetup, 'active_scaffold/delayed_setup'
   autoload :Finder, 'active_scaffold/finder'
   autoload :MarkedModel, 'active_scaffold/marked_model'
   autoload :RespondsToParent, 'active_scaffold/responds_to_parent'
@@ -42,6 +43,7 @@ module ActiveScaffold
   class ActionNotAllowed < SecurityError; end
   class ReverseAssociationRequired < RuntimeError; end
 
+  mattr_accessor :delayed_setup
   mattr_accessor :stylesheets
   self.stylesheets = []
   mattr_accessor :javascripts
