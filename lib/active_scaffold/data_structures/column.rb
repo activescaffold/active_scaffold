@@ -260,16 +260,16 @@ module ActiveScaffold::DataStructures
     # the association from the ActiveRecord class
     attr_reader :association
     def singular_association?
-      self.association and [:has_one, :belongs_to].include? self.association.macro
+      self.association and !self.association.collection?
     end
     def plural_association?
-      self.association and [:has_many, :has_and_belongs_to_many].include? self.association.macro
+      self.association and self.association.collection?
     end
     def through_association?
       self.association and self.association.options[:through]
     end
     def polymorphic_association?
-      self.association and self.association.options.has_key? :polymorphic and self.association.options[:polymorphic]
+      self.association and self.association.options.has_key? :polymorphic # TODO use polymorphic? when rails3 support is removed
     end
     def readonly_association?
       if self.association
