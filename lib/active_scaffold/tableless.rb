@@ -1,4 +1,25 @@
 class ActiveScaffold::Tableless < ActiveRecord::Base
+  class AssociationScope < ActiveRecord::Associations::AssociationScope
+    def column_for(table_name, column_name)
+      if table_name == klass.table_name
+        klass.columns_hash[column_name]
+      else
+        super
+      end
+    end
+  end
+
+  module Association
+    def self.included(base)
+      base.alias_method_chain :association_scope, :tableless
+    end
+
+    def association_scope_with_tableless
+      @association_scope ||= AssociationScope.new(self).scope if klass < ActiveScaffold::Tableless
+      association_scope_without_tableless
+    end
+  end
+
   class Relation < ActiveRecord::Relation
     attr_reader :conditions
     def initialize(klass, table)

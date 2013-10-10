@@ -19,6 +19,7 @@ module ActiveScaffold
     initializer "active_scaffold.active_record" do |app|
       ActiveSupport.on_load :active_record do
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
+        ActiveRecord::Associations::Association.send :include, ActiveScaffold::Tableless::Association
       end
     end
 
