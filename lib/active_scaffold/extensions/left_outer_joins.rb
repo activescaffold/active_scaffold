@@ -29,5 +29,5 @@ module ActiveScaffold
 end
 ActiveRecord::Relation.send :include, ActiveScaffold::OuterJoins
 module ActiveRecord::Querying
-  delegate :outer_joins, :outer_joins_sql, :to => :scoped
+  delegate :outer_joins, :outer_joins_sql, :to => Rails::VERSION::MAJOR < 4 ? :scoped : :all
 end
