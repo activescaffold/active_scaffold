@@ -48,16 +48,21 @@ module ActiveScaffold
       end
 
       columns.each :for => parent_record, :crud_type => crud_type, :flatten => true do |column|
-        # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
-        unless column.params.empty?
-          column.params.each{|p| parent_record.send("#{p}=", attributes[p]) if attributes.has_key? p}
-        end
+        begin
+          # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
+          unless column.params.empty?
+            column.params.each{|p| parent_record.send("#{p}=", attributes[p]) if attributes.has_key? p}
+          end
 
-        if multi_parameter_attributes.has_key? column.name
-          parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
-        elsif attributes.has_key? column.name
-          value = column_value_from_param_value(parent_record, column, attributes[column.name]) 
-          parent_record.send("#{column.name}=", value)
+          if multi_parameter_attributes.has_key? column.name
+            parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
+          elsif attributes.has_key? column.name
+            value = column_value_from_param_value(parent_record, column, attributes[column.name]) 
+            parent_record.send("#{column.name}=", value)
+          end
+        rescue
+          logger.error "#{$!.class.name}: #{$!.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} with value #{value.inspect}"
+          raise
         end
       end
 

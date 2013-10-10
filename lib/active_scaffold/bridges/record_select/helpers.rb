@@ -81,7 +81,7 @@ class ActiveScaffold::Bridges::RecordSelect
             end
           end
         rescue Exception => e
-          logger.error Time.now.to_s + "Sorry, we are not that smart yet. Attempted to restore search values to search fields but instead got -- #{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{@controller.class}"
+          logger.error "#{e.class.name}: #{e.message} -- Sorry, we are not that smart yet. Attempted to restore search values to search fields :#{column.name} in #{controller.class}"
           raise e
         end
       end

@@ -10,7 +10,7 @@ module ActiveScaffold
           value = '&nbsp;'.html_safe if value.nil? or value.blank? # fix for IE 6
           return value
         rescue Exception => e
-          logger.error "#{Time.now.to_s} #{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
           raise e
         end
       end
@@ -54,7 +54,7 @@ module ActiveScaffold
             text
           end
         rescue Exception => e
-          logger.error "#{Time.now.to_s} #{e.inspect} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
           raise e
         end
       end
