@@ -249,8 +249,12 @@ jQuery(document).ready(function($) {
   });
   
   ActiveScaffold.live_search(document);
+  ActiveScaffold.draggable_lists('.draggable-lists');
   jQuery(document).on('as:element_updated', function(e) { ActiveScaffold.live_search(e.target); });
-  jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) { ActiveScaffold.live_search(action_link.adapter); });
+  jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
+    ActiveScaffold.live_search(action_link.adapter);
+    ActiveScaffold.draggable_lists('.draggable-lists', action_link.adapter);
+  });
 });
 
 
@@ -361,7 +365,7 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
 var ActiveScaffold = {
   last_focus: null,
   live_search: function(element) {
-    jQuery('form.search.live input[type=search]').delayedObserver(function() {
+    jQuery('form.search.live input[type=search]', element).delayedObserver(function() {
      jQuery(this).parent().trigger("submit");
     }, 0.5);
   },
@@ -872,8 +876,11 @@ var ActiveScaffold = {
     });
   },
   
-  draggable_lists: function(element) {
-    jQuery('ul#' + element).draggable_lists();
+  draggable_lists: function(id_or_elements) {
+    var elements;
+    if (typeof(id_or_elements) == 'string') elements = jQuery('ul' + id_or_elements);
+    else elements = jQuery(elements)
+    elements.draggableLists();
   }
 }
 
