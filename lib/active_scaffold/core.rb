@@ -233,36 +233,40 @@ module ActiveScaffold
         end
       end
 
-      # Tries to find a controller for the given ActiveRecord model.
-      # Searches in the namespace of the current controller for singular and plural versions of the conventional "#{model}Controller" syntax.
-      # You may override this method to customize the search routine.
       def active_scaffold_controller_for(klass)
-        controller_namespace = self.to_s.split('::')[0...-1].join('::') + '::'
-        error_message = []
-        [controller_namespace, ''].each do |namespace|
-          ["#{klass.to_s.underscore.pluralize}", "#{klass.to_s.underscore.pluralize.singularize}"].each do |controller_name|
-            begin
-              controller = "#{namespace}#{controller_name.camelize}Controller".constantize
-            rescue NameError => error
-              # Only rescue NameError associated with the controller constant not existing - not other compile errors
-              if error.message["uninitialized constant #{controller}"]
-                error_message << "#{namespace}#{controller_name.camelize}Controller"
-                next
-              else
-                raise
-              end
-            end
-            raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
-            raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model.to_s == klass.to_s
-            return controller
-          end
-        end
-        raise ActiveScaffold::ControllerNotFound, "Could not find " + error_message.join(" or "), caller
+        ActiveScaffold::Core.active_scaffold_controller_for(klass, self.to_s.split('::')[0...-1].join('::') + '::')
       end
+
 
       def uses_active_scaffold?
         !active_scaffold_config.nil?
       end
+    end
+
+    # Tries to find a controller for the given ActiveRecord model.
+    # Searches in the namespace of the current controller for singular and plural versions of the conventional "#{model}Controller" syntax.
+    # You may override this method to customize the search routine.
+    def self.active_scaffold_controller_for(klass, controller_namespace = '::')
+      error_message = []
+      [controller_namespace, ''].each do |namespace|
+        ["#{klass.to_s.underscore.pluralize}", "#{klass.to_s.underscore.pluralize.singularize}"].each do |controller_name|
+          begin
+            controller = "#{namespace}#{controller_name.camelize}Controller".constantize
+          rescue NameError => error
+            # Only rescue NameError associated with the controller constant not existing - not other compile errors
+            if error.message["uninitialized constant #{controller}"]
+              error_message << "#{namespace}#{controller_name.camelize}Controller"
+              next
+            else
+              raise
+            end
+          end
+          raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
+          raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model.to_s == klass.to_s
+          return controller
+        end
+      end
+      raise ActiveScaffold::ControllerNotFound, "Could not find " + error_message.join(" or "), caller
     end
   end
 end

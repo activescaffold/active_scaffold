@@ -1,3 +1,3 @@
-class Car < ActiveRecord::base
+class Car < ActiveRecord::Base
   belongs_to :person
 end
