@@ -422,7 +422,7 @@ module ActiveScaffold
 
       def list_row_class_method(record)
         return @_list_row_class_method if defined? @_list_row_class_method
-        class_override_helper = :"#{clean_class_name(record.class.name)}_list_row_class"
+        class_override_helper = "#{clean_class_name(record.class.name)}_list_row_class"
         @_list_row_class_method = (class_override_helper if respond_to?(class_override_helper))
       end
 
@@ -494,8 +494,10 @@ module ActiveScaffold
         "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
       end
 
-      def column_show_add_existing(column)
-        (column.allow_add_existing and options_for_association_count(column.association) > 0)
+      def column_show_add_existing(column, record = nil)
+        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, call with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        record ||= @record # TODO Remove when relying on @record is removed
+        (column.allow_add_existing and options_for_association_count(column.association, record) > 0)
       end
 
       def column_show_add_new(column, associated, record)
@@ -518,11 +520,11 @@ module ActiveScaffold
       end
 
       def override_helper(column, suffix)
-        @_override_helpers ||= {}
-        @_override_helpers[suffix] ||= {}
-        @_override_helpers[suffix][@record.class.name] ||= {}
-        return @_override_helpers[suffix][@record.class.name][column.name] if @_override_helpers[suffix][@record.class.name].include? column.name
-        @_override_helpers[suffix][@record.class.name][column.name] = begin
+        hash = @_override_helpers ||= {}
+        hash = hash[suffix] ||= {}
+        hash = hash[column.active_record_class.name] ||= {}
+        return hash[column.name] if hash.include? column.name
+        hash[column.name] = begin
           method_with_class = override_helper_name(column, suffix, true)
           if respond_to?(method_with_class)
             method_with_class

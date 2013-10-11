@@ -17,7 +17,7 @@ options = {:id => element_form_id(:action => :add_existing),
   <% end -%>
 
   <label for="<%= "record_#{active_scaffold_config.model}" %>"><%= active_scaffold_add_existing_label %></label>
-  <%= active_scaffold_add_existing_input(:name => 'associated_id', :url_options => url_options) %>
+  <%= active_scaffold_add_existing_input(:name => 'associated_id', :url_options => url_options, :object => @record) %>
 
   <p class="form-footer">
     <%= submit_tag as_(:add), :class => "submit" %>
