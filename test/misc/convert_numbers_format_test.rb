@@ -8,7 +8,7 @@ class NumberModel < ActiveRecord::Base
   end
 end
 
-class AttributeParamsTest < Test::Unit::TestCase
+class ConvertNumbersFormatTest < Test::Unit::TestCase
   include ActiveScaffold::AttributeParams
   include ActiveScaffold::Finder
 
