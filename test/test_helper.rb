@@ -6,6 +6,7 @@ require "mock_app/config/environment"
 require 'rails/test_help'
 require 'test/unit'
 require 'active_scaffold'
+ActiveScaffold::Engine.initializers.each(&:run)
 
 require 'mocha/setup'
 begin
@@ -16,17 +17,11 @@ end
 def load_schema
   stdout = $stdout
   $stdout = StringIO.new # suppress output while building the schema
-  load File.join(ENV['RAILS_ROOT'], 'db', 'schema.rb')
+  load File.join(Rails.root, 'db', 'schema.rb')
   $stdout = stdout
 end
 
-def silence_stderr(&block)
-  stderr = $stderr
-  $stderr = StringIO.new
-  yield
-  $stderr = stderr
-end
-
+load_schema
 for file in %w[model_stub const_mocker company]
   require File.join(File.dirname(__FILE__), file)
 end
