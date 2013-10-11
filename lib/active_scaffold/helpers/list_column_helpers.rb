@@ -234,7 +234,7 @@ module ActiveScaffold
           options = active_scaffold_input_options(column).merge(:object => new_model)
           options[:class] = "#{options[:class]} inplace_field"
           content_tag(:div, active_scaffold_input_for(column, nil, options), :style => "display:none;", :class => inplace_edit_control_css_class).tap do
-            @record = old_record
+            @record = old_record # TODO remove when relying on @record is removed
           end
         end
       end

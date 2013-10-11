@@ -6,10 +6,13 @@ module ActiveScaffold
       # It does not do any rendering. It only decides which method is responsible for rendering.
       def active_scaffold_search_for(column, options = nil)
         options ||= active_scaffold_search_options(column)
+        record = options[:object]
+        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        record ||= @record # TODO Remove when relying on @record is removed
 
         # first, check if the dev has created an override for this specific field for search
         if (method = override_search_field(column))
-          send(method, options[:object] || @record, options)
+          send(method, record, options)
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
         elsif column.search_ui and (method = override_search(column.search_ui))
@@ -21,7 +24,7 @@ module ActiveScaffold
 
         # fourth, check if the dev has created an override for this specific field
         elsif (method = override_form_field(column))
-          send(method, options[:object] || @record, options)
+          send(method, record, options)
 
         # fallback: we get to make the decision
         else
@@ -66,12 +69,15 @@ module ActiveScaffold
       ##
 
       def active_scaffold_search_multi_select(column, options)
+        record = options.delete(:object)
+        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        record ||= @record # TODO Remove when relying on @record is removed
         associated = options.delete :value
         associated = [associated].compact unless associated.is_a? Array
         associated.collect!(&:to_i)
         
         if column.association
-          select_options = sorted_association_options_find(column.association).collect {|r| [r.to_label, r.id]}
+          select_options = sorted_association_options_find(column.association, nil, record).collect {|r| [r.to_label, r.id]}
         else
           select_options = column.options[:options].collect do |text, value|
             active_scaffold_translated_option(column, text, value)
@@ -83,11 +89,14 @@ module ActiveScaffold
       end
 
       def active_scaffold_search_select(column, html_options, options = {})
+        record = html_options.delete(:object)
+        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        record ||= @record # TODO Remove when relying on @record is removed
         associated = html_options.delete :value
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
           method = column.association.macro == :belongs_to ? column.association.foreign_key : column.name
-          select_options = sorted_association_options_find(column.association, false)
+          select_options = sorted_association_options_find(column.association, false, record)
         else
           method = column.name
           select_options = column.options[:options].collect do |text, value|
@@ -124,7 +133,7 @@ module ActiveScaffold
         select_options << [as_(:true), true]
         select_options << [as_(:false), false]
 
-        select_tag(options[:name], options_for_select(select_options, column.column.type_cast(field_search_params[column.name])), :id => options[:id])
+        select_tag(options[:name], options_for_select(select_options, column.column.type_cast(options[:value])), :id => options[:id])
       end
       # we can't use checkbox ui because it's not possible to decide whether search for this field or not
       alias_method :active_scaffold_search_checkbox, :active_scaffold_search_boolean
@@ -133,7 +142,7 @@ module ActiveScaffold
         select_options = []
         select_options << [as_(:_select_), nil]
         select_options.concat ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp), comp]}
-        select_tag(options[:name], options_for_select(select_options, field_search_params[column.name]), :id => options[:id])
+        select_tag(options[:name], options_for_select(select_options, options[:value]), :id => options[:id])
       end
 
       def field_search_params_range_values(column)
