@@ -12,6 +12,14 @@ begin
 rescue LoadError
 end
 
+def load_schema
+  stdout = $stdout
+  $stdout = StringIO.new # suppress output while building the schema
+  load File.join(Rails.root, 'db', 'schema.rb')
+  $stdout = stdout
+end
+load_schema
+
 for file in %w[model_stub const_mocker company]
   require File.join(File.dirname(__FILE__), file)
 end
