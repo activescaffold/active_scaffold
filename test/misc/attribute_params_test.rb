@@ -10,119 +10,165 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal 'First', model.first_name
     assert_nil model.last_name
     assert model.buildings.blank?
+    assert model.save
 
-    model.buildings.build(:name => '1st building')
+    model.buildings.create(:name => '1st building')
     model = update_record_from_params(model, :update, :first_name, :last_name, :first_name => 'Name', :last_name => 'Last')
     assert_equal 'Name', model.first_name
     assert_equal 'Last', model.last_name
     assert model.buildings.present?, 'buildings should not be cleared'
+    assert model.save
   end
 
   def test_saving_unexpected_column_is_ignored
     model = Person.new(:first_name => 'First', :last_name => 'Last')
     model.buildings.build(:name => '1st building')
+    assert model.save
+
     model = update_record_from_params(model, :update, :first_name, :first_name => 'Name', :last_name => 'Surname')
     assert_equal 'Name', model.first_name
     assert_equal 'Last', model.last_name
     assert model.buildings.present?, 'buildings should not be cleared'
+    assert model.save
   end
 
   def test_saving_has_many_select
-    Building.expects(:find).with(['1', '3']).returns([Building.new{|r| r.id = 1}, Building.new{|r| r.id = 3}])
-    model = update_record_from_params(Person.new, :create, :first_name, :last_name, :buildings, :first_name => 'First', :last_name => '', :buildings => ['', '1', '3']) # checkbox_list always add a hidden tag with empty value
+    buildings = 2.times.map { Building.create }
+    model = update_record_from_params(Person.new, :create, :first_name, :last_name, :buildings, :first_name => 'First', :last_name => '', :buildings => ['', *buildings.map{|b| b.id.to_s}]) # checkbox_list always add a hidden tag with empty value
     assert_equal 'First', model.first_name
     assert_nil model.last_name
-    assert_equal [1, 3], model.building_ids
-    assert_equal 2, model.buildings.size
+    assert_equal buildings.map(&:id), model.building_ids
+    assert_equal buildings, model.buildings
+    assert model.save
 
     model = update_record_from_params(model, :update, :first_name, :last_name, :buildings, :first_name => 'Name', :last_name => 'Last', :buildings => [''])
     assert_equal 'Name', model.first_name
     assert_equal 'Last', model.last_name
     assert model.building_ids.blank?, 'buildings should be cleared'
     assert model.buildings.blank?, 'buildings should be cleared'
+    assert model.save
   end
 
   def test_saving_belongs_to_select
-    Person.expects(:find).with('3').returns(Person.new{|r| r.id = 3})
-    model = update_record_from_params(Floor.new, :create, :number, :tenant, :number => '1', :tenant => '3')
+    person = Person.create
+    assert person.persisted?
+
+    model = update_record_from_params(Floor.new, :create, :number, :tenant, :number => '1', :tenant => person.id.to_s)
     assert_equal 1, model.number
-    assert_equal 3, model.tenant_id
-    assert model.tenant.present?
+    assert_equal person.id, model.tenant_id
+    assert_equal person, model.tenant
+    assert model.save
 
     model = update_record_from_params(model, :update, :number, :tenant, :number => '1', :tenant => '')
     assert_equal 1, model.number
     assert_nil model.tenant_id, 'tenant should be cleared'
     assert_nil model.tenant, 'tenant should be cleared'
+    assert model.save
   end
 
   def test_saving_has_one_select
-    Floor.expects(:find).with('12').returns(Floor.new{|r| r.id = 12})
-    model = update_record_from_params(Person.new, :create, :first_name, :floor, :first_name => 'Name', :floor => '12')
+    floor = Floor.create
+    assert floor.persisted?
+
+    model = update_record_from_params(Person.new, :create, :first_name, :floor, :first_name => 'Name', :floor => floor.id.to_s)
     assert_equal 'Name', model.first_name
     assert model.floor.present?
-    assert_equal 12, model.floor.id
+    assert_equal floor.id, model.floor.id
+    assert_nil floor.reload.tenant_id, 'tenant_id should not be saved yet'
+    assert model.save
+    assert_equal model.id, floor.reload.tenant_id, 'tenant_id should be saved'
 
-    model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '')
+    model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '', :skip => Floor)
     assert_equal 'First', model.first_name
+    assert_nil floor.reload.tenant_id, 'previous car should be saved and nullified'
     assert_nil model.floor, 'floor should be cleared'
+    assert model.save
   end
 
   def test_saving_has_many_crud_and_belongs_to_select
-    Floor.expects(:find).with('12').returns(Floor.new{|r| r.id = 12})
-    Person.expects(:find).with('3').returns(Person.new{|r| r.id = 3})
-    Person.expects(:find).with('4').returns(Person.new{|r| r.id = 4})
+    floor = Floor.create
+    people = 2.times.map { Person.create }
     key = Time.now.to_i.to_s
-    floors = {'0' => '', '1' => {:number => '1', :tenant => '', :id => '12'}, key => {:number => '2', 'tenant' => '3'}, key.succ => {:number => '4', 'tenant' => '4'}}
+    floors = {'0' => '', '1' => {:number => '1', :tenant => '', :id => floor.id.to_s}, key => {:number => '2', 'tenant' => people.first.id.to_s}, key.succ => {:number => '4', 'tenant' => people.last.id.to_s}}
     model = update_record_from_params(Building.new, :create, :name, :floors, :name => 'First', :floors => floors)
     assert_equal 'First', model.name
     assert_equal 3, model.floors.size
-    assert_equal [nil, 3, 4], model.floors.map(&:tenant_id)
+    assert_equal floor.id, model.floors.first.id
+    assert_equal [nil, *people.map(&:id)], model.floors.map(&:tenant_id)
+    assert model.save
 
     model = update_record_from_params(model, :update, :name, :floors, :name => 'Tower', :floors => {'0' => ''})
     assert_equal 'Tower', model.name
     assert model.floors.blank?, 'floors should be cleared'
+    assert model.save
   end
 
   def test_saving_belongs_to_crud
-    Person.expects(:find).with('3').returns(Person.new{|r| r.id = 3})
+    person = Person.create
+    assert person.persisted?
 
     model = update_record_from_params(Car.new, :create, :brand, :person, :brand => 'Ford', :person => {:first_name => 'First'})
     assert_equal 'Ford', model.brand
     assert model.person.present?
     assert model.person.new_record?
+    assert model.save
+    assert model.person.persisted?
 
-    model = update_record_from_params(model, :update, :brand, :person, :brand => 'Ford', :person => {:first_name => 'First', :id => '3'})
+    model = update_record_from_params(model, :update, :brand, :person, :brand => 'Ford', :person => {:first_name => 'First', :id => person.id.to_s})
     assert_equal 'Ford', model.brand
     assert model.person.present?
-    assert_equal 3, model.person.id
+    assert_equal person.id, model.person.id
+    assert model.save
 
     model = update_record_from_params(model, :update, :brand, :person, :brand => 'Mercedes', :person => {:first_name => ''})
     assert_equal 'Mercedes', model.brand
     assert model.person.blank?, 'person should be cleared'
+    assert model.save
   end
 
   def test_saving_has_one_crud
-    Car.expects(:find).with('12').returns(Car.new{|r| r.id = 12})
+    car = Car.create
+    assert car.persisted?
 
     model = update_record_from_params(Person.new, :create, :first_name, :car, :first_name => 'First', :car => {:brand => 'Ford'})
     assert_equal 'First', model.first_name
     assert model.car.present?
     assert model.car.new_record?
+    assert model.save
+    assert model.car.persisted?
 
-    model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'First', :car => {:brand => 'Mercedes', :id => '12'})
+    model = update_record_from_params(Person.new, :create, :first_name, :car, :first_name => 'First', :car => {:brand => 'Ford', :id => car.id.to_s})
     assert_equal 'First', model.first_name
     assert model.car.present?
-    assert_equal 12, model.car.id
+    assert_equal car.id, model.car.id
+    assert_nil car.reload.person_id, 'person_id should not be saved yet'
+    assert model.save
+    assert_equal model.id, car.reload.person_id, 'person_id should be saved'
 
-    model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'Name', :car => {:brand => ''})
+    model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'First', :car => {:brand => 'Mercedes'}, :skip => Car)
+    assert_equal 'First', model.first_name
+    assert_nil car.reload.person_id, 'previous car should be saved and nullified'
+    assert model.car.present?
+    assert_not_equal car.id, model.car.id
+    assert model.save
+
+    car = model.car.reload
+    model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'Name', :car => {:brand => ''}, :skip => Car)
     assert_equal 'Name', model.first_name
+    assert_nil car.reload.person_id, 'previous car should be saved and nullified'
     assert model.car.blank?, 'car should be cleared'
+    assert model.save
   end
 
   protected
-  def update_record_from_params(record, action, *columns)
+  MODELS = [Address, Building, Car, Contact, Floor, Person]
+  def update_record_from_params(record, action, *columns, &block)
     params = columns.extract_options!.with_indifferent_access
-    @controller.update_record_from_params(record, build_action_columns(record, action, columns), params)
+    skip = params.delete(:skip)
+    (MODELS-Array(skip)).each { |model| model.any_instance.expects(:save).never }
+    @controller.update_record_from_params(record, build_action_columns(record, action, columns), params).tap do
+      MODELS.each { |model| model.any_instance.unstub(:save) }
+    end
   end
 
   def build_action_columns(record, action, *columns)
