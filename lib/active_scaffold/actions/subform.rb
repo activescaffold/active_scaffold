@@ -14,7 +14,7 @@ module ActiveScaffold::Actions
 
       # NOTE: we don't check whether the user is allowed to update this record, because if not, we'll still let them associate the record. we'll just refuse to do more than associate, is all.
       @record = @column.association.klass.find(params[:associated_id]) if params[:associated_id]
-      @record ||= build_associated(@column.association, @parent_record, @column.plural_association?)
+      @record ||= build_associated(@column.association, @parent_record)
       @scope = params[:scope]
     end
 
