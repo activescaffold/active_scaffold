@@ -87,17 +87,23 @@ module ActiveScaffold
       end
       
       # build an associated record for association 
-      def build_associated(association, parent_record, create_associated = false)
+      def build_associated(association, parent_record)
         if association.options[:through]
           # build full chain, only check create_associated on initial parent_record
           parent_record = build_associated(association.through_reflection, parent_record, create_associated)
-          build_associated(association.source_reflection, parent_record, true)
-        elsif !create_associated
-          association.klass.new
+          build_associated(association.source_reflection, parent_record).tap do |record|
+            save_record_to_association(record, association.source_reflection.reverse, parent_record) # set inverse
+          end
         elsif association.collection?
           parent_record.send(association.name).build
-        else
+        elsif association.belongs_to? || parent_record.new_record? || parent_record.send(association.name).nil?
+          # avoid use build_association in has_one when record is saved and had associated record
+          # because associated record would be changed in DB
           parent_record.send("build_#{association.name}")
+        else
+          association.klass.new.tap do |record|
+            save_record_to_association(record, association.reverse, parent_record) # set inverse
+          end
         end
       end
     end

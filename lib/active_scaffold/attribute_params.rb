@@ -183,7 +183,7 @@ module ActiveScaffold
       if params.has_key? klass.primary_key
         record_from_current_or_find(klass, params[klass.primary_key], current)
       else
-        build_associated(parent_column.association, parent_record) if klass.authorized_for?(:crud_type => :create)
+        parent_column.association.klass.new if klass.authorized_for?(:crud_type => :create)
       end
     end
 
@@ -198,6 +198,15 @@ module ActiveScaffold
         current.detect {|o| o.id.to_s == id}
       else # attaching an existing but not-current object
         klass.find(id)
+      end
+    end
+
+    def save_record_to_association(record, association_name, value)
+      association = record.class.reflect_on_association(association_name) if association_name
+      if association.try(:collection?)
+        record.send(association_name) << value
+      elsif association
+        record.send("#{association_name}=", value)
       end
     end
 
