@@ -90,7 +90,7 @@ module ActiveScaffold
       def build_associated(association, parent_record)
         if association.options[:through]
           # build full chain, only check create_associated on initial parent_record
-          parent_record = build_associated(association.through_reflection, parent_record, create_associated)
+          parent_record = build_associated(association.through_reflection, parent_record)
           build_associated(association.source_reflection, parent_record).tap do |record|
             save_record_to_association(record, association.source_reflection.reverse, parent_record) # set inverse
           end
