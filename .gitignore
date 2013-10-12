@@ -10,6 +10,7 @@ doc
 
 # bundler
 .bundle
+gemfiles/vendor
 
 # jeweler generated
 pkg
