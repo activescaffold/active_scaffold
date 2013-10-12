@@ -59,19 +59,6 @@ module ActiveScaffold
         end
       end
 
-      # Should this column be displayed in the subform?
-      def in_subform?(column, parent_record)
-        return true unless column.association
-
-        # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
-        return false if column.polymorphic_association?
-
-        # A column shouldn't be in the subform if it's the reverse association to the parent
-        return false if column.association.inverse_for?(parent_record.class)
-
-        return true
-      end
-
       def form_remote_upload_tag(url_for_options = {}, options = {})
         options[:target] = action_iframe_id(url_for_options)
         options[:multipart] ||= true
@@ -492,18 +479,6 @@ module ActiveScaffold
 
       def format_column_calculation(column, calculation)
         "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
-      end
-
-      def column_show_add_existing(column, record = nil)
-        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, call with record.", caller if record.nil? # TODO Remove when relying on @record is removed
-        record ||= @record # TODO Remove when relying on @record is removed
-        (column.allow_add_existing and options_for_association_count(column.association, record) > 0)
-      end
-
-      def column_show_add_new(column, associated, record)
-        value = (column.plural_association? && !column.readonly_association?) || (column.singular_association? and not associated.empty?)
-        value = false unless column.association.klass.authorized_for?(:crud_type => :create)
-        value
       end
  
       def clean_column_name(name)

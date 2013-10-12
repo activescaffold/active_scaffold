@@ -8,6 +8,8 @@ module ActiveScaffold
   #     'name' => 'John',
   #     # a plural association hash
   #     'roles' => {
+  #       # hack to be able to clear roles
+  #       '0' => ''
   #       # associate with an existing role
   #       '5' => {'id' => 5}
   #       # associate with an existing role and edit it
@@ -57,11 +59,11 @@ module ActiveScaffold
           if multi_parameter_attributes.has_key? column.name
             parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
           elsif attributes.has_key? column.name
-            value = column_value_from_param_value(parent_record, column, attributes[column.name]) 
-            parent_record.send("#{column.name}=", value)
+            value = column_value_from_param_value(parent_record, column, attributes[column.name])
+            parent_record.send "#{column.name}=", value
           end
         rescue
-          logger.error "#{$!.class.name}: #{$!.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} with value #{value.inspect}"
+          logger.error "#{$!.class.name}: #{$!.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
           raise
         end
       end
@@ -80,17 +82,6 @@ module ActiveScaffold
     
       flash[:warning] = parent_record.errors.to_a.join("\n") if parent_record.errors.present?
       parent_record
-    end
-    
-    def manage_nested_record_from_params(parent_record, column, attributes)
-      record = find_or_create_for_params(attributes, column, parent_record)
-      if record
-        record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-        record_columns.constraint_columns = [column.association.reverse]
-        update_record_from_params(record, record_columns, attributes)
-        record.unsaved = true
-      end
-      record
     end
     
     def column_value_from_param_value(parent_record, column, value)
@@ -157,38 +148,59 @@ module ActiveScaffold
       if column.singular_association?
         manage_nested_record_from_params(parent_record, column, value)
       elsif column.plural_association?
+        value.sort! if RUBY_VERSION < '1.9'
         # HACK to be able to delete all associated records, hash will include "0" => ""
-        value.sort.collect {|key, value| manage_nested_record_from_params(parent_record, column, value) unless value == ""}.compact
+        value.collect {|key, value| manage_nested_record_from_params(parent_record, column, value) unless value == ""}.compact
       else
         value
       end
     end
+    
+    def manage_nested_record_from_params(parent_record, column, attributes)
+      return nil unless build_record_from_params(attributes, column, parent_record)
+      record = find_or_create_for_params(attributes, column, parent_record)
+      if record
+        record_columns = active_scaffold_config_for(column.association.klass).subform.columns
+        record_columns.constraint_columns = [column.association.reverse]
+        update_record_from_params(record, record_columns, attributes)
+        record.unsaved = true
+      end
+      record
+    end
 
-   # Attempts to create or find an instance of klass (which must be an ActiveRecord object) from the
-    # request parameters given. If params[:id] exists it will attempt to find an existing object
+    def build_record_from_params(params, column, record)
+      current = record.send(column.name)
+      klass = column.association.klass
+      (column.plural_association? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
+    end
+
+    # Attempts to create or find an instance of the klass of the association in parent_column from the
+    # request parameters given. If params[primary_key] exists it will attempt to find an existing object
     # otherwise it will build a new one.
     def find_or_create_for_params(params, parent_column, parent_record)
       current = parent_record.send(parent_column.name)
       klass = parent_column.association.klass
-      pk = klass.primary_key.to_sym
-      return nil if parent_column.show_blank_record?(current) and attributes_hash_is_empty?(params, klass)
-
-      if params.has_key? pk
-        # modifying the current object of a singular association
-        pk_val = params[pk] 
-        if current and current.is_a? ActiveRecord::Base and current.id.to_s == pk_val
-          current
-        # modifying one of the current objects in a plural association
-        elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == pk_val}
-          current.detect {|o| o.id.to_s == pk_val}
-        # attaching an existing but not-current object
-        else
-          klass.find(pk_val)
-        end
+      if params.has_key? klass.primary_key
+        record_from_current_or_find(klass, params[klass.primary_key], current)
       else
-        build_associated(parent_column, parent_record) if klass.authorized_for?(:crud_type => :create)
+        build_associated(parent_column.association, parent_record) if klass.authorized_for?(:crud_type => :create)
       end
     end
+
+    # Attempts to find an instance of klass (which must be an ActiveRecord object) with id primary key
+    # Returns record from current if it's included or find from DB
+    def record_from_current_or_find(klass, id, current)
+      if current and current.is_a? ActiveRecord::Base and current.id.to_s == id
+      # modifying the current object of a singular association
+        current
+      elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == id}
+      # modifying one of the current objects in a plural association
+        current.detect {|o| o.id.to_s == id}
+      else # attaching an existing but not-current object
+        klass.find(id)
+      end
+    end
+
     # Determines whether the given attributes hash is "empty".
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
