@@ -1,5 +1,7 @@
-require 'simplecov'
-SimpleCov.start { add_filter 'test' } if RUBY_VERSION >= '1.9'
+if RUBY_VERSION >= '1.9'
+  require 'simplecov'
+  SimpleCov.start { add_filter 'test' }
+end
 
 ENV['RAILS_ENV'] = 'test'
 require "mock_app/config/environment"

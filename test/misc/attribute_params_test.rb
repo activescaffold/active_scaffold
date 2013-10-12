@@ -28,7 +28,7 @@ class AttributeParamsTest < Test::Unit::TestCase
   end
 
   def test_saving_has_many_select
-    Building.expects(:find).with(['1', '3']).returns([Building.new(:id => 1), Building.new(:id => 3)])
+    Building.expects(:find).with(['1', '3']).returns([Building.new{|r| r.id = 1}, Building.new{|r| r.id = 3}])
     model = update_record_from_params(Person.new, :create, :first_name, :last_name, :buildings, :first_name => 'First', :last_name => '', :buildings => ['', '1', '3']) # checkbox_list always add a hidden tag with empty value
     assert_equal 'First', model.first_name
     assert_nil model.last_name
@@ -43,7 +43,7 @@ class AttributeParamsTest < Test::Unit::TestCase
   end
 
   def test_saving_belongs_to_select
-    Person.expects(:find).with('3').returns(Person.new(:id => 3))
+    Person.expects(:find).with('3').returns(Person.new{|r| r.id = 3})
     model = update_record_from_params(Floor.new, :create, :number, :tenant, :number => '1', :tenant => '3')
     assert_equal 1, model.number
     assert_equal 3, model.tenant_id
@@ -56,7 +56,7 @@ class AttributeParamsTest < Test::Unit::TestCase
   end
 
   def test_saving_has_one_select
-    Floor.expects(:find).with('12').returns(Floor.new(:id => 12))
+    Floor.expects(:find).with('12').returns(Floor.new{|r| r.id = 12})
     model = update_record_from_params(Person.new, :create, :first_name, :floor, :first_name => 'Name', :floor => '12')
     assert_equal 'Name', model.first_name
     assert model.floor.present?
@@ -68,9 +68,9 @@ class AttributeParamsTest < Test::Unit::TestCase
   end
 
   def test_saving_has_many_crud_and_belongs_to_select
-    Floor.expects(:find).with('12').returns(Floor.new(:id => 12))
-    Person.expects(:find).with('3').returns(Person.new(:id => 3))
-    Person.expects(:find).with('4').returns(Person.new(:id => 4))
+    Floor.expects(:find).with('12').returns(Floor.new{|r| r.id = 12})
+    Person.expects(:find).with('3').returns(Person.new{|r| r.id = 3})
+    Person.expects(:find).with('4').returns(Person.new{|r| r.id = 4})
     key = Time.now.to_i.to_s
     floors = {'0' => '', '1' => {:number => '1', :tenant => '', :id => '12'}, key => {:number => '2', 'tenant' => '3'}, key.succ => {:number => '4', 'tenant' => '4'}}
     model = update_record_from_params(Building.new, :create, :name, :floors, :name => 'First', :floors => floors)
@@ -84,7 +84,7 @@ class AttributeParamsTest < Test::Unit::TestCase
   end
 
   def test_saving_belongs_to_crud
-    Person.expects(:find).with('3').returns(Person.new(:id => 3))
+    Person.expects(:find).with('3').returns(Person.new{|r| r.id = 3})
 
     model = update_record_from_params(Car.new, :create, :brand, :person, :brand => 'Ford', :person => {:first_name => 'First'})
     assert_equal 'Ford', model.brand
@@ -102,7 +102,7 @@ class AttributeParamsTest < Test::Unit::TestCase
   end
 
   def test_saving_has_one_crud
-    Car.expects(:find).with('12').returns(Car.new(:id => 12))
+    Car.expects(:find).with('12').returns(Car.new{|r| r.id = 12})
 
     model = update_record_from_params(Person.new, :create, :first_name, :car, :first_name => 'First', :car => {:brand => 'Ford'})
     assert_equal 'First', model.first_name
