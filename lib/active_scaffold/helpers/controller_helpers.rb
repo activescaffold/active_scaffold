@@ -86,15 +86,18 @@ module ActiveScaffold
         @parent_action
       end
       
-      def build_associated(column, record)
-        if column.singular_association?
-          if column.association.options[:through]
-            record.send("build_#{column.association.through_reflection.name}").send("build_#{column.name}")
-          else
-            record.send("build_#{column.name}")
-          end
+      # build an associated record for association 
+      def build_associated(association, parent_record, create_associated = false)
+        if association.options[:through]
+          # build full chain, only check create_associated on initial parent_record
+          parent_record = build_associated(association.through_reflection, parent_record, create_associated)
+          build_associated(association.source_reflection, parent_record, true)
+        elsif !create_associated
+          association.klass.new
+        elsif association.collection?
+          parent_record.send(association.name).build
         else
-          record.send(column.name).build
+          parent_record.send("build_#{association.name}")
         end
       end
     end
