@@ -74,7 +74,7 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_nil model.tenant, 'tenant should be cleared'
     assert_equal person.id, Floor.find(model).tenant_id, 'floor should not be saved yet'
     assert model.save
-    assert_nil Floor.find(model).tenant_id, 'floor should not be saved yet'
+    assert_nil Floor.find(model).tenant_id, 'floor should not be saved'
   end
 
   def test_saving_has_one_select
@@ -228,6 +228,27 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_nil car.reload.person_id, 'previous car should be saved and nullified'
     assert model.car.blank?, 'car should be cleared'
     assert model.save
+  end
+
+  def test_saving_belongs_to_polymorphic_select
+    person = Person.create
+    assert person.persisted?
+
+    model = update_record_from_params(Contact.new, :create, :first_name, :contactable_type, :contactable, :first_name => 'First', :contactable_type => person.class.name, :contactable => person.id.to_s)
+    assert_equal 'First', model.first_name
+    assert_equal person.class.name, model.contactable_type
+    assert_equal person.id, model.contactable_id
+    assert_equal person, model.contactable
+    assert model.save
+
+    model = update_record_from_params(model, :update, :first_name, :contactable_type, :contactable, :first_name => 'Name', :contactable_type => person.class.name, :contactable => '')
+    assert_equal 'Name', model.first_name
+    assert_nil model.contactable_type
+    assert_nil model.contactable_id, 'contactable should be cleared'
+    assert_nil model.contactable, 'contactable should be cleared'
+    assert_equal person.id, Contact.find(model).contactable_id, 'contact should not be saved yet'
+    assert model.save
+    assert_nil Contact.find(model).contactable_id, 'contact should be saved'
   end
 
   protected
