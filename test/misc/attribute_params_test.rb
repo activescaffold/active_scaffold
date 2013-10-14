@@ -106,6 +106,26 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert model.save
   end
 
+  def test_saving_has_many_through_select
+    people = 2.times.map { Person.create }
+    assert people.all?(&:persisted?)
+
+    model = update_record_from_params(Building.new, :create, :name, :tenants, :name => 'Tower', :tenants => ['', *people.map{|b| b.id.to_s}]) # checkbox_list always add a hidden tag with empty value
+    assert_equal 'Tower', model.name
+    assert model.tenants.present?
+    assert model.floors.present?
+    assert_equal [nil]*2, people.map {|p| p.floor(true)}, 'floor should not be saved yet'
+    assert model.save
+    assert_equal [model.id]*2, model.floors.map(&:building_id)
+    assert_equal [model.id]*2, people.map {|p| p.floor(true).building_id}, 'floor should be saved'
+
+    model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => [''])
+    assert_equal 'Skyscrapper', model.name
+    assert_equal [nil]*2, people.map {|p| p.floor(true)}, 'previous floor should saved and deleted'
+    assert model.tenants.empty?, 'tenants should be cleared'
+    assert model.save
+  end
+
   def test_saving_has_many_crud_and_belongs_to_select
     floor = Floor.create
     people = 2.times.map { Person.create }
