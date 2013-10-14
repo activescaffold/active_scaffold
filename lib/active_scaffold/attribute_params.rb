@@ -44,7 +44,7 @@ module ActiveScaffold
       multi_parameter_attributes = {}
       attributes.each do |k, v|
         next unless k.include? '('
-        column_name = k.split('(').first.to_sym
+        column_name = k.split('(').first
         multi_parameter_attributes[column_name] ||= []
         multi_parameter_attributes[column_name] << [k, v]
       end
@@ -56,7 +56,7 @@ module ActiveScaffold
             column.params.each{|p| parent_record.send("#{p}=", attributes[p]) if attributes.has_key? p}
           end
 
-          if multi_parameter_attributes.has_key? column.name
+          if multi_parameter_attributes.has_key? column.name.to_s
             parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
           elsif attributes.has_key? column.name
             value = column_value_from_param_value(parent_record, column, attributes[column.name])
