@@ -41,11 +41,20 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal buildings, model.buildings
     assert model.save
 
+    model = update_record_from_params(model, :update, :first_name, :last_name, :buildings, :first_name => 'Name', :last_name => 'Last', :buildings => ['']) { raise ActiveRecord::Rollback }
+    assert_equal 'Name', model.first_name
+    assert_equal 'Last', model.last_name
+    assert_equal [model.id]*2, buildings.map{|b| b.reload.owner_id}, 'owners should not be saved'
+    assert model.building_ids.blank?, 'buildings should be cleared'
+    assert model.buildings.blank?, 'buildings should be cleared'
+
+    model.reload
     model = update_record_from_params(model, :update, :first_name, :last_name, :buildings, :first_name => 'Name', :last_name => 'Last', :buildings => [''])
     assert_equal 'Name', model.first_name
     assert_equal 'Last', model.last_name
     assert model.building_ids.blank?, 'buildings should be cleared'
     assert model.buildings.blank?, 'buildings should be cleared'
+    assert_equal [nil]*2, buildings.map{|b| b.reload.owner_id}, 'buildings should be saved'
     assert model.save
   end
 
@@ -63,7 +72,9 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal 1, model.number
     assert_nil model.tenant_id, 'tenant should be cleared'
     assert_nil model.tenant, 'tenant should be cleared'
+    assert_equal person.id, Floor.find(model).tenant_id, 'floor should not be saved yet'
     assert model.save
+    assert_nil Floor.find(model).tenant_id, 'floor should not be saved yet'
   end
 
   def test_saving_has_one_select
@@ -78,6 +89,12 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert model.save
     assert_equal model.id, floor.reload.tenant_id, 'tenant_id should be saved'
 
+    model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '', :skip => Floor) { raise ActiveRecord::Rollback }
+    assert_equal 'First', model.first_name
+    assert_equal model.id, floor.reload.tenant_id, 'previous car should not be saved and nullified'
+    assert_nil model.floor, 'floor should be cleared'
+
+    model.reload
     model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '', :skip => Floor)
     assert_equal 'First', model.first_name
     assert_nil floor.reload.tenant_id, 'previous car should be saved and nullified'
@@ -99,9 +116,15 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal model.id, model.floor.tenant_id, 'tenant_id should be saved'
     assert_equal [nil, model.id], building.floors(true).map(&:tenant_id)
 
+    model = update_record_from_params(model, :update, :first_name, :home, :first_name => 'First', :home => '') { raise ActiveRecord::Rollback }
+    assert_equal 'First', model.first_name
+    assert_equal [nil, model.id], building.floors(true).map(&:tenant_id), 'previous floor should not be deleted'
+    assert_nil model.home, 'home should be cleared'
+
+    model.reload
     model = update_record_from_params(model, :update, :first_name, :home, :first_name => 'First', :home => '')
     assert_equal 'First', model.first_name
-    assert_equal [nil], building.floors(true).map(&:tenant_id), 'previous floor should saved and deleted'
+    assert_equal [nil], building.floors(true).map(&:tenant_id), 'previous floor should be deleted'
     assert_nil model.home, 'home should be cleared'
     assert model.save
   end
@@ -119,9 +142,15 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal [model.id]*2, model.floors.map(&:building_id)
     assert_equal [model.id]*2, people.map {|p| p.floor(true).building_id}, 'floor should be saved'
 
+    model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => ['']) { raise ActiveRecord::Rollback }
+    assert_equal 'Skyscrapper', model.name
+    assert_equal [model.id]*2, people.map {|p| p.floor(true).building_id}, 'previous floor should not be deleted'
+    assert model.tenants.empty?, 'tenants should be cleared'
+
+    model.reload
     model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => [''])
     assert_equal 'Skyscrapper', model.name
-    assert_equal [nil]*2, people.map {|p| p.floor(true)}, 'previous floor should saved and deleted'
+    assert_equal [nil]*2, people.map {|p| p.floor(true)}, 'previous floor should be deleted'
     assert model.tenants.empty?, 'tenants should be cleared'
     assert model.save
   end
@@ -207,9 +236,13 @@ class AttributeParamsTest < Test::Unit::TestCase
     params = columns.extract_options!.with_indifferent_access
     skip = params.delete(:skip)
     #(MODELS-Array(skip)).each { |model| model.any_instance.expects(:save).never }
-    @controller.update_record_from_params(record, build_action_columns(record, action, columns), params).tap do
+    new_record = nil
+    record.class.transaction do
+      new_record = @controller.update_record_from_params(record, build_action_columns(record, action, columns), params)
       MODELS.each { |model| model.any_instance.unstub(:save) }
+      yield if block_given?
     end
+    new_record
   end
 
   def build_action_columns(record, action, *columns)
