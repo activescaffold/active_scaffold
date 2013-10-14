@@ -3,7 +3,6 @@ class Building < ActiveRecord::Base
   has_many :floors, :dependent => :delete_all
 
   has_one :address, :as => :addressable
-  has_many :contacts, :as => :contactable
 
   has_many :tenants, :through => :floors, :class_name => 'Person'
 end
