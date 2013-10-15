@@ -341,7 +341,7 @@ module ActiveScaffold
       if Rails::VERSION::MAJOR >= 4
         if options[:sorting].try(:sorts_by_sql?)
           options[:sorting].each do |col, _|
-            self.active_scaffold_references << col.includes if col.includes.present?
+            finder_options[:outer_joins] << col.includes if col.includes.present?
           end
         end
         finder_options.merge!(:references => active_scaffold_references)
