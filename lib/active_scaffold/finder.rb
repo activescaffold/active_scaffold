@@ -338,7 +338,14 @@ module ActiveScaffold
                          :outer_joins => active_scaffold_outer_joins,
                          :includes => full_includes,
                          :select => options[:select]}
-      finder_options.merge!(:references => active_scaffold_references) if Rails::VERSION::MAJOR >= 4
+      if Rails::VERSION::MAJOR >= 4
+        if options[:sorting].try(:sorts_by_sql?)
+          options[:sorting].each do |col, _|
+            self.active_scaffold_references << col.includes if col.includes.present?
+          end
+        end
+        finder_options.merge!(:references => active_scaffold_references)
+      end
     
       finder_options.merge! custom_finder_options
       finder_options
