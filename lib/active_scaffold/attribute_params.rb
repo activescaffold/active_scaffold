@@ -57,7 +57,7 @@ module ActiveScaffold
           end
 
           if multi_parameter_attributes.has_key? column.name.to_s
-            parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name])
+            parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name.to_s])
           elsif attributes.has_key? column.name
             value = column_value_from_param_value(parent_record, column, attributes[column.name])
             parent_record.send "#{column.name}=", value

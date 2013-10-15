@@ -28,6 +28,7 @@ ActiveRecord::Schema.define do
     t.string 'contactable_type'
     t.string 'first_name'
     t.string 'last_name'
+    t.date 'birthday'
     t.datetime "created_at"
     t.datetime "updated_at"
   end
