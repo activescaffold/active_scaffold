@@ -290,6 +290,19 @@ module ActiveScaffold
       @active_scaffold_references ||= []
     end
 
+    # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
+    def conditions_for_collection
+    end
+  
+    # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).  The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
+    def joins_for_collection
+    end
+  
+    # Override this method on your controller to provide custom finder options to the find() call. The return of this method should be a hash.
+    def custom_finder_options
+      {}
+    end
+
     def all_conditions
       [
         active_scaffold_conditions,                   # from the search modules

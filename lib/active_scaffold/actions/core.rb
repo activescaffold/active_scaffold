@@ -144,19 +144,6 @@ module ActiveScaffold::Actions
     def return_to_main
       redirect_to main_path_to_return
     end
-
-    # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
-    def conditions_for_collection
-    end
-  
-    # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).  The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
-    def joins_for_collection
-    end
-  
-    # Override this method on your controller to provide custom finder options to the find() call. The return of this method should be a hash.
-    def custom_finder_options
-      {}
-    end
   
     #Overide this method on your controller to provide model with named scopes
     def beginning_of_chain
