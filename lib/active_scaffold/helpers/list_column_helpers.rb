@@ -192,7 +192,7 @@ module ActiveScaffold
           if column.associated_limit.nil?
             Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
           elsif column.associated_limit > 0
-            value.target = value.find(:all, :limit => column.associated_limit + 1, :select => column.select_associated_columns)
+            value.target = value.limit(column.associated_limit + 1).select(column.select_associated_columns).to_a
           elsif @cache_associations
             value.target = size.to_i.zero? ? [] : [nil]
           end
