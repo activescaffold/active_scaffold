@@ -10,7 +10,7 @@ module ActiveScaffold
           value = '&nbsp;'.html_safe if value.nil? or value.blank? # fix for IE 6
           return value
         rescue Exception => e
-          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
           raise e
         end
       end
@@ -192,7 +192,7 @@ module ActiveScaffold
           if column.associated_limit.nil?
             Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
           elsif column.associated_limit > 0
-            value.target = value.limit(column.associated_limit + 1).select(column.select_associated_columns).to_a
+            value.target = value.limit(column.associated_limit + 1).select(column.select_associated_columns || '*').to_a
           elsif @cache_associations
             value.target = size.to_i.zero? ? [] : [nil]
           end
