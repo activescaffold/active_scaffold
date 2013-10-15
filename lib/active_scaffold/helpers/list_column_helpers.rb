@@ -111,11 +111,7 @@ module ActiveScaffold
       ##
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
-        if value && column.association # cache association size before calling column_empty?
-          associated_size = value.size if column.plural_association? and column.associated_number? # get count before cache association
-          cache_association(value, column, associated_size) if column.plural_association?
-        end
-        if column.association.nil? or column_empty?(value)
+        if column.association.nil?
           if column.form_ui == :select && column.options[:options]
             text, val = column.options[:options].find {|text, val| (val.nil? ? text : val).to_s == value.to_s}
             value = active_scaffold_translated_option(column, text, val).first if text
@@ -126,6 +122,10 @@ module ActiveScaffold
             format_value(value, column.options)
           end
         else
+          if column.plural_association?
+            associated_size = value.size if column.associated_number? # get count before cache association
+            cache_association(record.association(column.name), column, associated_size) unless value.loaded?
+          end
           format_association_value(value, column, associated_size)
         end
       end
@@ -147,29 +147,29 @@ module ActiveScaffold
       end
 
       def format_association_value(value, column, size)
-        format_value case column.association.macro
-          when :has_one, :belongs_to
-            if column.polymorphic_association?
-              "#{value.class.model_name.human}: #{value.to_label}"
-            else
-              value.to_label
-            end
-          when :has_many, :has_and_belongs_to_many
-            if column.associated_limit.nil?
-              firsts = value.collect { |v| v.to_label }
-            else
-              firsts = value.first(column.associated_limit)
-              firsts.collect! { |v| v.to_label }
-              firsts[column.associated_limit] = '…' if value.size > column.associated_limit
-            end
-            if column.associated_limit == 0
-              size if column.associated_number?
-            else
-              joined_associated = firsts.join(h(active_scaffold_config.list.association_join_text)).html_safe
-              joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
-              joined_associated
-            end
+        value = if column.association.collection?
+          if column.associated_limit.nil?
+            firsts = value.collect(&:to_label)
+          else
+            firsts = value.first(column.associated_limit)
+            firsts.collect!(&:to_label)
+            firsts[column.associated_limit] = '…' if value.size > column.associated_limit
+          end
+          if column.associated_limit == 0
+            size if column.associated_number?
+          else
+            joined_associated = firsts.join(h(active_scaffold_config.list.association_join_text)).html_safe
+            joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
+            joined_associated
+          end
+        elsif value
+          if column.polymorphic_association?
+            "#{value.class.model_name.human}: #{value.to_label}"
+          else
+            value.to_label
+          end
         end
+        format_value value
       end
 
       def format_value(column_value, options = {})
@@ -185,17 +185,16 @@ module ActiveScaffold
         clean_column_value(value)
       end
 
-      def cache_association(value, column, size)
-        # we are not using eager loading, cache firsts records in order not to query the database in a future
-        unless value.loaded?
-          # load at least one record, is needed to display '...'
-          if column.associated_limit.nil?
-            Rails.logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
-          elsif column.associated_limit > 0
-            value.target = value.limit(column.associated_limit + 1).select(column.select_associated_columns || '*').to_a
-          elsif @cache_associations
-            value.target = size.to_i.zero? ? [] : [nil]
-          end
+      def cache_association(association, column, size)
+        # we are not using eager loading, cache firsts records in order not to query the database for whole association in a future
+        if column.associated_limit.nil?
+          logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
+        elsif column.associated_limit > 0
+          # load at least one record more, is needed to display '...'
+          scope = association.send(Rails::VERSION::MAJOR >= 4 ? :scope : :scoped) # TODO Remove when rails3 support is removed
+          association.target = scope.limit(column.associated_limit + 1).select(column.select_associated_columns || '*').to_a
+        elsif @cache_associations
+          association.target = []
         end
       end
 
