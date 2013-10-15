@@ -380,17 +380,17 @@ module ActiveScaffold
         count = count_items(find_options, options[:count_includes])
       end
 
-      # where(nil) is called to ensure we get a relation
-      # even when beginning_of_chain is overrided
-      # so we can call to_a in sort_by :method
-      # it's needed when using outer_joins because
-      # calling uniq on associations (nested scaffolds) send SQL to DB
-      query = beginning_of_chain.where(nil) 
-      query = query.uniq if find_options[:outer_joins].present? # where(nil) is needed because calling uniq on associations (nested scaffolds) send SQL to DB
-      query = append_to_query(query, find_options)
+      query = append_to_query(beginning_of_chain, find_options)
+      if Rails::VERSION::MAJOR >= 4
+        query.distinct_value = true if find_options[:outer_joins].present?
+      else
+        query = query.where(nil).uniq if find_options[:outer_joins].present? # where(nil) is needed because calling uniq on associations (nested scaffolds) send SQL to DB
+      end
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
+          # where(nil) is called to ensure we get a relation because beginning_of_chain can return a klass or a relation
+          query = query.where(nil)
           calculate_last_modified(query)
           sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)
           sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
