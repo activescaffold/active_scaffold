@@ -29,8 +29,11 @@ module ActiveScaffold::Actions
         @filtered = !search_conditions.blank?
         self.active_scaffold_conditions.concat search_conditions if @filtered
 
-        outer_joins = columns.collect{ |column| column.search_joins unless column.includes.present? && list_columns.include?(column)}
+        references, outer_joins = columns.partition{ |column| column.includes.present? && list_columns.include?(column)}
+        outer_joins.collect! { |column| column.search_joins}
+        references.collect! { |column| column.includes }
         self.active_scaffold_outer_joins.concat outer_joins.flatten.uniq.compact
+        self.active_scaffold_references.concat references.flatten.uniq.compact
 
         active_scaffold_config.list.user.page = nil
       end
