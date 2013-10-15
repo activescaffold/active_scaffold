@@ -191,8 +191,7 @@ module ActiveScaffold
           logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
         elsif column.associated_limit > 0
           # load at least one record more, is needed to display '...'
-          scope = association.send(Rails::VERSION::MAJOR >= 4 ? :scope : :scoped) # TODO Remove when rails3 support is removed
-          association.target = scope.limit(column.associated_limit + 1).select(column.select_associated_columns || '*').to_a
+          association.target = association.reader.limit(column.associated_limit + 1).select(column.select_associated_columns || '*').to_a
         elsif @cache_associations
           association.target = []
         end
