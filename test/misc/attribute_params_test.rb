@@ -32,6 +32,12 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert model.save
   end
 
+  def test_saving_multiparameter_attribute
+    model = update_record_from_params(Contact.new, :update, :first_name, :birthday, :first_name => 'Christopher', :last_name => 'Columbus', 'birthday(1i)' => '1451', 'birthday(2i)' => '10', 'birthday(3i)' => '31')
+    assert_equal 'Christopher', model.first_name
+    assert_equal Date.new(1451, 10, 31), model.birthday
+  end
+
   def test_saving_has_many_select
     buildings = 2.times.map { Building.create }
     model = update_record_from_params(Person.new, :create, :first_name, :last_name, :buildings, :first_name => 'First', :last_name => '', :buildings => ['', *buildings.map{|b| b.id.to_s}]) # checkbox_list always add a hidden tag with empty value
