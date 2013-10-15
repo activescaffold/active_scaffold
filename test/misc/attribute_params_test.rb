@@ -142,7 +142,6 @@ class AttributeParamsTest < Test::Unit::TestCase
     model = update_record_from_params(Building.new, :create, :name, :tenants, :name => 'Tower', :tenants => ['', *people.map{|b| b.id.to_s}]) # checkbox_list always add a hidden tag with empty value
     assert_equal 'Tower', model.name
     assert model.tenants.present?
-    assert model.floors.present?
     assert_equal [nil]*2, people.map {|p| p.floor(true)}, 'floor should not be saved yet'
     assert model.save
     assert_equal [model.id]*2, model.floors.map(&:building_id)
