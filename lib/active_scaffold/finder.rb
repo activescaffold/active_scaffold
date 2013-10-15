@@ -284,6 +284,11 @@ module ActiveScaffold
     def active_scaffold_outer_joins
       @active_scaffold_outer_joins ||= []
     end
+    
+    attr_writer :active_scaffold_references
+    def active_scaffold_references
+      @active_scaffold_references ||= []
+    end
 
     def all_conditions
       [
@@ -320,6 +325,7 @@ module ActiveScaffold
                          :outer_joins => active_scaffold_outer_joins,
                          :includes => full_includes,
                          :select => options[:select]}
+      finder_options.merge!(:references => active_scaffold_references) if Rails::VERSION::MAJOR >= 4
     
       finder_options.merge! custom_finder_options
       finder_options
@@ -399,7 +405,7 @@ module ActiveScaffold
     end
     
     def append_to_query(query, options)
-      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions
+      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, (:references if Rails::VERSION::MAJOR >= 4)
       query = apply_conditions(query, *options[:conditions]) if options[:conditions]
       options.reject{|k, v| k == :conditions || v.blank?}.inject(query) do |query, (k, v)|
         query.send((k.to_sym), v) 
