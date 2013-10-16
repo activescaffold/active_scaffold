@@ -179,11 +179,13 @@ module ActiveScaffold::Actions
     end
 
     def objects_for_etag
-      @record
+      @last_modified ||= @record.updated_at
+      [@record, ('xhr' if request.xhr?)]
     end
 
     def view_stale?
       objects = objects_for_etag
+logger.debug objects.inspect
       if objects.is_a?(Array)
         args = {:etag => objects.to_a}
         args[:last_modified] = @last_modified if @last_modified

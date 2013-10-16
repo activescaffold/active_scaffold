@@ -1,5 +1,6 @@
 jQuery(document).ready(function($) {
-  jQuery.ajaxSettings.ifModified = true;
+/* It should not be needed, latest chrome is caching by itself
+  if (ActiveScaffold.config.conditional_get) jQuery.ajaxSettings.ifModified = true;
   jQuery(document).on('ajax:beforeSend', function(event, xhr, settings){
     xhr.cacheUrl = settings.url;
   });
@@ -27,6 +28,7 @@ jQuery(document).ready(function($) {
       }
     }
   });
+*/
   if (/1\.[2-7]\..*/.test(jQuery().jquery)) {
     var error = 'ActiveScaffold requires jquery 1.8.0 or greater, please use jquery-rails 2.1.x gem or greater';
     if (typeof console != 'undefined') console.error(error);
