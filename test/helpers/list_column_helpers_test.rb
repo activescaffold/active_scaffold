@@ -12,7 +12,7 @@ class ListColumnHelpersTest < ActionView::TestCase
     @record = stub(:a => 'value_2')
     @config = stub(:list => stub(:empty_field_text => '-', :association_join_text => ', '))
     @association_column = ActiveScaffold::DataStructures::Column.new(:b, ModelStub)
-    @association_column.stubs(:association).returns(stub(:macro => :has_many))
+    @association_column.stubs(:association).returns(stub(:collection? => true))
   end
 
   def test_options_for_select_list_ui_for_simple_column
