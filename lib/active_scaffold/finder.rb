@@ -407,7 +407,12 @@ module ActiveScaffold
     end
 
     def calculate_last_modified(query)
-      @last_modified = query.maximum(:updated_at) if conditional_get_support? && query.klass.columns_hash['updated_at']
+      if conditional_get_support? && query.klass.columns_hash['updated_at']
+        # Rails4 always join with includes on calculations with columns
+        # but includes can be removed from calculation if they are not used to search
+        query = query.except(:includes) if Rails::VERSION::MAJOR >= 4 && query.references_values.blank?
+        @last_modified = query.maximum(:updated_at)
+      end
     end
 
     def calculate_query

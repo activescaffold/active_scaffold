@@ -92,6 +92,7 @@ module ActiveScaffold::Config
     @@auto_select_columns = false
 
     # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
+    # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
     cattr_accessor :calculate_etag
     @@calculate_etag = false
 
@@ -204,6 +205,7 @@ module ActiveScaffold::Config
     attr_accessor :auto_select_columns
 
     # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
+    # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
     attr_accessor :calculate_etag
 
     class UserSettings < UserSettings
