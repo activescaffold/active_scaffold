@@ -39,11 +39,6 @@ jQuery(document).ready(function($) {
   jQuery(document).click(function(event) {
     jQuery('.action_group.dyn ul').remove();
   });
-  jQuery(document).on('ajax:complete', '.action_group.dyn ul a', function(event) {
-    var action_link = ActiveScaffold.find_action_link(event.target);
-    if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
-    jQuery(event.target).closest('.action_group.dyn ul').remove();
-  });
   jQuery(document).on('ajax:beforeSend', 'form.as_form', function(event) {
     var as_form = jQuery(this).closest("form");
     if (as_form.data('loading') == true) {
@@ -189,6 +184,12 @@ jQuery(document).ready(function($) {
       return true;
     } else return false;
   });
+  jQuery(document).on('ajax:complete', '.action_group.dyn ul a', function(event) {
+    var action_link = ActiveScaffold.find_action_link(event.target);
+    if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
+    jQuery(event.target).closest('.action_group.dyn ul').remove();
+  });
+
   jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form', function(event) {
     var element = jQuery(this);
     var value = element.is("input:checkbox:not(:checked)") ? null : element.val();
