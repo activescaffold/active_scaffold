@@ -37,7 +37,7 @@ jQuery(document).ready(function($) {
 
   jQuery(document).on('focus', ':input', function() { ActiveScaffold.last_focus = this; });
   jQuery(document).click(function(event) {
-    jQuery('.action_group.dyn ul').remove();
+    jQuery('.action_group.dyn ul').hide(); // only hide so action links loading still work
   });
   jQuery(document).on('ajax:beforeSend', 'form.as_form', function(event) {
     var as_form = jQuery(this).closest("form");
