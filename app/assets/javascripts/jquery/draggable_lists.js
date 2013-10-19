@@ -1,6 +1,6 @@
 (function() {
   function enableDraggableLists(element) {
-    if (element.hasClass('draggable-list') return;
+    if (element.hasClass('draggable-list')) return;
     element.addClass('draggable-list');
     var list_selected = jQuery(element.get(0).cloneNode(false)).addClass('selected');
     list_selected.attr('id', list_selected.attr('id') + '_selected').insertAfter(element);
