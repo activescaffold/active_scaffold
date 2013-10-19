@@ -240,7 +240,7 @@ jQuery(document).ready(function($) {
   });
   jQuery(document).on('click', '.hover_click a.as_action', function(event) {
     var element = jQuery(this).closest('.hover_click');
-    if (element) {
+    if (element.length) {
       element.find('ul').hide();
     }
     return true;
@@ -714,7 +714,7 @@ var ActiveScaffold = {
     selector = options.is_subform ? '' : selector + ':not(.sub-form) ';
     element = element.find(selector + '.' + options.field_class).first();
 
-    if (element) {
+    if (element.length) {
       if (options.is_subform == false) {
         this.replace(element.closest('dl'), content);
       } else {
