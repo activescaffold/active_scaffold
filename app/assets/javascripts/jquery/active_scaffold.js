@@ -253,7 +253,10 @@ jQuery(document).ready(function($) {
   
   ActiveScaffold.live_search(document);
   ActiveScaffold.draggable_lists('.draggable-lists');
-  jQuery(document).on('as:element_updated', function(e) { ActiveScaffold.live_search(e.target); });
+  jQuery(document).on('as:element_updated', function(e) {
+    ActiveScaffold.live_search(e.target);
+    ActiveScaffold.draggable_lists('.draggable-lists', action_link.adapter);
+  });
   jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
     ActiveScaffold.live_search(action_link.adapter);
     ActiveScaffold.draggable_lists('.draggable-lists', action_link.adapter);
