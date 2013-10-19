@@ -160,7 +160,7 @@ module ActiveScaffold::Actions
           next unless column
           next if active_scaffold_constraints[key]
           next if nested? and nested.param_name == key
-          conditions[key] = column.type_cast(value)
+          conditions[key] = value.is_a?(Array) ? value.map {|v| column.type_cast(v) } : column.type_cast(value)
         end
         conditions
       end
