@@ -12,6 +12,9 @@ module ActiveScaffold::DataStructures
     def label
       as_(@label) if @label
     end
+    def name
+      @label.to_s.underscore
+    end
     def css_class
       @label.to_s.underscore
     end
