@@ -12,16 +12,28 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   module Association
     def self.included(base)
       base.alias_method_chain :association_scope, :tableless
+      base.alias_method_chain :target_scope, :tableless
     end
 
     def association_scope_with_tableless
       @association_scope ||= AssociationScope.new(self).scope if klass < ActiveScaffold::Tableless
       association_scope_without_tableless
     end
+
+    def target_scope_with_tableless
+      target_scope_without_tableless.tap do |scope|
+        if klass < ActiveScaffold::Tableless
+          class << scope; include RelationExtension; end
+        end
+      end
+    end
   end
 
-  class Relation < ActiveRecord::Relation
-    attr_reader :conditions
+  module RelationExtension
+    def conditions
+      @conditions
+    end
+  
     def initialize(klass, table)
       super
       @conditions ||= []
@@ -65,10 +77,16 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
   end
 
+  # For rails3
+  class Relation < ActiveRecord::Relation
+    include RelationExtension
+  end
+
   def self.columns; @columns ||= []; end
   def self.table_name; @table_name ||= ActiveModel::Naming.plural(self); end
   def self.table_exists?; true; end
   self.abstract_class = true
+  # For rails3
   class << self
     private
     def relation
