@@ -120,7 +120,8 @@ fr:
           other: ! '%{count} erreurs interdisent ce(tte) %{model} d''être sauvegardé'
         body: ! 'Il y avait des problèmes avec les champs suivants :'
     cant_destroy_record: ! '%{record} ne peut être supprimé'
-    internal_error: Erreur de la requête (code 500, Erreur interne)
+    internal_error: Erreur de la requête
+    error_500: (code 500, Erreur interne)
     version_inconsistency: Version incomplète - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer.
     record_not_saved: Impossible d'enregistrer l'enregistrement à cause d'une erreur inconnue
     no_authorization_for_action: Aucune autorisation pour l'action %{action}

@@ -4,7 +4,7 @@
     <tr>
       <td class="messages-container">
         <p class="error-message message server-error" style="display:none;">
-          <%= as_(:internal_error).html_safe %>
+          <%= as_(:internal_error).html_safe %><span class="error-500"><%= as_(:error_500).html_safe %></span>
           <a href="#" class="close" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
         </p>
         <div id="<%= active_scaffold_messages_id -%>" class="action-messages">

@@ -120,7 +120,8 @@ ja:
           other: ! '%{count} errors prohibited this %{model} from being saved'
         body: ! 'There were problems with the following fields:'
     cant_destroy_record: ! '%{record}を削除で来ません'
-    internal_error: ! 'リクエストが失敗しました（コード500: 内部エラー）'
+    internal_error: ! 'リクエストが失敗しました'
+    error_500: ! '（コード500: 内部エラー）'
     version_inconsistency: バージョンが一致しません - あなたが編集している間にこのレコードが変更されました。
     no_authorization_for_action: 
     'null': 'Null'

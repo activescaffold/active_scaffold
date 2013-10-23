@@ -122,7 +122,8 @@ es:
           other: No se pudo guardar %{model} debido a %{count} errores.
         body: ! 'Hubo problemas con los siguientes campos:'
     cant_destroy_record: No se pudo borrar %{record}
-    internal_error: Petición fallida (código 500, error interno)
+    internal_error: Petición fallida
+    error_500: (código 500, error interno)
     version_inconsistency: Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo.
     record_not_saved: Fallo guardando el registro debido a un error desconocido
     no_authorization_for_action: No dispone de autorización para la acción %{action}
