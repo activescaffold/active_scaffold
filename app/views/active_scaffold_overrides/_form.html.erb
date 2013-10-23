@@ -7,14 +7,16 @@
   <% columns.each :for => @record, :crud_type => (:read if show_unauthorized_columns) do |column| %>
   <% column_css_class = column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %>
   <% renders_as = column_renders_as(column) %>
-  <% authorized = show_unauthorized_columns ? @record.authorized_for?(:crud_type => form_action, :column => column.name) : true unless renders_as == :subsection %>
+  <% authorized = show_unauthorized_columns || renders_as == :subsection ? @record.authorized_for?(:crud_type => form_action, :column => column.name) : true %>
   <% if renders_as == :subsection -%>
+  <% if authorized %>
     <% subsection_id = sub_section_id(:sub_section => column.label) %>
   <li class="sub-section <%= column_css_class %>">
     <h5><%= column.label %></h5>
     <%= render :partial => 'form', :locals => { :columns => column, :subsection_id => subsection_id, :form_action => form_action, :scope => scope } %>
     <%= link_to_visibility_toggle(subsection_id, {:default_visible => !column.collapsed}) -%>
   </li>
+  <% end %>
   <% elsif renders_as == :subform and authorized -%>
   <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column_css_class %> <%=column.name%>-sub-form" id="<%= sub_form_id(:association => column.name) %>">
     <%= render_column(column, @record, renders_as, scope) %>
