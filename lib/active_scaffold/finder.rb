@@ -351,13 +351,13 @@ module ActiveScaffold
       finder_options
     end
 
-    def count_items(find_options = {}, count_includes = nil)
+    def count_items(query, find_options = {}, count_includes = nil)
       count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
       options = find_options.reject{|k,v| [:select, :reorder].include? k}
       options[:includes] = count_includes
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count = append_to_query(beginning_of_chain, options).count
+      count = append_to_query(query, options).count
   
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
@@ -373,23 +373,24 @@ module ActiveScaffold
       options[:page] ||= 1
 
       find_options = finder_options(options)
-      if Rails::VERSION::MAJOR >= 4
-        query.distinct_value = true if find_options[:outer_joins].present?
-      else
-        query = query.where(nil).uniq if find_options[:outer_joins].present? # where(nil) is needed because calling uniq on associations (nested scaffolds) send SQL to DB
+      query = beginning_of_chain.where(nil) # where(nil) is needed because we need a relation
+      if find_options[:outer_joins].present?
+        if Rails::VERSION::MAJOR >= 4
+          query.distinct_value = true 
+        else
+          query = query.uniq if find_options[:outer_joins].present?
+        end
       end
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       if options[:pagination] && options[:pagination] != :infinite
-        count = count_items(find_options, options[:count_includes])
+        count = count_items(query, find_options, options[:count_includes])
       end
 
-      query = append_to_query(beginning_of_chain, find_options)
+      query = append_to_query(query, find_options)
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          # where(nil) is called to ensure we get a relation because beginning_of_chain can return a klass or a relation
-          query = query.where(nil)
           calculate_last_modified(query)
           sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)
           sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
