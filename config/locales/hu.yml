@@ -120,7 +120,8 @@ hu:
           other: ! '%{count} errors prohibited this %{model} from being saved'
         body: ! 'There were problems with the following fields:'
     cant_destroy_record: ! 'nem törölhető: %{record}'
-    internal_error: A lekérés sikertelen (code 500, Internal Error)
+    internal_error: A lekérés sikertelen
+    error_500: (code 500, Internal Error)
     version_inconsistency: Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni.
     no_authorization_for_action: 
     'null': 'Null'

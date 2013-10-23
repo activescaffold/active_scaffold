@@ -78,11 +78,11 @@ jQuery(document).ready(function($) {
     }
     return true;
   });
-  jQuery(document).on('ajax:complete', 'a.as_action', function(event, xhr) {
+  jQuery(document).on('ajax:success', 'a.as_action', function(event, response) {
     var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
     if (action_link) {
       if (action_link.position) {
-        action_link.insert(xhr.responseText);
+        action_link.insert(response);
         if (action_link.hide_target) action_link.target.hide();
       } else {
         action_link.enable();
@@ -114,7 +114,7 @@ jQuery(document).ready(function($) {
     }
     return true;
   });
-  jQuery(document).on('ajax:complete', 'a.as_cancel', function(event, xhr) {
+  jQuery(document).on('ajax:success', 'a.as_cancel', function(event) {
     var action_link = ActiveScaffold.find_action_link(jQuery(this));
 
     if (action_link && action_link.position) {
@@ -139,6 +139,7 @@ jQuery(document).ready(function($) {
   jQuery(document).on('ajax:error', 'a.as_sort', function(event, xhr, status, error) {
     var as_scaffold = jQuery(this).closest('.active-scaffold');
     ActiveScaffold.report_500_response(as_scaffold, xhr);
+    jQuery(this).closest('th').removeClass('loading');
     return true;
   });
   jQuery(document).on('mouseenter mouseleave', 'td.in_place_editor_field', function(event) {
@@ -583,13 +584,14 @@ var ActiveScaffold = {
     this.remove(record);
   },
 
-  report_500_response: function(active_scaffold_id) {
+  report_500_response: function(active_scaffold_id, xhr) {
     var server_error = jQuery(active_scaffold_id).find('td.messages-container p.server-error').first();
     if (server_error.is(':visible')) {
       ActiveScaffold.highlight(server_error);
     } else {
       server_error.show();
     }
+    if (xhr) server_error.find('.error-500')[xhr.status < 500 ? 'hide' : 'show']();
     ActiveScaffold.scroll_to(server_error, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
   },
   
