@@ -40,7 +40,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
 
     def initialize_copy(other)
-      @conditions = @conditions.dup
+      @conditions = @conditions.try(:dup) || []
       super
     end
 
