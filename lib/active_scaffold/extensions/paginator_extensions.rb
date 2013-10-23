@@ -4,13 +4,17 @@ class Paginator
 
   # Total number of pages
   def number_of_pages_with_infinite
-    number_of_pages_without_infinite unless infinite?
+    number_of_pages_without_infinite if @count
   end
   alias_method_chain :number_of_pages, :infinite
   
   # Is this an "infinite" paginator
   def infinite?
     @count.nil?
+  end
+
+  def count
+    @count || first.items.size
   end
   
   class Page
