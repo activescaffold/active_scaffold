@@ -69,12 +69,10 @@ module ActiveScaffold
     @@js_config ||= {:scroll_on_close => :checkInViewport}
   end
 
-  # exclude bridges you do not need
+  # exclude bridges you do not need, add to an initializer
   # name of bridge subdir should be used to exclude it
   # eg
   #   ActiveScaffold.exclude_bridges = [:cancan, :ancestry]
-  #   if you are using Activescaffold as a gem add to initializer
-  #   if you are using Activescaffold as a plugin add to active_scaffold_env.rb
   def self.exclude_bridges=(bridges)
     @@exclude_bridges = bridges
   end
