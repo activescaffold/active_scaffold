@@ -357,12 +357,11 @@ module ActiveScaffold
       options[:includes] = count_includes
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count_query = append_to_query(beginning_of_chain, options)
-      count = Rails::VERSION::MAJOR < 4 ? count_query.count(:distinct => true) : count_query.distinct.count
+      count = append_to_query(beginning_of_chain, options).count
   
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
-      count = count.length if count.is_a?(Hash) || count.is_a?(ActiveSupport::OrderedHash)
+      count = count.length if count.is_a?(Hash) || count.is_a?(ActiveSupport::OrderedHash) # TODO remove OrderedHash check when ruby 1.8 or rails3 support is removed
       count
     end
 
@@ -374,6 +373,11 @@ module ActiveScaffold
       options[:page] ||= 1
 
       find_options = finder_options(options)
+      if Rails::VERSION::MAJOR >= 4
+        query.distinct_value = true if find_options[:outer_joins].present?
+      else
+        query = query.where(nil).uniq if find_options[:outer_joins].present? # where(nil) is needed because calling uniq on associations (nested scaffolds) send SQL to DB
+      end
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       if options[:pagination] && options[:pagination] != :infinite
@@ -381,11 +385,6 @@ module ActiveScaffold
       end
 
       query = append_to_query(beginning_of_chain, find_options)
-      if Rails::VERSION::MAJOR >= 4
-        query.distinct_value = true if find_options[:outer_joins].present?
-      else
-        query = query.where(nil).uniq if find_options[:outer_joins].present? # where(nil) is needed because calling uniq on associations (nested scaffolds) send SQL to DB
-      end
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
