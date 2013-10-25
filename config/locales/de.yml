@@ -1,132 +1,136 @@
-de:
-  time:
-    formats:
-      picker: ! '%d.%m.%Y %H:%M'
-  active_scaffold:
+de: 
+  active_scaffold: 
+    ? "!="
+    : "!="
+    <: <
+    <=: <=
+    ? ">"
+    : ">"
+    ? ">="
+    : ">="
+    _select_: "- Auswählen -"
+    _to_: " zu "
     add: Hinzufügen
-    add_existing: Existierenden Eintrag hinzufügen
-    add_existing_model: Existierende %{model} hinzufügen
+    add_existing: "Existierenden Eintrag hinzufügen"
+    add_existing_model: "Existierende %{model} hinzufügen"
     apply: Apply
-    are_you_sure_to_delete: Sind Sie sicher?
+    are_you_sure_to_delete: "Sind Sie sicher?"
     average: Average
+    begins_with: Beginnt
+    between: Zwischen
     cancel: Abbrechen
-    click_to_edit: Zum Editieren anklicken
+    cant_destroy_record: "%{record} kann nicht gelöscht werden"
+    click_to_edit: "Zum Editieren anklicken"
     click_to_reset: Reset
     close: Schließen
     config_list: Konfigurieren
-    config_list_model: Konfiguriere Spalten für %{model}
-    create: Anlegen
-    create_model: Lege %{model} an
-    create_another: Weitere anlegen
-    created_model: ! '%{model} angelegt'
-    create_new: Neu anlegen
-    customize: Anpassen
-    delete: Löschen
-    deleted_model: ! '%{model} gelöscht'
-    delimiter: Trennzeichen
-    download: Download
-    edit: Bearbeiten
-    export: Exportieren
-    nested_for_model: ! '%{nested_model} für %{parent_model}'
-    nested_of_model: ! '%{nested_model} von %{parent_model}'
-    'false': 'False'
-    filtered: (Gefiltert)
-    found: Gefunden
-    hide: (Verstecken)
-    inplace_edit_handle: --
-    live_search: Live-Suche
-    loading: Lade…
-    mark_all_records: Mark all
-    maximum: Maximum
-    minimum: Minimum
-    next: Vor
-    no_entries: Keine Einträge
-    no_options: Keine Optionen
-    omit_header: Lasse Header weg
-    options: Optionen
-    pdf: PDF
-    previous: Zurück
-    print: Drucken
-    records_marked:
-      one: 1 marked %{model}
-      other: ! '%{count} marked %{model}'
-    refresh: Neu laden
-    remove: Entfernen
-    remove_file: Entferne oder Ersetze Datei
-    replace_existing: Existierenden ersetzen
-    replace_with_new: Mit Neuer ersetzen
-    revisions_for_model: Revisionen für %{model}
-    reset: Zurücksetzen
-    saving: Speichern…
-    search: Suche
-    search_terms: Suchbegriffe
-    _select_: ! '- Auswählen -'
-    show: Anzeigen
-    show_block: (Anzeigen)
-    show_model: Zeige %{model} an
-    sum: Sum
-    _to_: ! ' zu '
-    'true': 'True'
-    update: Speichern
-    update_model: Editiere %{model}
-    updated_model: ! '%{model} aktualisiert'
-    =: =
-    ! '>=': ! '>='
-    <=: <=
-    ! '>': ! '>'
-    <: <
-    ! '!=': ! '!='
-    between: Zwischen
+    config_list_model: "Konfiguriere Spalten für %{model}"
     contains: Enthält
-    begins_with: Beginnt
-    ends_with: Endet
-    today: Heute
-    yesterday: Gestern
-    tomorrow: Morgen
-    this_week: Diese Woche
-    prev_week: Letzte Woche
-    next_week: Nächste Woche
-    this_month: Diesen Monat
-    prev_month: Letzten Monat
-    next_month: Nächsten Monat
-    this_year: Dieses Jahr
-    prev_year: Letztes Jahr
-    next_year: Nächstes Jahr
-    past: Letzten
-    future: Nächsten
-    range: Zeitraum
-    seconds: Sekunden
-    minutes: Minuten
-    hours: Stunden
-    days: Tage
-    weeks: Wochen
-    months: Monate
-    years: Jahre
-    optional_attributes: Weitere
-    :null: 'Null'
-    not_null: Nicht Null
-    date_picker_options:
-      weekHeader: Wo
+    create: Anlegen
+    create_another: "Weitere anlegen"
+    create_model: "Lege %{model} an"
+    create_new: "Neu anlegen"
+    created_model: "%{model} angelegt"
+    customize: Anpassen
+    date_picker_options: 
       firstDay: 1
       isRTL: false
       showMonthAfterYear: false
-    datetime_picker_options:
-      timeText: Uhrzeit
-      currentText: Jetzt
+      weekHeader: Wo
+    datetime_picker_options: 
       closeText: Schließen
-    human_conditions:
-      boolean: ! '%{column} = %{value}'
-      association: ! '%{column} = %{value}'
-    errors:
-      template:
-        header:
-          one: ! 'Konnte %{model} nicht speichern: ein Fehler.'
-          other: ! 'Konnte %{model} nicht speichern: %{count} Fehler.'
-        body: ! 'Bitte überprüfen Sie die folgenden Felder:'
-    cant_destroy_record: ! '%{record} kann nicht gelöscht werden'
-    internal_error: Fehler bei der Verarbeitung
-    error_500: (code 500, Interner Fehler)
-    version_inconsistency: Inkonsistente Versionen - dieser Eintrag wurde verändert nachdem Sie mit der Bearbeitung begonnen haben.
-    record_not_saved: Eintrag kann nicht gespeichert werden. Ursache unbekannt.
-    no_authorization_for_action: Keine Berechtigung für Aktion %{action}
-    'null': 'Null'
+      currentText: Jetzt
+      timeText: Uhrzeit
+    days: Tage
+    delete: Löschen
+    deleted_model: "%{model} gelöscht"
+    delimiter: Trennzeichen
+    download: Download
+    edit: Bearbeiten
+    ends_with: Endet
+    error_500: "(code 500, Interner Fehler)"
+    errors: 
+      template: 
+        body: "Bitte überprüfen Sie die folgenden Felder:"
+        header: 
+          one: "Konnte %{model} nicht speichern: ein Fehler."
+          other: "Konnte %{model} nicht speichern: %{count} Fehler."
+    export: Exportieren
+    ? "false"
+    : "False"
+    filtered: (Gefiltert)
+    found: Gefunden
+    future: Nächsten
+    hide: (Verstecken)
+    hours: Stunden
+    human_conditions: 
+      association: "%{column} = %{value}"
+      boolean: "%{column} = %{value}"
+    inplace_edit_handle: "--"
+    internal_error: "Fehler bei der Verarbeitung"
+    live_search: Live-Suche
+    loading: Lade…
+    mark_all_records: "Mark all"
+    maximum: Maximum
+    minimum: Minimum
+    minutes: Minuten
+    months: Monate
+    nested_for_model: "%{nested_model} für %{parent_model}"
+    nested_of_model: "%{nested_model} von %{parent_model}"
+    next: Vor
+    next_month: "Nächsten Monat"
+    next_week: "Nächste Woche"
+    next_year: "Nächstes Jahr"
+    no_authorization_for_action: "Keine Berechtigung für Aktion %{action}"
+    no_entries: "Keine Einträge"
+    no_options: "Keine Optionen"
+    not_null: "Nicht Null"
+    ? "null"
+    : "Null"
+    omit_header: "Lasse Header weg"
+    optional_attributes: Weitere
+    options: Optionen
+    past: Letzten
+    pdf: PDF
+    prev_month: "Letzten Monat"
+    prev_week: "Letzte Woche"
+    prev_year: "Letztes Jahr"
+    previous: Zurück
+    print: Drucken
+    range: Zeitraum
+    record_not_saved: "Eintrag kann nicht gespeichert werden. Ursache unbekannt."
+    records_marked: 
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
+    refresh: "Neu laden"
+    remove: Entfernen
+    remove_file: "Entferne oder Ersetze Datei"
+    replace_existing: "Existierenden ersetzen"
+    replace_with_new: "Mit Neuer ersetzen"
+    reset: Zurücksetzen
+    revisions_for_model: "Revisionen für %{model}"
+    saving: Speichern…
+    search: Suche
+    search_terms: Suchbegriffe
+    seconds: Sekunden
+    show: Anzeigen
+    show_block: (Anzeigen)
+    show_model: "Zeige %{model} an"
+    sum: Sum
+    this_month: "Diesen Monat"
+    this_week: "Diese Woche"
+    this_year: "Dieses Jahr"
+    today: Heute
+    tomorrow: Morgen
+    ? "true"
+    : "True"
+    update: Speichern
+    update_model: "Editiere %{model}"
+    updated_model: "%{model} aktualisiert"
+    version_inconsistency: "Inkonsistente Versionen - dieser Eintrag wurde verändert nachdem Sie mit der Bearbeitung begonnen haben."
+    weeks: Wochen
+    years: Jahre
+    yesterday: Gestern
+  time: 
+    formats: 
+      picker: "%d.%m.%Y %H:%M"

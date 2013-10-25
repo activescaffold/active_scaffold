@@ -1,132 +1,136 @@
-en:
-  time:
-    formats:
-      picker: ! '%a, %d %b %Y %H:%M:%S'
-  active_scaffold:
+en: 
+  active_scaffold: 
+    ? "!="
+    : "!="
+    <: <
+    <=: <=
+    ? ">"
+    : ">"
+    ? ">="
+    : ">="
+    _select_: "- select -"
+    _to_: " to "
     add: Add
-    add_existing: Add Existing
-    add_existing_model: Add Existing %{model}
+    add_existing: "Add Existing"
+    add_existing_model: "Add Existing %{model}"
     apply: Apply
-    are_you_sure_to_delete: Are you sure you want to delete %{label}?
+    are_you_sure_to_delete: "Are you sure you want to delete %{label}?"
     average: Average
+    begins_with: "Begins with"
+    between: Between
     cancel: Cancel
-    click_to_edit: Click to edit
-    click_to_reset: Click to reset
+    cant_destroy_record: "%{record} can't be destroyed"
+    click_to_edit: "Click to edit"
+    click_to_reset: "Click to reset"
     close: Close
     config_list: Configure
-    config_list_model: Configure Columns for %{model}
-    create: Create
-    create_model: Create %{model}
-    create_another: Create Another %{model}
-    created_model: Created %{model}
-    create_new: Create New
-    customize: Customize
-    delete: Delete
-    deleted_model: Deleted %{model}
-    delimiter: Delimiter
-    download: Download
-    edit: Edit
-    export: Export
-    nested_for_model: ! '%{nested_model} for %{parent_model}'
-    nested_of_model: ! '%{nested_model} of %{parent_model}'
-    'false': 'False'
-    filtered: (Filtered)
-    found: Found
-    hide: (Hide)
-    inplace_edit_handle: --
-    live_search: Live Search
-    loading: Loading…
-    mark_all_records: Mark all
-    maximum: Maximum
-    minimum: Minimum
-    next: Next
-    no_entries: No Entries
-    no_options: no options
-    omit_header: Omit Header
-    options: Options
-    pdf: PDF
-    previous: Previous
-    print: Print
-    records_marked:
-      one: 1 marked %{model}
-      other: ! '%{count} marked %{model}'
-    refresh: Refresh
-    remove: Remove
-    remove_file: Remove or Replace file
-    replace_existing: Replace Existing
-    replace_with_new: Replace With New
-    revisions_for_model: Revisions for %{model}
-    reset: Reset
-    saving: Saving…
-    search: Search
-    search_terms: Search Terms
-    _select_: ! '- select -'
-    show: Show
-    show_block: (Show)
-    show_model: Show %{model}
-    sum: Sum
-    _to_: ! ' to '
-    'true': 'True'
-    update: Update
-    update_model: Update %{model}
-    updated_model: Updated %{model}
-    =: =
-    ! '>=': ! '>='
-    <=: <=
-    ! '>': ! '>'
-    <: <
-    ! '!=': ! '!='
-    between: Between
+    config_list_model: "Configure Columns for %{model}"
     contains: Contains
-    begins_with: Begins with
-    ends_with: Ends with
-    today: Today
-    yesterday: Yesterday
-    tomorrow: Tomorrow
-    this_week: This Week
-    prev_week: Last Week
-    next_week: Next Week
-    this_month: This Month
-    prev_month: Last Month
-    next_month: Next Month
-    this_year: This Year
-    prev_year: Last Year
-    next_year: Next Year
-    past: Past
-    future: Future
-    range: Range
-    seconds: Seconds
-    minutes: Minutes
-    hours: Hours
-    days: Days
-    weeks: Weeks
-    months: Months
-    years: Years
-    optional_attributes: Further Options
-    :null: 'Null'
-    not_null: Not Null
-    date_picker_options:
-      weekHeader: Wk
+    create: Create
+    create_another: "Create Another %{model}"
+    create_model: "Create %{model}"
+    create_new: "Create New"
+    created_model: "Created %{model}"
+    customize: Customize
+    date_picker_options: 
       firstDay: 0
       isRTL: false
       showMonthAfterYear: false
-    datetime_picker_options:
+      weekHeader: Wk
+    datetime_picker_options: 
       closeText: Close
       currentText: Now
       timeText: Hour
-    human_conditions:
-      boolean: ! '%{column} = %{value}'
-      association: ! '%{column} = %{value}'
-    errors:
-      template:
-        header:
-          one: 1 error prohibited this %{model} from being saved.
-          other: ! '%{count} errors prohibited this %{model} from being saved'
-        body: ! 'There were problems with the following fields:'
-    cant_destroy_record: ! '%{record} can''t be destroyed'
-    internal_error: Request Failed
-    error_500: (code 500, Internal Error)
-    version_inconsistency: Version inconsistency - this record has been modified since you started editing it.
-    record_not_saved: Failed to save record cause of an unknown error
-    no_authorization_for_action: No Authorization for action %{action}
-    'null': 'Null'
+    days: Days
+    delete: Delete
+    deleted_model: "Deleted %{model}"
+    delimiter: Delimiter
+    download: Download
+    edit: Edit
+    ends_with: "Ends with"
+    error_500: "(code 500, Internal Error)"
+    errors: 
+      template: 
+        body: "There were problems with the following fields:"
+        header: 
+          one: "1 error prohibited this %{model} from being saved."
+          other: "%{count} errors prohibited this %{model} from being saved"
+    export: Export
+    ? "false"
+    : "False"
+    filtered: (Filtered)
+    found: Found
+    future: Future
+    hide: (Hide)
+    hours: Hours
+    human_conditions: 
+      association: "%{column} = %{value}"
+      boolean: "%{column} = %{value}"
+    inplace_edit_handle: "--"
+    internal_error: "Request Failed"
+    live_search: "Live Search"
+    loading: Loading…
+    mark_all_records: "Mark all"
+    maximum: Maximum
+    minimum: Minimum
+    minutes: Minutes
+    months: Months
+    nested_for_model: "%{nested_model} for %{parent_model}"
+    nested_of_model: "%{nested_model} of %{parent_model}"
+    next: Next
+    next_month: "Next Month"
+    next_week: "Next Week"
+    next_year: "Next Year"
+    no_authorization_for_action: "No Authorization for action %{action}"
+    no_entries: "No Entries"
+    no_options: "no options"
+    not_null: "Not Null"
+    ? "null"
+    : "Null"
+    omit_header: "Omit Header"
+    optional_attributes: "Further Options"
+    options: Options
+    past: Past
+    pdf: PDF
+    prev_month: "Last Month"
+    prev_week: "Last Week"
+    prev_year: "Last Year"
+    previous: Previous
+    print: Print
+    range: Range
+    record_not_saved: "Failed to save record cause of an unknown error"
+    records_marked: 
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
+    refresh: Refresh
+    remove: Remove
+    remove_file: "Remove or Replace file"
+    replace_existing: "Replace Existing"
+    replace_with_new: "Replace With New"
+    reset: Reset
+    revisions_for_model: "Revisions for %{model}"
+    saving: Saving…
+    search: Search
+    search_terms: "Search Terms"
+    seconds: Seconds
+    show: Show
+    show_block: (Show)
+    show_model: "Show %{model}"
+    sum: Sum
+    this_month: "This Month"
+    this_week: "This Week"
+    this_year: "This Year"
+    today: Today
+    tomorrow: Tomorrow
+    ? "true"
+    : "True"
+    update: Update
+    update_model: "Update %{model}"
+    updated_model: "Updated %{model}"
+    version_inconsistency: "Version inconsistency - this record has been modified since you started editing it."
+    weeks: Weeks
+    years: Years
+    yesterday: Yesterday
+  time: 
+    formats: 
+      picker: "%a, %d %b %Y %H:%M:%S"
