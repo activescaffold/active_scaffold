@@ -8,6 +8,7 @@ en:
     add_existing_model: Add Existing %{model}
     apply: Apply
     are_you_sure_to_delete: Are you sure you want to delete %{label}?
+    average: Average
     cancel: Cancel
     click_to_edit: Click to edit
     click_to_reset: Click to reset
@@ -36,6 +37,8 @@ en:
     live_search: Live Search
     loading: Loading…
     mark_all_records: Mark all
+    maximum: Maximum
+    minimum: Minimum
     next: Next
     no_entries: No Entries
     no_options: no options
@@ -61,6 +64,7 @@ en:
     show: Show
     show_block: (Show)
     show_model: Show %{model}
+    sum: Sum
     _to_: ! ' to '
     'true': 'True'
     update: Update
