@@ -8,6 +8,7 @@ es:
     add_existing_model: Añadir %{model} Existente
     apply: Aplicar
     are_you_sure_to_delete: ¿Estás seguro de que quieres borrar %{label}?
+    average: Average
     cancel: Cancelar
     click_to_edit: Pulsa para editar
     click_to_reset: Pulsa para restaurar
@@ -36,6 +37,8 @@ es:
     live_search: Buscar en Vivo
     loading: Cargando…
     mark_all_records: Seleccionar todos
+    maximum: Maximum
+    minimum: Minimum
     nested_for_model: ! '%{nested_model} de %{parent_model}'
     nested_of_model: ! '%{nested_model} de %{parent_model}'
     next: Siguiente
@@ -63,6 +66,7 @@ es:
     show: Ver
     show_block: (Ver)
     show_model: Ver %{model}
+    sum: Sum
     _to_: ! ' a '
     'true': Sí
     update: Actualizar

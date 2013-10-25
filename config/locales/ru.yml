@@ -8,6 +8,7 @@ ru:
     add_existing_model: ! '%{model}: добавить существующую запись'
     apply: Применить
     are_you_sure_to_delete: Удалить %{label}?
+    average: Среднее
     cancel: Отмена
     click_to_edit: Нажмите для редактирования
     click_to_reset: Нажмите для сброса
@@ -40,6 +41,8 @@ ru:
     live_search: Поиск
     loading: Загрузка…
     mark_all_records: Отметить все
+    maximum: Максимум
+    minimum: Минимум
     next: Следующее
     no_entries: Нет записей
     no_options: Нет вариантов
@@ -67,6 +70,7 @@ ru:
     show: Показать
     show_block: (Показать)
     show_model: ! '%{model}: показать запись'
+    sum: Сумма
     _to_: ! ' to '
     'true': Да
     update: Обновить запись
@@ -113,9 +117,9 @@ ru:
       isRTL: false
       showMonthAfterYear: false
     datetime_picker_options:
-      closeText: 
-      currentText: 
-      timeText: 
+      closeText:
+      currentText:
+      timeText:
     human_conditions:
       boolean: ! '%{column} = %{value}'
       association: ! '%{column} = %{value}'

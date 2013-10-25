@@ -7,7 +7,8 @@ hu:
     add_existing: Meglevő hozzáadása
     add_existing_model: Meglevő %{model} hozzáadása
     apply: Apply
-    are_you_sure_to_delete: 
+    are_you_sure_to_delete:
+    average: Average
     cancel: Mégse
     click_to_edit: Kattints a szerkesztéshez
     click_to_reset: Kattints az alapállapothoz
@@ -16,7 +17,7 @@ hu:
     config_list_model: Configure Columns for %{model}
     create: Létrehozás
     create_model: ! '%{model} létrehozása'
-    create_another: 
+    create_another:
     created_model: ! '%{model} létrehozva'
     create_new: Új létrehozása
     customize: Testreszabás
@@ -36,6 +37,8 @@ hu:
     live_search: Élő keresés
     loading: Betöltés…
     mark_all_records: Mark all
+    maximum: Maximum
+    minimum: Minimum
     next: Következő
     no_entries: Nincs elem
     no_options: nincsenek opciók
@@ -61,6 +64,7 @@ hu:
     show: Mutatás
     show_block: (Mutatás)
     show_model: ! '%{model} mutatása'
+    sum: Sum
     _to_: ! ' – '
     'true': 'True'
     update: Modosítás
@@ -107,9 +111,9 @@ hu:
       isRTL: false
       showMonthAfterYear: false
     datetime_picker_options:
-      closeText: 
-      currentText: 
-      timeText: 
+      closeText:
+      currentText:
+      timeText:
     human_conditions:
       boolean: ! '%{column} = %{value}'
       association: ! '%{column} = %{value}'
@@ -123,6 +127,6 @@ hu:
     internal_error: A lekérés sikertelen
     error_500: (code 500, Internal Error)
     version_inconsistency: Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni.
-    no_authorization_for_action: 
+    no_authorization_for_action:
     'null': 'Null'
-    record_not_saved: 
+    record_not_saved:
