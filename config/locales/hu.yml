@@ -1,132 +1,136 @@
-hu:
-  time:
-    formats:
-      picker: ! '%a, %d %b %Y %H:%M:%S'
-  active_scaffold:
+hu: 
+  active_scaffold: 
+    ? "!="
+    : "!="
+    <: <
+    <=: <=
+    ? ">"
+    : ">"
+    ? ">="
+    : ">="
+    _select_: "- válassz -"
+    _to_: " – "
     add: Hozzáadás
-    add_existing: Meglevő hozzáadása
-    add_existing_model: Meglevő %{model} hozzáadása
+    add_existing: "Meglevő hozzáadása"
+    add_existing_model: "Meglevő %{model} hozzáadása"
     apply: Apply
-    are_you_sure_to_delete:
+    are_you_sure_to_delete: "Are you sure you want to delete %{label}?"
     average: Average
+    begins_with: "Begins with"
+    between: Között
     cancel: Mégse
-    click_to_edit: Kattints a szerkesztéshez
-    click_to_reset: Kattints az alapállapothoz
+    cant_destroy_record: "nem törölhető: %{record}"
+    click_to_edit: "Kattints a szerkesztéshez"
+    click_to_reset: "Kattints az alapállapothoz"
     close: Bezárás
     config_list: Configure
-    config_list_model: Configure Columns for %{model}
-    create: Létrehozás
-    create_model: ! '%{model} létrehozása'
-    create_another:
-    created_model: ! '%{model} létrehozva'
-    create_new: Új létrehozása
-    customize: Testreszabás
-    delete: Törlés
-    deleted_model: ! '%{model} törölve'
-    delimiter: Elválasztó
-    download: Letöltés
-    edit: Szerkesztés
-    export: Exportálás
-    nested_for_model: ! '%{nested_model} / %{parent_model}'
-    nested_of_model: ! '%{nested_model} of %{parent_model}'
-    'false': 'False'
-    filtered: (Szűrt)
-    found: Találat
-    hide: (Elrejtés)
-    inplace_edit_handle: --
-    live_search: Élő keresés
-    loading: Betöltés…
-    mark_all_records: Mark all
-    maximum: Maximum
-    minimum: Minimum
-    next: Következő
-    no_entries: Nincs elem
-    no_options: nincsenek opciók
-    omit_header: Fejléc mellőzése
-    options: Opciók
-    pdf: PDF
-    previous: Előző
-    print: Nyomtatás
-    records_marked:
-      one: 1 marked %{model}
-      other: ! '%{count} marked %{model}'
-    refresh: Frissítés
-    remove: Törlés
-    remove_file: Fájl törlése, vagy cseréje
-    replace_existing: Replace existing
-    replace_with_new: Csere újjal
-    revisions_for_model: ! '%{model} revíziói'
-    reset: Alapállapot
-    saving: Mentés…
-    search: Keresés
-    search_terms: Keresési kifejezések
-    _select_: ! '- válassz -'
-    show: Mutatás
-    show_block: (Mutatás)
-    show_model: ! '%{model} mutatása'
-    sum: Sum
-    _to_: ! ' – '
-    'true': 'True'
-    update: Modosítás
-    update_model: ! '%{model} modosítása'
-    updated_model: ! '%{model} módosítva'
-    =: =
-    ! '>=': ! '>='
-    <=: <=
-    ! '>': ! '>'
-    <: <
-    ! '!=': ! '!='
-    between: Között
+    config_list_model: "Configure Columns for %{model}"
     contains: Contains
-    begins_with: Begins with
-    ends_with: Ends with
-    today: Today
-    yesterday: Yesterday
-    tomorrow: Tommorrow
-    this_week: This Week
-    prev_week: Last Week
-    next_week: Next Week
-    this_month: This Month
-    prev_month: Last Month
-    next_month: Next Month
-    this_year: This Year
-    prev_year: Last Year
-    next_year: Next Year
-    past: Past
-    future: Future
-    range: Range
-    seconds: Seconds
-    minutes: Minutes
-    hours: Hours
-    days: Days
-    weeks: Weeks
-    months: Months
-    years: Years
-    optional_attributes: Further Options
-    :null: 'Null'
-    not_null: Not Null
-    date_picker_options:
-      weekHeader: Wk
+    create: Létrehozás
+    create_another: "Create Another %{model}"
+    create_model: "%{model} létrehozása"
+    create_new: "Új létrehozása"
+    created_model: "%{model} létrehozva"
+    customize: Testreszabás
+    date_picker_options: 
       firstDay: 0
       isRTL: false
       showMonthAfterYear: false
-    datetime_picker_options:
-      closeText:
-      currentText:
-      timeText:
-    human_conditions:
-      boolean: ! '%{column} = %{value}'
-      association: ! '%{column} = %{value}'
-    errors:
-      template:
-        header:
-          one: 1 error prohibited this %{model} from being saved.
-          other: ! '%{count} errors prohibited this %{model} from being saved'
-        body: ! 'There were problems with the following fields:'
-    cant_destroy_record: ! 'nem törölhető: %{record}'
-    internal_error: A lekérés sikertelen
-    error_500: (code 500, Internal Error)
-    version_inconsistency: Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni.
-    no_authorization_for_action:
-    'null': 'Null'
-    record_not_saved:
+      weekHeader: Wk
+    datetime_picker_options: 
+      closeText: ~
+      currentText: ~
+      timeText: ~
+    days: Days
+    delete: Törlés
+    deleted_model: "%{model} törölve"
+    delimiter: Elválasztó
+    download: Letöltés
+    edit: Szerkesztés
+    ends_with: "Ends with"
+    error_500: "(code 500, Internal Error)"
+    errors: 
+      template: 
+        body: "There were problems with the following fields:"
+        header: 
+          one: "1 error prohibited this %{model} from being saved."
+          other: "%{count} errors prohibited this %{model} from being saved"
+    export: Exportálás
+    ? "false"
+    : "False"
+    filtered: (Szűrt)
+    found: Találat
+    future: Future
+    hide: (Elrejtés)
+    hours: Hours
+    human_conditions: 
+      association: "%{column} = %{value}"
+      boolean: "%{column} = %{value}"
+    inplace_edit_handle: "--"
+    internal_error: "A lekérés sikertelen"
+    live_search: "Élő keresés"
+    loading: Betöltés…
+    mark_all_records: "Mark all"
+    maximum: Maximum
+    minimum: Minimum
+    minutes: Minutes
+    months: Months
+    nested_for_model: "%{nested_model} / %{parent_model}"
+    nested_of_model: "%{nested_model} of %{parent_model}"
+    next: Következő
+    next_month: "Next Month"
+    next_week: "Next Week"
+    next_year: "Next Year"
+    no_authorization_for_action: "No Authorization for action %{action}"
+    no_entries: "Nincs elem"
+    no_options: "nincsenek opciók"
+    not_null: "Not Null"
+    ? "null"
+    : "Null"
+    omit_header: "Fejléc mellőzése"
+    optional_attributes: "Further Options"
+    options: Opciók
+    past: Past
+    pdf: PDF
+    prev_month: "Last Month"
+    prev_week: "Last Week"
+    prev_year: "Last Year"
+    previous: Előző
+    print: Nyomtatás
+    range: Range
+    record_not_saved: "Failed to save record cause of an unknown error"
+    records_marked: 
+      one: "1 marked %{model}"
+      other: "%{count} marked %{model}"
+    refresh: Frissítés
+    remove: Törlés
+    remove_file: "Fájl törlése, vagy cseréje"
+    replace_existing: "Replace existing"
+    replace_with_new: "Csere újjal"
+    reset: Alapállapot
+    revisions_for_model: "%{model} revíziói"
+    saving: Mentés…
+    search: Keresés
+    search_terms: "Keresési kifejezések"
+    seconds: Seconds
+    show: Mutatás
+    show_block: (Mutatás)
+    show_model: "%{model} mutatása"
+    sum: Sum
+    this_month: "This Month"
+    this_week: "This Week"
+    this_year: "This Year"
+    today: Today
+    tomorrow: Tomorrow
+    ? "true"
+    : "True"
+    update: Modosítás
+    update_model: "%{model} modosítása"
+    updated_model: "%{model} módosítva"
+    version_inconsistency: "Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni."
+    weeks: Weeks
+    years: Years
+    yesterday: Yesterday
+  time: 
+    formats: 
+      picker: "%a, %d %b %Y %H:%M:%S"
