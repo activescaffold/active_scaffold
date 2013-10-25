@@ -7,7 +7,8 @@ ja:
     add_existing: 既存のものを追加
     add_existing_model: 既存の%{model}を追加
     apply: Apply
-    are_you_sure_to_delete: 
+    are_you_sure_to_delete:
+    average: Average
     cancel: キャンセル
     click_to_edit: クリックして編集
     click_to_reset: Click to reset
@@ -16,7 +17,7 @@ ja:
     config_list_model: Configure Columns for %{model}
     create: 作成
     create_model: ! '%{model}を作成'
-    create_another: 
+    create_another:
     created_model: ! '%{model}を作成しました'
     create_new: 新規作成
     customize: カスタマイズ
@@ -36,6 +37,8 @@ ja:
     live_search: その場で検索
     loading: 読み込み中…
     mark_all_records: Mark all
+    maximum: Maximum
+    minimum: Minimum
     next: 次
     no_entries: 見つかりませんでした
     no_options: オプション無し
@@ -61,6 +64,7 @@ ja:
     show: 表示
     show_block: (表示)
     show_model: ! '%{model}を表示'
+    sum: Sum
     _to_: ! ' to '
     'true': 'True'
     update: 更新
@@ -107,9 +111,9 @@ ja:
       isRTL: false
       showMonthAfterYear: false
     datetime_picker_options:
-      closeText: 
-      currentText: 
-      timeText: 
+      closeText:
+      currentText:
+      timeText:
     human_conditions:
       boolean: ! '%{column} = %{value}'
       association: ! '%{column} = %{value}'
@@ -123,6 +127,6 @@ ja:
     internal_error: ! 'リクエストが失敗しました'
     error_500: ! '（コード500: 内部エラー）'
     version_inconsistency: バージョンが一致しません - あなたが編集している間にこのレコードが変更されました。
-    no_authorization_for_action: 
+    no_authorization_for_action:
     'null': 'Null'
-    record_not_saved: 
+    record_not_saved:
