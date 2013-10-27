@@ -1,8 +1,6 @@
 module ActiveScaffold::Config
-  # to fix the ckeditor bridge problem
+  # to fix the ckeditor bridge problem inherit from full class name
   class Core < ActiveScaffold::Config::Base
-  # code commented out (see above)
-  #class Core < Base
     # global level configuration
     # --------------------------
 

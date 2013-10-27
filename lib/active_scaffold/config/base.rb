@@ -7,6 +7,7 @@ module ActiveScaffold::Config
       @core = core_config
       @action_group = self.class.action_group.clone if self.class.action_group
     end
+    attr_reader :core
 
     def self.inherited(subclass)
       class << subclass
