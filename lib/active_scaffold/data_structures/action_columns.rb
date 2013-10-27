@@ -127,9 +127,22 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    attr_writer :constraint_columns
+    def action_name
+      @action.class.name.demodulize.underscore
+    end
+
+    def constraint_columns_key
+      "#{@action.core.model_id.to_s.underscore}-#{action_name}"
+    end
+
+    def constraint_columns=(columns)
+      Thread.current[:constraint_columns] ||= {}
+      Thread.current[:constraint_columns][constraint_columns_key] = columns
+    end
+      
     def constraint_columns
-      @constraint_columns ||= []
+      constraints = Thread.current[:constraint_columns]
+      (constraints[constraint_columns_key] if constraints) || []
     end
     
     attr_writer :unauthorized_columns
