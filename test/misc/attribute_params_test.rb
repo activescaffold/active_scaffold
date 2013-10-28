@@ -267,6 +267,7 @@ class AttributeParamsTest < Test::Unit::TestCase
       new_record = @controller.update_record_from_params(record, build_action_columns(record, action, columns), params)
       MODELS.each { |model| model.any_instance.unstub(:save) }
       yield if block_given?
+      Thread.current[:constraint_columns] = nil
     end
     new_record
   end
