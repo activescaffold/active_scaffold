@@ -374,13 +374,6 @@ module ActiveScaffold
 
       find_options = finder_options(options)
       query = beginning_of_chain.where(nil) # where(nil) is needed because we need a relation
-      if find_options[:outer_joins].present?
-        if Rails::VERSION::MAJOR >= 4
-          query.distinct_value = true 
-        else
-          query = query.uniq if find_options[:outer_joins].present?
-        end
-      end
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       if options[:pagination] && options[:pagination] != :infinite
@@ -431,10 +424,17 @@ module ActiveScaffold
     
     def append_to_query(query, options)
       options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, (:references if Rails::VERSION::MAJOR >= 4)
-      query = apply_conditions(query, *options[:conditions]) if options[:conditions]
-      options.reject{|k, v| k == :conditions || v.blank?}.inject(query) do |query, (k, v)|
-        query.send((k.to_sym), v) 
+      query = options.reject{|k,v| v.blank?}.inject(query) do |query, (k, v)|
+        k == :conditions ? apply_conditions(query, *v) : query.send(k, v)
       end
+      if options[:outer_joins].present?
+        if Rails::VERSION::MAJOR >= 4
+          query.distinct_value = true 
+        else
+          query = query.uniq
+        end
+      end
+      query
     end
 
     def joins_for_finder
