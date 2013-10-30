@@ -63,10 +63,12 @@ module ActiveScaffold::Actions
           # call update_record_from_params with new_model
           # in other case some associations can be saved
           @record = new_model
+          apply_constraints_to_record(@record)
           @record = update_record_from_params(@record, @main_columns, hash)
           @record.id = id
         else
           @record = params[:id] ? find_if_allowed(params[:id], :update) : new_model
+          apply_constraints_to_record(@record) if @record.new_record?
           value = column_value_from_param_value(@record, @column, params.delete(:value))
           @record.send "#{@column.name}=", value
         end
