@@ -220,9 +220,18 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert model.save
     assert_equal model.id, car.reload.person_id, 'person_id should be saved'
 
+    model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'First', :car => {:brand => 'Mercedes', :id => car.id.to_s})
+    assert_equal 'First', model.first_name
+    assert model.car.present?
+    assert_equal 'Mercedes', model.car.brand
+    assert_equal 'Ford', car.reload.brand, 'brand should not be saved yet'
+    assert model.save
+    assert model.save_associated
+    assert_equal 'Mercedes', car.reload.brand, 'brand should be saved'
+
     model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'First', :car => {:brand => 'Mercedes'}, :skip => Car)
     assert_equal 'First', model.first_name
-    assert_nil car.reload.person_id, 'previous car should be saved and nullified'
+    assert_nil Car.where(:id => car.id).first, 'previous car should be deleted'
     assert model.car.present?
     assert_not_equal car.id, model.car.id
     assert model.save
@@ -230,7 +239,7 @@ class AttributeParamsTest < Test::Unit::TestCase
     car = model.car.reload
     model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'Name', :car => {:brand => ''}, :skip => Car)
     assert_equal 'Name', model.first_name
-    assert_nil car.reload.person_id, 'previous car should be saved and nullified'
+    assert_nil Car.where(:id => car.id).first, 'previous car should be deleted'
     assert model.car.blank?, 'car should be cleared'
     assert model.save
   end
