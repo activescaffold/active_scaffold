@@ -60,7 +60,7 @@ module ActiveScaffold
             parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name.to_s])
           elsif attributes.has_key? column.name
             value = column_value_from_param_value(parent_record, column, attributes[column.name])
-            parent_record.send "#{column.name}=", value
+            parent_record.send "#{column.name}=", value unless column.singular_association? && parent_record.send(column.name) == value # avoid deleting record when is the same in a has_one association
           end
         rescue
           logger.error "#{$!.class.name}: #{$!.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
