@@ -72,8 +72,22 @@ module ActiveScaffold::Actions
           value = column_value_from_param_value(@record, @column, params.delete(:value))
           @record.send "#{@column.name}=", value
         end
+        set_parent(@record) if @record.new_record? && params[:parent_controller] && params[:parent_id] && params[:child_association]
         
         after_render_field(@record, @column)
+      end
+    end
+
+    def set_parent(record)
+      parent_model = params[:parent_controller].singularize.camelize.constantize
+      association = parent_model.reflect_on_association(params[:child_association].to_sym).try(:reverse)
+      if association
+        parent = parent_model.find(params[:parent_id])
+        if record.class.reflect_on_association(association).collection?
+          record.send(association) << parent
+        else
+          record.send("#{association}=", parent)
+        end
       end
     end
     
