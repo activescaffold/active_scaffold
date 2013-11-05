@@ -5,5 +5,5 @@ class Person < ActiveRecord::Base
   has_one :home, :through => :floor, :source => :building
 
   has_many :contacts, :as => :contactable
-  has_one :car
+  has_one :car, :dependent => :destroy
 end
