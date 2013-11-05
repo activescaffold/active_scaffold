@@ -68,22 +68,10 @@ module ActiveScaffold
         end
       end
 
-      if parent_record.new_record?
-        parent_record.class.reflect_on_all_associations.each do |a|
-          next unless [:has_one, :has_many].include?(a.macro) and not (a.options[:through] || a.options[:finder_sql])
-          next unless (association_proxy = parent_record.send(a.name)).present?
-
-          raise ActiveScaffold::ReverseAssociationRequired, "Association #{a.name} in class #{parent_record.class.name}: In order to support :has_one and :has_many where the parent record is new and the child record(s) validate the presence of the parent, ActiveScaffold requires the reverse association (the belongs_to)." unless a.reverse
-
-          association_proxy = [association_proxy] if a.macro == :has_one
-          association_proxy.each { |record| record.send("#{a.reverse}=", parent_record) }
-        end
-      end
-    
       flash[:warning] = parent_record.errors.to_a.join("\n") if parent_record.errors.present?
       parent_record
     end
-    
+
     def column_value_from_param_value(parent_record, column, value)
       # convert the value, possibly by instantiating associated objects
       form_ui = column.form_ui || column.column.try(:type)
