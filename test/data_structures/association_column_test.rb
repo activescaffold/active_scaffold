@@ -1,5 +1,5 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
-require File.join(File.dirname(__FILE__), '../model_stub')
+require 'test_helper'
+require 'model_stub'
 
 class AssociationColumnTest < Test::Unit::TestCase
   def setup
@@ -12,15 +12,14 @@ class AssociationColumnTest < Test::Unit::TestCase
   end
 
   def test_sorting
-    # sorting on association columns is method-based
-    hash = {:method => "other_model.to_s"}
-    assert_equal hash, @association_column.sort
+    # sorting on association columns is not defined
+    assert_equal false, @association_column.sort
   end
 
   def test_searching
     # by default searching on association columns uses primary key
     assert @association_column.searchable?
-    assert_equal '"model_stubs"."id"', @association_column.search_sql
+    assert_equal ['"model_stubs"."id"'], @association_column.search_sql
   end
 
   def test_association

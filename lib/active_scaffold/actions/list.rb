@@ -1,14 +1,19 @@
 module ActiveScaffold::Actions
   module List
     def self.included(base)
-      base.before_filter :list_authorized_filter, :only => [:index, :row]
+      base.before_filter :list_authorized_filter, :only => :index
       base.helper_method :list_columns
     end
 
     def index
-      list
+      if params[:id] && !params[:id].is_a?(Array) && request.xhr?
+        row
+      else
+        list
+      end
     end
 
+    protected
     # get just a single row
     def row
       get_row
@@ -24,17 +29,16 @@ module ActiveScaffold::Actions
       @nested_auto_open = active_scaffold_config.list.nested_auto_open
       respond_to_action(:list)
     end
-    
-    protected
+
     def list_respond_to_html
-      if embedded?
+      if loading_embedded?
         render :action => 'list', :layout => false
       else
         render :action => 'list'
       end
     end
     def list_respond_to_js
-      if params[:adapter] || embedded?
+      if params[:adapter] || loading_embedded?
         render(:partial => 'list_with_header')
       else
         render :partial => 'refresh_list', :formats => [:js]
@@ -49,11 +53,11 @@ module ActiveScaffold::Actions
     def list_respond_to_yaml
       render :text => Hash.from_xml(response_object.to_xml(:only => list_columns_names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
-    
+
     def row_respond_to_html
       render(:partial => 'row', :locals => {:record => @record})
     end
-    
+
     def row_respond_to_js
       render :action => 'row'
     end
@@ -61,10 +65,15 @@ module ActiveScaffold::Actions
     # The actual algorithm to prepare for the list view
     def set_includes_for_columns(action = :list)
       @cache_associations = true
-      includes_for_list_columns = active_scaffold_config.send(action).columns.collect{ |c| c.includes }.flatten.uniq.compact
+      columns = if respond_to?(:"#{action}_columns", true)
+        send(:"#{action}_columns")
+      else
+        active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
+      end
+      includes_for_list_columns = columns.map{ |c| c.includes }.flatten.uniq.compact
       self.active_scaffold_includes.concat includes_for_list_columns
     end
-    
+
     def get_row
       set_includes_for_columns
       klass = beginning_of_chain.includes(active_scaffold_includes)
@@ -78,12 +87,16 @@ module ActiveScaffold::Actions
       options = { :sorting => active_scaffold_config.list.user.sorting,
         :count_includes => active_scaffold_config.list.user.count_includes }
       paginate = (params[:format].nil?) ? (accepts? :html, :js) : ['html', 'js'].include?(params[:format])
-      if paginate
-        options.merge!({
-            :per_page => active_scaffold_config.list.user.per_page,
-            :page => active_scaffold_config.list.user.page,
-            :pagination => active_scaffold_config.list.pagination
-          })
+      options[:pagination] = active_scaffold_config.list.pagination if paginate
+      if options[:pagination]
+        options.merge!(
+          :per_page => active_scaffold_config.list.user.per_page,
+          :page => active_scaffold_config.list.user.page
+        )
+      end
+      if active_scaffold_config.list.auto_select_columns
+        auto_select_columns = list_columns + [active_scaffold_config.columns[active_scaffold_config.model.primary_key]]
+        options[:select] = auto_select_columns.map { |c| quoted_select_columns(c.select_columns) }.compact.flatten
       end
 
       page = find_page(options)
@@ -94,22 +107,28 @@ module ActiveScaffold::Actions
       end
       @page, @records = page, page.items
     end
-    
+
+    def quoted_select_columns(columns)
+      columns.map { |c| active_scaffold_config.columns[c].try(:field) || c } if columns
+    end
+
     def do_refresh_list
-      do_search if respond_to? :do_search
+      params.delete(:id)
+      do_search if respond_to? :do_search, true
       do_list
     end
 
     def each_record_in_page
       _page = active_scaffold_config.list.user.page
-      do_search if respond_to? :do_search
+      do_search if respond_to? :do_search, true
       active_scaffold_config.list.user.page = _page
       do_list
       @page.items.each {|record| yield record}
     end
 
     def each_record_in_scope
-      do_search if respond_to? :do_search
+      do_search if respond_to? :do_search, true
+      set_includes_for_columns
       append_to_query(beginning_of_chain, finder_options).all.each {|record| yield record}
     end
 
@@ -129,11 +148,11 @@ module ActiveScaffold::Actions
     def process_action_link_action(render_action = :action_update, crud_type = nil)
       if request.get?
         # someone has disabled javascript, we have to show confirmation form first
-        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id] && params[:id].to_i > 0
+        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id].to_i > 0
         respond_to_action(:action_confirmation)
       else
         @action_link = active_scaffold_config.action_links[action_name]
-        if params[:id] && params[:id] && params[:id].to_i > 0
+        if params[:id] && params[:id].to_i > 0
           crud_type ||= (request.post? || request.put?) ? :update : :delete
           set_includes_for_columns
           klass = beginning_of_chain.includes(active_scaffold_includes)
@@ -176,7 +195,18 @@ module ActiveScaffold::Actions
     def action_update_respond_to_yaml
       render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => list_columns_names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
-     
+
+    def objects_for_etag
+      objects = if @list_columns
+        if active_scaffold_config.list.calculate_etag
+          @records.to_a
+        elsif active_scaffold_config.list.user.sorting
+          {:etag => active_scaffold_config.list.user.sorting.clause}
+        end
+      end
+      objects.present? ? objects : super
+    end
+
     private
     def list_authorized_filter
       raise ActiveScaffold::ActionNotAllowed unless list_authorized?
@@ -200,7 +230,7 @@ module ActiveScaffold::Actions
     end
 
     def list_columns
-      active_scaffold_config.list.columns.collect_visible
+      @list_columns ||= active_scaffold_config.list.columns.collect_visible
     end
 
     def list_columns_names

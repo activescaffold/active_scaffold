@@ -4,14 +4,16 @@ module ActiveScaffold::Actions
       base.class_eval do
         prepend_before_filter :register_constraints_with_action_columns, :unless => :nested?
         after_filter :clear_flashes
+        after_filter :clear_storage
         rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
+      base.helper_method :successful?
       base.helper_method :nested?
-      base.helper_method :calculate
+      base.helper_method :calculate_query
       base.helper_method :new_model
     end
     def render_field
-      if params[:in_place_editing]
+      if request.get?
         render_field_for_inplace_editing
       else
         render_field_for_update_columns
@@ -19,31 +21,33 @@ module ActiveScaffold::Actions
     end
     
     protected
+    def loading_embedded?
+      @loading_embedded ||= params.delete(:embedded)
+    end
+
     def embedded?
-      @embedded ||= params.delete(:embedded)
+      params[:eid]
     end
 
     def nested?
       false
     end
-  
-    def details_for_lookup
-      super.merge(:active_scaffold_view_paths => self.class.active_scaffold_paths)
-    end
 
     def render_field_for_inplace_editing
-      @record = find_if_allowed(params[:id], :update)
-      render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
+      @column = active_scaffold_config.columns[params[:update_column]]
+      @record = find_if_allowed(params[:id], :crud_type => :update, :column => params[:update_column])
+      render :action => 'render_field_inplace', :layout => false
     end
 
     def render_field_for_update_columns
-      column = active_scaffold_config.columns[params.delete(:column)]
-      unless column.nil?
+      @column = active_scaffold_config.columns[params.delete(:column)]
+      unless @column.nil?
         @source_id = params.delete(:source_id)
-        @columns = column.update_columns
+        @columns = @column.update_columns
         @scope = params.delete(:scope)
+        @main_columns = active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns
         
-        if column.send_form_on_update_column
+        if @column.send_form_on_update_column
           if @scope
             hash = @scope.gsub('[','').split(']').inject(params[:record]) do |hash, index|
               hash[index]
@@ -53,15 +57,39 @@ module ActiveScaffold::Actions
             hash = params[:record]
             id = params[:id]
           end
-          @record = id ? find_if_allowed(id, :update) : new_model
-          @record = update_record_from_params(@record, active_scaffold_config.send(@scope ? :subform : (id ? :update : :create)).columns, hash)
-        else
+
+          # check permissions and support overriding to_param
+          id = find_if_allowed(id, :update).id if id
+          # call update_record_from_params with new_model
+          # in other case some associations can be saved
           @record = new_model
-          value = column_value_from_param_value(@record, column, params.delete(:value))
-          @record.send "#{column.name}=", value
+          apply_constraints_to_record(@record)
+          @record = update_record_from_params(@record, @main_columns, hash)
+          @record.id = id
+        else
+          @record = params[:id] ? find_if_allowed(params[:id], :update) : new_model
+          apply_constraints_to_record(@record) if @record.new_record?
+          @record.id = nil
+          value = column_value_from_param_value(@record, @column, params.delete(:value))
+          @record.send "#{@column.name}=", value
+          @record.id = params[:id]
         end
+        set_parent(@record) if @record.new_record? && params[:parent_controller] && params[:parent_id] && params[:child_association]
         
-        after_render_field(@record, column)
+        after_render_field(@record, @column)
+      end
+    end
+
+    def set_parent(record)
+      parent_model = params[:parent_controller].singularize.camelize.constantize
+      association = parent_model.reflect_on_association(params[:child_association].to_sym).try(:reverse)
+      if association
+        parent = parent_model.find(params[:parent_id])
+        if record.class.reflect_on_association(association).collection?
+          record.send(association) << parent
+        else
+          record.send("#{association}=", parent)
+        end
       end
     end
     
@@ -73,11 +101,7 @@ module ActiveScaffold::Actions
     end
 
     def clear_flashes
-      if request.xhr?
-        flash.keys.each do |flash_key|
-          flash[flash_key] = nil
-        end
-      end
+      flash.clear if request.xhr?
     end
 
     def each_marked_record(&block)
@@ -124,7 +148,7 @@ module ActiveScaffold::Actions
     # circumvent this method by setting @success directly.
     def successful?
       if @successful.nil?
-        @record || @records
+        true
       else
         @successful
       end
@@ -138,19 +162,6 @@ module ActiveScaffold::Actions
     def return_to_main
       redirect_to main_path_to_return
     end
-
-    # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
-    def conditions_for_collection
-    end
-  
-    # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).  The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
-    def joins_for_collection
-    end
-  
-    # Override this method on your controller to provide custom finder options to the find() call. The return of this method should be a hash.
-    def custom_finder_options
-      {}
-    end
   
     #Overide this method on your controller to provide model with named scopes
     def beginning_of_chain
@@ -161,11 +172,13 @@ module ActiveScaffold::Actions
     def conditions_from_params
       @conditions_from_params ||= begin
         conditions = {}
-        params.reject {|key, value| [:controller, :action, :id, :page, :sort, :sort_direction].include?(key.to_sym)}.each do |key, value|
-          next unless active_scaffold_config.model.columns_hash[key.to_s]
-          next if active_scaffold_constraints[key.to_sym]
-          next if nested? and nested.param_name == key.to_sym
-          conditions[key.to_sym] = value
+        params.except(:controller, :action, :page, :sort, :sort_direction).each do |key, value|
+          column = active_scaffold_config.model.columns_hash[key.to_s]
+          key = key.to_sym
+          next unless column
+          next if active_scaffold_constraints[key]
+          next if nested? and nested.param_name == key
+          conditions[key] = value.is_a?(Array) ? value.map {|v| column.type_cast(v) } : column.type_cast(value)
         end
         conditions
       end
@@ -183,12 +196,36 @@ module ActiveScaffold::Actions
       model.respond_to?(:build) ? model.build(build_options || {}) : model.new
     end
 
+    def objects_for_etag
+      @last_modified ||= @record.updated_at
+      [@record, ('xhr' if request.xhr?)]
+    end
+
+    def view_stale?
+      objects = objects_for_etag
+logger.debug objects.inspect
+      if objects.is_a?(Array)
+        args = {:etag => objects.to_a}
+        args[:last_modified] = @last_modified if @last_modified
+      elsif objects.is_a?(Hash)
+        args = {:last_modified => @last_modified}.merge(objects)
+      else
+        args = objects
+      end
+      stale?(args)
+    end
+
+    def conditional_get_support?
+      request.get? && active_scaffold_config.conditional_get_support
+    end
+
     private
     def respond_to_action(action)
+      return unless !conditional_get_support? || view_stale?
       respond_to do |type|
         action_formats.each do |format|
           type.send(format) do
-            if respond_to?(method_name = "#{action}_respond_to_#{format}")
+            if respond_to?(method_name = "#{action}_respond_to_#{format}", true)
               send(method_name)
             end
           end

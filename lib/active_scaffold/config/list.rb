@@ -23,10 +23,18 @@ module ActiveScaffold::Config
       @wrap_tag = self.class.wrap_tag
       @always_show_search = self.class.always_show_search
       @always_show_create = self.class.always_show_create
+      @messages_above_header = self.class.messages_above_header
+      @auto_select_columns = self.class.auto_select_columns
+      @refresh_with_header = self.class.refresh_with_header
+      @calculate_etag = self.class.calculate_etag
     end
 
     # global level configuration
     # --------------------------
+    # include list header on refresh
+    cattr_accessor :refresh_with_header
+    @@refresh_with_header = false
+
     # how many records to show per page
     cattr_accessor :per_page
     @@per_page = 15
@@ -42,6 +50,10 @@ module ActiveScaffold::Config
     # what string to use when a field is empty
     cattr_accessor :empty_field_text
     @@empty_field_text = '-'
+
+    # display messages above table header
+    cattr_accessor :messages_above_header
+    @@messages_above_header = false
 
     # what string to use to join records from plural associations
     cattr_accessor :association_join_text
@@ -75,6 +87,15 @@ module ActiveScaffold::Config
     cattr_accessor :always_show_create
     @@always_show_create = false
 
+    # Enable auto select columns on list, so only columns needed for list columns are selected
+    cattr_accessor :auto_select_columns
+    @@auto_select_columns = false
+
+    # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
+    # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
+    cattr_accessor :calculate_etag
+    @@calculate_etag = false
+
     # instance-level configuration
     # ----------------------------
 
@@ -85,6 +106,9 @@ module ActiveScaffold::Config
     end
     
     public :columns=
+
+    # include list header on refresh
+    attr_accessor :refresh_with_header
 
     # how many rows to show at once
     attr_accessor :per_page
@@ -103,6 +127,9 @@ module ActiveScaffold::Config
 
     # what string to use when a field is empty
     attr_accessor :empty_field_text
+
+    # display messages above table header
+    attr_accessor :messages_above_header
 
     # what string to use to join records from plural associations
     attr_accessor :association_join_text
@@ -174,29 +201,37 @@ module ActiveScaffold::Config
     # it allows for more css styling
     attr_accessor :wrap_tag
     
+    # Enable auto select columns on list, so only columns needed for list columns are selected
+    attr_accessor :auto_select_columns
+
+    # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
+    # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
+    attr_accessor :calculate_etag
+
     class UserSettings < UserSettings
       def initialize(conf, storage, params)
-        super(conf,storage,params)
+        super(conf, storage, params, :list)
         @sorting = nil
       end
       
+      attr_writer :label
       # This label has alread been localized.
       def label
-        @session[:label] ? @session[:label] : @conf.label
+        self[:label] || @label || @conf.label
       end
 
       def per_page
-        @session['per_page'] = @params['limit'].to_i if @params.has_key? 'limit'
-        @session['per_page'] || @conf.per_page
+        self['per_page'] = @params['limit'].to_i if @params.has_key? 'limit'
+        self['per_page'] || @conf.per_page
       end
 
       def page
-        @session['page'] = @params['page'] if @params.has_key? 'page'
-        @session['page'] || 1
+        self['page'] = @params['page'] if @params.has_key? 'page'
+        self['page'] || 1
       end
 
       def page=(value = nil)
-        @session['page'] = value
+        self['page'] = value
       end
 
       attr_reader :nested_default_sorting
@@ -210,18 +245,26 @@ module ActiveScaffold::Config
         nested_default_sorting.nil? ? @conf.sorting : nested_default_sorting
       end
 
+      def user_sorting?
+        @params['sort'] && @params['sort_direction'] != 'reset'
+      end
+
       def sorting
         if @sorting.nil?
           # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
-          @session['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
-          @session['sort'] = nil if @params['sort_direction'] == 'reset'
+          self['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] and @params['sort_direction']
+          self['sort'] = nil if @params['sort_direction'] == 'reset'
 
-          if @session['sort']
+          if self['sort']
             sorting = @conf.sorting.clone
-            sorting.set(*@session['sort'])
+            sorting.set(*self['sort'])
             @sorting = sorting
           else
             @sorting = default_sorting
+            if @conf.columns.constraint_columns.present?
+              @sorting = @sorting.clone
+              @sorting.constraint_columns = @conf.columns.constraint_columns
+            end
           end
         end
         @sorting

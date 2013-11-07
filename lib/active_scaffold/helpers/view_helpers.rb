@@ -3,6 +3,7 @@ module ActiveScaffold
     # All extra helpers that should be included in the View.
     # Also a dumping ground for uncategorized helpers.
     module ViewHelpers
+      NESTED_PARAMS = [:eid, :association, :parent_scaffold]
       include ActiveScaffold::Helpers::IdHelpers
       include ActiveScaffold::Helpers::AssociationHelpers
       include ActiveScaffold::Helpers::PaginationHelpers
@@ -48,10 +49,6 @@ module ActiveScaffold
         lookup_context.exists? template_name, '', partial
       end
 
-      def generate_temporary_id
-        (Time.now.to_f*1000).to_i.to_s
-      end
-
       # Turns [[label, value]] into <option> tags
       # Takes optional parameter of :include_blank
       def option_tags_for(select_options, options = {})
@@ -60,19 +57,6 @@ module ActiveScaffold
           label, value = option[0], option[1]
           value.nil? ? "<option value="">#{label}</option>" : "<option value=\"#{value}\">#{label}</option>"
         end
-      end
-
-      # Should this column be displayed in the subform?
-      def in_subform?(column, parent_record)
-        return true unless column.association
-
-        # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
-        return false if column.polymorphic_association?
-
-        # A column shouldn't be in the subform if it's the reverse association to the parent
-        return false if column.association.inverse_for?(parent_record.class)
-
-        return true
       end
 
       def form_remote_upload_tag(url_for_options = {}, options = {})
@@ -94,42 +78,98 @@ module ActiveScaffold
       # You may also flag whether the other element is visible by default or not, and the initial text will adjust accordingly.
       def link_to_visibility_toggle(id, options = {})
         options[:default_visible] = true if options[:default_visible].nil?
-        options[:hide_label] = as_(:hide) 
-        options[:show_label] = as_(:show)
+        options[:hide_label] ||= as_(:hide) 
+        options[:show_label] ||= as_(:show_block)
         javascript_tag("ActiveScaffold.create_visibility_toggle('#{id}', #{options.to_json});")
       end
 
-      def skip_action_link(link, *args)
-        (!link.ignore_method.nil? && controller.respond_to?(link.ignore_method) && controller.send(link.ignore_method, *args)) || ((link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method, *args))
+      def skip_action_link?(link, *args)
+        !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *args)
       end
 
-      def render_action_link(link, record = nil, html_options = {})
-        if link.action.nil?
-          link = action_link_to_inline_form(link, record, html_options)
-          html_options.delete :link if link.crud_type == :create
-        end
-        url = action_link_url(link, record) unless link.action.nil?
-        html_options = action_link_html_options(link, record, html_options) unless link.action.nil?
-        action_link_html(link, url, html_options, record)
-      end
-
-      def render_group_action_link(link, options, record = nil)
-        if link.type == :member && !options[:authorized]
-          action_link_html(link, nil, {:class => "disabled #{link.action}#{link.html_options[:class].blank? ? '' : (' ' + link.html_options[:class])}"}, record)
+      def action_link_authorized?(link, *args)
+        security_method = link.security_method_set? || controller.respond_to?(link.security_method, true)
+        authorized = if security_method
+          controller.send(link.security_method, *args)
         else
-          render_action_link(link, record)
+          args.empty? ? true : args.first.authorized_for?(:crud_type => link.crud_type, :action => link.action)
+        end
+      end
+
+      def display_action_links(action_links, record, options, &block)
+        options[:level_0_tag] ||= nil
+        options[:options_level_0_tag] ||= nil
+        options[:level] ||= 0
+        options[:first_action] = true
+        output = ActiveSupport::SafeBuffer.new
+
+        action_links.each(:reverse => options.delete(:reverse), :groups => true) do |link|
+          if link.is_a? ActiveScaffold::DataStructures::ActionLinks
+            unless link.empty?
+              options[:level] += 1
+              content = display_action_links(link, record, options, &block)
+              options[:level] -= 1
+              if content.present?
+                output << display_action_link(link, content, record, options)
+                options[:first_action] = false
+              end
+            end
+          elsif !skip_action_link?(link, *Array(options[:for]))
+            authorized = action_link_authorized?(link, *Array(options[:for]))
+            next if !authorized && options[:skip_unauthorized]
+            output << display_action_link(link, nil, record, options.merge(:authorized => authorized))
+            options[:first_action] = false
+          end
+        end
+        output
+      end
+
+      def display_action_link(link, content, record, options)
+        if content
+          html_classes = hover_via_click? ? 'hover_click ' : ''
+          if options[:level] == 0
+            html_classes << 'action_group'
+            group_tag = :div
+          else
+            html_classes << 'top' if options[:first_action]
+            group_tag = :li
+          end
+          content = content_tag(group_tag, :class => (html_classes if html_classes.present?), :onclick => ('' if hover_via_click?)) do
+            content_tag(:div, as_(link.name), :class => link.name.to_s.downcase) << content_tag(:ul, content)
+          end
+        else
+          content = render_action_link(link, record, options)
+          content = content_tag(:li, content, :class => ('top' if options[:first_action])) unless options[:level] == 0
+        end
+        content = content_tag(options[:level_0_tag], content, options[:options_level_0_tag]) if options[:level] == 0 && options[:level_0_tag]
+        content
+      end
+
+      def render_action_link(link, record = nil, options = {})
+        if link.action.nil? || link.column.try(:polymorphic_association?)
+          link = action_link_to_inline_form(link, record)
+          options[:authorized] = false if link.action.nil? || link.controller.nil?
+          options.delete :link if link.crud_type == :create
+        end
+        if link.action.nil? || (link.type == :member && options.has_key?(:authorized) && !options[:authorized])
+          action_link_html(link, nil, {:link => action_link_text(link, options), :class => "disabled #{link.action}#{" #{link.html_options[:class]}" unless link.html_options[:class].blank?}"}, record)
+        else
+          url = action_link_url(link, record)
+          html_options = action_link_html_options(link, record, options)
+          action_link_html(link, url, html_options, record)
         end
       end
 
       # setup the action link to inline form
-      def action_link_to_inline_form(link, record, html_options)
+      def action_link_to_inline_form(link, record)
         link = link.clone
         associated = record.send(link.column.association.name)
         if link.column.polymorphic_association?
           link.controller = controller_path_for_activerecord(associated.class)
           return link if link.controller.nil?
         end
-        configure_column_link(link, record, associated)
+        link = configure_column_link(link, record, associated) if link.action.nil?
+        link
       end
 
       def configure_column_link(link, record, associated, actions = nil)
@@ -163,38 +203,57 @@ module ActiveScaffold
 
       def column_link_authorized?(link, column, record, associated)
         if column.association
-          associated_for_authorized = if associated.nil? || (column.plural_association? && !associated.loaded?) || (associated.respond_to?(:blank?) && associated.blank?)
+          associated_for_authorized = if column.plural_association? || (associated.respond_to?(:blank?) && associated.blank?)
             column.association.klass
-          elsif [:has_many, :has_and_belongs_to_many].include? column.association.macro
-            # may be cached with [] or [nil] to avoid some queries
-            associated.first || column.association.klass
           else
             associated
           end
           authorized = associated_for_authorized.authorized_for?(:crud_type => link.crud_type)
           authorized = authorized and record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
           authorized
-        else
-          record.authorized_for?(:crud_type => link.crud_type)
+        else 
+          action_link_authorized?(link, record)
         end
       end
-      
+
       def action_link_url(link, record)
-        url = if link.cached_url
-          link.cached_url
-        else
-          url = url_for(action_link_url_options(link, record))
-          link.cached_url = url unless link.dynamic_parameters.is_a?(Proc)
-          url
+        url = (@action_links_urls ||= {})[link.name_to_cache_link_url]
+        url ||= begin
+          url_options = action_link_url_options(link, record)
+          if active_scaffold_config.cache_action_link_urls
+            url = url_for(url_options)
+            model = active_scaffold_config.model
+            is_sti_record = record && model.columns_hash.include?(model.inheritance_column) &&
+              record[model.inheritance_column].present?
+            unless link.dynamic_parameters.is_a?(Proc) || is_sti_record
+              @action_links_urls[link.name_to_cache_link_url] = url 
+            end
+            url
+          else
+            url_for(params_for(url_options))
+          end
         end
         
-        url = record ? url.sub('--ID--', record.id.to_s) : url.clone
-        url = url.sub('--CHILD_ID--', record.send(link.column.association.name).id.to_s) if link.column.try(:singular_association?) && record.send(link.column.association.name).present?
-        query_string, non_nested_query_string = query_string_for_action_links(link)
-        if query_string || (!link.nested_link? && non_nested_query_string)
-          url << (url.include?('?') ? '&' : '?')
-          url << query_string if query_string
-          url << non_nested_query_string if !link.nested_link? && non_nested_query_string
+        url = record ? url.sub('--ID--', record.to_param) : url.clone
+        if link.column.try(:singular_association?)
+          child_id = record.send(link.column.association.name).try(:to_param)
+          if child_id.present?
+            url.sub!('--CHILD_ID--', child_id)
+          else
+            url.sub!(/\w+=--CHILD_ID--&?/,'')
+            url.sub!(/\?$/, '')
+          end
+        elsif nested?
+          url.sub!('--CHILD_ID--', params[nested.param_name].to_s)
+        end
+
+        if active_scaffold_config.cache_action_link_urls
+          query_string, non_nested_query_string = query_string_for_action_links(link)
+          if query_string || (!link.nested_link? && non_nested_query_string)
+            url << (url.include?('?') ? '&' : '?')
+            url << query_string if query_string
+            url << non_nested_query_string if !link.nested_link? && non_nested_query_string
+          end
         end
         url
       end
@@ -216,7 +275,7 @@ module ActiveScaffold
             next
           end
           qs = "#{key}=#{value}"
-          if [:eid, :association, :parent_scaffold].include?(key) || conditions_from_params.include?(key) || (nested? && nested.param_name == key)
+          if NESTED_PARAMS.include?(key) || conditions_from_params.include?(key) || (nested? && nested.param_name == key)
             non_nested_query_string_options << qs
           else
             query_string_options << qs
@@ -246,15 +305,25 @@ module ActiveScaffold
             url_options.merge! link.dynamic_parameters.call(record)
           end
         end
-        url_options_for_nested_link(link.column, record, link, url_options) if link.nested_link?
+        if link.nested_link?
+          url_options_for_nested_link(link.column, record, link, url_options)
+        elsif nested?
+          url_options[nested.param_name] = '--CHILD_ID--'
+        end
         url_options_for_sti_link(link.column, record, link, url_options) unless record.nil? || active_scaffold_config.sti_children.nil?
         url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get
         url_options
       end
       
-      def action_link_html_options(link, record, html_options)
+      def action_link_text(link, options)
+        text = image_tag(link.image[:name], :size => link.image[:size], :alt => options[:link] || link.label, :title => options[:link] || link.label) if link.image
+        text || options[:link]
+      end
+      
+      def action_link_html_options(link, record, options)
         link_id = get_action_link_id(link, record)
-        html_options.reverse_merge! link.html_options.merge(:class => link.action.to_s)
+        html_options = link.html_options.merge(:class => [link.html_options[:class], link.action.to_s].compact.join(' '))
+        html_options[:link] = action_link_text(link, options)
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails        
         html_options[:method] = link.method if link.method != :get
@@ -262,33 +331,28 @@ module ActiveScaffold
         html_options[:data] = {}
         html_options[:data][:confirm] = link.confirm(record.try(:to_label)) if link.confirm?
         if link.inline?
-          html_options[:class] += ' as_action'
+          html_options[:class] << ' as_action'
           html_options[:data][:position] = link.position if link.position
           html_options[:data][:action] = link.action
           html_options[:data][:cancel_refresh] = true if link.refresh_on_close
           html_options[:data][:keep_open] = true if link.keep_open?
         end
-        if link.popup?
-          html_options[:data][:popup] = true
-          html_options[:target] = '_blank'
-        end
+        html_options[:target] = '_blank' if link.popup?
         html_options[:id] = link_id
         html_options[:remote] = true unless link.page? || link.popup?
         if link.dhtml_confirm?
           unless link.inline?
-            html_options[:class] += ' as_action'
+            html_options[:class] << ' as_action'
             html_options[:page_link] = 'true'
           end
           html_options[:dhtml_confirm] = link.dhtml_confirm.value
           html_options[:onclick] = link.dhtml_confirm.onclick_function(controller, link_id)
         end
-        html_options[:class] += " #{link.html_options[:class]}" unless link.html_options[:class].blank?
         html_options
       end
 
       def get_action_link_id(link, record = nil, column = nil)
         column ||= link.column
-        id = record ? record.id.to_s : (nested? ? nested.parent_id : '')
         if column && column.plural_association?
           id = "#{column.association.name}-#{record.id}"
         elsif column && column.singular_association?
@@ -298,14 +362,14 @@ module ActiveScaffold
             id = "#{column.association.name}-#{record.id}" unless record.nil?
           end
         end
-        action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || link.controller != controller.controller_path}#{link.action}"
+        id ||= record ? record.id : (nested? ? nested_parent_id : '')
+        action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
         action_link_id(action_id, id)
       end
       
       def action_link_html(link, url, html_options, record)
         label = html_options.delete(:link)
         label ||= link.label
-        label = image_tag(link.image[:name], :size => link.image[:size], :alt => label, :title => label) if link.image
         if url.nil?
           content_tag(:a, label, html_options)
         else
@@ -318,7 +382,9 @@ module ActiveScaffold
           url_options[:parent_scaffold] = controller_path
           url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
           if column.singular_association? && url_options[:action].to_sym != :index
-            url_options[:id] = '--CHILD_ID--' if record.send(column.association.name).present?
+            url_options[:id] = '--CHILD_ID--'
+          else
+            url_options[:id] = nil
           end
         elsif link.parameters && link.parameters[:named_scope]
           url_options[:parent_scaffold] = controller_path
@@ -343,7 +409,7 @@ module ActiveScaffold
 
       def list_row_class_method(record)
         return @_list_row_class_method if defined? @_list_row_class_method
-        class_override_helper = :"#{clean_class_name(record.class.name)}_list_row_class"
+        class_override_helper = "#{clean_class_name(record.class.name)}_list_row_class"
         @_list_row_class_method = (class_override_helper if respond_to?(class_override_helper))
       end
 
@@ -391,14 +457,14 @@ module ActiveScaffold
 
       def column_empty?(column_value)
         empty = column_value.nil?
-        empty ||= column_value.blank?
+        empty ||= column_value != false && column_value.blank?
         empty ||= ['&nbsp;', active_scaffold_config.list.empty_field_text].include? column_value if String === column_value
         return empty
       end
 
       def column_calculation(column)
         unless column.calculate.instance_of? Proc
-          calculate(column)
+          calculate_query.calculate(column.calculate, column.name)
         else
           column.calculate.call(@records)
         end
@@ -408,18 +474,11 @@ module ActiveScaffold
         calculation = column_calculation(column)
         override_formatter = "render_#{column.name}_#{column.calculate.is_a?(Proc) ? :calculate : column.calculate}"
         calculation = send(override_formatter, calculation) if respond_to? override_formatter
+        format_column_calculation(column, calculation)
+      end
 
+      def format_column_calculation(column, calculation)
         "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
-      end
-
-      def column_show_add_existing(column)
-        (column.allow_add_existing and options_for_association_count(column.association) > 0)
-      end
-
-      def column_show_add_new(column, associated, record)
-        value = (column.plural_association? && !column.readonly_association?) || (column.singular_association? and not associated.empty?)
-        value = false unless column.association.klass.authorized_for?(:crud_type => :create)
-        value
       end
  
       def clean_column_name(name)
@@ -436,10 +495,11 @@ module ActiveScaffold
       end
 
       def override_helper(column, suffix)
-        @_override_helpers ||= {}
-        @_override_helpers[suffix] ||= {}
-        return @_override_helpers[suffix][column.name] if @_override_helpers[suffix].include? column.name
-        @_override_helpers[suffix][column.name] = begin
+        hash = @_override_helpers ||= {}
+        hash = hash[suffix] ||= {}
+        hash = hash[column.active_record_class.name] ||= {}
+        return hash[column.name] if hash.include? column.name
+        hash[column.name] = begin
           method_with_class = override_helper_name(column, suffix, true)
           if respond_to?(method_with_class)
             method_with_class
@@ -453,7 +513,7 @@ module ActiveScaffold
       def display_message(message)
         if (highlights = active_scaffold_config.highlight_messages)
           message = highlights.inject(message) do |msg, (phrases, highlighter)|
-            highlight(msg, phrases, highlighter)
+            highlight(msg, phrases, highlighter || {})
           end
         end
         if (format = active_scaffold_config.timestamped_messages)

@@ -1,0 +1,29 @@
+<%
+  column = if render_field.is_a? ActiveScaffold::DataStructures::Column
+    render_field
+  else
+    active_scaffold_config.columns[render_field.to_sym]
+  end
+  return unless @main_columns.include? column.name
+  @rendered ||= Set.new
+  return if @rendered.include? column.name
+  @rendered << column.name
+  renders_as = column_renders_as(column)
+  if renders_as == :subform
+    options = {:is_subform => true, :field_class => "#{column.name}-sub-form"}
+  else
+    options = {:is_subform => false, :field_class => "#{column.name}-input"}
+  end
+  html = if scope
+    readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
+    crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
+    active_scaffold_render_subform_column(column, scope, crud_type, readonly, !active_scaffold_config.subform.columns.names_without_auth_check.include?(column.name), @record)
+  else
+    render_column(column, @record, renders_as, scope)
+  end
+-%>
+
+ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(html) %>', <%= options.to_json.html_safe %>);
+<%if column.update_columns && !column.update_columns.empty?%>
+  <%=  render(:partial => "render_field", :collection => column.update_columns, :locals => {:source_id => source_id, :scope => scope})%>
+<%end%>

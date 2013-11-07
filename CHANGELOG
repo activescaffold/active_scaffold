@@ -1,6 +1,61 @@
-= master
+= 3.4.0 (not released yet)
+- Support rails4
+- Quote selected columns
+- More unobtrusive html views
+- Move () in visibility toggle links inside so they can be overrided
+- Extend datepicker to load settings from data attributes before onReady event is fired
+- Add weight to action links
+- Add placeholder in search form
+- load existing record on render_field when id is present
+- Add helper to override subform label
+- embedded? checks that it is displayed embedded, add loading_embedded? to check first loading of embedded
+- Fix previous page link with search and sort options when they are not stored in session
+- Fix updating column in main form when subform has column with same name
+- Fix sort_by :method without conditions
+- Add conditional_get_support and calculate_etag options to send etag and check it with stale? rails method, avoiding rendering views and loading all page items when page is cached
+- Remove row action (method exists but not as action), index with id is enough
+- Use to_param in action links
+- Allow to pass an array value in conditions_from_params, not only single value for columns
+- Display count items when pagination is disabled
+- Check security in column groups in forms
+
+= 3.3.3
+- Allow to override select options in active_scaffold_search_select
+- Load effects from jQuery UI when using jquery-rails 3 gem
+- Fix searching on nested scaffolds (broken on 3.3.2)
+- Fix searching when includes is set to nil
+- Send parent_controller for render_field requests on subforms for persisted records, as new records were already sending it
+- Avoid loading some JS when jquery-ui is not available
+- Load CSS from jquery ui rails gem
+
+= 3.3.2
+- Fix subforms inside subforms
+- Fix draggable for jquery-rails 3 gem
+- Support to change attributes in list column headings with column_heading_attributes helper
+- Keep url for embedded in data-refresh attr of active-scaffold-component div
+- Remove duplicated results when searching with outer_joins in plural associations
+
+= 3.3.1
+- Set adapter colspan (nested lists and forms) using javascript, fixed issue when active_scaffold_config_list is used
+- Fix bug saving default values when get method is overrided on model to return default value
+- Fix close action_link without adapter
+- Fix update calculations after destroy a row
+- Fix count and calculate searching with count_includes
+- Fix action_after_create
+- Cache associations options (for :select form_ui on associations), it can be disabled with config.cache_association_options = false
+- Clean some code so we can stop changing @record in partials and using @record in helpers
+- Support jquery-rails 3 gem and jquery-ui-rails gem
+- Clean some invalid HTML
+- Add store_user_settings option to enable storing sort, page and search params into session (enabled by default for backwards compatibility)
+- Fix each_record_in_scope when conditions_for_collection needs some includes
+- Add method to override label in search fields (field_search)
+- Add method to override attributes for column headings on list
+- Support security_method and ignore_method in column's link
+- render :super should work for every render call (with partial and locals or with only one hash)
+
+= 3.3.0
 - Unify field overrides and list_ui method signatures
-- Improve performance removing some partials and adding some caching for helper overrides and UIs, and caching url generation for lists
+- Improve performance removing some partials and adding some caching for helper overrides and UIs, and caching url generation for lists (caching url is optional)
 - Drop support for rails 3.1
 - Add HTML5 form fields
 - Add :chosen form_ui, and :chosen and :multi_chosen search_ui
@@ -10,12 +65,53 @@
 - Support for updating columns, row or table after updating a column with inplace_edit
 - Keep order for records in plural subforms, so new records are saved in same order as form order
 - Support add_subgroup in horizontal subforms
+- Improve support in helpers for using :select form_ui with polymorphic associations (needs to use a select to choose the class)
+- Allow to create in nested has_many :through associations, when source association is a belongs_to
+- Fix calculations using field_search with has_many includes
+- Add support to ActiveScaffold.create_record_row to insert after or before of an element
+- Add support for dynamic action group
+- Improve parsing of datetimes
+- Add support for lists filtered by id (one-item lists)
+- Fix update_columns with sending whole big forms
+- Improve update_columns on subforms
+- Support to override ActiveScaffold.remove so effects can be added on page elements deletion
+- Add support for conversion methods in controller, so form_uis can define how to convert params to values
+- Avoid sorting by contraint columns
+- Cosmetic fixes and improvements
+- Fix multipart persistent update form
+- Support jquery 1.9 (jquery-rails 2.2.0 gem)
+- Reduce usage of session
+- Allow to include header on list refreshing
+- Add search_joins to columns, so it's possible to do left joins without loading associations only for searching
+- Fix set focus for inplace edit clone and ajax
+- Allow to override label for list column headings with a new helper method column_heading_label
+- Keep focus on last field when render_field is called
+- Add empty create and update methods to tableless
+- Allow multiple subform levels
 
-= 3.2.17 (not released yet)
+= 3.2.20
+- Some fixes for ruby 1.9
+- Some fixes for rails 3.1
+- Fix detection of empty for has_and_belongs_to_many on subforms
+
+= 3.2.19
+- Avoid crashing when between is chosen and from or to is not filled
+
+= 3.2.18
+- Fix add existing record with record_select
+- Disable link for polymorphic associations in 3.2.x, it doesn't work
+
+= 3.2.17
 - fix constraints for columns with multiple columns in search_sql
 - remove unauthorized collection links
 - copy parameters and html_options on cloning action link
 - fix missing argument in datepicker conditions
+- check authorization in model for plural associations nested links
+- Allow to set action_group in nested.add_link
+- fix current page when is inside outer window
+- Support record select with polymorphic associations
+- Fix column count in inline adapter for forms and views
+- Add support for class prefix on human condition helpers
 
 = 3.2.16
 - Fix use of column.css_class in form when is a proc, it wasn't skipped when form was a columns group

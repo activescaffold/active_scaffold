@@ -1,0 +1,29 @@
+<%
+record = list_record if local_assigns[:list_record] # compat with render :partial :collection
+columns ||= list_columns
+tr_class = cycle("", "even-record") + ' ' + list_row_class(record)
+action_links ||= active_scaffold_config.action_links.member
+data_refresh ||= record.to_param
+-%>
+<tr class="record <%= tr_class %>" id="<%= element_row_id(:action => :list, :id => record.id) %>" data-refresh="<%= data_refresh %>">
+  <% columns.each do |column| %>
+    <% authorized = record.authorized_for?(:crud_type => :read, :column => column.name) -%>
+    <% column_value = authorized ? get_column_value(record, column) : active_scaffold_config.list.empty_field_text -%>
+
+    <%= content_tag :td, column_attributes(column, record).merge(:class => column_class(column, column_value, record)) do %>
+      <%= authorized ? render_list_column(column_value, column, record) : column_value %>
+    <% end %>
+  <% end -%>
+    
+  <td class="actions"><table>
+    <tr>
+      <td class="indicator-container">
+        <%= loading_indicator_tag(:action => :record, :id => record.id) %>
+      </td>
+      <%= display_action_links(action_links, record, :level_0_tag => :td, :for => record.persisted? ? record : record.class) %>
+    </tr>
+  </table></td>
+
+  
+  <%= render_nested_view(action_links, record) unless @nested_auto_open.nil? %>
+</tr>

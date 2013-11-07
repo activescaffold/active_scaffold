@@ -76,7 +76,7 @@ module ActiveScaffold
           conditions += values*column.search_sql.size if values.present?
           conditions
         rescue Exception => e
-          logger.error Time.now.to_s + "#{e.inspect} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{self.name}"
+          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{self.name}"
           raise e
         end
       end
@@ -116,8 +116,24 @@ module ActiveScaffold
           nil
         end
       end
+
+      def translate_days_and_months(value, format)
+        keys = {
+          '%A' => 'date.day_names',
+          '%a' => 'date.abbr_day_names',
+          '%B' => 'date.month_names',
+          '%b' => 'date.abbr_month_names'
+        }
+        keys.each do |f, k|
+          if format.include? f
+            table = Hash[I18n.t(k).compact.zip(I18n.t(k, :locale => :en).compact)]
+            value.gsub!(Regexp.union(table.keys)) { |s| table[s] }
+          end
+        end
+        value
+      end
       
-      def condition_value_for_datetime(value, conversion = :to_time)
+      def condition_value_for_datetime(column, value, conversion = :to_time)
         if value.is_a? Hash
           Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[part].to_i}) rescue nil
         elsif value.respond_to?(:strftime)
@@ -129,42 +145,41 @@ module ActiveScaffold
             value.send(conversion)
           end
         elsif conversion == :to_date
-          Date.strptime(value, I18n.t('date.formats.default')) rescue nil
+          Date.strptime(value, I18n.t("date.formats.#{column.options[:format] || :default}")) rescue nil
         else
           parts = Date._parse(value)
-          format = I18n.translate 'time.formats.picker', :default => '' if ActiveScaffold.js_framework == :jquery
+          format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if ActiveScaffold.js_framework == :jquery
           if format.blank?
             time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect {|part, format_part| format_part if parts[part].present?}.compact
             format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
           else
+            if parts[:hour]
+              [[:min, '%M'], [:sec, '%S']].each {|part, f| format.gsub!(":#{f}", '') unless parts[part].present?}
+            else
+              value += ' 00:00:00'
+            end
             format += ' %z' if parts[:offset].present? && format !~ /%z/i
           end
-          time = DateTime.strptime(value, format)
-          time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
-          time = time.send(conversion) unless conversion == :to_time
+          if !parts[:year] && !parts[:month] && !parts[:mday]
+            value = "#{Date.today.strftime(format.gsub(/%[HI].*/, ''))} #{value}"
+          end
+          value = translate_days_and_months(value, format) if I18n.locale != :en
+          time = DateTime.strptime(value, format) rescue nil
+          if time
+            time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
+            time = time.send(conversion) unless conversion == :to_time
+          end
           time
         end unless value.nil? || value.blank?
       end
 
       def condition_value_for_numeric(column, value)
         return value if value.nil?
-        value = i18n_number_to_native_format(value) if [:i18n_number, :currency].include?(column.options[:format]) && column.search_ui != :number
+        value = column.number_to_native(value) if column.options[:format] && column.search_ui != :number
         case (column.search_ui || column.column.type)
         when :integer   then value.to_i rescue value ? 1 : 0
         when :float     then value.to_f
         when :decimal   then ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
-        else
-          value
-        end
-      end
-
-      def i18n_number_to_native_format(value)
-        native = '.'
-        delimiter = I18n.t('number.format.delimiter')
-        separator = I18n.t('number.format.separator')
-        return value if value.blank? || !value.is_a?(String)
-        unless delimiter == native && !value.include?(separator) && value !~ /\.\d{3}$/
-          value.gsub(/[^0-9\-#{I18n.t('number.format.separator')}]/, '').gsub(I18n.t('number.format.separator'), native)
         else
           value
         end
@@ -180,8 +195,8 @@ module ActiveScaffold
             
       def condition_for_datetime(column, value, like_pattern = nil)
         conversion = datetime_conversion_for_condition(column)
-        from_value = condition_value_for_datetime(value[:from], conversion)
-        to_value = condition_value_for_datetime(value[:to], conversion)
+        from_value = condition_value_for_datetime(column, value[:from], conversion)
+        to_value = condition_value_for_datetime(column, value[:to], conversion)
 
         if from_value.nil? and to_value.nil?
           nil
@@ -265,6 +280,29 @@ module ActiveScaffold
       @active_scaffold_habtm_joins ||= []
     end
     
+    attr_writer :active_scaffold_outer_joins
+    def active_scaffold_outer_joins
+      @active_scaffold_outer_joins ||= []
+    end
+    
+    attr_writer :active_scaffold_references
+    def active_scaffold_references
+      @active_scaffold_references ||= []
+    end
+
+    # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
+    def conditions_for_collection
+    end
+  
+    # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).  The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
+    def joins_for_collection
+    end
+  
+    # Override this method on your controller to provide custom finder options to the find() call. The return of this method should be a hash.
+    def custom_finder_options
+      {}
+    end
+
     def all_conditions
       [
         active_scaffold_conditions,                   # from the search modules
@@ -272,15 +310,17 @@ module ActiveScaffold
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
         conditions_from_constraints,                  # from any constraints (embedded scaffolds)
         active_scaffold_session_storage[:conditions] # embedding conditions (weaker constraints)
-      ]
+      ].reject(&:blank?)
     end
     
-    # returns a single record (the given id) but only if it's allowed for the specified action.
+    # returns a single record (the given id) but only if it's allowed for the specified security options.
+    # security options can be a hash for authorized_for? method or a value to check as a :crud_type
     # accomplishes this by checking model.#{action}_authorized?
     # TODO: this should reside on the model, not the controller
-    def find_if_allowed(id, crud_type, klass = beginning_of_chain)
+    def find_if_allowed(id, security_options, klass = beginning_of_chain)
       record = klass.find(id)
-      raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for?(:crud_type => crud_type.to_sym)
+      security_options = {:crud_type => security_options.to_sym} unless security_options.is_a? Hash
+      raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for? security_options
       return record
     end
     # valid options may include:
@@ -295,72 +335,106 @@ module ActiveScaffold
       finder_options = { :reorder => options[:sorting].try(:clause),
                          :conditions => search_conditions,
                          :joins => joins_for_finder,
-                         :includes => full_includes}
+                         :outer_joins => active_scaffold_outer_joins,
+                         :includes => full_includes,
+                         :select => options[:select]}
+      if Rails::VERSION::MAJOR >= 4
+        if options[:sorting].try(:sorts_by_sql?)
+          options[:sorting].each do |col, _|
+            finder_options[:outer_joins] << col.includes if col.includes.present?
+          end
+        end
+        finder_options.merge!(:references => active_scaffold_references)
+      end
     
       finder_options.merge! custom_finder_options
       finder_options
     end
 
-    def count_items(find_options = {}, count_includes = nil)
-      count_includes ||= find_options[:includes] unless find_options[:conditions].nil?
+    def count_items(query, find_options = {}, count_includes = nil)
+      count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
       options = find_options.reject{|k,v| [:select, :reorder].include? k}
       options[:includes] = count_includes
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      count_query = append_to_query(beginning_of_chain, options)
-      count = count_query.count
+      count = append_to_query(query, options).count
   
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
-      count = count.length if count.is_a? ActiveSupport::OrderedHash
+      count = count.length if count.is_a?(Hash) || count.is_a?(ActiveSupport::OrderedHash) # TODO remove OrderedHash check when ruby 1.8 or rails3 support is removed
       count
     end
 
     # returns a Paginator::Page (not from ActiveRecord::Paginator) for the given parameters
     # See finder_options for valid options
     def find_page(options = {})
-      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination
+      options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination, :select
       options[:per_page] ||= 999999999
       options[:page] ||= 1
 
       find_options = finder_options(options)
+      query = beginning_of_chain.where(nil) # where(nil) is needed because we need a relation
       
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       if options[:pagination] && options[:pagination] != :infinite
-        count = count_items(find_options, options[:count_includes])
+        count = count_items(query, find_options, options[:count_includes])
       end
 
-      klass = beginning_of_chain
+      query = append_to_query(query, find_options)
       # we build the paginator differently for method- and sql-based sorting
       if options[:sorting] and options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          sorted_collection = sort_collection_by_column(append_to_query(klass, find_options).all, *options[:sorting].first)
+          calculate_last_modified(query)
+          sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)
           sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
           sorted_collection
         end
       else
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          find_options.merge!(:offset => offset, :limit => per_page) if options[:pagination]
-          append_to_query(klass, find_options).all
+          query = append_to_query(query, :offset => offset, :limit => per_page) if options[:pagination]
+          calculate_last_modified(query)
+          query
         end
       end
       pager.page(options[:page])
     end
 
-    def calculate(column)
+    def calculate_last_modified(query)
+      if conditional_get_support? && query.klass.columns_hash['updated_at']
+        # Rails4 always join with includes on calculations with columns
+        # but includes can be removed from calculation if they are not used to search
+        query = query.except(:includes) if Rails::VERSION::MAJOR >= 4 && query.references_values.blank?
+        @last_modified = query.maximum(:updated_at)
+      end
+    end
+
+    def calculate_query
       conditions = all_conditions
       includes = active_scaffold_config.list.count_includes
-      includes ||= active_scaffold_includes unless conditions.nil?
-      append_to_query(beginning_of_chain, :conditions => conditions, :includes => includes,
-        :joins => joins_for_collection).calculate(column.calculate, column.name)
+      includes ||= active_scaffold_includes unless conditions.blank?
+      primary_key = active_scaffold_config.model.primary_key
+      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => active_scaffold_outer_joins)
+      subquery = subquery.select(active_scaffold_config.columns[primary_key].field)
+      if includes
+        includes_relation = beginning_of_chain.includes(includes)
+        subquery = subquery.send(:apply_join_dependency, subquery, includes_relation.send(:construct_join_dependency_for_association_find))
+      end
+      active_scaffold_config.model.where(primary_key => subquery)
     end
     
     def append_to_query(query, options)
-      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :includes, :lock, :readonly, :from, :conditions
-      query = apply_conditions(query, *options.delete(:conditions)) if options[:conditions]
-      options.reject{|k, v| v.blank?}.inject(query) do |query, (k, v)|
-        query.send((k.to_sym), v) 
+      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, (:references if Rails::VERSION::MAJOR >= 4)
+      query = options.reject{|k,v| v.blank?}.inject(query) do |query, (k, v)|
+        k == :conditions ? apply_conditions(query, *v) : query.send(k, v)
       end
+      if options[:outer_joins].present?
+        if Rails::VERSION::MAJOR >= 4
+          query.distinct_value = true 
+        else
+          query = query.uniq
+        end
+      end
+      query
     end
 
     def joins_for_finder
@@ -388,7 +462,7 @@ module ActiveScaffold
     def sort_collection_by_column(collection, column, order)
       sorter = column.sort[:method]
       collection = collection.sort_by { |record|
-        value = (sorter.is_a? Proc) ? record.instance_eval(&sorter) : record.instance_eval(sorter)
+        value = (sorter.is_a? Proc) ? record.instance_eval(&sorter) : record.instance_eval(sorter.to_s)
         value = '' if value.nil?
         value
       }

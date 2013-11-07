@@ -16,7 +16,7 @@ module ActiveScaffold::Actions
 
     protected
     def response_location
-      url_for(params_for(:action => "show", :id => @record.id)) if successful?
+      url_for(params_for(:action => "show", :id => @record.to_param)) if successful?
     end
 
     def new_respond_to_html
@@ -33,6 +33,7 @@ module ActiveScaffold::Actions
 
     def create_respond_to_html
       if params[:iframe]=='true' # was this an iframe post ?
+        do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
         responds_to_parent do
           render :action => 'on_create', :formats => [:js], :layout => false
         end
@@ -40,14 +41,14 @@ module ActiveScaffold::Actions
         if successful?
           flash[:info] = as_(:created_model, :model => @record.to_label)
           if action = active_scaffold_config.create.action_after_create
-            redirect_to params_for(:action => action, :id => @record.id)
+            redirect_to params_for(:action => action, :id => @record.to_param)
           elsif active_scaffold_config.create.persistent
             redirect_to params_for(:action => "new")
           else
             return_to_main
           end
         else
-          if !nested? && active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
+          if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
             list
           else
             render(:action => 'create')
@@ -98,6 +99,7 @@ module ActiveScaffold::Actions
       rescue ActiveRecord::ActiveRecordError => ex
         flash[:error] = ex.message
         self.successful = false
+        @record ||= new_model # ensure @record exists or display form will fail
       end
     end
 
@@ -118,11 +120,11 @@ module ActiveScaffold::Actions
     # You may override the method to customize.
     
     def create_ignore?
-      nested? && active_scaffold_config.list.always_show_create
+      active_scaffold_config.list.always_show_create
     end
     
     def create_authorized?
-      (!nested? || !nested.readonly? || !nested.through?) && authorized_for?(:crud_type => :create)
+      !(nested? && (nested.readonly? || nested.readonly_through_association?)) && authorized_for?(:crud_type => :create)
     end
     private
     def create_authorized_filter

@@ -1,23 +1,11 @@
 module ActionView
   class LookupContext
     attr_accessor :last_template
-    register_detail(:active_scaffold_view_paths) { nil }
     
-    def find(name, prefixes = [], partial = false, keys = [], options = {})
-      unless active_scaffold_view_paths && prefixes && prefixes.one? && prefixes.first.blank?
-        args = args_for_lookup(name, prefixes, partial, keys, options)
-        view_paths = @view_paths
-        template = @view_paths.find_all(*args).first
-      end
-      if active_scaffold_view_paths && template.nil?
-        view_paths = active_scaffold_view_paths.is_a?(ActionView::PathSet) ? active_scaffold_view_paths : ActionView::PathSet.new(active_scaffold_view_paths)
-        args ||= args_for_lookup(name, '', partial, keys, options)
-        template = view_paths.find(*args_for_lookup(name, '', partial, keys, options)) 
-      end
-      raise(MissingTemplate.new(view_paths, *args)) unless template
-      self.last_template = template
+    def find_template_with_last_template(name, prefixes = [], partial = false, keys = [], options = {})
+      self.last_template = find_template_without_last_template(name, prefixes, partial, keys, options)
     end
-    alias :find_template :find
+    alias_method_chain :find_template, :last_template
   end
 end
 
@@ -55,18 +43,34 @@ module ActionView::Helpers #:nodoc:
         constraints = options[:constraints]
         conditions = options[:conditions]
         eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
-        session["as:#{eid}"] = {:constraints => constraints, :conditions => conditions, :list => {:label => args.first[:label]}}
+        eid_info = session["as:#{eid}"] ||= {}
+        if constraints
+          eid_info[:constraints] = constraints 
+        else
+          eid_info.delete :constraints
+        end
+        if conditions
+          eid_info[:conditions] = conditions
+        else
+          eid_info.delete :conditions
+        end
+        if options[:label]
+          eid_info[:list] = {:label => options[:label]}
+        else
+          eid_info.delete :list
+        end
+        session.delete "as:#{eid}" if eid_info.empty?
         options[:params] ||= {}
         options[:params].merge! :eid => eid, :embedded => true
 
         id = "as_#{eid}-embedded"
         url_options = {:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params])
 
-        if controller.respond_to?(:render_component_into_view)
+        if controller.respond_to?(:render_component_into_view, true)
           controller.send(:render_component_into_view, url_options)
         else
-          content_tag(:div, :id => id, :class => 'active-scaffold-component') do
-            url = url_for(url_options)
+          url = url_for(url_options)
+          content_tag(:div, :id => id, :class => 'active-scaffold-component', :data => {:refresh => url}) do
             # parse the ActiveRecord model name from the controller path, which
             # might be a namespaced controller (e.g., 'admin/admins')
             model = remote_controller.to_s.sub(/.*\//, '').singularize
@@ -76,36 +80,48 @@ module ActionView::Helpers #:nodoc:
             if ActiveScaffold.js_framework == :prototype
               javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true});")
             elsif ActiveScaffold.js_framework == :jquery
-              javascript_tag("jQuery('##{id}').load('#{url}', function() { $(this).trigger('as:element_updated'); });")
+              javascript_tag("jQuery('##{id}').load('#{url}', function() { jQuery(this).trigger('as:element_updated'); });")
             end
           end
         end
 
       elsif args.first == :super
-        prefix, template = @virtual_path.split('/')
-        last_view = view_stack.last || {}
+        @_view_paths ||= lookup_context.view_paths.clone
+        parts = @virtual_path.split('/')
+        template = parts.pop
+        prefix = parts.join('/')
+
         options = args[1] || {}
         options[:locals] ||= {}
-        options[:locals].reverse_merge!(last_view[:locals] || {})
-        options[:template] = template || prefix
-        # if template is nil we are rendering an active_scaffold (or active_scaffold's plugin) view
-        if template
+        if view_stack.last
+          options[:locals] = view_stack.last[:locals].merge!(options[:locals]) if view_stack.last[:locals]
+          options[:object] ||= view_stack.last[:object] if view_stack.last[:object]
+        end
+        options[:template] = template
+        # if prefix is active_scaffold_overrides we must try to render with this prefix in following paths
+        if prefix != 'active_scaffold_overrides'
           options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
         else
-          options[:prefixes] = ['']
-          active_scaffold_view_paths = lookup_context.active_scaffold_view_paths
-          last_view_path = File.expand_path(File.dirname(lookup_context.last_template.inspect), Rails.root)
-          lookup_context.active_scaffold_view_paths = active_scaffold_view_paths.drop(active_scaffold_view_paths.find_index {|path| path.to_s == last_view_path} + 1)
+          options[:prefixes] = ['active_scaffold_overrides']
+          last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
+          lookup_context.view_paths = view_paths.drop(view_paths.find_index {|path| path.to_s == last_view_path} + 1)
         end
         result = render_without_active_scaffold options
-        lookup_context.active_scaffold_view_paths = active_scaffold_view_paths unless template
+        lookup_context.view_paths = @_view_paths if @_view_paths
         result
       else
-        options = args.first
-        current_view = {:locals => options[:locals]} if options.is_a?(Hash)
-        view_stack << current_view if current_view.present?
+        @_view_paths ||= lookup_context.view_paths.clone
+        last_template = lookup_context.last_template
+        if args[0].is_a?(Hash)
+          current_view = {:locals => args[0][:locals], :object => args[0][:object]}
+        else # call is render 'partial', locals_hash
+          current_view = {:locals => args[1]}
+        end
+        view_stack << current_view if current_view
+        lookup_context.view_paths = @_view_paths # reset view_paths in case a view render :super, and then render :partial
         result = render_without_active_scaffold(*args, &block)
         view_stack.pop if current_view.present?
+        lookup_context.last_template = last_template
         result
       end
     end

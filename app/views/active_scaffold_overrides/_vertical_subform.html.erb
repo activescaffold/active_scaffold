@@ -1,0 +1,4 @@
+<div id="<%= sub_form_list_id(:association => column.name, :id => parent_record.id || generated_id(parent_record) || 99999999999) %>">
+  <%= render :partial => 'form_association_record', :collection => associated, :locals => {:scope => scope, :parent_record => parent_record, :column => column} %>
+  <%= render :partial => 'form_association_record', :object => show_blank_record, :locals => {:scope => scope, :parent_record => parent_record, :column => column, :locked => true, :index => associated.size} if show_blank_record %>
+</div>

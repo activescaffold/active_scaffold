@@ -1,0 +1,24 @@
+<%
+ActiveSupport::Deprecation.warn "Relying on @record to render form_asssociation partial with no parent_record local variable is deprecated", caller(1) unless local_assigns[:parent_record]
+parent_record ||= @record # save @record, some partial can change @record TODO remove when changing @record is removed
+associated = column.singular_association? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a
+#associated = associated.sort_by {|r| r.new_record? ? 99999999999 : r.id} unless column.association.options.has_key?(:order)
+if column.show_blank_record?(associated)
+  show_blank_record = build_associated(column.association, parent_record)
+end
+disable_required_for_new = @disable_required_for_new
+@disable_required_for_new = !!show_blank_record unless (column.singular_association? && column.required?)
+subform_div_id = "#{sub_form_id(:association => column.name, :id => parent_record.id || generated_id(parent_record) || 99999999999)}-div" 
+-%>
+<h5><%= column.label -%></h5>
+<div id ="<%= subform_div_id %>" <%= 'style="display: none;"'.html_safe if column.collapsed -%>>
+<%# HACK to be able to delete all associated records %>
+  <%= hidden_field_tag "#{active_scaffold_input_options(column, scope, :object => parent_record)[:name]}[0]", '' if column.plural_association? %>
+  <%= render :partial => subform_partial_for_column(column), :locals => {:column => column, :parent_record => parent_record, :associated => associated, :show_blank_record => show_blank_record, :scope => scope} %>
+  <%= render :partial => 'form_association_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated, :scope => scope} -%>
+</div>
+<%= link_to_visibility_toggle(subform_div_id, {:default_visible => !column.collapsed}) -%>
+<%
+  @record = parent_record # restore @record, some partials can change it TODO remove when changing @record is removed
+  @disable_required_for_new = disable_required_for_new
+-%>

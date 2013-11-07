@@ -7,6 +7,7 @@ module ActiveScaffold::Config
       @core = core_config
       @action_group = self.class.action_group.clone if self.class.action_group
     end
+    attr_reader :core
 
     def self.inherited(subclass)
       class << subclass
@@ -42,13 +43,28 @@ module ActiveScaffold::Config
     attr_accessor :action_group
 
     class UserSettings
-      def initialize(conf, storage, params)
+      def initialize(conf, storage, params, action = :base)
         # the session hash relevant to this action
         @session = storage
         # all the request params
         @params = params
         # the configuration object for this action
         @conf = conf
+        @action = action
+      end
+
+      def [](key)
+        @session[@action][key] if @action && @session[@action]
+      end
+
+      def []=(key, value)
+        @session[@action] ||= {}
+        if value
+          @session[@action][key] = value
+        else
+          @session[@action].delete key
+          @session.delete @action if @session[@action].empty?
+        end
       end
     end
     

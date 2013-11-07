@@ -12,6 +12,15 @@ if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFu
 
 
 document.observe("dom:loaded", function() {
+  document.on('click', function(event) {
+    $$('.action_group.dyn ul').invoke('remove');
+  });
+  document.on('ajax:complete', '.action_group.dyn ul a', function() {
+    var source = event.findElement();
+    var action_link = ActiveScaffold.find_action_link(source);
+    if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
+    $(source).up('.action_group.dyn ul').remove();
+  });
   document.on('ajax:create', 'form.as_form', function(event) {
     var source = event.findElement();
     var as_form = event.findElement('form');
@@ -42,7 +51,7 @@ document.observe("dom:loaded", function() {
       return false;
     }
   });
-  document.on('submit', 'form.as_form.as_remote_upload', function(event) {
+  document.on('submit', 'form.as_form:not([data-remote])', function(event) {
     var as_form = event.findElement('form');
     if (as_form && as_form.readAttribute('data-loading') == 'true') {
       setTimeout("ActiveScaffold.disable_form('" + as_form.readAttribute('id') + "')", 10);
@@ -95,7 +104,7 @@ document.observe("dom:loaded", function() {
     var action_link = ActiveScaffold.find_action_link(as_cancel);
     
     if (action_link) {
-      var refresh_data = action_link.readAttribute('data-cancel-refresh') || as_cancel.readAttribute('data-refresh');
+      var refresh_data = action_link.tag.readAttribute('data-cancel-refresh') || as_cancel.readAttribute('data-refresh');
       if (refresh_data && action_link.refresh_url) {
         event.memo.url = action_link.refresh_url;
       } else if (!refresh_data || as_cancel.readAttribute('href').blank()) {
@@ -235,9 +244,13 @@ document.observe("dom:loaded", function() {
   });
   document.on('ajax:before', 'a.as_add_existing, a.as_replace_existing', function(event) {
     var button = event.findElement();
-    var url =  button.readAttribute('href').sub('--ID--', button.previous().getValue());
-    event.memo.url = url;
-    return true;
+    var prev = button.previous();
+    if (!prev.match('input,select')) prev = prev.down('input,select');
+    var id = prev.getValue();
+    if (id) {
+      event.memo.url = button.readAttribute('href').sub('--ID--', id);
+      return true;
+    } else return false;
   });
   document.on('change', 'input.update_form, textarea.update_form, select.update_form', function(event) {
     var element = event.findElement();
@@ -268,11 +281,6 @@ document.observe("dom:loaded", function() {
     Element[element.value == 'REPLACE' ? 'show' : 'hide'](element.next().next());
     Element[element.value == 'REPLACE' ? 'hide' : 'show'](element.next('span'));
     return true;
-  });
-  document.on("click", "a[data-popup]", function(event, element) {
-    if (event.stopped) return;
-    window.open($(element).href);
-    event.stop();
   });
   document.on("click", ".hover_click", function(event, element) {
     var ul_element = element.down('ul');
@@ -392,8 +400,9 @@ var ActiveScaffold = {
     return element;
   },
   
-  remove: function(element) {
+  remove: function(element, callback) {
     $(element).remove();
+    if (callback) callback();
   },
   
   update_inplace_edit: function(element, value, empty) {
@@ -447,6 +456,20 @@ var ActiveScaffold = {
         tbody.insert({bottom: html});
       }
       new_row = Selector.findChildElements(tbody, ['tr.record']).last();
+    } else if (typeof options.insert_at == 'object') {
+      var insert_method, get_method, row, id;
+      if (options.insert_at.after) {
+        insert_method = 'after';
+        get_method = 'next';
+      } else {
+        insert_method = 'before';
+        get_method = 'previous';
+      }
+      if (id = options.insert_at[insert_method]) row = $(id);
+      if (row) {
+        row.insert({insert_method: html});
+        new_row = row[get_method]();
+      }
     }
     
     this.stripe(tbody);
@@ -477,11 +500,12 @@ var ActiveScaffold = {
         action_link.close_previous_adapter();
       }
     }
-    row.remove();
-    tbody = $(tbody);
-    this.stripe(tbody);
-    this.decrement_record_count(tbody.up('div.active-scaffold'));
-    this.reload_if_empty(tbody, page_reload_url);
+    ActiveScaffold.remove(row, function() {
+      tbody = $(tbody);
+      ActiveScaffold.stripe(tbody);
+      ActiveScaffold.decrement_record_count(tbody.up('div.active-scaffold'));
+      ActiveScaffold.reload_if_empty(tbody, page_reload_url);
+    });
   },
 
   delete_subform_record: function(record) {
@@ -510,6 +534,13 @@ var ActiveScaffold = {
   find_action_link: function(element) {
     element = $(element);
     return ActiveScaffold.ActionLink.get(element.match('.actions a') ? element : element.up('.as_adapter')); 
+  },
+
+  display_dynamic_action_group: function(link, html) {
+    link = $(link);
+    link.next('ul').remove();
+    link.up('td').addClassName('action_group dyn');
+    link.insert({after: html});
   },
   
   scroll_to: function(element, checkInViewport) {
@@ -564,9 +595,10 @@ var ActiveScaffold = {
     var toggler = toggable.previous();
     var initial_label = (options.default_visible === true) ? options.hide_label : options.show_label;
     
-    toggler.insert(' (<a class="visibility-toggle" href="#">' + initial_label + '</a>)');
+    toggler.insert(' <a class="visibility-toggle" href="#">' + initial_label + '</a>');
     toggler.firstDescendant().observe('click', function(event) {
       var element = event.element();
+      event.stop();
       toggable.toggle(); 
       element.innerHTML = (toggable.style.display == 'none') ? options.show_label : options.hide_label;
       return false;
@@ -591,11 +623,14 @@ var ActiveScaffold = {
   
   render_form_field: function(source, content, options) {
     var source = $(source);
-    var element = source.up('.association-record');
+    var element = source.up('.association-record'), selector = '';
     if (typeof(element) === 'undefined') {
       element = source.up('ol.form');
+      selector = 'li';
     }
-    element = element.down('.' + options.field_class);
+    // find without entering new subforms
+    selector = options.is_subform ? '' : selector + ':not(.sub-form) ';
+    element = element.down(selector + '.' + options.field_class);
 
     if (element) {
       if (options.is_subform == false) {
@@ -650,17 +685,21 @@ var ActiveScaffold = {
     var params = null;
 
     if (send_form) {
-      var selector;
+      var selector, base = as_form;
+      if (send_form == 'row') base = element.up('.association-record, form');
       if (selector = element.readAttribute('data-update_send_form_selector'))
-        params = Form.serializeElements(as_form.getElementsBySelector(selector), true);
+        params = Form.serializeElements(base.getElementsBySelector(selector), true);
+      else if (base != as_form)
+        params = Form.serializeElements(base.getElementsBySelector('input, textarea, select'), true);
       else params = as_form.serialize(true);
+      params['_method'] = '';
     } else {
         params = {value: val};
     }
     params.source_id = source_id;
 
     new Ajax.Request(url, {
-      method: 'get',
+      method: 'post',
       parameters: params,
       onLoading: function(response) {
         element.next('img.loading-indicator').style.visibility = 'visible';
@@ -803,7 +842,9 @@ ActiveScaffold.ActionLink = {
       if (parent && parent.nodeName.toUpperCase() == 'TD') {
         // record action
         parent = parent.up('tr.record')
-        new ActiveScaffold.Actions.Record(parent.select('a.as_action'), parent, parent.down('td.actions .loading-indicator'));
+        var loading_indicator = parent.down('td.actions .loading-indicator');
+        if (!loading_indicator) loading_indicator = element.parent().find('.loading-indicator');
+        new ActiveScaffold.Actions.Record(parent.select('a.as_action'), parent, loading_indicator);
       } else if (parent && parent.nodeName.toUpperCase() == 'DIV') {
         //table action
         new ActiveScaffold.Actions.Table(parent.select('a.as_action'), parent.up('div.active-scaffold').down('tbody.before-header'), parent.down('.loading-indicator'));
@@ -836,10 +877,17 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
   },
 
   close: function() {
-    this.enable();
-    this.adapter.remove();
-    if (this.hide_target) this.target.show();
-    if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(this.target.id, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+    var link = this;
+    ActiveScaffold.remove(this.adapter, function() {
+      link.enable();
+      if (link.hide_target) link.target.show();
+      if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(link.target.id, ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+    });
+  },
+
+  reload: function() {
+    this.close();
+    this.open();
   },
 
   get_new_adapter_id: function() {
@@ -891,7 +939,7 @@ ActiveScaffold.ActionLink.Abstract = Class.create({
 ActiveScaffold.Actions.Record = Class.create(ActiveScaffold.Actions.Abstract, {
   instantiate_link: function(link) {
     var l = new ActiveScaffold.ActionLink.Record(link, this.target, this.loading_indicator);
-    if (this.target.hasAttribute('data-refresh') && !this.target.readAttribute('data-refresh').blank()) l.refresh_url = this.target.readAttribute('data-refresh');
+    if (this.target.hasAttribute('data-refresh') && !this.target.readAttribute('data-refresh').blank()) l.refresh_url = this.target.up('.records').readAttribute('data-refresh-record').replace('--ID--', this.target.readAttribute('data-refresh'));
     
     if (l.position) {
       l.url = l.url.append_params({adapter: '_list_inline_adapter'});
@@ -906,8 +954,7 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
   close_previous_adapter: function() {
     this.set.links.each(function(item) {
       if (item.url != this.url && item.is_disabled() && !item.keep_open() && item.adapter) {
-        item.enable();
-        item.adapter.remove();
+        ActiveScaffold.remove(item.adapter, function () { item.enable(); });
       }
     }.bind(this));
   },
@@ -920,6 +967,7 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
       this.hide_target = true;
     }
 
+    var colspan = this.target.childElements().length;
     if (this.position == 'after') {
       this.target.insert({after:content});
       this.set_adapter(this.target.next());
@@ -931,6 +979,8 @@ ActiveScaffold.ActionLink.Record = Class.create(ActiveScaffold.ActionLink.Abstra
     else {
       return false;
     }
+    this.adapter.down('.inline-adapter-cell').writeAttribute('colspan', colspan);
+    ActiveScaffold.focus_first_element_of_form(this.adapter);
     ActiveScaffold.highlight(this.adapter.down('td').down());
   },
 
@@ -999,12 +1049,8 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
     else {
       throw 'Unknown position "' + this.position + '"'
     }
+    ActiveScaffold.focus_first_element_of_form(this.adapter);
     ActiveScaffold.highlight(this.adapter.down('td').down());
-  },
-
-  reload: function() {
-    this.close();
-    this.open();
   },
 });
 

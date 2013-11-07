@@ -1,0 +1,28 @@
+<% column_count ||= columns.length + 1 -%>
+<tbody class="messages">
+  <tr class="record even-record">
+    <td colspan="<%= column_count -%>" class="messages-container">
+<% unless active_scaffold_config.list.messages_above_header %>
+      <p class="error-message message server-error" style="display:none;">
+        <%= as_(:internal_error).html_safe %>
+        <a href="#" class="close" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
+      </p>
+      <div id="<%= active_scaffold_messages_id -%>" class="action-messages">
+        <%= render :partial => 'messages' %>
+      </div>
+<% end %>
+      <div class="filtered-message" <%= ' style="display:none;" '.html_safe unless @filtered %>>
+        <%= @filtered.is_a?(Array) ? render(:partial => 'human_conditions', :locals => {:columns => @filtered}) : as_(active_scaffold_config.list.filtered_message) %>
+        <% if active_scaffold_config.list.show_search_reset && @filtered -%>
+        <div class="reset">
+          <%= loading_indicator_tag(:action => :record, :id => nil) %>
+          <%= render_action_link(active_scaffold_config.list.reset_link) %>
+        </div>
+        <% end -%>
+      </div>
+      <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" '.html_safe unless @page.empty? %>>
+        <%= as_(active_scaffold_config.list.no_entries_message) %>
+      </p>
+    </td>
+  </tr>
+</tbody>    

@@ -1,35 +1,32 @@
+if RUBY_VERSION >= '1.9'
+  require 'simplecov'
+  SimpleCov.start { add_filter 'test' }
+end
+
+ENV['RAILS_ENV'] = 'test'
+require "mock_app/config/environment"
+require 'rails/test_help'
 require 'test/unit'
-require 'rubygems'
-require 'action_controller'
-require 'action_view/test_case'
-require 'mocha'
+
+require 'mocha/setup'
 begin
   require 'redgreen'
 rescue LoadError
 end
 
-ENV['RAILS_ENV'] = 'test'
-ENV['RAILS_ROOT'] ||= File.join(File.dirname(__FILE__), 'mock_app')
-
-require File.expand_path(File.join(ENV['RAILS_ROOT'], 'config', 'environment.rb'))
-
 def load_schema
   stdout = $stdout
   $stdout = StringIO.new # suppress output while building the schema
-  load File.join(ENV['RAILS_ROOT'], 'db', 'schema.rb')
+  load File.join(Rails.root, 'db', 'schema.rb')
   $stdout = stdout
 end
+load_schema
 
-def silence_stderr(&block)
-  stderr = $stderr
-  $stderr = StringIO.new
-  yield
-  $stderr = stderr
-end
-
-for file in %w[model_stub const_mocker]
+for file in %w[model_stub const_mocker company]
   require File.join(File.dirname(__FILE__), file)
 end
+
+I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))["en"]
 
 class Test::Unit::TestCase
   protected
@@ -37,3 +34,4 @@ class Test::Unit::TestCase
     ActiveScaffold::Config::Core.new("#{namespace}#{klass.to_s.underscore.downcase}")
   end
 end
+Object.send :remove_const, :Config

@@ -1,13 +1,46 @@
 class ActiveScaffold::Tableless < ActiveRecord::Base
-  class Relation < ActiveRecord::Relation
-    attr_reader :conditions
+  class AssociationScope < ActiveRecord::Associations::AssociationScope
+    def column_for(table_name, column_name)
+      if table_name == klass.table_name
+        klass.columns_hash[column_name]
+      else
+        super
+      end
+    end
+  end
+
+  module Association
+    def self.included(base)
+      base.alias_method_chain :association_scope, :tableless
+      base.alias_method_chain :target_scope, :tableless
+    end
+
+    def association_scope_with_tableless
+      @association_scope ||= AssociationScope.new(self).scope if klass < ActiveScaffold::Tableless
+      association_scope_without_tableless
+    end
+
+    def target_scope_with_tableless
+      target_scope_without_tableless.tap do |scope|
+        if klass < ActiveScaffold::Tableless
+          class << scope; include RelationExtension; end
+        end
+      end
+    end
+  end
+
+  module RelationExtension
+    def conditions
+      @conditions
+    end
+  
     def initialize(klass, table)
       super
       @conditions ||= []
     end
 
     def initialize_copy(other)
-      @conditions = @conditions.dup
+      @conditions = @conditions.try(:dup) || []
       super
     end
 
@@ -36,7 +69,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
 
     def find_one(id)
-      @klass.find_one(id, self)
+      @klass.find_one(id, self) or raise ActiveRecord::RecordNotFound
     end
 
     def execute_simple_calculation(operation, column_name, distinct)
@@ -44,15 +77,20 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
   end
 
+  # For rails3
+  class Relation < ActiveRecord::Relation
+    include RelationExtension
+  end
+
   def self.columns; @columns ||= []; end
   def self.table_name; @table_name ||= ActiveModel::Naming.plural(self); end
   def self.table_exists?; true; end
   self.abstract_class = true
+  # For rails3
   class << self
     private
     def relation
-      @relation ||= ActiveScaffold::Tableless::Relation.new(self, arel_table)
-      super
+      ActiveScaffold::Tableless::Relation.new(self, arel_table)
     end
   end
 
@@ -70,14 +108,22 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   def self.execute_simple_calculation(relation, operation, column_name, distinct)
-    if operation == 'count' && column_name == :all && !distinct
+    if operation == 'count' && [relation.klass.primary_key, :all].include?(column_name)
       find_all(relation).size
     else
-      raise "self.execute_simple_calculation must be implemented in a Tableless model to support #{operation} #{column_name} #{' distinct' if distinct} columns"
+      raise "self.execute_simple_calculation must be implemented in a Tableless model to support #{operation} #{column_name}#{' distinct' if distinct} columns"
     end
   end
 
   def destroy
     raise 'destroy must be implemented in a Tableless model'
+  end
+
+  def create #:nodoc:
+    run_callbacks(:create) {}
+  end
+
+  def update(*) #:nodoc:
+    run_callbacks(:update) {}
   end
 end

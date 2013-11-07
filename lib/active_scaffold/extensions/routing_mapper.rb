@@ -1,21 +1,22 @@
 module ActionDispatch
   module Routing
     ACTIVE_SCAFFOLD_CORE_ROUTING = {
-        :collection => {:show_search => :get, :render_field => :get, :mark => :post},
-        :member => {:row => :get, :update_column => :post, :render_field => :get, :mark => :post}
+        :collection => {:show_search => :get, :render_field => :post, :mark => :post},
+        :member => {:update_column => :post, :render_field => [:get, :post], :mark => :post}
     }
     ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING = {
         :collection => {:edit_associated => :get, :new_existing => :get, :add_existing => :post},
-        :member => {:edit_associated => :get, :add_association => :get, :destroy_existing => :delete}
+        :member => {:edit_associated => :get, :destroy_existing => :delete}
     }
     class Mapper
       module Base
         def as_routes(options = {:association => true})
           collection do
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each {|name, type| send(type, name)}
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each {|name, type| match(name, :via => type)}
           end
           member do
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each {|name, type| send(type, name)}
+            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each {|name, type| match(name, :via => type)}
+            get 'list', :action => :index
           end
           as_association_routes if options[:association]
         end

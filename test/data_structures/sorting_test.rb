@@ -1,5 +1,4 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
-# require 'test/model_stub'
+require 'test_helper'
 
 class SortingTest < Test::Unit::TestCase
   def setup
@@ -105,7 +104,7 @@ class SortingTest < Test::Unit::TestCase
   
   def test_set_default_sorting_with_simple_default_scope
     model_stub_with_default_scope = ModelStub.clone
-    model_stub_with_default_scope.class_eval { default_scope :order => 'a' }
+    model_stub_with_default_scope.class_eval { default_scope lambda { order('a') } }
     @sorting.set_default_sorting model_stub_with_default_scope
     
     assert @sorting.sorts_on?(:a)
@@ -115,7 +114,7 @@ class SortingTest < Test::Unit::TestCase
 
   def test_set_default_sorting_with_complex_default_scope
     model_stub_with_default_scope = ModelStub.clone
-    model_stub_with_default_scope.class_eval { default_scope :order => 'a DESC, players.last_name ASC' }
+    model_stub_with_default_scope.class_eval { default_scope lambda { order('a DESC, players.last_name ASC') } }
     @sorting.set_default_sorting model_stub_with_default_scope
     
     assert @sorting.sorts_on?(:a)

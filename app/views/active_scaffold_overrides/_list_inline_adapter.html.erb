@@ -1,0 +1,12 @@
+<%# nested_id, allows us to remove a nested scaffold programmatically %>
+<tr class="inline-adapter" id="<%= element_row_id :action => :nested %>">
+  <td class="inline-adapter-cell">
+<% if controller.send(:successful?) %>
+    <div class="<%= "#{params[:action]}-view" if params[:action] %> <%= "#{nested? ? nested.name : id_from_controller(params[:controller])}-view" %> view">
+      <%= link_to(as_(:close), '', :class => 'inline-adapter-close as_cancel', :remote => true, :title => as_(:close)) -%>
+      <%= payload -%>
+    </div>
+<% end %>
+  </td>
+</tr>
+<%= javascript_tag("setTimeout(function() { var action_link = ActiveScaffold.ActionLink.get('#{element_row_id(:action => :nested)}'); if (action_link) { action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');#{' action_link.close(); ActiveScaffold.scroll_to(action_link.scaffold(), ActiveScaffold.config.scroll_on_close == "checkInViewport");' unless controller.send(:successful?)} } }, 10);") %>

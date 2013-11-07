@@ -13,11 +13,10 @@ module ActiveScaffold::DataStructures
       self.crud_type = :create if [:create, :new].include?(action.try(:to_sym))
       self.crud_type = :update if [:edit, :update].include?(action.try(:to_sym))
       self.crud_type ||= :read
-      self.parameters = {}
-      self.html_options = {}
       self.column = nil
       self.image = nil
       self.dynamic_parameters = nil
+      self.weight = 0
 
       # apply quick properties
       options.each_pair do |k, v|
@@ -25,6 +24,14 @@ module ActiveScaffold::DataStructures
         self.send(setter, v) if self.respond_to? setter
       end
     end
+
+    def initialize_copy(action_link)
+      self.parameters = self.parameters.clone if action_link.instance_variable_get(:@parameters)
+      self.html_options = self.html_options.clone if action_link.instance_variable_get(:@html_options)
+    end
+
+    # the weight for this link in the action links collection, it will be used to sort the collection
+    attr_accessor :weight
 
     # the action-path for this link. what page to request? this is required!
     attr_accessor :action
@@ -42,7 +49,10 @@ module ActiveScaffold::DataStructures
     end
 
     # a hash of request parameters
-    attr_accessor :parameters
+    attr_writer :parameters
+    def parameters
+      @parameters ||= {}
+    end
 
     # a block for dynamic_parameters
     attr_accessor :dynamic_parameters
@@ -167,7 +177,10 @@ module ActiveScaffold::DataStructures
     attr_accessor :type
 
     # html options for the link
-    attr_accessor :html_options
+    attr_writer :html_options
+    def html_options
+      @html_options ||= {}
+    end
     
     # nested action_links are referencing a column
     attr_accessor :column
@@ -183,8 +196,9 @@ module ActiveScaffold::DataStructures
       @column || (parameters && parameters[:named_scope])
     end
     
-    # Internal use: generated url for this action_link
-    attr_accessor :cached_url
+    def name_to_cache_link_url
+      @name_to_cache_link_url ||= "#{controller || 'self'}_#{type}_#{action}#{'_' if parameters.present?}#{parameters.map{|k,v| "#{k}_#{v}"}.join('_')}_link_url"
+    end
     
     
   end

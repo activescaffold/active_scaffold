@@ -1,0 +1,5 @@
+<% calculations_id ||= active_scaffold_calculations_id -%>
+<% if active_scaffold_config.list.columns.any? {|c| c.calculation?} %>
+<% params.delete(:id) %>
+  ActiveScaffold.replace('<%= calculations_id %>', '<%= escape_javascript(render(:partial => 'list_calculations')) %>');
+<% end %>

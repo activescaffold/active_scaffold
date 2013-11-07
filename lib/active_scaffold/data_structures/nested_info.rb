@@ -30,10 +30,6 @@ module ActiveScaffold::DataStructures
       result
     end
     
-    def parent_scope
-      @parent_scope ||= parent_model.find(parent_id)
-    end
-    
     def habtm?
       false 
     end
@@ -56,6 +52,10 @@ module ActiveScaffold::DataStructures
 
     def plural_association?
       has_many? || habtm?
+    end
+
+    def readonly_through_association?
+      false
     end
 
     def through_association?
@@ -100,6 +100,12 @@ module ActiveScaffold::DataStructures
       association.macro == :has_one
     end
     
+    # A through association with has_one or has_many as source association
+    # create cannot be called in such through association
+    def readonly_through_association?
+      association.options[:through] && association.source_reflection.macro != :belongs_to
+    end
+    
     def through_association?
       association.options[:through]
     end
@@ -113,7 +119,11 @@ module ActiveScaffold::DataStructures
     end
 
     def default_sorting
-      association.options[:order]
+      if association.options[:order] # TODO remove when rails 3 compatibility is removed
+        association.options[:order]
+      elsif association.respond_to?(:scope) # rails 4
+        association.klass.class_eval(&association.scope).values[:order] if association.scope.is_a? Proc
+      end
     end
     
     def to_params
@@ -125,8 +135,8 @@ module ActiveScaffold::DataStructures
     def iterate_model_associations(model)
       @constrained_fields = []
       constrained_fields << association.foreign_key.to_sym unless association.belongs_to?
-      if association.reverse
-        @child_association = model.reflect_on_association(association.reverse)
+      if reverse = association.reverse(model)
+        @child_association = model.reflect_on_association(reverse)
         constrained_fields << @child_association.name unless @child_association == association
       end
     end

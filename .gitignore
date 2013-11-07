@@ -10,12 +10,16 @@ doc
 
 # bundler
 .bundle
+gemfiles/vendor
 
 # jeweler generated
 pkg
 
 # sass generated
 .sass-cache
+
+# logs
+log/**
 
 # Have editor/IDE/OS specific files you need to ignore? Consider using a global gitignore: 
 #
@@ -47,3 +51,4 @@ pkg
 # For kdevelop:
 *.kdev4
 .project
+config/initializers/localeapp.rb

@@ -1,0 +1,9 @@
+<% unless current_page.nil? -%>
+  <% url_options = pagination_url_options -%>
+  <% options = {'data-page-history' => controller_id, :remote => true, :method => :get} -%>
+
+  <%= loading_indicator_tag :action => :pagination %>
+  <%= link_to as_(:previous), url_options.merge(:page => current_page.number - 1), options.merge(:class => "as_paginate previous") if current_page.prev? %>
+  <%= pagination_ajax_links current_page, url_options, options, active_scaffold_config.list.page_links_inner_window, active_scaffold_config.list.page_links_outer_window %>
+  <%= link_to as_(:next), url_options.merge(:page => current_page.number + 1), options.merge(:class => "as_paginate next") if current_page.next? %>
+<% end -%>

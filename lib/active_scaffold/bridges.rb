@@ -56,6 +56,6 @@ module ActiveScaffold
   end
 end
 
-(Dir[File.join(File.dirname(__FILE__), "bridges/*.rb")] - [__FILE__]).each{|bridge_require|
-  ActiveScaffold::Bridges.register bridge_require
-} 
+Dir[File.join(File.dirname(__FILE__), "bridges/*.rb")].each do |bridge|
+  ActiveScaffold::Bridges.register bridge unless bridge == __FILE__
+end

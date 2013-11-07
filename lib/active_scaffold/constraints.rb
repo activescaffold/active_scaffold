@@ -62,14 +62,14 @@ module ActiveScaffold
           elsif column.association
             if column.association.macro == :has_and_belongs_to_many
               active_scaffold_habtm_joins.concat column.includes
-            else
+            elsif !column.association.options[:polymorphic]
               active_scaffold_includes.concat column.includes
             end
             hash_conditions.merge!(condition_from_association_constraint(column.association, v))
 
           # regular column constraints
           elsif column.searchable? && params[column.name] != v
-            active_scaffold_includes.concat column.includes
+            active_scaffold_includes.concat column.includes if column.includes.present?
             conditions << [column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR '), *([v] * column.search_sql.size)]
           end
         # unknown-to-activescaffold-but-real-database-column constraint
@@ -79,7 +79,7 @@ module ActiveScaffold
           raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
         end
       end
-      conditions
+      conditions.reject(&:blank?)
     end
 
     # We do NOT want to use .search_sql. If anything, search_sql will refer
@@ -90,6 +90,7 @@ module ActiveScaffold
       # we have to use the other model's primary_key.
       #
       # please see the relevant tests for concrete examples.
+
       field = if [:has_one, :has_many].include?(association.macro)
         association.klass.primary_key
       elsif [:has_and_belongs_to_many].include?(association.macro)
@@ -99,14 +100,9 @@ module ActiveScaffold
       end
 
       table = case association.macro
-        when :has_and_belongs_to_many
-        association.options[:join_table]
-
-        when :belongs_to
-        active_scaffold_config.model.table_name
-
-        else
-        association.table_name
+        when :has_and_belongs_to_many then association.respond_to?(:join_table) ? association.join_table : association.options[:join_table]
+        when :belongs_to then active_scaffold_config.model.table_name
+        else association.table_name
       end
 
       if association.options[:primary_key]
@@ -116,7 +112,7 @@ module ActiveScaffold
       condition = {"#{table}.#{field}" => value}
       if association.options[:polymorphic]
         raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller unless params[:parent_model]
-        condition["#{table}.#{association.name}_type"] = params[:parent_model].constantize.model.to_s
+        condition["#{table}.#{association.name}_type"] = params[:parent_model].constantize.to_s
       end
 
       condition

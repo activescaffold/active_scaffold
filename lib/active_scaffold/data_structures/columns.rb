@@ -42,7 +42,7 @@ module ActiveScaffold::DataStructures
 
     def exclude(*args)
       # only remove columns from _inheritable. we never want to completely forget about a column.
-      args.each { |a| @_inheritable.delete a }
+      args.each { |a| @_inheritable.delete a.to_sym }
     end
 
     # returns an array of columns with the provided names

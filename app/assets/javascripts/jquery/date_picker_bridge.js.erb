@@ -1,24 +1,42 @@
+<%# encoding: utf-8 %>
 <%= ActiveScaffold::Bridges[:date_picker].localization %>
+Object.getPrototypeOf(jQuery.datepicker)._attachDatepicker_without_inlineSettings = Object.getPrototypeOf(jQuery.datepicker)._attachDatepicker;
+jQuery.extend(Object.getPrototypeOf(jQuery.datepicker), {
+  _attachDatepicker: function(target, settings) {
+    var inlineSettings = {}, $target = jQuery(target);
+    for (var attrName in this._defaults) {
+      if(this._defaults.hasOwnProperty(attrName)){
+        var attrValue = $target.data(attrName.toLowerCase());
+        if (attrValue) {
+          try {
+            inlineSettings[attrName] = eval(attrValue);
+          } catch (err) {
+            inlineSettings[attrName] = attrValue;
+          }
+        }
+      }
+    }
+    this._attachDatepicker_without_inlineSettings(target, jQuery.extend({}, settings || {}, inlineSettings));
+  }
+});
+jQuery(document).on("focus", "input.date_picker", function(){
+  var date_picker = jQuery(this);
+  if (typeof(date_picker.datepicker) == 'function') {
+    if (!date_picker.hasClass('hasDatepicker')) {
+      date_picker.datepicker();
+      date_picker.trigger('focus');
+    }
+  }
+  return true;
+});
 
-jQuery(document).ready(function() {
-  jQuery('input.date_picker').live('focus', function(event) {
-    var date_picker = jQuery(this);
-    if (typeof(date_picker.datepicker) == 'function') {
-      if (!date_picker.hasClass('hasDatepicker')) {
-        date_picker.datepicker();
-        date_picker.trigger('focus');
-      }
+jQuery(document).on("focus", "input.datetime_picker", function(){
+  var date_picker = jQuery(this);
+  if (typeof(date_picker.datetimepicker) == 'function') {
+    if (!date_picker.hasClass('hasDatepicker')) {
+      date_picker.datetimepicker();
+      date_picker.trigger('focus');
     }
-    return true;
-  });
-  jQuery('input.datetime_picker').live('focus', function(event) {
-    var date_picker = jQuery(this);
-    if (typeof(date_picker.datetimepicker) == 'function') {
-      if (!date_picker.hasClass('hasDatepicker')) {
-        date_picker.datetimepicker();
-        date_picker.trigger('focus');
-      }
-    }
-    return true;
-  });
+  }
+  return true;
 });

@@ -1,0 +1,36 @@
+<div id="<%= active_scaffold_id -%>" class="<%= as_main_div_class %>" <%= "data-eid=#{id_from_controller(params[:eid])}" if params[:eid]%>>
+  <div class="active-scaffold-header">
+    <%= render :partial => 'list_header' %>
+  </div>
+  <table>
+    <tbody class="before-header" id="<%= before_header_id -%>">
+      <% if active_scaffold_config.list.always_show_search %>
+      <% old_record, @record = @record, new_model %>
+        <tr>
+          <td>
+            <div class="active-scaffold show_search-view <%= "#{id_from_controller params[:controller]}-view" %> view">
+              <%= render :partial => active_scaffold_config.list.search_partial %>
+            </div> 
+          </td> 
+        </tr>
+      <% @record = old_record %>
+      <% else %>
+      <tr><td></td></tr>
+      <% end %>
+      <% if active_scaffold_config.list.always_show_create %>
+      <% old_record, @record = @record, new_model %>
+        <tr> 
+          <td> 
+            <div  class="active-scaffold create-view <%= "#{id_from_controller params[:controller]}-view" %> view">
+              <%= render :partial => 'create_form_on_list' %>
+            </div> 
+          </td> 
+        </tr>
+      <% @record = old_record %>
+      <% end %>
+    </tbody>
+  </table>
+  <div id="<%= active_scaffold_content_id-%>" class="as_content">
+    <%= render :partial => 'list' %>
+  </div>
+</div>

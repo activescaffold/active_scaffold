@@ -1,0 +1,35 @@
+<% if active_scaffold_config.list.messages_above_header %>
+<table>
+  <tbody>
+    <tr>
+      <td class="messages-container">
+        <p class="error-message message server-error" style="display:none;">
+          <%= as_(:internal_error).html_safe %><span class="error-500"><%= as_(:error_500).html_safe %></span>
+          <a href="#" class="close" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
+        </p>
+        <div id="<%= active_scaffold_messages_id -%>" class="action-messages">
+          <%= render :partial => 'messages' %>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<% end %>
+<table>
+  <thead>
+    <tr>
+      <% columns = list_columns %>
+      <%= render :partial => 'list_column_headings', :locals => {:columns => columns} %>
+    </tr>
+  </thead>
+  <%= render :partial => 'list_messages', :locals => {:columns => columns} %>
+  <tbody class="records" id="<%= active_scaffold_tbody_id %>" data-refresh-record="<%= url_for(params_for(:action => :index, :id => '--ID--')) %>">
+    <% if !@page.empty? -%>
+      <%= render :partial => 'list_record', :collection => @page.items, :locals => {:hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.member} %>
+    <% end -%>
+    <% if columns.any? {|c| c.calculation?} -%>
+      <%= render :partial => 'list_calculations', :locals => {:columns => columns} %>
+    <% end -%>
+  </tbody>
+</table>
+<%= render :partial => 'list_pagination' %>

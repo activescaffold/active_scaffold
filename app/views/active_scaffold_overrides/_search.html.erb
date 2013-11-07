@@ -1,0 +1,28 @@
+<% live_search = active_scaffold_config.search.live? -%>
+<% url_options =  params_for(:action => :index).delete_if{|k,v| k == 'search'} -%>
+<%=
+options = {:id => element_form_id(:action => 'search'),
+           :class => "as_form search#{' live' if live_search}",
+           :remote => true,
+           :'data-loading' => true,
+           :method => :get}
+  form_tag url_options, options %>
+  <%= search_field_tag :search, search_params, :class => 'text-input', :id => search_input_id, :size => 50, :autocomplete => :off, :placeholder => as_(live_search ? :live_search : :search_terms) %>
+  <%= submit_tag as_(:search), :class => "submit", :style => ('display:none;' if live_search) %>
+  <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), :class => 'as_cancel', :remote => true, :data => {:refresh => true} %>
+  <%= loading_indicator_tag(:action => :search) %>
+</form>
+
+<% if ActiveScaffold.js_framework == :prototype %>
+<script type="text/javascript">
+//<![CDATA[
+  new TextFieldWithExample('<%= search_input_id %>', '<%= as_(live_search ? :live_search : :search_terms) %>', {focus: true});
+<% if live_search -%>
+  new Form.Element.DelayedObserver('<%= search_input_id %>', 0.5, function(element, value) {
+    if (!$(element.id)) return false; // because the element may have been destroyed
+    $(element).next().click();
+  });
+<% end -%>
+//]]>
+</script>
+<% end -%>

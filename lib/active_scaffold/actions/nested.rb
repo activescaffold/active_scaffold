@@ -32,7 +32,7 @@ module ActiveScaffold::Actions
     
     def configure_nested
       if nested?
-        active_scaffold_session_storage[:list][:label] =  if nested.belongs_to?
+        active_scaffold_config.list.user.label = if nested.belongs_to?
           as_(:nested_of_model, :nested_model => active_scaffold_config.model.model_name.human, :parent_model => nested_parent_record.to_label)
         else
           as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label)
@@ -75,16 +75,16 @@ module ActiveScaffold::Actions
     def beginning_of_chain
       if nested? && nested.association
         if nested.association.collection?
-          nested.parent_scope.send(nested.association.name)
-        elsif nested.association.options[:through] # has_one :through doesn't need conditions
+          nested_parent_record.send(nested.association.name)
+        elsif nested.association.options[:through] || nested.child_association.nil? # has_one :through doesn't need conditions, and without child_association is not possible to add them
           active_scaffold_config.model
         elsif nested.child_association.belongs_to?
-          active_scaffold_config.model.where(nested.child_association.foreign_key => nested.parent_scope)
+          active_scaffold_config.model.where(nested.child_association.foreign_key => nested_parent_record)
         elsif nested.association.belongs_to?
-          active_scaffold_config.model.joins(nested.child_association.name).where(nested.association.active_record.table_name => {nested.association.active_record.primary_key => nested.parent_scope})
+          active_scaffold_config.model.joins(nested.child_association.name).where(nested.association.active_record.table_name => {nested.association.active_record.primary_key => nested_parent_record}).readonly(false)
         end
       elsif nested? && nested.scope
-        nested.parent_scope.send(nested.scope)
+        nested_parent_record.send(nested.scope)
       else
         active_scaffold_config.model
       end
@@ -96,12 +96,11 @@ module ActiveScaffold::Actions
        
     def create_association_with_parent(record)
       if nested?
+        # has_many is done by beginning_of_chain and rails
         if (nested.belongs_to? || nested.has_one? || nested.habtm?) && nested.child_association
           parent = nested_parent_record(:read)
           case nested.child_association.macro
-          when :has_one
-            record.send("#{nested.child_association.name}=", parent)
-          when :belongs_to
+          when :has_one, :belongs_to
             record.send("#{nested.child_association.name}=", parent)
           when :has_many, :has_and_belongs_to_many
             record.send("#{nested.child_association.name}").send(:<<, parent)
