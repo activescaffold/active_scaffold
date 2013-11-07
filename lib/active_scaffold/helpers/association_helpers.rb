@@ -38,6 +38,7 @@ module ActiveScaffold
           end
         end
         cache_association_options(association, conditions, klass, cache) do
+	  klass = klass.accessible_by(current_ability, :read) # if defined? current_ability
           relation = klass.where(conditions).where(association.options[:conditions])
           relation = relation.includes(association.options[:include]) if association.options[:include]
           relation = yield(relation) if block_given?
