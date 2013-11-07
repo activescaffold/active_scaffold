@@ -4,7 +4,10 @@
 options = {:id => element_form_id(:action => :add_existing),
            :class => "as_form create",
            :method => :post,
-           'data-loading' => true}
+           'data-loading' => true,
+           'data-as_load' => 'form',
+           'data-as_action' => 'create'
+           }
   options[:remote] = true if xhr
   form_tag url_options, options -%>
 
