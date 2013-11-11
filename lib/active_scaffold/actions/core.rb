@@ -69,13 +69,16 @@ module ActiveScaffold::Actions
           @record.id = id
         else
           @record = params[:id] ? find_if_allowed(params[:id], :update) : new_model
-          apply_constraints_to_record(@record) if @record.new_record?
-          @record.id = nil
+          if @record.new_record?
+            apply_constraints_to_record(@record)
+          else
+            @record = @record.dup
+          end
           value = column_value_from_param_value(@record, @column, params.delete(:value))
           @record.send "#{@column.name}=", value
           @record.id = params[:id]
         end
-        set_parent(@record) if @record.new_record? && params[:parent_controller] && params[:parent_id] && params[:child_association]
+        set_parent(@record) if @record.id.nil? && params[:parent_controller] && params[:parent_id] && params[:child_association]
         
         after_render_field(@record, @column)
       end
