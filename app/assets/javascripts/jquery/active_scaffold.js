@@ -201,7 +201,7 @@ jQuery(document).ready(function($) {
     event.preventDefault();
     var element = jQuery(this);
     var form_element = element.prev();
-    if (form_element.is("ul.draggable-list")) form_element = form_element.find("input:checkbox");
+    if (form_element.is("ul.draggable-list")) form_element = form_element.parent().find("input:checkbox");
     var value = form_element.is("input:checkbox:not(:checked)") ? null : form_element.val();
     ActiveScaffold.update_column(form_element, element.attr('href'), element.data('update_send_form'), form_element.attr('id'), value);
   });
