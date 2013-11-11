@@ -46,6 +46,7 @@ module ActiveScaffold::Actions
         @columns = @column.update_columns
         @scope = params.delete(:scope)
         @main_columns = active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns
+        @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
         
         if @column.send_form_on_update_column
           if @scope
