@@ -203,7 +203,7 @@ jQuery(document).ready(function($) {
     if (form_element.is("ul.draggable-list")) form_element = form_element.find("input:checkbox");
     var value = form_element.is("input:checkbox:not(:checked)") ? null : form_element.val();
     ActiveScaffold.update_column(form_element, element.attr('href'), element.data('update_send_form'), form_element.attr('id'), value);
-    return true;
+    event.preventDefault();
   });
   jQuery(document).on('recordselect:change', 'input.recordselect.update_form', function(event, id, label) {
     var element = jQuery(this);
