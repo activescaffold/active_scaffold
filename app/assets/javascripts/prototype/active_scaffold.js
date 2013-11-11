@@ -261,7 +261,7 @@ document.observe("dom:loaded", function() {
     event.stop();
     var element = event.findElement();
     var form_element = element.previous();
-    if (form_element.match("ul.draggable-list")) form_element = form_element.select("input:checkbox");
+    if (form_element.match("ul.draggable-list")) form_element = form_element.up().select("input:checkbox");
     ActiveScaffold.update_column(form_element, element.readAttribute('href'), element.hasAttribute('data-update_send_form'), form_element.readAttribute('id'), form_element.getValue());
   });
   document.on('recordselect:change', 'input.recordselect.update_form', function(event) {
