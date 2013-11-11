@@ -252,9 +252,9 @@ module ActiveScaffold
         end
         if column.options[:refresh_link]
           link_options = {:class => 'refresh-link', :remote => true}
-          link_options['data-update_send_form'] = options['data-update_send_form']
-          link_options['data-update_send_form_selector'] = options['data-update_send_form_selector']
-          html << link_to(as_(:refresh), options['data-update_url'], link_options)
+          link_options['data-update_send_form'] = html_options['data-update_send_form']
+          link_options['data-update_send_form_selector'] = html_options['data-update_send_form_selector']
+          html << link_to(as_(:refresh), html_options['data-update_url'], link_options)
         end
         html
       end
