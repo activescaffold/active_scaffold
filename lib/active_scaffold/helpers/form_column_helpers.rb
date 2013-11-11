@@ -273,7 +273,7 @@ module ActiveScaffold
         associated_options, select_options = active_scaffold_plural_association_options(column, record)
         
         html = if select_options.empty?
-          content_tag(:span, as_(:no_options), :class => options[:class], :id => options[:id])
+          content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id])
         else
           active_scaffold_checkbox_list(column, select_options.collect {|r| [r.to_label, r.id]}, associated_options.collect(&:id), options)
         end
