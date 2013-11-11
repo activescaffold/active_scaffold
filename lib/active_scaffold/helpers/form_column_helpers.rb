@@ -251,7 +251,7 @@ module ActiveScaffold
           collection_select(:record, method, select_options, :id, :to_label, options, html_options)
         end
         if column.options[:refresh_link]
-          link_options = {:class => 'refresh-link', :remote => true}
+          link_options = {:class => 'refresh-link'}
           link_options['data-update_send_form'] = html_options['data-update_send_form']
           link_options['data-update_send_form_selector'] = html_options['data-update_send_form_selector']
           html << link_to(as_(:refresh), html_options['data-update_url'], link_options)
@@ -278,7 +278,7 @@ module ActiveScaffold
           active_scaffold_checkbox_list(column, select_options.collect {|r| [r.to_label, r.id]}, associated_options.collect(&:id), options)
         end
         if column.options[:refresh_link]
-          link_options = {:class => 'refresh-link', :remote => true}
+          link_options = {:class => 'refresh-link'}
           link_options['data-update_send_form'] = options['data-update_send_form']
           link_options['data-update_send_form_selector'] = options['data-update_send_form_selector']
           html << link_to(as_(:refresh), options['data-update_url'], link_options)
