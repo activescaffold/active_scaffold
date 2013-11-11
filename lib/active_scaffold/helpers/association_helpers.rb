@@ -38,11 +38,16 @@ module ActiveScaffold
           end
         end
         cache_association_options(association, conditions, klass, cache) do
+          klass = association_klass_scoped(association, klass, record)
           relation = klass.where(conditions).where(association.options[:conditions])
           relation = relation.includes(association.options[:include]) if association.options[:include]
           relation = yield(relation) if block_given?
           relation.to_a
         end
+      end
+
+      def association_klass_scoped(association, klass, record)
+        klass
       end
 
       # Sorts the options for select

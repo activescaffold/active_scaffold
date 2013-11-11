@@ -38,6 +38,12 @@ module ActiveScaffold::Bridges
       end
     end
 
+    module AssociationHelpers
+      def association_klass_scoped(association, klass, record)
+        super.accessible_by(current_ability, :read)
+      end
+    end
+
     # beginning of chain integration
     module Actions
       module Core
