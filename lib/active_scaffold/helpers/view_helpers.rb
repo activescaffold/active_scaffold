@@ -265,8 +265,8 @@ module ActiveScaffold
         keep = true
         @query_string_params ||= Set.new
         query_string_for_all = nil
-        query_string_options = []
-        non_nested_query_string_options = []
+        query_string_options = {}
+        non_nested_query_string_options = {}
         
         params_for.except(:controller, :action, :id).each do |key, value|
           @query_string_params << key
@@ -274,17 +274,16 @@ module ActiveScaffold
             keep = false
             next
           end
-          qs = "#{key}=#{value}"
           if NESTED_PARAMS.include?(key) || conditions_from_params.include?(key) || (nested? && nested.param_name == key)
-            non_nested_query_string_options << qs
+            non_nested_query_string_options[key] = value
           else
-            query_string_options << qs
+            query_string_options[key] = value
           end
         end
         
-        query_string = URI.escape(query_string_options.join('&')) if query_string_options.present?
+        query_string = query_string_options.to_query if query_string_options.present? #URI.escape(query_string_options.join('&')) if query_string_options.present?
         if non_nested_query_string_options.present?
-          non_nested_query_string = "#{'&' if query_string}#{URI.escape(non_nested_query_string_options.join('&'))}"
+          non_nested_query_string = "#{'&' if query_string}#{non_nested_query_string_options.to_query}" #URI.escape(non_nested_query_string_options.join('&'))}"
         end
         if keep
           @query_string = query_string
