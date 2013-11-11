@@ -715,6 +715,15 @@ padding: 1px;
 border: solid 1px;
 }
 
+.active-scaffold .refresh-link {
+display: inline-block;
+width: 25px;
+text-indent: 26px;
+overflow: hidden;
+background-position: 5px 50%;
+background-repeat: no-repeat;
+}
+
 .active-scaffold .checkbox-list {
 padding-left: 0px;
 }
@@ -726,6 +735,9 @@ display: inline;
 
 .active-scaffold .checkbox-list li label {
 padding: 0 0 0 2px;
+}
+.active-scaffold .checkbox-list + .refresh-link {
+float: left;
 }
 
 .active-scaffold .draggable-list {
