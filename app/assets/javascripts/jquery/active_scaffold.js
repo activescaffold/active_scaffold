@@ -197,6 +197,14 @@ jQuery(document).ready(function($) {
     ActiveScaffold.update_column(element, element.data('update_url'), element.data('update_send_form'), element.attr('id'), value);
     return true;
   });
+  jQuery(document).on('click', 'a.refresh_link', function(event) {
+    var element = jQuery(this);
+    var form_element = element.prev();
+    if (form_element.is("ul.draggable-list")) form_element = form_element.find("input:checkbox");
+    var value = form_element.is("input:checkbox:not(:checked)") ? null : form_element.val();
+    ActiveScaffold.update_column(form_element, element.attr('href'), element.data('update_send_form'), form_element.attr('id'), value);
+    return true;
+  });
   jQuery(document).on('recordselect:change', 'input.recordselect.update_form', function(event, id, label) {
     var element = jQuery(this);
     ActiveScaffold.update_column(element, element.data('update_url'), element.data('update_send_form'), element.attr('id'), id);
