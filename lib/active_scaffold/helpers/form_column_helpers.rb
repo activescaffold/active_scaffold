@@ -118,7 +118,7 @@ module ActiveScaffold
         elsif [:new, :create, :edit, :update, :render_field].include? params[:action].to_sym
           active_scaffold_config.send(record.new_record? ? :create : :update)
         end
-        if form_action && column.update_columns && (column.update_columns & form_action.columns.names).present?
+        if form_action && (column.options[:refresh_link] || (column.update_columns && (column.update_columns & form_action.columns.names).present?))
           url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
           url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
           url_params[:eid] = params[:eid] if params[:eid]
@@ -245,11 +245,18 @@ module ActiveScaffold
         html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]")
         active_scaffold_translate_select_options(options)
 
-        if optgroup = options.delete(:optgroup)
+        html = if optgroup = options.delete(:optgroup)
           select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
         else
           collection_select(:record, method, select_options, :id, :to_label, options, html_options)
         end
+        if column.options[:refresh_link]
+          link_options = {:class => 'refresh-link', :remote => true}
+          link_options['data-update_send_form'] = options['data-update_send_form']
+          link_options['data-update_send_form_selector'] = options['data-update_send_form_selector']
+          html << link_to(as_(:refresh), options['data-update_url'], link_options)
+        end
+        html
       end
 
       def active_scaffold_plural_association_options(column, record = nil)
@@ -264,9 +271,19 @@ module ActiveScaffold
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         associated_options, select_options = active_scaffold_plural_association_options(column, record)
-        return content_tag(:span, as_(:no_options), :class => options[:class], :id => options[:id]) if select_options.empty?
-
-        active_scaffold_checkbox_list(column, select_options.collect {|r| [r.to_label, r.id]}, associated_options.collect(&:id), options)
+        
+        html = if select_options.empty?
+          content_tag(:span, as_(:no_options), :class => options[:class], :id => options[:id])
+        else
+          active_scaffold_checkbox_list(column, select_options.collect {|r| [r.to_label, r.id]}, associated_options.collect(&:id), options)
+        end
+        if column.options[:refresh_link]
+          link_options = {:class => 'refresh-link', :remote => true}
+          link_options['data-update_send_form'] = options['data-update_send_form']
+          link_options['data-update_send_form_selector'] = options['data-update_send_form_selector']
+          html << link_to(as_(:refresh), options['data-update_url'], link_options)
+        end
+        html
       end
       
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
