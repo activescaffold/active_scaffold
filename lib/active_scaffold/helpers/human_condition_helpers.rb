@@ -6,7 +6,7 @@ module ActiveScaffold
       def active_scaffold_human_condition_for(column)
         value = field_search_params[column.name]
         search_ui = column.search_ui
-        search_ui ||= column.column.type if column.column
+        search_ui ||= column.type if column
         if override_human_condition_column?(column)
           send(override_human_condition_column(column), value, {})
         elsif search_ui and override_human_condition?(column.search_ui)
@@ -19,7 +19,7 @@ module ActiveScaffold
             opt = ActiveScaffold::Finder::StringComparators.index(value[:opt]) || value[:opt]
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(opt).downcase} '#{value[:from]}' #{opt == 'BETWEEN' ? '- ' + value[:to].to_s : ''}"
           when :date, :time, :datetime, :timestamp
-            conversion = column.column.type == :date ? :to_date : :to_time
+            conversion = column.type == :date ? :to_date : :to_time
             from = controller.condition_value_for_datetime(column, value[:from], conversion)
             to = controller.condition_value_for_datetime(column, value[:to], conversion)
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt])} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"
@@ -37,7 +37,7 @@ module ActiveScaffold
             end
             as_(:association, :scope => :human_conditions, :column => column.active_record_class.human_attribute_name(column.name), :value => associated.join(', '))
           when :boolean, :checkbox
-            label = column.column.type_cast(value) ? as_(:true) : as_(:false)
+            label = column.type_cast(value) ? as_(:true) : as_(:false)
             as_(:boolean, :scope => :human_conditions, :column => column.active_record_class.human_attribute_name(column.name), :value => label)
           when :null
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value.to_sym)}"

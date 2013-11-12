@@ -18,7 +18,7 @@ module ActiveScaffold
         where_clauses = []
         columns.each do |column|
           Array(column.search_sql).each do |search_sql|
-            where_clauses << "#{search_sql} #{(column.column.nil? || column.column.text?) ? ActiveScaffold::Finder.like_operator : '='} ?"
+            where_clauses << "#{search_sql} #{(column.nil? || column.text?) ? ActiveScaffold::Finder.like_operator : '='} ?"
           end
         end
         phrase = where_clauses.join(' OR ')
@@ -26,7 +26,7 @@ module ActiveScaffold
         tokens.collect do |value|
           columns.inject([phrase]) do |condition, column|
             Array(column.search_sql).size.times do
-              condition.push((column.column.nil? || column.column.text?) ? like_pattern.sub('?', value) : column.column.type_cast(value))
+              condition.push((column.nil? || column.text?) ? like_pattern.sub('?', value) : column.type_cast(value))
             end
             condition
           end
@@ -42,7 +42,7 @@ module ActiveScaffold
           return self.send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
         return unless column and column.search_sql and not value.blank?
-        search_ui = column.search_ui || column.column.try(:type)
+        search_ui = column.search_ui || column.try(:type)
         begin
           sql, *values = if search_ui && self.respond_to?("condition_for_#{search_ui}_type")
             self.send("condition_for_#{search_ui}_type", column, value, like_pattern)
@@ -52,7 +52,7 @@ module ActiveScaffold
             else
               case search_ui
               when :boolean, :checkbox
-                ["%{search_sql} = ?", column.column ? column.column.type_cast(value) : value]
+                ["%{search_sql} = ?", column ? column.type_cast(value) : value]
               when :integer, :decimal, :float
                 condition_for_numeric(column, value)
               when :string, :range
@@ -62,10 +62,10 @@ module ActiveScaffold
               when :select, :multi_select, :country, :usa_state, :chosen, :multi_chosen
                 ["%{search_sql} in (?)", Array(value)]
               else
-                if column.column.nil? || column.column.text?
+                if column.nil? || column.text?
                   ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
                 else
-                  ["%{search_sql} = ?", column.column.type_cast(value)]
+                  ["%{search_sql} = ?", column.type_cast(value)]
                 end
               end
             end
@@ -97,10 +97,10 @@ module ActiveScaffold
 
       def condition_for_range(column, value, like_pattern = nil)
         if !value.is_a?(Hash)
-          if column.column.nil? || column.column.text?
+          if column.nil? || column.text?
             ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
           else
-            ["%{search_sql} = ?", column.column.type_cast(value)]
+            ["%{search_sql} = ?", column.type_cast(value)]
           end
         elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
           condition_for_null_type(column, value[:opt], like_pattern)
@@ -132,7 +132,7 @@ module ActiveScaffold
         end
         value
       end
-      
+
       def condition_value_for_datetime(column, value, conversion = :to_time)
         if value.is_a? Hash
           Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[part].to_i}) rescue nil
@@ -176,7 +176,7 @@ module ActiveScaffold
       def condition_value_for_numeric(column, value)
         return value if value.nil?
         value = column.number_to_native(value) if column.options[:format] && column.search_ui != :number
-        case (column.search_ui || column.column.type)
+        case (column.search_ui || column.type)
         when :integer   then value.to_i rescue value ? 1 : 0
         when :float     then value.to_f
         when :decimal   then ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
@@ -184,15 +184,15 @@ module ActiveScaffold
           value
         end
       end
-      
+
       def datetime_conversion_for_condition(column)
-        if column.column
-          column.column.type == :date ? :to_date : :to_time
+        if column
+          column.type == :date ? :to_date : :to_time
         else
           :to_time
         end
       end
-            
+
       def condition_for_datetime(column, value, like_pattern = nil)
         conversion = datetime_conversion_for_condition(column)
         from_value = condition_value_for_datetime(column, value[:from], conversion)
@@ -216,7 +216,7 @@ module ActiveScaffold
           ["%{search_sql} = ?", value]
         end
       end
-      
+
       def condition_for_null_type(column, value, like_pattern = nil)
         case value.to_sym
         when :null
@@ -256,8 +256,8 @@ module ActiveScaffold
       'null',
       'not_null'
     ]
-    
-    
+
+
 
     def self.included(klass)
       klass.extend ClassMethods
@@ -279,12 +279,12 @@ module ActiveScaffold
     def active_scaffold_habtm_joins
       @active_scaffold_habtm_joins ||= []
     end
-    
+
     attr_writer :active_scaffold_outer_joins
     def active_scaffold_outer_joins
       @active_scaffold_outer_joins ||= []
     end
-    
+
     attr_writer :active_scaffold_references
     def active_scaffold_references
       @active_scaffold_references ||= []
@@ -293,11 +293,11 @@ module ActiveScaffold
     # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
     def conditions_for_collection
     end
-  
+
     # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).  The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
     def joins_for_collection
     end
-  
+
     # Override this method on your controller to provide custom finder options to the find() call. The return of this method should be a hash.
     def custom_finder_options
       {}
@@ -312,7 +312,7 @@ module ActiveScaffold
         active_scaffold_session_storage[:conditions] # embedding conditions (weaker constraints)
       ].reject(&:blank?)
     end
-    
+
     # returns a single record (the given id) but only if it's allowed for the specified security options.
     # security options can be a hash for authorized_for? method or a value to check as a :crud_type
     # accomplishes this by checking model.#{action}_authorized?
@@ -346,7 +346,7 @@ module ActiveScaffold
         end
         finder_options.merge!(:references => active_scaffold_references)
       end
-    
+
       finder_options.merge! custom_finder_options
       finder_options
     end
@@ -355,10 +355,10 @@ module ActiveScaffold
       count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
       options = find_options.reject{|k,v| [:select, :reorder].include? k}
       options[:includes] = count_includes
-      
+
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       count = append_to_query(query, options).count
-  
+
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
       count = count.length if count.is_a?(Hash) || count.is_a?(ActiveSupport::OrderedHash) # TODO remove OrderedHash check when ruby 1.8 or rails3 support is removed
@@ -374,7 +374,7 @@ module ActiveScaffold
 
       find_options = finder_options(options)
       query = beginning_of_chain.where(nil) # where(nil) is needed because we need a relation
-      
+
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       if options[:pagination] && options[:pagination] != :infinite
         count = count_items(query, find_options, options[:count_includes])
@@ -421,7 +421,7 @@ module ActiveScaffold
       end
       active_scaffold_config.model.where(primary_key => subquery)
     end
-    
+
     def append_to_query(query, options)
       options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, (:references if Rails::VERSION::MAJOR >= 4)
       query = options.reject{|k,v| v.blank?}.inject(query) do |query, (k, v)|
@@ -429,7 +429,7 @@ module ActiveScaffold
       end
       if options[:outer_joins].present?
         if Rails::VERSION::MAJOR >= 4
-          query.distinct_value = true 
+          query.distinct_value = true
         else
           query = query.uniq
         end
@@ -447,7 +447,7 @@ module ActiveScaffold
           []
       end + active_scaffold_habtm_joins
     end
-    
+
     def apply_conditions(query, *conditions)
       conditions.reject(&:blank?).inject(query) do |query, condition|
         if condition.is_a?(Array) && !condition.first.is_a?(String) # multiple conditions

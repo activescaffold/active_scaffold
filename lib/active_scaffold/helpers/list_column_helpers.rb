@@ -28,7 +28,7 @@ module ActiveScaffold
           # second, check if the dev has specified a valid list_ui for this column
           elsif column.list_ui and (method = override_column_ui(column.list_ui))
             method
-          elsif column.column and (method = override_column_ui(column.column.type))
+          elsif column and (method = override_column_ui(column.type))
             method
           else
             :format_column_value
@@ -209,7 +209,7 @@ module ActiveScaffold
       end
 
       def inplace_edit_cloning?(column)
-         column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
+         column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column and override_input?(column.type)))
       end
 
       def active_scaffold_inplace_edit(record, column, options = {})
@@ -248,7 +248,7 @@ module ActiveScaffold
         data[:ie_loading_text] = column.options[:loading_text] || as_(:loading)
         data[:ie_save_text] = column.options[:save_text] || as_(:update)
         data[:ie_saving_text] = column.options[:saving_text] || as_(:saving)
-        data[:ie_rows] = column.options[:rows] || 5 if column.column.try(:type) == :text
+        data[:ie_rows] = column.options[:rows] || 5 if column.try(:type) == :text
         data[:ie_cols] = column.options[:cols] if column.options[:cols]
         data[:ie_size] = column.options[:size] if column.options[:size]
 
@@ -317,11 +317,11 @@ module ActiveScaffold
           content_tag(:p, column_heading_label(column))
         end
       end
-      
+
       def column_heading_label(column)
         column.label
       end
-      
+
       def render_nested_view(action_links, record)
         rendered = []
         action_links.member.each do |link|
@@ -329,11 +329,11 @@ module ActiveScaffold
             link_url_options = {:adapter => '_list_inline_adapter', :format => :js}.merge(action_link_url_options(link, record))
             link_id = get_action_link_id(link, record)
             rendered << (controller.send(:render_component_into_view, link_url_options) + javascript_tag("ActiveScaffold.ActionLink.get('#{link_id}').set_opened();"))
-          end 
+          end
         end
         rendered.join(' ').html_safe
-      end  
-      
+      end
+
     end
   end
 end
