@@ -204,7 +204,7 @@ jQuery(document).ready(function($) {
     var form_element = element.prev();
     var value;
     if (form_element.is(".checkbox-list")) {
-      value = form_element.find(':checked').map(function(item){return $(this).val();});
+      value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
       form_element = form_element.parent().find("input:checkbox"); // parent is needed for draggable-list, checked list may be empty
     } else value = form_element.is("input:checkbox:not(:checked)") ? null : form_element.val();
     ActiveScaffold.update_column(form_element, element.attr('href'), element.data('update_send_form'), form_element.attr('id'), value);
