@@ -36,6 +36,7 @@ jQuery(document).ready(function($) {
   }
 
   jQuery(document).on('focus', ':input', function() { ActiveScaffold.last_focus = this; });
+  jQuery(document).on('blur', ':input', function(e) { ActiveScaffold.last_focus = e.relatedTarget; });
   jQuery(document).click(function(event) {
     jQuery('.action_group.dyn ul').hide(); // only hide so action links loading still work
   });
