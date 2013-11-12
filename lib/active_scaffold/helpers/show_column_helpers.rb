@@ -13,7 +13,7 @@ module ActiveScaffold
         elsif column.list_ui and (method = override_show_column_ui(column.list_ui))
           send(method, record, column)
         else
-          if column.column and (method = override_show_column_ui(column.column.type))
+          if column and (method = override_show_column_ui(column.type))
             send(method, record, column)
           else
             get_column_value(record, column)

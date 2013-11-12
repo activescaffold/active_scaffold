@@ -74,7 +74,7 @@ module ActiveScaffold
 
     def column_value_from_param_value(parent_record, column, value)
       # convert the value, possibly by instantiating associated objects
-      form_ui = column.form_ui || column.column.try(:type)
+      form_ui = column.form_ui || column.try(:type)
       if form_ui && self.respond_to?("column_value_for_#{form_ui}_type", true)
         self.send("column_value_for_#{form_ui}_type", parent_record, column, value)
       elsif value.is_a?(Hash)
@@ -83,15 +83,15 @@ module ActiveScaffold
         column_value_from_param_simple_value(parent_record, column, value)
       end
     end
-    
+
     def datetime_conversion_for_value(column)
-      if column.column
-        column.column.type == :date ? :to_date : :to_time
+      if column
+        column.type == :date ? :to_date : :to_time
       else
         :to_time
       end
     end
-    
+
     def column_value_for_datetime_type(parent_record, column, value)
       new_value = self.class.condition_value_for_datetime(column, value, self.class.datetime_conversion_for_condition(column))
       if new_value.nil? && value.present?
@@ -119,7 +119,7 @@ module ActiveScaffold
         # convert empty strings into nil. this works better with 'null => true' columns (and validations),
         # and 'null => false' columns should just convert back to an empty string.
         # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
-        value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
+        value = nil if value.is_a? String and value.empty? and !column.nil? and column.null
         value
       end
     end
@@ -143,7 +143,7 @@ module ActiveScaffold
         value
       end
     end
-    
+
     def manage_nested_record_from_params(parent_record, column, attributes)
       return nil unless build_record_from_params(attributes, column, parent_record)
       record = find_or_create_for_params(attributes, column, parent_record)
@@ -226,7 +226,7 @@ module ActiveScaffold
         end
       end
     end
-    
+
     def column_default_value(column_name, klass, column)
       column.default.to_s if column
     end

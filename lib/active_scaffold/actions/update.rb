@@ -128,8 +128,8 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], :read)
       if @record.authorized_for?(:crud_type => :update, :column => column)
         @column = active_scaffold_config.columns[column]
-        value ||= unless @column.column.nil? || @column.column.null
-          @column.column.default == true ? false : @column.column.default
+        value ||= unless @column.nil? || @column.null
+          @column.default == true ? false : @column.default
         end
         unless @column.nil?
           value = column_value_from_param_value(@record, @column, value)
