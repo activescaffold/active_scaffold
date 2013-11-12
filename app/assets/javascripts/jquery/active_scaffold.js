@@ -201,8 +201,11 @@ jQuery(document).ready(function($) {
     event.preventDefault();
     var element = jQuery(this);
     var form_element = element.prev();
-    if (form_element.is("ul.draggable-list")) form_element = form_element.parent().find("input:checkbox");
-    var value = form_element.is("input:checkbox:not(:checked)") ? null : form_element.val();
+    var value;
+    if (form_element.is(".checkbox-list")) {
+      value = form_element.find(':checked').map(function(item){return $(this).val();});
+      form_element = form_element.parent().find("input:checkbox"); // parent is needed for draggable-list, checked list may be empty
+    } else value = form_element.is("input:checkbox:not(:checked)") ? null : form_element.val();
     ActiveScaffold.update_column(form_element, element.attr('href'), element.data('update_send_form'), form_element.attr('id'), value);
   });
   jQuery(document).on('recordselect:change', 'input.recordselect.update_form', function(event, id, label) {
