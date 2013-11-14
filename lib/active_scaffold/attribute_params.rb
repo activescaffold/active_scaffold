@@ -129,6 +129,8 @@ module ActiveScaffold
       if value and not value.empty?
         ids = value.select {|id| id.present?}
         ids.empty? ? [] : column.association.klass.find(ids)
+      else
+        []
       end
     end
 
