@@ -316,7 +316,6 @@ module ActiveScaffold
     # returns a single record (the given id) but only if it's allowed for the specified security options.
     # security options can be a hash for authorized_for? method or a value to check as a :crud_type
     # accomplishes this by checking model.#{action}_authorized?
-    # TODO: this should reside on the model, not the controller
     def find_if_allowed(id, security_options, klass = beginning_of_chain)
       record = klass.find(id)
       security_options = {:crud_type => security_options.to_sym} unless security_options.is_a? Hash
