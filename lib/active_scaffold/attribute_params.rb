@@ -173,7 +173,7 @@ module ActiveScaffold
       if params.has_key? klass.primary_key
         record_from_current_or_find(klass, params[klass.primary_key], current)
       elsif klass.authorized_for?(:crud_type => :create)
-        parent_column.association.klass.new
+        build_associated(parent_column.association, parent_record)
       end
     end
 
