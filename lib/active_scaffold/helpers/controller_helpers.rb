@@ -100,6 +100,10 @@ module ActiveScaffold
           # avoid use build_association in has_one when record is saved and had associated record
           # because associated record would be changed in DB
           parent_record.send("build_#{association.name}")
+        elsif association.macro == :has_one && parent_record.persisted? && parent_record.send(association.name).present?
+          association.klass.new.tap do |record|
+            parent_record.send("#{association.name}=", record)
+          end
         else
           association.klass.new.tap do |record|
             save_record_to_association(record, association.reverse, parent_record) # set inverse
@@ -109,3 +113,4 @@ module ActiveScaffold
     end
   end
 end
+

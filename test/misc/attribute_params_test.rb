@@ -168,8 +168,8 @@ class AttributeParamsTest < Test::Unit::TestCase
     model = update_record_from_params(Building.new, :create, :name, :floors, :name => 'First', :floors => floors)
     assert_equal 'First', model.name
     assert_equal 3, model.floors.size
-    assert_equal floor.id, model.floors.first.id
-    assert_equal [nil, *people.map(&:id)], model.floors.map(&:tenant_id)
+    assert_equal floor.id, model.floors.last.id
+    assert_equal [*people.map(&:id), nil], model.floors.map(&:tenant_id)
     assert model.save
 
     model = update_record_from_params(model, :update, :name, :floors, :name => 'Tower', :floors => {'0' => ''})
@@ -301,3 +301,4 @@ class Controller
     @logger ||= Logger.new(STDOUT)
   end
 end
+
