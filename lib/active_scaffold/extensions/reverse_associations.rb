@@ -28,6 +28,7 @@ module ActiveRecord
 
           # stage 1 filter: collect associations that point back to this model and use the same foreign_key
           klass.reflect_on_all_associations.each do |assoc|
+            next if assoc == self
             if self.options[:through]
               # only iterate has_many :through associations
               next unless assoc.options[:through]
