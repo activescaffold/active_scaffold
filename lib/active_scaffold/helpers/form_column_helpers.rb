@@ -112,13 +112,14 @@ module ActiveScaffold
         record = options[:object]
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
-        form_action = if scope
-          subform_controller = controller.class.active_scaffold_controller_for(record.class)
-          subform_controller.active_scaffold_config.subform
+        subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
+        form_columns = @main_columns
+        form_columns ||= if scope
+          subform_controller.active_scaffold_config.subform.columns
         elsif [:new, :create, :edit, :update, :render_field].include? params[:action].to_sym
-          active_scaffold_config.send(record.new_record? ? :create : :update)
+          active_scaffold_config.send(record.new_record? ? :create : :update).columns
         end
-        if form_action && (column.options[:refresh_link] || (column.update_columns && (column.update_columns & form_action.columns.names).present?))
+        if form_columns && (column.options[:refresh_link] || (column.update_columns && (column.update_columns & form_columns.names).present?))
           url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
           url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
           url_params[:eid] = params[:eid] if params[:eid]
