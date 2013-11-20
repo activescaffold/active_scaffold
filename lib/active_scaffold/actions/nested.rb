@@ -76,7 +76,9 @@ module ActiveScaffold::Actions
       if nested? && nested.association
         if nested.association.collection?
           nested_parent_record.send(nested.association.name)
-        elsif nested.association.options[:through] || nested.child_association.nil? # has_one :through doesn't need conditions, and without child_association is not possible to add them
+        elsif nested.association.options[:through] # has_one :through
+          active_scaffold_config.model.where(active_scaffold_config.model.primary_key => nested_parent_record.send(nested.association.name).id)
+        elsif nested.child_association.nil? # without child_association is not possible to add conditions
           active_scaffold_config.model
         elsif nested.child_association.belongs_to?
           active_scaffold_config.model.where(nested.child_association.foreign_key => nested_parent_record)
