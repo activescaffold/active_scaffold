@@ -13,10 +13,13 @@ module ActiveScaffold
             js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show(); return false;";
           end
           
+          object_name, method = options[:name].split(/\[(#{column.name})\]/)
+          method.sub!(/#{column.name}/, 'delete_\0')
+
           content = active_scaffold_column_paperclip(@record, column)
           content_tag(:div,
             content + " | " +
-              hidden_field(:record, "delete_#{column.name}", :value => "false") +
+              hidden_field(object_name, method, :value => "false") +
               content_tag(:a, as_(:remove_file), {:href => '#', :onclick => js_remove_file_code}) 
           ) + content_tag(:div, input, :style => "display: none")
         else
