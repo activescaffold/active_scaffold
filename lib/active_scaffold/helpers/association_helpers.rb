@@ -41,9 +41,22 @@ module ActiveScaffold
           klass = association_klass_scoped(association, klass, record)
           relation = klass.where(conditions).where(association.options[:conditions])
           relation = relation.includes(association.options[:include]) if association.options[:include]
+          column = column_for_association_if_sorted(association, record)
+          if column 
+            if column.includes
+              include_assoc = column.includes.find { |assoc| assoc.is_a?(Hash) && assoc.include?(association.name) }
+              relation = relation.includes(include_assoc[association.name]) if include_assoc
+            end
+            relation = relation.order(column.sort[:sql])
+          end
           relation = yield(relation) if block_given?
           relation.to_a
         end
+      end
+
+      def column_for_association_if_sorted(association, record)
+        column = active_scaffold_config_for(record.class).columns[association.name] rescue nil
+        column if column.try(:sort) && column.sort[:sql]
       end
 
       def association_klass_scoped(association, klass, record)
@@ -52,7 +65,9 @@ module ActiveScaffold
 
       # Sorts the options for select
       def sorted_association_options_find(association, conditions = nil, record = nil)
-        association_options_find(association, conditions, nil, record).sort_by(&:to_label)
+        options = association_options_find(association, conditions, nil, record)
+        options = options.sort_by(&:to_label) unless column_for_association_if_sorted(association, record)
+        options
       end
 
       def association_options_count(association, conditions = nil)
