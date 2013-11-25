@@ -101,7 +101,8 @@ module ActiveScaffold
             include "ActiveScaffold::Actions::#{name}".constantize
 
             # sneak the action links from the actions into the main set
-            if link = active_scaffold_config.send(mod).link rescue nil
+            mod_conf = active_scaffold_config.send(mod)
+            if mod_conf.respond_to?(:link) && (link = mod_conf.link)
               if link.is_a? Array
                 link.each {|current| active_scaffold_config.action_links.add_to_group(current, active_scaffold_config.send(mod).action_group)}
               elsif link.is_a? ActiveScaffold::DataStructures::ActionLink
