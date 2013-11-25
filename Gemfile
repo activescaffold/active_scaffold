@@ -11,7 +11,11 @@ group :development, :test do
   gem "bundler", ">= 1.0.0"
   gem "localeapp"
   gem "rack"
-  gem "rubysl", :platform => :rbx
+  platforms :rbx do
+    gem "rubysl"
+    gem "rubysl-test-unit"
+    gem "racc"
+  end
 end
 
 group :test do

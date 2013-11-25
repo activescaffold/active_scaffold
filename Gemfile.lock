@@ -50,6 +50,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.7.8)
     polyglot (0.3.3)
+    racc (1.4.10)
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -258,6 +259,8 @@ GEM
     rubysl-syslog (2.0.1)
       ffi2-generators (~> 0.1)
     rubysl-tempfile (2.0.1)
+    rubysl-test-unit (2.0.3)
+      minitest (~> 4.7)
     rubysl-thread (2.0.2)
     rubysl-thwait (2.0.0)
     rubysl-time (2.0.3)
@@ -306,11 +309,13 @@ DEPENDENCIES
   bundler (>= 1.0.0)
   localeapp
   mocha
+  racc
   rack
   rails (~> 4.0.0)
   rake
   rdoc
   rubysl
+  rubysl-test-unit
   shoulda
   simplecov
   sqlite3

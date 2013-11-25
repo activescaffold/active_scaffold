@@ -1,4 +1,4 @@
-if RUBY_VERSION >= '1.9'
+if RUBY_VERSION >= '1.9' && RUBY_ENGINE == 'ruby' # remove RUBY_ENGINE test when rubinius-coverage fix is released
   require 'simplecov'
   SimpleCov.start { add_filter 'test' }
 end

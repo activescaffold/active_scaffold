@@ -48,10 +48,12 @@ GEM
       treetop (~> 1.4.8)
     metaclass (0.0.1)
     mime-types (1.23)
+    minitest (4.7.5)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multi_json (1.7.8)
     polyglot (0.3.3)
+    racc (1.4.10)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -266,6 +268,8 @@ GEM
     rubysl-syslog (2.0.1)
       ffi2-generators (~> 0.1)
     rubysl-tempfile (2.0.1)
+    rubysl-test-unit (2.0.3)
+      minitest (~> 4.7)
     rubysl-thread (2.0.2)
     rubysl-thwait (2.0.0)
     rubysl-time (2.0.3)
@@ -308,11 +312,13 @@ DEPENDENCIES
   bundler (>= 1.0.0)
   localeapp
   mocha
+  racc
   rack
   rails (~> 3.2.13)
   rake
   rdoc
   rubysl
+  rubysl-test-unit
   shoulda
   simplecov
   sqlite3
