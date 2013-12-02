@@ -20,6 +20,7 @@
 - Check security in column groups in forms
 - Add refresh_link option to :select form_ui
 - Sort association options in select :form_ui using column.sort_by :sql
+- Support :radio form_ui in association columns
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select
