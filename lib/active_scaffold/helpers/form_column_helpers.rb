@@ -340,16 +340,15 @@ module ActiveScaffold
 
       def active_scaffold_input_radio(column, html_options)
         html_options.merge!(column.options[:html_options] || {})
-        options = if column.singular_association?
-          active_scaffold_input_singular_association(column, html_options)
-        elsif column.plural_association?
-          active_scaffold_input_plural_association(column, html_options)
+        options = if column.association
+          sorted_association_options_find(column.association, nil, html_options[:object])
         else
           active_scaffold_enum_options(column)
         end
         options.inject('') do |html, (text, value)|
-          text, value = active_scaffold_translated_option(column, text, value) unless column.association
-          html << content_tag(:label, radio_button(:record, column.name, value, html_options.merge(:id => html_options[:id] + '-' + value.to_s)) + text)
+          text, value = column.association ? [text.to_label, text.id] : active_scaffold_translated_option(column, text, value)
+          checked = {:checked => html_options[:object].send(column.association.name).try(:id) == value} if column.association
+          html << content_tag(:label, radio_button(:record, column.name, value, html_options.merge(:id => html_options[:id] + '-' + value.to_s).merge(checked || {})) + text)
         end.html_safe
       end
 
