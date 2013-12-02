@@ -34,7 +34,7 @@ module ActiveScaffold::Actions
     end
     def update_respond_to_html
       if params[:iframe]=='true' # was this an iframe post ?
-        do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
+        do_refresh_list if successful? && active_scaffold_config.update.refresh_list && !render_parent?
         responds_to_parent do
           render :action => 'on_update', :formats => [:js], :layout => false
         end
