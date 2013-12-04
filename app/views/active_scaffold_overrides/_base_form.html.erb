@@ -15,11 +15,7 @@
    cancel_link = true if cancel_link.nil?
    submit_text ||= form_action
    body_partial ||= 'form'
-   if form_action == :update
-     form_id = element_form_id(:action => :update, :id => @record.try(:id))
-   else
-     form_id = element_form_id(:action => form_action)
-   end
+   form_id = element_form_id(:action => form_action, :id => @record.try(:id))
 %>
 <%=
 options = {:onsubmit => onsubmit,
