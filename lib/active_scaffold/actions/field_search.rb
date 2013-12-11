@@ -54,7 +54,7 @@ module ActiveScaffold::Actions
           unless search_condition.blank?
             if active_scaffold_config.list.user.count_includes.nil? && column.includes.present? && list_columns.include?(column)
               self.active_scaffold_references << column.includes
-            else
+            elsif column.search_joins.present?
               self.active_scaffold_outer_joins << column.search_joins
             end
             self.active_scaffold_conditions << search_condition
