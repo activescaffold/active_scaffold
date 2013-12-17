@@ -15,13 +15,15 @@ module ActiveScaffold::DataStructures
       model_scope = model.send(:build_default_scope)
       order_clause = model_scope.arel.order_clauses.join(",") if model_scope
 
-      # If an ORDER BY clause is found set default sorting according to it, else
       # fallback to setting primary key ordering
+      if model.column_names.include?(model.primary_key)
+        set(model.primary_key, 'ASC')
+        @sorting_by_primary_key = clause
+      end
+      # If an ORDER BY clause is found set default sorting according to it
       if order_clause
         set_sorting_from_order_clause(order_clause, model.table_name)
         @default_sorting = true
-      else
-        set(model.primary_key, 'ASC') if model.column_names.include?(model.primary_key)
       end
     end
 
@@ -109,6 +111,7 @@ module ActiveScaffold::DataStructures
         order << Array(sql).map {|column| "#{column} #{sort_direction}"}.join(', ')
       end
 
+      order << @sorting_by_primary_key if @sorting_by_primary_key # mandatory for postgres
       order unless order.empty?
     end
 
