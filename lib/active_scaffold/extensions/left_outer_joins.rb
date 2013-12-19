@@ -5,7 +5,7 @@ module ActiveScaffold
 
     if Rails::VERSION::MAJOR < 4
       included do
-        const_get(:MULTI_VALUE_METHODS) << :outer_joins_values
+        const_get(:MULTI_VALUE_METHODS) << :outer_joins
       end
 
       def outer_joins(*args)
