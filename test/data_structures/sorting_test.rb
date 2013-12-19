@@ -2,7 +2,7 @@ require 'test_helper'
 
 class SortingTest < Test::Unit::TestCase
   def setup
-    @columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b, :c, :d)
+    @columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b, :c, :d, :id)
     @sorting = ActiveScaffold::DataStructures::Sorting.new(@columns)
   end
 
