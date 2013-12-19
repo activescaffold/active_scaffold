@@ -212,15 +212,18 @@ module ActiveScaffold
          column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
       end
 
-      def active_scaffold_inplace_edit(record, column, options = {})
-        formatted_column = options[:formatted_column] || format_column_value(record, column)
+      def active_scaffold_inplace_edit_tag_options(record, column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
         tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
                        :title => as_(:click_to_edit), :data => {:ie_id => record.to_param}}
         tag_options[:data][:ie_update] = column.inplace_edit if column.inplace_edit != true
+        tag_options
+      end
 
+      def active_scaffold_inplace_edit(record, column, options = {})
+        formatted_column = options[:formatted_column] || format_column_value(record, column)
         content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<
-        content_tag(:span, formatted_column, tag_options)
+        content_tag(:span, formatted_column, active_scaffold_inplace_edit_tag_options(record, column))
       end
 
       def inplace_edit_control(column)
