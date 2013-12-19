@@ -47,7 +47,12 @@ module ActiveScaffold
 
         module ClassMethods
           # The proc to call that retrieves the current_user from the ApplicationController.
-          attr_accessor :current_user_proc
+          def current_user_proc
+            Thread.current[:current_user_proc]
+          end
+          def current_user_proc=(proc_value)
+            Thread.current[:current_user_proc] = proc_value
+          end
 
           # Class-level access to the current user
           def current_user
