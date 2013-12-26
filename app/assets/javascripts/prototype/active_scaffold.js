@@ -547,6 +547,11 @@ var ActiveScaffold = {
     link = $(link);
     link.next('ul').remove();
     link.up('td').addClassName('action_group dyn');
+    if (link.up('td.actions')) link.up('td').addClassName('action_group dyn');
+    else {
+      if (link.up().hasClassName('actions')) link.wrap('div');
+      link.up().addClassName('action_group dyn');
+    }
     link.insert({after: html});
   },
   

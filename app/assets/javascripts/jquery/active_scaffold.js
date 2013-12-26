@@ -616,7 +616,11 @@ var ActiveScaffold = {
   display_dynamic_action_group: function(link, html) {
     if (typeof(link) == 'string') link = jQuery('#' + link);
     link.next('ul').remove();
-    link.closest('td').addClass('action_group dyn');
+    if (link.closest('td.actions').length) link.closest('td').addClass('action_group dyn');
+    else {
+      if (link.parent('div.actions').length) link.wrap($('<div>'));
+      link.parent().addClass('action_group dyn');
+    }
     link.after(html);
   },
   
