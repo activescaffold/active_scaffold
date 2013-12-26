@@ -142,13 +142,13 @@ module ActiveScaffold::DataStructures
 
     def method_missing(name, *args, &block)
       class_eval %{
-        def #{name}
-          @#{name} ||= subgroup('#{name}'.to_sym)
+        def #{name}(label = nil)
+          @#{name} ||= subgroup('#{name}'.to_sym, label)
           yield @#{name} if block_given?
           @#{name}
         end
       }
-      send(name, &block)
+      send(name, args.first, &block)
     end
 
     attr_accessor :name
