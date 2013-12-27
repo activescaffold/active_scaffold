@@ -61,6 +61,9 @@ module ActiveScaffold
           elsif attributes.has_key? column.name
             value = column_value_from_param_value(parent_record, column, attributes[column.name])
             parent_record.send "#{column.name}=", value unless column.singular_association? && parent_record.send(column.name) == value # avoid deleting record when is the same in a has_one association
+            if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
+              Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
+            end
           end
         rescue
           logger.error "#{$!.class.name}: #{$!.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
