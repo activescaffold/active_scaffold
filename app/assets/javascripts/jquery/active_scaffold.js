@@ -902,8 +902,9 @@ var ActiveScaffold = {
   
   draggable_lists: function(id_or_elements) {
     var elements;
+    if (!jQuery.fn.draggableLists) return;
     if (typeof(id_or_elements) == 'string') elements = jQuery('ul' + id_or_elements);
-    else elements = jQuery(elements)
+    else elements = jQuery(elements);
     elements.draggableLists();
   }
 }
