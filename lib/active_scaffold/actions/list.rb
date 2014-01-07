@@ -45,16 +45,16 @@ module ActiveScaffold::Actions
       end
     end
     def list_respond_to_xml
-      render :xml => response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :methods => methods), :content_type => Mime::XML, :status => response_status
+      render :xml => response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :methods => list_columns_methods), :content_type => Mime::XML, :status => response_status
     end
     def list_respond_to_json
-      render :text => response_object.to_json(:only => list_columns_names + [active_scaffold_config.model.primary_key], :methods => methods), :content_type => Mime::JSON, :status => response_status
+      render :text => response_object.to_json(:only => list_columns_names + [active_scaffold_config.model.primary_key], :methods => list_columns_methods), :content_type => Mime::JSON, :status => response_status
     end
     def list_respond_to_yaml
-      render :text => Hash.from_xml(response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :methods => methods)).to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :text => Hash.from_xml(response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :methods => list_columns_methods)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
 
-    def list_column_methods
+    def list_columns_methods
       list_columns_names.reject {|col| active_scaffold_config.model.columns_hash[col] || active_scaffold_config.model.reflect_on_association(col)}
     end
 
