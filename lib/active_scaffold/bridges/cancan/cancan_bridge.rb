@@ -79,7 +79,12 @@ module ActiveScaffold::Bridges
 
         module ClassMethods
           # The proc to call that retrieves the current_ability from the ApplicationController.
-          attr_accessor :current_ability_proc
+          def current_ability_proc
+            Thread.current[:current_ability_proc]
+          end
+          def current_ability_proc=(value)
+            Thread.current[:current_ability_proc] = value
+          end
 
           # Class-level access to the current ability
           def current_ability
