@@ -223,6 +223,14 @@ logger.debug objects.inspect
       request.get? && active_scaffold_config.conditional_get_support
     end
 
+    def virtual_columns(columns)
+      columns.reject {|col| active_scaffold_config.model.columns_hash[col] || active_scaffold_config.model.reflect_on_association(col)}
+    end
+
+    def association_columns(columns)
+      columns.select {|col| active_scaffold_config.model.reflect_on_association(col)}
+    end
+
     private
     def respond_to_action(action)
       return unless !conditional_get_support? || view_stale?
