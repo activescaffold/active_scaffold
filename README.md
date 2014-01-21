@@ -37,7 +37,7 @@ Configuration
 -------------
 See Wiki for instructions on customising ActiveScaffold and to find the full API details.
 
-Compatability Issues
+Compatibility Issues
 --------------------
 jQuery 1.9 deprecates some methods that rails-3.2 branch still uses (NB: jQuery 1.9 is supported in 3.3.x, the master branch). You'll therefore need to ensure you use jQuery 1.8. You can do this by fixing version in your Gemfile:
 
