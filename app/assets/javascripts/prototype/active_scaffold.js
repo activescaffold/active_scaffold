@@ -1063,7 +1063,7 @@ ActiveScaffold.ActionLink.Table = Class.create(ActiveScaffold.ActionLink.Abstrac
     }
     ActiveScaffold.focus_first_element_of_form(this.adapter);
     ActiveScaffold.highlight(this.adapter.down('td').down());
-  },
+  }
 });
 
 if (Ajax.InPlaceEditor) {
