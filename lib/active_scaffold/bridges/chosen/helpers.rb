@@ -13,7 +13,7 @@ class ActiveScaffold::Bridges::Chosen
         html_options[:class] << ' chosen'
         if column.plural_association?
           associated_options, select_options = active_scaffold_plural_association_options(column)
-          options = {:selected => associated_options.collect {|a| a[1]}, :include_blank => as_(:_select_)}
+          options = {:selected => associated_options.collect {|a| a.id}, :include_blank => as_(:_select_)}
 
           html_options.update(:multiple => true).update(column.options[:html_options] || {})
           options.update(column.options)
