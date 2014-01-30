@@ -12,6 +12,6 @@ module ActiveScaffold
     end
   end
 end
-(defined?(ActionView::Helpers::InstanceTag) ? ActionView::Helpers::InstanceTag : ActionView::Helpers::Tags::DateSelect).class_eval do
+(defined?(ActionView::Helpers::Tags::DateSelect) ? ActionView::Helpers::Tags::DateSelect : ActionView::Helpers::InstanceTag).class_eval do
   include ActiveScaffold::DateSelectExtension
 end
