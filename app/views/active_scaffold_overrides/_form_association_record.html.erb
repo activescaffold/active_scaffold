@@ -19,7 +19,7 @@
     error_tag ||= :div
     error_inner_tag ||= nil
     default_col_class = ['form-element']
-    flatten = true unless local_assigns.has_key? :flatten
+    flatten ||= false
   else
     record_tag ||= :tbody
     row_tag ||= :tr
