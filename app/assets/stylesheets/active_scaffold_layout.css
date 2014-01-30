@@ -801,7 +801,7 @@ padding: 0 5px 0 1px;
 background: none;
 }
 
-.active-scaffold .horizontal-sub-form td dt label {
+.active-scaffold .horizontal-sub-form td > dl > dt label {
 display: none;
 }
 

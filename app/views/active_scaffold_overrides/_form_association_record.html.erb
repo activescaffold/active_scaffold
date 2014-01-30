@@ -52,8 +52,10 @@
   next unless in_subform?(column, parent_record)
   columns_length += 1
   show_actions = true
-  column = column.clone
-  column.form_ui ||= :select if column.association
+  if column.association && column.form_ui.nil?
+    column = column.clone
+    column.form_ui ||= :select
+  end
   
   col_class = default_col_class.clone
   col_class << 'required' if column.required?
