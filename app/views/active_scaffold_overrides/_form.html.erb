@@ -18,9 +18,9 @@
   </li>
   <% end %>
   <% elsif renders_as == :subform and authorized -%>
-  <li class="sub-form <%= active_scaffold_config_for(column.association.klass).subform.layout %>-sub-form <%= column_css_class %> <%=column.name%>-sub-form" id="<%= sub_form_id(:association => column.name) %>">
+  <%= content_tag :li, active_scaffold_subform_attributes(column, column_css_class) do %>
     <%= render_column(column, @record, renders_as, scope) %>
-  </li>
+  <% end %>
   <% else -%>
   <li class="form-element <%= 'required' if column.required? %> <%= column_css_class %>">
     <%= render_column(column, @record, renders_as, scope, !authorized) %>

@@ -72,12 +72,22 @@ module ActiveScaffold
           col_class = col_class.join(' ')
         end
         unless readonly and not record.new_record? or not record.authorized_for?(:crud_type => crud_type, :column => column.name)
-          render_column(column, record, column_renders_as(column), scope, false, col_class)
+          renders_as = column_renders_as(column)
+          html = render_column(column, record, renders_as, scope, false, col_class)
+          html = content_tag(:div, html, active_scaffold_subform_attributes(column)) if renders_as == :subform
+          html
         else
           options = active_scaffold_input_options(column, scope).except(:name)
           options[:class] = "#{options[:class]} #{col_class}" if col_class
           content_tag :span, get_column_value(record, column), options
         end
+      end
+
+      def active_scaffold_subform_attributes(column, column_css_class = nil)
+        {
+          :class => "sub-form #{active_scaffold_config_for(column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
+          :id => sub_form_id(:association => column.name)
+        }
       end
 
       # the standard active scaffold options used for textual inputs
