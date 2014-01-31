@@ -1,7 +1,7 @@
 module ActiveScaffold
   module Helpers
     module AssociationHelpers
-      # Cache the optins for select
+      # Cache the options for select
       def cache_association_options(association, conditions, klass, cache = true)
         if active_scaffold_config.cache_association_options && cache
           @_associations_cache ||= Hash.new { |h,k| h[k] = {} }
