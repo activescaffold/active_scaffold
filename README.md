@@ -31,7 +31,7 @@ Add the following line to /app/assets/stylesheets/application.css
 
     *= require active_scaffold
 
-Run the app and visit localhost:3000/teams 
+Run the app and visit localhost:3000/users 
 
 Configuration
 -------------
