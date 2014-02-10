@@ -741,6 +741,8 @@ padding: 0 0 0 2px;
 float: left;
 }
 
+.active-scaffold .draggable-lists + .loading-indicator { float: left; }
+
 .active-scaffold .draggable-list {
 float: left;
 width: 300px;
