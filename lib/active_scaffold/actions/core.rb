@@ -64,13 +64,13 @@ module ActiveScaffold::Actions
           # call update_record_from_params with new_model
           # in other case some associations can be saved
           @record = new_model
-          apply_constraints_to_record(@record)
+          apply_constraints_to_record(@record) unless @scope
           @record = update_record_from_params(@record, @main_columns, hash)
           @record.id = id
         else
           @record = params[:id] ? find_if_allowed(params[:id], :update) : new_model
           if @record.new_record?
-            apply_constraints_to_record(@record)
+            apply_constraints_to_record(@record) unless @scope
           else
             @record = @record.dup
           end
