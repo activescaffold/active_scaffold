@@ -22,7 +22,7 @@ class ActiveScaffold::Bridges::Chosen
           if optgroup = options.delete(:optgroup)
             select(:record, column.name, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
           else
-            collection_select(:record, column.name, select_options, :id, :to_label, options, html_options)
+            collection_select(:record, column.name, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
           end
         else
           active_scaffold_input_select(column, html_options)

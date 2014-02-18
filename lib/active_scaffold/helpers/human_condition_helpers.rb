@@ -27,7 +27,8 @@ module ActiveScaffold
             associated = value
             associated = [associated].compact unless associated.is_a? Array
             if column.association
-              associated = column.association.klass.where(:id => associated.map(&:to_i)).collect(&:to_label)
+              method = column.options[:label_method] || :to_label
+              associated = column.association.klass.where(:id => associated.map(&:to_i)).collect(&method)
             elsif column.options[:options]
               associated = associated.collect do |value|
                 text, val = column.options[:options].find {|text, val| (val.nil? ? text : val).to_s == value.to_s}

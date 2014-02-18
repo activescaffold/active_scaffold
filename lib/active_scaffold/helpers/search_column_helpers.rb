@@ -77,7 +77,8 @@ module ActiveScaffold
         associated.collect!(&:to_i)
         
         if column.association
-          select_options = sorted_association_options_find(column.association, nil, record).collect {|r| [r.to_label, r.id]}
+          method = column.options[:label_method] || :to_label
+          select_options = sorted_association_options_find(column.association, nil, record).collect {|r| [r.send(method), r.id]}
         else
           select_options = column.options[:options].collect do |text, value|
             active_scaffold_translated_option(column, text, value)
@@ -115,7 +116,7 @@ module ActiveScaffold
         if optgroup = options.delete(:optgroup)
           select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
         elsif column.association
-          collection_select(:record, method, select_options, :id, :to_label, options, html_options)
+          collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
         else
           select(:record, method, select_options, options, html_options)
         end

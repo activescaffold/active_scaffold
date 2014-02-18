@@ -22,6 +22,7 @@
 - Sort association options in select :form_ui using column.sort_by :sql
 - Support :radio form_ui in association columns
 - Improve XML/JSON/YAML: return primary key, associations and virtual columns (a method must exist in model)
+- Add support for :label_method option for association columns so another method can be used instead of to_label
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select
