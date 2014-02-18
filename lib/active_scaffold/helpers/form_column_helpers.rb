@@ -227,9 +227,11 @@ module ActiveScaffold
       ##
       
       def active_scaffold_grouped_options(column, select_options, optgroup)
-        group_label = active_scaffold_config_for(column.association.klass).columns[optgroup].try(:association) ? :to_label : :to_s
+        group_column = active_scaffold_config_for(column.association.klass).columns[optgroup]
+        group_label = group_column.options[:label_method] if group_column
+        group_label ||= group_column.try(:association) ? :to_label : :to_s
         select_options.group_by(&optgroup.to_sym).collect do |group, options|
-          [group.send(group_label), options.collect {|r| [r.to_label, r.id]}]
+          [group.send(group_label), options.collect {|r| [r.send(column.options[:label_method] || :to_label), r.id]}]
         end
       end
 
@@ -259,7 +261,7 @@ module ActiveScaffold
         html = if optgroup = options.delete(:optgroup)
           select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
         else
-          collection_select(:record, method, select_options, :id, :to_label, options, html_options)
+          collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
         end
         if column.options[:refresh_link]
           link_options = {:class => 'refresh-link'}
@@ -286,7 +288,8 @@ module ActiveScaffold
         html = if select_options.empty?
           content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id])
         else
-          active_scaffold_checkbox_list(column, select_options.collect {|r| [r.to_label, r.id]}, associated_options.collect(&:id), options)
+          method = column.options[:label_method] || :to_label
+          active_scaffold_checkbox_list(column, select_options.collect {|r| [r.send(method), r.id]}, associated_options.collect(&:id), options)
         end
         if column.options[:refresh_link]
           link_options = {:class => 'refresh-link'}
@@ -356,7 +359,8 @@ module ActiveScaffold
           active_scaffold_enum_options(column)
         end
         options.inject('') do |html, (text, value)|
-          text, value = column.association ? [text.to_label, text.id] : active_scaffold_translated_option(column, text, value)
+          method = column.options[:label_method] || :to_label if column.association
+          text, value = column.association ? [text.send(method), text.id] : active_scaffold_translated_option(column, text, value)
           checked = {:checked => html_options[:object].send(column.association.name).try(:id) == value} if column.association
           html << content_tag(:label, radio_button(:record, column.name, value, html_options.merge(:id => html_options[:id] + '-' + value.to_s).merge(checked || {})) + text)
         end.html_safe

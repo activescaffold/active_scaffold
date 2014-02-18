@@ -147,12 +147,13 @@ module ActiveScaffold
       end
 
       def format_association_value(value, column, size)
+        method = column.options[:label_method] || :to_label
         value = if column.association.collection?
           if column.associated_limit.nil?
-            firsts = value.collect(&:to_label)
+            firsts = value.collect(&method)
           else
             firsts = value.first(column.associated_limit)
-            firsts.collect!(&:to_label)
+            firsts.collect!(&method)
             firsts[column.associated_limit] = '…' if value.size > column.associated_limit
           end
           if column.associated_limit == 0
@@ -164,9 +165,9 @@ module ActiveScaffold
           end
         elsif value
           if column.polymorphic_association?
-            "#{value.class.model_name.human}: #{value.to_label}"
+            "#{value.class.model_name.human}: #{value.send(method)}"
           else
-            value.to_label
+            value.send(method)
           end
         end
         format_value value

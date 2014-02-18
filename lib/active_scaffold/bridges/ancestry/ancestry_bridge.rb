@@ -21,9 +21,10 @@ module ActiveScaffold::Bridges
         select_options = []
         select_control_options = {:selected => @record.parent_id}
         select_control_options[:include_blank] = as_(:_select_) if @record.parent_id.nil?
+        method = column.options[:label_method] || :to_label
         traverse_ancestry = proc do|key, value|
           unless key == @record
-            select_options << ["#{'__' * key.depth}#{key.to_label}", key.id]
+            select_options << ["#{'__' * key.depth}#{key.send(method)}", key.id]
             value.each(&traverse_ancestry) if value.is_a?(Hash) && !value.empty?
           end
         end
