@@ -89,7 +89,7 @@ module ActiveScaffold::Actions
       association = parent_model.reflect_on_association(params[:child_association].to_sym).try(:reverse)
       if association
         parent = params[:parent_id] ? parent_model.find(params[:parent_id]) : parent_model.new
-        apply_constraints_to_record(parent) if parent_model.new_record? && @scope
+        apply_constraints_to_record(parent) if parent.new_record?
         if record.class.reflect_on_association(association).collection?
           record.send(association) << parent
         else
