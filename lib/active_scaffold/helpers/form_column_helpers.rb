@@ -302,7 +302,7 @@ module ActiveScaffold
       
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
         html = hidden_field_tag("#{options[:name]}[]", '', :id => nil)
-        html << content_tag(:ul, :class => "#{options[:class]} checkbox-list#{' draggable-lists' if column.options[:draggable_lists]}", :id => options[:id]) do
+        html << content_tag(:ul, options.merge(:class => "#{options[:class]} checkbox-list#{' draggable-lists' if column.options[:draggable_lists]}")) do
           content = ''.html_safe
           select_options.each_with_index do |option, i|
             label, id = option

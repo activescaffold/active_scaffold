@@ -252,17 +252,29 @@ document.observe("dom:loaded", function() {
       return true;
     } else return false;
   });
-  document.on('change', 'input.update_form, textarea.update_form, select.update_form', function(event) {
+  document.on('change', 'input.update_form, textarea.update_form, select.update_form, .checkbox-list.update_form input:checkbox', function(event) {
     var element = event.findElement();
-    ActiveScaffold.update_column(element, element.readAttribute('data-update_url'), element.hasAttribute('data-update_send_form'), element.readAttribute('id'), element.getValue());
+    var form_element = element.up('.checkbox-list');
+    var value;
+    if (form_element.match(".checkbox-list")) {
+      value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
+    } else {
+      value = element.is("input:checkbox:not(:checked)") ? null : form_element.val();
+      form_element = element;
+    }
+    ActiveScaffold.update_column(element, form_element.readAttribute('data-update_url'), form_element.hasAttribute('data-update_send_form'), element.readAttribute('id'), value);
     return true;
   });
   document.on('click', 'a.refresh-link', function(event) {
     event.stop();
     var element = event.findElement();
     var form_element = element.previous();
-    if (form_element.match("ul.draggable-list")) form_element = form_element.up().select("input:checkbox");
-    ActiveScaffold.update_column(form_element, element.readAttribute('href'), element.hasAttribute('data-update_send_form'), form_element.readAttribute('id'), form_element.getValue());
+    var value;
+    if (form_element.match(".checkbox-list")) {
+      value = Form.Element.getValue(form_element);
+      form_element = form_element.up().select("input:checkbox"); // parent is needed for draggable-list, checked list may be empty
+    } else value = form_element.getValue();
+    ActiveScaffold.update_column(form_element, element.readAttribute('href'), element.hasAttribute('data-update_send_form'), form_element.readAttribute('id'), value);
   });
   document.on('recordselect:change', 'input.recordselect.update_form', function(event) {
     var element = event.findElement();

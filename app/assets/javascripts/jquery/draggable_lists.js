@@ -21,6 +21,7 @@
         jQuery(this).append(ui.draggable);
         var input = jQuery('input:checkbox', ui.draggable);
         input.prop('checked', jQuery(this).hasClass('selected'));
+        input.trigger('change');
         ui.draggable.css({left: '0px', top: '0px'});
       }
     });
