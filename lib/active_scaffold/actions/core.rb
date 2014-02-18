@@ -78,7 +78,7 @@ module ActiveScaffold::Actions
           @record.send "#{@column.name}=", value
           @record.id = params[:id]
         end
-        set_parent(@record) if @record.id.nil? && params[:parent_controller] && params[:parent_id] && params[:child_association]
+        set_parent(@record) if @record.id.nil? && params[:parent_controller] && params[:child_association]
         
         after_render_field(@record, @column)
       end
@@ -88,7 +88,8 @@ module ActiveScaffold::Actions
       parent_model = params[:parent_controller].singularize.camelize.constantize
       association = parent_model.reflect_on_association(params[:child_association].to_sym).try(:reverse)
       if association
-        parent = parent_model.find(params[:parent_id])
+        parent = params[:parent_id] ? parent_model.find(params[:parent_id]) : parent_model.new
+        apply_constraints_to_record(parent) if parent_model.new_record? && @scope
         if record.class.reflect_on_association(association).collection?
           record.send(association) << parent
         else
