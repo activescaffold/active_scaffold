@@ -192,10 +192,17 @@ jQuery(document).ready(function($) {
     jQuery(event.target).closest('.action_group.dyn ul').remove();
   });
 
-  jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form', function(event) {
+  jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form, .checkbox-list.update_form input:checkbox', function(event) {
     var element = jQuery(this);
-    var value = element.is("input:checkbox:not(:checked)") ? null : element.val();
-    ActiveScaffold.update_column(element, element.data('update_url'), element.data('update_send_form'), element.attr('id'), value);
+    var form_element = element.closest('.checkbox-list');
+    var value;
+    if (form_element.is(".checkbox-list")) {
+      value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
+    } else {
+      value = element.is("input:checkbox:not(:checked)") ? null : form_element.val();
+      form_element = element;
+    }
+    ActiveScaffold.update_column(element, form_element.data('update_url'), form_element.data('update_send_form'), element.attr('id'), value);
     return true;
   });
   jQuery(document).on('click', 'a.refresh-link', function(event) {
