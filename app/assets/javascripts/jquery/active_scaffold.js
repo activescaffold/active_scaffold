@@ -202,7 +202,7 @@ jQuery(document).ready(function($) {
       value = element.is("input:checkbox:not(:checked)") ? null : form_element.val();
       form_element = element;
     }
-    ActiveScaffold.update_column(element, form_element.data('update_url'), form_element.data('update_send_form'), element.attr('id'), value);
+    ActiveScaffold.update_column(form_element, form_element.data('update_url'), form_element.data('update_send_form'), element.attr('id'), value);
     return true;
   });
   jQuery(document).on('click', 'a.refresh-link', function(event) {
@@ -520,6 +520,8 @@ var ActiveScaffold = {
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','visible');
     jQuery('input[type=submit]', as_form).attr('disabled', 'disabled');
+    if (jQuery.fn.draggable) jQuery('.draggable-item', as_form).draggable('disable');
+    if (jQuery.fn.droppable) jQuery('.draggable-list', as_form).droppable('disable');
     // data-remote-disabled attr instead of set data because is used to in selector later
     jQuery("input:enabled,select:enabled,textarea:enabled", as_form).attr('disabled', 'disabled').attr('data-remove-disabled', true);
   },
@@ -530,6 +532,8 @@ var ActiveScaffold = {
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','hidden');
     jQuery('input[type=submit]', as_form).removeAttr('disabled');
+    if (jQuery.fn.draggable) jQuery('.draggable-item', as_form).draggable('enable');
+    if (jQuery.fn.droppable) jQuery('.draggable-list', as_form).droppable('enable');
     jQuery("input[data-remove-disabled],select[data-remove-disabled],textarea[data-remove-disabled]", as_form).removeAttr('disabled data-remove-disabled');
   },  
   
