@@ -78,6 +78,7 @@ $input_focus_bg: #ffc !default;
 
 $draggable_list_bg: #FFFF88 !default;
 $draggable_list_selected_bg: #7FCF00 !default;
+$draggable_list_disabled_bg: $disabled_color !default;
 $checkbox_list_bg: #fff !default;
 
 $subform_color: #999 !default;
@@ -370,6 +371,9 @@ background-color: $draggable_list_bg;
 
 .active-scaffold .draggable-list.selected {
 background-color: $draggable_list_selected_bg;
+}
+.active-scaffold .ui-droppable-disabled, .active-scaffold .ui-droppable-disabled.selected {
+background-color: $draggable_list_disabled_bg;
 }
 
 

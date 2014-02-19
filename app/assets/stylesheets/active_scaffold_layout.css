@@ -764,6 +764,12 @@ display: block;
 li.draggable-item {
   list-style: none;
 }
+li.draggable-item, li.draggable-item label {
+  cursor: move;
+}
+li.ui-draggable-disabled, li.ui-draggable-disabled label {
+  cursor: default;
+}
 li.draggable-item input,
 .active-scaffold .draggable-list input {
 display: none;
