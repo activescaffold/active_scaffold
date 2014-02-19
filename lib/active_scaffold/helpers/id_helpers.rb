@@ -88,6 +88,8 @@ module ActiveScaffold
 
       def loading_indicator_id(options = {})
         options[:action] ||= params[:action]
+        options[:id] ||= params[:id]
+        options[:id] ||= nested_parent_id if nested?
         clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
       end
       
