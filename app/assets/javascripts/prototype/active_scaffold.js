@@ -255,11 +255,12 @@ document.observe("dom:loaded", function() {
   document.on('change', 'input.update_form, textarea.update_form, select.update_form, .checkbox-list.update_form input:checkbox', function(event) {
     var element = event.findElement();
     var form_element = element.up('.checkbox-list');
-    var value;
+    var value, additional_params;
     if (form_element.match(".checkbox-list")) {
-      value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
+      value = Form.Element.getValue(form_element.up());
+      additional_params = element.readAttribute('checked') ? {'_added': element.readAttribute('value')} : {'_removed': element.readAttribute('value')};
     } else {
-      value = element.is("input:checkbox:not(:checked)") ? null : form_element.val();
+      value = element.getValue();
       form_element = element;
     }
     ActiveScaffold.update_column(element, form_element.readAttribute('data-update_url'), form_element.hasAttribute('data-update_send_form'), element.readAttribute('id'), value);
@@ -702,7 +703,7 @@ var ActiveScaffold = {
     }
   },
 
-  update_column: function(element, url, send_form, source_id, val) {
+  update_column: function(element, url, send_form, source_id, val, additional_params) {
     if (!element) element = $(source_id);
     
     var as_form = element.up('form.as_form');
@@ -717,6 +718,7 @@ var ActiveScaffold = {
         params = Form.serializeElements(base.getElementsBySelector('input, textarea, select'), true);
       else params = as_form.serialize(true);
       params['_method'] = '';
+      if (additional_params) params = Object.extend(params, additional_params);
     } else {
         params = {value: val};
     }

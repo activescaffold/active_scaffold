@@ -195,14 +195,15 @@ jQuery(document).ready(function($) {
   jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form, .checkbox-list.update_form input:checkbox', function(event) {
     var element = jQuery(this);
     var form_element = element.closest('.checkbox-list');
-    var value;
+    var value, additional_params;
     if (form_element.is(".checkbox-list")) {
       value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
+      additional_params = (element.is(':checked') ? '_added=' : '_removed=') + element.val();
     } else {
-      value = element.is("input:checkbox:not(:checked)") ? null : form_element.val();
+      value = element.is("input:checkbox:not(:checked)") ? null : element.val();
       form_element = element;
     }
-    ActiveScaffold.update_column(form_element, form_element.data('update_url'), form_element.data('update_send_form'), element.attr('id'), value);
+    ActiveScaffold.update_column(form_element, form_element.data('update_url'), form_element.data('update_send_form'), element.attr('id'), value, additional_params);
     return true;
   });
   jQuery(document).on('click', 'a.refresh-link', function(event) {
@@ -871,7 +872,7 @@ var ActiveScaffold = {
     }
   },
   
-  update_column: function(element, url, send_form, source_id, val) {
+  update_column: function(element, url, send_form, source_id, val, additional_params) {
     if (!element) element = jQuery('#' + source_id);
     var as_form = element.closest('form.as_form');
     var params = null;
@@ -884,6 +885,7 @@ var ActiveScaffold = {
       else if (send_form != as_form) params = base.find(':input').serialize();
       else base.serialize();
       params += '&_method=&' + jQuery.param({"source_id": source_id});
+      if (additional_params) params += '&' + additional_params;
     } else {
       params = {value: val};
       params.source_id = source_id;
