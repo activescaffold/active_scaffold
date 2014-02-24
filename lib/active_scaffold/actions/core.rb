@@ -60,13 +60,14 @@ module ActiveScaffold::Actions
           end
 
           # check permissions and support overriding to_param
-          id = find_if_allowed(id, :update).id if id
+          record = find_if_allowed(id, :update) if id
           # call update_record_from_params with new_model
           # in other case some associations can be saved
           @record = new_model
+          @record.attributes = record.attributes if record
+          @record.id = id
           apply_constraints_to_record(@record) unless @scope
           @record = update_record_from_params(@record, @main_columns, hash)
-          @record.id = id
         else
           @record = params[:id] ? find_if_allowed(params[:id], :update) : new_model
           if @record.new_record?
@@ -88,8 +89,11 @@ module ActiveScaffold::Actions
       parent_model = params[:parent_controller].singularize.camelize.constantize
       association = parent_model.reflect_on_association(params[:child_association].to_sym).try(:reverse)
       if association
-        parent = params[:parent_id] ? parent_model.find(params[:parent_id]) : parent_model.new
-        apply_constraints_to_record(parent) if parent.new_record?
+        parent = parent_model.new
+        parent.attributes = parent_model.find(params[:parent_id]).attributes if params[:parent_id]
+        parent.id = params[:parent_id]
+        parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record])
+        apply_constraints_to_record(parent) if params[:parent_id]
         if record.class.reflect_on_association(association).collection?
           record.send(association) << parent
         else
@@ -208,7 +212,6 @@ module ActiveScaffold::Actions
 
     def view_stale?
       objects = objects_for_etag
-logger.debug objects.inspect
       if objects.is_a?(Array)
         args = {:etag => objects.to_a}
         args[:last_modified] = @last_modified if @last_modified
