@@ -92,7 +92,7 @@ module ActiveScaffold::Actions
         parent = parent_model.new
         parent.attributes = parent_model.find(params[:parent_id]).attributes if params[:parent_id]
         parent.id = params[:parent_id]
-        parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record])
+        parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record]) if @column.send_form_on_update_column
         apply_constraints_to_record(parent) if params[:parent_id]
         if record.class.reflect_on_association(association).collection?
           record.send(association) << parent
