@@ -118,7 +118,7 @@ module ActiveScaffold
         { :name => name, :class => classes, :id => id_control}.merge(options)
       end
 
-      def current_form_columns
+      def current_form_columns(record)
         if [:new, :create, :edit, :update, :render_field].include? params[:action].to_sym
           active_scaffold_config.send(record.new_record? ? :create : :update).columns.names
         end
@@ -133,7 +133,7 @@ module ActiveScaffold
         form_columns ||= if scope
           subform_controller.active_scaffold_config.subform.columns.names
         else
-          current_form_columns
+          current_form_columns(record)
         end
         if form_columns && (column.options[:refresh_link] || (column.update_columns && (column.update_columns & form_columns).present?))
           url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
