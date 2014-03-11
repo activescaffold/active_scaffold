@@ -118,7 +118,7 @@ module ActiveScaffold
         { :name => name, :class => classes, :id => id_control}.merge(options)
       end
 
-      def current_form_columns(record, scope)
+      def current_form_columns(record, scope, subform_controller = nil)
         if scope
           subform_controller.active_scaffold_config.subform.columns.names
         elsif [:new, :create, :edit, :update, :render_field].include? params[:action].to_sym
@@ -132,7 +132,7 @@ module ActiveScaffold
         record ||= @record # TODO Remove when relying on @record is removed
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
         form_columns = @main_columns
-        form_columns ||= current_form_columns(record, scope)
+        form_columns ||= current_form_columns(record, scope, subform_controller)
         if form_columns && (column.options[:refresh_link] || (column.update_columns && (column.update_columns & form_columns).present?))
           url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
           url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
