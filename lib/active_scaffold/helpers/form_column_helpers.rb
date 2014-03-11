@@ -120,7 +120,7 @@ module ActiveScaffold
 
       def current_form_columns
         if [:new, :create, :edit, :update, :render_field].include? params[:action].to_sym
-          active_scaffold_config.send(record.new_record? ? :create : :update).columns
+          active_scaffold_config.send(record.new_record? ? :create : :update).columns.names
         end
       end
 
@@ -131,11 +131,11 @@ module ActiveScaffold
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
         form_columns = @main_columns
         form_columns ||= if scope
-          subform_controller.active_scaffold_config.subform.columns
+          subform_controller.active_scaffold_config.subform.columns.names
         else
           current_form_columns
         end
-        if form_columns && (column.options[:refresh_link] || (column.update_columns && (column.update_columns & form_columns.names).present?))
+        if form_columns && (column.options[:refresh_link] || (column.update_columns && (column.update_columns & form_columns).present?))
           url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
           url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
           url_params[:eid] = params[:eid] if params[:eid]
