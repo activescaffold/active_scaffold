@@ -521,6 +521,7 @@ var ActiveScaffold = {
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','visible');
     jQuery('input[type=submit]', as_form).attr('disabled', 'disabled');
+    jQuery('.sub-form a.destroy', as_form).addClass('disabled');
     if (jQuery.fn.draggable) jQuery('.draggable-item', as_form).draggable('disable');
     if (jQuery.fn.droppable) jQuery('.draggable-list', as_form).droppable('disable');
     // data-remote-disabled attr instead of set data because is used to in selector later
@@ -533,6 +534,7 @@ var ActiveScaffold = {
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','hidden');
     jQuery('input[type=submit]', as_form).removeAttr('disabled');
+    jQuery('.sub-form a.destroy.disabled', as_form).removeClass('disabled');
     if (jQuery.fn.draggable) jQuery('.draggable-item', as_form).draggable('enable');
     if (jQuery.fn.droppable) jQuery('.draggable-list', as_form).droppable('enable');
     jQuery("input[data-remove-disabled],select[data-remove-disabled],textarea[data-remove-disabled]", as_form).removeAttr('disabled data-remove-disabled');
