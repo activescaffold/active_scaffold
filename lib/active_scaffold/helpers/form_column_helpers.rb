@@ -327,7 +327,7 @@ module ActiveScaffold
         [(text.is_a?(Symbol) ? column.active_record_class.human_attribute_name(text) : text), value]
       end
       
-      def active_scaffold_enum_options(column)
+      def active_scaffold_enum_options(column, record = nil)
         column.options[:options]
       end
 
@@ -336,7 +336,7 @@ module ActiveScaffold
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         options = { :selected => record.send(column.name), :object => record }
-        options_for_select = active_scaffold_enum_options(column).collect do |text, value|
+        options_for_select = active_scaffold_enum_options(column, record).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
         end
         html_options.merge!(column.options[:html_options] || {})
@@ -356,11 +356,12 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_radio(column, html_options)
+        record = html_options[:object]
         html_options.merge!(column.options[:html_options] || {})
         options = if column.association
-          sorted_association_options_find(column.association, nil, html_options[:object])
+          sorted_association_options_find(column.association, nil, record)
         else
-          active_scaffold_enum_options(column)
+          active_scaffold_enum_options(column, record)
         end
         options.inject('') do |html, (text, value)|
           method = column.options[:label_method] || :to_label if column.association
