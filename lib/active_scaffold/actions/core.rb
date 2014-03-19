@@ -183,11 +183,16 @@ module ActiveScaffold::Actions
         conditions = {}
         params.except(:controller, :action, :page, :sort, :sort_direction).each do |key, value|
           column = active_scaffold_config.model.columns_hash[key.to_s]
-          key = key.to_sym
           next unless column
+          key = key.to_sym
+          not_string = [:string, :text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? and nested.param_name == key
-          conditions[key] = value.is_a?(Array) ? value.map {|v| column.type_cast(v) } : column.type_cast(value)
+          conditions[key] = if value.is_a?(Array)
+            value.map {|v| v.blank? && not_string ? nil : column.type_cast(v) }
+          else
+            value.blank? && not_string ? nil : column.type_cast(value)
+          end
         end
         conditions
       end
