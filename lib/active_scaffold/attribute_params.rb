@@ -37,7 +37,7 @@ module ActiveScaffold
     #
     # This is a secure way to apply params to a record, because it's based on a loop over the columns
     # set. The columns set will not yield unauthorized columns, and it will not yield unregistered columns.
-    def update_record_from_params(parent_record, columns, attributes)
+    def update_record_from_params(parent_record, columns, attributes, avoid_changes = false)
       crud_type = parent_record.new_record? ? :create : :update
       return parent_record unless parent_record.authorized_for?(:crud_type => crud_type)
 
@@ -60,6 +60,9 @@ module ActiveScaffold
             parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name.to_s])
           elsif attributes.has_key? column.name
             value = column_value_from_param_value(parent_record, column, attributes[column.name])
+            if avoid_changes && column.plural_association?
+              parent_record.association(column.name).target = parent_record.send(column.name).map {|r| column.association.klass.new r.attributes }
+            end
             parent_record.send "#{column.name}=", value unless column.singular_association? && parent_record.send(column.name) == value # avoid deleting record when is the same in a has_one association
             if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
               Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
