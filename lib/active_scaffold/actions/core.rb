@@ -67,7 +67,7 @@ module ActiveScaffold::Actions
           @record.attributes = record.attributes if record
           @record.id = id
           apply_constraints_to_record(@record) unless @scope
-          @record = update_record_from_params(@record, @main_columns, hash)
+          @record = update_record_from_params(@record, @main_columns, hash, true)
         else
           @record = params[:id] ? find_if_allowed(params[:id], :update) : new_model
           if @record.new_record?
