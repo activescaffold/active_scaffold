@@ -189,9 +189,9 @@ module ActiveScaffold::Actions
           next if active_scaffold_constraints[key]
           next if nested? and nested.param_name == key
           conditions[key] = if value.is_a?(Array)
-            value.map {|v| v.blank? && not_string ? nil : column.type_cast(v) }
+            value.map {|v| v == '' && not_string ? nil : column.type_cast(v) }
           else
-            value.blank? && not_string ? nil : column.type_cast(value)
+            value == '' && not_string ? nil : column.type_cast(value)
           end
         end
         conditions
