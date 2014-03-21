@@ -63,7 +63,7 @@ module ActiveScaffold
             if avoid_changes && column.plural_association?
               parent_record.association(column.name).target = parent_record.send(column.name).map {|r| column.association.klass.new r.attributes }
             end
-            parent_record.send "#{column.name}=", value unless column.singular_association? && parent_record.send(column.name) == value # avoid deleting record when is the same in a has_one association
+            parent_record.send "#{column.name}=", value
             if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
               Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
             end
