@@ -13,6 +13,7 @@ class ClassWithFinder
     active_scaffold_config.model
   end
   def conditional_get_support?; end
+  def params; {}; end
 end
 
 class FinderTest < Test::Unit::TestCase
