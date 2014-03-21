@@ -305,12 +305,17 @@ module ActiveScaffold
 
     def all_conditions
       [
+	id_condition, 				      # for list with id (e.g. /users/:id/index)
         active_scaffold_conditions,                   # from the search modules
         conditions_for_collection,                    # from the dev
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
         conditions_from_constraints,                  # from any constraints (embedded scaffolds)
         active_scaffold_session_storage[:conditions] # embedding conditions (weaker constraints)
       ].reject(&:blank?)
+    end
+
+    def id_condition
+	{:id => params[:id]} if params[:id]
     end
     
     # returns a single record (the given id) but only if it's allowed for the specified security options.
