@@ -202,7 +202,7 @@ class AttributeParamsTest < Test::Unit::TestCase
   end
 
   def test_saving_has_one_crud
-    car = Car.create
+    car = Car.create :brand => 'Renault'
     assert car.persisted?
 
     model = update_record_from_params(Person.new, :create, :first_name, :car, :first_name => 'First', :car => {:brand => 'Ford'})
@@ -212,11 +212,13 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert model.save
     assert model.car.persisted?
 
-    model = update_record_from_params(Person.new, :create, :first_name, :car, :first_name => 'First', :car => {:brand => 'Ford', :id => car.id.to_s})
+    model = update_record_from_params(Person.new, :create, :first_name, :car, :first_name => 'First', :car => {:brand => 'Peugeot', :id => car.id.to_s})
     assert_equal 'First', model.first_name
     assert model.car.present?
     assert_equal car.id, model.car.id
     assert_nil car.reload.person_id, 'person_id should not be saved yet'
+    assert_equal 'Peugeot', model.car.brand
+    assert_equal 'Renault', car.reload.brand, 'brand should not be saved yet'
     assert model.save
     assert_equal model.id, car.reload.person_id, 'person_id should be saved'
 
@@ -224,7 +226,6 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal 'First', model.first_name
     assert model.car.present?
     assert_equal 'Mercedes', model.car.brand
-    assert_equal 'Ford', car.reload.brand, 'brand should not be saved yet'
     assert model.save
     assert model.save_associated
     assert_equal 'Mercedes', car.reload.brand, 'brand should be saved'
