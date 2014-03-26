@@ -41,6 +41,7 @@ module ActiveScaffold::Actions
       if params[:adapter] || loading_embedded?
         render(:partial => 'list_with_header')
       else
+        @auto = params[:auto]
         render :partial => 'refresh_list', :formats => [:js]
       end
     end

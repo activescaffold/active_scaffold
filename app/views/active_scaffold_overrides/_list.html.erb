@@ -27,9 +27,11 @@
     <% if !@page.empty? -%>
       <%= render :partial => 'list_record', :collection => @page.items, :locals => {:hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.member} %>
     <% end -%>
-    <% if columns.any? {|c| c.calculation?} -%>
-      <%= render :partial => 'list_calculations', :locals => {:columns => columns} %>
-    <% end -%>
   </tbody>
+  <% if columns.any? {|c| c.calculation?} -%>
+  <tfoot>  
+    <%= render :partial => 'list_calculations', :locals => {:columns => columns} %>
+  </tfoot>
+  <% end -%>
 </table>
 <%= render :partial => 'list_pagination' %>
