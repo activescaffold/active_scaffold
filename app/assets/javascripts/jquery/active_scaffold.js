@@ -402,8 +402,11 @@ var ActiveScaffold = {
     var paginate_link = jQuery('.active-scaffold-pagination.auto-paginate a:first', element);
     if (paginate_link.length) {
       jQuery('.active-scaffold-pagination.auto-paginate', element).hide();
-      jQuery.get(paginate_link.attr('href'), {auto: true}, null, 'script');
+      ActiveScaffold.auto_load_page(paginate_link.attr('href'), {auto_pagination: true});
     }
+  },
+  auto_load_page: function(href, params) {
+    jQuery.get(href, params, null, 'script');
   },
 
   records_for: function(tbody_id) {
