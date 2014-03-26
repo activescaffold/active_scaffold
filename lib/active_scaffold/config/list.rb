@@ -18,6 +18,7 @@ module ActiveScaffold::Config
       @empty_field_text = self.class.empty_field_text
       @association_join_text = self.class.association_join_text
       @pagination = self.class.pagination
+      @auto_pagination = self.class.auto_pagination
       @show_search_reset = self.class.show_search_reset
       @reset_link = self.class.reset_link.clone
       @wrap_tag = self.class.wrap_tag
@@ -65,6 +66,12 @@ module ActiveScaffold::Config
     # * false: Disable pagination
     cattr_accessor :pagination
     @@pagination = true
+
+    # Auto paginate, only can be used with pagination enabled
+    # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are loaded
+    # * false: Disable auto pagination
+    cattr_accessor :auto_pagination
+    @@auto_pagination = false
 
     # show a link to reset the search next to filtered message
     cattr_accessor :show_search_reset
@@ -124,6 +131,11 @@ module ActiveScaffold::Config
     # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for large tables where counting is slow and we don't really care anyway)
     # * false: Disable pagination
     attr_accessor :pagination
+
+    # Auto paginate, only can be used with pagination enabled
+    # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are loaded
+    # * false: Disable auto pagination
+    attr_accessor :auto_pagination
 
     # what string to use when a field is empty
     attr_accessor :empty_field_text
@@ -226,7 +238,7 @@ module ActiveScaffold::Config
       end
 
       def page
-        self['page'] = @params['page'] if @params.has_key? 'page'
+        self['page'] = @params['page'] || 1 if @params.has_key?('page') || @conf.auto_pagination
         self['page'] || 1
       end
 

@@ -1,4 +1,6 @@
-<% if active_scaffold_config.list.refresh_with_header -%>
+<% if @auto -%>
+ActiveScaffold.append('<%= active_scaffold_tbody_id %>', '<%= escape_javascript(render(:partial => 'list_record', :collection => @page.items, :locals => {:hidden => false, :columns => list_columns, :action_links => active_scaffold_config.action_links.member})) %>');
+<% elsif active_scaffold_config.list.refresh_with_header -%>
 ActiveScaffold.replace('<%= active_scaffold_id %>', '<%= escape_javascript(render('list_with_header')) %>');
 <% else -%>
 ActiveScaffold.replace_html('<%= active_scaffold_content_id %>', '<%= escape_javascript(render('list')) %>');

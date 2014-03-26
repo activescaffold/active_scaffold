@@ -273,6 +273,7 @@ jQuery(document).ready(function($) {
   });
   
   ActiveScaffold.live_search(document);
+  ActiveScaffold.auto_paginate(document);
   ActiveScaffold.draggable_lists('.draggable-lists');
   jQuery(document).on('as:element_updated', function(e) {
     ActiveScaffold.live_search(e.target);
@@ -280,6 +281,7 @@ jQuery(document).ready(function($) {
   });
   jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
     ActiveScaffold.live_search(action_link.adapter);
+    ActiveScaffold.auto_paginate(action_link.adapter);
     ActiveScaffold.draggable_lists('.draggable-lists', action_link.adapter);
   });
 });
@@ -396,6 +398,14 @@ var ActiveScaffold = {
      jQuery(this).parent().trigger("submit");
     }, 0.5);
   },
+  auto_paginate: function(element) {
+    var paginate_link = jQuery('.active-scaffold-pagination.auto-paginate a:first', element);
+    if (paginate_link.length) {
+      jQuery('.active-scaffold-pagination.auto-paginate', element).hide();
+      jQuery.get(paginate_link.attr('href'), {auto: true}, null, 'script');
+    }
+  },
+
   records_for: function(tbody_id) {
     if (typeof(tbody_id) == 'string') tbody_id = '#' + tbody_id;
     return jQuery(tbody_id).children('.record');
@@ -484,6 +494,14 @@ var ActiveScaffold = {
     if (typeof(element) == 'string') element = '#' + element; 
     element = jQuery(element);
     element.html(html);
+    element.trigger('as:element_updated');
+    return element;
+  },
+
+  append: function(element, html) {
+    if (typeof(element) == 'string') element = '#' + element; 
+    element = jQuery(element);
+    element.append(html);
     element.trigger('as:element_updated');
     return element;
   },
