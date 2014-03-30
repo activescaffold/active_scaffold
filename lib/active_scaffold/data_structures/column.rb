@@ -350,7 +350,7 @@ module ActiveScaffold::DataStructures
       self.css_class = ''
       self.required = active_record_class.validators_on(self.name).any? do |val|
         !val.options[:if] && !val.options[:unless] && (ActiveModel::Validations::PresenceValidator === val ||
-          (ActiveModel::Validations::InclusionValidator === val && !val.options[:allow_nil] && !val.options[:allow_blank])
+          (ActiveModel::Validations::InclusionValidator === val && !val.options[:allow_nil] && !val.options[:allow_blank] && !(@form_ui == :checkbox && [[true, false], [false, true]].include?(val.send(:delimiter))))
         )
       end
       self.sort = true
