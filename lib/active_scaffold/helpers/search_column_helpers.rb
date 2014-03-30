@@ -157,15 +157,6 @@ module ActiveScaffold
         (column.column && column.column.text?) || column.search_ui == :string
       end
 
-      def include_null_comparators?(column)
-        return column.options[:null_comparators] if column.options.has_key? :null_comparators
-        if column.association
-          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
-        else
-          column.column.try(:null)
-        end
-      end
-
       def active_scaffold_search_range_comparator_options(column)
         select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
         if active_scaffold_search_range_string?(column)
