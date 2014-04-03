@@ -160,6 +160,17 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert model.save
   end
 
+  def test_saving_has_many_crud_with_error
+    building = Building.create(:name => 'First')
+    key = Time.now.to_i.to_s
+    floors = {'0' => '', key => {:number => '', 'tenant' => '', :number_required => true}}
+    model = update_record_from_params(building, :create, :name, :floors, :name => 'First', :floors => floors)
+    assert_equal 'First', model.name
+    assert_equal 1, model.floors.size
+    assert model.floors.first.errors.present?
+    assert !model.floors.first.persisted?
+  end
+
   def test_saving_has_many_crud_and_belongs_to_select
     floor = Floor.create
     people = 2.times.map { Person.create }
