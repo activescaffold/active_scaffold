@@ -403,20 +403,24 @@ var ActiveScaffold = {
   update_row: function(row, html) {
     row = $(row);
     var new_row = this.replace(row, html)
-    if (row.hasClassName('even-record')) new_row.addClassName('even-record');
-    ActiveScaffold.highlight(new_row);
+    if (new_row) {
+      if (row.hasClassName('even-record')) new_row.addClassName('even-record');
+      ActiveScaffold.highlight(new_row);
+    }
   },
   
   replace: function(element, html) {
     element = $(element)
-    Element.replace(element, html);
-    element = $(element.readAttribute('id'));
+    if (element) {
+      Element.replace(element, html);
+      element = $(element.readAttribute('id'));
+    }
     return element;
   },
     
   replace_html: function(element, html) {
     element = $(element);
-    element.update(html);
+    if (element) element.update(html);
     return element;
   },
   

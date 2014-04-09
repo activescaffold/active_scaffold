@@ -479,8 +479,10 @@ var ActiveScaffold = {
     if (row.hasClass('even-record')) even_row = true;
 
     replaced = this.replace(row, html);
-    if (even_row === true) replaced.addClass('even-record');
-    ActiveScaffold.highlight(replaced);
+    if (replaced) {
+      if (even_row === true) replaced.addClass('even-record');
+      ActiveScaffold.highlight(replaced);
+    }
   },
   
   replace: function(element, html) {
@@ -488,16 +490,20 @@ var ActiveScaffold = {
     element = jQuery(element);
     var new_element = typeof(html) == 'string' ? jQuery.parseHTML(html.trim(), true) : html;
     new_element = jQuery(new_element);
-    element.replaceWith(new_element);
-    new_element.trigger('as:element_updated');
-    return new_element;
+    if (element.length) {
+      element.replaceWith(new_element);
+      new_element.trigger('as:element_updated');
+      return new_element;
+    } else return null;
   },
   
   replace_html: function(element, html) {
     if (typeof(element) == 'string') element = '#' + element; 
     element = jQuery(element);
-    element.html(html);
-    element.trigger('as:element_updated');
+    if (element.length) {
+      element.html(html);
+      element.trigger('as:element_updated');
+    }
     return element;
   },
 
