@@ -303,7 +303,7 @@ module ActiveScaffold
           method = column.options[:label_method] || :to_label
           active_scaffold_checkbox_list(column, select_options.collect {|r| [r.send(method), r.id]}, associated_options.collect(&:id), options)
         end
-        html << active_scaffold_refresh_link(column, html_options) if column.options[:refresh_link]
+        html << active_scaffold_refresh_link(column, options) if column.options[:refresh_link]
         html
       end
       
