@@ -303,12 +303,7 @@ module ActiveScaffold
           method = column.options[:label_method] || :to_label
           active_scaffold_checkbox_list(column, select_options.collect {|r| [r.send(method), r.id]}, associated_options.collect(&:id), options)
         end
-        if column.options[:refresh_link]
-          link_options = {:class => 'refresh-link'}
-          link_options['data-update_send_form'] = options['data-update_send_form']
-          link_options['data-update_send_form_selector'] = options['data-update_send_form_selector']
-          html << link_to(as_(:refresh), options['data-update_url'], link_options)
-        end
+        html << active_scaffold_refresh_link(column, html_options) if column.options[:refresh_link]
         html
       end
       
