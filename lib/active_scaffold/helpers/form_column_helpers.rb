@@ -272,7 +272,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_refresh_link(column, html_options)
-        link_options = {}
+        link_options = {:object => html_options[:object]}
         if html_options['data-update_url']
           link_options['data-update_send_form'] = html_options['data-update_send_form']
           link_options['data-update_send_form_selector'] = html_options['data-update_send_form_selector']
