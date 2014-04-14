@@ -270,9 +270,19 @@ module ActiveScaffold
       @active_scaffold_conditions ||= []
     end
 
-    attr_writer :active_scaffold_includes
+    attr_writer :active_scaffold_preload
+    def active_scaffold_preload
+      @active_scaffold_preload ||= []
+    end
+
+    def active_scaffold_includes=(value)
+      ActiveSupport::Deprecation.warn "active_scaffold_includes doesn't exist anymore, use active_scaffold_preload, active_scaffold_outer_joins or active_scaffold_references"
+      self.active_scaffold_preload = value
+    end
+
     def active_scaffold_includes
-      @active_scaffold_includes ||= []
+      ActiveSupport::Deprecation.warn "active_scaffold_includes doesn't exist anymore, use active_scaffold_preload, active_scaffold_outer_joins or active_scaffold_references"
+      self.active_scaffold_preload
     end
 
     attr_writer :active_scaffold_habtm_joins
@@ -305,7 +315,7 @@ module ActiveScaffold
 
     def all_conditions
       [
-	id_condition, 				      # for list with id (e.g. /users/:id/index)
+        id_condition,                                 # for list with id (e.g. /users/:id/index)
         active_scaffold_conditions,                   # from the search modules
         conditions_for_collection,                    # from the dev
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
@@ -315,7 +325,7 @@ module ActiveScaffold
     end
 
     def id_condition
-	{:id => params[:id]} if params[:id]
+      {:id => params[:id]} if params[:id]
     end
     
     # returns a single record (the given id) but only if it's allowed for the specified security options.
@@ -333,13 +343,14 @@ module ActiveScaffold
     # * :page
     def finder_options(options = {})
       search_conditions = all_conditions
-      full_includes = (active_scaffold_includes.blank? ? nil : active_scaffold_includes)
+      full_includes = (active_scaffold_references.blank? ? nil : active_scaffold_references)
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = { :reorder => options[:sorting].try(:clause),
                          :conditions => search_conditions,
                          :joins => joins_for_finder,
                          :outer_joins => active_scaffold_outer_joins,
+                         :preload => active_scaffold_preload,
                          :includes => full_includes,
                          :select => options[:select]}
       if Rails::VERSION::MAJOR >= 4
@@ -358,9 +369,9 @@ module ActiveScaffold
     def count_items(query, find_options = {}, count_includes = nil)
       count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
       options = find_options.reject{|k,v| [:select, :reorder].include? k}
+      # NOTE: we must use includes in the count query, because some conditions may reference other tables
       options[:includes] = count_includes
       
-      # NOTE: we must use :include in the count query, because some conditions may reference other tables
       count = append_to_query(query, options).count
   
       # Converts count to an integer if ActiveRecord returned an OrderedHash
@@ -405,9 +416,6 @@ module ActiveScaffold
 
     def calculate_last_modified(query)
       if conditional_get_support? && query.klass.columns_hash['updated_at']
-        # Rails4 always join with includes on calculations with columns
-        # but includes can be removed from calculation if they are not used to search
-        query = query.except(:includes) if Rails::VERSION::MAJOR >= 4 && query.references_values.blank?
         @last_modified = query.maximum(:updated_at)
       end
     end
@@ -415,19 +423,19 @@ module ActiveScaffold
     def calculate_query
       conditions = all_conditions
       includes = active_scaffold_config.list.count_includes
-      includes ||= active_scaffold_includes unless conditions.blank?
+      includes ||= active_scaffold_references unless conditions.blank?
       primary_key = active_scaffold_config.model.primary_key
       subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => active_scaffold_outer_joins)
       subquery = subquery.select(active_scaffold_config.columns[primary_key].field)
       if includes
-        includes_relation = beginning_of_chain.includes(includes)
+        includes_relation = beginning_of_chain.eager_load(includes)
         subquery = subquery.send(:apply_join_dependency, subquery, includes_relation.send(:construct_join_dependency_for_association_find))
       end
       active_scaffold_config.model.where(primary_key => subquery)
     end
     
     def append_to_query(query, options)
-      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, (:references if Rails::VERSION::MAJOR >= 4)
+      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, (:references if Rails::VERSION::MAJOR >= 4)
       query = options.reject{|k,v| v.blank?}.inject(query) do |query, (k, v)|
         k == :conditions ? apply_conditions(query, *v) : query.send(k, v)
       end
