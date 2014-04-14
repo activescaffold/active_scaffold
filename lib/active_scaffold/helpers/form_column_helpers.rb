@@ -267,12 +267,12 @@ module ActiveScaffold
         else
           collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
         end
-        html << active_scaffold_refresh_link(column, html_options) if column.options[:refresh_link]
+        html << active_scaffold_refresh_link(column, html_options, record) if column.options[:refresh_link]
         html
       end
 
-      def active_scaffold_refresh_link(column, html_options)
-        link_options = {:object => html_options[:object]}
+      def active_scaffold_refresh_link(column, html_options, record)
+        link_options = {:object => record}
         if html_options['data-update_url']
           link_options['data-update_send_form'] = html_options['data-update_send_form']
           link_options['data-update_send_form_selector'] = html_options['data-update_send_form_selector']
@@ -303,7 +303,7 @@ module ActiveScaffold
           method = column.options[:label_method] || :to_label
           active_scaffold_checkbox_list(column, select_options.collect {|r| [r.send(method), r.id]}, associated_options.collect(&:id), options)
         end
-        html << active_scaffold_refresh_link(column, options) if column.options[:refresh_link]
+        html << active_scaffold_refresh_link(column, options, record) if column.options[:refresh_link]
         html
       end
       
