@@ -126,14 +126,14 @@ module ActiveScaffold
         end
       end
 
-      def update_columns_options(column, scope, options)
+      def update_columns_options(column, scope, options, force = false)
         record = options[:object]
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
         form_columns = @main_columns.try(:names)
         form_columns ||= current_form_columns(record, scope, subform_controller)
-        if form_columns && (column.options[:refresh_link] || (column.update_columns && (column.update_columns & form_columns).present?))
+        if force || (form_columns && column.update_columns && (column.update_columns & form_columns).present?)
           url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
           url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
           url_params[:eid] = params[:eid] if params[:eid]
@@ -267,13 +267,21 @@ module ActiveScaffold
         else
           collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
         end
-        if column.options[:refresh_link]
-          link_options = {:class => 'refresh-link'}
+        html << active_scaffold_refresh_link(column, html_options) if column.options[:refresh_link]
+        html
+      end
+
+      def active_scaffold_refresh_link(column, html_options)
+        link_options = {}
+        if html_options['data-update_url']
           link_options['data-update_send_form'] = html_options['data-update_send_form']
           link_options['data-update_send_form_selector'] = html_options['data-update_send_form_selector']
-          html << link_to(as_(:refresh), html_options['data-update_url'], link_options)
+        else
+          scope = html_options[:name].scan(/^record(\[[^\]]*\])?\[#{column.name}\]/)[0][0] if html_options[:name]
+          link_options = update_columns_options(column, scope, link_options, true)
         end
-        html
+        link_options[:class] = 'refresh-link'
+        link_to(as_(:refresh), link_options.delete('data-update_url') || html_options['data-update_url'], link_options)
       end
 
       def active_scaffold_plural_association_options(column, record = nil)
