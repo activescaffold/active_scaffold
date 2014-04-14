@@ -72,13 +72,13 @@ module ActiveScaffold::Actions
         active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
       end
       includes_for_list_columns = columns.map{ |c| c.includes }.flatten.uniq.compact
-      self.active_scaffold_includes.concat includes_for_list_columns
+      self.active_scaffold_preload.concat includes_for_list_columns
     end
 
-    def get_row
+    def get_row(crud_type = :read)
       set_includes_for_columns
-      klass = beginning_of_chain.includes(active_scaffold_includes)
-      @record = find_if_allowed(params[:id], :read, klass)
+      klass = beginning_of_chain.preload(active_scaffold_preload)
+      @record = find_if_allowed(params[:id], crud_type, klass)
     end
 
     # The actual algorithm to prepare for the list view
@@ -155,9 +155,7 @@ module ActiveScaffold::Actions
         @action_link = active_scaffold_config.action_links[action_name]
         if params[:id] && params[:id].to_i > 0
           crud_type ||= (request.post? || request.put?) ? :update : :delete
-          set_includes_for_columns
-          klass = beginning_of_chain.includes(active_scaffold_includes)
-          @record = find_if_allowed(params[:id], crud_type, klass)
+          get_row(crud_type)
           unless @record.nil?
             yield @record
           else

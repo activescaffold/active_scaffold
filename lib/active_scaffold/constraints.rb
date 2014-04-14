@@ -55,7 +55,7 @@ module ActiveScaffold
             field = far_association.klass.primary_key
             table = far_association.table_name
 
-            active_scaffold_includes.concat([{k => far_association.name}]) # e.g. {:den => :park}
+            active_scaffold_references.concat([{k => far_association.name}]) # e.g. {:den => :park}
             hash_conditions.merge!("#{table}.#{field}" => v.values.first)
 
           # association column constraint
@@ -63,13 +63,17 @@ module ActiveScaffold
             if column.association.macro == :has_and_belongs_to_many
               active_scaffold_habtm_joins.concat column.includes
             elsif !column.association.options[:polymorphic]
-              active_scaffold_includes.concat column.includes
+              if column.association.macro == :belongs_to
+                active_scaffold_preload.concat column.includes
+              else
+                active_scaffold_references.concat column.includes
+              end
             end
             hash_conditions.merge!(condition_from_association_constraint(column.association, v))
 
           # regular column constraints
           elsif column.searchable? && params[column.name] != v
-            active_scaffold_includes.concat column.includes if column.includes.present?
+            active_scaffold_references.concat column.references if column.includes.present?
             conditions << [column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR '), *([v] * column.search_sql.size)]
           end
         # unknown-to-activescaffold-but-real-database-column constraint
