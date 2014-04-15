@@ -27,6 +27,7 @@
 - Support update_columns in plural associations
 - Support nil conditions in conditions_from_params: when column param is empty and is not a text column, nil condition will be used
 - Support autopagination, first page is loaded in first request, then all pages are loaded and displayed by ajax automatically
+- Support toggle collection action links, for links with reload list to filter, so active link is marked
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select

@@ -216,24 +216,29 @@ module ActiveScaffold
         end
       end
 
-      def action_link_url(link, record)
-        url = (@action_links_urls ||= {})[link.name_to_cache_link_url]
+      def is_sti_record?(record)
+        model = active_scaffold_config.model
+        is_sti_record = record && model.columns_hash.include?(model.inheritance_column) &&
+          record[model.inheritance_column].present? && !record.instance_of?(model)
+      end
+
+      def cache_action_link_url?(link, record)
+        active_scaffold_config.cache_action_link_urls && link.type == :member && !link.dynamic_parameters.is_a?(Proc) && !is_sti_record?(record)
+      end
+
+      def cached_action_link_url(link, record)
+        url = (@action_links_urls ||= {})[link.name_to_cache]
         url ||= begin
           url_options = action_link_url_options(link, record)
-          if active_scaffold_config.cache_action_link_urls
-            url = url_for(url_options)
-            model = active_scaffold_config.model
-            is_sti_record = record && model.columns_hash.include?(model.inheritance_column) &&
-              record[model.inheritance_column].present?
-            unless link.dynamic_parameters.is_a?(Proc) || is_sti_record
-              @action_links_urls[link.name_to_cache_link_url] = url 
-            end
-            url
+          if cache_action_link_url?(link, record)
+            @action_links_urls[link.name_to_cache] = url_for(url_options)
           else
             url_for(params_for(url_options))
           end
         end
-        
+      end
+      
+      def replace_id_params_in_action_link_url(link, record, url)
         url = record ? url.sub('--ID--', record.to_param) : url.clone
         if link.column.try(:singular_association?)
           child_id = record.send(link.column.association.name).try(:to_param)
@@ -246,15 +251,23 @@ module ActiveScaffold
         elsif nested?
           url.sub!('--CHILD_ID--', params[nested.param_name].to_s)
         end
-
-        if active_scaffold_config.cache_action_link_urls
-          query_string, non_nested_query_string = query_string_for_action_links(link)
-          if query_string || (!link.nested_link? && non_nested_query_string)
-            url << (url.include?('?') ? '&' : '?')
-            url << query_string if query_string
-            url << non_nested_query_string if !link.nested_link? && non_nested_query_string
-          end
+        url
+      end
+      
+      def add_query_string_to_cached_url(link, url)
+        query_string, non_nested_query_string = query_string_for_action_links(link)
+        nested_params = (!link.nested_link? && non_nested_query_string)
+        if query_string || nested_params
+          url << (url.include?('?') ? '&' : '?')
+          url << query_string if query_string
+          url << non_nested_query_string if nested_params
         end
+        url
+      end
+
+      def action_link_url(link, record)
+        url = replace_id_params_in_action_link_url(link, record, cached_action_link_url(link, record))
+        url = add_query_string_to_cached_url(link, url) if @action_links_urls[link.name_to_cache]
         url
       end
 
@@ -281,9 +294,9 @@ module ActiveScaffold
           end
         end
         
-        query_string = query_string_options.to_query if query_string_options.present? #URI.escape(query_string_options.join('&')) if query_string_options.present?
+        query_string = query_string_options.to_query if query_string_options.present?
         if non_nested_query_string_options.present?
-          non_nested_query_string = "#{'&' if query_string}#{non_nested_query_string_options.to_query}" #URI.escape(non_nested_query_string_options.join('&'))}"
+          non_nested_query_string = "#{'&' if query_string}#{non_nested_query_string_options.to_query}"
         end
         if keep
           @query_string = query_string
@@ -291,8 +304,23 @@ module ActiveScaffold
         end
         [query_string, non_nested_query_string]
       end
+
+      def cache_action_link_url_options?(link, record)
+        active_scaffold_config.cache_action_link_urls && (link.type == :collection || !link.dynamic_parameters.is_a?(Proc)) && !is_sti_record?(record)
+      end
       
       def action_link_url_options(link, record)
+        options = (@action_links_url_options ||= {})[link.name_to_cache]
+        options ||= begin
+          options = generate_action_link_url_options(link, record)
+          if cache_action_link_url_options?(link, record)
+            @action_links_url_options[link.name_to_cache] = options
+          end
+          options
+        end
+      end
+
+      def generate_action_link_url_options(link, record)
         url_options = {:action => link.action}
         url_options[:id] = '--ID--' unless record.nil?
         url_options[:controller] = link.controller.to_s if link.controller
@@ -319,6 +347,28 @@ module ActiveScaffold
         text || options[:link]
       end
       
+      def replaced_action_link_url_options(link, record)
+        url = action_link_url_options(link, record)
+        url[:controller] ||= params[:controller]
+        missing_options, url_options = url.partition{|k,v| v.nil?}
+        replacements = {}
+        replacements['--ID--'] = record.id.to_s if record
+        if link.column.try(:singular_association?)
+          replacements['--CHILD_ID--'] = record.send(link.column.association.name).try(:id).to_s
+        elsif nested?
+          replacements['--CHILD_ID--'] = params[nested.param_name].to_s
+        end
+        url_options.collect! do |k,v|
+          [k.to_s, replacements[v] || v]
+        end
+        [missing_options, url_options]
+      end
+      
+      def action_link_selected?(link, record)
+        missing_options, url_options = replaced_action_link_url_options(link, record)
+        (url_options - params.to_a).blank? && missing_options.all? {|k,v| params[k].nil?}
+      end
+      
       def action_link_html_options(link, record, options)
         link_id = get_action_link_id(link, record)
         html_options = link.html_options.merge(:class => [link.html_options[:class], link.action.to_s].compact.join(' '))
@@ -336,6 +386,12 @@ module ActiveScaffold
           html_options[:data][:cancel_refresh] = true if link.refresh_on_close
           html_options[:data][:keep_open] = true if link.keep_open?
         end
+
+        if link.toggle
+          html_options[:class] << ' toggle'
+          html_options[:class] << ' active' if action_link_selected?(link, record)
+        end
+        
         html_options[:target] = '_blank' if link.popup?
         html_options[:id] = link_id
         html_options[:remote] = true unless link.page? || link.popup?
