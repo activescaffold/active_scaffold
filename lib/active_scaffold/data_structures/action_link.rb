@@ -23,6 +23,7 @@ module ActiveScaffold::DataStructures
         setter = "#{k}="
         self.send(setter, v) if self.respond_to? setter
       end
+      self.toggle = self.action.try(:to_sym) == :index && (parameters.present? || dynamic_parameters) unless options.include? :toggle
     end
 
     def initialize_copy(action_link)
@@ -53,6 +54,11 @@ module ActiveScaffold::DataStructures
     def parameters
       @parameters ||= {}
     end
+
+    # if active class is added to link when current request matches link
+    # enabled automatically for links to index with parameters or dynamic parameters
+    # disable when is not needed so current request match check is skipped
+    attr_accessor :toggle
 
     # a block for dynamic_parameters
     attr_accessor :dynamic_parameters
@@ -196,8 +202,8 @@ module ActiveScaffold::DataStructures
       @column || (parameters && parameters[:named_scope])
     end
     
-    def name_to_cache_link_url
-      @name_to_cache_link_url ||= "#{controller || 'self'}_#{type}_#{action}#{'_' if parameters.present?}#{parameters.map{|k,v| "#{k}_#{v}"}.join('_')}_link_url"
+    def name_to_cache
+      @name_to_cache ||= "#{controller || 'self'}_#{type}_#{action}#{'_' if parameters.present?}#{parameters.map{|k,v| "#{k}=#{v.is_a?(Array) ? v.join(',') : v}"}.join('_')}"
     end
     
     
