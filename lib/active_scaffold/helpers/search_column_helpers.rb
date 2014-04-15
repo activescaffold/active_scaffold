@@ -148,9 +148,8 @@ module ActiveScaffold
 
       def field_search_params_range_values(column)
         values = field_search_params[column.name]
-        return nil if values.nil?
+        return nil unless values.is_a? Hash
         return values[:opt], (values[:from].blank? ? nil : values[:from]), (values[:to].blank? ? nil : values[:to])
-        
       end
 
       def active_scaffold_search_range_string?(column)
