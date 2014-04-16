@@ -77,7 +77,10 @@ document.observe("dom:loaded", function() {
         action_link.insert(event.memo.request.transport.responseText);
         if (action_link.hide_target) action_link.target.hide();
       } else {
-        //event.memo.request.evalResponse(); // (clyfe) prototype evals the response by itself checking headers, this would eval twice
+        if (action_link.tag.hasClassName('toggle')) {
+          action_link.tag.up('.action_group,.actions').select('.toggle.active').invoke('removeClassName', 'active');
+          action_link.tag.addClassName('active');
+        }
         action_link.enable();
       }
       event.stop();
