@@ -86,6 +86,10 @@ jQuery(document).ready(function($) {
         action_link.insert(response);
         if (action_link.hide_target) action_link.target.hide();
       } else {
+        if (action_link.tag.hasClass('toggle')) {
+          action_link.tag.closest('.action_group,.actions').find('.toggle.active').removeClass('active');
+          action_link.tag.addClass('active');
+        }
         action_link.enable();
       }
       jQuery(this).trigger('as:action_success', action_link);
