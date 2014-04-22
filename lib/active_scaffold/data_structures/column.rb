@@ -269,7 +269,7 @@ module ActiveScaffold::DataStructures
       self.association and self.association.options[:through]
     end
     def polymorphic_association?
-      self.association and self.association.options.has_key? :polymorphic # TODO use polymorphic? when rails3 support is removed
+      self.association and self.association.options[:polymorphic]
     end
     def readonly_association?
       if self.association
