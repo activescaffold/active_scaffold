@@ -47,6 +47,9 @@ module ActiveScaffold
             end
           end
         end
+      rescue Exception => e
+        logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        raise e
       end
 
       # the standard active scaffold options used for class, name and scope

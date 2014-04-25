@@ -21,7 +21,7 @@ class ActiveScaffold::DataStructures::Actions
   end
 
   def include?(val)
-    super val.to_sym
+    val.is_a?(Symbol) ? super : @set.any?{|item| item.to_s == val.to_s}
   end
 
   # swaps one element in the list with the other.

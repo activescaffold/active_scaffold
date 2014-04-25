@@ -14,50 +14,49 @@ module ActiveScaffold
         record = options[:object]
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
-        begin
-          # first, check if the dev has created an override for this specific field
-          if (method = override_form_field(column))
-            send(method, record, options)
-          # second, check if the dev has specified a valid form_ui for this column
-          elsif column.form_ui and (method = override_input(column.form_ui))
-            send(method, column, options)
-          # fallback: we get to make the decision
-          else
-            if column.association
-              if column.form_ui.nil?
-                # its an association and nothing is specified, we will assume form_ui :select
-                active_scaffold_input_select(column, options)
-              else
-                # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
-                raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
-              end
-            elsif column.virtual?
-              options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
-              active_scaffold_input_virtual(column, options)
 
-            else # regular model attribute column
-              # if we (or someone else) have created a custom render option for the column type, use that
-              if (method = override_input(column.column.type))
-                send(method, column, options)
-              # final ultimate fallback: use rails' generic input method
-              else
-                # for textual fields we pass different options
-                text_types = [:text, :string, :integer, :float, :decimal, :date, :time, :datetime]
-                options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
-                if column.column.type == :string && options[:maxlength].blank?
-                  options[:maxlength] = column.column.limit
-                  options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
-                end
-                options[:include_blank] = true if column.column.null and [:date, :datetime, :time].include?(column.column.type)
-                options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
-                text_field(:record, column.name, options.merge(column.options))
+        # first, check if the dev has created an override for this specific field
+        if (method = override_form_field(column))
+          send(method, record, options)
+        # second, check if the dev has specified a valid form_ui for this column
+        elsif column.form_ui and (method = override_input(column.form_ui))
+          send(method, column, options)
+        # fallback: we get to make the decision
+        else
+          if column.association
+            if column.form_ui.nil?
+              # its an association and nothing is specified, we will assume form_ui :select
+              active_scaffold_input_select(column, options)
+            else
+              # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
+              raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
+            end
+          elsif column.virtual?
+            options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
+            active_scaffold_input_virtual(column, options)
+
+          else # regular model attribute column
+            # if we (or someone else) have created a custom render option for the column type, use that
+            if (method = override_input(column.column.type))
+              send(method, column, options)
+            # final ultimate fallback: use rails' generic input method
+            else
+              # for textual fields we pass different options
+              text_types = [:text, :string, :integer, :float, :decimal, :date, :time, :datetime]
+              options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
+              if column.column.type == :string && options[:maxlength].blank?
+                options[:maxlength] = column.column.limit
+                options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
               end
+              options[:include_blank] = true if column.column.null and [:date, :datetime, :time].include?(column.column.type)
+              options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
+              text_field(:record, column.name, options.merge(column.options))
             end
           end
-        rescue Exception => e
-          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-          raise e
         end
+      rescue Exception => e
+        logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        raise e
       end
       
       def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil)
