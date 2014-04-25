@@ -2,12 +2,6 @@ module ActiveScaffold::Config
   class Show < Base
     self.crud_type = :read
 
-    def initialize(core_config)
-      super
-      # start with the ActionLink defined globally
-      @link = self.class.link.clone
-    end
-
     # global level configuration
     # --------------------------
     cattr_accessor :link

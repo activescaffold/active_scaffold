@@ -4,8 +4,6 @@ module ActiveScaffold::Config
 
     def initialize(core_config)
       super
-      # start with the ActionLink defined globally
-      @link = self.class.link.clone
       @refresh_list = self.class.refresh_list
     end
 

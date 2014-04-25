@@ -2,8 +2,6 @@ module ActiveScaffold::Config
   class Form < Base
     def initialize(core_config)
       super
-      # start with the ActionLink defined globally
-      @link = self.class.link.clone unless self.class.link.nil?
       @show_unauthorized_columns = self.class.show_unauthorized_columns
       @refresh_list = self.class.refresh_list
       @persistent = self.class.persistent
