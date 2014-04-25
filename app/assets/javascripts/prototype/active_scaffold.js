@@ -43,6 +43,9 @@ document.observe("dom:loaded", function() {
       return false;
     }
   });
+  document.on('ajax:complete', 'form.live', function(event) {
+    ActiveScaffold.focus_first_element_of_form(event.findElement('form'));
+  });
   document.on('ajax:failure', 'form.as_form', function(event) {
     var as_div = event.findElement('div.active-scaffold');
     if (as_div) {
@@ -118,7 +121,7 @@ document.observe("dom:loaded", function() {
     return true;
   });
   document.on('ajax:success', 'a.as_cancel', function(event) {
-    var action_link = ActiveScaffold.find_action_link(event.findElement());
+    var link = event.findElement(), action_link = ActiveScaffold.find_action_link(link);
     if (action_link) {
       if (action_link.position) {
         action_link.close();
@@ -126,6 +129,7 @@ document.observe("dom:loaded", function() {
         event.memo.request.evalResponse(); 
       }
     }
+    if (link.hasClassName('reset')) link.up('form').reset();
     return true;
   });
   document.on('ajax:failure', 'a.as_cancel', function(event) {

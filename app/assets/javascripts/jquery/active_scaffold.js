@@ -54,6 +54,9 @@ jQuery(document).ready(function($) {
       ActiveScaffold.enable_form(as_form);
     }
   });
+  jQuery(document).on('ajax:complete', 'form.live', function(event) {
+    ActiveScaffold.focus_first_element_of_form(jQuery(this).closest("form"));
+  });
   jQuery(document).on('ajax:error', 'form.as_form', function(event, xhr, status, error) {
     var as_div = jQuery(this).closest("div.active-scaffold");
     if (as_div.length) {
@@ -120,11 +123,11 @@ jQuery(document).ready(function($) {
     return true;
   });
   jQuery(document).on('ajax:success', 'a.as_cancel', function(event) {
-    var action_link = ActiveScaffold.find_action_link(jQuery(this));
+    var link = jQuery(this), action_link = ActiveScaffold.find_action_link(link);
 
     if (action_link && action_link.position) {
       action_link.close();
-    }
+    } else if (link.hasClass('reset')) link.closest('form').get(0).reset();
     return true;
   });
   jQuery(document).on('ajax:error', 'a.as_cancel', function(event, xhr, status, error) {
