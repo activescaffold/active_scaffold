@@ -9,7 +9,12 @@ module ActiveScaffold
         else
           attachment.name
         end
-        link_to(content, attachment.remote_url, :target => '_blank')
+        link_to(content, dragonfly_url_for_attachment(attachment, record, column), :target => '_blank')
+      end
+
+      def dragonfly_url_for_attachment(attachment, record, column)
+        url_method = column.options[:private_store] ? :url : :remote_url
+        attachment.send(url_method)
       end
     end
   end
