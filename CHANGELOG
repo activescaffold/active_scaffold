@@ -30,6 +30,7 @@
 - Support toggle collection action links, for links with reload list to filter, so active link is marked
 - Support search and field_search at same time
 - Support for overriding how download url is get for dragonfly attachment
+- Trigger as:element_removed when ActiveScaffold.remove is called
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select
