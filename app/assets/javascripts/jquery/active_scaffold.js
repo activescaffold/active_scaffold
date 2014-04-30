@@ -524,7 +524,7 @@ var ActiveScaffold = {
   
   remove: function(element, callback) {
     if (typeof(element) == 'string') element = '#' + element; 
-    jQuery(element).remove();
+    jQuery(element).trigger('as:element_removed').remove();
     if (callback) callback();
   },
 
