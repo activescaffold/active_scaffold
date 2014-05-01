@@ -60,7 +60,7 @@ module ActiveScaffold::Actions
     end
 
     def row_respond_to_js
-      render :action => 'row'
+      render :action => 'row', :content_type => Mime::JS, :layout => false
     end
 
     # The actual algorithm to prepare for the list view
@@ -180,7 +180,7 @@ module ActiveScaffold::Actions
 
     def action_update_respond_to_js
       do_refresh_list unless @record.present?
-      render(:action => 'on_action_update')
+      render(:action => 'on_action_update', :content_type => Mime::JS, :layout => false)
     end
 
     def action_update_respond_to_xml
