@@ -23,7 +23,7 @@ module ActiveScaffold::Actions
         if params[:kind].present? && active_scaffold_config.actions.include?(params[:kind])
           params.delete(:kind)
         else
-          active_scaffold_config.list.search_partial
+          active_scaffold_config.list.auto_search_partial
         end
       end
       
