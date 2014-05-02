@@ -22,6 +22,8 @@ module ActiveScaffold::Actions
       def search_partial
         if params[:kind].present? && active_scaffold_config.actions.include?(params[:kind])
           params.delete(:kind)
+        else
+          active_scaffold_config.list.search_partial
         end
       end
       
@@ -48,7 +50,7 @@ module ActiveScaffold::Actions
       end
       
       def search_authorized_filter
-        action = active_scaffold_config.list.send(search_partial)
+        action = active_scaffold_config.send(search_partial)
         link = action.link || action.class.link
         raise ActiveScaffold::ActionNotAllowed unless self.send(link.security_method)
       end
