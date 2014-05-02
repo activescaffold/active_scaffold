@@ -48,7 +48,7 @@ module ActiveScaffold::Actions
       end
       
       def search_authorized_filter
-        action = active_scaffold_config.send(search_partial)
+        action = active_scaffold_config.list.send(search_partial)
         link = action.link || action.class.link
         raise ActiveScaffold::ActionNotAllowed unless self.send(link.security_method)
       end
