@@ -6,6 +6,13 @@ class ConfigurableClass
   def self.foo; FOO end
 end
 
+class IncludedClass < ConfigurableClass
+  include ActiveScaffold::Configurable
+end
+
+class ExtendedClass < ConfigurableClass
+  extend ActiveScaffold::Configurable
+end
 
 class ConfigurableTest < MiniTest::Unit::TestCase
   ##
@@ -15,15 +22,13 @@ class ConfigurableTest < MiniTest::Unit::TestCase
   HELLO = 'world'
 
   def test_instance_configuration
-    ConfigurableClass.send :include, ActiveScaffold::Configurable
-
-    configurable_class = ConfigurableClass.new
+    configurable_class = IncludedClass.new
 
     ##
     ## sanity checks
     ##
     # make sure the configure method is available
-    assert ConfigurableClass.respond_to?(:configure)
+    assert configurable_class.respond_to?(:configure)
     # make sure real functions still work
     assert_equal 'bar', configurable_class.foo
     # make sure other functions still don't work
@@ -52,45 +57,41 @@ class ConfigurableTest < MiniTest::Unit::TestCase
   end
 
   def test_class_configuration
-    ConfigurableClass.send :extend, ActiveScaffold::Configurable
-
     ##
     ## sanity checks
     ##
     # make sure the configure method is available
-    assert ConfigurableClass.respond_to?(:configure)
+    assert ExtendedClass.respond_to?(:configure)
     # make sure real functions still work
-    assert_equal 'bar', ConfigurableClass.foo
+    assert_equal 'bar', ExtendedClass.foo
     # make sure other functions still don't work
     assert_raises NoMethodError do
-      ConfigurableClass.i_do_not_exist
+      ExtendedClass.i_do_not_exist
     end
 
     ##
     ## test normal block behaviors
     ##
     # functions
-    assert_equal hello, ConfigurableClass.configure {hello}
+    assert_equal hello, ExtendedClass.configure {hello}
     # variables
-    assert_equal ConfigurableClass, ConfigurableClass.configure {ConfigurableClass}
+    assert_equal ExtendedClass, ExtendedClass.configure {ExtendedClass}
     # constants
-    assert_equal ConfigurableTest::HELLO, ConfigurableClass.configure {ConfigurableTest::HELLO}
+    assert_equal ConfigurableTest::HELLO, ExtendedClass.configure {ConfigurableTest::HELLO}
 
     ##
     ## test extra "localized" block behavior
     ##
     # functions
-    assert_equal ConfigurableClass.foo, ConfigurableClass.configure {foo}
+    assert_equal ExtendedClass.foo, ExtendedClass.configure {foo}
     # constants - not working
-#    assert_equal ConfigurableClass.FOO, ConfigurableClass.configure {FOO}
+#    assert_equal ExtendedClass.FOO, ExtendedClass.configure {FOO}
   end
 
   def test_arity
-    ConfigurableClass.send :extend, ActiveScaffold::Configurable
-
     # this is the main style
-    assert_equal 'foo', ConfigurableClass.configure {'foo'}
+    assert_equal 'foo', ExtendedClass.configure {'foo'}
     # but we want to let people accept the configurable class as the first argument, too
-    assert_equal 'bar', ConfigurableClass.configure {|a| a.foo}
+    assert_equal 'bar', ExtendedClass.configure {|a| a.foo}
   end
 end
