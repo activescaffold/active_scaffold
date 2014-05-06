@@ -365,11 +365,14 @@ module ActiveScaffold
         else
           active_scaffold_enum_options(column, record)
         end
+        id_key = html_options[:"data-id"] ? :"data-id" : :id
         options.inject('') do |html, (text, value)|
           method = column.options[:label_method] || :to_label if column.association
           text, value = column.association ? [text.send(method), text.id] : active_scaffold_translated_option(column, text, value)
           checked = {:checked => html_options[:object].send(column.association.name).try(:id) == value} if column.association
-          html << content_tag(:label, radio_button(:record, column.name, value, html_options.merge(:id => html_options[:id] + '-' + value.to_s).merge(checked || {})) + text)
+          radio_options = html_options.merge(id_key => html_options[id_key] + '-' + value.to_s)
+          radio_options.merge!(checked) if checked
+          html << content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
         end.html_safe
       end
 
