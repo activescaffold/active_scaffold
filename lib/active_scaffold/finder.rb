@@ -425,12 +425,7 @@ module ActiveScaffold
       includes = active_scaffold_config.list.count_includes
       includes ||= active_scaffold_references unless conditions.blank?
       primary_key = active_scaffold_config.model.primary_key
-      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => active_scaffold_outer_joins)
-      subquery = subquery.select(active_scaffold_config.columns[primary_key].field)
-      if includes
-        includes_relation = beginning_of_chain.eager_load(includes)
-        subquery = subquery.send(:apply_join_dependency, subquery, includes_relation.send(:construct_join_dependency_for_association_find))
-      end
+      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => active_scaffold_outer_joins + includes, :select => active_scaffold_config.columns[primary_key].field)
       active_scaffold_config.model.where(primary_key => subquery)
     end
     
