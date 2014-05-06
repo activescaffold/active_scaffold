@@ -95,13 +95,13 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert model.save
     assert_equal model.id, floor.reload.tenant_id, 'tenant_id should be saved'
 
-    model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '', :skip => Floor) { raise ActiveRecord::Rollback }
+    model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '') { raise ActiveRecord::Rollback }
     assert_equal 'First', model.first_name
     assert_equal model.id, floor.reload.tenant_id, 'previous car should not be saved and nullified'
     assert_nil model.floor, 'floor should be cleared'
 
     model.reload
-    model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '', :skip => Floor)
+    model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '')
     assert_equal 'First', model.first_name
     assert_nil floor.reload.tenant_id, 'previous car should be saved and nullified'
     assert_nil model.floor, 'floor should be cleared'
@@ -241,7 +241,7 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert model.save_associated
     assert_equal 'Mercedes', car.reload.brand, 'brand should be saved'
 
-    model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'First', :car => {:brand => 'Mercedes'}, :skip => Car)
+    model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'First', :car => {:brand => 'Mercedes'})
     assert_equal 'First', model.first_name
     assert_nil Car.where(:id => car.id).first, 'previous car should be deleted'
     assert model.car.present?
@@ -249,7 +249,7 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert model.save
 
     car = model.car.reload
-    model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'Name', :car => {:brand => ''}, :skip => Car)
+    model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'Name', :car => {:brand => ''})
     assert_equal 'Name', model.first_name
     assert_nil Car.where(:id => car.id).first, 'previous car should be deleted'
     assert model.car.blank?, 'car should be cleared'
@@ -281,8 +281,6 @@ class AttributeParamsTest < Test::Unit::TestCase
   MODELS = [Address, Building, Car, Contact, Floor, Person]
   def update_record_from_params(record, action, *columns, &block)
     params = columns.extract_options!.with_indifferent_access
-    skip = params.delete(:skip)
-    #(MODELS-Array(skip)).each { |model| model.any_instance.expects(:save).never }
     new_record = nil
     record.class.transaction do
       new_record = @controller.update_record_from_params(record, build_action_columns(record, action, columns), params)
