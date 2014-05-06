@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ErrorMessageTest < MiniTest::Unit::TestCase
+class ErrorMessageTest < MiniTest::Test
   def setup
     @error = ActiveScaffold::DataStructures::ErrorMessage.new 'foo'
   end

@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class CreateTest < MiniTest::Unit::TestCase
+  class CreateTest < MiniTest::Test
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.create.link

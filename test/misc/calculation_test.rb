@@ -16,7 +16,7 @@ class ClassWithFinder
   def params; {}; end
 end
 
-class CalculationTest < MiniTest::Unit::TestCase
+class CalculationTest < MiniTest::Test
   def setup
     @klass = ClassWithFinder.new
     @klass.stubs(:active_scaffold_config).returns(mock { stubs(:model).returns(Building) })
@@ -32,6 +32,6 @@ class CalculationTest < MiniTest::Unit::TestCase
     @klass.active_scaffold_config.expects(:columns).returns(mock { stubs(:"[]").returns(column) })
     query = @klass.send :calculate_query
     
-    assert_equal 0, query.count
+    assert_equal 0, query.eager_load(:floors).count
   end
 end

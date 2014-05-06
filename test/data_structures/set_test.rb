@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SetTest < MiniTest::Unit::TestCase
+class SetTest < MiniTest::Test
   def setup
     @items = ActiveScaffold::DataStructures::Set.new(:a, :b)
   end

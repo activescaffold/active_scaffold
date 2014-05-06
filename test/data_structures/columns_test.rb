@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ColumnsTest < MiniTest::Unit::TestCase
+class ColumnsTest < MiniTest::Test
   def setup
     @columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b)
   end

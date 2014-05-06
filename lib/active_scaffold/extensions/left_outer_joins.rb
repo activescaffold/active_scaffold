@@ -41,16 +41,28 @@ module ActiveScaffold
       end
     end
 
-    def build_arel
-      if outer_joins_values.empty?
-        super
-      else
-        relation = self.except(:outer_joins)
-        join_dependency = ActiveRecord::Associations::JoinDependency.new(@klass, outer_joins_values, [])
-        join_dependency.join_associations.each do |association|
-          relation = association.join_relation(relation)
+    if Rails.version < '4.1'
+      def build_arel
+        if outer_joins_values.empty?
+          super
+        else
+          relation = self.except(:outer_joins)
+          join_dependency = ActiveRecord::Associations::JoinDependency.new(@klass, outer_joins_values, [])
+          join_dependency.join_associations.each do |association|
+            relation = association.join_relation(relation)
+          end
+          relation
         end
-        relation.build_arel
+      end
+    else
+      def build_joins(manager, joins)
+        manager = super
+        unless outer_joins_values.empty?
+          join_dependency = ActiveRecord::Associations::JoinDependency.new(@klass, outer_joins_values, [])
+          joins = join_dependency.join_constraints []
+          joins.each { |join| manager.from(join) }
+        end
+        manager
       end
     end
   end

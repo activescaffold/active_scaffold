@@ -16,7 +16,7 @@ class ClassWithFinder
   def params; {}; end
 end
 
-class FinderTest < MiniTest::Unit::TestCase
+class FinderTest < MiniTest::Test
   def setup
     @klass = ClassWithFinder.new
     @klass.stubs(:active_scaffold_config).returns(mock { stubs(:model).returns(ModelStub) })
@@ -94,6 +94,6 @@ class FinderTest < MiniTest::Unit::TestCase
 
   private
   def relation_class
-    Rails::VERSION::MAJOR < 4 ? ActiveRecord::Relation : ActiveRecord::Relation::ActiveRecord_Relation_ModelStub
+    @klass.active_scaffold_config.model.send(:relation).class
   end
 end

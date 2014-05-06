@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class VirtualColumnTest < MiniTest::Unit::TestCase
+class VirtualColumnTest < MiniTest::Test
   def setup
     @virtual_column = ActiveScaffold::DataStructures::Column.new(:fake, ModelStub)
   end

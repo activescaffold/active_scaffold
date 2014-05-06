@@ -52,7 +52,7 @@ class PermissionModel < ActiveRecord::Base
   #def c1_authorized_for_update?; end
 end
 
-class ActiveRecordPermissionsTest < MiniTest::Unit::TestCase
+class ActiveRecordPermissionsTest < MiniTest::Test
   def setup
     @model = PermissionModel.new
   end

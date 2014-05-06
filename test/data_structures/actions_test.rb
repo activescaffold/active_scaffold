@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ActionsTest < MiniTest::Unit::TestCase
+class ActionsTest < MiniTest::Test
   def setup
     @actions = ActiveScaffold::DataStructures::Actions.new(:a, 'b')
   end
