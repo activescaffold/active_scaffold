@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class AttributeParamsTest < Test::Unit::TestCase
+class AttributeParamsTest < MiniTest::Unit::TestCase
   def setup
     @controller = Controller.new
   end
@@ -168,7 +168,7 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal 'First', model.name
     assert_equal 1, model.floors.size
     assert model.floors.first.errors.present?
-    assert !model.floors.first.persisted?
+    refute model.floors.first.persisted?
   end
 
   def test_saving_has_many_crud_and_belongs_to_select
@@ -245,7 +245,7 @@ class AttributeParamsTest < Test::Unit::TestCase
     assert_equal 'First', model.first_name
     assert_nil Car.where(:id => car.id).first, 'previous car should be deleted'
     assert model.car.present?
-    assert_not_equal car.id, model.car.id
+    refute_equal  car.id, model.car.id
     assert model.save
 
     car = model.car.reload

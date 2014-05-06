@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ActionLinksTest < Test::Unit::TestCase
+class ActionLinksTest < MiniTest::Unit::TestCase
   def setup
     @links = ActiveScaffold::DataStructures::ActionLinks.new
   end
@@ -38,15 +38,15 @@ class ActionLinksTest < Test::Unit::TestCase
   def test_empty
     assert @links.empty?
     @links.add 'a'
-    assert !@links.empty?
+    refute @links.empty?
   end
 
   def test_cloning
     @links.add 'foo/bar'
     @links_copy = @links.clone
 
-    assert !@links.equal?(@links_copy)
-    assert !@links['foo/bar'].equal?(@links_copy['foo/bar'])
+    refute @links.equal?(@links_copy)
+    refute @links['foo/bar'].equal?(@links_copy['foo/bar'])
   end
 
   def test_each
@@ -73,6 +73,6 @@ class ActionLinksTest < Test::Unit::TestCase
     rescue
       assert false, "deleting from action links when item doesn't exist should not throw an error"
     end
-    assert !@links['bar'].nil?
+    refute @links['bar'].nil?
   end
 end

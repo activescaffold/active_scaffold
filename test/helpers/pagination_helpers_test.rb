@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PaginationHelpersTest < Test::Unit::TestCase
+class PaginationHelpersTest < MiniTest::Unit::TestCase
   include ActiveScaffold::Helpers::PaginationHelpers
 
   def active_scaffold_config

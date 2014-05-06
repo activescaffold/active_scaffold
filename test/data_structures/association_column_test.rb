@@ -1,14 +1,14 @@
 require 'test_helper'
 require 'model_stub'
 
-class AssociationColumnTest < Test::Unit::TestCase
+class AssociationColumnTest < MiniTest::Unit::TestCase
   def setup
     @association_column = ActiveScaffold::DataStructures::Column.new('other_model', ModelStub)
   end
 
   def test_virtuality
     assert @association_column.association
-    assert !@association_column.virtual?
+    refute @association_column.virtual?
   end
 
   def test_sorting
@@ -32,10 +32,10 @@ class AssociationColumnTest < Test::Unit::TestCase
 
   def test_plurality
     assert @association_column.singular_association?
-    assert !@association_column.plural_association?
+    refute @association_column.plural_association?
 
     plural_association_column = ActiveScaffold::DataStructures::Column.new('other_models', ModelStub)
     assert plural_association_column.plural_association?
-    assert !plural_association_column.singular_association?
+    refute plural_association_column.singular_association?
   end
 end

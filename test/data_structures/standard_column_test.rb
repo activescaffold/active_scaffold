@@ -1,13 +1,13 @@
 require 'test_helper'
 
-class StandardColumnTest < Test::Unit::TestCase
+class StandardColumnTest < MiniTest::Unit::TestCase
   def setup
     @standard_column = ActiveScaffold::DataStructures::Column.new(ModelStub.columns.first.name, ModelStub)
   end
 
   def test_virtuality
     assert @standard_column.column
-    assert !@standard_column.virtual?
+    refute @standard_column.virtual?
   end
 
   def test_sorting

@@ -14,9 +14,9 @@ class PaperclipTest < ActionView::TestCase
   def test_initialization_without_paperclip
     Company.expects(:attachment_definitions)
     config = PaperclipCore.new(:company)
-    assert !config.create.multipart?
-    assert !config.update.multipart?
-    assert !config.columns.any? {|column| column.form_ui == :paperclip}
+    refute config.create.multipart?
+    refute config.update.multipart?
+    refute config.columns.any? {|column| column.form_ui == :paperclip}
   end
 
   def test_initialization
@@ -26,7 +26,7 @@ class PaperclipTest < ActionView::TestCase
     assert_equal :paperclip, config.columns[:logo].form_ui
     assert_equal [:delete_logo], config.columns[:logo].params.to_a
     %w(logo_file_name logo_file_size logo_updated_at logo_content_type).each do |attr|
-      assert !config.columns._inheritable.include?(attr.to_sym)
+      refute config.columns._inheritable.include?(attr.to_sym)
     end
     assert Company.method_defined?(:delete_logo)
     assert Company.method_defined?(:'delete_logo=')

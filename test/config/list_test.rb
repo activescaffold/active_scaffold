@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class ListTest < Test::Unit::TestCase
+  class ListTest < MiniTest::Unit::TestCase
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
     end
@@ -24,8 +24,8 @@ module Config
       assert_equal nil, @config.list.search_partial
       assert_equal :no_entries, @config.list.no_entries_message
       assert_equal :filtered, @config.list.filtered_message
-      assert !@config.list.always_show_create
-      assert !@config.list.always_show_search
+      refute @config.list.always_show_create
+      refute @config.list.always_show_search
       assert @config.list.count_includes.nil?
       assert_equal 'ModelStubs', @config.list.label
       assert @config.list.sorting.sorts_on?(:id)
@@ -56,21 +56,21 @@ module Config
       @config.list.pagination = :infinite
       assert_equal :infinite, @config.list.pagination
       @config.list.pagination = false
-      assert !@config.list.pagination
+      refute @config.list.pagination
     end
     
     def test_sorting
       @config.list.sorting = {:a => :desc}
       assert @config.list.sorting.sorts_on?(:a)
       assert_equal 'DESC', @config.list.sorting.direction_of(:a)
-      assert !@config.list.sorting.sorts_on?(:id)
+      refute @config.list.sorting.sorts_on?(:id)
       
       @config.list.sorting = [{:a => :asc}, {:b => :desc}]
       assert @config.list.sorting.sorts_on?(:a)
       assert_equal 'ASC', @config.list.sorting.direction_of(:a)
       assert @config.list.sorting.sorts_on?(:b)
       assert_equal 'DESC', @config.list.sorting.direction_of(:b)
-      assert !@config.list.sorting.sorts_on?(:id)
+      refute @config.list.sorting.sorts_on?(:id)
     end
     
     def test_per_page

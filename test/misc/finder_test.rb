@@ -16,7 +16,7 @@ class ClassWithFinder
   def params; {}; end
 end
 
-class FinderTest < Test::Unit::TestCase
+class FinderTest < MiniTest::Unit::TestCase
   def setup
     @klass = ClassWithFinder.new
     @klass.stubs(:active_scaffold_config).returns(mock { stubs(:model).returns(ModelStub) })
@@ -57,10 +57,7 @@ class FinderTest < Test::Unit::TestCase
     assert_equal collection.sort.reverse, @klass.send(:sort_collection_by_column, collection, column, 'desc')
 
     collection = ['a', nil, 'b']
-    result = nil
-    assert_nothing_raised do
-      result = @klass.send(:sort_collection_by_column, collection, column, 'asc')
-    end
+    result = @klass.send(:sort_collection_by_column, collection, column, 'asc')
     assert_equal [nil, 'a', 'b'], result
 
     column.sort_by :method => 'self'
@@ -78,7 +75,7 @@ class FinderTest < Test::Unit::TestCase
     
     assert_kind_of Integer, page.pager.count
     assert_equal 2, page.pager.count
-    assert_nothing_raised { page.pager.number_of_pages }
+    assert_equal 1, page.pager.number_of_pages
   end
 
   def test_disabled_pagination
