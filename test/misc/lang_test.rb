@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class LocalizationTest < Test::Unit::TestCase
+class LocalizationTest < MiniTest::Unit::TestCase
 
   def test_localization
     assert_equal "Dutch", as_(:dutch)

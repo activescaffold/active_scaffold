@@ -7,7 +7,7 @@ class ConfigurableClass
 end
 
 
-class ConfigurableTest < Test::Unit::TestCase
+class ConfigurableTest < MiniTest::Unit::TestCase
   ##
   ## constants and methods for tests to check against
   ##
@@ -27,7 +27,7 @@ class ConfigurableTest < Test::Unit::TestCase
     # make sure real functions still work
     assert_equal 'bar', configurable_class.foo
     # make sure other functions still don't work
-    assert_raise NoMethodError do
+    assert_raises NoMethodError do
       configurable_class.i_do_not_exist
     end
 
@@ -62,7 +62,7 @@ class ConfigurableTest < Test::Unit::TestCase
     # make sure real functions still work
     assert_equal 'bar', ConfigurableClass.foo
     # make sure other functions still don't work
-    assert_raise NoMethodError do
+    assert_raises NoMethodError do
       ConfigurableClass.i_do_not_exist
     end
 

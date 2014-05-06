@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SortingTest < Test::Unit::TestCase
+class SortingTest < MiniTest::Unit::TestCase
   def setup
     @columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b, :c, :d, :id)
     @sorting = ActiveScaffold::DataStructures::Sorting.new(@columns)
@@ -53,7 +53,7 @@ class SortingTest < Test::Unit::TestCase
 
     @sorting.set :b, 'DESC'
     assert @sorting.instance_variable_get('@clauses').size == 1
-    assert !@sorting.sorts_on?(:a)
+    refute @sorting.sorts_on?(:a)
     assert @sorting.sorts_on?(:b)
     assert_equal 'DESC', @sorting.direction_of(:b)
   end
@@ -64,7 +64,7 @@ class SortingTest < Test::Unit::TestCase
 
     assert @sorting.sorts_on?(:a)
     assert @sorting.sorts_on?(:b)
-    assert !@sorting.sorts_on?(:c)
+    refute @sorting.sorts_on?(:c)
   end
 
   def test_direction_of
@@ -83,14 +83,14 @@ class SortingTest < Test::Unit::TestCase
     assert @sorting.sorts_by_method?
 
     #test mixed sql/method sorting: raise error
-    assert_raise ArgumentError do
+    assert_raises ArgumentError do
       @sorting.add :b
     end
     
     #test pure sql sorting: false
     @sorting.clear
     @sorting.add :b
-    assert !@sorting.sorts_by_method?
+    refute @sorting.sorts_by_method?
   end
 
   def test_build_order_clause

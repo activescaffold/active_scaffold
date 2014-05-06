@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class NestedTest < Test::Unit::TestCase
+  class NestedTest < MiniTest::Unit::TestCase
     class ModelStubsController < ActionController::Base
       include ActiveScaffold::Core
       active_scaffold
@@ -31,7 +31,7 @@ module Config
     end
     
     def test_add_link
-      assert_raise(ArgumentError) { @config.nested.add_link :assoc_1 }
+      assert_raises(ArgumentError) { @config.nested.add_link :assoc_1 }
       config = @config
       ModelStubsController.class_eval do
         config.configure { nested.add_link :other_models }
@@ -40,9 +40,9 @@ module Config
       assert_equal 'ModelStubs', link.label
       assert_equal 'index', link.action
       assert_equal :after, link.position
-      assert !link.page?
-      assert !link.popup?
-      assert !link.confirm?
+      refute link.page?
+      refute link.popup?
+      refute link.confirm?
       assert link.inline?
       assert link.refresh_on_close
       assert_equal :other_models, link.parameters[:association]

@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class CreateTest < Test::Unit::TestCase
+  class CreateTest < MiniTest::Unit::TestCase
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.create.link
@@ -12,16 +12,16 @@ module Config
     end
     
     def test_default_options
-      assert !@config.create.persistent
+      refute @config.create.persistent
       assert @config.create.action_after_create.nil?
       assert_equal 'Create Model stub', @config.create.label
     end
 
     def test_link_defaults
       link = @config.create.link
-      assert !link.page?
-      assert !link.popup?
-      assert !link.confirm?
+      refute link.page?
+      refute link.popup?
+      refute link.confirm?
       assert_equal "new", link.action
       assert_equal "Create New", link.label
       assert link.inline?
@@ -35,7 +35,7 @@ module Config
     
     def test_setting_link
       @config.create.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
-      assert_not_equal(@default_link, @config.create.link)
+      refute_equal @default_link, @config.create.link
     end
     
     def test_label

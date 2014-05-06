@@ -2,62 +2,61 @@ require 'test_helper'
 # require 'test/model_stub'
 #require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/data_structures/set.rb')
 
-class ActionColumnsTest < Test::Unit::TestCase
+class ActionColumnsTest < MiniTest::Unit::TestCase
   def setup
     @columns = ActiveScaffold::DataStructures::ActionColumns.new([:a, :b])
   end
 
   def test_label
-    assert_nothing_raised do
-      @columns.label = 'foo';
-    end
-    assert @columns.label == 'foo'
+    refute_equal 'foo', @columns.label
+    @columns.label = 'foo'
+    assert_equal 'foo', @columns.label
   end
 
   def test_initialization
     assert @columns.include?(:a)
     assert @columns.include?(:b)
-    assert !@columns.include?(:c)
+    refute @columns.include?(:c)
   end
 
   def test_exclude
     # exclude with a symbol
     assert @columns.include?(:b)
     @columns.exclude :b
-    assert !@columns.include?(:b)
+    refute @columns.include?(:b)
 
     # exclude with a string
     assert @columns.include?(:a)
     @columns.exclude 'a'
-    assert !@columns.include?(:a)
+    refute @columns.include?(:a)
   end
 
   def test_exclude_array
     # exclude with a symbol
     assert @columns.include?(:b)
     @columns.exclude [:a, :b]
-    assert !@columns.include?(:b)
-    assert !@columns.include?(:a)
+    refute @columns.include?(:b)
+    refute @columns.include?(:a)
   end
 
   def test_add
     # try adding a simple column using a string
-    assert !@columns.include?(:c)
+    refute @columns.include?(:c)
     @columns.add 'c'
     assert @columns.include?(:c)
 
     # try adding a simple column using a symbol
-    assert !@columns.include?(:d)
+    refute @columns.include?(:d)
     @columns.add :d
     assert @columns.include?(:d)
 
     # test that << also adds
-    assert !@columns.include?(:e)
+    refute @columns.include?(:e)
     @columns << :e
     assert @columns.include?(:e)
 
     # try adding an array of columns
-    assert !@columns.include?(:f)
+    refute @columns.include?(:f)
     @columns.add [:f, :g]
     assert @columns.include?(:f)
     assert @columns.include?(:g)
@@ -92,7 +91,7 @@ class ActionColumnsTest < Test::Unit::TestCase
     end
 
     assert @columns.include?(:c)
-    assert !@columns.include?(:b)
+    refute @columns.include?(:b)
     @columns.each { |c|
       next unless c.is_a? ActiveScaffold::DataStructures::Columns
       assert c.include?(:e)
@@ -108,6 +107,6 @@ class ActionColumnsTest < Test::Unit::TestCase
     assert @columns.include?(:a)
     assert @columns.include?(:b)
     assert @columns.include?(:c)
-    assert !@columns.include?(:d)
+    refute @columns.include?(:d)
   end
 end

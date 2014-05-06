@@ -23,6 +23,7 @@ group :test do
   gem "simplecov", ">= 0"
   gem "mocha"
   gem "rails", "~> 3.2.13"
+  gem "minitest", "~> 4.7.0"
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
   end

@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class FieldSearchTest < Test::Unit::TestCase
+  class FieldSearchTest < MiniTest::Unit::TestCase
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @config.actions.swap :search, :field_search
@@ -22,14 +22,14 @@ module Config
       @config.field_search.text_search = :end
       assert_equal :end, @config.field_search.text_search
       @config.field_search.text_search = false
-      assert !@config.field_search.text_search
+      refute @config.field_search.text_search
     end
 
     def test_link_defaults
       link = @config.field_search.link
-      assert !link.page?
-      assert !link.popup?
-      assert !link.confirm?
+      refute link.page?
+      refute link.popup?
+      refute link.confirm?
       assert_equal "show_search", link.action
       assert_equal "Search", link.label
       assert link.inline?
@@ -43,7 +43,7 @@ module Config
     
     def test_setting_link
       @config.field_search.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
-      assert_not_equal(@default_link, @config.field_search.link)
+      refute_equal @default_link, @config.field_search.link
     end
   end
 end

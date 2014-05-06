@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ErrorMessageTest < Test::Unit::TestCase
+class ErrorMessageTest < MiniTest::Unit::TestCase
   def setup
     @error = ActiveScaffold::DataStructures::ErrorMessage.new 'foo'
   end
@@ -19,9 +19,7 @@ class ErrorMessageTest < Test::Unit::TestCase
 
   def test_yaml
     yml = nil
-    assert_nothing_raised do
-      yml = YAML.load(@error.to_yaml)
-    end
+    yml = YAML.load(@error.to_yaml)
     assert yml.has_key?(:error)
     assert_equal 'foo', yml[:error]
   end

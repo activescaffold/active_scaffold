@@ -6,7 +6,7 @@ end
 ENV['RAILS_ENV'] = 'test'
 require "mock_app/config/environment"
 require 'rails/test_help'
-require 'test/unit'
+require 'minitest/autorun'
 
 require 'mocha/setup'
 begin
@@ -28,7 +28,7 @@ end
 
 I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))["en"]
 
-class Test::Unit::TestCase
+class MiniTest::Unit::TestCase
   protected
   def config_for(klass, namespace = nil)
     ActiveScaffold::Config::Core.new("#{namespace}#{klass.to_s.underscore.downcase}")

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ActionLinkTest < Test::Unit::TestCase
+class ActionLinkTest < MiniTest::Unit::TestCase
   def setup
     @link = ActiveScaffold::DataStructures::ActionLink.new('foo')
   end
@@ -17,7 +17,7 @@ class ActionLinkTest < Test::Unit::TestCase
     @link.label = 'hello world'
     assert_equal 'hello world', @link.label
 
-    assert !@link.confirm
+    refute @link.confirm
     @link.confirm = true
     assert @link.confirm
 
@@ -57,22 +57,22 @@ class ActionLinkTest < Test::Unit::TestCase
   def test_presentation_style
     # default
     assert @link.inline?
-    assert !@link.popup?
-    assert !@link.page?
+    refute @link.popup?
+    refute @link.page?
 
     @link.popup = true
-    assert !@link.inline?
+    refute @link.inline?
     assert @link.popup?
-    assert !@link.page?
+    refute @link.page?
 
     @link.page = true
-    assert !@link.inline?
-    assert !@link.popup?
+    refute @link.inline?
+    refute @link.popup?
     assert @link.page?
 
     @link.inline = true
     assert @link.inline?
-    assert !@link.popup?
-    assert !@link.page?
+    refute @link.popup?
+    refute @link.page?
   end
 end

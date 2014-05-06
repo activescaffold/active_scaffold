@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ColumnTest < Test::Unit::TestCase
+class ColumnTest < MiniTest::Unit::TestCase
   def setup
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
     @association_col = ActiveScaffold::DataStructures::Column.new(:b, ModelStub)
@@ -33,12 +33,12 @@ class ColumnTest < Test::Unit::TestCase
     assert_equal 'style_me', @column.css_class
 
     # required
-    assert !@column.required?, 'default is false'
+    refute @column.required?, 'default is false'
     @column.required = true
     assert @column.required?, 'can be changed'
 
     # calculation
-    assert !@column.calculation?, 'default is nil'
+    refute @column.calculation?, 'default is nil'
     @column.calculate = :sum
     assert @column.calculation?, 'can be changed'
   end
@@ -107,14 +107,14 @@ class ColumnTest < Test::Unit::TestCase
 
   def test_searchable
     @column.search_sql = nil
-    assert !@column.searchable?
+    refute @column.searchable?
     @column.search_sql = true
     assert @column.searchable?
   end
 
   def test_sortable
     @column.sort = nil
-    assert !@column.sortable?
+    refute @column.sortable?
     @column.sort = true
     assert @column.sortable?
   end
@@ -143,10 +143,10 @@ class ColumnTest < Test::Unit::TestCase
   end
 
   def test_custom_sort__should_assert_keys
-    assert_raise(ArgumentError) { @column.sort_by :proc => "invalid config"  }
-    assert_raise(ArgumentError) { @column.sort={:proc => "invalid config" } }
-    assert_nothing_raised(ArgumentError) {@column.sort_by :method => "method"  }
-    assert_nothing_raised(ArgumentError) {@column.sort_by :sql => "method"  }
+    assert_raises(ArgumentError) { @column.sort_by :proc => "invalid config"  }
+    assert_raises(ArgumentError) { @column.sort={:proc => "invalid config" } }
+    assert_equal({:method => "method"}, @column.sort_by(:method => "method"))
+    assert_equal({:sql => "method"}, @column.sort_by(:sql => "method"))
   end
   
   def test_config_block

@@ -52,7 +52,7 @@ class PermissionModel < ActiveRecord::Base
   #def c1_authorized_for_update?; end
 end
 
-class ActiveRecordPermissionsTest < Test::Unit::TestCase
+class ActiveRecordPermissionsTest < MiniTest::Unit::TestCase
   def setup
     @model = PermissionModel.new
   end
@@ -155,6 +155,6 @@ class ActiveRecordPermissionsTest < Test::Unit::TestCase
   end
 
   def fail(value, message = nil)
-    assert !value, "#{message} should fail"
+    refute value, "#{message} should fail"
   end
 end

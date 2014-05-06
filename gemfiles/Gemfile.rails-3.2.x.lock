@@ -311,6 +311,7 @@ DEPENDENCIES
   activerecord-jdbcsqlite3-adapter
   bundler (>= 1.0.0)
   localeapp
+  minitest (~> 4.7.0)
   mocha
   racc
   rack

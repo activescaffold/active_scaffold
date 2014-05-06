@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class CoreTest < Test::Unit::TestCase
+  class CoreTest < MiniTest::Unit::TestCase
     class ModelStubsController < ActionController::Base
       include ActiveScaffold::Core
     end
@@ -11,8 +11,8 @@ module Config
     end
     
     def test_default_options
-      assert !@config.add_sti_create_links?
-      assert !@config.sti_children
+      refute @config.add_sti_create_links?
+      refute @config.sti_children
       assert_equal [:create, :list, :search, :update, :delete, :show, :nested, :subform], @config.actions.to_a
       assert_equal :default, @config.frontend
       assert_equal :default, @config.theme
@@ -22,7 +22,7 @@ module Config
     
     def test_add_sti_children
       @config.sti_create_links = true
-      assert !@config.add_sti_create_links?
+      refute @config.add_sti_create_links?
       @config.sti_children = [:a]
       assert @config.add_sti_create_links?
     end
@@ -35,7 +35,7 @@ module Config
     def test_actions
       assert @config.actions.include?(:create)
       @config.actions = [:list]
-      assert !@config.actions.include?(:create)
+      refute @config.actions.include?(:create)
       assert_equal [:list], @config.actions.to_a
     end
     
