@@ -1133,8 +1133,8 @@ ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
       return;
     }
 
-    var fld = patternNodes.editNode.cloneNode(true);
-    if (fld.id.length > 0) fld.id += this.options.nodeIdSuffix;
+    var fld = $(patternNodes.editNode.cloneNode(true));
+    if (fld.readAttribute("data-id").length > 0) fld.id = fld.readAttribute("data-id") + this.options.nodeIdSuffix;
     fld.name = this.options.paramName;
     fld.className = 'editor_field';
     this.setValue(fld, this._controls.editor.value);
@@ -1145,9 +1145,9 @@ ActiveScaffold.InPlaceEditor = Class.create(Ajax.InPlaceEditor, {
     this._form.appendChild(this._controls.editor);
 
     $A(patternNodes.additionalNodes).each(function(node) {
-      var patternNode = node.cloneNode(true);
+      var patternNode = $(node.cloneNode(true));
       if (patternNode.id.length > 0) {
-        patternNode.id = patternNode.id + this.options.nodeIdSuffix;
+        patternNode.id = patternNode.readAttribute("data-id") + this.options.nodeIdSuffix;
       }
       this._form.appendChild(patternNode);
     }.bind(this));

@@ -314,7 +314,7 @@ $.extend(InlineEditor.prototype, {
 
 		var editorNode = patternNodes.editNode.clone();
 		var clonedNodes = null;
-		if (editorNode.attr('id')) editorNode.attr('id', editorNode.attr('id') + this.settings.clone_id_suffix);
+		if (editorNode.data('id')) editorNode.attr('id', editorNode.data('id') + this.settings.clone_id_suffix);
 		editorNode.attr('name', 'inplace_value');
 		editorNode.addClass('editor_field');
 		this.setValue(editorNode, this.originalValue);
@@ -323,8 +323,8 @@ $.extend(InlineEditor.prototype, {
 		if (patternNodes.additionalNodes) {
 			patternNodes.additionalNodes.each(function (index, node) {
 				var patternNode = $(node).clone();
-				if (patternNode.attr('id')) {
-					patternNode.attr('id', patternNode.attr('id') + this.settings.clone_id_suffix);
+				if (patternNode.data('id')) {
+					patternNode.attr('id', patternNode.data('id') + this.settings.clone_id_suffix);
 				}
 				clonedNodes = clonedNodes.after(patternNode);
 			});
