@@ -40,9 +40,15 @@ class Company < ActiveRecord::Base
     @@before = s
   end
 
-  if method(:create_reflection).arity == 4
-    def self.create_reflection(macro, name, scope, options, active_record)
-      super(macro, name, options, active_record)
+  if respond_to?(:create_reflection)
+    if method(:create_reflection).arity == 4
+      def self.create_reflection(macro, name, scope, options, active_record)
+        super(macro, name, options, active_record)
+      end
+    end
+  else
+    def self.create_reflection(*args)
+      ActiveRecord::Reflection.create *args
     end
   end
   

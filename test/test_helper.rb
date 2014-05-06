@@ -28,10 +28,16 @@ end
 
 I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))["en"]
 
-class MiniTest::Unit::TestCase
+unless defined? Minitest::Test
+  class Minitest::Test < MiniTest::Unit::TestCase
+  end
+end
+
+class MiniTest::Test
   protected
   def config_for(klass, namespace = nil)
     ActiveScaffold::Config::Core.new("#{namespace}#{klass.to_s.underscore.downcase}")
   end
 end
+
 Object.send :remove_const, :Config

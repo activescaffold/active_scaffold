@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class FieldSearchTest < MiniTest::Unit::TestCase
+  class FieldSearchTest < MiniTest::Test
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @config.actions.swap :search, :field_search
