@@ -2,7 +2,7 @@ Overview
 ========
 [![travis tests](https://travis-ci.org/activescaffold/active_scaffold.png)](https://travis-ci.org/activescaffold/active_scaffold)
 
-ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails 3.2 and 4.0 are supported. For rails 4 is recommended >= 4.0.4. Rails 4.1 isn't supported yet.
+ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails 3.2 and 4.x are supported. For rails 4 is recommended >= 4.0.5.
 
 Branch Details
 --------------
