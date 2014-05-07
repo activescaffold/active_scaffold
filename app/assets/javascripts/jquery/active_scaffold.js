@@ -576,7 +576,8 @@ var ActiveScaffold = {
   
   focus_first_element_of_form: function(form_element) {
     if (typeof(form_element) == 'string') form_element = '#' + form_element;
-    jQuery(":input[type!=hidden]:first", $(form_element)).focus();
+    var form_selector = jQuery(form_element).is('form') ? '' : 'form ';
+    jQuery(form_selector + ":input[type!=hidden]:first", jQuery(form_element)).focus();
   },
     
   create_record_row: function(active_scaffold_id, html, options) {
