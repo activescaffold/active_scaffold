@@ -19,7 +19,7 @@ group :development, :test do
 end
 
 group :test do
-  gem "shoulda", ">= 0"
+  gem "shoulda", "~> 2.11.3"
   gem "simplecov", ">= 0"
   gem "mocha"
   gem "rails", "~> 3.2.18"
