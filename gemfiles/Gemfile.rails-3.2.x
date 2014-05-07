@@ -1,4 +1,4 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 # Add dependencies required to use your gem here.
 # Example:
 #   gem "activesupport", ">= 2.3.5"
@@ -22,7 +22,7 @@ group :test do
   gem "shoulda", ">= 0"
   gem "simplecov", ">= 0"
   gem "mocha"
-  gem "rails", "~> 3.2.17"
+  gem "rails", "~> 3.2.18"
   gem "minitest", "~> 4.7.0"
   gem "minitest-rails"
   gem "minitest_tu_shim"
