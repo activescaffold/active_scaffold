@@ -424,8 +424,10 @@ module ActiveScaffold
       conditions = all_conditions
       includes = active_scaffold_config.list.count_includes
       includes ||= active_scaffold_references unless conditions.blank?
+      outer_joins = active_scaffold_outer_joins
+      outer_joins += includes if includes
       primary_key = active_scaffold_config.model.primary_key
-      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => active_scaffold_outer_joins + includes, :select => active_scaffold_config.columns[primary_key].field)
+      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => outer_joins, :select => active_scaffold_config.columns[primary_key].field)
       active_scaffold_config.model.where(primary_key => subquery)
     end
     

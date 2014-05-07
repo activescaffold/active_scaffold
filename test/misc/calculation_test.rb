@@ -34,4 +34,15 @@ class CalculationTest < MiniTest::Test
     
     assert_equal 0, query.eager_load(:floors).count
   end
+
+  def test_calculation_without_conditions
+    @klass.stubs(:active_scaffold_references).returns([:owner])
+    @klass.active_scaffold_config.expects(:list).returns(mock { stubs(:count_includes).returns(nil) })
+
+    column = mock { stubs(:field).returns('"buildings"."id"') }
+    @klass.active_scaffold_config.expects(:columns).returns(mock { stubs(:"[]").returns(column) })
+    query = @klass.send :calculate_query
+    
+    assert_equal Building.count, query.eager_load(:floors).count
+  end
 end
