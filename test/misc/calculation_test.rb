@@ -18,9 +18,18 @@ end
 
 class CalculationTest < MiniTest::Test
   def setup
+    @buildings = []
+    @buildings << Building.create {|b| b.create_owner(:first_name => 'foo')}
+    @buildings << Building.create(:name => 'foo bar')
+    @buildings << Building.create
+    
     @klass = ClassWithFinder.new
     @klass.stubs(:active_scaffold_config).returns(mock { stubs(:model).returns(Building) })
     @klass.stubs(:active_scaffold_session_storage).returns({})
+  end
+  
+  def teardown
+    @buildings.each(&:destroy).map(&:owner).compact.each(&:destroy)
   end
 
   def test_calculation_with_conditions
@@ -31,8 +40,7 @@ class CalculationTest < MiniTest::Test
     column = mock { stubs(:field).returns('"buildings"."id"') }
     @klass.active_scaffold_config.expects(:columns).returns(mock { stubs(:"[]").returns(column) })
     query = @klass.send :calculate_query
-    
-    assert_equal 0, query.eager_load(:floors).count
+    assert_equal 2, query.count
   end
 
   def test_calculation_without_conditions
@@ -42,7 +50,6 @@ class CalculationTest < MiniTest::Test
     column = mock { stubs(:field).returns('"buildings"."id"') }
     @klass.active_scaffold_config.expects(:columns).returns(mock { stubs(:"[]").returns(column) })
     query = @klass.send :calculate_query
-    
-    assert_equal Building.count, query.eager_load(:floors).count
+    assert_equal Building.count, query.count
   end
 end
