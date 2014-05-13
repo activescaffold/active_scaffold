@@ -71,8 +71,10 @@ module ActiveScaffold::Actions
       else
         active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
       end
-      includes_for_list_columns = columns.map{ |c| c.includes }.flatten.uniq.compact
-      self.active_scaffold_preload.concat includes_for_list_columns
+      sorting = active_scaffold_config.list.user.sorting
+      columns_for_joins, columns_for_includes = columns.select{ |c| c.includes.present? }.partition {|c| sorting.sorts_on? c }
+      self.active_scaffold_preload.concat columns_for_includes.map(&:includes).flatten.uniq
+      self.active_scaffold_references.concat columns_for_joins.map(&:includes).flatten.uniq
     end
 
     def get_row(crud_type = :read)
