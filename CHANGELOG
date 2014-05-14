@@ -32,6 +32,7 @@
 - Support for overriding how download url is get for dragonfly attachment
 - Trigger as:element_removed when ActiveScaffold.remove is called
 - use preload instead of includes to preload associations without left join when not used for searching or sorting
+- Allows for contents such as "<i class='fa fa-filter'></i> Filters <i class='fa fa-caret-down'></i>" to be placed in the locale yml.
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select
