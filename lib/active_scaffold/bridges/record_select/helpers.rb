@@ -57,7 +57,7 @@ class ActiveScaffold::Bridges::RecordSelect
       def active_scaffold_record_select_autocomplete(column, options)
         record_select_options = active_scaffold_input_text_options(options).merge(
           :controller => active_scaffold_controller_for(@record.class).controller_path
-        )
+        ).merge(column.options)
         html = record_select_autocomplete(options[:name], @record, record_select_options)
         html = self.class.field_error_proc.call(html, self) if @record.errors[column.name].any?
         html
