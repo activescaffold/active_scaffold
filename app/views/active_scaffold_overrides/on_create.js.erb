@@ -28,13 +28,13 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
   <% unless render_parent? %>
     <% if active_scaffold_config.list.always_show_create %>
       ActiveScaffold.reset_form('<%= form_selector %>');
-    <% elsif active_scaffold_config.create.persistent %>
-      action_link.reload();
+    <% elsif params[:dont_close] %>
+      ActiveScaffold.replace('<%= form_selector %>','<%= escape_javascript(render(:partial => 'create_form', :locals => {:xhr => true})) %>');
     <% else %>
       action_link.close();
     <% end %>
     <% if (active_scaffold_config.create.action_after_create) %>
-      var link = ActiveScaffold.find_action_link('<%= action_link_id active_scaffold_config.create.action_after_create, @record.id %>');
+      var link = ActiveScaffold.find_action_link('<%= action_link_id active_scaffold_config.create.action_after_create, @record.id || @saved_record.id %>');
       if (link) (function() { link.open() })<%= '.defer' if ActiveScaffold.js_framework == :prototype %>();
     <% end %>
   <% end %>

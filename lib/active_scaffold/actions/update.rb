@@ -40,8 +40,14 @@ module ActiveScaffold::Actions
         end
       else # just a regular post
         if successful?
-          flash[:info] = as_(:updated_model, :model => @record.to_label)
-          return_to_main
+          message = as_(:updated_model, :model => @record.to_label)
+	  if params[:dont_close]
+	    flash.now[:info] = message
+	    render(:action => 'update')
+	  else
+	    flash[:info] = message
+	    return_to_main
+	  end
         else
           render(:action => 'update')
         end
