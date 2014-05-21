@@ -13,8 +13,6 @@ ru:
     add: "Добавить запись"
     add_existing: "Добавить существующую запись"
     add_existing_model: "%{model}: добавить существующую запись"
-    update_apply: Применить
-    create_apply: Create and continue
     are_you_sure_to_delete: "Удалить %{label}?"
     average: Среднее
     begins_with: "Начинается с"
@@ -29,6 +27,7 @@ ru:
     contains: Содержит
     create: Создать
     create_another: "%{model}: Создать другую запись"
+    create_apply: Создать и продолжить
     create_model: "%{model}: создать запись"
     create_new: "Создать новую запись"
     created_model: "%{model}: запись создана"
@@ -134,6 +133,7 @@ ru:
     ? "true"
     : Да
     update: "Обновить запись"
+    update_apply: Применить
     update_model: "%{model}: обновить запись"
     updated_model: "%{model}: запись обновлена"
     version_inconsistency: "Эта запись была обновлена с того момента, как вы начали ее редактировать"
