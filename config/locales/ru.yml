@@ -13,7 +13,8 @@ ru:
     add: "Добавить запись"
     add_existing: "Добавить существующую запись"
     add_existing_model: "%{model}: добавить существующую запись"
-    apply: Применить
+    update_apply: Применить
+    create_apply: Create and continue
     are_you_sure_to_delete: "Удалить %{label}?"
     average: Среднее
     begins_with: "Начинается с"

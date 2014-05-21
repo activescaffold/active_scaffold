@@ -35,6 +35,7 @@
 - Allows for contents such as "<i class='fa fa-filter'></i> Filters <i class='fa fa-caret-down'></i>" to be placed in the locale yml.
 - Add form_ui to html classes of li in forms
 - Allow to set different :controller for record_select_autocomplete (when no association in column using record_select)
+- Add :optional to create.persistent
 
 = 3.3.3
 - Allow to override select options in active_scaffold_search_select

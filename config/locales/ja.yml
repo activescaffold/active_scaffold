@@ -13,7 +13,8 @@ ja:
     add: 追加
     add_existing: 既存のものを追加
     add_existing_model: "既存の%{model}を追加"
-    apply: Apply
+    update_apply: Apply
+    create_apply: Create and continue
     are_you_sure_to_delete: "Are you sure you want to delete %{label}?"
     average: Average
     begins_with: "Begins with"

@@ -13,7 +13,8 @@ fr:
     add: Ajouter
     add_existing: "Ajouter un(e) existant(e)"
     add_existing_model: "Ajouter un(e) %{model} existant(e)"
-    apply: Appliquer
+    update_apply: Appliquer
+    create_apply: Create and continue
     are_you_sure_to_delete: "Êtes vous sûr de vouloir supprimer %{label} ?"
     average: Average
     begins_with: "Commençant par"
