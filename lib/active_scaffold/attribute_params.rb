@@ -61,12 +61,13 @@ module ActiveScaffold
           elsif attributes.has_key? column.name
             value = column_value_from_param_value(parent_record, column, attributes[column.name])
             if avoid_changes && column.plural_association?
-              parent_record.association(column.name).target = parent_record.send(column.name).map {|r| column.association.klass.new r.attributes }
-            end
-            begin
-              parent_record.send "#{column.name}=", value
-            rescue ActiveRecord::RecordNotSaved
               parent_record.association(column.name).target = value
+            else
+              begin
+                parent_record.send "#{column.name}=", value
+              rescue ActiveRecord::RecordNotSaved
+                parent_record.association(column.name).target = value
+              end
             end
             if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
               Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
