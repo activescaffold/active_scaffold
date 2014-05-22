@@ -64,14 +64,7 @@ module ActiveScaffold::Actions
           # call update_record_from_params with new_model
           # in other case some associations can be saved
           @record = new_model
-          if record
-            attributes = record.attributes
-            if record.class.respond_to? :protected_attributes
-              record.class.protected_attributes.each { |attr| @record[attr] = record[attr] }
-              attributes = attributes.except(record.class.protected_attributes)
-            end
-            @record.attributes = attributes
-          end
+          copy_attributes(record, @record) if record
           @record.id = id
           apply_constraints_to_record(@record) unless @scope
           @record = update_record_from_params(@record, @main_columns, hash, true)
@@ -97,7 +90,7 @@ module ActiveScaffold::Actions
       association = parent_model.reflect_on_association(params[:child_association].to_sym).try(:reverse)
       if association
         parent = parent_model.new
-        parent.attributes = parent_model.find(params[:parent_id]).attributes if params[:parent_id]
+        copy_attributes(parent_model.find(params[:parent_id]), parent) if params[:parent_id]
         parent.id = params[:parent_id]
         parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record]) if @column.send_form_on_update_column
         apply_constraints_to_record(parent) if params[:parent_id]
@@ -107,6 +100,15 @@ module ActiveScaffold::Actions
           record.send("#{association}=", parent)
         end
       end
+    end
+
+    def copy_attributes(org, dst)
+      attributes = org.attributes
+      if org.class.respond_to? :protected_attributes
+        org.class.protected_attributes.each { |attr| dst[attr] = org[attr] }
+        attributes = attributes.except(org.class.protected_attributes)
+      end
+      dst.attributes = attributes
     end
     
     # override this method if you want to do something after render_field
