@@ -66,7 +66,10 @@ module ActiveScaffold::Actions
           @record = new_model
           if record
             attributes = record.attributes
-            attribute  = attributes.except(record.class.protected_attributes) if record.class.respond_to? :protected_attributes
+            if record.class.respond_to? :protected_attributes
+              record.class.protected_attributes.each { |attr| @record[attr] = record[attr] }
+              attributes = attributes.except(record.class.protected_attributes)
+            end
             @record.attributes = attributes
           end
           @record.id = id
