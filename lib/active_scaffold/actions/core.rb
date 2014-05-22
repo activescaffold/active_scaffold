@@ -65,7 +65,6 @@ module ActiveScaffold::Actions
           # in other case some associations can be saved
           @record = new_model
           copy_attributes(record, @record) if record
-          @record.id = id
           apply_constraints_to_record(@record) unless @scope
           @record = update_record_from_params(@record, @main_columns, hash, true)
         else
@@ -102,13 +101,14 @@ module ActiveScaffold::Actions
       end
     end
 
-    def copy_attributes(org, dst)
-      attributes = org.attributes
-      if org.class.respond_to? :protected_attributes
-        org.class.protected_attributes.each { |attr| dst[attr] = org[attr] }
-        attributes = attributes.except(org.class.protected_attributes)
+    def copy_attributes(orig, dst)
+      attributes = orig.attributes
+      if orig.class.respond_to? :protected_attributes
+        orig.class.protected_attributes.each { |attr| dst[attr] = orig[attr] }
+        attributes = attributes.except(*orig.class.protected_attributes)
       end
       dst.attributes = attributes
+      dst
     end
     
     # override this method if you want to do something after render_field
