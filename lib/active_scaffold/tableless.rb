@@ -1,11 +1,20 @@
 class ActiveScaffold::Tableless < ActiveRecord::Base
   class AssociationScope < ActiveRecord::Associations::AssociationScope
-    def column_for(table_name, column_name)
+    def column_for(table_name, column_name, alias_tracker = nil)
+      klass = alias_tracker ? alias_tracker.connection.klass : self.klass
       if table_name == klass.table_name
         klass.columns_hash[column_name]
       else
         super
       end
+    end
+  end
+  
+  class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
+    attr_reader :klass
+    def initialize(klass, *args)
+      super(nil, *args)
+      @klass = klass
     end
   end
 
@@ -16,7 +25,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
 
     def association_scope_with_tableless
-      @association_scope ||= AssociationScope.new(self).scope if klass < ActiveScaffold::Tableless
+      @association_scope ||= AssociationScope.respond_to?(:scope) ? AssociationScope.new.scope(self, klass.connection) : AssociationScope.new(self).scope if klass < ActiveScaffold::Tableless
       association_scope_without_tableless
     end
 
@@ -92,6 +101,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     def relation
       ActiveScaffold::Tableless::Relation.new(self, arel_table)
     end
+  end
+  
+  def self.connection
+    @connection ||= Connection.new(self)
   end
 
   def self.column(name, sql_type = nil, options = {})
