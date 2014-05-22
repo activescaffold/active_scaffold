@@ -64,7 +64,11 @@ module ActiveScaffold::Actions
           # call update_record_from_params with new_model
           # in other case some associations can be saved
           @record = new_model
-          @record.attributes = record.attributes if record
+          if record
+            attributes = record.attributes
+            attribute  = attributes.except(record.class.protected_attributes) if record.class.respond_to? :protected_attributes
+            @record.attributes = attributes
+          end
           @record.id = id
           apply_constraints_to_record(@record) unless @scope
           @record = update_record_from_params(@record, @main_columns, hash, true)
