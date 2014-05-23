@@ -615,7 +615,7 @@ var ActiveScaffold = {
     this.highlight(new_row);
   },
     
-  create_record_row_from_url: function(active_scaffold_id, url, options) {
+  create_record_row_from_url: function(action_link, url, options) {
     jQuery.get(url, function(row) {
       ActiveScaffold.create_record_row(action_link.scaffold(), row, options);
       action_link.close();
