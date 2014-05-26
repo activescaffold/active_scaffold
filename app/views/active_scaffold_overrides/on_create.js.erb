@@ -20,7 +20,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
   <% elsif active_scaffold_config.create.refresh_list %>
     <%= render :partial => 'refresh_list' %>
   <% elsif params[:parent_controller].nil? %>
-    <% new_row = render :partial => 'list_record', :locals => {:record => @record} %>
+    <% new_row = render :partial => 'list_record', :locals => {:record => @saved_record || @record} %>
     ActiveScaffold.create_record_row(action_link ? action_link.scaffold() : '<%= active_scaffold_id %>', '<%= escape_javascript(new_row) %>', <%= {:insert_at => insert_at}.to_json.html_safe %>);
     <%= render :partial => 'update_calculations', :formats => [:js] %>
   <% end %>
