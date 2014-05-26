@@ -60,8 +60,8 @@ module ActiveScaffold::Actions
     def create_respond_to_js
       do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
       if successful? && params[:dont_close] && !render_parent?
-	@saved_record = @record
-	do_new
+        @saved_record = @record
+        do_new
       end
       render :action => 'on_create'
     end
