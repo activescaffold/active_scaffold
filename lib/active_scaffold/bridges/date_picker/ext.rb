@@ -26,13 +26,18 @@ ActiveScaffold::Config::Core.class_eval do
   alias_method_chain :initialize, :date_picker
 end
 
-ActiveRecord::ConnectionAdapters::Column.class_eval do
-  class << self
-    def fallback_string_to_date_with_date_picker(string)
-      Date.strptime(string, I18n.t('date.formats.default')) rescue fallback_string_to_date_without_date_picker(string)
-    end
-    alias_method_chain :fallback_string_to_date, :date_picker
+module ActiveScaffold::Bridges::DatePicker::CastExtension
+  def fallback_string_to_date_with_date_picker(string)
+    Date.strptime(string, I18n.t('date.formats.default')) rescue fallback_string_to_date_without_date_picker(string)
   end
+  def self.included(base)
+    base.alias_method_chain :fallback_string_to_date, :date_picker
+  end
+end
+if defined?(ActiveRecord::ConnectionAdapters::Type)
+  ActiveRecord::ConnectionAdapters::Type::Date.send(:include, ActiveScaffold::Bridges::DatePicker::CastExtension)
+else
+  ActiveRecord::ConnectionAdapters::Column.extend ActiveScaffold::Bridges::DatePicker::CastExtension
 end
 
 ActionView::Base.class_eval do
