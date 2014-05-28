@@ -55,6 +55,7 @@ class PaperclipTest < ActionView::TestCase
   end
 
   def test_form_ui
+    js, ActiveScaffold.js_framework = ActiveScaffold.js_framework, :jquery
     config = PaperclipCore.new(:company)
     @record = Company.new
 
