@@ -10,23 +10,26 @@ class ActiveScaffold::Bridges::RecordSelect
     module FormColumnHelpers
       # requires RecordSelect plugin to be installed and configured.
       def active_scaffold_input_record_select(column, options)
+        record = options.delete(:object)
+        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        record ||= @record # TODO Remove when relying on @record is removed
         if column.singular_association?
           multiple = false
           multiple = column.options[:html_options][:multiple] if column.options[:html_options] &&  column.options[:html_options][:multiple]
-          active_scaffold_record_select(column, options, @record.send(column.name), multiple)
+          active_scaffold_record_select(record, column, options, record.send(column.name), multiple)
         elsif column.plural_association?
-          active_scaffold_record_select(column, options, @record.send(column.name), true)
+          active_scaffold_record_select(record, column, options, record.send(column.name), true)
         else
-          active_scaffold_record_select_autocomplete(column, options)
+          active_scaffold_record_select_autocomplete(record, column, options)
         end
       end
 
-      def active_scaffold_record_select(column, options, value, multiple)
+      def active_scaffold_record_select(record, column, options, value, multiple)
         unless column.association
           raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
         end
         klass = if column.polymorphic_association?
-          @record.send(column.association.foreign_type).constantize rescue nil
+          record.send(column.association.foreign_type).constantize rescue nil
         else
           column.association.klass
         end
@@ -50,16 +53,16 @@ class ActiveScaffold::Bridges::RecordSelect
         else
           record_select_field(options[:name], value || klass.new, record_select_options)
         end
-        html = self.class.field_error_proc.call(html, self) if @record.errors[column.name].any?
+        html = self.class.field_error_proc.call(html, self) if record.errors[column.name].any?
         html
       end
       
-      def active_scaffold_record_select_autocomplete(column, options)
+      def active_scaffold_record_select_autocomplete(record, column, options)
         record_select_options = active_scaffold_input_text_options(options).merge(
-          :controller => active_scaffold_controller_for(@record.class).controller_path
+          :controller => active_scaffold_controller_for(record.class).controller_path
         ).merge(column.options)
-        html = record_select_autocomplete(options[:name], @record, record_select_options)
-        html = self.class.field_error_proc.call(html, self) if @record.errors[column.name].any?
+        html = record_select_autocomplete(options[:name], record, record_select_options)
+        html = self.class.field_error_proc.call(html, self) if record.errors[column.name].any?
         html
       end
     end
