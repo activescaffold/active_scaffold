@@ -20,6 +20,8 @@ module ActiveScaffold
       ActiveSupport.on_load :active_record do
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
         ActiveRecord::Associations::Association.send :include, ActiveScaffold::Tableless::Association
+        ActiveRecord::Associations::CollectionAssociation.send :include, ActiveScaffold::Tableless::CollectionAssociation
+        ActiveRecord::Associations::SingularAssociation.send :include, ActiveScaffold::Tableless::SingularAssociation
       end
     end
 

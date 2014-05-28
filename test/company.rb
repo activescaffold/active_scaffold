@@ -9,13 +9,13 @@ class Company < ActiveRecord::Base
   
   def self.columns_hash
     {
-      'name' => ActiveRecord::ConnectionAdapters::Column.new('name', nil, 'varchar(255)'),
-      'date' => ActiveRecord::ConnectionAdapters::Column.new('date', nil, 'date'),
-      'datetime' => ActiveRecord::ConnectionAdapters::Column.new('datetime', nil, 'datetime'),
-      'logo_file_name' => ActiveRecord::ConnectionAdapters::Column.new('logo_file_name', nil, 'varchar(255)'),
-      'logo_content_type' => ActiveRecord::ConnectionAdapters::Column.new('logo_content_type', nil, 'varchar(255)'),
-      'logo_file_size' => ActiveRecord::ConnectionAdapters::Column.new('logo_file_size', nil, 'int(11)'),
-      'logo_updated_at' => ActiveRecord::ConnectionAdapters::Column.new('logo_updated_at', nil, 'datetime'),
+      'name' => ColumnMock.new('name', nil, 'varchar(255)'),
+      'date' => ColumnMock.new('date', nil, 'date'),
+      'datetime' => ColumnMock.new('datetime', nil, 'datetime'),
+      'logo_file_name' => ColumnMock.new('logo_file_name', nil, 'varchar(255)'),
+      'logo_content_type' => ColumnMock.new('logo_content_type', nil, 'varchar(255)'),
+      'logo_file_size' => ColumnMock.new('logo_file_size', nil, 'int(11)'),
+      'logo_updated_at' => ColumnMock.new('logo_updated_at', nil, 'datetime'),
     }
   end
 

@@ -8,5 +8,6 @@ module RailsApp
   class Application < Rails::Application
     config.filter_parameters << :password
     config.action_mailer.default_url_options = { :host => "localhost:3000" }
+    I18n.enforce_available_locales = false
   end
 end

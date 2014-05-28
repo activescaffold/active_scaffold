@@ -4,7 +4,10 @@ class NumberModel < ActiveRecord::Base
   include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
   abstract_class = true
   def self.columns
-    @columns ||= [ActiveRecord::ConnectionAdapters::Column.new('number', '', 'double(10,2)')]
+    @columns ||= [ColumnMock.new('number', '', 'double(10,2)')]
+  end
+  def self.columns_hash
+    @hash ||= Hash[@columns.map{|c| [c.name, c]}]
   end
 end
 

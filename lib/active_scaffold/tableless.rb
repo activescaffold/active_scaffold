@@ -8,6 +8,13 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
         super
       end
     end
+
+    if defined?(ActiveRecord::Associations::AssociationScope::INSTANCE) # rails >= 4.1
+      INSTANCE = respond_to?(:create) ? create : new # create for rails >= 4.2
+      def self.scope(association, connection)
+        INSTANCE.scope association, connection
+      end
+    end
   end
   
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
@@ -18,6 +25,17 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
   end
 
+  class Column < ActiveRecord::ConnectionAdapters::Column
+    def initialize(name, default, sql_type = nil, null = true)
+      if defined?(ActiveRecord::ConnectionAdapters::Type) # rails >= 4.2
+        cast_type = ActiveRecord::Base.connection.send :lookup_cast_type, sql_type
+        super(name, default, cast_type, sql_type, null)
+      else # rails < 4.2
+        super
+      end
+    end
+  end
+
   module Association
     def self.included(base)
       base.alias_method_chain :association_scope, :tableless
@@ -25,8 +43,16 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
 
     def association_scope_with_tableless
-      @association_scope ||= AssociationScope.respond_to?(:scope) ? AssociationScope.new.scope(self, klass.connection) : AssociationScope.new(self).scope if klass < ActiveScaffold::Tableless
+      @association_scope ||= overrided_association_scope if klass < ActiveScaffold::Tableless
       association_scope_without_tableless
+    end
+    
+    def overrided_association_scope
+      if AssociationScope.respond_to?(:scope) # rails >= 4.1
+        AssociationScope.scope(self, klass.connection)
+      else # rails < 4.1
+        AssociationScope.new(self).scope
+      end
     end
 
     def target_scope_with_tableless
@@ -35,6 +61,24 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
           class << scope; include RelationExtension; end
         end
       end
+    end
+  end
+  
+  module CollectionAssociation
+    def self.included(base)
+      base.alias_method_chain :get_records, :tableless if Rails.version >= '4.2'
+    end
+    def get_records_with_tableless
+      klass < ActiveScaffold::Tableless ? scope.to_a : get_records_without_tableless
+    end
+  end
+  
+  module SingularAssociation
+    def self.included(base)
+      base.alias_method_chain :get_records, :tableless if Rails.version >= '4.2'
+    end
+    def get_records_with_tableless
+      klass < ActiveScaffold::Tableless ? scope.limit(1).to_a : get_records_without_tableless
     end
   end
 
@@ -86,29 +130,46 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
   end
 
-  # For rails3
   class Relation < ActiveRecord::Relation
     include RelationExtension
   end
-
-  def self.columns; @columns ||= []; end
-  def self.table_name; @table_name ||= ActiveModel::Naming.plural(self); end
-  def self.table_exists?; true; end
-  self.abstract_class = true
-  # For rails3
   class << self
     private
     def relation
       ActiveScaffold::Tableless::Relation.new(self, arel_table)
     end
   end
+
+  class StatementCache
+    def initialize(key)
+      @key = key
+    end
+
+    def execute(values, model, connection)
+      model.where(@key => values)
+    end
+  end
+
+  unless Rails.version < '4.2'
+    def self.columns_hash
+      @columns_hash ||= Hash[self.columns.map { |c| [c.name, c] }]
+    end
+    def self.initialize_find_by_cache
+      self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
+    end
+  end
+
+  def self.columns; @columns ||= []; end
+  def self.table_name; @table_name ||= ActiveModel::Naming.plural(self); end
+  def self.table_exists?; true; end
+  self.abstract_class = true
   
   def self.connection
     @connection ||= Connection.new(self)
   end
 
   def self.column(name, sql_type = nil, options = {})
-    column = ActiveRecord::ConnectionAdapters::Column.new(name.to_s, options[:default], sql_type.to_s, options.has_key?(:null) ? options[:null] : true)
+    column = Column.new(name.to_s, options[:default], sql_type.to_s, options.has_key?(:null) ? options[:null] : true)
     column.tap { columns << column }
   end
 

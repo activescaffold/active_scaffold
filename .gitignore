@@ -52,3 +52,4 @@ log/**
 *.kdev4
 .project
 config/initializers/localeapp.rb
+.ruby-version

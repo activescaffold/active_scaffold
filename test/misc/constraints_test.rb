@@ -3,7 +3,8 @@ require 'test_helper'
 module ModelStubs
   class ModelStub < ActiveRecord::Base
     abstract_class = true
-    def self.columns; [ActiveRecord::ConnectionAdapters::Column.new('foo', '')] end
+    def self.columns; @columns ||= [ColumnMock.new('foo', '')] end
+    def self.columns_hash; @hash ||= Hash[@columns.map{|c| [c.name, c]}] end
     def self.table_name
       @table_name || to_s.split('::').last.underscore.pluralize
     end
