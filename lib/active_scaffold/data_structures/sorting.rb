@@ -13,7 +13,7 @@ module ActiveScaffold::DataStructures
     
     def set_default_sorting(model)
       model_scope = model.send(:build_default_scope)
-      order_clause = model_scope.arel.order_clauses.join(",") if model_scope
+      order_clause = model_scope.order_values.join(",") if model_scope
 
       # fallback to setting primary key ordering
       if model.column_names.include?(model.primary_key)

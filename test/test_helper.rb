@@ -41,3 +41,4 @@ class MiniTest::Test
 end
 
 Object.send :remove_const, :Config
+class ColumnMock < ActiveScaffold::Tableless::Column; end

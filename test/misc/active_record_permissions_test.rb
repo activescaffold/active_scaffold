@@ -4,6 +4,7 @@ class PermissionModel < ActiveRecord::Base
   include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
   def self.columns; [] end
   def self.column_types; [] end
+  def self.columns_hash; {} end
 
   def authorized_for_read?; true; end
   def authorized_for_update?; false; end
