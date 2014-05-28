@@ -51,5 +51,7 @@ log/**
 # For kdevelop:
 *.kdev4
 .project
+
 config/initializers/localeapp.rb
 .ruby-version
+gemfiles/Gemfile.rails-master.lock
