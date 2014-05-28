@@ -2,9 +2,13 @@ module ActiveScaffold
   module Helpers
     module FormColumnHelpers
       def active_scaffold_input_dragonfly(column, options)
+        record = options[:object]
+        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        record ||= @record # TODO Remove when relying on @record is removed
         options = active_scaffold_input_text_options(options.merge(column.options))
+
         input = file_field(:record, column.name, options)
-        dragonfly = @record.send("#{column.name}")
+        dragonfly = record.send("#{column.name}")
         if dragonfly.present?
           case ActiveScaffold.js_framework
           when :jquery
@@ -13,7 +17,7 @@ module ActiveScaffold
             js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show(); return false;";
           end
           
-          content = active_scaffold_column_dragonfly(@record, column)
+          content = active_scaffold_column_dragonfly(record, column)
           content_tag(:div,
             content + " | " +
               hidden_field(:record, "remove_#{column.name}", :value => "false") +
