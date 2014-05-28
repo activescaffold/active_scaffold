@@ -152,7 +152,11 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
 
   unless Rails.version < '4.2'
     def self.columns_hash
-      @columns_hash ||= Hash[self.columns.map { |c| [c.name, c] }]
+      if self < ActiveScaffold::Tableless
+        @columns_hash ||= Hash[self.columns.map { |c| [c.name, c] }]
+      else
+        super
+      end
     end
     def self.initialize_find_by_cache
       self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
