@@ -120,7 +120,7 @@ module ActiveScaffold
       def current_form_columns(record, scope, subform_controller = nil)
         if scope
           subform_controller.active_scaffold_config.subform.columns.names
-        elsif [:new, :create, :edit, :update, :render_field].include? params[:action].to_sym
+        elsif [:new, :create, :edit, :update, :render_field].include? action_name.to_sym
           active_scaffold_config.send(record.new_record? ? :create : :update).columns.names
         end
       end
