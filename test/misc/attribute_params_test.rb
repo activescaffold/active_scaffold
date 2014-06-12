@@ -78,9 +78,9 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 1, model.number
     assert_nil model.tenant_id, 'tenant should be cleared'
     assert_nil model.tenant, 'tenant should be cleared'
-    assert_equal person.id, Floor.find(model).tenant_id, 'floor should not be saved yet'
+    assert_equal person.id, Floor.find(model.id).tenant_id, 'floor should not be saved yet'
     assert model.save
-    assert_nil Floor.find(model).tenant_id, 'floor should not be saved'
+    assert_nil Floor.find(model.id).tenant_id, 'floor should not be saved'
   end
 
   def test_saving_has_one_select
@@ -272,9 +272,9 @@ class AttributeParamsTest < MiniTest::Test
     assert_nil model.contactable_type
     assert_nil model.contactable_id, 'contactable should be cleared'
     assert_nil model.contactable, 'contactable should be cleared'
-    assert_equal person.id, Contact.find(model).contactable_id, 'contact should not be saved yet'
+    assert_equal person.id, Contact.find(model.id).contactable_id, 'contact should not be saved yet'
     assert model.save
-    assert_nil Contact.find(model).contactable_id, 'contact should be saved'
+    assert_nil Contact.find(model.id).contactable_id, 'contact should be saved'
   end
 
   protected
