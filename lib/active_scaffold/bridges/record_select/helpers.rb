@@ -70,7 +70,7 @@ class ActiveScaffold::Bridges::RecordSelect
     module SearchColumnHelpers
       def active_scaffold_search_record_select(column, options)
         value = field_search_record_select_value(column)
-        active_scaffold_record_select(column, options, value, column.options[:multiple])
+        active_scaffold_record_select(options[:object], column, options, value, column.options[:multiple])
       end
       
       def field_search_record_select_value(column)
