@@ -1,4 +1,7 @@
-= 3.4.0 (not released yet)
+= 3.4.1
+- Fix record_select on field_search
+
+= 3.4.0
 - Support rails4
 - Quote selected columns
 - More unobtrusive html views

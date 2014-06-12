@@ -5,6 +5,7 @@ class Company < ActiveRecord::Base
     @with_main_company = with_or_without == :with_main_company
     @attributes = {}
     @attributes_cache = {}
+    @raw_attributes = {}
   end
   
   def self.columns_hash
