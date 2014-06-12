@@ -26,12 +26,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   class Column < ActiveRecord::ConnectionAdapters::Column
-    def initialize(name, default, sql_type = nil, null = true)
-      if defined?(ActiveRecord::Type) # rails >= 4.2
+    if instance_method(:initialize).arity == -4 # rails >= 4.2
+      def initialize(name, default, sql_type = nil, null = true)
         cast_type = ActiveRecord::Base.connection.send :lookup_cast_type, sql_type
         super(name, default, cast_type, sql_type, null)
-      else # rails < 4.2
-        super
       end
     end
   end
