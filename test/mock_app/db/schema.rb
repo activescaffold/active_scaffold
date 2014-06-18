@@ -44,6 +44,8 @@ ActiveRecord::Schema.define do
   create_table 'people' do |t|
     t.string 'first_name'
     t.string 'last_name'
+    t.integer 'buildings_count', :null => false, :default => 0
+    t.integer 'floors_count', :null => false, :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end

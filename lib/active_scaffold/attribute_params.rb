@@ -66,7 +66,7 @@ module ActiveScaffold
               begin
                 parent_record.send "#{column.name}=", value
               rescue ActiveRecord::RecordNotSaved
-                parent_record.association(column.name).target = value
+                parent_record.association(column.name).target = value if column.association
               end
             end
             if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
