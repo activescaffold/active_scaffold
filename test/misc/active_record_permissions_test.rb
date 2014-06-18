@@ -2,9 +2,7 @@ require 'test_helper'
 
 class PermissionModel < ActiveRecord::Base
   include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
-  def self.columns; [] end
-  def self.column_types; [] end
-  def self.columns_hash; {} end
+  def self.columns; @columns ||= %w(a1 a2 a3 b1 b2 b3 c1 c2 c3).map {|c| ColumnMock.new(c, '', 'varchar(255)')}; end
 
   def authorized_for_read?; true; end
   def authorized_for_update?; false; end
