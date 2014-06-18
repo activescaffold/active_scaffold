@@ -74,7 +74,8 @@ module ActiveScaffold
       ## Overrides
       ##
       def active_scaffold_column_text(record, column)
-        clean_column_value(truncate(record.send(column.name), :length => column.options[:truncate] || 50))
+        # `to_s` is necessary to convert objects in serialized columns to string before truncation.
+        clean_column_value(truncate(record.send(column.name).to_s, :length => column.options[:truncate] || 50))
       end
 
       def active_scaffold_column_fulltext(record, column)
