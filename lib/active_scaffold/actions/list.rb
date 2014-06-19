@@ -77,7 +77,7 @@ module ActiveScaffold::Actions
       self.active_scaffold_references.concat columns_for_joins.map(&:includes).flatten.uniq
     end
 
-    def get_row(crud_type = :read)
+    def get_row(crud_type_or_security_options = :read)
       set_includes_for_columns
       klass = beginning_of_chain.preload(active_scaffold_preload)
       @record = find_if_allowed(params[:id], crud_type, klass)
@@ -148,7 +148,7 @@ module ActiveScaffold::Actions
     #   self.successful = true
     #   flash[:info] = 'Player fired'
     # end
-    def process_action_link_action(render_action = :action_update, crud_type = nil)
+    def process_action_link_action(render_action = :action_update, crud_type_or_security_options = nil)
       if request.get?
         # someone has disabled javascript, we have to show confirmation form first
         @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id].to_i > 0
@@ -156,8 +156,8 @@ module ActiveScaffold::Actions
       else
         @action_link = active_scaffold_config.action_links[action_name]
         if params[:id] && params[:id].to_i > 0
-          crud_type ||= (request.post? || request.put?) ? :update : :delete
-          get_row(crud_type)
+          crud_type_or_security_options ||= (request.post? || request.put?) ? :update : :delete
+          get_row(crud_type_or_security_options)
           unless @record.nil?
             yield @record
           else
