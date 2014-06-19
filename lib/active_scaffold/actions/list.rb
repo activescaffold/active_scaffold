@@ -80,7 +80,7 @@ module ActiveScaffold::Actions
     def get_row(crud_type_or_security_options = :read)
       set_includes_for_columns
       klass = beginning_of_chain.preload(active_scaffold_preload)
-      @record = find_if_allowed(params[:id], crud_type, klass)
+      @record = find_if_allowed(params[:id], crud_type_or_security_options, klass)
     end
 
     # The actual algorithm to prepare for the list view
