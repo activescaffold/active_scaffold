@@ -484,7 +484,7 @@ module ActiveScaffold
         @_column_classes[column.name] ||= begin
           classes = "#{column.name}-column "
           classes << 'sorted ' if active_scaffold_config.list.user.sorting.sorts_on?(column)
-          classes << 'numeric ' if column.column and [:decimal, :float, :integer].include?(column.column.type)
+          classes << 'numeric ' if column.number?
           classes << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
         end
         classes = "#{@_column_classes[column.name]} "
