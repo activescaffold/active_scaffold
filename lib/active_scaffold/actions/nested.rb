@@ -82,7 +82,7 @@ module ActiveScaffold::Actions
         elsif nested.child_association.nil? # without child_association is not possible to add conditions
           active_scaffold_config.model
         elsif nested.child_association.belongs_to?
-          active_scaffold_config.model.where(nested.child_association.foreign_key => nested_parent_record)
+          active_scaffold_config.model.where(nested.child_association.foreign_key => nested_parent_record.send(nested.association.association_primary_key))
         elsif nested.association.belongs_to?
           chain = active_scaffold_config.model.joins(nested.child_association.name)
           table_name = if active_scaffold_config.model == nested.association.active_record
