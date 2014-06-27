@@ -42,15 +42,12 @@ class AttributeParamsTest < MiniTest::Test
 
   def test_saving_has_many_select
     buildings = 2.times.map { Building.create }
-    Rails.logger.debug "create person"
     model = update_record_from_params(Person.new, :create, :first_name, :last_name, :buildings, :first_name => 'First', :last_name => '', :buildings => ['', *buildings.map{|b| b.id.to_s}]) # checkbox_list always add a hidden tag with empty value
-    Rails.logger.debug "attr set"
     assert_equal 'First', model.first_name
     assert_nil model.last_name
     assert_equal buildings.map(&:id), model.building_ids
     assert_equal buildings, model.buildings
     assert model.save
-    Rails.logger.debug "person created"
     assert_equal 2, model.reload.buildings_count
 
     model = update_record_from_params(model, :update, :first_name, :last_name, :buildings, :first_name => 'Name', :last_name => 'Last', :buildings => ['']) { raise ActiveRecord::Rollback }
@@ -59,9 +56,9 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal [model.id]*2, buildings.map{|b| b.reload.owner_id}, 'owners should not be saved'
     assert model.building_ids.blank?, 'buildings should be cleared'
     assert model.buildings.blank?, 'buildings should be cleared'
-    assert_equal 0, model.buildings_count
+    assert_equal 0, model.buildings.size
+    assert_equal 2, model.reload.buildings_count
 
-    model.reload
     model = update_record_from_params(model, :update, :first_name, :last_name, :buildings, :first_name => 'Name', :last_name => 'Last', :buildings => [''])
     assert_equal 'Name', model.first_name
     assert_equal 'Last', model.last_name
@@ -77,19 +74,14 @@ class AttributeParamsTest < MiniTest::Test
     assert person.persisted?
     assert_equal 0, person.floors_count
 
-    Rails.logger.debug "create floor"
     model = update_record_from_params(Floor.new, :create, :number, :tenant, :number => '1', :tenant => person.id.to_s)
-    Rails.logger.debug "attr set"
     assert_equal 1, model.number
     assert_equal person.id, model.tenant_id
     assert_equal person, model.tenant
     assert model.save
     assert_equal 1, person.reload.floors_count
-    Rails.logger.debug "floor created"
 
-    Rails.logger.debug "updated floor"
     model = update_record_from_params(model, :update, :number, :tenant, :number => '1', :tenant => '')
-    Rails.logger.debug "attr set"
     assert_equal 1, model.number
     assert_nil model.tenant_id, 'tenant should be cleared'
     assert_nil model.tenant, 'tenant should be cleared'
@@ -97,7 +89,6 @@ class AttributeParamsTest < MiniTest::Test
     assert model.save
     assert_nil Floor.find(model.id).tenant_id, 'floor should not be saved'
     assert_equal 0, person.reload.floors_count
-    Rails.logger.debug "floor updated"
   end
 
   def test_saving_has_one_select
