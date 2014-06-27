@@ -2,9 +2,8 @@ require 'test_helper'
 
 class NumberModel < ActiveRecord::Base
   include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
-  abstract_class = true
   def self.columns
-    @columns ||= [ColumnMock.new('number', '', 'double(10,2)')]
+    @columns ||= [ColumnMock.new('id', '', 'int(11)'), ColumnMock.new('number', '', 'double(10,2)')]
   end
   def self.columns_hash
     @hash ||= Hash[@columns.map{|c| [c.name, c]}]
