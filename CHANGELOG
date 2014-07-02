@@ -1,3 +1,11 @@
+= 3.4.1
+- fix search value when both field_search and search are enabled and a search with field_search is active
+- fix cancan permissions check on subform
+- fix has_one/belongs_to nested with :primary_key option
+- fix display of virtual number columns
+- fix display of serialized columns on list
+- improve tests
+
 = 3.4.0.1
 - Fix record_select on field_search
 
