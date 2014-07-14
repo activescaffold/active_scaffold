@@ -195,13 +195,15 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     raise 'destroy must be implemented in a Tableless model'
   end
 
-  def create_record #:nodoc:
+  def _create_record #:nodoc:
     run_callbacks(:create) {}
   end
-  alias_method :create, :create_record # for rails3
+  alias_method :create_record, :_create_record # for rails4 < 4.0.6, < 4.1.2
+  alias_method :create, :_create_record # for rails3
 
-  def update_record(*) #:nodoc:
+  def _update_record(*) #:nodoc:
     run_callbacks(:update) {}
   end
-  alias_method :update, :update_record # for rails3
+  alias_method :update_record, :_update_record # for rails4 < 4.0.6, < 4.1.2
+  alias_method :update, :_update_record # for rails3
 end
