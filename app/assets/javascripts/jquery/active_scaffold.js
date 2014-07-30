@@ -252,8 +252,8 @@ jQuery(document).ready(function($) {
   });
   
   jQuery(document).on('click', '.active-scaffold .sub-form a.destroy', function(event) {
-  	event.preventDefault();
-  	ActiveScaffold.delete_subform_record($(this).data('delete-id'));
+    event.preventDefault();
+    ActiveScaffold.delete_subform_record($(this).data('delete-id'));
   });
 
   jQuery(document).on("click", '.hover_click', function(event) {
@@ -667,7 +667,7 @@ var ActiveScaffold = {
     link.next('ul').remove();
     if (link.closest('td.actions').length) link.closest('td').addClass('action_group dyn');
     else {
-      if (link.parent('div.actions').length) link.wrap($('<div>'));
+      if (link.parent('div.actions').length) link.wrap(jQuery('<div>'));
       link.parent().addClass('action_group dyn');
     }
     link.after(html);
@@ -939,7 +939,7 @@ var ActiveScaffold = {
       complete: function(event) {
         element.nextAll('img.loading-indicator').css('visibility','hidden');
         ActiveScaffold.enable_form(as_form);
-        if (ActiveScaffold.last_focus) $(ActiveScaffold.last_focus).focus().select();
+        if (ActiveScaffold.last_focus) jQuery(ActiveScaffold.last_focus).focus().select();
       },
       error: function (xhr, status, error) {
         var as_div = element.closest("div.active-scaffold");
