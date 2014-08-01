@@ -1,3 +1,9 @@
+= 3.4.2 (not released yet)
+- fix tableless on latest rails4 versions
+- respond with 406 for html request on js only actions
+- fix JS issue on IE8
+- support jquery-ui-rails 5
+
 = 3.4.1
 - fix search value when both field_search and search are enabled and a search with field_search is active
 - fix cancan permissions check on subform
