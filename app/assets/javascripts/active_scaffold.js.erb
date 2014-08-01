@@ -7,12 +7,13 @@
 <% require_asset "jquery/date_picker_bridge" %>
 <% require_asset "jquery/draggable_lists" %>
 <% elsif Jquery.const_defined? 'Ui' %>
-<% require_asset "jquery.ui.core" %>
-<% require_asset "jquery.ui.effect" %>
-<% require_asset "jquery.ui.sortable" %>
-<% require_asset "jquery.ui.draggable" %>
-<% require_asset "jquery.ui.droppable" %>
-<% require_asset "jquery.ui.datepicker" %>
+<% jquery_ui_prefix = Jquery::Ui::Rails::VERSION < '5.0.0' ? 'jquery.ui.' : 'jquery-ui/' %>
+<% require_asset "#{jquery_ui_prefix}core" %>
+<% require_asset "#{jquery_ui_prefix}effect" %>
+<% require_asset "#{jquery_ui_prefix}sortable" %>
+<% require_asset "#{jquery_ui_prefix}draggable" %>
+<% require_asset "#{jquery_ui_prefix}droppable" %>
+<% require_asset "#{jquery_ui_prefix}datepicker" %>
 <% require_asset "jquery-ui-timepicker-addon" %>
 <% require_asset "jquery/date_picker_bridge" %>
 <% require_asset "jquery/draggable_lists" %>
