@@ -17,8 +17,12 @@ module ActiveScaffold::Actions
     def render_field
       if request.get?
         render_field_for_inplace_editing
+        respond_to do |format|
+          format.js { render :action => 'render_field_inplace', :layout => false }
+        end
       else
         render_field_for_update_columns
+        respond_to { |format| format.js }
       end
     end
     
@@ -38,9 +42,6 @@ module ActiveScaffold::Actions
     def render_field_for_inplace_editing
       @column = active_scaffold_config.columns[params[:update_column]]
       @record = find_if_allowed(params[:id], :crud_type => :update, :column => params[:update_column])
-      respond_to do |format|
-        format.js { render :action => 'render_field_inplace', :layout => false }
-      end
     end
 
     def render_field_for_update_columns
@@ -86,7 +87,6 @@ module ActiveScaffold::Actions
         
         after_render_field(@record, @column)
       end
-      respond_to { |format| format.js }
     end
 
     def set_parent(record)
