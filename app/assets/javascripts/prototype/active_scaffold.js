@@ -13,13 +13,13 @@ if (!Element.Methods.highlight) Element.addMethods({highlight: Prototype.emptyFu
 
 document.observe("dom:loaded", function() {
   document.on('click', function(event) {
-    $$('.action_group.dyn ul').invoke('remove');
+    $$('.action_group.dyn > ul').invoke('hide');
   });
-  document.on('ajax:complete', '.action_group.dyn ul a', function() {
+  document.on('ajax:complete', '.action_group.dyn > ul a', function() {
     var source = event.findElement();
     var action_link = ActiveScaffold.find_action_link(source);
     if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
-    $(source).up('.action_group.dyn ul').remove();
+    $(source).up('.action_group.dyn > ul').remove();
   });
   document.on('ajax:create', 'form.as_form', function(event) {
     var source = event.findElement();
@@ -568,15 +568,16 @@ var ActiveScaffold = {
   },
 
   display_dynamic_action_group: function(link, html) {
+    var container;
     link = $(link);
-    link.next('ul').remove();
-    link.up('td').addClassName('action_group dyn');
-    if (link.up('td.actions')) link.up('td').addClassName('action_group dyn');
-    else {
+    if (link.up('td.actions')) {
+      container = link.up('td').addClassName('action_group dyn');
+    } else {
       if (link.up().hasClassName('actions')) link.wrap('div');
-      link.up().addClassName('action_group dyn');
+      container = link.up().addClassName('action_group dyn');
     }
-    link.insert({after: html});
+    container.down('> ul').remove();
+    container.insert({bottom: html});
   },
   
   scroll_to: function(element, checkInViewport) {
