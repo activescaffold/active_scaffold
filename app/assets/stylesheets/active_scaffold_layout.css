@@ -261,7 +261,7 @@ min-width: 150px;
 right: 0px;
 z-index: 2;
 }
-.active-scaffold .actions .action_group.dyn ul {
+.active-scaffold .actions .action_group.dyn > ul {
 width: auto;
 display: block;
 }
@@ -296,7 +296,7 @@ text-align: left;
   background-position: 5px 50%;
   background-repeat: no-repeat;
 }
-.active-scaffold .actions .action_group.dyn ul li a {
+.active-scaffold .actions .action_group.dyn > ul li a {
   padding-left: 5px;
 }
 
@@ -309,7 +309,7 @@ border-top-width: 0px;
 display: none;
 }
 
-.active-scaffold .actions .action_group:hover ul,
+.active-scaffold .actions .action_group:hover > ul,
 .active-scaffold .actions .action_group ul li:hover > ul,
 .active-scaffold .actions .action_group ul ul li:hover ul {
 display: block;

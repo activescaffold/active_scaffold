@@ -38,7 +38,7 @@ jQuery(document).ready(function($) {
   jQuery(document).on('focus', ':input', function() { ActiveScaffold.last_focus = this; });
   jQuery(document).on('blur', ':input', function(e) { ActiveScaffold.last_focus = e.relatedTarget; });
   jQuery(document).click(function(event) {
-    jQuery('.action_group.dyn ul').hide(); // only hide so action links loading still work
+    jQuery('.action_group.dyn > ul').hide(); // only hide so action links loading still work
   });
   jQuery(document).on('ajax:beforeSend', 'form.as_form', function(event) {
     var as_form = jQuery(this).closest("form");
@@ -193,10 +193,10 @@ jQuery(document).ready(function($) {
       return true;
     } else return false;
   });
-  jQuery(document).on('ajax:complete', '.action_group.dyn ul a', function(event) {
+  jQuery(document).on('ajax:complete', '.action_group.dyn > ul a', function(event) {
     var action_link = ActiveScaffold.find_action_link(event.target);
     if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');  
-    jQuery(event.target).closest('.action_group.dyn ul').remove();
+    jQuery(event.target).closest('.action_group.dyn > ul').remove();
   });
 
   jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form, .checkbox-list.update_form input:checkbox', function(event) {
@@ -663,14 +663,16 @@ var ActiveScaffold = {
   },
 
   display_dynamic_action_group: function(link, html) {
+    var container;
     if (typeof(link) == 'string') link = jQuery('#' + link);
-    link.next('ul').remove();
-    if (link.closest('td.actions').length) link.closest('td').addClass('action_group dyn');
-    else {
+    if (link.closest('td.actions').length) {
+      container = link.closest('td').addClass('action_group dyn');
+    } else {
       if (link.parent('div.actions').length) link.wrap(jQuery('<div>'));
-      link.parent().addClass('action_group dyn');
+      container = link.parent().addClass('action_group dyn');
     }
-    link.after(html);
+    container.find('> ul').remove();
+    container.append(html);
   },
   
   scroll_to: function(element, checkInViewport) {
