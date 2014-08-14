@@ -130,7 +130,7 @@ module ActiveScaffold
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
-        form_columns = @main_columns.try(:names)
+        form_columns = @main_columns.try(:names) if scope.nil? || subform_controller == controller.class
         form_columns ||= current_form_columns(record, scope, subform_controller)
         if force || (form_columns && column.update_columns && (column.update_columns & form_columns).present?)
           url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)

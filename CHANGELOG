@@ -3,6 +3,7 @@
 - respond with 406 for html request on js only actions
 - fix JS issue on IE8
 - support jquery-ui-rails 5
+- update_columns fixes on subforms refreshing
 
 = 3.4.1
 - fix search value when both field_search and search are enabled and a search with field_search is active
