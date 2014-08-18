@@ -325,7 +325,7 @@ module ActiveScaffold
     end
 
     def id_condition
-      {:id => params[:id]} if params[:id]
+      {active_scaffold_config.model.primary_key => params[:id]} if params[:id]
     end
     
     # returns a single record (the given id) but only if it's allowed for the specified security options.

@@ -5,6 +5,7 @@
 - support jquery-ui-rails 5
 - update_columns fixes on subforms refreshing
 - fix dynamic links menu in group links
+- fix id_condition (/:id/index) for models with different primary key
 
 = 3.4.1
 - fix search value when both field_search and search are enabled and a search with field_search is active
