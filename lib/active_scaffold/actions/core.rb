@@ -65,7 +65,7 @@ module ActiveScaffold::Actions
           end
 
           # check permissions and support overriding to_param
-          record = find_if_allowed(id, :update) if id
+          record = find_if_allowed(id, :read) if id
           # call update_record_from_params with new_model
           # in other case some associations can be saved
           @record = new_model
@@ -73,7 +73,7 @@ module ActiveScaffold::Actions
           apply_constraints_to_record(@record) unless @scope
           @record = update_record_from_params(@record, @main_columns, hash, true)
         else
-          @record = params[:id] ? find_if_allowed(params[:id], :update) : new_model
+          @record = params[:id] ? find_if_allowed(params[:id], :read) : new_model
           if @record.new_record?
             apply_constraints_to_record(@record) unless @scope
           else
