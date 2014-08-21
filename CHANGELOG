@@ -7,6 +7,7 @@
 - fix dynamic links menu in group links
 - fix id_condition (/:id/index) for models with different primary key
 - fix parent_controller param when rendering subforms on render_field
+- fix session usage on rails >= 4.1
 
 = 3.4.1
 - fix search value when both field_search and search are enabled and a search with field_search is active
