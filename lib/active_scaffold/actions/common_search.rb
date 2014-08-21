@@ -29,14 +29,14 @@ module ActiveScaffold::Actions
       
       def store_search_params_into_session
         if active_scaffold_config.store_user_settings
-          active_scaffold_session_storage[:search] = params.delete :search if params[:search]
+          active_scaffold_session_storage['search'] = params.delete :search if params[:search]
         else
           @search_params = params.delete :search
         end
       end
 
       def search_params
-        @search_params || active_scaffold_session_storage[:search]
+        @search_params || active_scaffold_session_storage['search']
       end
 
       def global_search_ignore?

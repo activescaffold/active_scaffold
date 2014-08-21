@@ -237,7 +237,7 @@ module ActiveScaffold::Config
       attr_writer :label
       # This label has alread been localized.
       def label
-        self[:label] || @label || @conf.label
+        self['label'] || @label || @conf.label
       end
 
       def per_page

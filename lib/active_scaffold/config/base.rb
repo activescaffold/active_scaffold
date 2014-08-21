@@ -53,7 +53,7 @@ module ActiveScaffold::Config
         @params = params
         # the configuration object for this action
         @conf = conf
-        @action = action
+        @action = action.to_s
       end
 
       def [](key)
