@@ -151,11 +151,11 @@ module ActiveScaffold::Actions
     def process_action_link_action(render_action = :action_update, crud_type_or_security_options = nil)
       if request.get?
         # someone has disabled javascript, we have to show confirmation form first
-        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id].to_i > 0
+        @record = find_if_allowed(params[:id], :read) if params[:id]
         respond_to_action(:action_confirmation)
       else
         @action_link = active_scaffold_config.action_links[action_name]
-        if params[:id] && params[:id].to_i > 0
+        if params[:id]
           crud_type_or_security_options ||= (request.post? || request.put?) ? :update : :delete
           get_row(crud_type_or_security_options)
           unless @record.nil?
