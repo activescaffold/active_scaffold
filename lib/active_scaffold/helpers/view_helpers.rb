@@ -96,6 +96,15 @@ module ActiveScaffold
         end
       end
 
+      def display_dynamic_action_group(action_link, links, record_or_ul_options = nil, ul_options = nil)
+        ul_options = record_or_ul_options if ul_options.nil? && record_or_ul_options.is_a?(Hash)
+        record = record_or_ul_options unless record_or_ul_options.is_a?(Hash)
+        html = content_tag :ul, ul_options do
+          links.map { |link| content_tag :li, link }.join('').html_safe
+        end
+        raw "ActiveScaffold.display_dynamic_action_group('#{get_action_link_id action_link, record}', '#{escape_javascript html}');"
+      end
+
       def display_action_links(action_links, record, options, &block)
         options[:level_0_tag] ||= nil
         options[:options_level_0_tag] ||= nil
