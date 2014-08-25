@@ -156,7 +156,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_search_range_string?(column)
-        (column.column && column.column.text?) || column.search_ui == :string
+        column.text? || column.search_ui == :string
       end
 
       def active_scaffold_search_range_comparator_options(column)

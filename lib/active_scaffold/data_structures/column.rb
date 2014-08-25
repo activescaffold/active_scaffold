@@ -291,6 +291,10 @@ module ActiveScaffold::DataStructures
       @number
     end
 
+    def text?
+      @text
+    end
+
     # this is so that array.delete and array.include?, etc., will work by column name
     def ==(other) #:nodoc:
       # another column
@@ -338,11 +342,18 @@ module ActiveScaffold::DataStructures
         end
       end
       
-      self.number = @column.try(:number?)
-      @options = {:format => :i18n_number} if self.number?
-      @form_ui = :checkbox if @column and @column.type == :boolean
-      @form_ui = :textarea if @column and @column.type == :text
-      @form_ui = :number   if @column and self.number?
+      @text = @column.nil? || [:string, :text].include?(@column.type)
+      if @column
+        @form_ui = case @column.type
+          when :boolean then :checkbox
+          when :text then :textarea
+        end
+        if @column.number?
+          @number = true
+          @form_ui = :number
+          @options = {:format => :i18n_number}
+        end
+      end
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
       
