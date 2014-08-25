@@ -18,7 +18,7 @@ module ActiveScaffold
         where_clauses = []
         columns.each do |column|
           Array(column.search_sql).each do |search_sql|
-            where_clauses << "#{search_sql} #{(column.column.nil? || column.column.text?) ? ActiveScaffold::Finder.like_operator : '='} ?"
+            where_clauses << "#{search_sql} #{column.text? ? ActiveScaffold::Finder.like_operator : '='} ?"
           end
         end
         phrase = where_clauses.join(' OR ')
@@ -26,7 +26,7 @@ module ActiveScaffold
         tokens.collect do |value|
           columns.inject([phrase]) do |condition, column|
             Array(column.search_sql).size.times do
-              condition.push((column.column.nil? || column.column.text?) ? like_pattern.sub('?', value) : column.column.type_cast(value))
+              condition.push(column.text? ? like_pattern.sub('?', value) : column.column.type_cast(value))
             end
             condition
           end
@@ -62,7 +62,7 @@ module ActiveScaffold
               when :select, :multi_select, :country, :usa_state, :chosen, :multi_chosen
                 ["%{search_sql} in (?)", Array(value)]
               else
-                if column.column.nil? || column.column.text?
+                if column.text?
                   ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
                 else
                   ["%{search_sql} = ?", column.column.type_cast(value)]
@@ -97,7 +97,7 @@ module ActiveScaffold
 
       def condition_for_range(column, value, like_pattern = nil)
         if !value.is_a?(Hash)
-          if column.column.nil? || column.column.text?
+          if column.text?
             ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
           else
             ["%{search_sql} = ?", column.column.type_cast(value)]
