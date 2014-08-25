@@ -11,7 +11,7 @@ module ActiveScaffold::Actions
         do_show
         respond_to_action(:show)
       else
-        @record = find_if_allowed(params[:id], :read) if params[:id] && params[:id].to_i > 0
+        @record = find_if_allowed(params[:id], :read) if params[:id]
         action_confirmation_respond_to_html(:destroy)
       end
     end
