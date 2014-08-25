@@ -76,7 +76,7 @@ module ActiveScaffold
 
     module ThroughReflection
       def self.included(base)
-        base.send :include, ActiveScaffold::ReverseAssociation::CommonMethods
+        base.send :include, ActiveScaffold::ReverseAssociation::CommonMethods unless base < ActiveScaffold::ReverseAssociation::CommonMethods
       end
 
       protected
