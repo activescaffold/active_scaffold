@@ -128,11 +128,11 @@ module ActiveScaffold::Actions
     end
 
     def each_marked_record(&block)
-      active_scaffold_config.model.find(marked_records.to_a).each &block
+      active_scaffold_config.model.as_marked.each &block
     end
 
     def marked_records
-      active_scaffold_session_storage['marked_records'] ||= Set.new
+      active_scaffold_session_storage['marked_records'] ||= {}
     end
     
     def default_formats
