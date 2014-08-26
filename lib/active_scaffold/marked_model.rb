@@ -5,7 +5,7 @@ module ActiveScaffold
     def self.included(base)
       base.class_eval do
         extend ClassMethods
-        scope :as_marked, lambda { where(:id => marked_record_ids) }
+        scope :as_marked, lambda { where(primary_key => marked_record_ids) }
       end
     end
     
