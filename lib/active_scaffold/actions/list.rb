@@ -132,7 +132,8 @@ module ActiveScaffold::Actions
     def each_record_in_scope
       do_search if respond_to? :do_search, true
       set_includes_for_columns
-      append_to_query(beginning_of_chain, finder_options).each {|record| yield record}
+      # where(nil) is needed because we need a relation
+      append_to_query(beginning_of_chain.where(nil), finder_options).each {|record| yield record}
     end
 
     # The default security delegates to ActiveRecordPermissions.
