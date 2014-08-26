@@ -8,7 +8,7 @@ insert_at ||= :top -%>
 action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
 action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
 <% end -%>
-<% if controller.send :successful? -%>
+<% if successful? -%>
   <% if render_parent? %>
     <% if nested_singular_association? %>
       action_link.close(true);

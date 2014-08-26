@@ -1,10 +1,10 @@
 <% @column_span_id ||= element_cell_id(:id => @record.id.to_s, :action => 'update_column', :name => @column.name) -%>
-<% unless controller.send :successful? -%>
+<% unless successful? -%>
   alert('<%= escape_javascript(@record.errors.full_messages.join("\n")) %>');
   <% @record.reload -%>
 <% end -%>
 <% if @column.inplace_edit
-     ipe_update = @column.inplace_edit_update if controller.send :successful? -%>
+     ipe_update = @column.inplace_edit_update if successful? -%>
   <% case ipe_update
      when :row -%>
        ActiveScaffold.update_row('<%= element_row_id(:action => :list) %>', '<%= escape_javascript render('row', :record => @record) %>');
