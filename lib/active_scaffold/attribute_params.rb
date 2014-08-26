@@ -66,6 +66,7 @@ module ActiveScaffold
               begin
                 parent_record.send "#{column.name}=", value
               rescue ActiveRecord::RecordNotSaved
+                parent_record.errors.add column.name, :invalid
                 parent_record.association(column.name).target = value if column.association
               end
             end

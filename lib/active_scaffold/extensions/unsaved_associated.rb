@@ -4,7 +4,8 @@ class ActiveRecord::Base
     return true if path.include?(self) # prevent recursion (if associated and parent are new records)
     path << self
     # using [].all? syntax to avoid a short-circuit
-    with_unsaved_associated { |a| [a.valid?, a.associated_valid?(path)].all? }
+    # errors to associated record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
+    with_unsaved_associated { |a| [a.errors.empty? && a.valid?, a.associated_valid?(path)].all? }
   end
 
   def save_associated
