@@ -27,12 +27,13 @@ module ActiveScaffold::Actions
     end
 
     def mark_respond_to_js
-      if params[:id]
+      if params.delete(:id) # so find_page doesn't filter by :id
         do_search if respond_to? :do_search, true
         set_includes_for_columns if active_scaffold_config.actions.include? :list
         @page = find_page(:pagination => active_scaffold_config.mark.mark_all_mode != :page)
         render :action => 'on_mark'
       else
+        @include_checkboxes = true
         render :action => 'on_mark', :locals => {:checked => mark?}
       end
     end
