@@ -319,4 +319,7 @@ class Controller
   def logger
     @logger ||= Logger.new(STDOUT)
   end
+  def flash
+    @flash ||= ActionDispatch::Flash::FlashHash.new
+  end
 end
