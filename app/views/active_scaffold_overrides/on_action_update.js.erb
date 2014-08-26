@@ -1,4 +1,4 @@
-<% if controller.send :successful? %>
+<% if successful? %>
   <% if @record %>
     <%= render :partial => 'update_messages' %>
     <% row = escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) -%>
