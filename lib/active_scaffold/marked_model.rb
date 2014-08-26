@@ -4,29 +4,33 @@ module ActiveScaffold
     
     def self.included(base)
       base.extend ClassMethods
-      base.scope :as_marked, lambda { where(:id => base.marked_records.to_a) }
+      base.scope :as_marked, lambda { where(:id => base.marked_record_ids) }
     end
     
     def as_marked
-      marked_records.include?(self.id)
+      marked_records.include?(self.id.to_s)
     end
     
     def as_marked=(value)
       value = [true, 'true', 1, '1', 'T', 't'].include?(value.class == String ? value.downcase : value)
       if value == true
-        marked_records << self.id if !as_marked
+        marked_records[self.id.to_s] = true if !as_marked
       else
-        marked_records.delete(self.id)
+        marked_records.delete(self.id.to_s)
       end
     end
   
     module ClassMethods
       def marked_records
-        Thread.current[:marked_records] ||= Set.new
+        Thread.current[:marked_records] ||= {}
       end
 
       def marked_records=(marked)
         Thread.current[:marked_records] = marked 
+      end
+
+      def marked_record_ids
+        marked_records.keys
       end
     end
   

@@ -8,6 +8,7 @@
 - fix id_condition (/:id/index) for models with different primary key
 - fix parent_controller param when rendering subforms on render_field
 - fix session usage on rails >= 4.1
+- fix marked records on rails >= 4.1
 - add display_dynamic_action_group helper to help building js and html to display a dynamic action group
 - display error when has_one association with :select form_ui fails to set, save continued but change was lost
 
