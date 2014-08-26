@@ -3,8 +3,10 @@ module ActiveScaffold
     # This is a module aimed at making the make session_stored marked_records available to ActiveRecord models
     
     def self.included(base)
-      base.extend ClassMethods
-      base.scope :as_marked, lambda { where(:id => base.marked_record_ids) }
+      base.class_eval do
+        extend ClassMethods
+        scope :as_marked, lambda { where(:id => marked_record_ids) }
+      end
     end
     
     def as_marked
