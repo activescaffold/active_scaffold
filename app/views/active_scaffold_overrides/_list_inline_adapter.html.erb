@@ -7,6 +7,6 @@
       <%= payload -%>
     </div>
 <% end %>
+    <%= javascript_tag("setTimeout(function() { var action_link = ActiveScaffold.ActionLink.get('#{element_row_id(:action => :nested)}'); if (action_link) { action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');#{' action_link.close(); ActiveScaffold.scroll_to(action_link.scaffold(), ActiveScaffold.config.scroll_on_close == "checkInViewport");' unless successful?} } }, 10);") %>
   </td>
 </tr>
-<%= javascript_tag("setTimeout(function() { var action_link = ActiveScaffold.ActionLink.get('#{element_row_id(:action => :nested)}'); if (action_link) { action_link.update_flash_messages('#{escape_javascript(render(:partial => 'messages').strip)}');#{' action_link.close(); ActiveScaffold.scroll_to(action_link.scaffold(), ActiveScaffold.config.scroll_on_close == "checkInViewport");' unless successful?} } }, 10);") %>
