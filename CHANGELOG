@@ -12,6 +12,7 @@
 - add display_dynamic_action_group helper to help building js and html to display a dynamic action group
 - display error when has_one association with :select form_ui fails to set, save continued but change was lost
 - fix each_record_in_scope for rails 4 (fixes mark all records)
+- trigger as:element_created for created record
 
 = 3.4.1
 - fix search value when both field_search and search are enabled and a search with field_search is active

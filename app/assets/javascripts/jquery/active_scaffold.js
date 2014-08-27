@@ -583,13 +583,13 @@ var ActiveScaffold = {
   create_record_row: function(active_scaffold_id, html, options) {
     if (typeof(active_scaffold_id) == 'string') active_scaffold_id = '#' + active_scaffold_id;
     tbody = jQuery(active_scaffold_id).find('tbody.records').first();
+    var new_row;
     
     if (options.insert_at == 'top') {
       tbody.prepend(html);
-      var new_row = tbody.children('tr.record:first-child');
+      new_row = tbody.children('tr.record:first-child');
     } else if (options.insert_at == 'bottom') {
       var rows = tbody.children('tr.record, tr.inline-adapter');
-      var new_row = null;
       if (rows.length > 0) {
         new_row = rows.last().after(html).next();
       } else {
@@ -613,6 +613,7 @@ var ActiveScaffold = {
     this.hide_empty_message(tbody);
     this.increment_record_count(tbody.closest('div.active-scaffold'));
     this.highlight(new_row);
+    new_row.trigger('as:element_created');
   },
     
   create_record_row_from_url: function(action_link, url, options) {
