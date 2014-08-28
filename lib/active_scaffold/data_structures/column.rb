@@ -342,7 +342,7 @@ module ActiveScaffold::DataStructures
         end
       end
       
-      @text = @column.nil? || [:string, :text].include?(@column.type)
+      @text = (@column.nil? && @association.nil?) || [:string, :text].include?(@column.type)
       if @column
         @form_ui = case @column.type
           when :boolean then :checkbox
