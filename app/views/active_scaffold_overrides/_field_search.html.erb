@@ -13,13 +13,16 @@ form_tag url_options, options %>
     <% end -%>
     <% unless hiddens.empty?  -%>
       <li class="sub-section">
-      <h5><%= as_(:optional_attributes) %></h5>
-      <ol id ="<%= sub_section_id(:sub_section => 'further_options') %>" class="form" style="display:none;">
+      <% further_options_id = sub_section_id(:sub_section => 'further_options') %>
+      <h5>
+        <%= as_(:optional_attributes) %>
+        <%= link_to_visibility_toggle(further_options_id, {:default_visible => false}) %>
+      </h5>
+      <ol id ="<%= further_options_id %>" class="form" style="display:none;">
       <% hiddens.each do |column| -%>
         <li class="form-element"><%= search_attribute(column, @record) %></li>
       <% end -%>
       </ol>
-      <%= link_to_visibility_toggle(sub_section_id(:sub_section => 'further_options'), {:default_visible => false}) %>
       </li>
   <% end -%>
   </ol>

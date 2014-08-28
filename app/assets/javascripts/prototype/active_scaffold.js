@@ -284,6 +284,13 @@ document.observe("dom:loaded", function() {
     } else value = form_element.getValue();
     ActiveScaffold.update_column(form_element, element.readAttribute('href'), element.hasAttribute('data-update_send_form'), form_element.readAttribute('id'), value);
   });
+  document.on('click', 'a.visibility-toggle', function(event) {
+    event.stop();
+    var link = event.findElement();
+    var toggable = $(link.readAttribute('data-toggable'));
+    toggable.toggle();
+    link.innerHTML = (toggable.style.display == 'none') ? link.readAttribute('data-show') : link.readAttribute('data-hide');
+  });
   document.on('recordselect:change', 'input.recordselect.update_form', function(event) {
     var element = event.findElement();
     ActiveScaffold.update_column(element, element.readAttribute('data-update_url'), element.hasAttribute('data-update_send_form'), element.readAttribute('id'), element.memo.id);
@@ -625,21 +632,6 @@ var ActiveScaffold = {
     span.removeClassName('hover');
     span.inplace_edit = new ActiveScaffold.InPlaceEditor(span.readAttribute('id'), options.url, options)
     span.inplace_edit.enterEditMode();
-  },
-  
-  create_visibility_toggle: function(element, options) {
-    var toggable = $(element);
-    var toggler = toggable.previous();
-    var initial_label = (options.default_visible === true) ? options.hide_label : options.show_label;
-    
-    toggler.insert(' <a class="visibility-toggle" href="#">' + initial_label + '</a>');
-    toggler.firstDescendant().observe('click', function(event) {
-      var element = event.element();
-      event.stop();
-      toggable.toggle(); 
-      element.innerHTML = (toggable.style.display == 'none') ? options.show_label : options.hide_label;
-      return false;
-    });
   },
   
   create_associated_record_form: function(element, content, options) {

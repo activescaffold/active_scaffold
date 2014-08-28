@@ -80,7 +80,7 @@ module ActiveScaffold
         options[:default_visible] = true if options[:default_visible].nil?
         options[:hide_label] ||= as_(:hide) 
         options[:show_label] ||= as_(:show_block)
-        javascript_tag("ActiveScaffold.create_visibility_toggle('#{id}', #{options.to_json});")
+        link_to options[:default_visible] ? options[:hide_label] : options[:show_label], '#', :data => {:show => options[:show_label], :hide => options[:hide_label], :toggable => id}, :style => 'display: none;', :class => 'as-js-button visibility-toggle'
       end
 
       def skip_action_link?(link, *args)
