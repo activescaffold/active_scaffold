@@ -1,4 +1,8 @@
-= 3.4.2 (not released yet)
+= 3.4.3 (not released yet)
+- default search columns doesn't include association columns (broken on 3.4.2), it slowing down search with no point (searching by association's primary key)
+- More unobtrusive html views
+
+= 3.4.2
 - fix tableless on latest rails4 versions
 - respond with 406 for html request on js only actions
 - fix JS issue on IE8

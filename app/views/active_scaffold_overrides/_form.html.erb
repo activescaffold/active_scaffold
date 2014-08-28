@@ -12,9 +12,11 @@
   <% if authorized %>
     <% subsection_id = sub_section_id(:sub_section => column.label) %>
   <li class="sub-section <%= column_css_class %>">
-    <h5><%= column.label %></h5>
+    <h5>
+      <%= column.label %>
+      <%= link_to_visibility_toggle(subsection_id, {:default_visible => !column.collapsed}) -%>
+    </h5>
     <%= render :partial => 'form', :locals => { :columns => column, :subsection_id => subsection_id, :form_action => form_action, :scope => scope } %>
-    <%= link_to_visibility_toggle(subsection_id, {:default_visible => !column.collapsed}) -%>
   </li>
   <% end %>
   <% elsif renders_as == :subform and authorized -%>

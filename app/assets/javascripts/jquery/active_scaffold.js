@@ -224,6 +224,13 @@ jQuery(document).ready(function($) {
     } else value = form_element.is("input:checkbox:not(:checked)") ? null : form_element.val();
     ActiveScaffold.update_column(form_element, element.attr('href'), element.data('update_send_form'), form_element.attr('id'), value);
   });
+  jQuery(document).on('click', 'a.visibility-toggle', function(e) {
+    var link = jQuery(this), toggable = jQuery('#' + link.data('toggable'));
+    e.preventDefault();
+    toggable.toggle();
+    link.html((toggable.is(':hidden')) ? link.data('show') : link.data('hide'));
+    return false;
+  });
   jQuery(document).on('recordselect:change', 'input.recordselect.update_form', function(event, id, label) {
     var element = jQuery(this);
     ActiveScaffold.update_column(element, element.data('update_url'), element.data('update_send_form'), element.attr('id'), id);
@@ -279,14 +286,18 @@ jQuery(document).ready(function($) {
     e.preventDefault();
   });
   
+  /* setup some elements on page/form load */
+  jQuery('.as-js-button').show();
   ActiveScaffold.live_search(document);
   ActiveScaffold.auto_paginate(document);
   ActiveScaffold.draggable_lists('.draggable-lists');
   jQuery(document).on('as:element_updated', function(e) {
+    jQuery('.as-js-button', e.target).show();
     ActiveScaffold.live_search(e.target);
     ActiveScaffold.draggable_lists('.draggable-lists', e.target);
   });
   jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
+    jQuery('.as-js-button', action_link.adapter).show();
     ActiveScaffold.live_search(action_link.adapter);
     ActiveScaffold.auto_paginate(action_link.adapter);
     ActiveScaffold.draggable_lists('.draggable-lists', action_link.adapter);
@@ -733,21 +744,6 @@ var ActiveScaffold = {
     if (typeof(element.effect) == 'function') {
       element.effect("highlight", jQuery.extend({}, ActiveScaffold.config.highlight), 3000);
     }
-  },
-  
-  create_visibility_toggle: function(element, options) {
-    if (typeof(element) == 'string') element = '#' + element;
-    var toggable = jQuery(element);
-    var toggler = toggable.prev();
-    var initial_label = (options.default_visible === true) ? options.hide_label : options.show_label;
-    
-    toggler.append(' <a class="visibility-toggle" href="#">' + initial_label + '</a>');
-    toggler.children('a').click(function(e) {
-      e.preventDefault();
-      toggable.toggle(); 
-      jQuery(this).html((toggable.is(':hidden')) ? options.show_label : options.hide_label);
-      return false;
-    });
   },
   
   create_associated_record_form: function(element, content, options) {
