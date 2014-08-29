@@ -287,16 +287,19 @@ jQuery(document).ready(function($) {
   });
   
   /* setup some elements on page/form load */
+  ActiveScaffold.load_embedded(document);
   ActiveScaffold.enable_js_form_buttons(document);
   ActiveScaffold.live_search(document);
   ActiveScaffold.auto_paginate(document);
   ActiveScaffold.draggable_lists('.draggable-lists', document);
   jQuery(document).on('as:element_updated', function(e) {
+    ActiveScaffold.load_embedded(e.target);
     ActiveScaffold.enable_js_form_buttons(e.target);
     ActiveScaffold.live_search(e.target);
     ActiveScaffold.draggable_lists('.draggable-lists', e.target);
   });
   jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
+    ActiveScaffold.load_embedded(action_link.adapter);
     ActiveScaffold.enable_js_form_buttons(action_link.adapter);
     ActiveScaffold.live_search(action_link.adapter);
     ActiveScaffold.auto_paginate(action_link.adapter);
@@ -429,6 +432,14 @@ var ActiveScaffold = {
   enable_js_form_buttons: function(element) {
     jQuery('.as-js-button', element).show();
   },
+  load_embedded: function(element) {
+    $('.active-scaffold-component .load-embedded', element).each(function(index, item) {
+      item = jQuery(item);
+      item.closest('.active-scaffold-component').load(item.attr('href'), function() {
+        jQuery(this).trigger('as:element_updated');
+      });
+    });
+  },
 
   records_for: function(tbody_id) {
     if (typeof(tbody_id) == 'string') tbody_id = '#' + tbody_id;
@@ -469,10 +480,11 @@ var ActiveScaffold = {
   removeSortClasses: function(scaffold) {
     if (typeof(scaffold) == 'string') scaffold = '#' + scaffold;
     scaffold = jQuery(scaffold)
-    scaffold.find('td.sorted').each(function(element) {
-      element.removeClass("sorted");
+    scaffold.find('td.sorted').each(function(index, element) {
+      jQuery(element).removeClass("sorted");
     });
-    scaffold.find('th.sorted').each(function(element) {
+    scaffold.find('th.sorted').each(function(index, element) {
+      element = jQuery(element);
       element.removeClass("sorted");
       element.removeClass("asc");
       element.removeClass("desc");

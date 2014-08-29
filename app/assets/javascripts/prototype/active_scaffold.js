@@ -339,17 +339,20 @@ document.observe("dom:loaded", function() {
   });
   
   /* setup some elements on page/form load */
+  ActiveScaffold.load_embedded(document);
   ActiveScaffold.enable_js_form_buttons(document);
   ActiveScaffold.live_search(document);
   ActiveScaffold.auto_paginate(document);
   ActiveScaffold.draggable_lists('.draggable-lists', document);
   document.on('as:element_updated', function(e) {
     var target = event.findElement();
+    ActiveScaffold.load_embedded(target);
     ActiveScaffold.enable_js_form_buttons(target);
     ActiveScaffold.live_search(target);
     ActiveScaffold.draggable_lists('.draggable-lists', target);
   });
   document.on('as:action_success', 'a.as_action', function(e, action_link) {
+    ActiveScaffold.load_embedded(action_link.adapter);
     ActiveScaffold.enable_js_form_buttons(action_link.adapter);
     ActiveScaffold.live_search(action_link.adapter);
     ActiveScaffold.auto_paginate(action_link.adapter);
@@ -388,6 +391,11 @@ var ActiveScaffold = {
   },
   enable_js_form_buttons: function(element) {
     $(element).select('.as-js-button').invoke('show');
+  },
+  load_embedded: function(element) {
+    $(element).select('.active-scaffold-component .load-embedded').each(function(item) {
+      new Ajax.Updater(item.up('.active-scaffold-component'), item.readAttribute('href'), {method: 'get', evalScripts: true});
+    });
   },
   
   records_for: function(tbody_id) {
