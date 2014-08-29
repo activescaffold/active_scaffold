@@ -320,7 +320,6 @@ module ActiveScaffold
           end
           content
         end
-        html << javascript_tag("ActiveScaffold.draggable_lists('#{options[:id]}')") if column.options[:draggable_lists] && ActiveScaffold.js_framework == :prototype
         html
       end
 

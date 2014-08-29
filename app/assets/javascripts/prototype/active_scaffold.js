@@ -337,6 +337,24 @@ document.observe("dom:loaded", function() {
     ActiveScaffold.hide(element.up('.message'));
     event.stop();
   });
+  
+  /* setup some elements on page/form load */
+  ActiveScaffold.enable_js_form_buttons(document);
+  ActiveScaffold.live_search(document);
+  ActiveScaffold.auto_paginate(document);
+  ActiveScaffold.draggable_lists('.draggable-lists', document);
+  document.on('as:element_updated', function(e) {
+    var target = event.findElement();
+    ActiveScaffold.enable_js_form_buttons(target);
+    ActiveScaffold.live_search(target);
+    ActiveScaffold.draggable_lists('.draggable-lists', target);
+  });
+  document.on('as:action_success', 'a.as_action', function(e, action_link) {
+    ActiveScaffold.enable_js_form_buttons(action_link.adapter);
+    ActiveScaffold.live_search(action_link.adapter);
+    ActiveScaffold.auto_paginate(action_link.adapter);
+    ActiveScaffold.draggable_lists('.draggable-lists', action_link.adapter);
+  });
 });
 
 
@@ -345,6 +363,33 @@ document.observe("dom:loaded", function() {
  */
 
 var ActiveScaffold = {
+  live_search: function(element) {
+    $$('form.search.live input[type=search]', element).each(function(item) {
+      new Form.Element.DelayedObserver(item, 0.5, function(element, value) {
+        if (!$(element.id)) return false; // because the element may have been destroyed
+        $(element).next().click();
+      });
+    });
+  },
+  auto_paginate: function(element) {
+    var paginate_link = $(element).select('.active-scaffold-pagination.auto-paginate a:first');
+    if (paginate_link.length) {
+      $(element).select('.active-scaffold-pagination.auto-paginate').invoke('hide');
+      ActiveScaffold.auto_load_page(paginate_link.readAttribute('href'), {auto_pagination: true});
+    }
+  },
+  auto_load_page: function(href, params) {
+    new Ajax.Request(href, {
+      method: 'get',
+      parameters: params,
+      asynchronous: true,
+      evalScripts: true
+    });
+  },
+  enable_js_form_buttons: function(element) {
+    $(element).select('.as-js-button').invoke('show');
+  },
+  
   records_for: function(tbody_id) {
     var rows = [];
     var child = $(tbody_id).down('.record');
@@ -748,8 +793,13 @@ var ActiveScaffold = {
     });
   },
   
-  draggable_lists: function(element) {
-    new DraggableLists(element);
+  draggable_lists: function(selector_or_elements, parent) {
+    var elements;
+    if (typeof(selector_or_elements) == 'string') elements = $(parent).select('ul' + selector_or_elements);
+    else elements = $A($(selector_or_elements));
+    elements.each(function(item) {
+      new DraggableLists(item);
+    });
   },
 
   highlight: function(element) {
