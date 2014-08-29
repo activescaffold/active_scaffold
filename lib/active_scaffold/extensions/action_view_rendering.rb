@@ -75,12 +75,7 @@ module ActionView::Helpers #:nodoc:
             # might be a namespaced controller (e.g., 'admin/admins')
             model = remote_controller.to_s.sub(/.*\//, '').singularize
             content_tag(:div, :class => 'active-scaffold-header') do
-              content_tag :h2, link_to(args.first[:label] || active_scaffold_config_for(model).list.label, url, :remote => true)
-            end <<
-            if ActiveScaffold.js_framework == :prototype
-              javascript_tag("new Ajax.Updater('#{id}', '#{url}', {method: 'get', evalScripts: true});")
-            elsif ActiveScaffold.js_framework == :jquery
-              javascript_tag("jQuery('##{id}').load('#{url}', function() { jQuery(this).trigger('as:element_updated'); });")
+              content_tag :h2, link_to(args.first[:label] || active_scaffold_config_for(model).list.label, url, :remote => true, :class => 'load-embedded')
             end
           end
         end
