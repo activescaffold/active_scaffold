@@ -12,17 +12,3 @@ options = {:id => element_form_id(:action => 'search'),
   <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), :class => 'as_cancel reset', :remote => true, :data => {:refresh => true} %>
   <%= loading_indicator_tag(:action => :search) %>
 </form>
-
-<% if ActiveScaffold.js_framework == :prototype %>
-<script type="text/javascript">
-//<![CDATA[
-  new TextFieldWithExample('<%= search_input_id %>', '<%= as_(live_search ? :live_search : :search_terms) %>', {focus: true});
-<% if live_search -%>
-  new Form.Element.DelayedObserver('<%= search_input_id %>', 0.5, function(element, value) {
-    if (!$(element.id)) return false; // because the element may have been destroyed
-    $(element).next().click();
-  });
-<% end -%>
-//]]>
-</script>
-<% end -%>
