@@ -582,8 +582,7 @@ var ActiveScaffold = {
     if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','visible');
     jQuery('input[type=submit]', as_form).attr('disabled', 'disabled');
     jQuery('.sub-form a.destroy', as_form).addClass('disabled');
-    if (jQuery.fn.draggable) jQuery('.draggable-item', as_form).draggable('disable');
-    if (jQuery.fn.droppable) jQuery('.draggable-list', as_form).droppable('disable');
+    if (jQuery.fn.droppable) jQuery('.draggable-list', as_form).sortable('disable');
     // data-remote-disabled attr instead of set data because is used to in selector later
     jQuery("input:enabled,select:enabled,textarea:enabled", as_form).attr('disabled', 'disabled').attr('data-remove-disabled', true);
   },
@@ -595,8 +594,7 @@ var ActiveScaffold = {
     if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','hidden');
     jQuery('input[type=submit]', as_form).removeAttr('disabled');
     jQuery('.sub-form a.destroy.disabled', as_form).removeClass('disabled');
-    if (jQuery.fn.draggable) jQuery('.draggable-item', as_form).draggable('enable');
-    if (jQuery.fn.droppable) jQuery('.draggable-list', as_form).droppable('enable');
+    if (jQuery.fn.droppable) jQuery('.draggable-list', as_form).sortable('enable');
     jQuery("input[data-remove-disabled],select[data-remove-disabled],textarea[data-remove-disabled]", as_form).removeAttr('disabled data-remove-disabled');
   },  
   
@@ -967,7 +965,7 @@ var ActiveScaffold = {
   draggable_lists: function(selector_or_elements, parent) {
     var elements;
     if (!jQuery.fn.draggableLists) return;
-    if (typeof(selector_or_elements) == 'string') elements = jQuery('ul' + selector_or_elements, parent);
+    if (typeof(selector_or_elements) == 'string') elements = jQuery(selector_or_elements, parent);
     else elements = jQuery(selector_or_elements);
     elements.draggableLists();
   }

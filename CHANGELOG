@@ -1,5 +1,6 @@
 = 3.4.4 (not released yet)
 - Fix set_parent for render field on blank records added by default on subforms
+- Enable sorting on selected draggable list, so it can be used on config_list
 
 = 3.4.3
 - default search columns doesn't include association columns (broken on 3.4.2), it slowing down search with no point (searching by association's primary key)
