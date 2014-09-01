@@ -211,12 +211,6 @@ module ActiveScaffold::Config
       @hide_nested_column.nil? ? true : @hide_nested_column
     end
     
-    # might be set to open nested_link automatically in view
-    # conf.nested.add_link(:players)
-    # conf.list.nested_auto_open = {:players => 2}
-    # will open nested players view if there are 2 or less records in parent
-    attr_accessor :nested_auto_open
-    
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling
     attr_accessor :wrap_tag
