@@ -40,10 +40,10 @@ module ActiveScaffold
     # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.
     def handle_user_settings
       if self.class.uses_active_scaffold?
+        storage = active_scaffold_config.store_user_settings ? active_scaffold_session_storage : {}
         active_scaffold_config.actions.each do |action_name|
           conf_instance = active_scaffold_config.send(action_name) rescue next
           next if conf_instance.class::UserSettings == ActiveScaffold::Config::Base::UserSettings # if it hasn't been extended, skip it
-          storage = active_scaffold_config.store_user_settings ? active_scaffold_session_storage : {}
           conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, storage, params)
         end
       end
