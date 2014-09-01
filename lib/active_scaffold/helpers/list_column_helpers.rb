@@ -329,18 +329,6 @@ module ActiveScaffold
         column.label
       end
       
-      def render_nested_view(action_links, record)
-        rendered = []
-        action_links.member.each do |link|
-          if link.nested_link? && link.column && @nested_auto_open[link.column.name] && @records.length <= @nested_auto_open[link.column.name] && controller.respond_to?(:render_component_into_view, true)
-            link_url_options = {:adapter => '_list_inline_adapter', :format => :js}.merge(action_link_url_options(link, record))
-            link_id = get_action_link_id(link, record)
-            rendered << (controller.send(:render_component_into_view, link_url_options) + javascript_tag("ActiveScaffold.ActionLink.get('#{link_id}').set_opened();"))
-          end 
-        end
-        rendered.join(' ').html_safe
-      end  
-      
     end
   end
 end
