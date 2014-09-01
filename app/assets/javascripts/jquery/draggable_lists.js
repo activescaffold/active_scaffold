@@ -8,23 +8,18 @@
       var li = jQuery(item).closest('li').addClass('draggable-item');
       li.children('label').removeAttr('for');
       if (jQuery(item).is(':checked')) li.appendTo(list_selected);
-      li.draggable({appendTo: 'body', helper: 'clone'});
     });
-    jQuery([element, list_selected]).droppable({
+    var options = {
       hoverClass: 'hover',
-      accept: function(draggable) {
-        var parent_id = draggable.parent().attr('id'), id = jQuery(this).attr('id'),
-          requested_id = jQuery(this).hasClass('selected') ? id.replace('_selected', '') : id + '_selected';
-        return parent_id == requested_id;
-      },
-      drop: function(event, ui) {
-        jQuery(this).append(ui.draggable);
-        var input = jQuery('input:checkbox', ui.draggable);
+      containment: '',
+      receive: function(event, ui) {
+        var input = jQuery('input:checkbox', ui.item), selected = input.prop('checked');
         input.prop('checked', jQuery(this).hasClass('selected'));
-        input.trigger('change');
-        ui.draggable.css({left: '0px', top: '0px'});
+        if (selected != input.prop('checked')) input.trigger('change');
       }
-    });
+    };
+    jQuery(element).sortable(jQuery.extend(options, {connectWith: '#'+list_selected.attr('id')}));
+    jQuery(list_selected).sortable(jQuery.extend(options, {connectWith: '#'+element.attr('id')}));
     return element;
   };
   jQuery.fn.draggableLists = function() {

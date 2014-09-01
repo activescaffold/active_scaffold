@@ -803,7 +803,7 @@ var ActiveScaffold = {
   
   draggable_lists: function(selector_or_elements, parent) {
     var elements;
-    if (typeof(selector_or_elements) == 'string') elements = $(parent).select('ul' + selector_or_elements);
+    if (typeof(selector_or_elements) == 'string') elements = $(parent).select(selector_or_elements);
     else elements = $A($(selector_or_elements));
     elements.each(function(item) {
       new DraggableLists(item);
