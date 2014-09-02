@@ -65,11 +65,20 @@ module Config
       assert_equal 'DESC', @config.list.sorting.direction_of(:a)
       refute @config.list.sorting.sorts_on?(:id)
       
+      @config.list.sorting = {:c => :asc, :d => :desc}
+      assert @config.list.sorting.sorts_on?(:c)
+      assert_equal 'ASC', @config.list.sorting.direction_of(:c)
+      assert @config.list.sorting.sorts_on?(:d)
+      assert_equal 'DESC', @config.list.sorting.direction_of(:d)
+      refute @config.list.sorting.sorts_on?(:a)
+      refute @config.list.sorting.sorts_on?(:id)
+      
       @config.list.sorting = [{:a => :asc}, {:b => :desc}]
       assert @config.list.sorting.sorts_on?(:a)
       assert_equal 'ASC', @config.list.sorting.direction_of(:a)
       assert @config.list.sorting.sorts_on?(:b)
       assert_equal 'DESC', @config.list.sorting.direction_of(:b)
+      refute @config.list.sorting.sorts_on?(:c)
       refute @config.list.sorting.sorts_on?(:id)
     end
     
