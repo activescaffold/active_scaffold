@@ -24,8 +24,6 @@ ja:
     click_to_edit: クリックして編集
     click_to_reset: "Click to reset"
     close: 閉じる
-    config_list: Configure
-    config_list_model: "Configure Columns for %{model}"
     contains: Contains
     create: 作成
     create_another: "Create Another %{model}"

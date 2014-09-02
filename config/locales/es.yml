@@ -24,8 +24,6 @@ es:
     click_to_edit: "Pulsa para editar"
     click_to_reset: "Pulsa para restaurar"
     close: Cerrar
-    config_list: Configurar
-    config_list_model: "Configurar columnas de %{model}"
     contains: Contiene
     create: Crear
     create_another: "Crear Otro %{model}"

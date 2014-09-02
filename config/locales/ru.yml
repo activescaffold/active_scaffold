@@ -22,8 +22,6 @@ ru:
     click_to_edit: "Нажмите для редактирования"
     click_to_reset: "Нажмите для сброса"
     close: Закрыть
-    config_list: "Настройки списка"
-    config_list_model: "%{model}: настройки списка"
     contains: Содержит
     create: Создать
     create_another: "%{model}: Создать другую запись"

@@ -24,8 +24,6 @@ hu:
     click_to_edit: "Kattints a szerkesztéshez"
     click_to_reset: "Kattints az alapállapothoz"
     close: Bezárás
-    config_list: Configure
-    config_list_model: "Configure Columns for %{model}"
     contains: Contains
     create: Létrehozás
     create_another: "Create Another %{model}"
