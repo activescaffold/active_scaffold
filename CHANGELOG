@@ -3,6 +3,7 @@
 - Enable sorting on selected draggable list, so it can be used on config_list
 - Remove unfinished nested_auto_open feature, it was working only if render_component is used, which is not recommended way
 - Allow to set sorting on multiple columns with a hash, ruby 1.9 hashes keep order so an array of hashes is not needed anymore, although it still works.
+- Fix overriding default sorting (with config.list.user.sorting.set) without changing config.list.sorting
 
 = 3.4.3
 - default search columns doesn't include association columns (broken on 3.4.2), it slowing down search with no point (searching by association's primary key)
