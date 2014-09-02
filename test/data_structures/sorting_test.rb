@@ -56,6 +56,20 @@ class SortingTest < MiniTest::Test
     refute @sorting.sorts_on?(:a)
     assert @sorting.sorts_on?(:b)
     assert_equal 'DESC', @sorting.direction_of(:b)
+
+    @sorting.set :a => 'DESC', :b => 'ASC'
+    assert @sorting.instance_variable_get('@clauses').size == 2
+    assert @sorting.sorts_on?(:a)
+    assert_equal 'DESC', @sorting.direction_of(:a)
+    assert @sorting.sorts_on?(:b)
+    assert_equal 'ASC', @sorting.direction_of(:b)
+
+    @sorting.set [:a, 'DESC'], [:b, 'ASC']
+    assert @sorting.instance_variable_get('@clauses').size == 2
+    assert @sorting.sorts_on?(:a)
+    assert_equal 'DESC', @sorting.direction_of(:a)
+    assert @sorting.sorts_on?(:b)
+    assert_equal 'ASC', @sorting.direction_of(:b)
   end
 
   def test_sorts_on
