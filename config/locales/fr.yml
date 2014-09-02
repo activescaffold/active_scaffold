@@ -24,8 +24,6 @@ fr:
     click_to_edit: "Cliquer pour éditer"
     click_to_reset: "Cliquer pour ré-initialiser"
     close: Fermer
-    config_list: Configurer
-    config_list_model: "Configurer les colonnes pour %{model}"
     contains: Contient
     create: Créer
     create_another: "Créer un autre %{model}"
