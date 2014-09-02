@@ -258,7 +258,7 @@ module ActiveScaffold::Config
       end
 
       def default_sorting
-        nested_default_sorting.nil? ? @conf.sorting : nested_default_sorting
+        nested_default_sorting.nil? ? @conf.sorting.clone : nested_default_sorting
       end
 
       def user_sorting?
@@ -278,7 +278,6 @@ module ActiveScaffold::Config
           else
             @sorting = default_sorting
             if @conf.columns.constraint_columns.present?
-              @sorting = @sorting.clone
               @sorting.constraint_columns = @conf.columns.constraint_columns
             end
           end
