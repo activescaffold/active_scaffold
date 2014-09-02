@@ -17,7 +17,7 @@ module ActiveScaffold::DataStructures
 
       # fallback to setting primary key ordering
       if model.column_names.include?(model.primary_key)
-        set(model.primary_key, 'ASC')
+        set([model.primary_key, 'ASC'])
         @sorting_by_primary_key = clause
       end
       # If an ORDER BY clause is found set default sorting according to it
