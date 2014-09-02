@@ -49,9 +49,18 @@ module ActiveScaffold::DataStructures
     end
 
     # clears the sorting before setting to the given column/direction
+    # set(column, direction)
+    # set({column => direction}, {column => direction})
+    # set({column => direction, column => direction})
     def set(*args)
       clear
-      add(*args)
+      if args.first.is_a?(Hash)
+        args.each do |h|
+          h.each { |c,d| add(c,d) }
+        end
+      else
+        add(*args)
+      end
     end
 
     # clears the sorting

@@ -152,11 +152,13 @@ module ActiveScaffold::Config
     # the ActionLink to reset search
     attr_reader :reset_link
 
-    # the default sorting. should be an array of hashes of {column_name => direction}, e.g. [{:a => 'desc'}, {:b => 'asc'}]. to just sort on one column, you can simply provide a hash, though, e.g. {:a => 'desc'}.
+    # the default sorting.
+    # should be a hash of {column_name => direction}, e.g. {:a => 'desc', :b => 'asc'}.
+    # for backwards compatibility, it may be an array of hashes of {column_name => direction}, e.g. [{:a => 'desc'}, {:b => 'asc'}].
+    # to just sort on one column, you can simply provide a hash, e.g. {:a => 'desc'}.
     def sorting=(val)
       val = [val] if val.is_a? Hash
-      sorting.clear
-      val.each { |clause| sorting.add *Array(clause).first }
+      sorting.set *val
     end
     def sorting
       @sorting ||= ActiveScaffold::DataStructures::Sorting.new(@core.columns)
@@ -229,7 +231,7 @@ module ActiveScaffold::Config
       end
       
       attr_writer :label
-      # This label has alread been localized.
+      # This label has already been localized.
       def label
         self['label'] || @label || @conf.label
       end
