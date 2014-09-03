@@ -83,7 +83,7 @@ module ActiveScaffold::Actions
           @record.send "#{@column.name}=", value
           @record.id = params[:id]
         end
-        set_parent(@record) if @record.id.nil? && params[:parent_controller]
+        set_parent(@record) if @record.id.nil? && params[:parent_controller] && @scope
         
         after_render_field(@record, @column)
       end
