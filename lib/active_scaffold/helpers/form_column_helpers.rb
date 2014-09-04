@@ -299,24 +299,26 @@ module ActiveScaffold
         html = if select_options.empty?
           content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id])
         else
-          method = column.options[:label_method] || :to_label
-          active_scaffold_checkbox_list(column, select_options.collect {|r| [r.send(method), r.id]}, associated_options.collect(&:id), options)
+          active_scaffold_checkbox_list(column, select_options, associated_options.collect(&:id), options)
         end
         html << active_scaffold_refresh_link(column, options, record) if column.options[:refresh_link]
         html
       end
+
+      def active_scaffold_checkbox_option(option, label_method, associated_ids, checkbox_options, li_options = {})
+        content_tag(:li, li_options) do 
+          check_box_tag(checkbox_options[:name], option.id, associated_ids.include?(option.id), checkbox_options) <<
+          content_tag(:label, option.send(label_method), :for => checkbox_options[:id])
+        end
+      end
       
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
+        label_method = column.options[:label_method] || :to_label
         html = hidden_field_tag("#{options[:name]}[]", '', :id => nil)
         html << content_tag(:ul, options.merge(:class => "#{options[:class]} checkbox-list#{' draggable-lists' if column.options[:draggable_lists]}")) do
           content = ''.html_safe
           select_options.each_with_index do |option, i|
-            label, id = option
-            this_id = "#{options[:id]}_#{i}_id"
-            content << content_tag(:li) do 
-              check_box_tag("#{options[:name]}[]", id, associated_ids.include?(id), :id => this_id) <<
-              content_tag(:label, h(label), :for => this_id)
-            end
+            content << active_scaffold_checkbox_option(option, label_method, associated_ids, :name => "#{options[:name]}[]", :id => "#{options[:id]}_#{i}_id")
           end
           content
         end
