@@ -433,7 +433,7 @@ var ActiveScaffold = {
     jQuery('.as-js-button', element).show();
   },
   load_embedded: function(element) {
-    $('.active-scaffold-component .load-embedded', element).each(function(index, item) {
+    jQuery('.active-scaffold-component .load-embedded', element).each(function(index, item) {
       item = jQuery(item);
       item.closest('.active-scaffold-component').load(item.attr('href'), function() {
         jQuery(this).trigger('as:element_updated');
