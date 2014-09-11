@@ -41,7 +41,7 @@ add_new_url = params_for(:controller => controller_path, :action => 'edit_associ
            add_existing_id = "#{sub_form_id(:association => column.name, :id => parent_record.id || temporary_id || 99999999999)}-add-existing"
            add_existing_label = column.plural_association? ? :add_existing : :replace_existing %>
         <%= select_tag 'associated_id', '<option value="">'.html_safe + as_(:_select_) + '</option>'.html_safe + select_options %>
-        <%= link_to as_(add_existing_label), edit_associated_url, :id => add_existing_id, :remote => true, :class=> "subform-button as_#{add_existing_label}", :style => "display: none;" %>
+        <%= link_to as_(add_existing_label), edit_associated_url, :id => add_existing_id, :remote => true, :class=> "as-js-button as_#{add_existing_label}", :style => "display: none;" %>
       <% end -%>
     <% end -%>
   </div>
