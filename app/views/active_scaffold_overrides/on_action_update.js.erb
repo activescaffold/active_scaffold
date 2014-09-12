@@ -11,7 +11,7 @@
     <%= render :partial => 'update_calculations', :formats => [:js] %>
   <% else %>
     <% if @action_link.try(:position) %>
-      ActiveScaffold.find_action_link('<%= element_row_id(:action => action_name) %>').close();
+      ActiveScaffold.find_action_link('<%= element_form_id(:action => action_name) %>').close();
     <% end %>
     <%= render :partial => 'refresh_list' %>
   <% end %>
