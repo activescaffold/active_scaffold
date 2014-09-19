@@ -1,4 +1,10 @@
-= 3.4.4 (not released yet)
+= 3.4.5
+- Fix default sorting on ruby 1.8
+- Fix add existing button, broken on 3.4.4
+- add active_scaffold_checkbox_option so rendering li of checkbox_list can be overrided
+- Fix set_parent for render field on main form columns
+
+= 3.4.4
 - Fix set_parent for render field on blank records added by default on subforms
 - Enable sorting on selected draggable list, so it can be used on config_list
 - Remove unfinished nested_auto_open feature, it was working only if render_component is used, which is not recommended way
