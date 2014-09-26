@@ -21,6 +21,7 @@ en:
     between: Between
     cancel: Cancel
     cant_destroy_record: "%{record} can't be destroyed"
+    changes: Changes
     click_to_edit: "Click to edit"
     click_to_reset: "Click to reset"
     close: Close
@@ -43,6 +44,7 @@ en:
     days: Days
     delete: Delete
     deleted_model: "Deleted %{model}"
+    deleted_records: "List Deleted Records"
     delimiter: Delimiter
     download: Download
     edit: Edit
