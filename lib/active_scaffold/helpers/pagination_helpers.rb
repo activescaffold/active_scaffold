@@ -6,7 +6,7 @@ module ActiveScaffold
       end
 
       def pagination_url_options(url_options = nil)
-        url_options ||= params_for(:action => :index)
+        url_options ||= params_for
         unless active_scaffold_config.store_user_settings
           url_options.merge!(:search => search_params) if search_params.present?
           if active_scaffold_config.list.user.user_sorting?
