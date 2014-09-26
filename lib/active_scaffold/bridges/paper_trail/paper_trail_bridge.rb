@@ -4,7 +4,7 @@ module ActiveScaffold
       module PaperTrailBridge
         def initialize_with_paper_trail(model_id)
           initialize_without_paper_trail(model_id)
-          return unless self.model < PaperTrail::Model::InstanceMethods
+          return unless self.model < ::PaperTrail::Model::InstanceMethods
           self.actions << :deleted_records
         end
         
