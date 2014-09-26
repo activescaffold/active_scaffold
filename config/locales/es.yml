@@ -21,6 +21,7 @@ es:
     between: Entre
     cancel: Cancelar
     cant_destroy_record: "No se pudo borrar %{record}"
+    changes: Cambios
     click_to_edit: "Pulsa para editar"
     click_to_reset: "Pulsa para restaurar"
     close: Cerrar
@@ -43,6 +44,7 @@ es:
     days: Días
     delete: Borrar
     deleted_model: "%{model} borrado"
+    deleted_records: "Ver Eliminados"
     delimiter: Delimitador
     download: Descargar
     edit: Editar
