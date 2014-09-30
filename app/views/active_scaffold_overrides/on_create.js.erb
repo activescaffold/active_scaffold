@@ -30,6 +30,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
       ActiveScaffold.reset_form('<%= form_selector %>');
     <% elsif params[:dont_close] %>
       ActiveScaffold.replace('<%= form_selector %>','<%= escape_javascript(render(:partial => 'create_form', :locals => {:xhr => true})) %>');
+      ActiveScaffold.focus_first_element_of_form('<%= form_selector %>');
     <% else %>
       action_link.close();
     <% end %>
