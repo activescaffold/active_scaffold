@@ -1,8 +1,9 @@
-= 3.4.6 (not released yet)
+= 3.4.6
 - Add paper_trail bridge (requires 3.0.5 version for nested support). It adds:
     - a collection link to deleted action which display deleted_records
     - a member link to PaperTrail::VersionsController which display changes for current record. PaperTrail::VersionsController must be added, not included with ActiveScaffold.
 - Focus first element on persistent create forms when form is reloaded
+- Fix linking to non-namespaced controller from namespaced controller
 
 = 3.4.5
 - Fix default sorting on ruby 1.8
