@@ -1,3 +1,6 @@
+= 3.4.7 (not released yet)
+- sorting by primary key added by default only for postgres, on mysql it will avoid using index to sort (you can see using filesort on explain), slowdown sorting
+
 = 3.4.6
 - Add paper_trail bridge (requires 3.0.5 version for nested support). It adds:
     - a collection link to deleted action which display deleted_records
