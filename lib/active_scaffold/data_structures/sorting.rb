@@ -4,6 +4,7 @@ module ActiveScaffold::DataStructures
     include Enumerable
 
     attr_accessor :constraint_columns
+    attr_accessor :sorting_by_primary_key
 
     def initialize(columns)
       @columns = columns
@@ -18,7 +19,8 @@ module ActiveScaffold::DataStructures
       # fallback to setting primary key ordering
       if model.column_names.include?(model.primary_key)
         set([model.primary_key, 'ASC'])
-        @sorting_by_primary_key = clause
+        @primary_key_clause = clause
+        @sorting_by_primary_key = model.connection.try(:adapter_name) == 'PostgreSQL' # mandatory for postgres, so enabled by default
       end
       # If an ORDER BY clause is found set default sorting according to it
       if order_clause
@@ -121,7 +123,7 @@ module ActiveScaffold::DataStructures
         order << Array(sql).map {|column| "#{column} #{sort_direction}"}.join(', ')
       end
 
-      order << @sorting_by_primary_key if @sorting_by_primary_key # mandatory for postgres
+      order << @primary_key_clause if @sorting_by_primary_key
       order unless order.empty?
     end
 
