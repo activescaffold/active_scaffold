@@ -1,5 +1,6 @@
 = 3.4.7 (not released yet)
 - sorting by primary key added by default only for postgres, on mysql it will avoid using index to sort (you can see using filesort on explain), slowdown sorting
+- fix set_parent on rails 3.2 with attr_accessible
 
 = 3.4.6
 - Add paper_trail bridge (requires 3.0.5 version for nested support). It adds:
