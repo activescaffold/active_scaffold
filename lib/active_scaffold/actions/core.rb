@@ -84,7 +84,7 @@ module ActiveScaffold::Actions
           @record.id = params[:id]
         end
         set_parent(@record) if @record.id.nil? && params[:parent_controller] && @scope
-        
+
         after_render_field(@record, @column)
       end
     end
@@ -110,7 +110,7 @@ module ActiveScaffold::Actions
     def copy_attributes(orig, dst)
       attributes = orig.attributes
       if orig.class.respond_to? :accessible_attributes
-        attributes.each { |attr, value| dst[attr] = value unless orig.class.accessible_attributes.deny? attr }
+        attributes.each { |attr, value| dst[attr] = value if orig.class.accessible_attributes.deny? attr }
         attributes = attributes.slice(*orig.class.accessible_attributes)
       elsif orig.class.respond_to? :protected_attributes
         orig.class.protected_attributes.each { |attr| dst[attr] = orig[attr] }
