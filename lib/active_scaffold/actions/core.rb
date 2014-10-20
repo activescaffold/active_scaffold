@@ -97,7 +97,7 @@ module ActiveScaffold::Actions
         parent = parent_model.new
         copy_attributes(parent_model.find(params[:parent_id]), parent) if params[:parent_id]
         parent.id = params[:parent_id]
-        parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record]) if @column.send_form_on_update_column
+        parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
         apply_constraints_to_record(parent) if params[:parent_id]
         if record.class.reflect_on_association(association).collection?
           record.send(association) << parent
@@ -107,13 +107,14 @@ module ActiveScaffold::Actions
       end
     end
 
-    def copy_attributes(orig, dst)
+    def copy_attributes(orig, dst = nil)
+      dst ||= orig.class.new
       attributes = orig.attributes
-      if orig.class.respond_to? :accessible_attributes
-        attributes.each { |attr, value| dst[attr] = value if orig.class.accessible_attributes.deny? attr }
+      if orig.class.respond_to?(:accessible_attributes) && orig.class.accessible_attributes.present?
+        attributes.each { |attr, value| dst.send :write_attribute, attr, value if orig.class.accessible_attributes.deny? attr }
         attributes = attributes.slice(*orig.class.accessible_attributes)
       elsif orig.class.respond_to? :protected_attributes
-        orig.class.protected_attributes.each { |attr| dst[attr] = orig[attr] }
+        orig.class.protected_attributes.each { |attr| dst.send :write_attribute, attr, orig[attr] }
         attributes = attributes.except(*orig.class.protected_attributes)
       end
       dst.attributes = attributes
