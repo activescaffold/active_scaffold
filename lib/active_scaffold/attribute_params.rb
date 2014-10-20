@@ -59,7 +59,7 @@ module ActiveScaffold
           if multi_parameter_attributes.has_key? column.name.to_s
             parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name.to_s])
           elsif attributes.has_key? column.name
-            value = column_value_from_param_value(parent_record, column, attributes[column.name])
+            value = column_value_from_param_value(parent_record, column, attributes[column.name], avoid_changes)
             if avoid_changes && column.plural_association?
               parent_record.association(column.name).target = value
             else
@@ -84,13 +84,13 @@ module ActiveScaffold
       parent_record
     end
 
-    def column_value_from_param_value(parent_record, column, value)
+    def column_value_from_param_value(parent_record, column, value, avoid_changes = false)
       # convert the value, possibly by instantiating associated objects
       form_ui = column.form_ui || column.column.try(:type)
       if form_ui && self.respond_to?("column_value_for_#{form_ui}_type", true)
         self.send("column_value_for_#{form_ui}_type", parent_record, column, value)
       elsif value.is_a?(Hash)
-        column_value_from_param_hash_value(parent_record, column, value)
+        column_value_from_param_hash_value(parent_record, column, value, avoid_changes)
       else
         column_value_from_param_simple_value(parent_record, column, value)
       end
@@ -146,25 +146,25 @@ module ActiveScaffold
       end
     end
 
-    def column_value_from_param_hash_value(parent_record, column, value)
+    def column_value_from_param_hash_value(parent_record, column, value, avoid_changes = false)
       if column.singular_association?
-        manage_nested_record_from_params(parent_record, column, value)
+        manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.plural_association?
         value = value.sort if RUBY_VERSION < '1.9'
         # HACK to be able to delete all associated records, hash will include "0" => ""
-        value.collect {|key, value| manage_nested_record_from_params(parent_record, column, value) unless value == ""}.compact
+        value.collect {|key, value| manage_nested_record_from_params(parent_record, column, value, avoid_changes) unless value == ""}.compact
       else
         value
       end
     end
     
-    def manage_nested_record_from_params(parent_record, column, attributes)
+    def manage_nested_record_from_params(parent_record, column, attributes, avoid_changes = false)
       return nil unless build_record_from_params(attributes, column, parent_record)
       record = find_or_create_for_params(attributes, column, parent_record)
       if record
         record_columns = active_scaffold_config_for(column.association.klass).subform.columns
         record_columns.constraint_columns = [column.association.reverse]
-        update_record_from_params(record, record_columns, attributes)
+        update_record_from_params(record, record_columns, attributes, avoid_changes)
         record.unsaved = true
       end
       record
