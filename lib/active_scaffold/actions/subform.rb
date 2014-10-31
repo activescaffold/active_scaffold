@@ -9,6 +9,11 @@ module ActiveScaffold::Actions
 
     def do_edit_associated
       @parent_record = params[:id].nil? ? new_model : find_if_allowed(params[:id], :update)
+      if @parent_record.new_record?
+        apply_constraints_to_record @parent_record
+        create_association_with_parent @parent_record
+      end
+
       generate_temporary_id(@parent_record, params[:generated_id]) if @parent_record.new_record? && params[:generated_id]
       @column = active_scaffold_config.columns[params[:child_association]]
 
