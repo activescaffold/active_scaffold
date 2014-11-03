@@ -1,5 +1,6 @@
 = 3.4.8 (not released yet)
 - set parent data when adding new record on subform of a create form on a embedded or nested list
+- trigger ajax:* events on ajax call to render_field
 
 = 3.4.7
 - sorting by primary key added by default only for postgres, on mysql it will avoid using index to sort (you can see using filesort on explain), slowdown sorting
