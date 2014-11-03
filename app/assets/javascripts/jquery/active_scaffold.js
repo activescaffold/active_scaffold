@@ -944,20 +944,29 @@ var ActiveScaffold = {
       url: url,
       data: params,
       type: 'post',
-      beforeSend: function(event) {
+      beforeSend: function(xhr, settings) {
         element.nextAll('img.loading-indicator').css('visibility','visible');
         ActiveScaffold.disable_form(as_form);
+        if ($.rails.fire(element, 'ajax:beforeSend', [xhr, settings])) {
+          element.trigger('ajax:send', xhr);
+        } else {
+          return false;
+        }
       },
-      complete: function(event) {
+      success: function(data, status, xhr) {
+        as_form.find('#'+element.attr('id')).trigger('ajax:success', [data, status, xhr]);
+      },
+      complete: function(xhr, status) {
+        element = as_form.find('#'+element.attr('id'));
         element.nextAll('img.loading-indicator').css('visibility','hidden');
-        ActiveScaffold.enable_form(as_form);
+        element.trigger('ajax:complete', [xhr, status]);
         if (ActiveScaffold.last_focus) jQuery(ActiveScaffold.last_focus).focus().select();
       },
       error: function (xhr, status, error) {
+        element = as_form.find('#'+element.attr('id'));
         var as_div = element.closest("div.active-scaffold");
-        if (as_div) {
-          ActiveScaffold.report_500_response(as_div, xhr);
-        }
+        if (as_div) ActiveScaffold.report_500_response(as_div, xhr);
+        element.trigger('ajax:error', [xhr, status, error]);
       }
     });
   },
