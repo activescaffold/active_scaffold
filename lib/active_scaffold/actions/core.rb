@@ -114,7 +114,7 @@ module ActiveScaffold::Actions
         attributes.each { |attr, value| dst.send :write_attribute, attr, value if orig.class.accessible_attributes.deny? attr }
         attributes = attributes.slice(*orig.class.accessible_attributes)
       elsif orig.class.respond_to? :protected_attributes
-        orig.class.protected_attributes.each { |attr| dst.send :write_attribute, attr, orig[attr] }
+        orig.class.protected_attributes.each { |attr| dst.send :write_attribute, attr, orig[attr] if attr.present? }
         attributes = attributes.except(*orig.class.protected_attributes)
       end
       dst.attributes = attributes
