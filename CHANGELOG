@@ -1,4 +1,7 @@
-= 3.4.8 (not released yet)
+= 3.4.9 (not released yet)
+- update parent data when changing a column in subform of edit form, so parent has data from form as it works in new form
+
+= 3.4.8
 - set parent data when adding new record on subform of a create form on a embedded or nested list
 - trigger ajax:* events on ajax call to render_field
 

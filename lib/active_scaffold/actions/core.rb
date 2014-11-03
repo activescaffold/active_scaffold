@@ -83,7 +83,7 @@ module ActiveScaffold::Actions
           @record.send "#{@column.name}=", value
           @record.id = params[:id]
         end
-        set_parent(@record) if @record.id.nil? && params[:parent_controller] && @scope
+        set_parent(@record) if params[:parent_controller] && @scope
 
         after_render_field(@record, @column)
       end
@@ -98,7 +98,7 @@ module ActiveScaffold::Actions
         copy_attributes(parent_model.find(params[:parent_id]), parent) if params[:parent_id]
         parent.id = params[:parent_id]
         parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
-        apply_constraints_to_record(parent) if params[:parent_id]
+        apply_constraints_to_record(parent) unless params[:parent_id]
         if record.class.reflect_on_association(association).collection?
           record.send(association) << parent
         else
