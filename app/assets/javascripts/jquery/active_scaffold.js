@@ -598,10 +598,10 @@ var ActiveScaffold = {
     jQuery("input[data-remove-disabled],select[data-remove-disabled],textarea[data-remove-disabled]", as_form).removeAttr('disabled data-remove-disabled');
   },  
   
-  focus_first_element_of_form: function(form_element) {
+  focus_first_element_of_form: function(form_element, form_selector) {
     if (typeof(form_element) == 'string') form_element = '#' + form_element;
-    var form_selector = jQuery(form_element).is('form') ? '' : 'form ';
-    jQuery(form_selector + ":input[type!=hidden]:first", jQuery(form_element)).focus();
+    if (typeof(form_selector) == 'undefined') form_selector = jQuery(form_element).is('form') ? '' : 'form ';
+    jQuery(form_selector + ":input:visible:first", jQuery(form_element)).focus();
   },
     
   create_record_row: function(active_scaffold_id, html, options) {
@@ -768,7 +768,6 @@ var ActiveScaffold = {
         var tfoot = element.children('tfoot');
         if (tfoot.length) tfoot.before(content);
         else element.append(content);
-        content.trigger('as:element_created');
       }
     } else {
       var current = jQuery('#' + element.attr('id') + ' .sub-form-record')
@@ -776,9 +775,10 @@ var ActiveScaffold = {
         this.replace(current[0], content);
       } else {
         element.prepend(content);
-        content.trigger('as:element_created');
       }
     }
+    ActiveScaffold.focus_first_element_of_form(content, '');
+    content.trigger('as:element_created');
   },
   
   render_form_field: function(source, content, options) {
