@@ -1,5 +1,6 @@
 = 3.4.9 (not released yet)
 - update parent data when changing a column in subform of edit form, so parent has data from form as it works in new form
+- use :only and :except options from resource line on as_routes and as_association_routes, so activescaffold actions can be selected
 
 = 3.4.8
 - set parent data when adding new record on subform of a create form on a embedded or nested list

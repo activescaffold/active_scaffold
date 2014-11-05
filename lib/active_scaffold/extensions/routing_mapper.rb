@@ -8,25 +8,49 @@ module ActionDispatch
         :collection => {:edit_associated => :get, :new_existing => :get, :add_existing => :post},
         :member => {:edit_associated => :get, :destroy_existing => :delete}
     }
+    
     class Mapper
-      module Base
-        def as_routes(options = {:association => true})
-          collection do
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each {|name, type| match(name, :via => type)}
+      module Resources
+        class ActiveScaffold < Resource
+          def default_actions
+            @default_actions ||= (ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].keys + ACTIVE_SCAFFOLD_CORE_ROUTING[:member].keys).uniq
           end
-          member do
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each {|name, type| match(name, :via => type)}
-            get 'list', :action => :index
+        end
+        class ActiveScaffoldAssociation < Resource
+          def default_actions
+            @default_actions ||= (ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:collection].keys + ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:member].keys).uniq
           end
-          as_association_routes if options[:association]
+        end
+
+        def as_routes(opts = {:association => true})
+          with_scope_level(:resource, ActiveScaffold.new(parent_resource.name, parent_resource.options)) do
+            collection do
+              ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each do |name, type|
+                match(name, :via => type) if parent_resource.actions.include? name
+              end
+            end
+            member do
+              ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each do |name, type|
+                match(name, :via => type) if parent_resource.actions.include? name
+              end
+              get 'list', :action => :index if parent_resource.actions.include? :index
+            end
+          end
+          as_association_routes if opts[:association]
         end
         
         def as_association_routes
-          collection do 
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:collection].each {|name, type| send(type, name)}
-          end
-          member do
-            ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:member].each {|name, type| send(type, name)}
+          with_scope_level(:resource, ActiveScaffoldAssociation.new(parent_resource.name, parent_resource.options)) do
+            collection do 
+              ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:collection].each do |name, type|
+                match(name, :via => type) if parent_resource.actions.include? name
+              end
+            end
+            member do
+              ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:member].each do |name, type|
+                match(name, :via => type) if parent_resource.actions.include? name
+              end
+            end
           end
         end
         
