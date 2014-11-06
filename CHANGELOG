@@ -2,6 +2,10 @@
 - update parent data when changing a column in subform of edit form, so parent has data from form as it works in new form
 - use :only and :except options from resource line on as_routes and as_association_routes, so activescaffold actions can be selected
 - focus first element of subform record added
+- changes on destroy:
+  - destroy.js.erb uses main_path_to_return to get url to reload if page empty
+  - delete_record_row can be called without url
+- messages_id and form_selector on create, update and destroy JS views can be overrided when calling render :super
 
 = 3.4.8
 - set parent data when adding new record on subform of a create form on a embedded or nested list

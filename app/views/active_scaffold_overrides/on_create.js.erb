@@ -1,6 +1,6 @@
 try {
 var action_link;
-<% form_selector = "#{element_form_id(:action => :create)}"
+<% form_selector ||= "#{element_form_id(:action => :create)}"
 insert_at ||= :top -%>
 <% if active_scaffold_config.list.always_show_create -%>
 <%= render :partial => 'update_messages' %>
