@@ -660,7 +660,7 @@ var ActiveScaffold = {
     ActiveScaffold.remove(row, function() {
       ActiveScaffold.stripe(tbody);
       ActiveScaffold.decrement_record_count(tbody.closest('div.active-scaffold'));
-      ActiveScaffold.reload_if_empty(tbody, page_reload_url);
+      if (page_reload_url) ActiveScaffold.reload_if_empty(tbody, page_reload_url);
     });
   },
 
