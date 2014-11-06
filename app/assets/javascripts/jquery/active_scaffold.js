@@ -396,7 +396,8 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
               else {
                 if (el.data('timer')) { clearTimeout(el.data('timer')); }
                 el.data('timer', setTimeout(function(){
-                  el.data('callback').apply(el);
+                  var callback = el.data('callback')
+                  if (callback) callback.apply(el);
                 }, el.data('delay') * 1000));
                 el.data('oldval', el.val());
               }
