@@ -23,7 +23,7 @@ module ActionDispatch
         end
 
         def as_routes(opts = {:association => true})
-          with_scope_level(:resource, ActiveScaffold.new(parent_resource.name, parent_resource.options)) do
+          resource_scope(:resource, ActiveScaffold.new(parent_resource.name, parent_resource.options)) do
             collection do
               ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each do |name, type|
                 match(name, :via => type) if parent_resource.actions.include? name
@@ -40,7 +40,7 @@ module ActionDispatch
         end
         
         def as_association_routes
-          with_scope_level(:resource, ActiveScaffoldAssociation.new(parent_resource.name, parent_resource.options)) do
+          resource_scope(:resource, ActiveScaffoldAssociation.new(parent_resource.name, parent_resource.options)) do
             collection do 
               ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:collection].each do |name, type|
                 match(name, :via => type) if parent_resource.actions.include? name
