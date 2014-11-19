@@ -173,7 +173,7 @@ module ActiveScaffold
     def build_record_from_params(params, column, record)
       current = record.send(column.name)
       klass = column.association.klass
-      (column.plural_association? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
+      column.singular_association? || (column.plural_association? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
     end
 
     # Attempts to create or find an instance of the klass of the association in parent_column from the
