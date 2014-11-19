@@ -217,7 +217,7 @@ class AttributeParamsTest < MiniTest::Test
 
     model = update_record_from_params(model, :update, :brand, :person, :brand => 'Mercedes', :person => {:first_name => ''})
     assert_equal 'Mercedes', model.brand
-    assert model.person.blank?, 'person should be cleared'
+    refute_equal person.id, model.person.id
     assert model.save
   end
 
@@ -254,14 +254,14 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 'First', model.first_name
     assert_nil Car.where(:id => car.id).first, 'previous car should be deleted'
     assert model.car.present?
-    refute_equal  car.id, model.car.id
+    refute_equal car.id, model.car.id
     assert model.save
 
     car = model.car.reload
     model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'Name', :car => {:brand => ''})
     assert_equal 'Name', model.first_name
     assert_nil Car.where(:id => car.id).first, 'previous car should be deleted'
-    assert model.car.blank?, 'car should be cleared'
+    refute_equal car.id, model.car.id
     assert model.save
   end
 
