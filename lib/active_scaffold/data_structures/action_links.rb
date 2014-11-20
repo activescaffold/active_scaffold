@@ -1,6 +1,7 @@
 module ActiveScaffold::DataStructures
   class ActionLinks
     include Enumerable
+    attr_accessor :default_type
 
     def initialize
       @set = []
@@ -13,6 +14,7 @@ module ActiveScaffold::DataStructures
       link = if action.is_a?(ActiveScaffold::DataStructures::ActionLink) || action.is_a?(ActiveScaffold::DataStructures::ActionLinks)
         action
       else
+        options[:type] ||= default_type
         ActiveScaffold::DataStructures::ActionLink.new(action, options)
       end
       # NOTE: this duplicate check should be done by defining the comparison operator for an Action data structure
@@ -130,6 +132,7 @@ module ActiveScaffold::DataStructures
         group = ActiveScaffold::DataStructures::ActionLinks.new
         group.label = label || name
         group.name = name
+        group.default_type = self.name == :root ? (name.to_sym if %w(member collection).include?(name.to_s)) : default_type
         add_to_set group
       end
       group
