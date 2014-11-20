@@ -83,7 +83,9 @@ class Company < ActiveRecord::Base
   end
   
   def name
-    ''
+  end
+  def name_before_type_cast
+    self.name.to_s
   end
 
   def date
