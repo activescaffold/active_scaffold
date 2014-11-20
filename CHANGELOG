@@ -1,5 +1,6 @@
 = 3.4.10 (not released yet)
 - singular associations on subform are always created, in other case it's not possible to enable a checkbox without filling text fields.
+- process_action_link_action checks security for crud_type and action now
 
 = 3.4.9
 - update parent data when changing a column in subform of edit form, so parent has data from form as it works in new form
