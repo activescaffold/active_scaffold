@@ -83,6 +83,7 @@ class Company < ActiveRecord::Base
   end
   
   def name
+    ''
   end
 
   def date

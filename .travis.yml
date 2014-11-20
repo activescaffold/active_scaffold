@@ -39,9 +39,5 @@ matrix:
     - rvm: jruby-19mode
       gemfile: gemfiles/Gemfile.rails-3.2.x
   allow_failures:
-    - rvm: rbx-2
-      gemfile: gemfiles/Gemfile.rails-3.2.x
-    - rvm: rbx-2
-      gemfile: gemfiles/Gemfile.rails-master
     - rvm: jruby-19mode
       gemfile: gemfiles/Gemfile.rails-master
