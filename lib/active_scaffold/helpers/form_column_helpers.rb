@@ -277,7 +277,7 @@ module ActiveScaffold
           link_options['data-update_send_form_selector'] = html_options['data-update_send_form_selector']
         else
           scope = html_options[:name].scan(/^record((\[[^\]]*\])*)\[#{column.name}\]/)[0].try(:first) if html_options[:name]
-          link_options = update_columns_options(column, scope, link_options, true)
+          link_options = update_columns_options(column, scope.presence, link_options, true)
         end
         link_options[:class] = 'refresh-link'
         link_to(as_(:refresh), link_options.delete('data-update_url') || html_options['data-update_url'], link_options)
