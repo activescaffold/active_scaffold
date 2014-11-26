@@ -218,7 +218,7 @@ class AttributeParamsTest < MiniTest::Test
     floor = Floor.create
     people = 2.times.map { Person.create }
     key = Time.now.to_i.to_s
-    floors = {'0' => '', '1' => {:number => '1', :tenant => '', :id => floor.id.to_s}, key => {:number => '2', 'tenant' => people.first.id.to_s}, key.succ => {:number => '4', 'tenant' => people.last.id.to_s}}
+    floors = {'0' => '', floor.id.to_s => {:number => '1', :tenant => '', :id => floor.id.to_s}, key => {:number => '2', 'tenant' => people.first.id.to_s}, key.succ => {:number => '4', 'tenant' => people.last.id.to_s}}
     model = update_record_from_params(Building.new, :create, :name, :floors, :name => 'First', :floors => floors)
     assert_equal 'First', model.name
     assert_equal 3, model.floors.size
