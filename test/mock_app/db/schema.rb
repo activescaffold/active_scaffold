@@ -11,6 +11,7 @@ ActiveRecord::Schema.define do
   create_table 'buildings' do |t|
     t.string 'name'
     t.integer 'owner_id'
+    t.integer 'floors_count', :null => false, :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end

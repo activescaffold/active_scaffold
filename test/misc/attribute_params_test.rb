@@ -68,7 +68,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 0, model.reload.buildings_count
   end
 
-  def test_saving_belongs_to_select
+  def test_saving_belongs_to_select_for_has_one_reverse
     person = Person.create
     assert person.persisted?
     assert_equal 0, person.floors_count
@@ -86,8 +86,44 @@ class AttributeParamsTest < MiniTest::Test
     assert_nil model.tenant, 'tenant should be cleared'
     assert_equal person.id, Floor.find(model.id).tenant_id, 'floor should not be saved yet'
     assert model.save
-    assert_nil Floor.find(model.id).tenant_id, 'floor should not be saved'
+    assert_nil Floor.find(model.id).tenant_id, 'floor should be saved'
     assert_equal 0, person.reload.floors_count
+
+    model = update_record_from_params(model, :create, :number, :tenant, :number => '1', :tenant => person.id.to_s)
+    assert_equal 1, model.number
+    assert_equal person.id, model.tenant_id
+    assert_equal person, model.tenant
+    assert model.save
+    assert_equal 1, person.reload.floors_count
+  end
+
+  def test_saving_belongs_to_select_for_has_many_reverse
+    person = Person.create
+    assert person.persisted?
+    assert_equal 0, person.buildings_count
+
+    model = update_record_from_params(Building.new, :create, :name, :owner, :name => 'Tower', :owner => person.id.to_s)
+    assert_equal 'Tower', model.name
+    assert_equal person.id, model.owner_id
+    assert_equal person, model.owner
+    assert model.save
+    assert_equal 1, person.reload.buildings_count
+
+    model = update_record_from_params(model, :update, :name, :owner, :name => 'Tower', :owner => '')
+    assert_equal 'Tower', model.name
+    assert_nil model.owner_id, 'owner should be cleared'
+    assert_nil model.owner, 'owner should be cleared'
+    assert_equal person.id, Building.find(model.id).owner_id, 'building should not be saved yet'
+    assert model.save
+    assert_nil Building.find(model.id).owner_id, 'building should be saved'
+    assert_equal 0, person.reload.buildings_count
+
+    model = update_record_from_params(model, :create, :name, :owner, :name => 'Tower', :owner => person.id.to_s)
+    assert_equal 'Tower', model.name
+    assert_equal person.id, model.owner_id
+    assert_equal person, model.owner
+    assert model.save
+    assert_equal 1, person.reload.buildings_count
   end
 
   def test_saving_has_one_select
@@ -190,11 +226,13 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal [nil, *people.map(&:id)], model.floors.map(&:tenant_id)
     assert model.save
     assert_equal [1, 1], people.map(&:reload).map(&:floors_count)
+    assert_equal 3, model.reload.floors_count
 
     model = update_record_from_params(model, :update, :name, :floors, :name => 'Tower', :floors => {'0' => ''})
     assert_equal 'Tower', model.name
     assert model.floors.blank?, 'floors should be cleared'
     assert model.save
+    assert_equal 0, model.reload.floors_count
   end
 
   def test_saving_belongs_to_crud

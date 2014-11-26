@@ -5,8 +5,8 @@ class Building < ActiveRecord::Base
   has_one :address, :as => :addressable
 
   has_many :tenants, :through => :floors, :class_name => 'Person'
-  
-  if Rails.version < '4.1'
+
+  if Rails.version < '4.0'
     after_update :update_buildings_count, :if => :owner_id_changed?
     
     def update_buildings_count
