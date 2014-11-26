@@ -228,6 +228,26 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal [1, 1], people.map(&:reload).map(&:floors_count)
     assert_equal 3, model.reload.floors_count
 
+    last_floor = model.floors.last
+    floors = {'0' => '', floor.id.to_s => {:number => '1', :tenant => '', :id => floor.id.to_s}, last_floor.id.to_s => {:number => '4', 'tenant' => people.last.id.to_s, :id => last_floor.id.to_s}}
+    model = update_record_from_params(model, :create, :name, :floors, :name => 'First', :floors => floors)
+    assert_equal 'First', model.name
+    assert_equal 2, model.floors.size
+    assert_equal floor.id, model.floors.first.id
+    assert_equal [nil, last_floor.tenant_id], model.floors.map(&:tenant_id)
+    assert model.save
+    assert_equal 2, model.reload.floors_count
+
+    floors = {'0' => '', floor.id.to_s => {:number => '1', :tenant => '', :id => floor.id.to_s}}
+    new_model = update_record_from_params(Building.create, :create, :name, :floors, :name => 'Last', :floors => floors)
+    assert_equal 'Last', new_model.name
+    assert_equal 1, new_model.floors.size
+    assert_equal floor.id, new_model.floors.first.id
+    assert_equal [nil], new_model.floors.map(&:tenant_id)
+    assert new_model.save
+    assert_equal 1, new_model.reload.floors_count
+    assert_equal 1, model.reload.floors_count
+
     model = update_record_from_params(model, :update, :name, :floors, :name => 'Tower', :floors => {'0' => ''})
     assert_equal 'Tower', model.name
     assert model.floors.blank?, 'floors should be cleared'
