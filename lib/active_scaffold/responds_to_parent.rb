@@ -10,7 +10,6 @@ module ActiveScaffold
       if performed?
         # Either pull out a redirect or the request body
         script =  if response.headers['Location']
-                    #TODO: erase_redirect_results is missing in rails 3.0
                     "document.location.href = '#{self.class.helpers.escape_javascript location.to_s}'"
                   else
                     response.body || ''
