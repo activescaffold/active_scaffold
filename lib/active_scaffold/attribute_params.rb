@@ -32,6 +32,27 @@ module ActiveScaffold
   # }
   module AttributeParams
     protected
+    # workaround to update counters when belongs_to changes on persisted record on Rails 3
+    # TODO remove when rails3 support is removed
+    def rails3_counter_cache_hack(parent_record, column, value)
+      association = parent_record.association(column.name)
+      if association.send(:has_cached_counter?)
+        counter_attr = association.send(:cached_counter_attribute_name)
+        difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
+        if parent_record.new_record?
+          parent_record.send "#{counter_attr}=", difference
+        else
+          association.send :update_counter, difference
+        end
+      end
+    end
+
+    # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
+    # TODO remove when pull request is merged and no version with bug is supported
+    def counter_cache_hack?(column, value)
+      Rails.version >= '4.0' && column.association.try(:belongs_to?) && column.association.options[:counter_cache] && !value.is_a?(Hash)
+    end
+
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
     # association attributes and attempts to instantiate them as associated objects.
     #
@@ -62,9 +83,13 @@ module ActiveScaffold
             value = column_value_from_param_value(parent_record, column, attributes[column.name], avoid_changes)
             if avoid_changes && column.plural_association?
               parent_record.association(column.name).target = value
+            elsif counter_cache_hack?(column, attributes[column.name])
+              parent_record.send "#{column.association.foreign_key}=", value.try(:id)
+              parent_record.association(column.name).target = value
             else
               begin
                 parent_record.send "#{column.name}=", value
+                rails3_counter_cache_hack(parent_record, column, value) if Rails.version < '4.0' && column.plural_association? && !value.is_a?(Hash)
               rescue ActiveRecord::RecordNotSaved
                 parent_record.errors.add column.name, :invalid
                 parent_record.association(column.name).target = value if column.association
