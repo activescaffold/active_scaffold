@@ -13,7 +13,6 @@ class AttributeParamsTest < MiniTest::Test
     assert model.save
 
     model.buildings.create(:name => '1st building')
-    model.reload
     model = update_record_from_params(model, :update, :first_name, :last_name, :first_name => 'Name', :last_name => 'Last')
     assert_equal 'Name', model.first_name
     assert_equal 'Last', model.last_name
@@ -292,6 +291,7 @@ class AttributeParamsTest < MiniTest::Test
     params = columns.extract_options!.with_indifferent_access
     new_record = nil
     record.class.transaction do
+      record = record.class.find(record.id) if record.persisted?
       new_record = @controller.update_record_from_params(record, build_action_columns(record, action, columns), params)
       MODELS.each { |model| model.any_instance.unstub(:save) }
       yield if block_given?
