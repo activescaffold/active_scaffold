@@ -1,6 +1,6 @@
 class Person < ActiveRecord::Base
-  has_many :buildings, :foreign_key => :owner_id
-  has_one :floor, :foreign_key => :tenant_id
+  has_many :buildings, :foreign_key => :owner_id, :inverse_of => :owner
+  has_one :floor, :foreign_key => :tenant_id, :inverse_of => :tenant
   has_one :address, :through => :floor
   has_one :home, :through => :floor, :source => :building, :class_name => 'Building'
 

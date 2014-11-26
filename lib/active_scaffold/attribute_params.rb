@@ -39,10 +39,19 @@ module ActiveScaffold
       if association.send(:has_cached_counter?)
         counter_attr = association.send(:cached_counter_attribute_name)
         difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
+
         if parent_record.new_record?
           parent_record.send "#{counter_attr}=", difference
         else
-          association.send :update_counter, difference
+          # don't decrement counter for deleted records, on destroy they will update counter
+          difference += (parent_record.send(column.name) - value).size
+          association.send :update_counter, difference unless difference == 0
+        end
+
+        # update counters on old parents if belongs_to is changed
+        value.select(&:persisted?).each do |record|
+          key = record.send(column.association.foreign_key)
+          parent_record.class.decrement_counter counter_attr, key if key != parent_record.id
         end
       end
     end
@@ -88,8 +97,8 @@ module ActiveScaffold
               parent_record.association(column.name).target = value
             else
               begin
+                rails3_counter_cache_hack(parent_record, column, value) if Rails.version < '4.0' && column.plural_association?
                 parent_record.send "#{column.name}=", value
-                rails3_counter_cache_hack(parent_record, column, value) if Rails.version < '4.0' && column.plural_association? && !value.is_a?(Hash)
               rescue ActiveRecord::RecordNotSaved
                 parent_record.errors.add column.name, :invalid
                 parent_record.association(column.name).target = value if column.association
