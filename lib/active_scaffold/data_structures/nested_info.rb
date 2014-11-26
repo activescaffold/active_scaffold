@@ -54,7 +54,7 @@ module ActiveScaffold::DataStructures
       has_many? || habtm?
     end
 
-    def readonly_through_association?
+    def readonly_through_association?(columns)
       false
     end
 
@@ -101,9 +101,13 @@ module ActiveScaffold::DataStructures
     end
     
     # A through association with has_one or has_many as source association
-    # create cannot be called in such through association
-    def readonly_through_association?
-      association.options[:through] && association.source_reflection.macro != :belongs_to
+    # create cannot be called in such through association, unless create columns include through reflection of reverse association
+    # e.g. customer -> networks -> firewall, reverse is firewall -> network -> customer,
+    # firewall can be created if create columns include network
+    def readonly_through_association?(columns)
+      through_association? && association.source_reflection.macro != :belongs_to && (
+        !child_association || !columns.include?(child_association.through_reflection.name)
+      )
     end
     
     def through_association?

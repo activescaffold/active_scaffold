@@ -59,7 +59,15 @@ module ActiveScaffold
       end
 
       def association_klass_scoped(association, klass, record)
-        klass
+        if nested? && nested.through_association? && nested.child_association.try(:through_reflection) == association
+          if nested.association.through_reflection.collection?
+            nested_parent_record.send(nested.association.through_reflection.name)
+          else
+            klass.where(association.association_primary_key => nested_parent_record.send(nested.association.through_reflection.name).try(:id))
+          end
+        else
+          klass
+        end
       end
 
       # Sorts the options for select
