@@ -376,7 +376,7 @@ module ActiveScaffold
   
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
-      count = count.length if count.is_a?(Hash) || count.is_a?(ActiveSupport::OrderedHash) # TODO remove OrderedHash check when ruby 1.8 or rails3 support is removed
+      count = count.length if count.is_a?(Hash)
       count
     end
 
