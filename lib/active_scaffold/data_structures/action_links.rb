@@ -14,7 +14,7 @@ module ActiveScaffold::DataStructures
       link = if action.is_a?(ActiveScaffold::DataStructures::ActionLink) || action.is_a?(ActiveScaffold::DataStructures::ActionLinks)
         action
       else
-        options[:type] ||= default_type
+        options[:type] ||= default_type if default_type
         ActiveScaffold::DataStructures::ActionLink.new(action, options)
       end
       # NOTE: this duplicate check should be done by defining the comparison operator for an Action data structure
