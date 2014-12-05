@@ -4,6 +4,7 @@ class RoutingMapperTest < ActionController::TestCase
   test 'rails routes' do
     assert_routing 'addresses', :controller => 'addresses', :action => 'index'
     assert_routing 'addresses/1', :controller => 'addresses', :action => 'show', :id => '1'
+    assert_routing 'addresses/1/list', :controller => 'addresses', :action => 'index', :id => '1'
     assert_routing 'addresses/1/edit', :controller => 'addresses', :action => 'edit', :id => '1'
     assert_routing({:method => :put, :path => 'addresses/1'}, {:controller => 'addresses', :action => 'update', :id => '1'})
     assert_routing({:method => :delete, :path => 'addresses/1'}, {:controller => 'addresses', :action => 'destroy', :id => '1'})

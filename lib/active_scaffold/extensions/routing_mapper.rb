@@ -23,6 +23,7 @@ module ActionDispatch
         end
 
         def as_routes(opts = {:association => true})
+          resource = parent_resource
           resource_scope(:resource, ActiveScaffold.new(parent_resource.name, parent_resource.options)) do
             collection do
               ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each do |name, type|
@@ -33,7 +34,7 @@ module ActionDispatch
               ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each do |name, type|
                 match(name, :via => type) if parent_resource.actions.include? name
               end
-              get 'list', :action => :index if parent_resource.actions.include? :index
+              get 'list', :action => :index if resource.actions.include? :index
             end
           end
           as_association_routes if opts[:association]
