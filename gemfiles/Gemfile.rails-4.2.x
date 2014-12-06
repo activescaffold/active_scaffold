@@ -21,7 +21,7 @@ group :test do
   gem "shoulda", ">= 0"
   gem "simplecov", ">= 0"
   gem "mocha"
-  gem "rails", :github => 'rails/rails'
+  gem "rails", :github => 'rails/rails', :branch => '4-2-stable'
   gem "arel", :github => 'rails/arel'
   gem "rack", :github => 'rack/rack'
   gem "i18n", :github => 'svenfuchs/i18n'

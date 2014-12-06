@@ -8,7 +8,7 @@ script: bundle exec rake test
 gemfile:
   - gemfiles/Gemfile.rails-3.2.x
   - gemfiles/Gemfile.rails-4.0.x
-  - gemfiles/Gemfile.rails-master
+  - gemfiles/Gemfile.rails-4.2.x
   - Gemfile
 install: "bundle install"
 matrix:
