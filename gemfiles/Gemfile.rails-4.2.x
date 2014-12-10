@@ -22,9 +22,9 @@ group :test do
   gem "simplecov", ">= 0"
   gem "mocha"
   gem "rails", :github => 'rails/rails', :branch => '4-2-stable'
-  gem "arel", :github => 'rails/arel'
-  gem "rack", :github => 'rack/rack'
-  gem "i18n", :github => 'svenfuchs/i18n'
+  #gem "arel", :github => 'rails/arel'
+  #gem "rack", :github => 'rack/rack'
+  #gem "i18n", :github => 'svenfuchs/i18n'
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
   end
