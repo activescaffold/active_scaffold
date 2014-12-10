@@ -1,4 +1,4 @@
-= 3.4.11 (not released yet)
+= 3.4.11
 - Fix refresh-link on main form (not subform)
 - Workaround for counter_cache bug on rails4 (https://github.com/rails/rails/pull/14849)
 - Support create form on nested scaffolds on through association, if through reflection association is included in create form
