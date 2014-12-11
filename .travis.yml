@@ -14,4 +14,4 @@ install: "bundle install"
 matrix:
   allow_failures:
     - rvm: jruby-19mode
-      gemfile: gemfiles/Gemfile.rails-master
+      gemfile: gemfiles/Gemfile.rails-4.2.x
