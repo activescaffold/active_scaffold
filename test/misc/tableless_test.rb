@@ -2,7 +2,7 @@ require 'test_helper'
 
 class TablelessTest < MiniTest::Test
   def test_find_all
-    assert_equal [], FileModel.all
+    assert FileModel.all.to_a.empty?
   end
   
   def test_find_by_id
@@ -12,7 +12,7 @@ class TablelessTest < MiniTest::Test
   end
   
   def test_find_with_association
-    assert_equal [], Person.new.files
+    assert Person.new.files.empty?
   end
 end
   
