@@ -45,7 +45,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 'First', model.first_name
     assert_nil model.last_name
     assert_equal buildings.map(&:id), model.building_ids
-    assert_equal buildings, model.buildings
+    assert_equal buildings.map(&:id), model.buildings.map(&:id)
     assert model.save
     assert_equal 2, model.reload.buildings_count
 
