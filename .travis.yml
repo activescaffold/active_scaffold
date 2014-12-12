@@ -12,6 +12,12 @@ gemfile:
   - Gemfile
 install: "bundle install"
 matrix:
+  exclude:
+    - rvm: rbx-2.2
+      gemfile: gemfiles/Gemfile.rails-3.2.x
+  include:
+    - rvm: rbx-2.0
+      gemfile: gemfiles/Gemfile.rails-3.2.x
   allow_failures:
     - rvm: jruby-19mode
       gemfile: gemfiles/Gemfile.rails-4.2.x
