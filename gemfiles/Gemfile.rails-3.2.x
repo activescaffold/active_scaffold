@@ -12,7 +12,7 @@ group :development, :test do
   gem "localeapp"
   gem "rack"
   platforms :rbx do
-    gem "rubysl"
+    gem "rubysl", '~> 2.1.0'
     gem "rubysl-test-unit"
     gem "racc"
   end
