@@ -323,6 +323,7 @@ DEPENDENCIES
   rake
   rdoc
   rubysl
+  rubysl-openssl (~> 2.1.0)
   rubysl-test-unit
   shoulda
   simplecov
