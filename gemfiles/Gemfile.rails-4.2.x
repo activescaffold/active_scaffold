@@ -11,7 +11,8 @@ group :development, :test do
   gem "bundler", ">= 1.0.0"
   gem "localeapp"
   platforms :rbx do
-    gem "rubysl", '~> 2.1.0'
+    gem "rubysl"
+    gem "rubysl-openssl", '~> 2.1.0'
     gem "rubysl-test-unit"
     gem "racc"
   end
