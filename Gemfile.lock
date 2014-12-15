@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    active_scaffold (3.4.11)
+      rails (>= 3.2.18, < 5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -312,8 +318,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_scaffold!
   activerecord-jdbcsqlite3-adapter
-  bundler (>= 1.0.0)
+  bundler (~> 1.0)
   localeapp
   mocha
   psych
