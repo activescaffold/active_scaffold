@@ -3,12 +3,13 @@ source "https://rubygems.org"
 # Example:
 #   gem "activesupport", ">= 2.3.5"
 
+gemspec
+
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 group :development, :test do
   gem "rake"
   gem "rdoc"
-  gem "bundler", ">= 1.0.0"
   gem "localeapp"
   gem "rack"
   platforms :rbx do
@@ -20,7 +21,6 @@ group :development, :test do
 end
 
 group :test do
-  gem "shoulda", ">= 0"
   gem "simplecov", ">= 0"
   gem "mocha"
   gem "rails", "~> 4.1.1"
