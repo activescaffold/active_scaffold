@@ -932,8 +932,8 @@ var ActiveScaffold = {
       if (send_form == 'row') base = element.closest('.association-record, form');
       if (selector = element.data('update_send_form_selector'))
         params = base.find(selector).serialize();
-      else if (send_form != as_form) params = base.find(':input').serialize();
-      else base.serialize();
+      else if (base != as_form) params = base.find(':input').serialize();
+      else params = base.serialize();
       params += '&_method=&' + jQuery.param({"source_id": source_id});
       if (additional_params) params += '&' + additional_params;
     } else {
