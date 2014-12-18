@@ -332,15 +332,43 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal person.id, model.contactable_id
     assert_equal person, model.contactable
     assert model.save
+    assert_equal 1, person.reload.contacts_count
 
     model = update_record_from_params(model, :update, :first_name, :contactable_type, :contactable, :first_name => 'Name', :contactable_type => person.class.name, :contactable => '')
     assert_equal 'Name', model.first_name
-    assert_nil model.contactable_type
     assert_nil model.contactable_id, 'contactable should be cleared'
     assert_nil model.contactable, 'contactable should be cleared'
     assert_equal person.id, Contact.find(model.id).contactable_id, 'contact should not be saved yet'
     assert model.save
     assert_nil Contact.find(model.id).contactable_id, 'contact should be saved'
+    assert_equal 0, person.reload.contacts_count
+  end
+
+  def test_saving_has_many_polymorphic_select
+    contacts = 2.times.map { Contact.create }
+    
+    model = update_record_from_params(Person.new, :create, :first_name, :contacts, :first_name => 'Me', :contacts => ['', contacts.first.id.to_s])
+    assert_equal 'Me', model.first_name
+    assert model.contacts.present?
+    assert model.save
+    assert_equal [model.id], model.contacts.map(&:contactable_id)
+    assert_equal model.id, contacts.first.reload.contactable.id, 'contactable should be saved'
+    assert_equal 1, model.reload.contacts_count
+    
+    model = update_record_from_params(model, :update, :first_name, :contacts, :first_name => 'Name', :contacts => ['', *contacts.map{|c| c.id.to_s}])
+    assert_equal 'Name', model.first_name
+    assert model.contacts.present?
+    assert model.save
+    assert_equal [model.id]*2, model.contacts.map(&:contactable_id)
+    assert_equal [model.id]*2, contacts.map {|c| c.reload.contactable.id}, 'contactable should be saved'
+    assert_equal 2, model.reload.contacts_count
+    
+    model = update_record_from_params(model, :update, :first_name, :contacts, :first_name => 'Name', :contacts => [''])
+    assert_equal 'Name', model.first_name
+    assert model.contacts.empty?
+    assert model.save
+    assert_equal [nil]*2, contacts.map {|c| c.reload.contactable}, 'contactable should be saved'
+    assert_equal 0, model.reload.contacts_count
   end
 
   protected
