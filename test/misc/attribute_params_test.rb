@@ -372,14 +372,12 @@ class AttributeParamsTest < MiniTest::Test
   end
 
   protected
-  MODELS = [Address, Building, Car, Contact, Floor, Person]
   def update_record_from_params(record, action, *columns, &block)
     params = columns.extract_options!.with_indifferent_access
     new_record = nil
     record.class.transaction do
       record = record.class.find(record.id) if record.persisted?
       new_record = @controller.update_record_from_params(record, build_action_columns(record, action, columns), params)
-      MODELS.each { |model| model.any_instance.unstub(:save) }
       yield if block_given?
       Thread.current[:constraint_columns] = nil
     end
