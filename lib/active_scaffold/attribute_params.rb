@@ -33,25 +33,42 @@ module ActiveScaffold
   module AttributeParams
     protected
     # workaround to update counters when belongs_to changes on persisted record on Rails 3
-    # TODO remove when rails3 support is removed
-    def rails3_counter_cache_hack(parent_record, column, value)
+    # workaround to update counters when polymorphic has_many changes on persisted record
+    # TODO remove when rails3 support is removed and counter cache for polymorphic has_many association works on rails4 (works on rails4.2)
+    def plural_association_counter_cache_hack(parent_record, column, value)
       association = parent_record.association(column.name)
-      if association.send(:has_cached_counter?)
-        counter_attr = association.send(:cached_counter_attribute_name)
-        difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
+      counter_attr = association.send(:cached_counter_attribute_name)
+      difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
 
-        if parent_record.new_record?
+      if parent_record.new_record?
+        if Rails.version < '4.2'
           parent_record.send "#{counter_attr}=", difference
+          parent_record.send "#{column.name}=", value
         else
-          # don't decrement counter for deleted records, on destroy they will update counter
-          difference += (parent_record.send(column.name) - value).size
-          association.send :update_counter, difference unless difference == 0
+          parent_record.send "#{column.name}=", value
+          parent_record.send "#{counter_attr}_will_change!"
         end
+      else
+        # don't decrement counter for deleted records, on destroy they will update counter
+        difference += (parent_record.send(column.name) - value).size
+        association.send :update_counter, difference unless difference == 0
+      end
 
-        # update counters on old parents if belongs_to is changed
-        value.select(&:persisted?).each do |record|
-          key = record.send(column.association.foreign_key)
-          parent_record.class.decrement_counter counter_attr, key if key != parent_record.id
+      # update counters on old parents if belongs_to is changed
+      value.select(&:persisted?).each do |record|
+        key = record.send(column.association.foreign_key)
+        parent_record.class.decrement_counter counter_attr, key if key && key != parent_record.id
+      end
+      parent_record.send "#{column.name}=", value if parent_record.persisted?
+    end
+    
+    # TODO remove when plural_association_counter_cache_hack is not needed
+    def plural_association_counter_cache_hack?(parent_record, column)
+      if column.plural_association? && parent_record.association(column.name).send(:has_cached_counter?)
+        if Rails.version < '4.0' # rails 3 needs this hack always
+          true
+        else # rails 4 needs this hack for polymorphic has_many
+          column.association.options[:as]
         end
       end
     end
@@ -59,7 +76,9 @@ module ActiveScaffold
     # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
     # TODO remove when pull request is merged and no version with bug is supported
     def counter_cache_hack?(column, value)
-      Rails.version >= '4.0' && column.association.try(:belongs_to?) && column.association.options[:counter_cache] && !value.is_a?(Hash)
+      if Rails.version >= '4.0' && !value.is_a?(Hash)
+        column.association.try(:belongs_to?) && column.association.options[:counter_cache] && !column.association.options[:polymorphic]
+      end
     end
 
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
@@ -89,24 +108,7 @@ module ActiveScaffold
           if multi_parameter_attributes.has_key? column.name.to_s
             parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name.to_s])
           elsif attributes.has_key? column.name
-            value = column_value_from_param_value(parent_record, column, attributes[column.name], avoid_changes)
-            if avoid_changes && column.plural_association?
-              parent_record.association(column.name).target = value
-            elsif counter_cache_hack?(column, attributes[column.name])
-              parent_record.send "#{column.association.foreign_key}=", value.try(:id)
-              parent_record.association(column.name).target = value
-            else
-              begin
-                rails3_counter_cache_hack(parent_record, column, value) if Rails.version < '4.0' && column.plural_association?
-                parent_record.send "#{column.name}=", value
-              rescue ActiveRecord::RecordNotSaved
-                parent_record.errors.add column.name, :invalid
-                parent_record.association(column.name).target = value if column.association
-              end
-            end
-            if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
-              Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
-            end
+            update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
           end
         rescue
           logger.error "#{$!.class.name}: #{$!.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
@@ -116,6 +118,30 @@ module ActiveScaffold
 
       flash[:warning] = parent_record.errors.to_a.join("\n") if parent_record.errors.present?
       parent_record
+    end
+    
+    def update_column_from_params(parent_record, column, attribute, avoid_changes = false)
+      value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
+      if avoid_changes && column.plural_association?
+        parent_record.association(column.name).target = value
+      elsif counter_cache_hack?(column, attribute)
+        parent_record.send "#{column.association.foreign_key}=", value.try(:id)
+        parent_record.association(column.name).target = value
+      else
+        begin
+          if plural_association_counter_cache_hack?(parent_record, column)
+            plural_association_counter_cache_hack(parent_record, column, value)
+          else
+            parent_record.send "#{column.name}=", value
+          end
+        rescue ActiveRecord::RecordNotSaved
+          parent_record.errors.add column.name, :invalid
+          parent_record.association(column.name).target = value if column.association
+        end
+      end
+      if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
+        Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
+      end
     end
 
     def column_value_from_param_value(parent_record, column, value, avoid_changes = false)
