@@ -371,6 +371,30 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 0, model.reload.contacts_count
   end
 
+  def test_saving_habtm_select
+    roles = 2.times.map { Role.create }
+    
+    model = update_record_from_params(Person.new, :create, :first_name, :roles, :first_name => 'Me', :roles => ['', roles.first.id.to_s])
+    assert_equal 'Me', model.first_name
+    assert model.roles.present?
+    assert model.save
+    assert_equal [[model.id]], model.roles.map(&:person_ids)
+    assert_equal [model.id], roles.first.reload.person_ids, 'role should be saved'
+    
+    model = update_record_from_params(model, :update, :first_name, :roles, :first_name => 'Name', :roles => ['', *roles.map{|c| c.id.to_s}])
+    assert_equal 'Name', model.first_name
+    assert model.roles.present?
+    assert model.save
+    assert_equal [[model.id]]*2, model.roles.map(&:person_ids)
+    assert_equal [[model.id]]*2, roles.map {|r| r.reload.person_ids}, 'roles should be saved'
+    
+    model = update_record_from_params(model, :update, :first_name, :roles, :first_name => 'Name', :roles => [''])
+    assert_equal 'Name', model.first_name
+    assert model.roles.empty?
+    assert model.save
+    assert roles.all? {|r| r.reload.people.empty?}, 'roles should be saved'
+  end
+
   protected
   def update_record_from_params(record, action, *columns, &block)
     params = columns.extract_options!.with_indifferent_access
