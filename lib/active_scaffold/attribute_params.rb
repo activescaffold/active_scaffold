@@ -108,7 +108,7 @@ module ActiveScaffold
           if multi_parameter_attributes.has_key? column.name.to_s
             parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name.to_s])
           elsif attributes.has_key? column.name
-            update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
+            value = update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
           end
         rescue
           logger.error "#{$!.class.name}: #{$!.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
@@ -142,6 +142,7 @@ module ActiveScaffold
       if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
         Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
       end
+      value
     end
 
     def column_value_from_param_value(parent_record, column, value, avoid_changes = false)
