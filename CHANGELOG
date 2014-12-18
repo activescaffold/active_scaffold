@@ -1,3 +1,5 @@
+- Workaround for counter_cache bug on polymorphic associations on rails4
+
 = 3.4.11
 - Fix refresh-link on main form (not subform)
 - Workaround for counter_cache bug on rails4 (https://github.com/rails/rails/pull/14849)
