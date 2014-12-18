@@ -52,4 +52,15 @@ ActiveRecord::Schema.define do
     t.datetime "updated_at"
   end
 
+  create_table 'roles' do |t|
+    t.string 'name'
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table 'people_roles', :id => false do |t|
+    t.integer 'person_id'
+    t.integer 'role_id'
+  end
+
 end
