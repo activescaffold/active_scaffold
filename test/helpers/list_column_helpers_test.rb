@@ -10,7 +10,7 @@ class ListColumnHelpersTest < ActionView::TestCase
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
     @column.form_ui = :select
     @record = stub(:a => 'value_2')
-    @config = stub(:list => stub(:empty_field_text => '-', :association_join_text => ', '))
+    @config = stub(:list => stub(:empty_field_text => '-', :association_join_text => ', '), :actions => [:list])
     @association_column = ActiveScaffold::DataStructures::Column.new(:b, ModelStub)
     @association_column.stubs(:association).returns(stub(:collection? => true))
   end
