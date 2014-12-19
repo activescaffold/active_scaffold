@@ -32,6 +32,7 @@ module ActiveScaffold::Actions
     def edit_respond_to_js
       render(:partial => 'update_form')
     end
+    
     def update_respond_to_html
       if params[:iframe]=='true' # was this an iframe post ?
         do_refresh_list if successful? && active_scaffold_config.update.refresh_list && !render_parent?
@@ -41,18 +42,19 @@ module ActiveScaffold::Actions
       else # just a regular post
         if successful?
           message = as_(:updated_model, :model => @record.to_label)
-	  if params[:dont_close]
-	    flash.now[:info] = message
-	    render(:action => 'update')
-	  else
-	    flash[:info] = message
-	    return_to_main
-	  end
+          if params[:dont_close]
+            flash.now[:info] = message
+            render(:action => 'update')
+          else
+            flash[:info] = message
+            return_to_main
+          end
         else
           render(:action => 'update')
         end
       end
     end
+    
     def update_respond_to_js
       if successful?
         if !render_parent? && active_scaffold_config.actions.include?(:list)
@@ -68,12 +70,15 @@ module ActiveScaffold::Actions
       end
       render :action => 'on_update'
     end
+    
     def update_respond_to_xml
       render :xml => response_object.to_xml(:only => update_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(update_columns_names), :methods => virtual_columns(update_columns_names)), :content_type => Mime::XML, :status => response_status
     end
+    
     def update_respond_to_json
       render :text => response_object.to_json(:only => update_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(update_columns_names), :methods => virtual_columns(update_columns_names)), :content_type => Mime::JSON, :status => response_status
     end
+    
     def update_respond_to_yaml
       render :text => Hash.from_xml(response_object.to_xml(:only => update_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(update_columns_names), :methods => virtual_columns(update_columns_names))).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
