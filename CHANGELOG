@@ -1,4 +1,6 @@
+= 3.4.12
 - Workaround for counter_cache bug on polymorphic associations on rails4
+- Improve use of CRUD actions without list action
 
 = 3.4.11
 - Fix refresh-link on main form (not subform)

@@ -48,7 +48,7 @@ module ActiveScaffold
             render_action_link(link, record, :link => text, :authorized => link.action.nil? || column_link_authorized?(link, column, record, associated))
           elsif inplace_edit?(record, column)
             active_scaffold_inplace_edit(record, column, {:formatted_column => text})
-          elsif active_scaffold_config.list.wrap_tag
+          elsif active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.wrap_tag
             content_tag active_scaffold_config.list.wrap_tag, text
           else
             text
@@ -176,7 +176,7 @@ module ActiveScaffold
 
       def format_value(column_value, options = {})
         value = if column_empty?(column_value)
-          active_scaffold_config.list.empty_field_text
+          empty_field_text
         elsif column_value.is_a?(Time) || column_value.is_a?(Date)
           l(column_value, :format => options[:format] || :default)
         elsif [FalseClass, TrueClass].include?(column_value.class)

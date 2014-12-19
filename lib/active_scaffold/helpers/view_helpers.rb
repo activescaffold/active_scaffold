@@ -492,7 +492,7 @@ module ActiveScaffold
         @_column_classes ||= {}
         @_column_classes[column.name] ||= begin
           classes = "#{column.name}-column "
-          classes << 'sorted ' if active_scaffold_config.list.user.sorting.sorts_on?(column)
+          classes << 'sorted ' if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.user.sorting.sorts_on?(column)
           classes << 'numeric ' if column.number?
           classes << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
         end
@@ -522,8 +522,12 @@ module ActiveScaffold
       def column_empty?(column_value)
         empty = column_value.nil?
         empty ||= false != column_value && column_value.blank?
-        empty ||= ['&nbsp;', active_scaffold_config.list.empty_field_text].include? column_value if String === column_value
+        empty ||= ['&nbsp;', empty_field_text].include? column_value if String === column_value
         return empty
+      end
+      
+      def empty_field_text
+        active_scaffold_config.list.empty_field_text if active_scaffold_config.actions.include?(:list)
       end
 
       def column_calculation(column)

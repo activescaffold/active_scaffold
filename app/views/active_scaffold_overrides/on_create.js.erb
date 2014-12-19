@@ -1,8 +1,11 @@
 try {
 var action_link;
-<% form_selector ||= "#{element_form_id(:action => :create)}"
-insert_at ||= :top -%>
-<% if active_scaffold_config.list.always_show_create -%>
+<%
+  form_selector ||= "#{element_form_id(:action => :create)}"
+  insert_at ||= :top 
+  always_show_create ||= active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
+-%>
+<% if always_show_create -%>
 <%= render :partial => 'update_messages' %>
 <% else -%>
 action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
@@ -26,7 +29,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
   <% end %>
 
   <% unless render_parent? %>
-    <% if active_scaffold_config.list.always_show_create %>
+    <% if always_show_create %>
       ActiveScaffold.reset_form('<%= form_selector %>');
     <% elsif params[:dont_close] %>
       ActiveScaffold.replace('<%= form_selector %>','<%= escape_javascript(render(:partial => 'create_form', :locals => {:xhr => true})) %>');

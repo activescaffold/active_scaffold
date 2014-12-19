@@ -19,7 +19,7 @@
   <% else %>
     <%
       url = main_path_to_return
-      url[:page] = [active_scaffold_config.list.user.page.to_i - 1, 1].max if url.is_a? Hash
+      url[:page] = [active_scaffold_config.list.user.page.to_i - 1, 1].max if url.is_a?(Hash) && active_scaffold_config.actions.include?(:list)
     %>
     ActiveScaffold.delete_record_row('<%= element_row_id(:action => 'list', :id => params[:id]) %>', '<%= url_for(url) %>');
     <%= render :partial => 'update_calculations', :formats => [:js] %>
