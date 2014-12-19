@@ -78,8 +78,7 @@ module ActiveScaffold::Actions
 
     def get_row(crud_type_or_security_options = :read)
       set_includes_for_columns
-      klass = beginning_of_chain.preload(active_scaffold_preload)
-      @record = find_if_allowed(params[:id], crud_type_or_security_options, klass)
+      super
     end
 
     # The actual algorithm to prepare for the list view
@@ -141,62 +140,11 @@ module ActiveScaffold::Actions
       authorized_for?(:crud_type => :read)
     end
 
-    # call this method in your action_link action to simplify processing of actions
-    # eg for member action_link :fire
-    # process_action_link_action do |record|
-    #   record.update_attributes(:fired => true)
-    #   self.successful = true
-    #   flash[:info] = 'Player fired'
-    # end
-    def process_action_link_action(render_action = :action_update, crud_type_or_security_options = nil)
-      if request.get?
-        # someone has disabled javascript, we have to show confirmation form first
-        @record = find_if_allowed(params[:id], :read) if params[:id]
-        respond_to_action(:action_confirmation)
-      else
-        @action_link = active_scaffold_config.action_links[action_name]
-        if params[:id]
-          crud_type_or_security_options ||= {:crud_type => (request.post? || request.put?) ? :update : :delete, :action => action_name}
-          get_row(crud_type_or_security_options)
-          unless @record.nil?
-            yield @record
-          else
-            self.successful = false
-            flash[:error] = as_(:no_authorization_for_action, :action => action_name)
-          end
-        else
-          yield
-        end
-        respond_to_action(render_action)
-      end
-    end
-
-    def action_confirmation_respond_to_html(confirm_action = action_name.to_sym)
-      link = active_scaffold_config.action_links[confirm_action]
-      render :action => 'action_confirmation', :locals => {:record => @record, :link => link}
-    end
-
-    def action_update_respond_to_html
-      redirect_to :action => 'index'
-    end
-
     def action_update_respond_to_js
       do_refresh_list unless @record.present?
-      render(:action => 'on_action_update')
+      super
     end
-
-    def action_update_respond_to_xml
-      render :xml => successful? ? "" : response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::XML, :status => response_status
-    end
-
-    def action_update_respond_to_json
-      render :text => successful? ? "" : response_object.to_json(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::JSON, :status => response_status
-    end
-
-    def action_update_respond_to_yaml
-      render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names))).to_yaml, :content_type => Mime::YAML, :status => response_status
-    end
-
+    
     def objects_for_etag
       objects = if @list_columns
         if active_scaffold_config.list.calculate_etag
