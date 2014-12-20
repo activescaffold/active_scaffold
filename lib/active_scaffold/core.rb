@@ -121,8 +121,8 @@ module ActiveScaffold
       end
 
       module Prefixes
-        def parent_prefixes
-          @parent_prefixes ||= super << 'active_scaffold_overrides'
+        def local_prefixes
+          @local_prefixes ||= super << 'active_scaffold_overrides'
         end
       end
 
