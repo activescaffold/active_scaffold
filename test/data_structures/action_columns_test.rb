@@ -5,6 +5,7 @@ require 'test_helper'
 class ActionColumnsTest < MiniTest::Test
   def setup
     @columns = ActiveScaffold::DataStructures::ActionColumns.new([:a, :b])
+    @columns.action = stub(:core => stub(:model_id => 'model_stub'))
   end
 
   def test_label
