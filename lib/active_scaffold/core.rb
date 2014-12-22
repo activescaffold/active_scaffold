@@ -121,8 +121,8 @@ module ActiveScaffold
       end
 
       module Prefixes
-        def parent_prefixes
-          @parent_prefixes ||= super << 'active_scaffold_overrides'
+        define_method Rails.version < '4.2' ? 'parent_prefixes' : 'local_prefixes' do
+          @local_prefixes ||= super() << 'active_scaffold_overrides'
         end
       end
 

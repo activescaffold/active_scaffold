@@ -1,3 +1,5 @@
+- fix parent_prefixes deprecation on rails 4.2
+
 = 3.4.12
 - Workaround for counter_cache bug on polymorphic associations on rails4
 - Improve use of CRUD actions without list action
