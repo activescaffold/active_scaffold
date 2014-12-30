@@ -1,4 +1,5 @@
 - fix parent_prefixes deprecation on rails 4.2
+- set parent record on add existing
 
 = 3.4.12
 - Workaround for counter_cache bug on polymorphic associations on rails4
