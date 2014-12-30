@@ -109,6 +109,10 @@ module ActiveScaffold
             nil
         end
       end
+
+      def record_select_params_for_add_existing(association, edit_associated_url_options, record)
+        {:onselect => "ActiveScaffold.record_select_onselect(#{url_for(edit_associated_url).to_json}, #{active_scaffold_id.to_json}, id);"}
+      end
     end
   end
 end
