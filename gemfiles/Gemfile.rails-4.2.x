@@ -22,7 +22,7 @@ group :test do
   gem "shoulda", ">= 0"
   gem "simplecov", ">= 0"
   gem "mocha"
-  gem "rails", :github => 'rails/rails', :branch => '4-2-stable'
+  gem "rails", "~> 4.2.0"
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
   end
