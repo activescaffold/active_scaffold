@@ -38,7 +38,7 @@ module ActiveScaffold
             end
             as_(:association, :scope => :human_conditions, :column => column.active_record_class.human_attribute_name(column.name), :value => associated.join(', '))
           when :boolean, :checkbox
-            label = column.column.type_cast(value) ? as_(:true) : as_(:false)
+            label = ActiveScaffold::Core.column_type_cast(value, column.column) ? as_(:true) : as_(:false)
             as_(:boolean, :scope => :human_conditions, :column => column.active_record_class.human_attribute_name(column.name), :value => label)
           when :null
             "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value.to_sym)}"

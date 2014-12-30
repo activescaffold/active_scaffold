@@ -92,6 +92,11 @@ class FinderTest < MiniTest::Test
     page = @klass.send :find_page, :pagination => :infinite
   end
 
+  def test_condition_for_column
+    column = ActiveScaffold::DataStructures::Column.new('adult', Person)
+    assert_equal ['"people"."adult" = ?', false], ClassWithFinder.condition_for_column(column, '0')
+  end
+
   private
   def relation_class
     @klass.active_scaffold_config.model.send(:relation).class

@@ -48,6 +48,7 @@ ActiveRecord::Schema.define do
     t.integer 'buildings_count', :null => false, :default => 0
     t.integer 'floors_count', :null => false, :default => 0
     t.integer 'contacts_count', :null => false, :default => 0
+    t.boolean 'adult', :null => false, :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
