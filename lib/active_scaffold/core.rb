@@ -273,5 +273,13 @@ module ActiveScaffold
       end
       raise ActiveScaffold::ControllerNotFound, "Could not find " + error_message.join(" or "), caller
     end
+
+    def self.column_type_cast(value, column)
+      if Rails.version < '4.2'
+        column.type_cast value
+      else
+        column.cast_type.type_cast_from_user value
+      end
+    end
   end
 end

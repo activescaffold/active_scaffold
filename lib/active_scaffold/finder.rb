@@ -26,7 +26,7 @@ module ActiveScaffold
         tokens.collect do |value|
           columns.inject([phrase]) do |condition, column|
             Array(column.search_sql).size.times do
-              condition.push(column.text? ? like_pattern.sub('?', value) : column.column.type_cast(value))
+              condition.push(column.text? ? like_pattern.sub('?', value) : ActiveScaffold::Core.column_type_cast(value, column.column))
             end
             condition
           end
@@ -52,7 +52,7 @@ module ActiveScaffold
             else
               case search_ui
               when :boolean, :checkbox
-                ["%{search_sql} = ?", column.column ? column.column.type_cast(value) : value]
+                ["%{search_sql} = ?", column.column ? ActiveScaffold::Core.column_type_cast(value, column.column) : value]
               when :integer, :decimal, :float
                 condition_for_numeric(column, value)
               when :string, :range
@@ -65,7 +65,7 @@ module ActiveScaffold
                 if column.text?
                   ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
                 else
-                  ["%{search_sql} = ?", column.column.type_cast(value)]
+                  ["%{search_sql} = ?", ActiveScaffold::Core.column_type_cast(value, column.column)]
                 end
               end
             end
@@ -100,7 +100,7 @@ module ActiveScaffold
           if column.text?
             ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
           else
-            ["%{search_sql} = ?", column.column.type_cast(value)]
+            ["%{search_sql} = ?", ActiveScaffold::Core.column_type_cast(value, column.column)]
           end
         elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
           condition_for_null_type(column, value[:opt], like_pattern)
