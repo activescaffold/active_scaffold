@@ -1,5 +1,6 @@
 - fix parent_prefixes deprecation on rails 4.2
 - set parent record on add existing
+- add record_select_params_for_add_existing to allow to set params on record select browse url, so add existing records are filtered
 
 = 3.4.12
 - Workaround for counter_cache bug on polymorphic associations on rails4
