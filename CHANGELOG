@@ -2,6 +2,7 @@
 - set parent record on add existing
 - add record_select_params_for_add_existing to allow to set params on record select browse url, so add existing records are filtered
 - fix search with date and boolean columns on rails 4.2
+- fix cache association for has many through
 
 = 3.4.12
 - Workaround for counter_cache bug on polymorphic associations on rails4
