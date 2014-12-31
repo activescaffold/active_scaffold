@@ -2,14 +2,6 @@ module ActiveScaffold
   module Core
     def self.included(base)
       base.extend(ClassMethods)
-      base.module_eval do
-        # TODO: these should be in actions/core
-        before_filter :handle_user_settings
-        before_filter :check_input_device
-      end
-
-      base.helper_method :touch_device?
-      base.helper_method :hover_via_click?
       base.helper_method :active_scaffold_constraints
     end
 
@@ -35,36 +27,6 @@ module ActiveScaffold
     def clear_storage
       session_index = active_scaffold_session_storage_key
       session.delete(session_index) unless session[session_index].present?
-    end
-
-    # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.
-    def handle_user_settings
-      if self.class.uses_active_scaffold?
-        storage = active_scaffold_config.store_user_settings ? active_scaffold_session_storage : {}
-        active_scaffold_config.actions.each do |action_name|
-          conf_instance = active_scaffold_config.send(action_name) rescue next
-          next if conf_instance.class::UserSettings == ActiveScaffold::Config::Base::UserSettings # if it hasn't been extended, skip it
-          conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, storage, params)
-        end
-      end
-    end
-
-    def check_input_device
-      if request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"][/(iPhone|iPod|iPad)/i]
-        session[:input_device_type] = 'TOUCH'
-        session[:hover_supported] = false
-      else
-        session[:input_device_type] = 'MOUSE'
-        session[:hover_supported] = true
-      end if session[:input_device_type].nil?
-     end
-
-    def touch_device?
-      session[:input_device_type] == 'TOUCH'
-    end
-
-    def hover_via_click?
-      session[:hover_supported] == false
     end
       
     module ClassMethods
