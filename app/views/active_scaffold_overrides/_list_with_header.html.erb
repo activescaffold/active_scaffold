@@ -9,7 +9,7 @@
         <tr>
           <td>
             <div class="active-scaffold show_search-view <%= "#{id_from_controller params[:controller]}-view" %> view">
-              <%= render :partial => active_scaffold_config.list.search_partial %>
+              <%= render :partial => active_scaffold_config.list.search_partial, :locals => {:xhr => true} %>
             </div> 
           </td> 
         </tr>

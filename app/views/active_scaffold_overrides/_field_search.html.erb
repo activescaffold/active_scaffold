@@ -1,8 +1,8 @@
-<% url_options = params_for(:action => :index, :search => nil) -%>
+<% url_options ||= params_for(:action => :index, :search => nil) -%>
 <%=
 options = {:id => element_form_id(:action => 'search'),
            :class => "as_form search",
-           :remote => true,
+           :remote => xhr ||= request.xhr?,
            :method => :get,
            'data-loading' => true}
 form_tag url_options, options %>
@@ -28,7 +28,7 @@ form_tag url_options, options %>
   </ol>
   <p class="form-footer">
     <%= submit_tag as_(:search), :class => "submit" %>
-    <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), :class => 'as_cancel reset', :remote => true, :data => {:refresh => true} %>
+    <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), :class => 'as_cancel reset', :remote => true, :data => {:refresh => true} unless local_assigns[:skip_reset] %>
     <%= loading_indicator_tag(:action => :search) %>
   </p>
 </form>
