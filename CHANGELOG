@@ -4,6 +4,8 @@
 - fix search with date and boolean columns on rails 4.2
 - fix cache association for has many through
 - move handle_user_settings and check_input_device filters to Actions::Core so filters are not added to ActionController::Base, see cb2fabd
+- allow to use search and field_search without remote request
+- allow to remove reset button in search and field_search
 
 = 3.4.12
 - Workaround for counter_cache bug on polymorphic associations on rails4
