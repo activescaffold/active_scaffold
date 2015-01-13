@@ -1,5 +1,8 @@
 module ActiveScaffold
   module Constraints
+    def self.included(base)
+      base.helper_method :active_scaffold_constraints
+    end
 
     protected
 
@@ -22,14 +25,12 @@ module ActiveScaffold
         end
       end
 
-      if self.class.uses_active_scaffold?
-        # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
-        active_scaffold_config.actions.each do |action_name|
-          next if exclude_actions.include?(action_name)
-          action = active_scaffold_config.send(action_name)
-          next unless action.respond_to? :columns
-          action.columns.constraint_columns = constrained_fields
-        end
+      # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
+      active_scaffold_config.actions.each do |action_name|
+        next if exclude_actions.include?(action_name)
+        action = active_scaffold_config.send(action_name)
+        next unless action.respond_to? :columns
+        action.columns.constraint_columns = constrained_fields
       end
     end
 
