@@ -84,6 +84,7 @@ end
 class ConstraintsTestObject
   # stub out what the mixin expects to find ...
   def self.before_filter(*args); end
+  def self.helper_method(*); end
   attr_accessor :active_scaffold_preload
   attr_accessor :active_scaffold_references
   attr_accessor :active_scaffold_habtm_joins
