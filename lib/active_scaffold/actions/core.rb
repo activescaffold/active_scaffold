@@ -238,6 +238,22 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], crud_type_or_security_options, klass)
     end
 
+    def active_scaffold_session_storage_key(id = nil)
+      id ||= params[:eid] || "#{params[:controller]}#{"_#{nested_parent_id}" if nested?}"
+      "as:#{id}"
+    end
+
+    def active_scaffold_session_storage(id = nil)
+      session_index = active_scaffold_session_storage_key(id)
+      session[session_index] ||= {}
+      session[session_index]
+    end
+
+    def clear_storage
+      session_index = active_scaffold_session_storage_key
+      session.delete(session_index) unless session[session_index].present?
+    end
+
     # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.
     def handle_user_settings
       storage = active_scaffold_config.store_user_settings ? active_scaffold_session_storage : {}

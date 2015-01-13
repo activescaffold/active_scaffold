@@ -11,22 +11,6 @@ module ActiveScaffold
     def active_scaffold_config_for(klass)
       self.class.active_scaffold_config_for(klass)
     end
-
-    def active_scaffold_session_storage_key(id = nil)
-      id ||= params[:eid] || "#{params[:controller]}#{"_#{nested_parent_id}" if nested?}"
-      "as:#{id}"
-    end
-
-    def active_scaffold_session_storage(id = nil)
-      session_index = active_scaffold_session_storage_key(id)
-      session[session_index] ||= {}
-      session[session_index]
-    end
-
-    def clear_storage
-      session_index = active_scaffold_session_storage_key
-      session.delete(session_index) unless session[session_index].present?
-    end
       
     module ClassMethods
       def active_scaffold(model_id = nil, &block)
