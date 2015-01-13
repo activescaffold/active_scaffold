@@ -1,3 +1,4 @@
+= 3.4.14
 - fix filter order in AS controllers which inherit from AS controllers
 - clean code
 
