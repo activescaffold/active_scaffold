@@ -43,10 +43,12 @@ module ActiveScaffold
         end
         # include the rest of the code into the controller: the action core and the included actions
         module_eval do
-          include ActiveScaffold::Finder
-          include ActiveScaffold::Constraints
-          include ActiveScaffold::AttributeParams
-          include ActiveScaffold::Actions::Core
+          unless self < ActiveScaffold::Actions::Core
+            include ActiveScaffold::Finder
+            include ActiveScaffold::Constraints
+            include ActiveScaffold::AttributeParams
+            include ActiveScaffold::Actions::Core
+          end
           active_scaffold_config.actions.each do |mod|
             name = mod.to_s.camelize
             include "ActiveScaffold::Actions::#{name}".constantize

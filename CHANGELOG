@@ -1,3 +1,6 @@
+- fix filter order in AS controllers which inherit from AS controllers
+- clean code
+
 = 3.4.13
 - fix parent_prefixes deprecation on rails 4.2
 - set parent record on add existing
