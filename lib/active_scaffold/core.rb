@@ -2,7 +2,6 @@ module ActiveScaffold
   module Core
     def self.included(base)
       base.extend(ClassMethods)
-      base.helper_method :active_scaffold_constraints
     end
 
     def active_scaffold_config
