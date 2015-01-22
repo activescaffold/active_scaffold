@@ -37,7 +37,7 @@ module ActiveScaffold::Actions
       end
 
       def search_ignore?
-        active_scaffold_config.list.always_show_search == :search || global_search_ignore?
+        active_scaffold_config.list.always_show_search && active_scaffold_config.list.search_partial == 'search'
       end
 
       private
