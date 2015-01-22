@@ -38,10 +38,6 @@ module ActiveScaffold::Actions
       def search_params
         @search_params || active_scaffold_session_storage['search']
       end
-
-      def global_search_ignore?
-        active_scaffold_config.list.always_show_search == true
-      end
       
       # The default security delegates to ActiveRecordPermissions.
       # You may override the method to customize.
