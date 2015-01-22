@@ -129,7 +129,7 @@ jQuery(document).ready(function($) {
       action_link.close();
     } else if (link.hasClass('reset')) {
       var form = link.closest('form');
-      if (form.is('.search')) form.find(':input:visible').val('');
+      if (form.is('.search')) form.find(':input:visible:not([type=submit])').val('');
       else form.trigger('reset');
     }
     return true;
