@@ -1,4 +1,4 @@
-= 3.4.15
+= 3.4.16
 - add scoped_query to list methods, so it can be used for calculations, like each_record_in_scope is used to iterate over every filtered record
 - fix field_search_ignore? and search_ignore?
 - fix reset on search forms loaded with session search
