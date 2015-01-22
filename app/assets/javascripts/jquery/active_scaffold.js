@@ -127,7 +127,11 @@ jQuery(document).ready(function($) {
 
     if (action_link && action_link.position) {
       action_link.close();
-    } else if (link.hasClass('reset')) link.closest('form').get(0).reset();
+    } else if (link.hasClass('reset')) {
+      var form = link.closest('form');
+      if (form.is('search')) form.find(':input:visible').val('');
+      else form.trigger('reset');
+    }
     return true;
   });
   jQuery(document).on('ajax:error', 'a.as_cancel', function(event, xhr, status, error) {
