@@ -13,7 +13,7 @@ module ActiveScaffold::Actions
       else
         do_demark
       end
-      if marked_records.length > 0
+      if marked_records.any?
         count = marked_records.length
         flash[:info] = as_(:records_marked, :count => count, :model => active_scaffold_config.label(:count => count))
       end
@@ -37,7 +37,7 @@ module ActiveScaffold::Actions
         render :action => 'on_mark', :locals => {:checked => mark?}
       end
     end
- 
+
     # We need to give the ActiveRecord classes a handle to currently marked records. We don't want to just pass the object,
     # because the object may change. So we give ActiveRecord a proc that ties to the marked_records_method on this ApplicationController.
     def assign_marked_records_to_model
@@ -71,12 +71,12 @@ module ActiveScaffold::Actions
         each_record_in_scope { |record| record.as_marked = false }
       end
     end
-    
+
     def do_destroy
       super
       @record.as_marked = false if successful?
     end
-    
+
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def mark_authorized?

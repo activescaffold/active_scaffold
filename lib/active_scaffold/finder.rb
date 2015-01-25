@@ -10,7 +10,7 @@ module ActiveScaffold
       # token is found in at least one of the columns.
       def create_conditions_for_columns(tokens, columns, text_search = :full)
         # if there aren't any columns, then just return a nil condition
-        return unless columns.length > 0
+        return unless columns.any?
         like_pattern = like_pattern(text_search)
 
         tokens = [tokens] if tokens.is_a? String
@@ -132,7 +132,7 @@ module ActiveScaffold
         end
         value
       end
-      
+
       def condition_value_for_datetime(column, value, conversion = :to_time)
         if value.is_a? Hash
           Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[part].to_i}) rescue nil
@@ -184,7 +184,7 @@ module ActiveScaffold
           value
         end
       end
-      
+
       def datetime_conversion_for_condition(column)
         if column.column
           column.column.type == :date ? :to_date : :to_time
@@ -192,7 +192,7 @@ module ActiveScaffold
           :to_time
         end
       end
-            
+
       def condition_for_datetime(column, value, like_pattern = nil)
         conversion = datetime_conversion_for_condition(column)
         from_value = condition_value_for_datetime(column, value[:from], conversion)
@@ -216,7 +216,7 @@ module ActiveScaffold
           ["%{search_sql} = ?", value]
         end
       end
-      
+
       def condition_for_null_type(column, value, like_pattern = nil)
         case value.to_sym
         when :null
@@ -256,8 +256,8 @@ module ActiveScaffold
       'null',
       'not_null'
     ]
-    
-    
+
+
 
     def self.included(klass)
       klass.extend ClassMethods
@@ -289,12 +289,12 @@ module ActiveScaffold
     def active_scaffold_habtm_joins
       @active_scaffold_habtm_joins ||= []
     end
-    
+
     attr_writer :active_scaffold_outer_joins
     def active_scaffold_outer_joins
       @active_scaffold_outer_joins ||= []
     end
-    
+
     attr_writer :active_scaffold_references
     def active_scaffold_references
       @active_scaffold_references ||= []
@@ -303,11 +303,11 @@ module ActiveScaffold
     # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
     def conditions_for_collection
     end
-  
+
     # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).  The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
     def joins_for_collection
     end
-  
+
     # Override this method on your controller to provide custom finder options to the find() call. The return of this method should be a hash.
     def custom_finder_options
       {}
@@ -327,7 +327,7 @@ module ActiveScaffold
     def id_condition
       {active_scaffold_config.model.primary_key => params[:id]} if params[:id]
     end
-    
+
     # returns a single record (the given id) but only if it's allowed for the specified security options.
     # security options can be a hash for authorized_for? method or a value to check as a :crud_type
     # accomplishes this by checking model.#{action}_authorized?
@@ -361,7 +361,7 @@ module ActiveScaffold
         end
         finder_options.merge!(:references => active_scaffold_references)
       end
-    
+
       finder_options.merge! custom_finder_options
       finder_options
     end
@@ -371,9 +371,9 @@ module ActiveScaffold
       options = find_options.reject{|k,v| [:select, :reorder].include? k}
       # NOTE: we must use includes in the count query, because some conditions may reference other tables
       options[:includes] = count_includes
-      
+
       count = append_to_query(query, options).count
-  
+
       # Converts count to an integer if ActiveRecord returned an OrderedHash
       # that happens when find_options contains a :group key
       count = count.length if count.is_a?(Hash)
@@ -389,7 +389,7 @@ module ActiveScaffold
 
       find_options = finder_options(options)
       query = beginning_of_chain.where(nil) # where(nil) is needed because we need a relation
-      
+
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
       if options[:pagination] && options[:pagination] != :infinite
         count = count_items(query, find_options, options[:count_includes])
@@ -430,7 +430,7 @@ module ActiveScaffold
       subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => outer_joins, :select => active_scaffold_config.columns[primary_key].field)
       active_scaffold_config.model.where(primary_key => subquery)
     end
-    
+
     def append_to_query(query, options)
       options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, (:references if Rails::VERSION::MAJOR >= 4)
       query = options.reject{|k,v| v.blank?}.inject(query) do |query, (k, v)|
@@ -438,7 +438,7 @@ module ActiveScaffold
       end
       if options[:outer_joins].present?
         if Rails::VERSION::MAJOR >= 4
-          query.distinct_value = true 
+          query.distinct_value = true
         else
           query = query.uniq
         end
@@ -456,7 +456,7 @@ module ActiveScaffold
           []
       end + active_scaffold_habtm_joins
     end
-    
+
     def apply_conditions(query, *conditions)
       conditions.reject(&:blank?).inject(query) do |query, condition|
         if condition.is_a?(Array) && !condition.first.is_a?(String) # multiple conditions
