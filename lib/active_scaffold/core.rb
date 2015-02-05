@@ -186,7 +186,8 @@ module ActiveScaffold
       end
 
       def active_scaffold_controller_for(klass)
-        ActiveScaffold::Core.active_scaffold_controller_for(klass, self.to_s.split('::')[0...-1].join('::') + '::')
+        return self if uses_active_scaffold? && klass == active_scaffold_config.model
+        ActiveScaffold::Core.active_scaffold_controller_for(klass, self.to_s.deconstantize + '::')
       end
 
 
@@ -200,8 +201,9 @@ module ActiveScaffold
     # You may override this method to customize the search routine.
     def self.active_scaffold_controller_for(klass, controller_namespace = '::')
       error_message = []
+      class_names = [klass.to_s, klass.to_s.demodulize].map { |k| k.underscore.pluralize }.map { |k| [k, k.singularize] }.flatten
       [controller_namespace, ''].each do |namespace|
-        ["#{klass.to_s.underscore.pluralize}", "#{klass.to_s.underscore.pluralize.singularize}"].each do |controller_name|
+        class_names.each do |controller_name|
           begin
             controller = "#{namespace}#{controller_name.camelize}Controller".constantize
           rescue NameError => error
