@@ -15,6 +15,12 @@ module Config
       refute @config.create.persistent
       assert @config.create.action_after_create.nil?
       assert_equal 'Create Model stub', @config.create.label
+      assert @config.columns[:b].required?
+    end
+    
+    def test_override_required
+      @config.configure { |conf| conf.columns[:b].required = false }
+      refute @config.columns[:b].required?
     end
 
     def test_link_defaults
