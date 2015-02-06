@@ -1,4 +1,5 @@
 class ModelStub < ActiveRecord::Base
+  validates :b, :presence => true
   has_one :other_model, :class_name => 'ModelStub'
   has_many :other_models, :class_name => 'ModelStub'
   
