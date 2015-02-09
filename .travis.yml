@@ -4,7 +4,6 @@ rvm:
   - 2.0.0
   - rbx-2.2
   - jruby-19mode
-script: bundle exec rake test
 gemfile:
   - gemfiles/Gemfile.rails-3.2.x
   - gemfiles/Gemfile.rails-4.0.x
