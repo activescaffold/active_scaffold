@@ -8,7 +8,7 @@
     <% css_class = "#{column.name}-view"
      css_class.concat(" #{column.css_class}") unless column.css_class.nil? %>
     <dd class="<%= css_class.strip %>">
-    <%= show_column_value(@record, column) -%> &nbsp;
+    <%= show_column_value(@record, column) -%>
 <% end -%>
   </dd>
 <% end -%>
