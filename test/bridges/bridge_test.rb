@@ -64,6 +64,15 @@ class BridgeTest < MiniTest::Test
       assert(bridge_will_be_installed("SemanticAttributes"))
     end
   end
+  
+  def test__paper_trail_bridge
+    ConstMocker.mock("PaperTrail") do |cm|
+      cm.remove
+      assert(! bridge_will_be_installed("PaperTrail"))
+      cm.declare
+      assert(bridge_will_be_installed("PaperTrail"))
+    end
+  end
 
 protected
 

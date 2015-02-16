@@ -1,3 +1,5 @@
+- Fix paper_trail bridge on development
+
 = 3.4.17
 - Fix deprecation warning "Extra .css in SCSS file is unnecessary"
 - Improve support for namespaced models on namespaced controllers with different namespace
