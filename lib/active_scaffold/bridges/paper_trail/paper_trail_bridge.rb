@@ -15,3 +15,4 @@ module ActiveScaffold
     end
   end
 end
+ActiveScaffold::Config::Core.send :include, ActiveScaffold::Bridges::PaperTrail::PaperTrailBridge

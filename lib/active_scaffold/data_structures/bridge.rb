@@ -3,6 +3,9 @@ module ActiveScaffold::DataStructures
     def self.install
       raise(RunTimeError, "install not defined for bridge #{name}")
     end
+    
+    def self.prepare
+    end
       
     # by convention and default, use the bridge name as the required constant for installation
     def self.install?
