@@ -7,6 +7,7 @@ module ActiveScaffold
 
     mattr_accessor :bridges
     mattr_accessor :bridges_run
+    mattr_accessor :bridges_prepared
     self.bridges = {}
 
     def self.register(file)
@@ -38,6 +39,15 @@ module ActiveScaffold
         bridge.run if bridge
       end
       self.bridges_run = true
+    end
+      
+    def self.prepare_all
+      return false if self.bridges_prepared
+      self.bridges.keys.each do |bridge_name|
+        bridge = self[bridge_name]
+        bridge.prepare if bridge.install?
+      end
+      self.bridges_prepared = true
     end
 
     def self.all_stylesheets
