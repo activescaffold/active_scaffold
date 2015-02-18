@@ -7,8 +7,6 @@ class ActiveScaffold::Bridges::PaperTrail < ActiveScaffold::DataStructures::Brid
   end
   
   def self.prepare
-    puts 'prepare papertrail'
     ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection][:deleted] = :get
-    puts ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING.inspect
   end
 end
