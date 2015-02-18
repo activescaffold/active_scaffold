@@ -9,7 +9,6 @@ gemfile:
   - gemfiles/Gemfile.rails-4.0.x
   - gemfiles/Gemfile.rails-4.2.x
   - Gemfile
-install: "bundle install"
 matrix:
   allow_failures:
     - rvm: jruby-19mode
