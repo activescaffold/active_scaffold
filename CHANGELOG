@@ -1,4 +1,5 @@
 - Fix paper_trail bridge on development
+- Allow to set :data hash in :html_options for action links
 
 = 3.4.17
 - Fix deprecation warning "Extra .css in SCSS file is unnecessary"
