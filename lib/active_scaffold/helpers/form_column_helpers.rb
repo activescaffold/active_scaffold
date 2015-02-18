@@ -522,7 +522,7 @@ module ActiveScaffold
         record = options.delete(:object)
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
-        if ActiveScaffold.js_framework == :prototype && controller.respond_to?(:record_select_config, true)
+        if controller.respond_to?(:record_select_config, true)
           remote_controller = active_scaffold_controller_for(record_select_config.model).controller_path
           options.merge!(:controller => remote_controller)
           options.merge!(active_scaffold_input_text_options)
