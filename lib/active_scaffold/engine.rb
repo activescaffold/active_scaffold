@@ -7,7 +7,6 @@ module ActiveScaffold
         include ActiveScaffold::RespondsToParent
         include ActiveScaffold::Helpers::ControllerHelpers
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Controller
-        puts 'prepare_all'
         ActiveScaffold::Bridges.prepare_all
       end
     end
