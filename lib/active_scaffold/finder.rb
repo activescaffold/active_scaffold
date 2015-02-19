@@ -428,6 +428,7 @@ module ActiveScaffold
       outer_joins += includes if includes
       primary_key = active_scaffold_config.model.primary_key
       subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => outer_joins, :select => active_scaffold_config.columns[primary_key].field)
+      subquery = subquery.unscope(:order) if Rails::VERSION::MAJOR >= 4
       active_scaffold_config.model.where(primary_key => subquery)
     end
 
