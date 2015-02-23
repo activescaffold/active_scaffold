@@ -11,7 +11,7 @@ module ActiveScaffold::DataStructures
       @clauses = []
       @constraint_columns = []
     end
-    
+
     def set_default_sorting(model)
       model_scope = model.send(:build_default_scope)
       order_clause = model_scope.order_values.join(",") if model_scope
@@ -33,7 +33,7 @@ module ActiveScaffold::DataStructures
       clear
       set_sorting_from_order_clause(order_clause, table_name)
     end
-    
+
     # add a clause to the sorting, assuming the column is sortable
     def add(column_name, direction = nil)
       direction ||= 'ASC'
@@ -147,7 +147,7 @@ module ActiveScaffold::DataStructures
     def mixed_sorting?
       sorts_by_method? and sorts_by_sql?
     end
-    
+
     def default_sorting?
       @default_sorting
     end
@@ -161,7 +161,7 @@ module ActiveScaffold::DataStructures
         end
       end
     end
-    
+
     def extract_order_parts(criterion_parts)
       column_name_part, direction_part = criterion_parts.strip.split(' ')
       column_name_parts = column_name_part.split('.')
@@ -170,11 +170,11 @@ module ActiveScaffold::DataStructures
       order[:table_name] = remove_quotes(column_name_parts[-2]) if column_name_parts.length >= 2
       order
     end
-    
+
     def different_table?(model_table_name, order_table_name)
       !order_table_name.nil? && model_table_name != order_table_name
     end
-    
+
     def remove_quotes(sql_name)
       if sql_name.starts_with?('"') || sql_name.starts_with?('`')
         sql_name[1, (sql_name.length - 2)]
@@ -182,7 +182,7 @@ module ActiveScaffold::DataStructures
         sql_name
       end
     end
-    
+
     def extract_direction(direction_part)
       if direction_part.to_s.upcase == 'DESC'
         'DESC'

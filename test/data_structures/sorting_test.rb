@@ -100,7 +100,7 @@ class SortingTest < MiniTest::Test
     assert_raises ArgumentError do
       @sorting.add :b
     end
-    
+
     #test pure sql sorting: false
     @sorting.clear
     @sorting.add :b
@@ -115,12 +115,12 @@ class SortingTest < MiniTest::Test
 
     assert_equal '"model_stubs"."a" DESC, "model_stubs"."b" ASC', @sorting.clause.join(', ')
   end
-  
+
   def test_set_default_sorting_with_simple_default_scope
     model_stub_with_default_scope = ModelStub.clone
     model_stub_with_default_scope.class_eval { default_scope lambda { order('a') } }
     @sorting.set_default_sorting model_stub_with_default_scope
-    
+
     assert @sorting.sorts_on?(:a)
     assert_equal 'ASC', @sorting.direction_of(:a)
     assert_nil @sorting.clause
@@ -130,7 +130,7 @@ class SortingTest < MiniTest::Test
     model_stub_with_default_scope = ModelStub.clone
     model_stub_with_default_scope.class_eval { default_scope lambda { order('a DESC, players.last_name ASC') } }
     @sorting.set_default_sorting model_stub_with_default_scope
-    
+
     assert @sorting.sorts_on?(:a)
     assert_equal 'DESC', @sorting.direction_of(:a)
     assert_equal 1, @sorting.instance_variable_get(:@clauses).size

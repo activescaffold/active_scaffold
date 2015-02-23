@@ -48,11 +48,11 @@ module ActiveScaffold
   self.stylesheets = []
   mattr_accessor :javascripts
   self.javascripts = []
-  
+
   def self.js_framework=(framework)
     @@js_framework = framework
   end
-  
+
   def self.js_framework
     @@js_framework ||= if defined? Jquery
       :jquery

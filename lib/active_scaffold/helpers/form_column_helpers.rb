@@ -58,7 +58,7 @@ module ActiveScaffold
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
         raise e
       end
-      
+
       def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil)
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, call with record.", caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
@@ -110,7 +110,7 @@ module ActiveScaffold
         # Fix for keeping unique IDs in subform
         id_control = "record_#{column.name}_#{[params[:eid], params[:parent_id] || params[:id]].compact.join '_'}"
         id_control += scope_id(scope) if scope
-        
+
         classes = "#{column.name}-input"
         classes += ' numeric-input' if column.number?
 
@@ -154,7 +154,7 @@ module ActiveScaffold
       def field_attributes(column, record)
         {}
       end
-      
+
       def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil)
         if override_form_field_partial?(column)
           render :partial => override_form_field_partial(column), :locals => { :column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record }
@@ -166,7 +166,7 @@ module ActiveScaffold
           form_hidden_attribute(column, record, scope)
         end
       end
-      
+
       def form_attribute(column, record, scope = nil, only_value = false, col_class = nil)
         column_options = active_scaffold_input_options(column, scope, :object => record)
         attributes = field_attributes(column, record)
@@ -177,7 +177,7 @@ module ActiveScaffold
           content_tag(:span, get_column_value(record, column), column_options.except(:name, :object)) <<
           hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
         end
-        
+
         content_tag :dl, attributes do
           %|<dt>#{label_tag label_for(column, column_options), column.label}</dt><dd>#{field}
 #{loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns}
@@ -193,7 +193,7 @@ module ActiveScaffold
       def subform_label(column, hidden)
         column.label unless hidden
       end
-      
+
       def form_hidden_attribute(column, record, scope = nil)
         %|<dl style="display: none;"><dt></dt><dd>
 #{hidden_field :record, column.name, active_scaffold_input_options(column, scope).merge(:object => record)}
@@ -228,7 +228,7 @@ module ActiveScaffold
       ##
       ## Form input methods
       ##
-      
+
       def active_scaffold_grouped_options(column, select_options, optgroup)
         group_column = active_scaffold_config_for(column.association.klass).columns[optgroup]
         group_label = group_column.options[:label_method] if group_column
@@ -243,7 +243,7 @@ module ActiveScaffold
         options[:prompt] = as_(options[:prompt].to_s) if options[:prompt].is_a? Symbol
         options
       end
-      
+
       def active_scaffold_input_singular_association(column, html_options)
         record = html_options.delete(:object)
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
@@ -295,7 +295,7 @@ module ActiveScaffold
         ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         associated_options, select_options = active_scaffold_plural_association_options(column, record)
-        
+
         html = if select_options.empty?
           content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id])
         else
@@ -306,12 +306,12 @@ module ActiveScaffold
       end
 
       def active_scaffold_checkbox_option(option, label_method, associated_ids, checkbox_options, li_options = {})
-        content_tag(:li, li_options) do 
+        content_tag(:li, li_options) do
           check_box_tag(checkbox_options[:name], option.id, associated_ids.include?(option.id), checkbox_options) <<
           content_tag(:label, option.send(label_method), :for => checkbox_options[:id])
         end
       end
-      
+
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
         label_method = column.options[:label_method] || :to_label
         html = hidden_field_tag("#{options[:name]}[]", '', :id => nil)
@@ -329,7 +329,7 @@ module ActiveScaffold
         value = text if value.nil?
         [(text.is_a?(Symbol) ? column.active_record_class.human_attribute_name(text) : text), value]
       end
-      
+
       def active_scaffold_enum_options(column, record = nil)
         column.options[:options]
       end
@@ -389,7 +389,7 @@ module ActiveScaffold
       def active_scaffold_input_textarea(column, options)
         text_area(:record, column.name, options.merge(:cols => column.options[:cols], :rows => column.options[:rows], :size => column.options[:size]))
       end
-      
+
       def active_scaffold_input_virtual(column, options)
         options = active_scaffold_input_text_options(options)
         text_field :record, column.name, options.merge(column.options)
@@ -551,7 +551,7 @@ module ActiveScaffold
             v.is_a? ActiveModel::Validations::NumericalityValidator and v.attributes.include? column.name
           end
           equal_to = (v = validators.find{ |v| v.options[:equal_to] }) ? v.options[:equal_to] : nil
-          
+
           # If there is equal_to constraint - use it (unless otherwise specified by user)
           if equal_to and not (options[:min] or options[:max])
             numerical_constraints[:min] = numerical_constraints[:max] = equal_to
@@ -560,21 +560,21 @@ module ActiveScaffold
             only_integer = column.column.type == :integer if column.column
             only_integer ||= !!validators.find{ |v| v.options[:only_integer] }
             margin = only_integer ? 1 : 0
-            
+
             # Minimum
             unless options[:min]
               min = validators.map{ |v| v.options[:greater_than_or_equal] }.compact.max
               greater_than = validators.map{ |v| v.options[:greater_than] }.compact.max
               numerical_constraints[:min] = [min, (greater_than+margin if greater_than)].compact.max
             end
-            
+
             # Maximum
             unless options[:max]
               max = validators.map{ |v| v.options[:less_than_or_equal] }.compact.min
               less_than = validators.map{ |v| v.options[:less_than] }.compact.min
               numerical_constraints[:max] = [max, (less_than-margin if less_than)].compact.min
             end
-            
+
             # Set step = 2 for column values restricted to be odd or even (but only if minimum is set)
             unless options[:step]
               only_odd_valid  = validators.any?{ |v| v.options[:odd] }
@@ -589,7 +589,7 @@ module ActiveScaffold
               numerical_constraints[:step] ||= 'any' unless only_integer
             end
           end
-          
+
           column.numerical_constraints = numerical_constraints
         end
         return column.numerical_constraints.merge(options)

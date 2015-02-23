@@ -5,31 +5,31 @@ module Config
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
     end
-    
+
     def test__params_for_columns__returns_all_params
       @config._load_action_columns
       @config.columns[:a].params.add :keep_a, :a_temp
       assert @config.columns[:a].params.include?(:keep_a)
       assert @config.columns[:a].params.include?(:a_temp)
     end
-    
+
     def test_default_options
       refute @config.update.persistent
       refute @config.update.nested_links
       assert_equal 'Model stub', @config.update.label
     end
-    
+
     def test_persistent
       @config.update.persistent = true
       assert @config.update.persistent
     end
-    
+
     def test_nested_links
       old, @config.update.nested_links = @config.update.nested_links, true
       assert @config.update.nested_links
       @config.update.nested_links = old
     end
-    
+
     def test_label
       label = 'update new monkeys'
       @config.update.label = label

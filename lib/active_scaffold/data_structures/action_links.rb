@@ -107,7 +107,7 @@ module ActiveScaffold::DataStructures
         end
       end
     end
-    
+
     def collect_by_type(type = nil)
       links = []
       subgroup(type).each(type) {|link| links << link}

@@ -13,7 +13,7 @@ module ActiveScaffold::DataStructures
       self.clear_link if value
       @inplace_edit = value
     end
-    
+
     attr_accessor :inplace_edit_update
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
@@ -21,10 +21,10 @@ module ActiveScaffold::DataStructures
 
     # Whether to enable add_existing for this column
     attr_accessor :allow_add_existing
-    
+
     # What columns load from main table
     attr_accessor :select_columns
-    
+
     # Any extra parameters this particular column uses.  This is for create/update purposes.
     def params
       # lazy initialize
@@ -63,9 +63,9 @@ module ActiveScaffold::DataStructures
     def required?
       @required
     end
-    
+
     attr_reader :update_columns
-    
+
     # update dependent columns after value change in form
     #  update_columns = :name
     #  update_columns = [:name, :age]
@@ -176,7 +176,7 @@ module ActiveScaffold::DataStructures
     attr_reader :includes
     def includes=(value)
       @includes = case value
-        when Array then value 
+        when Array then value
         else value ? [value] : value # not convert nil to [nil]
       end
     end
@@ -188,7 +188,7 @@ module ActiveScaffold::DataStructures
 
     def search_joins=(value)
       @search_joins = case value
-        when Array then value 
+        when Array then value
         else [value] # automatically convert to an array
       end
     end
@@ -246,7 +246,7 @@ module ActiveScaffold::DataStructures
     cattr_accessor :actions_for_association_links
     @@actions_for_association_links = [:new, :edit, :show]
     attr_accessor :actions_for_association_links
-    
+
     cattr_accessor :association_form_ui
     @@association_form_ui = nil
 
@@ -285,7 +285,7 @@ module ActiveScaffold::DataStructures
     def virtual?
       column.nil? && association.nil?
     end
-    
+
     attr_writer :number
     def number?
       @number
@@ -341,7 +341,7 @@ module ActiveScaffold::DataStructures
           columns
         end
       end
-      
+
       @text = @column.nil? || [:string, :text].include?(@column.type)
       if @column
         @form_ui = case @column.type
@@ -356,7 +356,7 @@ module ActiveScaffold::DataStructures
       end
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
-      
+
       # default all the configurable variables
       self.css_class = ''
       self.required = active_record_class.validators_on(self.name).any? do |val|
@@ -366,7 +366,7 @@ module ActiveScaffold::DataStructures
       end
       self.sort = true
       self.search_sql = true
-      
+
       @weight = estimate_weight
 
       if association && !polymorphic_association?
@@ -435,7 +435,7 @@ module ActiveScaffold::DataStructures
         end
       end
     end
-    
+
     def initialize_search_sql
       self.search_sql = unless self.virtual?
         if association.nil?
@@ -448,13 +448,13 @@ module ActiveScaffold::DataStructures
 
     # the table name from the ActiveRecord class
     attr_reader :table
-    
+
     def estimate_weight
       if singular_association?
         400
       elsif plural_association?
         500
-      elsif [:created_at, :updated_at].include?(self.name) 
+      elsif [:created_at, :updated_at].include?(self.name)
         600
       elsif [:name, :label, :title].include?(self.name)
         100

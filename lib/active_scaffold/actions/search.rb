@@ -4,7 +4,7 @@ module ActiveScaffold::Actions
       base.send :include, ActiveScaffold::Actions::CommonSearch
       base.send :include, InstanceMethods
     end
-    
+
     module InstanceMethods
 
       protected

@@ -150,7 +150,7 @@ module ActiveScaffold::Actions
       do_refresh_list unless @record.present?
       super
     end
-    
+
     def objects_for_etag
       objects = if @list_columns
         if active_scaffold_config.list.calculate_etag

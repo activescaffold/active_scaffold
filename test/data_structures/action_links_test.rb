@@ -60,7 +60,7 @@ class ActionLinksTest < MiniTest::Test
       assert_equal 'bar', link.action
     end
   end
-  
+
   def test_delete
     @links.add 'foo'
     @links.add 'bar'

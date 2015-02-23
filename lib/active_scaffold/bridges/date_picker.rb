@@ -20,7 +20,7 @@ module ActiveScaffold::Bridges
     #{Helper.datetime_options_for_locales}
     $.timepicker.setDefaults($.timepicker.regional['#{::I18n.locale}']);
   }
-});\n"        
+});\n"
     end
   end
 end

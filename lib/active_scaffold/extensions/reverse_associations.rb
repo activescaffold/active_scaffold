@@ -42,7 +42,7 @@ module ActiveScaffold
       def self.included(base)
         base.send :include, ActiveScaffold::ReverseAssociation::CommonMethods
       end
-      
+
       protected
       def reverse_matches(klass)
         reverse_matches = []
@@ -91,7 +91,7 @@ module ActiveScaffold
           next unless assoc.options[:through]
           next unless assoc.class_name == self.active_record.name
           next unless assoc.through_reflection.class_name == self.through_reflection.class_name
-          
+
           reverse_matches << assoc
         end
         reverse_matches

@@ -35,7 +35,7 @@ class ActiveScaffold::Bridges::Chosen
         options[:class] << ' chosen'
         active_scaffold_search_select(column, options)
       end
-      
+
       def active_scaffold_search_multi_chosen(column, options)
         options[:class] << ' chosen'
         options[:multiple] = true

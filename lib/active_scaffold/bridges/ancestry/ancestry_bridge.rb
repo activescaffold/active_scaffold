@@ -3,7 +3,7 @@ ActiveScaffold::Config::Core.class_eval do
     initialize_without_ancestry(model_id)
 
     return unless self.model.respond_to? :ancestry_column
-    
+
     self.columns << :parent_id
     self.columns[:parent_id].form_ui = :ancestry
     update.columns.exclude :ancestry

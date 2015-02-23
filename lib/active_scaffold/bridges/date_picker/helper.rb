@@ -19,7 +19,7 @@ module ActiveScaffold::Bridges
         /%S/ => 'ss',
         /%[cUWwxXZz]/ => ''
       }
-      
+
       def self.date_options_for_locales
         I18n.available_locales.collect do |locale|
           locale_date_options = date_options(locale)
@@ -30,7 +30,7 @@ module ActiveScaffold::Bridges
           end
         end.compact.join('')
       end
-      
+
       def self.date_options(locale)
         begin
           date_picker_options = { :closeText => as_(:close),
@@ -68,7 +68,7 @@ module ActiveScaffold::Bridges
           end
         end.compact.join('')
       end
-      
+
       def self.datetime_options(locale)
         begin
           rails_time_format = I18n.translate! 'time.formats.picker', :locale => locale, :default => '%a, %d %b %Y %H:%M:%S'
@@ -93,7 +93,7 @@ module ActiveScaffold::Bridges
           raise if locale == I18n.locale
         end
       end
-      
+
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
         if rails_format =~ /%[cUWwxXZz]/
@@ -107,7 +107,7 @@ module ActiveScaffold::Bridges
         end
         js_format
       end
-      
+
       def self.split_datetime_format(datetime_format)
         date_format = datetime_format
         time_format = nil
@@ -122,12 +122,12 @@ module ActiveScaffold::Bridges
         end
         return date_format, time_format
       end
-      
+
       module DatepickerColumnHelpers
         def datepicker_split_datetime_format(datetime_format)
           ActiveScaffold::Bridges::DatePicker::Helper.split_datetime_format(datetime_format)
         end
-        
+
         def to_datepicker_format(rails_format)
           ActiveScaffold::Bridges::DatePicker::Helper.to_datepicker_format(rails_format)
         end
@@ -147,7 +147,7 @@ module ActiveScaffold::Bridges
           end unless format == :default
         end
       end
-      
+
       module SearchColumnHelpers
         def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
           if current_search.is_a? Hash
@@ -164,7 +164,7 @@ module ActiveScaffold::Bridges
           text_field_tag("#{options[:name]}[#{name}]", value ? l(value, :format => format) : nil, options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]", :object => nil))
         end
       end
-      
+
       module FormColumnHelpers
         def active_scaffold_input_date_picker(column, options)
           record = options[:object]

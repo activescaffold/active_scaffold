@@ -7,14 +7,14 @@ module Rails
       remove_hook_for :resource_controller
       remove_hook_for :resource_route
       remove_class_option :actions
-      
+
       def add_resource_route
-        route_config =  class_path.collect{|namespace| "namespace :#{namespace} do " }.join(" ") 
+        route_config =  class_path.collect{|namespace| "namespace :#{namespace} do " }.join(" ")
         route_config << "resources :#{file_name.pluralize} do as_routes end"
-        route_config << " end" * class_path.size 
+        route_config << " end" * class_path.size
         route route_config
-      end 
-     
+      end
+
       invoke "active_scaffold_controller"
     end
   end

@@ -9,7 +9,7 @@ module ActiveScaffold::Config
       @per_page = self.class.per_page
       @page_links_inner_window = self.class.page_links_inner_window
       @page_links_outer_window = self.class.page_links_outer_window
-      
+
       # originates here
       @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns)
       @sorting.set_default_sorting(@core.model)
@@ -47,7 +47,7 @@ module ActiveScaffold::Config
     # how many page links around first and last page to show
     cattr_accessor :page_links_outer_window
     @@page_links_outer_window = 0
-    
+
     # what string to use when a field is empty
     cattr_accessor :empty_field_text
     @@empty_field_text = '-'
@@ -89,7 +89,7 @@ module ActiveScaffold::Config
     # Show search form in the list header instead of display the link
     cattr_accessor :always_show_search
     @@always_show_search = false
-    
+
     # Show create form in the list header instead of display the link
     cattr_accessor :always_show_create
     @@always_show_create = false
@@ -111,7 +111,7 @@ module ActiveScaffold::Config
       self.columns = @core.columns._inheritable unless @columns # lazy evaluation
       @columns
     end
-    
+
     public :columns=
 
     # include list header on refresh
@@ -125,7 +125,7 @@ module ActiveScaffold::Config
 
     # how many page links around current page to show
     attr_accessor :page_links_outer_window
-    
+
     # What kind of pagination to use:
     # * true: The usual pagination
     # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for large tables where counting is slow and we don't really care anyway)
@@ -163,7 +163,7 @@ module ActiveScaffold::Config
     def sorting
       @sorting ||= ActiveScaffold::DataStructures::Sorting.new(@core.columns)
     end
-    
+
     # overwrite the includes used for the count sql query
     attr_accessor :count_includes
 
@@ -182,25 +182,25 @@ module ActiveScaffold::Config
     def filtered_message
       @filtered_message ? @filtered_message : :filtered
     end
-    
+
     attr_writer :always_show_search
     def always_show_search
       @always_show_search && !search_partial.blank?
     end
-    
+
     def search_partial
       if @always_show_search == true
         auto_search_partial
       else
-        @always_show_search.to_s if @core.actions.include? @always_show_search 
+        @always_show_search.to_s if @core.actions.include? @always_show_search
       end
     end
-    
+
     def auto_search_partial
       return "search" if @core.actions.include?(:search)
       return "field_search" if @core.actions.include?(:field_search)
     end
-    
+
     # always show create
     attr_writer :always_show_create
     def always_show_create
@@ -212,11 +212,11 @@ module ActiveScaffold::Config
     def hide_nested_column
       @hide_nested_column.nil? ? true : @hide_nested_column
     end
-    
+
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling
     attr_accessor :wrap_tag
-    
+
     # Enable auto select columns on list, so only columns needed for list columns are selected
     attr_accessor :auto_select_columns
 
@@ -229,7 +229,7 @@ module ActiveScaffold::Config
         super(conf, storage, params, :list)
         @sorting = nil
       end
-      
+
       attr_writer :label
       # This label has already been localized.
       def label
@@ -284,7 +284,7 @@ module ActiveScaffold::Config
         end
         @sorting
       end
-      
+
       def count_includes
         @conf.count_includes
       end

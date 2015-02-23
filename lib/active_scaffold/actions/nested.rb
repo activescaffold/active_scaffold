@@ -19,18 +19,18 @@ module ActiveScaffold::Actions
       set_nested unless defined? @nested
       @nested
     end
-    
+
     def nested?
       !nested.nil?
     end
-    
+
     def set_nested
       if params[:parent_scaffold] && (params[:association] || params[:named_scope])
         @nested = ActiveScaffold::DataStructures::NestedInfo.get(active_scaffold_config.model, params)
         register_constraints_with_action_columns(@nested.constrained_fields) unless @nested.nil?
       end
     end
-    
+
     def configure_nested
       if nested?
         active_scaffold_config.list.user.label = if nested.belongs_to?
@@ -43,7 +43,7 @@ module ActiveScaffold::Actions
         end
       end
     end
-    
+
     def nested_authorized?(record = nil)
       true
     end
@@ -62,7 +62,7 @@ module ActiveScaffold::Actions
         else
           # Production mode is caching this link into a non nested scaffold
           active_scaffold_config.action_links.delete('new_existing') if active_scaffold_config.action_links['new_existing']
-          
+
           if active_scaffold_config.nested.shallow_delete
             active_scaffold_config.action_links.delete("destroy_existing") if active_scaffold_config.action_links['destroy_existing']
             if active_scaffold_config.actions.include?(:delete)
@@ -72,7 +72,7 @@ module ActiveScaffold::Actions
         end
       end
     end
-    
+
     def beginning_of_chain
       if nested? && nested.association
         if nested.association.collection?
@@ -102,7 +102,7 @@ module ActiveScaffold::Actions
     def nested_parent_record(crud = :read)
       @nested_parent_record ||= find_if_allowed(nested.parent_id, crud, nested.parent_model)
     end
-       
+
     def create_association_with_parent(record)
       if nested?
         # has_many is done by beginning_of_chain and rails
@@ -117,7 +117,7 @@ module ActiveScaffold::Actions
         end
       end
     end
-    
+
     private
     def nested_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.nested.formats).uniq
@@ -147,7 +147,7 @@ module ActiveScaffold::Actions::Nested
       do_destroy_existing
       respond_to_action(:destroy_existing)
     end
-    
+
     protected
     def new_existing_respond_to_html
       if successful?
@@ -210,7 +210,7 @@ module ActiveScaffold::Actions::Nested
     def delete_existing_authorized?(record = nil)
       true
     end
- 
+
     def after_create_save(record)
       if params[:association_macro] == :has_and_belongs_to_many
         params[:associated_id] = record

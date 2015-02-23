@@ -31,7 +31,7 @@ module ActiveScaffold
     class << self
       alias_method :[], :load
     end
-      
+
     def self.run_all
       return false if self.bridges_run
       self.bridges.keys.each do |bridge_name|
@@ -40,7 +40,7 @@ module ActiveScaffold
       end
       self.bridges_run = true
     end
-      
+
     def self.prepare_all
       return false if self.bridges_prepared
       self.bridges.keys.each do |bridge_name|
