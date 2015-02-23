@@ -36,7 +36,7 @@ module ActiveScaffold::DataStructures
 
     # the action-path for this link. what page to request? this is required!
     attr_accessor :action
-    
+
     # the controller for this action link. if nil, the current controller should be assumed.
     attr_writer :controller
 
@@ -71,7 +71,7 @@ module ActiveScaffold::DataStructures
     def label
       @label.is_a?(Symbol) ? as_(@label) : @label
     end
-    
+
     # image to use {:name => 'arrow.png', :size => '16x16'}
     attr_accessor :image
 
@@ -86,7 +86,7 @@ module ActiveScaffold::DataStructures
     def confirm?
       !!@confirm
     end
-    
+
     # if the action uses a DHTML based (i.e. 2-phase) confirmation
     attr_accessor :dhtml_confirm
     def dhtml_confirm=(value)
@@ -111,11 +111,11 @@ module ActiveScaffold::DataStructures
 
     # enable it to refresh the parent row when the view is closed
     attr_accessor :refresh_on_close
-    
+
     # what method to call on the controller to see if this action_link should be visible
     # if method return true, link won't be displayed
     attr_accessor :ignore_method
-    
+
     # the crud type of the (eventual?) action. different than :method, because this crud action may not be imminent.
     # this is used to determine record-level authorization (e.g. record.authorized_for?(:crud_type => link.crud_type).
     # options are :create, :read, :update, and :delete
@@ -187,25 +187,25 @@ module ActiveScaffold::DataStructures
     def html_options
       @html_options ||= {}
     end
-    
+
     # nested action_links are referencing a column
     attr_accessor :column
-    
-    # don't close the panel when another action link is open 
+
+    # don't close the panel when another action link is open
     attr_writer :keep_open
     def keep_open?
       @keep_open
     end
-    
+
     # indicates that this a nested_link
     def nested_link?
       @column || (parameters && parameters[:named_scope])
     end
-    
+
     def name_to_cache
       @name_to_cache ||= "#{controller || 'self'}_#{type}_#{action}#{'_' if parameters.present?}#{parameters.map{|k,v| "#{k}=#{v.is_a?(Array) ? v.join(',') : v}"}.join('_')}"
     end
-    
-    
+
+
   end
 end

@@ -92,7 +92,7 @@ module ActiveScaffold
         options[:id] ||= nested_parent_id if nested?
         clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
       end
-      
+
       def sub_section_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= nested_parent_id if nested?
@@ -104,7 +104,7 @@ module ActiveScaffold
         options[:id] ||= nested_parent_id if nested?
         clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform"
       end
-      
+
       def sub_form_list_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= nested_parent_id if nested?
@@ -121,7 +121,7 @@ module ActiveScaffold
       def action_iframe_id(options)
         "#{controller_id}-#{options[:action]}-#{options[:id]}-iframe"
       end
-      
+
       def scope_id(scope)
         scope.gsub(/(\[|\])/, '_').gsub('__', '_').gsub(/_$/, '')
       end

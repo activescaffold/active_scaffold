@@ -7,7 +7,7 @@ class Company < ActiveRecord::Base
     @attributes_cache = {}
     @raw_attributes = {}
   end
-  
+
   def self.columns_hash
     {
       'name' => ColumnMock.new('name', nil, 'varchar(255)'),
@@ -23,19 +23,19 @@ class Company < ActiveRecord::Base
   def self.columns
     self.columns_hash.values
   end
-  
+
   def self.class_name
     self.name
   end
-  
+
   def self.table_name
     'companies'
   end
-  
+
   def self.attachment_definitions
     {:logo => {}}
   end
-  
+
   # not the real signature of the method, but forgive me
   def self.before_destroy(s=nil)
     @@before = s
@@ -52,7 +52,7 @@ class Company < ActiveRecord::Base
       ActiveRecord::Reflection.create *args
     end
   end
-  
+
   def self.has_many(association_id, options = {})
     reflection = create_reflection(:has_many, association_id, nil, options, self)
   end
@@ -65,7 +65,7 @@ class Company < ActiveRecord::Base
   has_many :companies
   has_one :company
   belongs_to :main_company, :class_name => 'Company'
-  
+
   def companies
     if @with_companies
       [nil]
@@ -73,15 +73,15 @@ class Company < ActiveRecord::Base
       []
     end
   end
-  
+
   def company
     @with_company
   end
-  
+
   def main_company
     @with_main_company
   end
-  
+
   def name
   end
   def name_before_type_cast

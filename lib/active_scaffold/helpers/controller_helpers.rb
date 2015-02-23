@@ -4,9 +4,9 @@ module ActiveScaffold
       def self.included(controller)
         controller.class_eval { helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated, :generate_temporary_id, :generated_id}
       end
-      
+
       include ActiveScaffold::Helpers::IdHelpers
-      
+
       def generate_temporary_id(record = nil, generated_id = nil)
         (generated_id || (Time.now.to_f*1000).to_i.to_s).tap do |id|
           (@temporary_ids ||= {})[record.class.name] = id if record
@@ -85,8 +85,8 @@ module ActiveScaffold
         end if @parent_action.nil?
         @parent_action
       end
-      
-      # build an associated record for association 
+
+      # build an associated record for association
       def build_associated(association, parent_record)
         if association.options[:through]
           # build full chain, only check create_associated on initial parent_record

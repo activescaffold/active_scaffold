@@ -5,7 +5,7 @@ class ActiveScaffold::Bridges::PaperTrail < ActiveScaffold::DataStructures::Brid
     require File.join(File.dirname(__FILE__), "paper_trail/config")
     require File.join(File.dirname(__FILE__), "paper_trail/helper")
   end
-  
+
   def self.prepare
     ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection][:deleted] = :get
   end

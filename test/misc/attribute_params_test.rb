@@ -346,7 +346,7 @@ class AttributeParamsTest < MiniTest::Test
 
   def test_saving_has_many_polymorphic_select
     contacts = 2.times.map { Contact.create }
-    
+
     model = update_record_from_params(Person.new, :create, :first_name, :contacts, :first_name => 'Me', :contacts => ['', contacts.first.id.to_s])
     assert_equal 'Me', model.first_name
     assert model.contacts.present?
@@ -354,7 +354,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal [model.id], model.contacts.map(&:contactable_id)
     assert_equal model.id, contacts.first.reload.contactable.id, 'contactable should be saved'
     assert_equal 1, model.reload.contacts_count
-    
+
     model = update_record_from_params(model, :update, :first_name, :contacts, :first_name => 'Name', :contacts => ['', *contacts.map{|c| c.id.to_s}])
     assert_equal 'Name', model.first_name
     assert model.contacts.present?
@@ -362,7 +362,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal [model.id]*2, model.contacts.map(&:contactable_id)
     assert_equal [model.id]*2, contacts.map {|c| c.reload.contactable.id}, 'contactable should be saved'
     assert_equal 2, model.reload.contacts_count
-    
+
     model = update_record_from_params(model, :update, :first_name, :contacts, :first_name => 'Name', :contacts => [''])
     assert_equal 'Name', model.first_name
     assert model.contacts.empty?
@@ -373,21 +373,21 @@ class AttributeParamsTest < MiniTest::Test
 
   def test_saving_habtm_select
     roles = 2.times.map { Role.create }
-    
+
     model = update_record_from_params(Person.new, :create, :first_name, :roles, :first_name => 'Me', :roles => ['', roles.first.id.to_s])
     assert_equal 'Me', model.first_name
     assert model.roles.present?
     assert model.save
     assert_equal [[model.id]], model.roles.map(&:person_ids)
     assert_equal [model.id], roles.first.reload.person_ids, 'role should be saved'
-    
+
     model = update_record_from_params(model, :update, :first_name, :roles, :first_name => 'Name', :roles => ['', *roles.map{|c| c.id.to_s}])
     assert_equal 'Name', model.first_name
     assert model.roles.present?
     assert model.save
     assert_equal [[model.id]]*2, model.roles.map(&:person_ids)
     assert_equal [[model.id]]*2, roles.map {|r| r.reload.person_ids}, 'roles should be saved'
-    
+
     model = update_record_from_params(model, :update, :first_name, :roles, :first_name => 'Name', :roles => [''])
     assert_equal 'Name', model.first_name
     assert model.roles.empty?
@@ -418,7 +418,7 @@ end
 class Controller
   def self.helper_method(*args); end
   def self.before_filter(*args); end
-  
+
   include ActiveScaffold::Core
   include ActiveScaffold::Helpers::ControllerHelpers
   include ActiveScaffold::AttributeParams

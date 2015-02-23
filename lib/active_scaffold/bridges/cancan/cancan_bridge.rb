@@ -1,6 +1,6 @@
 # Allow users to easily define aliases for AS actions.
 # Ability#as_action_aliases should be called by the user in his ability class
-# 
+#
 #     class Ability < CanCan::Ability
 #       def initialize(user)
 #         as_action_aliases

@@ -6,7 +6,7 @@ module Config
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.delete.link
     end
-    
+
     def teardown
       @config.delete.link = @default_link
     end
@@ -26,7 +26,7 @@ module Config
       assert_equal :delete, link.crud_type
       assert_equal :delete_authorized?, link.security_method
     end
-    
+
     def test_setting_link
       @config.delete.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
       refute_equal @default_link, @config.delete.link

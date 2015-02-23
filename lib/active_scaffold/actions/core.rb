@@ -29,7 +29,7 @@ module ActiveScaffold::Actions
         respond_to { |format| format.js }
       end
     end
-    
+
     protected
     def loading_embedded?
       @loading_embedded ||= params.delete(:embedded)
@@ -56,7 +56,7 @@ module ActiveScaffold::Actions
         @scope = params.delete(:scope)
         @main_columns = active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns
         @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
-        
+
         if @column.send_form_on_update_column
           if @scope
             hash = @scope.gsub('[','').split(']').inject(params[:record]) do |hash, index|
@@ -124,7 +124,7 @@ module ActiveScaffold::Actions
       dst.attributes = attributes
       dst
     end
-    
+
     # override this method if you want to do something after render_field
     def after_render_field(record, column); end
 
@@ -143,7 +143,7 @@ module ActiveScaffold::Actions
     def marked_records
       active_scaffold_session_storage['marked_records'] ||= {}
     end
-    
+
     def default_formats
       [:html, :js, :json, :xml, :yaml]
     end
@@ -185,7 +185,7 @@ module ActiveScaffold::Actions
         @successful
       end
     end
-    
+
     def successful=(val)
       @successful = (val) ? true : false
     end
@@ -194,12 +194,12 @@ module ActiveScaffold::Actions
     def return_to_main
       redirect_to main_path_to_return
     end
-  
+
     #Overide this method on your controller to provide model with named scopes
     def beginning_of_chain
       active_scaffold_config.model
     end
-        
+
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
     def conditions_from_params
       @conditions_from_params ||= begin

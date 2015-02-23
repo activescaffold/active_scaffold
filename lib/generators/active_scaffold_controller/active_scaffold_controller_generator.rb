@@ -23,7 +23,7 @@ module Rails
 
       def create_view_root_folder
         empty_directory File.join("app/views", controller_file_path)
-      end 
+      end
     end
   end
 end

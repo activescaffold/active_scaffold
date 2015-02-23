@@ -324,11 +324,11 @@ module ActiveScaffold
           content_tag(:p, column_heading_label(column))
         end
       end
-      
+
       def column_heading_label(column)
         column.label
       end
-      
+
     end
   end
 end

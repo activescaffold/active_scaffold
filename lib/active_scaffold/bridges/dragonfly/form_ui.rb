@@ -16,12 +16,12 @@ module ActiveScaffold
           when :prototype
             js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show(); return false;";
           end
-          
+
           content = active_scaffold_column_dragonfly(record, column)
           content_tag(:div,
             content + " | " +
               hidden_field(:record, "remove_#{column.name}", :value => "false") +
-              content_tag(:a, as_(:remove_file), {:href => '#', :onclick => js_remove_file_code}) 
+              content_tag(:a, as_(:remove_file), {:href => '#', :onclick => js_remove_file_code})
           ) + content_tag(:div, input, :style => "display: none")
         else
           input

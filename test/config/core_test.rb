@@ -9,7 +9,7 @@ module Config
       @config = ActiveScaffold::Config::Core.new :model_stub
       ModelStubsController.instance_variable_set :@active_scaffold_config, @config
     end
-    
+
     def test_default_options
       refute @config.add_sti_create_links?
       refute @config.sti_children
@@ -19,41 +19,41 @@ module Config
       assert_equal 'Model stub', @config.label(:count => 1)
       assert_equal 'ModelStubs', @config.label
     end
-    
+
     def test_add_sti_children
       @config.sti_create_links = true
       refute @config.add_sti_create_links?
       @config.sti_children = [:a]
       assert @config.add_sti_create_links?
     end
-    
+
     def test_sti_children
       @config.sti_children = [:a]
       assert_equal [:a], @config.sti_children
     end
-    
+
     def test_actions
       assert @config.actions.include?(:create)
       @config.actions = [:list]
       refute @config.actions.include?(:create)
       assert_equal [:list], @config.actions.to_a
     end
-    
+
     def test_form_ui_in_sti
       @config.columns << :type
-      
+
       @config.sti_create_links = false
       @config.sti_children = [:model_stub]
       @config._configure_sti
       assert_equal :select, @config.columns[:type].form_ui
       assert_equal [['Model stub', 'ModelStub']], @config.columns[:type].options[:options]
-      
+
       @config.columns[:type].form_ui = nil
       @config.sti_create_links = true
       @config._configure_sti
       assert_equal :hidden, @config.columns[:type].form_ui
     end
-    
+
     def test_sti_children_links
       @config.sti_children = [:model_stub]
       @config.sti_create_links = true

@@ -1,7 +1,7 @@
 module ActionView
   class LookupContext
     attr_accessor :last_template
-    
+
     def find_template_with_last_template(name, prefixes = [], partial = false, keys = [], options = {})
       self.last_template = find_template_without_last_template(name, prefixes, partial, keys, options)
     end
@@ -45,7 +45,7 @@ module ActionView::Helpers #:nodoc:
         eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
         eid_info = session["as:#{eid}"] ||= {}
         if constraints
-          eid_info['constraints'] = constraints 
+          eid_info['constraints'] = constraints
         else
           eid_info.delete 'constraints'
         end
@@ -121,7 +121,7 @@ module ActionView::Helpers #:nodoc:
       end
     end
     alias_method_chain :render, :active_scaffold
-    
+
     def view_stack
       @_view_stack ||= []
     end

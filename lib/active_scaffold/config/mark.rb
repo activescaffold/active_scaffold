@@ -9,16 +9,16 @@ module ActiveScaffold::Config
     @@mark_all_mode = :search
 
     attr_accessor :mark_all_mode
-    
+
     def initialize(core_config)
       @core = core_config
       @mark_all_mode = self.class.mark_all_mode
       @core.model.send(:include, ActiveScaffold::MarkedModel) unless @core.model < ActiveScaffold::MarkedModel
       add_mark_column
     end
-    
+
     protected
-    
+
     def add_mark_column
       @core.columns.add :as_marked
       @core.columns[:as_marked].label = 'M'

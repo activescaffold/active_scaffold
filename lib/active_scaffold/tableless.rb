@@ -16,7 +16,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       end
     end
   end
-  
+
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
     attr_reader :klass
     def initialize(klass, *args)
@@ -44,7 +44,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       @association_scope ||= overrided_association_scope if klass < ActiveScaffold::Tableless
       association_scope_without_tableless
     end
-    
+
     def overrided_association_scope
       if AssociationScope.respond_to?(:scope) # rails >= 4.1
         AssociationScope.scope(self, klass.connection)
@@ -61,7 +61,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       end
     end
   end
-  
+
   module CollectionAssociation
     def self.included(base)
       base.alias_method_chain :get_records, :tableless if Rails.version >= '4.2'
@@ -70,7 +70,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       klass < ActiveScaffold::Tableless ? scope.to_a : get_records_without_tableless
     end
   end
-  
+
   module SingularAssociation
     def self.included(base)
       base.alias_method_chain :get_records, :tableless if Rails.version >= '4.2'
@@ -84,7 +84,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     def conditions
       @conditions
     end
-  
+
     def initialize(klass, table)
       super
       @conditions ||= []
@@ -165,7 +165,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   def self.table_name; @table_name ||= ActiveModel::Naming.plural(self); end
   def self.table_exists?; true; end
   self.abstract_class = true
-  
+
   def self.connection
     @connection ||= Connection.new(self)
   end
