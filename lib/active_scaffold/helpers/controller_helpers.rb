@@ -49,7 +49,7 @@ module ActiveScaffold
             parameters[:controller] = params[:parent_sti]
             #parameters[:eid] = nil # not neeeded anymore?
           end
-          parameters[:action] = "index"
+          parameters[:action] = 'index'
           parameters[:id] = nil
           params_for(parameters).except(*exclude_parameters)
         end

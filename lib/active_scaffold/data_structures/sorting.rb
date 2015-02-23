@@ -14,7 +14,7 @@ module ActiveScaffold::DataStructures
 
     def set_default_sorting(model)
       model_scope = model.send(:build_default_scope)
-      order_clause = model_scope.order_values.join(",") if model_scope
+      order_clause = model_scope.order_values.join(',') if model_scope
 
       # fallback to setting primary key ordering
       if model.column_names.include?(model.primary_key)
@@ -40,7 +40,7 @@ module ActiveScaffold::DataStructures
       direction = direction.to_s.upcase
       column = get_column(column_name)
       raise ArgumentError, "Could not find column #{column_name}" if column.nil?
-      raise ArgumentError, "Sorting direction unknown" unless [:ASC, :DESC].include? direction.to_sym
+      raise ArgumentError, 'Sorting direction unknown' unless [:ASC, :DESC].include? direction.to_sym
       @clauses << [column, direction.untaint] if column.sortable?
       raise ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
     end

@@ -55,7 +55,7 @@ module ActiveScaffold
         select_options.insert(0,[as_(:_select_),nil]) if options[:include_blank]
         select_options.collect do |option|
           label, value = option[0], option[1]
-          value.nil? ? "<option value="">#{label}</option>" : "<option value=\"#{value}\">#{label}</option>"
+          value.nil? ? '<option value='">#{label}</option>" : "<option value=\"#{value}\">#{label}</option>"
         end
       end
 
@@ -63,14 +63,14 @@ module ActiveScaffold
         options[:target] = action_iframe_id(url_for_options)
         options[:multipart] ||= true
         options[:class] = "#{options[:class]} as_remote_upload".strip
-        output=""
+        output=''
         output << form_tag(url_for_options, options)
         (output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>").html_safe
       end
 
       # a general-use loading indicator (the "stuff is happening, please wait" feedback)
       def loading_indicator_tag(options)
-        image_tag "active_scaffold/indicator.gif", :style => "visibility:hidden;", :id => loading_indicator_id(options), :alt => "loading indicator", :class => "loading-indicator"
+        image_tag 'active_scaffold/indicator.gif', :style => 'visibility:hidden;', :id => loading_indicator_id(options), :alt => 'loading indicator', :class => 'loading-indicator'
       end
 
       # Creates a javascript-based link that toggles the visibility of some element on the page.
@@ -515,7 +515,7 @@ module ActiveScaffold
 
       def as_main_div_class
         classes = "active-scaffold active-scaffold-#{controller_id}  #{id_from_controller params[:controller]}-view #{active_scaffold_config.theme}-theme"
-        classes << " as_touch" if touch_device?
+        classes << ' as_touch' if touch_device?
         classes
       end
 

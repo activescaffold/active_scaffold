@@ -265,7 +265,7 @@ module ActiveScaffold::Actions
     end
 
     def check_input_device
-      if request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"][/(iPhone|iPod|iPad)/i]
+      if request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'][/(iPhone|iPod|iPad)/i]
         session[:input_device_type] = 'TOUCH'
         session[:hover_supported] = false
       else
@@ -326,15 +326,15 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_xml
-      render :xml => successful? ? "" : response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::XML, :status => response_status
+      render :xml => successful? ? '' : response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::XML, :status => response_status
     end
 
     def action_update_respond_to_json
-      render :text => successful? ? "" : response_object.to_json(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::JSON, :status => response_status
+      render :text => successful? ? '' : response_object.to_json(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::JSON, :status => response_status
     end
 
     def action_update_respond_to_yaml
-      render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names))).to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :text => successful? ? '' : Hash.from_xml(response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names))).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
 
     def objects_for_etag

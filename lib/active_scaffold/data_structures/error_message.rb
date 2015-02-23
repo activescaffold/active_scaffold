@@ -10,7 +10,7 @@ module ActiveScaffold::DataStructures
     end
 
     def to_xml
-      public_attributes.to_xml(:root => "errors")
+      public_attributes.to_xml(:root => 'errors')
     end
 
     def to_yaml

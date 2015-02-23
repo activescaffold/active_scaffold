@@ -56,7 +56,7 @@ module ActiveScaffold::Actions
           if active_scaffold_config.nested.shallow_delete
             active_scaffold_config.action_links.add('destroy_existing', :label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy_existing']
             if active_scaffold_config.actions.include?(:delete)
-              active_scaffold_config.action_links.delete("delete") if active_scaffold_config.action_links['delete']
+              active_scaffold_config.action_links.delete('delete') if active_scaffold_config.action_links['delete']
             end
           end
         else
@@ -64,7 +64,7 @@ module ActiveScaffold::Actions
           active_scaffold_config.action_links.delete('new_existing') if active_scaffold_config.action_links['new_existing']
 
           if active_scaffold_config.nested.shallow_delete
-            active_scaffold_config.action_links.delete("destroy_existing") if active_scaffold_config.action_links['destroy_existing']
+            active_scaffold_config.action_links.delete('destroy_existing') if active_scaffold_config.action_links['destroy_existing']
             if active_scaffold_config.actions.include?(:delete)
               active_scaffold_config.action_links.add(ActiveScaffold::Config::Delete.link) unless active_scaffold_config.action_links['delete']
             end
@@ -193,15 +193,15 @@ module ActiveScaffold::Actions::Nested
     end
 
     def destroy_existing_respond_to_xml
-      render :xml => successful? ? "" : response_object.to_xml(:only => active_scaffold_config.list.columns.names), :content_type => Mime::XML, :status => response_status
+      render :xml => successful? ? '' : response_object.to_xml(:only => active_scaffold_config.list.columns.names), :content_type => Mime::XML, :status => response_status
     end
 
     def destroy_existing_respond_to_json
-      render :text => successful? ? "" : response_object.to_json(:only => active_scaffold_config.list.columns.names), :content_type => Mime::JSON, :status => response_status
+      render :text => successful? ? '' : response_object.to_json(:only => active_scaffold_config.list.columns.names), :content_type => Mime::JSON, :status => response_status
     end
 
     def destroy_existing_respond_to_yaml
-      render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.list.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :text => successful? ? '' : Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.list.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
 
     def add_existing_authorized?(record = nil)

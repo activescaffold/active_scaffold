@@ -50,7 +50,7 @@ class SetTest < MiniTest::Test
 
     # test that << also adds
     refute @items.include?(:e)
-    @items << "e"
+    @items << 'e'
     assert @items.include?(:e)
 
     # try adding an array of columns

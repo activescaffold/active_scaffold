@@ -37,11 +37,11 @@ module ActiveScaffold::Actions
       end
 
       def field_search_respond_to_html
-        render(:action => "field_search")
+        render(:action => 'field_search')
       end
 
       def field_search_respond_to_js
-        render(:partial => "field_search")
+        render(:partial => 'field_search')
       end
 
       def do_search

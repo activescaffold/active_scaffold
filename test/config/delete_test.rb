@@ -16,8 +16,8 @@ module Config
       refute link.page?
       refute link.popup?
       assert link.confirm?
-      assert_equal "destroy", link.action
-      assert_equal "Delete", link.label
+      assert_equal 'destroy', link.action
+      assert_equal 'Delete', link.label
       assert link.inline?
       blank = {}
       assert_equal blank, link.html_options

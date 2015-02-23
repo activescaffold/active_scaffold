@@ -28,8 +28,8 @@ module Config
       refute link.page?
       refute link.popup?
       refute link.confirm?
-      assert_equal "new", link.action
-      assert_equal "Create New", link.label
+      assert_equal 'new', link.action
+      assert_equal 'Create New', link.label
       assert link.inline?
       blank = {}
       assert_equal blank, link.html_options

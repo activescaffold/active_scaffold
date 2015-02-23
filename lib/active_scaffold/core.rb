@@ -220,7 +220,7 @@ module ActiveScaffold
           return controller
         end
       end
-      raise ActiveScaffold::ControllerNotFound, "Could not find " + error_message.join(" or "), caller
+      raise ActiveScaffold::ControllerNotFound, 'Could not find ' + error_message.join(' or '), caller
     end
 
     def self.column_type_cast(value, column)
