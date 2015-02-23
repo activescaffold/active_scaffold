@@ -1,16 +1,26 @@
-language: ruby
-rvm:
-  - 1.9.3
-  - 2.0.0
-  - rbx-2.2
-  - jruby-19mode
+bundler_args: --jobs=3 --retry=3
 gemfile:
   - gemfiles/Gemfile.rails-3.2.x
   - gemfiles/Gemfile.rails-4.0.x
   - gemfiles/Gemfile.rails-4.2.x
   - Gemfile
-install: "bundle install"
+language: ruby
 matrix:
   allow_failures:
-    - rvm: jruby-19mode
-      gemfile: gemfiles/Gemfile.rails-4.2.x
+    - gemfile: Gemfile
+      rvm: rbx-2.4
+    - gemfile: Gemfile
+      rvm: rbx-2.5
+    - rvm: 2.2
+    - rvm: ruby-head
+rvm:
+  - 1.9.3
+  - 2.0
+  - 2.1
+  - 2.2
+  - ruby-head
+  - rbx-2.2
+  - rbx-2.4
+  - rbx-2.5
+  - jruby-19mode
+sudo: false
