@@ -4,7 +4,7 @@ module ActiveScaffold
     module FormColumnHelpers
       def active_scaffold_input_file_column(column, options)
         record = options[:object]
-        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         if record.send(column.name)
           # we already have a value? display the form for deletion.
@@ -22,11 +22,11 @@ module ActiveScaffold
             content_tag(:div) do
               content = get_column_value(record, column) + " #{custom_hidden_field_tag} | ".html_safe
               content += content_tag(:a, as_(:remove_file), {:href => '#', :onclick => remove_file_js})
-              content += content_tag(:div, file_column_field("record", column.name, options), :style => "display: none")
+              content += content_tag(:div, file_column_field('record', column.name, options), :style => 'display: none')
             end
           end
         else
-          file_column_field("record", column.name, options)
+          file_column_field('record', column.name, options)
         end
       end
 

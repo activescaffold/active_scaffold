@@ -2,7 +2,7 @@ require 'simplecov'
 SimpleCov.start { add_filter 'test' }
 
 ENV['RAILS_ENV'] = 'test'
-require "mock_app/config/environment"
+require 'mock_app/config/environment'
 require 'rails/test_help'
 require 'minitest/autorun'
 
@@ -24,7 +24,7 @@ for file in %w[model_stub const_mocker company]
   require File.join(File.dirname(__FILE__), file)
 end
 
-I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))["en"]
+I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))['en']
 
 unless defined? Minitest::Test
   class Minitest::Test < MiniTest::Unit::TestCase

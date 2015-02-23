@@ -27,7 +27,7 @@ module ActiveScaffold
       module FormColumnHelpers
         def active_scaffold_input_calendar_date_select(column, options)
           options[:class] = "#{options[:class]} text-input".strip
-          calendar_date_select("record", column.name, options.merge(column.options))
+          calendar_date_select('record', column.name, options.merge(column.options))
         end
       end
 
@@ -38,13 +38,13 @@ module ActiveScaffold
           else
             value = current_search
           end
-          calendar_date_select("record", column.name,
+          calendar_date_select('record', column.name,
             {:name => "#{options[:name]}[#{name}]",
              :value => (value ? l(value) : nil),
              :class => 'text-input',
              :id => "#{options[:id]}_#{name}",
              :time => column_datetime?(column) ? true : false,
-             :style => (options[:show].nil? || options[:show]) ? nil : "display: none"})
+             :style => (options[:show].nil? || options[:show]) ? nil : 'display: none'})
         end
       end
     end

@@ -7,7 +7,7 @@ class ActiveScaffold::Bridges::CalendarDateSelect < ActiveScaffold::DataStructur
       raise RuntimeError, "We've detected that you have active_scaffold_calendar_date_select_bridge installed.  This plugin has been moved to core.  Please remove active_scaffold_calendar_date_select_bridge to prevent any conflicts"
     end
 
-    require File.join(File.dirname(__FILE__), "calendar_date_select/as_cds_bridge.rb")
+    require File.join(File.dirname(__FILE__), 'calendar_date_select/as_cds_bridge.rb')
   end
 
   def self.install?

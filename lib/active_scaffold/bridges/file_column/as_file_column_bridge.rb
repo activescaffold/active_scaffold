@@ -28,7 +28,7 @@ module ActiveScaffold::Config
 
     def configure_file_column_field(field)
       # set list_ui first because it gets its default value from form_ui
-      self.columns[field].list_ui ||= self.model.field_has_image_version?(field, "thumb") ? :thumbnail : :download_link_with_filename
+      self.columns[field].list_ui ||= self.model.field_has_image_version?(field, 'thumb') ? :thumbnail : :download_link_with_filename
       self.columns[field].form_ui ||= :file_column
 
       # these 2 parameters are necessary helper attributes for the file column that must be allowed to be set to the model by active scaffold.
@@ -36,7 +36,7 @@ module ActiveScaffold::Config
 
       # set null to false so active_scaffold wont set it to null
       # delete_file_column will take care of deleting a file or not.
-      self.model.columns_hash[field.to_s].instance_variable_set("@null", false)
+      self.model.columns_hash[field.to_s].instance_variable_set('@null', false)
 
     rescue
       false

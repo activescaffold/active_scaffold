@@ -16,7 +16,7 @@ module ActiveScaffold::Actions
 
     protected
     def response_location
-      url_for(params_for(:action => "show", :id => @record.to_param)) if successful?
+      url_for(params_for(:action => 'show', :id => @record.to_param)) if successful?
     end
 
     def new_respond_to_html
@@ -43,7 +43,7 @@ module ActiveScaffold::Actions
           if action = active_scaffold_config.create.action_after_create
             redirect_to params_for(:action => action, :id => @record.to_param)
           elsif params[:dont_close]
-            redirect_to params_for(:action => "new")
+            redirect_to params_for(:action => 'new')
           else
             return_to_main
           end

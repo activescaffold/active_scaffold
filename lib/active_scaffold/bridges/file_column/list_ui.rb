@@ -16,7 +16,7 @@ module ActiveScaffold
       def active_scaffold_column_thumbnail(record, column)
         return nil if record.send(column.name).nil?
         link_to(
-          image_tag(url_for_file_column(record, column.name.to_s, "thumb"), :border => 0),
+          image_tag(url_for_file_column(record, column.name.to_s, 'thumb'), :border => 0),
           url_for_file_column(record, column.name.to_s),
           :popup => true)
       end

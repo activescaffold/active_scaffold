@@ -1,6 +1,6 @@
 class ActiveScaffold::Bridges::Cancan < ActiveScaffold::DataStructures::Bridge
   def self.install
-    require File.join(File.dirname(__FILE__), "cancan", "cancan_bridge.rb")
+    require File.join(File.dirname(__FILE__), 'cancan', 'cancan_bridge.rb')
 
     ActiveScaffold::Core::ClassMethods.send :include, ActiveScaffold::Bridges::Cancan::ClassMethods
     ActiveScaffold::Actions::Core.send :include, ActiveScaffold::Bridges::Cancan::Actions::Core

@@ -5,7 +5,7 @@ class ActiveScaffold::Bridges::TinyMce < ActiveScaffold::DataStructures::Bridge
   end
 
   def self.install?
-    Object.const_defined? "TinyMCE"
+    Object.const_defined? 'TinyMCE'
   end
 
   def self.javascripts

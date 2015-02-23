@@ -32,7 +32,7 @@ module ActiveScaffold::Config
     end
 
     cattr_accessor :split_terms
-    @@split_terms = " "
+    @@split_terms = ' '
 
     # instance-level configuration
     # ----------------------------

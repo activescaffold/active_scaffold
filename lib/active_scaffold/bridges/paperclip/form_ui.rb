@@ -3,7 +3,7 @@ module ActiveScaffold
     module FormColumnHelpers
       def active_scaffold_input_paperclip(column, options)
         record = options[:object]
-        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         options = active_scaffold_input_text_options(options.merge(column.options))
 
@@ -22,10 +22,10 @@ module ActiveScaffold
 
           content = active_scaffold_column_paperclip(record, column)
           content_tag(:div,
-            content + " | " +
-              hidden_field(object_name, method, :value => "false") +
+            content + ' | ' +
+              hidden_field(object_name, method, :value => 'false') +
               content_tag(:a, as_(:remove_file), {:href => '#', :onclick => js_remove_file_code})
-          ) + content_tag(:div, input, :style => "display: none")
+          ) + content_tag(:div, input, :style => 'display: none')
         else
           input
         end

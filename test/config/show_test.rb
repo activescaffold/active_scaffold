@@ -16,8 +16,8 @@ module Config
       refute link.page?
       refute link.popup?
       refute link.confirm?
-      assert_equal "show", link.action
-      assert_equal "Show", link.label
+      assert_equal 'show', link.action
+      assert_equal 'Show', link.label
       assert link.inline?
       blank = {}
       assert_equal blank, link.html_options
