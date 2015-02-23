@@ -33,7 +33,7 @@ module ActiveScaffold::Bridges
 
       def self.date_options(locale)
         begin
-          date_picker_options = { :closeText => as_(:close),
+          date_picker_options = {:closeText => as_(:close),
             :prevText => as_(:previous),
             :nextText => as_(:next),
             :currentText => as_(:today),

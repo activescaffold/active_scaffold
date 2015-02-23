@@ -346,7 +346,7 @@ module ActiveScaffold
       full_includes = (active_scaffold_references.blank? ? nil : active_scaffold_references)
 
       # create a general-use options array that's compatible with Rails finders
-      finder_options = { :reorder => options[:sorting].try(:clause),
+      finder_options = {:reorder => options[:sorting].try(:clause),
                          :conditions => search_conditions,
                          :joins => joins_for_finder,
                          :outer_joins => active_scaffold_outer_joins,

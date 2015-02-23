@@ -85,8 +85,8 @@ module ActiveScaffold::Actions
     def do_list
       set_includes_for_columns
 
-      options = { :sorting => active_scaffold_config.list.user.sorting,
-        :count_includes => active_scaffold_config.list.user.count_includes }
+      options = {:sorting => active_scaffold_config.list.user.sorting,
+        :count_includes => active_scaffold_config.list.user.count_includes}
       paginate = (params[:format].nil?) ? (accepts? :html, :js) : ['html', 'js'].include?(params[:format])
       options[:pagination] = active_scaffold_config.list.pagination if paginate
       if options[:pagination]
