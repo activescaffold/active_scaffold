@@ -144,7 +144,7 @@ class ColumnTest < MiniTest::Test
 
   def test_custom_sort__should_assert_keys
     assert_raises(ArgumentError) { @column.sort_by :proc => 'invalid config'  }
-    assert_raises(ArgumentError) { @column.sort={:proc => 'invalid config' } }
+    assert_raises(ArgumentError) { @column.sort={:proc => 'invalid config'} }
     assert_equal({:method => 'method'}, @column.sort_by(:method => 'method'))
     assert_equal({:sql => 'method'}, @column.sort_by(:sql => 'method'))
   end

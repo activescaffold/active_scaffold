@@ -114,7 +114,7 @@ module ActiveScaffold
         classes = "#{column.name}-input"
         classes += ' numeric-input' if column.number?
 
-        { :name => name, :class => classes, :id => id_control}.merge(options)
+        {:name => name, :class => classes, :id => id_control}.merge(options)
       end
 
       def current_form_columns(record, scope, subform_controller = nil)
@@ -157,11 +157,11 @@ module ActiveScaffold
 
       def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil)
         if override_form_field_partial?(column)
-          render :partial => override_form_field_partial(column), :locals => { :column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record }
+          render :partial => override_form_field_partial(column), :locals => {:column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record}
         elsif renders_as == :field || override_form_field?(column)
           form_attribute(column, record, scope, only_value, col_class)
         elsif renders_as == :subform
-          render :partial => 'form_association', :locals => { :column => column, :scope => scope, :parent_record => record }
+          render :partial => 'form_association', :locals => {:column => column, :scope => scope, :parent_record => record}
         else
           form_hidden_attribute(column, record, scope)
         end
@@ -338,7 +338,7 @@ module ActiveScaffold
         record = html_options.delete(:object)
         ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
-        options = { :selected => record.send(column.name), :object => record }
+        options = {:selected => record.send(column.name), :object => record}
         options_for_select = active_scaffold_enum_options(column, record).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
         end

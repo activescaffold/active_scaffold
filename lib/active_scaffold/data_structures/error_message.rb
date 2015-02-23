@@ -6,7 +6,7 @@ module ActiveScaffold::DataStructures
     end
 
     def public_attributes
-      { :error => @error }
+      {:error => @error}
     end
 
     def to_xml
