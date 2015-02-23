@@ -26,5 +26,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency(%q<bundler>, ["~> 1.0"])
   #s.add_runtime_dependency(%q<render_component_vho>, [">= 0"])
   s.add_runtime_dependency(%q<rails>, ">= 3.2.18", "<5")
+  # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide
+  s.add_development_dependency "rubocop"
 end
 
