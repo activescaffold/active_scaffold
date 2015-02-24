@@ -61,7 +61,7 @@ module ActiveScaffold
       end
       parent_record.send "#{column.name}=", value if parent_record.persisted?
     end
-    
+
     # TODO remove when has_many_counter_cache_hack is not needed
     def has_many_counter_cache_hack?(parent_record, column)
       if column.association.try(:macro) == :has_many && parent_record.association(column.name).send(:has_cached_counter?)
@@ -119,7 +119,7 @@ module ActiveScaffold
       flash[:warning] = parent_record.errors.to_a.join("\n") if parent_record.errors.present?
       parent_record
     end
-    
+
     def update_column_from_params(parent_record, column, attribute, avoid_changes = false)
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
       if avoid_changes && column.plural_association?
@@ -156,7 +156,7 @@ module ActiveScaffold
         column_value_from_param_simple_value(parent_record, column, value)
       end
     end
-    
+
     def datetime_conversion_for_value(column)
       if column.column
         column.column.type == :date ? :to_date : :to_time
@@ -164,7 +164,7 @@ module ActiveScaffold
         :to_time
       end
     end
-    
+
     def column_value_for_datetime_type(parent_record, column, value)
       new_value = self.class.condition_value_for_datetime(column, value, self.datetime_conversion_for_value(column))
       if new_value.nil? && value.present?
@@ -212,12 +212,12 @@ module ActiveScaffold
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.plural_association?
         # HACK to be able to delete all associated records, hash will include "0" => ""
-        value.collect {|key, value| manage_nested_record_from_params(parent_record, column, value, avoid_changes) unless value == ""}.compact
+        value.collect {|key, value| manage_nested_record_from_params(parent_record, column, value, avoid_changes) unless value == ''}.compact
       else
         value
       end
     end
-    
+
     def manage_nested_record_from_params(parent_record, column, attributes, avoid_changes = false)
       return nil unless build_record_from_params(attributes, column, parent_record)
       record = find_or_create_for_params(attributes, column, parent_record)
@@ -300,7 +300,7 @@ module ActiveScaffold
         end
       end
     end
-    
+
     def column_default_value(column_name, klass, column)
       column.default.to_s if column
     end

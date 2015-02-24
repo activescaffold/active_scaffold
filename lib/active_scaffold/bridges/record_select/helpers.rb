@@ -11,7 +11,7 @@ class ActiveScaffold::Bridges::RecordSelect
       # requires RecordSelect plugin to be installed and configured.
       def active_scaffold_input_record_select(column, options)
         record = options.delete(:object)
-        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         if column.singular_association?
           multiple = false
@@ -42,12 +42,12 @@ class ActiveScaffold::Bridges::RecordSelect
         if [:has_one, :has_many].include?(column.association.macro)
           params.merge!({column.association.foreign_key => ''})
         end
- 
+
         record_select_options = active_scaffold_input_text_options(options).merge(
           :controller => remote_controller
         )
         record_select_options.merge!(column.options)
- 
+
         html = if multiple
           record_multi_select_field(options[:name], value || [], record_select_options)
         else
@@ -56,7 +56,7 @@ class ActiveScaffold::Bridges::RecordSelect
         html = self.class.field_error_proc.call(html, self) if record.errors[column.name].any?
         html
       end
-      
+
       def active_scaffold_record_select_autocomplete(record, column, options)
         record_select_options = active_scaffold_input_text_options(options).merge(
           :controller => active_scaffold_controller_for(record.class).controller_path
@@ -72,7 +72,7 @@ class ActiveScaffold::Bridges::RecordSelect
         value = field_search_record_select_value(column)
         active_scaffold_record_select(options[:object], column, options, value, column.options[:multiple])
       end
-      
+
       def field_search_record_select_value(column)
         begin
           value = field_search_params[column.name]

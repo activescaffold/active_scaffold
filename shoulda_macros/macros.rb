@@ -65,7 +65,7 @@ class ActiveSupport::TestCase
         true
       }
     } do
-      assert_template :partial => "_form_hidden_attribute"
+      assert_template :partial => '_form_hidden_attribute'
       assert @rendered_columns.include?(column_name)
     end
   end

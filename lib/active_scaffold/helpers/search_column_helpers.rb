@@ -7,7 +7,7 @@ module ActiveScaffold
       def active_scaffold_search_for(column, options = nil)
         options ||= active_scaffold_search_options(column)
         record = options[:object]
-        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
 
         # first, check if the dev has created an override for this specific field for search
@@ -54,7 +54,7 @@ module ActiveScaffold
 
       # the standard active scaffold options used for class, name and scope
       def active_scaffold_search_options(column)
-        { :name => "search[#{column.name}]", :class => "#{column.name}-input", :id => "search_#{column.name}", :value => field_search_params[column.name] }
+        {:name => "search[#{column.name}]", :class => "#{column.name}-input", :id => "search_#{column.name}", :value => field_search_params[column.name]}
       end
 
       def search_attribute(column, record)
@@ -66,19 +66,19 @@ module ActiveScaffold
       def search_label_for(column, options)
         options[:id] unless [:range, :integer, :decimal, :float, :string, :date_picker, :datetime_picker, :calendar_date_select].include? column.search_ui
       end
-      
+
       ##
       ## Search input methods
       ##
 
       def active_scaffold_search_multi_select(column, options)
         record = options.delete(:object)
-        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         associated = options.delete :value
         associated = [associated].compact unless associated.is_a? Array
         associated.collect!(&:to_i)
-        
+
         if column.association
           method = column.options[:label_method] || :to_label
           select_options = sorted_association_options_find(column.association, nil, record).collect {|r| [r.send(method), r.id]}
@@ -94,7 +94,7 @@ module ActiveScaffold
 
       def active_scaffold_search_select(column, html_options, options = {})
         record = html_options.delete(:object)
-        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
         associated = html_options.delete :value
         if column.association
@@ -113,9 +113,9 @@ module ActiveScaffold
         if html_options[:multiple]
           html_options[:name] += '[]'
         else
-          options[:include_blank] ||= as_(:_select_) 
+          options[:include_blank] ||= as_(:_select_)
         end
-        
+
         if optgroup = options.delete(:optgroup)
           select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
         elsif column.association
@@ -141,7 +141,7 @@ module ActiveScaffold
       end
       # we can't use checkbox ui because it's not possible to decide whether search for this field or not
       alias_method :active_scaffold_search_checkbox, :active_scaffold_search_boolean
-      
+
       def active_scaffold_search_null(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
@@ -190,7 +190,7 @@ module ActiveScaffold
           text_field_size = 10
           opt_value ||= '='
         end
-        
+
         from_value = controller.class.condition_value_for_numeric(column, from_value)
         to_value = controller.class.condition_value_for_numeric(column, to_value)
         from_value = format_number_value(from_value, column.options) if from_value.is_a?(Numeric)
@@ -198,12 +198,12 @@ module ActiveScaffold
         html = select_tag("#{options[:name]}[opt]",
               options_for_select(select_options, opt_value),
               :id => "#{options[:id]}_opt",
-              :class => "as_search_range_option")
-        html << content_tag("span", :id => "#{options[:id]}_numeric", :style => ActiveScaffold::Finder::NullComparators.include?(opt_value) ? "display: none" : nil) do
+              :class => 'as_search_range_option')
+        html << content_tag('span', :id => "#{options[:id]}_numeric", :style => ActiveScaffold::Finder::NullComparators.include?(opt_value) ? 'display: none' : nil) do
           text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size)) <<
           content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
               active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))).html_safe,
-              :id => "#{options[:id]}_between", :class => "as_search_range_between", :style => (opt_value == 'BETWEEN') ? nil : "display: none")
+              :id => "#{options[:id]}_between", :class => 'as_search_range_between', :style => (opt_value == 'BETWEEN') ? nil : 'display: none')
         end
         content_tag :span, html, :class => 'search_range'
       end
@@ -215,13 +215,13 @@ module ActiveScaffold
       def field_search_datetime_value(value)
         DateTime.new(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
       end
-      
+
       def active_scaffold_search_datetime(column, options)
         opt_value, from_value, to_value = field_search_params_range_values(column)
         options = column.options.merge(options)
         helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
-        
-        send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options)) << 
+
+        send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options)) <<
         ' - '.html_safe << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
       end
 
@@ -236,7 +236,7 @@ module ActiveScaffold
       ##
       ## Search column override signatures
       ##
-      
+
       def search_column_label(column, record)
         column.label
       end
@@ -250,9 +250,9 @@ module ActiveScaffold
         method = "active_scaffold_search_#{form_ui}"
         method if respond_to? method
       end
-      
+
       def visibles_and_hiddens(search_config)
-        visibles = [] 
+        visibles = []
         hiddens = []
         search_config.columns.each do |column|
           next unless column.search_sql
@@ -264,7 +264,7 @@ module ActiveScaffold
         end
         return visibles, hiddens
       end
-      
+
       def searched_by?(column)
         value = field_search_params[column.name]
         case value

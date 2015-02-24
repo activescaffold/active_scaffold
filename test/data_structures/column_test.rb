@@ -143,12 +143,12 @@ class ColumnTest < MiniTest::Test
   end
 
   def test_custom_sort__should_assert_keys
-    assert_raises(ArgumentError) { @column.sort_by :proc => "invalid config"  }
-    assert_raises(ArgumentError) { @column.sort={:proc => "invalid config" } }
-    assert_equal({:method => "method"}, @column.sort_by(:method => "method"))
-    assert_equal({:sql => "method"}, @column.sort_by(:sql => "method"))
+    assert_raises(ArgumentError) { @column.sort_by :proc => 'invalid config'  }
+    assert_raises(ArgumentError) { @column.sort={:proc => 'invalid config'} }
+    assert_equal({:method => 'method'}, @column.sort_by(:method => 'method'))
+    assert_equal({:sql => 'method'}, @column.sort_by(:sql => 'method'))
   end
-  
+
   def test_config_block
     @column.configure do |config|
       # we can use the config object
@@ -173,7 +173,7 @@ class ColumnTest < MiniTest::Test
 
   def test_includes
     assert_equal nil, @column.includes
-    
+
     # make sure that when a non-array comes in, an array comes out
     @column.includes = :column_name
     assert_equal([:column_name], @column.includes)

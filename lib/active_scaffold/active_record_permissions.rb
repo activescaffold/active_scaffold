@@ -104,7 +104,7 @@ module ActiveScaffold
           return false if methods.any? {|m| !send(m)}
           true
         end
-        
+
         def cached_authorized_for_methods(options)
           key = "#{options[:crud_type]}##{options[:column]}##{options[:action]}"
           if self.is_a? Class
@@ -135,7 +135,7 @@ module ActiveScaffold
             crud_type_security_method(options[:crud_type]),
           ].compact.select {|m| respond_to?(m)}
         end
-        
+
         private
 
         def column_security_method(column)

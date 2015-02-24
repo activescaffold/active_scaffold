@@ -28,7 +28,7 @@ module ActiveScaffold::Config
 
     # show value of unauthorized columns instead of skip them
     attr_accessor :show_unauthorized_columns
-    
+
     # the ActionLink for this action
     attr_accessor :link
 
@@ -50,9 +50,9 @@ module ActiveScaffold::Config
       end
       @columns
     end
-    
+
     public :columns=
-    
+
     # whether the form should be multipart
     attr_writer :multipart
     def multipart?

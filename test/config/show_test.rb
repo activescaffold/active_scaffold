@@ -6,18 +6,18 @@ module Config
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.show.link
     end
-    
+
     def teardown
       @config.show.link = @default_link
     end
-    
+
     def test_link_defaults
       link = @config.show.link
       refute link.page?
       refute link.popup?
       refute link.confirm?
-      assert_equal "show", link.action
-      assert_equal "Show", link.label
+      assert_equal 'show', link.action
+      assert_equal 'Show', link.label
       assert link.inline?
       blank = {}
       assert_equal blank, link.html_options
@@ -26,12 +26,12 @@ module Config
       assert_equal :read, link.crud_type
       assert_equal :show_authorized?, link.security_method
     end
-    
+
     def test_setting_link
       @config.show.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
       refute_equal @default_link, @config.show.link
     end
-    
+
     def test_label
       label = 'show monkeys'
       @config.show.label = label

@@ -48,7 +48,7 @@ class ValidationReflectionTest < MiniTest::Test
     column = ActiveScaffold::DataStructures::Column.new(:main_company, Company)
     refute column.required?
   end
-  
+
   def test_override_required
     Company.expects(:validators_on).with(:name).returns([ActiveModel::Validations::PresenceValidator.new(:attributes => :name)])
     column = ActiveScaffold::DataStructures::Column.new(:name, Company)

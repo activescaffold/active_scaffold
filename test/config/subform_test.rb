@@ -9,7 +9,7 @@ module Config
     def test_defaults
       assert_equal :horizontal, @config.subform.layout
     end
-    
+
     def test_setting_layout
       layout = :vertical
       @config.subform.layout = layout

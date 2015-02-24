@@ -31,7 +31,7 @@ module ActiveScaffold
     class << self
       alias_method :[], :load
     end
-      
+
     def self.run_all
       return false if self.bridges_run
       self.bridges.keys.each do |bridge_name|
@@ -40,7 +40,7 @@ module ActiveScaffold
       end
       self.bridges_run = true
     end
-      
+
     def self.prepare_all
       return false if self.bridges_prepared
       self.bridges.keys.each do |bridge_name|
@@ -66,6 +66,6 @@ module ActiveScaffold
   end
 end
 
-Dir[File.join(File.dirname(__FILE__), "bridges/*.rb")].each do |bridge|
+Dir[File.join(File.dirname(__FILE__), 'bridges/*.rb')].each do |bridge|
   ActiveScaffold::Bridges.register bridge unless bridge == __FILE__
 end

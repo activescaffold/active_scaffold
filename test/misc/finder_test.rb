@@ -72,7 +72,7 @@ class FinderTest < MiniTest::Test
     relation_class.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
     page = @klass.send :find_page, :per_page => 20, :pagination => true
     page.items
-    
+
     assert_kind_of Integer, page.pager.count
     assert_equal 2, page.pager.count
     assert_equal 1, page.pager.number_of_pages

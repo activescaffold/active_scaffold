@@ -16,7 +16,7 @@ module ActiveScaffold::Actions
 
     protected
     def response_location
-      url_for(params_for(:action => "show", :id => @record.to_param)) if successful?
+      url_for(params_for(:action => 'show', :id => @record.to_param)) if successful?
     end
 
     def new_respond_to_html
@@ -26,7 +26,7 @@ module ActiveScaffold::Actions
         return_to_main
       end
     end
-    
+
     def new_respond_to_js
       render(:partial => 'create_form')
     end
@@ -43,7 +43,7 @@ module ActiveScaffold::Actions
           if action = active_scaffold_config.create.action_after_create
             redirect_to params_for(:action => action, :id => @record.to_param)
           elsif params[:dont_close]
-            redirect_to params_for(:action => "new")
+            redirect_to params_for(:action => 'new')
           else
             return_to_main
           end
@@ -127,11 +127,11 @@ module ActiveScaffold::Actions
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
-    
+
     def create_ignore?
       active_scaffold_config.list.always_show_create
     end
-    
+
     def create_authorized?
       if nested?
         nested_authorized = !nested.readonly? && !nested.readonly_through_association?(active_scaffold_config.create.columns)

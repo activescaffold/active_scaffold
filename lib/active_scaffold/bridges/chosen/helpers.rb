@@ -17,7 +17,7 @@ class ActiveScaffold::Bridges::Chosen
 
           html_options.update(:multiple => true).update(column.options[:html_options] || {})
           options.update(column.options)
-          html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?("[]")
+          html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
 
           if optgroup = options.delete(:optgroup)
             select(:record, column.name, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
@@ -35,7 +35,7 @@ class ActiveScaffold::Bridges::Chosen
         options[:class] << ' chosen'
         active_scaffold_search_select(column, options)
       end
-      
+
       def active_scaffold_search_multi_chosen(column, options)
         options[:class] << ' chosen'
         options[:multiple] = true

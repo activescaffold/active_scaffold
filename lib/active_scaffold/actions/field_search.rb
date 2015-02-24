@@ -5,7 +5,7 @@ module ActiveScaffold::Actions
       base.send :include, ActiveScaffold::Actions::CommonSearch
       base.send :include, InstanceMethods
     end
-    
+
     module InstanceMethods
 
       # FieldSearch uses params[:search] and not @record because search conditions do not always pass the Model's validations.
@@ -20,28 +20,28 @@ module ActiveScaffold::Actions
       def search_partial
         super || :field_search
       end
-      
+
       def store_search_params_into_session
         set_field_search_default_params(active_scaffold_config.field_search.default_params) unless active_scaffold_config.field_search.default_params.nil?
         super
       end
-      
+
       def set_field_search_default_params(default_params)
         if (params[:search].nil? && search_params.nil?) || (params[:search].is_a?(String) && params[:search].blank?)
           params[:search] = default_params.is_a?(Proc) ? self.instance_eval(&default_params) : default_params
         end
       end
-      
+
       def field_search_params
         search_params.is_a?(Hash) ? search_params : {}
       end
 
       def field_search_respond_to_html
-        render(:action => "field_search")
+        render(:action => 'field_search')
       end
-      
+
       def field_search_respond_to_js
-        render(:partial => "field_search")
+        render(:partial => 'field_search')
       end
 
       def do_search

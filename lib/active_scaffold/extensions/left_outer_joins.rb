@@ -30,7 +30,7 @@ module ActiveScaffold
       end
 
       def outer_joins(*args)
-        check_if_method_has_arguments!("outer_joins", args)
+        check_if_method_has_arguments!('outer_joins', args)
         spawn.outer_joins!(*args.compact.flatten)
       end
 

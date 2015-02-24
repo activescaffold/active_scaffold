@@ -19,7 +19,7 @@ module ActiveScaffold::Config
       self.columns = @core.columns._inheritable unless @columns # lazy evaluation
       @columns
     end
-    
+
     public :columns=
   end
 end
