@@ -466,17 +466,6 @@ Style/SpaceInsideBrackets:
 Style/SpaceInsideParens:
   Enabled: false
 
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/SpecialGlobalVars:
-  Enabled: false
-
-# Offense count: 12
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoredMethods.
-Style/SymbolProc:
-  Enabled: false
-
 # Offense count: 14
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.

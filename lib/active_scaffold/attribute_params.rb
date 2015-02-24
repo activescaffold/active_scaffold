@@ -111,8 +111,8 @@ module ActiveScaffold
           elsif attributes.has_key? column.name
             value = update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
           end
-        rescue
-          logger.error "#{$!.class.name}: #{$!.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
+        rescue Exception => e
+          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
           raise
         end
       end
@@ -201,7 +201,7 @@ module ActiveScaffold
     def column_plural_assocation_value_from_value(column, value)
       # it's an array of ids
       if value and not value.empty?
-        ids = value.select {|id| id.present?}
+        ids = value.select(&:present?)
         ids.empty? ? [] : column.association.klass.find(ids)
       else
         []

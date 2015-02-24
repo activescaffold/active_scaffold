@@ -31,7 +31,7 @@ module ActiveScaffold::DataStructures
     # note that this also makes columns inheritable
     def add(*args)
       args.flatten! # allow [] as a param
-      args = args.collect{ |a| a.to_sym }
+      args = args.collect(&:to_sym)
 
       # make the columns inheritable
       @_inheritable.concat(args)
