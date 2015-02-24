@@ -25,10 +25,10 @@ class BridgeTest < MiniTest::Test
 
   def test__file_column_bridge
     ConstMocker.mock('FileColumn') do |cm|
-    cm.remove
-    assert(!bridge_will_be_installed('FileColumn'))
-    cm.declare
-    assert(bridge_will_be_installed('FileColumn'))
+      cm.remove
+      assert(!bridge_will_be_installed('FileColumn'))
+      cm.declare
+      assert(bridge_will_be_installed('FileColumn'))
     end
   end
 

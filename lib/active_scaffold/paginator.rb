@@ -29,7 +29,7 @@ class Paginator
 
   # Total number of pages
   def number_of_pages
-     (@count / @per_page).to_i + (@count % @per_page > 0 ? 1 : 0)
+    (@count / @per_page).to_i + (@count % @per_page > 0 ? 1 : 0)
   end
 
   # First page object
