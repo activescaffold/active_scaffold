@@ -359,7 +359,7 @@ module ActiveScaffold
       def replaced_action_link_url_options(link, record)
         url = action_link_url_options(link, record)
         url[:controller] ||= params[:controller]
-        missing_options, url_options = url.partition{|k,v| v.nil?}
+        missing_options, url_options = url.partition {|k,v| v.nil?}
         replacements = {}
         replacements['--ID--'] = record.id.to_s if record
         if link.column.try(:singular_association?)

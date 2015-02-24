@@ -34,7 +34,7 @@ class ModelStub < ActiveRecord::Base
   end
 
   def self.columns
-    @columns ||= stubbed_columns.map{|c| ColumnMock.new(c.to_s, '', 'varchar(255)') }
+    @columns ||= stubbed_columns.map { |c| ColumnMock.new(c.to_s, '', 'varchar(255)') }
   end
 
   def self.columns_hash

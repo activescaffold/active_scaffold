@@ -90,7 +90,7 @@ class SortingTest < MiniTest::Test
   end
 
   def test_sorts_by_method
-    @columns[:a].sort_by :method => proc{0}
+    @columns[:a].sort_by :method => proc {0}
 
     # test pure method sorting: true
     @sorting.add :a

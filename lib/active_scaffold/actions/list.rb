@@ -72,7 +72,7 @@ module ActiveScaffold::Actions
         active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
       end
       sorting = active_scaffold_config.list.user.sorting
-      columns_for_joins, columns_for_includes = columns.select{ |c| c.includes.present? }.partition {|c| sorting.sorts_on? c }
+      columns_for_joins, columns_for_includes = columns.select { |c| c.includes.present? }.partition { |c| sorting.sorts_on? c }
       active_scaffold_preload.concat columns_for_includes.map(&:includes).flatten.uniq
       active_scaffold_references.concat columns_for_joins.map(&:includes).flatten.uniq
     end

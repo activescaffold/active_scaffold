@@ -48,14 +48,14 @@ module ActiveScaffold
           end
 
           def active_scaffold_search_date_bridge_trend_units(column)
-             options = ActiveScaffold::Finder::DateUnits.collect{|unit| [as_(unit.downcase.to_sym), unit]}
-             options = ActiveScaffold::Finder::TimeUnits.collect{|unit| [as_(unit.downcase.to_sym), unit]} + options if column_datetime?(column)
+             options = ActiveScaffold::Finder::DateUnits.collect {|unit| [as_(unit.downcase.to_sym), unit]}
+             options = ActiveScaffold::Finder::TimeUnits.collect {|unit| [as_(unit.downcase.to_sym), unit]} + options if column_datetime?(column)
              options
           end
 
           def active_scaffold_search_date_bridge_range_tag(column, options, current_search)
             range_controls = select_tag("#{options[:name]}[range]",
-              options_for_select(ActiveScaffold::Finder::DateRanges.collect{|range| [as_(range.downcase.to_sym), range]}, current_search['range']),
+              options_for_select(ActiveScaffold::Finder::DateRanges.collect {|range| [as_(range.downcase.to_sym), range]}, current_search['range']),
              :class => 'text-input', :id => nil)
             content_tag('span', range_controls.html_safe, :id => "#{options[:id]}_range", :class => 'search-date-range', :style => (current_search['opt'] == 'RANGE') ? nil : 'display: none')
           end

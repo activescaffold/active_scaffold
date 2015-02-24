@@ -9,19 +9,19 @@ class ActionLinksTest < MiniTest::Test
     # test adding with a shortcut
     @links.add 'foo/bar'
 
-    assert_equal 1, @links.find_all{true}.size
-    assert_equal 'foo/bar', @links.find_all{true}[0].action
+    assert_equal 1, @links.find_all {true}.size
+    assert_equal 'foo/bar', @links.find_all {true}[0].action
     assert_equal 'foo/bar', @links['foo/bar'].action
 
     # test adding an ActionLink object directly
     @links.add ActiveScaffold::DataStructures::ActionLink.new('hello/world')
 
-    assert_equal 2, @links.find_all{true}.size
+    assert_equal 2, @links.find_all {true}.size
 
     # test the << alias
     @links << 'a/b'
 
-    assert_equal 3, @links.find_all{true}.size
+    assert_equal 3, @links.find_all {true}.size
   end
 
   def test_array_access
