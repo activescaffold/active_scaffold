@@ -2,7 +2,8 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   RunRailsCops: true
-
+  Exclude:
+    - lib/generators/*/templates/**/*
 
 Style/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
