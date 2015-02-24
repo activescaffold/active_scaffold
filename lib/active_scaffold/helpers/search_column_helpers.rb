@@ -217,7 +217,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_search_datetime(column, options)
-        opt_value, from_value, to_value = field_search_params_range_values(column)
+        _, from_value, to_value = field_search_params_range_values(column)
         options = column.options.merge(options)
         helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
 

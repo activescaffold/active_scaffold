@@ -7,7 +7,7 @@ module ActiveScaffold
       end
 
       def controller_id(controller = (params[:eid] || nested_id || params[:parent_controller] || params[:controller]))
-        controller_id ||= 'as_' + id_from_controller(controller)
+        'as_' + id_from_controller(controller)
       end
 
       def nested_parent_id

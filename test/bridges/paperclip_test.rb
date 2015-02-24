@@ -67,5 +67,6 @@ class PaperclipTest < ActionView::TestCase
 
     @record.stubs(:logo).returns(stub(:file? => false))
     assert_dom_equal '<input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" />', active_scaffold_input_paperclip(config.columns[:logo], :name => 'record[logo]', :id => 'record_logo', :object => @record)
+    ActiveScaffold.js_framework = js
   end
 end

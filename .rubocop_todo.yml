@@ -17,10 +17,6 @@ Lint/AmbiguousRegexpLiteral:
 Lint/UnreachableCode:
   Enabled: false
 
-# Offense count: 23
-Lint/UselessAssignment:
-  Enabled: false
-
 # Offense count: 249
 Metrics/AbcSize:
   Max: 139

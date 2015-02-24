@@ -1,7 +1,6 @@
 module ActiveScaffold::DataStructures
   class NestedInfo
     def self.get(model, params)
-      nested_info = {}
       begin
         if params[:association].nil?
           ActiveScaffold::DataStructures::NestedInfoScope.new(model, params)

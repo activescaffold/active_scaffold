@@ -215,7 +215,7 @@ module ActiveScaffold
       def inplace_edit?(record, column)
         if column.inplace_edit
           editable = controller.send(:update_authorized?, record) if controller.respond_to?(:update_authorized?, true)
-          editable ||= record.authorized_for?(:crud_type => :update, :column => column.name)
+          editable || record.authorized_for?(:crud_type => :update, :column => column.name)
         end
       end
 
@@ -284,9 +284,9 @@ module ActiveScaffold
 
       def all_marked?
         if active_scaffold_config.mark.mark_all_mode == :page
-          all_marked = @page.items.detect { |record| !marked_records.include?(record.id) }.nil?
+          @page.items.detect { |record| !marked_records.include?(record.id) }.nil?
         else
-          all_marked = (marked_records.length >= @page.pager.count.to_i)
+          marked_records.length >= @page.pager.count.to_i
         end
       end
 
@@ -299,7 +299,7 @@ module ActiveScaffold
       end
 
       def column_heading_attributes(column, sorting, sort_direction)
-        tag_options = {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => strip_tags(column.description).presence}
+        {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => strip_tags(column.description).presence}
       end
 
       def render_column_heading(column, sorting, sort_direction)
