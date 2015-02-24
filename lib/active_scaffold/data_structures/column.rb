@@ -141,7 +141,7 @@ module ActiveScaffold::DataStructures
       @link
     end
 
-     # associate an action_link with this column
+    # associate an action_link with this column
     def set_link(action, options = {})
       if action.is_a?(ActiveScaffold::DataStructures::ActionLink) || (action.is_a? Proc)
         @link = action
