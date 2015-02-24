@@ -74,7 +74,7 @@ class BridgeTest < MiniTest::Test
     end
   end
 
-protected
+  protected
 
   def find_bridge(name)
     ActiveScaffold::Bridges[name.to_s.underscore.to_sym]
