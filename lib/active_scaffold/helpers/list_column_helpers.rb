@@ -9,7 +9,7 @@ module ActiveScaffold
           value = send(method, record, column)
           value = '&nbsp;'.html_safe if value.nil? or value.blank? # fix for IE 6
           return value
-        rescue Exception => e
+        rescue StandardError => e
           logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
           raise e
         end
@@ -54,7 +54,7 @@ module ActiveScaffold
           else
             text
           end
-        rescue Exception => e
+        rescue StandardError => e
           logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
           raise e
         end
