@@ -59,7 +59,7 @@ module ActiveScaffold::DataStructures
       clear
       if args.first.is_a?(Enumerable)
         args.each do |h|
-          h.is_a?(Hash) ? h.each { |c,d| add(c,d) } : add(*h)
+          h.is_a?(Hash) ? h.each { |c, d| add(c, d) } : add(*h)
         end
       else
         add(*args)

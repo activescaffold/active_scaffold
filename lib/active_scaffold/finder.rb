@@ -365,7 +365,7 @@ module ActiveScaffold
 
     def count_items(query, find_options = {}, count_includes = nil)
       count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
-      options = find_options.reject {|k,v| [:select, :reorder].include? k}
+      options = find_options.reject {|k, v| [:select, :reorder].include? k}
       # NOTE: we must use includes in the count query, because some conditions may reference other tables
       options[:includes] = count_includes
 
@@ -431,7 +431,7 @@ module ActiveScaffold
 
     def append_to_query(query, options)
       options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, (:references if Rails::VERSION::MAJOR >= 4)
-      query = options.reject {|k,v| v.blank?}.inject(query) do |query, (k, v)|
+      query = options.reject {|k, v| v.blank?}.inject(query) do |query, (k, v)|
         k == :conditions ? apply_conditions(query, *v) : query.send(k, v)
       end
       if options[:outer_joins].present?

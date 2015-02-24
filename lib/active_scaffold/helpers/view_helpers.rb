@@ -52,7 +52,7 @@ module ActiveScaffold
       # Turns [[label, value]] into <option> tags
       # Takes optional parameter of :include_blank
       def option_tags_for(select_options, options = {})
-        select_options.insert(0,[as_(:_select_),nil]) if options[:include_blank]
+        select_options.insert(0, [as_(:_select_), nil]) if options[:include_blank]
         select_options.collect do |option|
           label, value = option[0], option[1]
           value.nil? ? '<option value='">#{label}</option>" : "<option value=\"#{value}\">#{label}</option>"
@@ -254,7 +254,7 @@ module ActiveScaffold
           if child_id.present?
             url.sub!('--CHILD_ID--', child_id)
           else
-            url.sub!(/\w+=--CHILD_ID--&?/,'')
+            url.sub!(/\w+=--CHILD_ID--&?/, '')
             url.sub!(/\?$/, '')
           end
         elsif nested?
@@ -359,7 +359,7 @@ module ActiveScaffold
       def replaced_action_link_url_options(link, record)
         url = action_link_url_options(link, record)
         url[:controller] ||= params[:controller]
-        missing_options, url_options = url.partition {|k,v| v.nil?}
+        missing_options, url_options = url.partition {|k, v| v.nil?}
         replacements = {}
         replacements['--ID--'] = record.id.to_s if record
         if link.column.try(:singular_association?)
@@ -367,7 +367,7 @@ module ActiveScaffold
         elsif nested?
           replacements['--CHILD_ID--'] = params[nested.param_name].to_s
         end
-        url_options.collect! do |k,v|
+        url_options.collect! do |k, v|
           [k.to_s, replacements[v] || v]
         end
         [missing_options, url_options]
@@ -375,7 +375,7 @@ module ActiveScaffold
 
       def action_link_selected?(link, record)
         missing_options, url_options = replaced_action_link_url_options(link, record)
-        (url_options - params.to_a).blank? && missing_options.all? {|k,v| params[k].nil?}
+        (url_options - params.to_a).blank? && missing_options.all? {|k, v| params[k].nil?}
       end
 
       def action_link_html_options(link, record, options)

@@ -4,7 +4,7 @@ module ActiveScaffold
       # Cache the options for select
       def cache_association_options(association, conditions, klass, cache = true)
         if active_scaffold_config.cache_association_options && cache
-          @_associations_cache ||= Hash.new { |h,k| h[k] = {} }
+          @_associations_cache ||= Hash.new { |h, k| h[k] = {} }
           key = [association.name, association.active_record.name, klass.name].join('/')
           @_associations_cache[key][conditions] ||= yield
         else
