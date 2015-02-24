@@ -1,6 +1,6 @@
 addons:
   code_climate:
-    repo_token: <your codeclimate.com token for this repo>
+    repo_token: 8a344833c6693733b163f09a5243fa12dd7be0b69f0358b146c64dd4becabc60
 bundler_args: --jobs=3 --retry=3
 gemfile:
   - gemfiles/Gemfile.rails-3.2.x
