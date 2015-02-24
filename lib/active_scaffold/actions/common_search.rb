@@ -21,11 +21,12 @@ module ActiveScaffold::Actions
       end
 
       def search_partial
-        @_search_partial ||= if params[:kind].present? && active_scaffold_config.actions.include?(params[:kind])
-          params.delete(:kind)
-        else
-          active_scaffold_config.list.auto_search_partial
-        end
+        @_search_partial ||=
+          if params[:kind].present? && active_scaffold_config.actions.include?(params[:kind])
+            params.delete(:kind)
+          else
+            active_scaffold_config.list.auto_search_partial
+          end
       end
 
       def store_search_params_into_session

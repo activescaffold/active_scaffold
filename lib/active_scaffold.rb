@@ -54,11 +54,12 @@ module ActiveScaffold
   end
 
   def self.js_framework
-    @@js_framework ||= if defined? Jquery
-      :jquery
-    elsif defined? PrototypeRails
-      :prototype
-    end
+    @@js_framework ||=
+      if defined? Jquery
+        :jquery
+      elsif defined? PrototypeRails
+        :prototype
+      end
   end
 
   def self.js_config=(config)

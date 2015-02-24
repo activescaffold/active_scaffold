@@ -44,32 +44,16 @@ module ActiveScaffold
         return unless column and column.search_sql and not value.blank?
         search_ui = column.search_ui || column.column.try(:type)
         begin
-          sql, *values = if search_ui && self.respond_to?("condition_for_#{search_ui}_type")
-            send("condition_for_#{search_ui}_type", column, value, like_pattern)
-          else
-            if column.search_sql.instance_of? Proc
-              column.search_sql.call(value)
+          sql, *values =
+            if search_ui && self.respond_to?("condition_for_#{search_ui}_type")
+              send("condition_for_#{search_ui}_type", column, value, like_pattern)
             else
-              case search_ui
-              when :boolean, :checkbox
-                ['%{search_sql} = ?', column.column ? ActiveScaffold::Core.column_type_cast(value, column.column) : value]
-              when :integer, :decimal, :float
-                condition_for_numeric(column, value)
-              when :string, :range
-                condition_for_range(column, value, like_pattern)
-              when :date, :time, :datetime, :timestamp
-                condition_for_datetime(column, value)
-              when :select, :multi_select, :country, :usa_state, :chosen, :multi_chosen
-                ['%{search_sql} in (?)', Array(value)]
+              if column.search_sql.instance_of? Proc
+                column.search_sql.call(value)
               else
-                if column.text?
-                  ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
-                else
-                  ['%{search_sql} = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
-                end
+                condition_for_search_ui(column, value, like_pattern, search_ui)
               end
             end
-          end
           return nil unless sql
 
           conditions = [column.search_sql.collect { |search_sql| sql % {:search_sql => search_sql} }.join(' OR ')]
@@ -78,6 +62,27 @@ module ActiveScaffold
         rescue Exception => e
           logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
           raise e
+        end
+      end
+
+      def condition_for_search_ui(column, value, like_pattern, search_ui)
+        case search_ui
+        when :boolean, :checkbox
+          ['%{search_sql} = ?', column.column ? ActiveScaffold::Core.column_type_cast(value, column.column) : value]
+        when :integer, :decimal, :float
+          condition_for_numeric(column, value)
+        when :string, :range
+          condition_for_range(column, value, like_pattern)
+        when :date, :time, :datetime, :timestamp
+          condition_for_datetime(column, value)
+        when :select, :multi_select, :country, :usa_state, :chosen, :multi_chosen
+          ['%{search_sql} in (?)', Array(value)]
+        else
+          if column.text?
+            ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
+          else
+            ['%{search_sql} = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
+          end
         end
       end
 

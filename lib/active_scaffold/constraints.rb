@@ -96,11 +96,12 @@ module ActiveScaffold
       #
       # please see the relevant tests for concrete examples.
 
-      field = if [:has_one, :has_many, :has_and_belongs_to_many].include?(association.macro)
-        association.klass.primary_key
-      else
-        association.options[:foreign_key] || association.name.to_s.foreign_key
-      end
+      field =
+        if [:has_one, :has_many, :has_and_belongs_to_many].include?(association.macro)
+          association.klass.primary_key
+        else
+          association.options[:foreign_key] || association.name.to_s.foreign_key
+        end
 
       table = case association.macro
         when :belongs_to then active_scaffold_config.model.table_name

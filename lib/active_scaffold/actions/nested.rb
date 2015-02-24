@@ -34,11 +34,12 @@ module ActiveScaffold::Actions
 
     def configure_nested
       if nested?
-        active_scaffold_config.list.user.label = if nested.belongs_to?
-          as_(:nested_of_model, :nested_model => active_scaffold_config.model.model_name.human, :parent_model => nested_parent_record.to_label)
-        else
-          as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label)
-        end
+        active_scaffold_config.list.user.label =
+          if nested.belongs_to?
+            as_(:nested_of_model, :nested_model => active_scaffold_config.model.model_name.human, :parent_model => nested_parent_record.to_label)
+          else
+            as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label)
+          end
         if nested.sorted? && !active_scaffold_config.nested.ignore_order_from_association
           active_scaffold_config.list.user.nested_default_sorting = {:table_name => active_scaffold_config.model.model_name, :default_sorting => nested.default_sorting}
         end
@@ -86,10 +87,11 @@ module ActiveScaffold::Actions
           active_scaffold_config.model.where(nested.child_association.foreign_key => nested_parent_record.send(nested.association.association_primary_key))
         elsif nested.association.belongs_to?
           chain = active_scaffold_config.model.joins(nested.child_association.name)
-          table_name = if active_scaffold_config.model == nested.association.active_record
-            dependency = ActiveRecord::Associations::JoinDependency.new(chain.klass, chain.joins_values, [])
-            dependency.join_associations.find {|join| join.try(:reflection).try(:name) == nested.child_association.name}.try(:table).try(:right)
-          end
+          table_name =
+            if active_scaffold_config.model == nested.association.active_record
+              dependency = ActiveRecord::Associations::JoinDependency.new(chain.klass, chain.joins_values, [])
+              dependency.join_associations.find {|join| join.try(:reflection).try(:name) == nested.child_association.name}.try(:table).try(:right)
+            end
           table_name ||= nested.association.active_record.table_name
           chain.where(table_name => {nested.association.active_record.primary_key => nested_parent_record}).readonly(false)
         end

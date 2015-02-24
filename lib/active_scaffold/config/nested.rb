@@ -26,11 +26,12 @@ module ActiveScaffold::Config
     def add_link(attribute, options = {})
       column = @core.columns[attribute.to_sym]
       if column && column.association
-        label = if column.polymorphic_association?
-          column.label
-        else
-          column.association.klass.model_name.human({:count => column.singular_association? ? 1 : 2, :default => column.association.klass.name.pluralize})
-        end
+        label =
+          if column.polymorphic_association?
+            column.label
+          else
+            column.association.klass.model_name.human({:count => column.singular_association? ? 1 : 2, :default => column.association.klass.name.pluralize})
+          end
         options.reverse_merge! :security_method => :nested_authorized?, :label => label
         action_group = options.delete(:action_group) || self.action_group
         action_link = @core.link_for_association(column, options)
