@@ -7,7 +7,7 @@ module ActiveScaffold::Actions
       base.module_eval do
         before_filter :set_nested
         before_filter :configure_nested
-        include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
+        include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? { |a| a.macro == :has_and_belongs_to_many }
       end
       base.before_filter :include_habtm_actions
       base.helper_method :nested
@@ -90,7 +90,7 @@ module ActiveScaffold::Actions
           table_name =
             if active_scaffold_config.model == nested.association.active_record
               dependency = ActiveRecord::Associations::JoinDependency.new(chain.klass, chain.joins_values, [])
-              dependency.join_associations.find {|join| join.try(:reflection).try(:name) == nested.child_association.name}.try(:table).try(:right)
+              dependency.join_associations.find { |join| join.try(:reflection).try(:name) == nested.child_association.name }.try(:table).try(:right)
             end
           table_name ||= nested.association.active_record.table_name
           chain.where(table_name => {nested.association.active_record.primary_key => nested_parent_record}).readonly(false)

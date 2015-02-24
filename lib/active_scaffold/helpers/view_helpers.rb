@@ -358,7 +358,7 @@ module ActiveScaffold
       def replaced_action_link_url_options(link, record)
         url = action_link_url_options(link, record)
         url[:controller] ||= params[:controller]
-        missing_options, url_options = url.partition {|_, v| v.nil?}
+        missing_options, url_options = url.partition { |_, v| v.nil? }
         replacements = {}
         replacements['--ID--'] = record.id.to_s if record
         if link.column.try(:singular_association?)
@@ -374,7 +374,7 @@ module ActiveScaffold
 
       def action_link_selected?(link, record)
         missing_options, url_options = replaced_action_link_url_options(link, record)
-        (url_options - params.to_a).blank? && missing_options.all? {|k, _| params[k].nil?}
+        (url_options - params.to_a).blank? && missing_options.all? { |k, _| params[k].nil? }
       end
 
       def action_link_html_options(link, record, options)
@@ -606,7 +606,7 @@ module ActiveScaffold
         end
 
         objects.compact!
-        count = objects.inject(0) {|sum, object| sum + object.errors.count }
+        count = objects.inject(0) { |sum, object| sum + object.errors.count }
 
         if count.zero?
           ''

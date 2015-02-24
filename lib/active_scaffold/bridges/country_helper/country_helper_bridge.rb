@@ -22,12 +22,12 @@ module ActiveScaffold::Bridges
       # NOTE: Only the option tags are returned, you have to wrap this call in a regular HTML select tag.
       def country_options_for_select(selected = nil, priority_countries = nil)
         if priority_countries
-          country_options = options_for_select(priority_countries.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s]} + [['-------------', '']], :selected => selected, :disabled => '')
+          country_options = options_for_select(priority_countries.collect { |country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s] } + [['-------------', '']], :selected => selected, :disabled => '')
         else
           country_options = options_for_select([])
         end
 
-        return country_options + options_for_select(COUNTRIES.collect {|country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s]}, :selected => selected)
+        return country_options + options_for_select(COUNTRIES.collect { |country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s] }, :selected => selected)
       end
 
       # Returns a string of option tags for the states in the United States. Supply a state name as +selected to

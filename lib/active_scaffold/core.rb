@@ -57,7 +57,7 @@ module ActiveScaffold
             mod_conf = active_scaffold_config.send(mod)
             if mod_conf.respond_to?(:link) && (link = mod_conf.link)
               if link.is_a? Array
-                link.each {|current| active_scaffold_config.action_links.add_to_group(current, active_scaffold_config.send(mod).action_group)}
+                link.each { |current| active_scaffold_config.action_links.add_to_group(current, active_scaffold_config.send(mod).action_group) }
               elsif link.is_a? ActiveScaffold::DataStructures::ActionLink
                 active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
               end
@@ -96,7 +96,7 @@ module ActiveScaffold
           # lazy load of action_link, cause it was really slowing down app in dev mode
           # and might lead to trouble cause of cyclic constantization of controllers
           # and might be unnecessary cause it is done before columns are configured
-          column.set_link(Proc.new {|col| link_for_association(col)})
+          column.set_link(Proc.new { |col| link_for_association(col) })
         end
       end
 

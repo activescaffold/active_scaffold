@@ -120,7 +120,7 @@ module ActiveScaffold::DataStructures
         sql = sort_column.sort[:sql]
         next if sql.nil? or sql.empty?
 
-        order << Array(sql).map {|column| "#{column} #{sort_direction}"}.join(', ')
+        order << Array(sql).map { |column| "#{column} #{sort_direction}" }.join(', ')
       end
 
       order << @primary_key_clause if @sorting_by_primary_key
@@ -132,7 +132,7 @@ module ActiveScaffold::DataStructures
     # retrieves the sorting clause for the given column
     def get_clause(column)
       column = get_column(column)
-      @clauses.find { |clause| clause[0] == column}
+      @clauses.find { |clause| clause[0] == column }
     end
 
     # possibly converts the given argument into a column object from @columns (if it's not already)

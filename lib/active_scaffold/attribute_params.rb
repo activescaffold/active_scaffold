@@ -103,7 +103,7 @@ module ActiveScaffold
         begin
           # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
           unless column.params.empty?
-            column.params.each {|p| parent_record.send("#{p}=", attributes[p]) if attributes.has_key? p}
+            column.params.each { |p| parent_record.send("#{p}=", attributes[p]) if attributes.has_key? p }
           end
 
           if multi_parameter_attributes.has_key? column.name.to_s
@@ -256,9 +256,9 @@ module ActiveScaffold
       if current and current.is_a? ActiveRecord::Base and current.id.to_s == id
         # modifying the current object of a singular association
         current
-      elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == id}
+      elsif current and current.respond_to?(:any?) and current.any? { |o| o.id.to_s == id }
         # modifying one of the current objects in a plural association
-        current.detect {|o| o.id.to_s == id}
+        current.detect { |o| o.id.to_s == id }
       else # attaching an existing but not-current object
         klass.find(id)
       end

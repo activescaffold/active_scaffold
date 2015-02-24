@@ -33,7 +33,7 @@ module ActiveScaffold
         # because the object may change (someone may log in or out). So we give ActiveRecord a proc that ties to the
         # current_user_method on this ApplicationController.
         def assign_current_user_to_models
-          ActiveRecord::Base.current_user_proc = proc {send(ActiveRecordPermissions.current_user_method)}
+          ActiveRecord::Base.current_user_proc = proc { send(ActiveRecordPermissions.current_user_method) }
         end
       end
 
@@ -99,7 +99,7 @@ module ActiveScaffold
           return send(methods.first) if methods.one?
 
           # if any method returns false, then return false
-          return false if methods.any? {|m| !send(m)}
+          return false if methods.any? { |m| !send(m) }
           true
         end
 
@@ -131,7 +131,7 @@ module ActiveScaffold
           [
             column_security_method(options[:column]),
             crud_type_security_method(options[:crud_type])
-          ].compact.select {|m| respond_to?(m)}
+          ].compact.select { |m| respond_to?(m) }
         end
 
         private

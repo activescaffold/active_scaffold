@@ -157,7 +157,7 @@ module ActiveScaffold::DataStructures
     protected
 
     def collect_columns
-      @set.collect {|col| col.is_a?(ActiveScaffold::DataStructures::ActionColumns) ? col.collect_columns : col}
+      @set.collect { |col| col.is_a?(ActiveScaffold::DataStructures::ActionColumns) ? col.collect_columns : col }
     end
 
     # called during clone or dup. makes the clone/dup deeper.

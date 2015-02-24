@@ -12,7 +12,7 @@ ActiveScaffold::Config::Core.class_eval do
   def initialize_with_date_picker(model_id)
     initialize_without_date_picker(model_id)
 
-    date_picker_fields = model.columns.collect {|c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
+    date_picker_fields = model.columns.collect { |c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
     # check to see if file column was used on the model
     return if date_picker_fields.empty?
 

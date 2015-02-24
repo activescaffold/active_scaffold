@@ -17,7 +17,7 @@ class ActiveRecord::Base
   end
 
   def no_errors_in_associated?
-    with_unsaved_associated {|a| a.errors.count == 0 and a.no_errors_in_associated?}
+    with_unsaved_associated { |a| a.errors.count == 0 and a.no_errors_in_associated? }
   end
 
   protected
@@ -53,7 +53,7 @@ class ActiveRecord::Base
       if association_proxy.target.present?
         records = association_proxy.target
         records = [records] unless records.is_a? Array # convert singular associations into collections for ease of use
-        records.select {|r| r.unsaved? and not r.readonly?}.all? {|r| yield r} # must use select instead of find_all, which Rails overrides on association proxies for db access
+        records.select { |r| r.unsaved? and not r.readonly? }.all? { |r| yield r } # must use select instead of find_all, which Rails overrides on association proxies for db access
       else
         true
       end

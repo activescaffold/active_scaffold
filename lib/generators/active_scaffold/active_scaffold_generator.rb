@@ -9,7 +9,7 @@ module Rails
       remove_class_option :actions
 
       def add_resource_route
-        route_config =  class_path.collect {|namespace| "namespace :#{namespace} do " }.join(' ')
+        route_config =  class_path.collect { |namespace| "namespace :#{namespace} do " }.join(' ')
         route_config << "resources :#{file_name.pluralize} do as_routes end"
         route_config << ' end' * class_path.size
         route route_config
