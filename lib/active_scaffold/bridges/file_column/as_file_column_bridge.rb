@@ -19,9 +19,7 @@ module ActiveScaffold::Config
       update.multipart = true
       create.multipart = true
 
-      model.file_column_fields.each{ |field|
-        configure_file_column_field(field)
-      }
+      model.file_column_fields.each { |field| configure_file_column_field(field) }
     end
 
     alias_method_chain :initialize, :file_column unless self.method_defined?(:initialize_without_file_column)

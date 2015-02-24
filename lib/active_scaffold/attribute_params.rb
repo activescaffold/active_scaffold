@@ -103,7 +103,7 @@ module ActiveScaffold
         begin
           # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
           unless column.params.empty?
-            column.params.each{|p| parent_record.send("#{p}=", attributes[p]) if attributes.has_key? p}
+            column.params.each {|p| parent_record.send("#{p}=", attributes[p]) if attributes.has_key? p}
           end
 
           if multi_parameter_attributes.has_key? column.name.to_s

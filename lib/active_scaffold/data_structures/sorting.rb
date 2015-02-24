@@ -83,8 +83,8 @@ module ActiveScaffold::DataStructures
       clause[1]
     end
 
-    SORTING_STAGES = Hash[%w(reset ASC DESC reset).each_cons(2).map{|a|a}].freeze
-    DEFAULT_SORTING_STAGES = Hash[%w(ASC DESC ASC).each_cons(2).map{|a|a}].freeze
+    SORTING_STAGES = Hash[%w(reset ASC DESC reset).each_cons(2).to_a].freeze
+    DEFAULT_SORTING_STAGES = Hash[%w(ASC DESC ASC).each_cons(2).to_a].freeze
     def next_sorting_of(column, sorted_by_default)
       stages = sorted_by_default ? DEFAULT_SORTING_STAGES : SORTING_STAGES
       stages[direction_of(column)] || 'ASC'
@@ -132,7 +132,7 @@ module ActiveScaffold::DataStructures
     # retrieves the sorting clause for the given column
     def get_clause(column)
       column = get_column(column)
-      @clauses.find{ |clause| clause[0] == column}
+      @clauses.find { |clause| clause[0] == column}
     end
 
     # possibly converts the given argument into a column object from @columns (if it's not already)

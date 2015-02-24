@@ -17,7 +17,7 @@ module ActiveScaffold
     # If the constraint value is a Hash, then we assume the constraint is a multi-level association constraint (the reverse of a has_many :through) and we do NOT register the constraint column.
     def register_constraints_with_action_columns(constrained_fields = nil)
       constrained_fields ||= []
-      constrained_fields |= active_scaffold_constraints.reject{|k, v| v.is_a? Hash}.keys.collect(&:to_sym)
+      constrained_fields |= active_scaffold_constraints.reject {|k, v| v.is_a? Hash}.keys.collect(&:to_sym)
       exclude_actions = []
       [:list, :update].each do |action_name|
         if active_scaffold_config.actions.include? action_name
