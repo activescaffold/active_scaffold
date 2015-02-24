@@ -7,3 +7,10 @@ AllCops:
 
 Style/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
+
+Style/SingleLineBlockParams:
+  Enabled: false
+
+Style/SingleLineMethods:
+  Exclude:
+    - test/**/*

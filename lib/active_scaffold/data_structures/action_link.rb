@@ -127,7 +127,9 @@ module ActiveScaffold::DataStructures
       @inline = (val == true)
       self.popup = self.page = false if @inline
     end
-    def inline?; @inline end
+    def inline?
+      @inline
+    end
 
     # a "popup" link displays in a separate (browser?) window. this will eventually take arguments.
     # exclusive with inline? and page?
@@ -141,7 +143,9 @@ module ActiveScaffold::DataStructures
         self.method = nil
       end
     end
-    def popup?; @popup end
+    def popup?
+      @popup
+    end
 
     # a "page" link displays by reloading the current page
     # exclusive with inline? and popup?
@@ -158,7 +162,9 @@ module ActiveScaffold::DataStructures
         self.method = nil if method == :get
       end
     end
-    def page?; @page end
+    def page?
+      @page
+    end
 
     # where the result of this action should insert in the display.
     # for :type => :collection, supported values are:

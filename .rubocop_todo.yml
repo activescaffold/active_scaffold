@@ -406,17 +406,6 @@ Style/Semicolon:
 Style/SignalException:
   Enabled: false
 
-# Offense count: 3
-# Configuration parameters: Methods.
-Style/SingleLineBlockParams:
-  Enabled: false
-
-# Offense count: 48
-# Cop supports --auto-correct.
-# Configuration parameters: AllowIfMethodIsEmpty.
-Style/SingleLineMethods:
-  Enabled: false
-
 # Offense count: 228
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.

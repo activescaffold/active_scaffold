@@ -28,7 +28,9 @@ module ActiveScaffold::Config
     end
 
     # delegate
-    def crud_type; self.class.crud_type end
+    def crud_type
+      self.class.crud_type
+    end
 
     def label(model = nil)
       model ||= @core.label(:count => 1)
