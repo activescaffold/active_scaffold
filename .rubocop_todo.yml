@@ -17,10 +17,6 @@ Lint/AmbiguousRegexpLiteral:
 Lint/ShadowingOuterLocalVariable:
   Enabled: false
 
-# Offense count: 1
-Lint/UnderscorePrefixedVariableName:
-  Enabled: false
-
 # Offense count: 35
 Lint/UnreachableCode:
   Enabled: false
