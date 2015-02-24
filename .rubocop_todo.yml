@@ -21,14 +21,6 @@ Lint/UnreachableCode:
 Lint/UselessAssignment:
   Enabled: false
 
-# Offense count: 1
-Lint/UselessComparison:
-  Enabled: false
-
-# Offense count: 1
-Lint/UselessSetterCall:
-  Enabled: false
-
 # Offense count: 249
 Metrics/AbcSize:
   Max: 139

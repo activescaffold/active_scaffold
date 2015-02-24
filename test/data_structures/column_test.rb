@@ -61,7 +61,9 @@ class ColumnTest < MiniTest::Test
     assert columns != @column
 
     # identity
+    # rubocop:disable Lint/UselessComparison
     assert @column == @column
+    # rubocop:enable Lint/UselessComparison
 
     # string comparison
     assert @column == 'a'
