@@ -171,7 +171,7 @@ module ActiveScaffold
         column_options = active_scaffold_input_options(column, scope, :object => record)
         attributes = field_attributes(column, record)
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
-        field = 
+        field =
           if only_value
             content_tag(:span, get_column_value(record, column), column_options.except(:name, :object)) <<
             hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
