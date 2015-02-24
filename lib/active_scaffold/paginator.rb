@@ -128,7 +128,7 @@ class Paginator
     end
 
     def ==(other) #:nodoc:
-      @pager == other.pager && self.number == other.number
+      @pager == other.pager && number == other.number
     end
 
   end

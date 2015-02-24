@@ -50,7 +50,7 @@ module ActiveScaffold::Bridges
           date_picker_options.merge!(as_date_picker_options) if as_date_picker_options.is_a? Hash
           Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}" if as_date_picker_options.blank?
 
-          js_format = self.to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
+          js_format = to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
           date_picker_options[:dateFormat] = js_format unless js_format.blank?
           date_picker_options
         rescue
@@ -82,7 +82,7 @@ module ActiveScaffold::Bridges
           datetime_picker_options.merge!(as_datetime_picker_options) if as_datetime_picker_options.is_a? Hash
           Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{locale}" if as_datetime_picker_options.blank?
 
-          date_format, time_format = self.split_datetime_format(self.to_datepicker_format(rails_time_format))
+          date_format, time_format = split_datetime_format(to_datepicker_format(rails_time_format))
           datetime_picker_options[:dateFormat] = date_format unless date_format.nil?
           unless time_format.nil?
             datetime_picker_options[:timeFormat] = time_format
@@ -138,7 +138,7 @@ module ActiveScaffold::Bridges
             options['data-dateFormat'] = js_format unless js_format.nil?
           else
             rails_time_format = I18n.translate!("time.formats.#{format}")
-            date_format, time_format = datepicker_split_datetime_format(self.to_datepicker_format(rails_time_format))
+            date_format, time_format = datepicker_split_datetime_format(to_datepicker_format(rails_time_format))
             options['data-dateFormat'] = date_format unless date_format.nil?
             unless time_format.nil?
               options['data-timeFormat'] = time_format

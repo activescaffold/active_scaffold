@@ -44,7 +44,7 @@ module ActiveScaffold
     if Rails.version < '4.1'
       def build_arel
         unless outer_joins_values.empty?
-          relation = self.except(:outer_joins)
+          relation = except(:outer_joins)
           join_dependency = ActiveRecord::Associations::JoinDependency.new(@klass, outer_joins_values, [])
           join_dependency.join_associations.each do |association|
             relation = association.join_relation(relation)
@@ -57,7 +57,7 @@ module ActiveScaffold
     else
       def build_arel
         unless outer_joins_values.empty?
-          relation = self.except(:outer_joins)
+          relation = except(:outer_joins)
           relation.joins! ActiveRecord::Associations::JoinDependency.new(@klass, outer_joins_values, [])
           relation.build_arel
         else

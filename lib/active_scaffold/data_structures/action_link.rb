@@ -21,14 +21,14 @@ module ActiveScaffold::DataStructures
       # apply quick properties
       options.each_pair do |k, v|
         setter = "#{k}="
-        self.send(setter, v) if self.respond_to? setter
+        send(setter, v) if self.respond_to? setter
       end
       self.toggle = self.action.try(:to_sym) == :index && (parameters.present? || dynamic_parameters) unless options.include? :toggle
     end
 
     def initialize_copy(action_link)
-      self.parameters = self.parameters.clone if action_link.instance_variable_get(:@parameters)
-      self.html_options = self.html_options.clone if action_link.instance_variable_get(:@html_options)
+      self.parameters = parameters.clone if action_link.instance_variable_get(:@parameters)
+      self.html_options = html_options.clone if action_link.instance_variable_get(:@html_options)
     end
 
     # the weight for this link in the action links collection, it will be used to sort the collection
@@ -102,7 +102,7 @@ module ActiveScaffold::DataStructures
     # note that this is only the UI part of the security. to prevent URL hax0rz, you also need security on requests (e.g. don't execute update method unless authorized).
     attr_writer :security_method
     def security_method
-      @security_method || "#{self.action}_authorized?"
+      @security_method || "#{action}_authorized?"
     end
 
     def security_method_set?
@@ -174,9 +174,9 @@ module ActiveScaffold::DataStructures
     attr_writer :position
     def position
       return @position unless @position.nil? or @position == true
-      return :replace if self.type == :member
-      return :top if self.type == :collection
-      raise "what should the default position be for #{self.type}?"
+      return :replace if type == :member
+      return :top if type == :collection
+      raise "what should the default position be for #{type}?"
     end
 
     # what type of link this is. currently supported values are :collection and :member.

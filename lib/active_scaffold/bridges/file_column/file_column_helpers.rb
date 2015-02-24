@@ -33,7 +33,7 @@ module ActiveScaffold
         end
 
         def options_for_file_column_field(field)
-          self.allocate.send("#{field}_options")
+          allocate.send("#{field}_options")
         end
 
         def field_has_image_version?(field, version='thumb')

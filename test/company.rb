@@ -21,11 +21,11 @@ class Company < ActiveRecord::Base
   end
 
   def self.columns
-    self.columns_hash.values
+    columns_hash.values
   end
 
   def self.class_name
-    self.name
+    name
   end
 
   def self.table_name
@@ -85,7 +85,7 @@ class Company < ActiveRecord::Base
   def name
   end
   def name_before_type_cast
-    self.name.to_s
+    name.to_s
   end
 
   def date

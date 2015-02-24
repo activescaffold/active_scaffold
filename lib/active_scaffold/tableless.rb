@@ -151,7 +151,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   unless Rails.version < '4.2'
     def self.columns_hash
       if self < ActiveScaffold::Tableless
-        @columns_hash ||= Hash[self.columns.map { |c| [c.name, c] }]
+        @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
       else
         super
       end
