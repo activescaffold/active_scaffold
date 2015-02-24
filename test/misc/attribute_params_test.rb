@@ -52,7 +52,7 @@ class AttributeParamsTest < MiniTest::Test
     model = update_record_from_params(model, :update, :first_name, :last_name, :buildings, :first_name => 'Name', :last_name => 'Last', :buildings => ['']) { raise ActiveRecord::Rollback }
     assert_equal 'Name', model.first_name
     assert_equal 'Last', model.last_name
-    assert_equal [model.id]*2, buildings.map{|b| b.reload.owner_id}, 'owners should not be saved'
+    assert_equal [model.id] * 2, buildings.map{|b| b.reload.owner_id}, 'owners should not be saved'
     assert model.building_ids.blank?, 'buildings should be cleared'
     assert model.buildings.blank?, 'buildings should be cleared'
     assert_equal 0, model.buildings.size
@@ -63,7 +63,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 'Last', model.last_name
     assert model.building_ids.blank?, 'buildings should be cleared'
     assert model.buildings.blank?, 'buildings should be cleared'
-    assert_equal [nil]*2, buildings.map{|b| b.reload.owner_id}, 'buildings should be saved'
+    assert_equal [nil] * 2, buildings.map{|b| b.reload.owner_id}, 'buildings should be saved'
     assert model.save
     assert_equal 0, model.reload.buildings_count
   end
@@ -185,20 +185,20 @@ class AttributeParamsTest < MiniTest::Test
     model = update_record_from_params(Building.new, :create, :name, :tenants, :name => 'Tower', :tenants => ['', *people.map{|b| b.id.to_s}]) # checkbox_list always add a hidden tag with empty value
     assert_equal 'Tower', model.name
     assert model.tenants.present?
-    assert_equal [nil]*2, people.map {|p| p.floor(true)}, 'floor should not be saved yet'
+    assert_equal [nil] * 2, people.map {|p| p.floor(true)}, 'floor should not be saved yet'
     assert model.save
-    assert_equal [model.id]*2, model.floors.map(&:building_id)
-    assert_equal [model.id]*2, people.map {|p| p.floor(true).building_id}, 'floor should be saved'
+    assert_equal [model.id] * 2, model.floors.map(&:building_id)
+    assert_equal [model.id] * 2, people.map {|p| p.floor(true).building_id}, 'floor should be saved'
 
     model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => ['']) { raise ActiveRecord::Rollback }
     assert_equal 'Skyscrapper', model.name
-    assert_equal [model.id]*2, people.map {|p| p.floor(true).building_id}, 'previous floor should not be deleted'
+    assert_equal [model.id] * 2, people.map {|p| p.floor(true).building_id}, 'previous floor should not be deleted'
     assert model.tenants.empty?, 'tenants should be cleared'
 
     model.reload
     model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => [''])
     assert_equal 'Skyscrapper', model.name
-    assert_equal [nil]*2, people.map {|p| p.floor(true)}, 'previous floor should be deleted'
+    assert_equal [nil] * 2, people.map {|p| p.floor(true)}, 'previous floor should be deleted'
     assert model.tenants.empty?, 'tenants should be cleared'
     assert model.save
   end
@@ -359,15 +359,15 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 'Name', model.first_name
     assert model.contacts.present?
     assert model.save
-    assert_equal [model.id]*2, model.contacts.map(&:contactable_id)
-    assert_equal [model.id]*2, contacts.map {|c| c.reload.contactable.id}, 'contactable should be saved'
+    assert_equal [model.id] * 2, model.contacts.map(&:contactable_id)
+    assert_equal [model.id] * 2, contacts.map {|c| c.reload.contactable.id}, 'contactable should be saved'
     assert_equal 2, model.reload.contacts_count
 
     model = update_record_from_params(model, :update, :first_name, :contacts, :first_name => 'Name', :contacts => [''])
     assert_equal 'Name', model.first_name
     assert model.contacts.empty?
     assert model.save
-    assert_equal [nil]*2, contacts.map {|c| c.reload.contactable}, 'contactable should be saved'
+    assert_equal [nil] * 2, contacts.map {|c| c.reload.contactable}, 'contactable should be saved'
     assert_equal 0, model.reload.contacts_count
   end
 
@@ -385,8 +385,8 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 'Name', model.first_name
     assert model.roles.present?
     assert model.save
-    assert_equal [[model.id]]*2, model.roles.map(&:person_ids)
-    assert_equal [[model.id]]*2, roles.map {|r| r.reload.person_ids}, 'roles should be saved'
+    assert_equal [[model.id]] * 2, model.roles.map(&:person_ids)
+    assert_equal [[model.id]] * 2, roles.map {|r| r.reload.person_ids}, 'roles should be saved'
 
     model = update_record_from_params(model, :update, :first_name, :roles, :first_name => 'Name', :roles => [''])
     assert_equal 'Name', model.first_name

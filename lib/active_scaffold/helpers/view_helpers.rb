@@ -63,7 +63,7 @@ module ActiveScaffold
         options[:target] = action_iframe_id(url_for_options)
         options[:multipart] ||= true
         options[:class] = "#{options[:class]} as_remote_upload".strip
-        output=''
+        output = ''
         output << form_tag(url_for_options, options)
         (output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>").html_safe
       end
