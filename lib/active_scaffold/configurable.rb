@@ -7,10 +7,10 @@ module ActiveScaffold
   module Configurable
     def configure(&configuration_block)
       return unless configuration_block
-      @configuration_binding = eval('self', configuration_block.binding)
-      ret = instance_exec self, &configuration_block
+      @configuration_binding = configuration_block.binding.eval('self')
+      ret = instance_exec(self, &configuration_block)
       @configuration_binding = nil
-      return ret
+      ret
     end
 
     # this method will surely need tweaking. for example, i'm not sure if it should call super before or after it tries to eval with the binding.
