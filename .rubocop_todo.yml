@@ -13,11 +13,6 @@ Lint/AmbiguousOperator:
 Lint/AmbiguousRegexpLiteral:
   Enabled: false
 
-# Offense count: 1
-# Configuration parameters: AlignWith, SupportedStyles.
-Lint/DefEndAlignment:
-  Enabled: false
-
 # Offense count: 31
 # Configuration parameters: AlignWith, SupportedStyles.
 Lint/EndAlignment:

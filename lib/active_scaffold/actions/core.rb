@@ -273,7 +273,7 @@ module ActiveScaffold::Actions
         session[:input_device_type] = 'MOUSE'
         session[:hover_supported] = true
       end if session[:input_device_type].nil?
-     end
+    end
 
     def touch_device?
       session[:input_device_type] == 'TOUCH'
