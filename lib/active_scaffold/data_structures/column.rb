@@ -199,11 +199,12 @@ module ActiveScaffold::DataStructures
     #   search = "CONCAT(a, b)" define your own sql for searching. this should be the "left-side" of a WHERE condition. the operator and value will be supplied by ActiveScaffold.
     #   search = [:a, :b]       searches in both fields
     def search_sql=(value)
-      @search_sql = if value
-        (value == true || value.is_a?(Proc)) ? value : Array(value)
-      else
-        value
-      end
+      @search_sql =
+        if value
+          (value == true || value.is_a?(Proc)) ? value : Array(value)
+        else
+          value
+        end
     end
     def search_sql
       initialize_search_sql if @search_sql === true
@@ -321,24 +322,7 @@ module ActiveScaffold::DataStructures
       @show_blank_record = self.class.show_blank_record
       @send_form_on_update_column = self.class.send_form_on_update_column
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
-      @select_columns = if @association.nil? && @column
-        [field]
-      elsif polymorphic_association?
-        [field, quoted_field(@active_record_class.connection.quote_column_name(@association.foreign_type))]
-      elsif @association
-        if association.belongs_to?
-          [field]
-        else
-          columns = []
-          if active_record_class.columns_hash[count_column = "#{@association.name}_count"]
-            columns << quoted_field(@active_record_class.connection.quote_column_name(count_column))
-          end
-          if @association.through_reflection.try(:belongs_to?)
-            columns << quoted_field(@active_record_class.connection.quote_column_name(@association.through_reflection.foreign_key))
-          end
-          columns
-        end
-      end
+      @select_columns = default_select_columns
 
       @text = @column.nil? || [:string, :text].include?(@column.type)
       if @column
@@ -417,6 +401,27 @@ module ActiveScaffold::DataStructures
 
     protected
 
+    def default_select_columns
+      if association.nil? && column
+        [field]
+      elsif polymorphic_association?
+        [field, quoted_field(@active_record_class.connection.quote_column_name(association.foreign_type))]
+      elsif association
+        if association.belongs_to?
+          [field]
+        else
+          columns = []
+          if active_record_class.columns_hash[count_column = "#{association.name}_count"]
+            columns << quoted_field(@active_record_class.connection.quote_column_name(count_column))
+          end
+          if association.through_reflection.try(:belongs_to?)
+            columns << quoted_field(@active_record_class.connection.quote_column_name(association.through_reflection.foreign_key))
+          end
+          columns
+        end
+      end
+    end
+
     def quoted_field(name)
       [@active_record_class.quoted_table_name, name].join('.')
     end
@@ -435,13 +440,14 @@ module ActiveScaffold::DataStructures
     end
 
     def initialize_search_sql
-      self.search_sql = unless self.virtual?
-        if association.nil?
-          field.to_s unless @tableless
-        elsif !self.polymorphic_association?
-          [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
+      self.search_sql =
+        unless self.virtual?
+          if association.nil?
+            field.to_s unless @tableless
+          elsif !self.polymorphic_association?
+            [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
+          end
         end
-      end
     end
 
     # the table name from the ActiveRecord class

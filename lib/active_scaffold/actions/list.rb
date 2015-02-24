@@ -66,11 +66,12 @@ module ActiveScaffold::Actions
     # The actual algorithm to prepare for the list view
     def set_includes_for_columns(action = :list)
       @cache_associations = true
-      columns = if respond_to?(:"#{action}_columns", true)
-        send(:"#{action}_columns")
-      else
-        active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
-      end
+      columns =
+        if respond_to?(:"#{action}_columns", true)
+          send(:"#{action}_columns")
+        else
+          active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
+        end
       sorting = active_scaffold_config.list.user.sorting
       columns_for_joins, columns_for_includes = columns.select { |c| c.includes.present? }.partition { |c| sorting.sorts_on? c }
       active_scaffold_preload.concat columns_for_includes.map(&:includes).flatten.uniq
@@ -153,13 +154,14 @@ module ActiveScaffold::Actions
     end
 
     def objects_for_etag
-      objects = if @list_columns
-        if active_scaffold_config.list.calculate_etag
-          @records.to_a
-        elsif active_scaffold_config.list.user.sorting
-          {:etag => active_scaffold_config.list.user.sorting.clause}
+      objects =
+        if @list_columns
+          if active_scaffold_config.list.calculate_etag
+            @records.to_a
+          elsif active_scaffold_config.list.user.sorting
+            {:etag => active_scaffold_config.list.user.sorting.clause}
+          end
         end
-      end
       objects.present? ? objects : super
     end
 

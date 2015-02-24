@@ -212,11 +212,12 @@ module ActiveScaffold::Actions
           not_string = [:string, :text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? and nested.param_name == key
-          conditions[key] = if value.is_a?(Array)
-            value.map {|v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
-          else
-            value == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(value, column)
-          end
+          conditions[key] =
+            if value.is_a?(Array)
+              value.map {|v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
+            else
+              value == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(value, column)
+            end
         end
         conditions
       end
@@ -384,11 +385,12 @@ module ActiveScaffold::Actions
     end
 
     def action_formats
-      @action_formats ||= if respond_to? "#{action_name}_formats", true
-        send("#{action_name}_formats")
-      else
-        (default_formats + active_scaffold_config.formats).uniq
-      end
+      @action_formats ||=
+        if respond_to? "#{action_name}_formats", true
+          send("#{action_name}_formats")
+        else
+          (default_formats + active_scaffold_config.formats).uniq
+        end
     end
   end
 end

@@ -89,11 +89,12 @@ module ActiveScaffold
 
       def action_link_authorized?(link, *args)
         security_method = link.security_method_set? || controller.respond_to?(link.security_method, true)
-        authorized = if security_method
-          controller.send(link.security_method, *args)
-        else
-          args.empty? ? true : args.first.authorized_for?(:crud_type => link.crud_type, :action => link.action)
-        end
+        authorized =
+          if security_method
+            controller.send(link.security_method, *args)
+          else
+            args.empty? ? true : args.first.authorized_for?(:crud_type => link.crud_type, :action => link.action)
+          end
       end
 
       def display_dynamic_action_group(action_link, links, record_or_ul_options = nil, ul_options = nil)
@@ -212,11 +213,12 @@ module ActiveScaffold
 
       def column_link_authorized?(link, column, record, associated)
         if column.association
-          associated_for_authorized = if column.plural_association? || (associated.respond_to?(:blank?) && associated.blank?)
-            column.association.klass
-          else
-            associated
-          end
+          associated_for_authorized =
+            if column.plural_association? || (associated.respond_to?(:blank?) && associated.blank?)
+              column.association.klass
+            else
+              associated
+            end
           authorized = associated_for_authorized.authorized_for?(:crud_type => link.crud_type)
           authorized = authorized and record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
           authorized
@@ -623,11 +625,12 @@ module ActiveScaffold
           end
           options[:object_name] ||= params.first
 
-          header_message = if options.include?(:header_message)
-            options[:header_message]
-          else
-            as_('errors.template.header', :count => count, :model => options[:object_name].to_s.gsub('_', ' '))
-          end
+          header_message =
+            if options.include?(:header_message)
+              options[:header_message]
+            else
+              as_('errors.template.header', :count => count, :model => options[:object_name].to_s.gsub('_', ' '))
+            end
 
           message = options.include?(:message) ? options[:message] : as_('errors.template.body')
 
@@ -636,11 +639,12 @@ module ActiveScaffold
               options[:list_type] != :br ? content_tag(:li, msg) : msg
             end
           end
-          error_messages = if options[:list_type] == :br
-            error_messages.join('<br/>').html_safe
-          else
-            content_tag(options[:list_type], error_messages.join.html_safe)
-          end
+          error_messages =
+            if options[:list_type] == :br
+              error_messages.join('<br/>').html_safe
+            else
+              content_tag(options[:list_type], error_messages.join.html_safe)
+            end
 
           contents = []
           contents << content_tag(options[:header_tag] || :h2, header_message) unless header_message.blank?

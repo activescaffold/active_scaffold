@@ -20,19 +20,20 @@ module ActiveScaffold
         # check for an override helper
         method = column.list_method
         unless method
-          method = if (method = column_override(column))
-            # we only pass the record as the argument. we previously also passed the formatted_value,
-            # but mike perham pointed out that prohibited the usage of overrides to improve on the
-            # performance of our default formatting. see issue #138.
-            method
-          # second, check if the dev has specified a valid list_ui for this column
-          elsif column.list_ui and (method = override_column_ui(column.list_ui))
-            method
-          elsif column.column and (method = override_column_ui(column.column.type))
-            method
-          else
-            :format_column_value
-          end
+          method =
+            if (method = column_override(column))
+              # we only pass the record as the argument. we previously also passed the formatted_value,
+              # but mike perham pointed out that prohibited the usage of overrides to improve on the
+              # performance of our default formatting. see issue #138.
+              method
+            # second, check if the dev has specified a valid list_ui for this column
+            elsif column.list_ui and (method = override_column_ui(column.list_ui))
+              method
+            elsif column.column and (method = override_column_ui(column.column.type))
+              method
+            else
+              :format_column_value
+            end
           column.list_method = method
         end
         method
@@ -147,43 +148,51 @@ module ActiveScaffold
         clean_column_value(value)
       end
 
+      def format_collection_association_value(value, column, label_method, size)
+        if column.associated_limit.nil?
+          firsts = value.collect(&label_method)
+        elsif column.associated_limit == 0
+          size if column.associated_number?
+        else
+          firsts = value.first(column.associated_limit)
+          firsts.collect!(&label_method)
+          firsts << '…' if value.size > column.associated_limit
+          text = firsts.join(h(active_scaffold_config.list.association_join_text)).html_safe
+          text << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
+          text
+        end
+      end
+
+      def format_singular_association_value(value, column, label_method)
+        if column.polymorphic_association?
+          "#{value.class.model_name.human}: #{value.send(label_method)}"
+        else
+          value.send(label_method)
+        end
+      end
+
       def format_association_value(value, column, size)
         method = column.options[:label_method] || :to_label
-        value = if column.association.collection?
-          if column.associated_limit.nil?
-            firsts = value.collect(&method)
-          else
-            firsts = value.first(column.associated_limit)
-            firsts.collect!(&method)
-            firsts[column.associated_limit] = '…' if value.size > column.associated_limit
+        value =
+          if column.association.collection?
+            format_collection_association_value(value, column, method, size)
+          elsif value
+            format_singular_association_value(value, column, method)
           end
-          if column.associated_limit == 0
-            size if column.associated_number?
-          else
-            joined_associated = firsts.join(h(active_scaffold_config.list.association_join_text)).html_safe
-            joined_associated << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
-            joined_associated
-          end
-        elsif value
-          if column.polymorphic_association?
-            "#{value.class.model_name.human}: #{value.send(method)}"
-          else
-            value.send(method)
-          end
-        end
         format_value value
       end
 
       def format_value(column_value, options = {})
-        value = if column_empty?(column_value)
-          empty_field_text
-        elsif column_value.is_a?(Time) || column_value.is_a?(Date)
-          l(column_value, :format => options[:format] || :default)
-        elsif [FalseClass, TrueClass].include?(column_value.class)
-          as_(column_value.to_s.to_sym)
-        else
-          column_value.to_s
-        end
+        value =
+          if column_empty?(column_value)
+            empty_field_text
+          elsif column_value.is_a?(Time) || column_value.is_a?(Date)
+            l(column_value, :format => options[:format] || :default)
+          elsif [FalseClass, TrueClass].include?(column_value.class)
+            as_(column_value.to_s.to_sym)
+          else
+            column_value.to_s
+          end
         clean_column_value(value)
       end
 

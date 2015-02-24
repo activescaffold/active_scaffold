@@ -262,11 +262,12 @@ module ActiveScaffold
         html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
         active_scaffold_translate_select_options(options)
 
-        html = if (optgroup = options.delete(:optgroup))
-          select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
-        else
-          collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
-        end
+        html =
+          if (optgroup = options.delete(:optgroup))
+            select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
+          else
+            collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
+          end
         html << active_scaffold_refresh_link(column, html_options, record) if column.options[:refresh_link]
         html
       end
@@ -297,11 +298,12 @@ module ActiveScaffold
         record ||= @record # TODO Remove when relying on @record is removed
         associated_options, select_options = active_scaffold_plural_association_options(column, record)
 
-        html = if select_options.empty?
-          content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id])
-        else
-          active_scaffold_checkbox_list(column, select_options, associated_options.collect(&:id), options)
-        end
+        html =
+          if select_options.empty?
+            content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id])
+          else
+            active_scaffold_checkbox_list(column, select_options, associated_options.collect(&:id), options)
+          end
         html << active_scaffold_refresh_link(column, options, record) if column.options[:refresh_link]
         html
       end
@@ -362,12 +364,14 @@ module ActiveScaffold
       def active_scaffold_input_radio(column, html_options)
         record = html_options[:object]
         html_options.merge!(column.options[:html_options] || {})
-        options = if column.association
-          sorted_association_options_find(column.association, nil, record)
-        else
-          active_scaffold_enum_options(column, record)
-        end
+        options =
+          if column.association
+            sorted_association_options_find(column.association, nil, record)
+          else
+            active_scaffold_enum_options(column, record)
+          end
         id_key = html_options[:"data-id"] ? :"data-id" : :id
+
         options.inject('') do |html, (text, value)|
           method = column.options[:label_method] || :to_label if column.association
           text, value = column.association ? [text.send(method), text.id] : active_scaffold_translated_option(column, text, value)
