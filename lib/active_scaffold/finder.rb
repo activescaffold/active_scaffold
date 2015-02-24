@@ -336,7 +336,7 @@ module ActiveScaffold
     def find_if_allowed(id, security_options, klass = beginning_of_chain)
       record = klass.find(id)
       security_options = {:crud_type => security_options.to_sym} unless security_options.is_a? Hash
-      raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for? security_options
+      fail ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for? security_options
       return record
     end
     # valid options may include:

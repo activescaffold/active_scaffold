@@ -182,7 +182,7 @@ module ActiveScaffold::DataStructures
       return @position unless @position.nil? or @position == true
       return :replace if type == :member
       return :top if type == :collection
-      raise "what should the default position be for #{type}?"
+      fail "what should the default position be for #{type}?"
     end
 
     # what type of link this is. currently supported values are :collection and :member.

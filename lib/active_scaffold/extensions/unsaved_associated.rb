@@ -13,7 +13,7 @@ class ActiveRecord::Base
   end
 
   def save_associated!
-    save_associated or raise(ActiveRecord::RecordNotSaved)
+    save_associated or fail(ActiveRecord::RecordNotSaved)
   end
 
   def no_errors_in_associated?

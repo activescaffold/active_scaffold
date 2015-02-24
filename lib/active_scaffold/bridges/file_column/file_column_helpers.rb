@@ -41,7 +41,7 @@ module ActiveScaffold
             # the only way to get to the options of a particular field is to use the instance method
             options = options_for_file_column_field(field)
             versions = options[:magick][:versions]
-            raise unless versions.stringify_keys[version]
+            fail unless versions.stringify_keys[version]
             true
           rescue
             false

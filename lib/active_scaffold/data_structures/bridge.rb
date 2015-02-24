@@ -1,7 +1,7 @@
 module ActiveScaffold::DataStructures
   class Bridge
     def self.install
-      raise(RunTimeError, "install not defined for bridge #{name}")
+      fail(RunTimeError, "install not defined for bridge #{name}")
     end
 
     def self.prepare
