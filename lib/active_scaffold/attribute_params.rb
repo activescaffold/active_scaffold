@@ -280,7 +280,7 @@ module ActiveScaffold
       hash.all? do |key,value|
         # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
         parts = key.to_s.split('(')
-        #old style date form management... ignore them too
+        # old style date form management... ignore them too
         ignore_column_types = [:boolean, :datetime, :date, :time] if parts.length > 1
         column_name = parts.first
         column = klass.columns_hash[column_name]

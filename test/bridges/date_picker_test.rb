@@ -1,6 +1,6 @@
 require 'test_helper'
 require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/date_picker/ext')
-#require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/date_picker/helper')
+# require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/date_picker/helper')
 
 class DatePickerTest < ActionView::TestCase
   include ActiveScaffold::Helpers::ViewHelpers

@@ -457,8 +457,8 @@ module ActiveScaffold
       end
 
       def url_options_for_sti_link(column, record, link, url_options)
-        #need to find out controller of current record type
-        #and set parameters
+        # need to find out controller of current record type
+        # and set parameters
         # its quite difficult to detect an sti link
         # if link.column.nil? we are sure that it is nt an singular association inline autolink
         # howver that will not work if a sti parent is an singular association inline autolink

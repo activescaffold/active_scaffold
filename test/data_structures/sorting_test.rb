@@ -92,16 +92,16 @@ class SortingTest < MiniTest::Test
   def test_sorts_by_method
     @columns[:a].sort_by :method => proc{0}
 
-    #test pure method sorting: true
+    # test pure method sorting: true
     @sorting.add :a
     assert @sorting.sorts_by_method?
 
-    #test mixed sql/method sorting: raise error
+    # test mixed sql/method sorting: raise error
     assert_raises ArgumentError do
       @sorting.add :b
     end
 
-    #test pure sql sorting: false
+    # test pure sql sorting: false
     @sorting.clear
     @sorting.add :b
     refute @sorting.sorts_by_method?
