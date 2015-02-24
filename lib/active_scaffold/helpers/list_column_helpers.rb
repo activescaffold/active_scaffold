@@ -215,7 +215,7 @@ module ActiveScaffold
       end
 
       def inplace_edit_cloning?(column)
-         column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
+        column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
       end
 
       def active_scaffold_inplace_edit_tag_options(record, column)

@@ -6,7 +6,7 @@ module Rails
       include ResourceHelpers
 
       def self.source_root
-         @source_root ||= File.join(File.dirname(__FILE__), 'templates')
+        @source_root ||= File.join(File.dirname(__FILE__), 'templates')
       end
 
       check_class_collision :suffix => 'Controller'
