@@ -38,7 +38,7 @@ class ActiveSupport::TestCase
 
   def self.should_render_with_options_for_select(column_name, *options)
     should "render column #{column_name} with options for select" do
-      converting_sort = lambda {|a,b| a.to_s <=> b.to_s}
+      converting_sort = lambda {|a, b| a.to_s <=> b.to_s}
       assert_equal options.sort(&converting_sort), @controller.active_scaffold_config.columns[column_name].options[:options].sort(&converting_sort)
     end
   end
@@ -122,7 +122,7 @@ class ActiveSupport::TestCase
       script = script.is_a?(Regexp) ? script.source : Regexp.quote(script)
       script = script.gsub('\n', '\\\\\\n').
         gsub(/['"]/, '\\\\\\\\\&').
-        gsub('</script>','</scr"+"ipt>')
+        gsub('</script>', '</scr"+"ipt>')
       assert_select 'script[type=text/javascript]', Regexp.new('.*' + Regexp.quote("with(window.parent) { setTimeout(function() { window.eval('") + script + Regexp.quote("'); if (typeof(loc) !== 'undefined') loc.replace('about:blank'); }, 1) };") + '.*')
     end
   end

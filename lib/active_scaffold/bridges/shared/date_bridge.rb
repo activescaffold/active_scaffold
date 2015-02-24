@@ -21,7 +21,7 @@ module ActiveScaffold
           end
 
           def active_scaffold_search_date_bridge_comparator_tag(column, options, current_search)
-            select_tag("#{options[:name]}[opt]", options_for_select(active_scaffold_search_date_bridge_comparator_options(column),current_search['opt']), :id => "#{options[:id]}_opt", :class => 'as_search_range_option as_search_date_time_option')
+            select_tag("#{options[:name]}[opt]", options_for_select(active_scaffold_search_date_bridge_comparator_options(column), current_search['opt']), :id => "#{options[:id]}_opt", :class => 'as_search_range_option as_search_date_time_option')
           end
 
           def active_scaffold_search_date_bridge_numeric_tag(column, options, current_search)

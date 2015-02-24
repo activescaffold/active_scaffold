@@ -277,7 +277,7 @@ module ActiveScaffold
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
       ignore_column_types = [:boolean]
-      hash.all? do |key,value|
+      hash.all? do |key, value|
         # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
         parts = key.to_s.split('(')
         # old style date form management... ignore them too

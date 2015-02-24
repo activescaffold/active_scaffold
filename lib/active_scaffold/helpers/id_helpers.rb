@@ -50,7 +50,7 @@ module ActiveScaffold
         "#{controller_id}-search-input"
       end
 
-      def action_link_id(link_action,link_id)
+      def action_link_id(link_action, link_id)
         "#{controller_id}-#{link_action}-#{link_id}-link"
       end
 
