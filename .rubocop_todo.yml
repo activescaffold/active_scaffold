@@ -17,16 +17,6 @@ Lint/AmbiguousRegexpLiteral:
 Lint/UnreachableCode:
   Enabled: false
 
-# Offense count: 24
-# Cop supports --auto-correct.
-Lint/UnusedBlockArgument:
-  Enabled: false
-
-# Offense count: 70
-# Cop supports --auto-correct.
-Lint/UnusedMethodArgument:
-  Enabled: false
-
 # Offense count: 23
 Lint/UselessAssignment:
   Enabled: false
