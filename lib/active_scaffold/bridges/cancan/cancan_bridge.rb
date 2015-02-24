@@ -93,7 +93,9 @@ module ActiveScaffold::Bridges
         end
 
         # Instance-level access to the current ability
-        def current_ability; self.class.current_ability end
+        def current_ability
+          self.class.current_ability
+        end
       end
     end
 

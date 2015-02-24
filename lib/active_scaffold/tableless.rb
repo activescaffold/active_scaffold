@@ -160,9 +160,15 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
   end
 
-  def self.columns; @columns ||= []; end
-  def self.table_name; @table_name ||= ActiveModel::Naming.plural(self); end
-  def self.table_exists?; true; end
+  def self.columns
+    @columns ||= []
+  end
+  def self.table_name
+    @table_name ||= ActiveModel::Naming.plural(self)
+  end
+  def self.table_exists?
+    true
+  end
   self.abstract_class = true
 
   def self.connection
