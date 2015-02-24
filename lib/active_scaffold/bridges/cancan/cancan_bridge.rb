@@ -82,6 +82,7 @@ module ActiveScaffold::Bridges
           def current_ability_proc
             Thread.current[:current_ability_proc]
           end
+
           def current_ability_proc=(value)
             Thread.current[:current_ability_proc] = value
           end

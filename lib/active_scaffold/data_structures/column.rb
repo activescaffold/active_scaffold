@@ -206,10 +206,12 @@ module ActiveScaffold::DataStructures
           value
         end
     end
+
     def search_sql
       initialize_search_sql if @search_sql === true
       @search_sql
     end
+
     def searchable?
       !!search_sql
     end
@@ -261,15 +263,19 @@ module ActiveScaffold::DataStructures
     def singular_association?
       association and !association.collection?
     end
+
     def plural_association?
       association and association.collection?
     end
+
     def through_association?
       association and association.options[:through]
     end
+
     def polymorphic_association?
       association and association.options[:polymorphic]
     end
+
     def readonly_association?
       if association
         if association.options.key? :readonly

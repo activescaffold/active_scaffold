@@ -228,6 +228,7 @@ module ActiveScaffold
       def active_scaffold_search_date(column, options)
         active_scaffold_search_datetime(column, options.merge!(:discard_time => true))
       end
+
       def active_scaffold_search_time(column, options)
         active_scaffold_search_datetime(column, options.merge!(:discard_date => true))
       end

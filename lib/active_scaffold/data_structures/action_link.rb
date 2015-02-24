@@ -80,9 +80,11 @@ module ActiveScaffold::DataStructures
       @dhtml_confirm = nil if value
       @confirm = value
     end
+
     def confirm(label = '')
       @confirm.is_a?(String) ? @confirm : as_(@confirm, :label => label)
     end
+
     def confirm?
       !!@confirm
     end
@@ -93,6 +95,7 @@ module ActiveScaffold::DataStructures
       @confirm = nil if value
       @dhtml_confirm = value
     end
+
     def dhtml_confirm?
       !!@dhtml_confirm
     end
@@ -127,6 +130,7 @@ module ActiveScaffold::DataStructures
       @inline = (val == true)
       self.popup = self.page = false if @inline
     end
+
     def inline?
       @inline
     end
@@ -143,6 +147,7 @@ module ActiveScaffold::DataStructures
         self.method = nil
       end
     end
+
     def popup?
       @popup
     end
@@ -162,6 +167,7 @@ module ActiveScaffold::DataStructures
         self.method = nil if method == :get
       end
     end
+
     def page?
       @page
     end
