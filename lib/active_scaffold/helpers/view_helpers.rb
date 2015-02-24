@@ -35,12 +35,10 @@ module ActiveScaffold
       ##
 
       def controller_path_for_activerecord(klass)
-        begin
-          controller = active_scaffold_controller_for(klass)
-          controller.controller_path
-        rescue ActiveScaffold::ControllerNotFound
-          nil
-        end
+        controller = active_scaffold_controller_for(klass)
+        controller.controller_path
+      rescue ActiveScaffold::ControllerNotFound
+        nil
       end
 
       # This is the template finder logic, keep it updated with however we find stuff in rails
