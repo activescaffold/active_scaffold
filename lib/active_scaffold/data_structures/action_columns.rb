@@ -93,7 +93,7 @@ module ActiveScaffold::DataStructures
       options[:for] ||= @columns.active_record_class
       self.unauthorized_columns = []
       @set.each do |item|
-        unless item.is_a? ActiveScaffold::DataStructures::ActionColumns || @columns.nil?
+        unless item.is_a?(ActiveScaffold::DataStructures::ActionColumns) || @columns.nil?
           item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
           next if self.skip_column?(item, options)
         end

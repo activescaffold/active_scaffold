@@ -13,10 +13,6 @@ Lint/AmbiguousOperator:
 Lint/AmbiguousRegexpLiteral:
   Enabled: false
 
-# Offense count: 1
-Lint/RequireParentheses:
-  Enabled: false
-
 # Offense count: 8
 Lint/RescueException:
   Enabled: false
