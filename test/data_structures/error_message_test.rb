@@ -18,7 +18,6 @@ class ErrorMessageTest < MiniTest::Test
   end
 
   def test_yaml
-    yml = nil
     yml = YAML.load(@error.to_yaml)
     assert yml.has_key?(:error)
     assert_equal 'foo', yml[:error]

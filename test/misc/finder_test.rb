@@ -86,7 +86,7 @@ class FinderTest < MiniTest::Test
 
   def test_infinite_pagination
     ModelStub.expects(:count).never
-    page = @klass.send :find_page, :pagination => :infinite
+    @klass.send :find_page, :pagination => :infinite
   end
 
   def test_condition_for_column

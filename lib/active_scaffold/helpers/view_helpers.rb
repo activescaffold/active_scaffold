@@ -39,7 +39,7 @@ module ActiveScaffold
           controller = active_scaffold_controller_for(klass)
           controller.controller_path
         rescue ActiveScaffold::ControllerNotFound
-          controller = nil
+          nil
         end
       end
 
@@ -88,13 +88,11 @@ module ActiveScaffold
       end
 
       def action_link_authorized?(link, *args)
-        security_method = link.security_method_set? || controller.respond_to?(link.security_method, true)
-        authorized =
-          if security_method
-            controller.send(link.security_method, *args)
-          else
-            args.empty? ? true : args.first.authorized_for?(:crud_type => link.crud_type, :action => link.action)
-          end
+        if link.security_method_set? || controller.respond_to?(link.security_method, true)
+          controller.send(link.security_method, *args)
+        else
+          args.empty? ? true : args.first.authorized_for?(:crud_type => link.crud_type, :action => link.action)
+        end
       end
 
       def display_dynamic_action_group(action_link, links, record_or_ul_options = nil, ul_options = nil)
@@ -229,7 +227,7 @@ module ActiveScaffold
 
       def is_sti_record?(record)
         model = active_scaffold_config.model
-        is_sti_record = record && model.columns_hash.include?(model.inheritance_column) &&
+        record && model.columns_hash.include?(model.inheritance_column) &&
           record[model.inheritance_column].present? && !record.instance_of?(model)
       end
 
@@ -238,8 +236,8 @@ module ActiveScaffold
       end
 
       def cached_action_link_url(link, record)
-        url = (@action_links_urls ||= {})[link.name_to_cache]
-        url ||= begin
+        @action_links_urls ||= {}
+        @action_links_urls[link.name_to_cache] ||= begin
           url_options = action_link_url_options(link, record)
           if cache_action_link_url?(link, record)
             @action_links_urls[link.name_to_cache] = url_for(url_options)
@@ -288,7 +286,6 @@ module ActiveScaffold
         end
         keep = true
         @query_string_params ||= Set.new
-        query_string_for_all = nil
         query_string_options = {}
         non_nested_query_string_options = {}
 
@@ -321,8 +318,8 @@ module ActiveScaffold
       end
 
       def action_link_url_options(link, record)
-        options = (@action_links_url_options ||= {})[link.name_to_cache]
-        options ||= begin
+        @action_links_url_options ||= {}
+        @action_links_url_options[link.name_to_cache] ||= begin
           options = generate_action_link_url_options(link, record)
           if cache_action_link_url_options?(link, record)
             @action_links_url_options[link.name_to_cache] = options
