@@ -1,6 +1,6 @@
 module ActiveScaffold
   class Engine < ::Rails::Engine
-    initializer 'active_scaffold.action_controller' do |app|
+    initializer 'active_scaffold.action_controller' do
       ActiveSupport.on_load :action_controller do
         include ActiveScaffold::Core
         include ActiveScaffold::DelayedSetup if ActiveScaffold.delayed_setup
@@ -11,13 +11,13 @@ module ActiveScaffold
       end
     end
 
-    initializer 'active_scaffold.action_view' do |app|
+    initializer 'active_scaffold.action_view' do
       ActiveSupport.on_load :action_view do
         include ActiveScaffold::Helpers::ViewHelpers
       end
     end
 
-    initializer 'active_scaffold.active_record' do |app|
+    initializer 'active_scaffold.active_record' do
       ActiveSupport.on_load :active_record do
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
         ActiveRecord::Associations::Association.send :include, ActiveScaffold::Tableless::Association
