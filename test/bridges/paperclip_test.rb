@@ -40,7 +40,9 @@ class PaperclipTest < ActionView::TestCase
 
     company.expects(:logo).returns(stub(:dirty? => false))
     company.expects(:logo=)
+    # rubocop:disable Lint/UselessSetterCall
     company.delete_logo = 'true'
+    # rubocop:enable Lint/UselessSetterCall
   end
 
   def test_list_ui
