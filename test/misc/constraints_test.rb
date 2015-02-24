@@ -179,7 +179,7 @@ class ConstraintsTest < MiniTest::Test
 
   def test_constraint_conditions_for_associations_with_primary_key_option
     @test_object.active_scaffold_config = config_for('primary_key_location')
-    #user = ModelStubs::PrimaryKeyUser.new(:id => 1, :name => 'User Name')
+    # user = ModelStubs::PrimaryKeyUser.new(:id => 1, :name => 'User Name')
     ModelStubs::PrimaryKeyUser.expects(:find).with(1).returns(stub(:id => 1, :name => 'User Name'))
     assert_constraint_condition({'user' => 1}, [{'primary_key_locations.username' => 'User Name'}], 'association with primary-key constraint')
   end

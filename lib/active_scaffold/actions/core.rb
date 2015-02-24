@@ -196,7 +196,7 @@ module ActiveScaffold::Actions
       redirect_to main_path_to_return
     end
 
-    #Overide this method on your controller to provide model with named scopes
+    # Overide this method on your controller to provide model with named scopes
     def beginning_of_chain
       active_scaffold_config.model
     end

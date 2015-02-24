@@ -1,6 +1,6 @@
 require 'test_helper'
 # require 'test/model_stub'
-#require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/data_structures/set.rb')
+# require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/data_structures/set.rb')
 
 class ActionColumnsTest < MiniTest::Test
   def setup

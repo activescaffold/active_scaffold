@@ -6,49 +6,49 @@ class PermissionModel < ActiveRecord::Base
 
   def authorized_for_read?; true; end
   def authorized_for_update?; false; end
-  #def authorized_for_create?; end
+  # def authorized_for_create?; end
 
   def a1_authorized?; true; end
   def a2_authorized?; false; end
-  #def a3_authorized?; end
+  # def a3_authorized?; end
 
   def b1_authorized?; true; end
   def b2_authorized?; false; end
-  #def b3_authorized?; end
+  # def b3_authorized?; end
 
   def c1_authorized?; true; end
   def c2_authorized?; false; end
-  #def c3_authorized?; end
+  # def c3_authorized?; end
 
   def a3_authorized_for_create?; true; end
   def b3_authorized_for_create?; false; end
-  #def c3_authorized_for_create?; end
+  # def c3_authorized_for_create?; end
   def a2_authorized_for_create?; true; end
   def b2_authorized_for_create?; false; end
-  #def c2_authorized_for_create?; end
+  # def c2_authorized_for_create?; end
   def a1_authorized_for_create?; true; end
   def b1_authorized_for_create?; false; end
-  #def c1_authorized_for_create?; end
+  # def c1_authorized_for_create?; end
 
   def a3_authorized_for_read?; true; end
   def b3_authorized_for_read?; false; end
-  #def c3_authorized_for_read?; end
+  # def c3_authorized_for_read?; end
   def a2_authorized_for_read?; true; end
   def b2_authorized_for_read?; false; end
-  #def c2_authorized_for_read?; end
+  # def c2_authorized_for_read?; end
   def a1_authorized_for_read?; true; end
   def b1_authorized_for_read?; false; end
-  #def c1_authorized_for_read?; end
+  # def c1_authorized_for_read?; end
 
   def a3_authorized_for_update?; true; end
   def b3_authorized_for_update?; false; end
-  #def c3_authorized_for_update?; end
+  # def c3_authorized_for_update?; end
   def a2_authorized_for_update?; true; end
   def b2_authorized_for_update?; false; end
-  #def c2_authorized_for_update?; end
+  # def c2_authorized_for_update?; end
   def a1_authorized_for_update?; true; end
   def b1_authorized_for_update?; false; end
-  #def c1_authorized_for_update?; end
+  # def c1_authorized_for_update?; end
 end
 
 class ActiveRecordPermissionsTest < MiniTest::Test

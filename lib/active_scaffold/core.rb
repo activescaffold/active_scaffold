@@ -93,9 +93,9 @@ module ActiveScaffold
         return unless active_scaffold_config.actions.include? :list and active_scaffold_config.actions.include? :nested
         active_scaffold_config.columns.each do |column|
           next unless column.link.nil? and column.autolink?
-          #lazy load of action_link, cause it was really slowing down app in dev mode
-          #and might lead to trouble cause of cyclic constantization of controllers
-          #and might be unnecessary cause it is done before columns are configured
+          # lazy load of action_link, cause it was really slowing down app in dev mode
+          # and might lead to trouble cause of cyclic constantization of controllers
+          # and might be unnecessary cause it is done before columns are configured
           column.set_link(Proc.new {|col| link_for_association(col)})
         end
       end
