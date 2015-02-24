@@ -50,7 +50,7 @@ module ActiveScaffold::Actions
       @record ||= destroy_find_record
       begin
         self.successful = @record.destroy
-      rescue Exception => ex
+      rescue StandardError => ex
         flash[:warning] = as_(:cant_destroy_record, :record => @record.to_label)
         self.successful = false
         logger.debug ex.message

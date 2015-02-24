@@ -59,7 +59,7 @@ module ActiveScaffold
           conditions = [column.search_sql.collect { |search_sql| sql % {:search_sql => search_sql} }.join(' OR ')]
           conditions += values * column.search_sql.size if values.present?
           conditions
-        rescue Exception => e
+        rescue StandardError => e
           logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
           raise e
         end

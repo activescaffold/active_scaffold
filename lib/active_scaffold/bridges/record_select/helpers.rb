@@ -85,7 +85,7 @@ class ActiveScaffold::Bridges::RecordSelect
               column.association.klass.find(value.to_i)
             end
           end
-        rescue Exception => e
+        rescue StandardError => e
           logger.error "#{e.class.name}: #{e.message} -- Sorry, we are not that smart yet. Attempted to restore search values to search fields :#{column.name} in #{controller.class}"
           raise e
         end
