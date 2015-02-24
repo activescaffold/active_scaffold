@@ -10,6 +10,7 @@ require 'mocha/setup'
 begin
   require 'redgreen'
 rescue LoadError
+  puts 'redgreen not available'
 end
 
 def load_schema

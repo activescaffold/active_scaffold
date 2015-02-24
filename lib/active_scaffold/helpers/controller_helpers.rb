@@ -73,16 +73,19 @@ module ActiveScaffold
       end
 
       def render_parent_action
-        begin
-          @parent_action = :row
-          if params[:parent_sti]
-            parent_controller = "#{params[:parent_sti].to_s.camelize}Controller".constantize
-            @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list == true
-            @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list == true
-            @parent_action = :index if action_name == 'destroy' && parent_controller.active_scaffold_config.actions.include?(:delete) && parent_controller.active_scaffold_config.delete.refresh_list == true
+        if @parent_action.nil?
+          begin
+            @parent_action = :row
+            if params[:parent_sti]
+              parent_controller = "#{params[:parent_sti].to_s.camelize}Controller".constantize
+              @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list == true
+              @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list == true
+              @parent_action = :index if action_name == 'destroy' && parent_controller.active_scaffold_config.actions.include?(:delete) && parent_controller.active_scaffold_config.delete.refresh_list == true
+            end
+          rescue ActiveScaffold::ControllerNotFound => ex
+            logger.warn "#{ex.message} for parent_sti #{params[:parent_sti]}"
           end
-        rescue ActiveScaffold::ControllerNotFound
-        end if @parent_action.nil?
+        end
         @parent_action
       end
 
