@@ -284,7 +284,7 @@ module ActiveScaffold
       def mark_column_heading
         tag_options = {
           :id => "#{controller_id}_mark_heading",
-          :class => 'mark_heading in_place_editor_field',
+          :class => 'mark_heading in_place_editor_field'
         }
         content_tag(:span, check_box_tag("#{controller_id}_mark_heading_span_input", '1', all_marked?), tag_options)
       end
@@ -332,4 +332,3 @@ module ActiveScaffold
     end
   end
 end
-

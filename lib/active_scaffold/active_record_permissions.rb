@@ -132,7 +132,7 @@ module ActiveScaffold
           # collect other possibly-related methods that actually exist
           methods = [
             column_security_method(options[:column]),
-            crud_type_security_method(options[:crud_type]),
+            crud_type_security_method(options[:crud_type])
           ].compact.select {|m| respond_to?(m)}
         end
 

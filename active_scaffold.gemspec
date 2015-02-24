@@ -28,4 +28,3 @@ Gem::Specification.new do |s|
   # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide
   s.add_development_dependency 'rubocop'
 end
-

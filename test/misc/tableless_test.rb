@@ -15,4 +15,3 @@ class TablelessTest < MiniTest::Test
     assert Person.new.files.empty?
   end
 end
-
