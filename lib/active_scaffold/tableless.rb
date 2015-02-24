@@ -176,7 +176,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   def self.column(name, sql_type = nil, options = {})
-    column = Column.new(name.to_s, options[:default], sql_type.to_s, options.has_key?(:null) ? options[:null] : true)
+    column = Column.new(name.to_s, options[:default], sql_type.to_s, options.key?(:null) ? options[:null] : true)
     column.tap { columns << column }
   end
 

@@ -145,7 +145,7 @@ module ActiveScaffold::DataStructures
         @link = action
       else
         options[:label] ||= label
-        options[:position] ||= :after unless options.has_key?(:position)
+        options[:position] ||= :after unless options.key?(:position)
         options[:type] ||= :member
         @link = ActiveScaffold::DataStructures::ActionLink.new(action, options)
       end
@@ -272,7 +272,7 @@ module ActiveScaffold::DataStructures
     end
     def readonly_association?
       if association
-        if association.options.has_key? :readonly
+        if association.options.key? :readonly
           association.options[:readonly]
         else
           self.through_association?
