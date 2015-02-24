@@ -58,7 +58,6 @@ class SetTest < MiniTest::Test
     @items.add [:f, :g]
     assert @items.include?(:f)
     assert @items.include?(:g)
-
   end
 
   def test_length

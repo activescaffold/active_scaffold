@@ -61,7 +61,6 @@ class ActionColumnsTest < MiniTest::Test
     @columns.add [:f, :g]
     assert @columns.include?(:f)
     assert @columns.include?(:g)
-
   end
 
   def test_length
