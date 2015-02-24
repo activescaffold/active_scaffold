@@ -40,6 +40,7 @@ class ListColumnHelpersTest < ActionView::TestCase
   end
 
   private
+
   def active_scaffold_config
     @config
   end

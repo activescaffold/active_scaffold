@@ -12,6 +12,7 @@ module ActiveScaffold::Actions
     end
 
     protected
+
     def destroy_respond_to_html
       if self.successful?
         flash[:info] = as_(:deleted_model, :model => @record.to_label)
@@ -65,7 +66,9 @@ module ActiveScaffold::Actions
     def delete_ignore?(record = nil)
       (nested? && nested.readonly?) || !send(:authorized_for?, :crud_type => :delete)
     end
+
     private
+
     def delete_authorized_filter
       link = active_scaffold_config.delete.link || active_scaffold_config.delete.class.link
       raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)

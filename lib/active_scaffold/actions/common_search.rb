@@ -16,6 +16,7 @@ module ActiveScaffold::Actions
       end
 
       protected
+
       def do_search
       end
 

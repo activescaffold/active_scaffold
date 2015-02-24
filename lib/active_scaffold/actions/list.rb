@@ -14,6 +14,7 @@ module ActiveScaffold::Actions
     end
 
     protected
+
     # get just a single row
     def row
       get_row
@@ -163,6 +164,7 @@ module ActiveScaffold::Actions
     end
 
     private
+
     def list_authorized_filter
       raise ActiveScaffold::ActionNotAllowed unless list_authorized?
     end

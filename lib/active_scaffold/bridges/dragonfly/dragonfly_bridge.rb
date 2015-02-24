@@ -19,6 +19,7 @@ module ActiveScaffold
         end
 
         private
+
         def configure_dragonfly_field(field)
           columns << field
           columns[field].form_ui ||= :dragonfly
