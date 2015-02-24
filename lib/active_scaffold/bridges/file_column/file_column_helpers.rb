@@ -29,7 +29,7 @@ module ActiveScaffold
         end
 
         def file_column_fields
-          @file_column_fields||=FileColumnHelpers.file_column_fields(self)
+          @file_column_fields ||= FileColumnHelpers.file_column_fields(self)
         end
 
         def options_for_file_column_field(field)

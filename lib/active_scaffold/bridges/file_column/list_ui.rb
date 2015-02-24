@@ -9,7 +9,7 @@ module ActiveScaffold
 
       def active_scaffold_column_download_link(record, column, label = nil)
         return nil if record.send(column.name).nil?
-        label||=as_(:download)
+        label ||= as_(:download)
         link_to(label, url_for_file_column(record, column.name.to_s), :popup => true)
       end
 

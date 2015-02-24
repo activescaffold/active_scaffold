@@ -81,7 +81,7 @@ protected
   end
 
   def bridge_will_be_installed(name)
-    assert bridge=find_bridge(name), "No bridge found matching #{name}"
+    assert bridge = find_bridge(name), "No bridge found matching #{name}"
 
     bridge.install?
   end

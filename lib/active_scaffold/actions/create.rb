@@ -33,7 +33,7 @@ module ActiveScaffold::Actions
     end
 
     def create_respond_to_html
-      if params[:iframe]=='true' # was this an iframe post ?
+      if params[:iframe] == 'true' # was this an iframe post ?
         do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
         responds_to_parent do
           render :action => 'on_create', :formats => [:js], :layout => false

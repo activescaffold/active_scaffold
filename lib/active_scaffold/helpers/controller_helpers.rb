@@ -8,7 +8,7 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::IdHelpers
 
       def generate_temporary_id(record = nil, generated_id = nil)
-        (generated_id || (Time.now.to_f*1000).to_i.to_s).tap do |id|
+        (generated_id || (Time.now.to_f * 1000).to_i.to_s).tap do |id|
           (@temporary_ids ||= {})[record.class.name] = id if record
         end
       end

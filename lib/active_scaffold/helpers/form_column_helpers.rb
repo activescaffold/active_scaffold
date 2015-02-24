@@ -566,14 +566,14 @@ module ActiveScaffold
             unless options[:min]
               min = validators.map{ |v| v.options[:greater_than_or_equal] }.compact.max
               greater_than = validators.map{ |v| v.options[:greater_than] }.compact.max
-              numerical_constraints[:min] = [min, (greater_than+margin if greater_than)].compact.max
+              numerical_constraints[:min] = [min, (greater_than + margin if greater_than)].compact.max
             end
 
             # Maximum
             unless options[:max]
               max = validators.map{ |v| v.options[:less_than_or_equal] }.compact.min
               less_than = validators.map{ |v| v.options[:less_than] }.compact.min
-              numerical_constraints[:max] = [max, (less_than-margin if less_than)].compact.min
+              numerical_constraints[:max] = [max, (less_than - margin if less_than)].compact.min
             end
 
             # Set step = 2 for column values restricted to be odd or even (but only if minimum is set)
@@ -581,7 +581,7 @@ module ActiveScaffold
               only_odd_valid  = validators.any?{ |v| v.options[:odd] }
               only_even_valid = validators.any?{ |v| v.options[:even] } unless only_odd_valid
               if !only_integer
-                numerical_constraints[:step] ||= "0.#{'0'*(column.column.scale-1)}1" if column.column && column.column.scale.to_i > 0
+                numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column && column.column.scale.to_i > 0
               elsif options[:min] and options[:min].respond_to? :even? and (only_odd_valid or only_even_valid)
                 numerical_constraints[:step] = 2
                 numerical_constraints[:min] += 1 if only_odd_valid  and not options[:min].odd?

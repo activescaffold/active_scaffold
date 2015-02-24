@@ -237,7 +237,7 @@ module ActiveScaffold::Config
 
     # warning - this won't work as a per-request dynamic attribute in rails 2.0.  You'll need to interact with Controller#generic_view_paths
     def inherited_view_paths
-      @inherited_view_paths||=[]
+      @inherited_view_paths ||= []
     end
 
     # must be a class method so the layout doesn't depend on a controller that uses active_scaffold
