@@ -252,10 +252,7 @@ module ActiveScaffold
       :begins_with => '?%',
       :ends_with   => '%?'
     }
-    NullComparators = [
-      'null',
-      'not_null'
-    ]
+    NullComparators = %w(null not_null)
 
 
 
