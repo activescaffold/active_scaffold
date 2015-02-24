@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 require 'test_helper'
 
 class ListColumnHelpersTest < ActionView::TestCase
@@ -40,6 +40,7 @@ class ListColumnHelpersTest < ActionView::TestCase
   end
 
   private
+
   def active_scaffold_config
     @config
   end

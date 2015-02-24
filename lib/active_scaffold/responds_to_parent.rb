@@ -39,6 +39,6 @@ module ActiveScaffold
         render :text => script
       end
     end
-    alias respond_to_parent responds_to_parent
+    alias_method :respond_to_parent, :responds_to_parent
   end
 end

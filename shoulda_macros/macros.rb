@@ -128,6 +128,7 @@ class ActiveSupport::TestCase
   end
 
   private
+
   def column_names(action)
     columns = []
     @controller.active_scaffold_config.send(action).columns.each(:flatten => true) {|col| columns << col.name}

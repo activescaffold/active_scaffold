@@ -139,6 +139,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
   end
 
   private
+
   def convert_number(value, format = nil)
     record = NumberModel.new
     @config.columns[:number].options[:format] = format unless format.nil?

@@ -396,6 +396,7 @@ class AttributeParamsTest < MiniTest::Test
   end
 
   protected
+
   def update_record_from_params(record, action, *columns, &block)
     params = columns.extract_options!.with_indifferent_access
     new_record = nil

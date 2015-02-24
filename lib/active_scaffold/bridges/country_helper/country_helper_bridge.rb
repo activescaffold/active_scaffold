@@ -49,7 +49,7 @@ module ActiveScaffold::Bridges
 
         return state_options
       end
-            # All the countries included in the country_options output.
+      # All the countries included in the country_options output.
       COUNTRIES = [
       :afghanistan,
       :aland_islands,

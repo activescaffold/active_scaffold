@@ -1,9 +1,9 @@
 require 'rails/generators/rails/resource/resource_generator'
-#require 'generators/active_scaffold_controller/active_scaffold_controller_generator'
+# require 'generators/active_scaffold_controller/active_scaffold_controller_generator'
 
 module Rails
   module Generators
-    class ActiveScaffoldGenerator < ResourceGenerator #metagenerator
+    class ActiveScaffoldGenerator < ResourceGenerator # metagenerator
       remove_hook_for :resource_controller
       remove_hook_for :resource_route
       remove_class_option :actions

@@ -34,9 +34,9 @@ class ActiveRecord::Base
   # Otherwise the default behaviour of traversing all associations will be preserved.
   def associations_for_update
     if self.respond_to?( :scaffold_update_nofollow )
-      self.class.reflect_on_all_associations.reject { |association| self.scaffold_update_nofollow.include?( association.name ) }
+      self.class.reflect_on_all_associations.reject { |association| scaffold_update_nofollow.include?( association.name ) }
     elsif self.respond_to?( :scaffold_update_follow )
-      self.class.reflect_on_all_associations.select { |association| self.scaffold_update_follow.include?( association.name ) }
+      self.class.reflect_on_all_associations.select { |association| scaffold_update_follow.include?( association.name ) }
     else
       self.class.reflect_on_all_associations
     end
@@ -49,7 +49,7 @@ class ActiveRecord::Base
   # returns true otherwise, even when none of the associations have been instantiated. build wrapper methods accordingly.
   def with_unsaved_associated
     associations_for_update.all? do |assoc|
-      association_proxy = self.association(assoc.name)
+      association_proxy = association(assoc.name)
       if association_proxy.target.present?
         records = association_proxy.target
         records = [records] unless records.is_a? Array # convert singular associations into collections for ease of use

@@ -4,27 +4,27 @@ module ActiveScaffold
       module BitfieldsBridge
         def initialize_with_bitfields(model_id)
           initialize_without_bitfields(model_id)
-          return unless self.model.respond_to?(:bitfields) and self.model.bitfields.present?
+          return unless model.respond_to?(:bitfields) and model.bitfields.present?
 
-          self.model.bitfields.each do |column_name, options|
-            self.columns << options.keys
+          model.bitfields.each do |column_name, options|
+            columns << options.keys
             options.each do |column, value|
-              self.columns[column].form_ui = :checkbox
-              self.columns[column].weight = 1000 + value.to_s(2).size
+              columns[column].form_ui = :checkbox
+              columns[column].weight = 1000 + value.to_s(2).size
             end
           end
         end
 
         def _load_action_columns_with_bitfields
-          self.model.bitfields.each do |column_name, options|
+          model.bitfields.each do |column_name, options|
             columns = options.keys.sort_by { |column| self.columns[column].weight }
             [:create, :update, :show, :subform].each do |action|
-              if self.actions.include? action
-                self.send(action).columns.exclude column_name
-                self.send(action).columns.add_subgroup(column_name) { |group| group.add *columns }
+              if actions.include? action
+                send(action).columns.exclude column_name
+                send(action).columns.add_subgroup(column_name) { |group| group.add *columns }
               end
             end
-          end if self.model.respond_to?(:bitfields) and self.model.bitfields.present?
+          end if model.respond_to?(:bitfields) and model.bitfields.present?
 
           _load_action_columns_without_bitfields
         end

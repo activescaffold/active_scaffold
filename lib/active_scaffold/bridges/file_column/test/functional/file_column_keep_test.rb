@@ -11,24 +11,24 @@ class DeleteFileColumnTest < Test::Unit::TestCase
     assert_equal(1, @model.file_column_fields.length)
   end
 
-	def test__delete_band_image__boolean__should_delete
-		@model.delete_band_image = true
+  def test__delete_band_image__boolean__should_delete
+    @model.delete_band_image = true
     assert_nil @model.band_image
   end
 
-	def test__delete_band_image__string__should_delete
-		@model.delete_band_image = 'true'
+  def test__delete_band_image__string__should_delete
+    @model.delete_band_image = 'true'
     assert_nil @model.band_image
   end
 
 
-	def test__delete_band_image__boolean_false__shouldnt_delete
-		@model.delete_band_image = false
+  def test__delete_band_image__boolean_false__shouldnt_delete
+    @model.delete_band_image = false
     assert_not_nil @model.band_image
   end
 
-	def test__delete_band_image__string_false__shouldnt_delete
-		@model.delete_band_image = 'false'
+  def test__delete_band_image__string_false__shouldnt_delete
+    @model.delete_band_image = 'false'
     assert_not_nil @model.band_image
   end
 

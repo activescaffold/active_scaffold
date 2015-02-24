@@ -31,6 +31,7 @@ module ActiveScaffold::Actions
     end
 
     protected
+
     def loading_embedded?
       @loading_embedded ||= params.delete(:embedded)
     end
@@ -195,7 +196,7 @@ module ActiveScaffold::Actions
       redirect_to main_path_to_return
     end
 
-    #Overide this method on your controller to provide model with named scopes
+    # Overide this method on your controller to provide model with named scopes
     def beginning_of_chain
       active_scaffold_config.model
     end
@@ -368,6 +369,7 @@ module ActiveScaffold::Actions
     end
 
     private
+
     def respond_to_action(action)
       return unless !conditional_get_support? || view_stale?
       respond_to do |type|

@@ -34,8 +34,8 @@ class FinderTest < MiniTest::Test
     ]
 
     expected_conditions = [
-		['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%foo%', '%foo%'],
-		['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%bar%', '%bar%']
+    ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%foo%', '%foo%'],
+    ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%bar%', '%bar%']
     ]
     assert_equal expected_conditions, ClassWithFinder.create_conditions_for_columns(tokens, columns)
 
@@ -98,6 +98,7 @@ class FinderTest < MiniTest::Test
   end
 
   private
+
   def relation_class
     @klass.active_scaffold_config.model.send(:relation).class
   end

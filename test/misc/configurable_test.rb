@@ -52,7 +52,7 @@ class ConfigurableTest < MiniTest::Test
     # functions
     assert_equal configurable_class.foo, configurable_class.configure {foo}
     # constants - not working
-#    assert_equal configurable_class.FOO, configurable_class.configure {FOO}
+    #    assert_equal configurable_class.FOO, configurable_class.configure {FOO}
 
   end
 
@@ -85,7 +85,7 @@ class ConfigurableTest < MiniTest::Test
     # functions
     assert_equal ExtendedClass.foo, ExtendedClass.configure {foo}
     # constants - not working
-#    assert_equal ExtendedClass.FOO, ExtendedClass.configure {FOO}
+    #    assert_equal ExtendedClass.FOO, ExtendedClass.configure {FOO}
   end
 
   def test_arity

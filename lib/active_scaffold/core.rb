@@ -19,21 +19,21 @@ module ActiveScaffold
         ActiveScaffold::Bridges.run_all
 
         # converts Foo::BarController to 'bar' and FooBarsController to 'foo_bar' and AddressController to 'address'
-        model_id = self.to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore unless model_id
+        model_id = to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore unless model_id
 
         # run the configuration
         @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
         @active_scaffold_config_block = block
-        self.links_for_associations
+        links_for_associations
 
-        self.active_scaffold_superclasses_blocks.each {|superblock| self.active_scaffold_config.configure &superblock}
-        self.active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
-        self.active_scaffold_config.configure &block if block_given?
-        self.active_scaffold_config._configure_sti unless self.active_scaffold_config.sti_children.nil?
-        self.active_scaffold_config._load_action_columns
+        active_scaffold_superclasses_blocks.each {|superblock| active_scaffold_config.configure &superblock}
+        active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
+        active_scaffold_config.configure &block if block_given?
+        active_scaffold_config._configure_sti unless active_scaffold_config.sti_children.nil?
+        active_scaffold_config._load_action_columns
 
         # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
-        klass = self.active_scaffold_config.model
+        klass = active_scaffold_config.model
         # Rails 4.0.4 has removed attribute_methods_generated,
         # and made define_attribute_methods threadsave to call multiple times.
         # Check for that here.
@@ -64,7 +64,7 @@ module ActiveScaffold
             end
           end
         end
-        self._add_sti_create_links if self.active_scaffold_config.add_sti_create_links?
+        _add_sti_create_links if active_scaffold_config.add_sti_create_links?
       end
 
       module Prefixes
@@ -93,9 +93,9 @@ module ActiveScaffold
         return unless active_scaffold_config.actions.include? :list and active_scaffold_config.actions.include? :nested
         active_scaffold_config.columns.each do |column|
           next unless column.link.nil? and column.autolink?
-          #lazy load of action_link, cause it was really slowing down app in dev mode
-          #and might lead to trouble cause of cyclic constantization of controllers
-          #and might be unnecessary cause it is done before columns are configured
+          # lazy load of action_link, cause it was really slowing down app in dev mode
+          # and might lead to trouble cause of cyclic constantization of controllers
+          # and might be unnecessary cause it is done before columns are configured
           column.set_link(Proc.new {|col| link_for_association(col)})
         end
       end
@@ -153,7 +153,7 @@ module ActiveScaffold
 
       def active_scaffold_config
         if @active_scaffold_config.nil?
-          self.superclass.active_scaffold_config if self.superclass.respond_to? :active_scaffold_config
+          superclass.active_scaffold_config if superclass.respond_to? :active_scaffold_config
         else
           @active_scaffold_config
         end
@@ -165,7 +165,7 @@ module ActiveScaffold
 
       def active_scaffold_superclasses_blocks
         blocks = []
-        klass = self.superclass
+        klass = superclass
         while klass.respond_to? :active_scaffold_superclasses_blocks
           blocks << klass.active_scaffold_config_block
           klass = klass.superclass
@@ -187,7 +187,7 @@ module ActiveScaffold
 
       def active_scaffold_controller_for(klass)
         return self if uses_active_scaffold? && klass == active_scaffold_config.model
-        ActiveScaffold::Core.active_scaffold_controller_for(klass, self.to_s.deconstantize + '::')
+        ActiveScaffold::Core.active_scaffold_controller_for(klass, to_s.deconstantize + '::')
       end
 
 

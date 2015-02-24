@@ -15,6 +15,7 @@ module ActiveScaffold::Actions
     end
 
     protected
+
     def nested
       set_nested unless defined? @nested
       @nested
@@ -119,6 +120,7 @@ module ActiveScaffold::Actions
     end
 
     private
+
     def nested_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.nested.formats).uniq
     end
@@ -149,6 +151,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     protected
+
     def new_existing_respond_to_html
       if successful?
         render(:action => 'add_existing_form')
@@ -240,7 +243,9 @@ module ActiveScaffold::Actions::Nested
         do_destroy
       end
     end
+
     private
+
     def new_existing_formats
       (default_formats + active_scaffold_config.formats).uniq
     end

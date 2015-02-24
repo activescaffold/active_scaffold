@@ -32,6 +32,7 @@ module ActiveScaffold
   # }
   module AttributeParams
     protected
+
     # workaround to update counters when belongs_to changes on persisted record on Rails 3
     # workaround to update counters when polymorphic has_many changes on persisted record
     # TODO remove when rails3 support is removed and counter cache for polymorphic has_many association works on rails4 (works on rails4.2)
@@ -149,7 +150,7 @@ module ActiveScaffold
       # convert the value, possibly by instantiating associated objects
       form_ui = column.form_ui || column.column.try(:type)
       if form_ui && self.respond_to?("column_value_for_#{form_ui}_type", true)
-        self.send("column_value_for_#{form_ui}_type", parent_record, column, value)
+        send("column_value_for_#{form_ui}_type", parent_record, column, value)
       elsif value.is_a?(Hash)
         column_value_from_param_hash_value(parent_record, column, value, avoid_changes)
       else
@@ -166,7 +167,7 @@ module ActiveScaffold
     end
 
     def column_value_for_datetime_type(parent_record, column, value)
-      new_value = self.class.condition_value_for_datetime(column, value, self.datetime_conversion_for_value(column))
+      new_value = self.class.condition_value_for_datetime(column, value, datetime_conversion_for_value(column))
       if new_value.nil? && value.present?
         parent_record.errors.add column.name, :invalid
       end
@@ -253,10 +254,10 @@ module ActiveScaffold
     # Returns record from current if it's included or find from DB
     def record_from_current_or_find(klass, id, current)
       if current and current.is_a? ActiveRecord::Base and current.id.to_s == id
-      # modifying the current object of a singular association
+        # modifying the current object of a singular association
         current
       elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == id}
-      # modifying one of the current objects in a plural association
+        # modifying one of the current objects in a plural association
         current.detect {|o| o.id.to_s == id}
       else # attaching an existing but not-current object
         klass.find(id)
@@ -279,7 +280,7 @@ module ActiveScaffold
       hash.all? do |key,value|
         # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
         parts = key.to_s.split('(')
-        #old style date form management... ignore them too
+        # old style date form management... ignore them too
         ignore_column_types = [:boolean, :datetime, :date, :time] if parts.length > 1
         column_name = parts.first
         column = klass.columns_hash[column_name]

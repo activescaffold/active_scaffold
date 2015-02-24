@@ -1,8 +1,8 @@
-#require 'rails/generators/rails/scaffold_controller/scaffold_controller_generator'
+# require 'rails/generators/rails/scaffold_controller/scaffold_controller_generator'
 
 module Rails
   module Generators
-    class ActiveScaffoldControllerGenerator < NamedBase #metagenerator
+    class ActiveScaffoldControllerGenerator < NamedBase # metagenerator
       include ResourceHelpers
 
       def self.source_root

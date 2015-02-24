@@ -3,7 +3,7 @@ class ActiveScaffold::DataStructures::Actions
 
   def initialize(*args)
     @set = []
-    self.add *args
+    add *args
   end
 
   def exclude(*args)
