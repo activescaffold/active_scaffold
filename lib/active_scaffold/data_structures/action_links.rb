@@ -72,7 +72,7 @@ module ActiveScaffold::DataStructures
     end
 
     def delete(val)
-      self.each({:include_set => true}) do |link, set|
+      each({:include_set => true}) do |link, set|
         if link.action.to_s == val.to_s
           set.delete link
           break

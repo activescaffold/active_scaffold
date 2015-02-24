@@ -8,7 +8,7 @@ class PaginationHelpersTest < MiniTest::Test
   end
 
   def test_links
-    self.stubs(:pagination_ajax_link).returns('l')
+    stubs(:pagination_ajax_link).returns('l')
 
     assert_equal '1', links(1, 1)
     assert_equal '1 l', links(1, 2)
@@ -31,7 +31,7 @@ class PaginationHelpersTest < MiniTest::Test
   end
 
   def test_links_with_infinite_pagination
-    self.stubs(:pagination_ajax_link).returns('l')
+    stubs(:pagination_ajax_link).returns('l')
 
     assert_equal '1 l l .. l .. l', links(1, nil, 2, true)
     assert_equal 'l 2 l l .. l .. l', links(2, nil, 2, true)

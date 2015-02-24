@@ -28,7 +28,7 @@ module ActiveScaffold::Actions
 
       def set_field_search_default_params(default_params)
         if (params[:search].nil? && search_params.nil?) || (params[:search].is_a?(String) && params[:search].blank?)
-          params[:search] = default_params.is_a?(Proc) ? self.instance_eval(&default_params) : default_params
+          params[:search] = default_params.is_a?(Proc) ? instance_eval(&default_params) : default_params
         end
       end
 
@@ -55,11 +55,11 @@ module ActiveScaffold::Actions
             search_condition = self.class.condition_for_column(column, value, text_search)
             unless search_condition.blank?
               if active_scaffold_config.list.user.count_includes.nil? && column.includes.present? && list_columns.include?(column)
-                self.active_scaffold_references << column.includes
+                active_scaffold_references << column.includes
               elsif column.search_joins.present?
-                self.active_scaffold_outer_joins << column.search_joins
+                active_scaffold_outer_joins << column.search_joins
               end
-              self.active_scaffold_conditions << search_condition
+              active_scaffold_conditions << search_condition
               filtered_columns << column
             end
           end

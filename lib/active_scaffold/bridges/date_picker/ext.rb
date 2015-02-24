@@ -12,13 +12,13 @@ ActiveScaffold::Config::Core.class_eval do
   def initialize_with_date_picker(model_id)
     initialize_without_date_picker(model_id)
 
-    date_picker_fields = self.model.columns.collect{|c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
+    date_picker_fields = model.columns.collect{|c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
     # check to see if file column was used on the model
     return if date_picker_fields.empty?
 
     # automatically set the forum_ui to a date_picker or datetime_picker
     date_picker_fields.each{|field|
-      col_config = self.columns[field[:name]]
+      col_config = columns[field[:name]]
       col_config.form_ui = (field[:type] == :date ? :date_picker : :datetime_picker)
     }
   end

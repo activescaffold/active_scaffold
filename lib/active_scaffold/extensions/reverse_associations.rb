@@ -27,10 +27,10 @@ module ActiveScaffold
         klass ||= self.klass
 
         # name-based matching (association name vs self.active_record.to_s)
-        matches = self.reverse_matches(klass)
+        matches = reverse_matches(klass)
         if matches.length > 1
           matches.find_all do |assoc|
-            self.active_record.to_s.underscore.include? assoc.name.to_s.pluralize.singularize
+            active_record.to_s.underscore.include? assoc.name.to_s.pluralize.singularize
           end
         end
 
@@ -52,12 +52,12 @@ module ActiveScaffold
           next if assoc == self
           # skip over has_many :through associations
           next if assoc.options[:through]
-          next unless assoc.options[:polymorphic] or assoc.class_name == self.active_record.name
+          next unless assoc.options[:polymorphic] or assoc.class_name == active_record.name
 
-          case [assoc.macro, self.macro].find_all{|m| m == :has_and_belongs_to_many}.length
+          case [assoc.macro, macro].find_all{|m| m == :has_and_belongs_to_many}.length
             # if both are a habtm, then match them based on the join table
             when 2
-            next unless assoc.options[:join_table] == self.options[:join_table]
+            next unless assoc.options[:join_table] == options[:join_table]
 
             # if only one is a habtm, they do not match
             when 1
@@ -65,7 +65,7 @@ module ActiveScaffold
 
             # otherwise, match them based on the foreign_key
             when 0
-            next unless assoc.foreign_key.to_sym == self.foreign_key.to_sym
+            next unless assoc.foreign_key.to_sym == foreign_key.to_sym
           end
 
           reverse_matches << assoc
@@ -89,8 +89,8 @@ module ActiveScaffold
           next if assoc == self
           # only iterate has_many :through associations
           next unless assoc.options[:through]
-          next unless assoc.class_name == self.active_record.name
-          next unless assoc.through_reflection.class_name == self.through_reflection.class_name
+          next unless assoc.class_name == active_record.name
+          next unless assoc.through_reflection.class_name == through_reflection.class_name
 
           reverse_matches << assoc
         end

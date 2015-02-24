@@ -149,7 +149,7 @@ module ActiveScaffold
       # convert the value, possibly by instantiating associated objects
       form_ui = column.form_ui || column.column.try(:type)
       if form_ui && self.respond_to?("column_value_for_#{form_ui}_type", true)
-        self.send("column_value_for_#{form_ui}_type", parent_record, column, value)
+        send("column_value_for_#{form_ui}_type", parent_record, column, value)
       elsif value.is_a?(Hash)
         column_value_from_param_hash_value(parent_record, column, value, avoid_changes)
       else
@@ -166,7 +166,7 @@ module ActiveScaffold
     end
 
     def column_value_for_datetime_type(parent_record, column, value)
-      new_value = self.class.condition_value_for_datetime(column, value, self.datetime_conversion_for_value(column))
+      new_value = self.class.condition_value_for_datetime(column, value, datetime_conversion_for_value(column))
       if new_value.nil? && value.present?
         parent_record.errors.add column.name, :invalid
       end

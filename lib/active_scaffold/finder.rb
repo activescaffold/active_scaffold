@@ -39,13 +39,13 @@ module ActiveScaffold
       def condition_for_column(column, value, text_search = :full)
         like_pattern = like_pattern(text_search)
         if self.respond_to?("condition_for_#{column.name}_column")
-          return self.send("condition_for_#{column.name}_column", column, value, like_pattern)
+          return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
         return unless column and column.search_sql and not value.blank?
         search_ui = column.search_ui || column.column.try(:type)
         begin
           sql, *values = if search_ui && self.respond_to?("condition_for_#{search_ui}_type")
-            self.send("condition_for_#{search_ui}_type", column, value, like_pattern)
+            send("condition_for_#{search_ui}_type", column, value, like_pattern)
           else
             if column.search_sql.instance_of? Proc
               column.search_sql.call(value)
@@ -76,7 +76,7 @@ module ActiveScaffold
           conditions += values*column.search_sql.size if values.present?
           conditions
         rescue Exception => e
-          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{self.name}"
+          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
           raise e
         end
       end
@@ -282,7 +282,7 @@ module ActiveScaffold
 
     def active_scaffold_includes
       ActiveSupport::Deprecation.warn "active_scaffold_includes doesn't exist anymore, use active_scaffold_preload, active_scaffold_outer_joins or active_scaffold_references"
-      self.active_scaffold_preload
+      active_scaffold_preload
     end
 
     attr_writer :active_scaffold_habtm_joins

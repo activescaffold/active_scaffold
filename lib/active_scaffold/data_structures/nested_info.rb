@@ -81,7 +81,7 @@ module ActiveScaffold::DataStructures
     end
 
     def name
-      self.association.name
+      association.name
     end
 
     def has_many?
@@ -160,7 +160,7 @@ module ActiveScaffold::DataStructures
     end
 
     def name
-      self.scope
+      scope
     end
   end
 end

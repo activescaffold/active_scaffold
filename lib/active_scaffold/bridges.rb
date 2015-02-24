@@ -12,17 +12,17 @@ module ActiveScaffold
 
     def self.register(file)
       match = file.match(/(active_scaffold\/bridges\/(.*))\.rb\Z/)
-      self.bridges[match[2].to_sym] = match[1] if match
+      bridges[match[2].to_sym] = match[1] if match
     end
 
     def self.load(bridge_name)
-      bridge = self.bridges[bridge_name.to_sym]
+      bridge = bridges[bridge_name.to_sym]
       if bridge.is_a? String
         if ActiveScaffold.exclude_bridges.exclude? bridge_name.to_sym
           bridge = bridge.camelize.constantize
-          self.bridges[bridge_name.to_sym] = bridge
+          bridges[bridge_name.to_sym] = bridge
         else
-          self.bridges.delete bridge_name
+          bridges.delete bridge_name
           bridge = nil
         end
       end
@@ -33,8 +33,8 @@ module ActiveScaffold
     end
 
     def self.run_all
-      return false if self.bridges_run
-      self.bridges.keys.each do |bridge_name|
+      return false if bridges_run
+      bridges.keys.each do |bridge_name|
         bridge = self[bridge_name]
         bridge.run if bridge
       end
@@ -42,8 +42,8 @@ module ActiveScaffold
     end
 
     def self.prepare_all
-      return false if self.bridges_prepared
-      self.bridges.keys.each do |bridge_name|
+      return false if bridges_prepared
+      bridges.keys.each do |bridge_name|
         bridge = self[bridge_name]
         bridge.prepare if bridge.install?
       end
@@ -51,14 +51,14 @@ module ActiveScaffold
     end
 
     def self.all_stylesheets
-      self.bridges.keys.collect do |bridge_name|
+      bridges.keys.collect do |bridge_name|
         bridge = self[bridge_name]
         bridge.stylesheets if bridge and bridge.install?
       end.compact.flatten
     end
 
     def self.all_javascripts
-      self.bridges.keys.collect do |bridge_name|
+      bridges.keys.collect do |bridge_name|
         bridge = self[bridge_name]
         bridge.javascripts if bridge and bridge.install?
       end.compact.flatten

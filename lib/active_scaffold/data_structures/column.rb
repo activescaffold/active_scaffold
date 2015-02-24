@@ -10,7 +10,7 @@ module ActiveScaffold::DataStructures
     # Whether to enable inplace editing for this column. Currently works for text columns, in the List.
     attr_reader :inplace_edit
     def inplace_edit=(value)
-      self.clear_link if value
+      clear_link if value
       @inplace_edit = value
     end
 
@@ -92,7 +92,7 @@ module ActiveScaffold::DataStructures
     end
 
     def sort
-      self.initialize_sort if @sort === true
+      initialize_sort if @sort === true
       @sort
     end
 
@@ -146,7 +146,7 @@ module ActiveScaffold::DataStructures
       if action.is_a?(ActiveScaffold::DataStructures::ActionLink) || (action.is_a? Proc)
         @link = action
       else
-        options[:label] ||= self.label
+        options[:label] ||= label
         options[:position] ||= :after unless options.has_key?(:position)
         options[:type] ||= :member
         @link = ActiveScaffold::DataStructures::ActionLink.new(action, options)
@@ -208,7 +208,7 @@ module ActiveScaffold::DataStructures
       end
     end
     def search_sql
-      self.initialize_search_sql if @search_sql === true
+      initialize_search_sql if @search_sql === true
       @search_sql
     end
     def searchable?
@@ -237,7 +237,7 @@ module ActiveScaffold::DataStructures
     attr_writer :show_blank_record
     def show_blank_record?(associated)
       if @show_blank_record
-        return false unless self.association.klass.authorized_for?(:crud_type => :create) and not self.association.options[:readonly]
+        return false unless association.klass.authorized_for?(:crud_type => :create) and not association.options[:readonly]
         self.plural_association? or (self.singular_association? and associated.blank?)
       end
     end
@@ -260,21 +260,21 @@ module ActiveScaffold::DataStructures
     # the association from the ActiveRecord class
     attr_reader :association
     def singular_association?
-      self.association and !self.association.collection?
+      association and !association.collection?
     end
     def plural_association?
-      self.association and self.association.collection?
+      association and association.collection?
     end
     def through_association?
-      self.association and self.association.options[:through]
+      association and association.options[:through]
     end
     def polymorphic_association?
-      self.association and self.association.options[:polymorphic]
+      association and association.options[:polymorphic]
     end
     def readonly_association?
-      if self.association
-        if self.association.options.has_key? :readonly
-          self.association.options[:readonly]
+      if association
+        if association.options.has_key? :readonly
+          association.options[:readonly]
         else
           self.through_association?
         end
@@ -299,10 +299,10 @@ module ActiveScaffold::DataStructures
     def ==(other) #:nodoc:
       # another column
       if other.respond_to? :name and other.class == self.class
-        self.name == other.name.to_sym
+        name == other.name.to_sym
       # a string or symbol
       elsif other.respond_to? :to_sym
-        self.name == other.to_sym rescue false # catch "interning empty string"
+        name == other.to_sym rescue false # catch "interning empty string"
       # unknown
       else
         self.eql? other
@@ -328,7 +328,7 @@ module ActiveScaffold::DataStructures
       elsif polymorphic_association?
         [field, quoted_field(@active_record_class.connection.quote_column_name(@association.foreign_type))]
       elsif @association
-        if self.association.belongs_to?
+        if association.belongs_to?
           [field]
         else
           columns = []
@@ -371,7 +371,7 @@ module ActiveScaffold::DataStructures
 
       if association && !polymorphic_association?
         self.includes = [association.name]
-        self.search_joins = self.includes.clone
+        self.search_joins = includes.clone
       end
     end
 
@@ -382,15 +382,15 @@ module ActiveScaffold::DataStructures
     end
 
     def <=>(other_column)
-      order_weight = self.weight <=> other_column.weight
-      order_weight != 0 ? order_weight : self.name.to_s <=> other_column.name.to_s
+      order_weight = weight <=> other_column.weight
+      order_weight != 0 ? order_weight : name.to_s <=> other_column.name.to_s
     end
 
     def number_to_native(value)
       return value if value.blank? || !value.is_a?(String)
       native = '.' # native ruby separator
       format = {:separator => '', :delimiter => ''}.merge! I18n.t('number.format', :default => {})
-      specific = case self.options[:format]
+      specific = case options[:format]
       when :currency
         I18n.t('number.currency.format', :default => nil)
       when :size
@@ -429,7 +429,7 @@ module ActiveScaffold::DataStructures
         self.sort = false
       else
         if column && !@tableless
-          self.sort = {:sql => self.field}
+          self.sort = {:sql => field}
         else
           self.sort = false
         end
@@ -439,7 +439,7 @@ module ActiveScaffold::DataStructures
     def initialize_search_sql
       self.search_sql = unless self.virtual?
         if association.nil?
-          self.field.to_s unless @tableless
+          field.to_s unless @tableless
         elsif !self.polymorphic_association?
           [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
         end
@@ -454,9 +454,9 @@ module ActiveScaffold::DataStructures
         400
       elsif plural_association?
         500
-      elsif [:created_at, :updated_at].include?(self.name)
+      elsif [:created_at, :updated_at].include?(name)
         600
-      elsif [:name, :label, :title].include?(self.name)
+      elsif [:name, :label, :title].include?(name)
         100
       elsif required?
         200
