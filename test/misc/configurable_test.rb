@@ -92,8 +92,6 @@ class ConfigurableTest < MiniTest::Test
     # this is the main style
     assert_equal 'foo', ExtendedClass.configure {'foo'}
     # but we want to let people accept the configurable class as the first argument, too
-    # rubocop:disable Style/SymbolProc
-    assert_equal 'bar', ExtendedClass.configure { |a| a.foo }
-    # rubocop:enable Style/SymbolProc
+    assert_equal 'bar', ExtendedClass.configure { |a| a.foo } # rubocop:disable Style/SymbolProc
   end
 end
