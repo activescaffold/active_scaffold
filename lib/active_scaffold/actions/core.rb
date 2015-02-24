@@ -60,9 +60,7 @@ module ActiveScaffold::Actions
 
         if @column.send_form_on_update_column
           if @scope
-            hash = @scope.gsub('[', '').split(']').inject(params[:record]) do |hash, index|
-              hash[index]
-            end
+            hash = @scope.gsub('[', '').split(']').inject(params[:record]) { |h, idx| h[idx] }
             id = hash[:id]
           else
             hash = params[:record]

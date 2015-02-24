@@ -13,10 +13,6 @@ Lint/AmbiguousOperator:
 Lint/AmbiguousRegexpLiteral:
   Enabled: false
 
-# Offense count: 14
-Lint/ShadowingOuterLocalVariable:
-  Enabled: false
-
 # Offense count: 35
 Lint/UnreachableCode:
   Enabled: false
