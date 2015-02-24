@@ -13,7 +13,6 @@ module ActiveScaffold
         raise e
       end
 
-
       def get_column_method(record, column)
         # check for an override helper
         method = column.list_method
@@ -310,7 +309,6 @@ module ActiveScaffold
         end
         content_tag(:th, column_heading_value(column, sorting, sort_direction) + inplace_edit_control(column), tag_options)
       end
-
 
       def column_heading_value(column, sorting, sort_direction)
         if column.name == :as_marked

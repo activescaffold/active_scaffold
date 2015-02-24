@@ -259,8 +259,6 @@ module ActiveScaffold
     }
     NullComparators = %w(null not_null)
 
-
-
     def self.included(klass)
       klass.extend ClassMethods
     end

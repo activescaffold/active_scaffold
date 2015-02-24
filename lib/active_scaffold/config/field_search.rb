@@ -8,7 +8,6 @@ module ActiveScaffold::Config
       @human_conditions = self.class.human_conditions
     end
 
-
     # global level configuration
     # --------------------------
     # the ActionLink for this action

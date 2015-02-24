@@ -9,7 +9,6 @@ module ActiveScaffold::Config
       @split_terms = self.class.split_terms
     end
 
-
     # global level configuration
     # --------------------------
     # the ActionLink for this action

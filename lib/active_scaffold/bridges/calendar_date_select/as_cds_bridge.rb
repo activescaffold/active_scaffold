@@ -17,7 +17,6 @@ module ActiveScaffold::Config
   end
 end
 
-
 module ActiveScaffold
   module Bridges
     class CalendarDateSelect

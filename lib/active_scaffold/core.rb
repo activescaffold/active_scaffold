@@ -184,7 +184,6 @@ module ActiveScaffold
         ActiveScaffold::Core.active_scaffold_controller_for(klass, to_s.deconstantize + '::')
       end
 
-
       def uses_active_scaffold?
         !active_scaffold_config.nil?
       end

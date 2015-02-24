@@ -100,7 +100,6 @@ module ActiveScaffold::Bridges
       end
     end
 
-
     # plug into AS#authorized_for calls
     module ActiveRecord
       extend ActiveSupport::Concern
