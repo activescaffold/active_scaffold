@@ -555,7 +555,7 @@ module ActiveScaffold
           validators = column.active_record_class.validators.select do |v|
             v.is_a? ActiveModel::Validations::NumericalityValidator and v.attributes.include? column.name
           end
-          equal_to = (v = validators.find { |v| v.options[:equal_to] }) ? v.options[:equal_to] : nil
+          equal_to = (val = validators.find { |v| v.options[:equal_to] }) ? val.options[:equal_to] : nil
 
           # If there is equal_to constraint - use it (unless otherwise specified by user)
           if equal_to and not (options[:min] or options[:max])

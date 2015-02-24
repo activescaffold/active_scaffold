@@ -213,7 +213,7 @@ module ActiveScaffold
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.plural_association?
         # HACK to be able to delete all associated records, hash will include "0" => ""
-        value.collect {|key, value| manage_nested_record_from_params(parent_record, column, value, avoid_changes) unless value == ''}.compact
+        value.reject(&:blank?).collect { |key, val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }
       else
         value
       end

@@ -40,9 +40,9 @@ module ActiveScaffold::DataStructures
     # adds a link to a specific group
     # groups are represented as a string separated by a dot
     # eg member.crud
-    def add_to_group(link, group = nil)
+    def add_to_group(link, group_name = nil)
       add_to = root
-      add_to = group.split('.').inject(root) {|group, group_name| group.send(group_name)} if group
+      add_to = group_name.split('.').inject(root) { |group, name| group.send(name) } if group_name
       add_to << link unless link.nil?
     end
 

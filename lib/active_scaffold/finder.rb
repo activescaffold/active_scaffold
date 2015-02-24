@@ -434,19 +434,19 @@ module ActiveScaffold
       active_scaffold_config.model.where(primary_key => subquery)
     end
 
-    def append_to_query(query, options)
+    def append_to_query(relation, options)
       options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, (:references if Rails::VERSION::MAJOR >= 4)
-      query = options.reject {|k, v| v.blank?}.inject(query) do |query, (k, v)|
-        k == :conditions ? apply_conditions(query, *v) : query.send(k, v)
+      relation = options.reject {|k, v| v.blank?}.inject(relation) do |rel, (k, v)|
+        k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
       end
       if options[:outer_joins].present?
         if Rails::VERSION::MAJOR >= 4
-          query.distinct_value = true
+          relation.distinct_value = true
         else
-          query = query.uniq
+          relation = relation.uniq
         end
       end
-      query
+      relation
     end
 
     def joins_for_finder
@@ -460,12 +460,12 @@ module ActiveScaffold
       end + active_scaffold_habtm_joins
     end
 
-    def apply_conditions(query, *conditions)
-      conditions.reject(&:blank?).inject(query) do |query, condition|
+    def apply_conditions(relation, *conditions)
+      conditions.reject(&:blank?).inject(relation) do |rel, condition|
         if condition.is_a?(Array) && !condition.first.is_a?(String) # multiple conditions
-          apply_conditions(query, *condition)
+          apply_conditions(rel, *condition)
         else
-          query.where(condition)
+          rel.where(condition)
         end
       end
     end
