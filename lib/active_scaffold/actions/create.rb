@@ -147,9 +147,11 @@ module ActiveScaffold::Actions
       link = active_scaffold_config.create.link || active_scaffold_config.create.class.link
       fail ActiveScaffold::ActionNotAllowed unless send(link.security_method)
     end
+
     def new_formats
       (default_formats + active_scaffold_config.formats).uniq
     end
+
     def create_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.create.formats).uniq
     end

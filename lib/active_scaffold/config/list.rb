@@ -160,6 +160,7 @@ module ActiveScaffold::Config
       val = [val] if val.is_a? Hash
       sorting.set *val
     end
+
     def sorting
       @sorting ||= ActiveScaffold::DataStructures::Sorting.new(@core.columns)
     end

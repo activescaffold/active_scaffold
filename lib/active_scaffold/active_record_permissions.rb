@@ -48,6 +48,7 @@ module ActiveScaffold
           def current_user_proc
             Thread.current[:current_user_proc]
           end
+
           def current_user_proc=(proc_value)
             Thread.current[:current_user_proc] = proc_value
           end

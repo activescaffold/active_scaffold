@@ -12,9 +12,11 @@ module ActiveScaffold::Actions
       def search_respond_to_html
         render(:action => 'search')
       end
+
       def search_respond_to_js
         render(:partial => 'search')
       end
+
       def do_search
         if search_params.is_a?(String) && search_params.present?
           query = search_params.to_s.strip
