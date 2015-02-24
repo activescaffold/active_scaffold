@@ -16,7 +16,7 @@ module ActiveScaffold::Config
       class << subclass
         # the crud type of the action. possible values are :create, :read, :update, :delete, and nil.
         # this is not a setting for the developer. it's self-description for the actions.
-        def crud_type; @crud_type; end
+        attr_reader :crud_type
 
         protected
 
@@ -74,10 +74,7 @@ module ActiveScaffold::Config
     def formats
       @formats ||= []
     end
-
-    def formats=(val)
-      @formats=val
-    end
+    attr_writer :formats
 
     private
 

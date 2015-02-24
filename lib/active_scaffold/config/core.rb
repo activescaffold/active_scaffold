@@ -229,9 +229,7 @@ module ActiveScaffold::Config
     # some utility methods
     # --------------------
 
-    def model_id
-      @model_id
-    end
+    attr_reader :model_id
 
     def model
       @model ||= @model_id.to_s.camelize.constantize

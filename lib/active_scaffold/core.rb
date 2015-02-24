@@ -159,9 +159,7 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_config_block
-        @active_scaffold_config_block
-      end
+      attr_reader :active_scaffold_config_block
 
       def active_scaffold_superclasses_blocks
         blocks = []

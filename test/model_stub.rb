@@ -23,16 +23,12 @@ class ModelStub < ActiveRecord::Base
     self
   end
 
-  def other_model=(val)
-    @other_model = val
-  end
+  attr_writer :other_model
   def other_model
     @other_model || nil
   end
 
-  def other_models=(val)
-    @other_models = val
-  end
+  attr_writer :other_models
   def other_models
     @other_models || []
   end
