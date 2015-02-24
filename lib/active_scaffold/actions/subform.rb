@@ -20,7 +20,7 @@ module ActiveScaffold::Actions
       # NOTE: we don't check whether the user is allowed to update this record, because if not, we'll still let them associate the record. we'll just refuse to do more than associate, is all.
       @record = @column.association.klass.find(params[:associated_id]) if params[:associated_id]
       if @record
-        if association = active_scaffold_config.columns[params[:child_association]].association.reverse
+        if (association = active_scaffold_config.columns[params[:child_association]].association.reverse)
           if @record.class.reflect_on_association(association).collection?
             @record.send(association) << @parent_record
           else

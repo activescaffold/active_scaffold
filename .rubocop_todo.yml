@@ -5,13 +5,12 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 6
-# Configuration parameters: AllowSafeAssignment.
-Lint/AssignmentInCondition:
+# Offense count: 19
+Lint/AmbiguousOperator:
   Enabled: false
 
-# Offense count: 1
-Lint/Debugger:
+# Offense count: 3
+Lint/AmbiguousRegexpLiteral:
   Enabled: false
 
 # Offense count: 1
@@ -19,7 +18,7 @@ Lint/Debugger:
 Lint/DefEndAlignment:
   Enabled: false
 
-# Offense count: 32
+# Offense count: 31
 # Configuration parameters: AlignWith, SupportedStyles.
 Lint/EndAlignment:
   Enabled: false
@@ -36,7 +35,7 @@ Lint/HandleExceptions:
 Lint/RequireParentheses:
   Enabled: false
 
-# Offense count: 7
+# Offense count: 8
 Lint/RescueException:
   Enabled: false
 
@@ -57,7 +56,7 @@ Lint/UnreachableCode:
 Lint/UnusedBlockArgument:
   Enabled: false
 
-# Offense count: 68
+# Offense count: 70
 # Cop supports --auto-correct.
 Lint/UnusedMethodArgument:
   Enabled: false
@@ -74,7 +73,7 @@ Lint/UselessComparison:
 Lint/UselessSetterCall:
   Enabled: false
 
-# Offense count: 247
+# Offense count: 248
 Metrics/AbcSize:
   Max: 139
 
@@ -87,16 +86,20 @@ Metrics/BlockNesting:
 Metrics/ClassLength:
   Max: 356
 
-# Offense count: 89
+# Offense count: 90
 Metrics/CyclomaticComplexity:
   Max: 27
 
+<<<<<<< HEAD
 # Offense count: 1652
+=======
+# Offense count: 1661
+>>>>>>> fix Lint/AssignmentInCondition offense
 # Configuration parameters: AllowURI, URISchemes.
 Metrics/LineLength:
-  Max: 1107
+  Max: 987
 
-# Offense count: 177
+# Offense count: 178
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 76
@@ -106,7 +109,7 @@ Metrics/MethodLength:
 Metrics/ParameterLists:
   Max: 6
 
-# Offense count: 85
+# Offense count: 86
 Metrics/PerceivedComplexity:
   Max: 31
 
@@ -158,12 +161,12 @@ Style/CaseEquality:
 Style/CaseIndentation:
   Enabled: false
 
-# Offense count: 76
+# Offense count: 77
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/ClassAndModuleChildren:
   Enabled: false
 
-# Offense count: 73
+# Offense count: 71
 Style/ClassVars:
   Enabled: false
 
@@ -181,7 +184,7 @@ Style/ConstantName:
 Style/DeprecatedHashMethods:
   Enabled: false
 
-# Offense count: 256
+# Offense count: 257
 Style/Documentation:
   Enabled: false
 
@@ -199,7 +202,7 @@ Style/DoubleNegation:
 Style/EachWithObject:
   Enabled: false
 
-# Offense count: 33
+# Offense count: 32
 # Cop supports --auto-correct.
 Style/ElseAlignment:
   Enabled: false
@@ -208,13 +211,13 @@ Style/ElseAlignment:
 Style/EmptyElse:
   Enabled: false
 
-# Offense count: 78
+# Offense count: 75
 # Cop supports --auto-correct.
 # Configuration parameters: AllowAdjacentOneLineDefs.
 Style/EmptyLineBetweenDefs:
   Enabled: false
 
-# Offense count: 17
+# Offense count: 15
 # Cop supports --auto-correct.
 Style/EmptyLines:
   Enabled: false
@@ -225,7 +228,7 @@ Style/EmptyLines:
 Style/EmptyLinesAroundBlockBody:
   Enabled: false
 
-# Offense count: 22
+# Offense count: 21
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/EmptyLinesAroundClassBody:
@@ -268,7 +271,7 @@ Style/HashSyntax:
 Style/IfUnlessModifier:
   Enabled: false
 
-# Offense count: 2
+# Offense count: 1
 # Cop supports --auto-correct.
 Style/IndentArray:
   Enabled: false
@@ -284,7 +287,11 @@ Style/IndentHash:
 Style/IndentationConsistency:
   Enabled: false
 
+<<<<<<< HEAD
 # Offense count: 40
+=======
+# Offense count: 39
+>>>>>>> fix Lint/AssignmentInCondition offense
 # Cop supports --auto-correct.
 # Configuration parameters: Width.
 Style/IndentationWidth:
@@ -398,8 +405,19 @@ Style/Semicolon:
 Style/SignalException:
   Enabled: false
 
-# Offense count: 228
+# Offense count: 211
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
 Style/SpaceInsideBlockBraces:
+  Enabled: false
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/TrailingWhitespace:
+  Enabled: false
+
+# Offense count: 14
+# Cop supports --auto-correct.
+# Configuration parameters: ExactNameMatch, AllowPredicates, AllowDSLWriters, Whitelist.
+Style/TrivialAccessors:
   Enabled: false

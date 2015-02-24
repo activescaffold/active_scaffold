@@ -41,7 +41,7 @@ module ActiveScaffold::Actions
       else
         if successful?
           flash[:info] = as_(:created_model, :model => @record.to_label)
-          if action = active_scaffold_config.create.action_after_create
+          if (action = active_scaffold_config.create.action_after_create)
             redirect_to params_for(:action => action, :id => @record.to_param)
           elsif params[:dont_close]
             redirect_to params_for(:action => 'new')
