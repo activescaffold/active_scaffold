@@ -80,9 +80,7 @@ module ActiveScaffold::DataStructures
       iterate_model_associations(model)
     end
 
-    def name
-      association.name
-    end
+    delegate :name, :to => :association
 
     def has_many?
       association.macro == :has_many
@@ -92,9 +90,7 @@ module ActiveScaffold::DataStructures
       association.macro == :has_and_belongs_to_many
     end
 
-    def belongs_to?
-      association.belongs_to?
-    end
+    delegate :belongs_to?, :to => :association
 
     def has_one?
       association.macro == :has_one
