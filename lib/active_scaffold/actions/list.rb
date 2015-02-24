@@ -122,9 +122,9 @@ module ActiveScaffold::Actions
     end
 
     def each_record_in_page
-      _page = active_scaffold_config.list.user.page
+      current_page = active_scaffold_config.list.user.page
       do_search if respond_to? :do_search, true
-      active_scaffold_config.list.user.page = _page
+      active_scaffold_config.list.user.page = current_page
       do_list
       @page.items.each {|record| yield record}
     end
