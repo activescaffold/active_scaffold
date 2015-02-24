@@ -417,8 +417,8 @@ class AttributeParamsTest < MiniTest::Test
 end
 
 class Controller
-  def self.helper_method(*args); end
-  def self.before_filter(*args); end
+  def self.helper_method(*); end
+  def self.before_filter(*); end
 
   include ActiveScaffold::Core
   include ActiveScaffold::Helpers::ControllerHelpers

@@ -58,7 +58,7 @@ class PaginationHelpersTest < MiniTest::Test
     pagination_ajax_links(current_page, {}, {}, window_size, 0)
   end
 
-  def content_tag(tag, text, *args)
+  def content_tag(tag, text, *)
     text
   end
 end
