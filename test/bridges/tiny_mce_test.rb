@@ -19,6 +19,7 @@ class TinyMceTest < ActionView::TestCase
   end
 
   protected
+
   def include_tiny_mce_if_needed; end
   def tiny_mce_js; end
   def using_tiny_mce?

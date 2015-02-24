@@ -51,6 +51,7 @@ class PaginationHelpersTest < MiniTest::Test
   end
 
   private
+
   def links(current, last_page, window_size = 2, infinite = false)
     paginator = stub(:last => last_page = stub(:number => last_page), :infinite? => infinite)
     current_page = stub(:number => current, :pager => paginator)

@@ -21,6 +21,7 @@ module ActiveScaffold
         end
 
         private
+
         def configure_paperclip_field(field)
           columns << field
           columns[field].form_ui ||= :paperclip

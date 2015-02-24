@@ -44,6 +44,7 @@ module ActiveScaffold
       end
 
       protected
+
       def reverse_matches(klass)
         reverse_matches = []
 

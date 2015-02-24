@@ -31,6 +31,7 @@ module ActiveScaffold::Actions
     end
 
     protected
+
     def loading_embedded?
       @loading_embedded ||= params.delete(:embedded)
     end
@@ -368,6 +369,7 @@ module ActiveScaffold::Actions
     end
 
     private
+
     def respond_to_action(action)
       return unless !conditional_get_support? || view_stale?
       respond_to do |type|

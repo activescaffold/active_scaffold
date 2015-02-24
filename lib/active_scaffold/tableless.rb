@@ -133,6 +133,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
   class << self
     private
+
     def relation
       ActiveScaffold::Tableless::Relation.new(self, arel_table)
     end

@@ -15,6 +15,7 @@ module ActiveScaffold::Actions
     end
 
     protected
+
     def response_location
       url_for(params_for(:action => 'show', :id => @record.to_param)) if successful?
     end
@@ -139,7 +140,9 @@ module ActiveScaffold::Actions
       end
       authorized_for?(:crud_type => :create)
     end
+
     private
+
     def create_authorized_filter
       link = active_scaffold_config.create.link || active_scaffold_config.create.class.link
       raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)

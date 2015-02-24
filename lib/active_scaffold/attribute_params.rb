@@ -32,6 +32,7 @@ module ActiveScaffold
   # }
   module AttributeParams
     protected
+
     # workaround to update counters when belongs_to changes on persisted record on Rails 3
     # workaround to update counters when polymorphic has_many changes on persisted record
     # TODO remove when rails3 support is removed and counter cache for polymorphic has_many association works on rails4 (works on rails4.2)

@@ -8,6 +8,7 @@ module ActiveScaffold::Actions
     module InstanceMethods
 
       protected
+
       def search_respond_to_html
         render(:action => 'search')
       end
@@ -41,6 +42,7 @@ module ActiveScaffold::Actions
       end
 
       private
+
       def search_formats
         (default_formats + active_scaffold_config.formats + active_scaffold_config.search.formats).uniq
       end

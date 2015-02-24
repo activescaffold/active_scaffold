@@ -19,6 +19,7 @@ module ActiveScaffold::Actions
       end
       respond_to_action(:mark)
     end
+
     protected
 
     def mark_respond_to_html
