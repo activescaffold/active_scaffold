@@ -300,11 +300,11 @@ module ActiveScaffold::Actions
         if params[:id]
           crud_type_or_security_options ||= {:crud_type => (request.post? || request.put?) ? :update : :delete, :action => action_name}
           get_row(crud_type_or_security_options)
-          unless @record.nil?
-            yield @record
-          else
+          if @record.nil?
             self.successful = false
             flash[:error] = as_(:no_authorization_for_action, :action => action_name)
+          else
+            yield @record
           end
         else
           yield

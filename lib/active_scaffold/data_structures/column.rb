@@ -399,10 +399,10 @@ module ActiveScaffold::DataStructures
         I18n.t('number.percentage.format', :default => nil)
       end
       format.merge! specific unless specific.nil?
-      unless format[:separator].blank? || !value.include?(format[:separator]) && value.include?(native) && (format[:delimiter] != native || value !~ /\.\d{3}$/)
-        value.gsub(/[^0-9\-#{format[:separator]}]/, '').gsub(format[:separator], native)
-      else
+      if format[:separator].blank? || !value.include?(format[:separator]) && value.include?(native) && (format[:delimiter] != native || value !~ /\.\d{3}$/)
         value
+      else
+        value.gsub(/[^0-9\-#{format[:separator]}]/, '').gsub(format[:separator], native)
       end
     end
 

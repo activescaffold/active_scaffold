@@ -19,14 +19,14 @@ module ActiveScaffold::DataStructures
       end
       # NOTE: this duplicate check should be done by defining the comparison operator for an Action data structure
       existing = find_duplicate(link)
-      unless existing
+      if existing
+        existing
+      else
         # That s for backwards compatibility if we are in root of action_links
         # we have to move actionlink into members or collection subgroup
         group = (name == :root ? subgroup(link.type, link.type) : self)
         group.add_to_set(link)
         link
-      else
-        existing
       end
     end
     alias_method :<<, :add
