@@ -168,7 +168,7 @@ module ActiveScaffold::Actions
     private
 
     def list_authorized_filter
-      raise ActiveScaffold::ActionNotAllowed unless list_authorized?
+      fail ActiveScaffold::ActionNotAllowed unless list_authorized?
     end
 
     def list_formats

@@ -22,7 +22,7 @@ class Paginator
   def initialize(count, per_page, &select)
     @count, @per_page = count, per_page
     unless select
-      raise MissingSelectError, 'Must provide block to select data for each page'
+      fail MissingSelectError, 'Must provide block to select data for each page'
     end
     @select = select
   end

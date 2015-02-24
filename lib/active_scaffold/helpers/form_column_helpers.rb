@@ -29,7 +29,7 @@ module ActiveScaffold
               active_scaffold_input_select(column, options)
             else
               # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
-              raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
+              fail "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
             end
           elsif column.virtual?
             options[:value] = format_number_value(record.send(column.name), column.options) if column.number?

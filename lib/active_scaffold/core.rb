@@ -213,12 +213,12 @@ module ActiveScaffold
               raise
             end
           end
-          raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
-          raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model.to_s == klass.to_s
+          fail ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
+          fail ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model.to_s == klass.to_s
           return controller
         end
       end
-      raise ActiveScaffold::ControllerNotFound, 'Could not find ' + error_message.join(' or '), caller
+      fail ActiveScaffold::ControllerNotFound, 'Could not find ' + error_message.join(' or '), caller
     end
 
     def self.column_type_cast(value, column)
