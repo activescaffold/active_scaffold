@@ -13,9 +13,7 @@ module ActiveScaffold::DataStructures
       public_attributes.to_xml(:root => 'errors')
     end
 
-    def to_yaml
-      public_attributes.to_yaml
-    end
+    delegate :to_yaml, :to => :public_attributes
 
     def to_s
       @error

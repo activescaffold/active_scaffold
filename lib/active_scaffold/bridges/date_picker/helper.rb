@@ -50,7 +50,7 @@ module ActiveScaffold::Bridges
           date_picker_options.merge!(as_date_picker_options) if as_date_picker_options.is_a? Hash
           Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}" if as_date_picker_options.blank?
 
-          js_format = self.to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
+          js_format = to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
           date_picker_options[:dateFormat] = js_format unless js_format.blank?
           date_picker_options
         rescue
@@ -82,7 +82,7 @@ module ActiveScaffold::Bridges
           datetime_picker_options.merge!(as_datetime_picker_options) if as_datetime_picker_options.is_a? Hash
           Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{locale}" if as_datetime_picker_options.blank?
 
-          date_format, time_format = self.split_datetime_format(self.to_datepicker_format(rails_time_format))
+          date_format, time_format = split_datetime_format(to_datepicker_format(rails_time_format))
           datetime_picker_options[:dateFormat] = date_format unless date_format.nil?
           unless time_format.nil?
             datetime_picker_options[:timeFormat] = time_format
@@ -138,7 +138,7 @@ module ActiveScaffold::Bridges
             options['data-dateFormat'] = js_format unless js_format.nil?
           else
             rails_time_format = I18n.translate!("time.formats.#{format}")
-            date_format, time_format = datepicker_split_datetime_format(self.to_datepicker_format(rails_time_format))
+            date_format, time_format = datepicker_split_datetime_format(to_datepicker_format(rails_time_format))
             options['data-dateFormat'] = date_format unless date_format.nil?
             unless time_format.nil?
               options['data-timeFormat'] = time_format
@@ -157,7 +157,7 @@ module ActiveScaffold::Bridges
           end
           options = column.options.merge(options).except!(:include_blank, :discard_time, :discard_date, :value)
           options = active_scaffold_input_text_options(options.merge(column.options))
-          options[:class] << " #{column.search_ui.to_s}"
+          options[:class] << " #{column.search_ui}"
           options[:style] = (options[:show].nil? || options[:show]) ? nil : 'display: none'
           format = options.delete(:format) || (column.search_ui == :date_picker ? :default : :picker)
           datepicker_format_options(column, format, options)
@@ -171,7 +171,7 @@ module ActiveScaffold::Bridges
           ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
           record ||= @record # TODO Remove when relying on @record is removed
           options = active_scaffold_input_text_options(options.merge(column.options))
-          options[:class] << " #{column.form_ui.to_s}"
+          options[:class] << " #{column.form_ui}"
 
           value = controller.class.condition_value_for_datetime(column, record.send(column.name), column.form_ui == :date_picker ? :to_date : :to_time)
           format = options.delete(:format) || (column.form_ui == :date_picker ? :default : :picker)

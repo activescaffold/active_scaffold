@@ -14,6 +14,7 @@ module ActiveScaffold::Actions
     end
 
     protected
+
     # get just a single row
     def row
       get_row
@@ -72,8 +73,8 @@ module ActiveScaffold::Actions
       end
       sorting = active_scaffold_config.list.user.sorting
       columns_for_joins, columns_for_includes = columns.select{ |c| c.includes.present? }.partition {|c| sorting.sorts_on? c }
-      self.active_scaffold_preload.concat columns_for_includes.map(&:includes).flatten.uniq
-      self.active_scaffold_references.concat columns_for_joins.map(&:includes).flatten.uniq
+      active_scaffold_preload.concat columns_for_includes.map(&:includes).flatten.uniq
+      active_scaffold_references.concat columns_for_joins.map(&:includes).flatten.uniq
     end
 
     def get_row(crud_type_or_security_options = :read)
@@ -163,6 +164,7 @@ module ActiveScaffold::Actions
     end
 
     private
+
     def list_authorized_filter
       raise ActiveScaffold::ActionNotAllowed unless list_authorized?
     end

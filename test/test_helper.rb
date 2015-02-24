@@ -33,6 +33,7 @@ end
 
 class MiniTest::Test
   protected
+
   def config_for(klass, namespace = nil)
     ActiveScaffold::Config::Core.new("#{namespace}#{klass.to_s.underscore.downcase}")
   end

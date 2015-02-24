@@ -5,7 +5,7 @@ class ModelStub < ActiveRecord::Base
 
   cattr_accessor :stubbed_columns
   self.stubbed_columns = [:a, :b, :c, :d, :id]
-  attr_accessor *self.stubbed_columns
+  attr_accessor *stubbed_columns
 
   @@nested_scope_calls = []
   cattr_accessor :nested_scope_calls
@@ -38,7 +38,7 @@ class ModelStub < ActiveRecord::Base
   end
 
   def self.columns
-    @columns ||= self.stubbed_columns.map{|c| ColumnMock.new(c.to_s, '', 'varchar(255)') }
+    @columns ||= stubbed_columns.map{|c| ColumnMock.new(c.to_s, '', 'varchar(255)') }
   end
 
   def self.columns_hash

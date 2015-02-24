@@ -23,7 +23,7 @@ module ActiveScaffold::DataStructures
     def ==(other) #:nodoc:
       # another ActionColumns
       if other.class == self.class
-        self.label == other.label
+        label == other.label
       else
         @label.to_s == other.to_s
       end
@@ -36,10 +36,10 @@ module ActiveScaffold::DataStructures
     def add_subgroup(label, &proc)
       columns = ActiveScaffold::DataStructures::ActionColumns.new
       columns.label = label
-      columns.action = self.action
+      columns.action = action
       columns.configure &proc
-      self.exclude columns.collect_columns
-      self.add columns
+      exclude columns.collect_columns
+      add columns
     end
 
     def include?(item)
@@ -52,7 +52,7 @@ module ActiveScaffold::DataStructures
 
     def names
       if @columns
-        self.collect_visible(:flatten => true) { |c| c.name }
+        collect_visible(:flatten => true) { |c| c.name }
       else
         names_without_auth_check
       end
@@ -111,8 +111,8 @@ module ActiveScaffold::DataStructures
       # skip if this matches a constrained column
       result = true if constraint_columns.include?(column.name.to_sym)
       # skip this field if it's not authorized
-      unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || self.action.try(:crud_type) || :read, :column => column.name)
-        self.unauthorized_columns << column.name.to_sym
+      unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || action.try(:crud_type) || :read, :column => column.name)
+        unauthorized_columns << column.name.to_sym
         result = true
       end
       return result
@@ -151,7 +151,7 @@ module ActiveScaffold::DataStructures
     end
 
     def length
-      ((@set - self.constraint_columns) - self.unauthorized_columns).length
+      ((@set - constraint_columns) - unauthorized_columns).length
     end
 
     protected

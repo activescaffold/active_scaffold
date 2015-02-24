@@ -12,12 +12,13 @@ module ActiveScaffold::Actions
     end
 
     protected
+
     def destroy_respond_to_html
       if self.successful?
         flash[:info] = as_(:deleted_model, :model => @record.to_label)
       else
-        #error_message_for not available in controller...
-        #flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br)
+        # error_message_for not available in controller...
+        # flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br)
       end
       return_to_main
     end
@@ -63,12 +64,14 @@ module ActiveScaffold::Actions
       (!nested? || !nested.readonly?) && (record || self).send(:authorized_for?, :crud_type => :delete)
     end
     def delete_ignore?(record = nil)
-      (nested? && nested.readonly?) || !self.send(:authorized_for?, :crud_type => :delete)
+      (nested? && nested.readonly?) || !send(:authorized_for?, :crud_type => :delete)
     end
+
     private
+
     def delete_authorized_filter
       link = active_scaffold_config.delete.link || active_scaffold_config.delete.class.link
-      raise ActiveScaffold::ActionNotAllowed unless self.send(link.security_method)
+      raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)
     end
     def destroy_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.delete.formats).uniq

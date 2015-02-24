@@ -10,15 +10,15 @@ module ActiveScaffold
     end
 
     def as_marked
-      marked_records.include?(self.id.to_s)
+      marked_records.include?(id.to_s)
     end
 
     def as_marked=(value)
       value = [true, 'true', 1, '1', 'T', 't'].include?(value.class == String ? value.downcase : value)
       if value == true
-        marked_records[self.id.to_s] = true if !as_marked
+        marked_records[id.to_s] = true if !as_marked
       else
-        marked_records.delete(self.id.to_s)
+        marked_records.delete(id.to_s)
       end
     end
 

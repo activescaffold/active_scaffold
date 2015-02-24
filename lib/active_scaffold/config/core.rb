@@ -120,7 +120,7 @@ module ActiveScaffold::Config
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
     def add_sti_create_links?
-      self.sti_create_links and not self.sti_children.nil?
+      sti_create_links and not sti_children.nil?
     end
 
     # action links are used by actions to tie together. they appear as links for each record, or general links for the ActiveScaffold.
@@ -153,15 +153,15 @@ module ActiveScaffold::Config
       @actions = self.class.actions.clone
 
       # create a new default columns datastructure, since it doesn't make sense before now
-      attribute_names = self.model.columns.collect{ |c| c.name.to_sym }.sort_by { |c| c.to_s }
-      association_column_names = self.model.reflect_on_all_associations.collect{ |a| a.name.to_sym }.sort_by { |c| c.to_s }
-      @columns = ActiveScaffold::DataStructures::Columns.new(self.model, attribute_names + association_column_names)
+      attribute_names = model.columns.collect{ |c| c.name.to_sym }.sort_by { |c| c.to_s }
+      association_column_names = model.reflect_on_all_associations.collect{ |a| a.name.to_sym }.sort_by { |c| c.to_s }
+      @columns = ActiveScaffold::DataStructures::Columns.new(model, attribute_names + association_column_names)
 
       # and then, let's remove some columns from the inheritable set.
-      content_columns = Set.new(self.model.content_columns.map(&:name))
+      content_columns = Set.new(model.content_columns.map(&:name))
       @columns.exclude(*self.class.ignore_columns)
       @columns.exclude(*@columns.find_all { |c| c.column and content_columns.exclude?(c.column.name) }.collect {|c| c.name})
-      @columns.exclude(*self.model.reflect_on_all_associations.collect{|a| :"#{a.name}_type" if a.options[:polymorphic]}.compact)
+      @columns.exclude(*model.reflect_on_all_associations.collect{|a| :"#{a.name}_type" if a.options[:polymorphic]}.compact)
 
       # inherit the global frontend
       @frontend = self.class.frontend
@@ -181,21 +181,21 @@ module ActiveScaffold::Config
     # To be called after your finished configuration
     def _load_action_columns
       # then, register the column objects
-      self.actions.each do |action_name|
-        action = self.send(action_name)
-        action.columns.set_columns(self.columns) if action.respond_to?(:columns)
+      actions.each do |action_name|
+        action = send(action_name)
+        action.columns.set_columns(columns) if action.respond_to?(:columns)
       end
     end
 
     # To be called after your finished configuration
     def _configure_sti
-      column = self.model.inheritance_column
+      column = model.inheritance_column
       if sti_create_links
-        self.columns[column].form_ui ||= :hidden
+        columns[column].form_ui ||= :hidden
       else
-        self.columns[column].form_ui ||= :select
-        self.columns[column].options ||= {}
-        self.columns[column].options[:options] = self.sti_children.collect do |model_name|
+        columns[column].form_ui ||= :select
+        columns[column].options ||= {}
+        columns[column].options[:options] = sti_children.collect do |model_name|
           [model_name.to_s.camelize.constantize.model_name.human, model_name.to_s.camelize]
         end
       end

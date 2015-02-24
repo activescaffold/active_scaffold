@@ -8,6 +8,7 @@ module ActiveScaffold::Actions
     module InstanceMethods
 
       protected
+
       def search_respond_to_html
         render(:action => 'search')
       end
@@ -22,13 +23,13 @@ module ActiveScaffold::Actions
           query = query.split(active_scaffold_config.search.split_terms) if active_scaffold_config.search.split_terms
           search_conditions = self.class.create_conditions_for_columns(query, columns, text_search)
           @filtered = !search_conditions.blank?
-          self.active_scaffold_conditions.concat search_conditions if @filtered
+          active_scaffold_conditions.concat search_conditions if @filtered
 
           references, outer_joins = columns.partition{ |column| column.includes.present? && list_columns.include?(column)}
           outer_joins.collect! { |column| column.search_joins}
           references.collect! { |column| column.includes }
-          self.active_scaffold_outer_joins.concat outer_joins.flatten.uniq.compact
-          self.active_scaffold_references.concat references.flatten.uniq.compact
+          active_scaffold_outer_joins.concat outer_joins.flatten.uniq.compact
+          active_scaffold_references.concat references.flatten.uniq.compact
 
           active_scaffold_config.list.user.page = nil
         else
@@ -41,6 +42,7 @@ module ActiveScaffold::Actions
       end
 
       private
+
       def search_formats
         (default_formats + active_scaffold_config.formats + active_scaffold_config.search.formats).uniq
       end
