@@ -26,9 +26,9 @@ module ActiveScaffold
         @active_scaffold_config_block = block
         links_for_associations
 
-        active_scaffold_superclasses_blocks.each {|superblock| active_scaffold_config.configure &superblock}
+        active_scaffold_superclasses_blocks.each { |superblock| active_scaffold_config.configure(&superblock) }
         active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
-        active_scaffold_config.configure &block if block_given?
+        active_scaffold_config.configure(&block) if block_given?
         active_scaffold_config._configure_sti unless active_scaffold_config.sti_children.nil?
         active_scaffold_config._load_action_columns
 

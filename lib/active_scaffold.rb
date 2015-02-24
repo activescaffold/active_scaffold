@@ -86,7 +86,7 @@ module ActiveScaffold
   end
 
   def self.set_defaults(&block)
-    ActiveScaffold::Config::Core.configure &block
+    ActiveScaffold::Config::Core.configure(&block)
   end
 end
 require 'active_scaffold/engine'

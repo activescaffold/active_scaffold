@@ -138,7 +138,7 @@ module ActiveScaffold::Actions
     end
 
     def each_marked_record(&block)
-      active_scaffold_config.model.as_marked.each &block
+      active_scaffold_config.model.as_marked.each(&block)
     end
 
     def marked_records
