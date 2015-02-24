@@ -19,7 +19,7 @@ end
 class CalculationTest < MiniTest::Test
   def setup
     @buildings = []
-    @buildings << Building.create {|b| b.create_owner(:first_name => 'foo')}
+    @buildings << Building.create { |b| b.create_owner(:first_name => 'foo') }
     @buildings << Building.create(:name => 'foo bar')
     @buildings << Building.create
 

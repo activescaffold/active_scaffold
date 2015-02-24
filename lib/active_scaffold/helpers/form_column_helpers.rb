@@ -235,7 +235,7 @@ module ActiveScaffold
         group_label = group_column.options[:label_method] if group_column
         group_label ||= group_column.try(:association) ? :to_label : :to_s
         select_options.group_by(&optgroup.to_sym).collect do |group, options|
-          [group.send(group_label), options.collect {|r| [r.send(column.options[:label_method] || :to_label), r.id]}]
+          [group.send(group_label), options.collect { |r| [r.send(column.options[:label_method] || :to_label), r.id] }]
         end
       end
 

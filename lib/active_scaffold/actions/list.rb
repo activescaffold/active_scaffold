@@ -126,11 +126,11 @@ module ActiveScaffold::Actions
       do_search if respond_to? :do_search, true
       active_scaffold_config.list.user.page = current_page
       do_list
-      @page.items.each {|record| yield record}
+      @page.items.each { |record| yield record }
     end
 
     def each_record_in_scope
-      scoped_query.each {|record| yield record}
+      scoped_query.each { |record| yield record }
     end
 
     def scoped_query

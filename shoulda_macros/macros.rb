@@ -38,7 +38,7 @@ class ActiveSupport::TestCase
 
   def self.should_render_with_options_for_select(column_name, *options)
     should "render column #{column_name} with options for select" do
-      converting_sort = lambda {|a, b| a.to_s <=> b.to_s}
+      converting_sort = lambda { |a, b| a.to_s <=> b.to_s }
       assert_equal options.sort(&converting_sort), @controller.active_scaffold_config.columns[column_name].options[:options].sort(&converting_sort)
     end
   end
@@ -131,7 +131,7 @@ class ActiveSupport::TestCase
 
   def column_names(action)
     columns = []
-    @controller.active_scaffold_config.send(action).columns.each(:flatten => true) {|col| columns << col.name}
+    @controller.active_scaffold_config.send(action).columns.each(:flatten => true) { |col| columns << col.name }
     columns
   end
 end

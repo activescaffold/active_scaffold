@@ -113,7 +113,7 @@ module ActiveScaffold::Bridges
         time_format = nil
         time_start_indicators = %w{HH hh mm tt ss}
         unless datetime_format.nil?
-          start_indicator = time_start_indicators.detect {|indicator| datetime_format.include?(indicator)}
+          start_indicator = time_start_indicators.detect { |indicator| datetime_format.include?(indicator) }
           unless start_indicator.nil?
             pos_time_format = datetime_format.index(start_indicator)
             date_format = datetime_format.to(pos_time_format - 1).strip

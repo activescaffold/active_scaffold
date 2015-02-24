@@ -31,7 +31,7 @@ class ListColumnHelpersTest < ActionView::TestCase
 
   def test_association_join_text
     value = [1, 2, 3, 4].map(&:to_s)
-    value.each {|v| v.stubs(:to_label).returns(v)}
+    value.each { |v| v.stubs(:to_label).returns(v) }
     assert_equal '1, 2, 3, … (4)', format_association_value(value, @association_column, value.size)
     @config.list.stubs(:association_join_text => ',<br/>')
     assert_equal '1,&lt;br/&gt;2,&lt;br/&gt;3,&lt;br/&gt;… (4)', format_association_value(value, @association_column, value.size)

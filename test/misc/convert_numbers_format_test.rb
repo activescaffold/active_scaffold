@@ -6,7 +6,7 @@ class NumberModel < ActiveRecord::Base
     @columns ||= [ColumnMock.new('id', '', 'int(11)'), ColumnMock.new('number', '', 'double(10,2)')]
   end
   def self.columns_hash
-    @hash ||= Hash[@columns.map {|c| [c.name, c]}]
+    @hash ||= Hash[@columns.map { |c| [c.name, c] }]
   end
 end
 

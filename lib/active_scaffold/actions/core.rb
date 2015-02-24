@@ -212,7 +212,7 @@ module ActiveScaffold::Actions
           next if nested? and nested.param_name == key
           conditions[key] =
             if value.is_a?(Array)
-              value.map {|v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
+              value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
             else
               value == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(value, column)
             end
@@ -360,11 +360,11 @@ module ActiveScaffold::Actions
     end
 
     def virtual_columns(columns)
-      columns.reject {|col| active_scaffold_config.model.columns_hash[col] || active_scaffold_config.model.reflect_on_association(col)}
+      columns.reject { |col| active_scaffold_config.model.columns_hash[col] || active_scaffold_config.model.reflect_on_association(col) }
     end
 
     def association_columns(columns)
-      columns.select {|col| active_scaffold_config.model.reflect_on_association(col)}
+      columns.select { |col| active_scaffold_config.model.reflect_on_association(col) }
     end
 
     private

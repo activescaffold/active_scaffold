@@ -135,7 +135,7 @@ class ColumnTest < MiniTest::Test
     hash = {:sql => 'foobar'}
     assert_equal hash, @column.sort
 
-    some_proc = proc {'foobar'}
+    some_proc = proc { 'foobar' }
     @column.sort_by :method => some_proc
     hash = {:method => some_proc}
     assert_equal hash, @column.sort

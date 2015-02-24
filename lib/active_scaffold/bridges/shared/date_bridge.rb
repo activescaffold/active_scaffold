@@ -16,8 +16,8 @@ module ActiveScaffold
           end
 
           def active_scaffold_search_date_bridge_comparator_options(column)
-            select_options = ActiveScaffold::Finder::DateComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
-            select_options + ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
+            select_options = ActiveScaffold::Finder::DateComparators.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+            select_options + ActiveScaffold::Finder::NumericComparators.collect { |comp| [as_(comp.downcase.to_sym), comp] }
           end
 
           def active_scaffold_search_date_bridge_comparator_tag(column, options, current_search)
@@ -48,14 +48,14 @@ module ActiveScaffold
           end
 
           def active_scaffold_search_date_bridge_trend_units(column)
-             options = ActiveScaffold::Finder::DateUnits.collect {|unit| [as_(unit.downcase.to_sym), unit]}
-             options = ActiveScaffold::Finder::TimeUnits.collect {|unit| [as_(unit.downcase.to_sym), unit]} + options if column_datetime?(column)
+             options = ActiveScaffold::Finder::DateUnits.collect { |unit| [as_(unit.downcase.to_sym), unit] }
+             options = ActiveScaffold::Finder::TimeUnits.collect { |unit| [as_(unit.downcase.to_sym), unit] } + options if column_datetime?(column)
              options
           end
 
           def active_scaffold_search_date_bridge_range_tag(column, options, current_search)
             range_controls = select_tag("#{options[:name]}[range]",
-              options_for_select(ActiveScaffold::Finder::DateRanges.collect {|range| [as_(range.downcase.to_sym), range]}, current_search['range']),
+              options_for_select(ActiveScaffold::Finder::DateRanges.collect { |range| [as_(range.downcase.to_sym), range] }, current_search['range']),
              :class => 'text-input', :id => nil)
             content_tag('span', range_controls.html_safe, :id => "#{options[:id]}_range", :class => 'search-date-range', :style => (current_search['opt'] == 'RANGE') ? nil : 'display: none')
           end
@@ -126,7 +126,7 @@ module ActiveScaffold
               when 'PAST', 'FUTURE'
                 date_bridge_from_to_for_trend(column, value).collect(&conversion)
               else
-                %w(from to).collect { |field| condition_value_for_datetime(column, value[field], conversion)}
+                %w(from to).collect { |field| condition_value_for_datetime(column, value[field], conversion) }
               end
             end
 
