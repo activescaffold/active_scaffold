@@ -261,4 +261,3 @@ module ActiveScaffold::Config
     end
   end
 end
-

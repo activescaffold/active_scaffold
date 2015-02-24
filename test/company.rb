@@ -16,7 +16,7 @@ class Company < ActiveRecord::Base
       'logo_file_name' => ColumnMock.new('logo_file_name', nil, 'varchar(255)'),
       'logo_content_type' => ColumnMock.new('logo_content_type', nil, 'varchar(255)'),
       'logo_file_size' => ColumnMock.new('logo_file_size', nil, 'int(11)'),
-      'logo_updated_at' => ColumnMock.new('logo_updated_at', nil, 'datetime'),
+      'logo_updated_at' => ColumnMock.new('logo_updated_at', nil, 'datetime')
     }
   end
 

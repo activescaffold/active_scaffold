@@ -371,4 +371,3 @@ else
     include ActiveScaffold::Bridges::CountryHelper::InstanceTagMethods
   end
 end
-

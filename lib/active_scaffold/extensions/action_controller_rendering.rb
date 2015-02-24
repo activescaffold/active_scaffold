@@ -17,4 +17,3 @@ module ActionController #:nodoc:
     alias_method_chain :render, :active_scaffold
   end
 end
-

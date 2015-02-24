@@ -92,4 +92,3 @@ end
 require 'active_scaffold/engine'
 # TODO: clean up extensions. some could be organized for autoloading, and others could be removed entirely.
 Dir["#{File.dirname __FILE__}/active_scaffold/extensions/*.rb"].each { |file| require file }
-

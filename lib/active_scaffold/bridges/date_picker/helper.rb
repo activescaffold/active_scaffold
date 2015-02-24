@@ -43,7 +43,7 @@ module ActiveScaffold::Bridges
             :dayNamesShort => I18n.translate!('date.abbr_day_names', :locale => locale),
             :dayNamesMin => I18n.translate!('date.abbr_day_names', :locale => locale),
             :changeYear => true,
-            :changeMonth => true,
+            :changeMonth => true
           }
 
           as_date_picker_options = I18n.translate! :date_picker_options, :scope => :active_scaffold, :locale => locale, :default => ''
