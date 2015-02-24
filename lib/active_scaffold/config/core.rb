@@ -128,7 +128,7 @@ module ActiveScaffold::Config
 
     # a generally-applicable name for this ActiveScaffold ... will be used for generating page/section headers
     attr_writer :label
-    def label(options={})
+    def label(options = {})
       as_(@label, options) || model.model_name.human(options.merge(options[:count].to_i == 1 ? {} : {:default => model.name.pluralize}))
     end
 

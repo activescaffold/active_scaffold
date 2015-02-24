@@ -37,7 +37,7 @@ class Company < ActiveRecord::Base
   end
 
   # not the real signature of the method, but forgive me
-  def self.before_destroy(s=nil)
+  def self.before_destroy(s = nil)
     @@before = s
   end
 

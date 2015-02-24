@@ -36,7 +36,7 @@ module ActiveScaffold
           allocate.send("#{field}_options")
         end
 
-        def field_has_image_version?(field, version='thumb')
+        def field_has_image_version?(field, version = 'thumb')
           begin
             # the only way to get to the options of a particular field is to use the instance method
             options = options_for_file_column_field(field)

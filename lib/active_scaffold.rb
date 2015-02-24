@@ -12,7 +12,7 @@ module ActiveScaffold
   autoload :Tableless, 'active_scaffold/tableless'
   autoload :Version, 'active_scaffold/version'
 
-  def self.autoload_subdir(dir, mod=self, root = File.dirname(__FILE__))
+  def self.autoload_subdir(dir, mod = self, root = File.dirname(__FILE__))
     Dir["#{root}/active_scaffold/#{dir}/*.rb"].each { |file|
       basename = File.basename(file, '.rb')
       mod.module_eval {
