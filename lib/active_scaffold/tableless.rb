@@ -81,9 +81,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   module RelationExtension
-    def conditions
-      @conditions
-    end
+    attr_reader :conditions
 
     def initialize(klass, table)
       super

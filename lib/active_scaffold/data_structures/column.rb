@@ -112,9 +112,7 @@ module ActiveScaffold::DataStructures
       self.list_method = nil if @list_ui.nil? && value != @form_ui
       @form_ui = value
     end
-    def form_ui
-      @form_ui
-    end
+    attr_reader :form_ui
 
     def list_ui=(value)
       self.list_method = nil if value != @list_ui
