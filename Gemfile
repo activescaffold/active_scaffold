@@ -24,8 +24,8 @@ group :test do
   gem 'simplecov', '>= 0'
   gem 'mocha'
   gem 'rails', '~> 4.1.1'
-  gem "codeclimate-test-reporter", require: nil
-  gem "minitest-reporters", require: nil
+  gem 'codeclimate-test-reporter', :require => nil
+  gem 'minitest-reporters', :require => nil
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
   end
