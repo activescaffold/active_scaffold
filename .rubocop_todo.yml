@@ -498,9 +498,3 @@ Style/TrivialAccessors:
 # Offense count: 12
 Style/UnlessElse:
   Enabled: false
-
-# Offense count: 49
-# Cop supports --auto-correct.
-# Configuration parameters: WordRegex.
-Style/WordArray:
-  MinSize: 12

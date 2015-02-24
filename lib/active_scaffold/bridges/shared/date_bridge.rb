@@ -126,7 +126,7 @@ module ActiveScaffold
               when 'PAST', 'FUTURE'
                 date_bridge_from_to_for_trend(column, value).collect(&conversion)
               else
-                ['from', 'to'].collect { |field| condition_value_for_datetime(column, value[field], conversion)}
+                %w(from to).collect { |field| condition_value_for_datetime(column, value[field], conversion)}
               end
             end
 
@@ -171,7 +171,7 @@ module ActiveScaffold
                 return date_bridge_now.in(1.day).beginning_of_day, date_bridge_now.in(1.day).end_of_day
               else
                 range_type, range = value[:range].downcase.split('_')
-                raise ArgumentError unless ['week', 'month', 'year'].include?(range)
+                raise ArgumentError unless %w(week month year).include?(range)
                 case range_type
                 when 'this'
                   return date_bridge_now.send("beginning_of_#{range}".to_sym), date_bridge_now.send("end_of_#{range}")
@@ -199,10 +199,7 @@ module ActiveScaffold
   end
 end
 
-ActiveScaffold::Finder.const_set('DateComparators', ['PAST', 'FUTURE', 'RANGE'])
-ActiveScaffold::Finder.const_set('DateUnits', ['DAYS', 'WEEKS', 'MONTHS', 'YEARS'])
-ActiveScaffold::Finder.const_set('TimeUnits', ['SECONDS', 'MINUTES', 'HOURS'])
-ActiveScaffold::Finder.const_set('DateRanges', ['TODAY', 'YESTERDAY', 'TOMORROW',
-                                                'THIS_WEEK', 'PREV_WEEK', 'NEXT_WEEK',
-                                                'THIS_MONTH', 'PREV_MONTH', 'NEXT_MONTH',
-                                                'THIS_YEAR', 'PREV_YEAR', 'NEXT_YEAR'])
+ActiveScaffold::Finder.const_set('DateComparators', %w(PAST FUTURE RANGE))
+ActiveScaffold::Finder.const_set('DateUnits', %w(DAYS WEEKS MONTHS YEARS))
+ActiveScaffold::Finder.const_set('TimeUnits', %w(SECONDS MINUTES HOURS))
+ActiveScaffold::Finder.const_set('DateRanges', %w(TODAY YESTERDAY TOMORROW THIS_WEEK PREV_WEEK NEXT_WEEK THIS_MONTH PREV_MONTH NEXT_MONTH THIS_YEAR PREV_YEAR NEXT_YEAR))
