@@ -1,8 +1,8 @@
 class Company < ActiveRecord::Base
   def initialize(with_or_without = nil)
-    @with_companies = with_or_without == :with_companies
-    @with_company = with_or_without == :with_company
-    @with_main_company = with_or_without == :with_main_company
+    @companies = with_or_without == :with_companies
+    @company = with_or_without == :with_company
+    @main_company = with_or_without == :with_main_company
     @attributes = {}
     @attributes_cache = {}
     @raw_attributes = {}
@@ -67,23 +67,17 @@ class Company < ActiveRecord::Base
   belongs_to :main_company, :class_name => 'Company'
 
   def companies
-    if @with_companies
+    if @companies
       [nil]
     else
       []
     end
   end
 
-  def company
-    @with_company
-  end
+  attr_reader :company
+  attr_reader :main_company
 
-  def main_company
-    @with_main_company
-  end
-
-  def name
-  end
+  def name; end
   def name_before_type_cast
     name.to_s
   end

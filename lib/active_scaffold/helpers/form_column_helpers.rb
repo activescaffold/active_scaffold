@@ -262,7 +262,7 @@ module ActiveScaffold
         html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
         active_scaffold_translate_select_options(options)
 
-        html = if optgroup = options.delete(:optgroup)
+        html = if (optgroup = options.delete(:optgroup))
           select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
         else
           collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
