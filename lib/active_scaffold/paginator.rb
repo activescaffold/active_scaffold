@@ -44,7 +44,7 @@ class Paginator
 
   # Iterate through pages
   def each
-    each_with_index do |item, index|
+    each_with_index do |item, _|
       yield item
     end
   end

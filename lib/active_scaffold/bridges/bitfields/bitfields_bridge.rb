@@ -6,7 +6,7 @@ module ActiveScaffold
           initialize_without_bitfields(model_id)
           return unless model.respond_to?(:bitfields) and model.bitfields.present?
 
-          model.bitfields.each do |column_name, options|
+          model.bitfields.each do |_, options|
             columns << options.keys
             options.each do |column, value|
               columns[column].form_ui = :checkbox

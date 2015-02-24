@@ -26,7 +26,7 @@ class ActiveSupport::TestCase
   def self.should_render_as_form_ui(column_name, form_ui)
     should "render column #{column_name} as #{form_ui} form_ui", :before => lambda {
       @rendered_columns = []
-      @controller.view_context_class.any_instance.expects(:"active_scaffold_input_#{form_ui}").at_least_once.with {|column, options|
+      @controller.view_context_class.any_instance.expects(:"active_scaffold_input_#{form_ui}").at_least_once.with {|column, _|
         @rendered_columns << column.name
         true
       }
@@ -60,7 +60,7 @@ class ActiveSupport::TestCase
   def self.should_render_as_form_hidden(column_name)
     should "render column #{column_name} as form hidden", :before => lambda {
       @rendered_columns = []
-      @controller.view_context_class.any_instance.expects(:"hidden_field").at_least_once.with {|object, method, options|
+      @controller.view_context_class.any_instance.expects(:"hidden_field").at_least_once.with {|_, method, _|
         @rendered_columns << method
         true
       }
@@ -73,7 +73,7 @@ class ActiveSupport::TestCase
   def self.should_render_as_list_ui(column_name, list_ui)
     should "render column #{column_name} as #{list_ui} list_ui", :before => lambda {
       @rendered_columns = []
-      @controller.view_context_class.any_instance.expects(:"active_scaffold_column_#{list_ui}").at_least_once.with {|column, options|
+      @controller.view_context_class.any_instance.expects(:"active_scaffold_column_#{list_ui}").at_least_once.with {|column, _|
         @rendered_columns << column.name
         true
       }
@@ -102,7 +102,7 @@ class ActiveSupport::TestCase
       @column = @controller.active_scaffold_config.columns[column_name]
       @rendered_columns = []
       method = @column.list_ui == :checkbox ? :format_column_checkbox : :active_scaffold_inplace_edit
-      @controller.view_context_class.any_instance.expects(method).at_least_once.with {|model, column, options|
+      @controller.view_context_class.any_instance.expects(method).at_least_once.with {|_, column, _|
         @rendered_columns << column.name
         true
       }

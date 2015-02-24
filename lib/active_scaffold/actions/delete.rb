@@ -7,7 +7,7 @@ module ActiveScaffold::Actions
     def destroy
       params.delete :destroy_action
       process_action_link_action(:destroy) do |record|
-        do_destroy
+        do_destroy(record)
       end
     end
 
@@ -46,12 +46,12 @@ module ActiveScaffold::Actions
 
     # A simple method to handle the actual destroying of a record
     # May be overridden to customize the behavior
-    def do_destroy
-      @record ||= destroy_find_record
+    def do_destroy(record)
+      record ||= destroy_find_record
       begin
-        self.successful = @record.destroy
+        self.successful = record.destroy
       rescue StandardError => ex
-        flash[:warning] = as_(:cant_destroy_record, :record => @record.to_label)
+        flash[:warning] = as_(:cant_destroy_record, :record => record.to_label)
         self.successful = false
         logger.debug ex.message
         logger.debug ex.backtrace.join("\n")

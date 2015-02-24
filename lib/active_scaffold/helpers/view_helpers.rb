@@ -283,7 +283,7 @@ module ActiveScaffold
       end
 
       def query_string_for_action_links(link)
-        if defined?(@query_string) && link.parameters.none? { |k, v| @query_string_params.include? k }
+        if defined?(@query_string) && link.parameters.none? { |k, _| @query_string_params.include? k }
           return [@query_string, @non_nested_query_string]
         end
         keep = true
@@ -361,7 +361,7 @@ module ActiveScaffold
       def replaced_action_link_url_options(link, record)
         url = action_link_url_options(link, record)
         url[:controller] ||= params[:controller]
-        missing_options, url_options = url.partition {|k, v| v.nil?}
+        missing_options, url_options = url.partition {|_, v| v.nil?}
         replacements = {}
         replacements['--ID--'] = record.id.to_s if record
         if link.column.try(:singular_association?)
@@ -377,7 +377,7 @@ module ActiveScaffold
 
       def action_link_selected?(link, record)
         missing_options, url_options = replaced_action_link_url_options(link, record)
-        (url_options - params.to_a).blank? && missing_options.all? {|k, v| params[k].nil?}
+        (url_options - params.to_a).blank? && missing_options.all? {|k, _| params[k].nil?}
       end
 
       def action_link_html_options(link, record, options)
