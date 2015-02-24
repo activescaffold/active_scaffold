@@ -422,11 +422,6 @@ Style/SingleLineMethods:
 Style/SpaceAfterComma:
   Enabled: false
 
-# Offense count: 6
-# Cop supports --auto-correct.
-Style/SpaceAfterNot:
-  Enabled: false
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleInsidePipes, SupportedStyles.

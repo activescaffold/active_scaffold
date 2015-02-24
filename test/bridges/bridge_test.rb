@@ -16,7 +16,7 @@ class BridgeTest < MiniTest::Test
     js, ActiveScaffold.js_framework = ActiveScaffold.js_framework, :prototype
     ConstMocker.mock('CalendarDateSelect') do |cm|
       cm.remove
-      assert(! bridge_will_be_installed('CalendarDateSelect'))
+      assert(!bridge_will_be_installed('CalendarDateSelect'))
       cm.declare
       assert(bridge_will_be_installed('CalendarDateSelect'))
     end
@@ -26,7 +26,7 @@ class BridgeTest < MiniTest::Test
   def test__file_column_bridge
     ConstMocker.mock('FileColumn') do |cm|
     cm.remove
-    assert(! bridge_will_be_installed('FileColumn'))
+    assert(!bridge_will_be_installed('FileColumn'))
       cm.declare
       assert(bridge_will_be_installed('FileColumn'))
     end
@@ -35,7 +35,7 @@ class BridgeTest < MiniTest::Test
   def test__paperclip_bridge
     ConstMocker.mock('Paperclip') do |cm|
       cm.remove
-      assert(! bridge_will_be_installed('Paperclip'))
+      assert(!bridge_will_be_installed('Paperclip'))
       cm.declare
       assert(bridge_will_be_installed('Paperclip'))
     end
@@ -48,7 +48,7 @@ class BridgeTest < MiniTest::Test
         rails.declare
         ConstMocker.mock('Ui', jquery.const) do |cm|
           cm.remove
-          assert(! bridge_will_be_installed('DatePicker'))
+          assert(!bridge_will_be_installed('DatePicker'))
           cm.declare
           assert(bridge_will_be_installed('DatePicker'))
         end
@@ -59,7 +59,7 @@ class BridgeTest < MiniTest::Test
   def test__semantic_attributes_bridge
     ConstMocker.mock('SemanticAttributes') do |cm|
       cm.remove
-      assert(! bridge_will_be_installed('SemanticAttributes'))
+      assert(!bridge_will_be_installed('SemanticAttributes'))
       cm.declare
       assert(bridge_will_be_installed('SemanticAttributes'))
     end
@@ -68,7 +68,7 @@ class BridgeTest < MiniTest::Test
   def test__paper_trail_bridge
     ConstMocker.mock('PaperTrail') do |cm|
       cm.remove
-      assert(! bridge_will_be_installed('PaperTrail'))
+      assert(!bridge_will_be_installed('PaperTrail'))
       cm.declare
       assert(bridge_will_be_installed('PaperTrail'))
     end
