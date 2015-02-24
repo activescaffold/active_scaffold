@@ -29,7 +29,7 @@ module ActiveScaffold::Actions
         respond_to { |format| format.js }
       end
     end
-    
+
     protected
     def loading_embedded?
       @loading_embedded ||= params.delete(:embedded)
@@ -56,7 +56,7 @@ module ActiveScaffold::Actions
         @scope = params.delete(:scope)
         @main_columns = active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns
         @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
-        
+
         if @column.send_form_on_update_column
           if @scope
             hash = @scope.gsub('[','').split(']').inject(params[:record]) do |hash, index|
@@ -124,7 +124,7 @@ module ActiveScaffold::Actions
       dst.attributes = attributes
       dst
     end
-    
+
     # override this method if you want to do something after render_field
     def after_render_field(record, column); end
 
@@ -143,7 +143,7 @@ module ActiveScaffold::Actions
     def marked_records
       active_scaffold_session_storage['marked_records'] ||= {}
     end
-    
+
     def default_formats
       [:html, :js, :json, :xml, :yaml]
     end
@@ -185,7 +185,7 @@ module ActiveScaffold::Actions
         @successful
       end
     end
-    
+
     def successful=(val)
       @successful = (val) ? true : false
     end
@@ -194,12 +194,12 @@ module ActiveScaffold::Actions
     def return_to_main
       redirect_to main_path_to_return
     end
-  
+
     #Overide this method on your controller to provide model with named scopes
     def beginning_of_chain
       active_scaffold_config.model
     end
-        
+
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
     def conditions_from_params
       @conditions_from_params ||= begin
@@ -265,7 +265,7 @@ module ActiveScaffold::Actions
     end
 
     def check_input_device
-      if request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"][/(iPhone|iPod|iPad)/i]
+      if request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'][/(iPhone|iPod|iPad)/i]
         session[:input_device_type] = 'TOUCH'
         session[:hover_supported] = false
       else
@@ -326,15 +326,15 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_xml
-      render :xml => successful? ? "" : response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::XML, :status => response_status
+      render :xml => successful? ? '' : response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::XML, :status => response_status
     end
 
     def action_update_respond_to_json
-      render :text => successful? ? "" : response_object.to_json(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::JSON, :status => response_status
+      render :text => successful? ? '' : response_object.to_json(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names)), :content_type => Mime::JSON, :status => response_status
     end
 
     def action_update_respond_to_yaml
-      render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names))).to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :text => successful? ? '' : Hash.from_xml(response_object.to_xml(:only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names))).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
 
     def objects_for_etag

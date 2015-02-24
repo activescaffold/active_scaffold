@@ -10,12 +10,12 @@ module Config
     def setup
       @config = ActiveScaffold::Config::Core.new(:model_stub)
     end
-    
+
     def test_default_options
       assert @config.nested.shallow_delete
       assert_equal 'Add Existing Model stub', @config.nested.label
     end
-    
+
     def test_label
       label = 'nested monkeys'
       @config.nested.label = label
@@ -24,12 +24,12 @@ module Config
       @config.nested.label = :test_create_model
       assert_equal 'Add new Model stub', @config.nested.label
     end
-    
+
     def test_shallow_delete
       @config.nested.shallow_delete = true
       assert @config.nested.shallow_delete
     end
-    
+
     def test_add_link
       assert_raises(ArgumentError) { @config.nested.add_link :assoc_1 }
       config = @config

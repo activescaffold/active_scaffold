@@ -8,7 +8,7 @@ module ActiveScaffold
       self.class.config_active_scaffold_delayed
       super
     end
-    
+
     module ClassMethods
       def active_scaffold(model_id = nil, &block)
         @active_scaffold_delayed = proc{ super(model_id, &block) }

@@ -7,6 +7,6 @@ class Person < ActiveRecord::Base
   has_many :contacts, :as => :contactable
   has_one :car, :dependent => :destroy
   has_and_belongs_to_many :roles
-  
+
   has_many :files, :dependent => :destroy, :class_name => 'FileModel'
 end

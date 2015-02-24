@@ -5,7 +5,7 @@ module Config
     def setup
       @base = ActiveScaffold::Config::Base.new(ActiveScaffold::Config::Core.new(:model_stub))
     end
-    
+
     def test_formats
       assert_equal [], @base.formats
       @base.formats << :pdf

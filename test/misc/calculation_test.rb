@@ -22,12 +22,12 @@ class CalculationTest < MiniTest::Test
     @buildings << Building.create {|b| b.create_owner(:first_name => 'foo')}
     @buildings << Building.create(:name => 'foo bar')
     @buildings << Building.create
-    
+
     @klass = ClassWithFinder.new
     @klass.stubs(:active_scaffold_config).returns(mock { stubs(:model).returns(Building) })
     @klass.stubs(:active_scaffold_session_storage).returns({})
   end
-  
+
   def teardown
     @buildings.each(&:destroy).map(&:owner).compact.each(&:destroy)
   end

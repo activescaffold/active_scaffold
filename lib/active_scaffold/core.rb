@@ -11,7 +11,7 @@ module ActiveScaffold
     def active_scaffold_config_for(klass)
       self.class.active_scaffold_config_for(klass)
     end
-      
+
     module ClassMethods
       def active_scaffold(model_id = nil, &block)
         extend Prefixes
@@ -25,7 +25,7 @@ module ActiveScaffold
         @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
         @active_scaffold_config_block = block
         self.links_for_associations
-        
+
         self.active_scaffold_superclasses_blocks.each {|superblock| self.active_scaffold_config.configure &superblock}
         self.active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
         self.active_scaffold_config.configure &block if block_given?
@@ -99,7 +99,7 @@ module ActiveScaffold
           column.set_link(Proc.new {|col| link_for_association(col)})
         end
       end
-      
+
       def active_scaffold_controller_for_column(column, options = {})
         begin
           if column.polymorphic_association?
@@ -110,13 +110,13 @@ module ActiveScaffold
             active_scaffold_controller_for(column.association.klass)
           end
         rescue ActiveScaffold::ControllerNotFound
-          nil        
+          nil
         end
       end
-      
+
       def link_for_association(column, options = {})
         controller = active_scaffold_controller_for_column(column, options)
-        
+
         unless controller.nil?
           options.reverse_merge! :position => :after, :type => :member, :controller => (controller == :polymorph ? controller : "/#{controller.controller_path}"), :column => column
           options[:parameters] ||= {}
@@ -125,15 +125,15 @@ module ActiveScaffold
             ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(:refresh_on_close => true))
           else
             actions = controller.active_scaffold_config.actions unless controller == :polymorph
-            actions ||= [:create, :update, :show] 
+            actions ||= [:create, :update, :show]
             column.actions_for_association_links.delete :new unless actions.include? :create
             column.actions_for_association_links.delete :edit unless actions.include? :update
             column.actions_for_association_links.delete :show unless actions.include? :show
             ActiveScaffold::DataStructures::ActionLink.new(nil, options.merge(:html_options => {:class => column.name}))
-          end 
+          end
         end
       end
-      
+
       def link_for_association_as_scope(scope, options = {})
         options.reverse_merge! :label => scope, :position => :after, :type => :member, :controller => controller_path
         options[:parameters] ||= {}
@@ -220,7 +220,7 @@ module ActiveScaffold
           return controller
         end
       end
-      raise ActiveScaffold::ControllerNotFound, "Could not find " + error_message.join(" or "), caller
+      raise ActiveScaffold::ControllerNotFound, 'Could not find ' + error_message.join(' or '), caller
     end
 
     def self.column_type_cast(value, column)

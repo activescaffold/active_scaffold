@@ -13,13 +13,13 @@ module ActiveScaffold::Config
     # --------------------------
     cattr_accessor :shallow_delete
     @@shallow_delete = true
-    
+
     cattr_accessor :ignore_order_from_association
 
     # instance-level configuration
     # ----------------------------
     attr_accessor :shallow_delete
-    
+
     attr_accessor :ignore_order_from_association
 
     # Add a nested ActionLink
@@ -42,7 +42,7 @@ module ActiveScaffold::Config
         raise ArgumentError.new("column #{attribute} is not an association")
       end
     end
-    
+
     def add_scoped_link(named_scope, options = {})
       action_link = @core.link_for_association_as_scope(named_scope.to_sym, options)
       @core.action_links.add_to_group(action_link, action_group) unless action_link.nil?

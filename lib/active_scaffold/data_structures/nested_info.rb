@@ -12,26 +12,26 @@ module ActiveScaffold::DataStructures
         nil
       end
     end
-    
+
     attr_accessor :association, :child_association, :parent_model, :parent_scaffold, :parent_id, :param_name, :constrained_fields, :scope
-        
+
     def initialize(model, params)
       @parent_scaffold = "#{params[:parent_scaffold].to_s.camelize}Controller".constantize
       @parent_model = @parent_scaffold.active_scaffold_config.model
     end
-    
+
     def to_params
       {:parent_scaffold => parent_scaffold.controller_path}
     end
-    
+
     def new_instance?
       result = @new_instance.nil?
       @new_instance = false
       result
     end
-    
+
     def habtm?
-      false 
+      false
     end
 
     def has_many?
@@ -61,7 +61,7 @@ module ActiveScaffold::DataStructures
     def through_association?
       false
     end
-    
+
     def readonly?
       false
     end
@@ -70,7 +70,7 @@ module ActiveScaffold::DataStructures
       false
     end
   end
-  
+
   class NestedInfoAssociation < NestedInfo
     def initialize(model, params)
       super
@@ -79,19 +79,19 @@ module ActiveScaffold::DataStructures
       @parent_id = params[@param_name]
       iterate_model_associations(model)
     end
-    
+
     def name
       self.association.name
     end
-    
+
     def has_many?
-      association.macro == :has_many 
+      association.macro == :has_many
     end
-    
+
     def habtm?
-      association.macro == :has_and_belongs_to_many 
+      association.macro == :has_and_belongs_to_many
     end
-    
+
     def belongs_to?
       association.belongs_to?
     end
@@ -99,7 +99,7 @@ module ActiveScaffold::DataStructures
     def has_one?
       association.macro == :has_one
     end
-    
+
     # A through association with has_one or has_many as source association
     # create cannot be called in such through association, unless create columns include through reflection of reverse association
     # e.g. customer -> networks -> firewall, reverse is firewall -> network -> customer,
@@ -109,11 +109,11 @@ module ActiveScaffold::DataStructures
         !child_association || !columns.include?(child_association.through_reflection.name)
       )
     end
-    
+
     def through_association?
       association.options[:through]
     end
-    
+
     def readonly?
       association.options[:readonly]
     end
@@ -129,13 +129,13 @@ module ActiveScaffold::DataStructures
         association.klass.class_eval(&association.scope).values[:order] if association.scope.is_a? Proc
       end
     end
-    
+
     def to_params
       super.merge(:association => @association.name, :assoc_id => parent_id)
     end
-    
+
     protected
-    
+
     def iterate_model_associations(model)
       @constrained_fields = []
       constrained_fields << association.foreign_key.to_sym unless association.belongs_to?
@@ -145,20 +145,20 @@ module ActiveScaffold::DataStructures
       end
     end
   end
-  
+
   class NestedInfoScope < NestedInfo
     def initialize(model, params)
       super
       @scope = params[:named_scope].to_sym
       @param_name = parent_model.name.foreign_key.to_sym
       @parent_id = params[@param_name]
-      @constrained_fields = [] 
+      @constrained_fields = []
     end
-    
+
     def to_params
       super.merge(:named_scope => @scope)
     end
-    
+
     def name
       self.scope
     end

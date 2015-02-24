@@ -3,19 +3,19 @@ module ActiveScaffold::Config
 
     def initialize_with_calendar_date_select(model_id)
       initialize_without_calendar_date_select(model_id)
-      
+
       calendar_date_select_fields = self.model.columns.collect{|c| c.name.to_sym if [:date, :datetime].include?(c.type) }.compact
       # check to see if file column was used on the model
       return if calendar_date_select_fields.empty?
-      
+
       # automatically set the forum_ui to a file column
       calendar_date_select_fields.each{|field|
         self.columns[field].form_ui = :calendar_date_select
       }
     end
-    
+
     alias_method_chain :initialize, :calendar_date_select
-    
+
   end
 end
 
@@ -27,10 +27,10 @@ module ActiveScaffold
       module FormColumnHelpers
         def active_scaffold_input_calendar_date_select(column, options)
           options[:class] = "#{options[:class]} text-input".strip
-          calendar_date_select("record", column.name, options.merge(column.options))
-        end      
+          calendar_date_select('record', column.name, options.merge(column.options))
+        end
       end
-      
+
       module SearchColumnHelpers
         def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
           if current_search.is_a? Hash
@@ -38,13 +38,13 @@ module ActiveScaffold
           else
             value = current_search
           end
-          calendar_date_select("record", column.name, 
+          calendar_date_select('record', column.name,
             {:name => "#{options[:name]}[#{name}]",
              :value => (value ? l(value) : nil),
              :class => 'text-input',
              :id => "#{options[:id]}_#{name}",
              :time => column_datetime?(column) ? true : false,
-             :style => (options[:show].nil? || options[:show]) ? nil : "display: none"})
+             :style => (options[:show].nil? || options[:show]) ? nil : 'display: none'})
         end
       end
     end

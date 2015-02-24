@@ -7,7 +7,7 @@ module ActiveScaffold
           return unless self.model < ::PaperTrail::Model::InstanceMethods
           self.actions << :deleted_records
         end
-        
+
         def self.included(base)
           base.alias_method_chain :initialize, :paper_trail
         end

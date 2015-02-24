@@ -216,7 +216,7 @@ module ActiveScaffold
 
       def active_scaffold_inplace_edit_tag_options(record, column)
         id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
-        tag_options = {:id => element_cell_id(id_options), :class => "in_place_editor_field",
+        tag_options = {:id => element_cell_id(id_options), :class => 'in_place_editor_field',
                        :title => as_(:click_to_edit), :data => {:ie_id => record.to_param}}
         tag_options[:data][:ie_update] = column.inplace_edit if column.inplace_edit != true
         tag_options
@@ -238,19 +238,19 @@ module ActiveScaffold
           options[:class] = "#{options[:class]} inplace_field"
           options[:"data-id"] = options[:id]
           options[:id] = nil
-          content_tag(:div, active_scaffold_input_for(column, nil, options), :style => "display:none;", :class => inplace_edit_control_css_class).tap do
+          content_tag(:div, active_scaffold_input_for(column, nil, options), :style => 'display:none;', :class => inplace_edit_control_css_class).tap do
             @record = old_record # TODO remove when relying on @record is removed
           end
         end
       end
 
       def inplace_edit_control_css_class
-        "as_inplace_pattern"
+        'as_inplace_pattern'
       end
 
       def inplace_edit_data(column)
         data = {}
-        data[:ie_url] = url_for(params_for(:action => "update_column", :column => column.name, :id => '__id__'))
+        data[:ie_url] = url_for(params_for(:action => 'update_column', :column => column.name, :id => '__id__'))
         data[:ie_cancel_text] = column.options[:cancel_text] || as_(:cancel)
         data[:ie_loading_text] = column.options[:loading_text] || as_(:loading)
         data[:ie_save_text] = column.options[:save_text] || as_(:update)
@@ -284,7 +284,7 @@ module ActiveScaffold
       def mark_column_heading
         tag_options = {
           :id => "#{controller_id}_mark_heading",
-          :class => "mark_heading in_place_editor_field",
+          :class => 'mark_heading in_place_editor_field',
         }
         content_tag(:span, check_box_tag("#{controller_id}_mark_heading_span_input", '1', all_marked?), tag_options)
       end
@@ -311,7 +311,7 @@ module ActiveScaffold
         if column.name == :as_marked
           mark_column_heading
         elsif column.sortable?
-          options = {:id => nil, :class => "as_sort",
+          options = {:id => nil, :class => 'as_sort',
                      'data-page-history' => controller_id,
                      :remote => true, :method => :get}
           url_options = params_for(:action => :index, :page => 1,
@@ -324,11 +324,11 @@ module ActiveScaffold
           content_tag(:p, column_heading_label(column))
         end
       end
-      
+
       def column_heading_label(column)
         column.label
       end
-      
+
     end
   end
 end

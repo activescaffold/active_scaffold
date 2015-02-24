@@ -3,7 +3,7 @@ ActiveScaffold::Config::Core.class_eval do
     initialize_without_ancestry(model_id)
 
     return unless self.model.respond_to? :ancestry_column
-    
+
     self.columns << :parent_id
     self.columns[:parent_id].form_ui = :ancestry
     update.columns.exclude :ancestry
@@ -19,7 +19,7 @@ module ActiveScaffold::Bridges
     module FormColumnHelpers
       def active_scaffold_input_ancestry(column, options)
         record = options[:object]
-        ActiveSupport::Deprecation.warn "Relying on @record is deprecated, include :object in html_options with record.", caller if record.nil? # TODO Remove when relying on @record is removed
+        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
 
         select_options = []

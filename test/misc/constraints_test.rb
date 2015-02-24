@@ -192,6 +192,6 @@ class ConstraintsTest < MiniTest::Test
   end
 
   def config_for(klass, namespace = nil)
-    super(klass, "model_stubs/")
+    super(klass, 'model_stubs/')
   end
 end

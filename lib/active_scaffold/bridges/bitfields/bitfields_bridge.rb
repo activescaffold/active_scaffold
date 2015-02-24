@@ -14,7 +14,7 @@ module ActiveScaffold
             end
           end
         end
-        
+
         def _load_action_columns_with_bitfields
           self.model.bitfields.each do |column_name, options|
             columns = options.keys.sort_by { |column| self.columns[column].weight }
@@ -25,10 +25,10 @@ module ActiveScaffold
               end
             end
           end if self.model.respond_to?(:bitfields) and self.model.bitfields.present?
-          
+
           _load_action_columns_without_bitfields
         end
-          
+
 
         def self.included(base)
           base.alias_method_chain :initialize, :bitfields

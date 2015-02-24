@@ -2,7 +2,7 @@ module ActiveScaffold::Bridges
   class DatePicker < ActiveScaffold::DataStructures::Bridge
     autoload :Helper, 'active_scaffold/bridges/date_picker/helper'
     def self.install
-      require File.join(File.dirname(__FILE__), "date_picker/ext.rb")
+      require File.join(File.dirname(__FILE__), 'date_picker/ext.rb')
     end
     def self.install?
       ActiveScaffold.js_framework == :jquery && jquery_ui_included?
@@ -20,7 +20,7 @@ module ActiveScaffold::Bridges
     #{Helper.datetime_options_for_locales}
     $.timepicker.setDefaults($.timepicker.regional['#{::I18n.locale}']);
   }
-});\n"        
+});\n"
     end
   end
 end

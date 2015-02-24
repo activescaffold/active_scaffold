@@ -14,7 +14,7 @@ module ActiveScaffold
 
   def self.autoload_subdir(dir, mod=self, root = File.dirname(__FILE__))
     Dir["#{root}/active_scaffold/#{dir}/*.rb"].each { |file|
-      basename = File.basename(file, ".rb")
+      basename = File.basename(file, '.rb')
       mod.module_eval {
         autoload basename.camelcase.to_sym, "active_scaffold/#{dir}/#{basename}"
       }
@@ -48,11 +48,11 @@ module ActiveScaffold
   self.stylesheets = []
   mattr_accessor :javascripts
   self.javascripts = []
-  
+
   def self.js_framework=(framework)
     @@js_framework = framework
   end
-  
+
   def self.js_framework
     @@js_framework ||= if defined? Jquery
       :jquery
@@ -82,7 +82,7 @@ module ActiveScaffold
   end
 
   def self.root
-    File.dirname(__FILE__) + "/.."
+    File.dirname(__FILE__) + '/..'
   end
 
   def self.set_defaults(&block)

@@ -19,18 +19,18 @@ module ActiveScaffold::Actions
       set_nested unless defined? @nested
       @nested
     end
-    
+
     def nested?
       !nested.nil?
     end
-    
+
     def set_nested
       if params[:parent_scaffold] && (params[:association] || params[:named_scope])
         @nested = ActiveScaffold::DataStructures::NestedInfo.get(active_scaffold_config.model, params)
         register_constraints_with_action_columns(@nested.constrained_fields) unless @nested.nil?
       end
     end
-    
+
     def configure_nested
       if nested?
         active_scaffold_config.list.user.label = if nested.belongs_to?
@@ -43,7 +43,7 @@ module ActiveScaffold::Actions
         end
       end
     end
-    
+
     def nested_authorized?(record = nil)
       true
     end
@@ -56,15 +56,15 @@ module ActiveScaffold::Actions
           if active_scaffold_config.nested.shallow_delete
             active_scaffold_config.action_links.add('destroy_existing', :label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy_existing']
             if active_scaffold_config.actions.include?(:delete)
-              active_scaffold_config.action_links.delete("delete") if active_scaffold_config.action_links['delete']
+              active_scaffold_config.action_links.delete('delete') if active_scaffold_config.action_links['delete']
             end
           end
         else
           # Production mode is caching this link into a non nested scaffold
           active_scaffold_config.action_links.delete('new_existing') if active_scaffold_config.action_links['new_existing']
-          
+
           if active_scaffold_config.nested.shallow_delete
-            active_scaffold_config.action_links.delete("destroy_existing") if active_scaffold_config.action_links['destroy_existing']
+            active_scaffold_config.action_links.delete('destroy_existing') if active_scaffold_config.action_links['destroy_existing']
             if active_scaffold_config.actions.include?(:delete)
               active_scaffold_config.action_links.add(ActiveScaffold::Config::Delete.link) unless active_scaffold_config.action_links['delete']
             end
@@ -72,7 +72,7 @@ module ActiveScaffold::Actions
         end
       end
     end
-    
+
     def beginning_of_chain
       if nested? && nested.association
         if nested.association.collection?
@@ -102,7 +102,7 @@ module ActiveScaffold::Actions
     def nested_parent_record(crud = :read)
       @nested_parent_record ||= find_if_allowed(nested.parent_id, crud, nested.parent_model)
     end
-       
+
     def create_association_with_parent(record)
       if nested?
         # has_many is done by beginning_of_chain and rails
@@ -117,7 +117,7 @@ module ActiveScaffold::Actions
         end
       end
     end
-    
+
     private
     def nested_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.nested.formats).uniq
@@ -147,7 +147,7 @@ module ActiveScaffold::Actions::Nested
       do_destroy_existing
       respond_to_action(:destroy_existing)
     end
-    
+
     protected
     def new_existing_respond_to_html
       if successful?
@@ -193,15 +193,15 @@ module ActiveScaffold::Actions::Nested
     end
 
     def destroy_existing_respond_to_xml
-      render :xml => successful? ? "" : response_object.to_xml(:only => active_scaffold_config.list.columns.names), :content_type => Mime::XML, :status => response_status
+      render :xml => successful? ? '' : response_object.to_xml(:only => active_scaffold_config.list.columns.names), :content_type => Mime::XML, :status => response_status
     end
 
     def destroy_existing_respond_to_json
-      render :text => successful? ? "" : response_object.to_json(:only => active_scaffold_config.list.columns.names), :content_type => Mime::JSON, :status => response_status
+      render :text => successful? ? '' : response_object.to_json(:only => active_scaffold_config.list.columns.names), :content_type => Mime::JSON, :status => response_status
     end
 
     def destroy_existing_respond_to_yaml
-      render :text => successful? ? "" : Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.list.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :text => successful? ? '' : Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.list.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
 
     def add_existing_authorized?(record = nil)
@@ -210,7 +210,7 @@ module ActiveScaffold::Actions::Nested
     def delete_existing_authorized?(record = nil)
       true
     end
- 
+
     def after_create_save(record)
       if params[:association_macro] == :has_and_belongs_to_many
         params[:associated_id] = record

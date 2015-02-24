@@ -4,15 +4,15 @@ module ActiveScaffold::Actions
       base.send :include, ActiveScaffold::Actions::CommonSearch
       base.send :include, InstanceMethods
     end
-    
+
     module InstanceMethods
 
       protected
       def search_respond_to_html
-        render(:action => "search")
+        render(:action => 'search')
       end
       def search_respond_to_js
-        render(:partial => "search")
+        render(:partial => 'search')
       end
       def do_search
         if search_params.is_a?(String) && search_params.present?

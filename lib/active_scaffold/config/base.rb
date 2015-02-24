@@ -34,7 +34,7 @@ module ActiveScaffold::Config
       model ||= @core.label(:count => 1)
       @label.nil? ? model : as_(@label, :model => model)
     end
-    
+
     # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
     attr_accessor :user
 
@@ -70,17 +70,17 @@ module ActiveScaffold::Config
         end
       end
     end
-    
+
     def formats
       @formats ||= []
     end
-    
+
     def formats=(val)
       @formats=val
     end
-    
+
     private
-    
+
     def columns=(val)
       @columns.set_values(*val) if @columns
       @columns ||= ActiveScaffold::DataStructures::ActionColumns.new(*val).tap do |columns|
