@@ -31,8 +31,8 @@ class FinderTest < MiniTest::Test
     tokens = %w(foo bar)
 
     expected_conditions = [
-    ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%foo%', '%foo%'],
-    ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%bar%', '%bar%']
+      ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%foo%', '%foo%'],
+      ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%bar%', '%bar%']
     ]
     assert_equal expected_conditions, ClassWithFinder.create_conditions_for_columns(tokens, columns)
 
