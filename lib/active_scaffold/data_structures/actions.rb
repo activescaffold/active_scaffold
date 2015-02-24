@@ -7,7 +7,7 @@ class ActiveScaffold::DataStructures::Actions
   end
 
   def exclude(*args)
-    args.collect! { |a| a.to_sym } # symbolize the args
+    args.collect!(&:to_sym) # symbolize the args
     @set.reject! { |m| args.include? m } # reject all actions specified
   end
 

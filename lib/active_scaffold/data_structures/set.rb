@@ -25,7 +25,7 @@ module ActiveScaffold::DataStructures
     # the way to remove items from the set.
     def exclude(*args)
       args.flatten! # allow [] as a param
-      args.collect! { |a| a.to_sym } # symbolize the args
+      args.collect!(&:to_sym) # symbolize the args
       # check respond_to? :to_sym, ActionColumns doesn't respond to to_sym
       @set.reject! { |c| c.respond_to? :to_sym and args.include? c.to_sym } # reject all items specified
     end
