@@ -237,12 +237,12 @@ module ActiveScaffold::Config
       end
 
       def per_page
-        self['per_page'] = @params['limit'].to_i if @params.has_key? 'limit'
+        self['per_page'] = @params['limit'].to_i if @params.key? 'limit'
         self['per_page'] || @conf.per_page
       end
 
       def page
-        self['page'] = @params['page'] || 1 if @params.has_key?('page') || @conf.auto_pagination
+        self['page'] = @params['page'] || 1 if @params.key?('page') || @conf.auto_pagination
         self['page'] || 1
       end
 

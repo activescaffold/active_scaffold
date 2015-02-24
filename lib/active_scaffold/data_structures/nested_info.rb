@@ -112,7 +112,7 @@ module ActiveScaffold::DataStructures
     end
 
     def sorted?
-      association.options.has_key? :order
+      association.options.key? :order
     end
 
     def default_sorting

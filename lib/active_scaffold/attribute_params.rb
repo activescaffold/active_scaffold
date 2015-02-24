@@ -103,12 +103,12 @@ module ActiveScaffold
         begin
           # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
           unless column.params.empty?
-            column.params.each { |p| parent_record.send("#{p}=", attributes[p]) if attributes.has_key? p }
+            column.params.each { |p| parent_record.send("#{p}=", attributes[p]) if attributes.key? p }
           end
 
-          if multi_parameter_attributes.has_key? column.name.to_s
+          if multi_parameter_attributes.key? column.name.to_s
             parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name.to_s])
-          elsif attributes.has_key? column.name
+          elsif attributes.key? column.name
             value = update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
           end
         rescue StandardError => e
@@ -243,7 +243,7 @@ module ActiveScaffold
     def find_or_create_for_params(params, parent_column, parent_record)
       current = parent_record.send(parent_column.name)
       klass = parent_column.association.klass
-      if params.has_key? klass.primary_key
+      if params.key? klass.primary_key
         record_from_current_or_find(klass, params[klass.primary_key], current)
       elsif klass.authorized_for?(:crud_type => :create)
         parent_column.association.klass.new
