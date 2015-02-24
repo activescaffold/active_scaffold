@@ -254,10 +254,10 @@ module ActiveScaffold
     # Returns record from current if it's included or find from DB
     def record_from_current_or_find(klass, id, current)
       if current and current.is_a? ActiveRecord::Base and current.id.to_s == id
-      # modifying the current object of a singular association
+        # modifying the current object of a singular association
         current
       elsif current and current.respond_to?(:any?) and current.any? {|o| o.id.to_s == id}
-      # modifying one of the current objects in a plural association
+        # modifying one of the current objects in a plural association
         current.detect {|o| o.id.to_s == id}
       else # attaching an existing but not-current object
         klass.find(id)
