@@ -447,7 +447,7 @@ module ActiveScaffold
     def joins_for_finder
       case joins_for_collection
         when String
-          [ joins_for_collection ]
+          [joins_for_collection]
         when Array
           joins_for_collection
         else
