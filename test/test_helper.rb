@@ -5,13 +5,13 @@ ENV['RAILS_ENV'] = 'test'
 require 'mock_app/config/environment'
 require 'rails/test_help'
 require 'minitest/autorun'
-
 require 'mocha/setup'
-begin
-  require 'redgreen'
-rescue LoadError
-  puts 'redgreen not available'
-end
+
+require 'minitest/reporters'
+Minitest::Reporters.use!
+
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
 
 def load_schema
   stdout = $stdout

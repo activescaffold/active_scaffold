@@ -26,7 +26,9 @@ group :test do
   gem "rails", "~> 3.2.20"
   gem "minitest", "~> 4.7.0"
   gem "minitest-rails"
+  gem "minitest-reporters", require: nil
   gem "minitest_tu_shim"
+  gem "codeclimate-test-reporter", require: nil
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
   end

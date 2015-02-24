@@ -41,8 +41,11 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    ansi (1.5.0)
     arel (6.0.0)
     builder (3.2.2)
+    codeclimate-test-reporter (0.4.6)
+      simplecov (>= 0.7.1, < 1.0.0)
     docile (1.1.5)
     erubis (2.7.0)
     ffi2-generators (0.1.1)
@@ -69,6 +72,11 @@ GEM
     mime-types (2.4.3)
     mini_portile (0.6.1)
     minitest (5.5.0)
+    minitest-reporters (1.0.11)
+      ansi
+      builder
+      minitest (>= 5.0)
+      ruby-progressbar
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     multi_json (1.10.1)
@@ -111,6 +119,7 @@ GEM
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    ruby-progressbar (1.7.1)
     rubysl (2.1.0)
       rubysl-abbrev (~> 2.0)
       rubysl-base64 (~> 2.0)
@@ -349,7 +358,9 @@ PLATFORMS
 DEPENDENCIES
   activerecord-jdbcsqlite3-adapter
   bundler (>= 1.0.0)
+  codeclimate-test-reporter
   localeapp
+  minitest-reporters
   mocha
   racc
   rails (~> 4.2.0)
