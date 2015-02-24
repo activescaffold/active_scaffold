@@ -7,12 +7,12 @@ module ActiveScaffold::Actions
     def show
       # rest destroy falls back to rest show in case of disabled javascript
       # just render action_confirmation message for destroy
-      unless params.delete :destroy_action
-        do_show
-        respond_to_action(:show)
-      else
+      if params.delete :destroy_action
         @record = find_if_allowed(params[:id], :read) if params[:id]
         action_confirmation_respond_to_html(:destroy)
+      else
+        do_show
+        respond_to_action(:show)
       end
     end
 

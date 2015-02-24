@@ -70,15 +70,15 @@ module ActiveScaffold
           col_class << 'checkbox' if column.form_ui == :checkbox
           col_class = col_class.join(' ')
         end
-        unless readonly and not record.new_record? or not record.authorized_for?(:crud_type => crud_type, :column => column.name)
+        if readonly and not record.new_record? or not record.authorized_for?(:crud_type => crud_type, :column => column.name)
+          options = active_scaffold_input_options(column, scope).except(:name)
+          options[:class] = "#{options[:class]} #{col_class}" if col_class
+          content_tag :span, get_column_value(record, column), options
+        else
           renders_as = column_renders_as(column)
           html = render_column(column, record, renders_as, scope, false, col_class)
           html = content_tag(:div, html, active_scaffold_subform_attributes(column)) if renders_as == :subform
           html
-        else
-          options = active_scaffold_input_options(column, scope).except(:name)
-          options[:class] = "#{options[:class]} #{col_class}" if col_class
-          content_tag :span, get_column_value(record, column), options
         end
       end
 
@@ -171,12 +171,13 @@ module ActiveScaffold
         column_options = active_scaffold_input_options(column, scope, :object => record)
         attributes = field_attributes(column, record)
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
-        field = unless only_value
-          active_scaffold_input_for column, scope, column_options
-        else
-          content_tag(:span, get_column_value(record, column), column_options.except(:name, :object)) <<
-          hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
-        end
+        field = 
+          if only_value
+            content_tag(:span, get_column_value(record, column), column_options.except(:name, :object)) <<
+            hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
+          else
+            active_scaffold_input_for column, scope, column_options
+          end
 
         content_tag :dl, attributes do
           %|<dt>#{label_tag label_for(column, column_options), column.label}</dt><dd>#{field}

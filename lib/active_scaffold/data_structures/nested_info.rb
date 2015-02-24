@@ -3,10 +3,10 @@ module ActiveScaffold::DataStructures
     def self.get(model, params)
       nested_info = {}
       begin
-        unless params[:association].nil?
-          ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, params)
-        else
+        if params[:association].nil?
           ActiveScaffold::DataStructures::NestedInfoScope.new(model, params)
+        else
+          ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, params)
         end
       rescue ActiveScaffold::ControllerNotFound
         nil

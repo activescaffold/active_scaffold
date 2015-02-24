@@ -531,10 +531,10 @@ module ActiveScaffold
       end
 
       def column_calculation(column)
-        unless column.calculate.instance_of? Proc
-          calculate_query.calculate(column.calculate, column.name)
-        else
+        if column.calculate.instance_of? Proc
           column.calculate.call(@records)
+        else
+          calculate_query.calculate(column.calculate, column.name)
         end
       end
 
@@ -609,7 +609,9 @@ module ActiveScaffold
         objects.compact!
         count = objects.inject(0) {|sum, object| sum + object.errors.count }
 
-        unless count.zero?
+        if count.zero?
+          ''
+        else
           html = {}
           [:id, :class].each do |key|
             if options.include?(key)
@@ -646,8 +648,6 @@ module ActiveScaffold
           contents << error_messages
           contents = contents.join.html_safe
           options[:container_tag] ? content_tag(options[:container_tag], contents, html) : contents
-        else
-          ''
         end
       end
     end

@@ -494,7 +494,3 @@ Style/TrailingComma:
 # Configuration parameters: ExactNameMatch, AllowPredicates, AllowDSLWriters, Whitelist.
 Style/TrivialAccessors:
   Enabled: false
-
-# Offense count: 12
-Style/UnlessElse:
-  Enabled: false
