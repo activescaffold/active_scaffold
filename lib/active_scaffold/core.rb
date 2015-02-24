@@ -101,17 +101,15 @@ module ActiveScaffold
       end
 
       def active_scaffold_controller_for_column(column, options = {})
-        begin
-          if column.polymorphic_association?
-            :polymorph
-          elsif options.include?(:controller)
-            "#{options[:controller].to_s.camelize}Controller".constantize
-          else
-            active_scaffold_controller_for(column.association.klass)
-          end
-        rescue ActiveScaffold::ControllerNotFound
-          nil
+        if column.polymorphic_association?
+          :polymorph
+        elsif options.include?(:controller)
+          "#{options[:controller].to_s.camelize}Controller".constantize
+        else
+          active_scaffold_controller_for(column.association.klass)
         end
+      rescue ActiveScaffold::ControllerNotFound
+        nil
       end
 
       def link_for_association(column, options = {})
@@ -172,15 +170,13 @@ module ActiveScaffold
       end
 
       def active_scaffold_config_for(klass)
-        begin
-          controller = active_scaffold_controller_for(klass)
-        rescue ActiveScaffold::ControllerNotFound
-          config = ActiveScaffold::Config::Core.new(klass)
-          config._load_action_columns
-          config
-        else
-          controller.active_scaffold_config
-        end
+        controller = active_scaffold_controller_for(klass)
+      rescue ActiveScaffold::ControllerNotFound
+        config = ActiveScaffold::Config::Core.new(klass)
+        config._load_action_columns
+        config
+      else
+        controller.active_scaffold_config
       end
 
       def active_scaffold_controller_for(klass)
