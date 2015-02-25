@@ -200,7 +200,7 @@ module ActiveScaffold
 
     def column_plural_assocation_value_from_value(column, value)
       # it's an array of ids
-      if value and not value.empty?
+      if value and !value.empty?
         ids = value.select(&:present?)
         ids.empty? ? [] : column.association.klass.find(ids)
       else

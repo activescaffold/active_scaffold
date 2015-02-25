@@ -70,7 +70,7 @@ module ActiveScaffold
           col_class << 'checkbox' if column.form_ui == :checkbox
           col_class = col_class.join(' ')
         end
-        if readonly and not record.new_record? or not record.authorized_for?(:crud_type => crud_type, :column => column.name)
+        if readonly and !record.new_record? or !record.authorized_for?(:crud_type => crud_type, :column => column.name)
           options = active_scaffold_input_options(column, scope).except(:name)
           options[:class] = "#{options[:class]} #{col_class}" if col_class
           content_tag :span, get_column_value(record, column), options
@@ -558,7 +558,7 @@ module ActiveScaffold
           equal_to = (val = validators.find { |v| v.options[:equal_to] }) ? val.options[:equal_to] : nil
 
           # If there is equal_to constraint - use it (unless otherwise specified by user)
-          if equal_to and not (options[:min] or options[:max])
+          if equal_to and !(options[:min] or options[:max])
             numerical_constraints[:min] = numerical_constraints[:max] = equal_to
           else # find minimum and maximum from validators
             # we can safely modify :min and :max by 1 for :greater_tnan or :less_than value only for integer values
@@ -588,8 +588,8 @@ module ActiveScaffold
                 numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column && column.column.scale.to_i > 0
               elsif options[:min] and options[:min].respond_to? :even? and (only_odd_valid or only_even_valid)
                 numerical_constraints[:step] = 2
-                numerical_constraints[:min] += 1 if only_odd_valid  and not options[:min].odd?
-                numerical_constraints[:min] += 1 if only_even_valid and not options[:min].even?
+                numerical_constraints[:min] += 1 if only_odd_valid  and !options[:min].odd?
+                numerical_constraints[:min] += 1 if only_even_valid and !options[:min].even?
               end
               numerical_constraints[:step] ||= 'any' unless only_integer
             end
