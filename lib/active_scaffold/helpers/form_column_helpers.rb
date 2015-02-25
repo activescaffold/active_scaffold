@@ -211,7 +211,7 @@ module ActiveScaffold
         # A column shouldn't be in the subform if it's the reverse association to the parent
         return false if column.association.inverse_for?(parent_record.class)
 
-        return true
+        true
       end
 
       def column_show_add_existing(column, record = nil)
@@ -597,7 +597,7 @@ module ActiveScaffold
 
           column.numerical_constraints = numerical_constraints
         end
-        return column.numerical_constraints.merge(options)
+        column.numerical_constraints.merge(options)
       end
     end
   end

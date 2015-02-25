@@ -335,7 +335,7 @@ module ActiveScaffold
       record = klass.find(id)
       security_options = {:crud_type => security_options.to_sym} unless security_options.is_a? Hash
       raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for? security_options
-      return record
+      record
     end
     # valid options may include:
     # * :sorting - a Sorting DataStructure (basically an array of hashes of field => direction, e.g. [{:field1 => 'asc'}, {:field2 => 'desc'}]). please note that multi-column sorting has some limitations: if any column in a multi-field sort uses method-based sorting, it will be ignored. method sorting only works for single-column sorting.
