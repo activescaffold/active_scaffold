@@ -195,15 +195,17 @@ module ActiveScaffold
         to_value = controller.class.condition_value_for_numeric(column, to_value)
         from_value = format_number_value(from_value, column.options) if from_value.is_a?(Numeric)
         to_value = format_number_value(to_value, column.options) if to_value.is_a?(Numeric)
-        html = select_tag("#{options[:name]}[opt]",
-              options_for_select(select_options, opt_value),
-              :id => "#{options[:id]}_opt",
-              :class => 'as_search_range_option')
+        html = select_tag("#{options[:name]}[opt]", options_for_select(select_options, opt_value),
+                          :id => "#{options[:id]}_opt", :class => 'as_search_range_option')
         html << content_tag('span', :id => "#{options[:id]}_numeric", :style => ActiveScaffold::Finder::NullComparators.include?(opt_value) ? 'display: none' : nil) do
           text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size)) <<
-          content_tag(:span, (' - ' + text_field_tag("#{options[:name]}[to]", to_value,
-              active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))).html_safe,
-              :id => "#{options[:id]}_between", :class => 'as_search_range_between', :style => (opt_value == 'BETWEEN') ? nil : 'display: none')
+          content_tag(
+            :span, (
+              ' - ' + text_field_tag("#{options[:name]}[to]", to_value,
+                                     active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))
+            ).html_safe,
+            :id => "#{options[:id]}_between", :class => 'as_search_range_between', :style => (opt_value == 'BETWEEN') ? nil : 'display: none'
+          )
         end
         content_tag :span, html, :class => 'search_range'
       end

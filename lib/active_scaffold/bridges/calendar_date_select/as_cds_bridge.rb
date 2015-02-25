@@ -35,13 +35,15 @@ module ActiveScaffold
           else
             value = current_search
           end
-          calendar_date_select('record', column.name,
-            {:name => "#{options[:name]}[#{name}]",
-             :value => (value ? l(value) : nil),
-             :class => 'text-input',
-             :id => "#{options[:id]}_#{name}",
-             :time => column_datetime?(column) ? true : false,
-             :style => (options[:show].nil? || options[:show]) ? nil : 'display: none'})
+          calendar_date_select(
+            'record', column.name,
+            :name => "#{options[:name]}[#{name}]",
+            :value => (value ? l(value) : nil),
+            :class => 'text-input',
+            :id => "#{options[:id]}_#{name}",
+            :time => column_datetime?(column) ? true : false,
+            :style => (options[:show].nil? || options[:show]) ? nil : 'display: none'
+          )
         end
       end
     end

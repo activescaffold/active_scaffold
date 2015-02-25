@@ -306,7 +306,8 @@ module ActiveScaffold::Bridges
         add_default_name_and_id(html_options)
         value = value(object)
         selected_value = options.key?(:selected) ? options[:selected] : value
-        content_tag('select',
+        content_tag(
+          'select',
           add_options(
             country_options_for_select(selected_value, priority_countries),
             options, selected_value

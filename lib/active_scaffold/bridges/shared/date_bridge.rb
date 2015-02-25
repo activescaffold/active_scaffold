@@ -28,23 +28,26 @@ module ActiveScaffold
             numeric_controls = '' <<
             active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'from') <<
             content_tag(:span, (' - ' + active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'to')).html_safe,
-              :id => "#{options[:id]}_between", :class => 'as_search_range_between', :style => current_search['opt'] == 'BETWEEN' ? nil : 'display: none')
-            content_tag('span', numeric_controls.html_safe, :id => "#{options[:id]}_numeric", :class => 'search-date-numeric', :style => ActiveScaffold::Finder::NumericComparators.include?(current_search['opt']) ? nil : 'display: none')
+                        :id => "#{options[:id]}_between", :class => 'as_search_range_between',
+                        :style => current_search['opt'] == 'BETWEEN' ? nil : 'display: none')
+            content_tag('span', numeric_controls.html_safe, :id => "#{options[:id]}_numeric", :class => 'search-date-numeric',
+                        :style => ActiveScaffold::Finder::NumericComparators.include?(current_search['opt']) ? nil : 'display: none')
           end
 
           def active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
             active_scaffold_date_bridge_trend_tag(column, options,
-                                                 {:number_value => current_search['number'],
+                                                  :number_value => current_search['number'],
                                                   :unit_value => current_search['unit'],
-                                                  :show => (current_search['opt'] == 'PAST' || current_search['opt'] == 'FUTURE')})
+                                                  :show => (current_search['opt'] == 'PAST' || current_search['opt'] == 'FUTURE'))
           end
 
           def active_scaffold_date_bridge_trend_tag(column, options, trend_options)
             trend_controls = text_field_tag("#{options[:name]}[number]", trend_options[:number_value], :class => 'text-input', :size => 10, :autocomplete => 'off') << ' ' <<
             select_tag("#{options[:name]}[unit]",
-             options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:unit_value]),
-             :class => 'text-input')
-            content_tag('span', trend_controls.html_safe, :id => "#{options[:id]}_trend", :class => 'search-date-trend', :style => trend_options[:show] ? nil : 'display: none')
+                       options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:unit_value]),
+                       :class => 'text-input')
+            content_tag('span', trend_controls.html_safe, :id => "#{options[:id]}_trend", :class => 'search-date-trend',
+                        :style => trend_options[:show] ? nil : 'display: none')
           end
 
           def active_scaffold_search_date_bridge_trend_units(column)
@@ -55,9 +58,10 @@ module ActiveScaffold
 
           def active_scaffold_search_date_bridge_range_tag(column, options, current_search)
             range_controls = select_tag("#{options[:name]}[range]",
-              options_for_select(ActiveScaffold::Finder::DateRanges.collect { |range| [as_(range.downcase.to_sym), range] }, current_search['range']),
-             :class => 'text-input', :id => nil)
-            content_tag('span', range_controls.html_safe, :id => "#{options[:id]}_range", :class => 'search-date-range', :style => (current_search['opt'] == 'RANGE') ? nil : 'display: none')
+                                        options_for_select(ActiveScaffold::Finder::DateRanges.collect { |range| [as_(range.downcase.to_sym), range] }, current_search['range']),
+                                        :class => 'text-input', :id => nil)
+            content_tag('span', range_controls.html_safe, :id => "#{options[:id]}_range", :class => 'search-date-range',
+                        :style => (current_search['opt'] == 'RANGE') ? nil : 'display: none')
           end
 
           def column_datetime?(column)

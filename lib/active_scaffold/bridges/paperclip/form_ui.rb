@@ -21,7 +21,8 @@ module ActiveScaffold
           method.sub!(/#{column.name}/, 'delete_\0')
 
           content = active_scaffold_column_paperclip(record, column)
-          content_tag(:div,
+          content_tag(
+            :div,
             content + ' | ' +
               hidden_field(object_name, method, :value => 'false') +
               content_tag(:a, as_(:remove_file), {:href => '#', :onclick => js_remove_file_code})
