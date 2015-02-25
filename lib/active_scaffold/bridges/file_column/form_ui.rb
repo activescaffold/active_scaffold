@@ -21,7 +21,7 @@ module ActiveScaffold
           content_tag(:div) do
             content_tag(:div) do
               get_column_value(record, column) + " #{custom_hidden_field_tag} | ".html_safe <<
-              content_tag(:a, as_(:remove_file), {:href => '#', :onclick => remove_file_js}) <<
+              content_tag(:a, as_(:remove_file), :href => '#', :onclick => remove_file_js) <<
               content_tag(:div, file_column_field('record', column.name, options), :style => 'display: none')
             end
           end

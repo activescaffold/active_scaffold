@@ -13,8 +13,8 @@ class RoutingMapperTest < ActionController::TestCase
 
   test 'active scaffold routes' do
     assert_routing 'addresses/show_search', :controller => 'addresses', :action => 'show_search'
-    assert_routing({:method => 'post', :path => 'addresses/render_field'}, :controller => 'addresses', :action => 'render_field')
-    assert_routing({:method => 'post', :path => 'addresses/2/render_field'}, :controller => 'addresses', :action => 'render_field', :id => '2')
+    assert_routing({:method => 'post', :path => 'addresses/render_field'}, {:controller => 'addresses', :action => 'render_field'})
+    assert_routing({:method => 'post', :path => 'addresses/2/render_field'}, {:controller => 'addresses', :action => 'render_field', :id => '2'})
     assert_routing 'addresses/2/render_field', :controller => 'addresses', :action => 'render_field', :id => '2'
     assert_routing 'addresses/edit_associated', :controller => 'addresses', :action => 'edit_associated'
     assert_routing 'addresses/2/edit_associated', :controller => 'addresses', :action => 'edit_associated', :id => '2'

@@ -123,7 +123,7 @@ class ConstraintsTest < MiniTest::Test
     assert_constraint_condition({:address => 11}, [{'addresses.id' => 11}], 'find the user with address #11')
     # reverse of a has_many :through
     assert_constraint_condition({:subscription => {:service => 5}}, [{'services.id' => 5}], 'find all users subscribed to service #5')
-    assert(@test_object.active_scaffold_references.include?({:subscription => :service}), 'multi-level association include')
+    assert(@test_object.active_scaffold_references.include?(:subscription => :service), 'multi-level association include')
 
     @test_object.active_scaffold_config = config_for('subscription')
     # belongs_to (vs has_one)

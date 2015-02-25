@@ -70,8 +70,8 @@ class FinderTest < MiniTest::Test
   end
 
   def test_count_with_group
-    @klass.expects(:custom_finder_options).returns({:group => :a})
-    relation_class.any_instance.expects(:count).returns({'foo' => 5, 'bar' => 4})
+    @klass.expects(:custom_finder_options).returns(:group => :a)
+    relation_class.any_instance.expects(:count).returns('foo' => 5, 'bar' => 4)
     relation_class.any_instance.expects(:limit).with(20).returns(ModelStub.where(nil))
     relation_class.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
     page = @klass.send :find_page, :per_page => 20, :pagination => true

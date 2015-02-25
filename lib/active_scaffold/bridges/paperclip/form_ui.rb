@@ -25,7 +25,7 @@ module ActiveScaffold
             :div,
             content + ' | ' +
               hidden_field(object_name, method, :value => 'false') +
-              content_tag(:a, as_(:remove_file), {:href => '#', :onclick => js_remove_file_code})
+              content_tag(:a, as_(:remove_file), :href => '#', :onclick => js_remove_file_code)
           ) + content_tag(:div, input, :style => 'display: none')
         else
           input

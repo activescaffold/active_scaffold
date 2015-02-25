@@ -143,7 +143,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
   def convert_number(value, format = nil)
     record = NumberModel.new
     @config.columns[:number].options[:format] = format unless format.nil?
-    update_record_from_params(record, @config.create.columns, HashWithIndifferentAccess.new({:number => value}))
+    update_record_from_params(record, @config.create.columns, HashWithIndifferentAccess.new(:number => value))
     record.number
   end
 end
