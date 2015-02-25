@@ -53,14 +53,14 @@ module ActiveScaffold
     def self.all_stylesheets
       bridges.keys.collect do |bridge_name|
         bridge = self[bridge_name]
-        bridge.stylesheets if bridge and bridge.install?
+        bridge.stylesheets if bridge && bridge.install?
       end.compact.flatten
     end
 
     def self.all_javascripts
       bridges.keys.collect do |bridge_name|
         bridge = self[bridge_name]
-        bridge.javascripts if bridge and bridge.install?
+        bridge.javascripts if bridge && bridge.install?
       end.compact.flatten
     end
   end

@@ -39,14 +39,14 @@ module ActiveScaffold::DataStructures
       columns = ActiveScaffold::DataStructures::ActionColumns.new
       columns.label = label
       columns.action = action
-      columns.configure &proc
+      columns.configure(&proc)
       exclude columns.collect_columns
       add columns
     end
 
     def include?(item)
       @set.each do |c|
-        return true if !c.is_a? Symbol and c.include? item
+        return true if !c.is_a?(Symbol) && c.include?(item)
         return true if c == item.to_sym
       end
       false

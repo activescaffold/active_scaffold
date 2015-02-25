@@ -120,7 +120,7 @@ module ActiveScaffold::Config
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
     def add_sti_create_links?
-      sti_create_links and not sti_children.nil?
+      sti_create_links && !sti_children.nil?
     end
 
     # action links are used by actions to tie together. they appear as links for each record, or general links for the ActiveScaffold.
@@ -160,7 +160,7 @@ module ActiveScaffold::Config
       # and then, let's remove some columns from the inheritable set.
       content_columns = Set.new(model.content_columns.map(&:name))
       @columns.exclude(*self.class.ignore_columns)
-      @columns.exclude(*@columns.find_all { |c| c.column and content_columns.exclude?(c.column.name) }.collect(&:name))
+      @columns.exclude(*@columns.find_all { |c| c.column && content_columns.exclude?(c.column.name) }.collect(&:name))
       @columns.exclude(*model.reflect_on_all_associations.collect { |a| :"#{a.name}_type" if a.options[:polymorphic] }.compact)
 
       # inherit the global frontend
@@ -221,9 +221,7 @@ module ActiveScaffold::Config
 
     def self.method_missing(name, *args)
       klass = "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize rescue nil
-      if @@actions.include? name.to_s.underscore and klass
-        return klass
-      end
+      return klass if @@actions.include? name.to_s.underscore && klass
       super
     end
     # some utility methods
@@ -250,7 +248,7 @@ module ActiveScaffold::Config
     # note that this is unaffected by per-controller frontend configuration.
     def self.javascripts(frontend = self.frontend)
       javascript_dir = File.join(Rails.public_path, 'javascripts', asset_path('', frontend))
-      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js$/) or (!self.dhtml_history? and e.match('dhtml_history')) }
+      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js$/) || (!self.dhtml_history? && e.match('dhtml_history')) }
     end
 
     def self.available_frontends

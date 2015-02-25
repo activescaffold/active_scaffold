@@ -216,7 +216,7 @@ module ActiveScaffold
               associated
             end
           authorized = associated_for_authorized.authorized_for?(:crud_type => link.crud_type)
-          authorized = authorized and record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
+          authorized = authorized && record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
           authorized
         else
           action_link_authorized?(link, record)
