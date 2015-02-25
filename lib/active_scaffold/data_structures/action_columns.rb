@@ -109,15 +109,14 @@ module ActiveScaffold::DataStructures
     end
 
     def skip_column?(column, options)
-      result = false
       # skip if this matches a constrained column
-      result = true if constraint_columns.include?(column.name.to_sym)
+      return true if constraint_columns.include?(column.name.to_sym)
       # skip this field if it's not authorized
       unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || action.try(:crud_type) || :read, :column => column.name)
         unauthorized_columns << column.name.to_sym
-        result = true
+        return true
       end
-      result
+      false
     end
 
     # registers a set of column objects (recursively, for all nested ActionColumns)
