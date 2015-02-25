@@ -70,7 +70,7 @@ module ActiveScaffold::Bridges
         # because the object may change (someone may log in or out). So we give ActiveRecord a proc that ties to the
         # current_ability_method on this ApplicationController.
         def assign_current_ability_to_models
-          ::ActiveRecord::Base.current_ability_proc = proc {send(:current_ability)}
+          ::ActiveRecord::Base.current_ability_proc = proc { send(:current_ability) }
         end
       end
 
@@ -82,6 +82,7 @@ module ActiveScaffold::Bridges
           def current_ability_proc
             Thread.current[:current_ability_proc]
           end
+
           def current_ability_proc=(value)
             Thread.current[:current_ability_proc] = value
           end
@@ -98,7 +99,6 @@ module ActiveScaffold::Bridges
         end
       end
     end
-
 
     # plug into AS#authorized_for calls
     module ActiveRecord
@@ -121,7 +121,7 @@ module ActiveScaffold::Bridges
         # to allow access cancan must allow both :crud_type and :action
         # if cancan says "no", it delegates to default AS behavior
         def authorized_for_with_cancan?(options = {})
-          raise InvalidArgument if options[:crud_type].blank? and options[:action].blank?
+          fail InvalidArgument if options[:crud_type].blank? and options[:action].blank?
           if current_ability.present?
             crud_type_result = options[:crud_type].nil? ? true : current_ability.can?(options[:crud_type], self)
             action_result = options[:action].nil? ? true : current_ability.can?(options[:action].to_sym, self)

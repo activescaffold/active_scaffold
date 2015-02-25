@@ -55,18 +55,18 @@ module ActiveScaffold
           next if assoc.options[:through]
           next unless assoc.options[:polymorphic] or assoc.class_name == active_record.name
 
-          case [assoc.macro, macro].find_all {|m| m == :has_and_belongs_to_many}.length
+          case [assoc.macro, macro].find_all { |m| m == :has_and_belongs_to_many }.length
             # if both are a habtm, then match them based on the join table
             when 2
-            next unless assoc.options[:join_table] == options[:join_table]
+              next unless assoc.options[:join_table] == options[:join_table]
 
             # if only one is a habtm, they do not match
             when 1
-            next
+              next
 
             # otherwise, match them based on the foreign_key
             when 0
-            next unless assoc.foreign_key.to_sym == foreign_key.to_sym
+              next unless assoc.foreign_key.to_sym == foreign_key.to_sym
           end
 
           reverse_matches << assoc

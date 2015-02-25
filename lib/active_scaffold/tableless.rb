@@ -118,7 +118,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
 
     def find_one(id)
-      @klass.find_one(id, self) or raise ActiveRecord::RecordNotFound
+      @klass.find_one(id, self) or fail ActiveRecord::RecordNotFound
     end
 
     def execute_simple_calculation(operation, column_name, distinct)
@@ -176,28 +176,28 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   def self.column(name, sql_type = nil, options = {})
-    column = Column.new(name.to_s, options[:default], sql_type.to_s, options.has_key?(:null) ? options[:null] : true)
+    column = Column.new(name.to_s, options[:default], sql_type.to_s, options.key?(:null) ? options[:null] : true)
     column.tap { columns << column }
   end
 
   def self.find_all(relation)
-    raise 'self.find_all must be implemented in a Tableless model'
+    fail 'self.find_all must be implemented in a Tableless model'
   end
 
   def self.find_one(id, relation)
-    raise 'self.find_one must be implemented in a Tableless model'
+    fail 'self.find_one must be implemented in a Tableless model'
   end
 
   def self.execute_simple_calculation(relation, operation, column_name, distinct)
     if operation == 'count' && [relation.klass.primary_key, :all].include?(column_name)
       find_all(relation).size
     else
-      raise "self.execute_simple_calculation must be implemented in a Tableless model to support #{operation} #{column_name}#{' distinct' if distinct} columns"
+      fail "self.execute_simple_calculation must be implemented in a Tableless model to support #{operation} #{column_name}#{' distinct' if distinct} columns"
     end
   end
 
   def destroy
-    raise 'destroy must be implemented in a Tableless model'
+    fail 'destroy must be implemented in a Tableless model'
   end
 
   def _create_record #:nodoc:

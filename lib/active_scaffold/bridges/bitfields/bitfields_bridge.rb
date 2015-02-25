@@ -29,7 +29,6 @@ module ActiveScaffold
           _load_action_columns_without_bitfields
         end
 
-
         def self.included(base)
           base.alias_method_chain :initialize, :bitfields
           base.alias_method_chain :_load_action_columns, :bitfields

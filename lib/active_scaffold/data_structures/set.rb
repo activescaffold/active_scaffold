@@ -45,7 +45,7 @@ module ActiveScaffold::DataStructures
     alias_method :[], :find_by_name
 
     def each
-      @set.each {|i| yield i }
+      @set.each { |i| yield i }
     end
 
     # returns the number of items in the set

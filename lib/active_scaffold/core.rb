@@ -57,7 +57,7 @@ module ActiveScaffold
             mod_conf = active_scaffold_config.send(mod)
             if mod_conf.respond_to?(:link) && (link = mod_conf.link)
               if link.is_a? Array
-                link.each {|current| active_scaffold_config.action_links.add_to_group(current, active_scaffold_config.send(mod).action_group)}
+                link.each { |current| active_scaffold_config.action_links.add_to_group(current, active_scaffold_config.send(mod).action_group) }
               elsif link.is_a? ActiveScaffold::DataStructures::ActionLink
                 active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
               end
@@ -96,22 +96,20 @@ module ActiveScaffold
           # lazy load of action_link, cause it was really slowing down app in dev mode
           # and might lead to trouble cause of cyclic constantization of controllers
           # and might be unnecessary cause it is done before columns are configured
-          column.set_link(Proc.new {|col| link_for_association(col)})
+          column.set_link(Proc.new { |col| link_for_association(col) })
         end
       end
 
       def active_scaffold_controller_for_column(column, options = {})
-        begin
-          if column.polymorphic_association?
-            :polymorph
-          elsif options.include?(:controller)
-            "#{options[:controller].to_s.camelize}Controller".constantize
-          else
-            active_scaffold_controller_for(column.association.klass)
-          end
-        rescue ActiveScaffold::ControllerNotFound
-          nil
+        if column.polymorphic_association?
+          :polymorph
+        elsif options.include?(:controller)
+          "#{options[:controller].to_s.camelize}Controller".constantize
+        else
+          active_scaffold_controller_for(column.association.klass)
         end
+      rescue ActiveScaffold::ControllerNotFound
+        nil
       end
 
       def link_for_association(column, options = {})
@@ -172,22 +170,19 @@ module ActiveScaffold
       end
 
       def active_scaffold_config_for(klass)
-        begin
-          controller = active_scaffold_controller_for(klass)
-        rescue ActiveScaffold::ControllerNotFound
-          config = ActiveScaffold::Config::Core.new(klass)
-          config._load_action_columns
-          config
-        else
-          controller.active_scaffold_config
-        end
+        controller = active_scaffold_controller_for(klass)
+      rescue ActiveScaffold::ControllerNotFound
+        config = ActiveScaffold::Config::Core.new(klass)
+        config._load_action_columns
+        config
+      else
+        controller.active_scaffold_config
       end
 
       def active_scaffold_controller_for(klass)
         return self if uses_active_scaffold? && klass == active_scaffold_config.model
         ActiveScaffold::Core.active_scaffold_controller_for(klass, to_s.deconstantize + '::')
       end
-
 
       def uses_active_scaffold?
         !active_scaffold_config.nil?
@@ -213,12 +208,12 @@ module ActiveScaffold
               raise
             end
           end
-          raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
-          raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model.to_s == klass.to_s
+          fail ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
+          fail ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model.to_s == klass.to_s
           return controller
         end
       end
-      raise ActiveScaffold::ControllerNotFound, 'Could not find ' + error_message.join(' or '), caller
+      fail ActiveScaffold::ControllerNotFound, 'Could not find ' + error_message.join(' or '), caller
     end
 
     def self.column_type_cast(value, column)

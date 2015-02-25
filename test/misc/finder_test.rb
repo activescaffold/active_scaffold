@@ -3,16 +3,23 @@ require 'test_helper'
 class ClassWithFinder
   include ActiveScaffold::Finder
   def conditions_for_collection; end
+
   def conditions_from_params; end
+
   def conditions_from_constraints; end
+
   def joins_for_collection; end
+
   def custom_finder_options
     {}
   end
+
   def beginning_of_chain
     active_scaffold_config.model
   end
+
   def conditional_get_support?; end
+
   def params; {}; end
 end
 
@@ -47,7 +54,7 @@ class FinderTest < MiniTest::Test
 
   def test_method_sorting
     column = ActiveScaffold::DataStructures::Column.new('a', ModelStub)
-    column.sort_by :method => proc {self}
+    column.sort_by :method => proc { self }
 
     collection = [16000, 2853, 98765, 6188, 4]
     assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')

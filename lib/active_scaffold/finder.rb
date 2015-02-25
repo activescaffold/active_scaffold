@@ -140,7 +140,7 @@ module ActiveScaffold
 
       def condition_value_for_datetime(column, value, conversion = :to_time)
         if value.is_a? Hash
-          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect {|part| value[part].to_i}) rescue nil
+          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect { |part| value[part].to_i }) rescue nil
         elsif value.respond_to?(:strftime)
           if conversion == :to_time
             # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
@@ -155,11 +155,11 @@ module ActiveScaffold
           parts = Date._parse(value)
           format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if ActiveScaffold.js_framework == :jquery
           if format.blank?
-            time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect {|part, format_part| format_part if parts[part].present?}.compact
+            time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect { |part, format_part| format_part if parts[part].present? }.compact
             format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
           else
             if parts[:hour]
-              [[:min, '%M'], [:sec, '%S']].each {|part, f| format.gsub!(":#{f}", '') unless parts[part].present?}
+              [[:min, '%M'], [:sec, '%S']].each { |part, f| format.gsub!(":#{f}", '') unless parts[part].present? }
             else
               value += ' 00:00:00'
             end
@@ -259,8 +259,6 @@ module ActiveScaffold
     }
     NullComparators = %w(null not_null)
 
-
-
     def self.included(klass)
       klass.extend ClassMethods
     end
@@ -336,7 +334,7 @@ module ActiveScaffold
     def find_if_allowed(id, security_options, klass = beginning_of_chain)
       record = klass.find(id)
       security_options = {:crud_type => security_options.to_sym} unless security_options.is_a? Hash
-      raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for? security_options
+      fail ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for? security_options
       return record
     end
     # valid options may include:
@@ -370,7 +368,7 @@ module ActiveScaffold
 
     def count_items(query, find_options = {}, count_includes = nil)
       count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
-      options = find_options.reject {|k, _| [:select, :reorder].include? k}
+      options = find_options.reject { |k, _| [:select, :reorder].include? k }
       # NOTE: we must use includes in the count query, because some conditions may reference other tables
       options[:includes] = count_includes
 

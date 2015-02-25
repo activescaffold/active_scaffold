@@ -29,7 +29,7 @@ module ActiveScaffold
               active_scaffold_input_select(column, options)
             else
               # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
-              raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
+              fail "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
             end
           elsif column.virtual?
             options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
@@ -171,7 +171,7 @@ module ActiveScaffold
         column_options = active_scaffold_input_options(column, scope, :object => record)
         attributes = field_attributes(column, record)
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
-        field = 
+        field =
           if only_value
             content_tag(:span, get_column_value(record, column), column_options.except(:name, :object)) <<
             hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
@@ -235,7 +235,7 @@ module ActiveScaffold
         group_label = group_column.options[:label_method] if group_column
         group_label ||= group_column.try(:association) ? :to_label : :to_s
         select_options.group_by(&optgroup.to_sym).collect do |group, options|
-          [group.send(group_label), options.collect {|r| [r.send(column.options[:label_method] || :to_label), r.id]}]
+          [group.send(group_label), options.collect { |r| [r.send(column.options[:label_method] || :to_label), r.id] }]
         end
       end
 

@@ -96,7 +96,7 @@ module ActiveScaffold::Config
     def columns=(val)
       @columns._inheritable = val.collect(&:to_sym)
       # Add virtual columns
-      @columns << val.collect {|c| c.to_sym unless @columns[c.to_sym]}.compact
+      @columns << val.collect { |c| c.to_sym unless @columns[c.to_sym] }.compact
     end
 
     # lets you override the global ActiveScaffold frontend for a specific controller
@@ -161,7 +161,7 @@ module ActiveScaffold::Config
       content_columns = Set.new(model.content_columns.map(&:name))
       @columns.exclude(*self.class.ignore_columns)
       @columns.exclude(*@columns.find_all { |c| c.column and content_columns.exclude?(c.column.name) }.collect(&:name))
-      @columns.exclude(*model.reflect_on_all_associations.collect {|a| :"#{a.name}_type" if a.options[:polymorphic]}.compact)
+      @columns.exclude(*model.reflect_on_all_associations.collect { |a| :"#{a.name}_type" if a.options[:polymorphic] }.compact)
 
       # inherit the global frontend
       @frontend = self.class.frontend
@@ -213,7 +213,7 @@ module ActiveScaffold::Config
         if @actions.include? underscored_name
           return @action_configs[underscored_name] ||= klass.new(self)
         else
-          raise "#{titled_name} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
+          fail "#{titled_name} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
         end
       end
       super

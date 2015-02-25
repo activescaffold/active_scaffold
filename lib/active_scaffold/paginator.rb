@@ -22,14 +22,14 @@ class Paginator
   def initialize(count, per_page, &select)
     @count, @per_page = count, per_page
     unless select
-      raise MissingSelectError, 'Must provide block to select data for each page'
+      fail MissingSelectError, 'Must provide block to select data for each page'
     end
     @select = select
   end
 
   # Total number of pages
   def number_of_pages
-     (@count / @per_page).to_i + (@count % @per_page > 0 ? 1 : 0)
+    (@count / @per_page).to_i + (@count % @per_page > 0 ? 1 : 0)
   end
 
   # First page object

@@ -65,7 +65,7 @@ module ActiveScaffold
           associated = column.association.klass.where(:id => associated.map(&:to_i)).map(&method)
         elsif column.options[:options]
           associated = associated.collect do |value|
-            text, val = column.options[:options].find {|text, val| (val.nil? ? text : val).to_s == value.to_s}
+            text, val = column.options[:options].find { |text, val| (val.nil? ? text : val).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
             value
           end

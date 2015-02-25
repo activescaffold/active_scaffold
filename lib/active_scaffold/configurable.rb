@@ -15,14 +15,12 @@ module ActiveScaffold
 
     # this method will surely need tweaking. for example, i'm not sure if it should call super before or after it tries to eval with the binding.
     def method_missing(name, *args)
-      begin
-        super
-      rescue NoMethodError, NameError
-        if @configuration_binding.nil?
-          raise
-        else
-          @configuration_binding.send(name, *args)
-        end
+      super
+    rescue NoMethodError, NameError
+      if @configuration_binding.nil?
+        raise
+      else
+        @configuration_binding.send(name, *args)
       end
     end
   end

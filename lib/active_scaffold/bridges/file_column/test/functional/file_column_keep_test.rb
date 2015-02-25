@@ -21,7 +21,6 @@ class DeleteFileColumnTest < Test::Unit::TestCase
     assert_nil @model.band_image
   end
 
-
   def test__delete_band_image__boolean_false__shouldnt_delete
     @model.delete_band_image = false
     assert_not_nil @model.band_image
@@ -32,12 +31,10 @@ class DeleteFileColumnTest < Test::Unit::TestCase
     assert_not_nil @model.band_image
   end
 
-
   def test__just_uploaded__shouldnt_delete
     @model.band_image_just_uploaded = true
     @model.delete_band_image = 'true'
     assert_not_nil(@model.band_image)
   end
-
 
 end
