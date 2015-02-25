@@ -15,11 +15,11 @@ module ActiveScaffold
           send(method, record, options)
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
-        elsif column.search_ui and (method = override_search(column.search_ui))
+        elsif column.search_ui && (method = override_search(column.search_ui))
           send(method, column, options)
 
         # third, check if the dev has specified a valid search_ui for this column, using generic ui for forms
-        elsif column.search_ui and (method = override_input(column.search_ui))
+        elsif column.search_ui && (method = override_input(column.search_ui))
           send(method, column, options)
 
         # fourth, check if the dev has created an override for this specific field
@@ -28,7 +28,7 @@ module ActiveScaffold
 
         # fallback: we get to make the decision
         else
-          if column.association or column.virtual?
+          if column.association || column.virtual?
             active_scaffold_search_text(column, options)
 
           else # regular model attribute column

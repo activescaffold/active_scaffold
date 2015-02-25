@@ -209,7 +209,7 @@ module ActiveScaffold::Actions
           key = key.to_sym
           not_string = [:string, :text].exclude?(column.type)
           next if active_scaffold_constraints[key]
-          next if nested? and nested.param_name == key
+          next if nested? && nested.param_name == key
           conditions[key] =
             if value.is_a?(Array)
               value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }

@@ -76,7 +76,7 @@ class ActionColumnsTest < MiniTest::Test
     # then use the shortcut
     @columns.add_subgroup 'foo' do
     end
-    assert @columns.any? { |c| c.respond_to? :label and c.label == 'foo' }
+    assert @columns.any? { |c| c.respond_to?(:label) && c.label == 'foo' }
   end
 
   def test_block_config

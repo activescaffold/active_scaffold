@@ -19,7 +19,7 @@ module ActiveScaffold
         if (method = override_form_field(column))
           send(method, record, options)
         # second, check if the dev has specified a valid form_ui for this column
-        elsif column.form_ui and (method = override_input(column.form_ui))
+        elsif column.form_ui && (method = override_input(column.form_ui))
           send(method, column, options)
         # fallback: we get to make the decision
         else
@@ -48,7 +48,7 @@ module ActiveScaffold
                 options[:maxlength] = column.column.limit
                 options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
               end
-              options[:include_blank] = true if column.column.null and [:date, :datetime, :time].include?(column.column.type)
+              options[:include_blank] = true if column.column.null && [:date, :datetime, :time].include?(column.column.type)
               options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
               text_field(:record, column.name, options.merge(column.options))
             end
@@ -70,7 +70,7 @@ module ActiveScaffold
           col_class << 'checkbox' if column.form_ui == :checkbox
           col_class = col_class.join(' ')
         end
-        if readonly and !record.new_record? or !record.authorized_for?(:crud_type => crud_type, :column => column.name)
+        if readonly && !record.new_record? || !record.authorized_for?(:crud_type => crud_type, :column => column.name)
           options = active_scaffold_input_options(column, scope).except(:name)
           options[:class] = "#{options[:class]} #{col_class}" if col_class
           content_tag :span, get_column_value(record, column), options
@@ -217,7 +217,7 @@ module ActiveScaffold
       def column_show_add_existing(column, record = nil)
         ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, call with record.', caller if record.nil? # TODO Remove when relying on @record is removed
         record ||= @record # TODO Remove when relying on @record is removed
-        (column.allow_add_existing and options_for_association_count(column.association, record) > 0)
+        (column.allow_add_existing && options_for_association_count(column.association, record) > 0)
       end
 
       def column_show_add_new(column, associated, record)
@@ -505,9 +505,9 @@ module ActiveScaffold
       def column_renders_as(column)
         if column.respond_to? :each
           return :subsection
-        elsif column.active_record_class.locking_column.to_s == column.name.to_s or column.form_ui == :hidden
+        elsif column.active_record_class.locking_column.to_s == column.name.to_s || column.form_ui == :hidden
           return :hidden
-        elsif column.association.nil? or column.form_ui or !active_scaffold_config_for(column.association.klass).actions.include?(:subform) or override_form_field?(column)
+        elsif column.association.nil? || column.form_ui || !active_scaffold_config_for(column.association.klass).actions.include?(:subform) || override_form_field?(column)
           return :field
         else
           return :subform
@@ -553,12 +553,12 @@ module ActiveScaffold
         if column.numerical_constraints.nil?
           numerical_constraints = {}
           validators = column.active_record_class.validators.select do |v|
-            v.is_a? ActiveModel::Validations::NumericalityValidator and v.attributes.include? column.name
+            v.is_a?(ActiveModel::Validations::NumericalityValidator) && v.attributes.include?(column.name)
           end
           equal_to = (val = validators.find { |v| v.options[:equal_to] }) ? val.options[:equal_to] : nil
 
           # If there is equal_to constraint - use it (unless otherwise specified by user)
-          if equal_to and !(options[:min] or options[:max])
+          if equal_to && !(options[:min] || options[:max])
             numerical_constraints[:min] = numerical_constraints[:max] = equal_to
           else # find minimum and maximum from validators
             # we can safely modify :min and :max by 1 for :greater_tnan or :less_than value only for integer values
@@ -586,10 +586,10 @@ module ActiveScaffold
               only_even_valid = validators.any? { |v| v.options[:even] } unless only_odd_valid
               if !only_integer
                 numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column && column.column.scale.to_i > 0
-              elsif options[:min] and options[:min].respond_to? :even? and (only_odd_valid or only_even_valid)
+              elsif options[:min] && options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
                 numerical_constraints[:step] = 2
-                numerical_constraints[:min] += 1 if only_odd_valid  and !options[:min].odd?
-                numerical_constraints[:min] += 1 if only_even_valid and !options[:min].even?
+                numerical_constraints[:min] += 1 if only_odd_valid  && !options[:min].odd?
+                numerical_constraints[:min] += 1 if only_even_valid && !options[:min].even?
               end
               numerical_constraints[:step] ||= 'any' unless only_integer
             end

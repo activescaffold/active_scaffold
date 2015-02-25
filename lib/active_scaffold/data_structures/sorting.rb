@@ -92,11 +92,11 @@ module ActiveScaffold::DataStructures
 
     # checks whether any column is configured to sort by method (using a proc)
     def sorts_by_method?
-      @clauses.any? { |sorting| sorting[0].sort.is_a? Hash and sorting[0].sort.key? :method }
+      @clauses.any? { |sorting| sorting[0].sort.is_a?(Hash) && sorting[0].sort.key?(:method) }
     end
 
     def sorts_by_sql?
-      @clauses.any? { |sorting| sorting[0].sort.is_a? Hash and sorting[0].sort.key? :sql }
+      @clauses.any? { |sorting| sorting[0].sort.is_a?(Hash) && sorting[0].sort.key?(:sql) }
     end
 
     # iterate over the clauses
@@ -118,7 +118,7 @@ module ActiveScaffold::DataStructures
       each do |sort_column, sort_direction|
         next if constraint_columns.include? sort_column.name
         sql = sort_column.sort[:sql]
-        next if sql.nil? or sql.empty?
+        next if sql.nil? || sql.empty?
 
         order << Array(sql).map { |column| "#{column} #{sort_direction}" }.join(', ')
       end
@@ -145,7 +145,7 @@ module ActiveScaffold::DataStructures
     end
 
     def mixed_sorting?
-      sorts_by_method? and sorts_by_sql?
+      sorts_by_method? && sorts_by_sql?
     end
 
     def default_sorting?

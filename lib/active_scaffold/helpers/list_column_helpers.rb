@@ -6,7 +6,7 @@ module ActiveScaffold
       def get_column_value(record, column)
         method = get_column_method(record, column)
         value = send(method, record, column)
-        value = '&nbsp;'.html_safe if value.nil? or value.blank? # fix for IE 6
+        value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
         return value
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
@@ -24,9 +24,9 @@ module ActiveScaffold
               # performance of our default formatting. see issue #138.
               method
             # second, check if the dev has specified a valid list_ui for this column
-            elsif column.list_ui and (method = override_column_ui(column.list_ui))
+            elsif column.list_ui && (method = override_column_ui(column.list_ui))
               method
-            elsif column.column and (method = override_column_ui(column.column.type))
+            elsif column.column && (method = override_column_ui(column.column.type))
               method
             else
               :format_column_value
@@ -153,7 +153,7 @@ module ActiveScaffold
           firsts.collect!(&label_method)
           firsts << '…' if value.size > column.associated_limit
           text = firsts.join(h(active_scaffold_config.list.association_join_text)).html_safe
-          text << " (#{size})" if column.associated_number? and column.associated_limit and value.size > column.associated_limit
+          text << " (#{size})" if column.associated_number? && column.associated_limit && value.size > column.associated_limit
           text
         end
       end
@@ -215,7 +215,7 @@ module ActiveScaffold
       end
 
       def inplace_edit_cloning?(column)
-        column.inplace_edit != :ajax and (override_form_field?(column) or column.form_ui or (column.column and override_input?(column.column.type)))
+        column.inplace_edit != :ajax && (override_form_field?(column) || column.form_ui || (column.column && override_input?(column.column.type)))
       end
 
       def active_scaffold_inplace_edit_tag_options(record, column)
@@ -233,7 +233,7 @@ module ActiveScaffold
       end
 
       def inplace_edit_control(column)
-        if inplace_edit?(active_scaffold_config.model, column) and inplace_edit_cloning?(column)
+        if inplace_edit?(active_scaffold_config.model, column) && inplace_edit_cloning?(column)
           old_record, @record = @record, new_model # TODO remove when relying on @record is removed
           column = column.clone
           column.options = column.options.clone

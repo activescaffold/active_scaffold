@@ -90,9 +90,9 @@ module ActiveScaffold
 
       # Create the automatic column links. Note that this has to happen when configuration is *done*, because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?
       def links_for_associations
-        return unless active_scaffold_config.actions.include? :list and active_scaffold_config.actions.include? :nested
+        return unless active_scaffold_config.actions.include?(:list) && active_scaffold_config.actions.include?(:nested)
         active_scaffold_config.columns.each do |column|
-          next unless column.link.nil? and column.autolink?
+          next unless column.link.nil? && column.autolink?
           # lazy load of action_link, cause it was really slowing down app in dev mode
           # and might lead to trouble cause of cyclic constantization of controllers
           # and might be unnecessary cause it is done before columns are configured

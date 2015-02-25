@@ -193,14 +193,14 @@ module ActiveScaffold
         # convert empty strings into nil. this works better with 'null => true' columns (and validations),
         # and 'null => false' columns should just convert back to an empty string.
         # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
-        value = nil if value.is_a? String and value.empty? and !column.column.nil? and column.column.null
+        value = nil if value.is_a?(String) && value.empty? && !column.column.nil? && column.column.null
         value
       end
     end
 
     def column_plural_assocation_value_from_value(column, value)
       # it's an array of ids
-      if value and !value.empty?
+      if value && !value.empty?
         ids = value.select(&:present?)
         ids.empty? ? [] : column.association.klass.find(ids)
       else
@@ -253,10 +253,10 @@ module ActiveScaffold
     # Attempts to find an instance of klass (which must be an ActiveRecord object) with id primary key
     # Returns record from current if it's included or find from DB
     def record_from_current_or_find(klass, id, current)
-      if current and current.is_a? ActiveRecord::Base and current.id.to_s == id
+      if current && current.is_a?(ActiveRecord::Base) && current.id.to_s == id
         # modifying the current object of a singular association
         current
-      elsif current and current.respond_to?(:any?) and current.any? { |o| o.id.to_s == id }
+      elsif current && current.respond_to?(:any?) && current.any? { |o| o.id.to_s == id }
         # modifying one of the current objects in a plural association
         current.detect { |o| o.id.to_s == id }
       else # attaching an existing but not-current object
@@ -287,7 +287,7 @@ module ActiveScaffold
 
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
-        next true if column and ignore_column_types.include?(column.type)
+        next true if column && ignore_column_types.include?(column.type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
         next true if value == column_default_value(column_name, klass, column)

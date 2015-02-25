@@ -9,7 +9,7 @@ module ActiveScaffold
           search_ui ||= column.column.type if column.column
           if override_human_condition_column?(column)
             send(override_human_condition_column(column), value, {})
-          elsif search_ui and override_human_condition?(search_ui)
+          elsif search_ui && override_human_condition?(search_ui)
             send(override_human_condition(search_ui), column, value)
           else
             logger.warn "undefined active_scaffold_human_condition method for search_ui #{search_ui} on column #{column.name}"

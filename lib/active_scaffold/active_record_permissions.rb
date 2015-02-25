@@ -92,7 +92,7 @@ module ActiveScaffold
         # options[:column] should be the name of a model attribute
         # options[:action] is the name of a method
         def authorized_for?(options = {})
-          raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] and ![:create, :read, :update, :delete].include?(options[:crud_type])
+          raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] && ![:create, :read, :update, :delete].include?(options[:crud_type])
 
           # collect other possibly-related methods that actually exist
           methods = cached_authorized_for_methods(options)
@@ -120,13 +120,13 @@ module ActiveScaffold
           # you can disable a crud verb and enable that verb for a column
           # (for example, disable update and enable inplace_edit in a column)
           method = column_and_crud_type_security_method(options[:column], options[:crud_type])
-          return [method] if method and respond_to?(method)
+          return [method] if method && respond_to?(method)
 
           # authorized_for_action? has higher priority than other methods,
           # you can disable a crud verb and enable an action with that crud verb
           # (for example, disable update and enable an action with update as crud type)
           method = action_security_method(options[:action])
-          return [method] if method and respond_to?(method)
+          return [method] if method && respond_to?(method)
 
           # collect other possibly-related methods that actually exist
           [
@@ -150,7 +150,7 @@ module ActiveScaffold
         end
 
         def column_and_crud_type_security_method(column, crud_type)
-          "#{column}_authorized_for_#{crud_type}?" if column and crud_type
+          "#{column}_authorized_for_#{crud_type}?" if column && crud_type
         end
       end
     end

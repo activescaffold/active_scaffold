@@ -99,7 +99,7 @@ module ActiveScaffold::DataStructures
           item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
           next if self.skip_column?(item, options)
         end
-        if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.key?(:flatten) and options[:flatten]
+        if item.is_a?(ActiveScaffold::DataStructures::ActionColumns) && options.key?(:flatten) && options[:flatten]
           columns += item.collect_visible(options, &proc)
         else
           columns << (block_given? ? yield(item) : item)

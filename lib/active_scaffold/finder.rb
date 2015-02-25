@@ -41,7 +41,7 @@ module ActiveScaffold
         if self.respond_to?("condition_for_#{column.name}_column")
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
-        return unless column and column.search_sql and !value.blank?
+        return unless column && column.search_sql && !value.blank?
         search_ui = column.search_ui || column.column.try(:type)
         begin
           sql, *values =
@@ -91,7 +91,7 @@ module ActiveScaffold
           ['%{search_sql} = ?', condition_value_for_numeric(column, value)]
         elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
           condition_for_null_type(column, value[:opt])
-        elsif value[:from].blank? or !ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
+        elsif value[:from].blank? || !ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
           ['(%{search_sql} BETWEEN ? AND ?)', condition_value_for_numeric(column, value[:from]), condition_value_for_numeric(column, value[:to])]
@@ -203,7 +203,7 @@ module ActiveScaffold
         from_value = condition_value_for_datetime(column, value[:from], conversion)
         to_value = condition_value_for_datetime(column, value[:to], conversion)
 
-        if from_value.nil? and to_value.nil?
+        if from_value.nil? && to_value.nil?
           nil
         elsif !from_value
           ['%{search_sql} <= ?', to_value.to_s(:db)]
@@ -399,7 +399,7 @@ module ActiveScaffold
 
       query = append_to_query(query, find_options)
       # we build the paginator differently for method- and sql-based sorting
-      if options[:sorting] and options[:sorting].sorts_by_method?
+      if options[:sorting] && options[:sorting].sorts_by_method?
         pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
           calculate_last_modified(query)
           sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)

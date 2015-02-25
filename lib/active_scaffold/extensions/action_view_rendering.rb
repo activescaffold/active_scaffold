@@ -35,7 +35,7 @@ module ActionView::Helpers #:nodoc:
     # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
     #
     def render_with_active_scaffold(*args, &block)
-      if args.first.is_a? Hash and args.first[:active_scaffold]
+      if args.first.is_a?(Hash) && args.first[:active_scaffold]
         require 'digest/md5'
         options = args.first
 

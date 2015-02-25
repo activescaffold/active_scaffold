@@ -142,7 +142,7 @@ module ActiveScaffold
 
       active_scaffold_constraints.each do |k, v|
         column = active_scaffold_config.columns[k]
-        if column and column.association
+        if column && column.association
           if column.plural_association?
             record.send("#{k}").send(:<<, column.association.klass.find(v))
           elsif column.association.options[:polymorphic]
@@ -157,7 +157,7 @@ module ActiveScaffold
             # note that we can't take the extra step to correct this unless we're permitted to
             # run operations where activerecord auto-saves the object.
             reverse = column.association.klass.reflect_on_association(column.association.reverse)
-            if reverse.macro == :has_one and options[:allow_autosave]
+            if reverse.macro == :has_one && options[:allow_autosave]
               record.send(k).send("#{column.association.reverse}=", record)
             end
           end

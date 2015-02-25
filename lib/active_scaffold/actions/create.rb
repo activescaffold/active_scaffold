@@ -115,7 +115,7 @@ module ActiveScaffold::Actions
 
     def create_save(record)
       if successful?
-        record.save! and record.save_associated!
+        record.save! && record.save_associated!
         after_create_save(record)
       end
     end

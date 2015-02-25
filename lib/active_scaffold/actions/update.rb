@@ -111,7 +111,7 @@ module ActiveScaffold::Actions
           # errors to @record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
           self.successful = [@record.errors.empty? && @record.valid?, @record.associated_valid?].all? # this syntax avoids a short-circuit
           if successful?
-            @record.save! and @record.save_associated!
+            @record.save! && @record.save_associated!
             after_update_save(@record)
           else
             # some associations such as habtm are saved before saved is called on parent object

@@ -4,7 +4,7 @@ module ActiveScaffold
       module BitfieldsBridge
         def initialize_with_bitfields(model_id)
           initialize_without_bitfields(model_id)
-          return unless model.respond_to?(:bitfields) and model.bitfields.present?
+          return unless model.respond_to?(:bitfields) && model.bitfields.present?
 
           model.bitfields.each do |_, options|
             columns << options.keys
@@ -24,7 +24,7 @@ module ActiveScaffold
                 send(action).columns.add_subgroup(column_name) { |group| group.add *columns }
               end
             end
-          end if model.respond_to?(:bitfields) and model.bitfields.present?
+          end if model.respond_to?(:bitfields) && model.bitfields.present?
 
           _load_action_columns_without_bitfields
         end

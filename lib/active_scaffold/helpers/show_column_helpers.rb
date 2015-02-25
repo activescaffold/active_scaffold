@@ -10,10 +10,10 @@ module ActiveScaffold
           # performance of our default formatting. see issue #138.
           send(method, record, column)
         # second, check if the dev has specified a valid list_ui for this column
-        elsif column.list_ui and (method = override_show_column_ui(column.list_ui))
+        elsif column.list_ui && (method = override_show_column_ui(column.list_ui))
           send(method, record, column)
         else
-          if column.column and (method = override_show_column_ui(column.column.type))
+          if column.column && (method = override_show_column_ui(column.column.type))
             send(method, record, column)
           else
             get_column_value(record, column)

@@ -167,7 +167,7 @@ module ActiveScaffold::DataStructures
 
     # get whether to run a calculation on this column
     def calculation?
-      !(@calculate == false or @calculate.nil?)
+      !(@calculate == false || @calculate.nil?)
     end
 
     # a collection of associations to pre-load when finding the records on a page
@@ -238,8 +238,8 @@ module ActiveScaffold::DataStructures
     attr_writer :show_blank_record
     def show_blank_record?(associated)
       if @show_blank_record
-        return false unless association.klass.authorized_for?(:crud_type => :create) and !association.options[:readonly]
-        self.plural_association? or (self.singular_association? and associated.blank?)
+        return false unless association.klass.authorized_for?(:crud_type => :create) && !association.options[:readonly]
+        self.plural_association? || (self.singular_association? && associated.blank?)
       end
     end
 
@@ -261,19 +261,19 @@ module ActiveScaffold::DataStructures
     # the association from the ActiveRecord class
     attr_reader :association
     def singular_association?
-      association and !association.collection?
+      association && !association.collection?
     end
 
     def plural_association?
-      association and association.collection?
+      association && association.collection?
     end
 
     def through_association?
-      association and association.options[:through]
+      association && association.options[:through]
     end
 
     def polymorphic_association?
-      association and association.options[:polymorphic]
+      association && association.options[:polymorphic]
     end
 
     def readonly_association?
@@ -303,7 +303,7 @@ module ActiveScaffold::DataStructures
     # this is so that array.delete and array.include?, etc., will work by column name
     def ==(other) #:nodoc:
       # another column
-      if other.respond_to? :name and other.class == self.class
+      if other.respond_to?(:name) && other.class == self.class
         name == other.name.to_sym
       # a string or symbol
       elsif other.respond_to? :to_sym

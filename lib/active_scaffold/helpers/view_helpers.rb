@@ -495,7 +495,7 @@ module ActiveScaffold
         end
         classes = "#{@_column_classes[column.name]} "
         classes << 'empty ' if column_empty? column_value
-        classes << 'in_place_editor_field ' if inplace_edit?(record, column) or column.list_ui == :marked
+        classes << 'in_place_editor_field ' if inplace_edit?(record, column) || column.list_ui == :marked
         if column.css_class.is_a?(Proc)
           css_class = column.css_class.call(column_value, record)
           classes << css_class unless css_class.nil?
