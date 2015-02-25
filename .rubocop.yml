@@ -2,8 +2,11 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   RunRailsCops: true
+  Include:
+    - '**/Gemfile*'
   Exclude:
     - lib/generators/*/templates/**/*
+    - '**/Gemfile*.lock'
 
 Style/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
