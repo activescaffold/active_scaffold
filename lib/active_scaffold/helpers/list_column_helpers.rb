@@ -237,7 +237,7 @@ module ActiveScaffold
           old_record, @record = @record, new_model # TODO remove when relying on @record is removed
           column = column.clone
           column.options = column.options.clone
-          column.form_ui = :select if (column.association && column.form_ui.nil?)
+          column.form_ui = :select if column.association && column.form_ui.nil?
           options = active_scaffold_input_options(column).merge(:object => new_model)
           options[:class] = "#{options[:class]} inplace_field"
           options[:"data-id"] = options[:id]
