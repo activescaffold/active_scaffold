@@ -520,7 +520,7 @@ module ActiveScaffold
         empty = column_value.nil?
         empty ||= false != column_value && column_value.blank?
         empty ||= ['&nbsp;', empty_field_text].include? column_value if String === column_value
-        return empty
+        empty
       end
 
       def empty_field_text

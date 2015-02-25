@@ -13,7 +13,7 @@ Lint/AmbiguousOperator:
 Lint/AmbiguousRegexpLiteral:
   Enabled: false
 
-# Offense count: 252
+# Offense count: 250
 Metrics/AbcSize:
   Max: 139
 
@@ -53,7 +53,7 @@ Metrics/PerceivedComplexity:
 Style/AccessorMethodName:
   Enabled: false
 
-# Offense count: 23
+# Offense count: 25
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
 Style/AlignHash:
@@ -147,32 +147,15 @@ Style/For:
 Style/GuardClause:
   Enabled: false
 
-# Offense count: 1262
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/HashSyntax:
-  Enabled: false
-
 # Offense count: 2
 # Configuration parameters: MaxLineLength.
 Style/IfUnlessModifier:
-  Enabled: false
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/IndentHash:
   Enabled: false
 
 # Offense count: 14
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/MultilineOperationIndentation:
-  Enabled: false
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/NegatedIf:
   Enabled: false
 
 # Offense count: 2
@@ -186,12 +169,6 @@ Style/Next:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-# Configuration parameters: IncludeSemanticChanges.
-Style/NonNilCheck:
-  Enabled: false
-
-# Offense count: 11
-# Cop supports --auto-correct.
 Style/Not:
   Enabled: false
 
@@ -202,12 +179,6 @@ Style/NumericLiterals:
 
 # Offense count: 1
 Style/OpMethod:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowSafeAssignment.
-Style/ParenthesesAroundCondition:
   Enabled: false
 
 # Offense count: 6
@@ -222,19 +193,8 @@ Style/PredicateName:
   Enabled: false
 
 # Offense count: 2
-# Cop supports --auto-correct.
-Style/Proc:
-  Enabled: false
-
-# Offense count: 2
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/RaiseArgs:
-  Enabled: false
-
-# Offense count: 13
-# Cop supports --auto-correct.
-# Configuration parameters: AllowMultipleReturnValues.
-Style/RedundantReturn:
   Enabled: false
 
 # Offense count: 1
