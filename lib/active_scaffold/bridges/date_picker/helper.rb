@@ -32,7 +32,8 @@ module ActiveScaffold::Bridges
       end
 
       def self.date_options(locale)
-        date_picker_options = {:closeText => as_(:close),
+        date_picker_options = {
+          :closeText => as_(:close),
           :prevText => as_(:previous),
           :nextText => as_(:next),
           :currentText => as_(:today),
@@ -69,7 +70,8 @@ module ActiveScaffold::Bridges
 
       def self.datetime_options(locale)
         rails_time_format = I18n.translate! 'time.formats.picker', :locale => locale, :default => '%a, %d %b %Y %H:%M:%S'
-        datetime_picker_options = {:ampm => false,
+        datetime_picker_options = {
+          :ampm => false,
           :hourText => I18n.translate!('datetime.prompts.hour', :locale => locale),
           :minuteText => I18n.translate!('datetime.prompts.minute', :locale => locale),
           :secondText => I18n.translate!('datetime.prompts.second', :locale => locale)

@@ -318,7 +318,7 @@ module ActiveScaffold
                      'data-page-history' => controller_id,
                      :remote => true, :method => :get}
           url_options = params_for(:action => :index, :page => 1,
-                           :sort => column.name, :sort_direction => sort_direction)
+                                   :sort => column.name, :sort_direction => sort_direction)
           unless active_scaffold_config.store_user_settings
             url_options.merge!(:search => search_params) if search_params.present?
           end

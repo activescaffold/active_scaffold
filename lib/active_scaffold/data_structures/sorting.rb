@@ -166,7 +166,7 @@ module ActiveScaffold::DataStructures
       column_name_part, direction_part = criterion_parts.strip.split(' ')
       column_name_parts = column_name_part.split('.')
       order = {:direction => extract_direction(direction_part),
-        :column_name => remove_quotes(column_name_parts.last)}
+               :column_name => remove_quotes(column_name_parts.last)}
       order[:table_name] = remove_quotes(column_name_parts[-2]) if column_name_parts.length >= 2
       order
     end
