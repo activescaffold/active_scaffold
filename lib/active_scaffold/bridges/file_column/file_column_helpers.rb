@@ -39,7 +39,7 @@ module ActiveScaffold
         def field_has_image_version?(field, version = 'thumb')
           options = options_for_file_column_field(field)
           versions = options[:magick][:versions]
-          fail unless versions.stringify_keys[version]
+          raise unless versions.stringify_keys[version]
           true
         rescue
           false

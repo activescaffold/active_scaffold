@@ -213,7 +213,7 @@ module ActiveScaffold::Config
         if @actions.include? underscored_name
           return @action_configs[underscored_name] ||= klass.new(self)
         else
-          fail "#{titled_name} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
+          raise "#{titled_name} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
         end
       end
       super

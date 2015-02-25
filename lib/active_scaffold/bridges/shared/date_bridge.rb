@@ -171,7 +171,7 @@ module ActiveScaffold
                 return date_bridge_now.in(1.day).beginning_of_day, date_bridge_now.in(1.day).end_of_day
               else
                 range_type, range = value[:range].downcase.split('_')
-                fail ArgumentError unless %w(week month year).include?(range)
+                raise ArgumentError unless %w(week month year).include?(range)
                 case range_type
                 when 'this'
                   return date_bridge_now.send("beginning_of_#{range}".to_sym), date_bridge_now.send("end_of_#{range}")

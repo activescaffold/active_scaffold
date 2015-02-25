@@ -25,7 +25,7 @@ module ActiveScaffold
       end
 
       def outer_joins_values=(values)
-        fail ImmutableRelation if @loaded
+        raise ImmutableRelation if @loaded
         @values[:outer_joins] = values
       end
 

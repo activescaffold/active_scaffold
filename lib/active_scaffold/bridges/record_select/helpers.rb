@@ -26,7 +26,7 @@ class ActiveScaffold::Bridges::RecordSelect
 
       def active_scaffold_record_select(record, column, options, value, multiple)
         unless column.association
-          fail ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
+          raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
         end
         klass =
           if column.polymorphic_association?

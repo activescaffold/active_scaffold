@@ -11,6 +11,11 @@ Style/SpaceInsideHashLiteralBraces:
 Style/SingleLineBlockParams:
   Enabled: false
 
+Style/SignalException:
+  EnforcedStyle: only_raise
+  Exclude:
+    - test/**/*
+
 Style/SingleLineMethods:
   Exclude:
     - test/**/*

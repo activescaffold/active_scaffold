@@ -81,7 +81,7 @@ module ActiveScaffold
         elsif active_scaffold_config.model.columns_hash[k.to_s] && params[column.name] != v
           hash_conditions.merge!(k => v)
         else
-          fail ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
+          raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
         end
       end
       conditions.reject(&:blank?)
@@ -114,7 +114,7 @@ module ActiveScaffold
 
       condition = {"#{table}.#{field}" => value}
       if association.options[:polymorphic]
-        fail ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller unless params[:parent_model]
+        raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller unless params[:parent_model]
         condition["#{table}.#{association.name}_type"] = params[:parent_model].constantize.to_s
       end
 
@@ -146,7 +146,7 @@ module ActiveScaffold
           if column.plural_association?
             record.send("#{k}").send(:<<, column.association.klass.find(v))
           elsif column.association.options[:polymorphic]
-            fail ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller unless params[:parent_model]
+            raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller unless params[:parent_model]
             record.send("#{k}=", params[:parent_model].constantize.find(v))
           else # regular singular association
             record.send("#{k}=", column.association.klass.find(v))
