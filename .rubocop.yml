@@ -16,8 +16,6 @@ Style/SingleLineBlockParams:
 
 Style/SignalException:
   EnforcedStyle: only_raise
-  Exclude:
-    - test/**/*
 
 Style/SingleLineMethods:
   Exclude:

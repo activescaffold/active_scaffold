@@ -80,41 +80,41 @@ class ActiveRecordPermissionsTest < MiniTest::Test
     end
 
     pass(@model.authorized_for?(:column => :a3), '_a_')
-    fail(@model.authorized_for?(:column => :a2), '_f_')
+    miss(@model.authorized_for?(:column => :a2), '_f_')
     pass(@model.authorized_for?(:column => :a1), '_t_')
 
     pass(@model.authorized_for?(:crud_type => :create), 'a__')
-    fail(@model.authorized_for?(:crud_type => :update), 'f__')
+    miss(@model.authorized_for?(:crud_type => :update), 'f__')
     pass(@model.authorized_for?(:crud_type => :read), 't__')
 
     pass(@model.authorized_for?(:crud_type => :create, :column => :c3), 'aaa')
-    fail(@model.authorized_for?(:crud_type => :create, :column => :b3), 'aaf')
+    miss(@model.authorized_for?(:crud_type => :create, :column => :b3), 'aaf')
     pass(@model.authorized_for?(:crud_type => :create, :column => :a3), 'aat')
-    fail(@model.authorized_for?(:crud_type => :create, :column => :c2), 'afa')
-    fail(@model.authorized_for?(:crud_type => :create, :column => :b2), 'aff')
+    miss(@model.authorized_for?(:crud_type => :create, :column => :c2), 'afa')
+    miss(@model.authorized_for?(:crud_type => :create, :column => :b2), 'aff')
     pass(@model.authorized_for?(:crud_type => :create, :column => :a2), 'aft')
     pass(@model.authorized_for?(:crud_type => :create, :column => :c1), 'ata')
-    fail(@model.authorized_for?(:crud_type => :create, :column => :b1), 'atf')
+    miss(@model.authorized_for?(:crud_type => :create, :column => :b1), 'atf')
     pass(@model.authorized_for?(:crud_type => :create, :column => :a1), 'att')
 
-    fail(@model.authorized_for?(:crud_type => :update, :column => :c3), 'faa')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :b3), 'faf')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :c3), 'faa')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :b3), 'faf')
     pass(@model.authorized_for?(:crud_type => :update, :column => :a3), 'fat')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :c2), 'ffa')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :b2), 'fff')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :c2), 'ffa')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :b2), 'fff')
     pass(@model.authorized_for?(:crud_type => :update, :column => :a2), 'fft')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :c1), 'fta')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :b1), 'ftf')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :c1), 'fta')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :b1), 'ftf')
     pass(@model.authorized_for?(:crud_type => :update, :column => :a1), 'ftt')
 
     pass(@model.authorized_for?(:crud_type => :read, :column => :c3), 'taa')
-    fail(@model.authorized_for?(:crud_type => :read, :column => :b3), 'taf')
+    miss(@model.authorized_for?(:crud_type => :read, :column => :b3), 'taf')
     pass(@model.authorized_for?(:crud_type => :read, :column => :a3), 'tat')
-    fail(@model.authorized_for?(:crud_type => :read, :column => :c2), 'tfa')
-    fail(@model.authorized_for?(:crud_type => :read, :column => :b2), 'tff')
+    miss(@model.authorized_for?(:crud_type => :read, :column => :c2), 'tfa')
+    miss(@model.authorized_for?(:crud_type => :read, :column => :b2), 'tff')
     pass(@model.authorized_for?(:crud_type => :read, :column => :a2), 'tft')
     pass(@model.authorized_for?(:crud_type => :read, :column => :c1), 'tta')
-    fail(@model.authorized_for?(:crud_type => :read, :column => :b1), 'ttf')
+    miss(@model.authorized_for?(:crud_type => :read, :column => :b1), 'ttf')
     pass(@model.authorized_for?(:crud_type => :read, :column => :a1), 'ttt')
 
     ActiveScaffold.set_defaults do |config|
@@ -129,42 +129,42 @@ class ActiveRecordPermissionsTest < MiniTest::Test
       config.security.default_permission = false
     end
 
-    fail(@model.authorized_for?(:column => :a3), '_a_')
-    fail(@model.authorized_for?(:column => :a2), '_f_')
+    miss(@model.authorized_for?(:column => :a3), '_a_')
+    miss(@model.authorized_for?(:column => :a2), '_f_')
     pass(@model.authorized_for?(:column => :a1), '_t_')
 
-    fail(@model.authorized_for?(:crud_type => :create), 'a__')
-    fail(@model.authorized_for?(:crud_type => :update), 'f__')
+    miss(@model.authorized_for?(:crud_type => :create), 'a__')
+    miss(@model.authorized_for?(:crud_type => :update), 'f__')
     pass(@model.authorized_for?(:crud_type => :read), 't__')
 
-    fail(@model.authorized_for?(:crud_type => :create, :column => :c3), 'aaa')
-    fail(@model.authorized_for?(:crud_type => :create, :column => :b3), 'aaf')
+    miss(@model.authorized_for?(:crud_type => :create, :column => :c3), 'aaa')
+    miss(@model.authorized_for?(:crud_type => :create, :column => :b3), 'aaf')
     pass(@model.authorized_for?(:crud_type => :create, :column => :a3), 'aat')
-    fail(@model.authorized_for?(:crud_type => :create, :column => :c2), 'afa')
-    fail(@model.authorized_for?(:crud_type => :create, :column => :b2), 'aff')
+    miss(@model.authorized_for?(:crud_type => :create, :column => :c2), 'afa')
+    miss(@model.authorized_for?(:crud_type => :create, :column => :b2), 'aff')
     pass(@model.authorized_for?(:crud_type => :create, :column => :a2), 'aft')
     pass(@model.authorized_for?(:crud_type => :create, :column => :c1), 'ata')
-    fail(@model.authorized_for?(:crud_type => :create, :column => :b1), 'atf')
+    miss(@model.authorized_for?(:crud_type => :create, :column => :b1), 'atf')
     pass(@model.authorized_for?(:crud_type => :create, :column => :a1), 'att')
 
-    fail(@model.authorized_for?(:crud_type => :update, :column => :c3), 'faa')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :b3), 'faf')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :c3), 'faa')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :b3), 'faf')
     pass(@model.authorized_for?(:crud_type => :update, :column => :a3), 'fat')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :c2), 'ffa')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :b2), 'fff')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :c2), 'ffa')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :b2), 'fff')
     pass(@model.authorized_for?(:crud_type => :update, :column => :a2), 'fft')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :c1), 'fta')
-    fail(@model.authorized_for?(:crud_type => :update, :column => :b1), 'ftf')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :c1), 'fta')
+    miss(@model.authorized_for?(:crud_type => :update, :column => :b1), 'ftf')
     pass(@model.authorized_for?(:crud_type => :update, :column => :a1), 'ftt')
 
     pass(@model.authorized_for?(:crud_type => :read, :column => :c3), 'taa')
-    fail(@model.authorized_for?(:crud_type => :read, :column => :b3), 'taf')
+    miss(@model.authorized_for?(:crud_type => :read, :column => :b3), 'taf')
     pass(@model.authorized_for?(:crud_type => :read, :column => :a3), 'tat')
-    fail(@model.authorized_for?(:crud_type => :read, :column => :c2), 'tfa')
-    fail(@model.authorized_for?(:crud_type => :read, :column => :b2), 'tff')
+    miss(@model.authorized_for?(:crud_type => :read, :column => :c2), 'tfa')
+    miss(@model.authorized_for?(:crud_type => :read, :column => :b2), 'tff')
     pass(@model.authorized_for?(:crud_type => :read, :column => :a2), 'tft')
     pass(@model.authorized_for?(:crud_type => :read, :column => :c1), 'tta')
-    fail(@model.authorized_for?(:crud_type => :read, :column => :b1), 'ttf')
+    miss(@model.authorized_for?(:crud_type => :read, :column => :b1), 'ttf')
     pass(@model.authorized_for?(:crud_type => :read, :column => :a1), 'ttt')
 
     ActiveScaffold.set_defaults do |config|
@@ -178,7 +178,7 @@ class ActiveRecordPermissionsTest < MiniTest::Test
     assert value, "#{message} should pass"
   end
 
-  def fail(value, message = nil)
+  def miss(value, message = nil)
     refute value, "#{message} should fail"
   end
 end
