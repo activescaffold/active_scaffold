@@ -78,7 +78,7 @@ class ColumnTest < MiniTest::Test
     assert @column == column2
 
     # special comparisons
-    assert @column != nil
+    assert !@column.nil?
     assert @column != ''
     assert @column != 0
   end
