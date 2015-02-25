@@ -41,7 +41,7 @@ module ActiveScaffold
         if self.respond_to?("condition_for_#{column.name}_column")
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
-        return unless column and column.search_sql and not value.blank?
+        return unless column and column.search_sql and !value.blank?
         search_ui = column.search_ui || column.column.try(:type)
         begin
           sql, *values =
@@ -91,7 +91,7 @@ module ActiveScaffold
           ['%{search_sql} = ?', condition_value_for_numeric(column, value)]
         elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
           condition_for_null_type(column, value[:opt])
-        elsif value[:from].blank? or not ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
+        elsif value[:from].blank? or !ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
           ['(%{search_sql} BETWEEN ? AND ?)', condition_value_for_numeric(column, value[:from]), condition_value_for_numeric(column, value[:to])]
@@ -335,7 +335,7 @@ module ActiveScaffold
       record = klass.find(id)
       security_options = {:crud_type => security_options.to_sym} unless security_options.is_a? Hash
       raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for? security_options
-      return record
+      record
     end
     # valid options may include:
     # * :sorting - a Sorting DataStructure (basically an array of hashes of field => direction, e.g. [{:field1 => 'asc'}, {:field2 => 'desc'}]). please note that multi-column sorting has some limitations: if any column in a multi-field sort uses method-based sorting, it will be ignored. method sorting only works for single-column sorting.

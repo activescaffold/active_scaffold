@@ -49,7 +49,7 @@ module ActiveScaffold::DataStructures
         return true if !c.is_a? Symbol and c.include? item
         return true if c == item.to_sym
       end
-      return false
+      false
     end
 
     def names
@@ -117,7 +117,7 @@ module ActiveScaffold::DataStructures
         unauthorized_columns << column.name.to_sym
         result = true
       end
-      return result
+      result
     end
 
     # registers a set of column objects (recursively, for all nested ActionColumns)

@@ -116,7 +116,7 @@ module ActiveScaffold::Bridges
             time_format = datetime_format.from(pos_time_format).strip
           end
         end
-        return date_format, time_format
+        [date_format, time_format]
       end
 
       module DatepickerColumnHelpers
