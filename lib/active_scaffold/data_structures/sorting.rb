@@ -39,10 +39,10 @@ module ActiveScaffold::DataStructures
       direction ||= 'ASC'
       direction = direction.to_s.upcase
       column = get_column(column_name)
-      fail ArgumentError, "Could not find column #{column_name}" if column.nil?
-      fail ArgumentError, 'Sorting direction unknown' unless [:ASC, :DESC].include? direction.to_sym
+      raise ArgumentError, "Could not find column #{column_name}" if column.nil?
+      raise ArgumentError, 'Sorting direction unknown' unless [:ASC, :DESC].include? direction.to_sym
       @clauses << [column, direction.untaint] if column.sortable?
-      fail ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
+      raise ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
     end
 
     # an alias for +add+. must accept its arguments in a slightly different form, though.

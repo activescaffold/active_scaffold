@@ -49,7 +49,7 @@ class AttributeParamsTest < MiniTest::Test
     assert model.save
     assert_equal 2, model.reload.buildings_count
 
-    model = update_record_from_params(model, :update, :first_name, :last_name, :buildings, :first_name => 'Name', :last_name => 'Last', :buildings => ['']) { fail ActiveRecord::Rollback }
+    model = update_record_from_params(model, :update, :first_name, :last_name, :buildings, :first_name => 'Name', :last_name => 'Last', :buildings => ['']) { raise ActiveRecord::Rollback }
     assert_equal 'Name', model.first_name
     assert_equal 'Last', model.last_name
     assert_equal [model.id] * 2, buildings.map { |b| b.reload.owner_id }, 'owners should not be saved'
@@ -138,7 +138,7 @@ class AttributeParamsTest < MiniTest::Test
     assert model.save
     assert_equal model.id, floor.reload.tenant_id, 'tenant_id should be saved'
 
-    model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '') { fail ActiveRecord::Rollback }
+    model = update_record_from_params(model, :update, :first_name, :floor, :first_name => 'First', :floor => '') { raise ActiveRecord::Rollback }
     assert_equal 'First', model.first_name
     assert_equal model.id, floor.reload.tenant_id, 'previous car should not be saved and nullified'
     assert_nil model.floor, 'floor should be cleared'
@@ -165,7 +165,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal model.id, model.floor.tenant_id, 'tenant_id should be saved'
     assert_equal [nil, model.id], building.floors(true).map(&:tenant_id)
 
-    model = update_record_from_params(model, :update, :first_name, :home, :first_name => 'First', :home => '') { fail ActiveRecord::Rollback }
+    model = update_record_from_params(model, :update, :first_name, :home, :first_name => 'First', :home => '') { raise ActiveRecord::Rollback }
     assert_equal 'First', model.first_name
     assert_equal [nil, model.id], building.floors(true).map(&:tenant_id), 'previous floor should not be deleted'
     assert_nil model.home, 'home should be cleared'
@@ -190,7 +190,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal [model.id] * 2, model.floors.map(&:building_id)
     assert_equal [model.id] * 2, people.map { |p| p.floor(true).building_id }, 'floor should be saved'
 
-    model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => ['']) { fail ActiveRecord::Rollback }
+    model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => ['']) { raise ActiveRecord::Rollback }
     assert_equal 'Skyscrapper', model.name
     assert_equal [model.id] * 2, people.map { |p| p.floor(true).building_id }, 'previous floor should not be deleted'
     assert model.tenants.empty?, 'tenants should be cleared'

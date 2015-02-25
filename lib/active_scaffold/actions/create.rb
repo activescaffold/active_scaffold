@@ -145,7 +145,7 @@ module ActiveScaffold::Actions
 
     def create_authorized_filter
       link = active_scaffold_config.create.link || active_scaffold_config.create.class.link
-      fail ActiveScaffold::ActionNotAllowed unless send(link.security_method)
+      raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)
     end
 
     def new_formats

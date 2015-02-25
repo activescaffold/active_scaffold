@@ -92,7 +92,7 @@ module ActiveScaffold
         # options[:column] should be the name of a model attribute
         # options[:action] is the name of a method
         def authorized_for?(options = {})
-          fail ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] and ![:create, :read, :update, :delete].include?(options[:crud_type])
+          raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] and ![:create, :read, :update, :delete].include?(options[:crud_type])
 
           # collect other possibly-related methods that actually exist
           methods = cached_authorized_for_methods(options)

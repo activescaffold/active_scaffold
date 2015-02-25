@@ -116,7 +116,7 @@ module ActiveScaffold::Actions
           else
             # some associations such as habtm are saved before saved is called on parent object
             # we have to revert these changes if validation fails
-            fail ActiveRecord::Rollback, "don't save habtm associations unless record is valid"
+            raise ActiveRecord::Rollback, "don't save habtm associations unless record is valid"
           end
         end
       rescue ActiveRecord::StaleObjectError
@@ -195,7 +195,7 @@ module ActiveScaffold::Actions
 
     def update_authorized_filter
       link = active_scaffold_config.update.link || active_scaffold_config.update.class.link
-      fail ActiveScaffold::ActionNotAllowed unless send(link.security_method)
+      raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)
     end
 
     def edit_formats

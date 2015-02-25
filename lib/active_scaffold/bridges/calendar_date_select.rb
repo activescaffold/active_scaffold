@@ -4,7 +4,7 @@ class ActiveScaffold::Bridges::CalendarDateSelect < ActiveScaffold::DataStructur
     # we can detect this by checking to see if the bridge was installed before calling this code
 
     if ActiveScaffold::Config::Core.method_defined?(:initialize_with_calendar_date_select)
-      fail "We've detected that you have active_scaffold_calendar_date_select_bridge installed.  This plugin has been moved to core.  Please remove active_scaffold_calendar_date_select_bridge to prevent any conflicts"
+      raise "We've detected that you have active_scaffold_calendar_date_select_bridge installed.  This plugin has been moved to core.  Please remove active_scaffold_calendar_date_select_bridge to prevent any conflicts"
     end
 
     require File.join(File.dirname(__FILE__), 'calendar_date_select/as_cds_bridge.rb')
