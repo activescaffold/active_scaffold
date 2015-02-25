@@ -82,7 +82,7 @@ module ActiveScaffold
             new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
             new_sti_link.label = as_(:create_model, :model => child.to_s.camelize.constantize.model_name.human)
             new_sti_link.parameters = {:parent_sti => controller_path}
-            new_sti_link.controller = Proc.new { active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path }
+            new_sti_link.controller = proc { active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path }
             active_scaffold_config.action_links.collection.create.add(new_sti_link)
           end
         end
@@ -96,7 +96,7 @@ module ActiveScaffold
           # lazy load of action_link, cause it was really slowing down app in dev mode
           # and might lead to trouble cause of cyclic constantization of controllers
           # and might be unnecessary cause it is done before columns are configured
-          column.set_link(Proc.new { |col| link_for_association(col) })
+          column.set_link(proc { |col| link_for_association(col) })
         end
       end
 
