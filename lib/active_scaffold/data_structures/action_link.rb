@@ -80,9 +80,11 @@ module ActiveScaffold::DataStructures
       @dhtml_confirm = nil if value
       @confirm = value
     end
+
     def confirm(label = '')
       @confirm.is_a?(String) ? @confirm : as_(@confirm, :label => label)
     end
+
     def confirm?
       !!@confirm
     end
@@ -93,6 +95,7 @@ module ActiveScaffold::DataStructures
       @confirm = nil if value
       @dhtml_confirm = value
     end
+
     def dhtml_confirm?
       !!@dhtml_confirm
     end
@@ -127,6 +130,7 @@ module ActiveScaffold::DataStructures
       @inline = (val == true)
       self.popup = self.page = false if @inline
     end
+
     def inline?
       @inline
     end
@@ -143,6 +147,7 @@ module ActiveScaffold::DataStructures
         self.method = nil
       end
     end
+
     def popup?
       @popup
     end
@@ -162,6 +167,7 @@ module ActiveScaffold::DataStructures
         self.method = nil if method == :get
       end
     end
+
     def page?
       @page
     end
@@ -182,7 +188,7 @@ module ActiveScaffold::DataStructures
       return @position unless @position.nil? or @position == true
       return :replace if type == :member
       return :top if type == :collection
-      raise "what should the default position be for #{type}?"
+      fail "what should the default position be for #{type}?"
     end
 
     # what type of link this is. currently supported values are :collection and :member.
@@ -209,9 +215,8 @@ module ActiveScaffold::DataStructures
     end
 
     def name_to_cache
-      @name_to_cache ||= "#{controller || 'self'}_#{type}_#{action}#{'_' if parameters.present?}#{parameters.map {|k, v| "#{k}=#{v.is_a?(Array) ? v.join(',') : v}"}.join('_')}"
+      @name_to_cache ||= "#{controller || 'self'}_#{type}_#{action}#{'_' if parameters.present?}#{parameters.map { |k, v| "#{k}=#{v.is_a?(Array) ? v.join(',') : v}" }.join('_')}"
     end
-
 
   end
 end

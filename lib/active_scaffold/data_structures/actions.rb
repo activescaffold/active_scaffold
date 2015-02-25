@@ -17,11 +17,11 @@ class ActiveScaffold::DataStructures::Actions
   alias_method :<<, :add
 
   def each
-    @set.each {|item| yield item}
+    @set.each { |item| yield item }
   end
 
   def include?(val)
-    val.is_a?(Symbol) ? super : @set.any? {|item| item.to_s == val.to_s}
+    val.is_a?(Symbol) ? super : @set.any? { |item| item.to_s == val.to_s }
   end
 
   # swaps one element in the list with the other.

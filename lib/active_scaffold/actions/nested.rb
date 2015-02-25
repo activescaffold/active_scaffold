@@ -7,7 +7,7 @@ module ActiveScaffold::Actions
       base.module_eval do
         before_filter :set_nested
         before_filter :configure_nested
-        include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? {|a| a.macro == :has_and_belongs_to_many}
+        include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? { |a| a.macro == :has_and_belongs_to_many }
       end
       base.before_filter :include_habtm_actions
       base.helper_method :nested
@@ -90,7 +90,7 @@ module ActiveScaffold::Actions
           table_name =
             if active_scaffold_config.model == nested.association.active_record
               dependency = ActiveRecord::Associations::JoinDependency.new(chain.klass, chain.joins_values, [])
-              dependency.join_associations.find {|join| join.try(:reflection).try(:name) == nested.child_association.name}.try(:table).try(:right)
+              dependency.join_associations.find { |join| join.try(:reflection).try(:name) == nested.child_association.name }.try(:table).try(:right)
             end
           table_name ||= nested.association.active_record.table_name
           chain.where(table_name => {nested.association.active_record.primary_key => nested_parent_record}).readonly(false)
@@ -161,9 +161,11 @@ module ActiveScaffold::Actions::Nested
         return_to_main
       end
     end
+
     def new_existing_respond_to_js
       render(:partial => 'add_existing_form')
     end
+
     def add_existing_respond_to_html
       if successful?
         flash[:info] = as_(:created_model, :model => @record.to_label)
@@ -172,6 +174,7 @@ module ActiveScaffold::Actions::Nested
         render(:action => 'add_existing_form')
       end
     end
+
     def add_existing_respond_to_js
       if successful?
         render :action => 'add_existing'
@@ -179,15 +182,19 @@ module ActiveScaffold::Actions::Nested
         render :action => 'form_messages'
       end
     end
+
     def add_existing_respond_to_xml
       render :xml => response_object.to_xml(:only => active_scaffold_config.list.columns.names), :content_type => Mime::XML, :status => response_status
     end
+
     def add_existing_respond_to_json
       render :text => response_object.to_json(:only => active_scaffold_config.list.columns.names), :content_type => Mime::JSON, :status => response_status
     end
+
     def add_existing_respond_to_yaml
       render :text => Hash.from_xml(response_object.to_xml(:only => active_scaffold_config.list.columns.names)).to_yaml, :content_type => Mime::YAML, :status => response_status
     end
+
     def destroy_existing_respond_to_html
       flash[:info] = as_(:deleted_model, :model => @record.to_label)
       return_to_main
@@ -212,6 +219,7 @@ module ActiveScaffold::Actions::Nested
     def add_existing_authorized?(record = nil)
       true
     end
+
     def delete_existing_authorized?(record = nil)
       true
     end
@@ -251,9 +259,11 @@ module ActiveScaffold::Actions::Nested
     def new_existing_formats
       (default_formats + active_scaffold_config.formats).uniq
     end
+
     def add_existing_formats
       (default_formats + active_scaffold_config.formats).uniq
     end
+
     def destroy_existing_formats
       (default_formats + active_scaffold_config.formats).uniq
     end

@@ -90,7 +90,7 @@ class SortingTest < MiniTest::Test
   end
 
   def test_sorts_by_method
-    @columns[:a].sort_by :method => proc {0}
+    @columns[:a].sort_by :method => proc { 0 }
 
     # test pure method sorting: true
     @sorting.add :a
@@ -118,7 +118,7 @@ class SortingTest < MiniTest::Test
 
   def test_set_default_sorting_with_simple_default_scope
     model_stub_with_default_scope = ModelStub.clone
-    model_stub_with_default_scope.class_eval { default_scope lambda { order('a') } }
+    model_stub_with_default_scope.class_eval { default_scope -> { order('a') } }
     @sorting.set_default_sorting model_stub_with_default_scope
 
     assert @sorting.sorts_on?(:a)
@@ -128,7 +128,7 @@ class SortingTest < MiniTest::Test
 
   def test_set_default_sorting_with_complex_default_scope
     model_stub_with_default_scope = ModelStub.clone
-    model_stub_with_default_scope.class_eval { default_scope lambda { order('a DESC, players.last_name ASC') } }
+    model_stub_with_default_scope.class_eval { default_scope -> { order('a DESC, players.last_name ASC') } }
     @sorting.set_default_sorting model_stub_with_default_scope
 
     assert @sorting.sorts_on?(:a)

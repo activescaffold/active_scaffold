@@ -32,30 +32,28 @@ module ActiveScaffold::Bridges
       end
 
       def self.date_options(locale)
-        begin
-          date_picker_options = {:closeText => as_(:close),
-            :prevText => as_(:previous),
-            :nextText => as_(:next),
-            :currentText => as_(:today),
-            :monthNames => I18n.translate!('date.month_names', :locale => locale)[1..-1],
-            :monthNamesShort => I18n.translate!('date.abbr_month_names', :locale => locale)[1..-1],
-            :dayNames => I18n.translate!('date.day_names', :locale => locale),
-            :dayNamesShort => I18n.translate!('date.abbr_day_names', :locale => locale),
-            :dayNamesMin => I18n.translate!('date.abbr_day_names', :locale => locale),
-            :changeYear => true,
-            :changeMonth => true
-          }
+        date_picker_options = {:closeText => as_(:close),
+          :prevText => as_(:previous),
+          :nextText => as_(:next),
+          :currentText => as_(:today),
+          :monthNames => I18n.translate!('date.month_names', :locale => locale)[1..-1],
+          :monthNamesShort => I18n.translate!('date.abbr_month_names', :locale => locale)[1..-1],
+          :dayNames => I18n.translate!('date.day_names', :locale => locale),
+          :dayNamesShort => I18n.translate!('date.abbr_day_names', :locale => locale),
+          :dayNamesMin => I18n.translate!('date.abbr_day_names', :locale => locale),
+          :changeYear => true,
+          :changeMonth => true
+        }
 
-          as_date_picker_options = I18n.translate! :date_picker_options, :scope => :active_scaffold, :locale => locale, :default => ''
-          date_picker_options.merge!(as_date_picker_options) if as_date_picker_options.is_a? Hash
-          Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}" if as_date_picker_options.blank?
+        as_date_picker_options = I18n.translate! :date_picker_options, :scope => :active_scaffold, :locale => locale, :default => ''
+        date_picker_options.merge!(as_date_picker_options) if as_date_picker_options.is_a? Hash
+        Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}" if as_date_picker_options.blank?
 
-          js_format = to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
-          date_picker_options[:dateFormat] = js_format unless js_format.blank?
-          date_picker_options
-        rescue
-          raise if locale == I18n.locale
-        end
+        js_format = to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
+        date_picker_options[:dateFormat] = js_format unless js_format.blank?
+        date_picker_options
+      rescue
+        raise if locale == I18n.locale
       end
 
       def self.datetime_options_for_locales
@@ -70,28 +68,26 @@ module ActiveScaffold::Bridges
       end
 
       def self.datetime_options(locale)
-        begin
-          rails_time_format = I18n.translate! 'time.formats.picker', :locale => locale, :default => '%a, %d %b %Y %H:%M:%S'
-          datetime_picker_options = {:ampm => false,
-            :hourText => I18n.translate!('datetime.prompts.hour', :locale => locale),
-            :minuteText => I18n.translate!('datetime.prompts.minute', :locale => locale),
-            :secondText => I18n.translate!('datetime.prompts.second', :locale => locale)
-          }
+        rails_time_format = I18n.translate! 'time.formats.picker', :locale => locale, :default => '%a, %d %b %Y %H:%M:%S'
+        datetime_picker_options = {:ampm => false,
+          :hourText => I18n.translate!('datetime.prompts.hour', :locale => locale),
+          :minuteText => I18n.translate!('datetime.prompts.minute', :locale => locale),
+          :secondText => I18n.translate!('datetime.prompts.second', :locale => locale)
+        }
 
-          as_datetime_picker_options = I18n.translate! :datetime_picker_options, :scope => :active_scaffold, :locale => locale, :default => ''
-          datetime_picker_options.merge!(as_datetime_picker_options) if as_datetime_picker_options.is_a? Hash
-          Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{locale}" if as_datetime_picker_options.blank?
+        as_datetime_picker_options = I18n.translate! :datetime_picker_options, :scope => :active_scaffold, :locale => locale, :default => ''
+        datetime_picker_options.merge!(as_datetime_picker_options) if as_datetime_picker_options.is_a? Hash
+        Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{locale}" if as_datetime_picker_options.blank?
 
-          date_format, time_format = split_datetime_format(to_datepicker_format(rails_time_format))
-          datetime_picker_options[:dateFormat] = date_format unless date_format.nil?
-          unless time_format.nil?
-            datetime_picker_options[:timeFormat] = time_format
-            datetime_picker_options[:ampm] = true if rails_time_format.include?('%I')
-          end
-          datetime_picker_options
-        rescue
-          raise if locale == I18n.locale
+        date_format, time_format = split_datetime_format(to_datepicker_format(rails_time_format))
+        datetime_picker_options[:dateFormat] = date_format unless date_format.nil?
+        unless time_format.nil?
+          datetime_picker_options[:timeFormat] = time_format
+          datetime_picker_options[:ampm] = true if rails_time_format.include?('%I')
         end
+        datetime_picker_options
+      rescue
+        raise if locale == I18n.locale
       end
 
       def self.to_datepicker_format(rails_format)
@@ -113,7 +109,7 @@ module ActiveScaffold::Bridges
         time_format = nil
         time_start_indicators = %w{HH hh mm tt ss}
         unless datetime_format.nil?
-          start_indicator = time_start_indicators.detect {|indicator| datetime_format.include?(indicator)}
+          start_indicator = time_start_indicators.detect { |indicator| datetime_format.include?(indicator) }
           unless start_indicator.nil?
             pos_time_format = datetime_format.index(start_indicator)
             date_format = datetime_format.to(pos_time_format - 1).strip

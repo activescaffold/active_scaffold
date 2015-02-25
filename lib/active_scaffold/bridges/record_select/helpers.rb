@@ -26,7 +26,7 @@ class ActiveScaffold::Bridges::RecordSelect
 
       def active_scaffold_record_select(record, column, options, value, multiple)
         unless column.association
-          raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
+          fail ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
         end
         klass =
           if column.polymorphic_association?
@@ -76,19 +76,17 @@ class ActiveScaffold::Bridges::RecordSelect
       end
 
       def field_search_record_select_value(column)
-        begin
-          value = field_search_params[column.name]
-          unless value.blank?
-            if column.options[:multiple]
-              column.association.klass.find value.collect!(&:to_i)
-            else
-              column.association.klass.find(value.to_i)
-            end
+        value = field_search_params[column.name]
+        unless value.blank?
+          if column.options[:multiple]
+            column.association.klass.find value.collect!(&:to_i)
+          else
+            column.association.klass.find(value.to_i)
           end
-        rescue StandardError => e
-          logger.error "#{e.class.name}: #{e.message} -- Sorry, we are not that smart yet. Attempted to restore search values to search fields :#{column.name} in #{controller.class}"
-          raise e
         end
+      rescue StandardError => e
+        logger.error "#{e.class.name}: #{e.message} -- Sorry, we are not that smart yet. Attempted to restore search values to search fields :#{column.name} in #{controller.class}"
+        raise e
       end
     end
   end

@@ -63,5 +63,4 @@ ActiveRecord::Schema.define do
     t.integer 'person_id'
     t.integer 'role_id'
   end
-
 end

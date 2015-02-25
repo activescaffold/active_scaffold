@@ -1,15 +1,13 @@
 module ActiveScaffold::DataStructures
   class NestedInfo
     def self.get(model, params)
-      begin
-        if params[:association].nil?
-          ActiveScaffold::DataStructures::NestedInfoScope.new(model, params)
-        else
-          ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, params)
-        end
-      rescue ActiveScaffold::ControllerNotFound
-        nil
+      if params[:association].nil?
+        ActiveScaffold::DataStructures::NestedInfoScope.new(model, params)
+      else
+        ActiveScaffold::DataStructures::NestedInfoAssociation.new(model, params)
       end
+    rescue ActiveScaffold::ControllerNotFound
+      nil
     end
 
     attr_accessor :association, :child_association, :parent_model, :parent_scaffold, :parent_id, :param_name, :constrained_fields, :scope
@@ -114,7 +112,7 @@ module ActiveScaffold::DataStructures
     end
 
     def sorted?
-      association.options.has_key? :order
+      association.options.key? :order
     end
 
     def default_sorting

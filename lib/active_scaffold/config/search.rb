@@ -9,7 +9,6 @@ module ActiveScaffold::Config
       @split_terms = self.class.split_terms
     end
 
-
     # global level configuration
     # --------------------------
     # the ActionLink for this action
@@ -41,7 +40,7 @@ module ActiveScaffold::Config
     def columns
       # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will not be available to .searchable?
       unless @columns
-        self.columns = @core.columns.collect {|c| c.name if @core.columns._inheritable.include?(c.name) and c.searchable? and c.association.nil? and c.text?}.compact
+        self.columns = @core.columns.collect { |c| c.name if @core.columns._inheritable.include?(c.name) and c.searchable? and c.association.nil? and c.text? }.compact
       end
       @columns
     end

@@ -4,7 +4,7 @@ module ActiveScaffold
       module FileColumnHelpers
         class << self
           def file_column_fields(klass)
-            klass.instance_methods.select {|m| m.to_s =~ /_just_uploaded\?$/}.collect {|m| m[0..-16].to_sym }
+            klass.instance_methods.select { |m| m.to_s =~ /_just_uploaded\?$/ }.collect { |m| m[0..-16].to_sym }
           end
 
           def generate_delete_helpers(klass)
@@ -37,15 +37,12 @@ module ActiveScaffold
         end
 
         def field_has_image_version?(field, version = 'thumb')
-          begin
-            # the only way to get to the options of a particular field is to use the instance method
-            options = options_for_file_column_field(field)
-            versions = options[:magick][:versions]
-            raise unless versions.stringify_keys[version]
-            true
-          rescue
-            false
-          end
+          options = options_for_file_column_field(field)
+          versions = options[:magick][:versions]
+          fail unless versions.stringify_keys[version]
+          true
+        rescue
+          false
         end
 
         def generate_delete_helpers

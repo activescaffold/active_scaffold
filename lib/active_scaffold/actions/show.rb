@@ -55,6 +55,7 @@ module ActiveScaffold::Actions
     def show_authorized?(record = nil)
       (record || self).send(:authorized_for?, :crud_type => :read)
     end
+
     def show_ignore?(record = nil)
       !send(:authorized_for?, :crud_type => :read)
     end
@@ -63,8 +64,9 @@ module ActiveScaffold::Actions
 
     def show_authorized_filter
       link = active_scaffold_config.show.link || active_scaffold_config.show.class.link
-      raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)
+      fail ActiveScaffold::ActionNotAllowed unless send(link.security_method)
     end
+
     def show_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.show.formats).uniq
     end

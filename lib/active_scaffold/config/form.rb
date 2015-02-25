@@ -46,7 +46,7 @@ module ActiveScaffold::Config
       unless @columns # lazy evaluation
         self.columns = @core.columns._inheritable
         columns.exclude :created_on, :created_at, :updated_on, :updated_at, :as_marked
-        columns.exclude *@core.columns.collect {|c| c.name if c.polymorphic_association?}.compact
+        columns.exclude *@core.columns.collect { |c| c.name if c.polymorphic_association? }.compact
       end
       @columns
     end

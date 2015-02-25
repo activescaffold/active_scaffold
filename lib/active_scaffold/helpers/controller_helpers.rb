@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ControllerHelpers
       def self.included(controller)
-        controller.class_eval { helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated, :generate_temporary_id, :generated_id}
+        controller.class_eval { helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated, :generate_temporary_id, :generated_id }
       end
 
       include ActiveScaffold::Helpers::IdHelpers
@@ -25,7 +25,7 @@ module ActiveScaffold
         blacklist = [:adapter, :position, :sort, :sort_direction, :page, :auto_pagination, :record, :commit, :_method, :authenticity_token, :iframe, :associated_id, :dont_close]
         unless @params_for
           @params_for = {}
-          params.except(*blacklist).each {|key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value}
+          params.except(*blacklist).each { |key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value }
           @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end

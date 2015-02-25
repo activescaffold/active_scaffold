@@ -12,9 +12,11 @@ module ActiveScaffold::DataStructures
     def label
       as_(@label) if @label
     end
+
     def name
       @label.to_s.underscore
     end
+
     def css_class
       @label.to_s.underscore
     end
@@ -97,7 +99,7 @@ module ActiveScaffold::DataStructures
           item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
           next if self.skip_column?(item, options)
         end
-        if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.has_key?(:flatten) and options[:flatten]
+        if item.is_a? ActiveScaffold::DataStructures::ActionColumns and options.key?(:flatten) and options[:flatten]
           columns += item.collect_visible(options, &proc)
         else
           columns << (block_given? ? yield(item) : item)
@@ -157,7 +159,7 @@ module ActiveScaffold::DataStructures
     protected
 
     def collect_columns
-      @set.collect {|col| col.is_a?(ActiveScaffold::DataStructures::ActionColumns) ? col.collect_columns : col}
+      @set.collect { |col| col.is_a?(ActiveScaffold::DataStructures::ActionColumns) ? col.collect_columns : col }
     end
 
     # called during clone or dup. makes the clone/dup deeper.

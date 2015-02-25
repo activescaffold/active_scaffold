@@ -39,10 +39,10 @@ module ActiveScaffold::DataStructures
       direction ||= 'ASC'
       direction = direction.to_s.upcase
       column = get_column(column_name)
-      raise ArgumentError, "Could not find column #{column_name}" if column.nil?
-      raise ArgumentError, 'Sorting direction unknown' unless [:ASC, :DESC].include? direction.to_sym
+      fail ArgumentError, "Could not find column #{column_name}" if column.nil?
+      fail ArgumentError, 'Sorting direction unknown' unless [:ASC, :DESC].include? direction.to_sym
       @clauses << [column, direction.untaint] if column.sortable?
-      raise ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
+      fail ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
     end
 
     # an alias for +add+. must accept its arguments in a slightly different form, though.
@@ -92,11 +92,11 @@ module ActiveScaffold::DataStructures
 
     # checks whether any column is configured to sort by method (using a proc)
     def sorts_by_method?
-      @clauses.any? { |sorting| sorting[0].sort.is_a? Hash and sorting[0].sort.has_key? :method }
+      @clauses.any? { |sorting| sorting[0].sort.is_a? Hash and sorting[0].sort.key? :method }
     end
 
     def sorts_by_sql?
-      @clauses.any? { |sorting| sorting[0].sort.is_a? Hash and sorting[0].sort.has_key? :sql }
+      @clauses.any? { |sorting| sorting[0].sort.is_a? Hash and sorting[0].sort.key? :sql }
     end
 
     # iterate over the clauses
@@ -120,7 +120,7 @@ module ActiveScaffold::DataStructures
         sql = sort_column.sort[:sql]
         next if sql.nil? or sql.empty?
 
-        order << Array(sql).map {|column| "#{column} #{sort_direction}"}.join(', ')
+        order << Array(sql).map { |column| "#{column} #{sort_direction}" }.join(', ')
       end
 
       order << @primary_key_clause if @sorting_by_primary_key
@@ -132,7 +132,7 @@ module ActiveScaffold::DataStructures
     # retrieves the sorting clause for the given column
     def get_clause(column)
       column = get_column(column)
-      @clauses.find { |clause| clause[0] == column}
+      @clauses.find { |clause| clause[0] == column }
     end
 
     # possibly converts the given argument into a column object from @columns (if it's not already)

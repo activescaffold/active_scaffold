@@ -35,12 +35,10 @@ module ActiveScaffold
       ##
 
       def controller_path_for_activerecord(klass)
-        begin
-          controller = active_scaffold_controller_for(klass)
-          controller.controller_path
-        rescue ActiveScaffold::ControllerNotFound
-          nil
-        end
+        controller = active_scaffold_controller_for(klass)
+        controller.controller_path
+      rescue ActiveScaffold::ControllerNotFound
+        nil
       end
 
       # This is the template finder logic, keep it updated with however we find stuff in rails
@@ -159,7 +157,7 @@ module ActiveScaffold
           options[:authorized] = false if link.action.nil? || link.controller.nil?
           options.delete :link if link.crud_type == :create
         end
-        if link.action.nil? || (link.type == :member && options.has_key?(:authorized) && !options[:authorized])
+        if link.action.nil? || (link.type == :member && options.key?(:authorized) && !options[:authorized])
           action_link_html(link, nil, {:link => action_link_text(link, options), :class => "disabled #{link.action}#{" #{link.html_options[:class]}" unless link.html_options[:class].blank?}"}, record)
         else
           url = action_link_url(link, record)
@@ -358,7 +356,7 @@ module ActiveScaffold
       def replaced_action_link_url_options(link, record)
         url = action_link_url_options(link, record)
         url[:controller] ||= params[:controller]
-        missing_options, url_options = url.partition {|_, v| v.nil?}
+        missing_options, url_options = url.partition { |_, v| v.nil? }
         replacements = {}
         replacements['--ID--'] = record.id.to_s if record
         if link.column.try(:singular_association?)
@@ -374,7 +372,7 @@ module ActiveScaffold
 
       def action_link_selected?(link, record)
         missing_options, url_options = replaced_action_link_url_options(link, record)
-        (url_options - params.to_a).blank? && missing_options.all? {|k, _| params[k].nil?}
+        (url_options - params.to_a).blank? && missing_options.all? { |k, _| params[k].nil? }
       end
 
       def action_link_html_options(link, record, options)
@@ -606,7 +604,7 @@ module ActiveScaffold
         end
 
         objects.compact!
-        count = objects.inject(0) {|sum, object| sum + object.errors.count }
+        count = objects.inject(0) { |sum, object| sum + object.errors.count }
 
         if count.zero?
           ''

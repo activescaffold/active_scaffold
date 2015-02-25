@@ -81,7 +81,7 @@ module ActiveScaffold
 
         if column.association
           method = column.options[:label_method] || :to_label
-          select_options = sorted_association_options_find(column.association, nil, record).collect {|r| [r.send(method), r.id]}
+          select_options = sorted_association_options_find(column.association, nil, record).collect { |r| [r.send(method), r.id] }
         else
           select_options = column.options[:options].collect do |text, value|
             active_scaffold_translated_option(column, text, value)
@@ -145,7 +145,7 @@ module ActiveScaffold
       def active_scaffold_search_null(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
-        select_options.concat ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp), comp]}
+        select_options.concat ActiveScaffold::Finder::NullComparators.collect { |comp| [as_(comp), comp] }
         select_tag(options[:name], options_for_select(select_options, options[:value]), :id => options[:id])
       end
 
@@ -160,18 +160,18 @@ module ActiveScaffold
       end
 
       def active_scaffold_search_range_comparator_options(column)
-        select_options = ActiveScaffold::Finder::NumericComparators.collect {|comp| [as_(comp.downcase.to_sym), comp]}
+        select_options = ActiveScaffold::Finder::NumericComparators.collect { |comp| [as_(comp.downcase.to_sym), comp] }
         if active_scaffold_search_range_string?(column)
-          select_options.unshift *ActiveScaffold::Finder::StringComparators.collect {|title, comp| [as_(title), comp]}
+          select_options.unshift *ActiveScaffold::Finder::StringComparators.collect { |title, comp| [as_(title), comp] }
         end
         if include_null_comparators? column
-          select_options += ActiveScaffold::Finder::NullComparators.collect {|comp| [as_(comp), comp]}
+          select_options += ActiveScaffold::Finder::NullComparators.collect { |comp| [as_(comp), comp] }
         end
         select_options
       end
 
       def include_null_comparators?(column)
-        return column.options[:null_comparators] if column.options.has_key? :null_comparators
+        return column.options[:null_comparators] if column.options.key? :null_comparators
         if column.association
           column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
         else
@@ -228,6 +228,7 @@ module ActiveScaffold
       def active_scaffold_search_date(column, options)
         active_scaffold_search_datetime(column, options.merge!(:discard_time => true))
       end
+
       def active_scaffold_search_time(column, options)
         active_scaffold_search_datetime(column, options.merge!(:discard_date => true))
       end

@@ -78,6 +78,7 @@ class Company < ActiveRecord::Base
   attr_reader :main_company
 
   def name; end
+
   def name_before_type_cast
     name.to_s
   end
