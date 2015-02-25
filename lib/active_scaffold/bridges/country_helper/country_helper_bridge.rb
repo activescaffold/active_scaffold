@@ -27,7 +27,7 @@ module ActiveScaffold::Bridges
           country_options = options_for_select([])
         end
 
-        return country_options + options_for_select(COUNTRIES.collect { |country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s] }, :selected => selected)
+        country_options + options_for_select(COUNTRIES.collect { |country| [I18n.t("countries.#{country}", :default => country.to_s.titleize), country.to_s] }, :selected => selected)
       end
 
       # Returns a string of option tags for the states in the United States. Supply a state name as +selected to
@@ -47,7 +47,7 @@ module ActiveScaffold::Bridges
           state_options += options_for_select(USASTATES, :selected => selected)
         end
 
-        return state_options
+        state_options
       end
       # All the countries included in the country_options output.
       COUNTRIES = [

@@ -141,7 +141,7 @@ module ActiveScaffold::DataStructures
       return name_or_column if name_or_column.is_a? ActiveScaffold::DataStructures::Column
       # it's a name
       name_or_column = name_or_column.to_s.split('.').last if name_or_column.to_s.include? '.'
-      return @columns[name_or_column]
+      @columns[name_or_column]
     end
 
     def mixed_sorting?

@@ -130,7 +130,7 @@ module ActiveScaffold::Bridges
           end
           default_result = authorized_for_without_cancan?(options)
           result = (crud_type_result && action_result) || default_result
-          return result
+          result
         end
       end
     end
