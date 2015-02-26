@@ -10,9 +10,9 @@ module ActiveScaffold
           # we already have a value? display the form for deletion.
           case ActiveScaffold.js_framework
           when :jquery
-            remove_file_js = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show(); return false;";
+            remove_file_js = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show(); return false;"
           when :prototype
-            remove_file_js = "$(this).previous().value='true'; p=$(this).up(); p.hide(); p.next().show(); return false;";
+            remove_file_js = "$(this).previous().value='true'; p=$(this).up(); p.hide(); p.next().show(); return false;"
           end
 
           hidden_options = options.merge(:id => options[:id] + '_delete', :name => options[:name].sub("[#{column.name}]", "[delete_#{column.name}]"), :value => 'false')

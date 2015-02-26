@@ -12,9 +12,9 @@ module ActiveScaffold
         if paperclip.file?
           case ActiveScaffold.js_framework
           when :jquery
-            js_remove_file_code = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show(); return false;";
+            js_remove_file_code = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show(); return false;"
           when :prototype
-            js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show(); return false;";
+            js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show(); return false;"
           end
 
           object_name, method = options[:name].split(/\[(#{column.name})\]/)
