@@ -376,11 +376,11 @@ module ActiveScaffold
         options.each_with_object('') do |(text, value), html|
           if column.association
             text, value = [text.send(label_method), text.id]
-            checked = {:checked => html_options[:object].send(column.association.name).try(:id) == value} 
+            checked = {:checked => html_options[:object].send(column.association.name).try(:id) == value}
           else
             text, value = active_scaffold_translated_option(column, text, value)
           end
-          
+
           radio_options = html_options.merge(id_key => html_options[id_key] + '-' + value.to_s)
           radio_options.merge!(checked) if checked
           html << content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
