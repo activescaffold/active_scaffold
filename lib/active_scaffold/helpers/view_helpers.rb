@@ -519,7 +519,7 @@ module ActiveScaffold
       def column_empty?(column_value)
         empty = column_value.nil?
         empty ||= false != column_value && column_value.blank?
-        empty ||= ['&nbsp;', empty_field_text].include? column_value if String === column_value
+        empty ||= ['&nbsp;', empty_field_text].include? column_value if column_value.is_a? String
         empty
       end
 

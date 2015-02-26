@@ -92,7 +92,7 @@ module ActiveScaffold::DataStructures
     end
 
     def sort
-      initialize_sort if @sort === true
+      initialize_sort if @sort == true
       @sort
     end
 
@@ -348,9 +348,7 @@ module ActiveScaffold::DataStructures
       # default all the configurable variables
       self.css_class = ''
       self.required = active_record_class.validators_on(self.name).any? do |val|
-        !val.options[:if] && !val.options[:unless] && (ActiveModel::Validations::PresenceValidator === val ||
-          (ActiveModel::Validations::InclusionValidator === val && !val.options[:allow_nil] && !val.options[:allow_blank] && !(@form_ui == :checkbox && [[true, false], [false, true]].include?(val.send(:delimiter))))
-        )
+        validator_force_required?(val)
       end
       self.sort = true
       self.search_sql = true
@@ -406,6 +404,21 @@ module ActiveScaffold::DataStructures
     end
 
     protected
+
+    def validator_force_required?(val)
+      return false if val.options[:if] || val.options[:unless]
+      case val
+      when ActiveModel::Validations::PresenceValidator
+        true
+      when ActiveModel::Validations::InclusionValidator
+        !val.options[:allow_nil] && !val.options[:allow_blank] &&
+            !inclusion_validator_for_checkbox?(val)
+      end
+    end
+
+    def inclusion_validator_for_checkbox?(val)
+      @form_ui == :checkbox && [[true, false], [false, true]].include?(val.options[:with] || val.options[:within])
+    end
 
     def default_select_columns
       if association.nil? && column
