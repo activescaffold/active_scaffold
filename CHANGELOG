@@ -3,6 +3,7 @@
 - unscope(:order) in calculate_query (for rails >= 4)
 - clean code and follow ruby style guide
 - deny_access (rescue method for ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed) render with status :forbidden (403) instead of 401
+- allow to load nested scaffold with nested through associations, even with inplace edit enabled
 
 = 3.4.17
 - Fix deprecation warning "Extra .css in SCSS file is unnecessary"

@@ -229,11 +229,11 @@ module ActiveScaffold
 
       def inplace_edit_control(column)
         return unless inplace_edit?(active_scaffold_config.model, column) && inplace_edit_cloning?(column)
-        old_record, @record = @record, new_model # TODO: remove when relying on @record is removed
+        old_record, @record = @record, active_scaffold_config.model.new # TODO: remove when relying on @record is removed
         column = column.clone
         column.options = column.options.clone
         column.form_ui = :select if column.association && column.form_ui.nil?
-        options = active_scaffold_input_options(column).merge(:object => new_model)
+        options = active_scaffold_input_options(column).merge(:object => active_scaffold_config.model.new)
         options[:class] = "#{options[:class]} inplace_field"
         options[:"data-id"] = options[:id]
         options[:id] = nil
