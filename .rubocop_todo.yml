@@ -80,11 +80,6 @@ Style/ClassAndModuleChildren:
 Style/ClassVars:
   Enabled: false
 
-# Offense count: 54
-# Configuration parameters: Keywords.
-Style/CommentAnnotation:
-  Enabled: false
-
 # Offense count: 3
 Style/ConstantName:
   Enabled: false

@@ -11,8 +11,8 @@ class ActiveScaffold::Bridges::RecordSelect
       # requires RecordSelect plugin to be installed and configured.
       def active_scaffold_input_record_select(column, options)
         record = options.delete(:object)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO Remove when relying on @record is removed
-        record ||= @record # TODO Remove when relying on @record is removed
+        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
+        record ||= @record # TODO: Remove when relying on @record is removed
         if column.singular_association?
           multiple = false
           multiple = column.options[:html_options][:multiple] if column.options[:html_options] &&  column.options[:html_options][:multiple]

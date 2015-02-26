@@ -14,7 +14,7 @@ module ActiveScaffold
         relation = clone
 
         args.flatten!
-        relation.joins_values += [''] # HACK for using outer_joins in update_all/delete_all
+        relation.joins_values += [''] # HACK: for using outer_joins in update_all/delete_all
         relation.outer_joins_values += args
 
         relation
@@ -35,7 +35,7 @@ module ActiveScaffold
       end
 
       def outer_joins!(*args)
-        self.joins_values += [''] # HACK for using outer_joins in update_all/delete_all
+        self.joins_values += [''] # HACK: for using outer_joins in update_all/delete_all
         self.outer_joins_values += args
         self
       end
