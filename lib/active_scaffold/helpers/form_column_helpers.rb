@@ -180,10 +180,10 @@ module ActiveScaffold
           end
 
         content_tag :dl, attributes do
-          %|<dt>#{label_tag label_for(column, column_options), column.label}</dt><dd>#{field}
+          %(<dt>#{label_tag label_for(column, column_options), column.label}</dt><dd>#{field}
 #{loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns}
 #{content_tag :span, column.description, :class => 'description' if column.description.present?}
-</dd>|.html_safe
+</dd>).html_safe
         end
       end
 
@@ -196,9 +196,9 @@ module ActiveScaffold
       end
 
       def form_hidden_attribute(column, record, scope = nil)
-        %|<dl style="display: none;"><dt></dt><dd>
+        %(<dl style="display: none;"><dt></dt><dd>
 #{hidden_field :record, column.name, active_scaffold_input_options(column, scope).merge(:object => record)}
-</dd></dl>|.html_safe
+</dd></dl>).html_safe
       end
 
       # Should this column be displayed in the subform?

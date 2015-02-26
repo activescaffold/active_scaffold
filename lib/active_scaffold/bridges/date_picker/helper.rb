@@ -105,7 +105,7 @@ module ActiveScaffold::Bridges
       def self.split_datetime_format(datetime_format)
         date_format = datetime_format
         time_format = nil
-        time_start_indicators = %w{HH hh mm tt ss}
+        time_start_indicators = %w(HH hh mm tt ss)
         unless datetime_format.nil?
           start_indicator = time_start_indicators.detect { |indicator| datetime_format.include?(indicator) }
           unless start_indicator.nil?

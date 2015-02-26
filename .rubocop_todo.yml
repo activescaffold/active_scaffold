@@ -118,12 +118,6 @@ Style/Next:
 Style/NumericLiterals:
   MinDigits: 10
 
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: PreferredDelimiters.
-Style/PercentLiteralDelimiters:
-  Enabled: false
-
 # Offense count: 9
 # Configuration parameters: NamePrefix, NamePrefixBlacklist.
 Style/PredicateName:

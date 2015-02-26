@@ -21,7 +21,7 @@ def load_schema
 end
 load_schema
 
-for file in %w[model_stub const_mocker company]
+for file in %w(model_stub const_mocker company)
   require File.join(File.dirname(__FILE__), file)
 end
 

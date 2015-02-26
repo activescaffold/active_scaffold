@@ -60,7 +60,7 @@ module ActiveScaffold
       def search_attribute(column, record)
         column_options = active_scaffold_search_options(column).merge(:object => record)
         field = active_scaffold_search_for column, column_options
-        %|<dl><dt>#{label_tag search_label_for(column, column_options), search_column_label(column, record)}</dt><dd>#{field}</dd></dl>|.html_safe
+        %(<dl><dt>#{label_tag search_label_for(column, column_options), search_column_label(column, record)}</dt><dd>#{field}</dd></dl>).html_safe
       end
 
       def search_label_for(column, options)
