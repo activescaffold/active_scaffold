@@ -108,11 +108,6 @@ Style/MultilineOperationIndentation:
 Style/NestedTernaryOperator:
   Enabled: false
 
-# Offense count: 3
-# Configuration parameters: EnforcedStyle, MinBodyLength, SupportedStyles.
-Style/Next:
-  Enabled: false
-
 # Offense count: 7
 # Cop supports --auto-correct.
 Style/NumericLiterals:

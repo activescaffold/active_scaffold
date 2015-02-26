@@ -40,11 +40,11 @@ module ActiveScaffold
         if current_page.pager.infinite?
           offsets.reverse.each do |offset|
             page = current_page.number - offset
-            if page < start_number && page > last_page
-              html << '..' if page > last_page + 1
-              html << pagination_ajax_link(page, url_options, options)
-              last_page = page
-            end
+            next unless page < start_number && page > last_page
+
+            html << '..' if page > last_page + 1
+            html << pagination_ajax_link(page, url_options, options)
+            last_page = page
           end
         end
         html << '..' if start_number > last_page + 1

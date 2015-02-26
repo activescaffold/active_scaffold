@@ -50,17 +50,15 @@ module ActiveScaffold
             include ActiveScaffold::Actions::Core
           end
           active_scaffold_config.actions.each do |mod|
-            name = mod.to_s.camelize
-            include "ActiveScaffold::Actions::#{name}".constantize
+            include "ActiveScaffold::Actions::#{mod.to_s.camelize}".constantize
+            mod_conf = active_scaffold_config.send(mod)
+            next unless mod_conf.respond_to?(:link) && (link = mod_conf.link)
 
             # sneak the action links from the actions into the main set
-            mod_conf = active_scaffold_config.send(mod)
-            if mod_conf.respond_to?(:link) && (link = mod_conf.link)
-              if link.is_a? Array
-                link.each { |current| active_scaffold_config.action_links.add_to_group(current, active_scaffold_config.send(mod).action_group) }
-              elsif link.is_a? ActiveScaffold::DataStructures::ActionLink
-                active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
-              end
+            if link.is_a? Array
+              link.each { |current| active_scaffold_config.action_links.add_to_group(current, active_scaffold_config.send(mod).action_group) }
+            elsif link.is_a? ActiveScaffold::DataStructures::ActionLink
+              active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
             end
           end
         end
