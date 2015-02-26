@@ -2,7 +2,6 @@ module ActiveScaffold
   module Helpers
     # Helpers that assist with rendering of a human readable search statement
     module HumanConditionHelpers
-
       def active_scaffold_human_condition_for(column)
         unless (value = field_search_params[column.name]).nil?
           search_ui = column.search_ui

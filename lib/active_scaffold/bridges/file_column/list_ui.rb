@@ -20,7 +20,6 @@ module ActiveScaffold
           url_for_file_column(record, column.name.to_s),
           :popup => true)
       end
-
     end
   end
 end

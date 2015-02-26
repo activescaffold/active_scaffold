@@ -1,6 +1,5 @@
 module ActiveScaffold::Actions
   module Mark
-
     def self.included(base)
       base.before_filter :mark_authorized?, :only => :mark
       base.before_filter :assign_marked_records_to_model

@@ -29,7 +29,6 @@ module ActiveScaffold
           file_column_field('record', column.name, options)
         end
       end
-
     end
   end
 end

@@ -98,7 +98,6 @@ module ActiveScaffold
         reverse_matches
       end
     end
-
   end
 end
 

@@ -125,6 +125,5 @@ module ActionView::Helpers #:nodoc:
     def view_stack
       @_view_stack ||= []
     end
-
   end
 end

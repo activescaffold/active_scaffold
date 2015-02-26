@@ -6,7 +6,6 @@ module ActiveScaffold::Actions
     end
 
     module InstanceMethods
-
       protected
 
       def search_respond_to_html

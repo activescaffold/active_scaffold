@@ -331,7 +331,6 @@ module ActiveScaffold
       def column_heading_label(column)
         column.label
       end
-
     end
   end
 end

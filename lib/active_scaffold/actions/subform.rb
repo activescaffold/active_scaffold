@@ -32,6 +32,5 @@ module ActiveScaffold::Actions
       end
       @scope = params[:scope]
     end
-
   end
 end

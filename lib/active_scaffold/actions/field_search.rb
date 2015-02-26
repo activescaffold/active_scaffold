@@ -7,7 +7,6 @@ module ActiveScaffold::Actions
     end
 
     module InstanceMethods
-
       # FieldSearch uses params[:search] and not @record because search conditions do not always pass the Model's validations.
       # This facilitates for example, textual searches against associations via .search_sql
       def show_search
