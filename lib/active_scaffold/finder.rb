@@ -89,9 +89,9 @@ module ActiveScaffold
       def condition_for_numeric(column, value)
         if !value.is_a?(Hash)
           ['%{search_sql} = ?', condition_value_for_numeric(column, value)]
-        elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
+        elsif ActiveScaffold::Finder::NULL_COMPARATORS.include?(value[:opt])
           condition_for_null_type(column, value[:opt])
-        elsif value[:from].blank? || !ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
+        elsif value[:from].blank? || !ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
           ['(%{search_sql} BETWEEN ? AND ?)', condition_value_for_numeric(column, value[:from]), condition_value_for_numeric(column, value[:to])]
@@ -107,15 +107,15 @@ module ActiveScaffold
           else
             ['%{search_sql} = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
           end
-        elsif ActiveScaffold::Finder::NullComparators.include?(value[:opt])
+        elsif ActiveScaffold::Finder::NULL_COMPARATORS.include?(value[:opt])
           condition_for_null_type(column, value[:opt], like_pattern)
         elsif value[:from].blank?
           nil
-        elsif ActiveScaffold::Finder::StringComparators.values.include?(value[:opt])
+        elsif ActiveScaffold::Finder::STRING_COMPARATORS.values.include?(value[:opt])
           ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", value[:opt].sub('?', value[:from])]
         elsif value[:opt] == 'BETWEEN'
           ['(%{search_sql} BETWEEN ? AND ?)', value[:from], value[:to]]
-        elsif ActiveScaffold::Finder::NumericComparators.include?(value[:opt])
+        elsif ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt])
           ["%{search_sql} #{value[:opt]} ?", value[:from]]
         else
           nil
@@ -243,7 +243,7 @@ module ActiveScaffold
       end
     end
 
-    NumericComparators = [
+    NUMERIC_COMPARATORS = [
       '=',
       '>=',
       '<=',
@@ -252,12 +252,12 @@ module ActiveScaffold
       '!=',
       'BETWEEN'
     ]
-    StringComparators = {
+    STRING_COMPARATORS = {
       :contains    => '%?%',
       :begins_with => '?%',
       :ends_with   => '%?'
     }
-    NullComparators = %w(null not_null)
+    NULL_COMPARATORS = %w(null not_null)
 
     def self.included(klass)
       klass.extend ClassMethods

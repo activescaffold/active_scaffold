@@ -16,8 +16,8 @@ module ActiveScaffold
           end
 
           def active_scaffold_search_date_bridge_comparator_options(column)
-            select_options = ActiveScaffold::Finder::DateComparators.collect { |comp| [as_(comp.downcase.to_sym), comp] }
-            select_options + ActiveScaffold::Finder::NumericComparators.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+            select_options = ActiveScaffold::Finder::DATE_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+            select_options + ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
           end
 
           def active_scaffold_search_date_bridge_comparator_tag(column, options, current_search)
@@ -30,8 +30,9 @@ module ActiveScaffold
             content_tag(:span, (' - ' + active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'to')).html_safe,
                         :id => "#{options[:id]}_between", :class => 'as_search_range_between',
                         :style => current_search['opt'] == 'BETWEEN' ? nil : 'display: none')
-            content_tag('span', numeric_controls.html_safe, :id => "#{options[:id]}_numeric", :class => 'search-date-numeric',
-                                                            :style => ActiveScaffold::Finder::NumericComparators.include?(current_search['opt']) ? nil : 'display: none')
+            content_tag('span', numeric_controls.html_safe,
+                        :id => "#{options[:id]}_numeric", :class => 'search-date-numeric',
+                        :style => ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(current_search['opt']) ? nil : 'display: none')
           end
 
           def active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
@@ -46,22 +47,24 @@ module ActiveScaffold
             select_tag("#{options[:name]}[unit]",
                        options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:unit_value]),
                        :class => 'text-input')
-            content_tag('span', trend_controls.html_safe, :id => "#{options[:id]}_trend", :class => 'search-date-trend',
-                                                          :style => trend_options[:show] ? nil : 'display: none')
+            content_tag('span', trend_controls.html_safe,
+                        :id => "#{options[:id]}_trend", :class => 'search-date-trend',
+                        :style => trend_options[:show] ? nil : 'display: none')
           end
 
           def active_scaffold_search_date_bridge_trend_units(column)
-            options = ActiveScaffold::Finder::DateUnits.collect { |unit| [as_(unit.downcase.to_sym), unit] }
-            options = ActiveScaffold::Finder::TimeUnits.collect { |unit| [as_(unit.downcase.to_sym), unit] } + options if column_datetime?(column)
+            options = ActiveScaffold::Finder::DATE_UNITS.collect { |unit| [as_(unit.downcase.to_sym), unit] }
+            options = ActiveScaffold::Finder::TIME_UNITS.collect { |unit| [as_(unit.downcase.to_sym), unit] } + options if column_datetime?(column)
             options
           end
 
           def active_scaffold_search_date_bridge_range_tag(column, options, current_search)
             range_controls = select_tag("#{options[:name]}[range]",
-                                        options_for_select(ActiveScaffold::Finder::DateRanges.collect { |range| [as_(range.downcase.to_sym), range] }, current_search['range']),
+                                        options_for_select(ActiveScaffold::Finder::DATE_RANGES.collect { |range| [as_(range.downcase.to_sym), range] }, current_search['range']),
                                         :class => 'text-input', :id => nil)
-            content_tag('span', range_controls.html_safe, :id => "#{options[:id]}_range", :class => 'search-date-range',
-                                                          :style => (current_search['opt'] == 'RANGE') ? nil : 'display: none')
+            content_tag('span', range_controls.html_safe,
+                        :id => "#{options[:id]}_range", :class => 'search-date-range',
+                        :style => (current_search['opt'] == 'RANGE') ? nil : 'display: none')
           end
 
           def column_datetime?(column)
@@ -108,7 +111,7 @@ module ActiveScaffold
         module Finder
           module ClassMethods
             def condition_for_date_bridge_type(column, value, like_pattern)
-              operator = ActiveScaffold::Finder::NumericComparators.include?(value[:opt]) && value[:opt] != 'BETWEEN' ? value[:opt] : nil
+              operator = ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt]) && value[:opt] != 'BETWEEN' ? value[:opt] : nil
               from_value, to_value = date_bridge_from_to(column, value)
 
               if column.search_sql.is_a? Proc
@@ -203,7 +206,7 @@ module ActiveScaffold
   end
 end
 
-ActiveScaffold::Finder.const_set('DateComparators', %w(PAST FUTURE RANGE))
-ActiveScaffold::Finder.const_set('DateUnits', %w(DAYS WEEKS MONTHS YEARS))
-ActiveScaffold::Finder.const_set('TimeUnits', %w(SECONDS MINUTES HOURS))
-ActiveScaffold::Finder.const_set('DateRanges', %w(TODAY YESTERDAY TOMORROW THIS_WEEK PREV_WEEK NEXT_WEEK THIS_MONTH PREV_MONTH NEXT_MONTH THIS_YEAR PREV_YEAR NEXT_YEAR))
+ActiveScaffold::Finder.const_set('DATE_COMPARATORS', %w(PAST FUTURE RANGE))
+ActiveScaffold::Finder.const_set('DATE_UNITS', %w(DAYS WEEKS MONTHS YEARS))
+ActiveScaffold::Finder.const_set('TIME_UNITS', %w(SECONDS MINUTES HOURS))
+ActiveScaffold::Finder.const_set('DATE_RANGES', %w(TODAY YESTERDAY TOMORROW THIS_WEEK PREV_WEEK NEXT_WEEK THIS_MONTH PREV_MONTH NEXT_MONTH THIS_YEAR PREV_YEAR NEXT_YEAR))

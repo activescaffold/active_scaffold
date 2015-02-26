@@ -31,7 +31,7 @@ module ActiveScaffold
       alias_method :active_scaffold_human_condition_float, :active_scaffold_human_condition_integer
 
       def active_scaffold_human_condition_string(column, value)
-        opt = ActiveScaffold::Finder::StringComparators.index(value[:opt]) || value[:opt]
+        opt = ActiveScaffold::Finder::STRING_COMPARATORS.index(value[:opt]) || value[:opt]
         to = "- #{value[:to]}" if opt == 'BETWEEN'
         format_human_condition column, opt, "'#{value[:from]}'", to
       end

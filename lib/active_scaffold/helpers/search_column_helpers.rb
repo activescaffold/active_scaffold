@@ -145,7 +145,7 @@ module ActiveScaffold
       def active_scaffold_search_null(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
-        select_options.concat ActiveScaffold::Finder::NullComparators.collect { |comp| [as_(comp), comp] }
+        select_options.concat ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] }
         select_tag(options[:name], options_for_select(select_options, options[:value]), :id => options[:id])
       end
 
@@ -160,12 +160,12 @@ module ActiveScaffold
       end
 
       def active_scaffold_search_range_comparator_options(column)
-        select_options = ActiveScaffold::Finder::NumericComparators.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+        select_options = ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
         if active_scaffold_search_range_string?(column)
-          select_options.unshift *ActiveScaffold::Finder::StringComparators.collect { |title, comp| [as_(title), comp] }
+          select_options.unshift *ActiveScaffold::Finder::STRING_COMPARATORS.collect { |title, comp| [as_(title), comp] }
         end
         if include_null_comparators? column
-          select_options += ActiveScaffold::Finder::NullComparators.collect { |comp| [as_(comp), comp] }
+          select_options += ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] }
         end
         select_options
       end
@@ -197,7 +197,7 @@ module ActiveScaffold
         to_value = format_number_value(to_value, column.options) if to_value.is_a?(Numeric)
         html = select_tag("#{options[:name]}[opt]", options_for_select(select_options, opt_value),
                           :id => "#{options[:id]}_opt", :class => 'as_search_range_option')
-        html << content_tag('span', :id => "#{options[:id]}_numeric", :style => ActiveScaffold::Finder::NullComparators.include?(opt_value) ? 'display: none' : nil) do
+        html << content_tag('span', :id => "#{options[:id]}_numeric", :style => ActiveScaffold::Finder::NULL_COMPARATORS.include?(opt_value) ? 'display: none' : nil) do
           text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size)) <<
           content_tag(
             :span, (
