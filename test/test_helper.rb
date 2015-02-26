@@ -40,5 +40,6 @@ class MiniTest::Test
   end
 end
 
-Object.send :remove_const, :Config
+Config = RbConfig # HACK needed some comments
+
 class ColumnMock < ActiveScaffold::Tableless::Column; end
