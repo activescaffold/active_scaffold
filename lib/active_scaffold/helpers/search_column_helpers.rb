@@ -199,13 +199,13 @@ module ActiveScaffold
                           :id => "#{options[:id]}_opt", :class => 'as_search_range_option')
         html << content_tag('span', :id => "#{options[:id]}_numeric", :style => ActiveScaffold::Finder::NULL_COMPARATORS.include?(opt_value) ? 'display: none' : nil) do
           text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size)) <<
-          content_tag(
-            :span, (
-              ' - ' + text_field_tag("#{options[:name]}[to]", to_value,
-                                     active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))
-            ).html_safe,
-            :id => "#{options[:id]}_between", :class => 'as_search_range_between', :style => (opt_value == 'BETWEEN') ? nil : 'display: none'
-          )
+            content_tag(
+              :span, (
+                ' - ' + text_field_tag("#{options[:name]}[to]", to_value,
+                                       active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))
+              ).html_safe,
+              :id => "#{options[:id]}_between", :class => 'as_search_range_between', :style => (opt_value == 'BETWEEN') ? nil : 'display: none'
+            )
         end
         content_tag :span, html, :class => 'search_range'
       end
@@ -224,7 +224,7 @@ module ActiveScaffold
         helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
 
         send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options)) <<
-        ' - '.html_safe << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
+          ' - '.html_safe << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
       end
 
       def active_scaffold_search_date(column, options)

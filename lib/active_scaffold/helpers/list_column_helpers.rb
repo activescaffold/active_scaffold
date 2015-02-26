@@ -224,7 +224,7 @@ module ActiveScaffold
       def active_scaffold_inplace_edit(record, column, options = {})
         formatted_column = options[:formatted_column] || format_column_value(record, column)
         content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<
-        content_tag(:span, formatted_column, active_scaffold_inplace_edit_tag_options(record, column))
+          content_tag(:span, formatted_column, active_scaffold_inplace_edit_tag_options(record, column))
       end
 
       def inplace_edit_control(column)

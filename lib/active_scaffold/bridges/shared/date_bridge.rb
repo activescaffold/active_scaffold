@@ -25,11 +25,12 @@ module ActiveScaffold
           end
 
           def active_scaffold_search_date_bridge_numeric_tag(column, options, current_search)
-            numeric_controls = '' <<
-            active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'from') <<
-            content_tag(:span, (' - ' + active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'to')).html_safe,
-                        :id => "#{options[:id]}_between", :class => 'as_search_range_between',
-                        :style => current_search['opt'] == 'BETWEEN' ? nil : 'display: none')
+            numeric_controls =
+              '' <<
+              active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'from') <<
+              content_tag(:span, (' - ' + active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'to')).html_safe,
+                          :id => "#{options[:id]}_between", :class => 'as_search_range_between',
+                                          :style => current_search['opt'] == 'BETWEEN' ? nil : 'display: none')
             content_tag('span', numeric_controls.html_safe,
                         :id => "#{options[:id]}_numeric", :class => 'search-date-numeric',
                         :style => ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(current_search['opt']) ? nil : 'display: none')
@@ -43,10 +44,11 @@ module ActiveScaffold
           end
 
           def active_scaffold_date_bridge_trend_tag(column, options, trend_options)
-            trend_controls = text_field_tag("#{options[:name]}[number]", trend_options[:number_value], :class => 'text-input', :size => 10, :autocomplete => 'off') << ' ' <<
-            select_tag("#{options[:name]}[unit]",
-                       options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:unit_value]),
-                       :class => 'text-input')
+            trend_controls =
+              text_field_tag("#{options[:name]}[number]", trend_options[:number_value], :class => 'text-input', :size => 10, :autocomplete => 'off') << ' ' <<
+              select_tag("#{options[:name]}[unit]",
+                        options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:unit_value]),
+                        :class => 'text-input')
             content_tag('span', trend_controls.html_safe,
                         :id => "#{options[:id]}_trend", :class => 'search-date-trend',
                         :style => trend_options[:show] ? nil : 'display: none')

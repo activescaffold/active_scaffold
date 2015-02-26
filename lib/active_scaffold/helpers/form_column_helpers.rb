@@ -311,7 +311,7 @@ module ActiveScaffold
       def active_scaffold_checkbox_option(option, label_method, associated_ids, checkbox_options, li_options = {})
         content_tag(:li, li_options) do
           check_box_tag(checkbox_options[:name], option.id, associated_ids.include?(option.id), checkbox_options) <<
-          content_tag(:label, option.send(label_method), :for => checkbox_options[:id])
+            content_tag(:label, option.send(label_method), :for => checkbox_options[:id])
         end
       end
 

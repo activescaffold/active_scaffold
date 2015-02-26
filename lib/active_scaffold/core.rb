@@ -37,8 +37,8 @@ module ActiveScaffold
         # Rails 4.0.4 has removed attribute_methods_generated,
         # and made define_attribute_methods threadsave to call multiple times.
         # Check for that here.
-        if ((Rails::VERSION::MAJOR == 4) && !klass.respond_to?(:attribute_methods_generated)) ||
-            !klass.attribute_methods_generated?
+        if (Rails::VERSION::MAJOR == 4 && !klass.respond_to?(:attribute_methods_generated)) ||
+           !klass.attribute_methods_generated?
           klass.define_attribute_methods
         end
         # include the rest of the code into the controller: the action core and the included actions

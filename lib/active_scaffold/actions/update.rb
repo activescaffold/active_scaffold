@@ -125,8 +125,8 @@ module ActiveScaffold::Actions
       rescue ActiveRecord::RecordNotSaved => exception
         logger.warn {
           "\n\n#{exception.class} (#{exception.message}):\n    " +
-          Rails.backtrace_cleaner.clean(exception.backtrace).join("\n    ") +
-          "\n\n"
+            Rails.backtrace_cleaner.clean(exception.backtrace).join("\n    ") +
+            "\n\n"
         }
         @record.errors.add(:base, as_(:record_not_saved)) if @record.errors.empty?
         self.successful = false

@@ -76,17 +76,6 @@ Style/ClassVars:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 28
-# Configuration parameters: MinBodyLength.
-Style/GuardClause:
-  Enabled: false
-
-# Offense count: 15
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/MultilineOperationIndentation:
-  Enabled: false
-
 # Offense count: 2
 Style/NestedTernaryOperator:
   Enabled: false

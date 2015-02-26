@@ -410,7 +410,7 @@ module ActiveScaffold::DataStructures
         true
       when ActiveModel::Validations::InclusionValidator
         !val.options[:allow_nil] && !val.options[:allow_blank] &&
-            !inclusion_validator_for_checkbox?(val)
+          !inclusion_validator_for_checkbox?(val)
       end
     end
 
