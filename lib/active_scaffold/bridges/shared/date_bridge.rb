@@ -31,7 +31,7 @@ module ActiveScaffold
                         :id => "#{options[:id]}_between", :class => 'as_search_range_between',
                         :style => current_search['opt'] == 'BETWEEN' ? nil : 'display: none')
             content_tag('span', numeric_controls.html_safe, :id => "#{options[:id]}_numeric", :class => 'search-date-numeric',
-                        :style => ActiveScaffold::Finder::NumericComparators.include?(current_search['opt']) ? nil : 'display: none')
+                                                            :style => ActiveScaffold::Finder::NumericComparators.include?(current_search['opt']) ? nil : 'display: none')
           end
 
           def active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
@@ -47,7 +47,7 @@ module ActiveScaffold
                        options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:unit_value]),
                        :class => 'text-input')
             content_tag('span', trend_controls.html_safe, :id => "#{options[:id]}_trend", :class => 'search-date-trend',
-                        :style => trend_options[:show] ? nil : 'display: none')
+                                                          :style => trend_options[:show] ? nil : 'display: none')
           end
 
           def active_scaffold_search_date_bridge_trend_units(column)
@@ -61,7 +61,7 @@ module ActiveScaffold
                                         options_for_select(ActiveScaffold::Finder::DateRanges.collect { |range| [as_(range.downcase.to_sym), range] }, current_search['range']),
                                         :class => 'text-input', :id => nil)
             content_tag('span', range_controls.html_safe, :id => "#{options[:id]}_range", :class => 'search-date-range',
-                        :style => (current_search['opt'] == 'RANGE') ? nil : 'display: none')
+                                                          :style => (current_search['opt'] == 'RANGE') ? nil : 'display: none')
           end
 
           def column_datetime?(column)
