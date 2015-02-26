@@ -221,7 +221,7 @@ module ActiveScaffold::Config
 
     def self.method_missing(name, *args)
       klass = "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize rescue nil
-      return klass if @@actions.include? name.to_s.underscore && klass
+      return klass if @@actions.include?(name.to_s.underscore) && klass
       super
     end
     # some utility methods
