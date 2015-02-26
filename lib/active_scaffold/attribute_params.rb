@@ -36,7 +36,7 @@ module ActiveScaffold
     # workaround to update counters when belongs_to changes on persisted record on Rails 3
     # workaround to update counters when polymorphic has_many changes on persisted record
     # TODO: remove when rails3 support is removed and counter cache for polymorphic has_many association works on rails4 (works on rails4.2)
-    def has_many_counter_cache_hack(parent_record, column, value)
+    def hack_for_has_many_counter_cache(parent_record, column, value)
       association = parent_record.association(column.name)
       counter_attr = association.send(:cached_counter_attribute_name)
       difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
@@ -63,23 +63,21 @@ module ActiveScaffold
       parent_record.send "#{column.name}=", value if parent_record.persisted?
     end
 
-    # TODO: remove when has_many_counter_cache_hack is not needed
-    def has_many_counter_cache_hack?(parent_record, column)
-      if column.association.try(:macro) == :has_many && parent_record.association(column.name).send(:has_cached_counter?)
-        if Rails.version < '4.0' # rails 3 needs this hack always
-          true
-        else # rails 4 needs this hack for polymorphic has_many
-          column.association.options[:as]
-        end
+    # TODO: remove when hack_for_has_many_counter_cache is not needed
+    def hack_for_has_many_counter_cache?(parent_record, column)
+      return unless column.association.try(:macro) == :has_many && parent_record.association(column.name).send(:has_cached_counter?)
+      if Rails.version < '4.0' # rails 3 needs this hack always
+        true
+      else # rails 4 needs this hack for polymorphic has_many
+        column.association.options[:as]
       end
     end
 
     # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
     # TODO: remove when pull request is merged and no version with bug is supported
     def counter_cache_hack?(column, value)
-      if Rails.version >= '4.0' && !value.is_a?(Hash)
-        column.association.try(:belongs_to?) && column.association.options[:counter_cache] && !column.association.options[:polymorphic]
-      end
+      return unless Rails.version >= '4.0' && !value.is_a?(Hash)
+      column.association.try(:belongs_to?) && column.association.options[:counter_cache] && !column.association.options[:polymorphic]
     end
 
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
@@ -130,8 +128,8 @@ module ActiveScaffold
         parent_record.association(column.name).target = value
       else
         begin
-          if has_many_counter_cache_hack?(parent_record, column)
-            has_many_counter_cache_hack(parent_record, column, value)
+          if hack_for_has_many_counter_cache?(parent_record, column)
+            hack_for_has_many_counter_cache(parent_record, column, value)
           else
             parent_record.send "#{column.name}=", value
           end

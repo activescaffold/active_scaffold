@@ -26,9 +26,8 @@ module ActiveScaffold::Actions
       end
 
       def set_field_search_default_params(default_params)
-        if (params[:search].nil? && search_params.nil?) || (params[:search].is_a?(String) && params[:search].blank?)
-          params[:search] = default_params.is_a?(Proc) ? instance_eval(&default_params) : default_params
-        end
+        return unless (params[:search].is_a?(String) || search_params.nil?) && params[:search].blank?
+        params[:search] = default_params.is_a?(Proc) ? instance_eval(&default_params) : default_params
       end
 
       def field_search_params

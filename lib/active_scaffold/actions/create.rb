@@ -96,28 +96,25 @@ module ActiveScaffold::Actions
     # If you want to customize this behavior, consider using the +before_create_save+ and +after_create_save+ callbacks.
     def do_create(options = {})
       attributes = options[:attributes] || params[:record]
-      begin
-        active_scaffold_config.model.transaction do
-          @record = update_record_from_params(new_model, active_scaffold_config.create.columns, attributes)
-          apply_constraints_to_record(@record, :allow_autosave => true)
-          create_association_with_parent(@record) if nested?
-          before_create_save(@record)
-          # errors to @record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
-          self.successful = [@record.errors.empty? && @record.valid?, @record.associated_valid?].all? # this syntax avoids a short-circuit
-          create_save(@record) unless options[:skip_save]
-        end
-      rescue ActiveRecord::ActiveRecordError => ex
-        flash[:error] = ex.message
-        self.successful = false
-        @record ||= new_model # ensure @record exists or display form will fail
+      active_scaffold_config.model.transaction do
+        @record = update_record_from_params(new_model, active_scaffold_config.create.columns, attributes)
+        apply_constraints_to_record(@record, :allow_autosave => true)
+        create_association_with_parent(@record) if nested?
+        before_create_save(@record)
+        # errors to @record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
+        self.successful = [@record.errors.empty? && @record.valid?, @record.associated_valid?].all? # this syntax avoids a short-circuit
+        create_save(@record) unless options[:skip_save]
       end
+    rescue ActiveRecord::ActiveRecordError => ex
+      flash[:error] = ex.message
+      self.successful = false
+      @record ||= new_model # ensure @record exists or display form will fail
     end
 
     def create_save(record)
-      if successful?
-        record.save! && record.save_associated!
-        after_create_save(record)
-      end
+      return unless successful?
+      record.save! && record.save_associated!
+      after_create_save(record)
     end
 
     # override this method if you want to inject data in the record (or its associated objects) before the save

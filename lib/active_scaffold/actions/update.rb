@@ -142,32 +142,31 @@ module ActiveScaffold::Actions
       column = params.delete(:column).to_sym
       params.delete(:original_html)
       params.delete(:original_value)
-
       @record = find_if_allowed(params[:id], :read)
-      if @record.authorized_for?(:crud_type => :update, :column => column)
-        @column = active_scaffold_config.columns[column]
-        value ||=
-          unless @column.column.nil? || @column.column.null
-            @column.column.default == true ? false : @column.column.default
-          end
-        unless @column.nil?
-          value = column_value_from_param_value(@record, @column, value)
-          value = [] if value.nil? && @column.form_ui && @column.plural_association?
-        end
+      return unless @record.authorized_for?(:crud_type => :update, :column => column)
 
-        @record.send("#{@column.name}=", value)
-        before_update_save(@record)
-        self.successful = @record.save
-        if self.successful? && active_scaffold_config.actions.include?(:list)
-          if @column.inplace_edit_update == :table
-            params.delete(:id)
-            do_list
-          elsif @column.inplace_edit_update
-            get_row
-          end
+      @column = active_scaffold_config.columns[column]
+      value ||=
+        unless @column.column.nil? || @column.column.null
+          @column.column.default == true ? false : @column.column.default
         end
-        after_update_save(@record)
+      unless @column.nil?
+        value = column_value_from_param_value(@record, @column, value)
+        value = [] if value.nil? && @column.form_ui && @column.plural_association?
       end
+
+      @record.send("#{@column.name}=", value)
+      before_update_save(@record)
+      self.successful = @record.save
+      if self.successful? && active_scaffold_config.actions.include?(:list)
+        if @column.inplace_edit_update == :table
+          params.delete(:id)
+          do_list
+        elsif @column.inplace_edit_update
+          get_row
+        end
+      end
+      after_update_save(@record)
     end
 
     # override this method if you want to inject data in the record (or its associated objects) before the save

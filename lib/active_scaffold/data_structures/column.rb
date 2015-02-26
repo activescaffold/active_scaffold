@@ -237,10 +237,9 @@ module ActiveScaffold::DataStructures
     @@show_blank_record = true
     attr_writer :show_blank_record
     def show_blank_record?(associated)
-      if @show_blank_record
-        return false unless association.klass.authorized_for?(:crud_type => :create) && !association.options[:readonly]
-        self.plural_association? || (self.singular_association? && associated.blank?)
-      end
+      return false unless @show_blank_record
+      return false unless association.klass.authorized_for?(:crud_type => :create) && !association.options[:readonly]
+      self.plural_association? || (self.singular_association? && associated.blank?)
     end
 
     # methods for automatic links in singular association columns
@@ -277,12 +276,11 @@ module ActiveScaffold::DataStructures
     end
 
     def readonly_association?
-      if association
-        if association.options.key? :readonly
-          association.options[:readonly]
-        else
-          self.through_association?
-        end
+      return false unless association
+      if association.options.key? :readonly
+        association.options[:readonly]
+      else
+        self.through_association?
       end
     end
 
@@ -345,6 +343,11 @@ module ActiveScaffold::DataStructures
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
 
+      if association && !polymorphic_association?
+        self.includes = [association.name]
+        self.search_joins = includes.clone
+      end
+
       # default all the configurable variables
       self.css_class = ''
       self.required = active_record_class.validators_on(self.name).any? do |val|
@@ -354,11 +357,6 @@ module ActiveScaffold::DataStructures
       self.search_sql = true
 
       @weight = estimate_weight
-
-      if association && !polymorphic_association?
-        self.includes = [association.name]
-        self.search_joins = includes.clone
-      end
     end
 
     # just the field (not table.field)

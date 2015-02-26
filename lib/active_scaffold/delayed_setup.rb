@@ -15,10 +15,9 @@ module ActiveScaffold
       end
 
       def config_active_scaffold_delayed
-        if @active_scaffold_delayed
-          block, @active_scaffold_delayed = @active_scaffold_delayed, nil
-          block.call
-        end
+        return unless @active_scaffold_delayed
+        block, @active_scaffold_delayed = @active_scaffold_delayed, nil
+        block.call
       end
 
       def active_scaffold_config

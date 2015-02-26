@@ -74,15 +74,14 @@ module ActiveScaffold
       # To be called after include action modules
       def _add_sti_create_links
         new_action_link = active_scaffold_config.action_links.collection['new']
-        unless new_action_link.nil? || active_scaffold_config.sti_children.empty?
-          active_scaffold_config.action_links.collection.delete('new')
-          active_scaffold_config.sti_children.each do |child|
-            new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
-            new_sti_link.label = as_(:create_model, :model => child.to_s.camelize.constantize.model_name.human)
-            new_sti_link.parameters = {:parent_sti => controller_path}
-            new_sti_link.controller = proc { active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path }
-            active_scaffold_config.action_links.collection.create.add(new_sti_link)
-          end
+        return if new_action_link.nil? || active_scaffold_config.sti_children.empty?
+        active_scaffold_config.action_links.collection.delete('new')
+        active_scaffold_config.sti_children.each do |child|
+          new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
+          new_sti_link.label = as_(:create_model, :model => child.to_s.camelize.constantize.model_name.human)
+          new_sti_link.parameters = {:parent_sti => controller_path}
+          new_sti_link.controller = proc { active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path }
+          active_scaffold_config.action_links.collection.create.add(new_sti_link)
         end
       end
 
@@ -111,22 +110,20 @@ module ActiveScaffold
       end
 
       def link_for_association(column, options = {})
-        controller = active_scaffold_controller_for_column(column, options)
-
-        unless controller.nil?
-          options.reverse_merge! :position => :after, :type => :member, :controller => (controller == :polymorph ? controller : "/#{controller.controller_path}"), :column => column
-          options[:parameters] ||= {}
-          options[:parameters].reverse_merge! :association => column.association.name
-          if column.plural_association?
-            ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(:refresh_on_close => true))
-          else
-            actions = controller.active_scaffold_config.actions unless controller == :polymorph
-            actions ||= [:create, :update, :show]
-            column.actions_for_association_links.delete :new unless actions.include? :create
-            column.actions_for_association_links.delete :edit unless actions.include? :update
-            column.actions_for_association_links.delete :show unless actions.include? :show
-            ActiveScaffold::DataStructures::ActionLink.new(nil, options.merge(:html_options => {:class => column.name}))
-          end
+        return if (controller = active_scaffold_controller_for_column(column, options)).nil?
+        options.reverse_merge! :position => :after, :type => :member, :column => column,
+                               :controller => (controller == :polymorph ? controller : "/#{controller.controller_path}")
+        options[:parameters] ||= {}
+        options[:parameters].reverse_merge! :association => column.association.name
+        if column.plural_association?
+          ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(:refresh_on_close => true))
+        else
+          actions = controller.active_scaffold_config.actions unless controller == :polymorph
+          actions ||= [:create, :update, :show]
+          column.actions_for_association_links.delete :new unless actions.include? :create
+          column.actions_for_association_links.delete :edit unless actions.include? :update
+          column.actions_for_association_links.delete :show unless actions.include? :show
+          ActiveScaffold::DataStructures::ActionLink.new(nil, options.merge(:html_options => {:class => column.name}))
         end
       end
 

@@ -4,7 +4,7 @@ module ActiveScaffold::DataStructures
     include Enumerable
 
     attr_accessor :constraint_columns
-    attr_accessor :sorting_by_primary_key
+    attr_accessor :sorting_by_primary_key # enabled by default for postgres
 
     def initialize(columns)
       @columns = columns
@@ -13,20 +13,14 @@ module ActiveScaffold::DataStructures
     end
 
     def set_default_sorting(model)
+      # fallback to setting primary key ordering
+      setup_primary_key_order_clause(model)
       model_scope = model.send(:build_default_scope)
       order_clause = model_scope.order_values.join(',') if model_scope
-
-      # fallback to setting primary key ordering
-      if model.column_names.include?(model.primary_key)
-        set([model.primary_key, 'ASC'])
-        @primary_key_clause = clause
-        @sorting_by_primary_key = model.connection.try(:adapter_name) == 'PostgreSQL' # mandatory for postgres, so enabled by default
-      end
+      return unless order_clause
       # If an ORDER BY clause is found set default sorting according to it
-      if order_clause
-        set_sorting_from_order_clause(order_clause, model.table_name)
-        @default_sorting = true
-      end
+      set_sorting_from_order_clause(order_clause, model.table_name)
+      @default_sorting = true
     end
 
     def set_nested_sorting(table_name, order_clause)
@@ -123,7 +117,7 @@ module ActiveScaffold::DataStructures
         order << Array(sql).map { |column| "#{column} #{sort_direction}" }.join(', ')
       end
 
-      order << @primary_key_clause if @sorting_by_primary_key
+      order << @primary_key_order_clause if @sorting_by_primary_key
       order unless order.empty?
     end
 
@@ -189,6 +183,17 @@ module ActiveScaffold::DataStructures
       else
         'ASC'
       end
+    end
+
+    def postgres?(model)
+      model.connection.try(:adapter_name) == 'PostgreSQL'
+    end
+
+    def setup_primary_key_order_clause(model)
+      return unless model.column_names.include?(model.primary_key)
+      set([model.primary_key, 'ASC'])
+      @primary_key_order_clause = clause
+      @sorting_by_primary_key = postgres?(model) # mandatory for postgres, so enabled by default
     end
   end
 end

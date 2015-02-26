@@ -50,63 +50,65 @@ module ActiveScaffold::Actions
     end
 
     def render_field_for_update_columns
-      @column = active_scaffold_config.columns[params.delete(:column)]
-      unless @column.nil?
-        @source_id = params.delete(:source_id)
-        @columns = @column.update_columns || []
-        @scope = params.delete(:scope)
-        @main_columns = active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns
-        @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
+      return if (@column = active_scaffold_config.columns[params.delete(:column)]).nil?
+      @source_id = params.delete(:source_id)
+      @columns = @column.update_columns || []
+      @scope = params.delete(:scope)
+      @main_columns = active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns
+      @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
 
+      @record =
         if @column.send_form_on_update_column
-          if @scope
-            hash = @scope.gsub('[', '').split(']').inject(params[:record]) { |h, idx| h[idx] }
-            id = hash[:id]
-          else
-            hash = params[:record]
-            id = params[:id]
-          end
-
-          # check permissions and support overriding to_param
-          record = find_if_allowed(id, :read) if id
-          # call update_record_from_params with new_model
-          # in other case some associations can be saved
-          @record = new_model
-          copy_attributes(record, @record) if record
-          apply_constraints_to_record(@record) unless @scope
-          @record = update_record_from_params(@record, @main_columns, hash || {}, true)
+          updated_record_with_form(@main_columns, params[:record], @scope)
         else
-          @record = params[:id] ? find_if_allowed(params[:id], :read) : new_model
-          if @record.new_record?
-            apply_constraints_to_record(@record) unless @scope
-          else
-            @record = @record.dup
-          end
-          value = column_value_from_param_value(@record, @column, params.delete(:value))
-          @record.send "#{@column.name}=", value
-          @record.id = params[:id]
+          updated_record_with_column(@column, params.delete(:value), @scope)
         end
-        set_parent(@record) if params[:parent_controller] && @scope
+      set_parent(@record) if params[:parent_controller] && @scope
+      after_render_field(@record, @column)
+    end
 
-        after_render_field(@record, @column)
+    def updated_record_with_form(columns, attributes, scope)
+      if attributes && scope
+        attributes = scope.gsub('[', '').split(']').inject(attributes) { |h, idx| h[idx] }
+        id = attributes[:id]
+      else
+        id = params[:id]
       end
+
+      # check permissions and support overriding to_param
+      saved_record = find_if_allowed(id, :read) if id
+      # call update_record_from_params with new_model
+      # in other case some associations can be saved
+      record = new_model
+      copy_attributes(saved_record, record) if saved_record
+      apply_constraints_to_record(record) unless scope
+      update_record_from_params(record, columns, attributes || {}, true)
+    end
+
+    def updated_record_with_column(column, value, scope)
+      record = params[:id] ? find_if_allowed(params[:id], :read).dup : new_model
+      apply_constraints_to_record(record) unless scope || params[:id]
+      value = column_value_from_param_value(record, column, value)
+      record.send "#{column.name}=", value
+      record.id = params[:id]
+      record
     end
 
     def set_parent(record)
       parent_model = params[:parent_controller].singularize.camelize.constantize
       child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
       association = parent_model.reflect_on_association(child_association.to_sym).try(:reverse)
-      if association
-        parent = parent_model.new
-        copy_attributes(parent_model.find(params[:parent_id]), parent) if params[:parent_id]
-        parent.id = params[:parent_id]
-        parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
-        apply_constraints_to_record(parent) unless params[:parent_id]
-        if record.class.reflect_on_association(association).collection?
-          record.send(association) << parent
-        else
-          record.send("#{association}=", parent)
-        end
+      return if association.nil?
+
+      parent = parent_model.new
+      copy_attributes(parent_model.find(params[:parent_id]), parent) if params[:parent_id]
+      parent.id = params[:parent_id]
+      parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
+      apply_constraints_to_record(parent) unless params[:parent_id]
+      if record.class.reflect_on_association(association).collection?
+        record.send(association) << parent
+      else
+        record.send("#{association}=", parent)
       end
     end
 

@@ -3,16 +3,15 @@ module ActiveScaffold
     # Helpers that assist with rendering of a human readable search statement
     module HumanConditionHelpers
       def active_scaffold_human_condition_for(column)
-        unless (value = field_search_params[column.name]).nil?
-          search_ui = column.search_ui
-          search_ui ||= column.column.type if column.column
-          if override_human_condition_column?(column)
-            send(override_human_condition_column(column), value, {})
-          elsif search_ui && override_human_condition?(search_ui)
-            send(override_human_condition(search_ui), column, value)
-          else
-            logger.warn "undefined active_scaffold_human_condition method for search_ui #{search_ui} on column #{column.name}"
-          end
+        return if (value = field_search_params[column.name]).nil?
+        search_ui = column.search_ui
+        search_ui ||= column.column.type if column.column
+        if override_human_condition_column?(column)
+          send(override_human_condition_column(column), value, {})
+        elsif search_ui && override_human_condition?(search_ui)
+          send(override_human_condition(search_ui), column, value)
+        else
+          logger.warn "undefined active_scaffold_human_condition method for search_ui #{search_ui} on column #{column.name}"
         end
       end
 

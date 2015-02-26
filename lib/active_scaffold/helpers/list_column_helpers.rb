@@ -15,25 +15,21 @@ module ActiveScaffold
 
       def get_column_method(record, column)
         # check for an override helper
-        method = column.list_method
-        unless method
-          method =
-            if (method = column_override(column))
-              # we only pass the record as the argument. we previously also passed the formatted_value,
-              # but mike perham pointed out that prohibited the usage of overrides to improve on the
-              # performance of our default formatting. see issue #138.
-              method
-            # second, check if the dev has specified a valid list_ui for this column
-            elsif column.list_ui && (method = override_column_ui(column.list_ui))
-              method
-            elsif column.column && (method = override_column_ui(column.column.type))
-              method
-            else
-              :format_column_value
-            end
-          column.list_method = method
+        column.list_method ||= begin
+          if (method = column_override(column))
+            # we only pass the record as the argument. we previously also passed the formatted_value,
+            # but mike perham pointed out that prohibited the usage of overrides to improve on the
+            # performance of our default formatting. see issue #138.
+            method
+          # second, check if the dev has specified a valid list_ui for this column
+          elsif column.list_ui && (method = override_column_ui(column.list_ui))
+            method
+          elsif column.column && (method = override_column_ui(column.column.type))
+            method
+          else
+            :format_column_value
+          end
         end
-        method
       end
 
       # TODO: move empty_field_text and &nbsp; logic in here?
@@ -208,10 +204,9 @@ module ActiveScaffold
       # ==========
 
       def inplace_edit?(record, column)
-        if column.inplace_edit
-          editable = controller.send(:update_authorized?, record) if controller.respond_to?(:update_authorized?, true)
-          editable || record.authorized_for?(:crud_type => :update, :column => column.name)
-        end
+        return unless column.inplace_edit
+        editable = controller.send(:update_authorized?, record) if controller.respond_to?(:update_authorized?, true)
+        editable || record.authorized_for?(:crud_type => :update, :column => column.name)
       end
 
       def inplace_edit_cloning?(column)
@@ -233,18 +228,17 @@ module ActiveScaffold
       end
 
       def inplace_edit_control(column)
-        if inplace_edit?(active_scaffold_config.model, column) && inplace_edit_cloning?(column)
-          old_record, @record = @record, new_model # TODO: remove when relying on @record is removed
-          column = column.clone
-          column.options = column.options.clone
-          column.form_ui = :select if column.association && column.form_ui.nil?
-          options = active_scaffold_input_options(column).merge(:object => new_model)
-          options[:class] = "#{options[:class]} inplace_field"
-          options[:"data-id"] = options[:id]
-          options[:id] = nil
-          content_tag(:div, active_scaffold_input_for(column, nil, options), :style => 'display:none;', :class => inplace_edit_control_css_class).tap do
-            @record = old_record # TODO: remove when relying on @record is removed
-          end
+        return unless inplace_edit?(active_scaffold_config.model, column) && inplace_edit_cloning?(column)
+        old_record, @record = @record, new_model # TODO: remove when relying on @record is removed
+        column = column.clone
+        column.options = column.options.clone
+        column.form_ui = :select if column.association && column.form_ui.nil?
+        options = active_scaffold_input_options(column).merge(:object => new_model)
+        options[:class] = "#{options[:class]} inplace_field"
+        options[:"data-id"] = options[:id]
+        options[:id] = nil
+        content_tag(:div, active_scaffold_input_for(column, nil, options), :style => 'display:none;', :class => inplace_edit_control_css_class).tap do
+          @record = old_record # TODO: remove when relying on @record is removed
         end
       end
 
