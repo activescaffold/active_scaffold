@@ -1,6 +1,5 @@
 module ActiveScaffold::Config
   class Core < Base
-
     def initialize_with_calendar_date_select(model_id)
       initialize_without_calendar_date_select(model_id)
 
@@ -13,7 +12,6 @@ module ActiveScaffold::Config
     end
 
     alias_method_chain :initialize, :calendar_date_select
-
   end
 end
 

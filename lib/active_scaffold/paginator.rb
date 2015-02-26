@@ -1,7 +1,6 @@
 require 'forwardable'
 
 class Paginator
-
   VERSION = '1.0.9'
 
   class ArgumentError < ::ArgumentError; end
@@ -72,7 +71,6 @@ class Paginator
   # Retrieves items for a page and provides metadata about the position
   # of the page in the paginator
   class Page
-
     extend Forwardable
     def_delegator :@pager, :first, :first
     def_delegator :@pager, :last, :last
@@ -130,7 +128,5 @@ class Paginator
     def ==(other) #:nodoc:
       @pager == other.pager && number == other.number
     end
-
   end
-
 end

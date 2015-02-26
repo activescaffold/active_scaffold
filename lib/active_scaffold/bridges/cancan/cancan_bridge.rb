@@ -19,7 +19,6 @@ end
 
 module ActiveScaffold::Bridges
   class Cancan
-
     # controller level authorization
     # As already has callbacks to ensure authorization at controller method via "authorization_method"
     # but let's include this too, just in case, no sure how performance is affected tough :TODO benchmark
@@ -133,6 +132,5 @@ module ActiveScaffold::Bridges
         end
       end
     end
-
   end
 end

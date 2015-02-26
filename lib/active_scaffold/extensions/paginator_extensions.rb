@@ -1,7 +1,6 @@
 require 'active_scaffold/paginator'
 
 class Paginator
-
   # Total number of pages
   def number_of_pages_with_infinite
     number_of_pages_without_infinite if @count
@@ -33,5 +32,4 @@ class Paginator
       end
     end
   end
-
 end

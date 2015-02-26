@@ -36,5 +36,4 @@ class DeleteFileColumnTest < Test::Unit::TestCase
     @model.delete_band_image = 'true'
     assert_not_nil(@model.band_image)
   end
-
 end

@@ -217,6 +217,5 @@ module ActiveScaffold::DataStructures
     def name_to_cache
       @name_to_cache ||= "#{controller || 'self'}_#{type}_#{action}#{'_' if parameters.present?}#{parameters.map { |k, v| "#{k}=#{v.is_a?(Array) ? v.join(',') : v}" }.join('_')}"
     end
-
   end
 end

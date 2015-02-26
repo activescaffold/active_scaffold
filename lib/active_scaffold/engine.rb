@@ -25,6 +25,5 @@ module ActiveScaffold
         ActiveRecord::Associations::SingularAssociation.send :include, ActiveScaffold::Tableless::SingularAssociation
       end
     end
-
   end
 end

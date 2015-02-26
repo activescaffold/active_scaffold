@@ -56,6 +56,5 @@ module ActiveScaffold::DataStructures
     def empty?
       @set.empty?
     end
-
   end
 end

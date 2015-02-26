@@ -39,6 +39,5 @@ module ActiveScaffold::Config
     rescue
       false
     end
-
   end
 end
