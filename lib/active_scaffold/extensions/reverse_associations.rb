@@ -16,7 +16,7 @@ module ActiveScaffold
       end
 
       def reverse(klass = nil)
-        unless defined? @reverse
+        unless defined? @reverse # rubocop:disable Style/IfUnlessModifier
           @reverse ||= inverse_of.try(:name)
         end
         @reverse || (autodetect_inverse(klass).try(:name) unless klass.nil?)
