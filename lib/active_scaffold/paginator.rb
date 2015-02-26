@@ -58,12 +58,12 @@ class Paginator
   # Retrieve page object by number
   def page(number)
     number = (n = number.to_i) > 0 ? n : 1
-    Page.new(self, number, lambda {
+    Page.new(self, number) do
       offset = (number - 1) * @per_page
       args = [offset]
       args << @per_page if @select.arity == 2
       @select.call(*args)
-    })
+    end
   end
 
   # Page object
@@ -79,7 +79,7 @@ class Paginator
 
     attr_reader :number, :pager
 
-    def initialize(pager, number, select) #:nodoc:
+    def initialize(pager, number, &select) #:nodoc:
       @pager, @number = pager, number
       @offset = (number - 1) * pager.per_page
       @select = select

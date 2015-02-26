@@ -92,11 +92,11 @@ class ActionColumnsTest < MiniTest::Test
 
     assert @columns.include?(:c)
     refute @columns.include?(:b)
-    @columns.each { |c|
+    @columns.each do |c|
       next unless c.is_a? ActiveScaffold::DataStructures::Columns
       assert c.include?(:e)
       assert_equal 'my subgroup', c.name
-    }
+    end
   end
 
   def test_include

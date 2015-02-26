@@ -467,11 +467,11 @@ module ActiveScaffold
     # TODO: this should reside on the column, not the controller
     def sort_collection_by_column(collection, column, order)
       sorter = column.sort[:method]
-      collection = collection.sort_by { |record|
+      collection = collection.sort_by do |record|
         value = (sorter.is_a? Proc) ? record.instance_eval(&sorter) : record.instance_eval(sorter.to_s)
         value = '' if value.nil?
         value
-      }
+      end
       collection.reverse! if order.downcase == 'desc'
       collection
     end

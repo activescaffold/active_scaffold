@@ -24,13 +24,14 @@ class ActiveSupport::TestCase
   end
 
   def self.should_render_as_form_ui(column_name, form_ui)
-    should "render column #{column_name} as #{form_ui} form_ui", :before => lambda {
+    before_block = lambda do
       @rendered_columns = []
-      @controller.view_context_class.any_instance.expects(:"active_scaffold_input_#{form_ui}").at_least_once.with {|column, _|
+      @controller.view_context_class.any_instance.expects(:"active_scaffold_input_#{form_ui}").at_least_once.with do |column, _|
         @rendered_columns << column.name
         true
-      }
-    } do
+      end
+    end
+    should "render column #{column_name} as #{form_ui} form_ui", :before => before_block do
       assert_equal form_ui, @controller.active_scaffold_config.columns[column_name].form_ui
       assert @rendered_columns.include?(column_name)
     end
@@ -58,26 +59,28 @@ class ActiveSupport::TestCase
   end
 
   def self.should_render_as_form_hidden(column_name)
-    should "render column #{column_name} as form hidden", :before => lambda {
+    before_block = lambda do
       @rendered_columns = []
-      @controller.view_context_class.any_instance.expects(:"hidden_field").at_least_once.with {|_, method, _|
+      @controller.view_context_class.any_instance.expects(:"hidden_field").at_least_once.with do |_, method, _|
         @rendered_columns << method
         true
-      }
-    } do
+      end
+    end
+    should "render column #{column_name} as form hidden", :before => before_block do
       assert_template :partial => '_form_hidden_attribute'
       assert @rendered_columns.include?(column_name)
     end
   end
 
   def self.should_render_as_list_ui(column_name, list_ui)
-    should "render column #{column_name} as #{list_ui} list_ui", :before => lambda {
+    before_block = lambda do
       @rendered_columns = []
-      @controller.view_context_class.any_instance.expects(:"active_scaffold_column_#{list_ui}").at_least_once.with {|column, _|
+      @controller.view_context_class.any_instance.expects(:"active_scaffold_column_#{list_ui}").at_least_once.with do |column, _|
         @rendered_columns << column.name
         true
-      }
-    } do
+      end
+    end
+    should "render column #{column_name} as #{list_ui} list_ui", :before => before_block do
       assert_equal list_ui, @controller.active_scaffold_config.columns[column_name].list_ui
       assert @rendered_columns.include?(column_name)
     end
@@ -98,15 +101,16 @@ class ActiveSupport::TestCase
   end
 
   def self.should_render_as_inplace_edit(column_name)
-    should "render column #{column_name} as inplace edit", :before => lambda {
+    before_block = lambda do
       @column = @controller.active_scaffold_config.columns[column_name]
       @rendered_columns = []
       method = @column.list_ui == :checkbox ? :format_column_checkbox : :active_scaffold_inplace_edit
-      @controller.view_context_class.any_instance.expects(method).at_least_once.with {|_, column, _|
+      @controller.view_context_class.any_instance.expects(method).at_least_once.with do |_, column, _|
         @rendered_columns << column.name
         true
-      }
-    } do
+      end
+    end
+    should "render column #{column_name} as inplace edit", :before => before_block do
       assert @column.inplace_edit
       assert @rendered_columns.include?(column_name)
     end

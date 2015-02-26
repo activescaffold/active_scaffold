@@ -123,11 +123,11 @@ module ActiveScaffold::Actions
         @record.errors.add(:base, as_(:version_inconsistency))
         self.successful = false
       rescue ActiveRecord::RecordNotSaved => exception
-        logger.warn {
+        logger.warn do
           "\n\n#{exception.class} (#{exception.message}):\n    " +
             Rails.backtrace_cleaner.clean(exception.backtrace).join("\n    ") +
             "\n\n"
-        }
+        end
         @record.errors.add(:base, as_(:record_not_saved)) if @record.errors.empty?
         self.successful = false
       rescue ActiveRecord::ActiveRecordError => ex

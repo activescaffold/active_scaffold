@@ -13,12 +13,12 @@ module ActiveScaffold
   autoload :Version, 'active_scaffold/version'
 
   def self.autoload_subdir(dir, mod = self, root = File.dirname(__FILE__))
-    Dir["#{root}/active_scaffold/#{dir}/*.rb"].each { |file|
+    Dir["#{root}/active_scaffold/#{dir}/*.rb"].each do |file|
       basename = File.basename(file, '.rb')
-      mod.module_eval {
+      mod.module_eval do
         autoload basename.camelcase.to_sym, "active_scaffold/#{dir}/#{basename}"
-      }
-    }
+      end
+    end
   end
 
   module Actions
