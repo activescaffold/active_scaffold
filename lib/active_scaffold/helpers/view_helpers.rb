@@ -423,7 +423,7 @@ module ActiveScaffold
             id = "#{column.association.name}-#{record.id}" unless record.nil?
           end
         end
-        id ||= record ? record.id : (nested? ? nested_parent_id : '')
+        id ||= record.try(:id) || (nested? ? nested_parent_id : '')
         action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
         action_link_id(action_id, id)
       end

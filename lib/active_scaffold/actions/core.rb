@@ -54,7 +54,9 @@ module ActiveScaffold::Actions
       @source_id = params.delete(:source_id)
       @columns = @column.update_columns || []
       @scope = params.delete(:scope)
-      @main_columns = active_scaffold_config.send(@scope ? :subform : (params[:id] ? :update : :create)).columns
+      action = :subform if @scope
+      action ||= params[:id] ? :update : :create
+      @main_columns = active_scaffold_config.send(action).columns
       @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
 
       @record =
