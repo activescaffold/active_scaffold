@@ -563,7 +563,7 @@ module ActiveScaffold
           else # find minimum and maximum from validators
             # we can safely modify :min and :max by 1 for :greater_tnan or :less_than value only for integer values
             only_integer = column.column.type == :integer if column.column
-            only_integer ||= !!validators.find { |v| v.options[:only_integer] }
+            only_integer ||= validators.find { |v| v.options[:only_integer] }.present?
             margin = only_integer ? 1 : 0
 
             # Minimum

@@ -20,6 +20,7 @@ class ActionLinkTest < MiniTest::Test
     refute @link.confirm
     @link.confirm = true
     assert @link.confirm
+    assert @link.confirm?
 
     assert_equal 'bar_authorized?', @link.security_method
 

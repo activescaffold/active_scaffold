@@ -208,12 +208,12 @@ module ActiveScaffold::DataStructures
     end
 
     def search_sql
-      initialize_search_sql if @search_sql === true
+      initialize_search_sql if @search_sql == true
       @search_sql
     end
 
     def searchable?
-      !!search_sql
+      search_sql.present?
     end
 
     # to modify the default order of columns

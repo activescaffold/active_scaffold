@@ -86,7 +86,7 @@ module ActiveScaffold::DataStructures
     end
 
     def confirm?
-      !!@confirm
+      @confirm.present?
     end
 
     # if the action uses a DHTML based (i.e. 2-phase) confirmation
@@ -97,7 +97,7 @@ module ActiveScaffold::DataStructures
     end
 
     def dhtml_confirm?
-      !!@dhtml_confirm
+      @dhtml_confirm.present?
     end
 
     # what method to call on the controller to see if this action_link should be visible
@@ -109,7 +109,7 @@ module ActiveScaffold::DataStructures
     end
 
     def security_method_set?
-      !!@security_method
+      @security_method.present?
     end
 
     # enable it to refresh the parent row when the view is closed
