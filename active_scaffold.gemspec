@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.email = 'activescaffold@googlegroups.com'
   s.authors = ['Many, see README']
-  s.homepage = 'http://activescaffold.com'
+  s.homepage = 'https://github.com/activescaffold/active_scaffold'
   s.summary = 'Rails 3.2 and 4.0 version of activescaffold supporting prototype and jquery'
   s.description = 'Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, leaving you more time to focus on more challenging (and interesting!) problems.'
   s.require_paths = ['lib']
