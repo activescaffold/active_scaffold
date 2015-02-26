@@ -123,11 +123,6 @@ Style/NumericLiterals:
 Style/PredicateName:
   Enabled: false
 
-# Offense count: 2
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/RaiseArgs:
-  Enabled: false
-
 # Offense count: 1
 Style/RegexpLiteral:
   MaxSlashes: 2

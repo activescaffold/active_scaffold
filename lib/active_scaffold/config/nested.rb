@@ -38,9 +38,9 @@ module ActiveScaffold::Config
         @core.action_links.add_to_group(action_link, action_group) unless action_link.nil?
         action_link
       elsif column.nil?
-        raise ArgumentError.new("unknown column #{attribute}")
+        raise ArgumentError, "unknown column #{attribute}"
       elsif column.association.nil?
-        raise ArgumentError.new("column #{attribute} is not an association")
+        raise ArgumentError, "column #{attribute} is not an association"
       end
     end
 
