@@ -132,8 +132,7 @@ module ActiveScaffold::Actions
 
     def create_authorized?
       if nested?
-        nested_authorized = !nested.readonly? && !nested.readonly_through_association?(active_scaffold_config.create.columns)
-        return false unless nested_authorized
+        return false if nested.readonly? || nested.readonly_through_association?(active_scaffold_config.create.columns)
       end
       authorized_for?(:crud_type => :create)
     end

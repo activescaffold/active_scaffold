@@ -4,6 +4,7 @@
 - clean code and follow ruby style guide
 - deny_access (rescue method for ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed) render with status :forbidden (403) instead of 401
 - allow to load nested scaffold with nested through associations, even with inplace edit enabled
+- disable create on nested through associations
 
 = 3.4.17
 - Fix deprecation warning "Extra .css in SCSS file is unnecessary"
@@ -278,7 +279,7 @@
 - Add some classes to forms to improve CSS customization
 - Fix nested links for STI controllers with common configuration in a base controller
 - Fix adding routes twice in active_scaffold generator
-- Restore old behavior for action_link's security_method, ignore_method already hides the link 
+- Restore old behavior for action_link's security_method, ignore_method already hides the link
 - Add data-cancel-refresh to action links, so nested scaffold's behaviour can be applied to other action links and when adapter is closed row will be refreshed.
 - fix support for tableless models in rails >= 3.2.5
 
