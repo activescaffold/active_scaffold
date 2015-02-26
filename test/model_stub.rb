@@ -38,7 +38,7 @@ class ModelStub < ActiveRecord::Base
   end
 
   def self.columns_hash
-    @columns_hash ||= columns.inject({}) { |hash, column| hash[column.name.to_s] = column; hash }
+    @columns_hash ||= columns.each_with_object({}) { |column, hash| hash[column.name.to_s] = column }
   end
 
   # column-level security methods, used for testing

@@ -24,11 +24,10 @@ module ActiveScaffold
         phrase = where_clauses.join(' OR ')
 
         tokens.collect do |value|
-          columns.inject([phrase]) do |condition, column|
+          columns.each_with_object([phrase]) do |column, condition|
             Array(column.search_sql).size.times do
               condition.push(column.text? ? like_pattern.sub('?', value) : ActiveScaffold::Core.column_type_cast(value, column.column))
             end
-            condition
           end
         end
       end
