@@ -367,9 +367,9 @@ module ActiveScaffold::DataStructures
       @field_name ||= column ? @active_record_class.connection.quote_column_name(column.name) : association.foreign_key
     end
 
-    def <=>(other_column)
-      order_weight = weight <=> other_column.weight
-      order_weight != 0 ? order_weight : name.to_s <=> other_column.name.to_s
+    def <=>(other)
+      order_weight = weight <=> other.weight
+      order_weight != 0 ? order_weight : name.to_s <=> other.name.to_s
     end
 
     def number_to_native(value)
