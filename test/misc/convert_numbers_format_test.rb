@@ -57,7 +57,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 1000, convert_number('1,000')
     assert_equal 1000, convert_number('+1,000')
     assert_equal -1000, convert_number('-1,000')
-    assert_equal 1000000, convert_number('1,000,000')
+    assert_equal 1_000_000, convert_number('1,000,000')
   end
 
   def test_english_format_with_separator_and_delimiter_using_english_language
@@ -66,7 +66,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 1234.1, convert_number('1,234.100')
     assert_equal 1234.345, convert_number('+1,234.345')
     assert_equal -1234.345, convert_number('-1,234.345')
-    assert_equal 1234000.1, convert_number('1,234,000.100')
+    assert_equal 1_234_000.1, convert_number('1,234,000.100')
   end
 
   def test_english_format_with_decimal_separator_using_spanish_language
@@ -97,7 +97,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 1000, convert_number('1.000')
     assert_equal 1000, convert_number('+1.000')
     assert_equal -1000, convert_number('-1.000')
-    assert_equal 1000000, convert_number('1.000.000')
+    assert_equal 1_000_000, convert_number('1.000.000')
   end
 
   def test_spanish_format_with_separator_and_decimal_using_spanish_language
@@ -106,7 +106,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 1230.1, convert_number('1.230,100')
     assert_equal 1234.345, convert_number('+1.234,345')
     assert_equal -1234.345, convert_number('-1.234,345')
-    assert_equal 1234000.1, convert_number('1.234.000,100')
+    assert_equal 1_234_000.1, convert_number('1.234.000,100')
   end
 
   def test_english_currency_format_with_decimal_separator_using_russian_language

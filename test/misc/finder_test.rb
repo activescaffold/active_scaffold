@@ -56,7 +56,7 @@ class FinderTest < MiniTest::Test
     column = ActiveScaffold::DataStructures::Column.new('a', ModelStub)
     column.sort_by :method => proc { self }
 
-    collection = [16000, 2853, 98765, 6188, 4]
+    collection = [16_000, 2853, 98_765, 6188, 4]
     assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
     assert_equal collection.sort.reverse, @klass.send(:sort_collection_by_column, collection, column, 'desc')
 

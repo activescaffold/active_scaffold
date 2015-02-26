@@ -72,11 +72,6 @@ Style/Documentation:
   Enabled: false
 
 # Offense count: 7
-# Cop supports --auto-correct.
-Style/NumericLiterals:
-  MinDigits: 10
-
-# Offense count: 7
 # Configuration parameters: NamePrefix, NamePrefixBlacklist.
 Style/PredicateName:
   Enabled: false

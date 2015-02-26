@@ -381,7 +381,7 @@ module ActiveScaffold
     # See finder_options for valid options
     def find_page(options = {})
       options.assert_valid_keys :sorting, :per_page, :page, :count_includes, :pagination, :select
-      options[:per_page] ||= 999999999
+      options[:per_page] ||= 999_999_999
       options[:page] ||= 1
 
       find_options = finder_options(options)
