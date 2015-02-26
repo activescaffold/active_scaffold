@@ -25,8 +25,6 @@ module ActiveScaffold::Bridges
           locale_date_options = date_options(locale)
           if locale_date_options
             "$.datepicker.regional['#{locale}'] = #{locale_date_options.to_json};"
-          else
-            nil
           end
         end.compact.join('')
       end
@@ -62,8 +60,6 @@ module ActiveScaffold::Bridges
           locale_datetime_options = datetime_options(locale)
           if locale_datetime_options
             "$.timepicker.regional['#{locale}'] = #{locale_datetime_options.to_json};"
-          else
-            nil
           end
         end.compact.join('')
       end

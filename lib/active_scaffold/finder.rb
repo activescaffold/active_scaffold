@@ -117,8 +117,6 @@ module ActiveScaffold
           ['(%{search_sql} BETWEEN ? AND ?)', value[:from], value[:to]]
         elsif ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt])
           ["%{search_sql} #{value[:opt]} ?", value[:from]]
-        else
-          nil
         end
       end
 
@@ -223,13 +221,11 @@ module ActiveScaffold
       end
 
       def condition_for_null_type(column, value, like_pattern = nil)
-        case value.to_sym
-        when :null
+        case value.to_s
+        when 'null'
           ['%{search_sql} is null', []]
-        when :not_null
+        when 'not_null'
           ['%{search_sql} is not null', []]
-        else
-          nil
         end
       end
 
