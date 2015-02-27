@@ -10,11 +10,6 @@ gemfile:
   - gemfiles/Gemfile.rails-4.2.x
 language: ruby
 matrix:
-  allow_failures:
-    - gemfile: Gemfile
-      rvm: rbx-2.4
-    - gemfile: Gemfile
-      rvm: rbx-2.5
   exclude:
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: 2.2
@@ -26,8 +21,6 @@ rvm:
   - 2.1
   - 2.2
   - ruby-head
-  - rbx-2.2
-  - rbx-2.4
-  - rbx-2.5
+  - rbx-2
   - jruby-19mode
 sudo: false
