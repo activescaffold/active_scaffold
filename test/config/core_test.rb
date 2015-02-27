@@ -60,7 +60,7 @@ module Config
       @config.action_links.add @config.create.link
       ModelStubsController.send(:_add_sti_create_links)
       assert_equal 'Create Model stub', @config.action_links[:new].label
-      assert_equal 'config/core_test/model_stubs', @config.action_links[:new].parameters[:parent_sti]
+      assert_equal 'rb_config/core_test/model_stubs', @config.action_links[:new].parameters[:parent_sti]
     end
   end
 end
