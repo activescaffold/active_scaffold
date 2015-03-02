@@ -235,8 +235,8 @@ module ActiveScaffold
 
       def cached_action_link_url(link, record)
         @action_links_urls ||= {}
-        @action_links_urls[link.name_to_cache] ||= begin
-          url_options = action_link_url_options(link, record)
+        @action_links_urls[link.name_to_cache] || begin
+          url_options = cached_action_link_url_options(link, record)
           if cache_action_link_url?(link, record)
             @action_links_urls[link.name_to_cache] = url_for(url_options)
           else
@@ -315,10 +315,10 @@ module ActiveScaffold
         active_scaffold_config.cache_action_link_urls && (link.type == :collection || !link.dynamic_parameters.is_a?(Proc)) && !is_sti_record?(record)
       end
 
-      def action_link_url_options(link, record)
+      def cached_action_link_url_options(link, record)
         @action_links_url_options ||= {}
-        @action_links_url_options[link.name_to_cache] ||= begin
-          options = generate_action_link_url_options(link, record)
+        @action_links_url_options[link.name_to_cache] || begin
+          options = action_link_url_options(link, record)
           if cache_action_link_url_options?(link, record)
             @action_links_url_options[link.name_to_cache] = options
           end
@@ -326,7 +326,7 @@ module ActiveScaffold
         end
       end
 
-      def generate_action_link_url_options(link, record)
+      def action_link_url_options(link, record)
         url_options = {:action => link.action}
         url_options[:id] = '--ID--' unless record.nil?
         url_options[:controller] = link.controller.to_s if link.controller
@@ -354,7 +354,7 @@ module ActiveScaffold
       end
 
       def replaced_action_link_url_options(link, record)
-        url = action_link_url_options(link, record)
+        url = cached_action_link_url_options(link, record)
         url[:controller] ||= params[:controller]
         missing_options, url_options = url.partition { |_, v| v.nil? }
         replacements = {}
