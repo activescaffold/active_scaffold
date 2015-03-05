@@ -15,6 +15,19 @@ matrix:
       rvm: 2.2
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: ruby-head
+  include:
+    - gemfile: gemfiles/Gemfile.rails-3.2.x
+      rvm: jruby-19mode
+      jdk: openjdk7
+    - gemfile: gemfiles/Gemfile.rails-4.0.x
+      rvm: jruby-19mode
+      jdk: openjdk7
+    - gemfile: Gemfile
+      rvm: jruby-19mode
+      jdk: openjdk7
+    - gemfile: gemfiles/Gemfile.rails-4.2.x
+      rvm: jruby-19mode
+      jdk: openjdk7
 rvm:
   - 1.9.3
   - 2.0
@@ -22,5 +35,4 @@ rvm:
   - 2.2
   - ruby-head
   - rbx-2
-  - jruby-19mode
 sudo: false
