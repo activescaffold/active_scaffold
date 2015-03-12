@@ -53,7 +53,7 @@ Credits
 -------
 ActiveScaffold grew out of a project named Ajaxscaffold dating back to 2006. It has had numerous contributors including:
 
-ActiveScaffold Gem/Plugin by Scott Rutherford (scott@caronsoftware.com), Richard White (rrwhite@gmail.com), Lance Ivy (lance@cainlevy.net), Ed Moss, Tim Harper and Sergio Cambra (sergio@entrecables.com)
+ActiveScaffold Gem/Plugin by Scott Rutherford (scott@caronsoftware.com), Richard White (rrwhite@gmail.com), Lance Ivy (lance@cainlevy.net), Ed Moss, Tim Harper and Sergio Cambra (sergio@programatica.es)
 
 Uses DhtmlHistory by Brad Neuberg (bkn3@columbia.edu)
 http://codinginparadise.org
@@ -64,8 +64,8 @@ http://adamv.com/dev/javascript/querystring
 Uses Paginator by Bruce Williams
 http://paginator.rubyforge.org/
 
-Supports RecordSelect by Lance Ivy
-http://code.google.com/p/recordselect/
+Supports RecordSelect by Lance Ivy and Sergio Cambra
+http://github.com/scambra/recordselect/
 
 
 License
