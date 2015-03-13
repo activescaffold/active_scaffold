@@ -1,3 +1,4 @@
+= 3.4.18
 - Fix paper_trail bridge on development
 - Allow to set :data hash in :html_options for action links
 - unscope(:order) in calculate_query (for rails >= 4)
@@ -5,6 +6,7 @@
 - deny_access (rescue method for ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed) render with status :forbidden (403) instead of 401
 - allow to load nested scaffold with nested through associations, even with inplace edit enabled
 - disable create on nested through associations
+- Allow to config live_search delay with ActiveScaffold.js_config
 
 = 3.4.17
 - Fix deprecation warning "Extra .css in SCSS file is unnecessary"
