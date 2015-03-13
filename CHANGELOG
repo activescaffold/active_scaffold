@@ -7,6 +7,7 @@
 - allow to load nested scaffold with nested through associations, even with inplace edit enabled
 - disable create on nested through associations
 - Allow to config live_search delay with ActiveScaffold.js_config
+- Warn when form is changed (ignores search forms), this featured must be enabled with ActiveScaffold.js_config[:warn_changes]
 
 = 3.4.17
 - Fix deprecation warning "Extra .css in SCSS file is unnecessary"
