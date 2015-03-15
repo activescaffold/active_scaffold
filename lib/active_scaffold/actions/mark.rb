@@ -72,7 +72,7 @@ module ActiveScaffold::Actions
       end
     end
 
-    def do_destroy
+    def do_destroy(record)
       super
       @record.as_marked = false if successful?
     end
