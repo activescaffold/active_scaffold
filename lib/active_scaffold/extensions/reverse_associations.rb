@@ -98,8 +98,18 @@ module ActiveScaffold
         reverse_matches
       end
     end
+
+    module ThroughAssociation
+      # NOTE - for now, we're only supporting inverse setting back onto has_one associations.
+      # TODO remove when rails fixes this and old versions are not supported
+      def invertible_for?(record)
+        inverse = super
+        inverse && !inverse.collection?
+      end
+    end
   end
 end
 
 ActiveRecord::Reflection::AssociationReflection.send :include, ActiveScaffold::ReverseAssociation::AssociationReflection
 ActiveRecord::Reflection::ThroughReflection.send :include, ActiveScaffold::ReverseAssociation::ThroughReflection
+ActiveRecord::Associations::ThroughAssociation.send :include, ActiveScaffold::ReverseAssociation::ThroughAssociation

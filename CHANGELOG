@@ -1,3 +1,5 @@
+- Fix rails bug on set_inverse_instance for has_one :through associations which has_many inverse association
+
 = 3.4.18
 - Fix paper_trail bridge on development
 - Allow to set :data hash in :html_options for action links
