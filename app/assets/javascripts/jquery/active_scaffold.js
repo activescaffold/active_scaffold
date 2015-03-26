@@ -296,7 +296,7 @@ jQuery(document).ready(function($) {
   ActiveScaffold.live_search(document);
   ActiveScaffold.auto_paginate(document);
   ActiveScaffold.draggable_lists('.draggable-lists', document);
-  if (ActiveScaffold.warn_changes) ActiveScaffold.setup_warn_changes();
+  if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
   jQuery(document).on('as:element_updated', function(e) {
     ActiveScaffold.load_embedded(e.target);
     ActiveScaffold.enable_js_form_buttons(e.target);
@@ -987,7 +987,7 @@ var ActiveScaffold = {
 
   setup_warn_changes: function() {
     var need_confirm = false;
-    var unload_message = $('meta[name=unload-message]').val() || ActiveScaffold.config.unload_message || "Are you sure you want to navigate away? Any unsaved data will be lost.";
+    var unload_message = $('meta[name=unload-message]').attr('content') || ActiveScaffold.config.unload_message || "This page contains unsaved data that will be lost if you leave this page.";
     $(document).on('change input', '.active-scaffold form:not(.search) input, .active-scaffold form:not(.search) textarea, .active-scaffold form:not(.search) select', function() {
       $(this).closest('form').addClass('need-confirm');
     });

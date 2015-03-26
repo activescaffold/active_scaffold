@@ -1,4 +1,5 @@
 - Fix rails bug on set_inverse_instance for has_one :through associations which has_many inverse association
+- Fix warn when form is changed
 
 = 3.4.18.1
 - Fix do_destroy for mark action
@@ -12,7 +13,7 @@
 - allow to load nested scaffold with nested through associations, even with inplace edit enabled
 - disable create on nested through associations
 - Allow to config live_search delay with ActiveScaffold.js_config
-- Warn when form is changed (ignores search forms), this featured must be enabled with ActiveScaffold.js_config[:warn_changes]
+- Warn when form is changed (ignores search forms), this featured must be enabled with ActiveScaffold.js_config[:warn_changes], message can be set on <meta name="unload-message" content="..."> tag or ActiveScaffold.js_config[:unload_message]
 
 = 3.4.17
 - Fix deprecation warning "Extra .css in SCSS file is unnecessary"
