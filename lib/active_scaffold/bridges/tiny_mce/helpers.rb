@@ -15,22 +15,22 @@ class ActiveScaffold::Bridges::TinyMce
       def active_scaffold_input_text_editor(column, options)
         options[:class] = "#{options[:class]} mceEditor #{column.options[:class]}".strip
 
-        settings = {:theme => 'simple'}.merge(column.options[:tinymce] || {})
+        settings = {:theme => 'modern'}.merge(column.options[:tinymce] || {})
         settings = settings.to_json
         settings = "tinyMCE.settings = #{settings};"
 
         html = []
         html << send(override_input(:textarea), column, options)
-        html << javascript_tag(settings + "tinyMCE.execCommand('mceAddControl', false, '#{options[:id]}');") if request.xhr? || params[:iframe]
+        html << javascript_tag(settings + "tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if request.xhr? || params[:iframe]
         html.join "\n"
       end
 
       def onsubmit_with_tiny_mce
         case ActiveScaffold.js_framework
         when :jquery
-          submit_js = 'tinyMCE.triggerSave();jQuery(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, jQuery(elem).attr(\'id\')); });'
+          submit_js = 'tinyMCE.triggerSave();jQuery(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveEditor\', false, jQuery(elem).attr(\'id\')); });'
         when :prototype
-          submit_js = 'tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveControl\', false, elem.id); });'
+          submit_js = 'tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveEditor\', false, elem.id); });'
         end
         [onsubmit_without_tiny_mce, submit_js].compact.join ';'
       end
