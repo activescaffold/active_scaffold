@@ -1,3 +1,6 @@
+- Update tinymce bridge for tinyMCE 4.x
+
+= 3.4.19
 - Fix rails bug on set_inverse_instance for has_one :through associations which has_many inverse association
 - Fix warn when form is changed
 
