@@ -1,4 +1,5 @@
 - Update tinymce bridge for tinyMCE 4.x
+- Ignore :format in conditions_from_params
 
 = 3.4.19
 - Fix rails bug on set_inverse_instance for has_one :through associations which has_many inverse association

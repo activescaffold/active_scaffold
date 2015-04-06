@@ -208,7 +208,7 @@ module ActiveScaffold::Actions
     def conditions_from_params
       @conditions_from_params ||= begin
         conditions = {}
-        params.except(:controller, :action, :page, :sort, :sort_direction, :id).each do |key, value|
+        params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
           column = active_scaffold_config.model.columns_hash[key.to_s]
           next unless column
           key = key.to_sym
