@@ -105,7 +105,7 @@ module ActiveScaffold
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
         if column.association.nil?
-          if column.form_ui == :select && column.options[:options]
+          if [:select, :radio].include?(column.form_ui) && column.options[:options]
             text, val = column.options[:options].find { |text, val| (val.nil? ? text : val).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
