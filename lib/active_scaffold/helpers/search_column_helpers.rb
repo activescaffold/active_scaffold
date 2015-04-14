@@ -114,6 +114,7 @@ module ActiveScaffold
           html_options[:name] += '[]'
         else
           options[:include_blank] ||= as_(:_select_)
+          active_scaffold_translate_select_options(options)
         end
 
         if (optgroup = options.delete(:optgroup))
