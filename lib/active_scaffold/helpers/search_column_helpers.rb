@@ -185,11 +185,10 @@ module ActiveScaffold
         select_options = active_scaffold_search_range_comparator_options(column)
         if active_scaffold_search_range_string?(column)
           text_field_size = 15
-          opt_value ||= '%?%'
         else
           text_field_size = 10
-          opt_value ||= '='
         end
+        opt_value ||= select_options[0][1]
 
         from_value = controller.class.condition_value_for_numeric(column, from_value)
         to_value = controller.class.condition_value_for_numeric(column, to_value)
