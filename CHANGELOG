@@ -3,6 +3,7 @@
 - column with :radio form_ui works like :select form_ui in list and show
 - Fix default opt_value in search_range when comparator options is overrided
 - translate include_blank in select search_ui
+- Add column.css_class to li tag on field search
 
 = 3.4.19
 - Fix rails bug on set_inverse_instance for has_one :through associations which has_many inverse association
