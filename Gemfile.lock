@@ -61,7 +61,7 @@ GEM
     highline (1.6.21)
     hike (1.2.3)
     i18n (0.6.11)
-    json (1.8.1)
+    json (1.8.2)
     localeapp (0.7.2)
       gli
       i18n
