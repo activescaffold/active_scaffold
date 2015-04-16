@@ -429,7 +429,7 @@ module ActiveScaffold
     end
 
     def append_to_query(relation, options)
-      options.assert_valid_keys :where, :select, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, (:references if Rails::VERSION::MAJOR >= 4)
+      options.assert_valid_keys :where, :select, :having, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, (:references if Rails::VERSION::MAJOR >= 4)
       relation = options.reject { |_, v| v.blank? }.inject(relation) do |rel, (k, v)|
         k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
       end
