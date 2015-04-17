@@ -45,7 +45,7 @@ module ActiveScaffold
       return false if bridges_prepared
       bridges.keys.each do |bridge_name|
         bridge = self[bridge_name]
-        bridge.prepare if bridge.install?
+        bridge.prepare if bridge && bridge.install?
       end
       self.bridges_prepared = true
     end
