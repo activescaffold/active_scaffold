@@ -1,3 +1,6 @@
+- Fix excluding a bridge
+
+= 3.4.20
 - Update tinymce bridge for tinyMCE 4.x
 - Ignore :format in conditions_from_params
 - column with :radio form_ui works like :select form_ui in list and show
