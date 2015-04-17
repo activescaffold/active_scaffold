@@ -246,7 +246,7 @@ module ActiveScaffold
       end
 
       def replace_id_params_in_action_link_url(link, record, url)
-        url = record ? url.sub('--ID--', record.to_param) : url.clone
+        url = record ? url.sub('--ID--', record.to_param.to_s) : url.clone
         if link.column.try(:singular_association?)
           child_id = record.send(link.column.association.name).try(:to_param)
           if child_id.present?
@@ -333,9 +333,9 @@ module ActiveScaffold
         url_options.merge! link.parameters if link.parameters
         if link.dynamic_parameters.is_a?(Proc)
           if record.nil?
-            url_options.merge! link.dynamic_parameters.call
+            url_options.merge! instance_exec &link.dynamic_parameters
           else
-            url_options.merge! link.dynamic_parameters.call(record)
+            url_options.merge! instance_exec record, &link.dynamic_parameters
           end
         end
         if link.nested_link?
