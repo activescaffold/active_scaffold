@@ -991,7 +991,7 @@ var ActiveScaffold = {
     $(document).on('change input', '.active-scaffold form:not(.search) input, .active-scaffold form:not(.search) textarea, .active-scaffold form:not(.search) select', function() {
       $(this).closest('form').addClass('need-confirm');
     });
-    $(document).on('click', '.active-scaffold .as_cancel:not([data-remote])', function() {
+    $(document).on('click', '.active-scaffold .as_cancel:not([data-remote]), .active-scaffold input[type=submit]', function() {
       $(this).closest('form').removeClass('need-confirm');
     });
     window.onbeforeunload = function() {
