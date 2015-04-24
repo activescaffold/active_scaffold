@@ -1,6 +1,7 @@
 - Fix excluding a bridge
 - Allow to call helpers from dynamic_parameters proc
 - Fix warn when form is changed on create/update loaded on page (without AJAX)
+- Fix XSS vulnerability when using to_label with as_ (#425)
 
 = 3.4.20
 - Update tinymce bridge for tinyMCE 4.x
