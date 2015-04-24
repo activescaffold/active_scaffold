@@ -38,9 +38,9 @@ module ActiveScaffold::Actions
 
     def nested_label
       if nested.belongs_to?
-        as_(:nested_of_model, :nested_model => active_scaffold_config.model.model_name.human, :parent_model => nested_parent_record.to_label)
+        as_(:nested_of_model, :nested_model => active_scaffold_config.model.model_name.human, :parent_model => h(nested_parent_record.to_label))
       else
-        as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => nested_parent_record.to_label)
+        as_(:nested_for_model, :nested_model => active_scaffold_config.list.label, :parent_model => h(nested_parent_record.to_label))
       end
     end
 
@@ -165,7 +165,7 @@ module ActiveScaffold::Actions::Nested
 
     def add_existing_respond_to_html
       if successful?
-        flash[:info] = as_(:created_model, :model => @record.to_label)
+        flash[:info] = as_(:created_model, :model => h(@record.to_label))
         return_to_main
       else
         render(:action => 'add_existing_form')
@@ -193,7 +193,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     def destroy_existing_respond_to_html
-      flash[:info] = as_(:deleted_model, :model => @record.to_label)
+      flash[:info] = as_(:deleted_model, :model => h(@record.to_label))
       return_to_main
     end
 
