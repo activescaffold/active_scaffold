@@ -43,7 +43,7 @@ module ActiveScaffold::Actions
         end
       else # just a regular post
         if successful?
-          message = as_(:updated_model, :model => h(@record.to_label))
+          message = as_(:updated_model, :model => ERB::Util.h(@record.to_label))
           if params[:dont_close]
             flash.now[:info] = message
             render(:action => 'update')
@@ -68,7 +68,7 @@ module ActiveScaffold::Actions
             @record = get_row rescue nil # if record doesn't fullfil current conditions remove it from list
           end
         end
-        flash.now[:info] = as_(:updated_model, :model => h((@updated_record || @record).to_label)) if active_scaffold_config.update.persistent
+        flash.now[:info] = as_(:updated_model, :model => ERB::Util.h((@updated_record || @record).to_label)) if active_scaffold_config.update.persistent
       end
       render :action => 'on_update'
     end

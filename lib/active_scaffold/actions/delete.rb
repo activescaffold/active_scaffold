@@ -14,7 +14,7 @@ module ActiveScaffold::Actions
     protected
 
     def destroy_respond_to_html
-      flash[:info] = as_(:deleted_model, :model => h(@record.to_label)) if self.successful?
+      flash[:info] = as_(:deleted_model, :model => ERB::Util.h(@record.to_label)) if self.successful?
       return_to_main
     end
 
@@ -46,7 +46,7 @@ module ActiveScaffold::Actions
       begin
         self.successful = record.destroy
       rescue StandardError => ex
-        flash[:warning] = as_(:cant_destroy_record, :record => h(record.to_label))
+        flash[:warning] = as_(:cant_destroy_record, :record => ERB::Util.h(record.to_label))
         self.successful = false
         logger.debug ex.message
         logger.debug ex.backtrace.join("\n")

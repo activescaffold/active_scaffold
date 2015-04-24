@@ -40,7 +40,7 @@ module ActiveScaffold::Actions
         end
       else
         if successful?
-          flash[:info] = as_(:created_model, :model => h(@record.to_label))
+          flash[:info] = as_(:created_model, :model => ERB::Util.h(@record.to_label))
           if (action = active_scaffold_config.create.action_after_create)
             redirect_to params_for(:action => action, :id => @record.to_param)
           elsif params[:dont_close]
