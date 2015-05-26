@@ -303,6 +303,11 @@ jQuery(document).ready(function($) {
     ActiveScaffold.live_search(e.target);
     ActiveScaffold.draggable_lists('.draggable-lists', e.target);
   });
+  jQuery(document).on('as:element_updated', '.active-scaffold', function(e) {
+    if (e.target != this) return;
+    var search = $(this).find('form.search');
+    if (search.length) ActiveScaffold.focus_first_element_of_form(search);
+  });
   jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
     ActiveScaffold.load_embedded(action_link.adapter);
     ActiveScaffold.enable_js_form_buttons(action_link.adapter);
@@ -607,7 +612,8 @@ var ActiveScaffold = {
   focus_first_element_of_form: function(form_element, form_selector) {
     if (typeof(form_element) == 'string') form_element = '#' + form_element;
     if (typeof(form_selector) == 'undefined') form_selector = jQuery(form_element).is('form') ? '' : 'form ';
-    jQuery(form_selector + ":input:visible:first", jQuery(form_element)).focus();
+    var input = jQuery(form_selector + ":input:visible:first", jQuery(form_element)).focus();
+    if (input[0].value) input[0].selectionStart = input[0].selectionEnd = input[0].value.length;
   },
 
   create_record_row: function(active_scaffold_id, html, options) {
