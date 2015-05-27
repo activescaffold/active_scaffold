@@ -37,6 +37,7 @@ module ActiveScaffold
       # TODO: this should reside on the column, not the controller
       def condition_for_column(column, value, text_search = :full)
         like_pattern = like_pattern(text_search)
+        value = value.with_indifferent_access if value.is_a? Hash
         if self.respond_to?("condition_for_#{column.name}_column")
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end

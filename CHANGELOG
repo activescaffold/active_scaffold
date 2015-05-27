@@ -1,3 +1,6 @@
+= 3.4.21.1
+- Fix field_search when contains is used on rails 4.2
+
 = 3.4.21
 - Fix excluding a bridge
 - Allow to call helpers from dynamic_parameters proc
