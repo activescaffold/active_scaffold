@@ -613,7 +613,7 @@ var ActiveScaffold = {
     if (typeof(form_element) == 'string') form_element = '#' + form_element;
     if (typeof(form_selector) == 'undefined') form_selector = jQuery(form_element).is('form') ? '' : 'form ';
     var input = jQuery(form_selector + ":input:visible:first", jQuery(form_element)).focus();
-    if (input[0].value) input[0].selectionStart = input[0].selectionEnd = input[0].value.length;
+    if (input[0] && input[0].value) input[0].selectionStart = input[0].selectionEnd = input[0].value.length;
   },
 
   create_record_row: function(active_scaffold_id, html, options) {
