@@ -5,7 +5,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       if table_name == klass.table_name
         klass.columns_hash[column_name]
       else
-        super
+        association.klass.columns_hash[column_name]
       end
     end
 
