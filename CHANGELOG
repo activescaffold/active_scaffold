@@ -1,3 +1,5 @@
+- fix has_one/many tableless model through association
+
 = 3.4.21.1
 - Fix field_search when contains is used on rails 4.2
 
