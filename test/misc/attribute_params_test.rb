@@ -218,7 +218,7 @@ class AttributeParamsTest < MiniTest::Test
     floor = Floor.create
     people = 2.times.map { Person.create }
     key = Time.now.to_i.to_s
-    floors = {'0' => '', floor.id.to_s => {:number => '1', :tenant => '', :id => floor.id.to_s}, key => {:number => '2', 'tenant' => people.first.id.to_s}, key.succ => {:number => '4', 'tenant' => people.last.id.to_s}}
+    floors = {'0' => '', floor.id.to_s => {:number => '1', :tenant => '', :id => floor.id.to_s}, key => {:number => '2', 'tenant' => people.first.id.to_s}, key.succ => {:number => '4', 'tenant' => people.last.id.to_s}, key.succ.succ => {:number => '', 'tenant' => ''}}
     model = update_record_from_params(Building.new, :create, :name, :floors, :name => 'First', :floors => floors)
     assert_equal 'First', model.name
     assert_equal 3, model.floors.size
@@ -274,8 +274,21 @@ class AttributeParamsTest < MiniTest::Test
 
     model = update_record_from_params(model, :update, :brand, :person, :brand => 'Mercedes', :person => {:first_name => ''})
     assert_equal 'Mercedes', model.brand
-    refute_equal person.id, model.person.id
+    assert_nil model.person
     assert model.save
+  end
+
+  def test_saving_belongs_to_crud_with_boolean
+    model = update_record_from_params(Car.new, :create, :brand, :person, :brand => 'Ford', :person => {:first_name => '', :adult => '0'})
+    assert_equal 'Ford', model.brand
+    assert model.save
+    assert_nil model.person
+
+    model = update_record_from_params(model, :update, :brand, :person, :brand => 'Mercedes', :person => {:first_name => '', :adult => '1'})
+    assert_equal 'Mercedes', model.brand
+    assert model.person.present?
+    assert model.save
+    assert model.person.persisted?
   end
 
   def test_saving_has_one_crud
@@ -318,7 +331,7 @@ class AttributeParamsTest < MiniTest::Test
     model = update_record_from_params(model, :update, :first_name, :car, :first_name => 'Name', :car => {:brand => ''})
     assert_equal 'Name', model.first_name
     assert_nil Car.where(:id => car.id).first, 'previous car should be deleted'
-    refute_equal car.id, model.car.id
+    assert_nil model.car
     assert model.save
   end
 

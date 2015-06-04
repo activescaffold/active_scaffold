@@ -232,7 +232,7 @@ module ActiveScaffold
     def build_record_from_params(params, column, record)
       current = record.send(column.name)
       klass = column.association.klass
-      column.singular_association? || (column.plural_association? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
+      (column.plural_association? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
     end
 
     # Attempts to create or find an instance of the klass of the association in parent_column from the
@@ -274,21 +274,23 @@ module ActiveScaffold
     # Determines whether the given attributes hash is "empty".
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
-      ignore_column_types = [:boolean]
+      # old style date form management... ignore them too
+      part_ignore_column_types = [:datetime, :date, :time]
+
       hash.all? do |key, value|
         # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
         parts = key.to_s.split('(')
-        # old style date form management... ignore them too
-        ignore_column_types = [:boolean, :datetime, :date, :time] if parts.length > 1
         column_name = parts.first
         column = klass.columns_hash[column_name]
 
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
-        next true if column && ignore_column_types.include?(column.type)
+        next true if column && parts.length > 1 && part_ignore_column_types.include?(column.type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
-        next true if value == column_default_value(column_name, klass, column)
+        default_value = column_default_value(column_name, klass, column)
+        casted_value = column ? ActiveScaffold::Core.column_type_cast(value, column) : value
+        next true if casted_value == default_value
 
         if value.is_a?(Hash)
           attributes_hash_is_empty?(value, klass)
@@ -301,7 +303,7 @@ module ActiveScaffold
     end
 
     def column_default_value(column_name, klass, column)
-      column.default.to_s if column
+      column.default if column
     end
   end
 end

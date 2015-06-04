@@ -1,4 +1,6 @@
 - fix has_one/many tableless model through association
+- fix check default value for checkboxes, so if record in subform, with checkbox, is left as default, is not saved, but setting checkbox would save record
+- singular associations on subform are not always created, so you can leave default values on fields and skip creation, in other case some validations could fail and force to create singular associations
 
 = 3.4.21.1
 - Fix field_search when contains is used on rails 4.2
