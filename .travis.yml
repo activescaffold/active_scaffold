@@ -10,6 +10,7 @@ gemfile:
   - gemfiles/Gemfile.rails-4.0.x
   - Gemfile
   - gemfiles/Gemfile.rails-4.2.x
+  - gemfiles/Gemfile.rails-stable
 rvm:
   - 1.9.3
   - 2.0
@@ -17,6 +18,10 @@ rvm:
   - 2.2
   - ruby-head
   - rbx-2
+  - jruby-19mode
+  - jruby-9
+jdk:
+  - openjdk7
 matrix:
   allow_failures:
     - rvm: ruby-head
@@ -25,28 +30,3 @@ matrix:
       rvm: 2.2
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: ruby-head
-  include:
-    - gemfile: gemfiles/Gemfile.rails-3.2.x
-      rvm: jruby-19mode
-      jdk: openjdk7
-    - gemfile: gemfiles/Gemfile.rails-4.0.x
-      rvm: jruby-19mode
-      jdk: openjdk7
-    - gemfile: Gemfile
-      rvm: jruby-19mode
-      jdk: openjdk7
-    - gemfile: gemfiles/Gemfile.rails-4.2.x
-      rvm: jruby-19mode
-      jdk: openjdk7
-    - gemfile: gemfiles/Gemfile.rails-3.2.x
-      rvm: jruby-9
-      jdk: openjdk7
-    - gemfile: gemfiles/Gemfile.rails-4.0.x
-      rvm: jruby-9
-      jdk: openjdk7
-    - gemfile: Gemfile
-      rvm: jruby-9
-      jdk: openjdk7
-    - gemfile: gemfiles/Gemfile.rails-4.2.x
-      rvm: jruby-9
-      jdk: openjdk7
