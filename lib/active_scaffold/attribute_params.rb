@@ -35,19 +35,19 @@ module ActiveScaffold
 
     # workaround to update counters when belongs_to changes on persisted record on Rails 3
     # workaround to update counters when polymorphic has_many changes on persisted record
-    # TODO: remove when rails3 support is removed and counter cache for polymorphic has_many association works on rails4 (works on rails4.2)
+    # TODO: remove when rails3 support is removed and counter cache for polymorphic has_many association works on rails4
     def hack_for_has_many_counter_cache(parent_record, column, value)
       association = parent_record.association(column.name)
       counter_attr = association.send(:cached_counter_attribute_name)
       difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
 
       if parent_record.new_record?
-        if Rails.version < '4.2'
-          parent_record.send "#{counter_attr}=", difference
-          parent_record.send "#{column.name}=", value
-        else
+        if Rails.version == '4.2.0'
           parent_record.send "#{column.name}=", value
           parent_record.send "#{counter_attr}_will_change!"
+        else # < 4.2 or > 4.2.0
+          parent_record.send "#{counter_attr}=", difference
+          parent_record.send "#{column.name}=", value
         end
       else
         # don't decrement counter for deleted records, on destroy they will update counter
