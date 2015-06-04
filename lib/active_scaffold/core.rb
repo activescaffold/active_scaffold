@@ -215,7 +215,7 @@ module ActiveScaffold
       if Rails.version < '4.2'
         column.type_cast value
       else
-        column.cast_type.type_cast_from_user value
+        column.type_cast_from_user value
       end
     end
   end

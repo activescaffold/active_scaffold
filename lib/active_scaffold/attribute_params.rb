@@ -303,7 +303,12 @@ module ActiveScaffold
     end
 
     def column_default_value(column_name, klass, column)
-      column.default if column
+      return unless column
+      if Rails.version < '4.2'
+        column.default
+      else
+        column.type_cast_from_database(column.default)
+      end
     end
   end
 end
