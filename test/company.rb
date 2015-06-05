@@ -82,6 +82,7 @@ class Company < ActiveRecord::Base
   def name_before_type_cast
     name.to_s
   end
+  def name_came_from_user?; end
 
   def date
     Date.today
