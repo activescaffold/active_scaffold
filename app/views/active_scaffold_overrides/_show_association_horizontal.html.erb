@@ -1,0 +1,17 @@
+<%
+  columns_hash = {}
+%>
+<table>
+  <thead>
+    <tr>
+<% show_columns_for(associated.first, column, columns_hash).each(:skip_groups => true) do |column| -%>
+      <th><%= show_label(column) %></th>
+<% end -%>
+    </tr>
+  </thead>
+  <tbody>
+<% associated.each do |record| -%>
+    <%= render :partial => 'show_horizontal_record', :locals => {:record => record, :parent_record => parent_record, :columns => show_columns_for(associated.first, column, columns_hash)} %>
+<% end -%>
+  </tbody>
+</table>

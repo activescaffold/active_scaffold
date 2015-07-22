@@ -130,7 +130,8 @@ background-color: $column_header_bg;
 color: $column_header_link_color;
 }
 
-.active-scaffold th p {
+.active-scaffold th p,
+.active-scaffold .show-view th {
 color: $column_header_color;
 }
 

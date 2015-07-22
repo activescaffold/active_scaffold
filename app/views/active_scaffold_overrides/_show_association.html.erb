@@ -1,0 +1,2 @@
+<% associated = column.singular_association? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a -%>
+<%= render :partial => "show_association_#{show_partial}", :locals => {:column => column, :parent_record => parent_record, :associated => associated} if associated.present? %>

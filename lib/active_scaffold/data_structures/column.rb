@@ -120,7 +120,12 @@ module ActiveScaffold::DataStructures
     end
 
     def list_ui
-      @list_ui || @form_ui
+      @list_ui || form_ui
+    end
+
+    attr_writer :show_ui
+    def show_ui
+      @show_ui || list_ui
     end
 
     attr_writer :search_ui

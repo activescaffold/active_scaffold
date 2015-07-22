@@ -1,0 +1,4 @@
+<% columns_hash = {} -%>
+<% associated.each do |record| -%>
+  <%= render :partial => "show_columns", :locals => {:columns => show_columns_for(record, column, columns_hash), :record => record} %>
+<% end -%>

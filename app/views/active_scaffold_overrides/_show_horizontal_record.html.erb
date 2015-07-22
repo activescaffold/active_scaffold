@@ -1,0 +1,25 @@
+<%
+  columns_length = 0
+  columns_groups = []
+%>
+<tr>
+<% columns.each :for => record do |column| -%>
+  <%
+    if column.respond_to? :each
+      columns_groups << column
+      next
+    end
+    columns_length += 1
+  %>
+  <%= content_tag :td, content_tag(:span, show_column_value(record, column)), :class => "#{column.name}-column #{:numeric if column.number?}" %>
+<% end -%>
+</tr>
+<% columns_groups.each do |columns| %>
+<tr>
+  <td colspan="<%= columns_length %>">
+<% columns.each do |column| %>
+    <%= show_column_value(record, column) %>
+<% end %>
+  </td>
+</tr>
+<% end -%>

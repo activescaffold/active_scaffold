@@ -1,14 +1,14 @@
 <dl>
-<% columns.each :for => @record do |column| %>
-  <dt><%= column.label -%></dt>
+<% columns.each :for => record do |column| %>
+  <dt><%= show_label(column) -%></dt>
 <% if column.respond_to? :each -%>
   <dd>
-    <%= render :partial => 'show_columns', :locals => {:columns => column} %>
+    <%= render :partial => 'show_columns', :locals => {:columns => column, :record => record} %>
 <% else -%>
     <% css_class = "#{column.name}-view"
      css_class.concat(" #{column.css_class}") unless column.css_class.nil? %>
     <dd class="<%= css_class.strip %>">
-    <%= show_column_value(@record, column) -%>
+    <%= show_column_value(record, column) -%>
 <% end -%>
   </dd>
 <% end -%>
