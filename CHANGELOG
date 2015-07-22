@@ -1,3 +1,4 @@
+= 3.4.23
 - fix chosen on new subform rows
 - add show_ui to column
 - add :vertical and :horizontal show_ui for associations
