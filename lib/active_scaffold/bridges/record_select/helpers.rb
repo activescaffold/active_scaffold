@@ -60,7 +60,7 @@ class ActiveScaffold::Bridges::RecordSelect
       end
 
       def active_scaffold_record_select_autocomplete(record, column, options)
-        record_select_options = active_scaffold_input_text_options(options).merge(
+        record_select_options = active_scaffold_input_text_options(options).reverse_merge(
           :controller => active_scaffold_controller_for(record.class).controller_path
         ).merge(column.options)
         html = record_select_autocomplete(options[:name], record, record_select_options)
