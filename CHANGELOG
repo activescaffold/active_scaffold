@@ -1,6 +1,7 @@
 - allow to set :controller in active_scaffold_record_select_autocomplete parameter or active_scaffold_input_text_options
 - fix keeping focus after update_columns when focus was changed to a field which is going to be updated
 - no autofocus first input if is inside .no-autofocus tag
+- use active_scaffold_enum_options on select search_ui
 
 = 3.4.23
 - fix chosen on new subform rows

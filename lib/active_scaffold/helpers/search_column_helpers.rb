@@ -103,7 +103,7 @@ module ActiveScaffold
           select_options = sorted_association_options_find(column.association, false, record)
         else
           method = column.name
-          select_options = column.options[:options].collect do |text, value|
+          select_options = active_scaffold_enum_options(column, record).collect do |text, value|
             active_scaffold_translated_option(column, text, value)
           end
         end
