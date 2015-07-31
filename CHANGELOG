@@ -2,6 +2,7 @@
 - fix keeping focus after update_columns when focus was changed to a field which is going to be updated
 - no autofocus first input if is inside .no-autofocus tag
 - use active_scaffold_enum_options on select search_ui
+- add submit_text option for field_search and search partials
 
 = 3.4.23
 - fix chosen on new subform rows

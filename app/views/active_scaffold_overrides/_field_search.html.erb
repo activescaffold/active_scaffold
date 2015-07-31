@@ -1,11 +1,15 @@
-<% url_options ||= params_for(:action => :index, :search => nil) -%>
-<%=
-options = {:id => element_form_id(:action => 'search'),
-           :class => "as_form search",
-           :remote => xhr ||= request.xhr?,
-           :method => :get,
-           'data-loading' => true}
-form_tag url_options, options %>
+<%
+  url_options ||= params_for(:action => :index, :search => nil)
+  submit_text ||= :search
+  options = {
+    :id => element_form_id(:action => 'search'),
+    :class => "as_form search",
+    :remote => xhr ||= request.xhr?,
+    :method => :get,
+    :'data-loading' => true
+  }
+-%>
+<%= form_tag url_options, options %>
   <ol class="form">
    <% visibles, hiddens = visibles_and_hiddens(active_scaffold_config.field_search) %>
     <% visibles.each do |column| -%>
@@ -27,7 +31,7 @@ form_tag url_options, options %>
   <% end -%>
   </ol>
   <p class="form-footer">
-    <%= submit_tag as_(:search), :class => "submit" %>
+    <%= submit_tag as_(submit_text), :class => "submit" %>
     <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), :class => 'as_cancel reset', :remote => true, :data => {:refresh => true} unless local_assigns[:skip_reset] %>
     <%= loading_indicator_tag(:action => :search) %>
   </p>
