@@ -960,10 +960,20 @@ var ActiveScaffold = {
       type: 'post',
       beforeSend: function(xhr, settings) {
         element.nextAll('img.loading-indicator').css('visibility','visible');
-        ActiveScaffold.disable_form(as_form);
+        /* force to blur and save previous last_focus, because disable_form will trigger
+         * blur on focused element and we will not be able to restore focus later
+         */
+        var last_focus = ActiveScaffold.last_focus;
+        if (last_focus) {
+          $(last_focus).blur();
+          ActiveScaffold.last_focus = last_focus;
+        }
+        //ActiveScaffold.disable_form(as_form); // not needed: called from on('ajax:beforeSend', 'form.as_form')
+
         if ($.rails.fire(element, 'ajax:beforeSend', [xhr, settings])) {
           element.trigger('ajax:send', xhr);
         } else {
+          $(ActiveScaffold.last_focus).focus();
           return false;
         }
       },

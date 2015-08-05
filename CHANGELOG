@@ -1,4 +1,5 @@
 - call focus_first_element after highlight and trigger element_created
+- fix restoring focus to element which triggers update column
 
 = 3.4.24
 - allow to set :controller in active_scaffold_record_select_autocomplete parameter or active_scaffold_input_text_options
