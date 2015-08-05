@@ -791,8 +791,8 @@ var ActiveScaffold = {
         element.prepend(content);
       }
     }
-    ActiveScaffold.focus_first_element_of_form(content, '');
     content.trigger('as:element_created');
+    ActiveScaffold.focus_first_element_of_form(content, '');
   },
 
   render_form_field: function(source, content, options) {
@@ -1232,8 +1232,8 @@ ActiveScaffold.ActionLink.Record = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       return false;
     }
-    ActiveScaffold.focus_first_element_of_form(this.adapter);
     ActiveScaffold.highlight(this.adapter.find('td'));
+    ActiveScaffold.focus_first_element_of_form(this.adapter);
   },
 
   close: function(refreshed_content_or_reload) {
@@ -1300,7 +1300,7 @@ ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       throw 'Unknown position "' + this.position + '"'
     }
-    ActiveScaffold.focus_first_element_of_form(this.adapter);
     ActiveScaffold.highlight(this.adapter.find('td').first().children());
+    ActiveScaffold.focus_first_element_of_form(this.adapter);
   }
 });
