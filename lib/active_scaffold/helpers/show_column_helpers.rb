@@ -26,12 +26,12 @@ module ActiveScaffold
       end
 
       def active_scaffold_show_horizontal(record, column)
-        raise ":horizontal show_ui must be used on association column" unless column.association
+        raise ':horizontal show_ui must be used on association column' unless column.association
         render :partial => 'show_association', :locals => {:column => column, :parent_record => record, :show_partial => :horizontal}
       end
 
       def active_scaffold_show_vertical(record, column)
-        raise ":vertical show_ui must be used on association column" unless column.association
+        raise ':vertical show_ui must be used on association column' unless column.association
         render :partial => 'show_association', :locals => {:column => column, :parent_record => record, :show_partial => :vertical}
       end
 
