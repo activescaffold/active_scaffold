@@ -11,9 +11,7 @@ doc
 # bundler
 .bundle
 gemfiles/vendor
-
-# jeweler generated
-pkg
+/pkg/
 
 # sass generated
 .sass-cache
