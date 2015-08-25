@@ -1,25 +1,23 @@
 # rcov generated
-coverage
+/coverage/
 
 # rdoc generated
-rdoc
+/rdoc/
 
 # yard generated
-doc
-.yardoc
+/doc/
+/.yardoc
 
 # bundler
-.bundle
-gemfiles/vendor
-
-# jeweler generated
-pkg
+/.bundle/
+/gemfiles/vendor/
+/pkg/
 
 # sass generated
-.sass-cache
+/.sass-cache
 
 # logs
-log/**
+/log/**
 
 # Have editor/IDE/OS specific files you need to ignore? Consider using a global gitignore: 
 #
@@ -49,9 +47,9 @@ log/**
 *.swp
 #
 # For kdevelop:
-*.kdev4
-.project
+/*.kdev4
+/.project
 
-config/initializers/localeapp.rb
-.ruby-version
-gemfiles/Gemfile.rails-master.lock
+/config/initializers/localeapp.rb
+/.ruby-version
+/gemfiles/Gemfile.rails-master.lock
