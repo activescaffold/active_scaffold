@@ -135,7 +135,7 @@ module ActiveScaffold
       end
 
       def add_active_scaffold_path(path)
-        as_path = File.join(ActiveScaffold::Config::Core.plugin_directory, 'app', 'views')
+        as_path = File.realpath File.join(ActiveScaffold::Config::Core.plugin_directory, 'app', 'views')
         index = view_paths.find_index { |p| p.to_s == as_path }
         if index
           self.view_paths = view_paths[0..index - 1] + Array(path) + view_paths[index..-1]
