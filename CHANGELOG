@@ -1,3 +1,4 @@
+= 3.4.26
 - fix padding for dynamic action_group inside action_group
 - fix using gem with symlink in BUNDLE_PATH option of config/bundle file
 
