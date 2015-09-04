@@ -758,6 +758,7 @@ var ActiveScaffold = {
     if (column_heading.data('ie-rows')) options.textarea_rows = column_heading.data('ie-rows');
     if (column_heading.data('ie-cols')) options.textarea_cols = column_heading.data('ie-cols');
     if (column_heading.data('ie-size')) options.text_size = column_heading.data('ie-size');
+    if (column_heading.data('ie-use-html')) options.use_html = column_heading.data('ie-use-html');
   },
 
   create_inplace_editor: function(span, options) {

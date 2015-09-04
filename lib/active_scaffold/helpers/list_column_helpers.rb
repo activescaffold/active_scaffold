@@ -256,6 +256,7 @@ module ActiveScaffold
         data[:ie_rows] = column.options[:rows] || 5 if column.column.try(:type) == :text
         data[:ie_cols] = column.options[:cols] if column.options[:cols]
         data[:ie_size] = column.options[:size] if column.options[:size]
+        data[:ie_use_html] = column.options[:use_html] if column.options[:use_html]
 
         if column.list_ui == :checkbox
           data[:ie_mode] = :inline_checkbox
