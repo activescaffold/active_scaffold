@@ -109,7 +109,7 @@ module ActiveScaffold::Actions
           @record = update_record_from_params(@record, active_scaffold_config.update.columns, attributes) unless options[:no_record_param_update]
           before_update_save(@record)
           # errors to @record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
-          self.successful = [@record.errors.empty? && @record.valid?, @record.associated_valid?].all? # this syntax avoids a short-circuit
+          self.successful = [@record.keeping_errors { @record.valid? }, @record.associated_valid?].all? # this syntax avoids a short-circuit
           if successful?
             @record.save! && @record.save_associated!
             after_update_save(@record)

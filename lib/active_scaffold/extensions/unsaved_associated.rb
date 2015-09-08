@@ -5,7 +5,7 @@ class ActiveRecord::Base
     path << self
     # using [].all? syntax to avoid a short-circuit
     # errors to associated record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
-    with_unsaved_associated { |a| [a.errors.empty? && a.valid?, a.associated_valid?(path)].all? }
+    with_unsaved_associated { |a| [a.keeping_errors { a.valid? }, a.associated_valid?(path)].all? }
   end
 
   def save_associated
@@ -18,6 +18,15 @@ class ActiveRecord::Base
 
   def no_errors_in_associated?
     with_unsaved_associated { |a| a.errors.count == 0 && a.no_errors_in_associated? }
+  end
+
+  def keeping_errors
+    old_errors = errors.dup if errors.present?
+    yield.tap do
+      (old_errors || []).each do |attr|
+        old_errors[attr].each { |msg| errors.add(attr, msg) unless errors.added?(attr, msg) }
+      end
+    end
   end
 
   protected

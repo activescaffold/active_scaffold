@@ -102,7 +102,7 @@ module ActiveScaffold::Actions
         create_association_with_parent(@record) if nested?
         before_create_save(@record)
         # errors to @record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
-        self.successful = [@record.errors.empty? && @record.valid?, @record.associated_valid?].all? # this syntax avoids a short-circuit
+        self.successful = [@record.keeping_errors { @record.valid? }, @record.associated_valid?].all? # this syntax avoids a short-circuit
         create_save(@record) unless options[:skip_save]
       end
     rescue ActiveRecord::ActiveRecordError => ex

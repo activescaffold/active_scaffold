@@ -115,7 +115,6 @@ module ActiveScaffold
         end
       end
 
-      flash[:warning] = parent_record.errors.to_a.join("\n") if parent_record.errors.present?
       parent_record
     end
 
