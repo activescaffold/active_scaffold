@@ -1,3 +1,5 @@
+- don't stop on first associated record with error
+
 = 3.4.27
 - support use_html option in columns for inplace_edit
 - don't add errors added on update_record_from_params to flash[:warning], they are on errors array, keep errors from update_record_from_params when running valid?
