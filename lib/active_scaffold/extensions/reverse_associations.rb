@@ -66,7 +66,11 @@ module ActiveScaffold
 
             # otherwise, match them based on the foreign_key
             when 0
-              next unless assoc.foreign_key.to_sym == foreign_key.to_sym
+              if assoc.foreign_key.is_a? Array
+                next unless assoc.foreign_key.to_sym == foreign_key.to_sym
+              else
+                next unless assoc.foreign_key.to_sym == foreign_key.to_sym
+              end
           end
 
           reverse_matches << assoc

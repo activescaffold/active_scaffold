@@ -1,4 +1,5 @@
 - don't stop on first associated record with error
+- compatibility fix for composite primary keys gem
 
 = 3.4.27
 - support use_html option in columns for inplace_edit
