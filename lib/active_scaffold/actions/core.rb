@@ -365,7 +365,7 @@ module ActiveScaffold::Actions
     end
 
     def virtual_columns(columns)
-      columns.reject { |col| active_scaffold_config.model.columns_hash[col] || active_scaffold_config.model.reflect_on_association(col) }
+      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.model.reflect_on_association(col) }
     end
 
     def association_columns(columns)
