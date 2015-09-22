@@ -1,6 +1,7 @@
 - don't stop on first associated record with error
 - compatibility fix for composite primary keys gem
 - fix double columns output on json and xml formats
+- fix for search_ui :multi_select on non-association column
 
 = 3.4.27
 - support use_html option in columns for inplace_edit
