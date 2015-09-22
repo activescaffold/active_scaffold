@@ -56,7 +56,9 @@ module ActiveScaffold
 
             # sneak the action links from the actions into the main set
             if link.is_a? Array
-              link.each { |current| active_scaffold_config.action_links.add_to_group(current, active_scaffold_config.send(mod).action_group) }
+              link.each do |current_link|
+                active_scaffold_config.action_links.add_to_group(current_link, active_scaffold_config.send(mod).action_group)
+              end
             elsif link.is_a? ActiveScaffold::DataStructures::ActionLink
               active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
             end
