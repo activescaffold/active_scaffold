@@ -1,3 +1,6 @@
+- fix for search_ui :multi_select on non-association column and non integer options
+
+= 3.4.28
 - don't stop on first associated record with error
 - compatibility fix for composite primary keys gem
 - fix double columns output on json and xml formats

@@ -77,11 +77,13 @@ module ActiveScaffold
         record ||= @record # TODO: Remove when relying on @record is removed
         associated = options.delete :value
         associated = [associated].compact unless associated.is_a? Array
-        associated.collect!(&:to_i)
 
         if column.association
+          associated.collect!(&:to_i)
           method = column.options[:label_method] || :to_label
-          select_options = sorted_association_options_find(column.association, nil, record).collect { |r| [r.send(method), r.id] }
+          select_options = sorted_association_options_find(column.association, nil, record).collect do |r|
+            [r.send(method), r.id]
+          end
         else
           select_options = column.options[:options].collect do |text, value|
             active_scaffold_translated_option(column, text, value)
