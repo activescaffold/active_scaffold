@@ -176,7 +176,7 @@ module ActiveScaffold
         if value.present?
           if column.polymorphic_association?
             class_name = parent_record.send(column.association.foreign_type)
-            class_name.constantize.find(value) if class_name
+            class_name.constantize.find(value) if class_name.present?
           else
             # it's a single id
             column.association.klass.find(value)
