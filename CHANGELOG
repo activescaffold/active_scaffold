@@ -1,4 +1,5 @@
 - fix for search_ui :multi_select on non-association column and non integer options
+- ensure id for radio button is valid
 
 = 3.4.28
 - don't stop on first associated record with error
