@@ -1,3 +1,4 @@
+= 3.4.29
 - fix for search_ui :multi_select on non-association column and non integer options
 - ensure id for radio button is valid
 - check foregin_type present, not only nil, on polymorphic associations

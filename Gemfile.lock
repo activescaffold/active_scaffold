@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    active_scaffold (3.4.28)
+    active_scaffold (3.4.29)
       rails (>= 3.2.18, < 5)
 
 GEM
