@@ -1,33 +1,42 @@
-<% case ActiveScaffold.js_framework %>
-<% when :jquery %>
-<% require_asset "getprototypeof" %>
-<% if Jquery::Rails.const_defined? 'JQUERY_UI_VERSION' %>
-<% require_asset "jquery-ui" %>
-<% require_asset "jquery-ui-timepicker-addon" %>
-<% require_asset "jquery/date_picker_bridge" %>
-<% require_asset "jquery/draggable_lists" %>
-<% elsif Jquery.const_defined? 'Ui' %>
-<% jquery_ui_prefix = Jquery::Ui::Rails::VERSION < '5.0.0' ? 'jquery.ui.' : 'jquery-ui/' %>
-<% require_asset "#{jquery_ui_prefix}core" %>
-<% require_asset "#{jquery_ui_prefix}effect" %>
-<% require_asset "#{jquery_ui_prefix}sortable" %>
-<% require_asset "#{jquery_ui_prefix}draggable" %>
-<% require_asset "#{jquery_ui_prefix}droppable" %>
-<% require_asset "#{jquery_ui_prefix}datepicker" %>
-<% require_asset "jquery-ui-timepicker-addon" %>
-<% require_asset "jquery/date_picker_bridge" %>
-<% require_asset "jquery/draggable_lists" %>
-<% end %>
-<% require_asset "jquery/active_scaffold" %>
-<% require_asset "jquery/jquery.editinplace" %>
-<% when :prototype %>
-<% require_asset "effects" %>
-<% require_asset "controls" %>
-<% require_asset "prototype/active_scaffold" %>
-<% require_asset "prototype/dhtml_history" %>
-<% require_asset "prototype/form_enhancements" %>
-<% require_asset "prototype/rico_corner" %>
-<% end %>
+<%
+  case ActiveScaffold.js_framework
+  when :jquery
+    jquery_ui = true
+    require_asset "getprototypeof"
+    if Jquery::Rails.const_defined? 'JQUERY_UI_VERSION'
+      require_asset "jquery-ui"
+    elsif Jquery.const_defined? 'Ui'
+      jquery_ui_prefix = Jquery::Ui::Rails::VERSION < '5.0.0' ? 'jquery.ui.' : 'jquery-ui/'
+      require_asset "#{jquery_ui_prefix}core"
+      require_asset "#{jquery_ui_prefix}effect"
+      require_asset "#{jquery_ui_prefix}sortable"
+      require_asset "#{jquery_ui_prefix}draggable"
+      require_asset "#{jquery_ui_prefix}droppable"
+      require_asset "#{jquery_ui_prefix}datepicker"
+      require_asset "jquery-ui-timepicker-addon"
+      require_asset "jquery/date_picker_bridge"
+      require_asset "jquery/draggable_lists"
+    else
+      jquery_ui = false
+    end
+    if jquery_ui
+      require_asset "jquery-ui-timepicker-addon"
+      require_asset "jquery/date_picker_bridge"
+      require_asset "jquery/draggable_lists"
+    end
+    require_asset "jquery/active_scaffold"
+    require_asset "jquery/jquery.editinplace"
+  when :prototype
+    require_asset "effects"
+    require_asset "controls"
+    require_asset "prototype/active_scaffold"
+    require_asset "prototype/dhtml_history"
+    require_asset "prototype/form_enhancements"
+    require_asset "prototype/rico_corner"
+  end
+%>
 ActiveScaffold.config = <%= ActiveScaffold.js_config.to_json %>;
-<% ActiveScaffold.javascripts.each {|js| require_asset js} %>
-<% ActiveScaffold::Bridges.all_javascripts.each {|js| require_asset js} %>
+<%
+  ActiveScaffold.javascripts.each {|js| require_asset js}
+  ActiveScaffold::Bridges.all_javascripts.each {|js| require_asset js}
+%>
