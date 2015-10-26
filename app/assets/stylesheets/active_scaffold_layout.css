@@ -104,12 +104,6 @@ top: 19px;
 top: 14px;
 }
 
-.view .active-scaffold-header div.actions a,
-.view .active-scaffold-header div.actions div,
-.view .active-scaffold-header div.actions div.action_group {
-float: left;
-}
-
 .active-scaffold-header div.actions a.disabled {
 opacity: 0.5;
 }
@@ -119,7 +113,7 @@ opacity: 0.5;
 .active-scaffold-header div.actions a.show_search,
 .active-scaffold-header div.actions a.show_config_list,
 .active-scaffold-header div.actions div.action_group div {
-margin:0;  
+margin:0;
 padding: 5px 5px 5px 25px;
 background-position: 5px 50%;
 background-repeat: no-repeat;
