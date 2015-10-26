@@ -142,10 +142,10 @@ module ActiveScaffold::Actions
       column = params.delete(:column).to_sym
       params.delete(:original_html)
       params.delete(:original_value)
+      @column = active_scaffold_config.columns[column]
       @record = find_if_allowed(params[:id], :read)
       return unless @record.authorized_for?(:crud_type => :update, :column => column)
 
-      @column = active_scaffold_config.columns[column]
       value ||=
         unless @column.column.nil? || @column.column.null
           @column.column.default == true ? false : @column.column.default
