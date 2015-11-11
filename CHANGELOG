@@ -1,5 +1,6 @@
 - move jquery-ui images to app/assets for rails 4.2 compatibility
 - clean css so no need to reverse links on nested
+- fix responds_to_parent with redirect
 
 = 3.4.29
 - fix for search_ui :multi_select on non-association column and non integer options
