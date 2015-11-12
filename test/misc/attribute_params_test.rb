@@ -431,7 +431,7 @@ end
 
 class Controller
   def self.helper_method(*); end
-  def self.before_filter(*); end
+  def self.before_action(*); end
 
   include ActiveScaffold::Core
   include ActiveScaffold::Helpers::ControllerHelpers

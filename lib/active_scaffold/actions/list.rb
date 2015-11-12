@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module List
     def self.included(base)
-      base.before_filter :list_authorized_filter, :only => :index
+      base.before_action :list_authorized_filter, :only => :index
       base.helper_method :list_columns
     end
 
