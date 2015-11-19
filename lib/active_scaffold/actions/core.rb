@@ -97,7 +97,8 @@ module ActiveScaffold::Actions
     end
 
     def set_parent(record)
-      parent_model = params[:parent_controller].singularize.camelize.constantize
+      controller = "#{params[:parent_controller].camelize}Controller".constantize
+      parent_model = controller.active_scaffold_config.model
       child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
       association = parent_model.reflect_on_association(child_association.to_sym).try(:reverse)
       return if association.nil?
