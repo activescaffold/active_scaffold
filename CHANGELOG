@@ -1,3 +1,6 @@
+- fix multiple support for :select form_ui with non-association columns
+
+= 3.4.30
 - move jquery-ui images to app/assets for rails 4.2 compatibility
 - clean css so no need to reverse links on nested
 - fix responds_to_parent with redirect

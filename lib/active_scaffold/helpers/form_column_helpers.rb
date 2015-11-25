@@ -349,6 +349,7 @@ module ActiveScaffold
         end
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
+        html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
         active_scaffold_translate_select_options(options)
         select(:record, column.name, options_for_select, options, html_options)
       end
