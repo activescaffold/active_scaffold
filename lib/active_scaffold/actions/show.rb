@@ -19,15 +19,11 @@ module ActiveScaffold::Actions
     protected
 
     def show_respond_to_json
-      render :text => response_object.to_json(:only => show_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(show_columns_names), :methods => virtual_columns(show_columns_names)), :content_type => Mime::JSON, :status => response_status
-    end
-
-    def show_respond_to_yaml
-      render :text => Hash.from_xml(response_object.to_xml(:only => show_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(show_columns_names), :methods => virtual_columns(show_columns_names))).to_yaml, :content_type => Mime::YAML, :status => response_status
+      render :json => response_object, :only => show_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(show_columns_names), :methods => virtual_columns(show_columns_names), :status => response_status
     end
 
     def show_respond_to_xml
-      render :xml => response_object.to_xml(:only => show_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(show_columns_names), :methods => virtual_columns(show_columns_names)), :content_type => Mime::XML, :status => response_status
+      render :xml => response_object, :only => show_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(show_columns_names), :methods => virtual_columns(show_columns_names), :status => response_status
     end
 
     def show_respond_to_js
