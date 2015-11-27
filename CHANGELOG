@@ -1,6 +1,7 @@
 - fix multiple support for :select form_ui with non-association columns
 - remove yaml response support, not used in rails usually and no support for respond_to :yaml
 - clean code to generate API responses (json/xml)
+- really fi compatibility with composite primary keys gem
 
 = 3.4.30
 - move jquery-ui images to app/assets for rails 4.2 compatibility
