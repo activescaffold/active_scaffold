@@ -80,13 +80,17 @@ module ActiveScaffold::Config
 
     private
 
-    def columns=(val)
-      @columns.set_values(*val) if @columns
-      @columns ||= ActiveScaffold::DataStructures::ActionColumns.new(*val).tap do |columns|
+    def build_action_columns(val)
+      ActiveScaffold::DataStructures::ActionColumns.new(*val).tap do |columns|
         columns.action = self
-        columns.set_columns(@core.columns) if @columns.respond_to?(:set_columns)
+        columns.set_columns(@core.columns)
         columns
       end
+    end
+
+    def columns=(val)
+      @columns.set_values(*val) if @columns
+      @columns ||= build_action_columns(val)
       @columns
     end
   end
