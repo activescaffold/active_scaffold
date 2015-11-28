@@ -14,12 +14,6 @@ module ActiveScaffold::Config
     # the label for this action. used for the header.
     attr_writer :label
 
-    # provides access to the list of columns specifically meant for this action to use
-    def columns
-      self.columns = @core.columns._inheritable unless @columns # lazy evaluation
-      @columns
-    end
-
-    public :columns=
+    columns_accessor :columns
   end
 end

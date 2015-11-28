@@ -88,10 +88,34 @@ module ActiveScaffold::Config
       end
     end
 
-    def columns=(val)
-      @columns.set_values(*val) if @columns
-      @columns ||= build_action_columns(val)
-      @columns
+    def self.columns_accessor(*names, &block)
+      options = names.extract_options!
+      names.each do |name|
+        var = "@#{name}"
+        define_method "#{name}=" do |val|
+          if instance_variable_get(var)
+            instance_variable_get(var).set_values(*val)
+          else
+            instance_variable_set(var, build_action_columns(val))
+          end
+          instance_variable_get(var)
+        end
+
+        define_method name do
+          unless instance_variable_get(var) # lazy evaluation
+            if options[:copy]
+              action, columns = options[:copy]
+              action_columns = @core.send(action).send(columns || :columns).clone
+              action_columns.action = self
+              instance_variable_set(var, action_columns)
+            else
+              self.send("#{name}=", @core.columns._inheritable)
+            end
+            instance_exec &block if block
+          end
+          instance_variable_get(var)
+        end
+      end
     end
   end
 end

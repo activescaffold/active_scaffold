@@ -106,13 +106,7 @@ module ActiveScaffold::Config
     # instance-level configuration
     # ----------------------------
 
-    # provides access to the list of columns specifically meant for the Table to use
-    def columns
-      self.columns = @core.columns._inheritable unless @columns # lazy evaluation
-      @columns
-    end
-
-    public :columns=
+    columns_accessor :columns
 
     # include list header on refresh
     attr_accessor :refresh_with_header

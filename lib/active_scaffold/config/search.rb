@@ -36,6 +36,7 @@ module ActiveScaffold::Config
     # instance-level configuration
     # ----------------------------
 
+    columns_accessor :columns
     # provides access to the list of columns specifically meant for the Search to use
     def columns
       # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will not be available to .searchable?
@@ -44,8 +45,6 @@ module ActiveScaffold::Config
       end
       @columns
     end
-
-    public :columns=
 
     # A flag for how the search should do full-text searching in the database:
     # * :full: LIKE %?%

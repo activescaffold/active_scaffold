@@ -31,17 +31,9 @@ module ActiveScaffold::Config
     # instance-level configuration
     # ----------------------------
 
-    # provides access to the list of columns specifically meant for the Search to use
-    def columns
-      # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will not be available to .searchable?
-      unless @columns
-        self.columns = @core.columns._inheritable
-        columns.exclude @core.columns.active_record_class.locking_column.to_sym
-      end
-      @columns
+    columns_accessor :columns do
+      columns.exclude @core.columns.active_record_class.locking_column.to_sym
     end
-
-    public :columns=
 
     # A flag for how the search should do full-text searching in the database:
     # * :full: LIKE %?%

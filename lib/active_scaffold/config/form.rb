@@ -41,17 +41,10 @@ module ActiveScaffold::Config
     # whether we should refresh list after create or not
     attr_accessor :refresh_list
 
-    # provides access to the list of columns specifically meant for the Form to use
-    def columns
-      unless @columns # lazy evaluation
-        self.columns = @core.columns._inheritable
-        columns.exclude :created_on, :created_at, :updated_on, :updated_at, :as_marked
-        columns.exclude *@core.columns.collect { |c| c.name if c.polymorphic_association? }.compact
-      end
-      @columns
+    columns_accessor :columns do
+      columns.exclude :created_on, :created_at, :updated_on, :updated_at, :as_marked
+      columns.exclude *@core.columns.collect { |c| c.name if c.polymorphic_association? }.compact
     end
-
-    public :columns=
 
     # whether the form should be multipart
     attr_writer :multipart
