@@ -178,7 +178,7 @@ module ActiveScaffold::Actions
 
     # API response object that will be converted to XML/JSON using to_xxx
     def response_object
-      @response_object = successful? ? (@record || @records) : @record.errors
+      @response_object ||= successful? ? (@record || @records) : @record.errors
     end
 
     # Success is the existence of one or more model objects. Most actions
