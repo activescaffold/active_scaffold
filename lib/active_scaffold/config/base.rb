@@ -103,8 +103,8 @@ module ActiveScaffold::Config
 
         define_method name do
           unless instance_variable_get(var) # lazy evaluation
-            if options[:copy]
-              action, columns = options[:copy]
+            action, columns = options[:copy] if options[:copy]
+            if action && @core.actions.include?(action)
               action_columns = @core.send(action).send(columns || :columns).clone
               action_columns.action = self
               instance_variable_set(var, action_columns)
