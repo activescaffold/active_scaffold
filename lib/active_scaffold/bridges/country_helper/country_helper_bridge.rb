@@ -2,15 +2,22 @@ module ActiveScaffold::Bridges
   class CountryHelper
     module CountryHelpers
       def country_select_class
+        # TODO remove when rails 3.2 support is dropped
         defined?(ActionView::Helpers::InstanceTag) ? ActionView::Helpers::InstanceTag : ActionView::Helpers::Tags::CountrySelect
       end
+
+      def country_select_options(options)
+        # TODO remove when rails 3.2 support is dropped
+        defined?(ActionView::Helpers::InstanceTag) ? options[:object] : options
+      end
+
       # Return select and option tags for the given object and method, using country_options_for_select to generate the list of option tags.
       def country_select(object, method, priority_countries = nil, options = {}, html_options = {})
-        country_select_class.new(object, method, self, options).to_country_select_tag(priority_countries, options, html_options)
+        country_select_class.new(object, method, self, country_select_options(options)).to_country_select_tag(priority_countries, options, html_options)
       end
 
       def usa_state_select(object, method, priority_states = nil, options = {}, html_options = {})
-        country_select_class.new(object, method, self, options).to_usa_state_select_tag(priority_states, options, html_options)
+        country_select_class.new(object, method, self, country_select_options(options)).to_usa_state_select_tag(priority_states, options, html_options)
       end
     end
 
@@ -360,7 +367,7 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::CountryHelper::FormColumnHelpers
   include ActiveScaffold::Bridges::CountryHelper::SearchColumnHelpers
 end
-if defined? ActionView::Helpers::InstanceTag
+if defined? ActionView::Helpers::InstanceTag # TODO remove when rails 3.2 support is dropped
   ActionView::Helpers::InstanceTag.class_eval do
     include ActiveScaffold::Bridges::CountryHelper::CountryOptionsHelpers
     include ActiveScaffold::Bridges::CountryHelper::InstanceTagMethods
