@@ -451,6 +451,12 @@ var ActiveScaffold = {
       });
     });
   },
+  reload_embedded: function(element_or_selector) {
+    var item = jQuery(element_or_selector);
+    item.load(item.data('refresh'), function() {
+      jQuery(this).trigger('as:element_updated');
+    });
+  },
 
   records_for: function(tbody_id) {
     if (typeof(tbody_id) == 'string') tbody_id = '#' + tbody_id;
