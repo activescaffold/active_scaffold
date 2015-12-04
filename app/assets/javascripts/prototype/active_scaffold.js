@@ -397,6 +397,10 @@ var ActiveScaffold = {
       new Ajax.Updater(item.up('.active-scaffold-component'), item.readAttribute('href'), {method: 'get', evalScripts: true});
     });
   },
+  reload_embedded: function(element) {
+    var item = $(element)
+    new Ajax.Updater(item, item.readAttribute('data-refresh'), {method: 'get', evalScripts: true});
+  },
   
   records_for: function(tbody_id) {
     var rows = [];
