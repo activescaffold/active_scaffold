@@ -4,10 +4,6 @@
 # rdoc generated
 /rdoc/
 
-# yard generated
-/doc/
-/.yardoc
-
 # bundler
 /.bundle/
 /gemfiles/vendor/
