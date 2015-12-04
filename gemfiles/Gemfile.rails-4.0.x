@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 # Example:
 #   gem "activesupport", ">= 2.3.5"
 
+gemspec :path => '../'
+
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 group :development, :test do
@@ -20,7 +22,6 @@ group :development, :test do
 end
 
 group :test do
-  gem 'shoulda', '>= 0'
   gem 'simplecov', '>= 0'
   gem 'mocha'
   gem 'rails', '~> 4.0.12'

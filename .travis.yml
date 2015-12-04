@@ -6,10 +6,9 @@ sudo: false
 cache: bundler
 language: ruby
 gemfile:
-  - gemfiles/Gemfile.rails-3.2.x
   - gemfiles/Gemfile.rails-4.0.x
+  - gemfiles/Gemfile.rails-4.1.x
   - Gemfile
-  - gemfiles/Gemfile.rails-4.2.x
   - gemfiles/Gemfile.rails-stable
 rvm:
   - 1.9.3
@@ -25,8 +24,3 @@ jdk:
 matrix:
   allow_failures:
     - rvm: ruby-head
-  exclude:
-    - gemfile: gemfiles/Gemfile.rails-3.2.x
-      rvm: 2.2
-    - gemfile: gemfiles/Gemfile.rails-3.2.x
-      rvm: ruby-head
