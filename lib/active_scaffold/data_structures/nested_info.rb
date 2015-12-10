@@ -134,7 +134,7 @@ module ActiveScaffold::DataStructures
 
     def iterate_model_associations(model)
       @constrained_fields = []
-      constrained_fields << association.foreign_key.to_sym unless association.belongs_to?
+      constrained_fields << Array(association.foreign_key).map(&:to_sym) unless association.belongs_to?
       return if (reverse = association.reverse(model)).nil?
       @child_association = model.reflect_on_association(reverse)
       constrained_fields << @child_association.name unless @child_association == association
