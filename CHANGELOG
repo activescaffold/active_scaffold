@@ -1,5 +1,6 @@
 - Add ActiveScaffold.reload_embedded JS method, to reload an embedded scaffold
 - Fix nested on composite primary key associations
+- Fix render :super on partials rendered with :collection (like _list_record)
 
 = 3.4.31
 - fix multiple support for :select form_ui with non-association columns
