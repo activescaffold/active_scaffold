@@ -9,7 +9,7 @@ module ActiveScaffold
 
         carrierwave = record.send("#{column.name}")
         if !carrierwave.file.blank?
-
+          required = options.delete(:required)
           remove_field_options = {
             :name => options[:name].gsub(/\[#{column.name}\]$/, "[remove_#{column.name}]"),
             :id => 'remove_' + options[:id],
@@ -23,10 +23,10 @@ module ActiveScaffold
 
           case ActiveScaffold.js_framework
           when :jquery
-            js_remove_file_code = "jQuery(this).prev('input#remove_#{options[:id]}').val('true'); jQuery(this).parent().hide().next().show(); return false;"
+            js_remove_file_code = "jQuery(this).prev('input#remove_#{options[:id]}').val('true'); jQuery(this).parent().hide().next().show()#{".find('input').attr('required', 'required')" if required}; return false;"
             js_dont_remove_file_code = "jQuery(this).parents('div.carrierwave_controls').find('input#remove_#{options[:id]}').val('false'); return false;"
           when :prototype
-            js_remove_file_code = "$(this).previous('input#remove_#{options[:id]}').value='true'; $(this).up().hide().next().show(); return false;"
+            js_remove_file_code = "$(this).previous('input#remove_#{options[:id]}').value='true'; $(this).up().hide().next().show()#{".down().writeAttribute('required', 'required')" if required}; return false;"
             js_dont_remove_file_code = "$(this).up('div.carrierwave_controls').down('input#remove_#{options[:id]}').value='false'; return false;"
           end
 
