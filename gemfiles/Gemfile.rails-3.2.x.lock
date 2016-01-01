@@ -22,6 +22,11 @@ GEM
       activesupport (= 3.2.20)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
+    activerecord-jdbc-adapter (1.3.19)
+      activerecord (>= 2.2)
+    activerecord-jdbcsqlite3-adapter (1.3.19)
+      activerecord-jdbc-adapter (~> 1.3.19)
+      jdbc-sqlite3 (>= 3.7.2, < 3.9)
     activeresource (3.2.20)
       activemodel (= 3.2.20)
       activesupport (= 3.2.20)
@@ -40,8 +45,10 @@ GEM
     hashie (3.4.0)
     hike (1.2.3)
     i18n (0.7.0)
+    jdbc-sqlite3 (3.8.11.2)
     journey (1.0.4)
     json (1.8.2)
+    json (1.8.2-java)
     localeapp (0.7.2)
       gli
       i18n
@@ -328,6 +335,7 @@ GEM
     ya2yaml (0.31)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
@@ -351,3 +359,6 @@ DEPENDENCIES
   shoulda (~> 2.11.3)
   simplecov
   sqlite3
+
+BUNDLED WITH
+   1.11.2
