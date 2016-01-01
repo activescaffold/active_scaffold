@@ -18,7 +18,7 @@ rvm:
   - 2.0
   - 2.1
   - 2.2
-  - 2.3.0-preview1
+  - 2.3.0
   - ruby-head
   - rbx-2
   - jruby-19mode
@@ -28,9 +28,10 @@ jdk:
 matrix:
   allow_failures:
     - rvm: ruby-head
-    - rvm: 2.3.0-preview1
   exclude:
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: 2.2
+    - gemfile: gemfiles/Gemfile.rails-3.2.x
+      rvm: 2.3.0
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: ruby-head
