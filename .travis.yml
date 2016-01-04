@@ -1,7 +1,9 @@
 addons:
   code_climate:
     repo_token: 8a344833c6693733b163f09a5243fa12dd7be0b69f0358b146c64dd4becabc60
-bundler_args: --clean --jobs=3 --retry=3
+before_script:
+  - bin/brakeman
+bundler_args: --clean --deployment --jobs=3 --retry=3 --without development production
 sudo: false
 cache: bundler
 language: ruby
