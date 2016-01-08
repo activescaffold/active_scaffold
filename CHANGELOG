@@ -1,4 +1,5 @@
 - Fix _base_form when used with actions, so :multipart and :persistent can set to false instead of getting them from action config
+- Copy update.columns from create.columns, if not defined
 
 = 3.4.32
 - Add ActiveScaffold.reload_embedded JS method, to reload an embedded scaffold
