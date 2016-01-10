@@ -6,6 +6,14 @@ module Config
       @config = ActiveScaffold::Config::Core.new :model_stub
     end
 
+    def test_copy_columns_from_create
+      @config.create.columns = [:a, :c, :d]
+      assert_equal [:a, :d], @config.create.columns.names
+      @config.update.columns = @config.create.columns
+      @config._load_action_columns
+      assert_equal [:a, :c, :d], @config.update.columns.names
+    end
+
     def test__params_for_columns__returns_all_params
       @config._load_action_columns
       @config.columns[:a].params.add :keep_a, :a_temp

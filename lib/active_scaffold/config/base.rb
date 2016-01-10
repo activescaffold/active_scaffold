@@ -81,11 +81,15 @@ module ActiveScaffold::Config
     private
 
     def build_action_columns(val)
-      ActiveScaffold::DataStructures::ActionColumns.new(*val).tap do |columns|
-        columns.action = self
-        columns.set_columns(@core.columns)
-        columns
-      end
+      columns =
+        if val.is_a?(ActiveScaffold::DataStructures::ActionColumns)
+          val.dup
+        else
+          ActiveScaffold::DataStructures::ActionColumns.new(*val)
+        end
+      columns.action = self
+      columns.set_columns(@core.columns)
+      columns
     end
 
     def self.columns_accessor(*names, &block)
