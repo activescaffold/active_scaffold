@@ -1,5 +1,6 @@
 - Fix _base_form when used with actions, so :multipart and :persistent can set to false instead of getting them from action config
 - Copy update.columns from create.columns, if not defined
+- Ensure ajax:complete is called to enable form after render_form_field request, even if element is removed
 
 = 3.4.32
 - Add ActiveScaffold.reload_embedded JS method, to reload an embedded scaffold

@@ -984,7 +984,8 @@ var ActiveScaffold = {
       complete: function(xhr, status) {
         element = as_form.find('#'+element.attr('id'));
         element.nextAll('img.loading-indicator').css('visibility','hidden');
-        element.trigger('ajax:complete', [xhr, status]);
+        var complete_element = element.length ? element : as_form; 
+        complete_element.trigger('ajax:complete', [xhr, status]);
         if (ActiveScaffold.last_focus) {
           var item = jQuery(ActiveScaffold.last_focus);
           if (item.closest('body').length == 0 && item.attr('id')) item = jQuery('#' + item.attr('id'));
