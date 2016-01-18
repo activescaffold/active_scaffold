@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    active_scaffold (3.4.32)
+    active_scaffold (3.4.33)
       rails (>= 3.2.18, < 5)
 
 GEM
@@ -397,3 +397,6 @@ DEPENDENCIES
   shoulda
   simplecov
   sqlite3
+
+BUNDLED WITH
+   1.11.0
