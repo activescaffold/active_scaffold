@@ -38,7 +38,7 @@ module ActiveScaffold::Actions
       end
 
       def search_params
-        @search_params || active_scaffold_session_storage['search']
+        @search_params || active_scaffold_session_storage['search'] unless params[:id]
       end
 
       # The default security delegates to ActiveRecordPermissions.
