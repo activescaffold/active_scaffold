@@ -4,33 +4,36 @@ addons:
 before_script:
   - bin/brakeman
 bundler_args: --clean --deployment --jobs=3 --retry=3 --without development production
-sudo: false
 cache: bundler
-language: ruby
 gemfile:
+  - Gemfile
   - gemfiles/Gemfile.rails-3.2.x
   - gemfiles/Gemfile.rails-4.0.x
-  - Gemfile
   - gemfiles/Gemfile.rails-4.2.x
   - gemfiles/Gemfile.rails-stable
+jdk:
+  - openjdk7
+language: ruby
+matrix:
+  allow_failures:
+    - rvm: rbx-3
+    - rvm: ruby-head
+  exclude:
+    - gemfile: gemfiles/Gemfile.rails-3.2.x
+      rvm: 2.2
+    - gemfile: gemfiles/Gemfile.rails-3.2.x
+      rvm: 2.3.0
+    - gemfile: gemfiles/Gemfile.rails-3.2.x
+      rvm: ruby-head
 rvm:
   - 1.9.3
   - 2.0
   - 2.1
   - 2.2
-  - 2.3.0-preview1
-  - ruby-head
-  - rbx-2
+  - 2.3.0
   - jruby-19mode
   - jruby-9
-jdk:
-  - openjdk7
-matrix:
-  allow_failures:
-    - rvm: ruby-head
-    - rvm: 2.3.0-preview1
-  exclude:
-    - gemfile: gemfiles/Gemfile.rails-3.2.x
-      rvm: 2.2
-    - gemfile: gemfiles/Gemfile.rails-3.2.x
-      rvm: ruby-head
+  - rbx-2
+  - rbx-3
+  - ruby-head
+sudo: false
