@@ -199,7 +199,7 @@ jQuery(document).ready(function($) {
   });
   jQuery(document).on('ajax:complete', '.action_group.dyn > ul a', function(event) {
     var action_link = ActiveScaffold.find_action_link(event.target);
-    if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');
+    if (action_link && action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');
     jQuery(event.target).closest('.action_group.dyn > ul').remove();
   });
 
@@ -984,7 +984,7 @@ var ActiveScaffold = {
       complete: function(xhr, status) {
         element = as_form.find('#'+element.attr('id'));
         element.nextAll('img.loading-indicator').css('visibility','hidden');
-        var complete_element = element.length ? element : as_form; 
+        var complete_element = element.length ? element : as_form;
         complete_element.trigger('ajax:complete', [xhr, status]);
         if (ActiveScaffold.last_focus) {
           var item = jQuery(ActiveScaffold.last_focus);
