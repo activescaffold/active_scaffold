@@ -1,6 +1,7 @@
 - Fix past, future and range on field search with rails 4, local time was used instead of UTC
 - Ignore search params when params[:id] is set
 - Eager load HABTM with scope using left join
+- Add active_scaffold/indicator.gif to precompile so rails 4.2 precompiles it
 
 = 3.4.33
 - Fix _base_form when used with actions, so :multipart and :persistent can set to false instead of getting them from action config
