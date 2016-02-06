@@ -76,18 +76,18 @@ module ActiveScaffold
 
         module HumanConditionHelpers
           def active_scaffold_human_condition_date_bridge(column, value)
-            case value[:opt]
+            case value['opt']
             when 'RANGE'
-              range_type, range = value[:range].downcase.split('_')
+              range_type, range = value['range'].downcase.split('_')
               format = active_scaffold_human_condition_date_bridge_range_format(range_type, range)
               from, to = controller.class.date_bridge_from_to(column, value)
-              "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value[:range].downcase).downcase} (#{I18n.l(from, :format => format)})"
+              "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value['range'].downcase).downcase} (#{I18n.l(from, :format => format)})"
             when 'PAST', 'FUTURE'
               from, to = controller.class.date_bridge_from_to(column, value)
               "#{column.active_record_class.human_attribute_name(column.name)} #{as_('BETWEEN'.downcase).downcase} #{I18n.l(from)} - #{I18n.l(to)}"
             else
               from, to = controller.class.date_bridge_from_to(column, value)
-              "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value[:opt].downcase).downcase} #{I18n.l(from)} #{value[:opt] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"
+              "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value['opt'].downcase).downcase} #{I18n.l(from)} #{value['opt'] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"
             end
           end
 
@@ -113,7 +113,7 @@ module ActiveScaffold
         module Finder
           module ClassMethods
             def condition_for_date_bridge_type(column, value, like_pattern)
-              operator = ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt]) && value[:opt] != 'BETWEEN' ? value[:opt] : nil
+              operator = ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value['opt']) && value['opt'] != 'BETWEEN' ? value['opt'] : nil
               from_value, to_value = date_bridge_from_to(column, value)
 
               if column.search_sql.is_a? Proc
@@ -122,14 +122,14 @@ module ActiveScaffold
                 if operator.nil?
                   ['%{search_sql} BETWEEN ? AND ?', from_value.to_s(:db), to_value.to_s(:db)] unless from_value.nil? || to_value.nil?
                 else
-                  ["%{search_sql} #{value[:opt]} ?", from_value.to_s(:db)] unless from_value.nil?
+                  ["%{search_sql} #{value['opt']} ?", from_value.to_s(:db)] unless from_value.nil?
                 end
               end
             end
 
             def date_bridge_from_to(column, value)
               conversion = datetime_conversion_for_condition(column)
-              case value[:opt]
+              case value['opt']
               when 'RANGE'
                 values = date_bridge_from_to_for_range(column, value)
                 # Avoid calling to_time, not needed and broken on rails >= 4, because return local time instead of UTC
@@ -177,7 +177,7 @@ module ActiveScaffold
             end
 
             def date_bridge_from_to_for_range(column, value)
-              case value[:range]
+              case value['range']
               when 'TODAY'
                 return date_bridge_now.beginning_of_day, date_bridge_now.end_of_day
               when 'YESTERDAY'
@@ -185,7 +185,7 @@ module ActiveScaffold
               when 'TOMORROW'
                 return date_bridge_now.in(1.day).beginning_of_day, date_bridge_now.in(1.day).end_of_day
               else
-                range_type, range = value[:range].downcase.split('_')
+                range_type, range = value['range'].downcase.split('_')
                 raise ArgumentError unless %w(week month year).include?(range)
                 case range_type
                 when 'this'

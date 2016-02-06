@@ -54,7 +54,7 @@ module ActiveScaffold
 
       # the standard active scaffold options used for class, name and scope
       def active_scaffold_search_options(column)
-        {:name => "search[#{column.name}]", :class => "#{column.name}-input", :id => "search_#{column.name}", :value => field_search_params[column.name]}
+        {:name => "search[#{column.name}]", :class => "#{column.name}-input", :id => "search_#{column.name}", :value => field_search_params[column.name.to_s]}
       end
 
       def search_attribute(column, record)
