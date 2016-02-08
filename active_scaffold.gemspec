@@ -28,5 +28,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency('bundler', ['~> 1.0'])
   # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide
   s.add_development_dependency 'rubocop'
-  s.add_development_dependency 'shoulda'
 end
