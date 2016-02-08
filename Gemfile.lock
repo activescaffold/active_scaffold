@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    active_scaffold (3.4.31)
+    active_scaffold (3.4.33)
       ice_nine (~> 0.11)
-      rails (>= 3.2.18, < 5)
+      rails (>= 4.0, < 5)
 
 GEM
   remote: https://rubygems.org/
@@ -37,10 +37,10 @@ GEM
       activemodel (= 4.2.5)
       activesupport (= 4.2.5)
       arel (~> 6.0)
-    activerecord-jdbc-adapter (1.3.13)
+    activerecord-jdbc-adapter (1.3.19)
       activerecord (>= 2.2)
-    activerecord-jdbcsqlite3-adapter (1.3.13)
-      activerecord-jdbc-adapter (~> 1.3.13)
+    activerecord-jdbcsqlite3-adapter (1.3.19)
+      activerecord-jdbc-adapter (~> 1.3.19)
       jdbc-sqlite3 (>= 3.7.2, < 3.9)
     activesupport (4.2.5)
       i18n (~> 0.7)
@@ -53,7 +53,7 @@ GEM
     ast (2.1.0)
     astrolabe (1.3.1)
       parser (~> 2.2)
-    brakeman (3.1.3)
+    brakeman (3.1.4)
       erubis (~> 2.6)
       fastercsv (~> 1.5)
       haml (>= 3.0, < 5.0)
@@ -81,8 +81,8 @@ GEM
       tilt
     highline (1.7.8)
     i18n (0.7.0)
-    ice_nine (0.11.1)
-    jdbc-sqlite3 (3.8.7)
+    ice_nine (0.11.2)
+    jdbc-sqlite3 (3.8.11.2)
     json (1.8.3)
     json (1.8.3-java)
     localeapp (0.9.0)
@@ -107,8 +107,8 @@ GEM
       ruby-progressbar
     mocha (1.1.0)
       metaclass (~> 0.0.1)
-    multi_json (1.11.0)
-    netrc (0.9.0)
+    multi_json (1.11.2)
+    netrc (0.10.3)
     nokogiri (1.6.7)
       mini_portile2 (~> 2.0.0.rc2)
     nokogiri (1.6.7-java)
@@ -367,7 +367,7 @@ GEM
     rubysl-yaml (2.0.4)
     rubysl-zlib (2.0.1)
     safe_yaml (1.0.4)
-    sass (3.4.19)
+    sass (3.4.20)
     sexp_processor (4.6.0)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
@@ -426,3 +426,6 @@ DEPENDENCIES
   shoulda
   simplecov
   sqlite3
+
+BUNDLED WITH
+   1.11.0

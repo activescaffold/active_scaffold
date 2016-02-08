@@ -22,12 +22,10 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9'
   s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
 
-  s.add_runtime_dependency('rails', '>= 3.2.18', '<5')
+  s.add_runtime_dependency('rails', '>= 4.0', '<5')
   s.add_runtime_dependency('ice_nine', '~> 0.11')
 
   s.add_development_dependency('bundler', ['~> 1.0'])
-  # Brakeman detects security vulnerabilities in Ruby on Rails applications via static analysis.
-  s.add_development_dependency 'brakeman'
   # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide
   s.add_development_dependency 'rubocop'
   s.add_development_dependency 'shoulda'
