@@ -3,7 +3,7 @@ module ActiveScaffold
     # Helpers that assist with rendering of a human readable search statement
     module HumanConditionHelpers
       def active_scaffold_human_condition_for(column)
-        return if (value = field_search_params[column.name]).nil?
+        return if (value = field_search_params[column.name.to_s]).nil?
         search_ui = column.search_ui
         search_ui ||= column.column.type if column.column
         if override_human_condition_column?(column)
