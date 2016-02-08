@@ -6,15 +6,16 @@ module ActiveScaffold
         ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
         record ||= @record # TODO: Remove when relying on @record is removed
         options = active_scaffold_input_text_options(options.merge(column.options))
-
-        input = file_field(:record, column.name, options)
         paperclip = record.send("#{column.name}")
+
+        required = options.delete(:required) if paperclip.file?
+        input = file_field(:record, column.name, options)
         if paperclip.file?
           case ActiveScaffold.js_framework
           when :jquery
-            js_remove_file_code = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show(); return false;"
+            js_remove_file_code = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show()#{".find('input').attr('required', 'required')" if required}; return false;"
           when :prototype
-            js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show(); return false;"
+            js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show()#{".down().writeAttribute('required', 'required')" if required}; return false;"
           end
 
           object_name, method = options[:name].split(/\[(#{column.name})\]/)

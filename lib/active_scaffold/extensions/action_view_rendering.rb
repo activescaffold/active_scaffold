@@ -82,6 +82,7 @@ module ActionView::Helpers #:nodoc:
 
       elsif args.first == :super
         @_view_paths ||= lookup_context.view_paths.clone
+        @_last_template ||= lookup_context.last_template
         parts = @virtual_path.split('/')
         template = parts.pop
         prefix = parts.join('/')
@@ -103,6 +104,7 @@ module ActionView::Helpers #:nodoc:
         end
         result = render_without_active_scaffold options
         lookup_context.view_paths = @_view_paths if @_view_paths
+        lookup_context.last_template = @_last_template if @_last_template
         result
       else
         @_view_paths ||= lookup_context.view_paths.clone

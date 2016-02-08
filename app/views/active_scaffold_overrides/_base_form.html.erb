@@ -3,9 +3,10 @@
    url_options ||= params_for(:action => form_action)
    xhr = request.xhr? if xhr.nil?
    if active_scaffold_config.actions.include? form_action
-     multipart ||= active_scaffold_config.send(form_action).multipart?
-     columns ||= active_scaffold_config.send(form_action).columns
-     persistent ||= active_scaffold_config.send(form_action).persistent
+     action_config = active_scaffold_config.send(form_action)
+     multipart ||= action_config.multipart? unless local_assigns.has_key? :multipart
+     columns ||= action_config.columns unless local_assigns.has_key? :columns
+     persistent ||= action_config.persistent unless local_assigns.has_key? :persistent
    else
      multipart ||= false
      columns ||= nil

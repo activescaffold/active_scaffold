@@ -8,6 +8,8 @@ gemspec
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 group :development, :test do
+  # A static analysis security vulnerability scanner for Ruby on Rails applications
+  gem 'brakeman', require: false
   gem 'rake'
   gem 'rdoc'
   gem 'bundler', '>= 1.0.0'

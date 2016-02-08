@@ -4,8 +4,9 @@ class ModelStub < ActiveRecord::Base
   has_many :other_models, :class_name => 'ModelStub'
 
   cattr_accessor :stubbed_columns
-  self.stubbed_columns = [:a, :b, :c, :d, :id]
+  self.stubbed_columns = [:a, :b, :c, :d, :id, :created_at]
   attr_accessor *stubbed_columns
+  self.primary_key = :id
 
   @@nested_scope_calls = []
   cattr_accessor :nested_scope_calls
@@ -34,7 +35,11 @@ class ModelStub < ActiveRecord::Base
   end
 
   def self.columns
-    @columns ||= stubbed_columns.map { |c| ColumnMock.new(c.to_s, '', 'varchar(255)') }
+    @columns ||= stubbed_columns.map do |c|
+      column = ColumnMock.new(c.to_s, '', 'varchar(255)')
+      column.primary = true if c.to_s == self.primary_key.to_s && column.respond_to?(:primary=)
+      column
+    end
   end
 
   def self.columns_hash
@@ -42,10 +47,13 @@ class ModelStub < ActiveRecord::Base
   end
 
   # column-level security methods, used for testing
-  def self.a_authorized_for_bar?(user)
+  def self.a_authorized_for_bar?
     true
   end
-  def self.b_authorized?(user)
+  def self.b_authorized?
+    false
+  end
+  def self.c_authorized_for_create?
     false
   end
 end

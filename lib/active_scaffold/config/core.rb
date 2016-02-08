@@ -161,7 +161,7 @@ module ActiveScaffold::Config
       content_columns = Set.new(model.content_columns.map(&:name))
       @columns.exclude(*self.class.ignore_columns)
       @columns.exclude(*@columns.find_all { |c| c.column && content_columns.exclude?(c.column.name) }.collect(&:name))
-      @columns.exclude(*model.reflect_on_all_associations.collect { |a| :"#{a.name}_type" if a.options[:polymorphic] }.compact)
+      @columns.exclude(*model.reflect_on_all_associations.collect { |a| a.foreign_type.to_sym if a.options[:polymorphic] }.compact)
 
       # inherit the global frontend
       @frontend = self.class.frontend

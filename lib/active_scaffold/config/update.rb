@@ -17,6 +17,8 @@ module ActiveScaffold::Config
     end
     @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => :edit, :type => :member, :security_method => :update_authorized?, :ignore_method => :update_ignore?)
 
+    columns_accessor :columns, :copy => :create
+
     # instance-level configuration
     # ----------------------------
 

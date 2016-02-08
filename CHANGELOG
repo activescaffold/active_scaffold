@@ -1,5 +1,18 @@
+- Fix past, future and range on field search with rails 4, local time was used instead of UTC
+- Ignore search params when params[:id] is set
+- Eager load HABTM with scope using left join
+- Add active_scaffold/indicator.gif to precompile so rails 4.2 precompiles it
+
+= 3.4.33
+- Fix _base_form when used with actions, so :multipart and :persistent can set to false instead of getting them from action config
+- Copy update.columns from create.columns, if not defined
+- Ensure ajax:complete is called to enable form after render_form_field request, even if element is removed
+
+= 3.4.32
 - Add ActiveScaffold.reload_embedded JS method, to reload an embedded scaffold
 - Fix nested on composite primary key associations
+- Fix render :super on partials rendered with :collection (like _list_record)
+- Fix required on paperclip, carrierwave and dragonfly bridges, when file is already saved
 
 = 3.4.31
 - fix multiple support for :select form_ui with non-association columns

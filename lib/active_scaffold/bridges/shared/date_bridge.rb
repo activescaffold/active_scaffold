@@ -131,9 +131,15 @@ module ActiveScaffold
               conversion = datetime_conversion_for_condition(column)
               case value[:opt]
               when 'RANGE'
-                date_bridge_from_to_for_range(column, value).collect(&conversion)
+                values = date_bridge_from_to_for_range(column, value)
+                # Avoid calling to_time, not needed and broken on rails >= 4, because return local time instead of UTC
+                values.collect!(&conversion) if conversion != :to_time
+                values
               when 'PAST', 'FUTURE'
-                date_bridge_from_to_for_trend(column, value).collect(&conversion)
+                values = date_bridge_from_to_for_trend(column, value)
+                # Avoid calling to_time, not needed and broken on rails >= 4, because return local time instead of UTC
+                values.collect!(&conversion) if conversion != :to_time
+                values
               else
                 %w(from to).collect { |field| condition_value_for_datetime(column, value[field], conversion) }
               end

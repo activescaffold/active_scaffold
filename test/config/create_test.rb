@@ -11,6 +11,10 @@ module Config
       @config.create.link = @default_link
     end
 
+    def test_default_columns
+      assert_equal [:a, :d, :other_model, :other_models], @config.create.columns.names
+    end
+
     def test_default_options
       refute @config.create.persistent
       assert @config.create.action_after_create.nil?

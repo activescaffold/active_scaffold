@@ -25,5 +25,7 @@ module ActiveScaffold
         ActiveRecord::Associations::SingularAssociation.send :include, ActiveScaffold::Tableless::SingularAssociation
       end
     end
+
+    config.assets.precompile << 'active_scaffold/indicator.gif' if Rails::VERSION::MAJOR >= 4
   end
 end
