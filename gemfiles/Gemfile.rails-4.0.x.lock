@@ -2,8 +2,8 @@ PATH
   remote: ../
   specs:
     active_scaffold (3.4.33)
-    ice_nine (~> 0.11)
-      rails (>= 3.2.18, < 5)
+      ice_nine (~> 0.11)
+      rails (>= 4.0, < 5)
 
 GEM
   remote: https://rubygems.org/
@@ -58,6 +58,7 @@ GEM
     codeclimate-test-reporter (0.4.6)
       simplecov (>= 0.7.1, < 1.0.0)
     concurrent-ruby (1.0.0)
+    concurrent-ruby (1.0.0-java)
     docile (1.1.5)
     erubis (2.7.0)
     fastercsv (1.5.5)
@@ -384,6 +385,7 @@ DEPENDENCIES
   brakeman
   bundler (>= 1.0.0)
   codeclimate-test-reporter
+  jdbc-sqlite3
   localeapp
   minitest-reporters
   mocha
