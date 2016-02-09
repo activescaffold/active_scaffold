@@ -24,6 +24,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'shoulda', '>= 0'
   gem 'simplecov', '>= 0'
   gem 'mocha'
   gem 'rails', '~> 4.0.12'
