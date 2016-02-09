@@ -58,7 +58,7 @@ GIT
 PATH
   remote: ../
   specs:
-    active_scaffold (3.4.31)
+    active_scaffold (3.4.33)
       ice_nine (~> 0.11)
       rails (>= 3.2.18, < 5)
 
