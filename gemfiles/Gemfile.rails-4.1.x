@@ -26,7 +26,7 @@ group :test do
   gem 'shoulda', '>= 0'
   gem 'simplecov', '>= 0'
   gem 'mocha'
-  gem 'rails', '~> 4.1.1'
+  gem 'rails', '~> 4.1.14'
   gem 'codeclimate-test-reporter', require: nil
   gem 'minitest-reporters', require:  nil
   platforms :jruby do

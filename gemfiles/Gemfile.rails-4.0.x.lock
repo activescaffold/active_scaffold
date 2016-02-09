@@ -2,7 +2,7 @@ PATH
   remote: ../
   specs:
     active_scaffold (3.4.33)
-      ice_nine (~> 0.11)
+    2ice_nine (~> 0.11)
       rails (>= 3.2.18, < 5)
 
 GEM
@@ -68,7 +68,7 @@ GEM
     hashie (3.4.0)
     highline (1.7.8)
     i18n (0.7.0)
-    ice_nine (0.11.1)
+    ice_nine (0.11.2)
     jdbc-sqlite3 (3.8.11.2)
     json (1.8.2)
     json (1.8.2-java)
