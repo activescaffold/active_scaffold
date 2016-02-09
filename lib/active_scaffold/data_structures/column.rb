@@ -14,6 +14,8 @@ module ActiveScaffold::DataStructures
       @inplace_edit = value
     end
 
+    # :table to refresh list
+    # true or :row to refresh row
     attr_accessor :inplace_edit_update
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
