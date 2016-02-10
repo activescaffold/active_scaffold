@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Delete
     def self.included(base)
-      base.before_filter :delete_authorized_filter, :only => [:destroy]
+      base.before_action :delete_authorized_filter, :only => [:destroy]
     end
 
     def destroy

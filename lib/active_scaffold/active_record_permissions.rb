@@ -26,7 +26,7 @@ module ActiveScaffold
     module ModelUserAccess
       module Controller
         def self.included(base)
-          base.prepend_before_filter :assign_current_user_to_models
+          base.prepend_before_action :assign_current_user_to_models
         end
 
         # We need to give the ActiveRecord classes a handle to the current user. We don't want to just pass the object,
