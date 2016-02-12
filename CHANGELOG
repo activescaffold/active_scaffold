@@ -3,6 +3,7 @@
 - Eager load HABTM with scope using left join
 - Add active_scaffold/indicator.gif to precompile so rails 4.2 precompiles it
 - Add support for ActiveRecord::Enum so :select form_ui is used by default
+- Fix nested link on self-association belongs_to for rails >= 4.1
 
 = 3.4.33
 - Fix _base_form when used with actions, so :multipart and :persistent can set to false instead of getting them from action config

@@ -91,7 +91,8 @@ module ActiveScaffold::Actions
           table_name =
             if active_scaffold_config.model == nested.association.active_record
               dependency = ActiveRecord::Associations::JoinDependency.new(chain.klass, chain.joins_values, [])
-              dependency.join_associations.find { |join| join.try(:reflection).try(:name) == nested.child_association.name }.try(:table).try(:right)
+              join_associations = Rails.version >= '4.1.0' ? dependency.join_associations : dependency.join_root.children
+              join_associations.find {|join| join.try(:reflection).try(:name) == nested.child_association.name}.try(:table).try(:right)
             end
           table_name ||= nested.association.active_record.table_name
           chain.where(table_name => {nested.association.active_record.primary_key => nested_parent_record}).readonly(false)
