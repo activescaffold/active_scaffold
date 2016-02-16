@@ -144,7 +144,9 @@ module ActiveScaffold::Actions
 
       value ||=
         unless @column.column.nil? || @column.column.null
-          @column.column.default == true ? false : @column.column.default
+          default_val = @column.column.default
+          default_val = @column.column.cast_type.type_cast_from_user default_val if Rails.version >= '4.2.0'
+          default_val == true ? false : default_val
         end
       unless @column.nil?
         value = column_value_from_param_value(@record, @column, value)

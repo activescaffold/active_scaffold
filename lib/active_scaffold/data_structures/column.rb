@@ -337,14 +337,18 @@ module ActiveScaffold::DataStructures
 
       @text = @column.nil? || [:string, :text].include?(@column.type)
       if @column
-        @form_ui = case @column.type
-          when :boolean then :checkbox
-          when :text then :textarea
-        end
-        if @column.number?
+        if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
+          @form_ui = :select
+          @options = {:options => active_record_class.send(name.to_s.pluralize).keys}
+        elsif @column.number?
           @number = true
           @form_ui = :number
           @options = {:format => :i18n_number}
+        else
+          @form_ui = case @column.type
+            when :boolean then :checkbox
+            when :text then :textarea
+          end
         end
       end
       @allow_add_existing = true
