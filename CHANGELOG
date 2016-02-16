@@ -4,6 +4,7 @@
 - Add active_scaffold/indicator.gif to precompile so rails 4.2 precompiles it
 - Add support for ActiveRecord::Enum so :select form_ui is used by default
 - Fix nested link on self-association belongs_to for rails >= 4.1
+- Fix update_column for boolean columns with default true on rails 4.2
 
 = 3.4.33
 - Fix _base_form when used with actions, so :multipart and :persistent can set to false instead of getting them from action config
