@@ -21,13 +21,15 @@ jdk:
 language: ruby
 matrix:
   allow_failures:
-    - rvm: rbx-3
+    - rvm: rbx-3.19
     - rvm: ruby-head
   exclude:
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: 2.2
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: 2.3.0
+    - gemfile: gemfiles/Gemfile.rails-3.2.x
+      rvm: rbx-3.19
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: ruby-head
 rvm:
@@ -39,6 +41,6 @@ rvm:
   - jruby-19mode
   - jruby-9
   - rbx-2
-  - rbx-3
+  - rbx-3.19
   - ruby-head
 sudo: false
