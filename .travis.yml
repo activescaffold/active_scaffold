@@ -29,6 +29,8 @@ matrix:
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: 2.3.0
     - gemfile: gemfiles/Gemfile.rails-3.2.x
+      rvm: jruby-9.0.5.0
+    - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: rbx-3.19
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: ruby-head
@@ -39,7 +41,7 @@ rvm:
   - 2.2
   - 2.3.0
   - jruby-19mode
-  - jruby-9
+  - jruby-9.0.5.0
   - rbx-2
   - rbx-3.19
   - ruby-head
