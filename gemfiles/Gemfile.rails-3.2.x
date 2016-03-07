@@ -25,7 +25,7 @@ group :test do
   gem 'shoulda', '~> 2.11.3'
   gem 'simplecov', '>= 0'
   gem 'mocha'
-  gem 'rails', '~> 3.2.20'
+  gem 'rails', '~> 3.2.22.2'
   gem 'minitest', '~> 4.7.0'
   gem 'minitest-rails'
   gem 'minitest-reporters', require: nil
