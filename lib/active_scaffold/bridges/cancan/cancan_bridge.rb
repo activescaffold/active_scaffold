@@ -62,7 +62,7 @@ module ActiveScaffold::Bridges
       module Controller
         extend ActiveSupport::Concern
         included do
-          prepend_before_filter :assign_current_ability_to_models
+          prepend_before_action :assign_current_ability_to_models
         end
 
         # We need to give the ActiveRecord classes a handle to the current ability. We don't want to just pass the object,

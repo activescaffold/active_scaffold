@@ -2,11 +2,11 @@ module ActiveScaffold::Actions
   module Core
     def self.included(base)
       base.class_eval do
-        before_filter :handle_user_settings
-        before_filter :check_input_device
-        before_filter :register_constraints_with_action_columns, :unless => :nested?
-        after_filter :clear_flashes
-        after_filter :clear_storage
+        before_action :handle_user_settings
+        before_action :check_input_device
+        before_action :register_constraints_with_action_columns, :unless => :nested?
+        after_action :clear_flashes
+        after_action :clear_storage
         rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
       base.helper_method :successful?

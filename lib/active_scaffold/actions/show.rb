@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Show
     def self.included(base)
-      base.before_filter :show_authorized_filter, :only => :show
+      base.before_action :show_authorized_filter, :only => :show
     end
 
     def show

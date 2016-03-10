@@ -91,5 +91,7 @@ module ActiveScaffold
   end
 end
 require 'active_scaffold/engine'
+require 'ice_nine'
+require 'ice_nine/core_ext/object'
 # TODO: clean up extensions. some could be organized for autoloading, and others could be removed entirely.
 Dir["#{File.dirname __FILE__}/active_scaffold/extensions/*.rb"].each { |file| require file }

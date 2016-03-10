@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 # Example:
 #   gem "activesupport", ">= 2.3.5"
 
+gemspec :path => '../'
+
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 group :development, :test do
@@ -30,6 +32,7 @@ group :test do
   gem 'minitest-reporters', require: nil
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
+    gem 'jdbc-sqlite3'
   end
 
   platforms :ruby do

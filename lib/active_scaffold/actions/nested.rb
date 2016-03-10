@@ -4,11 +4,11 @@ module ActiveScaffold::Actions
     def self.included(base)
       super
       base.module_eval do
-        before_filter :set_nested
-        before_filter :configure_nested
+        before_action :set_nested
+        before_action :configure_nested
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? { |a| a.macro == :has_and_belongs_to_many }
       end
-      base.before_filter :include_habtm_actions
+      base.before_action :include_habtm_actions
       base.helper_method :nested
       base.helper_method :nested_parent_record
     end
