@@ -161,7 +161,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   def self.columns
-    @columns ||= []
+    @tableless_columns ||= []
   end
   def self.table_name
     @table_name ||= ActiveModel::Naming.plural(self)
