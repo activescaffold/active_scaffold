@@ -1,4 +1,5 @@
 - Fix JS error on update columns when request fails and form is loaded on page
+- Not raise exception when trying to scroll to missing element
 
 = 3.4.34
 - Fix past, future and range on field search with rails 4, local time was used instead of UTC

@@ -724,6 +724,7 @@ var ActiveScaffold = {
     if (typeof checkInViewport == 'undefined') checkInViewport = true;
     if (typeof(element) == 'string') element = '#' + element;
     element = jQuery(element);
+    if (!element.length) return;
     if (checkInViewport && element.visible()) return;
     jQuery(document).scrollTop(element.offset().top);
   },
