@@ -692,6 +692,7 @@ var ActiveScaffold = {
 
   report_500_response: function(active_scaffold_id, xhr) {
     var server_error = jQuery(active_scaffold_id).find('td.messages-container p.server-error').first();
+    if (!server_error.length) return;
     if (server_error.is(':visible')) {
       ActiveScaffold.highlight(server_error);
     } else {
@@ -994,8 +995,6 @@ var ActiveScaffold = {
       },
       error: function (xhr, status, error) {
         element = as_form.find('#'+element.attr('id'));
-        var as_div = element.closest("div.active-scaffold");
-        if (as_div) ActiveScaffold.report_500_response(as_div, xhr);
         element.trigger('ajax:error', [xhr, status, error]);
       }
     });
