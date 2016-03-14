@@ -691,8 +691,7 @@ var ActiveScaffold = {
   },
 
   report_500_response: function(active_scaffold_id, xhr) {
-    var server_error = jQuery(active_scaffold_id).find('td.messages-container p.server-error').first();
-    if (!server_error.length) return;
+    var server_error = jQuery(active_scaffold_id).find('.messages-container p.server-error').first();
     if (server_error.is(':visible')) {
       ActiveScaffold.highlight(server_error);
     } else {
@@ -725,6 +724,7 @@ var ActiveScaffold = {
     if (typeof checkInViewport == 'undefined') checkInViewport = true;
     if (typeof(element) == 'string') element = '#' + element;
     element = jQuery(element);
+    if (!element.length) return;
     if (checkInViewport && element.visible()) return;
     jQuery(document).scrollTop(element.offset().top);
   },
@@ -990,7 +990,7 @@ var ActiveScaffold = {
         if (ActiveScaffold.last_focus) {
           var item = jQuery(ActiveScaffold.last_focus);
           if (item.closest('body').length == 0 && item.attr('id')) item = jQuery('#' + item.attr('id'));
-          item.focus().select();
+          if (status != 'error') item.focus().select();
         }
       },
       error: function (xhr, status, error) {
