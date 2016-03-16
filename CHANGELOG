@@ -1,5 +1,6 @@
 - Fix JS error on update columns when request fails and form is loaded on page
 - Not raise exception when trying to scroll to missing element
+- Fix error on rails 3.2 caused by a workaround to fix eager load HABTM with scope on rails 4.2
 
 = 3.4.34
 - Fix past, future and range on field search with rails 4, local time was used instead of UTC
