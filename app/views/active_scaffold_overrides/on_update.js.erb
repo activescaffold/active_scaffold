@@ -3,12 +3,14 @@ try {
 var action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
 action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
 <% if successful? %>
-  <% if params[:dont_close] %>
+  <% if params[:dont_close] == 'true' %>
     <% row_selector = element_row_id(:action => :list, :id => @record.id) %>
     ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
     action_link.target = $('#<%= row_selector %>');
     <%= render :partial => 'update_calculations', :formats => [:js] %>
-    <%= "ActiveScaffold.enable_form('#{form_selector}');" if params[:iframe] == 'true' %>
+    <% if params[:iframe] == 'true' %>
+      ActiveScaffold.enable_form('<%= form_selector %>');
+    <% end %>
   <% else %>
     <% if render_parent? %>
       <% if nested_singular_association? || render_parent_action == :row %>
