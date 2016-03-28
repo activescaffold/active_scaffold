@@ -1,3 +1,5 @@
+- Fix tableless for rails >= 4.1 for associations with table
+
 = 3.4.35
 - Fix JS error on update columns when request fails and form is loaded on page
 - Not raise exception when trying to scroll to missing element
