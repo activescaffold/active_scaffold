@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9'
   s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
 
-  s.add_runtime_dependency('rails', '>= 4.0', '<5')
+  s.add_runtime_dependency('rails', '>= 4.0']
   s.add_runtime_dependency('ice_nine', '~> 0.11')
 
   s.add_development_dependency('bundler', ['~> 1.0'])
