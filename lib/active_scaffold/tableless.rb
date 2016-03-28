@@ -4,7 +4,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       klass = alias_tracker ? alias_tracker.connection.klass : self.klass
       if table_name == klass.table_name
         klass.columns_hash[column_name]
-      elsif alias_tracker && (klass = alias_tracker.instance_variable_get(:@assoc_klass)
+      elsif alias_tracker && (klass = alias_tracker.instance_variable_get(:@assoc_klass))
         klass.columns_hash[column_name]
       else # rails < 4.1
         association.klass.columns_hash[column_name]
