@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    active_scaffold (3.4.35)
+    active_scaffold (3.4.36)
       ice_nine (~> 0.11)
       rails (>= 4.0, < 5)
 
