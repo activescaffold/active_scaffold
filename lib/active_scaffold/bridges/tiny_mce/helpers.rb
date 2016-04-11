@@ -42,6 +42,10 @@ class ActiveScaffold::Bridges::TinyMce
         end
         [onsubmit_without_tiny_mce, submit_js].compact.join ';'
       end
+
+      # The implementation is very tinymce specific, so it makes sense allowing :form_ui
+      # to be :tinymce as well
+      alias_method :active_scaffold_input_tinymce, :active_scaffold_input_text_editor
     end
 
     module SearchColumnHelpers
