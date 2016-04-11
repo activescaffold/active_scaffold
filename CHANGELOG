@@ -1,4 +1,5 @@
 - return valid css class for subgroups, e.g. when name with dot is used for translation scopes
+- check permissions for add existing and delete existing, use nested parent record authorized for update nested association column
 
 = 3.4.36
 - Fix tableless for rails >= 4.1 for associations with table
