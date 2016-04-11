@@ -18,7 +18,7 @@ module ActiveScaffold::DataStructures
     end
 
     def css_class
-      @label.to_s.underscore
+      @label.to_s.underscore.gsub /[^-_0-9a-zA-Z]/, '-'
     end
 
     # this is so that array.delete and array.include?, etc., will work by column name

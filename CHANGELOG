@@ -1,3 +1,5 @@
+- return valid css class for subgroups, e.g. when name with dot is used for translation scopes
+
 = 3.4.36
 - Fix tableless for rails >= 4.1 for associations with table
 - use number_with_precision for non-integer numbers with i18n_number format, so strip_insignificant_zeros and precision can be used
