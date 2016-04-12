@@ -15,6 +15,7 @@ module ActiveScaffold::Bridges
         country_code = record.send(column.name)
         return if country_code.blank?
         country = ISO3166::Country[country_code]
+        return country_code unless country
         country.translations[I18n.locale.to_s] || country.name
       end
     end
