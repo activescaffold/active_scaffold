@@ -31,7 +31,7 @@ module ActiveScaffold::Bridges
 
         state_options
       end
-      
+
       USASTATES = [%w(Alabama AL), %w(Alaska AK), %w(Arizona AZ), %w(Arkansas AR), %w(California CA), %w(Colorado CO), %w(Connecticut CT), %w(Delaware DE), ['District of Columbia', 'DC'], %w(Florida FL), %w(Georgia GA), %w(Hawaii HI), %w(Idaho ID), %w(Illinois IL), %w(Indiana IN), %w(Iowa IA), %w(Kansas KS), %w(Kentucky KY), %w(Louisiana LA), %w(Maine ME), %w(Maryland MD), %w(Massachusetts MA), %w(Michigan MI), %w(Minnesota MN), %w(Mississippi MS), %w(Missouri MO), %w(Montana MT), %w(Nebraska NE), %w(Nevada NV), ['New Hampshire', 'NH'], ['New Jersey', 'NJ'], ['New Mexico', 'NM'], ['New York', 'NY'], ['North Carolina', 'NC'], ['North Dakota', 'ND'], %w(Ohio OH), %w(Oklahoma OK), %w(Oregon OR), %w(Pennsylvania PA), ['Rhode Island', 'RI'], ['South Carolina', 'SC'], ['South Dakota', 'SD'], %w(Tennessee TN), %w(Texas TX), %w(Utah UT), %w(Vermont VT), %w(Virginia VA), %w(Washington WA), %w(Wisconsin WI), ['West Virginia', 'WV'], %w(Wyoming WY)] unless const_defined?('USASTATES')
     end
 
@@ -70,9 +70,11 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::UsaStateSelect::SearchColumnHelpers
 end
 if defined? ActionView::Helpers::InstanceTag # TODO remove when rails 3.2 support is dropped
-  class ActionView::Helpers::Tags::UsaStateSelect < ActionView::Helpers::InstanceTag
-    include ActiveScaffold::Bridges::UsaStateSelect::UsaStateSelectOptionsHelpers
-    include ActiveScaffold::Bridges::UsaStateSelect::InstanceTagMethods
+  module ActionView::Helpers::Tags
+    class UsaStateSelect < ActionView::Helpers::InstanceTag
+      include ActiveScaffold::Bridges::UsaStateSelect::UsaStateSelectOptionsHelpers
+      include ActiveScaffold::Bridges::UsaStateSelect::InstanceTagMethods
+    end
   end
 else
   class ActionView::Helpers::Tags::UsaStateSelect < ActionView::Helpers::Tags::Base #:nodoc:
