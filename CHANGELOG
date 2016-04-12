@@ -1,5 +1,8 @@
+= 3.4.37
 - return valid css class for subgroups, e.g. when name with dot is used for translation scopes
 - check permissions for add existing and delete existing, use nested parent record authorized for update nested association column
+- TinyMCE bridge integrate better with the tinymce-rails (thanks to @subfusc)
+- Remove own country_select helpers and convert into bridge for country_select gem (now it will save country code instead of country name, migrate data or restore old behaviour setting columns[:col].options[:format] = :old)
 
 = 3.4.36
 - Fix tableless for rails >= 4.1 for associations with table
