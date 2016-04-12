@@ -2,14 +2,14 @@ module ActiveScaffold::Bridges
   class CountrySelect
     module FormColumnHelpers
       def active_scaffold_input_country(column, options)
-        select_options = {:prompt => as_(:_select_), :priority_countries => column.options[:priority] || [:united_states], :format => column.options[:format]}
+        select_options = {:prompt => as_(:_select_), :priority_countries => column.options[:priority] || [:us], :format => column.options[:format]}
         select_options.merge!(options)
         options.reverse_merge!(column.options).except!(:prompt, :priority, :format)
         options[:name] += '[]' if options[:multiple]
         country_select(:record, column.name, select_options, options.except(:object))
       end
     end
-    
+
     module ListColumnHelpers
       def active_scaffold_column_country(record, column)
         country_code = record.send(column.name)
