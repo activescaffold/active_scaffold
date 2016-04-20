@@ -15,7 +15,6 @@ jdk:
 language: ruby
 matrix:
   allow_failures:
-    - rvm: rbx-3.27
     - rvm: ruby-head
   exclude:
     - gemfile: gemfiles/Gemfile.rails-3.2.x
@@ -24,8 +23,6 @@ matrix:
       rvm: 2.3.0
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: jruby-9.0.5.0
-    - gemfile: gemfiles/Gemfile.rails-3.2.x
-      rvm: rbx-3.19
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: ruby-head
 rvm:
