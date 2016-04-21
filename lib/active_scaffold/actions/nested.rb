@@ -53,8 +53,7 @@ module ActiveScaffold::Actions
     end
 
     def include_habtm_actions
-      return unless nested?
-      if nested.habtm?
+      if nested? && nested.habtm?
         # Production mode is ok with adding a link everytime the scaffold is nested - we are not ok with that.
         active_scaffold_config.action_links.add('new_existing', :label => :add_existing, :type => :collection, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
         if active_scaffold_config.nested.shallow_delete
