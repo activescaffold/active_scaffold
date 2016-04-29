@@ -155,6 +155,7 @@ DEPENDENCIES
   brakeman
   bundler (>= 1.0.0)
   codeclimate-test-reporter
+  jdbc-sqlite3
   localeapp
   minitest-reporters
   mocha
