@@ -27,7 +27,10 @@ group :test do
   gem 'codeclimate-test-reporter', require: nil
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
+    gem 'jdbc-sqlite3'
   end
 
-  gem 'sqlite3'
+  platforms :ruby do
+    gem 'sqlite3'
+  end
 end
