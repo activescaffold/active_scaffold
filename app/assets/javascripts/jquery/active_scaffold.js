@@ -448,7 +448,9 @@ var ActiveScaffold = {
   },
   sliders: function(element) {
     $('.as-slider', element).each(function() {
-      $(this).slider($(this).data('slider'));
+      var opts = $(this).data('slider');
+      $(this).slider(opts); 
+      if (opts.disabled) $(this).find('.ui-slider-handle').hide();
     });
   },
   load_embedded: function(element) {
