@@ -212,12 +212,16 @@ display:inline;
 text-align: right;
 }
 
+.as-slider { display: block; }
 .as-slider .ui-slider-range {
   border: 0;
   height: 100%;
   border-radius: 5px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+}
+.as-slider.ui-state-disabled {
+  opacity: 1;
 }
 
 /* Table :: Actions (Edit, Delete)

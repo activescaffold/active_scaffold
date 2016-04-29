@@ -52,3 +52,7 @@ float: none;
 .active-scaffold li.form-element dt {
 padding: 4px 0;
 }
+
+.as-slider.ui-state-disabled {
+  filter: alpha(Opacity=100);
+}
