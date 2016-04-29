@@ -26,9 +26,7 @@ group :test do
     gem 'activerecord-jdbcsqlite3-adapter'
   end
 
-  platforms :ruby do
-    gem 'sqlite3'
-  end
+  gem 'sqlite3'
 
   platforms :rbx do
     gem 'psych'
