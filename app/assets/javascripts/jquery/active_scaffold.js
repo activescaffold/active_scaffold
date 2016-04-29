@@ -450,7 +450,7 @@ var ActiveScaffold = {
     $('.as-slider', element).each(function() {
       $(this).slider($(this).data('slider'));
     });
-  }
+  },
   load_embedded: function(element) {
     jQuery('.active-scaffold-component .load-embedded', element).each(function(index, item) {
       item = jQuery(item);
