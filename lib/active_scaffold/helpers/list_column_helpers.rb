@@ -85,7 +85,7 @@ module ActiveScaffold
         check_box(:record, column.name, options)
       end
       
-      def active_scaffold_column_slider(record, column)
+      def active_scaffold_column_percentage(record, column)
         options = column.options[:slider] || {}
         options = options.merge(min: record.send(options[:min_method])) if options[:min_method]
         options = options.merge(max: record.send(options[:max_method])) if options[:max_method]
