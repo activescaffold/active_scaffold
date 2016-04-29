@@ -212,6 +212,14 @@ display:inline;
 text-align: right;
 }
 
+.as-slider .ui-slider-range {
+  border: 0;
+  height: 100%;
+  border-radius: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 /* Table :: Actions (Edit, Delete)
    ============================= */
 .active-scaffold tr.record td.actions {

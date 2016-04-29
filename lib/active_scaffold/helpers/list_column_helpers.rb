@@ -84,6 +84,14 @@ module ActiveScaffold
         options.delete(:disabled) if inplace_edit?(record, column)
         check_box(:record, column.name, options)
       end
+      
+      def active_scaffold_column_percentage(record, column)
+        options = column.options[:slider] || {}
+        options = options.merge(min: record.send(options[:min_method])) if options[:min_method]
+        options = options.merge(max: record.send(options[:max_method])) if options[:max_method]
+        value = record.send(options[:value_method]) if options[:value_method]
+        as_slider options.merge(value: value || record.send(column.name))
+      end
 
       def column_override(column)
         override_helper column, 'column'
