@@ -541,6 +541,10 @@ module ActiveScaffold
       def format_column_calculation(column, calculation)
         "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
       end
+      
+      def as_slider(options)
+        content_tag(:span, '', class: 'as-slider', data: {slider: options})
+      end
 
       def clean_column_name(name)
         name.to_s.gsub('?', '')

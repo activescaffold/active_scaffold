@@ -296,12 +296,14 @@ jQuery(document).ready(function($) {
   ActiveScaffold.live_search(document);
   ActiveScaffold.auto_paginate(document);
   ActiveScaffold.draggable_lists('.draggable-lists', document);
+  ActiveScaffold.sliders(document);
   if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
   jQuery(document).on('as:element_updated', function(e) {
     ActiveScaffold.load_embedded(e.target);
     ActiveScaffold.enable_js_form_buttons(e.target);
     ActiveScaffold.live_search(e.target);
     ActiveScaffold.draggable_lists('.draggable-lists', e.target);
+    ActiveScaffold.sliders(e.target);
   });
   jQuery(document).on('as:element_updated', '.active-scaffold', function(e) {
     if (e.target != this) return;
@@ -314,6 +316,7 @@ jQuery(document).ready(function($) {
     ActiveScaffold.live_search(action_link.adapter);
     ActiveScaffold.auto_paginate(action_link.adapter);
     ActiveScaffold.draggable_lists('.draggable-lists', action_link.adapter);
+    ActiveScaffold.sliders(action_link.adapter);
   });
 });
 
@@ -442,6 +445,13 @@ var ActiveScaffold = {
   },
   enable_js_form_buttons: function(element) {
     jQuery('.as-js-button', element).show();
+  },
+  sliders: function(element) {
+    $('.as-slider', element).each(function() {
+      var opts = $(this).data('slider');
+      $(this).slider(opts); 
+      if (opts.disabled) $(this).find('.ui-slider-handle').hide();
+    });
   },
   load_embedded: function(element) {
     jQuery('.active-scaffold-component .load-embedded', element).each(function(index, item) {
