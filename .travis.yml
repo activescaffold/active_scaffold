@@ -22,7 +22,7 @@ matrix:
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: 2.3.0
     - gemfile: gemfiles/Gemfile.rails-3.2.x
-      rvm: jruby-9.0.5.0
+      rvm: jruby-9.1.0.0
     - gemfile: gemfiles/Gemfile.rails-3.2.x
       rvm: ruby-head
 rvm:
@@ -32,7 +32,7 @@ rvm:
   - 2.2
   - 2.3.0
   - jruby-19mode
-  - jruby-9.0.5.0
+  - jruby-9.1.0.0
   - rbx-2
   - rbx-3.29
   - ruby-head
