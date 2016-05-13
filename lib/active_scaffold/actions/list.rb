@@ -74,10 +74,15 @@ module ActiveScaffold::Actions
         end
       sorting = active_scaffold_config.list.user.sorting
       columns_for_joins, columns_for_includes = columns.select { |c| c.includes.present? }.partition do |c|
-        sorting.sorts_on?(c) || (c.plural_association? && c.association.macro == :has_and_belongs_to_many && c.association.respond_to?(:scope) && c.association.scope)
+        column_for_includes?(c)
       end
       active_scaffold_preload.concat columns_for_includes.map(&:includes).flatten.uniq
       active_scaffold_references.concat columns_for_joins.map(&:includes).flatten.uniq
+    end
+
+    def column_for_includes?(column)
+      assoc = column.association if column.plural_association?
+      sorting.sorts_on?(column) || (assoc && assoc.macro == :has_and_belongs_to_many && assoc.respond_to?(:scope) && assoc.scope)
     end
 
     def get_row(crud_type_or_security_options = :read)

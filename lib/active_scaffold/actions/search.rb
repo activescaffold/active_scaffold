@@ -26,7 +26,9 @@ module ActiveScaffold::Actions
           @filtered = !search_conditions.blank?
           active_scaffold_conditions.concat search_conditions if @filtered
 
-          references, outer_joins = columns.partition { |column| column.includes.present? && list_columns.include?(column) }
+          references, outer_joins = columns.partition do |column|
+            column_for_includes?(column) || (column.includes.present? && list_columns.include?(column))
+          end
           outer_joins.collect!(&:search_joins)
           references.collect!(&:includes)
           active_scaffold_outer_joins.concat outer_joins.flatten.uniq.compact
