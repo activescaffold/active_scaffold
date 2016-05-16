@@ -132,17 +132,19 @@ module ActiveScaffold
       end
 
       def format_number_value(value, options = {})
-        value = case options[:format]
-          when :size
-            number_to_human_size(value, options[:i18n_options] || {})
-          when :percentage
-            number_to_percentage(value, options[:i18n_options] || {})
-          when :currency
-            number_to_currency(value, options[:i18n_options] || {})
-          when :i18n_number
-            send("number_with_#{value.is_a?(Integer) ? 'delimiter' : 'precision'}", value, options[:i18n_options] || {})
-          else
-            value
+        if value
+          value = case options[:format]
+            when :size
+              number_to_human_size(value, options[:i18n_options] || {})
+            when :percentage
+              number_to_percentage(value, options[:i18n_options] || {})
+            when :currency
+              number_to_currency(value, options[:i18n_options] || {})
+            when :i18n_number
+              send("number_with_#{value.is_a?(Integer) ? 'delimiter' : 'precision'}", value, options[:i18n_options] || {})
+            else
+              value
+          end
         end
         clean_column_value(value)
       end
