@@ -72,7 +72,6 @@ module ActiveScaffold::Actions
         else
           active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
         end
-      sorting = active_scaffold_config.list.user.sorting
       columns_for_joins, columns_for_includes = columns.select { |c| c.includes.present? }.partition do |c|
         column_for_includes?(c)
       end
@@ -82,7 +81,8 @@ module ActiveScaffold::Actions
 
     def column_for_includes?(column)
       assoc = column.association if column.plural_association?
-      sorting.sorts_on?(column) || (assoc && assoc.macro == :has_and_belongs_to_many && assoc.respond_to?(:scope) && assoc.scope)
+      active_scaffold_config.list.user.sorting.sorts_on?(column) ||
+        (assoc && assoc.macro == :has_and_belongs_to_many && assoc.respond_to?(:scope) && assoc.scope)
     end
 
     def get_row(crud_type_or_security_options = :read)
