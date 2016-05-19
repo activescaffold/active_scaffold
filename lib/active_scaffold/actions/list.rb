@@ -72,12 +72,12 @@ module ActiveScaffold::Actions
         else
           active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
         end
-      columns_for_joins, columns_for_includes = columns.select { |c| c.includes.present? }.partition do |c|
+      joins_cols, preload_cols = columns.select { |c| c.includes.present? }.partition do |c|
         column_for_includes?(c)
       end
-      active_scaffold_preload.concat columns_for_includes.map(&:includes).flatten.uniq
-      active_scaffold_references.concat columns_for_joins.map(&:includes).flatten.uniq
-    end
+      active_scaffold_references.concat joins_cols.map(&:includes).flatten.uniq
+      active_scaffold_preload.concat preload_cols.map(&:includes).flatten.uniq
+  end
 
     def column_for_includes?(column)
       assoc = column.association if column.plural_association?

@@ -53,8 +53,8 @@ module ActiveScaffold::Actions
             search_condition = self.class.condition_for_column(column, value, text_search)
             next if search_condition.blank?
 
-            if column_for_includes?(column) ||
-                (active_scaffold_config.list.user.count_includes.nil? && column.includes.present? && list_columns.include?(column))
+            if column.includes.present? && (column_for_includes?(column) ||
+                (active_scaffold_config.list.user.count_includes.nil? && list_columns.include?(column)))
               active_scaffold_references << column.includes
             elsif column.search_joins.present?
               active_scaffold_outer_joins << column.search_joins
