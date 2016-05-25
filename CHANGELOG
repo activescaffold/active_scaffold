@@ -3,6 +3,7 @@
 - fix default required for column with :checkbox form_ui and inclusion validator on rails 3.2
 - fix search on habtm column on postgresql
 - fix for format_number_value with nil
+- add includes for sorting columns only if columns is not displayed, add to includes for postgresql, to outer_joins for others
 
 = 3.4.37
 - return valid css class for subgroups, e.g. when name with dot is used for translation scopes
