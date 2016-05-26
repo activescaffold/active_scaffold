@@ -47,14 +47,17 @@ module ActiveScaffold::Actions
           filtered_columns = []
           text_search = active_scaffold_config.field_search.text_search
           columns = active_scaffold_config.field_search.columns
+          count_includes = active_scaffold_config.list.user.count_includes
           search_params.each do |key, value|
             next unless columns.include? key
             column = active_scaffold_config.columns[key]
             search_condition = self.class.condition_for_column(column, value, text_search)
             next if search_condition.blank?
 
-            unless column.includes.present? && active_scaffold_config.list.user.count_includes.nil? && list_columns.include?(column)
-              active_scaffold_outer_joins << column.search_joins if column.search_joins.present?
+            if count_includes.nil? && column.includes.present? && list_columns.include?(column)
+              active_scaffold_references << column.includes
+            elsif column.search_joins.present?
+              active_scaffold_outer_joins << column.search_joins
             end
             active_scaffold_conditions << search_condition
             filtered_columns << column

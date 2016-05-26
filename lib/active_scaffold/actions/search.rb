@@ -26,10 +26,11 @@ module ActiveScaffold::Actions
           @filtered = !search_conditions.blank?
           active_scaffold_conditions.concat search_conditions if @filtered
 
-          outer_joins = columns.collect do |column|
-            column.search_joins unless column.includes.present? && list_columns.include?(column)
+          references, outer_joins = columns.partition do |column|
+            column.includes.present? && list_columns.include?(column)
           end
-          active_scaffold_outer_joins.concat outer_joins.flatten.uniq.compact
+          active_scaffold_references.concat references.map(&:includes).flatten.uniq.compact
+          active_scaffold_outer_joins.concat outer_joins.map(&:search_joins).flatten.uniq.compact
 
           active_scaffold_config.list.user.page = nil
         else
