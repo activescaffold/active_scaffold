@@ -20,9 +20,17 @@ module ActiveScaffold
     initializer 'active_scaffold.active_record' do
       ActiveSupport.on_load :active_record do
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
-        ActiveRecord::Associations::Association.send :include, ActiveScaffold::Tableless::Association
-        ActiveRecord::Associations::CollectionAssociation.send :include, ActiveScaffold::Tableless::CollectionAssociation
-        ActiveRecord::Associations::SingularAssociation.send :include, ActiveScaffold::Tableless::SingularAssociation
+        module ActiveRecord::Associations
+          Association.send :include, ActiveScaffold::Tableless::Association
+          CollectionAssociation.send :include, ActiveScaffold::Tableless::CollectionAssociation
+          SingularAssociation.send :include, ActiveScaffold::Tableless::SingularAssociation
+        end
+        module ActiveRecord::ConnectionAdapters
+          AbstractAdapter.send :include, ActiveScaffold::ConnectionAdapters::AbstractAdapter
+          if defined?(PostgreSQLAdapter)
+            PostgreSQLAdapter.send :include, ActiveScaffold::ConnectionAdapters::PostgreSQLAdapter
+          end
+        end
       end
     end
 

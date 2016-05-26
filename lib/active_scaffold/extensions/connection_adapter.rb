@@ -1,12 +1,12 @@
-module ActiveRecord
+module ActiveScaffold
   module ConnectionAdapters
-    class AbstractAdapter
+    module AbstractAdapter
       def needs_order_expressions_in_select?
         false
       end
     end
 
-    class PostgreSQLAdapter
+    module PostgreSQLAdapter
       def needs_order_expressions_in_select?
         true
       end
