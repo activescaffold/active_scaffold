@@ -9,10 +9,10 @@ module ActiveScaffold
       return unless performed?
 
       # Either pull out a redirect or the request body
-      script =  if response.headers['Location']
-                  "document.location.href = '#{self.class.helpers.escape_javascript response.headers.delete('Location').to_s}'"
-                else
-                  response.body || ''
+      script = if response.headers['Location']
+                 "document.location.href = '#{self.class.helpers.escape_javascript response.headers.delete('Location').to_s}'"
+               else
+                 response.body || ''
                 end
       response.status = 200 if (300...400).include? response.status
 

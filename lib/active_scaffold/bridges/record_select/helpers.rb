@@ -15,7 +15,7 @@ class ActiveScaffold::Bridges::RecordSelect
         record ||= @record # TODO: Remove when relying on @record is removed
         if column.singular_association?
           multiple = false
-          multiple = column.options[:html_options][:multiple] if column.options[:html_options] &&  column.options[:html_options][:multiple]
+          multiple = column.options[:html_options][:multiple] if column.options[:html_options] && column.options[:html_options][:multiple]
           active_scaffold_record_select(record, column, options, record.send(column.name), multiple)
         elsif column.plural_association?
           active_scaffold_record_select(record, column, options, record.send(column.name), true)
