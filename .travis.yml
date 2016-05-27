@@ -14,12 +14,14 @@ jdk:
 language: ruby
 matrix:
   allow_failures:
+    - rvm: 2.4.0-preview1
     - rvm: ruby-head
 rvm:
   - 2.0
   - 2.1
   - 2.2
   - 2.3.1
+  - 2.4.0-preview1
   - jruby-9.1.2.0
   - rbx-2
   - rbx-3.29
