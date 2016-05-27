@@ -22,7 +22,7 @@ class ActiveScaffold::Bridges::TinyMce
         options[:class] = "#{options[:class]} mceEditor #{column.options[:class]}".strip
 
         settings = tinymce_configuration(column.options[:tinymce_config] || :default).options.
-          reject{|k,v| k =='selector'}.
+          reject{ |k,v| k =='selector' }.
           merge(column.options[:tinymce] || {})
         settings = settings.to_json
         settings = "tinyMCE.settings = #{settings};"
