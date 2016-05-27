@@ -121,7 +121,7 @@ module ActiveScaffold::DataStructures
     end
 
     def empty?
-      @set.size == 0
+      @set.empty?
     end
 
     def subgroup(name, label = nil)
