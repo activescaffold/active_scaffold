@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ListColumnHelpers
       def active_scaffold_column_carrierwave(record, column)
-        carrierwave = record.send("#{column.name}")
+        carrierwave = record.send(column.name.to_s)
         return nil if carrierwave.file.blank?
         thumbnail_style = ActiveScaffold::Bridges::Carrierwave::CarrierwaveBridgeHelpers.thumbnail_style
         content =

@@ -144,7 +144,7 @@ module ActiveScaffold
         column = active_scaffold_config.columns[k]
         if column && column.association
           if column.plural_association?
-            record.send("#{k}").send(:<<, column.association.klass.find(v))
+            record.send(k.to_s).send(:<<, column.association.klass.find(v))
           elsif column.association.options[:polymorphic]
             raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller unless params[:parent_model]
             record.send("#{k}=", params[:parent_model].constantize.find(v))

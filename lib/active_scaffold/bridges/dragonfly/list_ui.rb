@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ListColumnHelpers
       def active_scaffold_column_dragonfly(record, column)
-        attachment = record.send("#{column.name}")
+        attachment = record.send(column.name.to_s)
         return nil unless attachment.present?
         content =
           if attachment.image?

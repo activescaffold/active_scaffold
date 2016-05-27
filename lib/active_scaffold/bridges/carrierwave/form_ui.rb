@@ -7,7 +7,7 @@ module ActiveScaffold
         record ||= @record # TODO: Remove when relying on @record is removed
         options = active_scaffold_input_text_options(options.merge(column.options))
 
-        carrierwave = record.send("#{column.name}")
+        carrierwave = record.send(column.name.to_s)
         if !carrierwave.file.blank?
           required = options.delete(:required)
           remove_field_options = {

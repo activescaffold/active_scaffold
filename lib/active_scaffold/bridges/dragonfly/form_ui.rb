@@ -6,7 +6,7 @@ module ActiveScaffold
         ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
         record ||= @record # TODO: Remove when relying on @record is removed
         options = active_scaffold_input_text_options(options.merge(column.options))
-        dragonfly = record.send("#{column.name}")
+        dragonfly = record.send(column.name.to_s)
 
         required = options.delete(:required) if dragonfly.present?
         input = file_field(:record, column.name, options)

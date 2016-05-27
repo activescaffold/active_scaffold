@@ -115,7 +115,7 @@ module ActiveScaffold::Actions
       when :has_one, :belongs_to
         record.send("#{nested.child_association.name}=", parent)
       when :has_many, :has_and_belongs_to_many
-        record.send("#{nested.child_association.name}").send(:<<, parent)
+        record.send(nested.child_association.name.to_s).send(:<<, parent)
       end
     end
 

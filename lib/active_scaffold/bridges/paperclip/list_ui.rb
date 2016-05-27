@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module ListColumnHelpers
       def active_scaffold_column_paperclip(record, column)
-        paperclip = record.send("#{column.name}")
+        paperclip = record.send(column.name.to_s)
         return nil unless paperclip.file?
         content =
           if paperclip.styles.include?(ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style)
