@@ -36,13 +36,13 @@ module ActionView::Helpers #:nodoc:
     #
     def render_with_active_scaffold(*args, &block)
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
-        require 'digest/md5'
+        require 'digest/sha2'
         options = args.first
 
         remote_controller = options[:active_scaffold]
         constraints = options[:constraints]
         conditions = options[:conditions]
-        eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
+        eid = Digest::SHA512.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
         eid_info = session["as:#{eid}"] ||= {}
         if constraints
           eid_info['constraints'] = constraints
