@@ -1,7 +1,7 @@
 class File #:nodoc:
   unless File.respond_to?(:binread)
     def self.binread(file)
-      File.open(file, 'rb') { |f| f.read }
+      File.open(file, 'rb', &:read)
     end
   end
 end

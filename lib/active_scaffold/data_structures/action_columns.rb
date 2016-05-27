@@ -54,7 +54,7 @@ module ActiveScaffold::DataStructures
 
     def names
       if @columns
-        collect_visible(:flatten => true) { |c| c.name }
+        collect_visible(:flatten => true, &:name)
       else
         names_without_auth_check
       end
