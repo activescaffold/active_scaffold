@@ -61,7 +61,7 @@ class ActiveSupport::TestCase
   def self.should_render_as_form_hidden(column_name)
     before_block = lambda do
       @rendered_columns = []
-      @controller.view_context_class.any_instance.expects(:"hidden_field").at_least_once.with do |_, method, _|
+      @controller.view_context_class.any_instance.expects(:hidden_field).at_least_once.with do |_, method, _|
         @rendered_columns << method
         true
       end
