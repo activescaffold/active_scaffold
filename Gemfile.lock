@@ -3,7 +3,7 @@ PATH
   specs:
     active_scaffold (3.4.38)
       ice_nine (~> 0.11)
-      rails (>= 4.0)
+      rails (>= 4.0.5)
 
 GEM
   remote: https://rubygems.org/
