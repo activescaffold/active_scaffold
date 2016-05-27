@@ -1,31 +1,35 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  RunRailsCops: true
   Include:
     - '**/Gemfile*'
   Exclude:
-    - lib/generators/*/templates/**/*
     - '**/Gemfile*.lock'
+    - 'bin/*'
+    - 'lib/generators/*/templates/**/*'
+    - 'vendor/bundle/**/*'
 
-Style/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: no_space
+Rails:
+  Enabled: true
 
-Style/SingleLineBlockParams:
+Style/BracesAroundHashParameters:
+  EnforcedStyle: context_dependent
+
+Style/HashSyntax:
   Enabled: false
 
 Style/SignalException:
   EnforcedStyle: only_raise
 
+Style/SingleLineBlockParams:
+  Enabled: false
+
 Style/SingleLineMethods:
   Exclude:
-    - test/**/*
+    - 'test/**/*'
+
+Style/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
 
 Lint/UnusedMethodArgument:
   Enabled: false
-
-Style/HashSyntax:
-  Enabled: false
-
-Style/BracesAroundHashParameters:
-  EnforcedStyle: context_dependent
