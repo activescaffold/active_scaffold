@@ -77,7 +77,7 @@ module ActiveScaffold::Actions
       end
       active_scaffold_references.concat joins_cols.map(&:includes).flatten.uniq
       active_scaffold_preload.concat preload_cols.map(&:includes).flatten.uniq
-      set_includes_for_sorting(columns, sorting) if Rails::VERSION::MAJOR >= 4 && sorting.sorts_by_sql?
+      set_includes_for_sorting(columns, sorting) if sorting.sorts_by_sql?
     end
 
     def set_includes_for_sorting(columns, sorting)

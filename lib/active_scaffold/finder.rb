@@ -349,11 +349,9 @@ module ActiveScaffold
         :outer_joins => active_scaffold_outer_joins,
         :preload => active_scaffold_preload,
         :includes => full_includes,
+        :references => full_includes,
         :select => options[:select]
       }
-      if Rails::VERSION::MAJOR >= 4
-        finder_options.merge!(:references => active_scaffold_references)
-      end
 
       finder_options.merge! custom_finder_options
       finder_options
@@ -420,22 +418,16 @@ module ActiveScaffold
       outer_joins += includes if includes
       primary_key = active_scaffold_config.model.primary_key
       subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => outer_joins, :select => active_scaffold_config.columns[primary_key].field)
-      subquery = subquery.unscope(:order) if Rails::VERSION::MAJOR >= 4
+      subquery = subquery.unscope(:order)
       active_scaffold_config.model.where(primary_key => subquery)
     end
 
     def append_to_query(relation, options)
-      options.assert_valid_keys :where, :select, :having, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, (:references if Rails::VERSION::MAJOR >= 4)
+      options.assert_valid_keys :where, :select, :having, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, :references
       relation = options.reject { |_, v| v.blank? }.inject(relation) do |rel, (k, v)|
         k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
       end
-      if options[:outer_joins].present?
-        if Rails::VERSION::MAJOR >= 4
-          relation.distinct_value = true
-        else
-          relation = relation.uniq
-        end
-      end
+      relation.distinct_value = true if options[:outer_joins].present?
       relation
     end
 

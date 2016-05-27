@@ -63,21 +63,18 @@ module ActiveScaffold
       parent_record.send "#{column.name}=", value if parent_record.persisted?
     end
 
+    # rails 4 needs this hack for polymorphic has_many
     # TODO: remove when hack_for_has_many_counter_cache is not needed
     def hack_for_has_many_counter_cache?(parent_record, column)
-      return unless column.association.try(:macro) == :has_many && parent_record.association(column.name).send(:has_cached_counter?)
-      if Rails.version < '4.0' # rails 3 needs this hack always
-        true
-      else # rails 4 needs this hack for polymorphic has_many
-        column.association.options[:as]
-      end
+      assoc = column.association
+      assoc.try(:macro) == :has_many && assoc.options[:as] && parent_record.association(column.name).send(:has_cached_counter?)
     end
 
     # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
+    # rails 4 needs this hack for polymorphic has_many, when selecting record, not creating new one (value is Hash)
     # TODO: remove when pull request is merged and no version with bug is supported
-    def counter_cache_hack?(column, value)
-      return unless Rails.version >= '4.0' && !value.is_a?(Hash)
-      column.association.try(:belongs_to?) && column.association.options[:counter_cache] && !column.association.options[:polymorphic]
+    def counter_cache_hack?(assoc, value)
+      !value.is_a?(Hash) && assoc.try(:belongs_to?) && assoc.options[:counter_cache] && !assoc.options[:polymorphic]
     end
 
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
@@ -122,7 +119,7 @@ module ActiveScaffold
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
       if avoid_changes && column.plural_association?
         parent_record.association(column.name).target = value
-      elsif counter_cache_hack?(column, attribute)
+      elsif counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value.try(:id)
         parent_record.association(column.name).target = value
       else

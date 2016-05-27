@@ -34,6 +34,6 @@ module ActiveScaffold
       end
     end
 
-    config.assets.precompile << 'active_scaffold/indicator.gif' if Rails::VERSION::MAJOR >= 4
+    config.assets.precompile << 'active_scaffold/indicator.gif'
   end
 end
