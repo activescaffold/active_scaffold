@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 #   gem 'activesupport', '>= 2.3.5'
 
 gemspec :path => '../'
+gem 'active_scaffold', path: '../'
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
