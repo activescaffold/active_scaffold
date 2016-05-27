@@ -1,6 +1,10 @@
+= 3.4.38
 - ensure add_existing and delete_existing are removed when list is not nested
 - add :percentage list_ui, use jquery ui slider, set slider options on column.options[:slider], :value_method (default to column name), :min_method and :max_method to get value, min and max options from record
 - fix default required for column with :checkbox form_ui and inclusion validator on rails 3.2
+- fix search on habtm column on postgresql
+- fix for format_number_value with nil
+- add includes for sorting columns only if columns is not displayed, add to includes for postgresql, to outer_joins for others
 
 = 3.4.37
 - return valid css class for subgroups, e.g. when name with dot is used for translation scopes

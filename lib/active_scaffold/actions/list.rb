@@ -64,7 +64,7 @@ module ActiveScaffold::Actions
     end
 
     # The actual algorithm to prepare for the list view
-    def set_includes_for_columns(action = :list)
+    def set_includes_for_columns(action = :list, sorting = active_scaffold_config.list.user.sorting)
       @cache_associations = true
       columns =
         if respond_to?(:"#{action}_columns", true)
@@ -72,12 +72,33 @@ module ActiveScaffold::Actions
         else
           active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
         end
-      sorting = active_scaffold_config.list.user.sorting
-      columns_for_joins, columns_for_includes = columns.select { |c| c.includes.present? }.partition do |c|
-        sorting.sorts_on?(c) || (c.plural_association? && c.association.macro == :has_and_belongs_to_many && c.association.respond_to?(:scope) && c.association.scope)
+      joins_cols, preload_cols = columns.select { |c| c.includes.present? }.partition do |col|
+        includes_need_join?(col, sorting)
       end
-      active_scaffold_preload.concat columns_for_includes.map(&:includes).flatten.uniq
-      active_scaffold_references.concat columns_for_joins.map(&:includes).flatten.uniq
+      active_scaffold_references.concat joins_cols.map(&:includes).flatten.uniq
+      active_scaffold_preload.concat preload_cols.map(&:includes).flatten.uniq
+      set_includes_for_sorting(columns, sorting) if Rails::VERSION::MAJOR >= 4 && sorting.sorts_by_sql?
+    end
+
+    def set_includes_for_sorting(columns, sorting)
+      sorting.each do |col, _|
+        if col.includes.present? && !columns.include?(col)
+          if active_scaffold_config.model.connection.needs_order_expressions_in_select?
+            active_scaffold_references << col.includes
+          else
+            active_scaffold_outer_joins << col.includes
+          end
+        end
+      end
+    end
+
+    def includes_need_join?(column, sorting = active_scaffold_config.list.user.sorting)
+      sorting.sorts_on?(column) || scoped_habtm?(column)
+    end
+
+    def scoped_habtm?(column)
+      assoc = column.association if column.plural_association?
+      assoc && assoc.macro == :has_and_belongs_to_many && assoc.respond_to?(:scope) && assoc.scope
     end
 
     def get_row(crud_type_or_security_options = :read)
