@@ -8,7 +8,7 @@ class TinyMceTest < ActionView::TestCase
   # configuration options from tinymce.yml
   #
   # [1]: https://github.com/spohlenz/tinymce-rails/blob/master/lib/tinymce/rails/helper.rb#L37
-  def tinymce_configuration(config=:default)
+  def tinymce_configuration(config = :default)
     return case config
            when :default
              Class.new do
