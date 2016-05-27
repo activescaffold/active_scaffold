@@ -109,11 +109,11 @@ module ActionView::Helpers #:nodoc:
       else
         @_view_paths ||= lookup_context.view_paths.clone
         last_template = lookup_context.last_template
-        if args[0].is_a?(Hash)
-          current_view = {:locals => args[0][:locals], :object => args[0][:object]}
-        else # call is render 'partial', locals_hash
-          current_view = {:locals => args[1]}
-        end
+        current_view = if args[0].is_a?(Hash)
+                         {:locals => args[0][:locals], :object => args[0][:object]}
+                       else # call is render 'partial', locals_hash
+                         {:locals => args[1]}
+                       end
         view_stack << current_view if current_view
         lookup_context.view_paths = @_view_paths # reset view_paths in case a view render :super, and then render :partial
         result = render_without_active_scaffold(*args, &block)

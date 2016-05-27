@@ -388,20 +388,20 @@ module ActiveScaffold
 
       query = append_to_query(query, find_options)
       # we build the paginator differently for method- and sql-based sorting
-      if options[:sorting] && options[:sorting].sorts_by_method?
-        pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          calculate_last_modified(query)
-          sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)
-          sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
-          sorted_collection
-        end
-      else
-        pager = ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-          query = append_to_query(query, :offset => offset, :limit => per_page) if options[:pagination]
-          calculate_last_modified(query)
-          query
-        end
-      end
+      pager = if options[:sorting] && options[:sorting].sorts_by_method?
+                ::Paginator.new(count, options[:per_page]) do |offset, per_page|
+                  calculate_last_modified(query)
+                  sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)
+                  sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
+                  sorted_collection
+                end
+              else
+                ::Paginator.new(count, options[:per_page]) do |offset, per_page|
+                  query = append_to_query(query, :offset => offset, :limit => per_page) if options[:pagination]
+                  calculate_last_modified(query)
+                  query
+                end
+              end
       pager.page(options[:page])
     end
 

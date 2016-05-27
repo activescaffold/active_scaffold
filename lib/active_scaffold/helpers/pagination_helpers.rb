@@ -50,11 +50,11 @@ module ActiveScaffold
         html << '..' if start_number > last_page + 1
 
         [start_number, last_page + 1].max.upto(end_number) do |num|
-          if current_page.number == num
-            html << content_tag(:span, num.to_s, :class => 'as_paginate current')
-          else
-            html << pagination_ajax_link(num, url_options, options)
-          end
+          html << if current_page.number == num
+                    content_tag(:span, num.to_s, :class => 'as_paginate current')
+                  else
+                    pagination_ajax_link(num, url_options, options)
+                  end
         end
 
         if current_page.pager.infinite?

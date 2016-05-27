@@ -17,17 +17,17 @@ module ActiveScaffold::Bridges
       # in case you want to highligh a local area
       # NOTE: Only the option tags are returned from this method, wrap it in a <select>
       def usa_state_options_for_select(selected = nil, priority_states = nil)
-        if priority_states
-          state_options = options_for_select(priority_states + [['-------------', '']], :selected => selected, :disabled => '')
-        else
-          state_options = options_for_select([])
-        end
+        state_options = if priority_states
+                          options_for_select(priority_states + [['-------------', '']], :selected => selected, :disabled => '')
+                        else
+                          options_for_select([])
+                        end
 
-        if priority_states && priority_states.include?(selected)
-          state_options += options_for_select(USASTATES - priority_states, :selected => selected)
-        else
-          state_options += options_for_select(USASTATES, :selected => selected)
-        end
+        state_options += if priority_states && priority_states.include?(selected)
+                           options_for_select(USASTATES - priority_states, :selected => selected)
+                         else
+                           options_for_select(USASTATES, :selected => selected)
+                         end
 
         state_options
       end

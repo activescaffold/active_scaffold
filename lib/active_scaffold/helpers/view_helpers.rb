@@ -442,11 +442,11 @@ module ActiveScaffold
         if column && column.association
           url_options[:parent_scaffold] = controller_path
           url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
-          if column.singular_association? && url_options[:action].to_sym != :index
-            url_options[:id] = '--CHILD_ID--'
-          else
-            url_options[:id] = nil
-          end
+          url_options[:id] = if column.singular_association? && url_options[:action].to_sym != :index
+                               '--CHILD_ID--'
+                             else
+                               nil
+                             end
         elsif link.parameters && link.parameters[:named_scope]
           url_options[:parent_scaffold] = controller_path
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
@@ -541,7 +541,7 @@ module ActiveScaffold
       def format_column_calculation(column, calculation)
         "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
       end
-      
+
       def as_slider(options)
         content_tag(:span, '', class: 'as-slider', data: {slider: options})
       end

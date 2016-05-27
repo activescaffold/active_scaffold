@@ -57,7 +57,7 @@ Lint/UnusedBlockArgument:
 
 # Offense count: 239
 Metrics/AbcSize:
-  Max: 135
+  Max: 134
 
 # Offense count: 23
 Metrics/BlockNesting:
@@ -72,7 +72,7 @@ Metrics/ClassLength:
 Metrics/CyclomaticComplexity:
   Max: 27
 
-# Offense count: 1674
+# Offense count: 1675
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes.
 # URISchemes: http, https
 Metrics/LineLength:
@@ -439,6 +439,14 @@ Style/Documentation:
 Style/DotPosition:
   Enabled: false
 
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: empty, nil, both
+Style/EmptyElse:
+  Exclude:
+    - 'lib/active_scaffold/helpers/view_helpers.rb'
+
 # Offense count: 39
 # Cop supports --auto-correct.
 # Configuration parameters: AllowAdjacentOneLineDefs.
@@ -711,12 +719,11 @@ Style/SymbolProc:
     - 'lib/active_scaffold/bridges/date_picker/ext.rb'
     - 'lib/active_scaffold/data_structures/action_columns.rb'
 
-# Offense count: 2
+# Offense count: 1
 # Cop supports --auto-correct.
 Style/TrailingWhitespace:
   Exclude:
     - 'lib/active_scaffold/helpers/list_column_helpers.rb'
-    - 'lib/active_scaffold/helpers/view_helpers.rb'
 
 # Offense count: 9
 # Cop supports --auto-correct.
