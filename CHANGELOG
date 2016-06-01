@@ -1,3 +1,5 @@
+- fix removing delete link with config.delete.link = false, broken on 3.4.38
+
 = 3.4.38
 - ensure add_existing and delete_existing are removed when list is not nested
 - add :percentage list_ui, use jquery ui slider, set slider options on column.options[:slider], :value_method (default to column name), :min_method and :max_method to get value, min and max options from record
