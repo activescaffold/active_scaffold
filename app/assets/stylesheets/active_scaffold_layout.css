@@ -104,6 +104,10 @@ top: 19px;
 top: 14px;
 }
 
+.active-scaffold .active-scaffold .active-scaffold-header div.actions .action_group ul ul {
+top: -3px;
+}
+
 .active-scaffold-header div.actions a.disabled {
 opacity: 0.5;
 }
