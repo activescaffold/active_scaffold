@@ -22,7 +22,7 @@ module ActiveScaffold::Actions
         @record = @column.association.klass.find(params[:associated_id])
         if nested? # Generate a form that will update on save
           # Store the associated_record in @parent_record, but avoid save - that is handled on form submit.
-          @parent_record.send("#{params[:child_association]}=", associated_record)
+          @parent_record.send("#{params[:child_association]}=", @record)
         else # Edit the association directly.
           if (association = active_scaffold_config.columns[params[:child_association]].association.reverse)
             if @record.class.reflect_on_association(association).collection?
