@@ -140,8 +140,9 @@ module ActiveScaffold
     def apply_constraints_to_record(record, options = {})
       options[:allow_autosave] = false if options[:allow_autosave].nil?
 
+      config = record.is_a?(active_scaffold_config.model) ? active_scaffold_config : active_scaffold_config_for(record.class)
       active_scaffold_constraints.each do |k, v|
-        column = active_scaffold_config.columns[k]
+        column = config.columns[k]
         if column && column.association
           if column.plural_association?
             record.send(k.to_s).send(:<<, column.association.klass.find(v))
