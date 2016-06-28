@@ -156,8 +156,8 @@ module ActiveScaffold
       end
 
       def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil)
-        if override_form_field_partial?(column)
-          render :partial => override_form_field_partial(column), :locals => {:column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record}
+        if partial = override_form_field_partial(column)
+          render :partial => partial, :locals => {:column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record}
         elsif renders_as == :field || override_form_field?(column)
           form_attribute(column, record, scope, only_value, col_class)
         elsif renders_as == :subform
@@ -466,23 +466,24 @@ module ActiveScaffold
       ## Form column override signatures
       ##
 
+      def partial_for_model(model, partial)
+        controller = active_scaffold_controller_for(model)
+        while controller.uses_active_scaffold? do
+          path = File.join(controller.controller_path, partial)
+          return path if template_exists?(path, true)
+          controller = controller.superclass
+        end
+        nil
+      end
+
       # add functionality for overriding subform partials from association class path
-      def override_subform_partial?(column, subform_partial)
-        template_exists?(override_subform_partial(column, subform_partial), true)
-      end
-
       def override_subform_partial(column, subform_partial)
-        File.join(active_scaffold_controller_for(column.association.klass).controller_path, subform_partial) if column_renders_as(column) == :subform
-      end
-
-      def override_form_field_partial?(column)
-        template_exists?(override_form_field_partial(column), true)
+        partial_for_model(column.association.klass, subform_partial).tap{|v|logger.debug v} if column_renders_as(column) == :subform
       end
 
       # the naming convention for overriding form fields with helpers
       def override_form_field_partial(column)
-        path = active_scaffold_controller_for(column.active_record_class).controller_path
-        File.join(path, "#{clean_column_name(column.name)}_form_column")
+        partial_for_model(column.active_record_class, "#{clean_column_name(column.name)}_form_column")
       end
 
       def override_form_field(column)
@@ -499,11 +500,7 @@ module ActiveScaffold
 
       def subform_partial_for_column(column)
         subform_partial = "#{active_scaffold_config_for(column.association.klass).subform.layout}_subform"
-        if override_subform_partial?(column, subform_partial)
-          override_subform_partial(column, subform_partial)
-        else
-          subform_partial
-        end
+        override_subform_partial(column, subform_partial) || subform_partial
       end
 
       ##

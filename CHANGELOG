@@ -1,7 +1,10 @@
+- fix select of existing record for nested subform
+- fix apply constraints to parent (fix update columns on subform on embedded scaffold)
+- fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes
+
 = 3.4.39 (not released)
 - fix removing delete link with config.delete.link = false, broken on 3.4.38
 - fix position of nested action groups
-- fix apply constraints to parent (fix update columns on subform on embedded scaffold)
 
 = 3.4.38
 - ensure add_existing and delete_existing are removed when list is not nested
