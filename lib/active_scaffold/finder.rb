@@ -339,19 +339,26 @@ module ActiveScaffold
     # * :page
     def finder_options(options = {})
       search_conditions = all_conditions
-      full_includes = (active_scaffold_references.blank? ? nil : active_scaffold_references)
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = {
         :reorder => options[:sorting].try(:clause),
-        :conditions => search_conditions,
-        :joins => joins_for_finder,
-        :outer_joins => active_scaffold_outer_joins,
-        :preload => active_scaffold_preload,
-        :includes => full_includes,
-        :references => full_includes,
-        :select => options[:select]
+        :conditions => search_conditions
       }
+      if active_scaffold_config.mongoid?
+        full_includes = [active_scaffold_references, active_scaffold_preload].compact.flatten.uniq
+        finder_options[:order] = finder_options.delete(:reorder)
+      else
+        full_includes = active_scaffold_references
+        finder_options.merge!(
+          :joins => joins_for_finder,
+          :outer_joins => active_scaffold_outer_joins,
+          :preload => active_scaffold_preload,
+          :references => full_includes,
+          :select => options[:select]
+        )
+      end
+      finder_options[:includes] = full_includes.presence
 
       finder_options.merge! custom_finder_options
       finder_options
@@ -359,7 +366,7 @@ module ActiveScaffold
 
     def count_items(query, find_options = {}, count_includes = nil)
       count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
-      options = find_options.reject { |k, _| [:select, :reorder].include? k }
+      options = find_options.reject { |k, _| [:select, :reorder, :order].include? k }
       # NOTE: we must use includes in the count query, because some conditions may reference other tables
       options[:includes] = count_includes
 
@@ -423,7 +430,7 @@ module ActiveScaffold
     end
 
     def append_to_query(relation, options)
-      options.assert_valid_keys :where, :select, :having, :group, :reorder, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, :references
+      options.assert_valid_keys :where, :select, :having, :group, :reorder, :order, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, :references
       relation = options.reject { |_, v| v.blank? }.inject(relation) do |rel, (k, v)|
         k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
       end
