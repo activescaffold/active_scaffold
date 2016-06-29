@@ -240,7 +240,8 @@ module ActiveScaffold::Actions
     end
 
     def get_row(crud_type_or_security_options = :read)
-      klass = beginning_of_chain.preload(active_scaffold_preload)
+      klass = beginning_of_chain
+      klass.preload!(active_scaffold_preload) unless active_scaffold_config.mongoid?
       @record = find_if_allowed(params[:id], crud_type_or_security_options, klass)
     end
 
