@@ -8,6 +8,10 @@ module ActiveScaffold
       active_record_class < Mongoid::Document
     end
 
+    def tableless?
+      active_record_class < ActiveScaffold::Tableless
+    end
+
     def _columns
       if active_record?
         active_record_class.columns
