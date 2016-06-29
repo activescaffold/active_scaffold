@@ -1,6 +1,7 @@
 module ActiveScaffold::DataStructures
   class Column
     include ActiveScaffold::Configurable
+    include ActiveScaffold::OrmChecks
 
     attr_reader :active_record_class
 
@@ -323,7 +324,7 @@ module ActiveScaffold::DataStructures
     def initialize(name, active_record_class) #:nodoc:
       self.name = name.to_sym
       @tableless = active_record_class < ActiveScaffold::Tableless
-      @column = active_record_class.columns_hash[self.name.to_s]
+      @column = _columns_hash[self.name.to_s]
       @association = active_record_class.reflect_on_association(self.name)
       @autolink = !@association.nil?
       @active_record_class = active_record_class
@@ -340,7 +341,7 @@ module ActiveScaffold::DataStructures
         if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
           @form_ui = :select
           @options = {:options => active_record_class.send(name.to_s.pluralize).keys}
-        elsif @column.number?
+        elsif column_number?
           @number = true
           @form_ui = :number
           @options = {:format => :i18n_number}
@@ -373,7 +374,15 @@ module ActiveScaffold::DataStructures
     # just the field (not table.field)
     def field_name
       return nil if virtual?
-      @field_name ||= column ? @active_record_class.connection.quote_column_name(column.name) : association.foreign_key
+      @field_name ||= if column
+        if active_record?
+          @active_record_class.connection.quote_column_name(column.name)
+        else
+          column.name.to_s
+        end
+      else
+        association.foreign_key
+      end
     end
 
     def <=>(other)
@@ -440,7 +449,7 @@ module ActiveScaffold::DataStructures
           [field]
         else
           columns = []
-          if active_record_class.columns_hash[count_column = "#{association.name}_count"]
+          if _columns_hash[count_column = "#{association.name}_count"]
             columns << quoted_field(@active_record_class.connection.quote_column_name(count_column))
           end
           if association.through_reflection.try(:belongs_to?)
@@ -451,8 +460,17 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    def column_number?
+      return @column.number? if active_record?
+      return @column.type < Numeric if mongoid?
+    end
+
     def quoted_field(name)
-      [@active_record_class.quoted_table_name, name].join('.')
+      if active_record?
+        [@active_record_class.quoted_table_name, name].join('.')
+      else
+        name
+      end
     end
 
     def initialize_sort

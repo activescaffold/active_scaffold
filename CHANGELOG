@@ -1,6 +1,7 @@
 - fix select of existing record for nested subform
 - fix apply constraints to parent (fix update columns on subform on embedded scaffold)
 - fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes
+- add basic support for mongoid
 
 = 3.4.39 (not released)
 - fix removing delete link with config.delete.link = false, broken on 3.4.38

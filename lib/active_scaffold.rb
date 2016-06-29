@@ -8,6 +8,7 @@ module ActiveScaffold
   autoload :DelayedSetup, 'active_scaffold/delayed_setup'
   autoload :Finder, 'active_scaffold/finder'
   autoload :MarkedModel, 'active_scaffold/marked_model'
+  autoload :OrmChecks, 'active_scaffold/orm_checks'
   autoload :RespondsToParent, 'active_scaffold/responds_to_parent'
   autoload :Tableless, 'active_scaffold/tableless'
   autoload :Version, 'active_scaffold/version'

@@ -1,6 +1,7 @@
 module ActiveScaffold::Config
   # to fix the ckeditor bridge problem inherit from full class name
   class Core < ActiveScaffold::Config::Base
+    include ActiveScaffold::OrmChecks
     # global level configuration
     # --------------------------
 
@@ -153,12 +154,12 @@ module ActiveScaffold::Config
       @actions = self.class.actions.clone
 
       # create a new default columns datastructure, since it doesn't make sense before now
-      attribute_names = model.columns.collect { |c| c.name.to_sym }.sort_by(&:to_s)
+      attribute_names = _columns.collect { |c| c.name.to_sym }.sort_by(&:to_s)
       association_column_names = model.reflect_on_all_associations.collect { |a| a.name.to_sym }.sort_by(&:to_s)
       @columns = ActiveScaffold::DataStructures::Columns.new(model, attribute_names + association_column_names)
 
       # and then, let's remove some columns from the inheritable set.
-      content_columns = Set.new(model.content_columns.map(&:name))
+      content_columns = Set.new(_content_columns.map(&:name))
       @columns.exclude(*self.class.ignore_columns)
       @columns.exclude(*@columns.find_all { |c| c.column && content_columns.exclude?(c.column.name) }.collect(&:name))
       @columns.exclude(*model.reflect_on_all_associations.collect { |a| a.foreign_type.to_sym if a.options[:polymorphic] }.compact)
@@ -232,6 +233,7 @@ module ActiveScaffold::Config
     def model
       @model ||= @model_id.to_s.camelize.constantize
     end
+    alias_method :active_record_class, :model
 
     # warning - this won't work as a per-request dynamic attribute in rails 2.0.  You'll need to interact with Controller#generic_view_paths
     def inherited_view_paths
