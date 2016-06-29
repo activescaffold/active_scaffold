@@ -2,6 +2,7 @@ module ActiveScaffold::DataStructures
   # encapsulates the column sorting configuration for the List view
   class Sorting
     include Enumerable
+    include OrmChecks
 
     attr_accessor :constraint_columns
     attr_accessor :sorting_by_primary_key # enabled by default for postgres
@@ -13,6 +14,7 @@ module ActiveScaffold::DataStructures
     end
 
     def set_default_sorting(model)
+      return unless active_record?(model)
       # fallback to setting primary key ordering
       setup_primary_key_order_clause(model)
       model_scope = model.send(:build_default_scope)
@@ -190,8 +192,6 @@ module ActiveScaffold::DataStructures
     end
 
     def setup_primary_key_order_clause(model)
-      return unless defined? ActiveRecord
-      return unless model < ActiveRecord::Base
       return unless model.column_names.include?(model.primary_key)
       set([model.primary_key, 'ASC'])
       @primary_key_order_clause = clause

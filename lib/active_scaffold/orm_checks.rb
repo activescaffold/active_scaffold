@@ -1,17 +1,17 @@
 module ActiveScaffold
   module OrmChecks
-    def active_record?
+    def active_record?(model = self.active_record_class)
       return unless defined? ActiveRecord
-      active_record_class < ActiveRecord::Base
+      model < ActiveRecord::Base
     end
 
-    def mongoid?
+    def mongoid?(model = self.active_record_class)
       return unless defined? Mongoid
-      active_record_class < Mongoid::Document
+      model < Mongoid::Document
     end
 
-    def tableless?
-      active_record_class < ActiveScaffold::Tableless
+    def tableless?(model = self.active_record_class)
+      model < ActiveScaffold::Tableless
     end
 
     def _table_name
