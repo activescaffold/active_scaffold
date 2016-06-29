@@ -227,6 +227,7 @@ module ActiveScaffold
       end
 
       def is_sti_record?(record)
+        return unless active_scaffold_config.active_record?
         model = active_scaffold_config.model
         record && model.columns_hash.include?(model.inheritance_column) &&
           record[model.inheritance_column].present? && !record.instance_of?(model)

@@ -2,7 +2,7 @@ module ActiveScaffold::DataStructures
   # encapsulates the column sorting configuration for the List view
   class Sorting
     include Enumerable
-    include OrmChecks
+    include ActiveScaffold::OrmChecks
 
     attr_accessor :constraint_columns
     attr_accessor :sorting_by_primary_key # enabled by default for postgres

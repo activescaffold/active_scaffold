@@ -34,7 +34,7 @@ module ActiveScaffold
 
         # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
         # define_attribute_methods is safe to call multiple times since rails 4.0.4
-        active_scaffold_config.model.define_attribute_methods
+        active_scaffold_config.model.define_attribute_methods if active_scaffold_config.active_record?
         # include the rest of the code into the controller: the action core and the included actions
         module_eval do
           unless self < ActiveScaffold::Actions::Core
