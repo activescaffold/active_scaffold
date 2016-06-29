@@ -42,8 +42,7 @@ module ActiveScaffold::Actions
     # May be overridden to customize show routine
     def do_show
       set_includes_for_columns(:show) if active_scaffold_config.actions.include? :list
-      klass = beginning_of_chain.preload(active_scaffold_preload)
-      @record = find_if_allowed(params[:id], :read, klass)
+      get_row
     end
 
     # The default security delegates to ActiveRecordPermissions.
