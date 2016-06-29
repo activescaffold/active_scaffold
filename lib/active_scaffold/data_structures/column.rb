@@ -327,7 +327,7 @@ module ActiveScaffold::DataStructures
       @column = _columns_hash[self.name.to_s]
       @association = active_record_class.reflect_on_association(self.name)
       @autolink = !@association.nil?
-      @table = active_record_class.table_name
+      @table = _table_name
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
@@ -465,11 +465,7 @@ module ActiveScaffold::DataStructures
     end
 
     def quoted_field(name)
-      if active_record?
-        [@active_record_class.quoted_table_name, name].join('.')
-      else
-        name
-      end
+      [_quoted_table_name, name].compact.join('.')
     end
 
     def initialize_sort

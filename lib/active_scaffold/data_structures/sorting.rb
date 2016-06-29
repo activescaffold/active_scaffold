@@ -190,6 +190,8 @@ module ActiveScaffold::DataStructures
     end
 
     def setup_primary_key_order_clause(model)
+      return unless defined? ActiveRecord
+      return unless model < ActiveRecord::Base
       return unless model.column_names.include?(model.primary_key)
       set([model.primary_key, 'ASC'])
       @primary_key_order_clause = clause
