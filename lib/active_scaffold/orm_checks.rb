@@ -9,7 +9,7 @@ module ActiveScaffold
     end
 
     def _columns
-      if active_record_class?
+      if active_record?
         active_record_class.columns
       elsif mongoid?
         active_record_class.fields.values
@@ -19,7 +19,7 @@ module ActiveScaffold
     end
 
     def _columns_hash
-      if active_record_class?
+      if active_record?
         active_record_class.columns_hash
       elsif mongoid?
         active_record_class.fields
@@ -29,7 +29,7 @@ module ActiveScaffold
     end
 
     def _content_columns
-      if active_record_class?
+      if active_record?
         active_record_class.content_columns
       elsif mongoid?
         active_record_class.columns.reject { |c| c.name == '_id' }
