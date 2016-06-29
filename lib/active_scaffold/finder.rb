@@ -353,7 +353,7 @@ module ActiveScaffold
           :outer_joins => active_scaffold_outer_joins,
           :preload => active_scaffold_preload,
           :includes => active_scaffold_references.presence,
-          :references => full_includes,
+          :references => active_scaffold_references.presence,
           :select => options[:select]
         )
       end
