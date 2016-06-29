@@ -6,17 +6,20 @@ module ActiveScaffold::DataStructures
 
     attr_accessor :constraint_columns
     attr_accessor :sorting_by_primary_key # enabled by default for postgres
+    attr_reader :model
+    alias_method :active_record_class, :model
 
-    def initialize(columns)
+    def initialize(columns, model)
       @columns = columns
       @clauses = []
       @constraint_columns = []
+      @model = model
     end
 
-    def set_default_sorting(model)
-      return unless active_record?(model)
+    def set_default_sorting
+      return unless active_record?
       # fallback to setting primary key ordering
-      setup_primary_key_order_clause(model)
+      setup_primary_key_order_clause
       model_scope = model.send(:build_default_scope)
       order_clause = model_scope.order_values.join(',') if model_scope
       return unless order_clause
@@ -116,10 +119,14 @@ module ActiveScaffold::DataStructures
         sql = sort_column.sort[:sql]
         next if sql.nil? || sql.empty?
 
-        order << Array(sql).map { |column| "#{column} #{sort_direction}" }.join(', ')
+        parts = Array(sql).map do |column|
+          mongoid? ? [column, sort_direction] : "#{column} #{sort_direction}"
+        end
+        order << parts
       end
 
       order << @primary_key_order_clause if @sorting_by_primary_key
+      order.flatten!(1)
       order unless order.empty?
     end
 
@@ -187,15 +194,15 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    def postgres?(model)
+    def postgres?
       model.connection.try(:adapter_name) == 'PostgreSQL'
     end
 
-    def setup_primary_key_order_clause(model)
+    def setup_primary_key_order_clause
       return unless model.column_names.include?(model.primary_key)
       set([model.primary_key, 'ASC'])
       @primary_key_order_clause = clause
-      @sorting_by_primary_key = postgres?(model) # mandatory for postgres, so enabled by default
+      @sorting_by_primary_key = postgres? # mandatory for postgres, so enabled by default
     end
   end
 end

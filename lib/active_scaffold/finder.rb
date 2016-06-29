@@ -346,19 +346,17 @@ module ActiveScaffold
         :conditions => search_conditions
       }
       if active_scaffold_config.mongoid?
-        full_includes = [active_scaffold_references, active_scaffold_preload].compact.flatten.uniq
-        finder_options[:order] = finder_options.delete(:reorder)
+        finder_options[:includes] = [active_scaffold_references, active_scaffold_preload].compact.flatten.uniq.presence
       else
-        full_includes = active_scaffold_references
         finder_options.merge!(
           :joins => joins_for_finder,
           :outer_joins => active_scaffold_outer_joins,
           :preload => active_scaffold_preload,
+          :includes => active_scaffold_references.presence,
           :references => full_includes,
           :select => options[:select]
         )
       end
-      finder_options[:includes] = full_includes.presence
 
       finder_options.merge! custom_finder_options
       finder_options

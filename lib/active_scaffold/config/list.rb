@@ -11,8 +11,8 @@ module ActiveScaffold::Config
       @page_links_outer_window = self.class.page_links_outer_window
 
       # originates here
-      @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns)
-      @sorting.set_default_sorting(@core.model)
+      @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns, @core.model)
+      @sorting.set_default_sorting
 
       # inherit from global scope
       @empty_field_text = self.class.empty_field_text
@@ -156,7 +156,7 @@ module ActiveScaffold::Config
     end
 
     def sorting
-      @sorting ||= ActiveScaffold::DataStructures::Sorting.new(@core.columns)
+      @sorting ||= ActiveScaffold::DataStructures::Sorting.new(@core.columns, @core.model)
     end
 
     # overwrite the includes used for the count sql query
