@@ -26,7 +26,7 @@ end
 class FinderTest < MiniTest::Test
   def setup
     @klass = ClassWithFinder.new
-    @klass.stubs(:active_scaffold_config).returns(mock { stubs(:model).returns(ModelStub) })
+    @klass.stubs(:active_scaffold_config).returns(mock { stubs(model: ModelStub, mongoid?: false) })
     @klass.stubs(:active_scaffold_session_storage).returns({})
   end
 
