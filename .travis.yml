@@ -9,10 +9,18 @@ gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-4.0.x
   - gemfiles/Gemfile.rails-4.1.x
+  - gemfiles/Gemfile.rails-5.0.x
 jdk:
   - openjdk7
 language: ruby
 matrix:
+  exclude:
+    - rvm: 2.0
+      gemfile: gemfiles/Gemfile.rails-5.0.x 
+    - rvm: 2.1
+      gemfile: gemfiles/Gemfile.rails-5.0.x 
+    - rvm: rbx-2
+      gemfile: gemfiles/Gemfile.rails-5.0.x 
   allow_failures:
     - rvm: 2.4.0-preview1
     - rvm: ruby-head
