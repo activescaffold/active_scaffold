@@ -2,6 +2,7 @@
 - fix removing delete link with config.delete.link = false, broken on 3.4.38
 - fix position of nested action groups
 - fix human conditions with rails 4.2 and json session
+- fix search conditions for decimal columns on rails 4.2
 
 = 3.4.38
 - ensure add_existing and delete_existing are removed when list is not nested
