@@ -1,4 +1,4 @@
-= 3.4.39 (not released)
+= 3.4.39
 - fix removing delete link with config.delete.link = false, broken on 3.4.38
 - fix position of nested action groups
 - fix human conditions with rails 4.2 and json session
