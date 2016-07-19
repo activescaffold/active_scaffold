@@ -182,7 +182,12 @@ module ActiveScaffold
         case (column.search_ui || column.column.type)
         when :integer   then value.to_i rescue value ? 1 : 0
         when :float     then value.to_f
-        when :decimal   then ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
+        when :decimal
+          if Rails.version >= '4.2.0'
+            ActiveRecord::Type::Decimal.new.type_cast_from_user(value)
+          else
+            ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
+          end
         else
           value
         end
