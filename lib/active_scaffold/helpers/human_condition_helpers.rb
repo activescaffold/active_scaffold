@@ -21,24 +21,24 @@ module ActiveScaffold
       end
 
       def active_scaffold_human_condition_integer(column, value)
-        from = format_number_value(controller.class.condition_value_for_numeric(column, value[:from]), column.options) if value[:from].present?
-        to = "- #{format_number_value(controller.class.condition_value_for_numeric(column, value[:to]), column.options)}" if value[:opt] == 'BETWEEN'
-        format_human_condition column, value[:opt].downcase, from, to
+        from = format_number_value(controller.class.condition_value_for_numeric(column, value['from']), column.options) if value['from'].present?
+        to = "- #{format_number_value(controller.class.condition_value_for_numeric(column, value['to']), column.options)}" if value['opt'] == 'BETWEEN'
+        format_human_condition column, value['opt'].downcase, from, to
       end
       alias_method :active_scaffold_human_condition_decimal, :active_scaffold_human_condition_integer
       alias_method :active_scaffold_human_condition_float, :active_scaffold_human_condition_integer
 
       def active_scaffold_human_condition_string(column, value)
-        opt = ActiveScaffold::Finder::STRING_COMPARATORS.key(value[:opt]) || value[:opt]
-        to = "- #{value[:to]}" if opt == 'BETWEEN'
-        format_human_condition column, opt, "'#{value[:from]}'", to
+        opt = ActiveScaffold::Finder::STRING_COMPARATORS.key(value['opt']) || value['opt']
+        to = "- #{value['to']}" if opt == 'BETWEEN'
+        format_human_condition column, opt, "'#{value['from']}'", to
       end
 
       def active_scaffold_human_condition_date(column, value)
         conversion = column.column.type == :date ? :to_date : :to_time
-        from = I18n.l controller.condition_value_for_datetime(column, value[:from], conversion)
-        to = "- #{I18n.l controller.condition_value_for_datetime(column, value[:to], conversion)}" if value[:opt] == 'BETWEEN'
-        format_human_condition column, value[:opt], from, to
+        from = I18n.l controller.condition_value_for_datetime(column, value['from'], conversion)
+        to = "- #{I18n.l controller.condition_value_for_datetime(column, value['to'], conversion)}" if value['opt'] == 'BETWEEN'
+        format_human_condition column, value['opt'], from, to
       end
       alias_method :active_scaffold_human_condition_time, :active_scaffold_human_condition_date
       alias_method :active_scaffold_human_condition_datetime, :active_scaffold_human_condition_date
