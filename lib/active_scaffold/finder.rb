@@ -276,16 +276,6 @@ module ActiveScaffold
       @active_scaffold_preload ||= []
     end
 
-    def active_scaffold_includes=(value)
-      ActiveSupport::Deprecation.warn "active_scaffold_includes doesn't exist anymore, use active_scaffold_preload, active_scaffold_outer_joins or active_scaffold_references"
-      self.active_scaffold_preload = value
-    end
-
-    def active_scaffold_includes
-      ActiveSupport::Deprecation.warn "active_scaffold_includes doesn't exist anymore, use active_scaffold_preload, active_scaffold_outer_joins or active_scaffold_references"
-      active_scaffold_preload
-    end
-
     attr_writer :active_scaffold_habtm_joins
     def active_scaffold_habtm_joins
       @active_scaffold_habtm_joins ||= []
@@ -355,7 +345,7 @@ module ActiveScaffold
       else
         finder_options.merge!(
           :joins => joins_for_finder,
-          :outer_joins => active_scaffold_outer_joins,
+          :left_joins => active_scaffold_outer_joins,
           :preload => active_scaffold_preload,
           :includes => active_scaffold_references.presence,
           :references => active_scaffold_references.presence,
@@ -424,20 +414,22 @@ module ActiveScaffold
       conditions = all_conditions
       includes = active_scaffold_config.list.count_includes
       includes ||= active_scaffold_references unless conditions.blank?
-      outer_joins = active_scaffold_outer_joins
-      outer_joins += includes if includes
+      left_joins = active_scaffold_outer_joins
+      left_joins += includes if includes
       primary_key = active_scaffold_config.model.primary_key
-      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :outer_joins => outer_joins, :select => active_scaffold_config.columns[primary_key].field)
+      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :left_joins => left_joins, :select => active_scaffold_config.columns[primary_key].field)
       subquery = subquery.unscope(:order)
       active_scaffold_config.model.where(primary_key => subquery)
     end
 
     def append_to_query(relation, options)
-      options.assert_valid_keys :where, :select, :having, :group, :reorder, :order, :limit, :offset, :joins, :outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, :references
+      options.assert_valid_keys :where, :select, :having, :group, :reorder, :order, :limit, :offset, :joins, :left_joins, :left_outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, :references
       relation = options.reject { |_, v| v.blank? }.inject(relation) do |rel, (k, v)|
         k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
       end
-      relation.distinct_value = true if options[:outer_joins].present?
+      if options[:left_outer_joins].present? || options[:left_joins].present?
+        relation.distinct_value = true
+      end
       relation
     end
 

@@ -3,8 +3,6 @@ module ActiveScaffold
     module FormColumnHelpers
       def active_scaffold_input_carrierwave(column, options)
         record = options[:object]
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         options = active_scaffold_input_text_options(options.merge(column.options))
 
         carrierwave = record.send(column.name.to_s)

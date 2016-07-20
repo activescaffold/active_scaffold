@@ -14,8 +14,6 @@ module ActiveScaffold
 
       # Provides a way to honor the :conditions on an association while searching the association's klass
       def association_options_find(association, conditions = nil, klass = nil, record = nil)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, call with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         if klass.nil? && association.options[:polymorphic]
           class_name = record.send(association.foreign_type)
           if class_name.present?
@@ -29,14 +27,7 @@ module ActiveScaffold
           klass ||= association.klass
         end
 
-        if conditions.nil?
-          if method(:options_for_association_conditions).arity.abs == 2
-            conditions = options_for_association_conditions(association, record)
-          else
-            ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include record in your options_for_association_conditions overrided method.', caller if record.nil? # TODO: Remove when relying on @record is removed
-            conditions = options_for_association_conditions(association)
-          end
-        end
+        conditions ||= options_for_association_conditions(association, record)
         cache_association_options(association, conditions, klass, cache) do
           klass = association_klass_scoped(association, klass, record)
           relation = klass.where(conditions).where(association.options[:conditions])
@@ -86,12 +77,7 @@ module ActiveScaffold
       end
 
       def options_for_association_count(association, record)
-        if method(:options_for_association_conditions).arity.abs == 2
-          conditions = options_for_association_conditions(association, record)
-        else
-          ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include record in your options_for_association_conditions overrided method.', caller if record.nil? # TODO: Remove when relying on @record is removed
-          conditions = options_for_association_conditions(association)
-        end
+        conditions = options_for_association_conditions(association, record)
         association_options_count(association, conditions)
       end
 

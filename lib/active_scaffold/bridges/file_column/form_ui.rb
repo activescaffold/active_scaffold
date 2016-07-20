@@ -4,8 +4,6 @@ module ActiveScaffold
     module FormColumnHelpers
       def active_scaffold_input_file_column(column, options)
         record = options[:object]
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         if record.send(column.name)
           # we already have a value? display the form for deletion.
           case ActiveScaffold.js_framework

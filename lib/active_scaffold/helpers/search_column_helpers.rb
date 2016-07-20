@@ -7,8 +7,6 @@ module ActiveScaffold
       def active_scaffold_search_for(column, options = nil)
         options ||= active_scaffold_search_options(column)
         record = options[:object]
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
 
         # first, check if the dev has created an override for this specific field for search
         if (method = override_search_field(column))
@@ -73,8 +71,6 @@ module ActiveScaffold
 
       def active_scaffold_search_multi_select(column, options)
         record = options.delete(:object)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         associated = options.delete :value
         associated = [associated].compact unless associated.is_a? Array
 
@@ -96,8 +92,6 @@ module ActiveScaffold
 
       def active_scaffold_search_select(column, html_options, options = {})
         record = html_options.delete(:object)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         associated = html_options.delete :value
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?

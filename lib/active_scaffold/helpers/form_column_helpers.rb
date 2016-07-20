@@ -12,8 +12,6 @@ module ActiveScaffold
 
       def active_scaffold_render_input(column, options)
         record = options[:object]
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
 
         # first, check if the dev has created an override for this specific field
         if (method = override_form_field(column))
@@ -60,8 +58,6 @@ module ActiveScaffold
       end
 
       def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, call with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         if add_class
           col_class = []
           col_class << 'required' if column.required?
@@ -127,8 +123,6 @@ module ActiveScaffold
 
       def update_columns_options(column, scope, options, force = false)
         record = options[:object]
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
         form_columns = @main_columns.try(:names) if scope.nil? || subform_controller == controller.class
         form_columns ||= current_form_columns(record, scope, subform_controller)
@@ -215,9 +209,7 @@ module ActiveScaffold
       end
 
       def column_show_add_existing(column, record = nil)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, call with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
-        (column.allow_add_existing && options_for_association_count(column.association, record) > 0)
+        column.allow_add_existing && options_for_association_count(column.association, record) > 0
       end
 
       def column_show_add_new(column, associated, record)
@@ -247,8 +239,6 @@ module ActiveScaffold
 
       def active_scaffold_input_singular_association(column, html_options)
         record = html_options.delete(:object)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         associated = record.send(column.association.name)
 
         select_options = sorted_association_options_find(column.association, nil, record)
@@ -286,16 +276,12 @@ module ActiveScaffold
       end
 
       def active_scaffold_plural_association_options(column, record = nil)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, call with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         associated_options = record.send(column.association.name)
         [associated_options, associated_options | sorted_association_options_find(column.association, nil, record)]
       end
 
       def active_scaffold_input_plural_association(column, options)
         record = options.delete(:object)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         associated_options, select_options = active_scaffold_plural_association_options(column, record)
 
         html =
@@ -341,8 +327,6 @@ module ActiveScaffold
 
       def active_scaffold_input_enum(column, html_options)
         record = html_options.delete(:object)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in html_options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         options = {:selected => record.send(column.name), :object => record}
         options_for_select = active_scaffold_enum_options(column, record).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
@@ -449,8 +433,6 @@ module ActiveScaffold
 
       def active_scaffold_input_boolean(column, options)
         record = options.delete(:object)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         select_options = []
         select_options << [as_(:_select_), nil] if !column.virtual? && column.column.null
         select_options << [as_(:true), true]
@@ -520,7 +502,6 @@ module ActiveScaffold
       end
 
       def column_scope(column, scope = nil, record = nil)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, call with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
         if column.plural_association?
           "#{scope}[#{column.name}][#{record.id || generate_temporary_id(record)}]"
         else
@@ -530,8 +511,6 @@ module ActiveScaffold
 
       def active_scaffold_add_existing_input(options)
         record = options.delete(:object)
-        ActiveSupport::Deprecation.warn 'Relying on @record is deprecated, include :object in options with record.', caller if record.nil? # TODO: Remove when relying on @record is removed
-        record ||= @record # TODO: Remove when relying on @record is removed
         if !ActiveScaffold.js_framework.nil? && controller.respond_to?(:record_select_config, true)
           remote_controller = active_scaffold_controller_for(record_select_config.model).controller_path
           options.merge!(:controller => remote_controller)
