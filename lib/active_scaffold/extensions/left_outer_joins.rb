@@ -63,6 +63,6 @@ if Rails.version < '5.0.0'
   end
   ActiveRecord::Relation.send :include, ActiveScaffold::OuterJoins
   module ActiveRecord::Querying
-    delegate :outer_joins, :to => :all
+    delegate :left_outer_joins, :left_joins, :outer_joins, :to => :all
   end
 end
