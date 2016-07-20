@@ -114,7 +114,7 @@ module ActiveScaffold
         value ||= record.send(column.name) unless record.nil?
         if column.association.nil?
           if [:select, :radio].include?(column.form_ui) && column.options[:options]
-            text, val = column.options[:options].find { |text, val| (val.nil? ? text : val).to_s == value.to_s }
+            text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
           if value.is_a? Numeric

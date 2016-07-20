@@ -165,10 +165,11 @@ module ActiveScaffold
       def active_scaffold_search_range_comparator_options(column)
         select_options = ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
         if active_scaffold_search_range_string?(column)
-          select_options.unshift *ActiveScaffold::Finder::STRING_COMPARATORS.collect { |title, comp| [as_(title), comp] }
+          comparators = ActiveScaffold::Finder::STRING_COMPARATORS.collect { |title, comp| [as_(title), comp] }
+          select_options.unshift(*comparators)
         end
         if include_null_comparators? column
-          select_options += ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] }
+          select_options.concat ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] }
         end
         select_options
       end

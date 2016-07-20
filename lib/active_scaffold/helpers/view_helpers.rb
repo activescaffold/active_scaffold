@@ -337,9 +337,9 @@ module ActiveScaffold
         url_options.merge! link.parameters if link.parameters
         if link.dynamic_parameters.is_a?(Proc)
           if record.nil?
-            url_options.merge! instance_exec &link.dynamic_parameters
+            url_options.merge! instance_exec(&link.dynamic_parameters)
           else
-            url_options.merge! instance_exec record, &link.dynamic_parameters
+            url_options.merge! instance_exec(record, &link.dynamic_parameters)
           end
         end
         if link.nested_link?
