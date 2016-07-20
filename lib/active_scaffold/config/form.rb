@@ -13,14 +13,14 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # show value of unauthorized columns instead of skip them
-    class_attribute :show_unauthorized_columns
+    class_attribute :show_unauthorized_columns, instance_accessor: false
 
     # whether the form stays open after an update or not
-    cattr_accessor :persistent
+    class_attribute :persistent, instance_accessor: false
     @@persistent = false
 
     # whether we should refresh list after update or not
-    cattr_accessor :refresh_list
+    class_attribute :refresh_list, instance_accessor: false
     @@refresh_list = false
 
     # instance-level configuration
@@ -43,7 +43,7 @@ module ActiveScaffold::Config
 
     columns_accessor :columns do
       columns.exclude :created_on, :created_at, :updated_on, :updated_at, :as_marked
-      columns.exclude *@core.columns.collect { |c| c.name if c.polymorphic_association? }.compact
+      columns.exclude(*@core.columns.collect { |c| c.name if c.polymorphic_association? }.compact)
     end
 
     # whether the form should be multipart

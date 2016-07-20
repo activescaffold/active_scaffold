@@ -7,7 +7,7 @@ class ActiveRecordTest < MiniTest::Test
 
   def test_to_label
     # without anything defined, it'll use the to_s method (e.g. #<ModelStub:0xb7379300>)
-    assert_match /^#<[a-z]+:0x[0-9a-f]+>$/i, @record.to_label
+    assert_match(/^#<[a-z]+:0x[0-9a-f]+>$/i, @record.to_label)
 
     class << @record
       def to_s

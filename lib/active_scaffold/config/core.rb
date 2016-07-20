@@ -6,7 +6,7 @@ module ActiveScaffold::Config
     # --------------------------
 
     # provides read/write access to the global Actions DataStructure
-    cattr_reader :actions
+    cattr_reader :actions, instance_accessor: false
     def self.actions=(val)
       @@actions = ActiveScaffold::DataStructures::Actions.new(*val)
     end
@@ -17,27 +17,27 @@ module ActiveScaffold::Config
     @@plugin_directory = File.expand_path(__FILE__).match(%{(^.*)/lib/active_scaffold/config/core.rb})[1]
 
     # lets you specify a global ActiveScaffold frontend.
-    cattr_accessor :frontend
+    cattr_accessor :frontend, instance_accessor: false
     @@frontend = :default
 
     # lets you specify a global ActiveScaffold theme for your frontend.
-    cattr_accessor :theme
+    cattr_accessor :theme, instance_accessor: false
     @@theme = :default
 
     # enable caching of action link urls
-    cattr_accessor :cache_action_link_urls
+    cattr_accessor :cache_action_link_urls, instance_accessor: false
     @@cache_action_link_urls = true
 
     # enable caching of association options
-    cattr_accessor :cache_association_options
+    cattr_accessor :cache_association_options, instance_accessor: false
     @@cache_association_options = true
 
     # enable setting ETag and LastModified on responses and using fresh_when/stale? to respond with 304 and avoid rendering views
-    cattr_accessor :conditional_get_support
+    cattr_accessor :conditional_get_support, instance_accessor: false
     @@conditional_get_support = false
 
     # enable saving user settings in session (per_page, limit, page, sort, search params)
-    cattr_accessor :store_user_settings
+    cattr_accessor :store_user_settings, instance_accessor: false
     @@store_user_settings = true
 
     # lets you disable the DHTML history
@@ -50,7 +50,7 @@ module ActiveScaffold::Config
     @@dhtml_history = true
 
     # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
-    cattr_reader :action_links
+    cattr_reader :action_links, instance_reader: false
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
 
     # access to the permissions configuration.
@@ -72,15 +72,15 @@ module ActiveScaffold::Config
     @@ignore_columns = ActiveScaffold::DataStructures::Set.new
 
     # lets you specify whether add a create link for each sti child
-    cattr_accessor :sti_create_links
+    cattr_accessor :sti_create_links, instance_accessor: false
     @@sti_create_links = true
 
     # prefix messages with current timestamp, set the format to display (you can use I18n keys) or true and :short will be used
-    cattr_accessor :timestamped_messages
+    cattr_accessor :timestamped_messages, instance_accessor: false
     @@timestamped_messages = false
 
     # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use highlight rails helper
-    cattr_accessor :highlight_messages
+    cattr_accessor :highlight_messages, instance_accessor: false
     @@highlight_messages = nil
 
     # instance-level configuration

@@ -9,7 +9,7 @@ module ActiveScaffold::DataStructures
 
     def set_values(*args)
       @set = []
-      add *args
+      add(*args)
     end
 
     # the way to add items to the set.

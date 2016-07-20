@@ -42,7 +42,7 @@ module ActiveScaffold::Config
 
     # define a default action_group for this action
     # e.g. 'members.crud'
-    class_attribute :action_group
+    class_attribute :action_group, instance_accessor: false
 
     # action_group this action should belong to
     attr_accessor :action_group
@@ -97,7 +97,7 @@ module ActiveScaffold::Config
       names.each do |name|
         var = "@#{name}"
         define_method "#{name}=" do |val|
-          if instance_variable_get(var)
+          if instance_variable_defined?(var)
             instance_variable_get(var).set_values(*val)
           else
             instance_variable_set(var, build_action_columns(val))
@@ -105,8 +105,9 @@ module ActiveScaffold::Config
           instance_variable_get(var)
         end
 
+        return if method_defined? name
         define_method name do
-          unless instance_variable_get(var) # lazy evaluation
+          unless instance_variable_defined?(var) # lazy evaluation
             action, columns = options[:copy] if options[:copy]
             if action && @core.actions.include?(action)
               action_columns = @core.send(action).send(columns || :columns).clone
@@ -115,7 +116,7 @@ module ActiveScaffold::Config
             else
               self.send("#{name}=", @core.columns._inheritable)
             end
-            instance_exec &block if block
+            instance_exec(&block) if block
           end
           instance_variable_get(var)
         end

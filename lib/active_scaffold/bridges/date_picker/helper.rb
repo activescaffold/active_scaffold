@@ -95,7 +95,7 @@ module ActiveScaffold::Bridges
           nil
         end
         js_format = rails_format.dup
-        js_format.gsub! /([ ]|^)([^% ]\S*)/, " '\\2'"
+        js_format.gsub!(/([ ]|^)([^% ]\S*)/, " '\\2'")
         DATE_FORMAT_CONVERSION.each do |key, value|
           js_format.gsub!(key, value)
         end

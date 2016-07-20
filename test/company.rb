@@ -49,7 +49,7 @@ class Company < ActiveRecord::Base
     end
   else
     def self.create_reflection(*args)
-      ActiveRecord::Reflection.create *args
+      ActiveRecord::Reflection.create(*args)
     end
   end
 

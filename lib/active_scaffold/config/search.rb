@@ -12,7 +12,7 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # the ActionLink for this action
-    cattr_accessor :link
+    cattr_accessor :link, instance_accessor: false
     @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => :search, :type => :collection, :security_method => :search_authorized?, :ignore_method => :search_ignore?)
 
     # A flag for how the search should do full-text searching in the database:
@@ -21,30 +21,30 @@ module ActiveScaffold::Config
     # * :end: LIKE %?
     # * false: LIKE ?
     # Default is :full
-    cattr_accessor :text_search
+    cattr_accessor :text_search, instance_accessor: false
     @@text_search = :full
 
     # whether submits the search as you type
-    cattr_writer :live
+    cattr_writer :live, instance_writer: false
     def self.live?
       @@live
     end
 
-    cattr_accessor :split_terms
+    cattr_accessor :split_terms, instance_accessor: false
     @@split_terms = ' '
 
     # instance-level configuration
     # ----------------------------
 
-    columns_accessor :columns
     # provides access to the list of columns specifically meant for the Search to use
     def columns
       # we want to delay initializing to the @core.columns set for as long as possible. Too soon and .search_sql will not be available to .searchable?
-      unless @columns
+      unless defined? @columns
         self.columns = @core.columns.collect { |c| c.name if @core.columns._inheritable.include?(c.name) && c.searchable? && c.association.nil? && c.text? }.compact
       end
       @columns
     end
+    columns_accessor :columns
 
     # A flag for how the search should do full-text searching in the database:
     # * :full: LIKE %?%

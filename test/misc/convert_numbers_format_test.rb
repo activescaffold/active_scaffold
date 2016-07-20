@@ -46,7 +46,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 0.1, convert_number('0.1')
     assert_equal 0.345, convert_number('0.345')
     assert_equal 0.345, convert_number('+0.345')
-    assert_equal -0.345, convert_number('-0.345')
+    assert_equal(-0.345, convert_number('-0.345'))
     assert_equal 9.345, convert_number('9.345')
     assert_equal 9.1, convert_number('9.1')
     assert_equal 90.1, convert_number('90.1')
@@ -56,7 +56,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     I18n.locale = :en
     assert_equal 1000, convert_number('1,000')
     assert_equal 1000, convert_number('+1,000')
-    assert_equal -1000, convert_number('-1,000')
+    assert_equal(-1000, convert_number('-1,000'))
     assert_equal 1_000_000, convert_number('1,000,000')
   end
 
@@ -65,7 +65,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 1234.1, convert_number('1,234.1')
     assert_equal 1234.1, convert_number('1,234.100')
     assert_equal 1234.345, convert_number('+1,234.345')
-    assert_equal -1234.345, convert_number('-1,234.345')
+    assert_equal(-1234.345, convert_number('-1,234.345'))
     assert_equal 1_234_000.1, convert_number('1,234,000.100')
   end
 
@@ -74,7 +74,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 0.1, convert_number('.1')
     assert_equal 0.1, convert_number('0.1')
     assert_equal 0.12, convert_number('+0.12')
-    assert_equal -0.12, convert_number('-0.12')
+    assert_equal(-0.12, convert_number('-0.12'))
     assert_equal 9.1, convert_number('9.1')
     assert_equal 90.1, convert_number('90.1')
   end
@@ -86,7 +86,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 0.1, convert_number('0,1')
     assert_equal 0.345, convert_number('0,345')
     assert_equal 0.345, convert_number('+0,345')
-    assert_equal -0.345, convert_number('-0,345')
+    assert_equal(-0.345, convert_number('-0,345'))
     assert_equal 9.1, convert_number('9,1')
     assert_equal 90.1, convert_number('90,1')
     assert_equal 9.1, convert_number('9,100')
@@ -96,7 +96,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     I18n.locale = :es
     assert_equal 1000, convert_number('1.000')
     assert_equal 1000, convert_number('+1.000')
-    assert_equal -1000, convert_number('-1.000')
+    assert_equal(-1000, convert_number('-1.000'))
     assert_equal 1_000_000, convert_number('1.000.000')
   end
 
@@ -105,7 +105,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 1230.1, convert_number('1.230,1')
     assert_equal 1230.1, convert_number('1.230,100')
     assert_equal 1234.345, convert_number('+1.234,345')
-    assert_equal -1234.345, convert_number('-1.234,345')
+    assert_equal(-1234.345, convert_number('-1.234,345'))
     assert_equal 1_234_000.1, convert_number('1.234.000,100')
   end
 
@@ -114,7 +114,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 0.1, convert_number('.1', :currency)
     assert_equal 0.1, convert_number('0.1', :currency)
     assert_equal 0.12, convert_number('+0.12', :currency)
-    assert_equal -0.12, convert_number('-0.12', :currency)
+    assert_equal(-0.12, convert_number('-0.12', :currency))
     assert_equal 9.1, convert_number('9.1', :currency)
     assert_equal 90.1, convert_number('90.1', :currency)
   end
@@ -126,7 +126,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     assert_equal 0.1, convert_number('0,1', :currency)
     assert_equal 0.345, convert_number('0,345', :currency)
     assert_equal 0.345, convert_number('+0,345', :currency)
-    assert_equal -0.345, convert_number('-0,345', :currency)
+    assert_equal(-0.345, convert_number('-0,345', :currency))
     assert_equal 9.1, convert_number('9,1', :currency)
     assert_equal 90.1, convert_number('90,1', :currency)
     assert_equal 9.1, convert_number('9,100', :currency)

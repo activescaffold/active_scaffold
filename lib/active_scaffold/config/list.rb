@@ -33,74 +33,74 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # include list header on refresh
-    cattr_accessor :refresh_with_header
+    cattr_accessor :refresh_with_header, instance_accessor: false
     @@refresh_with_header = false
 
     # how many records to show per page
-    cattr_accessor :per_page
+    cattr_accessor :per_page, instance_accessor: false
     @@per_page = 15
 
     # how many page links around current page to show
-    cattr_accessor :page_links_inner_window
+    cattr_accessor :page_links_inner_window, instance_accessor: false
     @@page_links_inner_window = 2
 
     # how many page links around first and last page to show
-    cattr_accessor :page_links_outer_window
+    cattr_accessor :page_links_outer_window, instance_accessor: false
     @@page_links_outer_window = 0
 
     # what string to use when a field is empty
-    cattr_accessor :empty_field_text
+    cattr_accessor :empty_field_text, instance_accessor: false
     @@empty_field_text = '-'
 
     # display messages above table header
-    cattr_accessor :messages_above_header
+    cattr_accessor :messages_above_header, instance_accessor: false
     @@messages_above_header = false
 
     # what string to use to join records from plural associations
-    cattr_accessor :association_join_text
+    cattr_accessor :association_join_text, instance_accessor: false
     @@association_join_text = ', '
 
     # What kind of pagination to use:
     # * true: The usual pagination
     # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for large tables where counting is slow and we don't really care anyway)
     # * false: Disable pagination
-    cattr_accessor :pagination
+    cattr_accessor :pagination, instance_accessor: false
     @@pagination = true
 
     # Auto paginate, only can be used with pagination enabled
     # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are loaded
     # * false: Disable auto pagination
-    cattr_accessor :auto_pagination
+    cattr_accessor :auto_pagination, instance_accessor: false
     @@auto_pagination = false
 
     # show a link to reset the search next to filtered message
-    cattr_accessor :show_search_reset
+    cattr_accessor :show_search_reset, instance_accessor: false
     @@show_search_reset = true
 
     # the ActionLink to reset search
-    cattr_reader :reset_link
+    cattr_reader :reset_link, instance_reader: false
     @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :collection, :position => false, :parameters => {:search => ''})
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling
-    cattr_accessor :wrap_tag
+    cattr_accessor :wrap_tag, instance_accessor: false
     @@wrap_tag = nil
 
     # Show search form in the list header instead of display the link
-    cattr_accessor :always_show_search
+    cattr_accessor :always_show_search, instance_accessor: false
     @@always_show_search = false
 
     # Show create form in the list header instead of display the link
-    cattr_accessor :always_show_create
+    cattr_accessor :always_show_create, instance_accessor: false
     @@always_show_create = false
 
     # Enable auto select columns on list, so only columns needed for list columns are selected
-    cattr_accessor :auto_select_columns
+    cattr_accessor :auto_select_columns, instance_accessor: false
     @@auto_select_columns = false
 
     # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
     # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
-    cattr_accessor :calculate_etag
+    cattr_accessor :calculate_etag, instance_accessor: false
     @@calculate_etag = false
 
     # instance-level configuration
@@ -152,7 +152,7 @@ module ActiveScaffold::Config
     # to just sort on one column, you can simply provide a hash, e.g. {:a => 'desc'}.
     def sorting=(val)
       val = [val] if val.is_a? Hash
-      sorting.set *val
+      sorting.set(*val)
     end
 
     def sorting

@@ -77,7 +77,7 @@ module ActiveScaffold::DataStructures
     end
 
     # send all the form instead of only new value when this column change
-    cattr_accessor :send_form_on_update_column
+    cattr_accessor :send_form_on_update_column, instance_accessor: false
     attr_accessor :send_form_on_update_column
 
     # sorting on a column can be configured four ways:
@@ -137,7 +137,7 @@ module ActiveScaffold::DataStructures
     end
 
     # a place to store dev's column specific options
-    attr_accessor :options
+    attr_writer :options
     def options
       @options ||= {}
     end
@@ -228,12 +228,12 @@ module ActiveScaffold::DataStructures
     attr_accessor :weight
 
     # to set how many associated records a column with plural association must show in list
-    cattr_accessor :associated_limit
+    cattr_accessor :associated_limit, instance_accessor: false
     @@associated_limit = 3
     attr_accessor :associated_limit
 
     # whether the number of associated records must be shown or not
-    cattr_accessor :associated_number
+    cattr_accessor :associated_number, instance_accessor: false
     @@associated_number = true
     attr_writer :associated_number
     def associated_number?
@@ -241,7 +241,7 @@ module ActiveScaffold::DataStructures
     end
 
     # whether a blank row must be shown in the subform
-    cattr_accessor :show_blank_record
+    cattr_accessor :show_blank_record, instance_accessor: false
     @@show_blank_record = true
     attr_writer :show_blank_record
     def show_blank_record?(associated)
@@ -251,7 +251,7 @@ module ActiveScaffold::DataStructures
     end
 
     # methods for automatic links in singular association columns
-    cattr_accessor :actions_for_association_links
+    cattr_accessor :actions_for_association_links, instance_accessor: false
     @@actions_for_association_links = [:new, :edit, :show]
     attr_accessor :actions_for_association_links
 
@@ -336,6 +336,7 @@ module ActiveScaffold::DataStructures
       @select_columns = default_select_columns
 
       @text = @column.nil? || [:string, :text].include?(@column.type)
+      @number = false
       if @column
         if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
           @form_ui = :select

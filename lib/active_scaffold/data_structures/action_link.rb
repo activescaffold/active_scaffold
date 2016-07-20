@@ -90,7 +90,7 @@ module ActiveScaffold::DataStructures
     end
 
     # if the action uses a DHTML based (i.e. 2-phase) confirmation
-    attr_accessor :dhtml_confirm
+    attr_reader :dhtml_confirm
     def dhtml_confirm=(value)
       @confirm = nil if value
       @dhtml_confirm = value

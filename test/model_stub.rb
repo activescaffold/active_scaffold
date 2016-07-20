@@ -5,14 +5,11 @@ class ModelStub < ActiveRecord::Base
 
   cattr_accessor :stubbed_columns
   self.stubbed_columns = [:a, :b, :c, :d, :id, :created_at]
-  attr_accessor *stubbed_columns
+  attr_accessor(*stubbed_columns)
   self.primary_key = :id
 
   @@nested_scope_calls = []
   cattr_accessor :nested_scope_calls
-
-  scope :a_is_defined, -> { where.not(:a => nil) }
-  scope :b_like, ->(pattern) { where('b like ?', pattern) }
 
   def self.a_is_defined
     @@nested_scope_calls << :a_is_defined

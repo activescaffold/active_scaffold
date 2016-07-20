@@ -11,10 +11,10 @@ module ActiveScaffold::Config
 
     # global level configuration
     # --------------------------
-    cattr_accessor :shallow_delete
+    cattr_accessor :shallow_delete, instance_accessor: false
     @@shallow_delete = true
 
-    cattr_accessor :ignore_order_from_association
+    cattr_accessor :ignore_order_from_association, instance_accessor: false
 
     # instance-level configuration
     # ----------------------------

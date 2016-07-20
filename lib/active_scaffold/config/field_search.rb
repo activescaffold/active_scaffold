@@ -11,7 +11,7 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # the ActionLink for this action
-    cattr_reader :link
+    cattr_reader :link, instance_accessor: false
     @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => :search, :type => :collection, :security_method => :search_authorized?, :ignore_method => :field_search_ignore?)
 
     # A flag for how the search should do full-text searching in the database:
@@ -20,12 +20,12 @@ module ActiveScaffold::Config
     # * :end: LIKE %?
     # * false: LIKE ?
     # Default is :full
-    cattr_accessor :text_search
+    cattr_accessor :text_search, instance_accessor: false
     @@text_search = :full
 
     # human conditions
     # instead of just filtered you may show the user a humanized search condition statment
-    cattr_accessor :human_conditions
+    cattr_accessor :human_conditions, instance_accessor: false
     @@human_conditions = false
 
     # instance-level configuration

@@ -24,7 +24,7 @@ module ActiveScaffold::DataStructures
       @_inheritable = []
       @set = []
 
-      add *args
+      add(*args)
     end
 
     # the way to add columns to the set. this is primarily useful for virtual columns.
