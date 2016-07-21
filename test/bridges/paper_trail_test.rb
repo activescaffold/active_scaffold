@@ -7,9 +7,8 @@ class PaperTrailTest < ActionController::TestCase
   def test_deleted_route
     with_routing do |map|
       map.draw do
-        resources :addresses do
-          as_routes
-        end
+        concern :active_scaffold, ActiveScaffold::Routing::Basic.new
+        resources :addresses, concerns: :active_scaffold
       end
       assert_routing '/addresses/deleted', :controller => 'addresses', :action => 'deleted'
     end
