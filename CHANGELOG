@@ -1,5 +1,8 @@
 - add basic support for mongoid
 - use concerns for routes, deprecate as_routes method
+- add install generator
+- rename active_scaffold generator as active_scaffold:resource
+- rename active_scaffold_controller generator as active_scaffold:controller
 - remove deprecations from 3.4.x (active_scaffold_includes and using @record in helpers)
 - fix select of existing record for nested subform
 - fix apply constraints to parent (fix update columns on subform on embedded scaffold)
