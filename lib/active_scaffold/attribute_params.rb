@@ -66,6 +66,7 @@ module ActiveScaffold
     # rails 4 needs this hack for polymorphic has_many
     # TODO: remove when hack_for_has_many_counter_cache is not needed
     def hack_for_has_many_counter_cache?(parent_record, column)
+      return unless Rails.version < '5.0'
       assoc = column.association
       assoc.try(:macro) == :has_many && assoc.options[:as] && parent_record.association(column.name).send(:has_cached_counter?)
     end
@@ -74,7 +75,7 @@ module ActiveScaffold
     # rails 4 needs this hack for polymorphic has_many, when selecting record, not creating new one (value is Hash)
     # TODO: remove when pull request is merged and no version with bug is supported
     def counter_cache_hack?(assoc, value)
-      !value.is_a?(Hash) && assoc.try(:belongs_to?) && assoc.options[:counter_cache] && !assoc.options[:polymorphic]
+      !value.is_a?(Hash) && assoc.try(:belongs_to?) && assoc.options[:counter_cache] && (Rails.version >= '5.0' || !assoc.options[:polymorphic])
     end
 
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
