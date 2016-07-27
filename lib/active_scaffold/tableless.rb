@@ -34,6 +34,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       super(nil, *args)
       @klass = klass
     end
+
+    def columns(table_name)
+      klass.columns
+    end
   end
 
   class Column < ActiveRecord::ConnectionAdapters::Column

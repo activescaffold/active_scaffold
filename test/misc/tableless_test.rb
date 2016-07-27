@@ -30,4 +30,12 @@ class TablelessTest < MiniTest::Test
   def test_find_with_through_association
     assert Building.new.files.empty?
   end
+
+  def test_new
+    assert FileModel.new
+  end
+
+  def test_association
+    assert FileModel.new.person.nil?
+  end
 end
