@@ -216,8 +216,11 @@ module ActiveScaffold
     def self.column_type_cast(value, column)
       if Rails.version < '4.2'
         column.type_cast value
-      else
+      elsif Rails.version < '5.0'
         column.type_cast_from_user value
+      else
+        cast_type = ActiveRecord::Type.lookup column.type
+        cast_type ? cast_type.cast(value) : value
       end
     end
   end

@@ -6,7 +6,16 @@ class NumberModel < ActiveRecord::Base
     @columns ||= [ColumnMock.new('id', '', 'int(11)'), ColumnMock.new('number', '', 'double(10,2)')]
   end
   def self.columns_hash
-    @hash ||= Hash[@columns.map { |c| [c.name, c] }]
+    @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
+  end
+  def self.load_schema!
+    columns_hash.each do |name, column|
+      define_attribute(
+        name,
+        connection.lookup_cast_type_from_column(column),
+        default: column.default
+      )
+    end
   end
 end
 
@@ -15,6 +24,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
   include ActiveScaffold::Finder
 
   def setup
+    NumberModel.load_schema! if Rails.version >= '5.0'
     I18n.backend.store_translations :en, :number => {:format => {
       :delimiter => ',',
       :separator => '.'

@@ -60,7 +60,7 @@ module ActiveScaffold
           conditions += values * column.search_sql.size if values.present?
           conditions
         rescue StandardError => e
-          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
+          Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
           raise e
         end
       end

@@ -9,7 +9,7 @@ class Company < ActiveRecord::Base
   end
 
   def self.columns_hash
-    {
+    @columns_hash ||= {
       'name' => ColumnMock.new('name', nil, 'varchar(255)'),
       'date' => ColumnMock.new('date', nil, 'date'),
       'datetime' => ColumnMock.new('datetime', nil, 'datetime'),

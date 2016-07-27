@@ -461,7 +461,7 @@ module ActiveScaffold::DataStructures
     end
 
     def column_number?
-      return @column.number? if active_record?
+      return [:float, :decimal, :integer].include? @column.type if active_record?
       return @column.type < Numeric if mongoid?
     end
 

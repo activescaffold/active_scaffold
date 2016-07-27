@@ -107,7 +107,7 @@ module ActiveScaffold
             value = update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
           end
         rescue => e
-          logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
+          Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
           raise
         end
       end
@@ -302,8 +302,11 @@ module ActiveScaffold
       return unless column
       if Rails.version < '4.2'
         column.default
-      else
+      elsif Rails.version < '5.0'
         column.type_cast_from_database(column.default)
+      else
+        cast_type = ActiveRecord::Type.lookup column.type
+        cast_type ? cast_type.deserialize(column.default) : column.default
       end
     end
   end

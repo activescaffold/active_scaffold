@@ -1,5 +1,6 @@
 class ActiveScaffold::Tableless < ActiveRecord::Base
   class AssociationScope < ActiveRecord::Associations::AssociationScope
+    # unneeded on rails 5
     def column_for(table_name, column_name, alias_tracker = nil)
       klass = alias_tracker ? alias_tracker.connection.klass : self.klass
       if table_name == klass.table_name
@@ -17,9 +18,11 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
         INSTANCE.scope association, connection
       end
 
-      def add_constraints(scope, owner, assoc_klass, refl, tracker)
-        tracker.instance_variable_set(:@assoc_klass, assoc_klass)
-        super
+      if Rails.version < '5.0.0'
+        def add_constraints(scope, owner, assoc_klass, refl, tracker)
+          tracker.instance_variable_set(:@assoc_klass, assoc_klass)
+          super
+        end
       end
     end
   end
@@ -33,7 +36,12 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   class Column < ActiveRecord::ConnectionAdapters::Column
-    if instance_method(:initialize).arity == -4 # rails >= 4.2
+    if Rails.version >= '5.0.0'
+      def initialize(name, default, sql_type = nil, null = true)
+        metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, sql_type
+        super(name, default, metadata, null)
+      end
+    elsif Rails.version >= '4.2.0'
       def initialize(name, default, sql_type = nil, null = true)
         cast_type = ActiveRecord::Base.connection.send :lookup_cast_type, sql_type
         super(name, default, cast_type, sql_type, null)
@@ -90,9 +98,16 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   module RelationExtension
     attr_reader :conditions
 
-    def initialize(klass, table)
-      super
-      @conditions ||= []
+    if Rails.version >= '5.0'
+      def initialize(klass, table, predicate_builder, values = {})
+        super
+        @conditions ||= []
+      end
+    else
+      def initialize(klass, table)
+        super
+        @conditions ||= []
+      end
     end
 
     def initialize_copy(other)
@@ -140,7 +155,9 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     private
 
     def relation
-      ActiveScaffold::Tableless::Relation.new(self, arel_table)
+      args = [self, arel_table]
+      args << predicate_builder if Rails.version >= '5.0.0'
+      ActiveScaffold::Tableless::Relation.new(*args)
     end
   end
 
@@ -162,8 +179,17 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
         super
       end
     end
-    def self.initialize_find_by_cache
-      self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
+    if Rails.version >= '5.0'
+      def self.initialize_find_by_cache
+        @find_by_statement_cache = {
+          true => Hash.new { |h, k| h[k] = StatementCache.new(k) },
+          false => Hash.new { |h, k| h[k] = StatementCache.new(k) }
+        }
+      end
+    else
+      def self.initialize_find_by_cache
+        self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
+      end
     end
   end
 
