@@ -13,8 +13,11 @@ group :development, :test do
   gem 'rake'
   gem 'rdoc'
   gem 'bundler', '>= 1.0.0'
-  gem 'localeapp'
   gem 'rack'
+end
+
+group :development do
+  gem 'localeapp'
 end
 
 group :test do

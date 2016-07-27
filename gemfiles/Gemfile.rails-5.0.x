@@ -13,8 +13,11 @@ group :development, :test do
   gem 'brakeman', require: false
   gem 'rake'
   gem 'rdoc'
-  gem 'localeapp'
   gem 'rack'
+end
+
+group :development do
+  gem 'localeapp'
 end
 
 group :test do
