@@ -5,4 +5,5 @@ class Building < ActiveRecord::Base
   has_one :address, :as => :addressable
 
   has_many :tenants, :through => :floors, :class_name => 'Person'
+  has_many :files, :through => :tenants, :class_name => 'FileModel'
 end

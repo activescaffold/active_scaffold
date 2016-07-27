@@ -1,24 +1,25 @@
 class ActiveScaffold::Tableless < ActiveRecord::Base
   class AssociationScope < ActiveRecord::Associations::AssociationScope
-    # unneeded on rails 5
-    def column_for(table_name, column_name, alias_tracker = nil)
-      klass = alias_tracker ? alias_tracker.connection.klass : self.klass
-      if table_name == klass.table_name
-        klass.columns_hash[column_name]
-      elsif alias_tracker && (klass = alias_tracker.instance_variable_get(:@assoc_klass))
-        klass.columns_hash[column_name]
-      else # rails < 4.1
-        association.klass.columns_hash[column_name]
-      end
-    end
-
     if defined?(ActiveRecord::Associations::AssociationScope::INSTANCE) # rails >= 4.1
       INSTANCE = respond_to?(:create) ? create : new # create for rails >= 4.2
       def self.scope(association, connection)
         INSTANCE.scope association, connection
       end
+    end
 
-      if Rails.version < '5.0.0'
+    if Rails.version < '5.0.0'
+      def column_for(table_name, column_name, alias_tracker = nil)
+        klass = alias_tracker ? alias_tracker.connection.klass : self.klass
+        if table_name == klass.table_name
+          klass.columns_hash[column_name]
+        elsif alias_tracker && (klass = alias_tracker.instance_variable_get(:@assoc_klass))
+          klass.columns_hash[column_name]
+        else # rails < 4.1
+          association.klass.columns_hash[column_name]
+        end
+      end
+
+      if Rails.version >= '4.1'
         def add_constraints(scope, owner, assoc_klass, refl, tracker)
           tracker.instance_variable_set(:@assoc_klass, assoc_klass)
           super

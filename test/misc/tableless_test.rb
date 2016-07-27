@@ -5,6 +5,18 @@ class TablelessTest < MiniTest::Test
     assert FileModel.all.to_a.empty?
   end
 
+  def test_where
+    assert FileModel.where(name: 'file').to_a.empty?
+  end
+
+  def test_where_using_assoc
+    assert FileModel.includes(:person).where(people: {name: 'Name'}).to_a.empty?
+  end
+
+  def test_count
+    assert_equal 0, FileModel.count
+  end
+
   def test_find_by_id
     assert_raises ActiveRecord::RecordNotFound do
       FileModel.find('filename')
@@ -13,5 +25,9 @@ class TablelessTest < MiniTest::Test
 
   def test_find_with_association
     assert Person.new.files.empty?
+  end
+
+  def test_find_with_through_association
+    assert Building.new.files.empty?
   end
 end
