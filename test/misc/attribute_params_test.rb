@@ -34,9 +34,9 @@ class AttributeParamsTest < MiniTest::Test
   end
 
   def test_saving_multiparameter_attribute
-    model = update_record_from_params(Contact.new, :update, :first_name, :birthday, :first_name => 'Christopher', :last_name => 'Columbus', 'birthday(1i)' => '1451', 'birthday(2i)' => '10', 'birthday(3i)' => '31')
-    assert_equal 'Christopher', model.first_name
-    assert_equal Date.new(1451, 10, 31), model.birthday
+    model = update_record_from_params(Contact.new, :update, :first_name, :birthday, :first_name => 'Diego', :last_name => 'Velazquez', 'birthday(1i)' => '1599', 'birthday(2i)' => '6', 'birthday(3i)' => '6')
+    assert_equal 'Diego', model.first_name
+    assert_equal Date.new(1599, 6, 6), model.birthday
   end
 
   def test_saving_has_many_select
