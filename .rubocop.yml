@@ -6,7 +6,7 @@ AllCops:
   Exclude:
     - '**/Gemfile*.lock'
     - 'bin/*'
-    - 'lib/generators/*/templates/**/*'
+    - 'lib/generators/**/templates/**/*'
     - 'vendor/bundle/**/*'
 
 Rails:
