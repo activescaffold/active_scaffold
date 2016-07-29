@@ -2,9 +2,9 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   Include:
-    - '**/Gemfile*'
+    - 'gemfiles/Gemfile*'
   Exclude:
-    - '**/Gemfile*.lock'
+    - 'gemfiles/Gemfile*.lock'
     - 'bin/*'
     - 'lib/generators/**/templates/**/*'
     - 'vendor/bundle/**/*'
