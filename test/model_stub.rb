@@ -34,7 +34,7 @@ class ModelStub < ActiveRecord::Base
   def self.columns
     @columns ||= stubbed_columns.map do |c|
       column = ColumnMock.new(c.to_s, '', 'varchar(255)')
-      column.primary = true if c.to_s == self.primary_key.to_s && column.respond_to?(:primary=)
+      column.primary = true if c.to_s == primary_key.to_s && column.respond_to?(:primary=)
       column
     end
   end

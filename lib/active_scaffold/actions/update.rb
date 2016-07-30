@@ -156,7 +156,7 @@ module ActiveScaffold::Actions
       @record.send("#{@column.name}=", value)
       before_update_save(@record)
       self.successful = @record.save
-      if self.successful? && active_scaffold_config.actions.include?(:list)
+      if successful? && active_scaffold_config.actions.include?(:list)
         if @column.inplace_edit_update == :table
           params.delete(:id)
           do_list
@@ -185,7 +185,7 @@ module ActiveScaffold::Actions
     end
 
     def update_ignore?(record = nil)
-      !self.authorized_for?(:crud_type => :update)
+      !authorized_for?(:crud_type => :update)
     end
 
     private

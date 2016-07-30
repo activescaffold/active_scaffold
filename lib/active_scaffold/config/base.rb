@@ -114,7 +114,7 @@ module ActiveScaffold::Config
               action_columns.action = self
               instance_variable_set(var, action_columns)
             else
-              self.send("#{name}=", @core.columns._inheritable)
+              send("#{name}=", @core.columns._inheritable)
             end
             instance_exec(&block) if block
           end

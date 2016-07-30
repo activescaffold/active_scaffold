@@ -38,14 +38,14 @@ module ActiveScaffold
       def condition_for_column(column, value, text_search = :full)
         like_pattern = like_pattern(text_search)
         value = value.with_indifferent_access if value.is_a? Hash
-        if self.respond_to?("condition_for_#{column.name}_column")
+        if respond_to?("condition_for_#{column.name}_column")
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
         return unless column && column.search_sql && !value.blank?
         search_ui = column.search_ui || column.column.try(:type)
         begin
           sql, *values =
-            if search_ui && self.respond_to?("condition_for_#{search_ui}_type")
+            if search_ui && respond_to?("condition_for_#{search_ui}_type")
               send("condition_for_#{search_ui}_type", column, value, like_pattern)
             else
               if column.search_sql.instance_of? Proc

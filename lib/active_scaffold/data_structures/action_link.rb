@@ -21,7 +21,7 @@ module ActiveScaffold::DataStructures
       # apply quick properties
       options.each_pair do |k, v|
         setter = "#{k}="
-        send(setter, v) if self.respond_to? setter
+        send(setter, v) if respond_to? setter
       end
       self.toggle = self.action.try(:to_sym) == :index && (parameters.present? || dynamic_parameters) unless options.include? :toggle
     end

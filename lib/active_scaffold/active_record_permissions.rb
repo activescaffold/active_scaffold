@@ -106,7 +106,7 @@ module ActiveScaffold
 
         def cached_authorized_for_methods(options)
           key = "#{options[:crud_type]}##{options[:column]}##{options[:action]}"
-          if self.is_a? Class
+          if is_a? Class
             self.class_security_methods ||= {}
             self.class_security_methods[key] ||= authorized_for_methods(options)
           else

@@ -14,7 +14,7 @@ module ActiveScaffold::Actions
     protected
 
     def destroy_respond_to_html
-      flash[:info] = as_(:deleted_model, :model => ERB::Util.h(@record.to_label)) if self.successful?
+      flash[:info] = as_(:deleted_model, :model => ERB::Util.h(@record.to_label)) if successful?
       return_to_main
     end
 
@@ -56,7 +56,7 @@ module ActiveScaffold::Actions
     end
 
     def delete_ignore?(record = nil)
-      (nested? && nested.readonly?) || !self.authorized_for?(:crud_type => :delete)
+      (nested? && nested.readonly?) || !authorized_for?(:crud_type => :delete)
     end
 
     private

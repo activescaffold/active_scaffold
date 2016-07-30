@@ -247,7 +247,7 @@ module ActiveScaffold::DataStructures
     def show_blank_record?(associated)
       return false unless @show_blank_record
       return false unless association.klass.authorized_for?(:crud_type => :create) && !association.options[:readonly]
-      self.plural_association? || (self.singular_association? && associated.blank?)
+      plural_association? || (singular_association? && associated.blank?)
     end
 
     # methods for automatic links in singular association columns
@@ -288,7 +288,7 @@ module ActiveScaffold::DataStructures
       if association.options.key? :readonly
         association.options[:readonly]
       else
-        self.through_association?
+        through_association?
       end
     end
 
@@ -316,7 +316,7 @@ module ActiveScaffold::DataStructures
         name == other.to_sym rescue false # catch "interning empty string"
       # unknown
       else
-        self.eql? other
+        eql? other
       end
     end
 
@@ -470,7 +470,7 @@ module ActiveScaffold::DataStructures
     end
 
     def initialize_sort
-      if self.virtual?
+      if virtual?
         # we don't automatically enable method sorting for virtual columns because it's slow, and we expect fewer complaints this way.
         self.sort = false
       else
@@ -484,10 +484,10 @@ module ActiveScaffold::DataStructures
 
     def initialize_search_sql
       self.search_sql =
-        unless self.virtual?
+        unless virtual?
           if association.nil?
             field.to_s unless tableless?
-          elsif !self.polymorphic_association?
+          elsif !polymorphic_association?
             [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
           end
         end

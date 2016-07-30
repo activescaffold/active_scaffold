@@ -76,7 +76,7 @@ module ActiveScaffold::DataStructures
       @set.each do |item|
         unless item.is_a?(ActiveScaffold::DataStructures::ActionColumns) || @columns.nil?
           item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
-          next if self.skip_column?(item, options)
+          next if skip_column?(item, options)
         end
         if item.is_a? ActiveScaffold::DataStructures::ActionColumns
           if options[:flatten]
@@ -97,7 +97,7 @@ module ActiveScaffold::DataStructures
       @set.each do |item|
         unless item.is_a?(ActiveScaffold::DataStructures::ActionColumns) || @columns.nil?
           item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
-          next if self.skip_column?(item, options)
+          next if skip_column?(item, options)
         end
         if item.is_a?(ActiveScaffold::DataStructures::ActionColumns) && options.key?(:flatten) && options[:flatten]
           columns += item.collect_visible(options, &proc)

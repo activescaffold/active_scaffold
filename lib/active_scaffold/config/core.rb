@@ -250,7 +250,7 @@ module ActiveScaffold::Config
     # note that this is unaffected by per-controller frontend configuration.
     def self.javascripts(frontend = self.frontend)
       javascript_dir = File.join(Rails.public_path, 'javascripts', asset_path('', frontend))
-      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js$/) || (!self.dhtml_history? && e.match('dhtml_history')) }
+      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js$/) || (!dhtml_history? && e.match('dhtml_history')) }
     end
 
     def self.available_frontends

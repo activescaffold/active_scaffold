@@ -65,7 +65,7 @@ module ActiveScaffold
         define_method Rails.version < '4.2' ? 'parent_prefixes' : 'local_prefixes' do
           @local_prefixes ||= begin
             prefixes = super()
-            unless self.superclass.uses_active_scaffold? || prefixes.include?('active_scaffold_overrides')
+            unless superclass.uses_active_scaffold? || prefixes.include?('active_scaffold_overrides')
               prefixes << 'active_scaffold_overrides'
             end
             prefixes
