@@ -387,7 +387,7 @@ module ActiveScaffold::DataStructures
 
     def <=>(other)
       order_weight = weight <=> other.weight
-      order_weight != 0 ? order_weight : name.to_s <=> other.name.to_s
+      order_weight.nonzero? ? order_weight : name.to_s <=> other.name.to_s
     end
 
     def number_to_native(value)

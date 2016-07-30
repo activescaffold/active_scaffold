@@ -136,7 +136,7 @@ module ActiveScaffold
       def display_action_link(link, content, record, options)
         if content
           html_classes = hover_via_click? ? 'hover_click ' : ''
-          if options[:level] == 0
+          if (options[:level]).zero?
             html_classes << 'action_group'
             group_tag = :div
           else
@@ -148,9 +148,9 @@ module ActiveScaffold
           end
         else
           content = render_action_link(link, record, options)
-          content = content_tag(:li, content, :class => ('top' if options[:first_action])) unless options[:level] == 0
+          content = content_tag(:li, content, :class => ('top' if options[:first_action])) unless (options[:level]).zero?
         end
-        content = content_tag(options[:level_0_tag], content, options[:options_level_0_tag]) if options[:level] == 0 && options[:level_0_tag]
+        content = content_tag(options[:level_0_tag], content, options[:options_level_0_tag]) if (options[:level]).zero? && options[:level_0_tag]
         content
       end
 

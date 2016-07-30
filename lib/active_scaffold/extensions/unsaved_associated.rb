@@ -17,7 +17,7 @@ class ActiveRecord::Base
   end
 
   def no_errors_in_associated?
-    with_unsaved_associated { |a| a.errors.count == 0 && a.no_errors_in_associated? }
+    with_unsaved_associated { |a| a.errors.count.zero? && a.no_errors_in_associated? }
   end
 
   def keeping_errors

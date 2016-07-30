@@ -152,7 +152,7 @@ module ActiveScaffold
       def format_collection_association_value(value, column, label_method, size)
         if column.associated_limit.nil?
           firsts = value.collect(&label_method)
-        elsif column.associated_limit == 0
+        elsif column.associated_limit.zero?
           size if column.associated_number?
         else
           firsts = value.first(column.associated_limit)

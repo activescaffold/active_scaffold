@@ -80,7 +80,7 @@ class ColumnTest < MiniTest::Test
     # special comparisons
     refute @column.nil?
     assert @column != ''
-    assert @column != 0
+    assert @column.nonzero?
   end
 
   def test_ui

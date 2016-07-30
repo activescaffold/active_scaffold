@@ -52,7 +52,7 @@ module ActiveScaffold
       else
         # don't decrement counter for deleted records, on destroy they will update counter
         difference += (parent_record.send(column.name) - value).size
-        association.send :update_counter, difference unless difference == 0
+        association.send :update_counter, difference unless difference.zero?
       end
 
       # update counters on old parents if belongs_to is changed

@@ -29,7 +29,7 @@ Paginator::Page.class_eval do
     if @pager.infinite?
       items.to_a.empty?
     else
-      @pager.count == 0
+      @pager.count.zero?
     end
   end
 end
