@@ -192,7 +192,7 @@ module ActiveScaffold::Actions
     end
 
     def successful=(val)
-      @successful = (val) ? true : false
+      @successful = val ? true : false
     end
 
     # Redirect to the main page (override if the ActiveScaffold is used as a component on another controllers page) for Javascript degradation

@@ -155,10 +155,10 @@ module ActiveScaffold
                 trend_number = [value['number'].to_i,  1].max
                 now = date_bridge_now
                 if date_bridge_column_date?(column)
-                  from = now.beginning_of_day.ago((trend_number).send(value['unit'].downcase.singularize.to_sym))
+                  from = now.beginning_of_day.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
                   to = now.end_of_day
                 else
-                  from = now.ago((trend_number).send(value['unit'].downcase.singularize.to_sym))
+                  from = now.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
                   to = now
                 end
                 return from, to
@@ -167,10 +167,10 @@ module ActiveScaffold
                 now = date_bridge_now
                 if date_bridge_column_date?(column)
                   from = now.beginning_of_day
-                  to = now.end_of_day.in((trend_number).send(value['unit'].downcase.singularize.to_sym))
+                  to = now.end_of_day.in(trend_number.send(value['unit'].downcase.singularize.to_sym))
                 else
                   from = now
-                  to = now.in((trend_number).send(value['unit'].downcase.singularize.to_sym))
+                  to = now.in(trend_number.send(value['unit'].downcase.singularize.to_sym))
                 end
                 return from, to
               end

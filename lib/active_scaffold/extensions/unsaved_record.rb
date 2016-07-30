@@ -2,7 +2,7 @@
 module ActiveScaffold::UnsavedRecord
   # acts like a dirty? flag, manually thrown during update_record_from_params.
   def unsaved=(val)
-    @unsaved = (val) ? true : false
+    @unsaved = val ? true : false
   end
 
   # whether the unsaved? flag has been thrown
