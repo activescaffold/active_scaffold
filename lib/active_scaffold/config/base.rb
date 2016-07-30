@@ -122,5 +122,7 @@ module ActiveScaffold::Config
         end
       end
     end
+
+    private_class_method :columns_accessor
   end
 end
