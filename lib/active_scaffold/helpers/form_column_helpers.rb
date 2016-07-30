@@ -450,7 +450,7 @@ module ActiveScaffold
 
       def partial_for_model(model, partial)
         controller = active_scaffold_controller_for(model)
-        while controller.uses_active_scaffold? do
+        while controller.uses_active_scaffold?
           path = File.join(controller.controller_path, partial)
           return path if template_exists?(path, true)
           controller = controller.superclass
