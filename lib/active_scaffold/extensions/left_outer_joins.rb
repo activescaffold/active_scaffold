@@ -19,7 +19,7 @@ if Rails.version < '5.0.0'
       alias :left_joins :left_outer_joins
 
       def outer_joins(*args)
-        ActiveSupport::Deprecation.warn "use left_outer_joins or left_joins which is added to Rails 5.0.0"
+        ActiveSupport::Deprecation.warn 'use left_outer_joins or left_joins which is added to Rails 5.0.0'
         left_outer_joins(*args)
       end
 
@@ -31,7 +31,7 @@ if Rails.version < '5.0.0'
       alias :left_joins! :left_outer_joins!
 
       def outer_joins!(*args)
-        ActiveSupport::Deprecation.warn "use left_outer_joins! or left_joins! which is added to Rails 5.0.0"
+        ActiveSupport::Deprecation.warn 'use left_outer_joins! or left_joins! which is added to Rails 5.0.0'
         left_outer_joins!(*args)
       end
 

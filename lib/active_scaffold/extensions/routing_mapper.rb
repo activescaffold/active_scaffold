@@ -89,12 +89,12 @@ module ActionDispatch
         end
 
         def define_active_scaffold_concern
-          ActiveSupport::Deprecation.warn "Add concern :active_scaffold, ActiveScaffold::Routing::Basic.new(association: true) to your routes file."
+          ActiveSupport::Deprecation.warn 'Add concern :active_scaffold, ActiveScaffold::Routing::Basic.new(association: true) to your routes file.'
           concern :active_scaffold, ActiveScaffold::Routing::Basic.new(association: true)
         end
 
         def define_active_scaffold_association_concern
-          ActiveSupport::Deprecation.warn "Add concern :active_scaffold_association, ActiveScaffold::Routing::Association.new to your routes file."
+          ActiveSupport::Deprecation.warn 'Add concern :active_scaffold_association, ActiveScaffold::Routing::Association.new to your routes file.'
           concern :active_scaffold_association, ActiveScaffold::Routing::Association.new
         end
 
@@ -103,13 +103,13 @@ module ActionDispatch
           if opts[:association] && !@concerns[:active_scaffold_association]
             define_active_scaffold_association_concern
           end
-          ActiveSupport::Deprecation.warn "Use concerns: :active_scaffold in resources instead of as_routes, or concerns :active_scaffold in resources block if want to disable association routes or restrict routes with only or except options."
+          ActiveSupport::Deprecation.warn 'Use concerns: :active_scaffold in resources instead of as_routes, or concerns :active_scaffold in resources block if want to disable association routes or restrict routes with only or except options.'
           concerns :active_scaffold, parent_options.merge(association: opts[:association])
         end
 
         def as_association_routes
           define_active_scaffold_association_concern unless @concerns[:active_scaffold_association]
-          ActiveSupport::Deprecation.warn "Use concerns: :active_scaffold_association in resources instead of as_association_routes, or concerns :active_scaffold_association in resources block if want to restrict routes with only or except options."
+          ActiveSupport::Deprecation.warn 'Use concerns: :active_scaffold_association in resources instead of as_association_routes, or concerns :active_scaffold_association in resources block if want to restrict routes with only or except options.'
           concerns :active_scaffold_association, parent_options
         end
 
