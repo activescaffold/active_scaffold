@@ -152,7 +152,7 @@ module ActiveScaffold
             def date_bridge_from_to_for_trend(column, value)
               case value['opt']
               when 'PAST'
-                trend_number = [value['number'].to_i,  1].max
+                trend_number = [value['number'].to_i, 1].max
                 now = date_bridge_now
                 if date_bridge_column_date?(column)
                   from = now.beginning_of_day.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
@@ -163,7 +163,7 @@ module ActiveScaffold
                 end
                 return from, to
               when 'FUTURE'
-                trend_number = [value['number'].to_i,  1].max
+                trend_number = [value['number'].to_i, 1].max
                 now = date_bridge_now
                 if date_bridge_column_date?(column)
                   from = now.beginning_of_day
