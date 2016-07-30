@@ -1,7 +1,7 @@
 require 'forwardable'
 
 class Paginator
-  VERSION = '1.0.9'
+  VERSION = '1.0.9'.freeze
 
   class ArgumentError < ::ArgumentError; end
   class MissingCountError < ArgumentError; end

@@ -3,7 +3,7 @@ module ActiveScaffold
     # All extra helpers that should be included in the View.
     # Also a dumping ground for uncategorized helpers.
     module ViewHelpers
-      NESTED_PARAMS = [:eid, :association, :parent_scaffold]
+      NESTED_PARAMS = [:eid, :association, :parent_scaffold].freeze
       include ActiveScaffold::Helpers::IdHelpers
       include ActiveScaffold::Helpers::AssociationHelpers
       include ActiveScaffold::Helpers::PaginationHelpers

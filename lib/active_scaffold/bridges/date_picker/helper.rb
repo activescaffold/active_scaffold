@@ -18,7 +18,7 @@ module ActiveScaffold::Bridges
         /%p/ => 'tt',
         /%S/ => 'ss',
         /%[cUWwxXZz]/ => ''
-      }
+      }.freeze
 
       def self.date_options_for_locales
         I18n.available_locales.collect do |locale|

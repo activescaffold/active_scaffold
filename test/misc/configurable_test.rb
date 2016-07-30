@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class ConfigurableClass
-  FOO = 'bar'
+  FOO = 'bar'.freeze
   def foo; FOO end
   def self.foo; FOO end
 end
@@ -19,7 +19,7 @@ class ConfigurableTest < MiniTest::Test
   ## constants and methods for tests to check against
   ##
   def hello; 'world' end
-  HELLO = 'world'
+  HELLO = 'world'.freeze
 
   def test_instance_configuration
     configurable_class = IncludedClass.new
