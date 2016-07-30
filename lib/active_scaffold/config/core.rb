@@ -44,6 +44,7 @@ module ActiveScaffold::Config
     def self.dhtml_history=(val)
       @@dhtml_history = val
     end
+
     def self.dhtml_history?
       @@dhtml_history ? true : false
     end
@@ -66,6 +67,7 @@ module ActiveScaffold::Config
     def self.ignore_columns
       @@ignore_columns
     end
+
     def self.ignore_columns=(val)
       @@ignore_columns = ActiveScaffold::DataStructures::Set.new(*val)
     end

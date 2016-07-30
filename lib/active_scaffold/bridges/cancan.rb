@@ -10,6 +10,7 @@ class ActiveScaffold::Bridges::Cancan < ActiveScaffold::DataStructures::Bridge
     ::ActiveRecord::Base.send :include, ActiveScaffold::Bridges::Cancan::ModelUserAccess::Model
     ::ActiveRecord::Base.send :include, ActiveScaffold::Bridges::Cancan::ActiveRecord
   end
+
   def self.install?
     Object.const_defined? 'CanCan'
   end

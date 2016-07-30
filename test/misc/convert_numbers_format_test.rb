@@ -5,9 +5,11 @@ class NumberModel < ActiveRecord::Base
   def self.columns
     @columns ||= [ColumnMock.new('id', '', 'int(11)'), ColumnMock.new('number', '', 'double(10,2)')]
   end
+
   def self.columns_hash
     @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
   end
+
   def self.load_schema!
     columns_hash.each do |name, column|
       define_attribute(

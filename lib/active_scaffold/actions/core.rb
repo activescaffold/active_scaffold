@@ -18,6 +18,7 @@ module ActiveScaffold::Actions
       base.helper_method :touch_device?
       base.helper_method :hover_via_click?
     end
+
     def render_field
       if request.get?
         render_field_for_inplace_editing

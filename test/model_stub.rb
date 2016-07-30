@@ -47,9 +47,11 @@ class ModelStub < ActiveRecord::Base
   def self.a_authorized_for_bar?
     true
   end
+
   def self.b_authorized?
     false
   end
+
   def self.c_authorized_for_create?
     false
   end

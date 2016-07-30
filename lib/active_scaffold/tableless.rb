@@ -86,6 +86,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     def self.included(base)
       base.alias_method_chain :get_records, :tableless if Rails.version >= '4.2'
     end
+
     def get_records_with_tableless
       klass < ActiveScaffold::Tableless ? scope.to_a : get_records_without_tableless
     end
@@ -95,6 +96,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     def self.included(base)
       base.alias_method_chain :get_records, :tableless if Rails.version >= '4.2'
     end
+
     def get_records_with_tableless
       klass < ActiveScaffold::Tableless ? scope.limit(1).to_a : get_records_without_tableless
     end
@@ -201,9 +203,11 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   def self.columns
     @tableless_columns ||= []
   end
+
   def self.table_name
     @table_name ||= ActiveModel::Naming.plural(self)
   end
+
   def self.table_exists?
     true
   end

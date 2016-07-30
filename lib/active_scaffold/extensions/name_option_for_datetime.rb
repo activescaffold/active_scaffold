@@ -4,6 +4,7 @@ module ActiveScaffold
       options.merge!(:prefix => options[:name].gsub(/\[[^\[]*\]$/, '')) if options[:name]
       datetime_selector_without_name(options, html_options)
     end
+
     def self.included(base)
       base.class_eval do
         alias_method_chain :datetime_selector, :name

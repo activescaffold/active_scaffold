@@ -12,6 +12,7 @@ module ActiveScaffold::Config
     def self.link
       @@link
     end
+
     def self.link=(val)
       @@link = val
     end

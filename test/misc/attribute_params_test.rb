@@ -431,6 +431,7 @@ end
 
 class Controller
   def self.helper_method(*); end
+
   def self.before_action(*); end
 
   include ActiveScaffold::Core

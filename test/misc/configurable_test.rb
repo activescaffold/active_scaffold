@@ -3,6 +3,7 @@ require 'test_helper'
 class ConfigurableClass
   FOO = 'bar'.freeze
   def foo; FOO end
+
   def self.foo; FOO end
 end
 

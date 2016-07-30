@@ -28,6 +28,7 @@ module ActiveScaffold::Bridges::DatePicker::CastExtension
   def fallback_string_to_date_with_date_picker(string)
     Date.strptime(string, I18n.t('date.formats.default')) rescue fallback_string_to_date_without_date_picker(string)
   end
+
   def self.included(base)
     base.alias_method_chain :fallback_string_to_date, :date_picker
   end

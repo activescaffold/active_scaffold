@@ -6,9 +6,11 @@ class PermissionModel < ActiveRecord::Base
     @columns ||= [ColumnMock.new('id', '', 'int(11)')] +
         %w(a1 a2 a3 b1 b2 b3 c1 c2 c3).map { |c| ColumnMock.new(c, '', 'varchar(255)') }
   end
+
   def self.columns_hash
     @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
   end
+
   def self.schema_loaded?
     true
   end
@@ -36,10 +38,12 @@ class PermissionModel < ActiveRecord::Base
   def a3_authorized_for_create?; true; end
 
   def b3_authorized_for_create?; false; end
+
   # def c3_authorized_for_create?; end
   def a2_authorized_for_create?; true; end
 
   def b2_authorized_for_create?; false; end
+
   # def c2_authorized_for_create?; end
   def a1_authorized_for_create?; true; end
 
@@ -49,10 +53,12 @@ class PermissionModel < ActiveRecord::Base
   def a3_authorized_for_read?; true; end
 
   def b3_authorized_for_read?; false; end
+
   # def c3_authorized_for_read?; end
   def a2_authorized_for_read?; true; end
 
   def b2_authorized_for_read?; false; end
+
   # def c2_authorized_for_read?; end
   def a1_authorized_for_read?; true; end
 
@@ -62,10 +68,12 @@ class PermissionModel < ActiveRecord::Base
   def a3_authorized_for_update?; true; end
 
   def b3_authorized_for_update?; false; end
+
   # def c3_authorized_for_update?; end
   def a2_authorized_for_update?; true; end
 
   def b2_authorized_for_update?; false; end
+
   # def c2_authorized_for_update?; end
   def a1_authorized_for_update?; true; end
 

@@ -6,6 +6,7 @@ class ActiveScaffold::Bridges::Carrierwave < ActiveScaffold::DataStructures::Bri
     require File.join(File.dirname(__FILE__), 'carrierwave/carrierwave_bridge')
     ActiveScaffold::Config::Core.send :include, ActiveScaffold::Bridges::Carrierwave::CarrierwaveBridge
   end
+
   def self.install?
     Object.const_defined? 'CarrierWave'
   end

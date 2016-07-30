@@ -4,7 +4,9 @@ module ModelStubs
   class ModelStub < ActiveRecord::Base
     self.abstract_class = true
     def self.columns; @columns ||= [ColumnMock.new('foo', '')] end
+
     def self.columns_hash; @hash ||= Hash[@columns.map { |c| [c.name, c] }] end
+
     def self.table_name
       @table_name || to_s.split('::').last.underscore.pluralize
     end
@@ -84,6 +86,7 @@ end
 class ConstraintsTestObject
   # stub out what the mixin expects to find ...
   def self.before_action(*); end
+
   def self.helper_method(*); end
   attr_accessor :active_scaffold_preload
   attr_accessor :active_scaffold_references
