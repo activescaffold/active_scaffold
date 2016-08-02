@@ -125,8 +125,8 @@ class ActiveSupport::TestCase
       script = block ? instance_eval(&block) : /.*/
       script = script.is_a?(Regexp) ? script.source : Regexp.quote(script)
       script = script.gsub('\n', '\\\\\\n')
-               .gsub(/['"]/, '\\\\\\\\\&')
-               .gsub('</script>', '</scr"+"ipt>')
+                     .gsub(/['"]/, '\\\\\\\\\&')
+                     .gsub('</script>', '</scr"+"ipt>')
       assert_select 'script[type=text/javascript]', Regexp.new('.*' + Regexp.quote("with(window.parent) { setTimeout(function() { window.eval('") + script + Regexp.quote("'); if (typeof(loc) !== 'undefined') loc.replace('about:blank'); }, 1) };") + '.*')
     end
   end
