@@ -168,7 +168,7 @@ module ActiveScaffold
         field =
           if only_value
             content_tag(:span, get_column_value(record, column), column_options.except(:name, :object)) <<
-            hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
+              hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
           else
             active_scaffold_input_for column, scope, column_options
           end
