@@ -463,7 +463,7 @@ module ActiveScaffold
         value = '' if value.nil?
         value
       end
-      collection.reverse! if order.downcase == 'desc'
+      collection.reverse! if order.casecmp('DESC').zero?
       collection
     end
   end
