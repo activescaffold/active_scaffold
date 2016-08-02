@@ -340,7 +340,7 @@ module ActiveScaffold::DataStructures
       if @column
         if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
           @form_ui = :select
-          @options = {:options => active_record_class.send(name.to_s.pluralize).keys}
+          @options = {:options => active_record_class.send(name.to_s.pluralize).keys.map(&:to_sym)}
         elsif column_number?
           @number = true
           @form_ui = :number
