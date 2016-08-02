@@ -236,10 +236,10 @@ module ActiveScaffold
 
       def like_pattern(text_search)
         case text_search
-          when :full then '%?%'
-          when :start then '?%'
-          when :end then '%?'
-          else '?'
+        when :full then '%?%'
+        when :start then '?%'
+        when :end then '%?'
+        else '?'
         end
       end
     end
@@ -436,12 +436,12 @@ module ActiveScaffold
 
     def joins_for_finder
       case joins_for_collection
-        when String
-          [joins_for_collection]
-        when Array
-          joins_for_collection
-        else
-          []
+      when String
+        [joins_for_collection]
+      when Array
+        joins_for_collection
+      else
+        []
       end + active_scaffold_habtm_joins
     end
 

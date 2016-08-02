@@ -182,8 +182,8 @@ module ActiveScaffold::DataStructures
     attr_reader :includes
     def includes=(value)
       @includes = case value
-        when Array then value
-        else value ? [value] : value # not convert nil to [nil]
+                  when Array then value
+                  else value ? [value] : value # not convert nil to [nil]
       end
     end
 
@@ -194,8 +194,8 @@ module ActiveScaffold::DataStructures
 
     def search_joins=(value)
       @search_joins = case value
-        when Array then value
-        else [value] # automatically convert to an array
+                      when Array then value
+                      else [value] # automatically convert to an array
       end
     end
 
@@ -347,8 +347,8 @@ module ActiveScaffold::DataStructures
           @options = {:format => :i18n_number}
         else
           @form_ui = case @column.type
-            when :boolean then :checkbox
-            when :text then :textarea
+                     when :boolean then :checkbox
+                     when :text then :textarea
           end
         end
       end
@@ -395,12 +395,12 @@ module ActiveScaffold::DataStructures
       native = '.' # native ruby separator
       format = {:separator => '', :delimiter => ''}.merge! I18n.t('number.format', :default => {})
       specific = case options[:format]
-      when :currency
-        I18n.t('number.currency.format', :default => nil)
-      when :size
-        I18n.t('number.human.format', :default => nil)
-      when :percentage
-        I18n.t('number.percentage.format', :default => nil)
+                 when :currency
+                   I18n.t('number.currency.format', :default => nil)
+                 when :size
+                   I18n.t('number.human.format', :default => nil)
+                 when :percentage
+                   I18n.t('number.percentage.format', :default => nil)
       end
       format.merge! specific unless specific.nil?
       if format[:separator].blank? || !value.include?(format[:separator]) && value.include?(native) && (format[:delimiter] != native || value !~ /\.\d{3}$/)

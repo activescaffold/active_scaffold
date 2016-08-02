@@ -104,8 +104,8 @@ module ActiveScaffold
         end
 
       table = case association.macro
-        when :belongs_to then active_scaffold_config.model.table_name
-        else association.table_name
+              when :belongs_to then active_scaffold_config.model.table_name
+              else association.table_name
       end
 
       if association.options[:primary_key]

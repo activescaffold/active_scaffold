@@ -87,12 +87,12 @@ module ActiveScaffold
       def options_for_association_conditions(association, record = nil)
         return nil if association.options[:through]
         case association.macro
-          when :has_one, :has_many
-            # Find only orphaned objects
-            {association.foreign_key => nil}
-          when :belongs_to, :has_and_belongs_to_many
-            # Find all
-            nil
+        when :has_one, :has_many
+          # Find only orphaned objects
+          {association.foreign_key => nil}
+        when :belongs_to, :has_and_belongs_to_many
+          # Find all
+          nil
         end
       end
 
