@@ -40,7 +40,7 @@ class AttributeParamsTest < MiniTest::Test
   end
 
   def test_saving_has_many_select
-    buildings = 2.times.map { Building.create }
+    buildings = Array.new(2) { Building.create }
     model = update_record_from_params(Person.new, :create, :first_name, :last_name, :buildings, :first_name => 'First', :last_name => '', :buildings => ['', *buildings.map { |b| b.id.to_s }]) # checkbox_list always add a hidden tag with empty value
     assert_equal 'First', model.first_name
     assert_nil model.last_name
@@ -179,7 +179,7 @@ class AttributeParamsTest < MiniTest::Test
   end
 
   def test_saving_has_many_through_select
-    people = 2.times.map { Person.create }
+    people = Array.new(2) { Person.create }
     assert people.all?(&:persisted?)
 
     model = update_record_from_params(Building.new, :create, :name, :tenants, :name => 'Tower', :tenants => ['', *people.map { |b| b.id.to_s }]) # checkbox_list always add a hidden tag with empty value
@@ -216,7 +216,7 @@ class AttributeParamsTest < MiniTest::Test
 
   def test_saving_has_many_crud_and_belongs_to_select
     floor = Floor.create
-    people = 2.times.map { Person.create }
+    people = Array.new(2) { Person.create }
     key = Time.now.to_i.to_s
     floors = {'0' => '', floor.id.to_s => {:number => '1', :tenant => '', :id => floor.id.to_s}, key => {:number => '2', 'tenant' => people.first.id.to_s}, key.succ => {:number => '4', 'tenant' => people.last.id.to_s}, key.succ.succ => {:number => '', 'tenant' => ''}}
     model = update_record_from_params(Building.new, :create, :name, :floors, :name => 'First', :floors => floors)
@@ -358,7 +358,7 @@ class AttributeParamsTest < MiniTest::Test
   end
 
   def test_saving_has_many_polymorphic_select
-    contacts = 2.times.map { Contact.create }
+    contacts = Array.new(2) { Contact.create }
 
     model = update_record_from_params(Person.new, :create, :first_name, :contacts, :first_name => 'Me', :contacts => ['', contacts.first.id.to_s])
     assert_equal 'Me', model.first_name
@@ -385,7 +385,7 @@ class AttributeParamsTest < MiniTest::Test
   end
 
   def test_saving_habtm_select
-    roles = 2.times.map { Role.create }
+    roles = Array.new(2) { Role.create }
 
     model = update_record_from_params(Person.new, :create, :first_name, :roles, :first_name => 'Me', :roles => ['', roles.first.id.to_s])
     assert_equal 'Me', model.first_name
