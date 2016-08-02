@@ -9,20 +9,20 @@ class TinyMceTest < ActionView::TestCase
   #
   # [1]: https://github.com/spohlenz/tinymce-rails/blob/master/lib/tinymce/rails/helper.rb#L37
   def tinymce_configuration(config = :default)
-    return case config
-           when :default
-             Class.new do
-               def options
-                 {theme: 'modern'}
-               end
-             end.new
-           when :alternate
-             Class.new do
-               def options
-                 {theme: 'alternate', toolbar: 'undo redo | format'}
-               end
-             end.new
-           end
+    case config
+    when :default
+      Class.new do
+        def options
+          {theme: 'modern'}
+        end
+      end.new
+    when :alternate
+      Class.new do
+        def options
+          {theme: 'alternate', toolbar: 'undo redo | format'}
+        end
+      end.new
+    end
   end
 
   def test_includes
