@@ -72,7 +72,7 @@ module ActiveScaffold::Actions
 
     def updated_record_with_form(columns, attributes, scope)
       if attributes && scope
-        attributes = scope.gsub('[', '').split(']').inject(attributes) { |h, idx| h[idx] }
+        attributes = scope.delete('[').split(']').inject(attributes) { |h, idx| h[idx] }
         id = attributes[:id]
       else
         id = params[:id]

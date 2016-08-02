@@ -551,11 +551,11 @@ module ActiveScaffold
       end
 
       def clean_column_name(name)
-        name.to_s.gsub('?', '')
+        name.to_s.delete('?')
       end
 
       def clean_class_name(name)
-        name.underscore.gsub('/', '_')
+        name.underscore.tr('/', '_')
       end
 
       # the naming convention for overriding with helpers
@@ -628,7 +628,7 @@ module ActiveScaffold
             if options.include?(:header_message)
               options[:header_message]
             else
-              as_('errors.template.header', :count => count, :model => options[:object_name].to_s.gsub('_', ' '))
+              as_('errors.template.header', :count => count, :model => options[:object_name].to_s.tr('_', ' '))
             end
 
           message = options.include?(:message) ? options[:message] : as_('errors.template.body')
