@@ -2,7 +2,7 @@ module ActiveScaffold::Bridges
   class UsaStateSelect
     module UsaStateSelectHelpers
       def usa_state_select_options(options)
-        # TODO remove when rails 3.2 support is dropped
+        # TODO: remove when rails 3.2 support is dropped
         defined?(ActionView::Helpers::InstanceTag) ? options[:object] : options
       end
 
@@ -69,7 +69,7 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::UsaStateSelect::FormColumnHelpers
   include ActiveScaffold::Bridges::UsaStateSelect::SearchColumnHelpers
 end
-if defined? ActionView::Helpers::InstanceTag # TODO remove when rails 3.2 support is dropped
+if defined? ActionView::Helpers::InstanceTag # TODO: remove when rails 3.2 support is dropped
   module ActionView::Helpers::Tags
     class UsaStateSelect < ActionView::Helpers::InstanceTag
       include ActiveScaffold::Bridges::UsaStateSelect::UsaStateSelectOptionsHelpers
