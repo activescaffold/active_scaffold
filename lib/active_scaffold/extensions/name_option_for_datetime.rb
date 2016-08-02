@@ -1,7 +1,7 @@
 module ActiveScaffold
   module DateSelectExtension
     def datetime_selector_with_name(options, html_options)
-      options.merge!(:prefix => options[:name].gsub(/\[[^\[]*\]$/, '')) if options[:name]
+      options[:prefix] = options[:name].gsub(/\[[^\[]*\]$/, '') if options[:name]
       datetime_selector_without_name(options, html_options)
     end
 

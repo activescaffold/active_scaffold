@@ -513,7 +513,7 @@ module ActiveScaffold
         record = options.delete(:object)
         if !ActiveScaffold.js_framework.nil? && controller.respond_to?(:record_select_config, true)
           remote_controller = active_scaffold_controller_for(record_select_config.model).controller_path
-          options.merge!(:controller => remote_controller)
+          options[:controller] = remote_controller
           options.merge!(active_scaffold_input_text_options)
           record_select_field(options[:name], record, options)
         else

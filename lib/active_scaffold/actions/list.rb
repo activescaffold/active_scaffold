@@ -115,10 +115,8 @@ module ActiveScaffold::Actions
       paginate = params[:format].nil? ? (accepts? :html, :js) : %w(html js).include?(params[:format])
       options[:pagination] = active_scaffold_config.list.pagination if paginate
       if options[:pagination]
-        options.merge!(
-          :per_page => active_scaffold_config.list.user.per_page,
-          :page => active_scaffold_config.list.user.page
-        )
+        options[:per_page] = active_scaffold_config.list.user.per_page
+        options[:page] = active_scaffold_config.list.user.page
       end
       if active_scaffold_config.list.auto_select_columns
         auto_select_columns = list_columns + [active_scaffold_config.columns[active_scaffold_config.model.primary_key]]
