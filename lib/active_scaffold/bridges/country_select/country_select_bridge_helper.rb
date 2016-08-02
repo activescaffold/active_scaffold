@@ -29,7 +29,7 @@ module ActiveScaffold::Bridges
 end
 
 # To use old way, saving country name instead of CountrySelect default of country code
-CountrySelect::FORMATS[:old] = lambda { |country| [country.translations[I18n.locale.to_s] || country.name, country.name] }
+CountrySelect::FORMATS[:old] = ->(country) { [country.translations[I18n.locale.to_s] || country.name, country.name] }
 
 ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::CountrySelect::FormColumnHelpers
