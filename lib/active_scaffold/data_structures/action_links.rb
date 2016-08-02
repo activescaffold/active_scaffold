@@ -31,7 +31,7 @@ module ActiveScaffold::DataStructures
         link
       end
     end
-    alias_method :<<, :add
+    alias << add
 
     def add_to_set(link)
       @set << link

@@ -25,8 +25,8 @@ module ActiveScaffold
         to = "- #{format_number_value(controller.class.condition_value_for_numeric(column, value['to']), column.options)}" if value['opt'] == 'BETWEEN'
         format_human_condition column, value['opt'].downcase, from, to
       end
-      alias_method :active_scaffold_human_condition_decimal, :active_scaffold_human_condition_integer
-      alias_method :active_scaffold_human_condition_float, :active_scaffold_human_condition_integer
+      alias active_scaffold_human_condition_decimal active_scaffold_human_condition_integer
+      alias active_scaffold_human_condition_float active_scaffold_human_condition_integer
 
       def active_scaffold_human_condition_string(column, value)
         opt = ActiveScaffold::Finder::STRING_COMPARATORS.key(value['opt']) || value['opt']
@@ -40,16 +40,16 @@ module ActiveScaffold
         to = "- #{I18n.l controller.condition_value_for_datetime(column, value['to'], conversion)}" if value['opt'] == 'BETWEEN'
         format_human_condition column, value['opt'], from, to
       end
-      alias_method :active_scaffold_human_condition_time, :active_scaffold_human_condition_date
-      alias_method :active_scaffold_human_condition_datetime, :active_scaffold_human_condition_date
-      alias_method :active_scaffold_human_condition_timestamp, :active_scaffold_human_condition_date
+      alias active_scaffold_human_condition_time active_scaffold_human_condition_date
+      alias active_scaffold_human_condition_datetime active_scaffold_human_condition_date
+      alias active_scaffold_human_condition_timestamp active_scaffold_human_condition_date
 
       def active_scaffold_human_condition_boolean(column, value)
         attribute = column.active_record_class.human_attribute_name(column.name)
         label = as_(ActiveScaffold::Core.column_type_cast(value, column.column) ? :true : :false)
         as_(:boolean, :scope => :human_conditions, :column => attribute, :value => label)
       end
-      alias_method :active_scaffold_human_condition_checkbox, :active_scaffold_human_condition_boolean
+      alias active_scaffold_human_condition_checkbox active_scaffold_human_condition_boolean
 
       def active_scaffold_human_condition_null(column, value)
         format_human_condition column, value.to_sym
@@ -70,14 +70,14 @@ module ActiveScaffold
         end
         as_(:association, :scope => :human_conditions, :column => attribute, :value => associated.join(', '))
       end
-      alias_method :active_scaffold_human_condition_multi_select, :active_scaffold_human_condition_select
-      alias_method :active_scaffold_human_condition_record_select, :active_scaffold_human_condition_select
+      alias active_scaffold_human_condition_multi_select active_scaffold_human_condition_select
+      alias active_scaffold_human_condition_record_select active_scaffold_human_condition_select
 
       # the naming convention for overriding form fields with helpers
       def override_human_condition_column(column)
         override_helper column, 'human_condition_column'
       end
-      alias_method :override_human_condition_column?, :override_human_condition_column
+      alias override_human_condition_column? override_human_condition_column
 
       def override_human_condition?(search_ui)
         respond_to?(override_human_condition(search_ui))

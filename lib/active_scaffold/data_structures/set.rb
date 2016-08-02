@@ -20,7 +20,7 @@ module ActiveScaffold::DataStructures
         @set << arg unless @set.include? arg # avoid duplicates
       end
     end
-    alias_method :<<, :add
+    alias << add
 
     # the way to remove items from the set.
     def exclude(*args)
@@ -29,7 +29,7 @@ module ActiveScaffold::DataStructures
       # check respond_to? :to_sym, ActionColumns doesn't respond to to_sym
       @set.reject! { |c| c.respond_to?(:to_sym) && args.include?(c.to_sym) } # reject all items specified
     end
-    alias_method :remove, :exclude
+    alias remove exclude
 
     # returns an array of items with the provided names
     def find_by_names(*names)
@@ -42,7 +42,7 @@ module ActiveScaffold::DataStructures
       item = @set.find { |c| c == name }
       item
     end
-    alias_method :[], :find_by_name
+    alias [] find_by_name
 
     def each
       @set.each { |i| yield i }

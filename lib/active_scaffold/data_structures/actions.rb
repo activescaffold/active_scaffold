@@ -14,7 +14,7 @@ class ActiveScaffold::DataStructures::Actions
   def add(*args)
     args.each { |arg| @set << arg.to_sym unless @set.include? arg.to_sym }
   end
-  alias_method :<<, :add
+  alias << add
 
   def each
     @set.each { |item| yield item }

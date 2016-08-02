@@ -471,14 +471,14 @@ module ActiveScaffold
       def override_form_field(column)
         override_helper column, 'form_column'
       end
-      alias_method :override_form_field?, :override_form_field
+      alias override_form_field? override_form_field
 
       # the naming convention for overriding form input types with helpers
       def override_input(form_ui)
         method = "active_scaffold_input_#{form_ui}"
         method if respond_to? method
       end
-      alias_method :override_input?, :override_input
+      alias override_input? override_input
 
       def subform_partial_for_column(column)
         subform_partial = "#{active_scaffold_config_for(column.association.klass).subform.layout}_subform"

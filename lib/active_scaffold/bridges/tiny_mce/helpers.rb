@@ -45,7 +45,7 @@ class ActiveScaffold::Bridges::TinyMce
 
       # The implementation is very tinymce specific, so it makes sense allowing :form_ui
       # to be :tinymce as well
-      alias_method :active_scaffold_input_tinymce, :active_scaffold_input_text_editor
+      alias active_scaffold_input_tinymce active_scaffold_input_text_editor
     end
 
     module SearchColumnHelpers

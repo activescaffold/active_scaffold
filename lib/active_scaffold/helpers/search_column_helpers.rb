@@ -137,7 +137,7 @@ module ActiveScaffold
         select_tag(options[:name], options_for_select(select_options, ActiveScaffold::Core.column_type_cast(options[:value], column.column)), :id => options[:id])
       end
       # we can't use checkbox ui because it's not possible to decide whether search for this field or not
-      alias_method :active_scaffold_search_checkbox, :active_scaffold_search_boolean
+      alias active_scaffold_search_checkbox active_scaffold_search_boolean
 
       def active_scaffold_search_null(column, options)
         select_options = []
@@ -206,10 +206,10 @@ module ActiveScaffold
         end
         content_tag :span, html, :class => 'search_range'
       end
-      alias_method :active_scaffold_search_integer, :active_scaffold_search_range
-      alias_method :active_scaffold_search_decimal, :active_scaffold_search_range
-      alias_method :active_scaffold_search_float, :active_scaffold_search_range
-      alias_method :active_scaffold_search_string, :active_scaffold_search_range
+      alias active_scaffold_search_integer active_scaffold_search_range
+      alias active_scaffold_search_decimal active_scaffold_search_range
+      alias active_scaffold_search_float active_scaffold_search_range
+      alias active_scaffold_search_string active_scaffold_search_range
 
       def field_search_datetime_value(value)
         DateTime.new.in_time_zone(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
@@ -231,7 +231,7 @@ module ActiveScaffold
       def active_scaffold_search_time(column, options)
         active_scaffold_search_datetime(column, options.merge!(:discard_date => true))
       end
-      alias_method :active_scaffold_search_timestamp, :active_scaffold_search_datetime
+      alias active_scaffold_search_timestamp active_scaffold_search_datetime
 
       ##
       ## Search column override signatures

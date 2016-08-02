@@ -38,7 +38,7 @@ module ActiveScaffold::DataStructures
       # then add columns to @set (unless they already exist)
       args.each { |a| @set << ActiveScaffold::DataStructures::Column.new(a.to_sym, @active_record_class) unless find_by_name(a) }
     end
-    alias_method :<<, :add
+    alias << add
 
     def exclude(*args)
       # only remove columns from _inheritable. we never want to completely forget about a column.
@@ -56,7 +56,7 @@ module ActiveScaffold::DataStructures
       column = @set.find { |c| c == name }
       column
     end
-    alias_method :[], :find_by_name
+    alias [] find_by_name
 
     def each
       @set.each { |i| yield i }

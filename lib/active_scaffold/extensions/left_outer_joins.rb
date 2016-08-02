@@ -16,7 +16,7 @@ if Rails.version < '5.0.0'
         check_if_method_has_arguments!('left_outer_joins', args)
         spawn.left_outer_joins!(*args.compact.flatten)
       end
-      alias :left_joins :left_outer_joins
+      alias left_joins left_outer_joins
 
       def outer_joins(*args)
         ActiveSupport::Deprecation.warn 'use left_outer_joins or left_joins which is added to Rails 5.0.0'
@@ -28,7 +28,7 @@ if Rails.version < '5.0.0'
         self.left_outer_joins_values += args
         self
       end
-      alias :left_joins! :left_outer_joins!
+      alias left_joins! left_outer_joins!
 
       def outer_joins!(*args)
         ActiveSupport::Deprecation.warn 'use left_outer_joins! or left_joins! which is added to Rails 5.0.0'

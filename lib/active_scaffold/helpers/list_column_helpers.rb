@@ -96,7 +96,7 @@ module ActiveScaffold
       def column_override(column)
         override_helper column, 'column'
       end
-      alias_method :column_override?, :column_override
+      alias column_override? column_override
 
       # the naming convention for overriding column types with helpers
       def override_column_ui(list_ui)
@@ -105,7 +105,7 @@ module ActiveScaffold
         method = "active_scaffold_column_#{list_ui}"
         @_column_ui_overrides[list_ui] = (method if respond_to? method)
       end
-      alias_method :override_column_ui?, :override_column_ui
+      alias override_column_ui? override_column_ui
 
       ##
       ## Formatting

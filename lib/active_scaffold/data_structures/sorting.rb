@@ -7,7 +7,7 @@ module ActiveScaffold::DataStructures
     attr_accessor :constraint_columns
     attr_accessor :sorting_by_primary_key # enabled by default for postgres
     attr_reader :model
-    alias_method :active_record_class, :model
+    alias active_record_class model
 
     def initialize(columns, model)
       @columns = columns

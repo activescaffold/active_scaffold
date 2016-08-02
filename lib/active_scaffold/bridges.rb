@@ -29,7 +29,7 @@ module ActiveScaffold
       bridge
     end
     class << self
-      alias_method :[], :load
+      alias [] load
     end
 
     def self.run_all
