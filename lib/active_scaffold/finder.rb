@@ -164,7 +164,7 @@ module ActiveScaffold
             format += ' %z' if parts[:offset].present? && format !~ /%z/i
           end
           if !parts[:year] && !parts[:month] && !parts[:mday]
-            value = "#{Date.today.strftime(format.gsub(/%[HI].*/, ''))} #{value}"
+            value = "#{Time.zone.today.strftime(format.gsub(/%[HI].*/, ''))} #{value}"
           end
           value = translate_days_and_months(value, format) if I18n.locale != :en
           time = DateTime.strptime(value, format) rescue nil

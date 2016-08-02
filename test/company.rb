@@ -88,7 +88,7 @@ class Company < ActiveRecord::Base
   def name_came_from_user?; end
 
   def date
-    Date.today
+    Time.zone.today
   end
 
   def datetime
