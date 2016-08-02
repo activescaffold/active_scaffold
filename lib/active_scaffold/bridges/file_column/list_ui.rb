@@ -18,7 +18,8 @@ module ActiveScaffold
         link_to(
           image_tag(url_for_file_column(record, column.name.to_s, 'thumb'), :border => 0),
           url_for_file_column(record, column.name.to_s),
-          :popup => true)
+          :popup => true
+        )
       end
     end
   end
