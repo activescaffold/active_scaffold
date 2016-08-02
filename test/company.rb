@@ -92,6 +92,6 @@ class Company < ActiveRecord::Base
   end
 
   def datetime
-    Time.now
+    Time.zone.now
   end
 end

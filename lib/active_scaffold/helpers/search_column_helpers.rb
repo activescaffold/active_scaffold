@@ -212,7 +212,7 @@ module ActiveScaffold
       alias_method :active_scaffold_search_string, :active_scaffold_search_range
 
       def field_search_datetime_value(value)
-        DateTime.new(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
+        DateTime.new.in_time_zone(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
       end
 
       def active_scaffold_search_datetime(column, options)
