@@ -380,8 +380,8 @@ module ActiveScaffold::DataStructures
                         else
                           column.name.to_s
                         end
-      else
-        association.foreign_key
+                      else
+                        association.foreign_key
       end
     end
 
