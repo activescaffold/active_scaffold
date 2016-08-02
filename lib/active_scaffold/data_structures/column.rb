@@ -375,11 +375,11 @@ module ActiveScaffold::DataStructures
     def field_name
       return nil if virtual?
       @field_name ||= if column
-        if active_record?
-          @active_record_class.connection.quote_column_name(column.name)
-        else
-          column.name.to_s
-        end
+                        if active_record?
+                          @active_record_class.connection.quote_column_name(column.name)
+                        else
+                          column.name.to_s
+                        end
       else
         association.foreign_key
       end
