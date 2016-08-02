@@ -14,7 +14,7 @@ module ActiveScaffold
                else
                  response.body || ''
                 end
-      response.status = 200 if (300...400).include? response.status
+      response.status = 200 if (300...400).cover? response.status
 
       # Eval in parent scope and replace document location of this frame
       # so back button doesn't replay action on targeted forms
