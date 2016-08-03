@@ -10,7 +10,7 @@ class ColumnTest < MiniTest::Test
 
   def test_column
     assert @column.column.is_a?(ActiveRecord::ConnectionAdapters::Column)
-    assert @column.column.name == 'a'
+    assert_equal @column.column.name, 'a'
   end
 
   def test_basic_properties
@@ -54,33 +54,33 @@ class ColumnTest < MiniTest::Test
   def test_equality
     # create a separate columns object, and make sure it's not ==
     columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b)
-    assert columns != @column
+    refute_equal columns, @column
 
     # create a separate action_columns object, and make sure it's not ==
     columns = ActiveScaffold::DataStructures::ActionColumns.new(:a, :b)
-    assert columns != @column
+    refute_equal columns, @column
 
     # identity
-    assert @column == @column # rubocop:disable Lint/UselessComparison
+    assert_equal @column, @column
 
     # string comparison
-    assert @column == 'a'
-    assert @column != 'fake'
+    assert_equal @column, 'a'
+    refute_equal @column, 'fake'
 
     # symbol comparison
-    assert @column == :a
-    assert @column != :fake
+    assert_equal @column, :a
+    refute_equal @column, :fake
 
     # comparison with different object of same type
     column2 = ActiveScaffold::DataStructures::Column.new(:fake, ModelStub)
-    assert @column != column2
+    refute_equal @column, column2
     column2.name = 'a'
-    assert @column == column2
+    assert_equal @column, column2
 
     # special comparisons
     refute @column.nil?
-    assert @column != ''
-    assert @column != 0
+    refute_equal @column, ''
+    refute_equal @column, 0
   end
 
   def test_ui
