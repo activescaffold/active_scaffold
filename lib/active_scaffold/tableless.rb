@@ -246,11 +246,9 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     run_callbacks(:create) {}
   end
   alias create_record _create_record # for rails4 < 4.0.6, < 4.1.2
-  alias create _create_record # for rails3
 
   def _update_record(*) #:nodoc:
     run_callbacks(:update) {}
   end
   alias update_record _update_record # for rails4 < 4.0.6, < 4.1.2
-  alias update _update_record # for rails3
 end
