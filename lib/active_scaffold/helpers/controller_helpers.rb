@@ -17,15 +17,23 @@ module ActiveScaffold
         @temporary_ids[record.class.name] if record && @temporary_ids
       end
 
+      # These params should not propagate:
+      # :adapter and :position are one-use rendering arguments.
+      # :sort, :sort_direction, and :page are arguments that stored in the session.
+      # and wow. no we don't want to propagate :record.
+      # :commit is a special rails variable for form buttons
+      # :_method is a special rails variable to simulate put, patch and delete actions.
+      # :dont_close is submit button which avoids closing form.
+      # :auto_pagination is used when all records are loaded automatically with multiple request.
+      # :iframe is used to simulate ajax forms loading form in iframe.
+      # :associated_id used in add_existing
+      # :authenticity_token is sent on some ajax requests
+      BLACKLIST_PARAMS = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :dont_close, :auto_pagination, :iframe, :associated_id, :authenticity_token].freeze
+
       def params_for(options = {})
-        # :adapter and :position are one-use rendering arguments. they should not propagate.
-        # :sort, :sort_direction, and :page are arguments that stored in the session. they need not propagate.
-        # and wow. no we don't want to propagate :record.
-        # :commit is a special rails variable for form buttons
-        blacklist = [:adapter, :position, :sort, :sort_direction, :page, :auto_pagination, :record, :commit, :_method, :authenticity_token, :iframe, :associated_id, :dont_close]
         unless @params_for
           @params_for = {}
-          params.except(*blacklist).each { |key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value }
+          params.except(*BLACKLIST_PARAMS).each { |key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value }
           @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end

@@ -15,6 +15,7 @@ module ActiveScaffold::Actions
       pager = Paginator.new(query.count, active_scaffold_config.list.per_page) do |offset, per_page|
         query.offset(offset).limit(per_page).map(&:reify)
       end
+      @pagination_action = :deleted
       @page = pager.page(params[:page] || 1)
       @records = @page.items
       respond_to_action(:list)

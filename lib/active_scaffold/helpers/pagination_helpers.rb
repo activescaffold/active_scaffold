@@ -6,7 +6,8 @@ module ActiveScaffold
       end
 
       def pagination_url_options(url_options = nil)
-        url_options ||= params_for
+        # :id needed because rails reuse it even if we delete from params (like do_refresh_list does)
+        url_options ||= params_for(:action => @pagination_action || :index, :id => params[:id])
         unless active_scaffold_config.store_user_settings
           url_options[:search] = search_params if search_params.present?
           if active_scaffold_config.list.user.user_sorting?
