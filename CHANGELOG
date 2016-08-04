@@ -1,6 +1,6 @@
-- Fix for using jquery-ui-rails 6.0
-
 = 3.4.42
+- fix do_refresh_list on actions with GET route, it used :id and :action from request for sorting and pagination links
+- Fix for using jquery-ui-rails 6.0
 - Fix for protected and private authorized methods
 
 = 3.4.41.1
