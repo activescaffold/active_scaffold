@@ -447,10 +447,10 @@ var ActiveScaffold = {
     jQuery('.as-js-button', element).show();
   },
   sliders: function(element) {
-    $('.as-slider', element).each(function() {
+    jQuery('.as-slider', element).each(function() {
       var opts = $(this).data('slider');
-      $(this).slider(opts); 
-      if (opts.disabled) $(this).find('.ui-slider-handle').hide();
+      jQuery(this).slider(opts); 
+      if (opts.disabled) jQuery(this).find('.ui-slider-handle').hide();
     });
   },
   load_embedded: function(element) {
@@ -977,15 +977,15 @@ var ActiveScaffold = {
          */
         var last_focus = ActiveScaffold.last_focus;
         if (last_focus) {
-          $(last_focus).blur();
+          jQuery(last_focus).blur();
           ActiveScaffold.last_focus = last_focus;
         }
         //ActiveScaffold.disable_form(as_form); // not needed: called from on('ajax:beforeSend', 'form.as_form')
 
-        if ($.rails.fire(element, 'ajax:beforeSend', [xhr, settings])) {
+        if (jQuery.rails.fire(element, 'ajax:beforeSend', [xhr, settings])) {
           element.trigger('ajax:send', xhr);
         } else {
-          $(ActiveScaffold.last_focus).focus();
+          jQuery(ActiveScaffold.last_focus).focus();
           return false;
         }
       },
@@ -1020,15 +1020,15 @@ var ActiveScaffold = {
 
   setup_warn_changes: function() {
     var need_confirm = false;
-    var unload_message = $('meta[name=unload-message]').attr('content') || ActiveScaffold.config.unload_message || "This page contains unsaved data that will be lost if you leave this page.";
-    $(document).on('change input', '.active-scaffold form:not(.search) input, .active-scaffold form:not(.search) textarea, .active-scaffold form:not(.search) select', function() {
-      $(this).closest('form').addClass('need-confirm');
+    var unload_message = jQuery('meta[name=unload-message]').attr('content') || ActiveScaffold.config.unload_message || "This page contains unsaved data that will be lost if you leave this page.";
+    jQuery(document).on('change input', '.active-scaffold form:not(.search) input, .active-scaffold form:not(.search) textarea, .active-scaffold form:not(.search) select', function() {
+      jQuery(this).closest('form').addClass('need-confirm');
     });
-    $(document).on('click', '.active-scaffold .as_cancel:not([data-remote]), .active-scaffold input[type=submit]', function() {
-      $(this).closest('form').removeClass('need-confirm');
+    jQuery(document).on('click', '.active-scaffold .as_cancel:not([data-remote]), .active-scaffold input[type=submit]', function() {
+      jQuery(this).closest('form').removeClass('need-confirm');
     });
     window.onbeforeunload = function() {
-      if ($('form.need-confirm').length) return unload_message;
+      if (jQuery('form.need-confirm').length) return unload_message;
     }
   }
 }

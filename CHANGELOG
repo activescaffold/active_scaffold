@@ -10,6 +10,7 @@
 - fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes
 - fix translation for ActiveRecord enums
 - fix do_refresh_list on actions with GET route, it used :id and :action from request for sorting and pagination links
+- replace some uses of $ with jQuery
 
 = 3.4.39
 - fix removing delete link with config.delete.link = false, broken on 3.4.38
