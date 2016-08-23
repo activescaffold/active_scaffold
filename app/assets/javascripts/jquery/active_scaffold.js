@@ -205,9 +205,10 @@ jQuery(document).ready(function($) {
 
   jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form, .checkbox-list.update_form input:checkbox', function(event) {
     var element = jQuery(this);
-    var form_element = element.closest('.checkbox-list');
+    var form_element;
     var value, additional_params;
-    if (form_element.is(".checkbox-list")) {
+    if (element.is(".checkbox-list input:checkbox")) {
+      form_element = element.closest('.checkbox-list')
       value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
       additional_params = (element.is(':checked') ? '_added=' : '_removed=') + element.val();
     } else {
@@ -449,7 +450,7 @@ var ActiveScaffold = {
   sliders: function(element) {
     jQuery('.as-slider', element).each(function() {
       var opts = $(this).data('slider');
-      jQuery(this).slider(opts); 
+      jQuery(this).slider(opts);
       if (opts.disabled) jQuery(this).find('.ui-slider-handle').hide();
     });
   },

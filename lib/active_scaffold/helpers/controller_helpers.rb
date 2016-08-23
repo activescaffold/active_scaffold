@@ -28,7 +28,9 @@ module ActiveScaffold
       # :iframe is used to simulate ajax forms loading form in iframe.
       # :associated_id used in add_existing
       # :authenticity_token is sent on some ajax requests
-      BLACKLIST_PARAMS = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :dont_close, :auto_pagination, :iframe, :associated_id, :authenticity_token].freeze
+      # :_added is sent on checkbox-list with update_columns
+      # :_removed is sent on checkbox-list with update_columns
+      BLACKLIST_PARAMS = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :dont_close, :auto_pagination, :iframe, :associated_id, :authenticity_token, :_added, :_removed].freeze
 
       def params_for(options = {})
         unless @params_for
