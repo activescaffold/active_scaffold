@@ -138,7 +138,7 @@ module ActiveScaffold
           end
 
           options[:class] = "#{options[:class]} update_form".strip
-          options['data-update_url'] = url_for(url_params.merge(:_added => nil, :_removed => nil))
+          options['data-update_url'] = url_for(url_params)
           options['data-update_send_form'] = column.send_form_on_update_column
           options['data-update_send_form_selector'] = column.options[:send_form_selector] if column.options[:send_form_selector]
         end
