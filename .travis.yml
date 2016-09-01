@@ -14,9 +14,10 @@ jdk:
   - openjdk7
 language: ruby
 matrix:
-  exclude:
-    - rvm: 2.0
+  include:
+    - rvm: ruby-head
       gemfile: gemfiles/Gemfile.rails-5.0.x 
+  exclude:
     - rvm: 2.1
       gemfile: gemfiles/Gemfile.rails-5.0.x 
     - rvm: rbx-2
@@ -29,13 +30,11 @@ matrix:
     - rvm: jruby-9.1.2.0
       gemfile: gemfiles/Gemfile.rails-5.0.x
 rvm:
-  - 2.0
   - 2.1
   - 2.2.2
   - 2.3.1
-  - 2.4.0-preview1
+  #- 2.4.0-preview1
   - jruby-9.1.2.0
   - rbx-2
   - rbx-3.29
-  - ruby-head
 sudo: false

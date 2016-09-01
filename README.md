@@ -8,7 +8,7 @@ Overview
 [![Inline docs](https://inch-ci.org/github/activescaffold/active_scaffold.svg?branch=master)](https://inch-ci.org/github/activescaffold/active_scaffold)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 4.0.5 is supported, ruby >= 2.0 supported, although it should work with ruby 1.9.3, it's too old and not tested.
+ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 4.0.5 is supported, ruby >= 2.1 supported, although it should work with ruby >= 1.9.3, it's too old and not tested.
 
 Branch Details
 --------------
