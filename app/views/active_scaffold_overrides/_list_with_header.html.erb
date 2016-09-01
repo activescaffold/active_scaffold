@@ -10,21 +10,21 @@
           <td>
             <div class="active-scaffold show_search-view <%= "#{id_from_controller params[:controller]}-view" %> view">
               <%= render :partial => active_scaffold_config.list.search_partial, :locals => {:xhr => true} %>
-            </div> 
-          </td> 
+            </div>
+          </td>
         </tr>
       <% @record = old_record %>
       <% else %>
       <tr><td></td></tr>
       <% end %>
-      <% if active_scaffold_config.list.always_show_create %>
+      <% if active_scaffold_config.list.always_show_create && controller.send(:create_authorized?) %>
       <% old_record, @record = @record, new_model %>
-        <tr> 
-          <td> 
+        <tr>
+          <td>
             <div  class="active-scaffold create-view <%= "#{id_from_controller params[:controller]}-view" %> view">
               <%= render :partial => 'create_form_on_list' %>
-            </div> 
-          </td> 
+            </div>
+          </td>
         </tr>
       <% @record = old_record %>
       <% end %>

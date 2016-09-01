@@ -5,6 +5,7 @@
 - rename active_scaffold generator as active_scaffold:resource
 - rename active_scaffold_controller generator as active_scaffold:controller
 - remove deprecations from 3.4.x (active_scaffold_includes and using @record in helpers)
+- check create authorized for create on list (config.list.always_show_create)
 - fix select of existing record for nested subform
 - fix apply constraints to parent (fix update columns on subform on embedded scaffold)
 - fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes
