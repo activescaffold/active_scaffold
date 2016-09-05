@@ -11,7 +11,7 @@ gemfile:
   - gemfiles/Gemfile.rails-4.1.x
   - gemfiles/Gemfile.rails-5.0.x
 jdk:
-  - openjdk7
+  - openjdk8
 language: ruby
 matrix:
   include:
@@ -29,11 +29,11 @@ matrix:
     - rvm: jruby-9.1.4.0
       gemfile: gemfiles/Gemfile.rails-5.0.x
 rvm:
-  - 2.1
-  - 2.2.2
-  - 2.3.1
+  #- 2.1
+  #- 2.2.2
+  #- 2.3.1
   #- 2.4.0-preview1
   - jruby-9.1.4.0
-  - rbx-2
-  - rbx-3.29
+  #- rbx-2
+  #- rbx-3.29
 sudo: false
