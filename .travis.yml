@@ -24,17 +24,17 @@ matrix:
     - rvm: rbx-2
       gemfile: gemfiles/Gemfile.rails-5.0.x 
   allow_failures:
-    - rvm: 2.4.0-preview1
+    - rvm: 2.4.0-preview2
     - rvm: rbx-3.29
       gemfile: gemfiles/Gemfile.rails-5.0.x
-    - rvm: jruby-9.1.4.0
+    - rvm: jruby-9.1.5.0
       gemfile: gemfiles/Gemfile.rails-5.0.x
 rvm:
   - 2.1
   - 2.2.2
   - 2.3.1
-  #- 2.4.0-preview1
-  - jruby-9.1.4.0
+  - 2.4.0-preview2
+  - jruby-9.1.5.0
   - rbx-2
   - rbx-3.29
 sudo: false
