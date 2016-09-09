@@ -376,7 +376,7 @@ module ActiveScaffold
 
       def action_link_selected?(link, record)
         missing_options, url_options = replaced_action_link_url_options(link, record)
-        (url_options - params.to_a).blank? && missing_options.all? { |k, _| params[k].nil? }
+        (url_options - params.to_h.to_a).blank? && missing_options.all? { |k, _| params[k].nil? }
       end
 
       def action_link_html_options(link, record, options)
