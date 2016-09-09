@@ -1,13 +1,15 @@
 module ActiveScaffold
   module ReverseAssociation
+    module WithAutodetect
+      def inverse_of
+        super || autodetect_inverse
+      end
+    end
+
     module CommonMethods
       def self.included(base)
         base.class_eval { attr_writer :reverse }
-        base.alias_method_chain :inverse_of, :autodetect
-      end
-
-      def inverse_of_with_autodetect
-        inverse_of_without_autodetect || autodetect_inverse
+        base.prepend(WithAutodetect)
       end
 
       def inverse_for?(klass)

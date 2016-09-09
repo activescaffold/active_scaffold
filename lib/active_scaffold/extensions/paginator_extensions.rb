@@ -1,11 +1,14 @@
 require 'active_scaffold/paginator'
 
 Paginator.class_eval do
-  # Total number of pages
-  def number_of_pages_with_infinite
-    number_of_pages_without_infinite if @count
+  module WithInfinite
+    def number_of_pages
+      super if @count
+    end
   end
-  alias_method_chain :number_of_pages, :infinite
+
+  # Total number of pages
+  prepend WithInfinite
 
   # Is this an "infinite" paginator
   def infinite?
@@ -18,12 +21,15 @@ Paginator.class_eval do
 end
 
 Paginator::Page.class_eval do
-  # Checks to see if there's a page after this one
-  def next_with_infinite?
-    return true if @pager.infinite?
-    next_without_infinite?
+  module WithInfinite
+    def next?
+      return true if @pager.infinite?
+      super
+    end
   end
-  alias_method_chain :next?, :infinite
+
+  # Checks to see if there's a page after this one
+  prepend WithInfinite
 
   def empty?
     if @pager.infinite?

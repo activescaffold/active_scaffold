@@ -1,15 +1,14 @@
 module ActiveScaffold
-  module DateSelectExtension
-    def datetime_selector_with_name(options, html_options)
+  module WithName
+    def datetime_selector(options, html_options)
       options[:prefix] = options[:name].gsub(/\[[^\[]*\]$/, '') if options[:name]
-      datetime_selector_without_name(options, html_options)
+      super(options, html_options)
     end
+  end
 
+  module DateSelectExtension
     def self.included(base)
-      base.class_eval do
-        alias_method_chain :datetime_selector, :name
-        private :datetime_selector_without_name, :datetime_selector_with_name, :datetime_selector
-      end
+      base.prepend WithName
     end
   end
 end
