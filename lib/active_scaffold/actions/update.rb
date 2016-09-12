@@ -180,8 +180,8 @@ module ActiveScaffold::Actions
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
-    def update_authorized?(record = nil)
-      (!nested? || !nested.readonly?) && (record || self).authorized_for?(:crud_type => :update)
+    def update_authorized?(record = nil, column = nil)
+      (!nested? || !nested.readonly?) && (record || self).authorized_for?(crud_type: :update, column: column)
     end
 
     def update_ignore?(record = nil)
