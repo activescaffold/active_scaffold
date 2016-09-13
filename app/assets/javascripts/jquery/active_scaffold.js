@@ -299,12 +299,14 @@ jQuery(document).ready(function($) {
   ActiveScaffold.draggable_lists('.draggable-lists', document);
   ActiveScaffold.sliders(document);
   if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
-  jQuery(document).on('as:element_updated', function(e) {
-    ActiveScaffold.load_embedded(e.target);
+  jQuery(document).on('as:element_updated as:element_created', function(e) {
     ActiveScaffold.enable_js_form_buttons(e.target);
-    ActiveScaffold.live_search(e.target);
     ActiveScaffold.draggable_lists('.draggable-lists', e.target);
     ActiveScaffold.sliders(e.target);
+  });
+  jQuery(document).on('as:element_updated', function(e) {
+    ActiveScaffold.load_embedded(e.target);
+    ActiveScaffold.live_search(e.target);
   });
   jQuery(document).on('as:element_updated', '.active-scaffold', function(e) {
     if (e.target != this) return;
