@@ -217,7 +217,7 @@ module ActiveScaffold
         return unless column.inplace_edit
         if controller.respond_to?(:update_authorized?, true)
           if controller.method(:update_authorized?).parameters.size == 2
-            return controller.send(:update_authorized?, record, column)
+            return controller.send(:update_authorized?, record, column.name)
           else
             ActiveSupport::Deprecation.warn 'add column = nil parameter to update_authorized? on your controller'
             editable = controller.send(:update_authorized?, record)
@@ -280,7 +280,7 @@ module ActiveScaffold
         elsif inplace_edit_cloning?(column)
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
-          url = url_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name)
+          url = params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name)
           plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
