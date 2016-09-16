@@ -30,7 +30,7 @@ module ActiveScaffold::Actions
           end
         end
       else
-        @record = build_associated(@column.association, @parent_record)
+        @record = build_associated(@column, @parent_record)
       end
       @scope = params[:scope]
     end

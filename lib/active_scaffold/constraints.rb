@@ -63,8 +63,8 @@ module ActiveScaffold
           elsif column.association
             if column.association.macro == :has_and_belongs_to_many
               active_scaffold_habtm_joins.concat column.includes
-            elsif !column.association.options[:polymorphic]
-              if column.association.macro == :belongs_to
+            elsif !column.polymorphic_association?
+              if column.belongs_to_association?
                 active_scaffold_preload.concat column.includes
               else
                 active_scaffold_references.concat column.includes
@@ -97,23 +97,22 @@ module ActiveScaffold
       # please see the relevant tests for concrete examples.
 
       field =
-        if [:has_one, :has_many, :has_and_belongs_to_many].include?(association.macro)
-          association.klass.primary_key
+        if %i(belongs_to belongs_to_record belongs_to_document).include?(association.macro)
+          association.foreign_key
         else
-          association.options[:foreign_key] || association.name.to_s.foreign_key
+          association.klass.primary_key
         end
 
-      table = case association.macro
-              when :belongs_to then active_scaffold_config.model.table_name
-              else association.table_name
-      end
+      table = association.belongs_to? ? active_scaffold_config.model.table_name : association.table_name
 
-      if association.options[:primary_key]
+      assoc_primary_key = association.options[:primary_key] if association.respond_to? :options
+      assoc_primary_key ||= association[:primary_key] if association.respond_to? :[]
+      if assoc_primary_key
         value = association.klass.find(value).send(association.options[:primary_key])
       end
 
       condition = {"#{table}.#{field}" => value}
-      if association.options[:polymorphic]
+      if association.polymorphic?
         raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller unless params[:parent_model]
         condition["#{table}.#{association.name}_type"] = params[:parent_model].constantize.to_s
       end

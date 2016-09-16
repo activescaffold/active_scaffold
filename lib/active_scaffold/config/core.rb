@@ -157,8 +157,11 @@ module ActiveScaffold::Config
 
       # create a new default columns datastructure, since it doesn't make sense before now
       attribute_names = _columns.collect { |c| c.name.to_sym }.sort_by(&:to_s)
-      association_column_names = model.reflect_on_all_associations.collect { |a| a.name.to_sym }.sort_by(&:to_s)
-      @columns = ActiveScaffold::DataStructures::Columns.new(model, attribute_names + association_column_names)
+      association_column_names = model.reflect_on_all_associations.collect { |a| a.name.to_sym }
+      if defined?(ActiveMongoid) && model < ActiveMongoid::Associations
+        association_column_names.concat model.am_relations.keys.map(&:to_sym) 
+      end
+      @columns = ActiveScaffold::DataStructures::Columns.new(model, attribute_names + association_column_names.sort_by(&:to_s))
 
       # and then, let's remove some columns from the inheritable set.
       content_columns = Set.new(_content_columns.map(&:name))

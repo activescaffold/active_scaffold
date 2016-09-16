@@ -175,7 +175,7 @@ module ActiveScaffold
       def format_association_value(value, column, size)
         method = column.options[:label_method] || :to_label
         value =
-          if column.association.collection?
+          if column.plural_association?
             format_collection_association_value(value, column, method, size)
           elsif value
             format_singular_association_value(value, column, method)

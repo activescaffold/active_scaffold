@@ -445,7 +445,7 @@ module ActiveScaffold
       def url_options_for_nested_link(column, record, link, url_options)
         if column && column.association
           url_options[:parent_scaffold] = controller_path
-          url_options[column.association.active_record.name.foreign_key.to_sym] = url_options.delete(:id)
+          url_options[column.model.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:id] = if column.singular_association? && url_options[:action].to_sym != :index
                                '--CHILD_ID--'
                              else

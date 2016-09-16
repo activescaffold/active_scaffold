@@ -95,7 +95,7 @@ module ActiveScaffold
         associated = html_options.delete :value
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
-          method = column.association.macro == :belongs_to ? column.association.foreign_key : column.name
+          method = column.belongs_to_association? ? column.association.foreign_key : column.name
           select_options = sorted_association_options_find(column.association, false, record)
         else
           method = column.name
@@ -171,7 +171,7 @@ module ActiveScaffold
       def include_null_comparators?(column)
         return column.options[:null_comparators] if column.options.key? :null_comparators
         if column.association
-          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
+          !column.belongs_to_association? || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
         else
           column.column.try(:null)
         end

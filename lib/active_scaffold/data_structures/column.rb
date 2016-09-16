@@ -4,6 +4,7 @@ module ActiveScaffold::DataStructures
     include ActiveScaffold::OrmChecks
 
     attr_reader :active_record_class
+    alias_method :model, :active_record_class
 
     # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all others will be inferred from this name.
     attr_accessor :name
@@ -266,25 +267,34 @@ module ActiveScaffold::DataStructures
     attr_reader :column
 
     # the association from the ActiveRecord class
-    attr_reader :association
+    def association
+      @association || @am_association
+    end
+    
+    def belongs_to_association?
+      return @association.macro == :belongs_to if @association
+      return %i(belongs_to_record belongs_to_document).include?(@am_association.macro) if @am_association
+    end
+    
     def singular_association?
-      association && !association.collection?
+      association && !plural_association?
     end
 
     def plural_association?
-      association && association.collection?
+      return @association.collection? if @association
+      return %i(has_many_documents has_many_records).include?(@am_association.macro) if @am_association
     end
 
     def through_association?
-      association && association.options[:through]
+      @association && @association.options[:through]
     end
 
     def polymorphic_association?
-      association && association.options[:polymorphic]
+      association.try(:polymorphic?)
     end
 
     def readonly_association?
-      return false unless association
+      return false unless @association
       if association.options.key? :readonly
         association.options[:readonly]
       else
@@ -325,14 +335,17 @@ module ActiveScaffold::DataStructures
       self.name = name.to_sym
       @active_record_class = active_record_class
       @column = _columns_hash[self.name.to_s]
-      @association = active_record_class.reflect_on_association(self.name)
-      @autolink = !@association.nil?
+      @association = active_record_class.reflect_on_association(name)
+      if !@association && defined?(ActiveMongoid) && model < ActiveMongoid::Associations
+        @am_association ||= active_record_class.reflect_on_am_association(name)
+      end
+      @autolink = self.association.present?
       @table = _table_name
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
       @send_form_on_update_column = self.class.send_form_on_update_column
-      @actions_for_association_links = self.class.actions_for_association_links.clone if @association
+      @actions_for_association_links = self.class.actions_for_association_links.clone if self.association
       @select_columns = default_select_columns
 
       @text = @column.nil? || [:string, :text].include?(@column.type)
