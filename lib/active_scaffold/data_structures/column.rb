@@ -468,7 +468,7 @@ module ActiveScaffold::DataStructures
         unless virtual?
           if association.nil?
             field.to_s unless tableless?
-          elsif !association.polymorphic?
+          elsif association.type != :active_mongoid && !association.polymorphic?
             [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
           end
         end
