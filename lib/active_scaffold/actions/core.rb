@@ -211,7 +211,7 @@ module ActiveScaffold::Actions
       @conditions_from_params ||= begin
         conditions = {}
         params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
-          column = active_scaffold_config.model.columns_hash[key.to_s]
+          column = active_scaffold_config._columns_hash[key.to_s]
           next unless column
           key = key.to_sym
           not_string = [:string, :text].exclude?(column.type)
