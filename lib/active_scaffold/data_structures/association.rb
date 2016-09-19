@@ -66,7 +66,7 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    delegate :name, :klass, :foreign_key, to: :@association
+    delegate :name, :klass, :foreign_key, :==, to: :@association
 
     def through_reflection
       @association.through_reflection if through?
@@ -155,8 +155,8 @@ module ActiveScaffold::DataStructures
       @association.inverse_for?(klass) if @type == :active_record
     end
 
-    def reverse_association
-      return unless reverse_name = reverse
+    def reverse_association(klass = nil)
+      return unless reverse_name = reverse(klass)
       assoc = case @type
         when :active_record  then @association.klass.reflect_on_association(reverse_name)
         when :active_mongoid then @association.klass.reflect_on_am_association(reverse_name)
