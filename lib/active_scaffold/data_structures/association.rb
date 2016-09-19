@@ -140,6 +140,11 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    def reverse=(value)
+      # FIXME move reverse_association extension code here
+      @association.reverse = value if @type == :active_record
+    end
+
     def reverse(klass = nil)
       # FIXME move reverse_association extension code here
       @association.reverse(klass) if @type == :active_record
