@@ -165,7 +165,7 @@ module ActiveScaffold
       end
 
       def format_singular_association_value(value, column, label_method)
-        if column.polymorphic_association?
+        if column.association.polymorphic?
           "#{value.class.model_name.human}: #{value.send(label_method)}"
         else
           value.send(label_method)
@@ -281,7 +281,7 @@ module ActiveScaffold
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
           url = url_for(params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name))
-          plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
+          plural = column.association.try(:collection?) && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
           data[:ie_plural] = plural

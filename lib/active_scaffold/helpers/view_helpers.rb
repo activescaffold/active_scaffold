@@ -213,7 +213,7 @@ module ActiveScaffold
       def column_link_authorized?(link, column, record, associated)
         if column.association
           associated_for_authorized =
-            if column.plural_association? || (associated.respond_to?(:blank?) && associated.blank?)
+            if column.association.collection? || (associated.respond_to?(:blank?) && associated.blank?)
               column.association.klass
             else
               associated
@@ -363,7 +363,7 @@ module ActiveScaffold
         missing_options, url_options = url.partition { |_, v| v.nil? }
         replacements = {}
         replacements['--ID--'] = record.id.to_s if record
-        if link.column.try(:singular_association?)
+        if link.column.try(:association).try(:singular?)
           replacements['--CHILD_ID--'] = record.send(link.column.association.name).try(:id).to_s
         elsif nested?
           replacements['--CHILD_ID--'] = params[nested.param_name].to_s
@@ -418,13 +418,13 @@ module ActiveScaffold
 
       def get_action_link_id(link, record = nil, column = nil)
         column ||= link.column
-        if column && column.plural_association?
-          id = "#{column.association.name}-#{record.id}"
-        elsif column && column.singular_association?
-          if record.try(column.association.name.to_sym).present?
+        if column.try(:association) && record
+          if column.association.collection?
+            id = "#{column.association.name}-#{record.id}"
+          elsif record.send(column.association.name).present?
             id = "#{column.association.name}-#{record.send(column.association.name).id}-#{record.id}"
           else
-            id = "#{column.association.name}-#{record.id}" unless record.nil?
+            id = "#{column.association.name}-#{record.id}"
           end
         end
         id ||= record.try(:id) || (nested? ? nested_parent_id : '')

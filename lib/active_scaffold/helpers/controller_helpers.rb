@@ -100,16 +100,17 @@ module ActiveScaffold
       end
 
       # build an associated record for association
-      def build_associated(column, parent_record)
-        if column.through_association?
+      def build_associated(association, parent_record)
+        if association.through?
           # build full chain, only check create_associated on initial parent_record
           parent_record = build_associated(association.through_reflection, parent_record)
-          build_associated(association.source_reflection, parent_record).tap do |record|
-            save_record_to_association(record, association.source_reflection.reverse, parent_record) # set inverse
+          source_assoc = ActiveScaffold::DataStructures::Association.new(association.source_reflection, :active_record)
+          build_associated(source_assoc, parent_record).tap do |record|
+            save_record_to_association(record, source_assoc.reverse, parent_record) # set inverse
           end
-        elsif column.plural_association?
+        elsif association.collection?
           parent_record.send(association.name).build
-        elsif column.belongs_to_association? || parent_record.new_record? || parent_record.send(association.name).nil?
+        elsif association.belongs_to? || parent_record.new_record? || parent_record.send(association.name).nil?
           # avoid use build_association in has_one when record is saved and had associated record
           # because associated record would be changed in DB
           parent_record.send("build_#{association.name}")

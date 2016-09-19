@@ -68,7 +68,7 @@
   <% end -%>
   <% if show_actions -%>
     <%= content_tag column_tag, :class => "actions" do %>
-      <% if record_column.plural_association? and (record.authorized_for?(:crud_type => :delete) or not [:destroy, :delete_all].include?(record_column.association.options[:dependent])) %>
+      <% if record_column.association.collection? and (record.authorized_for?(:crud_type => :delete) or not [:destroy, :delete_all, :delete].include?(record_column.association.dependent)) %>
         <%= link_to as_(:remove), '#', :class => 'destroy', :id => "#{options[:id]}-destroy" , :data => {:delete_id => tr_id} unless locked %>
       <% end %>
       <% unless record.new_record? %>

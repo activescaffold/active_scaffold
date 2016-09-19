@@ -182,7 +182,7 @@ module ActiveScaffold
       end
 
       def label_for(column, options)
-        options[:id] unless column.form_ui == :select && column.plural_association?
+        options[:id] unless column.form_ui == :select && column.association.try(:collection?)
       end
 
       def subform_label(column, hidden)
@@ -200,7 +200,7 @@ module ActiveScaffold
         return true unless column.association
 
         # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
-        return false if column.polymorphic_association?
+        return false if column.association.polymorphic?
 
         # A column shouldn't be in the subform if it's the reverse association to the parent
         return false if column.association.inverse_for?(parent_record.class)
@@ -213,7 +213,7 @@ module ActiveScaffold
       end
 
       def column_show_add_new(column, associated, record)
-        value = (column.plural_association? && !column.readonly_association?) || column.singular_association?
+        value = (column.association.collection? && !column.association.readonly?) || column.association.singular?
         value &&= false unless column.association.klass.authorized_for?(:crud_type => :create)
         value
       end
@@ -502,7 +502,7 @@ module ActiveScaffold
       end
 
       def column_scope(column, scope = nil, record = nil)
-        if column.plural_association?
+        if column.association.try(:collection?)
           "#{scope}[#{column.name}][#{record.id || generate_temporary_id(record)}]"
         else
           "#{scope}[#{column.name}]"

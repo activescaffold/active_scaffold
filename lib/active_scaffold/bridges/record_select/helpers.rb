@@ -11,11 +11,11 @@ class ActiveScaffold::Bridges::RecordSelect
       # requires RecordSelect plugin to be installed and configured.
       def active_scaffold_input_record_select(column, options)
         record = options.delete(:object)
-        if column.singular_association?
+        if column.association.try(:singular?)
           multiple = false
           multiple = column.options[:html_options][:multiple] if column.options[:html_options] && column.options[:html_options][:multiple]
           active_scaffold_record_select(record, column, options, record.send(column.name), multiple)
-        elsif column.plural_association?
+        elsif column.association.try(:collection?)
           active_scaffold_record_select(record, column, options, record.send(column.name), true)
         else
           active_scaffold_record_select_autocomplete(record, column, options)
@@ -27,7 +27,7 @@ class ActiveScaffold::Bridges::RecordSelect
           raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
         end
         klass =
-          if column.polymorphic_association?
+          if column.association.polymorphic?
             record.send(column.association.foreign_type).constantize rescue nil
           else
             column.association.klass
@@ -38,7 +38,7 @@ class ActiveScaffold::Bridges::RecordSelect
 
         # if the opposite association is a :belongs_to (in that case association in this class must be has_one or has_many)
         # then only show records that have not been associated yet
-        if [:has_one, :has_many].include?(column.association.macro)
+        if column.association.has_one? || column.association.has_many?
           params[column.association.foreign_key] = ''
         end
 

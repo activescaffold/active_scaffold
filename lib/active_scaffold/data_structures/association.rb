@@ -72,6 +72,14 @@ module ActiveScaffold::DataStructures
       @association.through_reflection if through?
     end
 
+    def source_reflection
+      @association.source_reflection if through?
+    end
+
+    def scope
+      @association.scope if @type == :active_record
+    end
+
     def inverse_klass
       case @type
       when :active_record  then @association.active_record
@@ -118,6 +126,13 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    def dependent
+      case @type
+      when :active_record  then @association.options[:dependent]
+      when :active_mongoid then @association.dependent
+      end
+    end
+
     def table_name
       case @type
       when :active_record  then @association.table_name
@@ -126,8 +141,13 @@ module ActiveScaffold::DataStructures
     end
 
     def reverse
-      # FIXME move reverse code here
+      # FIXME move reverse_association extension code here
       @association.reverse if @type == :active_record
+    end
+
+    def inverse_for?(klass)
+      # FIXME move reverse_association extension code here
+      @association.inverse_for?(klass) if @type == :active_record
     end
 
     def reverse_association

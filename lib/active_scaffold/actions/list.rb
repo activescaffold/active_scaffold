@@ -97,8 +97,8 @@ module ActiveScaffold::Actions
     end
 
     def scoped_habtm?(column)
-      assoc = column.association if column.plural_association?
-      assoc && assoc.macro == :has_and_belongs_to_many && assoc.respond_to?(:scope) && assoc.scope
+      assoc = column.association if column.association.try :collection?
+      assoc && assoc.habtm? && assoc.scope
     end
 
     def get_row(crud_type_or_security_options = :read)
