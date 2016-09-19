@@ -230,7 +230,7 @@ module ActiveScaffold::Actions
 
     def new_model
       model = beginning_of_chain
-      if nested? && nested.association && nested.association.collection? && model.columns_hash[column = model.inheritance_column]
+      if nested? && nested.plural_association? && model.columns_hash[column = model.inheritance_column]
         model_name = params.delete(column) # in new action inheritance_column must be in params
         model_name ||= params[:record].delete(column) unless params[:record].blank? # in create action must be inside record key
         model_name = model_name.camelize if model_name
