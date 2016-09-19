@@ -101,7 +101,7 @@ module ActiveScaffold::DataStructures
     end
 
     def sorted?
-      default_sorting.present?
+      false # FIXME: default_sorting is not working anymore
     end
 
     def default_sorting
