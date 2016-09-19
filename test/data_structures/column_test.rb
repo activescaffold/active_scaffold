@@ -5,7 +5,7 @@ class ColumnTest < MiniTest::Test
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
     @association_col = ActiveScaffold::DataStructures::Column.new(:b, ModelStub)
     @association_col.stubs(:polymorphic_association?).returns(false)
-    @association_col.instance_variable_set(:@association, true)
+    @association_col.stubs(association: stub(polymorphic?: false))
   end
 
   def test_column

@@ -23,7 +23,7 @@ class AssociationColumnTest < MiniTest::Test
   end
 
   def test_association
-    assert @association_column.association.is_a?(ActiveRecord::Reflection::AssociationReflection)
+    assert @association_column.association.is_a?(ActiveScaffold::DataStructures::Association)
   end
 
   def test_includes
@@ -31,11 +31,11 @@ class AssociationColumnTest < MiniTest::Test
   end
 
   def test_plurality
-    assert @association_column.singular_association?
-    refute @association_column.plural_association?
+    assert @association_column.association.singular?
+    refute @association_column.association.collection?
 
     plural_association_column = ActiveScaffold::DataStructures::Column.new('other_models', ModelStub)
-    assert plural_association_column.plural_association?
-    refute plural_association_column.singular_association?
+    assert plural_association_column.association.collection?
+    refute plural_association_column.association.singular?
   end
 end

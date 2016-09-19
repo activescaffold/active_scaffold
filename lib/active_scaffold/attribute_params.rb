@@ -68,14 +68,15 @@ module ActiveScaffold
     def hack_for_has_many_counter_cache?(parent_record, column)
       return unless Rails.version < '5.0'
       assoc = column.association
-      assoc.try(:macro) == :has_many && assoc.options[:as] && parent_record.association(column.name).send(:has_cached_counter?)
+      return unless assoc.try(:type) == :active_record
+      assoc.has_many? && assoc.as && parent_record.association(column.name).send(:has_cached_counter?)
     end
 
     # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
     # rails 4 needs this hack for polymorphic has_many, when selecting record, not creating new one (value is Hash)
     # TODO: remove when pull request is merged and no version with bug is supported
     def counter_cache_hack?(assoc, value)
-      !value.is_a?(Hash) && assoc.try(:belongs_to?) && assoc.options[:counter_cache] && (Rails.version >= '5.0' || !assoc.options[:polymorphic])
+      !value.is_a?(Hash) && assoc.try(:type) == :active_record && assoc.try(:belongs_to?) && assoc.counter_cache && (Rails.version >= '5.0' || !assoc.polymorphic?)
     end
 
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
@@ -118,7 +119,7 @@ module ActiveScaffold
 
     def update_column_from_params(parent_record, column, attribute, avoid_changes = false)
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
-      if avoid_changes && column.plural_association?
+      if avoid_changes && column.association.collection?
         parent_record.association(column.name).target = value
       elsif counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value.try(:id)
@@ -135,7 +136,7 @@ module ActiveScaffold
           parent_record.association(column.name).target = value if column.association
         end
       end
-      if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
+      if column.association && column.association.reverse && column.association.reverse_association.belongs_to?
         Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
       end
       value
@@ -170,9 +171,9 @@ module ActiveScaffold
     end
 
     def column_value_from_param_simple_value(parent_record, column, value)
-      if column.singular_association?
+      if column.association.try :singular?
         if value.present?
-          if column.polymorphic_association?
+          if column.association.polymorphic?
             class_name = parent_record.send(column.association.foreign_type)
             class_name.constantize.find(value) if class_name.present?
           else
@@ -180,7 +181,7 @@ module ActiveScaffold
             column.association.klass.find(value)
           end
         end
-      elsif column.plural_association?
+      elsif column.association.try :collection?
         column_plural_assocation_value_from_value(column, Array(value))
       elsif column.number? && column.options[:format] && column.form_ui != :number
         column.number_to_native(value)
@@ -204,9 +205,9 @@ module ActiveScaffold
     end
 
     def column_value_from_param_hash_value(parent_record, column, value, avoid_changes = false)
-      if column.singular_association?
+      if column.association.try :singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
-      elsif column.plural_association?
+      elsif column.association.try :collection?
         # HACK: to be able to delete all associated records, hash will include "0" => ""
         value.collect { |_, val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) unless val.blank? }.compact
       else
@@ -229,7 +230,7 @@ module ActiveScaffold
     def build_record_from_params(params, column, record)
       current = record.send(column.name)
       klass = column.association.klass
-      (column.plural_association? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
+      (column.association.try(:collection?) && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
     end
 
     # Attempts to create or find an instance of the klass of the association in parent_column from the

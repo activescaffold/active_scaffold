@@ -339,9 +339,9 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_select(column, html_options)
-        if column.singular_association?
+        if column.association.try :singular?
           active_scaffold_input_singular_association(column, html_options)
-        elsif column.plural_association?
+        elsif column.association.try :collection?
           active_scaffold_input_plural_association(column, html_options)
         else
           active_scaffold_input_enum(column, html_options)

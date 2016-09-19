@@ -61,10 +61,10 @@ module ActiveScaffold
 
           # association column constraint
           elsif column.association
-            if column.association.macro == :has_and_belongs_to_many
+            if column.association.habtm?
               active_scaffold_habtm_joins.concat column.includes
-            elsif !column.polymorphic_association?
-              if column.belongs_to_association?
+            elsif !column.association.polymorphic?
+              if column.association.belongs_to?
                 active_scaffold_preload.concat column.includes
               else
                 active_scaffold_references.concat column.includes
@@ -96,8 +96,7 @@ module ActiveScaffold
       #
       # please see the relevant tests for concrete examples.
 
-      field =
-        if %i(belongs_to belongs_to_record belongs_to_document).include?(association.macro)
+      field = if association.belongs_to?
           association.foreign_key
         else
           association.klass.primary_key
@@ -105,16 +104,14 @@ module ActiveScaffold
 
       table = association.belongs_to? ? active_scaffold_config.model.table_name : association.table_name
 
-      assoc_primary_key = association.options[:primary_key] if association.respond_to? :options
-      assoc_primary_key ||= association[:primary_key] if association.respond_to? :[]
-      if assoc_primary_key
-        value = association.klass.find(value).send(association.options[:primary_key])
+      if association.primary_key
+        value = association.klass.find(value).send(association.primary_key)
       end
 
       condition = {"#{table}.#{field}" => value}
       if association.polymorphic?
         raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller unless params[:parent_model]
-        condition["#{table}.#{association.name}_type"] = params[:parent_model].constantize.to_s
+        condition["#{table}.#{association.foreign_type}"] = params[:parent_model].constantize.to_s
       end
 
       condition
@@ -143,9 +140,9 @@ module ActiveScaffold
       active_scaffold_constraints.each do |k, v|
         column = config.columns[k]
         if column && column.association
-          if column.plural_association?
+          if column.association.collection?
             record.send(k.to_s).send(:<<, column.association.klass.find(v))
-          elsif column.association.options[:polymorphic]
+          elsif column.association.polymorphic?
             raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller unless params[:parent_model]
             record.send("#{k}=", params[:parent_model].constantize.find(v))
           else # regular singular association
@@ -156,9 +153,9 @@ module ActiveScaffold
             #
             # note that we can't take the extra step to correct this unless we're permitted to
             # run operations where activerecord auto-saves the object.
-            reverse = column.association.klass.reflect_on_association(column.association.reverse)
-            if reverse.macro == :has_one && options[:allow_autosave]
-              record.send(k).send("#{column.association.reverse}=", record)
+            reverse = column.association.reverse_association
+            if reverse.singular? && !reverse.belongs_to? && options[:allow_autosave]
+              record.send(k).send("#{reverse.name}=", record)
             end
           end
         else
