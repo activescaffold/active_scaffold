@@ -5,7 +5,7 @@ module ActiveScaffold
     end
 
     def active_scaffold_config
-      self.class.active_scaffold_config
+      @active_scaffold_config ||= self.class.active_scaffold_config.proxy
     end
 
     def active_scaffold_config_for(klass)
@@ -46,6 +46,7 @@ module ActiveScaffold
           active_scaffold_config.actions.each do |mod|
             include "ActiveScaffold::Actions::#{mod.to_s.camelize}".constantize
             mod_conf = active_scaffold_config.send(mod)
+            #active_scaffold_config._setup_action(mod) if ActiveScaffold.threadsafe
             next unless mod_conf.respond_to?(:link) && (link = mod_conf.link)
 
             # sneak the action links from the actions into the main set
@@ -59,6 +60,7 @@ module ActiveScaffold
           end
         end
         _add_sti_create_links if active_scaffold_config.add_sti_create_links?
+        active_scaffold_config.deep_freeze! if ActiveScaffold.threadsafe
       end
 
       module Prefixes
@@ -173,7 +175,7 @@ module ActiveScaffold
         config._load_action_columns
         config
       else
-        controller.active_scaffold_config
+        controller.active_scaffold_config.proxy
       end
 
       def active_scaffold_controller_for(klass)

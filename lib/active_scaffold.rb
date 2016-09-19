@@ -44,16 +44,18 @@ module ActiveScaffold
   class ActionNotAllowed < SecurityError; end
   class ReverseAssociationRequired < RuntimeError; end
 
-  mattr_accessor :delayed_setup
-  mattr_accessor :stylesheets
+  mattr_accessor :delayed_setup, instance_writer: false
+  mattr_accessor :stylesheets, instance_writer: false
   self.stylesheets = []
-  mattr_accessor :javascripts
+  mattr_accessor :javascripts, instance_writer: false
   self.javascripts = []
 
-  def self.js_framework=(framework)
-    @@js_framework = framework
+  mattr_reader :threadsafe
+  def self.threadsafe!
+    @@threadsafe = true
   end
 
+  mattr_writer :js_framework, instance_writer: false
   def self.js_framework
     @@js_framework ||=
       if defined? Jquery
@@ -63,10 +65,7 @@ module ActiveScaffold
       end
   end
 
-  def self.js_config=(config)
-    @@js_config = config
-  end
-
+  mattr_writer :js_config, instance_writer: false
   def self.js_config
     @@js_config ||= {:scroll_on_close => :checkInViewport}
   end
@@ -75,10 +74,7 @@ module ActiveScaffold
   # name of bridge subdir should be used to exclude it
   # eg
   #   ActiveScaffold.exclude_bridges = [:cancan, :ancestry]
-  def self.exclude_bridges=(bridges)
-    @@exclude_bridges = bridges
-  end
-
+  mattr_writer :exclude_bridges, instance_writer: false
   def self.exclude_bridges
     @@exclude_bridges ||= []
   end

@@ -411,10 +411,27 @@ module ActiveScaffold::DataStructures
     end
 
     # to cache method to get value in list
-    attr_accessor :list_method
+    def list_method
+      Rails.cache.fetch(cache_key(:list_method))
+    end
+
+    def list_method=(value)
+      Rails.cache.write(cache_key(:list_method), value)
+    end
 
     # cache constraints for numeric columns (get in ActiveScaffold::Helpers::FormColumnHelpers::numerical_constraints_for_column)
-    attr_accessor :numerical_constraints
+    def numerical_constraints
+      Rails.cache.fetch(cache_key(:numerical_constraints))
+    end
+
+    def numerical_constraints=(value)
+      Rails.cache.write(cache_key(:numerical_constraints), value)
+    end
+
+    # cache key to cache column info
+    def cache_key(attr)
+      [@active_record_class.name, name, attr].compact.map(&:to_s).join('#')
+    end
 
     # the table.field name for this column, if applicable
     def field

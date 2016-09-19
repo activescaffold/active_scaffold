@@ -204,13 +204,29 @@ module ActiveScaffold::Config
       end
     end
 
+    def _setup_action(action)
+      define_singleton_method action do
+        self[action]
+      end
+    end
+
+    def proxy
+      return self unless ActiveScaffold.threadsafe
+      # Wrap class so we skip cow proxy wrapper classes cache, config objects may have singleton methods
+      CowProxy.wrap(self)
+    end
+
     # configuration routing.
     # we want to route calls named like an activated action to that action's global or local Config class.
     # ---------------------------
     def method_missing(name, *args)
+      self[name] || super
+    end
+
+    def [](action_name)
       @action_configs ||= {}
-      titled_name = name.to_s.camelcase
-      underscored_name = name.to_s.underscore.to_sym
+      titled_name = action_name.to_s.camelcase
+      underscored_name = action_name.to_s.underscore.to_sym
       klass = "ActiveScaffold::Config::#{titled_name}".constantize rescue nil
       if klass
         if @actions.include? underscored_name
@@ -219,8 +235,13 @@ module ActiveScaffold::Config
           raise "#{titled_name} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
         end
       end
-      super
     end
+
+    def []=(action_name, action_config)
+      @action_configs ||= {}
+      @action_configs[action_name] = action_config
+    end
+    private :[]=
 
     def self.method_missing(name, *args)
       klass = "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize rescue nil
@@ -258,6 +279,28 @@ module ActiveScaffold::Config
     def self.available_frontends
       frontends_dir = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
       Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
+    end
+  end
+end
+
+module CowProxy
+  module ActiveScaffold
+    module Config
+      class Core < ::CowProxy::WrapClass(::ActiveScaffold::Config::Core)
+        prepend ::CowProxy::Container
+        def _copy_on_write(*)
+          super.tap do
+            action_configs = {}
+            @hash.each { |k, v| action_configs[k] = v } if @hash
+            @hash = nil
+            __getobj__.instance_variable_set :@action_configs, action_configs
+          end
+        end
+
+        def method_missing(name, *args)
+          self[name] || super
+        end
+      end
     end
   end
 end
