@@ -1,7 +1,7 @@
 <%
-associated_form = render :partial => "form_association_record", :object => @record, :locals => {:scope => @scope, :parent_record => @parent_record, :column => @column, :locked => @record.new_record? && @column.singular_association?}
+associated_form = render :partial => "form_association_record", :object => @record, :locals => {:scope => @scope, :parent_record => @parent_record, :column => @column, :locked => @record.new_record? && @column.association.singular?}
 options = {:singular => false}
-if @column.singular_association?
+if @column.association.singular?
   options[:singular] = true
 else
   unless @record.new_record?

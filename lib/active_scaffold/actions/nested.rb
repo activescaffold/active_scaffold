@@ -112,11 +112,10 @@ module ActiveScaffold::Actions
       # has_many is done by beginning_of_chain and rails
       return unless (nested.belongs_to? || nested.has_one? || nested.habtm?) && nested.child_association
       return if (parent = nested_parent_record).nil?
-      case nested.child_association.macro
-      when :has_one, :belongs_to
+      if nested.child_association.singular?
         record.send("#{nested.child_association.name}=", parent)
-      when :has_many, :has_and_belongs_to_many
-        record.send(nested.child_association.name.to_s).send(:<<, parent)
+      else
+        record.send(nested.child_association.name) << parent
       end
     end
 
