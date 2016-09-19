@@ -136,7 +136,7 @@ module ActiveScaffold
           parent_record.association(column.name).target = value if column.association
         end
       end
-      if column.association && column.association.reverse && column.association.reverse_association.belongs_to?
+      if column.association.try(:reverse) && column.association.reverse_association.belongs_to?
         Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
       end
       value
@@ -230,7 +230,7 @@ module ActiveScaffold
     def build_record_from_params(params, column, record)
       current = record.send(column.name)
       klass = column.association.klass
-      (column.association.try(:collection?) && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
+      (column.association.collection? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
     end
 
     # Attempts to create or find an instance of the klass of the association in parent_column from the
@@ -260,12 +260,11 @@ module ActiveScaffold
       end
     end
 
-    def save_record_to_association(record, association_name, value)
-      association = record.class.reflect_on_association(association_name) if association_name
+    def save_record_to_association(record, association, value)
       if association.try(:collection?)
-        record.send(association_name) << value
+        record.send(association.name) << value
       elsif association
-        record.send("#{association_name}=", value)
+        record.send("#{association.name}=", value)
       end
     end
 

@@ -106,7 +106,7 @@ module ActiveScaffold
           parent_record = build_associated(association.through_reflection, parent_record)
           source_assoc = ActiveScaffold::DataStructures::Association.new(association.source_reflection, :active_record)
           build_associated(source_assoc, parent_record).tap do |record|
-            save_record_to_association(record, source_assoc.reverse, parent_record) # set inverse
+            save_record_to_association(record, source_assoc.reverse_association, parent_record) # set inverse
           end
         elsif association.collection?
           parent_record.send(association.name).build
@@ -116,7 +116,7 @@ module ActiveScaffold
           parent_record.send("build_#{association.name}")
         else
           association.klass.new.tap do |record|
-            save_record_to_association(record, association.reverse, parent_record) # set inverse
+            save_record_to_association(record, association.reverse_association, parent_record) # set inverse
           end
         end
       end
