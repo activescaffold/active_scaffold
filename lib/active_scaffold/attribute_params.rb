@@ -119,7 +119,7 @@ module ActiveScaffold
 
     def update_column_from_params(parent_record, column, attribute, avoid_changes = false)
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
-      if avoid_changes && column.association.collection?
+      if avoid_changes && column.association.try(:collection?)
         parent_record.association(column.name).target = value
       elsif counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value.try(:id)
