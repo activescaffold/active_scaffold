@@ -72,6 +72,13 @@ module ActiveScaffold::DataStructures
       @association.through_reflection if through?
     end
 
+    def inverse_klass
+      case @type
+      when :active_record  then @association.active_record
+      when :active_mongoid then @association.inverse_klass
+      end
+    end
+
     def primary_key
       case @type
       when :active_record  then @association.options[:primary_key]

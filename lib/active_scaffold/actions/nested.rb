@@ -89,13 +89,13 @@ module ActiveScaffold::Actions
         elsif nested.association.belongs_to?
           chain = active_scaffold_config.model.joins(nested.child_association.name)
           table_name =
-            if active_scaffold_config.model == nested.association.active_record
+            if active_scaffold_config.model == nested.association.inverse_klass
               dependency = ActiveRecord::Associations::JoinDependency.new(chain.klass, chain.joins_values, [])
               join_associations = Rails.version >= '4.1.0' ? dependency.join_root.children : dependency.join_associations
               join_associations.find { |join| join.try(:reflection).try(:name) == nested.child_association.name }.try(:table).try(:right)
             end
-          table_name ||= nested.association.active_record.table_name
-          chain.where(table_name => {nested.association.active_record.primary_key => nested_parent_record}).readonly(false)
+          table_name ||= nested.association.inverse_klass.table_name
+          chain.where(table_name => {nested.association.inverse_klass.primary_key => nested_parent_record}).readonly(false)
         end
       elsif nested? && nested.scope
         nested_parent_record.send(nested.scope)

@@ -71,27 +71,13 @@ module ActiveScaffold::DataStructures
   class NestedInfoAssociation < NestedInfo
     def initialize(model, params)
       super
-      @association = parent_model.reflect_on_association(params[:association].to_sym)
-      @param_name = @association.active_record.name.foreign_key.to_sym
+      @association = parent_scaffold.active_scaffold_config.columns[params[:association].to_sym].try(:association)
+      @param_name = @association.inverse_klass.name.foreign_key.to_sym
       @parent_id = params[@param_name]
       iterate_model_associations(model)
     end
 
-    delegate :name, :to => :association
-
-    def has_many?
-      association.macro == :has_many
-    end
-
-    def habtm?
-      association.macro == :has_and_belongs_to_many
-    end
-
-    delegate :belongs_to?, :to => :association
-
-    def has_one?
-      association.macro == :has_one
-    end
+    delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :to => :association
 
     # A through association with has_one or has_many as source association
     # create cannot be called in nested through associations, and not-nested through associations
@@ -101,27 +87,25 @@ module ActiveScaffold::DataStructures
     def readonly_through_association?(columns)
       return false unless through_association?
       return true if association.through_reflection.options[:through]
-      association.source_reflection.macro != :belongs_to && (
+      !association.source_reflection.belongs_to? && (
         !child_association || !columns.include?(child_association.through_reflection.name)
       )
     end
 
     def through_association?
-      association.options[:through]
+      association.through?
     end
 
     def readonly?
-      association.options[:readonly]
+      association.readonly?
     end
 
     def sorted?
-      association.options.key? :order
+      default_sorting.present?
     end
 
     def default_sorting
-      if association.options[:order] # TODO: remove when rails 3 compatibility is removed
-        association.options[:order]
-      elsif association.respond_to?(:scope) # rails 4
+      if association.respond_to?(:scope) # rails 4
         association.klass.class_eval(&association.scope).values[:order] if association.scope.is_a? Proc
       end
     end

@@ -5,7 +5,7 @@ module ActiveScaffold
       def cache_association_options(association, conditions, klass, cache = true)
         if active_scaffold_config.cache_association_options && cache
           @_associations_cache ||= Hash.new { |h, k| h[k] = {} }
-          key = [association.name, association.active_record.name, klass.name].join('/')
+          key = [association.name, association.inverse_klass.name, klass.name].join('/')
           @_associations_cache[key][conditions] ||= yield
         else
           yield
