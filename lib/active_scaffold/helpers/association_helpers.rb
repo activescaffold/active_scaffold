@@ -88,9 +88,8 @@ module ActiveScaffold
       # Should work in both the subform and form_ui=>:select modes.
       # Check association.name to specialize the conditions per-column.
       def options_for_association_conditions(association, record = nil)
-        return nil if association.respond_to?(:options) && association.options[:through]
-        case association.macro
-        when :has_one, :has_many, :has_many_documents, :has_many_records
+        return nil if association.through?
+        if association.has_one? || association.has_many?
           # Find only orphaned objects
           {association.foreign_key => nil}
         end
