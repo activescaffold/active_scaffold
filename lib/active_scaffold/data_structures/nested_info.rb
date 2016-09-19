@@ -101,12 +101,12 @@ module ActiveScaffold::DataStructures
     end
 
     def sorted?
-      false # FIXME: default_sorting is not working anymore
+      default_sorting.present?
     end
 
     def default_sorting
       if association.respond_to?(:scope) # rails 4
-        association.klass.class_eval(&association.scope).values[:order] if association.scope.is_a? Proc
+        association.klass.instance_exec(&association.scope).values[:order] if association.scope.is_a? Proc
       end
     end
 
