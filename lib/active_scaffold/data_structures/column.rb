@@ -336,7 +336,7 @@ module ActiveScaffold::DataStructures
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
 
-      if association && !association.polymorphic?
+      if association && !association.polymorphic? && association.type != :active_mongoid
         self.includes = [association.name]
         self.search_joins = includes.clone
       end
