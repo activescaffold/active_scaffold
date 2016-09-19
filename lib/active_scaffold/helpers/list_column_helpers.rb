@@ -123,7 +123,7 @@ module ActiveScaffold
             format_value(value, column.options)
           end
         else
-          if column.association.collection?
+          if column.association.collection? && column.association.type == :active_record
             associated_size = value.size if column.associated_number? # get count before cache association
             cache_association(record.association(column.name), column, associated_size) unless value.loaded?
           end
