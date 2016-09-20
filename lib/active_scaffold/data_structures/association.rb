@@ -160,7 +160,7 @@ module ActiveScaffold::DataStructures
     end
 
     def inverse_for?(klass)
-      inverse_class = reverse_association(klass).inverse_klass
+      inverse_class = reverse_association(klass).try(:inverse_klass)
       inverse_class.present? && (inverse_class == klass || klass < inverse_class)
     end
 
