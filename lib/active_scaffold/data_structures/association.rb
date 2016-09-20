@@ -163,7 +163,7 @@ module ActiveScaffold::DataStructures
       inverse_class =
           case @type
           when :active_record then @association.inverse_of.try(:active_record)
-          when :active_mongoid, :mongoid then @association.inverse_klass
+          when :active_mongoid, :mongoid then @association.klass
           end
       inverse_class.present? && (inverse_class == klass || klass < inverse_class)
     end
