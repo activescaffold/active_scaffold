@@ -160,11 +160,7 @@ module ActiveScaffold::DataStructures
     end
 
     def inverse_for?(klass)
-      inverse_class =
-          case @type
-          when :active_record then @association.inverse_of.try(:active_record)
-          when :active_mongoid, :mongoid then @association.klass
-          end
+      inverse_class = reverse_association(klass).inverse_klass
       inverse_class.present? && (inverse_class == klass || klass < inverse_class)
     end
 
