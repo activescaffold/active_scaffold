@@ -302,7 +302,7 @@ module ActiveScaffold::DataStructures
       self.name = name.to_sym
       @active_record_class = active_record_class
       @column = _columns_hash[self.name.to_s]
-      assoc, assoc_type = active_record_class.reflect_on_association(name), :active_record
+      assoc, assoc_type = active_record_class.reflect_on_association(self.name), :active_record
       if !association && defined?(ActiveMongoid) && model < ActiveMongoid::Associations
         assoc, assoc_type = active_record_class.reflect_on_am_association(name), :active_mongoid
       end
