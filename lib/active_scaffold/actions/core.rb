@@ -238,7 +238,7 @@ module ActiveScaffold::Actions
         model_name ||= active_scaffold_config.model.name
         build_options = {column.to_sym => model_name} if model_name
       end
-      model.respond_to?(:build) ? model.build(build_options || {}) : model.new
+      relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
     end
 
     def get_row(crud_type_or_security_options = :read)
