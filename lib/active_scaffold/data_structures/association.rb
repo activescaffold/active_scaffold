@@ -182,7 +182,7 @@ module ActiveScaffold::DataStructures
       matches = reverse_matches(klass || self.klass)
       if matches.length > 1
         matches.select! do |assoc|
-          active_record.to_s.underscore.include? assoc.name.to_s.pluralize.singularize
+          inverse_klass.name.underscore.include? assoc.name.to_s.pluralize.singularize
         end
       end
 
