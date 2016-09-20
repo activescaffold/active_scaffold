@@ -48,9 +48,9 @@ module ActiveScaffold
 
     def _reflect_on_all_associations
       if active_record?
-        reflect_on_all_associations
+        active_record_class.reflect_on_all_associations
       elsif mongoid?
-        relations.values
+        active_record_class.relations.values
       end
     end
 
