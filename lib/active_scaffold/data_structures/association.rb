@@ -206,7 +206,7 @@ module ActiveScaffold::DataStructures
       return false unless assoc.polymorphic? || assoc.class_name == inverse_klass.try(:name)
 
       if through?
-        reverse_through_match?(assoc) if assoc.through?
+        reverse_through_match?(assoc) if assoc.options[:through]
       elsif habtm?
         reverse_habtm_match?(assoc) if assoc.macro == :has_and_belongs_to_many
       else
