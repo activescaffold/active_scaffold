@@ -63,7 +63,7 @@ module ActiveScaffold::DataStructures
       false
     end
 
-    def sorted?
+    def sorted?(*)
       false
     end
   end
@@ -100,13 +100,16 @@ module ActiveScaffold::DataStructures
       association.readonly?
     end
 
-    def sorted?
-      default_sorting.present?
+    def sorted?(chain)
+      default_sorting(chain).present?
     end
 
-    def default_sorting
-      if association.respond_to?(:scope) # rails 4
-        association.klass.instance_exec(&association.scope).values[:order] if association.scope.is_a? Proc
+    def default_sorting(chain)
+      return @default_sorting if defined? @default_sorting
+      if association.respond_to?(:scope) && association.scope.is_a?(Proc) && chain.respond_to?(:values)
+        @default_sorting = chain.values[:order]
+        @default_sorting = @default_sorting.map(&:to_sql) if @default_sorting[0].is_a? Arel::Nodes::Node
+        @default_sorting.join(', ')
       end
     end
 

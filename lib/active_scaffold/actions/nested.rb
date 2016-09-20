@@ -34,7 +34,10 @@ module ActiveScaffold::Actions
     def configure_nested
       return unless nested?
       active_scaffold_config.list.user.label = nested_label
-      active_scaffold_config.list.user.nested_default_sorting = nested_default_sorting if nested.sorted? && !active_scaffold_config.nested.ignore_order_from_association
+      unless active_scaffold_config.nested.ignore_order_from_association
+        chain = beginning_of_chain
+        active_scaffold_config.list.user.nested_default_sorting = nested_default_sorting(chain) if nested.sorted?(chain)
+      end
     end
 
     def nested_label
@@ -45,8 +48,8 @@ module ActiveScaffold::Actions
       end
     end
 
-    def nested_default_sorting
-      {:table_name => active_scaffold_config.model.model_name, :default_sorting => nested.default_sorting}
+    def nested_default_sorting(chain)
+      {:table_name => active_scaffold_config._table_name, :default_sorting => nested.default_sorting(chain)}
     end
 
     def nested_authorized?(record = nil)
