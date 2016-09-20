@@ -46,6 +46,14 @@ module ActiveScaffold
       end
     end
 
+    def _reflect_on_all_associations
+      if active_record?
+        reflect_on_all_associations
+      elsif mongoid?
+        relations.values
+      end
+    end
+
     def _content_columns
       if active_record?
         active_record_class.content_columns

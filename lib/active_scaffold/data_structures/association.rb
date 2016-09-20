@@ -195,7 +195,8 @@ module ActiveScaffold::DataStructures
 
     def reverse_matches(klass)
       associations = case @type
-        when :active_record, :mongoid then klass.reflect_on_all_associations
+        when :active_record  then klass.reflect_on_all_associations
+        when :mongoid        then klass.relations.values
         when :active_mongoid then klass.am_relations.values
       end
       # collect associations that point back to this model and use the same foreign_key
