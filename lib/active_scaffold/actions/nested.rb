@@ -103,7 +103,7 @@ module ActiveScaffold::Actions
       if nested.association.type == :active_mongoid
         # not possible to join models on different Orm
         primary_key = active_scaffold_config.mongoid? ? '_id' : active_scaffold_config.model.primary_key
-        active_scaffold_config.model.where(primary_key => nested_parent_record)
+        active_scaffold_config.model.where(primary_key => nested_parent_record.send(nested.association.name))
       else
         chain = active_scaffold_config.model.joins(nested.child_association.name)
         table_name =
