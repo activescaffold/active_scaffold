@@ -101,7 +101,7 @@ module ActiveScaffold::Actions
       controller = "#{params[:parent_controller].camelize}Controller".constantize
       parent_model = controller.active_scaffold_config.model
       child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
-      association = parent_model.reflect_on_association(child_association.to_sym).try(:reverse)
+      association = controller.active_scaffold_config.columns[child_association.to_sym].try(:reverse_association)
       return if association.nil?
 
       parent = parent_model.new
@@ -109,10 +109,10 @@ module ActiveScaffold::Actions
       parent.id = params[:parent_id]
       parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
       apply_constraints_to_record(parent) unless params[:parent_id]
-      if record.class.reflect_on_association(association).collection?
-        record.send(association) << parent
+      if association.collection?
+        record.send(association.name) << parent
       else
-        record.send("#{association}=", parent)
+        record.send("#{association.name}=", parent)
       end
     end
 

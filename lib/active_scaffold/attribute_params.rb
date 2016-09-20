@@ -136,7 +136,7 @@ module ActiveScaffold
           parent_record.association(column.name).target = value if column.association
         end
       end
-      if column.association.try(:reverse) && column.association.reverse_association.belongs_to?
+      if column.association.try(:reverse_association).try(:belongs_to?)
         Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
       end
       value
@@ -220,7 +220,7 @@ module ActiveScaffold
       record = find_or_create_for_params(attributes, column, parent_record)
       if record
         record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-        record_columns.constraint_columns = [column.association.reverse]
+        record_columns.constraint_columns = [column.association.reverse].compact
         update_record_from_params(record, record_columns, attributes, avoid_changes)
         record.unsaved = true
       end
