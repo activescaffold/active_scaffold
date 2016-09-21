@@ -33,19 +33,18 @@ module ActiveScaffold
   module AttributeParams
     protected
 
-    # workaround to update counters when belongs_to changes on persisted record on Rails 3
     # workaround to update counters when polymorphic has_many changes on persisted record
-    # TODO: remove when rails3 support is removed and counter cache for polymorphic has_many association works on rails4
+    # TODO: remove when rails4 support is removed or counter cache for polymorphic has_many association works on rails4
     def hack_for_has_many_counter_cache(parent_record, column, value)
       association = parent_record.association(column.name)
       counter_attr = association.send(:cached_counter_attribute_name)
       difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
 
       if parent_record.new_record?
-        if Rails.version == '4.2.0'
+        if Rails.version >= '4.2.0'
           parent_record.send "#{column.name}=", value
           parent_record.send "#{counter_attr}_will_change!"
-        else # < 4.2 or > 4.2.0
+        else # < 4.2
           parent_record.send "#{counter_attr}=", difference
           parent_record.send "#{column.name}=", value
         end
@@ -73,7 +72,8 @@ module ActiveScaffold
     end
 
     # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
-    # rails 4 needs this hack for polymorphic has_many, when selecting record, not creating new one (value is Hash)
+    # rails 4 needs this hack for non-polymorphic belongs_to, when selecting record, not creating new one (value is Hash)
+    # rails 5 needs this hack for belongs_to, when selecting record, not creating new one (value is Hash)
     # TODO: remove when pull request is merged and no version with bug is supported
     def counter_cache_hack?(assoc, value)
       !value.is_a?(Hash) && assoc.try(:type) == :active_record && assoc.try(:belongs_to?) && assoc.counter_cache && (Rails.version >= '5.0' || !assoc.polymorphic?)
