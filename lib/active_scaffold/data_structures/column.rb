@@ -323,7 +323,7 @@ module ActiveScaffold::DataStructures
       @actions_for_association_links = self.class.actions_for_association_links.clone if self.association
       @select_columns = default_select_columns
 
-      @text = @column.nil? || [:string, :text].include?(@column.type)
+      @text = @column.nil? || [:string, :text, String].include?(@column.type)
       @number = false
       if @column
         if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
