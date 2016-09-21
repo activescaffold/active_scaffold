@@ -214,6 +214,20 @@ module ActiveScaffold
     end
 
     def self.column_type_cast(value, column)
+      if defined?(ActiveRecord) && ActiveRecord::ConnectionAdapters::Column === column
+        active_record_column_type_cast(value, column)
+      elsif defined?(Mongoid) && Mongoid::Fields::Standard === column
+        mongoid_column_type_cast(value, column)
+      else
+        value
+      end
+    end
+
+    def self.mongoid_column_type_cast(value, column)
+      column.type.evolve value
+    end
+
+    def self.active_record_column_type_cast(value, column)
       if Rails.version < '4.2'
         column.type_cast value
       elsif Rails.version < '5.0'
