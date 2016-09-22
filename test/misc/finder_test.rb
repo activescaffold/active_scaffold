@@ -19,15 +19,15 @@ class FinderTest < MiniTest::Test
       ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%foo%', '%foo%'],
       ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%bar%', '%bar%']
     ]
-    assert_equal expected_conditions, ClassWithFinder.create_conditions_for_columns(tokens, columns)
+    assert_equal expected_conditions, ClassWithFinder.conditions_for_columns(tokens, columns)
 
     expected_conditions = [
       '"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?',
       '%foo%', '%foo%'
     ]
-    assert_equal [expected_conditions], ClassWithFinder.create_conditions_for_columns('foo', columns)
+    assert_equal [expected_conditions], ClassWithFinder.conditions_for_columns('foo', columns)
 
-    assert_equal nil, ClassWithFinder.create_conditions_for_columns('foo', [])
+    assert_equal nil, ClassWithFinder.conditions_for_columns('foo', [])
   end
 
   def test_method_sorting
