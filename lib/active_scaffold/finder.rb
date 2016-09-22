@@ -71,7 +71,7 @@ module ActiveScaffold
             end.flatten
             active_scaffold_config.model.or(token_conditions).selector
           end
-          [active_scaffold_config.model.and(token_conditions).selector]
+          [active_scaffold_config.model.and(conditions).selector]
         end
 
         def like_pattern(text_search)
