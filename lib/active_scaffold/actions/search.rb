@@ -22,7 +22,7 @@ module ActiveScaffold::Actions
           columns = active_scaffold_config.search.columns
           text_search = active_scaffold_config.search.text_search
           query = query.split(active_scaffold_config.search.split_terms) if active_scaffold_config.search.split_terms
-          search_conditions = self.class.create_conditions_for_columns(query, columns, text_search)
+          search_conditions = self.class.conditions_for_columns(query, columns, text_search)
           @filtered = !search_conditions.blank?
           active_scaffold_conditions.concat search_conditions if @filtered
 

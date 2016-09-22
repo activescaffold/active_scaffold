@@ -5,29 +5,78 @@ module ActiveScaffold
     end
 
     module ClassMethods
+      def self.extended(klass)
+        if klass.active_scaffold_config.active_record?
+          klass.extend ActiveRecord
+        elsif klass.active_scaffold_config.mongoid?
+          klass.extend Mongoid
+        end
+      end
+
       # Takes a collection of search terms (the tokens) and creates SQL that
       # searches all specified ActiveScaffold columns. A row will match if each
       # token is found in at least one of the columns.
-      def create_conditions_for_columns(tokens, columns, text_search = :full)
+      def conditions_for_columns(tokens, columns, text_search = :full)
         # if there aren't any columns, then just return a nil condition
         return unless columns.any?
-        like_pattern = like_pattern(text_search)
 
         tokens = [tokens] if tokens.is_a? String
+        columns_tokens = type_casted_tokens(tokens, columns, like_pattern(text_search))
+        create_conditions_for_columns(columns_tokens, columns)
+      end
 
-        where_clauses = []
-        columns.each do |column|
-          Array(column.search_sql).each do |search_sql|
-            where_clauses << "#{search_sql} #{column.text? ? ActiveScaffold::Finder.like_operator : '='} ?"
+      def type_casted_tokens(tokens, columns, like_pattern)
+        columns.each_with_object({}) do |column, conditions|
+          conditions[column.name] = tokens.map do |value|
+            column.text? ? like_pattern.sub('?', value) : ActiveScaffold::Core.column_type_cast(value, column.column)
           end
         end
-        phrase = where_clauses.join(' OR ')
+      end
 
-        tokens.collect do |value|
-          columns.each_with_object([phrase]) do |column, condition|
-            Array(column.search_sql).size.times do
-              condition.push(column.text? ? like_pattern.sub('?', value) : ActiveScaffold::Core.column_type_cast(value, column.column))
+      module ActiveRecord
+        def create_conditions_for_columns(columns_tokens, columns)
+          where_clauses = []
+          columns.each do |column|
+            Array(column.search_sql).each do |search_sql|
+              where_clauses << "#{search_sql} #{column.text? ? ActiveScaffold::Finder.like_operator : '='} ?"
             end
+          end
+          phrase = where_clauses.join(' OR ')
+
+          columns_tokens.values[0].size.times.map do |i|
+            columns.each_with_object([phrase]) do |column, condition|
+              value = columns_tokens[column.name][i]
+              condition.concat([value] * Array(column.search_sql).size)
+            end
+          end.tap{|v| Rails.logger.debug v.inspect}
+        end
+
+        def like_pattern(text_search)
+          case text_search
+          when :full then '%?%'
+          when :start then '?%'
+          when :end then '%?'
+          else '?'
+          end
+        end
+      end
+
+      module Mongoid
+        def create_conditions_for_columns(columns_tokens, columns)
+          columns.each_with_object({}) do |column, conditions|
+            tokens = columns_tokens[column.name]
+            Array(column.search_sql).each do |search_sql|
+              condition[search_sql.to_sym.in] = tokens
+            end
+          end
+        end
+
+        def like_pattern(text_search)
+          case text_search
+          when :full then '?'
+          when :start then '^?'
+          when :end then '?$'
+          else '^?$'
           end
         end
       end
@@ -231,15 +280,6 @@ module ActiveScaffold
           ['%{search_sql} is null', []]
         when 'not_null'
           ['%{search_sql} is not null', []]
-        end
-      end
-
-      def like_pattern(text_search)
-        case text_search
-        when :full then '%?%'
-        when :start then '?%'
-        when :end then '%?'
-        else '?'
         end
       end
     end
