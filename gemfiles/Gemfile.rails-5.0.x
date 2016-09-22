@@ -11,12 +11,7 @@ group :development, :test do
   # A static analysis security vulnerability scanner for Ruby on Rails applications
   gem 'brakeman', require: false
   gem 'rake'
-  gem 'rdoc'
   gem 'rack'
-end
-
-group :development do
-  gem 'localeapp'
 end
 
 group :test do
