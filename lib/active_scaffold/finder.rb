@@ -37,7 +37,7 @@ module ActiveScaffold
         def create_conditions_for_columns(columns_tokens, columns)
           where_clauses = []
           columns.each do |column|
-            Array(column.search_sql).each do |search_sql|
+            column.search_sql.each do |search_sql|
               where_clauses << "#{search_sql} #{column.text? ? ActiveScaffold::Finder.like_operator : '='} ?"
             end
           end
@@ -46,7 +46,7 @@ module ActiveScaffold
           columns_tokens.values[0].size.times.map do |i|
             columns.each_with_object([phrase]) do |column, condition|
               value = columns_tokens[column.name][i]
-              condition.concat([value] * Array(column.search_sql).size)
+              condition.concat([value] * column.search_sql.size)
             end
           end.tap{|v| Rails.logger.debug v.inspect}
         end
@@ -65,7 +65,7 @@ module ActiveScaffold
         def create_conditions_for_columns(columns_tokens, columns)
           columns.each_with_object({}) do |column, conditions|
             tokens = columns_tokens[column.name]
-            Array(column.search_sql).each do |search_sql|
+            column.search_sql.each do |search_sql|
               condition[search_sql.to_sym.in] = tokens
             end
           end
