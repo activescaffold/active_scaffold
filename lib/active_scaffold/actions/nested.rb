@@ -85,12 +85,12 @@ module ActiveScaffold::Actions
           nested_parent_record.send(nested.association.name)
         elsif nested.association.through? # has_one :through
           active_scaffold_config.model.where(active_scaffold_config.model.primary_key => nested_parent_record.send(nested.association.name).try(:id))
-        elsif nested.child_association.nil? # without child_association is not possible to add conditions
-          active_scaffold_config.model
-        elsif nested.child_association.belongs_to?
+        elsif nested.association.has_one?
           active_scaffold_config.model.where(nested.child_association.foreign_key => nested_parent_record.send(nested.association.association_primary_key))
         elsif nested.association.belongs_to?
           nested_belongs_to_chain
+        else # never should get here
+          active_scaffold_config.model
         end
       elsif nested? && nested.scope
         nested_parent_record.send(nested.scope)
@@ -100,21 +100,8 @@ module ActiveScaffold::Actions
     end
 
     def nested_belongs_to_chain
-      if nested.association.type == :active_mongoid
-        # not possible to join models on different Orm
-        primary_key = active_scaffold_config.mongoid? ? '_id' : active_scaffold_config.model.primary_key
-        active_scaffold_config.model.where(primary_key => nested_parent_record.send(nested.association.name))
-      else
-        chain = active_scaffold_config.model.joins(nested.child_association.name)
-        table_name =
-          if active_scaffold_config.model == nested.association.inverse_klass
-            dependency = ActiveRecord::Associations::JoinDependency.new(chain.klass, chain.joins_values, [])
-            join_associations = Rails.version >= '4.1.0' ? dependency.join_root.children : dependency.join_associations
-            join_associations.find { |join| join.try(:reflection).try(:name) == nested.child_association.name }.try(:table).try(:right)
-          end
-        table_name ||= nested.association.reverse_association.table_name
-        chain.where(table_name => {nested.association.inverse_klass.primary_key => nested_parent_record}).readonly(false)
-      end
+      primary_key = active_scaffold_config.mongoid? ? '_id' : active_scaffold_config.model.primary_key
+      active_scaffold_config.model.where(primary_key => nested_parent_record.send(nested.association.name))
     end
 
     def nested_parent_record(crud = :read)

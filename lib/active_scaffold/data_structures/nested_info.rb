@@ -74,7 +74,8 @@ module ActiveScaffold::DataStructures
       @association = parent_scaffold.active_scaffold_config.columns[params[:association].to_sym].try(:association)
       @param_name = @association.inverse_klass.name.foreign_key.to_sym
       @parent_id = params[@param_name]
-      iterate_model_associations(model)
+      @child_association = association.reverse_association(model)
+      setup_constrained_fields
     end
 
     delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :to => :association
@@ -119,12 +120,12 @@ module ActiveScaffold::DataStructures
 
     protected
 
-    def iterate_model_associations(model)
+    def setup_constrained_fields
       @constrained_fields = []
-      constrained_fields << Array(association.foreign_key).map(&:to_sym) unless association.belongs_to?
-      return if (reverse = association.reverse(model)).nil?
-      @child_association = association.reverse_association(model)
-      constrained_fields << @child_association.name unless @child_association == association
+      @constrained_fields << Array(association.foreign_key).map(&:to_sym) unless association.belongs_to?
+      if child_association && child_association != association
+        @constrained_fields << child_association.name
+      end
     end
   end
 
