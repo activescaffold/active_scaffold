@@ -15,10 +15,7 @@ module ActiveScaffold
       # Provides a way to honor the :conditions on an association while searching the association's klass
       def association_options_find(association, conditions = nil, klass = nil, record = nil)
         if klass.nil? && association.polymorphic?
-          class_name = case association.macro
-            when :belongs_to then record.send(association.foreign_type)
-            when :belongs_to_record, :belongs_to_document then record.send(association.type)
-          end
+          class_name = record.send(association.foreign_type) if association.belongs_to?
           if class_name.present?
             klass = class_name.constantize
           else
