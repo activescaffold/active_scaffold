@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'active_scaffold_config_mock'
 
 class NumberModel < ActiveRecord::Base
   include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
@@ -22,6 +23,7 @@ class NumberModel < ActiveRecord::Base
 end
 
 class ConvertNumbersFormatTest < MiniTest::Test
+  include ActiveScaffoldConfigMock
   include ActiveScaffold::AttributeParams
   include ActiveScaffold::Finder
 

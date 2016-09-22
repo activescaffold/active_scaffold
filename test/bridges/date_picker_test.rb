@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'active_scaffold_config_mock'
 require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/date_picker/ext')
 # require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/date_picker/helper')
 
@@ -9,6 +10,7 @@ class DatePickerTest < ActionView::TestCase
 
   def setup
     @controller.class.class_eval do
+      include ActiveScaffoldConfigMock
       include ActiveScaffold::Finder
     end
   end

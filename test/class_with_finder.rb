@@ -1,5 +1,13 @@
+require 'active_scaffold_config_mock'
+
 class ClassWithFinder
+  include ActiveScaffoldConfigMock
   include ActiveScaffold::Finder
+
+  def active_scaffold_config
+    self.class.active_scaffold_config
+  end
+
   def conditions_for_collection; end
 
   def conditions_from_params; end
