@@ -21,20 +21,20 @@ module ActiveScaffold
         return unless columns.any?
 
         tokens = [tokens] if tokens.is_a? String
-        columns_tokens = type_casted_tokens(tokens, columns, like_pattern(text_search))
-        create_conditions_for_columns(columns_tokens, columns)
+        tokens = type_casted_tokens(tokens, columns, like_pattern(text_search))
+        create_conditions_for_columns(tokens, columns)
       end
 
       def type_casted_tokens(tokens, columns, like_pattern)
-        columns.each_with_object({}) do |column, conditions|
-          conditions[column.name] = tokens.map do |value|
-            column.text? ? like_pattern.sub('?', value) : ActiveScaffold::Core.column_type_cast(value, column.column)
+        tokens.map do |value|
+          columns.each_with_object({}) do |column, column_tokens|
+            column_tokens[column.name] = column.text? ? like_pattern.sub('?', value) : ActiveScaffold::Core.column_type_cast(value, column.column)
           end
         end
       end
 
       module ActiveRecord
-        def create_conditions_for_columns(columns_tokens, columns)
+        def create_conditions_for_columns(tokens, columns)
           where_clauses = []
           columns.each do |column|
             column.search_sql.each do |search_sql|
@@ -43,12 +43,11 @@ module ActiveScaffold
           end
           phrase = where_clauses.join(' OR ')
 
-          columns_tokens.values[0].size.times.map do |i|
+          tokens.map do |columns_token|
             columns.each_with_object([phrase]) do |column, condition|
-              value = columns_tokens[column.name][i]
-              condition.concat([value] * column.search_sql.size)
+              condition.concat([columns_token[column.name]] * column.search_sql.size)
             end
-          end.tap{|v| Rails.logger.debug v.inspect}
+          end
         end
 
         def like_pattern(text_search)
@@ -62,12 +61,15 @@ module ActiveScaffold
       end
 
       module Mongoid
-        def create_conditions_for_columns(columns_tokens, columns)
-          columns.each_with_object({}) do |column, conditions|
-            tokens = columns_tokens[column.name]
-            column.search_sql.each do |search_sql|
-              condition[search_sql.to_sym.in] = tokens
-            end
+        def create_conditions_for_columns(tokens, columns)
+          tokens.map do |columns_token|
+            token_conditions = columns.map do |column|
+              value = columns_token[column.name]
+              column.search_sql.map do |search_sql|
+                {search_sql => value}
+              end
+            end.flatten
+            active_scaffold_config.model.or(token_conditions).selector
           end
         end
 
