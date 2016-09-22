@@ -101,7 +101,7 @@ module ActiveScaffold::Actions
       controller = "#{params[:parent_controller].camelize}Controller".constantize
       parent_model = controller.active_scaffold_config.model
       child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
-      association = controller.active_scaffold_config.columns[child_association.to_sym].try(:reverse_association)
+      association = controller.active_scaffold_config.columns[child_association.to_sym].try(:association).try(:reverse_association)
       return if association.nil?
 
       parent = parent_model.new
