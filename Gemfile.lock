@@ -84,6 +84,7 @@ GEM
       mime-types (>= 1.16, < 4)
     metaclass (0.0.4)
     mime-types (2.99.3)
+    mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
     minitest (5.9.0)
     minitest-reporters (1.1.11)
@@ -199,4 +200,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.13.1
+   1.11.2
