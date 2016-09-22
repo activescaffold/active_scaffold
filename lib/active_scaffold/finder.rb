@@ -65,6 +65,7 @@ module ActiveScaffold
           conditions = tokens.map do |columns_token|
             token_conditions = columns.map do |column|
               value = columns_token[column.name]
+              value = %r{value} if column.text?
               column.search_sql.map do |search_sql|
                 {search_sql => value}
               end
