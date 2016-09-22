@@ -20,8 +20,12 @@ module ActiveScaffold
             columns = options.keys.sort_by { |column| self.columns[column].weight }
             [:create, :update, :show, :subform].each do |action|
               if actions.include? action
-                send(action).columns.exclude column_name
-                send(action).columns.add_subgroup(column_name) { |group| group.add *columns }
+                if send(action).columns.include? column_name
+                  send(action).columns.exclude column_name
+                  send(action).columns.add_subgroup(column_name) { |group| group.add *columns }
+                else
+                  send(action).columns.exclude *columns
+                end
               end
             end
           end if model.respond_to?(:bitfields) && model.bitfields.present?
