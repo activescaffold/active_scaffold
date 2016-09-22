@@ -62,7 +62,7 @@ module ActiveScaffold
 
       module Mongoid
         def create_conditions_for_columns(tokens, columns)
-          tokens.map do |columns_token|
+          conditions = tokens.map do |columns_token|
             token_conditions = columns.map do |column|
               value = columns_token[column.name]
               column.search_sql.map do |search_sql|
@@ -71,6 +71,7 @@ module ActiveScaffold
             end.flatten
             active_scaffold_config.model.or(token_conditions).selector
           end
+          [active_scaffold_config.model.and(token_conditions).selector]
         end
 
         def like_pattern(text_search)
