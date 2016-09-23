@@ -21,10 +21,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def table_name
-      case @type
-      when :active_record  then @association.table_name
-      when :active_mongoid, :mongoid then @association.klass.collection.name
-      end
+      @association.klass < ActiveRecord::Base ? @association.klass.table_name : super
     end
 
     protected
