@@ -409,7 +409,7 @@ module ActiveScaffold::DataStructures
         end
       elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
         assoc = active_record_class.reflect_on_am_association(name)
-        Association::ActiveMongoid.new(assoc)
+        Association::ActiveMongoid.new(assoc) if assoc
       end
     end
 
