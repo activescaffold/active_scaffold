@@ -23,7 +23,7 @@ class AssociationColumnTest < MiniTest::Test
   end
 
   def test_association
-    assert @association_column.association.is_a?(ActiveScaffold::DataStructures::Association)
+    assert @association_column.association.is_a?(ActiveScaffold::DataStructures::Association::Abstract)
   end
 
   def test_includes

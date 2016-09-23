@@ -65,18 +65,15 @@ module ActiveScaffold
     # rails 4 needs this hack for polymorphic has_many
     # TODO: remove when hack_for_has_many_counter_cache is not needed
     def hack_for_has_many_counter_cache?(parent_record, column)
-      return unless Rails.version < '5.0'
-      assoc = column.association
-      return unless assoc.try(:type) == :active_record
-      assoc.has_many? && assoc.as && parent_record.association(column.name).send(:has_cached_counter?)
+      column.association.counter_cache_hack? && parent_record.association(column.name).send(:has_cached_counter?)
     end
 
     # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
     # rails 4 needs this hack for non-polymorphic belongs_to, when selecting record, not creating new one (value is Hash)
     # rails 5 needs this hack for belongs_to, when selecting record, not creating new one (value is Hash)
     # TODO: remove when pull request is merged and no version with bug is supported
-    def counter_cache_hack?(assoc, value)
-      !value.is_a?(Hash) && assoc.try(:type) == :active_record && assoc.try(:belongs_to?) && assoc.counter_cache && (Rails.version >= '5.0' || !assoc.polymorphic?)
+    def counter_cache_hack?(association, value)
+      !value.is_a?(Hash) && association.belongs_to? && association.counter_cache_hack?
     end
 
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
@@ -121,12 +118,12 @@ module ActiveScaffold
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
       if avoid_changes && column.association.try(:collection?)
         parent_record.association(column.name).target = value
-      elsif counter_cache_hack?(column.association, attribute)
+      elsif column.association && counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value.try(:id)
         parent_record.association(column.name).target = value
       else
         begin
-          if hack_for_has_many_counter_cache?(parent_record, column)
+          if column.association && hack_for_has_many_counter_cache?(parent_record, column)
             hack_for_has_many_counter_cache(parent_record, column, value)
           else
             parent_record.send "#{column.name}=", value

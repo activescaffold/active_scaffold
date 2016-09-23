@@ -302,17 +302,7 @@ module ActiveScaffold::DataStructures
       self.name = name.to_sym
       @active_record_class = active_record_class
       @column = _columns_hash[self.name.to_s]
-      klass_type =
-        case
-        when active_record? then :active_record
-        when mongoid? then :mongoid
-        end
-
-      assoc, assoc_type = active_record_class.reflect_on_association(self.name), klass_type
-      if !assoc && defined?(ActiveMongoid) && model < ActiveMongoid::Associations
-        assoc, assoc_type = active_record_class.reflect_on_am_association(name), :active_mongoid
-      end
-      @association = Association.new(assoc, assoc_type) if assoc
+      setup_association_info
 
       @autolink = self.association.present?
       @table = _table_name
@@ -343,7 +333,7 @@ module ActiveScaffold::DataStructures
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
 
-      if association && !association.polymorphic? && association.type != :active_mongoid
+      if association && association.allow_join?
         self.includes = [association.name]
         self.search_joins = includes.clone
       end
@@ -410,6 +400,18 @@ module ActiveScaffold::DataStructures
     end
 
     protected
+    def setup_association_info
+      assoc = active_record_class.reflect_on_association(self.name)
+      @association = if assoc
+        case
+        when active_record? then Association::ActiveRecord.new(assoc)
+        when mongoid? then Association::Mongoid.new(assoc)
+        end
+      elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
+        assoc = active_record_class.reflect_on_am_association(name)
+        Association::ActiveMongoid.new(assoc)
+      end
+    end
 
     def validator_force_required?(val)
       return false if val.options[:if] || val.options[:unless]
@@ -475,8 +477,8 @@ module ActiveScaffold::DataStructures
         unless virtual?
           if association.nil?
             field.to_s unless tableless?
-          elsif association.type != :active_mongoid && !association.polymorphic?
-            [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
+          elsif association.allow_join?
+            [association.quoted_table_name, association.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
           end
         end
     end

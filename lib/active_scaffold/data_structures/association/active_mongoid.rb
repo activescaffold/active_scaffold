@@ -1,0 +1,40 @@
+module ActiveScaffold::DataStructures::Association
+  class ActiveMongoid < Mongoid
+    def allow_join?
+      false
+    end
+    
+    def belongs_to?
+      %i(belongs_to_record belongs_to_document).include?(@association.macro)
+    end
+
+    def has_one?
+      %i(has_one_record has_one_document).include?(@association.macro)
+    end
+
+    def has_many?
+      %i(has_many_records has_many_documents).include?(@association.macro)
+    end
+
+    def collection?
+      %i(has_many_documents has_many_records).include?(@association.macro)
+    end
+
+    def table_name
+      case @type
+      when :active_record  then @association.table_name
+      when :active_mongoid, :mongoid then @association.klass.collection.name
+      end
+    end
+
+    protected
+    def reflect_on_association(name)
+      @association.klass.reflect_on_am_association(reverse_name)
+    end
+    
+    def self.reflect_on_all_associations(klass)
+      return [] unless klass.respond_to? :am_relations
+      klass.am_relations.values
+    end
+  end
+end
