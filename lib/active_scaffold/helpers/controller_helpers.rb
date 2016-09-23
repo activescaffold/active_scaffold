@@ -104,7 +104,7 @@ module ActiveScaffold
         if association.through?
           # build full chain, only check create_associated on initial parent_record
           parent_record = build_associated(association.through_reflection, parent_record)
-          source_assoc = ActiveScaffold::DataStructures::Association.new(association.source_reflection, :active_record)
+          source_assoc = association.class.new(association.source_reflection)
           build_associated(source_assoc, parent_record).tap do |record|
             save_record_to_association(record, source_assoc.reverse_association, parent_record) # set inverse
           end
