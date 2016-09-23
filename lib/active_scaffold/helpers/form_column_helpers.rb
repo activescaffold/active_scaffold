@@ -213,8 +213,9 @@ module ActiveScaffold
       end
 
       def column_show_add_new(column, associated, record)
-        value = (column.association.collection? && !column.association.readonly?) || column.association.singular?
-        value &&= false unless column.association.klass.authorized_for?(:crud_type => :create)
+        assoc = column.association
+        value = (assoc.collection? && !assoc.readonly? && !assoc.through?) || assoc.singular?
+        value &&= false unless assoc.klass.authorized_for?(:crud_type => :create)
         value
       end
 

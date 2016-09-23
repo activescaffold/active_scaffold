@@ -63,11 +63,7 @@ module ActiveScaffold::DataStructures
 
     def readonly?
       return false unless @type == :active_record
-      if scope_values.key? :readonly
-        scope_values[:readonly]
-      else
-        through?
-      end
+      scope_values[:readonly]
     end
 
     delegate :name, :klass, :foreign_key, :==, to: :@association
