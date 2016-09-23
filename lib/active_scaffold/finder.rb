@@ -6,10 +6,11 @@ module ActiveScaffold
 
     module ClassMethods
       def self.extended(klass)
-        if klass.active_scaffold_config.try :mongoid?
-          klass.extend Mongoid
-        else
+        return unless klass.active_scaffold_config
+        if klass.active_scaffold_config.active_record?
           klass.extend ActiveRecord
+        elsif klass.active_scaffold_config.mongoid?
+          klass.extend Mongoid
         end
       end
 
