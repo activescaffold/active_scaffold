@@ -63,8 +63,8 @@ module ActiveScaffold::DataStructures
 
     def readonly?
       return false unless @type == :active_record
-      if @association.options.key? :readonly
-        @association.options[:readonly]
+      if scope_values.key? :readonly
+        scope_values[:readonly]
       else
         through?
       end
@@ -174,6 +174,10 @@ module ActiveScaffold::DataStructures
     end
 
     protected
+    def scope_values
+      return {} unless @association.scope
+      @scope_values ||= @association.klass.instance_exec(&@association.scope).values rescue {}
+    end
 
     def get_reverse(klass = nil)
       return nil if klass.nil? && polymorphic?
