@@ -56,7 +56,7 @@ module ActiveScaffold::DataStructures::Association
     end
     
     def respond_to_target?
-      false
+      true
     end
     
     def counter_cache_hack?
