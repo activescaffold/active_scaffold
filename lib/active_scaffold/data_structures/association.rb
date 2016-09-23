@@ -50,7 +50,7 @@ module ActiveScaffold::DataStructures
     end
 
     def through?
-      @association.options[:through] if @type == :active_record
+      @association.options[:through].present? if @type == :active_record
     end
 
     # polymorphic belongs_to
