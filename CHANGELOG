@@ -1,3 +1,5 @@
+= 3.4.40
+- allow to exclude bitfield column
 - replace some uses of $ with jQuery
 
 = 3.4.39
