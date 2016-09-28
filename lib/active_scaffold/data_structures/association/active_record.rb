@@ -1,5 +1,13 @@
 module ActiveScaffold::DataStructures::Association
   class ActiveRecord < Abstract
+    class << self
+      protected
+
+      def reflect_on_all_associations(klass)
+        klass.reflect_on_all_associations
+      end
+    end
+
     delegate :collection?, :polymorphic?, :association_primary_key, :foreign_type, :table_name, to: :@association
 
     def through?
@@ -84,10 +92,6 @@ module ActiveScaffold::DataStructures::Association
     def reverse_direct_match?(assoc)
       # skip over has_many :through associations
       !assoc.options[:through] && super
-    end
-
-    def self.reflect_on_all_associations(klass)
-      klass.reflect_on_all_associations
     end
   end
 end
