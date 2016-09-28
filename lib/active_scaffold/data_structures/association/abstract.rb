@@ -5,7 +5,7 @@ module ActiveScaffold::DataStructures::Association
     end
     attr_writer :reverse
     delegate :name, :klass, :foreign_key, :==, to: :@association
-    
+
     def allow_join?
       !polymorphic?
     end
@@ -44,17 +44,17 @@ module ActiveScaffold::DataStructures::Association
 
     def through_reflection
     end
-    
+
     def source_reflection
     end
-    
+
     def scope
     end
-    
+
     def respond_to_target?
       false
     end
-    
+
     def counter_cache_hack?
       false
     end
@@ -62,7 +62,7 @@ module ActiveScaffold::DataStructures::Association
     def quoted_table_name
       raise "define quoted_table_name method in #{self.class.name} class"
     end
-    
+
     def quoted_primary_key
       raise "define quoted_primary_key method in #{self.class.name} class"
     end

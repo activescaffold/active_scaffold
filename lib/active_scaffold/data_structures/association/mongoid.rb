@@ -33,11 +33,11 @@ module ActiveScaffold::DataStructures::Association
     def quoted_table_name
       table_name
     end
-    
+
     def quoted_primary_key
       '_id'
     end
-    
+
     def self.reflect_on_all_associations(klass)
       klass.relations.values
     end

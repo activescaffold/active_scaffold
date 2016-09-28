@@ -50,15 +50,15 @@ module ActiveScaffold::DataStructures::Association
     def quoted_table_name
       @association.klass.quoted_table_name
     end
-    
+
     def quoted_primary_key
       @association.klass.quoted_primary_key
     end
-    
+
     def respond_to_target?
       true
     end
-    
+
     def counter_cache_hack?
       if has_many?
         Rails.version < '5.0' && as
@@ -66,7 +66,7 @@ module ActiveScaffold::DataStructures::Association
         counter_cache && (Rails.version >= '5.0' || !polymorphic?)
       end
     end
-    
+
     protected
     def scope_values
       return {} unless @association.scope
@@ -85,7 +85,7 @@ module ActiveScaffold::DataStructures::Association
       # skip over has_many :through associations
       !assoc.options[:through] && super
     end
-    
+
     def self.reflect_on_all_associations(klass)
       klass.reflect_on_all_associations
     end

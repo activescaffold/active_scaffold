@@ -3,7 +3,7 @@ module ActiveScaffold::DataStructures::Association
     def allow_join?
       false
     end
-    
+
     def belongs_to?
       %i(belongs_to_record belongs_to_document).include?(@association.macro)
     end
@@ -28,7 +28,7 @@ module ActiveScaffold::DataStructures::Association
     def reflect_on_association(name)
       @association.klass.reflect_on_am_association(reverse_name)
     end
-    
+
     def self.reflect_on_all_associations(klass)
       return [] unless klass.respond_to? :am_relations
       klass.am_relations.values
