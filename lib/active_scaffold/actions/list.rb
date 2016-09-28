@@ -82,12 +82,11 @@ module ActiveScaffold::Actions
 
     def set_includes_for_sorting(columns, sorting)
       sorting.each do |col, _|
-        if col.includes.present? && !columns.include?(col)
-          if active_scaffold_config.model.connection.needs_order_expressions_in_select?
-            active_scaffold_references << col.includes
-          else
-            active_scaffold_outer_joins << col.includes
-          end
+        next unless col.includes.present? && !columns.include?(col)
+        if active_scaffold_config.model.connection.needs_order_expressions_in_select?
+          active_scaffold_references << col.includes
+        else
+          active_scaffold_outer_joins << col.includes
         end
       end
     end

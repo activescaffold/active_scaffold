@@ -419,13 +419,13 @@ module ActiveScaffold
       def get_action_link_id(link, record = nil, column = nil)
         column ||= link.column
         if column.try(:association) && record
-          if column.association.collection?
-            id = "#{column.association.name}-#{record.id}"
-          elsif record.send(column.association.name).present?
-            id = "#{column.association.name}-#{record.send(column.association.name).id}-#{record.id}"
-          else
-            id = "#{column.association.name}-#{record.id}"
-          end
+          id = if column.association.collection?
+                 "#{column.association.name}-#{record.id}"
+               elsif record.send(column.association.name).present?
+                 "#{column.association.name}-#{record.send(column.association.name).id}-#{record.id}"
+               else
+                 "#{column.association.name}-#{record.id}"
+               end
         end
         id ||= record.try(:id) || (nested? ? nested_parent_id : '')
         action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
