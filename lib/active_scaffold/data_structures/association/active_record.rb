@@ -1,8 +1,6 @@
 module ActiveScaffold::DataStructures::Association
   class ActiveRecord < Abstract
     class << self
-      protected
-
       def reflect_on_all_associations(klass)
         klass.reflect_on_all_associations
       end
