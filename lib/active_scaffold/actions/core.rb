@@ -89,7 +89,7 @@ module ActiveScaffold::Actions
     end
 
     def updated_record_with_column(column, value, scope)
-      record = params[:id] ? find_if_allowed(params[:id], :read).dup : new_model
+      record = params[:id] ? copy_attributes(find_if_allowed(params[:id], :read)) : new_model
       apply_constraints_to_record(record) unless scope || params[:id]
       value = column_value_from_param_value(record, column, value)
       record.send "#{column.name}=", value
