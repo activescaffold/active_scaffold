@@ -15,6 +15,9 @@
 - fix do_refresh_list on actions with GET route, it used :id and :action from request for sorting and pagination links
 - fix enabling draggable lists and sliders on new subform records
 
+= 3.4.41
+- Fix XSS via eid param
+
 = 3.4.40
 - allow to exclude bitfield column
 - replace some uses of $ with jQuery
