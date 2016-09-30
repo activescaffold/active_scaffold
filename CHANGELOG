@@ -1,3 +1,6 @@
+= 3.4.41.1
+- Fix issue with id_helpers and active_scaffold_sortable, caused by last security fix
+
 = 3.4.41
 - Fix XSS via eid param
 
