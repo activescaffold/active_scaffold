@@ -21,10 +21,11 @@ matrix:
   exclude:
     - rvm: 2.1
       gemfile: gemfiles/Gemfile.rails-5.0.x 
-    - rvm: rbx
-      gemfile: gemfiles/Gemfile.rails-5.0.x 
-  allow_failures:
     - rvm: 2.4.0-preview2
+      gemfile: gemfiles/Gemfile.rails-4.0.x 
+    - rvm: 2.4.0-preview2
+      gemfile: gemfiles/Gemfile.rails-4.1.x 
+  allow_failures:
     - rvm: rbx
     - rvm: jruby-9.1.5.0
       gemfile: gemfiles/Gemfile.rails-5.0.x
