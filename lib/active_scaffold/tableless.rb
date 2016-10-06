@@ -54,10 +54,15 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
   end
 
-  module Tableless
-    def association_scope
+  module Association
+    def self.included(base)
+      base.alias_method_chain :association_scope, :tableless
+      base.alias_method_chain :target_scope, :tableless
+    end
+
+    def association_scope_with_tableless
       @association_scope ||= overrided_association_scope if klass < ActiveScaffold::Tableless
-      super
+      association_scope_without_tableless
     end
 
     def overrided_association_scope
@@ -68,40 +73,32 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       end
     end
 
-    def target_scope
-      super.tap do |scope|
+    def target_scope_with_tableless
+      target_scope_without_tableless.tap do |scope|
         if klass < ActiveScaffold::Tableless
           class << scope; include RelationExtension; end
         end
       end
     end
-
-    def get_records
-      klass < ActiveScaffold::Tableless ? scope.to_a : super
-    end
-  end
-  
-  module Association
-    def self.included(base)
-      base.prepend Tableless
-    end
   end
 
   module CollectionAssociation
     def self.included(base)
-      base.prepend Tableless if Rails.version >= '4.2'
+      base.alias_method_chain :get_records, :tableless if Rails.version >= '4.2'
     end
-  end
 
-  module TablelessSingularAssociation
-    def get_records
-      klass < ActiveScaffold::Tableless ? scope.limit(1).to_a : super
+    def get_records_with_tableless
+      klass < ActiveScaffold::Tableless ? scope.to_a : get_records_without_tableless
     end
   end
 
   module SingularAssociation
     def self.included(base)
-      base.prepend TablelessSingularAssociation
+      base.alias_method_chain :get_records, :tableless if Rails.version >= '4.2'
+    end
+
+    def get_records_with_tableless
+      klass < ActiveScaffold::Tableless ? scope.limit(1).to_a : get_records_without_tableless
     end
   end
 

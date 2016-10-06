@@ -9,19 +9,7 @@ class ActiveScaffold::Bridges::TinyMce
 
     module FormColumnHelpers
       def self.included(base)
-        base.prepend OnSubmit
-      end
-
-      module OnSubmit
-        def onsubmit
-          case ActiveScaffold.js_framework
-          when :jquery
-            submit_js = 'tinyMCE.triggerSave();jQuery(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveEditor\', false, jQuery(elem).attr(\'id\')); });'
-          when :prototype
-            submit_js = 'tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveEditor\', false, elem.id); });'
-          end
-          [super, submit_js].compact.join ';'
-        end
+        base.alias_method_chain :onsubmit, :tiny_mce
       end
 
       # The two column options that can be set specifically for the text_editor input
@@ -43,6 +31,16 @@ class ActiveScaffold::Bridges::TinyMce
         html << send(override_input(:textarea), column, options)
         html << javascript_tag(settings + "tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if request.xhr? || params[:iframe]
         html.join "\n"
+      end
+
+      def onsubmit_with_tiny_mce
+        case ActiveScaffold.js_framework
+        when :jquery
+          submit_js = 'tinyMCE.triggerSave();jQuery(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveEditor\', false, jQuery(elem).attr(\'id\')); });'
+        when :prototype
+          submit_js = 'tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveEditor\', false, elem.id); });'
+        end
+        [onsubmit_without_tiny_mce, submit_js].compact.join ';'
       end
 
       # The implementation is very tinymce specific, so it makes sense allowing :form_ui

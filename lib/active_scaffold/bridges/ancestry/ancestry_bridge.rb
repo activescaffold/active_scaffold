@@ -1,19 +1,21 @@
+ActiveScaffold::Config::Core.class_eval do
+  def initialize_with_ancestry(model_id)
+    initialize_without_ancestry(model_id)
+
+    return unless model.respond_to? :ancestry_column
+
+    columns << :parent_id
+    columns[:parent_id].form_ui = :ancestry
+    update.columns.exclude :ancestry
+    create.columns.exclude :ancestry, :parent_id
+    list.columns.exclude :ancestry, :parent_id
+  end
+
+  alias_method_chain :initialize, :ancestry
+end
+
 module ActiveScaffold::Bridges
   class Ancestry
-    module AncestryBridge
-      def initialize(model_id)
-        super(model_id)
-
-        return unless model.respond_to? :ancestry_column
-
-        columns << :parent_id
-        columns[:parent_id].form_ui = :ancestry
-        update.columns.exclude :ancestry
-        create.columns.exclude :ancestry, :parent_id
-        list.columns.exclude :ancestry, :parent_id
-      end
-    end
-
     module FormColumnHelpers
       def active_scaffold_input_ancestry(column, options)
         record = options[:object]
@@ -37,4 +39,3 @@ end
 ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::Ancestry::FormColumnHelpers
 end
-ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::Ancestry::AncestryBridge

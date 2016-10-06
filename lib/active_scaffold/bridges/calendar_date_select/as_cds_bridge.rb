@@ -1,19 +1,23 @@
+module ActiveScaffold::Config
+  class Core < Base
+    def initialize_with_calendar_date_select(model_id)
+      initialize_without_calendar_date_select(model_id)
+
+      calendar_date_select_fields = _columns.collect { |c| c.name.to_sym if [:date, :datetime].include?(c.type) }.compact
+      # check to see if file column was used on the model
+      return if calendar_date_select_fields.empty?
+
+      # automatically set the forum_ui to a file column
+      calendar_date_select_fields.each { |field| columns[field].form_ui = :calendar_date_select }
+    end
+
+    alias_method_chain :initialize, :calendar_date_select
+  end
+end
+
 module ActiveScaffold
   module Bridges
     class CalendarDateSelect
-      module CalendarDateSelectBridge
-        def initialize(model_id)
-          initialize_without_calendar_date_select(model_id)
-
-          calendar_date_select_fields = _columns.collect { |c| c.name.to_sym if [:date, :datetime].include?(c.type) }.compact
-          # check to see if file column was used on the model
-          return if calendar_date_select_fields.empty?
-
-          # automatically set the forum_ui to a file column
-          calendar_date_select_fields.each { |field| columns[field].form_ui = :calendar_date_select }
-        end
-      end
-
       # Helpers that assist with the rendering of a Form Column
       module FormColumnHelpers
         def active_scaffold_input_calendar_date_select(column, options)
@@ -57,4 +61,3 @@ ActiveScaffold::Finder::ClassMethods.module_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
   alias_method :condition_for_calendar_date_select_type, :condition_for_date_bridge_type
 end
-ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::CalendarDateSelect::CalendarDateSelectBridge

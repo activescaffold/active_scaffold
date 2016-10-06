@@ -2,8 +2,8 @@ module ActiveScaffold
   module Bridges
     class Carrierwave
       module CarrierwaveBridge
-        def initialize(model_id)
-          super
+        def initialize_with_carrierwave(model_id)
+          initialize_without_carrierwave(model_id)
           return unless model.respond_to?(:uploaders) && model.uploaders.present?
 
           update.multipart = true
@@ -12,6 +12,10 @@ module ActiveScaffold
           model.uploaders.keys.each do |field|
             configure_carrierwave_field(field.to_sym)
           end
+        end
+
+        def self.included(base)
+          base.alias_method_chain :initialize, :carrierwave
         end
 
         private

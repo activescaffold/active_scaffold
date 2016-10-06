@@ -2,8 +2,8 @@ module ActiveScaffold
   module Bridges
     class Dragonfly
       module DragonflyBridge
-        def initialize(model_id)
-          super
+        def initialize_with_dragonfly(model_id)
+          initialize_without_dragonfly(model_id)
           return unless model.respond_to?(:dragonfly_attachment_classes) && model.dragonfly_attachment_classes.present?
 
           update.multipart = true
@@ -12,6 +12,10 @@ module ActiveScaffold
           model.dragonfly_attachment_classes.each do |attachment|
             configure_dragonfly_field(attachment.attribute)
           end
+        end
+
+        def self.included(base)
+          base.alias_method_chain :initialize, :dragonfly
         end
 
         private

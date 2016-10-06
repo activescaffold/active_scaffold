@@ -6,58 +6,39 @@ class File #:nodoc:
   end
 end
 
-class ActiveScaffold::Bridges::DatePicker
-  module DatePickerBridge
-    def initialize(model_id)
-      super
+ActiveScaffold::Config::Core.class_eval do
+  def initialize_with_date_picker(model_id)
+    initialize_without_date_picker(model_id)
 
-      date_picker_fields = _columns.collect { |c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
-      # check to see if file column was used on the model
-      return if date_picker_fields.empty?
+    date_picker_fields = _columns.collect { |c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
+    # check to see if file column was used on the model
+    return if date_picker_fields.empty?
 
-      # automatically set the forum_ui to a date_picker or datetime_picker
-      date_picker_fields.each do |field|
-        col_config = columns[field[:name]]
-        col_config.form_ui = (field[:type] == :date ? :date_picker : :datetime_picker)
-      end
+    # automatically set the forum_ui to a date_picker or datetime_picker
+    date_picker_fields.each do |field|
+      col_config = columns[field[:name]]
+      col_config.form_ui = (field[:type] == :date ? :date_picker : :datetime_picker)
     end
   end
 
-  module Finder
-    def datetime_conversion_for_condition(column)
-      if column.search_ui == :date_picker
-        :to_date
-      else
-        super
-      end
-    end
+  alias_method_chain :initialize, :date_picker
+end
+
+module ActiveScaffold::Bridges::DatePicker::CastExtension
+  def fallback_string_to_date_with_date_picker(string)
+    Date.strptime(string, I18n.t('date.formats.default')) rescue fallback_string_to_date_without_date_picker(string)
   end
 
-  module AttributeParams
-    def datetime_conversion_for_value(column)
-      if column.form_ui == :date_picker
-        :to_date
-      else
-        super
-      end
-    end
-  end
-
-  module CastExtension
-    def fallback_string_to_date(string)
-      Date.strptime(string, I18n.t('date.formats.default')) rescue super
-    end
+  def self.included(base)
+    base.alias_method_chain :fallback_string_to_date, :date_picker
   end
 end
-if defined?(ActiveRecord::ConnectionAdapters::Type) # rails >= 4.2
-  ActiveRecord::ConnectionAdapters::Type::Date.send(:prepend, ActiveScaffold::Bridges::DatePicker::CastExtension)
+if defined?(ActiveRecord::ConnectionAdapters::Type)
+  ActiveRecord::ConnectionAdapters::Type::Date.send(:include, ActiveScaffold::Bridges::DatePicker::CastExtension)
 else
-  class << ActiveRecord::ConnectionAdapters::Column
-    prepend ActiveScaffold::Bridges::DatePicker::CastExtension
-  end
+  ActiveRecord::ConnectionAdapters::Column.extend ActiveScaffold::Bridges::DatePicker::CastExtension
 end
 
-ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::DatePicker::DatePickerBridge
 ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
   alias_method :active_scaffold_search_date_picker, :active_scaffold_search_date_bridge
@@ -71,13 +52,28 @@ ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::DatePicker::Helper::DatepickerColumnHelpers
 end
 ActiveScaffold::Finder::ClassMethods.module_eval do
-  prepend ActiveScaffold::Bridges::DatePicker::Finder
   include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
+  def datetime_conversion_for_condition_with_datepicker(column)
+    if column.search_ui == :date_picker
+      :to_date
+    else
+      datetime_conversion_for_condition_without_datepicker(column)
+    end
+  end
+  alias_method_chain :datetime_conversion_for_condition, :datepicker
+
   alias_method :condition_for_date_picker_type, :condition_for_date_bridge_type
   alias_method :condition_for_datetime_picker_type, :condition_for_date_picker_type
 end
 ActiveScaffold::AttributeParams.module_eval do
-  prepend ActiveScaffold::Bridges::DatePicker::AttributeParams
+  def datetime_conversion_for_value_with_datepicker(column)
+    if column.form_ui == :date_picker
+      :to_date
+    else
+      datetime_conversion_for_value_without_datepicker(column)
+    end
+  end
+  alias_method_chain :datetime_conversion_for_value, :datepicker
   alias_method :column_value_for_date_picker_type, :column_value_for_datetime_type
   alias_method :column_value_for_datetime_picker_type, :column_value_for_datetime_type
 end

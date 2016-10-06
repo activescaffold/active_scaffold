@@ -2,11 +2,11 @@ ActiveScaffold::DataStructures::Column.class_eval do
   attr_accessor :file_column_display
 end
 
-class ActiveScaffold::Bridges::FileColumn
-  module FileColumnBridge
+module ActiveScaffold::Config
+  class Core < Base
     attr_accessor :file_column_fields
-    def initialize(model_id)
-      super
+    def initialize_with_file_column(model_id)
+      initialize_without_file_column(model_id)
 
       return unless ActiveScaffold::Bridges::FileColumn::FileColumnHelpers.klass_has_file_column_fields?(model)
 
@@ -21,6 +21,8 @@ class ActiveScaffold::Bridges::FileColumn
 
       model.file_column_fields.each { |field| configure_file_column_field(field) }
     end
+
+    alias_method_chain :initialize, :file_column unless method_defined?(:initialize_without_file_column)
 
     def configure_file_column_field(field)
       # set list_ui first because it gets its default value from form_ui
@@ -39,4 +41,3 @@ class ActiveScaffold::Bridges::FileColumn
     end
   end
 end
-ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::FileColumn::FileColumnBridge

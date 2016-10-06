@@ -1,15 +1,16 @@
-module ActiveScaffold
-  module LookupContext
+module ActionView
+  class LookupContext
     attr_accessor :last_template
 
-    def find_template(name, prefixes = [], partial = false, keys = [], options = {})
-      self.last_template = super(name, prefixes, partial, keys, options)
+    def find_template_with_last_template(name, prefixes = [], partial = false, keys = [], options = {})
+      self.last_template = find_template_without_last_template(name, prefixes, partial, keys, options)
     end
+    alias_method_chain :find_template, :last_template
   end
 end
 
 # wrap the action rendering for ActiveScaffold views
-module ActiveScaffold #:nodoc:
+module ActionView::Helpers #:nodoc:
   module RenderingHelper
     #
     # Adds two rendering options.
@@ -33,7 +34,7 @@ module ActiveScaffold #:nodoc:
     #
     # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
     #
-    def render(*args, &block)
+    def render_with_active_scaffold(*args, &block)
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
         require 'digest/sha2'
         options = args.first
@@ -101,7 +102,7 @@ module ActiveScaffold #:nodoc:
           last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
           lookup_context.view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
         end
-        result = super options
+        result = render_without_active_scaffold options
         lookup_context.view_paths = @_view_paths if @_view_paths
         lookup_context.last_template = @_last_template if @_last_template
         result
@@ -115,27 +116,16 @@ module ActiveScaffold #:nodoc:
                        end
         view_stack << current_view if current_view
         lookup_context.view_paths = @_view_paths # reset view_paths in case a view render :super, and then render :partial
-        result = super(*args, &block)
+        result = render_without_active_scaffold(*args, &block)
         view_stack.pop if current_view.present?
         lookup_context.last_template = last_template
         result
       end
     end
+    alias_method_chain :render, :active_scaffold
 
     def view_stack
       @_view_stack ||= []
-    end
-  end
-end
-
-module ActionView
-  LookupContext.class_eval do
-    prepend ActiveScaffold::LookupContext
-  end
-
-  module Helpers
-    module RenderingHelper
-      prepend ActiveScaffold::RenderingHelper
     end
   end
 end
