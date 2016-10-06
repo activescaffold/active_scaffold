@@ -7,6 +7,6 @@ class ActiveScaffold::Bridges::Paperclip < ActiveScaffold::DataStructures::Bridg
     require File.join(File.dirname(__FILE__), 'paperclip/list_ui')
     require File.join(File.dirname(__FILE__), 'paperclip/paperclip_bridge_helpers')
     require File.join(File.dirname(__FILE__), 'paperclip/paperclip_bridge')
-    ActiveScaffold::Config::Core.send :include, ActiveScaffold::Bridges::Paperclip::PaperclipBridge
+    ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::Paperclip::PaperclipBridge
   end
 end

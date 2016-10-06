@@ -23,13 +23,8 @@ module ActiveScaffold::Bridges
     # As already has callbacks to ensure authorization at controller method via "authorization_method"
     # but let's include this too, just in case, no sure how performance is affected tough :TODO benchmark
     module ClassMethods
-      extend ActiveSupport::Concern
-      included do
-        alias_method_chain :active_scaffold, :cancan
-      end
-
-      def active_scaffold_with_cancan(model_id = nil, &block)
-        active_scaffold_without_cancan(model_id, &block)
+      def active_scaffold(model_id = nil, &block)
+        super
         authorize_resource(
           :class => active_scaffold_config.model,
           :instance => :record
@@ -46,13 +41,9 @@ module ActiveScaffold::Bridges
     # beginning of chain integration
     module Actions
       module Core
-        extend ActiveSupport::Concern
-        included do
-          alias_method_chain :beginning_of_chain, :cancan
-        end
         # :TODO can this be expanded more ?
-        def beginning_of_chain_with_cancan
-          beginning_of_chain_without_cancan.accessible_by(current_ability)
+        def beginning_of_chain
+          super.accessible_by(current_ability)
         end
       end
     end
@@ -103,11 +94,9 @@ module ActiveScaffold::Bridges
     module ActiveRecord
       extend ActiveSupport::Concern
       included do
-        extend SecurityMethods
-        include SecurityMethods
-        alias_method_chain :authorized_for?, :cancan
+        prepend SecurityMethods
         class << self
-          alias_method_chain :authorized_for?, :cancan
+          prepend SecurityMethods
         end
       end
 
@@ -119,7 +108,7 @@ module ActiveScaffold::Bridges
         #     {:action=>"edit"}
         # to allow access cancan must allow both :crud_type and :action
         # if cancan says "no", it delegates to default AS behavior
-        def authorized_for_with_cancan?(options = {})
+        def authorized_for?(options = {})
           raise InvalidArgument if options[:crud_type].blank? && options[:action].blank?
           if current_ability.present?
             crud_type_result = options[:crud_type].nil? ? true : current_ability.can?(options[:crud_type], self)
@@ -127,8 +116,7 @@ module ActiveScaffold::Bridges
           else
             crud_type_result, action_result = false, false
           end
-          default_result = authorized_for_without_cancan?(options)
-          (crud_type_result && action_result) || default_result
+          (crud_type_result && action_result) || super
         end
       end
     end
