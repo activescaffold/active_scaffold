@@ -118,15 +118,7 @@ module ActiveScaffold::Actions
 
     def copy_attributes(orig, dst = nil)
       dst ||= orig.class.new
-      attributes = orig.attributes
-      if orig.class.respond_to?(:accessible_attributes) && orig.class.accessible_attributes.present?
-        attributes.each { |attr, value| dst.send :write_attribute, attr, value if orig.class.accessible_attributes.deny? attr }
-        attributes = attributes.slice(*orig.class.accessible_attributes)
-      elsif orig.class.respond_to? :protected_attributes
-        orig.class.protected_attributes.each { |attr| dst.send :write_attribute, attr, orig[attr] if attr.present? }
-        attributes = attributes.except(*orig.class.protected_attributes)
-      end
-      dst.attributes = attributes
+      orig.attributes.each { |attr, value| dst.send :write_attribute, attr, value }
       dst
     end
 
