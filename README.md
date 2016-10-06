@@ -29,7 +29,7 @@ Run the following commands
     bundle install
     rails g active_scaffold:install
     bundle exec rake db:create
-    rails g active_scaffold User name:string
+    rails g active_scaffold:resource User name:string
     bundle exec rake db:migrate
 
 Run the app and visit localhost:3000/users
