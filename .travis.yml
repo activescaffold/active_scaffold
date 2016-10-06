@@ -5,6 +5,7 @@ before_script:
   - bin/brakeman
 bundler_args: --clean --deployment --jobs=3 --retry=3 --without development production
 cache: bundler
+dist: trusty
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-4.0.x
