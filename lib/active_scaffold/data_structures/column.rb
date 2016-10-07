@@ -4,7 +4,7 @@ module ActiveScaffold::DataStructures
     include ActiveScaffold::OrmChecks
 
     attr_reader :active_record_class
-    alias_method :model, :active_record_class
+    alias model active_record_class
 
     # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all others will be inferred from this name.
     attr_accessor :name
