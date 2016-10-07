@@ -98,8 +98,8 @@ module ActiveScaffold
 
       field = if association.belongs_to?
                 association.foreign_key
-        else
-          association.klass.primary_key
+              else
+                association.klass.primary_key
         end
 
       table = association.belongs_to? ? active_scaffold_config.model.table_name : association.table_name
