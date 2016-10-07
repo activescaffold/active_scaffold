@@ -400,6 +400,7 @@ module ActiveScaffold::DataStructures
     end
 
     protected
+
     def setup_association_info
       assoc = active_record_class.reflect_on_association(self.name)
       @association = if assoc

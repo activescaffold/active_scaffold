@@ -30,6 +30,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     protected
+
     def reflect_on_association(name)
       @association.klass.reflect_on_am_association(reverse_name)
     end

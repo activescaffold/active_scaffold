@@ -72,6 +72,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     protected
+
     def scope_values
       return {} unless @association.scope
       @scope_values ||= @association.klass.instance_exec(&@association.scope).values rescue {}
