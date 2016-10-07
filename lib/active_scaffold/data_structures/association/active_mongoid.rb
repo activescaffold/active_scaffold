@@ -1,10 +1,8 @@
 module ActiveScaffold::DataStructures::Association
   class ActiveMongoid < Mongoid
-    class << self
-      def reflect_on_all_associations(klass)
-        return [] unless klass.respond_to? :am_relations
-        klass.am_relations.values
-      end
+    def self.reflect_on_all_associations(klass)
+      return [] unless klass.respond_to? :am_relations
+      klass.am_relations.values
     end
 
     def allow_join?

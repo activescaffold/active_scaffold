@@ -1,9 +1,7 @@
 module ActiveScaffold::DataStructures::Association
   class ActiveRecord < Abstract
-    class << self
-      def reflect_on_all_associations(klass)
-        klass.reflect_on_all_associations
-      end
+    def self.reflect_on_all_associations(klass)
+      klass.reflect_on_all_associations
     end
 
     delegate :collection?, :polymorphic?, :association_primary_key, :foreign_type, :table_name, to: :@association
