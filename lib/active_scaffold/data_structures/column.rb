@@ -403,10 +403,10 @@ module ActiveScaffold::DataStructures
     def setup_association_info
       assoc = active_record_class.reflect_on_association(self.name)
       @association = if assoc
-        case
-        when active_record? then Association::ActiveRecord.new(assoc)
-        when mongoid? then Association::Mongoid.new(assoc)
-        end
+                       case
+                       when active_record? then Association::ActiveRecord.new(assoc)
+                       when mongoid? then Association::Mongoid.new(assoc)
+                       end
       elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
         assoc = active_record_class.reflect_on_am_association(name)
         Association::ActiveMongoid.new(assoc) if assoc

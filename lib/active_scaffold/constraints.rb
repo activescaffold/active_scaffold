@@ -97,7 +97,7 @@ module ActiveScaffold
       # please see the relevant tests for concrete examples.
 
       field = if association.belongs_to?
-          association.foreign_key
+                association.foreign_key
         else
           association.klass.primary_key
         end
