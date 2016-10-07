@@ -78,7 +78,7 @@ module ActiveScaffold::DataStructures
       setup_constrained_fields
     end
 
-    delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :to => :association
+    delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :readonly?, :to => :association
 
     # A through association with has_one or has_many as source association
     # create cannot be called in nested through associations, and not-nested through associations
@@ -95,10 +95,6 @@ module ActiveScaffold::DataStructures
 
     def through_association?
       association.through?
-    end
-
-    def readonly?
-      association.readonly?
     end
 
     def sorted?(chain)
