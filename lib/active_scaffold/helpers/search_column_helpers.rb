@@ -171,7 +171,7 @@ module ActiveScaffold
       def include_null_comparators?(column)
         return column.options[:null_comparators] if column.options.key? :null_comparators
         if column.association
-          !column.belongs_to_association? || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
+          !column.association.belongs_to? || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
         else
           column.column.try(:null)
         end
