@@ -2,8 +2,8 @@ module ActiveScaffold
   module Bridges
     class Paperclip
       module PaperclipBridge
-        def initialize_with_paperclip(model_id)
-          initialize_without_paperclip(model_id)
+        def initialize(model_id)
+          super
           return unless model.respond_to?(:attachment_definitions) && !model.attachment_definitions.nil?
 
           update.multipart = true
@@ -14,10 +14,6 @@ module ActiveScaffold
             # define the "delete" helper for use with active scaffold, unless it's already defined
             ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.generate_delete_helper(model, field)
           end
-        end
-
-        def self.included(base)
-          base.alias_method_chain :initialize, :paperclip
         end
 
         private
