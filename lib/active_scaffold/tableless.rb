@@ -76,7 +76,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       end
     end
   end
-  
+
   module Association
     def self.included(base)
       base.prepend Tableless
