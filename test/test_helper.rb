@@ -12,8 +12,10 @@ require 'mocha/setup'
 require 'minitest/reporters'
 Minitest::Reporters.use!
 
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
+if RUBY_ENGINE != 'rbx'
+  require 'codeclimate-test-reporter'
+  CodeClimate::TestReporter.start
+end
 
 def load_schema
   stdout = $stdout
