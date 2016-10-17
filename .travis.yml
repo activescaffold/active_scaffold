@@ -5,6 +5,7 @@ before_script:
   - bin/brakeman
 bundler_args: --clean --deployment --jobs=3 --retry=3 --without development production
 cache: bundler
+dist: trusty
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-4.0.x
@@ -26,7 +27,7 @@ matrix:
     - rvm: 2.4.0-preview2
       gemfile: gemfiles/Gemfile.rails-4.1.x 
   allow_failures:
-    - rvm: rbx
+    - rvm: rbx-3
     - rvm: 2.4.0-preview2
       gemfile: Gemfile
     - rvm: jruby-9.1.5.0
@@ -37,5 +38,5 @@ rvm:
   - 2.3.1
   - 2.4.0-preview2
   - jruby-9.1.5.0
-  - rbx
-sudo: false
+  - rbx-3
+sudo: required
