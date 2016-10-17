@@ -26,10 +26,10 @@ matrix:
       gemfile: gemfiles/Gemfile.rails-4.0.x 
     - rvm: 2.4.0-preview2
       gemfile: gemfiles/Gemfile.rails-4.1.x 
+    - rvm: 2.4.0-preview2 # enable with rails 4.2.8
+      gemfile: Gemfile
   allow_failures:
     - rvm: rbx-3
-    - rvm: 2.4.0-preview2
-      gemfile: Gemfile
     - rvm: jruby-9.1.5.0
       gemfile: gemfiles/Gemfile.rails-5.0.x
 rvm:
