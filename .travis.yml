@@ -30,6 +30,8 @@ matrix:
       gemfile: Gemfile
   allow_failures:
     - rvm: rbx-3
+    - rvm: rbx-3
+      gemfile: gemfiles/Gemfile.rails-5.0.x
     - rvm: jruby-9.1.5.0
       gemfile: gemfiles/Gemfile.rails-5.0.x
 rvm:
