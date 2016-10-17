@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    active_scaffold (3.4.41.1)
+    active_scaffold (3.4.99)
       ice_nine (~> 0.11)
       rails (>= 4.0.5)
 
@@ -91,7 +91,7 @@ GEM
       builder
       minitest (>= 5.0)
       ruby-progressbar
-    mocha (1.1.0)
+    mocha (1.2.1)
       metaclass (~> 0.0.1)
     netrc (0.11.0)
     nokogiri (1.6.8)
