@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
-# Add dependencies required to use your gem here.
-# Example:
-#   gem 'activesupport', '>= 2.3.5'
 
 gemspec :path => '../'
 
-# Add dependencies to develop your gem here.
-# Include everything needed to run rake, tests, features, etc.
+group :development do
+  #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
+  gem 'localeapp'
+end
+
 group :development, :test do
   # A static analysis security vulnerability scanner for Ruby on Rails applications
   gem 'brakeman', require: false
@@ -15,21 +15,16 @@ group :development, :test do
   # RDoc produces HTML and command-line documentation for Ruby projects
   gem 'rdoc'
   # Bundler provides a consistent environment for Ruby projects by tracking and installing the exact gems and versions that are needed
-  gem 'bundler', '>= 1.0.0'
+  gem 'bundler', '~> 1.0'
   # Rack provides a minimal interface between webservers that support Ruby and Ruby frameworks
   gem 'rack'
-end
-
-group :development do
-  #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
-  gem 'localeapp'
+  # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
+  gem 'rubocop', require: false
 end
 
 group :test do
   # Makes tests easy on the fingers and the eyes
-  gem 'shoulda', '>= 0'
-  # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
-  gem 'simplecov', '>= 0'
+  gem 'shoulda'
   # Mocking and stubbing library with JMock/SchMock syntax, which allows mocking and stubbing of methods on real (non-mock) classes
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
@@ -37,9 +32,9 @@ group :test do
   gem 'rails', '~> 4.1.14.2'
   # Collects test coverage data from your Ruby test suite and sends it to Code Climate's hosted, automated code review service.
   # Based on SimpleCov
-  gem 'codeclimate-test-reporter', require: nil
+  gem 'codeclimate-test-reporter', require: false
   # Create customizable MiniTest output formats
-  gem 'minitest-reporters', require: nil
+  gem 'minitest-reporters', require: false
 
   platforms :jruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine

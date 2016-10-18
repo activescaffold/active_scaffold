@@ -179,7 +179,7 @@ DEPENDENCIES
   active_scaffold!
   activerecord-jdbcsqlite3-adapter
   brakeman
-  bundler (>= 1.0.0)
+  bundler (~> 1.0)
   codeclimate-test-reporter
   jdbc-sqlite3
   localeapp
@@ -192,7 +192,6 @@ DEPENDENCIES
   rdoc
   rubocop
   shoulda
-  simplecov
   sqlite3
 
 BUNDLED WITH
