@@ -1,0 +1,135 @@
+.test_jruby_template: &test_jruby
+  script:
+    - apt-get -qq update
+    - apt-get -qq install git
+    - bundle install --clean --deployment --jobs=$(nproc) --without development lint
+    - bin/rake
+  stage: test
+  variables:
+    JRUBY_OPTS: --debug
+
+.test_mri_template: &test_mri
+  script:
+    - bundle install --clean --deployment --jobs=$(nproc) --without development lint
+    - bin/rake
+  stage: test
+
+
+before_script:
+  - id
+  - uname -a
+  - cat /etc/os-release
+  - ruby --version
+  - gem --version
+  - bundle --version
+
+cache:
+  paths:
+    - vendor/bundle
+
+lint:brakeman:
+  image: ruby:alpine
+  script:
+    - apk add --no-cache --update git
+    - bundle install --clean --deployment --jobs=2 --without default development test
+    - bin/brakeman
+  stage: lint
+
+lint:rubocop:
+  image: ruby:alpine
+  script:
+    - apk add --no-cache --update git
+    - bundle install --clean --deployment --jobs=2 --without default development test
+    - bin/rubocop
+  stage: lint
+
+stages:
+  - lint
+  - test
+
+test:Gemfile:jruby:9.1:
+  <<: *test_jruby
+  image: jruby:9.1
+
+test:Gemfile:mri:2.1:
+  <<: *test_mri
+  image: ruby:2.1
+
+test:Gemfile:mri:2.2:
+  <<: *test_mri
+  image: ruby:2.2
+
+test:Gemfile:mri:2.3:
+  <<: *test_mri
+  image: ruby:2.3
+
+test:Gemfile.rails-4.0.x:jruby:9.1:
+  <<: *test_jruby
+  image: jruby:9.1
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
+
+test:Gemfile.rails-4.0.x:mri:2.1:
+  <<: *test_mri
+  image: ruby:2.1
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
+
+test:Gemfile.rails-4.0.x:mri:2.2:
+  <<: *test_mri
+  image: ruby:2.2
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
+
+test:Gemfile.rails-4.0.x:mri:2.3:
+  <<: *test_mri
+  image: ruby:2.3
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
+
+test:Gemfile.rails-4.1.x:jruby:9.1:
+  <<: *test_jruby
+  image: jruby:9.1
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
+
+test:Gemfile.rails-4.1.x:mri:2.1:
+  <<: *test_mri
+  image: ruby:2.1
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
+
+test:Gemfile.rails-4.1.x:mri:2.2:
+  <<: *test_mri
+  image: ruby:2.2
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
+
+test:Gemfile.rails-4.1.x:mri:2.3:
+  <<: *test_mri
+  image: ruby:2.3
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
+
+test:Gemfile.rails-5.0.x:jruby:9.1:
+  <<: *test_jruby
+  allow_failure: true
+  image: jruby:9.1
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
+
+test:Gemfile.rails-5.0.x:mri:2.2:
+  <<: *test_mri
+  image: ruby:2.2
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
+
+test:Gemfile.rails-5.0.x:mri:2.3:
+  <<: *test_mri
+  image: ruby:2.3
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
+
+variables:
+  LC_ALL: C.UTF-8
+  RAILS_ENV: test

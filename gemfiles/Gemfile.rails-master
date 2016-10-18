@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gemspec :path => '../'
+gemspec path: '../'
 gem 'active_scaffold', path: '../'
 
 group :development do

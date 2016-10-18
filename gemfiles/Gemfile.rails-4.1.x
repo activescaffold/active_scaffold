@@ -1,25 +1,28 @@
 source 'https://rubygems.org'
 
-gemspec :path => '../'
+gemspec path: '../'
 
 group :development do
   #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
   gem 'localeapp'
+  # RDoc produces HTML and command-line documentation for Ruby projects
+  gem 'rdoc'
+end
+
+group :development, :lint do
+  # A static analysis security vulnerability scanner for Ruby on Rails applications
+  gem 'brakeman', require: false
+  # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
+  gem 'rubocop', require: false
 end
 
 group :development, :test do
-  # A static analysis security vulnerability scanner for Ruby on Rails applications
-  gem 'brakeman', require: false
   # A make-like build utility for Ruby
   gem 'rake'
-  # RDoc produces HTML and command-line documentation for Ruby projects
-  gem 'rdoc'
   # Bundler provides a consistent environment for Ruby projects by tracking and installing the exact gems and versions that are needed
   gem 'bundler', '~> 1.0'
   # Rack provides a minimal interface between webservers that support Ruby and Ruby frameworks
   gem 'rack'
-  # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
-  gem 'rubocop', require: false
 end
 
 group :test do
