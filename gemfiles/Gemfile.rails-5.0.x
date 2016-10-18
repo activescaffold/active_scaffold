@@ -29,7 +29,7 @@ group :test do
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
-  gem 'rails', '~> 5.0.0'
+  gem 'rails', '~> 5.0.0.1'
   # Collects test coverage data from your Ruby test suite and sends it to Code Climate's hosted, automated code review service.
   # Based on SimpleCov
   gem 'codeclimate-test-reporter', require: false
