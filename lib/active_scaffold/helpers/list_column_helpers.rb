@@ -123,9 +123,11 @@ module ActiveScaffold
             format_value(value, column.options)
           end
         else
-          if column.association.collection? && column.association.respond_to_target?
+          if column.association.collection?
             associated_size = value.size if column.associated_number? # get count before cache association
-            cache_association(record.association(column.name), column, associated_size) unless value.loaded?
+            if column.association.respond_to_target? && !value.loaded?
+              cache_association(record.association(column.name), column, associated_size)
+            end
           end
           format_association_value(value, column, associated_size)
         end
