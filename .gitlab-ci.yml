@@ -65,7 +65,7 @@ lint:brakeman:
 lint:bundler:audit:
   <<: *lint
   script:
-    -  bin/bundle-audit check --update --verbose
+    - bin/bundle-audit check --update --verbose
 
 lint:rubocop:
   <<: *lint
