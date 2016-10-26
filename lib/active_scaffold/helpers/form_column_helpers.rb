@@ -48,7 +48,7 @@ module ActiveScaffold
               end
               options[:include_blank] = true if column.column.null && [:date, :datetime, :time].include?(column.column.type)
               options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
-              text_field(:record, column.name, options.merge(column.options))
+              text_field(:record, column.name, options.merge(column.options).except(:format))
             end
           end
         end
@@ -411,21 +411,21 @@ module ActiveScaffold
       # A text box, that accepts only valid phone-number (in-browser validation)
       def active_scaffold_input_telephone(column, options)
         options = active_scaffold_input_text_options(options)
-        telephone_field :record, column.name, options.merge(column.options)
+        telephone_field :record, column.name, options.merge(column.options).except(:format)
       end
 
       # A spinbox control for number values (in-browser validation)
       def active_scaffold_input_number(column, options)
         options = numerical_constraints_for_column(column, options)
         options = active_scaffold_input_text_options(options)
-        number_field :record, column.name, options.merge(column.options)
+        number_field :record, column.name, options.merge(column.options).except(:format)
       end
 
       # A slider control for number values (in-browser validation)
       def active_scaffold_input_range(column, options)
         options = numerical_constraints_for_column(column, options)
         options = active_scaffold_input_text_options(options)
-        range_field :record, column.name, options.merge(column.options)
+        range_field :record, column.name, options.merge(column.options).except(:format)
       end
 
       #
