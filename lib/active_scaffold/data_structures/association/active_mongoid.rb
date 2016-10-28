@@ -6,7 +6,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def inverse_klass
-      as ? association[:inverse_class_name].constantize : super
+      as ? @association[:inverse_class_name].constantize : super
     end
 
     def allow_join?
