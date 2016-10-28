@@ -352,15 +352,7 @@ module ActiveScaffold::DataStructures
     # just the field (not table.field)
     def field_name
       return nil if virtual?
-      @field_name ||= if column
-                        if active_record?
-                          @active_record_class.connection.quote_column_name(column.name)
-                        else
-                          column.name.to_s
-                        end
-                      else
-                        association.foreign_key
-      end
+      @field_name ||= column ? quoted_field_name(column.name) : association.foreign_key
     end
 
     def <=>(other)
@@ -434,17 +426,17 @@ module ActiveScaffold::DataStructures
       if association.nil? && column
         [field]
       elsif association.try(:polymorphic?)
-        [field, quoted_field(@active_record_class.connection.quote_column_name(association.foreign_type))]
+        [field, quoted_field(quoted_field_name(association.foreign_type))]
       elsif association
         if association.belongs_to?
           [field]
         else
           columns = []
           if _columns_hash[count_column = "#{association.name}_count"]
-            columns << quoted_field(@active_record_class.connection.quote_column_name(count_column))
+            columns << quoted_field(quoted_field_name(count_column))
           end
           if association.through_reflection.try(:belongs_to?)
-            columns << quoted_field(@active_record_class.connection.quote_column_name(association.through_reflection.foreign_key))
+            columns << quoted_field(quoted_field_name(association.through_reflection.foreign_key))
           end
           columns
         end
@@ -456,8 +448,16 @@ module ActiveScaffold::DataStructures
       return @column.type < Numeric if mongoid?
     end
 
+    def quoted_field_name(column_name)
+      if active_record?
+        @active_record_class.connection.quote_column_name(column_name)
+      else
+        column_name.to_s
+      end
+    end
+
     def quoted_field(name)
-      [_quoted_table_name, name].compact.join('.')
+      active_record? ? [_quoted_table_name, name].compact.join('.') : name
     end
 
     def initialize_sort

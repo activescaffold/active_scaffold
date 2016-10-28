@@ -5,6 +5,10 @@ module ActiveScaffold::DataStructures::Association
       klass.am_relations.values
     end
 
+    def inverse_klass
+      as ? association[:inverse_class_name].constantize : super
+    end
+
     def allow_join?
       false
     end
