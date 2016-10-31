@@ -92,6 +92,7 @@ test:rails-4.0.x:mri:2.2:
 test:rails-4.0.x:mri:2.3:
   <<: *use_rails_4_0_x
   image: ruby:2.3
+
 test:rails-4.1.x:jruby:9.1:
   <<: *use_rails_4_1_x
   <<: *use_jruby
