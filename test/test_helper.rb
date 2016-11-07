@@ -1,4 +1,4 @@
-if RUBY_ENGINE == 'ruby'
+if RUBY_ENGINE != 'rbx'
   require 'simplecov'
   SimpleCov.start { add_filter 'test' }
 end
@@ -11,11 +11,6 @@ require 'mocha/setup'
 
 require 'minitest/reporters'
 Minitest::Reporters.use!
-
-if RUBY_ENGINE != 'rbx'
-  require 'codeclimate-test-reporter'
-  CodeClimate::TestReporter.start
-end
 
 def load_schema
   stdout = $stdout

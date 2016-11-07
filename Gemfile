@@ -38,6 +38,7 @@ group :test do
   # Collects test coverage data from your Ruby test suite and sends it to Code Climate's hosted, automated code review service.
   # Based on SimpleCov
   gem 'codeclimate-test-reporter', require: false
+  gem 'simplecov', require: false
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
 
