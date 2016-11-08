@@ -824,6 +824,10 @@ var ActiveScaffold = {
 
     if (element.length) {
       if (options.is_subform == false) {
+        if (typeof(options.hidden) != 'undefined') {
+          var li = element.closest('li');
+          li[options.hidden ? 'addClass' : 'removeClass'].call(li, 'hidden')
+        }
         this.replace(element.closest('dl'), content);
       } else {
         this.replace_html(element, content);

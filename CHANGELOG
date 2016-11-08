@@ -14,6 +14,7 @@
 - fix translation for ActiveRecord enums
 - fix do_refresh_list on actions with GET route, it used :id and :action from request for sorting and pagination links
 - fix enabling draggable lists and sliders on new subform records
+- fix updating column and changing from :hidden form_ui to different one
 
 = 3.4.41.1
 - Fix issue with id_helpers and active_scaffold_sortable, caused by last security fix

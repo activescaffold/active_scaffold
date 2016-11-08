@@ -12,7 +12,7 @@
   if renders_as == :subform
     options = {:is_subform => true, :field_class => "#{column.name}-sub-form"}
   else
-    options = {:is_subform => false, :field_class => "#{column.name}-input"}
+    options = {:is_subform => false, :field_class => "#{column.name}-input", :hidden => column.form_ui == :hidden}
   end
   html = if scope
     readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
