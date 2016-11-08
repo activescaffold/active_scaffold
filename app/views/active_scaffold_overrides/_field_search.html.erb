@@ -11,7 +11,7 @@
 -%>
 <%= form_tag url_options, options %>
   <ol class="form">
-   <% visibles, hiddens = visibles_and_hiddens(active_scaffold_config.field_search) %>
+    <% visibles, hiddens = visibles_and_hiddens(active_scaffold_config.field_search) %>
     <% visibles.each do |column| -%>
       <li class="form-element <%= column.css_class unless column.css_class.is_a?(Proc) %>"><%= search_attribute(column, @record) %></li>
     <% end -%>
