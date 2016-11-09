@@ -1,79 +1,75 @@
-es: 
-  active_scaffold: 
-    ? "!="
-    : Distinto
-    <: Menor
-    <=: "Menor o igual"
-    ? ">"
-    : Mayor
-    ? ">="
-    : "Mayor o igual"
+es:
+  active_scaffold:
+    "!=": Distinto
+    "<": Menor
+    "<=": Menor o igual
+    "=": Igual
+    ">": Mayor
+    ">=": Mayor o igual
     _select_: "- seleccionar -"
     _to_: " a "
     add: Añadir
-    add_existing: "Añadir Existente"
-    add_existing_model: "Añadir %{model} Existente"
-    create_apply: Crear y continuar    
-    update_apply: Aplicar
+    add_existing: Añadir Existente
+    add_existing_model: Añadir %{model} Existente
+    apply: Aplicar
     are_you_sure_to_delete: "¿Estás seguro de que quieres borrar %{label}?"
     average: Media
-    begins_with: "Empieza con"
+    begins_with: Empieza con
     between: Entre
     cancel: Cancelar
-    cant_destroy_record: "No se pudo borrar %{record}"
-    changes: Cambios
-    click_to_edit: "Pulsa para editar"
-    click_to_reset: "Pulsa para restaurar"
+    cant_destroy_record: No se pudo borrar %{record}
+    click_to_edit: Pulsa para editar
+    click_to_reset: Pulsa para restaurar
     close: Cerrar
+    config_list: Configurar
+    config_list_model: Configurar columnas de %{model}
     contains: Contiene
     create: Crear
-    create_another: "Crear Otro %{model}"
-    create_model: "Crear %{model}"
-    create_new: "Crear Nuevo"
+    create_another: Crear Otro %{model}
+    create_model: Crear %{model}
+    create_new: Crear Nuevo
     created_model: "%{model} creado"
     customize: Personalizar
-    date_picker_options: 
+    date_picker_options:
       firstDay: 1
       isRTL: false
       showMonthAfterYear: false
       weekHeader: Sm
-    datetime_picker_options: 
+    datetime_picker_options:
       closeText: Cerrar
       currentText: Ahora
       timeText: Hora
     days: Días
     delete: Borrar
     deleted_model: "%{model} borrado"
-    deleted_records: "Ver Eliminados"
     delimiter: Delimitador
     download: Descargar
     edit: Editar
-    ends_with: "Termina con"
+    ends_with: Termina con
     error_500: "(código 500, error interno)"
-    errors: 
-      template: 
-        body: "Hubo problemas con los siguientes campos:"
-        header: 
-          one: "No se pudo guardar %{model} debido a un error."
-          other: "No se pudo guardar %{model} debido a %{count} errores."
+    errors:
+      template:
+        body: 'Hubo problemas con los siguientes campos:'
+        header:
+          one: No se pudo guardar %{model} debido a un error.
+          other: No se pudo guardar %{model} debido a %{count} errores.
     export: Exportar
-    ? "false"
-    : "No"
-    filtered: (Filtrado)
-    found: 
+    'false': 'No'
+    filtered: "(Filtrado)"
+    found:
       one: encontrado
       other: encontrados
     future: Futuro
-    hide: (Ocultar)
+    hide: "(Ocultar)"
     hours: Horas
-    human_conditions: 
+    human_conditions:
       association: "%{column} = %{value}"
       boolean: "%{column} = %{value}"
     inplace_edit_handle: "--"
-    internal_error: "Petición fallida"
-    live_search: "Buscar en Vivo"
+    internal_error: Petición fallida
+    live_search: Buscar en Vivo
     loading: Cargando…
-    mark_all_records: "Seleccionar todos"
+    mark_all_records: Seleccionar todos
     maximum: Máximo
     minimum: Mínimo
     minutes: Minutos
@@ -81,59 +77,63 @@ es:
     nested_for_model: "%{nested_model} de %{parent_model}"
     nested_of_model: "%{nested_model} de %{parent_model}"
     next: Siguiente
-    next_month: "Próximo mes"
-    next_week: "Próxima semana"
-    next_year: "Próximo año"
-    no_authorization_for_action: "No dispone de autorización para la acción %{action}"
-    no_entries: "Sin entradas"
-    no_options: "sin opciones"
-    not_null: "No Nulo"
-    ? "null"
-    : Nulo
-    omit_header: "Omitir Cabecera"
-    optional_attributes: "Más opciones"
+    next_month: Próximo mes
+    next_week: Próxima semana
+    next_year: Próximo año
+    no_authorization_for_action: No dispone de autorización para la acción %{action}
+    no_entries: Sin entradas
+    no_options: sin opciones
+    not_null: No Nulo
+    'null': Nulo
+    omit_header: Omitir Cabecera
+    optional_attributes: Más opciones
     options: Opciones
     past: Pasado
     pdf: PDF
-    prev_month: "Mes pasado"
-    prev_week: "Semana pasada"
-    prev_year: "Año pasado"
+    prev_month: Mes pasado
+    prev_week: Semana pasada
+    prev_year: Año pasado
     previous: Anterior
     print: Imprimir
     range: Rango
-    record_not_saved: "Fallo guardando el registro debido a un error desconocido"
-    records_marked: 
-      one: "1 %{model} seleccionado"
+    record_not_saved: Fallo guardando el registro debido a un error desconocido
+    records_marked:
+      one: 1 %{model} seleccionado
       other: "%{count} %{model} seleccionados"
     refresh: Recargar
     remove: Eliminar
-    remove_file: "Eliminar o Reemplazar archivo"
-    replace_existing: "Reemplazar existente"
-    replace_with_new: "Reemplazar con Nuevo"
+    remove_file: Eliminar o Reemplazar archivo
+    replace_existing: Reemplazar existente
+    replace_with_new: Reemplazar con Nuevo
     reset: Restaurar
-    revisions_for_model: "Revisiones de %{model}"
+    revisions_for_model: Revisiones de %{model}
     saving: Guardando…
     search: Buscar
-    search_terms: "Términos a buscar"
+    search_terms: Términos a buscar
     seconds: Segundos
     show: Ver
-    show_block: (Ver)
-    show_model: "Ver %{model}"
+    show_block: "(Ver)"
+    show_model: Ver %{model}
     sum: Total
-    this_month: "Este mes"
-    this_week: "Esta semana"
-    this_year: "Este año"
+    this_month: Este mes
+    this_week: Esta semana
+    this_year: Este año
     today: Hoy
     tomorrow: Mañana
-    ? "true"
-    : Sí
+    'true': Sí
     update: Actualizar
-    update_model: "Actualizar %{model}"
+    update_model: Actualizar %{model}
     updated_model: "%{model} actualizado"
-    version_inconsistency: "Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo."
+    version_inconsistency: Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo.
     weeks: Semanas
     years: Años
     yesterday: Ayer
-  time: 
-    formats: 
+    changes: Cambios
+    create_apply: Crear y continuar
+    deleted_records: Ver Eliminados
+    group_by: Agrupar por
+    no_group: No agrupar
+    update_apply: Aplicar
+  time:
+    formats:
       picker: "%a, %d %b %Y %H:%M:%S"

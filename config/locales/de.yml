@@ -1,42 +1,41 @@
-de: 
-  active_scaffold: 
-    ? "!="
-    : "!="
-    <: <
-    <=: <=
-    ? ">"
-    : ">"
-    ? ">="
-    : ">="
+de:
+  active_scaffold:
+    "!=": "!="
+    "<": "<"
+    "<=": "<="
+    "=": "="
+    ">": ">"
+    ">=": ">="
     _select_: "- Auswählen -"
     _to_: " zu "
     add: Hinzufügen
-    add_existing: "Existierenden Eintrag hinzufügen"
-    add_existing_model: "Existierende %{model} hinzufügen"
-    update_apply: Apply
-    create_apply: Create and continue
-    are_you_sure_to_delete: "Sind Sie sicher?"
-    average: Average
+    add_existing: Existierenden Eintrag hinzufügen
+    add_existing_model: Existierende %{model} hinzufügen
+    apply: Akzeptieren
+    are_you_sure_to_delete: Sind Sie sicher?
+    average: Durchschnitt
     begins_with: Beginnt
     between: Zwischen
     cancel: Abbrechen
     cant_destroy_record: "%{record} kann nicht gelöscht werden"
-    click_to_edit: "Zum Editieren anklicken"
+    click_to_edit: Zum Editieren anklicken
     click_to_reset: Reset
     close: Schließen
+    config_list: Konfigurieren
+    config_list_model: Konfiguriere Spalten für %{model}
     contains: Enthält
     create: Anlegen
-    create_another: "Weitere anlegen"
-    create_model: "Lege %{model} an"
-    create_new: "Neu anlegen"
+    create_another: Weitere anlegen
+    create_model: Lege %{model} an
+    create_new: Neu anlegen
     created_model: "%{model} angelegt"
     customize: Anpassen
-    date_picker_options: 
+    date_picker_options:
       firstDay: 1
       isRTL: false
       showMonthAfterYear: false
       weekHeader: Wo
-    datetime_picker_options: 
+    datetime_picker_options:
       closeText: Schließen
       currentText: Jetzt
       timeText: Uhrzeit
@@ -44,32 +43,31 @@ de:
     delete: Löschen
     deleted_model: "%{model} gelöscht"
     delimiter: Trennzeichen
-    download: Download
+    download: 
     edit: Bearbeiten
     ends_with: Endet
     error_500: "(code 500, Interner Fehler)"
-    errors: 
-      template: 
-        body: "Bitte überprüfen Sie die folgenden Felder:"
-        header: 
-          one: "Konnte %{model} nicht speichern: ein Fehler."
-          other: "Konnte %{model} nicht speichern: %{count} Fehler."
+    errors:
+      template:
+        body: 'Bitte überprüfen Sie die folgenden Felder:'
+        header:
+          one: 'Konnte %{model} nicht speichern: ein Fehler.'
+          other: 'Konnte %{model} nicht speichern: %{count} Fehler.'
     export: Exportieren
-    ? "false"
-    : "False"
-    filtered: (Gefiltert)
+    'false': Falsch
+    filtered: "(Gefiltert)"
     found: Gefunden
     future: Nächsten
-    hide: (Verstecken)
+    hide: "(Verstecken)"
     hours: Stunden
-    human_conditions: 
+    human_conditions:
       association: "%{column} = %{value}"
       boolean: "%{column} = %{value}"
     inplace_edit_handle: "--"
-    internal_error: "Fehler bei der Verarbeitung"
+    internal_error: Fehler bei der Verarbeitung
     live_search: Live-Suche
     loading: Lade…
-    mark_all_records: "Mark all"
+    mark_all_records: Alle auswählen
     maximum: Maximum
     minimum: Minimum
     minutes: Minuten
@@ -77,59 +75,63 @@ de:
     nested_for_model: "%{nested_model} für %{parent_model}"
     nested_of_model: "%{nested_model} von %{parent_model}"
     next: Vor
-    next_month: "Nächsten Monat"
-    next_week: "Nächste Woche"
-    next_year: "Nächstes Jahr"
-    no_authorization_for_action: "Keine Berechtigung für Aktion %{action}"
-    no_entries: "Keine Einträge"
-    no_options: "Keine Optionen"
-    not_null: "Nicht Null"
-    ? "null"
-    : "Null"
-    omit_header: "Lasse Header weg"
+    next_month: Nächsten Monat
+    next_week: Nächste Woche
+    next_year: Nächstes Jahr
+    no_authorization_for_action: Keine Berechtigung für Aktion %{action}
+    no_entries: Keine Einträge
+    no_options: Keine Optionen
+    not_null: Nicht Null
+    'null': 'Null'
+    omit_header: Lasse Header weg
     optional_attributes: Weitere
     options: Optionen
     past: Letzten
     pdf: PDF
-    prev_month: "Letzten Monat"
-    prev_week: "Letzte Woche"
-    prev_year: "Letztes Jahr"
+    prev_month: Letzten Monat
+    prev_week: Letzte Woche
+    prev_year: Letztes Jahr
     previous: Zurück
     print: Drucken
     range: Zeitraum
-    record_not_saved: "Eintrag kann nicht gespeichert werden. Ursache unbekannt."
-    records_marked: 
-      one: "1 marked %{model}"
-      other: "%{count} marked %{model}"
-    refresh: "Neu laden"
+    record_not_saved: Eintrag kann nicht gespeichert werden. Ursache unbekannt.
+    records_marked:
+      one: 1 %{model} makriert
+      other: "%{count} %{model} makriert"
+    refresh: Neu laden
     remove: Entfernen
-    remove_file: "Entferne oder Ersetze Datei"
-    replace_existing: "Existierenden ersetzen"
-    replace_with_new: "Mit Neuer ersetzen"
+    remove_file: Entferne oder Ersetze Datei
+    replace_existing: Existierenden ersetzen
+    replace_with_new: Mit Neuer ersetzen
     reset: Zurücksetzen
-    revisions_for_model: "Revisionen für %{model}"
+    revisions_for_model: Revisionen für %{model}
     saving: Speichern…
     search: Suche
     search_terms: Suchbegriffe
     seconds: Sekunden
     show: Anzeigen
-    show_block: (Anzeigen)
-    show_model: "Zeige %{model} an"
-    sum: Sum
-    this_month: "Diesen Monat"
-    this_week: "Diese Woche"
-    this_year: "Dieses Jahr"
+    show_block: "(Anzeigen)"
+    show_model: Zeige %{model} an
+    sum: Summe
+    this_month: Diesen Monat
+    this_week: Diese Woche
+    this_year: Dieses Jahr
     today: Heute
     tomorrow: Morgen
-    ? "true"
-    : "True"
+    'true': Richtig
     update: Speichern
-    update_model: "Editiere %{model}"
+    update_model: Editiere %{model}
     updated_model: "%{model} aktualisiert"
-    version_inconsistency: "Inkonsistente Versionen - dieser Eintrag wurde verändert nachdem Sie mit der Bearbeitung begonnen haben."
+    version_inconsistency: Inkonsistente Versionen - dieser Eintrag wurde verändert nachdem Sie mit der Bearbeitung begonnen haben.
     weeks: Wochen
     years: Jahre
     yesterday: Gestern
-  time: 
-    formats: 
+    changes: 
+    create_apply: 
+    deleted_records: 
+    group_by: 
+    no_group: 
+    update_apply: 
+  time:
+    formats:
       picker: "%d.%m.%Y %H:%M"

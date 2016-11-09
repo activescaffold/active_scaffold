@@ -1,75 +1,73 @@
-ja: 
-  active_scaffold: 
-    ? "!="
-    : "!="
-    <: <
-    <=: <=
-    ? ">"
-    : ">"
-    ? ">="
-    : ">="
+ja:
+  active_scaffold:
+    "!=": "!="
+    "<": "<"
+    "<=": "<="
+    "=": "="
+    ">": ">"
+    ">=": ">="
     _select_: "- 選択してください -"
     _to_: " to "
     add: 追加
     add_existing: 既存のものを追加
-    add_existing_model: "既存の%{model}を追加"
-    update_apply: Apply
-    create_apply: Create and continue
-    are_you_sure_to_delete: "Are you sure you want to delete %{label}?"
+    add_existing_model: 既存の%{model}を追加
+    apply: Apply
+    are_you_sure_to_delete: Are you sure you want to delete %{label}?
     average: Average
-    begins_with: "Begins with"
+    begins_with: Begins with
     between: Between
     cancel: キャンセル
     cant_destroy_record: "%{record}を削除で来ません"
     click_to_edit: クリックして編集
-    click_to_reset: "Click to reset"
+    click_to_reset: Click to reset
     close: 閉じる
+    config_list: Configure
+    config_list_model: Configure Columns for %{model}
     contains: Contains
     create: 作成
-    create_another: "Create Another %{model}"
+    create_another: Create Another %{model}
     create_model: "%{model}を作成"
     create_new: 新規作成
     created_model: "%{model}を作成しました"
     customize: カスタマイズ
-    date_picker_options: 
+    date_picker_options:
       firstDay: 0
       isRTL: false
       showMonthAfterYear: false
       weekHeader: Wk
-    datetime_picker_options: 
-      closeText: ~
-      currentText: ~
-      timeText: ~
+    datetime_picker_options:
+      closeText: 
+      currentText: 
+      timeText: 
     days: Days
     delete: 削除
     deleted_model: "%{model}を削除しました"
     delimiter: Delimiter
     download: ダウンロード
     edit: 編集
-    ends_with: "Ends with"
+    ends_with: Ends with
     error_500: "（コード500: 内部エラー）"
-    errors: 
-      template: 
-        body: "There were problems with the following fields:"
-        header: 
-          one: "1 error prohibited this %{model} from being saved."
+    errors:
+      template:
+        body: 'There were problems with the following fields:'
+        header:
+          one: 1 error prohibited this %{model} from being saved.
           other: "%{count} errors prohibited this %{model} from being saved"
     export: Export
-    ? "false"
-    : "False"
-    filtered: （フィルタ中）
+    'false': 'False'
+    filtered: "（フィルタ中）"
     found: 個ありました
     future: Future
-    hide: (隠す)
+    hide: "(隠す)"
     hours: Hours
-    human_conditions: 
+    human_conditions:
       association: "%{column} = %{value}"
       boolean: "%{column} = %{value}"
     inplace_edit_handle: "--"
     internal_error: リクエストが失敗しました
     live_search: その場で検索
     loading: 読み込み中…
-    mark_all_records: "Mark all"
+    mark_all_records: Mark all
     maximum: Maximum
     minimum: Minimum
     minutes: Minutes
@@ -77,59 +75,63 @@ ja:
     nested_for_model: "%{parent_model}の%{nested_model}"
     nested_of_model: "%{nested_model} of %{parent_model}"
     next: 次
-    next_month: "Next Month"
-    next_week: "Next Week"
-    next_year: "Next Year"
-    no_authorization_for_action: "No Authorization for action %{action}"
+    next_month: Next Month
+    next_week: Next Week
+    next_year: Next Year
+    no_authorization_for_action: No Authorization for action %{action}
     no_entries: 見つかりませんでした
     no_options: オプション無し
-    not_null: "Not Null"
-    ? "null"
-    : "Null"
-    omit_header: "Omit Header"
-    optional_attributes: "Further Options"
+    not_null: Not Null
+    'null': 'Null'
+    omit_header: Omit Header
+    optional_attributes: Further Options
     options: オプション
     past: Past
     pdf: PDF
-    prev_month: "Last Month"
-    prev_week: "Last Week"
-    prev_year: "Last Year"
+    prev_month: Last Month
+    prev_week: Last Week
+    prev_year: Last Year
     previous: 前
     print: 印刷
     range: Range
-    record_not_saved: "Failed to save record cause of an unknown error"
-    records_marked: 
-      one: "1 marked %{model}"
+    record_not_saved: Failed to save record cause of an unknown error
+    records_marked:
+      one: 1 marked %{model}
       other: "%{count} marked %{model}"
     refresh: Refresh
     remove: 削除
     remove_file: ファイルを削除または置換
-    replace_existing: "Replace existing"
+    replace_existing: Replace existing
     replace_with_new: 新しいもので置換
     reset: リセット
-    revisions_for_model: "Revisions for %{model}"
+    revisions_for_model: Revisions for %{model}
     saving: 保存中…
     search: 検索
     search_terms: 検索単語
     seconds: Seconds
     show: 表示
-    show_block: (表示)
+    show_block: "(表示)"
     show_model: "%{model}を表示"
     sum: Sum
-    this_month: "This Month"
-    this_week: "This Week"
-    this_year: "This Year"
+    this_month: This Month
+    this_week: This Week
+    this_year: This Year
     today: Today
     tomorrow: Tomorrow
-    ? "true"
-    : "True"
+    'true': 'True'
     update: 更新
     update_model: "%{model}を更新"
     updated_model: "%{model}を更新しました"
-    version_inconsistency: "バージョンが一致しません - あなたが編集している間にこのレコードが変更されました。"
+    version_inconsistency: バージョンが一致しません - あなたが編集している間にこのレコードが変更されました。
     weeks: Weeks
     years: Years
     yesterday: Yesterday
-  time: 
-    formats: 
+    changes: 
+    create_apply: 
+    deleted_records: 
+    group_by: 
+    no_group: 
+    update_apply: 
+  time:
+    formats:
       picker: "%a, %d %b %Y %H:%M:%S"
