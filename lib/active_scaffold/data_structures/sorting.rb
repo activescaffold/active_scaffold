@@ -109,15 +109,16 @@ module ActiveScaffold::DataStructures
     end
 
     # builds an order-by clause
-    def clause
+    def clause(grouped_columns_calculations = nil)
       return nil if sorts_by_method? || default_sorting?
 
       # unless the sorting is by method, create the sql string
       order = []
       each do |sort_column, sort_direction|
         next if constraint_columns.include? sort_column.name
-        sql = sort_column.sort[:sql]
-        next if sql.nil? || sql.empty?
+        sql = grouped_columns_calculations.try(:dig, sort_column.name) || sort_column.sort[:sql]
+        next unless sql.present?
+        sql = sql.to_sql if sql.respond_to?(:to_sql)
 
         parts = Array(sql).map do |column|
           mongoid? ? [column, sort_direction] : "#{column} #{sort_direction}"

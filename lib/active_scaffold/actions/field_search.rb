@@ -46,7 +46,9 @@ module ActiveScaffold::Actions
           if active_scaffold_config.model.columns_hash.include?(active_scaffold_config.model.inheritance_column)
             select_query << active_scaffold_config.columns[active_scaffold_config.model.inheritance_column].field
           end
-          list_columns[1..-1].each { |column| select_query << calculation_for_group(column) }
+          grouped_columns_calculations.each do |name, part|
+            select_query << (part.respond_to?(:as) ? part : Arel::Nodes::SqlLiteral.new(part)).as(name.to_s)
+          end
           {
             group: group_by,
             select: select_query
@@ -56,20 +58,25 @@ module ActiveScaffold::Actions
         end
       end
 
+      def grouped_columns_calculations
+        @grouped_columns_calculations ||= list_columns[1..-1].each_with_object({}) { |c, h| h[c.name] = calculation_for_group(c) }
+      end
+
       def calculation_for_group(column)
-        Arel::Nodes::NamedFunction.new(column.calculate.to_s, [column.active_record_class.arel_table[column.name]]).as(column.name.to_s)
+        Arel::Nodes::NamedFunction.new(column.calculate.to_s, [column.active_record_class.arel_table[column.name]])
       end
 
       def list_columns
         @list_columns ||= if search_grouped?
-          [search_group_column || field_search_params['active_scaffold_group']].concat grouped_columns
+          columns = grouped_columns || super.select { |col| col.calculation? }
+          [search_group_column || field_search_params['active_scaffold_group']].concat columns
         else
           super
         end
       end
 
       def grouped_columns
-        return super.select { |col| col.calculation? } unless active_scaffold_config.field_search.grouped_columns.present?
+        return unless active_scaffold_config.field_search.grouped_columns.present?
         active_scaffold_config.field_search.grouped_columns.map do |col|
           active_scaffold_config.columns[col]
         end.compact
