@@ -2,6 +2,7 @@ module ActiveScaffold::Actions
   module FieldSearch
     def self.included(base)
       base.helper_method :field_search_params
+      base.helper_method :search_grouped?
       base.send :include, ActiveScaffold::Actions::CommonSearch
       base.send :include, InstanceMethods
     end
@@ -30,6 +31,50 @@ module ActiveScaffold::Actions
         params[:search] = default_params.is_a?(Proc) ? instance_eval(&default_params) : default_params
       end
 
+      def search_grouped?
+        field_search_params.present? && field_search_params['active_scaffold_group'].present?
+      end
+
+      def search_group_column
+        active_scaffold_config.columns[field_search_params['active_scaffold_group']]
+      end
+
+      def custom_finder_options
+        if search_grouped?
+          group_by = search_group_column.try(:field) || field_search_params['active_scaffold_group']
+          select_query = quoted_select_columns(search_group_column.try(:select_columns)) || [group_by]
+          if active_scaffold_config.model.columns_hash.include?(active_scaffold_config.model.inheritance_column)
+            select_query << active_scaffold_config.columns[active_scaffold_config.model.inheritance_column].field
+          end
+          list_columns[1..-1].each { |column| select_query << calculation_for_group(column) }
+          {
+            group: group_by,
+            select: select_query
+          }
+        else
+          super
+        end
+      end
+
+      def calculation_for_group(column)
+        Arel::Nodes::NamedFunction.new(column.calculate.to_s, [column.active_record_class.arel_table[column.name]]).as(column.name.to_s)
+      end
+
+      def list_columns
+        @list_columns ||= if search_grouped?
+          [search_group_column || field_search_params['active_scaffold_group']].concat grouped_columns
+        else
+          super
+        end
+      end
+
+      def grouped_columns
+        return super.select { |col| col.calculation? } unless active_scaffold_config.field_search.grouped_columns.present?
+        active_scaffold_config.field_search.grouped_columns.map do |col|
+          active_scaffold_config.columns[col]
+        end.compact
+      end
+
       def field_search_params
         search_params.is_a?(Hash) ? search_params : {}
       end
@@ -54,7 +99,7 @@ module ActiveScaffold::Actions
             search_condition = self.class.condition_for_column(column, value, text_search)
             next if search_condition.blank?
 
-            if count_includes.nil? && column.includes.present? && list_columns.include?(column)
+            if count_includes.nil? && column.includes.present? && list_columns.include?(column) && !search_grouped?
               active_scaffold_references << column.includes
             elsif column.search_joins.present?
               active_scaffold_outer_joins << column.search_joins

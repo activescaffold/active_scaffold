@@ -55,6 +55,12 @@ module ActiveScaffold::Config
       @optional_columns ||= []
     end
 
+    # add array of columns as options for group by to get aggregated listings
+    attr_accessor :group_options
+
+    # columns to display on aggregated listing
+    attr_accessor :grouped_columns
+
     # default search params
     # default_params = {:title => {"from"=>"test", "to"=>"", "opt"=>"%?%"}}
     attr_accessor :default_params

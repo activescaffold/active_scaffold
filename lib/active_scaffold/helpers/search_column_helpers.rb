@@ -139,6 +139,25 @@ module ActiveScaffold
       # we can't use checkbox ui because it's not possible to decide whether search for this field or not
       alias active_scaffold_search_checkbox active_scaffold_search_boolean
 
+      def active_scaffold_group_search_column(record, options)
+        select_tag 'search[active_scaffold_group]', options_for_select(active_scaffold_group_search_options, selected: field_search_params['active_scaffold_group'])
+      end
+
+      def active_scaffold_group_search_options
+        options = active_scaffold_config.field_search.group_options.collect do |text, value|
+          active_scaffold_translated_option(active_scaffold_group_column, text, value)
+        end
+        [[as_(:no_group), '']].concat options
+      end
+
+      def active_scaffold_group_column
+        @_active_scaffold_group_column ||= begin
+          column = ActiveScaffold::DataStructures::Column.new(:active_scaffold_group, active_scaffold_config.model)
+          column.label = :group_by
+          column
+        end
+      end
+
       def active_scaffold_search_null(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
@@ -261,6 +280,10 @@ module ActiveScaffold
           else
             visibles << column
           end
+        end
+        if search_config.group_options.present?
+          columns = search_grouped? || search_config.optional_columns.empty? ? visibles : hiddens
+          columns << active_scaffold_group_column
         end
         [visibles, hiddens]
       end

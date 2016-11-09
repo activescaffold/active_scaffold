@@ -62,6 +62,7 @@ en:
     filtered: (Filtered)
     found: Found
     future: Future
+    group_by: "Group by"
     hide: (Hide)
     hours: Hours
     human_conditions: 
@@ -84,6 +85,7 @@ en:
     next_year: "Next Year"
     no_authorization_for_action: "No Authorization for action %{action}"
     no_entries: "No Entries"
+    no_group: "No group"
     no_options: "no options"
     not_null: "Not Null"
     ? "null"
