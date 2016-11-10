@@ -9,6 +9,7 @@
 - check create authorized for create on list (config.list.always_show_create)
 - allow to disable inplace_edit for column when update form is enabled
 - add support for aggregated lists to field_search (config.field_search.group_options)
+- add support for range conditions in url params for date and datetime columns
 - fix select of existing record for nested subform
 - fix apply constraints to parent (fix update columns on subform on embedded scaffold)
 - fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes

@@ -214,12 +214,15 @@ module ActiveScaffold::Actions
           not_string = [:string, :text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
+          range = %i(date datetime).include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
+          value = value.split('..') if range
           conditions[key] =
             if value.is_a?(Array)
               value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
             else
               value == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(value, column)
             end
+          conditions[key] = Range.new(*conditions[key]) if range
         end
         conditions
       end
