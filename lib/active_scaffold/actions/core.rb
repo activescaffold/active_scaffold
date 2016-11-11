@@ -214,6 +214,7 @@ module ActiveScaffold::Actions
           not_string = [:string, :text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
+
           range = %i(date datetime).include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
           value = value.split('..') if range
           conditions[key] =
@@ -222,7 +223,13 @@ module ActiveScaffold::Actions
             else
               value == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(value, column)
             end
-          conditions[key] = Range.new(*conditions[key]) if range
+
+          if range
+            if column.type == :datetime && conditions[key][1].is_a? Date
+              conditions[key][1] = conditions[key][1].end_of_day if conditions[key][1].is_a? Date
+            end
+            conditions[key] = Range.new(*conditions[key])
+          end
         end
         conditions
       end
