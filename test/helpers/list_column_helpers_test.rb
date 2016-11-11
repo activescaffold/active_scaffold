@@ -42,6 +42,10 @@ class ListColumnHelpersTest < ActionView::TestCase
 
   private
 
+  def grouped_search?
+    false
+  end
+
   def active_scaffold_config
     @config
   end
