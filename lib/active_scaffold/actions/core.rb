@@ -225,9 +225,7 @@ module ActiveScaffold::Actions
             end
 
           if range
-            if column.type == :datetime && conditions[key][1].is_a? Date
-              conditions[key][1] = conditions[key][1].end_of_day if conditions[key][1].is_a? Date
-            end
+            conditions[key][1] = conditions[key][1].end_of_day if column.type == :datetime && conditions[key][1].is_a?(Date)
             conditions[key] = Range.new(*conditions[key])
           end
         end
