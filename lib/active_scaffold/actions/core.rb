@@ -223,11 +223,7 @@ module ActiveScaffold::Actions
             else
               value == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(value, column)
             end
-
-          if range
-            conditions[key][1] = conditions[key][1].end_of_day if column.type == :datetime && conditions[key][1].is_a?(Date)
-            conditions[key] = Range.new(*conditions[key])
-          end
+          conditions[key] = Range.new(*conditions[key]) if range
         end
         conditions
       end
