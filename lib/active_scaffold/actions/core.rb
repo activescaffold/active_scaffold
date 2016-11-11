@@ -11,7 +11,7 @@ module ActiveScaffold::Actions
       end
       base.helper_method :successful?
       base.helper_method :nested?
-      base.helper_method :search_grouped?
+      base.helper_method :grouped_search?
       base.helper_method :embedded?
       base.helper_method :loading_embedded?
       base.helper_method :calculate_query
@@ -46,7 +46,7 @@ module ActiveScaffold::Actions
       false
     end
 
-    def search_grouped?
+    def grouped_search?
       false
     end
 

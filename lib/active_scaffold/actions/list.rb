@@ -73,7 +73,7 @@ module ActiveScaffold::Actions
           active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
         end
       joins_cols, preload_cols = columns.select { |c| c.includes.present? }.partition do |col|
-        includes_need_join?(col, sorting) && !search_grouped?
+        includes_need_join?(col, sorting) && !grouped_search?
       end
       active_scaffold_references.concat joins_cols.map(&:includes).flatten.uniq
       active_scaffold_preload.concat preload_cols.map(&:includes).flatten.uniq

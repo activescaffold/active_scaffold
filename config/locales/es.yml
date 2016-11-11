@@ -137,3 +137,9 @@ es:
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"
+  date:
+    formats:
+      month: "%B"
+      quarter: Trimestre %{num}
+      year_month: "%b %Y"
+      year_quarter: Trimestre %{quarter} %{year}

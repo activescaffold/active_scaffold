@@ -117,7 +117,9 @@ module ActiveScaffold
             text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
-          if value.is_a? Numeric
+          if grouped_search? && column == search_group_column && search_group_function
+            format_grouped_search_column(value, column.options)
+          elsif value.is_a? Numeric
             format_number_value(value, column.options)
           else
             format_value(value, column.options)
@@ -149,6 +151,23 @@ module ActiveScaffold
           end
         end
         clean_column_value(value)
+      end
+
+      def format_grouped_search_column(value, options = {})
+        case search_group_function
+        when 'year_month'
+          year, month = value.to_s.scan(/(\d*)(\d{2})/)[0]
+          I18n.l(Date.new(year.to_i, month.to_i, 1), format: options[:group_format] || search_group_function.to_sym)
+        when 'year_quarter'
+          year, quarter = value.to_s.scan(/(\d*)(\d)/)[0]
+          logger.debug "#{value} #{year} #{quarter}"
+          I18n.t(options[:group_format] || search_group_function, scope: 'date.formats', year: year, quarter: quarter)
+        when 'quarter'
+          I18n.t(options[:group_format] || search_group_function, scope: 'date.formats', num: value)
+        when 'month'
+          I18n.l(Date.new(Date.today.year, value, 1), format: options[:group_format] || search_group_function.to_sym)
+        else value
+        end
       end
 
       def format_collection_association_value(value, column, label_method, size)

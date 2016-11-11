@@ -131,6 +131,12 @@ en:
     weeks: Weeks
     years: Years
     yesterday: Yesterday
+  date:
+    formats:
+      month: "%B"
+      year_month: "%b %Y"
+      quarter: Quarter %{num}
+      year_quarter: Quarter %{quarter} %{year}
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"

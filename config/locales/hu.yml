@@ -135,3 +135,9 @@ hu:
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"
+  date:
+    formats:
+      month: 
+      quarter: 
+      year_month: 
+      year_quarter: 

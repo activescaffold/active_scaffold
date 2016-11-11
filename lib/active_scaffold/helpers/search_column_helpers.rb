@@ -282,7 +282,7 @@ module ActiveScaffold
           end
         end
         if search_config.group_options.present?
-          columns = search_grouped? || search_config.optional_columns.empty? ? visibles : hiddens
+          columns = grouped_search? || search_config.optional_columns.empty? ? visibles : hiddens
           columns << active_scaffold_group_column
         end
         [visibles, hiddens]
