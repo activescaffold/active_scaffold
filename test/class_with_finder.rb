@@ -27,4 +27,8 @@ class ClassWithFinder
   def conditional_get_support?; end
 
   def params; {}; end
+
+  def grouped_search?
+    false
+  end
 end
