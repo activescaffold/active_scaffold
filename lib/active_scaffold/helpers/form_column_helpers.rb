@@ -238,7 +238,7 @@ module ActiveScaffold
         options
       end
 
-      def active_scaffold_input_singular_association(column, html_options)
+      def active_scaffold_input_singular_association(column, html_options, options = {})
         record = html_options.delete(:object)
         associated = record.send(column.association.name)
 
@@ -246,7 +246,7 @@ module ActiveScaffold
         select_options.unshift(associated) unless associated.nil? || select_options.include?(associated)
 
         method = column.name
-        options = {:selected => associated.try(:id), :include_blank => as_(:_select_), :object => record}
+        options.merge! :selected => associated.try(:id), :include_blank => as_(:_select_), :object => record
 
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
@@ -326,9 +326,9 @@ module ActiveScaffold
         column.options[:options]
       end
 
-      def active_scaffold_input_enum(column, html_options)
+      def active_scaffold_input_enum(column, html_options, options = {})
         record = html_options.delete(:object)
-        options = {:selected => record.send(column.name), :object => record}
+        options.merge! :selected => record.send(column.name), :object => record
         options_for_select = active_scaffold_enum_options(column, record).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
         end
