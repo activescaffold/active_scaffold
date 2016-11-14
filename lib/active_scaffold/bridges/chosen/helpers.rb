@@ -39,7 +39,7 @@ class ActiveScaffold::Bridges::Chosen
       def active_scaffold_search_multi_chosen(column, options)
         options[:class] << ' chosen'
         options[:multiple] = true
-        options[:prompt] = nil
+        options[:'data-placeholder'] = column.options[:placeholder] || as_(:_select_)
         active_scaffold_search_select(column, options)
       end
     end
