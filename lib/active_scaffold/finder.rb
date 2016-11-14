@@ -384,7 +384,7 @@ module ActiveScaffold
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = {
-        :reorder => options[:sorting].try(:clause, (grouped_columns_calculations if respond_to? :grouped_columns_calculations, true)),
+        :reorder => options[:sorting].try(:clause, (grouped_columns_calculations if grouped_search?)),
         :conditions => search_conditions
       }
       if active_scaffold_config.mongoid?
