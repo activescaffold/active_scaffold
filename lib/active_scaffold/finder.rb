@@ -130,7 +130,8 @@ module ActiveScaffold
         when :date, :time, :datetime, :timestamp
           condition_for_datetime(column, value)
         when :select, :multi_select, :country, :usa_state, :chosen, :multi_chosen
-          ['%{search_sql} in (?)', Array(value)]
+          values = Array(value).select(&:present?)
+          ['%{search_sql} in (?)', values] if values.present?
         else
           if column.text?
             ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
