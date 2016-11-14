@@ -56,7 +56,8 @@ GEM
     bundler-audit (0.5.0)
       bundler (~> 1.2)
       thor (~> 0.18)
-    codeclimate-test-reporter (1.0.1)
+    codeclimate-test-reporter (1.0.3)
+      simplecov
     concurrent-ruby (1.0.2)
     concurrent-ruby (1.0.2-java)
     docile (1.1.5)
@@ -195,7 +196,6 @@ DEPENDENCIES
   rdoc
   rubocop
   shoulda
-  simplecov
   sqlite3
 
 BUNDLED WITH
