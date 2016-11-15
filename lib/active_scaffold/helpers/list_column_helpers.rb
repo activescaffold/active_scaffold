@@ -160,7 +160,6 @@ module ActiveScaffold
           I18n.l(Date.new(year.to_i, month.to_i, 1), format: options[:group_format] || search_group_function.to_sym)
         when 'year_quarter'
           year, quarter = value.to_s.scan(/(\d*)(\d)/)[0]
-          logger.debug "#{value} #{year} #{quarter}"
           I18n.t(options[:group_format] || search_group_function, scope: 'date.formats', year: year, quarter: quarter)
         when 'quarter'
           I18n.t(options[:group_format] || search_group_function, scope: 'date.formats', num: value)

@@ -461,7 +461,7 @@ module ActiveScaffold
 
       # add functionality for overriding subform partials from association class path
       def override_subform_partial(column, subform_partial)
-        partial_for_model(column.association.klass, subform_partial).tap { |v| logger.debug v } if column_renders_as(column) == :subform
+        partial_for_model(column.association.klass, subform_partial) if column_renders_as(column) == :subform
       end
 
       # the naming convention for overriding form fields with helpers
