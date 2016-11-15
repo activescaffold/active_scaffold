@@ -289,7 +289,7 @@ module ActiveScaffold
       end
 
       def searched_by?(column)
-        value = field_search_params[column.name]
+        value = field_search_params[column.name.to_s]
         case value
         when Hash
           !value['from'].blank?
