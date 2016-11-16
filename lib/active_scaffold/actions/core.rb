@@ -366,11 +366,11 @@ module ActiveScaffold::Actions
     end
 
     def virtual_columns(columns)
-      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.columns[col].association }
+      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.columns[col].try(:association) }
     end
 
     def association_columns(columns)
-      columns.select { |col| active_scaffold_config.columns[col].association }
+      columns.select { |col| active_scaffold_config.columns[col].try(:association) }
     end
 
     private
