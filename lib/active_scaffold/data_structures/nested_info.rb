@@ -71,10 +71,11 @@ module ActiveScaffold::DataStructures
   class NestedInfoAssociation < NestedInfo
     def initialize(model, params)
       super
-      @association = parent_scaffold.active_scaffold_config.columns[params[:association].to_sym].try(:association)
-      @param_name = @association.inverse_klass.name.foreign_key.to_sym
+      column = parent_scaffold.active_scaffold_config.columns[params[:association].to_sym]
+      @param_name = column.model.name.foreign_key.to_sym
       @parent_id = params[@param_name]
-      @child_association = association.reverse_association(model)
+      @association = column.try(:association)
+      @child_association = association.reverse_association(model) if association
       setup_constrained_fields
     end
 
