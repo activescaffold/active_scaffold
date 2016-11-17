@@ -239,9 +239,9 @@ module ActiveScaffold
         when :float     then value.to_f
         when :decimal
           if Rails.version >= '4.2.0'
-            ActiveRecord::Type::Decimal.new.type_cast_from_user(value)
+            ::ActiveRecord::Type::Decimal.new.type_cast_from_user(value)
           else
-            ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
+            ::ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
           end
         else
           value
