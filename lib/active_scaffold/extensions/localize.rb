@@ -5,6 +5,5 @@ class Object
       # text = nil if text.include?('translation missing:')
     end
     text ||= key
-    text
   end
 end
