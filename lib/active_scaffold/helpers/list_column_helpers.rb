@@ -95,8 +95,8 @@ module ActiveScaffold
 
       def tel_to(text)
         groups = text.to_s.scan(/(?:^\+)?\d+/)
-        extension = groups.pop if text.to_s =~ /(?:\s*x\s*)\d+$/
-        link_to text, "tel:#{groups.join '-'}"
+        extension = groups.pop if text.to_s =~ /(?:\s*\w+\s*)\d+$/
+        link_to text, "tel:#{[groups.join('-'), extension].compact.join(',')}"
       end
 
       def active_scaffold_column_telephone(record, column)
