@@ -95,6 +95,7 @@ module ActiveScaffold
 
       def tel_to(text)
         groups = text.to_s.scan(/(?:^\+)?\d+/)
+        extension = groups.pop if text.to_s =~ /(?:\s*x\s*)\d+$/
         link_to text, "tel:#{groups.join '-'}"
       end
 
