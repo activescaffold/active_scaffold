@@ -1,6 +1,6 @@
 <div class="active-scaffold">
   <div class="update-view <%= "#{id_from_controller params[:controller]}-view" %> view">
-    <% if active_scaffold_config.update.nested_links and active_scaffold_config.action_links.member.empty? -%>
+    <% if active_scaffold_config.update.nested_links and !active_scaffold_config.action_links.member.empty? -%>
     <%= render :partial => 'update_actions', :locals => {:record => @record} %>
     <% end -%>
     <%= render :partial => 'update_form' -%>

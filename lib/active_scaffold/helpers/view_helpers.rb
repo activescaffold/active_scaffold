@@ -389,12 +389,13 @@ module ActiveScaffold
 
         html_options[:data] ||= {}
         html_options[:data][:confirm] = link.confirm(h(record.try(:to_label))) if link.confirm?
-        if link.inline?
+        if !options[:page] && !options[:popup] && (options[:inline] || link.inline?)
           html_options[:class] << ' as_action'
           html_options[:data][:position] = link.position if link.position
           html_options[:data][:action] = link.action
           html_options[:data][:cancel_refresh] = true if link.refresh_on_close
           html_options[:data][:keep_open] = true if link.keep_open?
+          html_options[:remote] = true
         end
 
         if link.toggle
@@ -402,9 +403,8 @@ module ActiveScaffold
           html_options[:class] << ' active' if action_link_selected?(link, record)
         end
 
-        html_options[:target] = '_blank' if link.popup?
+        html_options[:target] = '_blank' if !options[:page] && !options[:inline] && (options[:popup] || link.popup?)
         html_options[:id] = link_id
-        html_options[:remote] = true unless link.page? || link.popup?
         if link.dhtml_confirm?
           unless link.inline?
             html_options[:class] << ' as_action'

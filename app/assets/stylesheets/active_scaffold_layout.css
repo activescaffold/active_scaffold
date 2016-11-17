@@ -51,7 +51,7 @@ padding: 5px 20px 5px 5px;
 /* Header
    ======================== */
 
-.active-scaffold-header {
+.active-scaffold-header, .form-footer + .active-scaffold-footer {
 position: relative;
 }
 
@@ -61,8 +61,8 @@ margin: 0;
 font: bold 160% arial, sans-serif;
 }
 
-.active-scaffold-header div.actions a,
-.active-scaffold-header div.actions {
+.active-scaffold div.actions a,
+.active-scaffold div.actions {
 float: right;
 font: bold 14px arial;
 letter-spacing: -1px;
@@ -74,7 +74,7 @@ background-position: 1px 50%;
 background-repeat: no-repeat;
 }
 
-.active-scaffold-header div.actions a {
+.active-scaffold div.actions a {
 padding: 5px 5px;
 margin-left: 0px;
 }
@@ -84,18 +84,18 @@ margin-left: 0px;
 padding: 1px 5px;
 }
 
-.active-scaffold-header div.actions div.action_group {
+.active-scaffold div.actions div.action_group {
 display: inline;
 float: right;
 }
 
-.active-scaffold-header div.actions div.action_group li a,
-.active-scaffold-header div.actions div.action_group li div {
+.active-scaffold div.actions div.action_group li a,
+.active-scaffold div.actions div.action_group li div {
 float: none;
 margin: 0;
 }
 
-.active-scaffold-header div.actions .action_group ul {
+.active-scaffold div.actions .action_group ul {
 line-height: 130%;
 top: 19px;
 }
@@ -108,7 +108,7 @@ top: 14px;
 top: -3px;
 }
 
-.active-scaffold-header div.actions a.disabled {
+.active-scaffold div.actions a.disabled {
 opacity: 0.5;
 }
 
@@ -116,7 +116,7 @@ opacity: 0.5;
 .active-scaffold-header div.actions a.new_existing,
 .active-scaffold-header div.actions a.show_search,
 .active-scaffold-header div.actions a.show_config_list,
-.active-scaffold-header div.actions div.action_group div {
+.active-scaffold div.actions div.action_group div {
 margin:0;
 padding: 5px 5px 5px 25px;
 background-position: 5px 50%;
@@ -134,7 +134,8 @@ background-position: 1px 50%;
 background-repeat: no-repeat;
 }
 
-.active-scaffold-header div.actions a.disabled:hover {
+.active-scaffold div.actions a.disabled:hover,
+.active-scaffold div.actions a.disabled:hover {
 background-color: transparent;
 cursor: default;
 }
@@ -666,6 +667,13 @@ font: bold 14px arial, sans-serif;
 letter-spacing: 0;
 }
 
+.active-scaffold .active-scaffold-footer div.actions {
+  margin-top: -20px;
+}
+.active-scaffold .active-scaffold-footer div.actions a {
+  margin: 0;
+}
+
 /* Form :: Fields
    ============================== */
 
@@ -927,36 +935,36 @@ font-size: 20px;
 padding: 3px 10px;
 }
 
-.as_touch .active-scaffold-header div.actions a {
+.as_touch div.actions a {
 padding: 7px 5px;
 }
 
-.as_touch .active-scaffold .active-scaffold-header div.actions a {
+.as_touch .active-scaffold div.actions a {
 padding: 7px 5px;
 }
 
-.as_touch .active-scaffold-header div.actions .action_group ul {
+.as_touch div.actions .action_group ul {
 line-height: 130%;
 top: 23px;
 }
 
-.as_touch .active-scaffold .active-scaffold-header div.actions .action_group ul {
+.as_touch .active-scaffold div.actions .action_group ul {
 top: 23px;
 }
 
-.as_touch .active-scaffold-header div.actions a.new,
-.as_touch .active-scaffold-header div.actions a.new_existing,
-.as_touch .active-scaffold-header div.actions a.show_search,
-.as_touch .active-scaffold-header div.actions a.show_config_list,
-.as_touch .active-scaffold-header div.actions div.action_group div {
+.as_touch div.actions a.new,
+.as_touch div.actions a.new_existing,
+.as_touch div.actions a.show_search,
+.as_touch div.actions a.show_config_list,
+.as_touch div.actions div.action_group div {
 padding: 7px 5px 7px 25px;
 }
 
-.as_touch .active-scaffold .active-scaffold-header div.actions > a.new,
-.as_touch .active-scaffold .active-scaffold-header div.actions > a.new_existing,
-.as_touch .active-scaffold .active-scaffold-header div.actions > a.show_search,
-.as_touch .active-scaffold .active-scaffold-header div.actions > a.show_config_list,
-.as_touch .active-scaffold .active-scaffold-header div.actions div.action_group > div {
+.as_touch .active-scaffold div.actions > a.new,
+.as_touch .active-scaffold div.actions > a.new_existing,
+.as_touch .active-scaffold div.actions > a.show_search,
+.as_touch .active-scaffold div.actions > a.show_config_list,
+.as_touch .active-scaffold div.actions div.action_group > div {
 padding: 7px 5px 7px 25px;
 background-position: 5px 50%;
 }
@@ -973,12 +981,12 @@ padding: 7px 5px 7px 25px;
 padding: 4px 0px;
 }
 
-.as_touch .active-scaffold .active-scaffold-header div.actions a,
-.as_touch .active-scaffold .active-scaffold-header div.actions div {
+.as_touch .active-scaffold div.actions a,
+.as_touch .active-scaffold div.actions div {
   font: bold 14px arial;
 }
 
-.as_touch .active-scaffold .active-scaffold-header div.actions {
+.as_touch .active-scaffold div.actions {
   right: 15px;
 }
 
