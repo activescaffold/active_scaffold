@@ -292,6 +292,12 @@ jQuery(document).ready(function($) {
     e.preventDefault();
   });
 
+  jQuery(document).on('click', 'form.as_form .no-color', function() {
+    var color_field = jQuery(this).parent().next(':input');
+    color_field.attr('type', jQuery(this).prop('checked') ? 'hidden' : 'color');
+    if (jQuery(this).prop('checked')) color_field.val('');
+  });
+
   /* setup some elements on page/form load */
   ActiveScaffold.load_embedded(document);
   ActiveScaffold.enable_js_form_buttons(document);

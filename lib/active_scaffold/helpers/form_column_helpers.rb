@@ -428,6 +428,20 @@ module ActiveScaffold
         range_field :record, column.name, options.merge(column.options).except(:format)
       end
 
+      # A color picker
+      def active_scaffold_input_color(column, options)
+        options = active_scaffold_input_text_options(options)
+        if column.column.try(:null)
+          no_color = options[:object].send(column.name).nil?
+          method = no_color ? :hidden_field : :color_field
+          html = content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ :no_color}")
+        else
+          method = :color_field
+          html = ''.html_safe
+        end
+        html << send(method, :record, column.name, options.merge(column.options).except(:format))
+      end
+
       #
       # Column.type-based inputs
       #

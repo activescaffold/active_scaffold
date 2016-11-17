@@ -82,6 +82,7 @@ en:
     next_week: Next Week
     next_year: Next Year
     no_authorization_for_action: No Authorization for action %{action}
+    no_color: No color
     no_entries: No Entries
     no_group: No group
     no_options: no options
