@@ -134,6 +134,7 @@ es:
     group_by: Agrupar por
     no_group: No agrupar
     update_apply: Aplicar
+    no_color: Sin color
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"

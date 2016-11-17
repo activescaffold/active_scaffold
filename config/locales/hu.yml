@@ -132,6 +132,7 @@ hu:
     group_by: 
     no_group: 
     update_apply: 
+    no_color: 
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"
