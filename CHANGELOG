@@ -12,6 +12,7 @@
 - add support for range conditions in url params for date and datetime columns
 - add :color form_ui with "No color" checkbox to disable if column may be null
 - add inline_links config to show action, display member links in show action loaded in page
+- add :telephone list_ui displaying formatted phone number with tel: link
 - fix select of existing record for nested subform
 - fix apply constraints to parent (fix update columns on subform on embedded scaffold)
 - fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes

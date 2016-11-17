@@ -93,6 +93,18 @@ module ActiveScaffold
         as_slider options.merge(value: value || record.send(column.name))
       end
 
+      def tel_to(text)
+        groups = text.to_s.scan(/(?:^\+)?\d+/)
+        link_to text, "tel:#{groups.join '-'}"
+      end
+
+      def active_scaffold_column_telephone(record, column)
+        phone = record.send column.name
+        return unless phone.present?
+        phone = number_to_phone(phone) unless column.options[:format] == false
+        tel_to phone
+      end
+
       def column_override(column)
         override_helper column, 'column'
       end
