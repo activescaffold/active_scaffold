@@ -1,7 +1,7 @@
 <div class="active-scaffold-<%= position %>">
   <div class="actions">
     <% active_scaffold_config.action_links.member.each do |link| -%>
-      <% next if display_link_in_show?(link, position) %>
+      <% next unless display_link_in_show?(link, position) %>
       <% next if link.action == 'show' && link.controller.nil? && link.parameters.empty? -%>
       <% next if skip_action_link?(link, record) || !action_link_authorized?(link, record) -%>
       <%= render_action_link(link, record, :authorized => true, :page => true) -%>
