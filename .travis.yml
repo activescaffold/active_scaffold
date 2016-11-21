@@ -20,23 +20,23 @@ matrix:
   exclude:
     - rvm: 2.1.9
       gemfile: gemfiles/Gemfile.rails-5.0.x 
-    - rvm: 2.4.0-preview2
+    - rvm: 2.4.0-preview3
       gemfile: gemfiles/Gemfile.rails-4.0.x 
-    - rvm: 2.4.0-preview2
+    - rvm: 2.4.0-preview3
       gemfile: gemfiles/Gemfile.rails-4.1.x 
-    - rvm: 2.4.0-preview2 # enable with rails 4.2.8
+    - rvm: 2.4.0-preview3 # enable with rails 4.2.8
       gemfile: Gemfile
-    - rvm: 2.4.0-preview2
+    - rvm: 2.4.0-preview3
       gemfile: gemfiles/Gemfile.rails-5.0.x
   allow_failures:
     - rvm: rbx-3
-    - rvm: jruby-9.1.5.0
+    - rvm: jruby-9.1.6.0
       gemfile: gemfiles/Gemfile.rails-5.0.x
 rvm:
   - 2.1.9
-  - 2.2.5
-  - 2.3.1
-  - 2.4.0-preview2
-  - jruby-9.1.5.0
+  - 2.2.6
+  - 2.3.2
+  - 2.4.0-preview3
+  - jruby-9.1.6.0
   - rbx-3
 sudo: required
