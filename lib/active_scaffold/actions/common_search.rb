@@ -29,12 +29,21 @@ module ActiveScaffold::Actions
           end
       end
 
+      def permitted_search_params
+        if Rails.version >= '5.0' && params[:search].is_a?(ActionController::Parameters)
+          params[:search].permit!.to_h
+        else
+          params[:search]
+        end
+      end
+
       def store_search_params_into_session
         if active_scaffold_config.store_user_settings
-          active_scaffold_session_storage['search'] = params.delete :search if params[:search]
+          active_scaffold_session_storage['search'] = permitted_search_params
         else
-          @search_params = params.delete :search
+          @search_params = permitted_search_params
         end
+        params.delete :search
       end
 
       def search_params

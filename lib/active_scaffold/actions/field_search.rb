@@ -141,7 +141,7 @@ module ActiveScaffold::Actions
       end
 
       def do_search
-        if search_params.is_a?(Hash) && search_params.present?
+        if field_search_params.present?
           filtered_columns = []
           text_search = active_scaffold_config.field_search.text_search
           columns = active_scaffold_config.field_search.columns
