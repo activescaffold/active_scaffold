@@ -84,7 +84,7 @@ module ActiveScaffold::DataStructures::Association
                 get_reverse(klass) unless klass.nil?
               else
                 return unless reverse_name = reverse(klass)
-                assoc = reflect_on_association(reverse_name)
+                reflect_on_association(reverse_name)
       end
       self.class.new(assoc) if assoc
     end

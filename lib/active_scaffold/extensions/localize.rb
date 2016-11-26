@@ -4,6 +4,6 @@ class Object
       text = I18n.translate(key.to_s, {:scope => [:active_scaffold, *options.delete(:scope)], :default => key.is_a?(String) ? key : key.to_s.titleize}.merge(options)).html_safe
       # text = nil if text.include?('translation missing:')
     end
-    text ||= key
+    text || key
   end
 end
