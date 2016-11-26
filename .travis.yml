@@ -2,7 +2,7 @@ addons:
   code_climate:
     repo_token: 8a344833c6693733b163f09a5243fa12dd7be0b69f0358b146c64dd4becabc60
 after_script:
-  - bundle exec codeclimate-test-reporter
+  - bin/codeclimate-test-reporter
 before_script:
   - bin/brakeman
 bundler_args: --clean --deployment --jobs=$(nproc) --without development production
@@ -35,7 +35,7 @@ matrix:
 rvm:
   - 2.1.9
   - 2.2.6
-  - 2.3.2
+  - 2.3.3
   - 2.4.0-preview3
   - jruby-9.1.6.0
   - rbx-3
