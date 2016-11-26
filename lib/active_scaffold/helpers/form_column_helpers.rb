@@ -328,7 +328,8 @@ module ActiveScaffold
 
       def active_scaffold_input_enum(column, html_options, options = {})
         record = html_options.delete(:object)
-        options.merge! :selected => record.send(column.name), :object => record
+        options[:selected] = record.send(column.name)
+        options[:object] = record
         options_for_select = active_scaffold_enum_options(column, record).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
         end
