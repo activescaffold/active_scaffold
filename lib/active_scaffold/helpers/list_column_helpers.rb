@@ -177,7 +177,7 @@ module ActiveScaffold
         when 'quarter'
           I18n.t(options[:group_format] || search_group_function, scope: 'date.formats', num: value)
         when 'month'
-          I18n.l(Date.new(Date.today.year, value, 1), format: options[:group_format] || search_group_function.to_sym)
+          I18n.l(Date.new(Time.zone.today.year, value, 1), format: options[:group_format] || search_group_function.to_sym)
         else value
         end
       end
