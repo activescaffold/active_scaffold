@@ -21,6 +21,7 @@
     - 2gb
 
 .use_jruby: &use_jruby
+  <<: *test
   before_script:
     - cat /etc/os-release
     - uname -a
@@ -30,8 +31,11 @@
     - apt-get -qq update
     - apt-get -qq install git
   image: jruby:9.1
+  variables:
+    JRUBY_OPTS: --debug
 
 .use_mri: &use_mri
+  <<: *test
   before_script:
     - cat /etc/os-release
     - uname -a
@@ -78,95 +82,78 @@ stages:
   - lint
   - test
 
-
 test:rails-4.0.x:jruby:9.1:
-  <<: *test
   <<: *use_jruby
   <<: *use_rails_4_0_x
 
 test:rails-4.0.x:mri:2.1:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_4_0_x
   image: ruby:2.1
 
 test:rails-4.0.x:mri:2.2:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_4_0_x
   image: ruby:2.2
 
 test:rails-4.0.x:mri:2.3:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_4_0_x
   image: ruby:2.3
 
 test:rails-4.1.x:jruby:9.1:
-  <<: *test
   <<: *use_jruby
   <<: *use_rails_4_1_x
 
 test:rails-4.1.x:mri:2.1:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_4_1_x
   image: ruby:2.1
 
 test:rails-4.1.x:mri:2.2:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_4_1_x
   image: ruby:2.2
 
 test:rails-4.1.x:mri:2.3:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_4_1_x
   image: ruby:2.3
 
 test:rails-4.2.x:jruby:9.1:
-  <<: *test
   <<: *use_jruby
   <<: *use_rails_4_2_x
 
 test:rails-4.2.x:mri:2.1:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_4_2_x
   image: ruby:2.1
 
 test:rails-4.2.x:mri:2.2:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_4_2_x
   image: ruby:2.2
 
 test:rails-4.2.x:mri:2.3:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_4_2_x
   image: ruby:2.3
 
 test:rails-5.0.x:jruby:9.1:
-  allow_failure: true
-  <<: *test
   <<: *use_jruby
   <<: *use_rails_5_0_x
+  allow_failure: true
 
 test:rails-5.0.x:mri:2.2:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_5_0_x
   image: ruby:2.2
 
 test:rails-5.0.x:mri:2.3:
-  <<: *test
   <<: *use_mri
   <<: *use_rails_5_0_x
   image: ruby:2.3
 
 variables:
-  JRUBY_OPTS: --debug
   LC_ALL: C.UTF-8
   RAILS_ENV: test
