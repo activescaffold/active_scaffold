@@ -507,13 +507,13 @@ module ActiveScaffold
 
       def column_renders_as(column)
         if column.respond_to? :each
-          return :subsection
+          :subsection
         elsif column.active_record_class.locking_column.to_s == column.name.to_s || column.form_ui == :hidden
-          return :hidden
+          :hidden
         elsif column.association.nil? || column.form_ui || !active_scaffold_config_for(column.association.klass).actions.include?(:subform) || override_form_field?(column)
-          return :field
+          :field
         else
-          return :subform
+          :subform
         end
       end
 
