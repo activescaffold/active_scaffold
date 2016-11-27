@@ -11,12 +11,6 @@
   stage: lint
 
 .test: &test
-  before_script:
-    - cat /etc/os-release
-    - uname -a
-    - ruby --version
-    - gem --version
-    - bundle --version
   script:
     - bundle install --clean --deployment --jobs=$(nproc) --without development lint production
     - bin/rake
@@ -33,23 +27,27 @@
     - apt-get -qq install git
   image: jruby:9.1
 
+.use_mri: &use_mri
+  before_script:
+    - cat /etc/os-release
+    - uname -a
+    - ruby --version
+    - gem --version
+    - bundle --version
+
 .use_rails_4_0_x: &use_rails_4_0_x
-  <<: *test
   variables:
     BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
 
 .use_rails_4_1_x: &use_rails_4_1_x
-  <<: *test
   variables:
     BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
 
 .use_rails_4_2_x: &use_rails_4_2_x
-  <<: *test
   variables:
     BUNDLE_GEMFILE: Gemfile
 
 .use_rails_5_0_x: &use_rails_5_0_x
-  <<: *test
   variables:
     BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
 
@@ -78,63 +76,89 @@ stages:
 
 
 test:rails-4.0.x:jruby:9.1:
-  <<: *use_rails_4_0_x
+  <<: *test
   <<: *use_jruby
+  <<: *use_rails_4_0_x
 
 test:rails-4.0.x:mri:2.1:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_4_0_x
   image: ruby:2.1
 
 test:rails-4.0.x:mri:2.2:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_4_0_x
   image: ruby:2.2
 
 test:rails-4.0.x:mri:2.3:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_4_0_x
   image: ruby:2.3
 
 test:rails-4.1.x:jruby:9.1:
-  <<: *use_rails_4_1_x
+  <<: *test
   <<: *use_jruby
+  <<: *use_rails_4_1_x
 
 test:rails-4.1.x:mri:2.1:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_4_1_x
   image: ruby:2.1
 
 test:rails-4.1.x:mri:2.2:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_4_1_x
   image: ruby:2.2
 
 test:rails-4.1.x:mri:2.3:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_4_1_x
   image: ruby:2.3
 
 test:rails-4.2.x:jruby:9.1:
-  <<: *use_rails_4_2_x
+  <<: *test
   <<: *use_jruby
+  <<: *use_rails_4_2_x
 
 test:rails-4.2.x:mri:2.1:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_4_2_x
   image: ruby:2.1
 
 test:rails-4.2.x:mri:2.2:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_4_2_x
   image: ruby:2.2
 
 test:rails-4.2.x:mri:2.3:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_4_2_x
   image: ruby:2.3
 
 test:rails-5.0.x:jruby:9.1:
   allow_failure: true
-  <<: *use_rails_5_0_x
+  <<: *test
   <<: *use_jruby
+  <<: *use_rails_5_0_x
 
 test:rails-5.0.x:mri:2.2:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_5_0_x
   image: ruby:2.2
 
 test:rails-5.0.x:mri:2.3:
+  <<: *test
+  <<: *use_mri
   <<: *use_rails_5_0_x
   image: ruby:2.3
 
