@@ -84,13 +84,14 @@ module ActiveScaffold::DataStructures
 
     def delete_group(name)
       @set.each do |group|
+        next unless group.is_a?(ActiveScaffold::DataStructures::ActionLinks)
         if group.name == name
           @set.delete group
           break
         else
           group.delete_group(name)
           break
-        end if group.is_a?(ActiveScaffold::DataStructures::ActionLinks)
+        end
       end
     end
 

@@ -275,13 +275,15 @@ module ActiveScaffold::Actions
     end
 
     def check_input_device
-      if request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'][/(iPhone|iPod|iPad)/i]
-        session[:input_device_type] = 'TOUCH'
-        session[:hover_supported] = false
-      else
-        session[:input_device_type] = 'MOUSE'
-        session[:hover_supported] = true
-      end if session[:input_device_type].nil?
+      if session[:input_device_type].nil?
+        if request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'][/(iPhone|iPod|iPad)/i]
+          session[:input_device_type] = 'TOUCH'
+          session[:hover_supported] = false
+        else
+          session[:input_device_type] = 'MOUSE'
+          session[:hover_supported] = true
+        end
+      end
     end
 
     def touch_device?

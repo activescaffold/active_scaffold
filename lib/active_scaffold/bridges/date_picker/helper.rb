@@ -127,18 +127,20 @@ module ActiveScaffold::Bridges
         end
 
         def datepicker_format_options(column, format, options)
-          if column.form_ui == :date_picker
-            js_format = to_datepicker_format(I18n.translate!("date.formats.#{format}"))
-            options['data-dateFormat'] = js_format unless js_format.nil?
-          else
-            rails_time_format = I18n.translate!("time.formats.#{format}")
-            date_format, time_format = datepicker_split_datetime_format(to_datepicker_format(rails_time_format))
-            options['data-dateFormat'] = date_format unless date_format.nil?
-            unless time_format.nil?
-              options['data-timeFormat'] = time_format
-              options['data-ampm'] = true if rails_time_format.include?('%I')
+          unless format == :default
+            if column.form_ui == :date_picker
+              js_format = to_datepicker_format(I18n.translate!("date.formats.#{format}"))
+              options['data-dateFormat'] = js_format unless js_format.nil?
+            else
+              rails_time_format = I18n.translate!("time.formats.#{format}")
+              date_format, time_format = datepicker_split_datetime_format(to_datepicker_format(rails_time_format))
+              options['data-dateFormat'] = date_format unless date_format.nil?
+              unless time_format.nil?
+                options['data-timeFormat'] = time_format
+                options['data-ampm'] = true if rails_time_format.include?('%I')
+              end
             end
-          end unless format == :default
+          end
         end
       end
 

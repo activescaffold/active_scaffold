@@ -192,43 +192,45 @@ module ActiveScaffold
       end
 
       def condition_value_for_datetime(column, value, conversion = :to_time)
-        if value.is_a? Hash
-          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect { |part| value[part].to_i }) rescue nil
-        elsif value.respond_to?(:strftime)
-          if conversion == :to_time
-            # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
-            # https://github.com/rails/rails/pull/2453
-            value.to_time.in_time_zone
-          else
-            value.send(conversion)
-          end
-        elsif conversion == :to_date
-          Date.strptime(value, I18n.t("date.formats.#{column.options[:format] || :default}")) rescue nil
-        else
-          parts = Date._parse(value)
-          format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if ActiveScaffold.js_framework == :jquery
-          if format.blank?
-            time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect { |part, format_part| format_part if parts[part].present? }.compact
-            format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
-          else
-            if parts[:hour]
-              [[:min, '%M'], [:sec, '%S']].each { |part, f| format.gsub!(":#{f}", '') unless parts[part].present? }
+        unless value.nil? || value.blank?
+          if value.is_a? Hash
+            Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect { |part| value[part].to_i }) rescue nil
+          elsif value.respond_to?(:strftime)
+            if conversion == :to_time
+              # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
+              # https://github.com/rails/rails/pull/2453
+              value.to_time.in_time_zone
             else
-              value += ' 00:00:00'
+              value.send(conversion)
             end
-            format += ' %z' if parts[:offset].present? && format !~ /%z/i
+          elsif conversion == :to_date
+            Date.strptime(value, I18n.t("date.formats.#{column.options[:format] || :default}")) rescue nil
+          else
+            parts = Date._parse(value)
+            format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if ActiveScaffold.js_framework == :jquery
+            if format.blank?
+              time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect { |part, format_part| format_part if parts[part].present? }.compact
+              format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
+            else
+              if parts[:hour]
+                [[:min, '%M'], [:sec, '%S']].each { |part, f| format.gsub!(":#{f}", '') unless parts[part].present? }
+              else
+                value += ' 00:00:00'
+              end
+              format += ' %z' if parts[:offset].present? && format !~ /%z/i
+            end
+            if !parts[:year] && !parts[:month] && !parts[:mday]
+              value = "#{Time.zone.today.strftime(format.gsub(/%[HI].*/, ''))} #{value}"
+            end
+            value = translate_days_and_months(value, format) if I18n.locale != :en
+            time = DateTime.strptime(value, format) rescue nil
+            if time
+              time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
+              time = time.send(conversion) unless conversion == :to_time
+            end
+            time
           end
-          if !parts[:year] && !parts[:month] && !parts[:mday]
-            value = "#{Time.zone.today.strftime(format.gsub(/%[HI].*/, ''))} #{value}"
-          end
-          value = translate_days_and_months(value, format) if I18n.locale != :en
-          time = DateTime.strptime(value, format) rescue nil
-          if time
-            time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
-            time = time.send(conversion) unless conversion == :to_time
-          end
-          time
-        end unless value.nil? || value.blank?
+        end
       end
 
       def condition_value_for_numeric(column, value)
