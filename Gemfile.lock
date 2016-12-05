@@ -88,8 +88,8 @@ GEM
     metaclass (0.0.4)
     mime-types (2.99.3)
     mini_portile2 (2.1.0)
-    minitest (5.9.1)
-    minitest-reporters (1.1.12)
+    minitest (5.10.1)
+    minitest-reporters (1.1.13)
       ansi
       builder
       minitest (>= 5.0)
