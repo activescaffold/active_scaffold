@@ -580,6 +580,7 @@ module ActiveScaffold
       end
 
       def display_message(message)
+        message = message.map { |msg| h(msg) }.join(tag(:br)).html_safe if message.is_a?(Array)
         if (highlights = active_scaffold_config.highlight_messages)
           message = highlights.inject(message) do |msg, (phrases, highlighter)|
             highlight(msg, phrases, highlighter || {})
