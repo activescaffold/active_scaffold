@@ -9,6 +9,7 @@
       jquery_ui_prefix = Jquery::Ui::Rails::VERSION < '5.0.0' ? 'jquery.ui.' : 'jquery-ui/'
       require_asset "#{jquery_ui_prefix}core"
       require_asset "#{jquery_ui_prefix}effect"
+      jquery_ui_prefix = 'jquery-ui/widgets/' if Jquery::Ui::Rails::VERSION >= '6.0.0'
       require_asset "#{jquery_ui_prefix}sortable"
       require_asset "#{jquery_ui_prefix}draggable"
       require_asset "#{jquery_ui_prefix}droppable"
