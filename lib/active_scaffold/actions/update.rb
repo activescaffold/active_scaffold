@@ -156,7 +156,9 @@ module ActiveScaffold::Actions
       @record.send("#{@column.name}=", value)
       before_update_save(@record)
       self.successful = @record.save
-      if successful? && active_scaffold_config.actions.include?(:list)
+      if !successful?
+        flash.now[:error] = @record.errors.full_messages.presence
+      elsif active_scaffold_config.actions.include?(:list)
         if @column.inplace_edit_update == :table
           params.delete(:id)
           do_list
