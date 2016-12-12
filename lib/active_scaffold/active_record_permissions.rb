@@ -91,16 +91,31 @@ module ActiveScaffold
         # options[:crud_type] should be a CRUD verb (:create, :read, :update, :destroy)
         # options[:column] should be the name of a model attribute
         # options[:action] is the name of a method
+        # options[:reason] if returning reason is expected, it will return array with authorized and reason, or nil if no reason
         def authorized_for?(options = {})
           raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] && ![:create, :read, :update, :delete].include?(options[:crud_type])
 
+          not_authorized_reason = ActiveScaffold::Config::Core.not_authorized_reason
           # collect other possibly-related methods that actually exist
           methods = cached_authorized_for_methods(options)
           return ActiveRecordPermissions.default_permission if methods.empty?
-          return send(methods.first) if methods.one?
+          if methods.one?
+            result = send(methods.first)
+            # if not_authorized_reason enabled interpret String as reason for not authorized
+            authorized, reason = not_authorized_reason && result.is_a?(String) ? [false, result] : result
+            # return array with reason only if requested with options[:reason]
+            return options[:reason] ? [authorized, reason] : authorized
+          end
 
           # if any method returns false, then return false
-          return false if methods.any? { |m| !send(m) }
+          methods.each do |method|
+            result = send(method)
+            # if not_authorized_reason enabled interpret String as reason for not authorized
+            authorized, reason = not_authorized_reason && result.is_a?(String) ? [false, result] : [result, nil]
+            next if authorized
+            # return array with reason only if requested with options[:reason]
+            return options[:reason] ? [authorized, reason] : authorized
+          end
           true
         end
 

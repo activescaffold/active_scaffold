@@ -210,7 +210,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     def delete_existing_authorized?(record = nil)
-      nested_parent_record.authorized_for?(:crud_type => :update, :column => nested.association.try(:name))
+      nested_parent_record.authorized_for?(:crud_type => :update, :column => nested.association.try(:name), :reason => true)
     end
 
     def after_create_save(record)

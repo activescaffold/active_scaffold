@@ -89,11 +89,12 @@ module ActiveScaffold
       end
 
       def action_link_authorized?(link, *args)
-        if link.security_method_set? || controller.respond_to?(link.security_method, true)
+        auth, reason = if link.security_method_set? || controller.respond_to?(link.security_method, true)
           controller.send(link.security_method, *args)
         else
-          args.empty? ? true : args.first.authorized_for?(:crud_type => link.crud_type, :action => link.action)
+          args.empty? ? true : args.first.authorized_for?(:crud_type => link.crud_type, :action => link.action, :reason => true)
         end
+        [auth, reason]
       end
 
       def display_dynamic_action_group(action_link, links, record_or_ul_options = nil, ul_options = nil)
@@ -124,9 +125,10 @@ module ActiveScaffold
               end
             end
           elsif !skip_action_link?(link, *Array(options[:for]))
-            authorized = action_link_authorized?(link, *Array(options[:for]))
+            authorized, reason = action_link_authorized?(link, *Array(options[:for]))
             next if !authorized && options[:skip_unauthorized]
-            output << display_action_link(link, nil, record, options.merge(:authorized => authorized))
+            logger.debug reason.inspect
+            output << display_action_link(link, nil, record, options.merge(:authorized => authorized, :not_authorized_reason => reason))
             options[:first_action] = false
           end
         end
@@ -161,7 +163,7 @@ module ActiveScaffold
           options.delete :link if link.crud_type == :create
         end
         if link.action.nil? || (link.type == :member && options.key?(:authorized) && !options[:authorized])
-          action_link_html(link, nil, {:link => action_link_text(link, options), :class => "disabled #{link.action}#{" #{link.html_options[:class]}" unless link.html_options[:class].blank?}"}, record)
+          action_link_html(link, nil, {:link => action_link_text(link, options), :class => "disabled #{link.action}#{" #{link.html_options[:class]}" unless link.html_options[:class].blank?}", :title => options[:not_authorized_reason]}, record)
         else
           url = action_link_url(link, record)
           html_options = action_link_html_options(link, record, options)
@@ -218,9 +220,11 @@ module ActiveScaffold
             else
               associated
             end
-          authorized = associated_for_authorized.authorized_for?(:crud_type => link.crud_type)
-          authorized &&= record.authorized_for?(:crud_type => :update, :column => column.name) if link.crud_type == :create
-          authorized
+          authorized, reason = associated_for_authorized.authorized_for?(:crud_type => link.crud_type, :reason => true)
+          if link.crud_type == :create && authorized
+            authorized, reason = record.authorized_for?(:crud_type => :update, :column => column.name, :reason => true)
+          end
+          [authorized, reason]
         else
           action_link_authorized?(link, record)
         end

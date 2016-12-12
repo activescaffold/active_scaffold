@@ -41,9 +41,7 @@ module ActiveScaffold::Config
     @@store_user_settings = true
 
     # lets you disable the DHTML history
-    def self.dhtml_history=(val)
-      @@dhtml_history = val
-    end
+    cattr_writer :dhtml_history, instance_accessor: false
 
     def self.dhtml_history?
       @@dhtml_history ? true : false
@@ -84,6 +82,10 @@ module ActiveScaffold::Config
     # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use highlight rails helper
     cattr_accessor :highlight_messages, instance_accessor: false
     @@highlight_messages = nil
+
+    # if enabled, string returned on authorized methods will be interpreted as not authorized and used as reason
+    cattr_accessor :not_authorized_reason, instance_accessor: false
+    @@not_authorized_reason = false
 
     # instance-level configuration
     # ----------------------------

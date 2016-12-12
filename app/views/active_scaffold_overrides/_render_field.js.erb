@@ -15,7 +15,7 @@
     options = {:is_subform => false, :field_class => "#{column.name}-input", :hidden => column.form_ui == :hidden}
   end
   html = if scope
-    readonly = (@record.readonly? or not @record.authorized_for?(:crud_type => :update))
+    readonly = @record.readonly? || !@record.authorized_for?(:crud_type => :update)
     crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
     active_scaffold_render_subform_column(column, scope, crud_type, readonly, !active_scaffold_config.subform.columns.names_without_auth_check.include?(column.name), @record)
   else

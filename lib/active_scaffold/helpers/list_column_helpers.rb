@@ -38,7 +38,9 @@ module ActiveScaffold
         if column.link && !skip_action_link?(column.link, record)
           link = column.link
           associated = record.send(column.association.name) if column.association
-          render_action_link(link, record, :link => text, :authorized => link.action.nil? || column_link_authorized?(link, column, record, associated))
+          authorized = link.action.nil?
+          authorized, reason = column_link_authorized?(link, column, record, associated) unless authorized
+          render_action_link(link, record, :link => text, :authorized => authorized, :not_authorized_reason => reason)
         elsif inplace_edit?(record, column)
           active_scaffold_inplace_edit(record, column, :formatted_column => text)
         elsif active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.wrap_tag
@@ -250,10 +252,10 @@ module ActiveScaffold
         return unless column.inplace_edit
         if controller.respond_to?(:update_authorized?, true)
           if controller.method(:update_authorized?).parameters.size == 2
-            return controller.send(:update_authorized?, record, column.name)
+            return Array(controller.send(:update_authorized?, record, column.name))[0]
           else
             ActiveSupport::Deprecation.warn 'add column = nil parameter to update_authorized? on your controller'
-            editable = controller.send(:update_authorized?, record)
+            editable = Array(controller.send(:update_authorized?, record))[0]
           end
         end
         editable || record.authorized_for?(:crud_type => :update, :column => column.name)

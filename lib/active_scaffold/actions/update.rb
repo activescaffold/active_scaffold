@@ -183,7 +183,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def update_authorized?(record = nil, column = nil)
-      (!nested? || !nested.readonly?) && (record || self).authorized_for?(crud_type: :update, column: column)
+      (!nested? || !nested.readonly?) && (record || self).authorized_for?(crud_type: :update, column: column, reason: true)
     end
 
     def update_ignore?(record = nil)
@@ -194,7 +194,7 @@ module ActiveScaffold::Actions
 
     def update_authorized_filter
       link = active_scaffold_config.update.link || active_scaffold_config.update.class.link
-      raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)
+      raise ActiveScaffold::ActionNotAllowed unless Array(send(link.security_method))[0]
     end
 
     def edit_formats
