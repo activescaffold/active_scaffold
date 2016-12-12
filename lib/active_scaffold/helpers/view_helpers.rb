@@ -89,11 +89,12 @@ module ActiveScaffold
       end
 
       def action_link_authorized?(link, *args)
-        auth, reason = if link.security_method_set? || controller.respond_to?(link.security_method, true)
-          controller.send(link.security_method, *args)
-        else
-          args.empty? ? true : args.first.authorized_for?(:crud_type => link.crud_type, :action => link.action, :reason => true)
-        end
+        auth, reason =
+            if link.security_method_set? || controller.respond_to?(link.security_method, true)
+              controller.send(link.security_method, *args)
+            else
+              args.empty? ? true : args.first.authorized_for?(:crud_type => link.crud_type, :action => link.action, :reason => true)
+            end
         [auth, reason]
       end
 
