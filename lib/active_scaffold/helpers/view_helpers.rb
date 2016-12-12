@@ -127,7 +127,6 @@ module ActiveScaffold
           elsif !skip_action_link?(link, *Array(options[:for]))
             authorized, reason = action_link_authorized?(link, *Array(options[:for]))
             next if !authorized && options[:skip_unauthorized]
-            logger.debug reason.inspect
             output << display_action_link(link, nil, record, options.merge(:authorized => authorized, :not_authorized_reason => reason))
             options[:first_action] = false
           end
