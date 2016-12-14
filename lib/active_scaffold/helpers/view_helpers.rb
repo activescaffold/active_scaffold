@@ -54,9 +54,10 @@ module ActiveScaffold
         options[:target] = action_iframe_id(url_for_options)
         options[:multipart] ||= true
         options[:class] = "#{options[:class]} as_remote_upload".strip
-        output = ''
+        output = []
         output << form_tag(url_for_options, options)
-        (output << "<iframe id='#{action_iframe_id(url_for_options)}' name='#{action_iframe_id(url_for_options)}' style='display:none'></iframe>").html_safe
+        output << content_tag(:iframe, '', id: action_iframe_id(url_for_options), name: action_iframe_id(url_for_options), style: 'display:none')
+        safe_join output
       end
 
       # a general-use loading indicator (the "stuff is happening, please wait" feedback)
@@ -167,7 +168,7 @@ module ActiveScaffold
       end
 
       def display_message(message)
-        message = message.map { |msg| h(msg) }.join(tag(:br)).html_safe if message.is_a?(Array)
+        message = safe_join message, tag(:br) if message.is_a?(Array)
         if (highlights = active_scaffold_config.highlight_messages)
           message = highlights.inject(message) do |msg, (phrases, highlighter)|
             highlight(msg, phrases, highlighter || {})
@@ -175,7 +176,9 @@ module ActiveScaffold
         end
         if (format = active_scaffold_config.timestamped_messages)
           format = :short if format == true
-          message = "#{content_tag :div, l(Time.current, :format => format), :class => 'timestamp'} #{content_tag :div, message, :class => 'message-content'}".html_safe
+          message = [content_tag(:div, l(Time.current, :format => format), :class => 'timestamp')]
+          message << content_tag(:div, message, :class => 'message-content')
+          safe_join message, ' '
         end
         message
       end
@@ -228,16 +231,16 @@ module ActiveScaffold
           end
           error_messages =
             if options[:list_type] == :br
-              error_messages.join('<br/>').html_safe
+              safe_join error_messages, tag(:br)
             else
-              content_tag(options[:list_type], error_messages.join.html_safe)
+              content_tag options[:list_type], safe_join(error_messages)
             end
 
           contents = []
           contents << content_tag(options[:header_tag] || :h2, header_message) unless header_message.blank?
           contents << content_tag(:p, message) unless message.blank?
           contents << error_messages
-          contents = contents.join.html_safe
+          contents = safe_join(contents)
           options[:container_tag] ? content_tag(options[:container_tag], contents, html) : contents
         end
       end

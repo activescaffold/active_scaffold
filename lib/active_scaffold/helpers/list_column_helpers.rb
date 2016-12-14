@@ -193,7 +193,7 @@ module ActiveScaffold
           firsts = value.loaded? ? value[0, column.associated_limit] : value.limit(column.associated_limit)
           firsts = firsts.map(&label_method)
           firsts << '…' if value.size > column.associated_limit
-          text = firsts.join(h(active_scaffold_config.list.association_join_text)).html_safe
+          text = safe_join firsts, active_scaffold_config.list.association_join_text
           text << " (#{size})" if column.associated_number? && column.associated_limit && value.size > column.associated_limit
           text
         end

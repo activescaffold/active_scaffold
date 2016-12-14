@@ -69,7 +69,7 @@ module ActiveScaffold
             html << pagination_ajax_link(num, url_options, options)
           end
         end
-        html.join(' ').html_safe
+        safe_join html, ' '
       end
     end
   end

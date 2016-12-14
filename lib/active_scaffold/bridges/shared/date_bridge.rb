@@ -12,7 +12,7 @@ module ActiveScaffold
             tags << active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
             tags << active_scaffold_search_date_bridge_numeric_tag(column, options, current_search)
             tags << active_scaffold_search_date_bridge_range_tag(column, options, current_search)
-            tags.join('&nbsp;').html_safe
+            safe_join tags, '&nbsp;'.html_safe
           end
 
           def active_scaffold_search_date_bridge_comparator_options(column)
