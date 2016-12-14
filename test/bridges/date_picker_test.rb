@@ -17,7 +17,7 @@ class DatePickerTest < ActionView::TestCase
 
   def test_set_form_ui
     config = ActiveScaffold::Config::Core.new(:company)
-    assert_equal nil, config.columns[:name].form_ui, 'form_ui for name'
+    assert_nil config.columns[:name].form_ui, 'form_ui for name'
     assert_equal :date_picker, config.columns[:date].form_ui, 'form_ui for date'
     assert_equal :datetime_picker, config.columns[:datetime].form_ui, 'form_ui for datetime'
   end

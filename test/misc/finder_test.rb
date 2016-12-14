@@ -27,7 +27,7 @@ class FinderTest < MiniTest::Test
     ]
     assert_equal [expected_conditions], ClassWithFinder.conditions_for_columns('foo', columns)
 
-    assert_equal nil, ClassWithFinder.conditions_for_columns('foo', [])
+    assert_nil ClassWithFinder.conditions_for_columns('foo', [])
   end
 
   def test_method_sorting
