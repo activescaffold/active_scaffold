@@ -2,6 +2,7 @@ require 'test_helper'
 
 class PaginationHelpersTest < MiniTest::Test
   include ActiveScaffold::Helpers::PaginationHelpers
+  include ActionView::Helpers::OutputSafetyHelper
 
   def active_scaffold_config
     @config ||= config_for('model_stub')
