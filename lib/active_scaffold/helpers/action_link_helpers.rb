@@ -151,7 +151,7 @@ module ActiveScaffold
         end
       end
 
-      def is_sti_record?(record)
+      def sti_record?(record)
         return unless active_scaffold_config.active_record?
         model = active_scaffold_config.model
         record && model.columns_hash.include?(model.inheritance_column) &&
@@ -159,7 +159,7 @@ module ActiveScaffold
       end
 
       def cache_action_link_url?(link, record)
-        active_scaffold_config.cache_action_link_urls && link.type == :member && !link.dynamic_parameters.is_a?(Proc) && !is_sti_record?(record)
+        active_scaffold_config.cache_action_link_urls && link.type == :member && !link.dynamic_parameters.is_a?(Proc) && !sti_record?(record)
       end
 
       def cached_action_link_url(link, record)
@@ -241,7 +241,7 @@ module ActiveScaffold
       end
 
       def cache_action_link_url_options?(link, record)
-        active_scaffold_config.cache_action_link_urls && (link.type == :collection || !link.dynamic_parameters.is_a?(Proc)) && !is_sti_record?(record)
+        active_scaffold_config.cache_action_link_urls && (link.type == :collection || !link.dynamic_parameters.is_a?(Proc)) && !sti_record?(record)
       end
 
       def cached_action_link_url_options(link, record)
@@ -373,8 +373,6 @@ module ActiveScaffold
           url_options[column.model.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:id] = if column.association.singular? && url_options[:action].to_sym != :index
                                '--CHILD_ID--'
-                             else
-                               nil
                              end
         elsif link.parameters && link.parameters[:named_scope]
           url_options[:parent_scaffold] = controller_path

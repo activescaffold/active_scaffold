@@ -122,6 +122,7 @@ Rails/OutputSafety:
     - 'lib/active_scaffold/helpers/pagination_helpers.rb'
     - 'lib/active_scaffold/helpers/search_column_helpers.rb'
     - 'lib/active_scaffold/helpers/view_helpers.rb'
+    - 'lib/active_scaffold/helpers/action_link_helpers.rb'
     - 'test/helpers/list_column_helpers_test.rb'
 
 # Offense count: 7
