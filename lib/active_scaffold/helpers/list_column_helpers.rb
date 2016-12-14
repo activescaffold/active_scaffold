@@ -324,6 +324,8 @@ module ActiveScaffold
         data
       end
 
+      # MARK
+
       def all_marked?
         if active_scaffold_config.mark.mark_all_mode == :page
           @page.items.detect { |record| !marked_records.include?(record.id) }.nil?
@@ -339,6 +341,8 @@ module ActiveScaffold
         }
         content_tag(:span, check_box_tag("#{controller_id}_mark_heading_span_input", '1', all_marked?), tag_options)
       end
+
+      # COLUMN HEADINGS
 
       def column_heading_attributes(column, sorting, sort_direction)
         {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => strip_tags(column.description).presence}
@@ -378,6 +382,27 @@ module ActiveScaffold
 
       def column_heading_label(column)
         column.label
+      end
+
+      # CALCULATIONS
+
+      def column_calculation(column)
+        if column.calculate.instance_of? Proc
+          column.calculate.call(@records)
+        else
+          calculate_query.calculate(column.calculate, column.name)
+        end
+      end
+
+      def render_column_calculation(column)
+        calculation = column_calculation(column)
+        override_formatter = "render_#{column.name}_#{column.calculate.is_a?(Proc) ? :calculate : column.calculate}"
+        calculation = send(override_formatter, calculation) if respond_to? override_formatter
+        format_column_calculation(column, calculation)
+      end
+
+      def format_column_calculation(column, calculation)
+        "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
       end
     end
   end

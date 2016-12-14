@@ -33,3 +33,6 @@ Style/SpaceInsideHashLiteralBraces:
 
 Lint/UnusedMethodArgument:
   Enabled: false
+
+Metrics/ModuleLength:
+  Max: 500
