@@ -366,11 +366,11 @@ background-color: $input_focus_bg;
 border-color: $input_border_color;
 }
 
-.active-scaffold .draggable-list {
+.active-scaffold form .checkbox-list.draggable-list {
 background-color: $draggable_list_bg;
 }
 
-.active-scaffold .draggable-list.selected {
+.active-scaffold form .checkbox-list.draggable-list.selected {
 background-color: $draggable_list_selected_bg;
 }
 .active-scaffold .ui-droppable-disabled, .active-scaffold .ui-droppable-disabled.selected {
