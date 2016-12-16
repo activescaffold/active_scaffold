@@ -176,9 +176,9 @@ module ActiveScaffold
         end
         if (format = active_scaffold_config.timestamped_messages)
           format = :short if format == true
-          message = [content_tag(:div, l(Time.current, :format => format), :class => 'timestamp')]
-          message << content_tag(:div, message, :class => 'message-content')
-          message = safe_join message, ' '
+          messages = [content_tag(:div, l(Time.current, :format => format), :class => 'timestamp')]
+          messages << content_tag(:div, message, :class => 'message-content')
+          message = safe_join messages, ' '
         end
         message
       end
