@@ -5,8 +5,7 @@ class BridgeTest < MiniTest::Test
     @const_store = {}
   end
 
-  def teardown
-  end
+  def teardown; end
 
   def test__shouldnt_throw_errors
     ActiveScaffold::Bridges.run_all

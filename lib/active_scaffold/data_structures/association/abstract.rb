@@ -42,14 +42,11 @@ module ActiveScaffold::DataStructures::Association
       false
     end
 
-    def through_reflection
-    end
+    def through_reflection; end
 
-    def source_reflection
-    end
+    def source_reflection; end
 
-    def scope
-    end
+    def scope; end
 
     def respond_to_target?
       false
@@ -130,8 +127,7 @@ module ActiveScaffold::DataStructures::Association
       end
     end
 
-    def reverse_through_match?(assoc)
-    end
+    def reverse_through_match?(assoc); end
 
     def reverse_habtm_match?(assoc)
       assoc.macro == :has_and_belongs_to_many
