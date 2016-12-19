@@ -65,8 +65,9 @@ cache:
 
 lint:brakeman:
   <<: *lint
+  allow_failure: true
   script:
-    - bin/brakeman
+    - bin/brakeman --exit-on-warn
 
 lint:bundler:audit:
   <<: *lint
