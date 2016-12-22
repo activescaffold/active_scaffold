@@ -196,6 +196,7 @@ DEPENDENCIES
   rdoc
   rubocop
   shoulda
+  simplecov
   sqlite3
 
 BUNDLED WITH

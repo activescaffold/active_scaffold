@@ -1,3 +1,19 @@
+.deploy: &deploy
+  before_script:
+    - cat /etc/os-release
+    - uname -a
+    - ruby --version
+    - gem --version
+    - bundle --version
+    - apk add --no-cache --update git
+    - bundle install --clean --deployment --jobs=2 --without default development lint production test
+  image: ruby:alpine
+  only:
+    - master
+  stage: deploy
+  tags:
+    - 2gb
+
 .lint: &lint
   before_script:
     - cat /etc/os-release
@@ -6,15 +22,19 @@
     - gem --version
     - bundle --version
     - apk add --no-cache --update git
-    - bundle install --clean --deployment --jobs=2 --without default development production test
+    - bundle install --clean --deployment --jobs=2 --without default deployment development production test
   image: ruby:alpine
   stage: lint
   tags:
     - 2gb
 
 .test: &test
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - coverage
   script:
-    - bundle install --clean --deployment --jobs=$(nproc) --without development lint production
+    - bundle install --clean --deployment --jobs=$(nproc) --without deployment development lint production
     - bin/rake
   stage: test
   tags:
@@ -77,9 +97,21 @@ lint:rubocop:
   script:
     - bin/rubocop
 
+pages:
+  <<: *deploy
+  artifacts:
+    expire_in: 1 month
+    paths:
+      - public
+  script:
+    - bin/codeclimate-test-reporter
+    - mkdir -pv public
+    - mv -v coverage public
+
 stages:
   - lint
   - test
+  - deploy
 
 test:rails-4.0.x:jruby:9.1:
   <<: *use_jruby
