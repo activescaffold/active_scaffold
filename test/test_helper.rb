@@ -1,7 +1,4 @@
-if RUBY_ENGINE != 'rbx'
-  require 'simplecov'
-  SimpleCov.start { add_filter 'test' }
-end
+require 'simplecov' unless RUBY_ENGINE == 'rbx'
 
 ENV['RAILS_ENV'] = 'test'
 require 'mock_app/config/environment'
