@@ -84,8 +84,13 @@ cache:
 lint:brakeman:
   <<: *lint
   allow_failure: true
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - brakeman
+    when: always
   script:
-    - bin/brakeman --exit-on-warn
+    - bin/brakeman --exit-on-warn --output brakeman/index.html
 
 lint:bundler:audit:
   <<: *lint
@@ -106,6 +111,7 @@ pages:
   script:
     - bin/codeclimate-test-reporter
     - mkdir -pv public
+    - mv -v brakeman public
     - mv -v coverage public
 
 stages:
