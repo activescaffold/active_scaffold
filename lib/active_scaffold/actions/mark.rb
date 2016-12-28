@@ -45,7 +45,11 @@ module ActiveScaffold::Actions
     end
 
     def mark?
-      @mark ||= [true, 'true', 1, '1', 'T', 't'].include?(params[:value].class == String ? params[:value].downcase : params[:value])
+      @mark ||= begin
+        value = params.delete :value
+        value.downcase! if value.is_a? String
+        [true, 'true', 1, '1', 't'].include? value
+      end
     end
 
     def mark_all_scope_forced?
