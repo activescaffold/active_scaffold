@@ -22,6 +22,10 @@ module ActiveScaffold
     mattr_accessor :default_permission
     @@default_permission = true
 
+    # if enabled, string returned on authorized methods will be interpreted as not authorized and used as reason
+    mattr_accessor :not_authorized_reason
+    @@not_authorized_reason = false
+
     # This is a module aimed at making the current_user available to ActiveRecord models for permissions.
     module ModelUserAccess
       module Controller
@@ -95,7 +99,7 @@ module ActiveScaffold
         def authorized_for?(options = {})
           raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] && ![:create, :read, :update, :delete].include?(options[:crud_type])
 
-          not_authorized_reason = ActiveScaffold::Config::Core.not_authorized_reason
+          not_authorized_reason = ActiveRecordPermissions.not_authorized_reason
           # collect other possibly-related methods that actually exist
           methods = cached_authorized_for_methods(options)
           return ActiveRecordPermissions.default_permission if methods.empty?

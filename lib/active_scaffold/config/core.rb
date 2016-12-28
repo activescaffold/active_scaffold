@@ -83,10 +83,6 @@ module ActiveScaffold::Config
     cattr_accessor :highlight_messages, instance_accessor: false
     @@highlight_messages = nil
 
-    # if enabled, string returned on authorized methods will be interpreted as not authorized and used as reason
-    cattr_accessor :not_authorized_reason, instance_accessor: false
-    @@not_authorized_reason = false
-
     # instance-level configuration
     # ----------------------------
 
