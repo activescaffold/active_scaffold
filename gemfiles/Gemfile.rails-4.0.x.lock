@@ -42,8 +42,8 @@ GEM
     ast (2.3.0)
     brakeman (3.4.0)
     builder (3.1.4)
-    codeclimate-test-reporter (0.6.0)
-      simplecov (>= 0.7.1, < 1.0.0)
+    codeclimate-test-reporter (1.0.4)
+      simplecov
     concurrent-ruby (1.0.2)
     concurrent-ruby (1.0.2-java)
     docile (1.1.5)
@@ -70,7 +70,6 @@ GEM
       mime-types (>= 1.16, < 4)
     metaclass (0.0.4)
     mime-types (2.99.3)
-    mime-types-data (3.2016.0521)
     minitest (4.7.5)
     minitest-reporters (0.14.24)
       ansi
@@ -170,4 +169,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.13.5
+   1.13.7
