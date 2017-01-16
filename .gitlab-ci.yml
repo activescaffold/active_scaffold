@@ -61,21 +61,21 @@
     - gem --version
     - bundle --version
 
+.use_rails_3_2_x: &use_rails_3_2_x
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-3.2.x
+
 .use_rails_4_0_x: &use_rails_4_0_x
   variables:
     BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
 
 .use_rails_4_1_x: &use_rails_4_1_x
   variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
+    BUNDLE_GEMFILE: Gemfile
 
 .use_rails_4_2_x: &use_rails_4_2_x
   variables:
-    BUNDLE_GEMFILE: Gemfile
-
-.use_rails_5_0_x: &use_rails_5_0_x
-  variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.2.x
 
 cache:
   paths:
@@ -94,6 +94,7 @@ lint:brakeman:
 
 lint:bundler:audit:
   <<: *lint
+  allow_failure: true # only in old branches
   script:
     - bin/bundle-audit check --update --verbose
 
@@ -118,6 +119,21 @@ stages:
   - lint
   - test
   - deploy
+
+test:rails-3.2.x:mri:1.9:
+  <<: *use_mri
+  <<: *use_rails_3_2_x
+  image: ruby:1.9.3
+
+test:rails-3.2.x:mri:2.0:
+  <<: *use_mri
+  <<: *use_rails_3_2_x
+  image: ruby:2.0
+
+test:rails-3.2.x:mri:2.1:
+  <<: *use_mri
+  <<: *use_rails_3_2_x
+  image: ruby:2.1
 
 test:rails-4.0.x:jruby:9.1:
   <<: *use_jruby
@@ -174,21 +190,6 @@ test:rails-4.2.x:mri:2.2:
 test:rails-4.2.x:mri:2.3:
   <<: *use_mri
   <<: *use_rails_4_2_x
-  image: ruby:2.3
-
-test:rails-5.0.x:jruby:9.1:
-  <<: *use_jruby
-  <<: *use_rails_5_0_x
-  allow_failure: true
-
-test:rails-5.0.x:mri:2.2:
-  <<: *use_mri
-  <<: *use_rails_5_0_x
-  image: ruby:2.2
-
-test:rails-5.0.x:mri:2.3:
-  <<: *use_mri
-  <<: *use_rails_5_0_x
   image: ruby:2.3
 
 variables:
