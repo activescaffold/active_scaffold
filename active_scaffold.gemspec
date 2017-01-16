@@ -21,9 +21,6 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.9'
 
-  s.add_development_dependency('bundler', ['~> 1.0'])
   s.add_dependency('rails', '>= 3.2.22.2', '< 5')
   # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide
-  s.add_development_dependency 'rubocop'
-  s.add_development_dependency 'shoulda'
 end
