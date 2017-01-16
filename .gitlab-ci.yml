@@ -1,0 +1,197 @@
+.deploy: &deploy
+  before_script:
+    - cat /etc/os-release
+    - uname -a
+    - ruby --version
+    - gem --version
+    - bundle --version
+    - apk add --no-cache --update git
+    - bundle install --clean --deployment --jobs=2 --without default development lint production test
+  image: ruby:alpine
+  only:
+    - master
+  stage: deploy
+  tags:
+    - 2gb
+
+.lint: &lint
+  before_script:
+    - cat /etc/os-release
+    - uname -a
+    - ruby --version
+    - gem --version
+    - bundle --version
+    - apk add --no-cache --update git
+    - bundle install --clean --deployment --jobs=2 --without default deployment development production test
+  image: ruby:alpine
+  stage: lint
+  tags:
+    - 2gb
+
+.test: &test
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - coverage
+  script:
+    - bundle install --clean --deployment --jobs=$(nproc) --without deployment development lint production
+    - bin/rake
+  stage: test
+  tags:
+    - 2gb
+
+.use_jruby: &use_jruby
+  <<: *test
+  before_script:
+    - cat /etc/os-release
+    - uname -a
+    - ruby --version
+    - gem --version
+    - bundle --version
+    - apt-get -qq update
+    - apt-get -qq install git
+  image: jruby:9.1
+
+.use_mri: &use_mri
+  <<: *test
+  before_script:
+    - cat /etc/os-release
+    - uname -a
+    - ruby --version
+    - gem --version
+    - bundle --version
+
+.use_rails_4_0_x: &use_rails_4_0_x
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
+
+.use_rails_4_1_x: &use_rails_4_1_x
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
+
+.use_rails_4_2_x: &use_rails_4_2_x
+  variables:
+    BUNDLE_GEMFILE: Gemfile
+
+.use_rails_5_0_x: &use_rails_5_0_x
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
+
+cache:
+  paths:
+    - vendor/bundle
+
+lint:brakeman:
+  <<: *lint
+  allow_failure: true
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - brakeman
+    when: always
+  script:
+    - bin/brakeman --exit-on-warn --output brakeman/index.html
+
+lint:bundler:audit:
+  <<: *lint
+  script:
+    - bin/bundle-audit check --update --verbose
+
+lint:rubocop:
+  <<: *lint
+  script:
+    - bin/rubocop
+
+pages:
+  <<: *deploy
+  artifacts:
+    expire_in: 1 month
+    paths:
+      - public
+  script:
+    - bin/codeclimate-test-reporter
+    - mkdir -pv public
+    - mv -v brakeman public
+    - mv -v coverage public
+
+stages:
+  - lint
+  - test
+  - deploy
+
+test:rails-4.0.x:jruby:9.1:
+  <<: *use_jruby
+  <<: *use_rails_4_0_x
+
+test:rails-4.0.x:mri:2.1:
+  <<: *use_mri
+  <<: *use_rails_4_0_x
+  image: ruby:2.1
+
+test:rails-4.0.x:mri:2.2:
+  <<: *use_mri
+  <<: *use_rails_4_0_x
+  image: ruby:2.2
+
+test:rails-4.0.x:mri:2.3:
+  <<: *use_mri
+  <<: *use_rails_4_0_x
+  image: ruby:2.3
+
+test:rails-4.1.x:jruby:9.1:
+  <<: *use_jruby
+  <<: *use_rails_4_1_x
+
+test:rails-4.1.x:mri:2.1:
+  <<: *use_mri
+  <<: *use_rails_4_1_x
+  image: ruby:2.1
+
+test:rails-4.1.x:mri:2.2:
+  <<: *use_mri
+  <<: *use_rails_4_1_x
+  image: ruby:2.2
+
+test:rails-4.1.x:mri:2.3:
+  <<: *use_mri
+  <<: *use_rails_4_1_x
+  image: ruby:2.3
+
+test:rails-4.2.x:jruby:9.1:
+  <<: *use_jruby
+  <<: *use_rails_4_2_x
+
+test:rails-4.2.x:mri:2.1:
+  <<: *use_mri
+  <<: *use_rails_4_2_x
+  image: ruby:2.1
+
+test:rails-4.2.x:mri:2.2:
+  <<: *use_mri
+  <<: *use_rails_4_2_x
+  image: ruby:2.2
+
+test:rails-4.2.x:mri:2.3:
+  <<: *use_mri
+  <<: *use_rails_4_2_x
+  image: ruby:2.3
+
+test:rails-5.0.x:jruby:9.1:
+  <<: *use_jruby
+  <<: *use_rails_5_0_x
+  allow_failure: true
+
+test:rails-5.0.x:mri:2.2:
+  <<: *use_mri
+  <<: *use_rails_5_0_x
+  image: ruby:2.2
+
+test:rails-5.0.x:mri:2.3:
+  <<: *use_mri
+  <<: *use_rails_5_0_x
+  image: ruby:2.3
+
+variables:
+  JRUBY_OPTS: --debug
+  LC_ALL: C.UTF-8
+  RAILS_ENV: test
