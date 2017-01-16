@@ -1,12 +1,16 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  RunRailsCops: true
   Include:
-    - '**/Gemfile*'
+    - 'gemfiles/Gemfile*'
   Exclude:
-    - lib/generators/*/templates/**/*
-    - '**/Gemfile*.lock'
+    - 'gemfiles/Gemfile*.lock'
+    - 'bin/*'
+    - 'lib/generators/**/templates/**/*'
+    - 'vendor/bundle/**/*'
+
+Rails:
+  Enabled: true
 
 Style/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
