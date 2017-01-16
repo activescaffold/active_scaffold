@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 gemspec path: '../'
-gem 'active_scaffold', path: '../'
 
 group :development do
   #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
