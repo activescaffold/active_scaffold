@@ -160,4 +160,8 @@ class ConvertNumbersFormatTest < MiniTest::Test
     update_record_from_params(record, @config.create.columns, HashWithIndifferentAccess.new(:number => value))
     record.number
   end
+
+  def params_hash?(v)
+    v.is_a? Hash
+  end
 end
