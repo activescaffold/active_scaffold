@@ -205,7 +205,7 @@ module ActiveScaffold
       if column.association.try :singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.association.try :collection?
-        value = value.permit!.to_h if Rails.version >= '5.0'
+        value = value.permit!.to_h if Rails.version >= '5.0' && value.is_a?(ActionController::Parameters)
         # HACK: to be able to delete all associated records, hash will include "0" => ""
         values = value.values.reject(&:blank?)
         values.collect { |val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }.compact
