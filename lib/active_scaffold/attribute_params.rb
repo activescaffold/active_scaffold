@@ -73,7 +73,7 @@ module ActiveScaffold
     # rails 5 needs this hack for belongs_to, when selecting record, not creating new one (value is Hash)
     # TODO: remove when pull request is merged and no version with bug is supported
     def counter_cache_hack?(association, value)
-      !value.is_a?(Hash) && association.belongs_to? && association.counter_cache_hack?
+      !params_hash?(value) && association.belongs_to? && association.counter_cache_hack?
     end
 
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
@@ -144,7 +144,7 @@ module ActiveScaffold
       form_ui = column.form_ui || column.column.try(:type)
       if form_ui && respond_to?("column_value_for_#{form_ui}_type", true)
         send("column_value_for_#{form_ui}_type", parent_record, column, value)
-      elsif value.is_a?(Hash)
+      elsif params_hash? value
         column_value_from_param_hash_value(parent_record, column, value, avoid_changes)
       else
         column_value_from_param_simple_value(parent_record, column, value)
@@ -205,15 +205,17 @@ module ActiveScaffold
       if column.association.try :singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.association.try :collection?
+        value = value.permit!.to_h if Rails.version >= '5.0'
         # HACK: to be able to delete all associated records, hash will include "0" => ""
-        value.collect { |_, val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) unless val.blank? }.compact
+        values = value.values.reject(&:blank?)
+        values.collect { |val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }.compact
       else
         value
       end
     end
 
     def manage_nested_record_from_params(parent_record, column, attributes, avoid_changes = false)
-      return nil unless build_record_from_params(attributes, column, parent_record)
+      return nil unless build_record_from_params?(attributes, column, parent_record)
       record = find_or_create_for_params(attributes, column, parent_record)
       if record
         record_columns = active_scaffold_config_for(column.association.klass).subform.columns
@@ -224,7 +226,7 @@ module ActiveScaffold
       record
     end
 
-    def build_record_from_params(params, column, record)
+    def build_record_from_params?(params, column, record)
       current = record.send(column.name)
       klass = column.association.klass
       (column.association.collection? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
@@ -286,7 +288,7 @@ module ActiveScaffold
         casted_value = column ? ActiveScaffold::Core.column_type_cast(value, column) : value
         next true if casted_value == default_value
 
-        if value.is_a?(Hash)
+        if params_hash? value
           attributes_hash_is_empty?(value, klass)
         elsif value.is_a?(Array)
           value.all?(&:blank?)

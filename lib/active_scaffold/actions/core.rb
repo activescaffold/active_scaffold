@@ -294,6 +294,10 @@ module ActiveScaffold::Actions
       session[:hover_supported] == false
     end
 
+    def params_hash?(value)
+      value.is_a?(Hash) || (Rails.version >= '5.0' && value.is_a?(ActionController::Parameters))
+    end
+
     # call this method in your action_link action to simplify processing of actions
     # eg for member action_link :fire
     # process_action_link_action do |record|
