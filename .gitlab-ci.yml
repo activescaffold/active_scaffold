@@ -7,7 +7,7 @@
     - bundle --version
     - apk add --no-cache --update git
     - bundle install --clean --deployment --jobs=2 --without default development lint production test
-  image: ruby:alpine
+  image: ruby:2.3 # alpine doesn't work for compile json, needed for codeclimate-test-reporter
   only:
     - master
   stage: deploy
