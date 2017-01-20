@@ -139,11 +139,6 @@ test:rails-4.0.x:mri:2.3:
   <<: *use_rails_4_0_x
   image: ruby:2.3
 
-test:rails-4.0.x:mri:2.4:
-  <<: *use_mri
-  <<: *use_rails_4_0_x
-  image: ruby:2.4
-
 test:rails-4.1.x:jruby:9.1:
   <<: *use_jruby
   <<: *use_rails_4_1_x
@@ -162,11 +157,6 @@ test:rails-4.1.x:mri:2.3:
   <<: *use_mri
   <<: *use_rails_4_1_x
   image: ruby:2.3
-
-test:rails-4.1.x:mri:2.4:
-  <<: *use_mri
-  <<: *use_rails_4_1_x
-  image: ruby:2.4
 
 test:rails-4.2.x:jruby:9.1:
   <<: *use_jruby
@@ -191,6 +181,7 @@ test:rails-4.2.x:mri:2.4:
   <<: *use_mri
   <<: *use_rails_4_2_x
   image: ruby:2.4
+  allow_failure: true # should work with rails 4.2.8
 
 test:rails-5.0.x:jruby:9.1:
   <<: *use_jruby
