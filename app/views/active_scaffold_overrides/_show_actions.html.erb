@@ -1,9 +1,13 @@
 <div class="active-scaffold-<%= position %>">
   <div class="actions">
     <% active_scaffold_config.action_links.member.each do |link| -%>
-      <% next unless display_link_in_show?(link, position) %>
-      <% next if link.action == 'show' && link.controller.nil? && link.parameters.empty? -%>
-      <% next if skip_action_link?(link, record) || !action_link_authorized?(link, record) -%>
+      <%
+        next unless display_link_in_show?(link, position)
+        next if link.action == 'show' && link.controller.nil? && link.parameters.empty?
+        next if skip_action_link?(link, record)
+        auth, reason = action_link_authorized?(link, record)
+        next unless auth
+      -%>
       <%= render_action_link(link, record, :authorized => true, :page => true) -%>
     <% end -%>
   </div>
