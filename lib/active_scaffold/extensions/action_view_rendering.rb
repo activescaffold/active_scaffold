@@ -35,13 +35,18 @@ module ActiveScaffold #:nodoc:
     #
     def render(*args, &block)
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
-        require 'digest/sha2'
+        require 'digest/md5'
         options = args.first
 
         remote_controller = options[:active_scaffold]
         constraints = options[:constraints]
         conditions = options[:conditions]
-        eid = Digest::SHA512.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
+        # It is important that the EID hash remains short as to not contribute
+        # to a large session size and thus a possible cookie overflow exception
+        # when using rails CookieStore or EncryptedCookieStore. For example,
+        # when rendering many embedded scaffolds with constraints or conditions
+        # on a single page.
+        eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
         eid_info = session["as:#{eid}"] ||= {}
         if constraints
           eid_info['constraints'] = constraints
