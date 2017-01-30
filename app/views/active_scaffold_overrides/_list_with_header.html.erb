@@ -1,4 +1,4 @@
-<div id="<%= active_scaffold_id -%>" class="<%= as_main_div_class %>" <%= "data-eid=#{id_from_controller(params[:eid])}" if params[:eid]%>>
+<%= content_tag(:div, id: active_scaffold_id, class: as_main_div_class, data: params[:eid] ? {eid: id_from_controller(params[:eid])} : {}) do %>
   <div class="active-scaffold-header">
     <%= render :partial => 'list_header' %>
   </div>
@@ -33,4 +33,4 @@
   <div id="<%= active_scaffold_content_id-%>" class="as_content">
     <%= render :partial => 'list' %>
   </div>
-</div>
+<% end %>
