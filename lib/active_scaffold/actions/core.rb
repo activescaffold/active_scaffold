@@ -35,7 +35,7 @@ module ActiveScaffold::Actions
     protected
 
     def loading_embedded?
-      @loading_embedded ||= params.delete(:embedded)
+      @loading_embedded ||= active_scaffold_embedded_params.delete(:loading)
     end
 
     def embedded?
@@ -257,6 +257,10 @@ module ActiveScaffold::Actions
       session_index = active_scaffold_session_storage_key(id)
       session[session_index] ||= {}
       session[session_index]
+    end
+
+    def active_scaffold_embedded_params
+      params[:embedded] || {}
     end
 
     def clear_storage

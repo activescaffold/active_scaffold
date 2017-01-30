@@ -5,7 +5,6 @@ class FinderTest < MiniTest::Test
   def setup
     @klass = ClassWithFinder.new
     @klass.active_scaffold_config.stubs(model: ModelStub)
-    @klass.stubs(:active_scaffold_session_storage).returns({})
   end
 
   def test_create_conditions_for_columns

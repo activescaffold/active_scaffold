@@ -14,6 +14,7 @@
 - add inline_links config to show action, display member links in show action loaded in page
 - add :telephone list_ui displaying formatted phone number with tel: link
 - add global config option to display reason for disabled action, authorized methods must return string with reason, and string is interpreted as not authorized
+- stop saving embedded scaffolds info into session, so no more CookieOverflow errors caused by loading many embedded scaffolds
 - fix select of existing record for nested subform
 - fix apply constraints to parent (fix update columns on subform on embedded scaffold)
 - fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes

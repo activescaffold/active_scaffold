@@ -14,6 +14,10 @@ class ClassWithFinder
 
   def conditions_from_constraints; end
 
+  def active_scaffold_embedded_params
+    {}
+  end
+
   def joins_for_collection; end
 
   def custom_finder_options

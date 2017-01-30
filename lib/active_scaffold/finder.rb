@@ -357,7 +357,7 @@ module ActiveScaffold
         conditions_for_collection,                    # from the dev
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
         conditions_from_constraints,                  # from any constraints (embedded scaffolds)
-        active_scaffold_session_storage['conditions'] # embedding conditions (weaker constraints)
+        active_scaffold_embedded_params[:conditions]  # embedding conditions (weaker constraints)
       ].reject(&:blank?)
     end
 

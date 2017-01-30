@@ -47,25 +47,12 @@ module ActiveScaffold #:nodoc:
         # when rendering many embedded scaffolds with constraints or conditions
         # on a single page.
         eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
-        eid_info = session["as:#{eid}"] ||= {}
-        if constraints
-          eid_info['constraints'] = constraints
-        else
-          eid_info.delete 'constraints'
-        end
-        if conditions
-          eid_info['conditions'] = conditions
-        else
-          eid_info.delete 'conditions'
-        end
-        if options[:label]
-          eid_info['list'] = {'label' => options[:label]}
-        else
-          eid_info.delete 'list'
-        end
-        session.delete "as:#{eid}" if eid_info.empty?
+        eid_info = {loading: true}
+        eid_info[:constraints] = constraints if constraints
+        eid_info[:conditions] = conditions if conditions
+        eid_info[:label] = options[:label] if options[:label]
         options[:params] ||= {}
-        options[:params].merge! :eid => eid, :embedded => true
+        options[:params].merge! :eid => eid, :embedded => eid_info
 
         id = "as_#{eid}-embedded"
         url_options = {:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params])

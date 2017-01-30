@@ -228,7 +228,11 @@ module ActiveScaffold::Config
       attr_writer :label
       # This label has already been localized.
       def label
-        self['label'] || @label || @conf.label
+        self['label'] || embedded_label || @label || @conf.label
+      end
+
+      def embedded_label
+        @params[:embedded][:label] if @params[:embedded]
       end
 
       def per_page

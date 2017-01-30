@@ -10,7 +10,6 @@ class CalculationTest < MiniTest::Test
 
     @klass = ClassWithFinder.new
     @klass.active_scaffold_config.stubs(:model).returns(Building)
-    @klass.stubs(:active_scaffold_session_storage).returns({})
   end
 
   def teardown
