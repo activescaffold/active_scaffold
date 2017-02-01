@@ -299,7 +299,19 @@ module ActiveScaffold::Actions
     end
 
     def params_hash?(value)
-      value.is_a?(Hash) || (Rails.version >= '5.0' && value.is_a?(ActionController::Parameters))
+      value.is_a?(Hash) || controller_params?(value)
+    end
+
+    def controller_params?(value)
+      Rails.version >= '5.0' && value.is_a?(ActionController::Parameters)
+    end
+
+    def controller_params_to_hash(value)
+      value.permit!.to_h
+    end
+
+    def permitted_params(value)
+      controller_params?(value) ? controller_params_to_hash(value) : value
     end
 
     # call this method in your action_link action to simplify processing of actions

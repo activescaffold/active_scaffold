@@ -29,11 +29,7 @@ module ActiveScaffold::Actions
       end
 
       def permitted_search_params
-        if Rails.version >= '5.0' && params[:search].is_a?(ActionController::Parameters)
-          params[:search].permit!.to_h
-        else
-          params[:search]
-        end
+        permitted_params params[:search]
       end
 
       def store_search_params_into_session
