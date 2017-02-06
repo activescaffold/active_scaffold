@@ -55,7 +55,7 @@ module ActiveScaffold #:nodoc:
         options[:params].merge! :eid => eid, :embedded => eid_info
 
         id = "as_#{eid}-embedded"
-        url_options = {:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params])
+        url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
 
         if controller.respond_to?(:render_component_into_view, true)
           controller.send(:render_component_into_view, url_options)
