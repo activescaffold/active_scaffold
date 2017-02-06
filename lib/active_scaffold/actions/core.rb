@@ -303,11 +303,15 @@ module ActiveScaffold::Actions
     end
 
     def controller_params?(value)
-      value.is_a?(ActionController::Parameters)
+      value.is_a?(::ActionController::Parameters)
     end
 
     def params_hash(value)
-      controller_params?(value) ? value.to_unsafe_h : value
+      if controller_params?(value)
+        Rails.version < '4.2' ? value.clone.permit! : value.to_unsafe_h
+      else
+        value
+      end
     end
 
     # call this method in your action_link action to simplify processing of actions
