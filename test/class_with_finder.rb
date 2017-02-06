@@ -18,6 +18,10 @@ class ClassWithFinder
     {}
   end
 
+  def params_hash(v)
+    v
+  end
+
   def joins_for_collection; end
 
   def custom_finder_options

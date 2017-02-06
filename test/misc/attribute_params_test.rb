@@ -450,4 +450,8 @@ class Controller
   def params_hash?(v)
     v.is_a? Hash
   end
+
+  def params_hash(v)
+    v
+  end
 end
