@@ -205,7 +205,7 @@ module ActiveScaffold
       if column.association.try :singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.association.try :collection?
-        value = permitted_params(value)
+        value = params_hash(value)
         # HACK: to be able to delete all associated records, hash will include "0" => ""
         values = value.values.reject(&:blank?)
         values.collect { |val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }.compact

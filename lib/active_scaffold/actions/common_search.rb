@@ -29,7 +29,7 @@ module ActiveScaffold::Actions
       end
 
       def permitted_search_params
-        permitted_params params[:search]
+        params_hash params[:search]
       end
 
       def store_search_params_into_session

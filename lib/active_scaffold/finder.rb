@@ -351,7 +351,7 @@ module ActiveScaffold
     end
 
     def active_scaffold_embedded_conditions
-      permitted_params active_scaffold_embedded_params[:conditions]
+      params_hash active_scaffold_embedded_params[:conditions]
     end
 
     def all_conditions
