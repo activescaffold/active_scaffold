@@ -63,7 +63,7 @@ module ActiveScaffold::Actions
         if active_scaffold_config.nested.shallow_delete
           active_scaffold_config.action_links.add('destroy_existing', :label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy_existing']
           if active_scaffold_config.actions.include?(:delete)
-            active_scaffold_config.action_links.delete('delete') if active_scaffold_config.action_links['delete']
+            active_scaffold_config.action_links.delete('destroy') if active_scaffold_config.action_links['destroy']
           end
         end
       else
@@ -73,7 +73,7 @@ module ActiveScaffold::Actions
         if active_scaffold_config.nested.shallow_delete
           active_scaffold_config.action_links.delete('destroy_existing') if active_scaffold_config.action_links['destroy_existing']
           if active_scaffold_config.actions.include?(:delete) && active_scaffold_config.delete.link
-            active_scaffold_config.action_links.add(active_scaffold_config.delete.link) unless active_scaffold_config.action_links['delete']
+            active_scaffold_config.action_links.add(active_scaffold_config.delete.link) unless active_scaffold_config.action_links['destroy']
           end
         end
       end
