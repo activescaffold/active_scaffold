@@ -7,12 +7,14 @@
       require_asset "jquery-ui"
     elsif Jquery.const_defined? 'Ui'
       jquery_ui_prefix = Jquery::Ui::Rails::VERSION < '5.0.0' ? 'jquery.ui.' : 'jquery-ui/'
+      jquery_widget_prefix = (Jquery::Ui::Rails::VERSION > '6' ? "widgets" : "")
+
       require_asset "#{jquery_ui_prefix}core"
       require_asset "#{jquery_ui_prefix}effect"
-      require_asset "#{jquery_ui_prefix}sortable"
-      require_asset "#{jquery_ui_prefix}draggable"
-      require_asset "#{jquery_ui_prefix}droppable"
-      require_asset "#{jquery_ui_prefix}datepicker"
+      require_asset "#{jquery_ui_prefix}#{jquery_widget_prefix}/sortable"
+      require_asset "#{jquery_ui_prefix}#{jquery_widget_prefix}/draggable"
+      require_asset "#{jquery_ui_prefix}#{jquery_widget_prefix}/droppable"
+      require_asset "#{jquery_ui_prefix}#{jquery_widget_prefix}/datepicker"
     else
       jquery_ui = false
     end
