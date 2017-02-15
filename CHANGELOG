@@ -1,3 +1,5 @@
+- Fix for using jquery-ui-rails 6.0
+
 = 3.4.42
 - Fix for protected and private authorized methods
 
