@@ -96,7 +96,7 @@ module ActiveScaffold
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
         return unless column && column.search_sql && !value.blank?
-        search_ui = column.search_ui || column.column.try(:type)
+        search_ui = column.search_ui || column.column_type
         begin
           sql, *values =
             if search_ui && respond_to?("condition_for_#{search_ui}_type")
