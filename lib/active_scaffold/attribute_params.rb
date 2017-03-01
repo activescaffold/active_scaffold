@@ -271,17 +271,18 @@ module ActiveScaffold
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
       # old style date form management... ignore them too
-      part_ignore_column_types = [:datetime, :date, :time]
+      part_ignore_column_types = [:datetime, :date, :time, Time, Date]
 
       hash.all? do |key, value|
         # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
         parts = key.to_s.split('(')
         column_name = parts.first
-        column = klass.columns_hash[column_name]
+        column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
+        column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
 
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
-        next true if column && parts.length > 1 && part_ignore_column_types.include?(column.type)
+        next true if column && parts.length > 1 && part_ignore_column_types.include?(column_type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
         default_value = column_default_value(column_name, klass, column)
@@ -300,13 +301,18 @@ module ActiveScaffold
 
     def column_default_value(column_name, klass, column)
       return unless column
-      if Rails.version < '4.2'
-        column.default
-      elsif Rails.version < '5.0'
-        column.type_cast_from_database(column.default)
-      else
-        cast_type = ActiveRecord::Type.lookup column.type
-        cast_type ? cast_type.deserialize(column.default) : column.default
+      if ActiveScaffold::OrmChecks.mongoid? klass
+        column.default_val
+      elsif ActiveScaffold::OrmChecks.active_record? klass
+        if Rails.version < '4.2'
+          column.default
+        elsif Rails.version < '5.0'
+          column.type_cast_from_database(column.default)
+        else
+          column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
+          cast_type = ActiveModel::Type.lookup column_type
+          cast_type ? cast_type.deserialize(column.default) : column.default
+        end
       end
     end
   end

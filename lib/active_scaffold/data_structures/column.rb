@@ -391,6 +391,14 @@ module ActiveScaffold::DataStructures
       @field ||= quoted_field(field_name)
     end
 
+    def type_for_attribute
+      ActiveScaffold::OrmChecks.type_for_attribute active_record_class, name
+    end
+
+    def column_type
+      ActiveScaffold::OrmChecks.column_type active_record_class, name
+    end
+
     protected
 
     def setup_association_info
