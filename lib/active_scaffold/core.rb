@@ -232,8 +232,10 @@ module ActiveScaffold
         column.type_cast value
       elsif Rails.version < '5.0'
         column.type_cast_from_user value
+      elsif column.type.respond_to? :cast
+        column.type.cast value
       else
-        cast_type = ActiveRecord::Type.lookup column.type
+        cast_type = ActiveModel::Type.lookup column.type
         cast_type ? cast_type.cast(value) : value
       end
     end
