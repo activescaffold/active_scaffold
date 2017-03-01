@@ -278,7 +278,7 @@ module ActiveScaffold
         parts = key.to_s.split('(')
         column_name = parts.first
         column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
-        column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
+        column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name) if column
 
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.

@@ -69,7 +69,11 @@ module ActiveScaffold
 
       def type_for_attribute(klass, column_name)
         if active_record? klass
-          klass.type_for_attribute column_name.to_s
+          if klass.respond_to? :type_for_attribute
+            klass.type_for_attribute column_name.to_s
+          else # Rails.version < 4.2
+            klass.column_types[column_name.to_s]
+          end
         elsif mongoid? klass
           klass.fields[column_name.to_s].type
         end
