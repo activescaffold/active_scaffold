@@ -160,20 +160,20 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 'Name', model.first_name
     assert model.home.present?
     assert model.floor.present?
-    assert_equal [nil], building.floors(true).map(&:tenant_id), 'floor should not be saved yet'
+    assert_equal [nil], building.floors.reload.map(&:tenant_id), 'floor should not be saved yet'
     assert model.save
     assert_equal model.id, model.floor.tenant_id, 'tenant_id should be saved'
-    assert_equal [nil, model.id], building.floors(true).map(&:tenant_id)
+    assert_equal [nil, model.id], building.floors.reload.map(&:tenant_id)
 
     model = update_record_from_params(model, :update, :first_name, :home, :first_name => 'First', :home => '') { raise ActiveRecord::Rollback }
     assert_equal 'First', model.first_name
-    assert_equal [nil, model.id], building.floors(true).map(&:tenant_id), 'previous floor should not be deleted'
+    assert_equal [nil, model.id], building.floors.reload.map(&:tenant_id), 'previous floor should not be deleted'
     assert_nil model.home, 'home should be cleared'
 
     model.reload
     model = update_record_from_params(model, :update, :first_name, :home, :first_name => 'First', :home => '')
     assert_equal 'First', model.first_name
-    assert_equal [nil], building.floors(true).map(&:tenant_id), 'previous floor should be deleted'
+    assert_equal [nil], building.floors.reload.map(&:tenant_id), 'previous floor should be deleted'
     assert_nil model.home, 'home should be cleared'
     assert model.save
   end
@@ -185,20 +185,20 @@ class AttributeParamsTest < MiniTest::Test
     model = update_record_from_params(Building.new, :create, :name, :tenants, :name => 'Tower', :tenants => ['', *people.map { |b| b.id.to_s }]) # checkbox_list always add a hidden tag with empty value
     assert_equal 'Tower', model.name
     assert model.tenants.present?
-    assert_equal [nil] * 2, people.map { |p| p.floor(true) }, 'floor should not be saved yet'
+    assert_equal [nil] * 2, people.map { |p| p.respond_to?(:reload_floor) ? p.reload_floor : p.floor(true) }, 'floor should not be saved yet'
     assert model.save
     assert_equal [model.id] * 2, model.floors.map(&:building_id)
-    assert_equal [model.id] * 2, people.map { |p| p.floor(true).building_id }, 'floor should be saved'
+    assert_equal [model.id] * 2, people.map { |p| (p.respond_to?(:reload_floor) ? p.reload_floor : p.floor(true)).building_id }, 'floor should be saved'
 
     model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => ['']) { raise ActiveRecord::Rollback }
     assert_equal 'Skyscrapper', model.name
-    assert_equal [model.id] * 2, people.map { |p| p.floor(true).building_id }, 'previous floor should not be deleted'
+    assert_equal [model.id] * 2, people.map { |p| (p.respond_to?(:reload_floor) ? p.reload_floor : p.floor(true)).building_id }, 'previous floor should not be deleted'
     assert model.tenants.empty?, 'tenants should be cleared'
 
     model.reload
     model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => [''])
     assert_equal 'Skyscrapper', model.name
-    assert_equal [nil] * 2, people.map { |p| p.floor(true) }, 'previous floor should be deleted'
+    assert_equal [nil] * 2, people.map { |p| p.respond_to?(:reload_floor) ? p.reload_floor : p.floor(true) }, 'previous floor should be deleted'
     assert model.tenants.empty?, 'tenants should be cleared'
     assert model.save
   end

@@ -43,6 +43,12 @@ class ModelStub < ActiveRecord::Base
     @columns_hash ||= columns.each_with_object({}) { |column, hash| hash[column.name.to_s] = column }
   end
 
+  if self.respond_to? :type_for_attribute
+    def self.type_for_attribute(attribute_name)
+      defined?(ActiveModel::Type) ? ActiveModel::Type::String.new : super
+    end
+  end
+
   # column-level security methods, used for testing
   def self.a_authorized_for_bar?
     true
