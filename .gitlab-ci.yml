@@ -14,7 +14,7 @@
     - master
   stage: deploy
   tags:
-    - 2gb
+    - gitlab-org
 
 .lint: &lint
   before_script:
