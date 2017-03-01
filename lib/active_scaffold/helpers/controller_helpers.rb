@@ -41,11 +41,11 @@ module ActiveScaffold
           @params_for = {}
           params.except(*BLACKLIST_PARAMS).each do |key, value|
             @params_for[key.to_sym] =
-                if controller_params? value
-                  params_hash value
-                else
-                  value.duplicable? ? value.clone : value
-                end
+              if controller_params? value
+                params_hash value
+              else
+                value.duplicable? ? value.clone : value
+              end
           end
           @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
