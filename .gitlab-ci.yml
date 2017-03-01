@@ -14,7 +14,7 @@
     - master
   stage: deploy
   tags:
-    - gitlab-org
+    - ruby
 
 .lint: &lint
   before_script:
@@ -28,7 +28,7 @@
   image: ruby:alpine
   stage: lint
   tags:
-    - 2gb
+    - ruby
 
 .test: &test
   artifacts:
@@ -40,7 +40,7 @@
     - bin/rake
   stage: test
   tags:
-    - 2gb
+    - ruby
 
 .use_jruby: &use_jruby
   <<: *test
