@@ -3,7 +3,8 @@ module ActiveScaffold
     # All extra helpers that should be included in the View.
     # Also a dumping ground for uncategorized helpers.
     module ActionLinkHelpers
-      NESTED_PARAMS = [:eid, :association, :parent_scaffold].freeze
+      # params which mustn't be copying to nested links
+      NESTED_PARAMS = [:eid, :embedded, :association, :parent_scaffold].freeze
 
       def skip_action_link?(link, *args)
         !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *args)
@@ -169,6 +170,7 @@ module ActiveScaffold
           if cache_action_link_url?(link, record)
             @action_links_urls[link.name_to_cache] = url_for(url_options)
           else
+            url_options.merge! eid: nil, embedded: nil if link.nested_link?
             url_for(params_for(url_options))
           end
         end
