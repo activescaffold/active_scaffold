@@ -95,7 +95,7 @@ module ActiveScaffold
         associated = html_options.delete :value
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
-          method = column.association.macro == :belongs_to ? column.association.foreign_key : column.name
+          method = column.association.belongs_to? ? column.association.foreign_key : column.name
           select_options = sorted_association_options_find(column.association, false, record)
         else
           method = column.name
@@ -139,6 +139,26 @@ module ActiveScaffold
       # we can't use checkbox ui because it's not possible to decide whether search for this field or not
       alias active_scaffold_search_checkbox active_scaffold_search_boolean
 
+      def active_scaffold_group_search_column(record, options)
+        select_tag 'search[active_scaffold_group]', options_for_select(active_scaffold_group_search_options, selected: field_search_params['active_scaffold_group'])
+      end
+
+      def active_scaffold_group_search_options
+        options = active_scaffold_config.field_search.group_options.collect do |text, value|
+          active_scaffold_translated_option(active_scaffold_group_column, text, value)
+        end
+        [[as_(:no_group), '']].concat options
+      end
+
+      def active_scaffold_group_column
+        return unless active_scaffold_config.field_search.group_options.present?
+        @_active_scaffold_group_column ||= begin
+          column = ActiveScaffold::DataStructures::Column.new(:active_scaffold_group, active_scaffold_config.model)
+          column.label = :group_by
+          column
+        end
+      end
+
       def active_scaffold_search_null(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
@@ -171,7 +191,7 @@ module ActiveScaffold
       def include_null_comparators?(column)
         return column.options[:null_comparators] if column.options.key? :null_comparators
         if column.association
-          column.association.macro != :belongs_to || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
+          !column.association.belongs_to? || active_scaffold_config.columns[column.association.foreign_key].column.try(:null)
         else
           column.column.try(:null)
         end
@@ -262,11 +282,15 @@ module ActiveScaffold
             visibles << column
           end
         end
+        if active_scaffold_group_column
+          columns = grouped_search? || search_config.optional_columns.empty? ? visibles : hiddens
+          columns << active_scaffold_group_column
+        end
         [visibles, hiddens]
       end
 
       def searched_by?(column)
-        value = field_search_params[column.name]
+        value = field_search_params[column.name.to_s]
         case value
         when Hash
           !value['from'].blank?

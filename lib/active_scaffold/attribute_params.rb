@@ -33,19 +33,18 @@ module ActiveScaffold
   module AttributeParams
     protected
 
-    # workaround to update counters when belongs_to changes on persisted record on Rails 3
     # workaround to update counters when polymorphic has_many changes on persisted record
-    # TODO: remove when rails3 support is removed and counter cache for polymorphic has_many association works on rails4
+    # TODO: remove when rails4 support is removed or counter cache for polymorphic has_many association works on rails4
     def hack_for_has_many_counter_cache(parent_record, column, value)
       association = parent_record.association(column.name)
       counter_attr = association.send(:cached_counter_attribute_name)
       difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
 
       if parent_record.new_record?
-        if Rails.version == '4.2.0'
+        if Rails.version >= '4.2.0'
           parent_record.send "#{column.name}=", value
           parent_record.send "#{counter_attr}_will_change!"
-        else # < 4.2 or > 4.2.0
+        else # < 4.2
           parent_record.send "#{counter_attr}=", difference
           parent_record.send "#{column.name}=", value
         end
@@ -66,16 +65,15 @@ module ActiveScaffold
     # rails 4 needs this hack for polymorphic has_many
     # TODO: remove when hack_for_has_many_counter_cache is not needed
     def hack_for_has_many_counter_cache?(parent_record, column)
-      return unless Rails.version < '5.0'
-      assoc = column.association
-      assoc.try(:macro) == :has_many && assoc.options[:as] && parent_record.association(column.name).send(:has_cached_counter?)
+      column.association.counter_cache_hack? && parent_record.association(column.name).send(:has_cached_counter?)
     end
 
     # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
-    # rails 4 needs this hack for polymorphic has_many, when selecting record, not creating new one (value is Hash)
+    # rails 4 needs this hack for non-polymorphic belongs_to, when selecting record, not creating new one (value is Hash)
+    # rails 5 needs this hack for belongs_to, when selecting record, not creating new one (value is Hash)
     # TODO: remove when pull request is merged and no version with bug is supported
-    def counter_cache_hack?(assoc, value)
-      !value.is_a?(Hash) && assoc.try(:belongs_to?) && assoc.options[:counter_cache] && (Rails.version >= '5.0' || !assoc.options[:polymorphic])
+    def counter_cache_hack?(association, value)
+      !params_hash?(value) && association.belongs_to? && association.counter_cache_hack?
     end
 
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
@@ -118,14 +116,14 @@ module ActiveScaffold
 
     def update_column_from_params(parent_record, column, attribute, avoid_changes = false)
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
-      if avoid_changes && column.plural_association?
+      if avoid_changes && column.association.try(:collection?)
         parent_record.association(column.name).target = value
-      elsif counter_cache_hack?(column.association, attribute)
+      elsif column.association && counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value.try(:id)
         parent_record.association(column.name).target = value
       else
         begin
-          if hack_for_has_many_counter_cache?(parent_record, column)
+          if column.association && hack_for_has_many_counter_cache?(parent_record, column)
             hack_for_has_many_counter_cache(parent_record, column, value)
           else
             parent_record.send "#{column.name}=", value
@@ -135,7 +133,7 @@ module ActiveScaffold
           parent_record.association(column.name).target = value if column.association
         end
       end
-      if column.association && [:has_one, :has_many].include?(column.association.macro) && column.association.reverse
+      if column.association.try(:reverse_association).try(:belongs_to?)
         Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
       end
       value
@@ -146,7 +144,7 @@ module ActiveScaffold
       form_ui = column.form_ui || column.column.try(:type)
       if form_ui && respond_to?("column_value_for_#{form_ui}_type", true)
         send("column_value_for_#{form_ui}_type", parent_record, column, value)
-      elsif value.is_a?(Hash)
+      elsif params_hash? value
         column_value_from_param_hash_value(parent_record, column, value, avoid_changes)
       else
         column_value_from_param_simple_value(parent_record, column, value)
@@ -170,9 +168,9 @@ module ActiveScaffold
     end
 
     def column_value_from_param_simple_value(parent_record, column, value)
-      if column.singular_association?
+      if column.association.try :singular?
         if value.present?
-          if column.polymorphic_association?
+          if column.association.polymorphic?
             class_name = parent_record.send(column.association.foreign_type)
             class_name.constantize.find(value) if class_name.present?
           else
@@ -180,7 +178,7 @@ module ActiveScaffold
             column.association.klass.find(value)
           end
         end
-      elsif column.plural_association?
+      elsif column.association.try :collection?
         column_plural_assocation_value_from_value(column, Array(value))
       elsif column.number? && column.options[:format] && column.form_ui != :number
         column.number_to_native(value)
@@ -204,32 +202,34 @@ module ActiveScaffold
     end
 
     def column_value_from_param_hash_value(parent_record, column, value, avoid_changes = false)
-      if column.singular_association?
+      if column.association.try :singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
-      elsif column.plural_association?
+      elsif column.association.try :collection?
+        value = params_hash(value)
         # HACK: to be able to delete all associated records, hash will include "0" => ""
-        value.collect { |_, val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) unless val.blank? }.compact
+        values = value.values.reject(&:blank?)
+        values.collect { |val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }.compact
       else
         value
       end
     end
 
     def manage_nested_record_from_params(parent_record, column, attributes, avoid_changes = false)
-      return nil unless build_record_from_params(attributes, column, parent_record)
+      return nil unless build_record_from_params?(attributes, column, parent_record)
       record = find_or_create_for_params(attributes, column, parent_record)
       if record
         record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-        record_columns.constraint_columns = [column.association.reverse]
+        record_columns.constraint_columns = [column.association.reverse].compact
         update_record_from_params(record, record_columns, attributes, avoid_changes)
         record.unsaved = true
       end
       record
     end
 
-    def build_record_from_params(params, column, record)
+    def build_record_from_params?(params, column, record)
       current = record.send(column.name)
       klass = column.association.klass
-      (column.plural_association? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
+      (column.association.collection? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
     end
 
     # Attempts to create or find an instance of the klass of the association in parent_column from the
@@ -259,12 +259,11 @@ module ActiveScaffold
       end
     end
 
-    def save_record_to_association(record, association_name, value)
-      association = record.class.reflect_on_association(association_name) if association_name
+    def save_record_to_association(record, association, value)
       if association.try(:collection?)
-        record.send(association_name) << value
+        record.send(association.name) << value
       elsif association
-        record.send("#{association_name}=", value)
+        record.send("#{association.name}=", value)
       end
     end
 
@@ -272,24 +271,25 @@ module ActiveScaffold
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
       # old style date form management... ignore them too
-      part_ignore_column_types = [:datetime, :date, :time]
+      part_ignore_column_types = [:datetime, :date, :time, Time, Date]
 
       hash.all? do |key, value|
         # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
         parts = key.to_s.split('(')
         column_name = parts.first
-        column = klass.columns_hash[column_name]
+        column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
+        column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name) if column
 
         # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
-        next true if column && parts.length > 1 && part_ignore_column_types.include?(column.type)
+        next true if column && parts.length > 1 && part_ignore_column_types.include?(column_type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
         default_value = column_default_value(column_name, klass, column)
         casted_value = column ? ActiveScaffold::Core.column_type_cast(value, column) : value
         next true if casted_value == default_value
 
-        if value.is_a?(Hash)
+        if params_hash? value
           attributes_hash_is_empty?(value, klass)
         elsif value.is_a?(Array)
           value.all?(&:blank?)
@@ -301,13 +301,18 @@ module ActiveScaffold
 
     def column_default_value(column_name, klass, column)
       return unless column
-      if Rails.version < '4.2'
-        column.default
-      elsif Rails.version < '5.0'
-        column.type_cast_from_database(column.default)
-      else
-        cast_type = ActiveRecord::Type.lookup column.type
-        cast_type ? cast_type.deserialize(column.default) : column.default
+      if ActiveScaffold::OrmChecks.mongoid? klass
+        column.default_val
+      elsif ActiveScaffold::OrmChecks.active_record? klass
+        if Rails.version < '4.2'
+          column.default
+        elsif Rails.version < '5.0'
+          column.type_cast_from_database(column.default)
+        else
+          column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
+          cast_type = ActiveModel::Type.lookup column_type
+          cast_type ? cast_type.deserialize(column.default) : column.default
+        end
       end
     end
   end

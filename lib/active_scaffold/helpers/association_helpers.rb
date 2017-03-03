@@ -5,7 +5,7 @@ module ActiveScaffold
       def cache_association_options(association, conditions, klass, cache = true)
         if active_scaffold_config.cache_association_options && cache
           @_associations_cache ||= Hash.new { |h, k| h[k] = {} }
-          key = [association.name, association.active_record.name, klass.name].join('/')
+          key = [association.name, association.inverse_klass.name, klass.name].join('/')
           @_associations_cache[key][conditions] ||= yield
         else
           yield
@@ -14,8 +14,8 @@ module ActiveScaffold
 
       # Provides a way to honor the :conditions on an association while searching the association's klass
       def association_options_find(association, conditions = nil, klass = nil, record = nil)
-        if klass.nil? && association.options[:polymorphic]
-          class_name = record.send(association.foreign_type)
+        if klass.nil? && association.polymorphic?
+          class_name = record.send(association.foreign_type) if association.belongs_to?
           if class_name.present?
             klass = class_name.constantize
           else
@@ -30,8 +30,7 @@ module ActiveScaffold
         conditions ||= options_for_association_conditions(association, record)
         cache_association_options(association, conditions, klass, cache) do
           klass = association_klass_scoped(association, klass, record)
-          relation = klass.where(conditions).where(association.options[:conditions])
-          relation = relation.includes(association.options[:include]) if association.options[:include]
+          relation = klass.where(conditions)
           column = column_for_association(association, record)
           if column && column.try(:sort) && column.sort[:sql]
             if column.includes
@@ -51,6 +50,7 @@ module ActiveScaffold
 
       def association_klass_scoped(association, klass, record)
         if nested? && nested.through_association? && nested.child_association.try(:through_reflection) == association
+          # only ActiveRecord associations
           if nested.association.through_reflection.collection?
             nested_parent_record.send(nested.association.through_reflection.name)
           else
@@ -73,7 +73,7 @@ module ActiveScaffold
       end
 
       def association_options_count(association, conditions = nil)
-        association.klass.where(conditions).where(association.options[:conditions]).count
+        association.klass.where(conditions).count
       end
 
       def options_for_association_count(association, record)
@@ -85,14 +85,10 @@ module ActiveScaffold
       # Should work in both the subform and form_ui=>:select modes.
       # Check association.name to specialize the conditions per-column.
       def options_for_association_conditions(association, record = nil)
-        return nil if association.options[:through]
-        case association.macro
-        when :has_one, :has_many
+        return nil if association.through?
+        if association.has_one? || association.has_many?
           # Find only orphaned objects
           {association.foreign_key => nil}
-        when :belongs_to, :has_and_belongs_to_many
-          # Find all
-          nil
         end
       end
 

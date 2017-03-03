@@ -15,7 +15,8 @@ data_refresh ||= record.to_param
       <%= authorized ? render_list_column(column_value, column, record) : column_value %>
     <% end %>
   <% end -%>
-    
+
+  <% unless grouped_search? -%>
   <td class="actions"><table>
     <tr>
       <td class="indicator-container">
@@ -24,4 +25,5 @@ data_refresh ||= record.to_param
       <%= display_action_links(action_links, record, :level_0_tag => :td, :for => record.persisted? ? record : record.class) %>
     </tr>
   </table></td>
+  <% end -%>
 </tr>

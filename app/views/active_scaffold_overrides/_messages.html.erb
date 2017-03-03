@@ -1,5 +1,5 @@
 <% for name in [:info, :warning, :error] %>
-  <% if flash[name] %>
+  <% if flash[name].present? %>
     <div class="<%= "#{name}-message message" %>">
       <%= display_message flash[name] %>
       <% if request.xhr? %>

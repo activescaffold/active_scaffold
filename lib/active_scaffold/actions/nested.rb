@@ -34,7 +34,10 @@ module ActiveScaffold::Actions
     def configure_nested
       return unless nested?
       active_scaffold_config.list.user.label = nested_label
-      active_scaffold_config.list.user.nested_default_sorting = nested_default_sorting if nested.sorted? && !active_scaffold_config.nested.ignore_order_from_association
+      unless active_scaffold_config.nested.ignore_order_from_association
+        chain = beginning_of_chain
+        active_scaffold_config.list.user.nested_default_sorting = nested_default_sorting(chain) if nested.sorted?(chain)
+      end
     end
 
     def nested_label
@@ -45,8 +48,8 @@ module ActiveScaffold::Actions
       end
     end
 
-    def nested_default_sorting
-      {:table_name => active_scaffold_config.model.model_name, :default_sorting => nested.default_sorting}
+    def nested_default_sorting(chain)
+      {:table_name => active_scaffold_config._table_name, :default_sorting => nested.default_sorting(chain)}
     end
 
     def nested_authorized?(record = nil)
@@ -60,7 +63,7 @@ module ActiveScaffold::Actions
         if active_scaffold_config.nested.shallow_delete
           active_scaffold_config.action_links.add('destroy_existing', :label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy_existing']
           if active_scaffold_config.actions.include?(:delete)
-            active_scaffold_config.action_links.delete('delete') if active_scaffold_config.action_links['delete']
+            active_scaffold_config.action_links.delete('destroy') if active_scaffold_config.action_links['destroy']
           end
         end
       else
@@ -70,7 +73,7 @@ module ActiveScaffold::Actions
         if active_scaffold_config.nested.shallow_delete
           active_scaffold_config.action_links.delete('destroy_existing') if active_scaffold_config.action_links['destroy_existing']
           if active_scaffold_config.actions.include?(:delete) && active_scaffold_config.delete.link
-            active_scaffold_config.action_links.add(active_scaffold_config.delete.link) unless active_scaffold_config.action_links['delete']
+            active_scaffold_config.action_links.add(active_scaffold_config.delete.link) unless active_scaffold_config.action_links['destroy']
           end
         end
       end
@@ -80,28 +83,25 @@ module ActiveScaffold::Actions
       if nested? && nested.association
         if nested.association.collection?
           nested_parent_record.send(nested.association.name)
-        elsif nested.association.options[:through] # has_one :through
+        elsif nested.association.through? # has_one :through
           active_scaffold_config.model.where(active_scaffold_config.model.primary_key => nested_parent_record.send(nested.association.name).try(:id))
-        elsif nested.child_association.nil? # without child_association is not possible to add conditions
-          active_scaffold_config.model
-        elsif nested.child_association.belongs_to?
+        elsif nested.association.has_one?
           active_scaffold_config.model.where(nested.child_association.foreign_key => nested_parent_record.send(nested.association.association_primary_key))
         elsif nested.association.belongs_to?
-          chain = active_scaffold_config.model.joins(nested.child_association.name)
-          table_name =
-            if active_scaffold_config.model == nested.association.active_record
-              dependency = ActiveRecord::Associations::JoinDependency.new(chain.klass, chain.joins_values, [])
-              join_associations = Rails.version >= '4.1.0' ? dependency.join_root.children : dependency.join_associations
-              join_associations.find { |join| join.try(:reflection).try(:name) == nested.child_association.name }.try(:table).try(:right)
-            end
-          table_name ||= nested.association.active_record.table_name
-          chain.where(table_name => {nested.association.active_record.primary_key => nested_parent_record}).readonly(false)
+          nested_belongs_to_chain
+        else # never should get here
+          active_scaffold_config.model
         end
       elsif nested? && nested.scope
         nested_parent_record.send(nested.scope)
       else
         active_scaffold_config.model
       end
+    end
+
+    def nested_belongs_to_chain
+      primary_key = active_scaffold_config.mongoid? ? '_id' : active_scaffold_config.model.primary_key
+      active_scaffold_config.model.where(primary_key => nested_parent_record.send(nested.association.name))
     end
 
     def nested_parent_record(crud = :read)
@@ -112,11 +112,10 @@ module ActiveScaffold::Actions
       # has_many is done by beginning_of_chain and rails
       return unless (nested.belongs_to? || nested.has_one? || nested.habtm?) && nested.child_association
       return if (parent = nested_parent_record).nil?
-      case nested.child_association.macro
-      when :has_one, :belongs_to
+      if nested.child_association.singular?
         record.send("#{nested.child_association.name}=", parent)
-      when :has_many, :has_and_belongs_to_many
-        record.send(nested.child_association.name.to_s).send(:<<, parent)
+      else
+        record.send(nested.child_association.name) << parent
       end
     end
 
@@ -211,7 +210,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     def delete_existing_authorized?(record = nil)
-      nested_parent_record.authorized_for?(:crud_type => :update, :column => nested.association.try(:name))
+      nested_parent_record.authorized_for?(:crud_type => :update, :column => nested.association.try(:name), :reason => true)
     end
 
     def after_create_save(record)

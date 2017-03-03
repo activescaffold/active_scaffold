@@ -4,6 +4,7 @@ module ActiveScaffold::DataStructures
     include ActiveScaffold::OrmChecks
 
     attr_reader :active_record_class
+    alias model active_record_class
 
     # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all others will be inferred from this name.
     attr_accessor :name
@@ -133,7 +134,7 @@ module ActiveScaffold::DataStructures
 
     attr_writer :search_ui
     def search_ui
-      @search_ui || @form_ui || (@association && !polymorphic_association? ? :select : nil)
+      @search_ui || @form_ui || (:select if association && !association.polymorphic?)
     end
 
     # a place to store dev's column specific options
@@ -246,8 +247,8 @@ module ActiveScaffold::DataStructures
     attr_writer :show_blank_record
     def show_blank_record?(associated)
       return false unless @show_blank_record
-      return false unless association.klass.authorized_for?(:crud_type => :create) && !association.options[:readonly]
-      plural_association? || (singular_association? && associated.blank?)
+      return false unless association.klass.authorized_for?(:crud_type => :create) && !association.readonly?
+      association.collection? || (association.singular? && associated.blank?)
     end
 
     # methods for automatic links in singular association columns
@@ -267,30 +268,6 @@ module ActiveScaffold::DataStructures
 
     # the association from the ActiveRecord class
     attr_reader :association
-    def singular_association?
-      association && !association.collection?
-    end
-
-    def plural_association?
-      association && association.collection?
-    end
-
-    def through_association?
-      association && association.options[:through]
-    end
-
-    def polymorphic_association?
-      association && association.options[:polymorphic]
-    end
-
-    def readonly_association?
-      return false unless association
-      if association.options.key? :readonly
-        association.options[:readonly]
-      else
-        through_association?
-      end
-    end
 
     # an interpreted property. the column is virtual if it isn't from the active record model or any associated models
     def virtual?
@@ -325,17 +302,18 @@ module ActiveScaffold::DataStructures
       self.name = name.to_sym
       @active_record_class = active_record_class
       @column = _columns_hash[self.name.to_s]
-      @association = active_record_class.reflect_on_association(self.name)
-      @autolink = !@association.nil?
+      setup_association_info
+
+      @autolink = self.association.present?
       @table = _table_name
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
       @send_form_on_update_column = self.class.send_form_on_update_column
-      @actions_for_association_links = self.class.actions_for_association_links.clone if @association
+      @actions_for_association_links = self.class.actions_for_association_links.clone if self.association
       @select_columns = default_select_columns
 
-      @text = @column.nil? || [:string, :text].include?(@column.type)
+      @text = @column.nil? || [:string, :text, String].include?(column_type)
       @number = false
       if @column
         if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
@@ -355,7 +333,7 @@ module ActiveScaffold::DataStructures
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
 
-      if association && !polymorphic_association?
+      if association && association.allow_join?
         self.includes = [association.name]
         self.search_joins = includes.clone
       end
@@ -374,15 +352,7 @@ module ActiveScaffold::DataStructures
     # just the field (not table.field)
     def field_name
       return nil if virtual?
-      @field_name ||= if column
-                        if active_record?
-                          @active_record_class.connection.quote_column_name(column.name)
-                        else
-                          column.name.to_s
-                        end
-                      else
-                        association.foreign_key
-      end
+      @field_name ||= column ? quoted_field_name(column.name) : association.foreign_key
     end
 
     def <=>(other)
@@ -438,7 +408,28 @@ module ActiveScaffold::DataStructures
       @field ||= quoted_field(field_name)
     end
 
+    def type_for_attribute
+      ActiveScaffold::OrmChecks.type_for_attribute active_record_class, name
+    end
+
+    def column_type
+      ActiveScaffold::OrmChecks.column_type active_record_class, name
+    end
+
     protected
+
+    def setup_association_info
+      assoc = active_record_class.reflect_on_association(self.name)
+      @association = if assoc
+                       case
+                       when active_record? then Association::ActiveRecord.new(assoc)
+                       when mongoid? then Association::Mongoid.new(assoc)
+                       end
+                     elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
+                       assoc = active_record_class.reflect_on_am_association(name)
+                       Association::ActiveMongoid.new(assoc) if assoc
+      end
+    end
 
     def validator_force_required?(val)
       return false if val.options[:if] || val.options[:unless]
@@ -459,18 +450,18 @@ module ActiveScaffold::DataStructures
     def default_select_columns
       if association.nil? && column
         [field]
-      elsif polymorphic_association?
-        [field, quoted_field(@active_record_class.connection.quote_column_name(association.foreign_type))]
+      elsif association.try(:polymorphic?)
+        [field, quoted_field(quoted_field_name(association.foreign_type))]
       elsif association
         if association.belongs_to?
           [field]
         else
           columns = []
           if _columns_hash[count_column = "#{association.name}_count"]
-            columns << quoted_field(@active_record_class.connection.quote_column_name(count_column))
+            columns << quoted_field(quoted_field_name(count_column))
           end
           if association.through_reflection.try(:belongs_to?)
-            columns << quoted_field(@active_record_class.connection.quote_column_name(association.through_reflection.foreign_key))
+            columns << quoted_field(quoted_field_name(association.through_reflection.foreign_key))
           end
           columns
         end
@@ -482,8 +473,16 @@ module ActiveScaffold::DataStructures
       return @column.type < Numeric if mongoid?
     end
 
+    def quoted_field_name(column_name)
+      if active_record?
+        @active_record_class.connection.quote_column_name(column_name)
+      else
+        column_name.to_s
+      end
+    end
+
     def quoted_field(name)
-      [_quoted_table_name, name].compact.join('.')
+      active_record? ? [_quoted_table_name, name].compact.join('.') : name
     end
 
     def initialize_sort
@@ -504,8 +503,8 @@ module ActiveScaffold::DataStructures
         unless virtual?
           if association.nil?
             field.to_s unless tableless?
-          elsif !polymorphic_association?
-            [association.klass.quoted_table_name, association.klass.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
+          elsif association.allow_join?
+            [association.quoted_table_name, association.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
           end
         end
     end
@@ -514,9 +513,9 @@ module ActiveScaffold::DataStructures
     attr_reader :table
 
     def estimate_weight
-      if singular_association?
+      if association.try(:singular?)
         400
-      elsif plural_association?
+      elsif association.try(:collection?)
         500
       elsif [:created_at, :updated_at].include?(name)
         600

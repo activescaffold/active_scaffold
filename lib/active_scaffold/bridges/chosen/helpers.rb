@@ -11,7 +11,7 @@ class ActiveScaffold::Bridges::Chosen
       # requires RecordSelect plugin to be installed and configured.
       def active_scaffold_input_chosen(column, html_options)
         html_options[:class] << ' chosen'
-        if column.plural_association?
+        if column.association.try(:collection?)
           associated_options, select_options = active_scaffold_plural_association_options(column)
           options = {:selected => associated_options.collect(&:id), :include_blank => as_(:_select_)}
 
@@ -39,6 +39,7 @@ class ActiveScaffold::Bridges::Chosen
       def active_scaffold_search_multi_chosen(column, options)
         options[:class] << ' chosen'
         options[:multiple] = true
+        options[:'data-placeholder'] = column.options[:placeholder] || as_(:_select_)
         active_scaffold_search_select(column, options)
       end
     end

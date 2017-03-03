@@ -1,16 +1,15 @@
-module ActionView
-  class LookupContext
+module ActiveScaffold
+  module LookupContext
     attr_accessor :last_template
 
-    def find_template_with_last_template(name, prefixes = [], partial = false, keys = [], options = {})
-      self.last_template = find_template_without_last_template(name, prefixes, partial, keys, options)
+    def find_template(name, prefixes = [], partial = false, keys = [], options = {})
+      self.last_template = super(name, prefixes, partial, keys, options)
     end
-    alias_method_chain :find_template, :last_template
   end
 end
 
 # wrap the action rendering for ActiveScaffold views
-module ActionView::Helpers #:nodoc:
+module ActiveScaffold #:nodoc:
   module RenderingHelper
     #
     # Adds two rendering options.
@@ -34,37 +33,29 @@ module ActionView::Helpers #:nodoc:
     #
     # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
     #
-    def render_with_active_scaffold(*args, &block)
+    def render(*args, &block)
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
-        require 'digest/sha2'
+        require 'digest/md5'
         options = args.first
 
         remote_controller = options[:active_scaffold]
         constraints = options[:constraints]
         conditions = options[:conditions]
-        eid = Digest::SHA512.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
-        eid_info = session["as:#{eid}"] ||= {}
-        if constraints
-          eid_info['constraints'] = constraints
-        else
-          eid_info.delete 'constraints'
-        end
-        if conditions
-          eid_info['conditions'] = conditions
-        else
-          eid_info.delete 'conditions'
-        end
-        if options[:label]
-          eid_info['list'] = {'label' => options[:label]}
-        else
-          eid_info.delete 'list'
-        end
-        session.delete "as:#{eid}" if eid_info.empty?
+        # It is important that the EID hash remains short as to not contribute
+        # to a large session size and thus a possible cookie overflow exception
+        # when using rails CookieStore or EncryptedCookieStore. For example,
+        # when rendering many embedded scaffolds with constraints or conditions
+        # on a single page.
+        eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
+        eid_info = {loading: true}
+        eid_info[:constraints] = constraints if constraints
+        eid_info[:conditions] = conditions if conditions
+        eid_info[:label] = options[:label] if options[:label]
         options[:params] ||= {}
-        options[:params].merge! :eid => eid, :embedded => true
+        options[:params].merge! :eid => eid, :embedded => eid_info
 
         id = "as_#{eid}-embedded"
-        url_options = {:controller => remote_controller.to_s, :action => 'index'}.merge(options[:params])
+        url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
 
         if controller.respond_to?(:render_component_into_view, true)
           controller.send(:render_component_into_view, url_options)
@@ -102,7 +93,7 @@ module ActionView::Helpers #:nodoc:
           last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
           lookup_context.view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
         end
-        result = render_without_active_scaffold options
+        result = super options
         lookup_context.view_paths = @_view_paths if @_view_paths
         lookup_context.last_template = @_last_template if @_last_template
         result
@@ -116,16 +107,27 @@ module ActionView::Helpers #:nodoc:
                        end
         view_stack << current_view if current_view
         lookup_context.view_paths = @_view_paths # reset view_paths in case a view render :super, and then render :partial
-        result = render_without_active_scaffold(*args, &block)
+        result = super
         view_stack.pop if current_view.present?
         lookup_context.last_template = last_template
         result
       end
     end
-    alias_method_chain :render, :active_scaffold
 
     def view_stack
       @_view_stack ||= []
+    end
+  end
+end
+
+module ActionView
+  LookupContext.class_eval do
+    prepend ActiveScaffold::LookupContext
+  end
+
+  module Helpers
+    Base.class_eval do
+      include ActiveScaffold::RenderingHelper
     end
   end
 end

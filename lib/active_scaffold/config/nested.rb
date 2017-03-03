@@ -27,10 +27,10 @@ module ActiveScaffold::Config
       column = @core.columns[attribute.to_sym]
       if column && column.association
         label =
-          if column.polymorphic_association?
+          if column.association.polymorphic?
             column.label
           else
-            column.association.klass.model_name.human(:count => column.singular_association? ? 1 : 2, :default => column.association.klass.name.pluralize)
+            column.association.klass.model_name.human(:count => column.association.singular? ? 1 : 2, :default => column.association.klass.name.pluralize)
           end
         options.reverse_merge! :security_method => :nested_authorized?, :label => label
         action_group = options.delete(:action_group) || self.action_group

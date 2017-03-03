@@ -4,6 +4,6 @@ class ActiveScaffold::Bridges::Dragonfly < ActiveScaffold::DataStructures::Bridg
     require File.join(File.dirname(__FILE__), 'dragonfly/list_ui')
     require File.join(File.dirname(__FILE__), 'dragonfly/dragonfly_bridge_helpers')
     require File.join(File.dirname(__FILE__), 'dragonfly/dragonfly_bridge')
-    ActiveScaffold::Config::Core.send :include, ActiveScaffold::Bridges::Dragonfly::DragonflyBridge
+    ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::Dragonfly::DragonflyBridge
   end
 end

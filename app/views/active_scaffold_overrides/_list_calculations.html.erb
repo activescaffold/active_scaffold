@@ -8,7 +8,7 @@
     <td>&nbsp;</td>
     <% end -%>
   <% end -%>
-  <% unless active_scaffold_config.action_links.empty? -%>
+  <% unless active_scaffold_config.action_links.empty? || grouped_search? -%>
     <td class="actions">&nbsp;</td>
   <% end -%>
 </tr>

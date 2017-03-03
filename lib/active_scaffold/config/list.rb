@@ -228,7 +228,11 @@ module ActiveScaffold::Config
       attr_writer :label
       # This label has already been localized.
       def label
-        self['label'] || @label || @conf.label
+        self['label'] || embedded_label || @label || @conf.label
+      end
+
+      def embedded_label
+        @params[:embedded][:label] if @params[:embedded]
       end
 
       def per_page
@@ -266,7 +270,7 @@ module ActiveScaffold::Config
           self['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] && @params['sort_direction']
           self['sort'] = nil if @params['sort_direction'] == 'reset'
 
-          if self['sort']
+          if self['sort'] && @conf.core.columns[self['sort'][0]]
             sorting = @conf.sorting.clone
             sorting.set(*self['sort'])
             @sorting = sorting

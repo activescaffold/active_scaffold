@@ -56,6 +56,10 @@ module ActiveScaffold
         method = "active_scaffold_show_#{show_ui}"
         method if respond_to? method
       end
+
+      def display_link_in_show?(link, position)
+        position == :header
+      end
     end
   end
 end

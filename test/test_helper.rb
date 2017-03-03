@@ -1,7 +1,4 @@
-if RUBY_ENGINE == 'ruby'
-  require 'simplecov'
-  SimpleCov.start { add_filter 'test' }
-end
+require 'simplecov' unless RUBY_ENGINE == 'rbx'
 
 ENV['RAILS_ENV'] = 'test'
 require 'mock_app/config/environment'
@@ -11,9 +8,6 @@ require 'mocha/setup'
 
 require 'minitest/reporters'
 Minitest::Reporters.use!
-
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
 
 def load_schema
   stdout = $stdout

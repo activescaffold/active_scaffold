@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'active_scaffold_config_mock'
 require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/date_picker/ext')
 # require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/bridges/date_picker/helper')
 
@@ -9,13 +10,14 @@ class DatePickerTest < ActionView::TestCase
 
   def setup
     @controller.class.class_eval do
+      include ActiveScaffoldConfigMock
       include ActiveScaffold::Finder
     end
   end
 
   def test_set_form_ui
     config = ActiveScaffold::Config::Core.new(:company)
-    assert_equal nil, config.columns[:name].form_ui, 'form_ui for name'
+    assert_nil config.columns[:name].form_ui, 'form_ui for name'
     assert_equal :date_picker, config.columns[:date].form_ui, 'form_ui for date'
     assert_equal :datetime_picker, config.columns[:datetime].form_ui, 'form_ui for datetime'
   end

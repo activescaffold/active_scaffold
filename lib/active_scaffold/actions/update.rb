@@ -150,13 +150,15 @@ module ActiveScaffold::Actions
         end
       unless @column.nil?
         value = column_value_from_param_value(@record, @column, value)
-        value = [] if value.nil? && @column.form_ui && @column.plural_association?
+        value = [] if value.nil? && @column.form_ui && @column.association.try(:collection?)
       end
 
       @record.send("#{@column.name}=", value)
       before_update_save(@record)
       self.successful = @record.save
-      if successful? && active_scaffold_config.actions.include?(:list)
+      if !successful?
+        flash.now[:error] = @record.errors.full_messages.presence
+      elsif active_scaffold_config.actions.include?(:list)
         if @column.inplace_edit_update == :table
           params.delete(:id)
           do_list
@@ -181,7 +183,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def update_authorized?(record = nil, column = nil)
-      (!nested? || !nested.readonly?) && (record || self).authorized_for?(crud_type: :update, column: column)
+      (!nested? || !nested.readonly?) && (record || self).authorized_for?(crud_type: :update, column: column, reason: true)
     end
 
     def update_ignore?(record = nil)
@@ -192,7 +194,7 @@ module ActiveScaffold::Actions
 
     def update_authorized_filter
       link = active_scaffold_config.update.link || active_scaffold_config.update.class.link
-      raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)
+      raise ActiveScaffold::ActionNotAllowed unless Array(send(link.security_method))[0]
     end
 
     def edit_formats

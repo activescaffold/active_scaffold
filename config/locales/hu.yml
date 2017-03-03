@@ -1,75 +1,73 @@
-hu: 
-  active_scaffold: 
-    ? "!="
-    : "!="
-    <: <
-    <=: <=
-    ? ">"
-    : ">"
-    ? ">="
-    : ">="
+hu:
+  active_scaffold:
+    "!=": "!="
+    "<": "<"
+    "<=": "<="
+    "=": "="
+    ">": ">"
+    ">=": ">="
     _select_: "- válassz -"
     _to_: " – "
     add: Hozzáadás
-    add_existing: "Meglevő hozzáadása"
-    add_existing_model: "Meglevő %{model} hozzáadása"
-    update_apply: Apply
-    create_apply: Create and continue
-    are_you_sure_to_delete: "Are you sure you want to delete %{label}?"
+    add_existing: Meglevő hozzáadása
+    add_existing_model: Meglevő %{model} hozzáadása
+    apply: Apply
+    are_you_sure_to_delete: Are you sure you want to delete %{label}?
     average: Average
-    begins_with: "Begins with"
+    begins_with: Begins with
     between: Között
     cancel: Mégse
-    cant_destroy_record: "nem törölhető: %{record}"
-    click_to_edit: "Kattints a szerkesztéshez"
-    click_to_reset: "Kattints az alapállapothoz"
+    cant_destroy_record: 'nem törölhető: %{record}'
+    click_to_edit: Kattints a szerkesztéshez
+    click_to_reset: Kattints az alapállapothoz
     close: Bezárás
+    config_list: Configure
+    config_list_model: Configure Columns for %{model}
     contains: Contains
     create: Létrehozás
-    create_another: "Create Another %{model}"
+    create_another: Create Another %{model}
     create_model: "%{model} létrehozása"
-    create_new: "Új létrehozása"
+    create_new: Új létrehozása
     created_model: "%{model} létrehozva"
     customize: Testreszabás
-    date_picker_options: 
+    date_picker_options:
       firstDay: 0
       isRTL: false
       showMonthAfterYear: false
       weekHeader: Wk
-    datetime_picker_options: 
-      closeText: ~
-      currentText: ~
-      timeText: ~
+    datetime_picker_options:
+      closeText: 
+      currentText: 
+      timeText: 
     days: Days
     delete: Törlés
     deleted_model: "%{model} törölve"
     delimiter: Elválasztó
     download: Letöltés
     edit: Szerkesztés
-    ends_with: "Ends with"
+    ends_with: Ends with
     error_500: "(code 500, Internal Error)"
-    errors: 
-      template: 
-        body: "There were problems with the following fields:"
-        header: 
-          one: "1 error prohibited this %{model} from being saved."
+    errors:
+      template:
+        body: 'There were problems with the following fields:'
+        header:
+          one: 1 error prohibited this %{model} from being saved.
           other: "%{count} errors prohibited this %{model} from being saved"
     export: Exportálás
-    ? "false"
-    : "False"
-    filtered: (Szűrt)
+    'false': 'False'
+    filtered: "(Szűrt)"
     found: Találat
     future: Future
-    hide: (Elrejtés)
+    hide: "(Elrejtés)"
     hours: Hours
-    human_conditions: 
+    human_conditions:
       association: "%{column} = %{value}"
       boolean: "%{column} = %{value}"
     inplace_edit_handle: "--"
-    internal_error: "A lekérés sikertelen"
-    live_search: "Élő keresés"
+    internal_error: A lekérés sikertelen
+    live_search: Élő keresés
     loading: Betöltés…
-    mark_all_records: "Mark all"
+    mark_all_records: Mark all
     maximum: Maximum
     minimum: Minimum
     minutes: Minutes
@@ -77,59 +75,70 @@ hu:
     nested_for_model: "%{nested_model} / %{parent_model}"
     nested_of_model: "%{nested_model} of %{parent_model}"
     next: Következő
-    next_month: "Next Month"
-    next_week: "Next Week"
-    next_year: "Next Year"
-    no_authorization_for_action: "No Authorization for action %{action}"
-    no_entries: "Nincs elem"
-    no_options: "nincsenek opciók"
-    not_null: "Not Null"
-    ? "null"
-    : "Null"
-    omit_header: "Fejléc mellőzése"
-    optional_attributes: "Further Options"
+    next_month: Next Month
+    next_week: Next Week
+    next_year: Next Year
+    no_authorization_for_action: No Authorization for action %{action}
+    no_entries: Nincs elem
+    no_options: nincsenek opciók
+    not_null: Not Null
+    'null': 'Null'
+    omit_header: Fejléc mellőzése
+    optional_attributes: Further Options
     options: Opciók
     past: Past
     pdf: PDF
-    prev_month: "Last Month"
-    prev_week: "Last Week"
-    prev_year: "Last Year"
+    prev_month: Last Month
+    prev_week: Last Week
+    prev_year: Last Year
     previous: Előző
     print: Nyomtatás
     range: Range
-    record_not_saved: "Failed to save record cause of an unknown error"
-    records_marked: 
-      one: "1 marked %{model}"
+    record_not_saved: Failed to save record cause of an unknown error
+    records_marked:
+      one: 1 marked %{model}
       other: "%{count} marked %{model}"
     refresh: Frissítés
     remove: Törlés
-    remove_file: "Fájl törlése, vagy cseréje"
-    replace_existing: "Replace existing"
-    replace_with_new: "Csere újjal"
+    remove_file: Fájl törlése, vagy cseréje
+    replace_existing: Replace existing
+    replace_with_new: Csere újjal
     reset: Alapállapot
     revisions_for_model: "%{model} revíziói"
     saving: Mentés…
     search: Keresés
-    search_terms: "Keresési kifejezések"
+    search_terms: Keresési kifejezések
     seconds: Seconds
     show: Mutatás
-    show_block: (Mutatás)
+    show_block: "(Mutatás)"
     show_model: "%{model} mutatása"
     sum: Sum
-    this_month: "This Month"
-    this_week: "This Week"
-    this_year: "This Year"
+    this_month: This Month
+    this_week: This Week
+    this_year: This Year
     today: Today
     tomorrow: Tomorrow
-    ? "true"
-    : "True"
+    'true': 'True'
     update: Modosítás
     update_model: "%{model} modosítása"
     updated_model: "%{model} módosítva"
-    version_inconsistency: "Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni."
+    version_inconsistency: Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni.
     weeks: Weeks
     years: Years
     yesterday: Yesterday
-  time: 
-    formats: 
+    changes: 
+    create_apply: 
+    deleted_records: 
+    group_by: 
+    no_group: 
+    update_apply: 
+    no_color: 
+  time:
+    formats:
       picker: "%a, %d %b %Y %H:%M:%S"
+  date:
+    formats:
+      month: 
+      quarter: 
+      year_month: 
+      year_quarter: 

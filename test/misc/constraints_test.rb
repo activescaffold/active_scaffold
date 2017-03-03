@@ -7,6 +7,12 @@ module ModelStubs
 
     def self.columns_hash; @hash ||= Hash[@columns.map { |c| [c.name, c] }] end
 
+    if respond_to? :type_for_attribute
+      def self.type_for_attribute(column_name)
+        defined?(ActiveModel::Type) ? ActiveModel::Type::String.new : super
+      end
+    end
+
     def self.table_name
       @table_name || to_s.split('::').last.underscore.pluralize
     end

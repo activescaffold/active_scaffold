@@ -1,6 +1,6 @@
 <% @column_span_id ||= element_cell_id(:id => @record.id.to_s, :action => 'update_column', :name => @column.name) -%>
 <% unless successful? -%>
-  alert('<%= escape_javascript(@record.errors.full_messages.join("\n")) %>');
+  <%= render 'update_messages' %>
   <% @record.reload -%>
 <% end -%>
 <% if @column.inplace_edit

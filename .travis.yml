@@ -1,10 +1,11 @@
 addons:
   code_climate:
     repo_token: 8a344833c6693733b163f09a5243fa12dd7be0b69f0358b146c64dd4becabc60
-before_script:
-  - bin/brakeman
-bundler_args: --clean --deployment --jobs=3 --retry=3 --without development production
+after_script:
+  - bin/codeclimate-test-reporter
+bundler_args: --clean --deployment --jobs=$(nproc) --without development production
 cache: bundler
+dist: trusty
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-4.0.x
@@ -14,27 +15,26 @@ jdk:
   - openjdk7
 language: ruby
 matrix:
-  include:
-    - rvm: ruby-head
-      gemfile: gemfiles/Gemfile.rails-5.0.x 
-      jdk:
   exclude:
-    - rvm: 2.1
+    - rvm: 2.1.9
       gemfile: gemfiles/Gemfile.rails-5.0.x 
-    - rvm: rbx-2
-      gemfile: gemfiles/Gemfile.rails-5.0.x 
-  allow_failures:
-    - rvm: 2.4.0-preview1
-    - rvm: rbx-3.29
+    - rvm: 2.4.0-preview3
+      gemfile: gemfiles/Gemfile.rails-4.0.x 
+    - rvm: 2.4.0-preview3
+      gemfile: gemfiles/Gemfile.rails-4.1.x 
+    - rvm: 2.4.0-preview3 # enable with rails 4.2.8
+      gemfile: Gemfile
+    - rvm: 2.4.0-preview3
       gemfile: gemfiles/Gemfile.rails-5.0.x
-    - rvm: jruby-9.1.4.0
+  allow_failures:
+    - rvm: rbx-3
+    - rvm: jruby-9.1.6.0
       gemfile: gemfiles/Gemfile.rails-5.0.x
 rvm:
-  - 2.1
-  - 2.2.2
-  - 2.3.1
-  #- 2.4.0-preview1
-  - jruby-9.1.4.0
-  - rbx-2
-  - rbx-3.29
-sudo: false
+  - 2.1.9
+  - 2.2.6
+  - 2.3.3
+  - 2.4.0-preview3
+  - jruby-9.1.6.0
+  - rbx-3
+sudo: required

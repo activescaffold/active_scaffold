@@ -34,6 +34,8 @@ module ActiveScaffold
       end
     end
 
-    config.assets.precompile << 'active_scaffold/indicator.gif'
+    initializer 'active_scaffold.assets' do
+      config.assets.precompile << 'active_scaffold/indicator.gif'
+    end
   end
 end

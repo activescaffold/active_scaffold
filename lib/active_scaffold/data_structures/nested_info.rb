@@ -63,7 +63,7 @@ module ActiveScaffold::DataStructures
       false
     end
 
-    def sorted?
+    def sorted?(*)
       false
     end
   end
@@ -71,27 +71,15 @@ module ActiveScaffold::DataStructures
   class NestedInfoAssociation < NestedInfo
     def initialize(model, params)
       super
-      @association = parent_model.reflect_on_association(params[:association].to_sym)
-      @param_name = @association.active_record.name.foreign_key.to_sym
+      column = parent_scaffold.active_scaffold_config.columns[params[:association].to_sym]
+      @param_name = column.model.name.foreign_key.to_sym
       @parent_id = params[@param_name]
-      iterate_model_associations(model)
+      @association = column.try(:association)
+      @child_association = association.reverse_association(model) if association
+      setup_constrained_fields
     end
 
-    delegate :name, :to => :association
-
-    def has_many?
-      association.macro == :has_many
-    end
-
-    def habtm?
-      association.macro == :has_and_belongs_to_many
-    end
-
-    delegate :belongs_to?, :to => :association
-
-    def has_one?
-      association.macro == :has_one
-    end
+    delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :readonly?, :to => :association
 
     # A through association with has_one or has_many as source association
     # create cannot be called in nested through associations, and not-nested through associations
@@ -101,28 +89,25 @@ module ActiveScaffold::DataStructures
     def readonly_through_association?(columns)
       return false unless through_association?
       return true if association.through_reflection.options[:through]
-      association.source_reflection.macro != :belongs_to && (
+      !association.source_reflection.belongs_to? && (
         !child_association || !columns.include?(child_association.through_reflection.name)
       )
     end
 
     def through_association?
-      association.options[:through]
+      association.through?
     end
 
-    def readonly?
-      association.options[:readonly]
+    def sorted?(chain)
+      default_sorting(chain).present?
     end
 
-    def sorted?
-      association.options.key? :order
-    end
-
-    def default_sorting
-      if association.options[:order] # TODO: remove when rails 3 compatibility is removed
-        association.options[:order]
-      elsif association.respond_to?(:scope) # rails 4
-        association.klass.class_eval(&association.scope).values[:order] if association.scope.is_a? Proc
+    def default_sorting(chain)
+      return @default_sorting if defined? @default_sorting
+      if association.scope.is_a?(Proc) && chain.respond_to?(:values)
+        @default_sorting = chain.values[:order]
+        @default_sorting = @default_sorting.map(&:to_sql) if @default_sorting[0].is_a? Arel::Nodes::Node
+        @default_sorting = @default_sorting.join(', ')
       end
     end
 
@@ -132,12 +117,12 @@ module ActiveScaffold::DataStructures
 
     protected
 
-    def iterate_model_associations(model)
+    def setup_constrained_fields
       @constrained_fields = []
-      constrained_fields << Array(association.foreign_key).map(&:to_sym) unless association.belongs_to?
-      return if (reverse = association.reverse(model)).nil?
-      @child_association = model.reflect_on_association(reverse)
-      constrained_fields << @child_association.name unless @child_association == association
+      @constrained_fields << Array(association.foreign_key).map(&:to_sym) unless association.belongs_to?
+      if child_association && child_association != association
+        @constrained_fields << child_association.name
+      end
     end
   end
 

@@ -11,6 +11,7 @@ module ActiveScaffold::Actions
       end
       base.helper_method :successful?
       base.helper_method :nested?
+      base.helper_method :grouped_search?
       base.helper_method :embedded?
       base.helper_method :loading_embedded?
       base.helper_method :calculate_query
@@ -34,7 +35,7 @@ module ActiveScaffold::Actions
     protected
 
     def loading_embedded?
-      @loading_embedded ||= params.delete(:embedded)
+      @loading_embedded ||= active_scaffold_embedded_params.delete(:loading)
     end
 
     def embedded?
@@ -42,6 +43,10 @@ module ActiveScaffold::Actions
     end
 
     def nested?
+      false
+    end
+
+    def grouped_search?
       false
     end
 
@@ -89,7 +94,7 @@ module ActiveScaffold::Actions
     end
 
     def updated_record_with_column(column, value, scope)
-      record = params[:id] ? find_if_allowed(params[:id], :read).dup : new_model
+      record = params[:id] ? copy_attributes(find_if_allowed(params[:id], :read)) : new_model
       apply_constraints_to_record(record) unless scope || params[:id]
       value = column_value_from_param_value(record, column, value)
       record.send "#{column.name}=", value
@@ -101,7 +106,7 @@ module ActiveScaffold::Actions
       controller = "#{params[:parent_controller].camelize}Controller".constantize
       parent_model = controller.active_scaffold_config.model
       child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
-      association = parent_model.reflect_on_association(child_association.to_sym).try(:reverse)
+      association = controller.active_scaffold_config.columns[child_association.to_sym].try(:association).try(:reverse_association)
       return if association.nil?
 
       parent = parent_model.new
@@ -109,24 +114,16 @@ module ActiveScaffold::Actions
       parent.id = params[:parent_id]
       parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
       apply_constraints_to_record(parent) unless params[:parent_id]
-      if record.class.reflect_on_association(association).collection?
-        record.send(association) << parent
+      if association.collection?
+        record.send(association.name) << parent
       else
-        record.send("#{association}=", parent)
+        record.send("#{association.name}=", parent)
       end
     end
 
     def copy_attributes(orig, dst = nil)
       dst ||= orig.class.new
-      attributes = orig.attributes
-      if orig.class.respond_to?(:accessible_attributes) && orig.class.accessible_attributes.present?
-        attributes.each { |attr, value| dst.send :write_attribute, attr, value if orig.class.accessible_attributes.deny? attr }
-        attributes = attributes.slice(*orig.class.accessible_attributes)
-      elsif orig.class.respond_to? :protected_attributes
-        orig.class.protected_attributes.each { |attr| dst.send :write_attribute, attr, orig[attr] if attr.present? }
-        attributes = attributes.except(*orig.class.protected_attributes)
-      end
-      dst.attributes = attributes
+      orig.attributes.each { |attr, value| dst.send :write_attribute, attr, value }
       dst
     end
 
@@ -211,33 +208,38 @@ module ActiveScaffold::Actions
       @conditions_from_params ||= begin
         conditions = {}
         params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
-          column = active_scaffold_config.model.columns_hash[key.to_s]
+          column = active_scaffold_config._columns_hash[key.to_s]
           next unless column
           key = key.to_sym
           not_string = [:string, :text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
+
+          range = %i(date datetime).include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
+          value = value.split('..') if range
           conditions[key] =
             if value.is_a?(Array)
               value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
             else
               value == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(value, column)
             end
+          conditions[key] = Range.new(*conditions[key]) if range
         end
         conditions
       end
     end
 
     def new_model
-      model = beginning_of_chain
-      if nested? && nested.association && nested.association.collection? && model.columns_hash[column = model.inheritance_column]
+      relation = beginning_of_chain
+      config = active_scaffold_config_for(relation.klass) if nested? && nested.plural_association?
+      if config && config._columns_hash[column = relation.klass.inheritance_column]
         model_name = params.delete(column) # in new action inheritance_column must be in params
         model_name ||= params[:record].delete(column) unless params[:record].blank? # in create action must be inside record key
         model_name = model_name.camelize if model_name
         model_name ||= active_scaffold_config.model.name
         build_options = {column.to_sym => model_name} if model_name
       end
-      model.respond_to?(:build) ? model.build(build_options || {}) : model.new
+      relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
     end
 
     def get_row(crud_type_or_security_options = :read)
@@ -257,6 +259,10 @@ module ActiveScaffold::Actions
       session[session_index]
     end
 
+    def active_scaffold_embedded_params
+      params[:embedded] || {}
+    end
+
     def clear_storage
       session_index = active_scaffold_session_storage_key
       session.delete(session_index) unless session[session_index].present?
@@ -273,13 +279,15 @@ module ActiveScaffold::Actions
     end
 
     def check_input_device
-      if request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'][/(iPhone|iPod|iPad)/i]
-        session[:input_device_type] = 'TOUCH'
-        session[:hover_supported] = false
-      else
-        session[:input_device_type] = 'MOUSE'
-        session[:hover_supported] = true
-      end if session[:input_device_type].nil?
+      if session[:input_device_type].nil?
+        if request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'][/(iPhone|iPod|iPad)/i]
+          session[:input_device_type] = 'TOUCH'
+          session[:hover_supported] = false
+        else
+          session[:input_device_type] = 'MOUSE'
+          session[:hover_supported] = true
+        end
+      end
     end
 
     def touch_device?
@@ -288,6 +296,22 @@ module ActiveScaffold::Actions
 
     def hover_via_click?
       session[:hover_supported] == false
+    end
+
+    def params_hash?(value)
+      value.is_a?(Hash) || controller_params?(value)
+    end
+
+    def controller_params?(value)
+      value.is_a?(::ActionController::Parameters)
+    end
+
+    def params_hash(value)
+      if controller_params?(value)
+        Rails.version < '4.2' ? value.clone.permit! : value.to_unsafe_h.with_indifferent_access
+      else
+        value
+      end
     end
 
     # call this method in your action_link action to simplify processing of actions
@@ -364,11 +388,11 @@ module ActiveScaffold::Actions
     end
 
     def virtual_columns(columns)
-      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.model.reflect_on_association(col) }
+      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.columns[col].try(:association) }
     end
 
     def association_columns(columns)
-      columns.select { |col| active_scaffold_config.model.reflect_on_association(col) }
+      columns.select { |col| active_scaffold_config.columns[col].try(:association) }
     end
 
     private

@@ -41,18 +41,21 @@ module ActiveScaffold::Actions
       record ||= destroy_find_record
       begin
         self.successful = record.destroy
-      rescue StandardError => ex
+      rescue StandardError => exception
         flash[:warning] = as_(:cant_destroy_record, :record => ERB::Util.h(record.to_label))
         self.successful = false
-        logger.debug ex.message
-        logger.debug ex.backtrace.join("\n")
+        logger.warn do
+          "\n\n#{exception.class} (#{exception.message}):\n    " +
+            Rails.backtrace_cleaner.clean(exception.backtrace).join("\n    ") +
+            "\n\n"
+        end
       end
     end
 
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def delete_authorized?(record = nil)
-      (!nested? || !nested.readonly?) && (record || self).authorized_for?(:crud_type => :delete)
+      (!nested? || !nested.readonly?) && (record || self).authorized_for?(crud_type: :delete, reason: true)
     end
 
     def delete_ignore?(record = nil)
@@ -63,7 +66,7 @@ module ActiveScaffold::Actions
 
     def delete_authorized_filter
       link = active_scaffold_config.delete.link || active_scaffold_config.delete.class.link
-      raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)
+      raise ActiveScaffold::ActionNotAllowed unless Array(send(link.security_method))[0]
     end
 
     def destroy_formats

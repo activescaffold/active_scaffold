@@ -12,7 +12,7 @@ module ActiveScaffold
             tags << active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
             tags << active_scaffold_search_date_bridge_numeric_tag(column, options, current_search)
             tags << active_scaffold_search_date_bridge_range_tag(column, options, current_search)
-            tags.join('&nbsp;').html_safe
+            safe_join tags, '&nbsp;'.html_safe
           end
 
           def active_scaffold_search_date_bridge_comparator_options(column)
@@ -161,7 +161,7 @@ module ActiveScaffold
                   from = now.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
                   to = now
                 end
-                return from, to
+                [from, to]
               when 'FUTURE'
                 trend_number = [value['number'].to_i, 1].max
                 now = date_bridge_now
@@ -172,18 +172,18 @@ module ActiveScaffold
                   from = now
                   to = now.in(trend_number.send(value['unit'].downcase.singularize.to_sym))
                 end
-                return from, to
+                [from, to]
               end
             end
 
             def date_bridge_from_to_for_range(column, value)
               case value['range']
               when 'TODAY'
-                return date_bridge_now.beginning_of_day, date_bridge_now.end_of_day
+                [date_bridge_now.beginning_of_day, date_bridge_now.end_of_day]
               when 'YESTERDAY'
-                return date_bridge_now.ago(1.day).beginning_of_day, date_bridge_now.ago(1.day).end_of_day
+                [date_bridge_now.ago(1.day).beginning_of_day, date_bridge_now.ago(1.day).end_of_day]
               when 'TOMORROW'
-                return date_bridge_now.in(1.day).beginning_of_day, date_bridge_now.in(1.day).end_of_day
+                [date_bridge_now.in(1.day).beginning_of_day, date_bridge_now.in(1.day).end_of_day]
               else
                 range_type, range = value['range'].downcase.split('_')
                 raise ArgumentError unless %w(week month year).include?(range)

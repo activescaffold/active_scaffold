@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'active_scaffold_config_mock'
 
 class NumberModel < ActiveRecord::Base
   include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
@@ -22,6 +23,7 @@ class NumberModel < ActiveRecord::Base
 end
 
 class ConvertNumbersFormatTest < MiniTest::Test
+  include ActiveScaffoldConfigMock
   include ActiveScaffold::AttributeParams
   include ActiveScaffold::Finder
 
@@ -157,5 +159,9 @@ class ConvertNumbersFormatTest < MiniTest::Test
     @config.columns[:number].options[:format] = format unless format.nil?
     update_record_from_params(record, @config.create.columns, HashWithIndifferentAccess.new(:number => value))
     record.number
+  end
+
+  def params_hash?(v)
+    v.is_a? Hash
   end
 end

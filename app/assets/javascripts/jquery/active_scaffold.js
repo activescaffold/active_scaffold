@@ -88,6 +88,7 @@ jQuery(document).ready(function($) {
       if (action_link.position) {
         action_link.insert(response);
         if (action_link.hide_target) action_link.target.hide();
+        if (action_link.hide_content) action_link.content.hide();
       } else {
         if (action_link.tag.hasClass('toggle')) {
           action_link.tag.closest('.action_group,.actions').find('.toggle.active').removeClass('active');
@@ -289,6 +290,12 @@ jQuery(document).ready(function($) {
   jQuery(document).on('click', '.message a.close', function(e) {
     ActiveScaffold.hide(jQuery(this).closest('.message'));
     e.preventDefault();
+  });
+
+  jQuery(document).on('click', 'form.as_form .no-color', function() {
+    var color_field = jQuery(this).parent().next(':input');
+    color_field.attr('type', jQuery(this).prop('checked') ? 'hidden' : 'color');
+    if (jQuery(this).prop('checked')) color_field.val('');
   });
 
   /* setup some elements on page/form load */
@@ -824,6 +831,10 @@ var ActiveScaffold = {
 
     if (element.length) {
       if (options.is_subform == false) {
+        if (typeof(options.hidden) != 'undefined') {
+          var li = element.closest('li');
+          li[options.hidden ? 'addClass' : 'removeClass'].call(li, 'hidden')
+        }
         this.replace(element.closest('dl'), content);
       } else {
         this.replace_html(element, content);
@@ -1129,6 +1140,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
     this.url = this.tag.attr('href');
     this.method = this.tag.data('method') || 'get';
     this.target = target;
+    this.content = target.closest('.active-scaffold').find('.as_content:first');
     this.loading_indicator = loading_indicator;
     this.hide_target = false;
     this.position = this.tag.data('position');
@@ -1152,6 +1164,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
       ActiveScaffold.remove(this.adapter, function() {
         link.enable();
         if (link.hide_target) link.target.show();
+        if (link.hide_content) link.content.show();
         if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close == 'checkInViewport');
       });
     }
@@ -1317,6 +1330,11 @@ ActiveScaffold.Actions.Table = ActiveScaffold.Actions.Abstract.extend({
 
 ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
   insert: function(content) {
+    if (this.position == 'replace') {
+      this.position = 'top';
+      this.hide_content = true;
+    }
+
     if (this.position == 'top') {
       this.target.prepend(content);
       this.set_adapter(this.target.children().first());

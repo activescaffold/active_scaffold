@@ -73,7 +73,7 @@ module ActiveScaffold::Actions
           active_scaffold_config.send(action).columns.collect_visible(:flatten => true)
         end
       joins_cols, preload_cols = columns.select { |c| c.includes.present? }.partition do |col|
-        includes_need_join?(col, sorting)
+        includes_need_join?(col, sorting) && !grouped_search?
       end
       active_scaffold_references.concat joins_cols.map(&:includes).flatten.uniq
       active_scaffold_preload.concat preload_cols.map(&:includes).flatten.uniq
@@ -82,12 +82,11 @@ module ActiveScaffold::Actions
 
     def set_includes_for_sorting(columns, sorting)
       sorting.each do |col, _|
-        if col.includes.present? && !columns.include?(col)
-          if active_scaffold_config.model.connection.needs_order_expressions_in_select?
-            active_scaffold_references << col.includes
-          else
-            active_scaffold_outer_joins << col.includes
-          end
+        next unless col.includes.present? && !columns.include?(col)
+        if active_scaffold_config.model.connection.needs_order_expressions_in_select?
+          active_scaffold_references << col.includes
+        else
+          active_scaffold_outer_joins << col.includes
         end
       end
     end
@@ -97,8 +96,8 @@ module ActiveScaffold::Actions
     end
 
     def scoped_habtm?(column)
-      assoc = column.association if column.plural_association?
-      assoc && assoc.macro == :has_and_belongs_to_many && assoc.respond_to?(:scope) && assoc.scope
+      assoc = column.association if column.association.try :collection?
+      assoc && assoc.habtm? && assoc.scope
     end
 
     def get_row(crud_type_or_security_options = :read)

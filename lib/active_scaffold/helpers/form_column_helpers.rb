@@ -48,7 +48,7 @@ module ActiveScaffold
               end
               options[:include_blank] = true if column.column.null && [:date, :datetime, :time].include?(column.column.type)
               options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
-              text_field(:record, column.name, options.merge(column.options))
+              text_field(:record, column.name, options.merge(column.options).except(:format))
             end
           end
         end
@@ -182,7 +182,7 @@ module ActiveScaffold
       end
 
       def label_for(column, options)
-        options[:id] unless column.form_ui == :select && column.plural_association?
+        options[:id] unless column.form_ui == :select && column.association.try(:collection?)
       end
 
       def subform_label(column, hidden)
@@ -200,7 +200,7 @@ module ActiveScaffold
         return true unless column.association
 
         # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
-        return false if column.polymorphic_association?
+        return false if column.association.polymorphic?
 
         # A column shouldn't be in the subform if it's the reverse association to the parent
         return false if column.association.inverse_for?(parent_record.class)
@@ -213,8 +213,9 @@ module ActiveScaffold
       end
 
       def column_show_add_new(column, associated, record)
-        value = (column.plural_association? && !column.readonly_association?) || column.singular_association?
-        value &&= false unless column.association.klass.authorized_for?(:crud_type => :create)
+        assoc = column.association
+        value = (assoc.collection? && !assoc.readonly? && !assoc.through?) || assoc.singular?
+        value &&= false unless assoc.klass.authorized_for?(:crud_type => :create)
         value
       end
 
@@ -237,7 +238,7 @@ module ActiveScaffold
         options
       end
 
-      def active_scaffold_input_singular_association(column, html_options)
+      def active_scaffold_input_singular_association(column, html_options, options = {})
         record = html_options.delete(:object)
         associated = record.send(column.association.name)
 
@@ -245,7 +246,7 @@ module ActiveScaffold
         select_options.unshift(associated) unless associated.nil? || select_options.include?(associated)
 
         method = column.name
-        options = {:selected => associated.try(:id), :include_blank => as_(:_select_), :object => record}
+        options.merge! :selected => associated.try(:id), :include_blank => as_(:_select_), :object => record
 
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
@@ -325,9 +326,10 @@ module ActiveScaffold
         column.options[:options]
       end
 
-      def active_scaffold_input_enum(column, html_options)
+      def active_scaffold_input_enum(column, html_options, options = {})
         record = html_options.delete(:object)
-        options = {:selected => record.send(column.name), :object => record}
+        options[:selected] = record.send(column.name)
+        options[:object] = record
         options_for_select = active_scaffold_enum_options(column, record).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
         end
@@ -339,9 +341,9 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_select(column, html_options)
-        if column.singular_association?
+        if column.association.try :singular?
           active_scaffold_input_singular_association(column, html_options)
-        elsif column.plural_association?
+        elsif column.association.try :collection?
           active_scaffold_input_plural_association(column, html_options)
         else
           active_scaffold_input_enum(column, html_options)
@@ -410,21 +412,35 @@ module ActiveScaffold
       # A text box, that accepts only valid phone-number (in-browser validation)
       def active_scaffold_input_telephone(column, options)
         options = active_scaffold_input_text_options(options)
-        telephone_field :record, column.name, options.merge(column.options)
+        telephone_field :record, column.name, options.merge(column.options).except(:format)
       end
 
       # A spinbox control for number values (in-browser validation)
       def active_scaffold_input_number(column, options)
         options = numerical_constraints_for_column(column, options)
         options = active_scaffold_input_text_options(options)
-        number_field :record, column.name, options.merge(column.options)
+        number_field :record, column.name, options.merge(column.options).except(:format)
       end
 
       # A slider control for number values (in-browser validation)
       def active_scaffold_input_range(column, options)
         options = numerical_constraints_for_column(column, options)
         options = active_scaffold_input_text_options(options)
-        range_field :record, column.name, options.merge(column.options)
+        range_field :record, column.name, options.merge(column.options).except(:format)
+      end
+
+      # A color picker
+      def active_scaffold_input_color(column, options)
+        options = active_scaffold_input_text_options(options)
+        if column.column.try(:null)
+          no_color = options[:object].send(column.name).nil?
+          method = no_color ? :hidden_field : :color_field
+          html = content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ :no_color}")
+        else
+          method = :color_field
+          html = ''.html_safe
+        end
+        html << send(method, :record, column.name, options.merge(column.options).except(:format))
       end
 
       #
@@ -441,8 +457,7 @@ module ActiveScaffold
         select_tag(options[:name], options_for_select(select_options, record.send(column.name)), options)
       end
 
-      def onsubmit
-      end
+      def onsubmit; end
 
       ##
       ## Form column override signatures
@@ -460,7 +475,7 @@ module ActiveScaffold
 
       # add functionality for overriding subform partials from association class path
       def override_subform_partial(column, subform_partial)
-        partial_for_model(column.association.klass, subform_partial).tap { |v| logger.debug v } if column_renders_as(column) == :subform
+        partial_for_model(column.association.klass, subform_partial) if column_renders_as(column) == :subform
       end
 
       # the naming convention for overriding form fields with helpers
@@ -491,18 +506,18 @@ module ActiveScaffold
 
       def column_renders_as(column)
         if column.respond_to? :each
-          return :subsection
+          :subsection
         elsif column.active_record_class.locking_column.to_s == column.name.to_s || column.form_ui == :hidden
-          return :hidden
+          :hidden
         elsif column.association.nil? || column.form_ui || !active_scaffold_config_for(column.association.klass).actions.include?(:subform) || override_form_field?(column)
-          return :field
+          :field
         else
-          return :subform
+          :subform
         end
       end
 
       def column_scope(column, scope = nil, record = nil)
-        if column.plural_association?
+        if column.association.try(:collection?)
           "#{scope}[#{column.name}][#{record.id || generate_temporary_id(record)}]"
         else
           "#{scope}[#{column.name}]"

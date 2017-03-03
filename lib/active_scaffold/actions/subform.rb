@@ -2,7 +2,7 @@ module ActiveScaffold::Actions
   module Subform
     def edit_associated
       do_edit_associated
-      render :action => 'edit_associated', :formats => [:js], :readonly => @column.association.options[:readonly]
+      render :action => 'edit_associated', :formats => [:js], :readonly => @column.association.readonly?
     end
 
     protected
@@ -20,13 +20,13 @@ module ActiveScaffold::Actions
       # NOTE: we don't check whether the user is allowed to update this record, because if not, we'll still let them associate the record. we'll just refuse to do more than associate, is all.
       if params[:associated_id]
         @record = @column.association.klass.find(params[:associated_id])
-        if (association = @column.association.reverse)
-          if @record.class.reflect_on_association(association).collection?
-            @record.send(association) << @parent_record
+        if (reverse = @column.association.reverse_association)
+          if reverse.collection?
+            @record.send(reverse.name) << @parent_record
           elsif @column.association.belongs_to?
             @parent_record.send("#{@column.name}=", @record)
           else
-            @record.send("#{association}=", @parent_record)
+            @record.send("#{reverse.name}=", @parent_record)
           end
         end
       else

@@ -38,7 +38,9 @@ module ActiveScaffold
         if column.link && !skip_action_link?(column.link, record)
           link = column.link
           associated = record.send(column.association.name) if column.association
-          render_action_link(link, record, :link => text, :authorized => link.action.nil? || column_link_authorized?(link, column, record, associated))
+          authorized = link.action.nil?
+          authorized, reason = column_link_authorized?(link, column, record, associated) unless authorized
+          render_action_link(link, record, :link => text, :authorized => authorized, :not_authorized_reason => reason)
         elsif inplace_edit?(record, column)
           active_scaffold_inplace_edit(record, column, :formatted_column => text)
         elsif active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.wrap_tag
@@ -93,6 +95,19 @@ module ActiveScaffold
         as_slider options.merge(value: value || record.send(column.name))
       end
 
+      def tel_to(text)
+        groups = text.to_s.scan(/(?:^\+)?\d+/)
+        extension = groups.pop if text.to_s =~ /\s*[^\d\s]+\s*\d+$/
+        link_to text, "tel:#{[groups.join('-'), extension].compact.join(',')}"
+      end
+
+      def active_scaffold_column_telephone(record, column)
+        phone = record.send column.name
+        return unless phone.present?
+        phone = number_to_phone(phone) unless column.options[:format] == false
+        tel_to phone
+      end
+
       def column_override(column)
         override_helper column, 'column'
       end
@@ -117,15 +132,19 @@ module ActiveScaffold
             text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
-          if value.is_a? Numeric
+          if grouped_search? && column == search_group_column && search_group_function
+            format_grouped_search_column(value, column.options)
+          elsif value.is_a? Numeric
             format_number_value(value, column.options)
           else
             format_value(value, column.options)
           end
         else
-          if column.plural_association?
+          if column.association.collection?
             associated_size = value.size if column.associated_number? # get count before cache association
-            cache_association(record.association(column.name), column, associated_size) unless value.loaded?
+            if column.association.respond_to_target? && !value.loaded?
+              cache_association(record.association(column.name), column, associated_size)
+            end
           end
           format_association_value(value, column, associated_size)
         end
@@ -149,23 +168,39 @@ module ActiveScaffold
         clean_column_value(value)
       end
 
+      def format_grouped_search_column(value, options = {})
+        case search_group_function
+        when 'year_month'
+          year, month = value.to_s.scan(/(\d*)(\d{2})/)[0]
+          I18n.l(Date.new(year.to_i, month.to_i, 1), format: options[:group_format] || search_group_function.to_sym)
+        when 'year_quarter'
+          year, quarter = value.to_s.scan(/(\d*)(\d)/)[0]
+          I18n.t(options[:group_format] || search_group_function, scope: 'date.formats', year: year, quarter: quarter)
+        when 'quarter'
+          I18n.t(options[:group_format] || search_group_function, scope: 'date.formats', num: value)
+        when 'month'
+          I18n.l(Date.new(Time.zone.today.year, value, 1), format: options[:group_format] || search_group_function.to_sym)
+        else value
+        end
+      end
+
       def format_collection_association_value(value, column, label_method, size)
         if column.associated_limit.nil?
           firsts = value.collect(&label_method)
         elsif column.associated_limit.zero?
           size if column.associated_number?
         else
-          firsts = value.first(column.associated_limit)
-          firsts.collect!(&label_method)
+          firsts = value.loaded? ? value[0, column.associated_limit] : value.limit(column.associated_limit)
+          firsts = firsts.map(&label_method)
           firsts << '…' if value.size > column.associated_limit
-          text = firsts.join(h(active_scaffold_config.list.association_join_text)).html_safe
+          text = safe_join firsts, active_scaffold_config.list.association_join_text
           text << " (#{size})" if column.associated_number? && column.associated_limit && value.size > column.associated_limit
           text
         end
       end
 
       def format_singular_association_value(value, column, label_method)
-        if column.polymorphic_association?
+        if column.association.polymorphic?
           "#{value.class.model_name.human}: #{value.send(label_method)}"
         else
           value.send(label_method)
@@ -217,10 +252,10 @@ module ActiveScaffold
         return unless column.inplace_edit
         if controller.respond_to?(:update_authorized?, true)
           if controller.method(:update_authorized?).parameters.size == 2
-            return controller.send(:update_authorized?, record, column.name)
+            return Array(controller.send(:update_authorized?, record, column.name))[0]
           else
             ActiveSupport::Deprecation.warn 'add column = nil parameter to update_authorized? on your controller'
-            editable = controller.send(:update_authorized?, record)
+            editable = Array(controller.send(:update_authorized?, record))[0]
           end
         end
         editable || record.authorized_for?(:crud_type => :update, :column => column.name)
@@ -280,14 +315,16 @@ module ActiveScaffold
         elsif inplace_edit_cloning?(column)
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
-          url = params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name)
-          plural = column.plural_association? && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
+          url = url_for(params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name))
+          plural = column.association.try(:collection?) && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
           data[:ie_plural] = plural
         end
         data
       end
+
+      # MARK
 
       def all_marked?
         if active_scaffold_config.mark.mark_all_mode == :page
@@ -304,6 +341,8 @@ module ActiveScaffold
         }
         content_tag(:span, check_box_tag("#{controller_id}_mark_heading_span_input", '1', all_marked?), tag_options)
       end
+
+      # COLUMN HEADINGS
 
       def column_heading_attributes(column, sorting, sort_direction)
         {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => strip_tags(column.description).presence}
@@ -343,6 +382,27 @@ module ActiveScaffold
 
       def column_heading_label(column)
         column.label
+      end
+
+      # CALCULATIONS
+
+      def column_calculation(column)
+        if column.calculate.instance_of? Proc
+          column.calculate.call(@records)
+        else
+          calculate_query.calculate(column.calculate, column.name)
+        end
+      end
+
+      def render_column_calculation(column)
+        calculation = column_calculation(column)
+        override_formatter = "render_#{column.name}_#{column.calculate.is_a?(Proc) ? :calculate : column.calculate}"
+        calculation = send(override_formatter, calculation) if respond_to? override_formatter
+        format_column_calculation(column, calculation)
+      end
+
+      def format_column_calculation(column, calculation)
+        "#{"#{as_(column.calculate)}: " unless column.calculate.is_a? Proc}#{format_column_value nil, column, calculation}"
       end
     end
   end

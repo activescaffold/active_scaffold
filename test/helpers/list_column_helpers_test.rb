@@ -31,6 +31,7 @@ class ListColumnHelpersTest < ActionView::TestCase
 
   def test_association_join_text
     value = [1, 2, 3, 4].map(&:to_s)
+    value.stubs(loaded?: true)
     value.each { |v| v.stubs(:to_label).returns(v) }
     assert_equal '1, 2, 3, … (4)', format_association_value(value, @association_column, value.size)
     @config.list.stubs(:association_join_text => ',<br/>')
@@ -40,6 +41,10 @@ class ListColumnHelpersTest < ActionView::TestCase
   end
 
   private
+
+  def grouped_search?
+    false
+  end
 
   def active_scaffold_config
     @config

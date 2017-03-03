@@ -9,8 +9,7 @@ class CalculationTest < MiniTest::Test
     @buildings << Building.create
 
     @klass = ClassWithFinder.new
-    @klass.stubs(:active_scaffold_config).returns(mock { stubs(:model).returns(Building) })
-    @klass.stubs(:active_scaffold_session_storage).returns({})
+    @klass.active_scaffold_config.stubs(:model).returns(Building)
   end
 
   def teardown

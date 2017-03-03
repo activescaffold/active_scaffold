@@ -102,7 +102,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_controller_for_column(column, options = {})
-        if column.polymorphic_association?
+        if column.association.polymorphic?
           :polymorph
         elsif options.include?(:controller)
           "#{options[:controller].to_s.camelize}Controller".constantize
@@ -119,7 +119,7 @@ module ActiveScaffold
                                :controller => (controller == :polymorph ? controller : "/#{controller.controller_path}")
         options[:parameters] ||= {}
         options[:parameters].reverse_merge! :association => column.association.name
-        if column.plural_association?
+        if column.association.collection?
           ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(:refresh_on_close => true))
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
@@ -216,12 +216,28 @@ module ActiveScaffold
     end
 
     def self.column_type_cast(value, column)
+      if defined?(ActiveRecord) && ActiveRecord::ConnectionAdapters::Column === column
+        active_record_column_type_cast(value, column)
+      elsif defined?(Mongoid) && Mongoid::Fields::Standard === column
+        mongoid_column_type_cast(value, column)
+      else
+        value
+      end
+    end
+
+    def self.mongoid_column_type_cast(value, column)
+      column.type.evolve value
+    end
+
+    def self.active_record_column_type_cast(value, column)
       if Rails.version < '4.2'
         column.type_cast value
       elsif Rails.version < '5.0'
         column.type_cast_from_user value
+      elsif column.type.respond_to? :cast
+        column.type.cast value
       else
-        cast_type = ActiveRecord::Type.lookup column.type
+        cast_type = ActiveModel::Type.lookup column.type
         cast_type ? cast_type.cast(value) : value
       end
     end

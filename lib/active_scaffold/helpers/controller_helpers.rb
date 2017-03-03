@@ -2,7 +2,11 @@ module ActiveScaffold
   module Helpers
     module ControllerHelpers
       def self.included(controller)
-        controller.class_eval { helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated, :generate_temporary_id, :generated_id }
+        if controller.respond_to? :helper_method
+          controller.class_eval do
+            helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated, :generate_temporary_id, :generated_id
+          end
+        end
       end
 
       include ActiveScaffold::Helpers::IdHelpers
@@ -35,7 +39,14 @@ module ActiveScaffold
       def params_for(options = {})
         unless @params_for
           @params_for = {}
-          params.except(*BLACKLIST_PARAMS).each { |key, value| @params_for[key.to_sym] = value.duplicable? ? value.clone : value }
+          params.except(*BLACKLIST_PARAMS).each do |key, value|
+            @params_for[key.to_sym] =
+              if controller_params? value
+                params_hash value
+              else
+                value.duplicable? ? value.clone : value
+              end
+          end
           @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end
@@ -101,11 +112,12 @@ module ActiveScaffold
 
       # build an associated record for association
       def build_associated(association, parent_record)
-        if association.options[:through]
+        if association.through?
           # build full chain, only check create_associated on initial parent_record
           parent_record = build_associated(association.through_reflection, parent_record)
-          build_associated(association.source_reflection, parent_record).tap do |record|
-            save_record_to_association(record, association.source_reflection.reverse, parent_record) # set inverse
+          source_assoc = association.class.new(association.source_reflection)
+          build_associated(source_assoc, parent_record).tap do |record|
+            save_record_to_association(record, source_assoc.reverse_association, parent_record) # set inverse
           end
         elsif association.collection?
           parent_record.send(association.name).build
@@ -115,7 +127,7 @@ module ActiveScaffold
           parent_record.send("build_#{association.name}")
         else
           association.klass.new.tap do |record|
-            save_record_to_association(record, association.reverse, parent_record) # set inverse
+            save_record_to_association(record, association.reverse_association, parent_record) # set inverse
           end
         end
       end

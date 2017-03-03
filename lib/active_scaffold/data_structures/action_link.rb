@@ -165,7 +165,6 @@ module ActiveScaffold::DataStructures
     # where the result of this action should insert in the display.
     # for :type => :collection, supported values are:
     #   :top
-    #   :bottom
     #   :replace (for updating the entire table)
     #   false (no attempt at positioning)
     # for :type => :member, supported values are:

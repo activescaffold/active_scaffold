@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Mark
     def self.included(base)
-      base.before_action :mark_authorized?, :only => :mark
+      base.before_action :mark_authorized_filter, :only => :mark
       base.before_action :assign_marked_records_to_model
       base.helper_method :marked_records
     end
@@ -45,7 +45,11 @@ module ActiveScaffold::Actions
     end
 
     def mark?
-      @mark ||= [true, 'true', 1, '1', 'T', 't'].include?(params[:value].class == String ? params[:value].downcase : params[:value])
+      @mark ||= begin
+        value = params.delete :value
+        value.downcase! if value.is_a? String
+        [true, 'true', 1, '1', 't'].include? value
+      end
     end
 
     def mark_all_scope_forced?
@@ -80,7 +84,11 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def mark_authorized?
-      authorized_for?(:crud_type => :read)
+      authorized_for?(crud_type: :read)
+    end
+
+    def mark_authorized_filter
+      raise ActiveScaffold::ActionNotAllowed unless mark_authorized?
     end
 
     def mark_formats

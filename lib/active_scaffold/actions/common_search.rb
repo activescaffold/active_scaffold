@@ -17,8 +17,7 @@ module ActiveScaffold::Actions
 
       protected
 
-      def do_search
-      end
+      def do_search; end
 
       def search_partial
         @_search_partial ||=
@@ -29,12 +28,17 @@ module ActiveScaffold::Actions
           end
       end
 
+      def permitted_search_params
+        params_hash params[:search]
+      end
+
       def store_search_params_into_session
         if active_scaffold_config.store_user_settings
-          active_scaffold_session_storage['search'] = params.delete :search if params[:search]
+          active_scaffold_session_storage['search'] = permitted_search_params if params[:search]
         else
-          @search_params = params.delete :search
+          @search_params = permitted_search_params
         end
+        params.delete :search
       end
 
       def search_params

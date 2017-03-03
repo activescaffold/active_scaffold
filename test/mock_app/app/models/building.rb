@@ -1,5 +1,5 @@
 class Building < ActiveRecord::Base
-  belongs_to :owner, :class_name => 'Person', :counter_cache => true, :inverse_of => :building
+  belongs_to :owner, :class_name => 'Person', :counter_cache => true, :inverse_of => :buildings
   has_many :floors, :dependent => :destroy, :inverse_of => :building
 
   has_one :address, :as => :addressable

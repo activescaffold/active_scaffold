@@ -8,7 +8,7 @@ Overview
 [![Inline docs](https://inch-ci.org/github/activescaffold/active_scaffold.svg?branch=master)](https://inch-ci.org/github/activescaffold/active_scaffold)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 4.0.5 is supported, ruby >= 2.1 supported, although it should work with ruby >= 1.9.3, it's too old and not tested.
+ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 4.0.5 is supported, ruby >= 2.1 supported, although it should work with ruby >= 2.0.0, it's too old and not tested. Ruby < 2.0.0 won't work.
 
 Branch Details
 --------------
@@ -29,7 +29,7 @@ Run the following commands
     bundle install
     rails g active_scaffold:install
     bundle exec rake db:create
-    rails g active_scaffold User name:string
+    rails g active_scaffold:resource User name:string
     bundle exec rake db:migrate
 
 Run the app and visit localhost:3000/users
@@ -60,3 +60,15 @@ http://github.com/scambra/recordselect/
 License
 =======
 Released under the MIT license (included)
+
+---
+
+A ruby translation project managed on [Locale](http://www.localeapp.com/) that's open to all!
+
+## Contributing to active_scaffold
+
+- Edit the translations directly on the [active_scaffold](http://www.localeapp.com/projects/public?search=active_scaffold) project on Locale.
+- **That's it!**
+- The maintainer will then pull translations from the Locale project and push to Github.
+
+Happy translating!

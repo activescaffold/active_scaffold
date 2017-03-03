@@ -19,12 +19,11 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
   s.test_files = `git ls-files test`.split("\n")
 
-  s.required_ruby_version = '>= 1.9'
+  s.required_ruby_version = '>= 2.0'
 
+  # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
+  # It encourages beautiful code by favoring convention over configuration.
   s.add_runtime_dependency('rails', '>= 4.0.5')
+  # Deep Freeze Ruby Objects
   s.add_runtime_dependency('ice_nine', '~> 0.11')
-
-  s.add_development_dependency('bundler', ['~> 1.0'])
-  # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide
-  s.add_development_dependency 'rubocop'
 end

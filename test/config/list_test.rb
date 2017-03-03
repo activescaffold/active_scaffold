@@ -21,7 +21,7 @@ module Config
       assert_equal '-', @config.list.empty_field_text
       assert_equal ', ', @config.list.association_join_text
       assert_equal true, @config.list.pagination
-      assert_equal nil, @config.list.search_partial
+      assert_nil @config.list.search_partial
       assert_equal :no_entries, @config.list.no_entries_message
       assert_equal :filtered, @config.list.filtered_message
       refute @config.list.always_show_create

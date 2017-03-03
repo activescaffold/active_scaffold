@@ -4,8 +4,7 @@ require 'class_with_finder'
 class FinderTest < MiniTest::Test
   def setup
     @klass = ClassWithFinder.new
-    @klass.stubs(:active_scaffold_config).returns(mock { stubs(model: ModelStub, mongoid?: false) })
-    @klass.stubs(:active_scaffold_session_storage).returns({})
+    @klass.active_scaffold_config.stubs(model: ModelStub)
   end
 
   def test_create_conditions_for_columns
@@ -19,15 +18,15 @@ class FinderTest < MiniTest::Test
       ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%foo%', '%foo%'],
       ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%bar%', '%bar%']
     ]
-    assert_equal expected_conditions, ClassWithFinder.create_conditions_for_columns(tokens, columns)
+    assert_equal expected_conditions, ClassWithFinder.conditions_for_columns(tokens, columns)
 
     expected_conditions = [
       '"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?',
       '%foo%', '%foo%'
     ]
-    assert_equal [expected_conditions], ClassWithFinder.create_conditions_for_columns('foo', columns)
+    assert_equal [expected_conditions], ClassWithFinder.conditions_for_columns('foo', columns)
 
-    assert_equal nil, ClassWithFinder.create_conditions_for_columns('foo', [])
+    assert_nil ClassWithFinder.conditions_for_columns('foo', [])
   end
 
   def test_method_sorting

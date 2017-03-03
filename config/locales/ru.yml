@@ -1,80 +1,79 @@
-ru: 
-  active_scaffold: 
-    ? "!="
-    : "!="
-    <: <
-    <=: <=
-    ? ">"
-    : ">"
-    ? ">="
-    : ">="
+ru:
+  active_scaffold:
+    "!=": "!="
+    "<": "<"
+    "<=": "<="
+    "=": "="
+    ">": ">"
+    ">=": ">="
     _select_: "- выбрать -"
     _to_: " to "
-    add: "Добавить запись"
-    add_existing: "Добавить существующую запись"
+    add: Добавить запись
+    add_existing: Добавить существующую запись
     add_existing_model: "%{model}: добавить существующую запись"
-    are_you_sure_to_delete: "Удалить %{label}?"
+    apply: Применить
+    are_you_sure_to_delete: Удалить %{label}?
     average: Среднее
-    begins_with: "Начинается с"
-    between: "В интервале"
+    begins_with: Начинается с
+    between: В интервале
     cancel: Отмена
-    cant_destroy_record: "Запись %{record} не может быть удалена"
-    click_to_edit: "Нажмите для редактирования"
-    click_to_reset: "Нажмите для сброса"
+    cant_destroy_record: Запись %{record} не может быть удалена
+    click_to_edit: Нажмите для редактирования
+    click_to_reset: Нажмите для сброса
     close: Закрыть
+    config_list: Настройки списка
+    config_list_model: "%{model}: настройки списка"
     contains: Содержит
     create: Создать
     create_another: "%{model}: Создать другую запись"
-    create_apply: Создать и продолжить
     create_model: "%{model}: создать запись"
-    create_new: "Создать новую запись"
+    create_new: Создать новую запись
     created_model: "%{model}: запись создана"
     customize: Настроить
-    date_picker_options: 
+    date_picker_options:
       firstDay: 1
       isRTL: false
       showMonthAfterYear: false
       weekHeader: Нед.
-    datetime_picker_options: 
-      closeText: ~
-      currentText: ~
-      timeText: ~
+    datetime_picker_options:
+      closeText: Закрыть
+      currentText: Текущее время
+      timeText: 
     days: дней
     delete: Удалить
     deleted_model: "%{model}: запись удалена"
     delimiter: Разделитель
     download: Загрузить
     edit: Изменить
-    ends_with: "Оканчивается на"
-    error_500: "500 ошибка сервера"
-    errors: 
-      template: 
-        body: "Проблемы возникли со следующими полями:"
-        header: 
+    ends_with: Оканчивается на
+    error_500: 500 ошибка сервера
+    errors:
+      template:
+        body: 'Проблемы возникли со следующими полями:'
+        header:
           few: "%{model}: сохранение не удалось из-за %{count} ошибок"
           many: "%{model}: сохранение не удалось из-за %{count} ошибок"
           one: "%{model}: сохранение не удалось из-за %{count} ошибки"
           other: "%{model}: сохранение не удалось из-за %{count} ошибки"
     export: Экспорт
-    ? "false"
-    : Нет
-    filtered: (Найденное)
-    found: 
+    'false': Нет
+    filtered: "(Найденное)"
+    found:
       few: записи
       many: записей
       one: запись
       other: записи
     future: Будущие
-    hide: (Скрыть)
+    hide: "(Скрыть)"
     hours: часов
-    human_conditions: 
+    human_conditions:
       association: "%{column} = %{value}"
       boolean: "%{column} = %{value}"
     inplace_edit_handle: "--"
-    internal_error: "Внутренняя ошибка"
+    internal_error: Внутренняя ошибка
     live_search: Поиск
     loading: Загрузка…
-    mark_all_records: "Отметить все"
+    mark_all_records: Отметить все
     maximum: Максимум
     minimum: Минимум
     minutes: минут
@@ -82,62 +81,72 @@ ru:
     nested_for_model: "%{parent_model} / %{nested_model}"
     nested_of_model: "%{nested_model} @ %{parent_model}"
     next: Следующее
-    next_month: "В следующем месяце"
-    next_week: "На следующей неделе"
-    next_year: "В следующем году"
-    no_authorization_for_action: "Нет прав на выполнение действия \"%{action}\""
-    no_entries: "Нет записей"
-    no_options: "Нет вариантов"
-    not_null: "Не пусто"
-    ? "null"
-    : Пусто
-    omit_header: "Пропустить заголовок"
-    optional_attributes: "Дополнительные настройки"
+    next_month: В следующем месяце
+    next_week: На следующей неделе
+    next_year: В следующем году
+    no_authorization_for_action: Нет прав на выполнение действия "%{action}"
+    no_entries: Нет записей
+    no_options: Нет вариантов
+    not_null: Не пусто
+    'null': Пусто
+    omit_header: Пропустить заголовок
+    optional_attributes: Дополнительные настройки
     options: Настройки
     past: Прошедшие
     pdf: PDF
-    prev_month: "В прошлом месяце"
-    prev_week: "На прошлой неделе"
-    prev_year: "В прошлом году"
+    prev_month: В прошлом месяце
+    prev_week: На прошлой неделе
+    prev_year: В прошлом году
     previous: Предыдущее
     print: Печать
     range: Интервал
-    record_not_saved: "Запись  не может быть сохранена из-за неизвестной ошибки"
-    records_marked: 
-      few: "Отмечено %{count} записи"
-      many: "Отмечено %{count} записей"
-      one: "Отмечена 1 запись"
-      other: "Отмечено %{count} записи"
+    record_not_saved: Запись  не может быть сохранена из-за неизвестной ошибки
+    records_marked:
+      few: Отмечено %{count} записи
+      many: Отмечено %{count} записей
+      one: Отмечена 1 запись
+      other: Отмечено %{count} записи
     refresh: Обновить
     remove: Удалить
-    remove_file: "Удалить или заменить файл"
-    replace_existing: "Заменить существующим"
-    replace_with_new: "Заменить новым"
+    remove_file: Удалить или заменить файл
+    replace_existing: Заменить существующим
+    replace_with_new: Заменить новым
     reset: Сброс
     revisions_for_model: "%{model}: редакции"
     saving: Сохранение…
     search: Поиск
-    search_terms: "Ключевые слова"
+    search_terms: Ключевые слова
     seconds: секунд
     show: Показать
-    show_block: (Показать)
+    show_block: "(Показать)"
     show_model: "%{model}: показать запись"
     sum: Сумма
-    this_month: "В этом месяце"
-    this_week: "На этой неделе"
-    this_year: "В этом году"
+    this_month: В этом месяце
+    this_week: На этой неделе
+    this_year: В этом году
     today: Сегодня
     tomorrow: Завтра
-    ? "true"
-    : Да
-    update: "Обновить запись"
-    update_apply: Применить
+    'true': Да
+    update: Обновить запись
     update_model: "%{model}: обновить запись"
     updated_model: "%{model}: запись обновлена"
-    version_inconsistency: "Эта запись была обновлена с того момента, как вы начали ее редактировать"
+    version_inconsistency: Эта запись была обновлена с того момента, как вы начали ее редактировать
     weeks: недель
     years: лет
     yesterday: Вчера
-  time: 
-    formats: 
+    changes: 
+    create_apply: 
+    deleted_records: 
+    group_by: 
+    no_group: 
+    update_apply: 
+    no_color: 
+  time:
+    formats:
       picker: "%a, %d %b %Y %H:%M:%S"
+  date:
+    formats:
+      month: 
+      quarter: 
+      year_month: 
+      year_quarter: 

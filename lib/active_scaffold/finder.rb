@@ -5,29 +5,83 @@ module ActiveScaffold
     end
 
     module ClassMethods
+      def self.extended(klass)
+        return unless klass.active_scaffold_config
+        if klass.active_scaffold_config.active_record?
+          klass.extend ActiveRecord
+        elsif klass.active_scaffold_config.mongoid?
+          klass.extend Mongoid
+        end
+      end
+
       # Takes a collection of search terms (the tokens) and creates SQL that
       # searches all specified ActiveScaffold columns. A row will match if each
       # token is found in at least one of the columns.
-      def create_conditions_for_columns(tokens, columns, text_search = :full)
+      def conditions_for_columns(tokens, columns, text_search = :full)
         # if there aren't any columns, then just return a nil condition
         return unless columns.any?
-        like_pattern = like_pattern(text_search)
 
         tokens = [tokens] if tokens.is_a? String
+        tokens = type_casted_tokens(tokens, columns, like_pattern(text_search))
+        create_conditions_for_columns(tokens, columns)
+      end
 
-        where_clauses = []
-        columns.each do |column|
-          Array(column.search_sql).each do |search_sql|
-            where_clauses << "#{search_sql} #{column.text? ? ActiveScaffold::Finder.like_operator : '='} ?"
+      def type_casted_tokens(tokens, columns, like_pattern)
+        tokens.map do |value|
+          columns.each_with_object({}) do |column, column_tokens|
+            column_tokens[column.name] = column.text? ? like_pattern.sub('?', value) : ActiveScaffold::Core.column_type_cast(value, column.column)
           end
         end
-        phrase = where_clauses.join(' OR ')
+      end
 
-        tokens.collect do |value|
-          columns.each_with_object([phrase]) do |column, condition|
-            Array(column.search_sql).size.times do
-              condition.push(column.text? ? like_pattern.sub('?', value) : ActiveScaffold::Core.column_type_cast(value, column.column))
+      module ActiveRecord
+        def create_conditions_for_columns(tokens, columns)
+          where_clauses = []
+          columns.each do |column|
+            column.search_sql.each do |search_sql|
+              where_clauses << "#{search_sql} #{column.text? ? ActiveScaffold::Finder.like_operator : '='} ?"
             end
+          end
+          phrase = where_clauses.join(' OR ')
+
+          tokens.map do |columns_token|
+            columns.each_with_object([phrase]) do |column, condition|
+              condition.concat([columns_token[column.name]] * column.search_sql.size)
+            end
+          end
+        end
+
+        def like_pattern(text_search)
+          case text_search
+          when :full then '%?%'
+          when :start then '?%'
+          when :end then '%?'
+          else '?'
+          end
+        end
+      end
+
+      module Mongoid
+        def create_conditions_for_columns(tokens, columns)
+          conditions = tokens.map do |columns_token|
+            token_conditions = columns.map do |column|
+              value = columns_token[column.name]
+              value = /#{value}/ if column.text?
+              column.search_sql.map do |search_sql|
+                {search_sql => value}
+              end
+            end.flatten
+            active_scaffold_config.model.or(token_conditions).selector
+          end
+          [active_scaffold_config.model.and(conditions).selector]
+        end
+
+        def like_pattern(text_search)
+          case text_search
+          when :full then '?'
+          when :start then '^?'
+          when :end then '?$'
+          else '^?$'
           end
         end
       end
@@ -42,7 +96,7 @@ module ActiveScaffold
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
         return unless column && column.search_sql && !value.blank?
-        search_ui = column.search_ui || column.column.try(:type)
+        search_ui = column.search_ui || column.column_type
         begin
           sql, *values =
             if search_ui && respond_to?("condition_for_#{search_ui}_type")
@@ -76,7 +130,8 @@ module ActiveScaffold
         when :date, :time, :datetime, :timestamp
           condition_for_datetime(column, value)
         when :select, :multi_select, :country, :usa_state, :chosen, :multi_chosen
-          ['%{search_sql} in (?)', Array(value)]
+          values = Array(value).select(&:present?)
+          ['%{search_sql} in (?)', values] if values.present?
         else
           if column.text?
             ["%{search_sql} #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
@@ -137,43 +192,45 @@ module ActiveScaffold
       end
 
       def condition_value_for_datetime(column, value, conversion = :to_time)
-        if value.is_a? Hash
-          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect { |part| value[part].to_i }) rescue nil
-        elsif value.respond_to?(:strftime)
-          if conversion == :to_time
-            # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
-            # https://github.com/rails/rails/pull/2453
-            value.to_time.in_time_zone
-          else
-            value.send(conversion)
-          end
-        elsif conversion == :to_date
-          Date.strptime(value, I18n.t("date.formats.#{column.options[:format] || :default}")) rescue nil
-        else
-          parts = Date._parse(value)
-          format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if ActiveScaffold.js_framework == :jquery
-          if format.blank?
-            time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect { |part, format_part| format_part if parts[part].present? }.compact
-            format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
-          else
-            if parts[:hour]
-              [[:min, '%M'], [:sec, '%S']].each { |part, f| format.gsub!(":#{f}", '') unless parts[part].present? }
+        unless value.nil? || value.blank?
+          if value.is_a? Hash
+            Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect { |part| value[part].to_i }) rescue nil
+          elsif value.respond_to?(:strftime)
+            if conversion == :to_time
+              # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
+              # https://github.com/rails/rails/pull/2453
+              value.to_time.in_time_zone
             else
-              value += ' 00:00:00'
+              value.send(conversion)
             end
-            format += ' %z' if parts[:offset].present? && format !~ /%z/i
+          elsif conversion == :to_date
+            Date.strptime(value, I18n.t("date.formats.#{column.options[:format] || :default}")) rescue nil
+          else
+            parts = Date._parse(value)
+            format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if ActiveScaffold.js_framework == :jquery
+            if format.blank?
+              time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect { |part, format_part| format_part if parts[part].present? }.compact
+              format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
+            else
+              if parts[:hour]
+                [[:min, '%M'], [:sec, '%S']].each { |part, f| format.gsub!(":#{f}", '') unless parts[part].present? }
+              else
+                value += ' 00:00:00'
+              end
+              format += ' %z' if parts[:offset].present? && format !~ /%z/i
+            end
+            if !parts[:year] && !parts[:month] && !parts[:mday]
+              value = "#{Time.zone.today.strftime(format.gsub(/%[HI].*/, ''))} #{value}"
+            end
+            value = translate_days_and_months(value, format) if I18n.locale != :en
+            time = DateTime.strptime(value, format) rescue nil
+            if time
+              time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
+              time = time.send(conversion) unless conversion == :to_time
+            end
+            time
           end
-          if !parts[:year] && !parts[:month] && !parts[:mday]
-            value = "#{Time.zone.today.strftime(format.gsub(/%[HI].*/, ''))} #{value}"
-          end
-          value = translate_days_and_months(value, format) if I18n.locale != :en
-          time = DateTime.strptime(value, format) rescue nil
-          if time
-            time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
-            time = time.send(conversion) unless conversion == :to_time
-          end
-          time
-        end unless value.nil? || value.blank?
+        end
       end
 
       def condition_value_for_numeric(column, value)
@@ -184,9 +241,9 @@ module ActiveScaffold
         when :float     then value.to_f
         when :decimal
           if Rails.version >= '4.2.0'
-            ActiveRecord::Type::Decimal.new.type_cast_from_user(value)
+            ::ActiveRecord::Type::Decimal.new.type_cast_from_user(value)
           else
-            ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
+            ::ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
           end
         else
           value
@@ -231,15 +288,6 @@ module ActiveScaffold
           ['%{search_sql} is null', []]
         when 'not_null'
           ['%{search_sql} is not null', []]
-        end
-      end
-
-      def like_pattern(text_search)
-        case text_search
-        when :full then '%?%'
-        when :start then '?%'
-        when :end then '%?'
-        else '?'
         end
       end
     end
@@ -292,16 +340,18 @@ module ActiveScaffold
     end
 
     # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
-    def conditions_for_collection
-    end
+    def conditions_for_collection; end
 
     # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).  The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
-    def joins_for_collection
-    end
+    def joins_for_collection; end
 
     # Override this method on your controller to provide custom finder options to the find() call. The return of this method should be a hash.
     def custom_finder_options
       {}
+    end
+
+    def active_scaffold_embedded_conditions
+      params_hash active_scaffold_embedded_params[:conditions]
     end
 
     def all_conditions
@@ -311,7 +361,7 @@ module ActiveScaffold
         conditions_for_collection,                    # from the dev
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
         conditions_from_constraints,                  # from any constraints (embedded scaffolds)
-        active_scaffold_session_storage['conditions'] # embedding conditions (weaker constraints)
+        active_scaffold_embedded_conditions           # embedding conditions (weaker constraints)
       ].reject(&:blank?)
     end
 
@@ -338,7 +388,7 @@ module ActiveScaffold
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = {
-        :reorder => options[:sorting].try(:clause),
+        :reorder => options[:sorting].try(:clause, (grouped_columns_calculations if grouped_search?)),
         :conditions => search_conditions
       }
       if active_scaffold_config.mongoid?

@@ -1,4 +1,4 @@
-<% column_count ||= columns.length + 1 -%>
+<% column_count ||= columns.length + (grouped_search? ? 0 : 1) -%>
 <tbody class="messages">
   <tr class="record even-record">
     <td colspan="<%= column_count -%>" class="messages-container">
