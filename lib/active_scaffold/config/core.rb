@@ -182,6 +182,12 @@ module ActiveScaffold::Config
       @highlight_messages = self.class.highlight_messages
     end
 
+    # To be called before freezing
+    def _cache_lazy_values
+      action_links.each(&:name_to_cache) if cache_action_link_urls
+      columns.select(&:sortable?).each(&:sort)
+    end
+
     # To be called after your finished configuration
     def _load_action_columns
       # then, register the column objects

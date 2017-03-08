@@ -60,7 +60,10 @@ module ActiveScaffold
           end
         end
         _add_sti_create_links if active_scaffold_config.add_sti_create_links?
-        active_scaffold_config.deep_freeze! if ActiveScaffold.threadsafe
+        if ActiveScaffold.threadsafe
+          active_scaffold_config._cache_lazy_values
+          active_scaffold_config.deep_freeze!
+        end
       end
 
       module Prefixes
@@ -180,6 +183,7 @@ module ActiveScaffold
 
       def active_scaffold_controller_for(klass)
         return self if uses_active_scaffold? && klass == active_scaffold_config.model
+        # noinspection RubyArgCount
         ActiveScaffold::Core.active_scaffold_controller_for(klass, to_s.deconstantize + '::')
       end
 
