@@ -1,5 +1,7 @@
 module ActiveScaffold::DataStructures
   class ActionLink
+    NO_OPTIONS = {}.freeze
+
     # provides a quick way to set any property of the object from a hash
     def initialize(action, options = {})
       # set defaults
@@ -52,7 +54,8 @@ module ActiveScaffold::DataStructures
     # a hash of request parameters
     attr_writer :parameters
     def parameters
-      @parameters ||= {}
+      return @parameters || NO_OPTIONS if frozen?
+      @parameters ||= NO_OPTIONS.dup
     end
 
     # if active class is added to link when current request matches link
@@ -186,7 +189,8 @@ module ActiveScaffold::DataStructures
     # html options for the link
     attr_writer :html_options
     def html_options
-      @html_options ||= {}
+      return @html_options || NO_OPTIONS if frozen?
+      @html_options ||= NO_OPTIONS.dup
     end
 
     # nested action_links are referencing a column
@@ -204,7 +208,15 @@ module ActiveScaffold::DataStructures
     end
 
     def name_to_cache
-      @name_to_cache ||= "#{controller || 'self'}_#{type}_#{action}#{'_' if parameters.present?}#{parameters.map { |k, v| "#{k}=#{v.is_a?(Array) ? v.join(',') : v}" }.join('_')}"
+      return @name_to_cache if defined? @name_to_cache
+      [
+          controller || 'self',
+          type,
+          action,
+          *parameters.map { |k, v| "#{k}=#{v.is_a?(Array) ? v.join(',') : v}" }
+      ].compact.join('_').tap do |name_to_cache|
+        @name_to_cache = name_to_cache unless frozen?
+      end
     end
   end
 end
