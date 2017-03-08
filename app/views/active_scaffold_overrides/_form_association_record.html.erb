@@ -53,7 +53,7 @@
     columns_length += 1
     show_actions = true
     if column.association && column.form_ui.nil?
-      column = column.clone
+      column = column.dup
       column.form_ui ||= :select
     end
 

@@ -2,6 +2,7 @@ module ActiveScaffold::Config
   class Base
     include ActiveScaffold::Configurable
     extend ActiveScaffold::Configurable
+    NO_FORMATS = [].freeze
 
     def initialize(core_config)
       @core = core_config
@@ -38,7 +39,13 @@ module ActiveScaffold::Config
     end
 
     # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
-    attr_accessor :user
+    def user
+      Thread.current["#{core.model_id}_#{self.class.name.underscore}_user"]
+    end
+
+    def user=(value)
+      Thread.current["#{core.model_id}_#{self.class.name.underscore}_user"] = value
+    end
 
     # define a default action_group for this action
     # e.g. 'members.crud'
@@ -74,7 +81,8 @@ module ActiveScaffold::Config
     end
 
     def formats
-      @formats ||= []
+      return @formats || NO_FORMATS if frozen?
+      @formats ||= NO_FORMATS.dup
     end
     attr_writer :formats
 

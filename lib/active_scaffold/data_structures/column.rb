@@ -2,6 +2,8 @@ module ActiveScaffold::DataStructures
   class Column
     include ActiveScaffold::Configurable
     include ActiveScaffold::OrmChecks
+    NO_PARAMS = Set.new.freeze
+    NO_OPTIONS = {}.freeze
 
     attr_reader :active_record_class
     alias model active_record_class
@@ -31,8 +33,8 @@ module ActiveScaffold::DataStructures
 
     # Any extra parameters this particular column uses.  This is for create/update purposes.
     def params
-      # lazy initialize
-      @params ||= Set.new
+      return @params || NO_PARAMS if frozen?
+      @params ||= NO_PARAMS.dup
     end
 
     # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.
@@ -140,10 +142,12 @@ module ActiveScaffold::DataStructures
     # a place to store dev's column specific options
     attr_writer :options
     def options
-      @options ||= {}
+      return @options || NO_OPTIONS if frozen?
+      @options ||= NO_OPTIONS.dup
     end
 
     def link
+      return @link.call(self) if frozen? && @link.is_a?(Proc)
       @link = @link.call(self) if @link.is_a? Proc
       @link
     end

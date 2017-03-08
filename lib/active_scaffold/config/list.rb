@@ -240,6 +240,10 @@ module ActiveScaffold::Config
         self['per_page'] || @conf.per_page
       end
 
+      def per_page=(value)
+        self['per_page'] = value
+      end
+
       def page
         self['page'] = @params['page'] || 1 if @params.key?('page') || @conf.auto_pagination
         self['page'] || 1
@@ -252,12 +256,12 @@ module ActiveScaffold::Config
       attr_reader :nested_default_sorting
 
       def nested_default_sorting=(options)
-        @nested_default_sorting ||= @conf.sorting.clone
+        @nested_default_sorting ||= @conf.sorting.dup
         @nested_default_sorting.set_nested_sorting(options[:table_name], options[:default_sorting])
       end
 
       def default_sorting
-        nested_default_sorting.nil? ? @conf.sorting.clone : nested_default_sorting
+        nested_default_sorting.nil? ? @conf.sorting.dup : nested_default_sorting
       end
 
       def user_sorting?
@@ -271,7 +275,7 @@ module ActiveScaffold::Config
           self['sort'] = nil if @params['sort_direction'] == 'reset'
 
           if self['sort'] && @conf.core.columns[self['sort'][0]]
-            sorting = @conf.sorting.clone
+            sorting = @conf.sorting.dup
             sorting.set(*self['sort'])
             @sorting = sorting
           else
