@@ -119,6 +119,14 @@ module ActiveScaffold::Actions
       else
         record.send("#{association.name}=", parent)
       end
+
+      if params[:nested] # form in nested scaffold, set nested parent_record to parent
+        nested = ActiveScaffold::DataStructures::NestedInfo.get(parent.class, params.delete(:nested))
+        if nested.child_association
+          apply_constraints_to_record(parent, constraints: {nested.child_association.name => nested.parent_id})
+        end
+      end
+      parent
     end
 
     def copy_attributes(orig, dst = nil)
