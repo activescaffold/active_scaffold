@@ -128,8 +128,10 @@ module ActiveScaffold
         form_columns ||= current_form_columns(record, scope, subform_controller)
         if force || (form_columns && column.update_columns && (column.update_columns & form_columns).present?)
           url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
-          url_params = url_params.except(:parent_scaffold, :association, nested.param_name) if nested? && scope
-          url_params[:eid] = params[:eid] if params[:eid]
+          if nested? && scope
+            url_params[:nested] = url_params.slice(:parent_scaffold, :association, nested.param_name)
+            url_params = url_params.except(:parent_scaffold, :association, nested.param_name)
+          end
           if scope
             url_params[:parent_controller] ||= url_params[:controller].gsub(/^\//, '')
             url_params[:controller] = subform_controller.controller_path

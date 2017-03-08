@@ -135,9 +135,10 @@ module ActiveScaffold
     # If it *is* ok (e.g. you're in a transaction), then set :allow_autosave to true.
     def apply_constraints_to_record(record, options = {})
       options[:allow_autosave] = false if options[:allow_autosave].nil?
+      constraints = options[:constraints] || active_scaffold_constraints
 
       config = record.is_a?(active_scaffold_config.model) ? active_scaffold_config : active_scaffold_config_for(record.class)
-      active_scaffold_constraints.each do |k, v|
+      constraints.each do |k, v|
         column = config.columns[k]
         if column && column.association
           if column.association.collection?
