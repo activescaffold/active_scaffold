@@ -69,18 +69,16 @@ class ActiveScaffold::Bridges::RecordSelect
 
     module SearchColumnHelpers
       def active_scaffold_search_record_select(column, options)
-        value = field_search_record_select_value(column)
+        value = field_search_record_select_value(options[:value])
         active_scaffold_record_select(options[:object], column, options, value, column.options[:multiple])
       end
 
-      def field_search_record_select_value(column)
-        value = field_search_params[column.name]
-        unless value.blank?
-          if column.options[:multiple]
-            column.association.klass.find value.collect!(&:to_i)
-          else
-            column.association.klass.find(value.to_i)
-          end
+      def field_search_record_select_value(value)
+        return if value.blank?
+        if column.options[:multiple]
+          column.association.klass.find value.collect!(&:to_i)
+        else
+          column.association.klass.find(value.to_i)
         end
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- Sorry, we are not that smart yet. Attempted to restore search values to search fields :#{column.name} in #{controller.class}"
