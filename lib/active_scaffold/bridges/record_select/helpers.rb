@@ -69,11 +69,11 @@ class ActiveScaffold::Bridges::RecordSelect
 
     module SearchColumnHelpers
       def active_scaffold_search_record_select(column, options)
-        value = field_search_record_select_value(options[:value])
+        value = field_search_record_select_value(column, options[:value])
         active_scaffold_record_select(options[:object], column, options, value, column.options[:multiple])
       end
 
-      def field_search_record_select_value(value)
+      def field_search_record_select_value(column, value)
         return if value.blank?
         if column.options[:multiple]
           column.association.klass.find value.collect!(&:to_i)
