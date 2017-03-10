@@ -352,6 +352,21 @@ module ActiveScaffold
         end
       end
 
+      def active_scaffold_radio_option(option, selected, column, radio_options)
+        if column.association
+          label_method = column.options[:label_method] || :to_label
+          text, value = [option.send(label_method), option.id]
+          checked = {:checked => selected == value}
+        else
+          text, value = active_scaffold_translated_option(column, *option)
+        end
+
+        id_key = html_options[:"data-id"] ? :"data-id" : :id
+        radio_options = radio_options.merge(id_key => radio_options[id_key] + '-' + value.to_s.parameterize)
+        radio_options.merge!(checked) if checked
+        content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
+      end
+
       def active_scaffold_input_radio(column, html_options)
         record = html_options[:object]
         html_options.merge!(column.options[:html_options] || {})
@@ -361,21 +376,12 @@ module ActiveScaffold
           else
             active_scaffold_enum_options(column, record)
           end
-        id_key = html_options[:"data-id"] ? :"data-id" : :id
-        label_method = column.options[:label_method] || :to_label if column.association
 
-        options.each_with_object('') do |(text, value), html|
-          if column.association
-            text, value = [text.send(label_method), text.id]
-            checked = {:checked => html_options[:object].send(column.association.name).try(:id) == value}
-          else
-            text, value = active_scaffold_translated_option(column, text, value)
-          end
-
-          radio_options = html_options.merge(id_key => html_options[id_key] + '-' + value.to_s.parameterize)
-          radio_options.merge!(checked) if checked
-          html << content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
-        end.html_safe
+        selected = record.send(column.association.name).try(:id) if column.association
+        radios = options.map do |option|
+          active_scaffold_radio_option(option, selected, column, html_options)
+        end
+        safe_join radios
       end
 
       def active_scaffold_input_checkbox(column, options)
