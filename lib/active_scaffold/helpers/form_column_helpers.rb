@@ -443,12 +443,12 @@ module ActiveScaffold
         if column.column.try(:null)
           no_color = options[:object].send(column.name).nil?
           method = no_color ? :hidden_field : :color_field
-          html = content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ :no_color}")
+          html = content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ column.options[:no_color] || :no_color}")
         else
           method = :color_field
           html = ''.html_safe
         end
-        html << send(method, :record, column.name, options.merge(column.options).except(:format))
+        html << send(method, :record, column.name, options.merge(column.options).except(:format, :no_color))
       end
 
       #
