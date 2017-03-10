@@ -361,7 +361,7 @@ module ActiveScaffold
           text, value = active_scaffold_translated_option(column, *option)
         end
 
-        id_key = html_options[:"data-id"] ? :"data-id" : :id
+        id_key = radio_options[:"data-id"] ? :"data-id" : :id
         radio_options = radio_options.merge(id_key => radio_options[id_key] + '-' + value.to_s.parameterize)
         radio_options.merge!(checked) if checked
         content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
