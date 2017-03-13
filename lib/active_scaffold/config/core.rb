@@ -60,6 +60,11 @@ module ActiveScaffold::Config
       ActiveScaffold::ActiveRecordPermissions
     end
 
+    # access to default column configuration.
+    def self.column
+      ActiveScaffold::DataStructures::Column
+    end
+
     # columns that should be ignored for every model. these should be metadata columns like change dates, versions, etc.
     # values in this array may be symbols or strings.
     def self.ignore_columns
