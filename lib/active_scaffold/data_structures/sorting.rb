@@ -55,6 +55,9 @@ module ActiveScaffold::DataStructures
     # set({column => direction}, {column => direction})
     # set([column, direction], [column, direction])
     def set(*args)
+      # TODO: add deprecation unless args.size == 1 && args[0].is_a? Hash
+      # when deprecation is removed:
+      # * change list#sorting= to sorting.set(val)
       clear
       if args.first.is_a?(Enumerable)
         args.each do |h|

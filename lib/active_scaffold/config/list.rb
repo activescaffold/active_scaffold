@@ -222,7 +222,7 @@ module ActiveScaffold::Config
     class UserSettings < UserSettings
       def initialize(conf, storage, params)
         super(conf, storage, params, :list)
-        @sorting = nil
+        @_sorting = nil
       end
 
       attr_writer :label
@@ -261,15 +261,21 @@ module ActiveScaffold::Config
       end
 
       def default_sorting
-        nested_default_sorting.nil? ? @conf.sorting.dup : nested_default_sorting
+        nested_default_sorting.nil? || @sorting.present? ? @conf.sorting.dup : nested_default_sorting
       end
+
+      # TODO: programatically set sorting, for per-request configuration, priority @params, then @sort
 
       def user_sorting?
         @params['sort'] && @params['sort_direction'] != 'reset'
       end
 
+      # change list sorting for this request, unless sorting is defined
+      # {column => direction, column => direction}
+      attr_writer :sorting
+
       def sorting
-        if @sorting.nil?
+        if @_sorting.nil?
           # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
           self['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] && @params['sort_direction']
           self['sort'] = nil if @params['sort_direction'] == 'reset'
@@ -277,15 +283,16 @@ module ActiveScaffold::Config
           if self['sort'] && @conf.core.columns[self['sort'][0]]
             sorting = @conf.sorting.dup
             sorting.set(*self['sort'])
-            @sorting = sorting
+            @_sorting = sorting
           else
-            @sorting = default_sorting
+            @_sorting = default_sorting
+            @_sorting.set(@sorting) if @sorting
             if @conf.columns.constraint_columns.present?
-              @sorting.constraint_columns = @conf.columns.constraint_columns
+              @_sorting.constraint_columns = @conf.columns.constraint_columns
             end
           end
         end
-        @sorting
+        @_sorting
       end
 
       def count_includes
