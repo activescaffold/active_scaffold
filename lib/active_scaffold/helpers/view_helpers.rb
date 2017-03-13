@@ -169,12 +169,12 @@ module ActiveScaffold
 
       def display_message(message)
         message = safe_join message, tag(:br) if message.is_a?(Array)
-        if (highlights = active_scaffold_config.highlight_messages)
+        if (highlights = active_scaffold_config.user.highlight_messages)
           message = highlights.inject(message) do |msg, (phrases, highlighter)|
             highlight(msg, phrases, highlighter || {})
           end
         end
-        if (format = active_scaffold_config.timestamped_messages)
+        if (format = active_scaffold_config.user.timestamped_messages)
           format = :short if format == true
           messages = [content_tag(:div, l(Time.current, :format => format), :class => 'timestamp')]
           messages << content_tag(:div, message, :class => 'message-content')

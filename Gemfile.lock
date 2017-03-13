@@ -1,3 +1,9 @@
+GIT
+  remote: git://github.com/Programatica/cow_proxy.git
+  revision: 6afbbb65cd090f7260543e784b183171c5540350
+  specs:
+    cow_proxy (0.1.0)
+
 PATH
   remote: .
   specs:
@@ -184,6 +190,7 @@ DEPENDENCIES
   bundler (~> 1.0)
   bundler-audit
   codeclimate-test-reporter
+  cow_proxy!
   jdbc-sqlite3
   localeapp
   minitest-reporters

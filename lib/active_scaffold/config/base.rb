@@ -38,13 +38,17 @@ module ActiveScaffold::Config
       @label.nil? ? model : as_(@label, :model => model)
     end
 
-    # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
-    def user
-      Thread.current["#{core.model_id}_#{self.class.name.underscore}_user"]
+    def model_id
+      (core || self).model_id
     end
 
-    def user=(value)
-      Thread.current["#{core.model_id}_#{self.class.name.underscore}_user"] = value
+    # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
+    def user
+      Thread.current["#{model_id}_#{self.class.name.underscore}_user"]
+    end
+
+    def new_user_settings(conf_instance, storage, params)
+      Thread.current["#{model_id}_#{self.class.name.underscore}_user"] = self.class::UserSettings.new(conf_instance, storage, params)
     end
 
     # define a default action_group for this action
@@ -55,9 +59,30 @@ module ActiveScaffold::Config
     attr_accessor :action_group
 
     class UserSettings
+      # define setter and getter for names
+      # values will be saved for current request only
+      # getter will return value set with setter, or value from conf
+      def self.user_attr(*names)
+        attr_writer *names
+        names.each do |name|
+          define_method(name) { instance_variable_get("@#{name}") || @conf.send(name) }
+        end
+      end
+
+      # define setter and getter for names
+      # values will be saved in session if store_user_settings is enabled,
+      # in other case for current request only
+      # getter will return value set with setter, or value from conf
+      def self.session_attr(*names)
+        names.each do |name|
+          define_method(name) { |value| self[name] = value }
+          define_method(name) { self[name] || @conf.send(name) }
+        end
+      end
+
       def initialize(conf, storage, params, action = :base)
         # the session hash relevant to this action
-        @session = storage
+        @storage = storage
         # all the request params
         @params = params
         # the configuration object for this action
@@ -66,16 +91,16 @@ module ActiveScaffold::Config
       end
 
       def [](key)
-        @session[@action][key] if @action && @session[@action]
+        @storage[@action][key.to_s] if @action && @storage[@action]
       end
 
       def []=(key, value)
-        @session[@action] ||= {}
+        @storage[@action] ||= {}
         if value
-          @session[@action][key] = value
+          @storage[@action][key.to_s] = value
         else
-          @session[@action].delete key
-          @session.delete @action if @session[@action].empty?
+          @storage[@action].delete key.to_s
+          @storage.delete @action if @storage[@action].empty?
         end
       end
     end

@@ -51,5 +51,7 @@ module ActiveScaffold::Config
 
     # the label for this Nested action. used for the header.
     attr_writer :label
+
+    undef_method :new_user_settings
   end
 end

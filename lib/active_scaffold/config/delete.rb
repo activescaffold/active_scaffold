@@ -26,5 +26,7 @@ module ActiveScaffold::Config
 
     # whether we should refresh list after destroy or not
     attr_accessor :refresh_list
+
+    undef_method :new_user_settings
   end
 end

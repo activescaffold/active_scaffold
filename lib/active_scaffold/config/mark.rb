@@ -26,5 +26,7 @@ module ActiveScaffold::Config
       @core.columns[:as_marked].sort = false
       @core.list.columns = [:as_marked] + @core.list.columns.names_without_auth_check unless @core.list.columns.include? :as_marked
     end
+
+    undef_method :new_user_settings
   end
 end

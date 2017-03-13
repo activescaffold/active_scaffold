@@ -28,5 +28,7 @@ module ActiveScaffold::Config
 
     # whether the form stays open after a create or not
     attr_accessor :action_after_create
+
+    undef_method :new_user_settings
   end
 end

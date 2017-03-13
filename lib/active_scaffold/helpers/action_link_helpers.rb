@@ -160,7 +160,7 @@ module ActiveScaffold
       end
 
       def cache_action_link_url?(link, record)
-        active_scaffold_config.cache_action_link_urls && link.type == :member && !link.dynamic_parameters.is_a?(Proc) && !sti_record?(record)
+        active_scaffold_config.user.cache_action_link_urls && link.type == :member && !link.dynamic_parameters.is_a?(Proc) && !sti_record?(record)
       end
 
       def cached_action_link_url(link, record)
@@ -243,7 +243,7 @@ module ActiveScaffold
       end
 
       def cache_action_link_url_options?(link, record)
-        active_scaffold_config.cache_action_link_urls && (link.type == :collection || !link.dynamic_parameters.is_a?(Proc)) && !sti_record?(record)
+        active_scaffold_config.user.cache_action_link_urls && (link.type == :collection || !link.dynamic_parameters.is_a?(Proc)) && !sti_record?(record)
       end
 
       def cached_action_link_url_options(link, record)

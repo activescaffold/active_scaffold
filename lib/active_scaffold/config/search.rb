@@ -64,5 +64,7 @@ module ActiveScaffold::Config
     def live?
       @live
     end
+
+    undef_method :new_user_settings
   end
 end

@@ -279,10 +279,11 @@ module ActiveScaffold::Actions
     # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.
     def handle_user_settings
       storage = active_scaffold_config.store_user_settings ? active_scaffold_session_storage : {}
+      active_scaffold_config.new_user_settings(active_scaffold_config, storage, params)
       active_scaffold_config.actions.each do |action_name|
         conf_instance = active_scaffold_config.send(action_name) rescue next
-        next if conf_instance.class::UserSettings == ActiveScaffold::Config::Base::UserSettings # if it hasn't been extended, skip it
-        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, storage, params)
+        next unless conf_instance.respond_to? :new_user_settings
+        conf_instance.new_user_settings(conf_instance, storage, params)
       end
     end
 
@@ -392,7 +393,7 @@ module ActiveScaffold::Actions
     end
 
     def conditional_get_support?
-      request.get? && active_scaffold_config.conditional_get_support
+      request.get? && active_scaffold_config.user.conditional_get_support
     end
 
     def virtual_columns(columns)

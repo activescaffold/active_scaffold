@@ -295,6 +295,11 @@ module ActiveScaffold::Config
       frontends_dir = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
       Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
     end
+
+    class UserSettings < UserSettings
+      user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
+                :timestamped_messages, :highlight_messages
+    end
   end
 end
 
