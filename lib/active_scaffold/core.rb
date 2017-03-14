@@ -46,7 +46,7 @@ module ActiveScaffold
           active_scaffold_config.actions.each do |mod|
             include "ActiveScaffold::Actions::#{mod.to_s.camelize}".constantize
             mod_conf = active_scaffold_config.send(mod)
-            #active_scaffold_config._setup_action(mod) if ActiveScaffold.threadsafe
+            active_scaffold_config._setup_action(mod) if ActiveScaffold.threadsafe
             next unless mod_conf.respond_to?(:link) && (link = mod_conf.link)
 
             # sneak the action links from the actions into the main set

@@ -36,3 +36,10 @@ Lint/UnusedMethodArgument:
 
 Metrics/ModuleLength:
   Max: 500
+
+Metrics/ClassLength:
+  Max: 500
+  CountComments: false
+
+Performance/RedundantMerge:
+  MaxKeyValuePairs: 1

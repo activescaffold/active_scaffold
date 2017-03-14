@@ -245,7 +245,7 @@ module ActiveScaffold::Config
       klass = "ActiveScaffold::Config::#{titled_name}".constantize rescue nil
       if klass
         if @actions.include? underscored_name
-          return @action_configs[underscored_name] ||= klass.new(self)
+          @action_configs[underscored_name] ||= klass.new(self)
         else
           raise "#{titled_name} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
         end

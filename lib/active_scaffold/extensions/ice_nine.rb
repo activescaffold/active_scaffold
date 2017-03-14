@@ -2,9 +2,9 @@ module IceNine
   class Freezer
     def self.find(name)
       freezer = name.split('::').reduce(self) do |mod, const|
-        mod.const_lookup(const) or break mod
+        mod.const_lookup(const) or break mod # rubocop:disable Style/AndOr
       end
-      freezer if freezer < self  # only return a descendant freezer
+      freezer if freezer < self # only return a descendant freezer
     end
 
     class ObjectWithExclussion < Object
@@ -14,8 +14,8 @@ module IceNine
         object.instance_variables.each do |ivar_name|
           next if excluded_vars.include? ivar_name
           Freezer.guarded_deep_freeze(
-              object.instance_variable_get(ivar_name),
-              recursion_guard
+            object.instance_variable_get(ivar_name),
+            recursion_guard
           )
         end
       end

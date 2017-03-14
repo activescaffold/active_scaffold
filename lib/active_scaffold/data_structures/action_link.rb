@@ -210,10 +210,10 @@ module ActiveScaffold::DataStructures
     def name_to_cache
       return @name_to_cache if defined? @name_to_cache
       [
-          controller || 'self',
-          type,
-          action,
-          *parameters.map { |k, v| "#{k}=#{v.is_a?(Array) ? v.join(',') : v}" }
+        controller || 'self',
+        type,
+        action,
+        *parameters.map { |k, v| "#{k}=#{v.is_a?(Array) ? v.join(',') : v}" }
       ].compact.join('_').tap do |name_to_cache|
         @name_to_cache = name_to_cache unless frozen?
       end

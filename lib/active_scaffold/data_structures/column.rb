@@ -424,15 +424,16 @@ module ActiveScaffold::DataStructures
 
     def setup_association_info
       assoc = active_record_class.reflect_on_association(self.name)
-      @association = if assoc
-                       case
-                       when active_record? then Association::ActiveRecord.new(assoc)
-                       when mongoid? then Association::Mongoid.new(assoc)
-                       end
-                     elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
-                       assoc = active_record_class.reflect_on_am_association(name)
-                       Association::ActiveMongoid.new(assoc) if assoc
-      end
+      @association =
+        if assoc
+          case
+          when active_record? then Association::ActiveRecord.new(assoc)
+          when mongoid? then Association::Mongoid.new(assoc)
+          end
+        elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
+          assoc = active_record_class.reflect_on_am_association(name)
+          Association::ActiveMongoid.new(assoc) if assoc
+        end
     end
 
     def validator_force_required?(val)
@@ -490,15 +491,10 @@ module ActiveScaffold::DataStructures
     end
 
     def initialize_sort
-      if virtual?
-        # we don't automatically enable method sorting for virtual columns because it's slow, and we expect fewer complaints this way.
-        self.sort = false
+      if column && !tableless?
+        self.sort = {:sql => field}
       else
-        if column && !tableless?
-          self.sort = {:sql => field}
-        else
-          self.sort = false
-        end
+        self.sort = false
       end
     end
 

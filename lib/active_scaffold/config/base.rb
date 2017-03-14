@@ -63,7 +63,7 @@ module ActiveScaffold::Config
       # values will be saved for current request only
       # getter will return value set with setter, or value from conf
       def self.user_attr(*names)
-        attr_writer *names
+        attr_writer(*names)
         names.each do |name|
           define_method(name) { instance_variable_get("@#{name}") || @conf.send(name) }
         end
