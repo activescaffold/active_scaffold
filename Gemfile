@@ -30,7 +30,7 @@ group :development, :test do
   gem 'bundler', '~> 1.0'
   # Rack provides a minimal interface between webservers that support Ruby and Ruby frameworks
   gem 'rack'
-  gem 'cow_proxy', github: 'Programatica/cow_proxy' # move to gemspec when released
+  gem 'cow_proxy', git: 'https://github.com/Programatica/cow_proxy' # move to gemspec when released
 end
 
 group :test do
