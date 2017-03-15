@@ -117,6 +117,8 @@ module ActiveScaffold
         if scope
           subform_controller.active_scaffold_config.subform.columns.names
         elsif [:new, :create, :edit, :update, :render_field].include? action_name.to_sym
+          # disable update_columns for inplace_edit (GET render_field)
+          return if action_name == 'render_field' && request.get?
           active_scaffold_config.send(record.new_record? ? :create : :update).columns.names
         end
       end
