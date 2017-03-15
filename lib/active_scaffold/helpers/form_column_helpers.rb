@@ -117,6 +117,8 @@ module ActiveScaffold
         if scope
           subform_controller.active_scaffold_config.subform.columns.names
         elsif [:new, :create, :edit, :update, :render_field].include? action_name.to_sym
+          # disable update_columns for inplace_edit (GET render_field)
+          return if action_name == 'render_field' && request.get?
           active_scaffold_config.send(record.new_record? ? :create : :update).columns.names
         end
       end
@@ -352,6 +354,21 @@ module ActiveScaffold
         end
       end
 
+      def active_scaffold_radio_option(option, selected, column, radio_options)
+        if column.association
+          label_method = column.options[:label_method] || :to_label
+          text, value = [option.send(label_method), option.id]
+          checked = {:checked => selected == value}
+        else
+          text, value = active_scaffold_translated_option(column, *option)
+        end
+
+        id_key = radio_options[:"data-id"] ? :"data-id" : :id
+        radio_options = radio_options.merge(id_key => radio_options[id_key] + '-' + value.to_s.parameterize)
+        radio_options.merge!(checked) if checked
+        content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
+      end
+
       def active_scaffold_input_radio(column, html_options)
         record = html_options[:object]
         html_options.merge!(column.options[:html_options] || {})
@@ -361,21 +378,12 @@ module ActiveScaffold
           else
             active_scaffold_enum_options(column, record)
           end
-        id_key = html_options[:"data-id"] ? :"data-id" : :id
-        label_method = column.options[:label_method] || :to_label if column.association
 
-        options.each_with_object('') do |(text, value), html|
-          if column.association
-            text, value = [text.send(label_method), text.id]
-            checked = {:checked => html_options[:object].send(column.association.name).try(:id) == value}
-          else
-            text, value = active_scaffold_translated_option(column, text, value)
-          end
-
-          radio_options = html_options.merge(id_key => html_options[id_key] + '-' + value.to_s.parameterize)
-          radio_options.merge!(checked) if checked
-          html << content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
-        end.html_safe
+        selected = record.send(column.association.name).try(:id) if column.association
+        radios = options.map do |option|
+          active_scaffold_radio_option(option, selected, column, html_options)
+        end
+        safe_join radios
       end
 
       def active_scaffold_input_checkbox(column, options)
@@ -437,12 +445,12 @@ module ActiveScaffold
         if column.column.try(:null)
           no_color = options[:object].send(column.name).nil?
           method = no_color ? :hidden_field : :color_field
-          html = content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ :no_color}")
+          html = content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ column.options[:no_color] || :no_color}")
         else
           method = :color_field
           html = ''.html_safe
         end
-        html << send(method, :record, column.name, options.merge(column.options).except(:format))
+        html << send(method, :record, column.name, options.merge(column.options).except(:format, :no_color))
       end
 
       #
