@@ -1,4 +1,4 @@
-after_script:
+after_success:
   - bin/codeclimate-test-reporter
 bundler_args: --clean --deployment --jobs=$(nproc) --without development production
 cache: bundler
