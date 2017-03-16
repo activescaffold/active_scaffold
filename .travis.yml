@@ -1,6 +1,3 @@
-addons:
-  code_climate:
-    repo_token: 8a344833c6693733b163f09a5243fa12dd7be0b69f0358b146c64dd4becabc60
 after_script:
   - bin/codeclimate-test-reporter
 bundler_args: --clean --deployment --jobs=$(nproc) --without development production
