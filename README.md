@@ -32,7 +32,8 @@ Run the following commands
     rails g active_scaffold:resource User name:string
     bundle exec rake db:migrate
     
-    For Rails 5 :-
+Commands for Rails 5
+
     bundle install
     rails g active_scaffold:install
     rails db:create
