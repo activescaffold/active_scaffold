@@ -31,6 +31,14 @@ Run the following commands
     bundle exec rake db:create
     rails g active_scaffold:resource User name:string
     bundle exec rake db:migrate
+    
+    For Rails 5 :-
+    bundle install
+    rails g active_scaffold:install
+    rails db:create
+    rails g active_scaffold:resource User name:string
+    rails db:migrate
+    
 
 Run the app and visit localhost:3000/users
 
