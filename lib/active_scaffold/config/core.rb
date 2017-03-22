@@ -299,27 +299,30 @@ module ActiveScaffold::Config
     class UserSettings < UserSettings
       user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
                 :timestamped_messages, :highlight_messages
+
+      def method_missing(name, *args)
+        value = super
+        value.is_a?(Base) ? value.user || value : value
+      end
+
+      def columns
+        @columns ||= UserColumns.new(@conf.columns)
+
+      end
     end
-  end
-end
 
-module CowProxy
-  module ActiveScaffold
-    module Config
-      class Core < ::CowProxy::WrapClass(::ActiveScaffold::Config::Core)
-        prepend ::CowProxy::Container
-        def _copy_on_write(*)
-          super.tap do
-            action_configs = {}
-            @hash.each { |k, v| action_configs[k] = v } if @hash
-            @hash = nil
-            __getobj__.instance_variable_set :@action_configs, action_configs
-          end
-        end
+    class UserColumns
+      def initialize(columns)
+        @global_columns = columns
+        @columns = {}
+      end
 
-        def method_missing(name, *args)
-          self[name] || super
-        end
+      def [](name)
+        @columns[name.to_sym] ||= CowProxy.wrap @global_columns[name]
+      end
+
+      def method_missing(name, *args)
+        @global_columns.send(name, *args)
       end
     end
   end

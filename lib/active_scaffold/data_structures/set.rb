@@ -58,21 +58,3 @@ module ActiveScaffold::DataStructures
     end
   end
 end
-
-module CowProxy
-  module ActiveScaffold
-    module DataStructures
-      class Set < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::Set)
-        prepend ::CowProxy::Container
-        def _copy_on_write(*)
-          super.tap do
-            set = []
-            @hash.each { |k, v| set[k] = v } if @hash
-            @hash = nil
-            __getobj__.instance_variable_set :@set, set
-          end
-        end
-      end
-    end
-  end
-end

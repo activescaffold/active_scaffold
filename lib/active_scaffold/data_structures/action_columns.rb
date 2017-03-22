@@ -172,12 +172,3 @@ module ActiveScaffold::DataStructures
     end
   end
 end
-
-module CowProxy
-  module ActiveScaffold
-    module DataStructures
-      class ActionColumns < Set
-      end
-    end
-  end
-end

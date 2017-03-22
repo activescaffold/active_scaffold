@@ -5,7 +5,8 @@ module ActiveScaffold
     end
 
     def active_scaffold_config
-      @active_scaffold_config ||= self.class.active_scaffold_config.proxy
+      #@active_scaffold_config ||= self.class.active_scaffold_config.proxy
+      self.class.active_scaffold_config.user || self.class.active_scaffold_config
     end
 
     def active_scaffold_config_for(klass)

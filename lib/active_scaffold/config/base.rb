@@ -103,6 +103,10 @@ module ActiveScaffold::Config
           @storage.delete @action if @storage[@action].empty?
         end
       end
+
+      def method_missing(name, *args)
+        @conf.send(name, *args)
+      end
     end
 
     def formats
@@ -132,10 +136,20 @@ module ActiveScaffold::Config
         define_method "#{name}=" do |val|
           if instance_variable_defined?(var)
             instance_variable_get(var).set_values(*val)
+            instance_variable_get(var)
           else
             instance_variable_set(var, build_action_columns(val))
           end
-          instance_variable_get(var)
+        end
+
+        self::UserSettings.class_eval do
+          define_method "#{name}=" do |val|
+            instance_variable_set(var, build_action_columns(val))
+          end
+          define_method name do
+            proxy_columns = instance_variable_get(var)
+                instance_variable_set(var, ::CowProxy.wrap(@conf.send(name)))
+          end
         end
 
         return if method_defined? name
