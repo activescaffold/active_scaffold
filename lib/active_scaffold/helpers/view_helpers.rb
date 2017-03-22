@@ -17,11 +17,6 @@ module ActiveScaffold
       ## Delegates
       ##
 
-      # access to the configuration variable
-      def active_scaffold_config
-        controller.class.active_scaffold_config
-      end
-
       def active_scaffold_config_for(*args)
         controller.class.active_scaffold_config_for(*args)
       end
