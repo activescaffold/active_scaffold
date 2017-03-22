@@ -38,6 +38,7 @@ module ActiveScaffold
         bridge = self[bridge_name]
         bridge.run if bridge
       end
+      ActiveScaffold::Config::Core.freeze if ActiveScaffold.threadsafe
       self.bridges_run = true
     end
 

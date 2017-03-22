@@ -88,6 +88,12 @@ module ActiveScaffold::Config
     cattr_accessor :highlight_messages, instance_accessor: false
     @@highlight_messages = nil
 
+    def self.freeze
+      super
+      security.freeze
+      column.freeze
+    end
+
     # instance-level configuration
     # ----------------------------
 
