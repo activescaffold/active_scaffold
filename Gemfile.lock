@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     active_scaffold (3.4.99)
-      cow_proxy (~> 0.1.1)
+      cow_proxy (~> 0.1.2)
       ice_nine (~> 0.11)
       rails (>= 4.0.5)
 
@@ -60,7 +60,7 @@ GEM
       simplecov
     concurrent-ruby (1.0.5)
     concurrent-ruby (1.0.5-java)
-    cow_proxy (0.1.1)
+    cow_proxy (0.1.2)
     docile (1.1.5)
     domain_name (0.5.20161129)
       unf (>= 0.0.5, < 1.0.0)
