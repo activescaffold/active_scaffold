@@ -47,8 +47,8 @@ module ActiveScaffold::Config
       Thread.current["#{model_id}_#{self.class.name.underscore}_user"]
     end
 
-    def new_user_settings(conf_instance, storage, params)
-      Thread.current["#{model_id}_#{self.class.name.underscore}_user"] = self.class::UserSettings.new(conf_instance, storage, params)
+    def new_user_settings(storage, params)
+      Thread.current["#{model_id}_#{self.class.name.underscore}_user"] = self.class::UserSettings.new(self, storage, params)
     end
 
     # define a default action_group for this action
@@ -88,6 +88,10 @@ module ActiveScaffold::Config
         # the configuration object for this action
         @conf = conf
         @action = action.to_s
+      end
+
+      def user
+        self
       end
 
       def [](key)

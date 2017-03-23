@@ -308,12 +308,18 @@ module ActiveScaffold::Config
 
       def method_missing(name, *args)
         value = super
-        value.is_a?(Base) ? value.user || value : value
+        value.is_a?(Base) ? action_user_settings(value) : value
+      end
+
+      def action_user_settings(action_config)
+        if action_config.user.nil? && action_config.respond_to?(:new_user_settings)
+          action_config.new_user_settings @storage, @params
+        end
+        action_config.user || action_config
       end
 
       def columns
         @columns ||= UserColumns.new(@conf.columns)
-
       end
     end
 

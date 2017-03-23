@@ -4,13 +4,24 @@ module ActiveScaffold
       base.extend(ClassMethods)
     end
 
-    def active_scaffold_config
-      #@active_scaffold_config ||= self.class.active_scaffold_config.proxy
-      self.class.active_scaffold_config.user || self.class.active_scaffold_config
+    def setup_user_settings
+      config = self.class.active_scaffold_config
+      config.new_user_settings(active_scaffold_session_storage, params)
+      unless ActiveScaffold.threadsafe
+        config.actions.each do |action_name|
+          conf_instance = config.send(action_name) rescue next
+          config.user.action_user_settings(conf_instance)
+        end
+      end
     end
 
-    def active_scaffold_config_for(klass)
-      self.class.active_scaffold_config_for(klass)
+    def active_scaffold_config
+      setup_user_settings unless self.class.active_scaffold_config.user
+      if ActiveScaffold.threadsafe
+        self.class.active_scaffold_config.user
+      else
+        self.class.active_scaffold_config
+      end
     end
 
     module ClassMethods

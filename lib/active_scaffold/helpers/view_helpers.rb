@@ -17,10 +17,6 @@ module ActiveScaffold
       ## Delegates
       ##
 
-      def active_scaffold_config_for(*args)
-        controller.class.active_scaffold_config_for(*args)
-      end
-
       def active_scaffold_controller_for(*args)
         controller.class.active_scaffold_controller_for(*args)
       end

@@ -27,12 +27,12 @@ module ActiveScaffold::Actions
     def set_nested
       @nested = nil
       return unless params[:parent_scaffold] && (params[:association] || params[:named_scope])
-      @nested = ActiveScaffold::DataStructures::NestedInfo.get(active_scaffold_config.model, params)
-      register_constraints_with_action_columns(@nested.constrained_fields) unless @nested.nil?
+      @nested = ActiveScaffold::DataStructures::NestedInfo.get(self.class.active_scaffold_config.model, params)
     end
 
     def configure_nested
       return unless nested?
+      register_constraints_with_action_columns(nested.constrained_fields)
       active_scaffold_config.list.user.label = nested_label
       unless active_scaffold_config.nested.ignore_order_from_association
         chain = beginning_of_chain

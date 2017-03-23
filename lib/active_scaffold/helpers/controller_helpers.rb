@@ -4,12 +4,18 @@ module ActiveScaffold
       def self.included(controller)
         if controller.respond_to? :helper_method
           controller.class_eval do
-            helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated, :generate_temporary_id, :generated_id
+            helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?,
+                          :render_parent_options, :render_parent_action, :nested_singular_association?,
+                          :build_associated, :generate_temporary_id, :generated_id, :active_scaffold_config_for
           end
         end
       end
 
       include ActiveScaffold::Helpers::IdHelpers
+
+      def active_scaffold_config_for(klass)
+        self.class.active_scaffold_config_for(klass)
+      end
 
       def generate_temporary_id(record = nil, generated_id = nil)
         (generated_id || (Time.now.to_f * 1000).to_i.to_s).tap do |id|
