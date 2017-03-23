@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email = 'activescaffold@googlegroups.com'
   s.authors = ['Many, see README']
   s.homepage = 'https://github.com/activescaffold/active_scaffold'
-  s.summary = 'Rails 3.2, 4.0, 4.1 and 4.2 versions of ActiveScaffold supporting prototype and jquery'
+  s.summary = 'Rails 4.x and 5.0 versions of ActiveScaffold supporting prototype and jquery'
   s.description = 'Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, leaving you more time to focus on more challenging (and interesting!) problems.'
   s.require_paths = ['lib']
   s.files = `git ls-files {app,config,lib,public,shoulda_macros,vendor}`.split("\n") + %w[LICENSE CHANGELOG README.md]
@@ -26,5 +26,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('rails', '>= 4.0.5')
   # Deep Freeze Ruby Objects
   s.add_runtime_dependency('ice_nine', '~> 0.11')
-  s.add_runtime_dependency('cow_proxy', '~> 0.1.2')
+  s.add_runtime_dependency('cow_proxy', '~> 0.1.3')
 end
