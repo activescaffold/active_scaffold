@@ -68,7 +68,5 @@ module ActiveScaffold::Config
     # human conditions
     # instead of just filtered you may show the user a humanized search condition statment
     attr_accessor :human_conditions
-
-    undef_method :new_user_settings
   end
 end

@@ -25,7 +25,5 @@ module ActiveScaffold::Config
     attr_writer :label
 
     columns_accessor :columns
-
-    undef_method :new_user_settings
   end
 end

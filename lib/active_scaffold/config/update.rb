@@ -32,7 +32,5 @@ module ActiveScaffold::Config
     def hide_nested_column
       @hide_nested_column.nil? ? true : @hide_nested_column
     end
-
-    undef_method :new_user_settings
   end
 end
