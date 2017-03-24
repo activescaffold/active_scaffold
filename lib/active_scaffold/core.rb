@@ -190,7 +190,7 @@ module ActiveScaffold
         config._load_action_columns
         config
       else
-        controller.active_scaffold_config.proxy
+        controller.active_scaffold_config
       end
 
       def active_scaffold_controller_for(klass)

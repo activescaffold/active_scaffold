@@ -14,7 +14,12 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::IdHelpers
 
       def active_scaffold_config_for(klass)
-        self.class.active_scaffold_config_for(klass)
+        config = self.class.active_scaffold_config_for(klass)
+        if ActiveScaffold.threadsafe
+          config.user || config.new_user_settings({}, {})
+        else
+          config
+        end
       end
 
       def generate_temporary_id(record = nil, generated_id = nil)
