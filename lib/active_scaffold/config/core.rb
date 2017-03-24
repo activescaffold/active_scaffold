@@ -265,7 +265,12 @@ module ActiveScaffold::Config
     private :[]=
 
     def self.method_missing(name, *args)
-      klass = "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize rescue nil
+      begin
+        klass = "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize
+      rescue => e
+        Rails.logger.debug e.message
+        Rails.logger.debug e.backtrace
+      end
       return klass if @@actions.include?(name.to_s.underscore) && klass
       super
     end

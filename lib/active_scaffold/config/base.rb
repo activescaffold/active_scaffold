@@ -150,6 +150,10 @@ module ActiveScaffold::Config
           end
         end
 
+        if self::UserSettings == ActiveScaffold::Config::Base::UserSettings
+          self.const_set 'UserSettings', Class.new(ActiveScaffold::Config::Base::UserSettings)
+        end
+
         self::UserSettings.class_eval do
           define_method "#{name}=" do |val|
             instance_variable_set(var, build_action_columns(val))

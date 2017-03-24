@@ -219,7 +219,7 @@ module ActiveScaffold::Config
     # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
     attr_accessor :calculate_etag
 
-    class UserSettings < UserSettings
+    UserSettings.class_eval do # defined with columns_accessor
       def initialize(conf, storage, params)
         super(conf, storage, params, :list)
         @_sorting = nil
