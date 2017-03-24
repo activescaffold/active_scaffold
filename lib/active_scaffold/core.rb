@@ -6,7 +6,7 @@ module ActiveScaffold
 
     def setup_user_settings
       config = self.class.active_scaffold_config
-      config.new_user_settings(active_scaffold_session_storage, params)
+      config.new_user_settings(user_settings_storage, params)
       unless ActiveScaffold.threadsafe
         config.actions.each do |action_name|
           conf_instance = config.send(action_name) rescue next
