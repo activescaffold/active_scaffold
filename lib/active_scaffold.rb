@@ -9,6 +9,7 @@ module ActiveScaffold
   autoload :Finder, 'active_scaffold/finder'
   autoload :MarkedModel, 'active_scaffold/marked_model'
   autoload :OrmChecks, 'active_scaffold/orm_checks'
+  autoload :Registry, 'active_scaffold/registry'
   autoload :RespondsToParent, 'active_scaffold/responds_to_parent'
   autoload :Tableless, 'active_scaffold/tableless'
   autoload :Version, 'active_scaffold/version'
@@ -90,5 +91,6 @@ end
 require 'active_scaffold/engine'
 require 'ice_nine'
 require 'ice_nine/core_ext/object'
+require 'request_store'
 # TODO: clean up extensions. some could be organized for autoloading, and others could be removed entirely.
 Dir["#{File.dirname __FILE__}/active_scaffold/extensions/*.rb"].each { |file| require file }

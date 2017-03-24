@@ -43,16 +43,16 @@ module ActiveScaffold::Config
     end
 
     def user_settings_key
-      :"#{model_id}_#{self.class.name.underscore}_user"
+      :"#{model_id}_#{self.class.name.underscore}"
     end
 
     # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
     def user
-      Thread.current[user_settings_key]
+      ActiveScaffold::Registry.user_settings[user_settings_key]
     end
 
     def new_user_settings(storage, params)
-      Thread.current[user_settings_key] = self.class::UserSettings.new(self, storage, params)
+      ActiveScaffold::Registry.user_settings[user_settings_key] = self.class::UserSettings.new(self, storage, params)
     end
 
     # define a default action_group for this action

@@ -417,7 +417,7 @@ class AttributeParamsTest < MiniTest::Test
       record = record.class.find(record.id) if record.persisted?
       new_record = @controller.update_record_from_params(record, build_action_columns(record, action, columns), params)
       yield if block_given?
-      Thread.current[:constraint_columns] = nil
+      ActiveScaffold::Registry.constraint_columns.clear
     end
     new_record
   end

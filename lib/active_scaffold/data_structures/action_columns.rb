@@ -137,23 +137,19 @@ module ActiveScaffold::DataStructures
     end
 
     def constraint_columns=(columns)
-      Thread.current[:constraint_columns] ||= {}
-      Thread.current[:constraint_columns][columns_key] = columns
+      ActiveScaffold::Registry.constraint_columns[columns_key] = columns
     end
 
     def constraint_columns
-      constraints = Thread.current[:constraint_columns]
-      (constraints[columns_key] if constraints) || []
+      ActiveScaffold::Registry.constraint_columns[columns_key]
     end
 
     def unauthorized_columns=(columns)
-      Thread.current[:unauthorized_columns] ||= {}
-      Thread.current[:unauthorized_columns][columns_key] = columns
+      ActiveScaffold::Registry.unauthorized_columns[columns_key] = columns
     end
 
     def unauthorized_columns
-      Thread.current[:unauthorized_columns] ||= {}
-      Thread.current[:unauthorized_columns][columns_key] ||= []
+      ActiveScaffold::Registry.unauthorized_columns[columns_key]
     end
 
     def length

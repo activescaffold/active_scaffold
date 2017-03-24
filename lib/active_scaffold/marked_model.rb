@@ -24,11 +24,11 @@ module ActiveScaffold
 
     module ClassMethods
       def marked_records
-        Thread.current[:marked_records] ||= {}
+        ActiveScaffold::Registry.marked_records ||= {}
       end
 
       def marked_records=(marked)
-        Thread.current[:marked_records] = marked
+        ActiveScaffold::Registry.marked_records = marked
       end
 
       def marked_record_ids
