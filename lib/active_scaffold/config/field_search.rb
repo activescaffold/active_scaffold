@@ -1,6 +1,7 @@
 module ActiveScaffold::Config
   class FieldSearch < Base
     self.crud_type = :read
+    NO_COLUMNS = [].freeze
 
     def initialize(core_config)
       super
@@ -52,7 +53,8 @@ module ActiveScaffold::Config
     end
 
     def optional_columns
-      @optional_columns ||= []
+      return @optional_columns || NO_COLUMNS if frozen?
+      @optional_columns ||= NO_COLUMNS.dup
     end
 
     # add array of columns as options for group by to get aggregated listings
