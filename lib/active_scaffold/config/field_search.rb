@@ -70,5 +70,9 @@ module ActiveScaffold::Config
     # human conditions
     # instead of just filtered you may show the user a humanized search condition statment
     attr_accessor :human_conditions
+
+    UserSettings.class_eval do
+      user_attr :optional_columns, :group_options, :grouped_columns, :human_conditions
+    end
   end
 end
