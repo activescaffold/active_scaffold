@@ -14,5 +14,9 @@ module ActiveScaffold
     def unauthorized_columns
       @unauthorized_columns ||= Hash.new { |h, k| h[k] = [] }
     end
+
+    def self.instance
+      RequestStore.store[@per_thread_registry_key] ||= new
+    end
   end
 end
