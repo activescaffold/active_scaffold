@@ -115,6 +115,18 @@ module ActiveScaffold::Config
       def method_missing(name, *args)
         @conf.send(name, *args)
       end
+
+      def respond_to_missing?(name, include_protected = false)
+        @conf.respond_to?(name, include_protected) || super
+      end
+
+      private
+
+      def proxy_columns(columns)
+        proxy = ::CowProxy.wrap(columns)
+        proxy.columns = @conf.core.user.columns
+        proxy
+      end
     end
 
     def formats
@@ -151,16 +163,16 @@ module ActiveScaffold::Config
         end
 
         if self::UserSettings == ActiveScaffold::Config::Base::UserSettings
-          self.const_set 'UserSettings', Class.new(ActiveScaffold::Config::Base::UserSettings)
+          const_set 'UserSettings', Class.new(ActiveScaffold::Config::Base::UserSettings)
         end
 
         self::UserSettings.class_eval do
           define_method "#{name}=" do |val|
-            instance_variable_set(var, build_action_columns(val))
+            instance_variable_set var, proxy_columns(build_action_columns(val))
           end
           define_method name do
-            proxy_columns = instance_variable_get(var)
-                instance_variable_set(var, ::CowProxy.wrap(@conf.send(name)))
+            instance_variable_get(var) ||
+                instance_variable_set(var, proxy_columns(@conf.send(name)))
           end
         end
 
