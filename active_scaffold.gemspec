@@ -26,6 +26,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('rails', '>= 4.0.5')
   # Deep Freeze Ruby Objects
   s.add_runtime_dependency('ice_nine', '~> 0.11')
-  s.add_runtime_dependency('cow_proxy', '~> 0.1.4')
+  s.add_runtime_dependency('cow_proxy', '~> 0.2.0')
   s.add_runtime_dependency('request_store', '~> 1.3')
 end
