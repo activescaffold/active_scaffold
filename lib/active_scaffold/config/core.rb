@@ -231,12 +231,6 @@ module ActiveScaffold::Config
       end
     end
 
-    def proxy
-      return self unless ActiveScaffold.threadsafe
-      # Wrap class so we skip cow proxy wrapper classes cache, config objects may have singleton methods
-      CowProxy.wrap(self)
-    end
-
     # configuration routing.
     # we want to route calls named like an activated action to that action's global or local Config class.
     # ---------------------------
