@@ -262,11 +262,9 @@ module ActiveScaffold::Actions
     end
 
     def active_scaffold_session_storage(id = nil)
-      @as_session_storage ||= begin
-        session_index = active_scaffold_session_storage_key(id)
-        session[session_index] ||= {}
-        session[session_index]
-      end
+      session_index = active_scaffold_session_storage_key(id)
+      session[session_index] ||= {}
+      session[session_index]
     end
 
     def user_settings_storage
