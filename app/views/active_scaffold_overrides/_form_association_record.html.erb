@@ -53,8 +53,8 @@
     columns_length += 1
     show_actions = true
     if column.association && column.form_ui.nil?
-      column = column.dup
-      column.form_ui ||= :select
+      column = column.dup unless ActiveScaffold.threadsafe
+      column.form_ui = :select
     end
 
     col_class = default_col_class.clone
