@@ -90,6 +90,7 @@ module ActiveScaffold
           classes << 'sorted ' if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.user.sorting.sorts_on?(column)
           classes << 'numeric ' if column.number?
           classes << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
+          classes
         end
         classes = "#{@_column_classes[column.name]} "
         classes << 'empty ' if column_empty? column_value
