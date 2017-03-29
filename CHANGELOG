@@ -24,6 +24,7 @@
 - fix updating column and changing from :hidden form_ui to different one
 - fix searching with :multi_chosen search_ui
 - fix human conditions for :chosen and :multi_chosen search_ui
+- fix display of association in list when association_limit is nil
 
 = 3.4.42
 - Fix for protected and private authorized methods

@@ -187,6 +187,7 @@ module ActiveScaffold
       def format_collection_association_value(value, column, label_method, size)
         if column.associated_limit.nil?
           firsts = value.collect(&label_method)
+          safe_join firsts, active_scaffold_config.list.association_join_text
         elsif column.associated_limit.zero?
           size if column.associated_number?
         else
