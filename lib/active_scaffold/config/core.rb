@@ -302,6 +302,7 @@ module ActiveScaffold::Config
     end
 
     class UserSettings < UserSettings
+      include ActiveScaffold::Configurable
       user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
                 :timestamped_messages, :highlight_messages
 

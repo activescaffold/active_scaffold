@@ -7,7 +7,16 @@ module CowProxy
       end
 
       class Set < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::Set)
-        include Indexable
+        protected
+        # Copy wrapped values to duplicated wrapped object
+        # @see CowProxy::Base#__copy_on_write__
+        # @return duplicated wrapped object
+        def __copy_on_write__(*)
+          super.tap do
+            new_set = __getobj__.instance_variable_get(:@set).dup
+            __getobj__.instance_variable_set(:@set, new_set)
+          end
+        end
       end
 
       class ActionColumns < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::ActionColumns)
