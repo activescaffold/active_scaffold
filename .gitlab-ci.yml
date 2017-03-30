@@ -5,7 +5,7 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update git make gcc
+    - apk add --no-cache --update alpine-sdk # git make gcc ...
     - bundle install --clean --deployment --jobs=2 --without default development lint production test
   image: ruby:alpine
   only:
