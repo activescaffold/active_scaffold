@@ -270,7 +270,7 @@ module ActiveScaffold::Config
     end
 
     def self.config_class?(name)
-      ActiveScaffold::Config.const_defined? name.to_s_camelcase
+      ActiveScaffold::Config.const_defined? name.to_s.camelcase
     end
 
     def self.respond_to_missing?(name, include_all = false)
