@@ -136,7 +136,7 @@ module ActiveScaffold::Actions
     def do_update_column
       # delete from params so update :table won't break urls, also they shouldn't be used in sort links too
       value = params.delete(:value)
-      column = params.delete(:column).to_sym
+      column = params.delete(:column)
       params.delete(:original_html)
       params.delete(:original_value)
       @column = active_scaffold_config.columns[column]
