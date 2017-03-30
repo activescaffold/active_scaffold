@@ -2,7 +2,7 @@ module ActiveScaffold::DataStructures
   class Column
     include ActiveScaffold::Configurable
     include ActiveScaffold::OrmChecks
-    NO_PARAMS = ::Set.new.freeze
+    NO_PARAMS = Set.new.freeze
     NO_OPTIONS = {}.freeze
 
     attr_reader :active_record_class
