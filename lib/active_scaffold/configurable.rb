@@ -13,14 +13,19 @@ module ActiveScaffold
       ret
     end
 
-    # this method will surely need tweaking. for example, i'm not sure if it should call super before or after it tries to eval with the binding.
     def method_missing(name, *args)
-      super
-    rescue NoMethodError, NameError
-      if @configuration_binding.nil?
-        raise
-      else
+      if @configuration_binding.try :respond_to?, name, true
         @configuration_binding.send(name, *args)
+      else
+        super
+      end
+    end
+
+    def respond_to_missing?(name, include_all = false)
+      if @configuration_binding
+        @configuration_binding.respond_to?(name, include_all)
+      else
+        super
       end
     end
   end

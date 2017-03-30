@@ -113,11 +113,11 @@ module ActiveScaffold::Config
       end
 
       def method_missing(name, *args)
-        @conf.send(name, *args)
+        @conf.respond_to?(name, true) ? @conf.send(name, *args) : super
       end
 
-      def respond_to_missing?(name, include_protected = false)
-        @conf.respond_to?(name, include_protected) || super
+      def respond_to_missing?(name, include_all = false)
+        @conf.respond_to?(name, include_all) || super
       end
 
       private

@@ -9,7 +9,7 @@ module ActiveScaffold
       config.new_user_settings(user_settings_storage, params)
       unless ActiveScaffold.threadsafe
         config.actions.each do |action_name|
-          conf_instance = config.send(action_name) rescue next
+          conf_instance = config.send(action_name) rescue next # rubocop:disable Style/RescueModifier
           config.user.action_user_settings(conf_instance)
         end
       end

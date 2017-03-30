@@ -238,17 +238,19 @@ module ActiveScaffold::Config
       self[name] || super
     end
 
+    def respond_to_missing?(name, include_all = false)
+      self.class.config_class?(name) && @actions.include?(action_name.to_s.underscore.to_sym) || super
+    end
+
     def [](action_name)
-      @action_configs ||= {}
-      titled_name = action_name.to_s.camelcase
-      underscored_name = action_name.to_s.underscore.to_sym
-      klass = "ActiveScaffold::Config::#{titled_name}".constantize rescue nil
-      if klass
-        if @actions.include? underscored_name
-          @action_configs[underscored_name] ||= klass.new(self)
-        else
-          raise "#{titled_name} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
-        end
+      klass = self.class.config_class(action_name)
+      return unless klass
+
+      if @actions.include? underscored_name
+        @action_configs ||= {}
+        @action_configs[underscored_name] ||= klass.new(self)
+      else
+        raise "#{action_name.to_s.camelcase} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
       end
     end
 
@@ -259,14 +261,20 @@ module ActiveScaffold::Config
     private :[]=
 
     def self.method_missing(name, *args)
-      begin
-        klass = "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize
-      rescue => e
-        Rails.logger.debug e.message
-        Rails.logger.debug e.backtrace
-      end
-      return klass if @@actions.include?(name.to_s.underscore) && klass
-      super
+      klass = config_class(name) if @@actions.include?(name.to_s.underscore)
+      klass || super
+    end
+
+    def self.config_class(name)
+      "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize if config_class?(name)
+    end
+
+    def self.config_class?(name)
+      ActiveScaffold::Config.const_defined? name.to_s_camelcase
+    end
+
+    def self.respond_to_missing?(name, include_all = false)
+      config_class?(name) && @@actions.include?(name.to_s.underscore) || super
     end
     # some utility methods
     # --------------------
@@ -311,6 +319,10 @@ module ActiveScaffold::Config
         value.is_a?(Base) ? action_user_settings(value) : value
       end
 
+      def respond_to_missing?(name, include_all = false)
+        super # avoid rubocop warning
+      end
+
       def action_user_settings(action_config)
         if action_config.user.nil? && action_config.respond_to?(:new_user_settings)
           action_config.new_user_settings @storage, @params
@@ -334,7 +346,15 @@ module ActiveScaffold::Config
       end
 
       def method_missing(name, *args)
-        @global_columns.send(name, *args)
+        if @global_columns.respond_to?(name, true)
+          @global_columns.send(name, *args)
+        else
+          super
+        end
+      end
+
+      def respond_to_missing?(name, include_all = false)
+        @global_columns.respond_to?(name, include_all) || super
       end
     end
   end

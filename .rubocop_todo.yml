@@ -58,7 +58,7 @@ Metrics/AbcSize:
 # Offense count: 2
 # Configuration parameters: CountComments.
 Metrics/BlockLength:
-  Max: 57
+  Max: 80
 
 # Offense count: 22
 Metrics/BlockNesting:
@@ -220,8 +220,6 @@ Style/IfInsideElse:
 # Offense count: 4
 Style/MethodMissing:
   Exclude:
-    - 'lib/active_scaffold/config/core.rb'
-    - 'lib/active_scaffold/configurable.rb'
     - 'lib/active_scaffold/data_structures/action_links.rb'
 
 # Offense count: 11
@@ -273,10 +271,8 @@ Style/RegexpLiteral:
 Style/RescueModifier:
   Exclude:
     - 'lib/active_scaffold/actions/core.rb'
-    - 'lib/active_scaffold/actions/update.rb'
     - 'lib/active_scaffold/bridges/date_picker/ext.rb'
     - 'lib/active_scaffold/bridges/record_select/helpers.rb'
-    - 'lib/active_scaffold/config/core.rb'
     - 'lib/active_scaffold/data_structures/association/active_record.rb'
     - 'lib/active_scaffold/data_structures/column.rb'
     - 'lib/active_scaffold/finder.rb'

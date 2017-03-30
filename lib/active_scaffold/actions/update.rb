@@ -65,7 +65,8 @@ module ActiveScaffold::Actions
           else
             @updated_record = @record
             # get_row so associations are cached like in list action
-            @record = get_row rescue nil # if record doesn't fullfil current conditions remove it from list
+            # if record doesn't fullfil current conditions remove it from list
+            @record = get_row rescue nil # rubocop:disable Style/RescueModifier
           end
         end
         flash.now[:info] = as_(:updated_model, :model => ERB::Util.h((@updated_record || @record).to_label)) if active_scaffold_config.update.persistent
