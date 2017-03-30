@@ -5,11 +5,9 @@
     - ruby --version
     - gem --version
     - bundle --version
-    #- apk add --no-cache --update git make
-    - apt-get -qq update
-    - apt-get -qq install git
+    - apk add --no-cache --update alpine-sdk # git make gcc ...
     - bundle install --clean --deployment --jobs=2 --without default development lint production test
-  image: ruby:2.3 # alpine doesn't work for compile json, needed for codeclimate-test-reporter
+  image: ruby:alpine
   only:
     - master
   stage: deploy
