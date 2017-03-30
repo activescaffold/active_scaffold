@@ -25,7 +25,7 @@
     - bundle --version
     - apk add --no-cache --update git
     - bundle install --clean --deployment --jobs=2 --without default deployment development production test
-  image: ruby:alpine
+  image: ruby:2.3 # fails to install gem in ruby:alpine
   stage: lint
   tags:
     - ruby
