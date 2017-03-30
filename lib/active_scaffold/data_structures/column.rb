@@ -288,11 +288,11 @@ module ActiveScaffold::DataStructures
       # another column
       if other.respond_to?(:name) && other.class == self.class
         name == other.name.to_sym
-      # a string or symbol
-      elsif other.respond_to? :to_sym
-        name == other.to_sym rescue false # catch "interning empty string"
-      # unknown
-      else
+      elsif other.is_a? Symbol
+        name == other
+      elsif other.is_a? String
+        name.to_s == other # avoid creating new symbols
+      else # unknown
         eql? other
       end
     end
