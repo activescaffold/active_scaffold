@@ -14,6 +14,10 @@ group :development do
   gem 'rdoc'
 end
 
+group :lint, :deployment do
+  gem 'rake', require: false
+end
+
 group :development, :lint do
   # A static analysis security vulnerability scanner for Ruby on Rails applications
   gem 'brakeman', require: false
