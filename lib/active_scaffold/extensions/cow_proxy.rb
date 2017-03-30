@@ -8,6 +8,7 @@ module CowProxy
 
       class Set < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::Set)
         protected
+
         # Copy wrapped values to duplicated wrapped object
         # @see CowProxy::Base#__copy_on_write__
         # @return duplicated wrapped object

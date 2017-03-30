@@ -172,7 +172,7 @@ module ActiveScaffold::Config
           end
           define_method name do
             instance_variable_get(var) ||
-                instance_variable_set(var, proxy_columns(@conf.send(name)))
+              instance_variable_set(var, proxy_columns(@conf.send(name)))
           end
         end
 
