@@ -246,6 +246,7 @@ module ActiveScaffold::Config
       klass = self.class.config_class(action_name)
       return unless klass
 
+      underscored_name = action_name.to_s.underscore.to_sym
       if @actions.include? underscored_name
         @action_configs ||= {}
         @action_configs[underscored_name] ||= klass.new(self)
