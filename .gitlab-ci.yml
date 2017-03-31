@@ -184,7 +184,6 @@ test:rails-4.2.x:mri:2.4:
 test:rails-5.0.x:jruby:9.1:
   <<: *use_jruby
   <<: *use_rails_5_0_x
-  allow_failure: true
 
 test:rails-5.0.x:mri:2.2:
   <<: *use_mri
