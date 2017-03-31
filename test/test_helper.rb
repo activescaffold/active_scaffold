@@ -18,6 +18,10 @@ def load_schema
 end
 load_schema
 
+ActiveScaffold.threadsafe!
+# avoid freezing defaults so we can stubs in tests for testing with different defaults
+ActiveScaffold::Config::Core.stubs(:freeze)
+
 %w(model_stub const_mocker company).each do |file|
   require File.join(File.dirname(__FILE__), file)
 end

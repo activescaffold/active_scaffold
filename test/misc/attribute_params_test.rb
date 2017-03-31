@@ -423,9 +423,9 @@ class AttributeParamsTest < MiniTest::Test
   end
 
   def build_action_columns(record, action, *columns)
-    controller = ActiveScaffold::Core.active_scaffold_controller_for record.class
-    controller.active_scaffold_config.send(action).columns = columns
-    controller.active_scaffold_config.send(action).columns
+    config = @controller.active_scaffold_config_for record.class
+    config.send(action).columns = columns
+    config.send(action).columns
   end
 end
 
