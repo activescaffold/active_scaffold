@@ -135,6 +135,15 @@ module ActiveScaffold::Actions
       dst
     end
 
+    def parent_sti_controller
+      return unless params[:parent_sti]
+      unless defined? @parent_sti_controller
+        controller = look_for_parent_sti_controller
+        @parent_sti_controller = controller.controller_path == params[:parent_sti] ? controller : false
+      end
+      @parent_sti_controller
+    end
+
     # override this method if you want to do something after render_field
     def after_render_field(record, column); end
 
@@ -425,6 +434,20 @@ module ActiveScaffold::Actions
         else
           (default_formats + active_scaffold_config.formats).uniq
         end
+    end
+
+    def look_for_parent_sti_controller
+      klass = self.class.active_scaffold_config.model
+      loop do
+        klass = klass.superclass
+        controller = self.class.active_scaffold_controller_for(klass)
+        cfg = controller.active_scaffold_config if controller.uses_active_scaffold?
+        next unless cfg && cfg.add_sti_create_links?
+        return controller if cfg.sti_children.include? controller_path
+      end
+    rescue ActiveScaffold::ControllerNotFound => ex
+      logger.warn "#{ex.message} looking for parent_sti of #{self.class.active_scaffold_config.model.name}"
+      nil
     end
   end
 end
