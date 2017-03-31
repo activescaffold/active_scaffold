@@ -103,10 +103,10 @@ module ActiveScaffold::Actions
     end
 
     def set_parent(record)
-      controller = "#{params[:parent_controller].camelize}Controller".constantize
-      parent_model = controller.active_scaffold_config.model
+      @parent_controller = "#{params[:parent_controller].camelize}Controller".constantize
+      parent_model = @parent_controller.active_scaffold_config.model
       child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
-      association = controller.active_scaffold_config.columns[child_association].try(:association).try(:reverse_association)
+      association = @parent_controller.active_scaffold_config.columns[child_association].try(:association).try(:reverse_association)
       return if association.nil?
 
       parent = parent_model.new
@@ -206,7 +206,7 @@ module ActiveScaffold::Actions
       redirect_to main_path_to_return
     end
 
-    # Overide this method on your controller to provide model with named scopes
+    # Overide this method on your @parent_controller to provide model with named scopes
     def beginning_of_chain
       active_scaffold_config.model
     end
