@@ -34,6 +34,9 @@ Style/SpaceInsideHashLiteralBraces:
 Lint/UnusedMethodArgument:
   Enabled: false
 
+Metrics/ClassLength:
+  Max: 500
+
 Metrics/ModuleLength:
   Max: 500
 
