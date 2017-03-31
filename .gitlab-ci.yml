@@ -99,7 +99,6 @@ lint:bundler:audit:
 
 lint:rubocop:
   <<: *lint
-  allow_failure: true # only in old branches
   script:
     - bin/rubocop
 
