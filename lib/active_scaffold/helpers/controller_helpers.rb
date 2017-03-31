@@ -85,7 +85,7 @@ module ActiveScaffold
       end
 
       def main_form_controller
-        @main_form_controller ||= "#{params[:parent_controller]}Controller".camelize.constantize if params[:parent_controller]
+        @main_form_controller ||= "#{params[:parent_controller].camelize}Controller".constantize if params[:parent_controller]
       end
 
       def render_parent?
