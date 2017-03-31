@@ -369,9 +369,10 @@ module ActiveScaffold
           options = {:id => nil, :class => 'as_sort',
                      'data-page-history' => controller_id,
                      :remote => true, :method => :get}
-          # :id needed because rails reuse it even if we delete from params (like do_refresh_list does)
-          url_options = params_for(:action => :index, :page => 1, :id => params[:id],
-                                   :sort => column.name, :sort_direction => sort_direction)
+          url_options = {action: :index, page: 1, sort: column.name, sort_direction: sort_direction}
+          # :id needed because rails reuse it even if it was deleted from params (like do_refresh_list does)
+          url_options[:id] = nil if @remove_id_from_list_links
+          url_options = params_for(url_options)
           unless active_scaffold_config.store_user_settings
             url_options[:search] = search_params if search_params.present?
           end
