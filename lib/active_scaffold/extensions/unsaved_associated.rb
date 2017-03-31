@@ -13,7 +13,7 @@ class ActiveRecord::Base
   end
 
   def save_associated!
-    save_associated || raise(ActiveRecord::RecordNotSaved)
+    save_associated || raise(ActiveRecord::RecordNotSaved, "Fail saving associations for #{inspect}", self)
   end
 
   def no_errors_in_associated?

@@ -87,24 +87,21 @@ module ActiveScaffold
       def render_parent_options
         if nested_singular_association?
           {:controller => nested.parent_scaffold.controller_path, :action => :index, :id => nested.parent_id}
-        elsif params[:parent_sti]
-          options = params_for(:controller => params[:parent_sti], :action => render_parent_action, :parent_sti => nil)
-          options.merge(:action => :index, :id => @record.to_param) if render_parent_action == :row
+        elsif parent_sti_controller
+          options = params_for(:controller => parent_sti_controller.controller_path, :action => render_parent_action, :parent_sti => nil)
+          options.merge!(:action => :index, :id => @record.to_param) if render_parent_action == :row
+          options
         end
       end
 
       def render_parent_action
         if @parent_action.nil?
-          begin
-            @parent_action = :row
-            if params[:parent_sti]
-              parent_controller = "#{params[:parent_sti].to_s.camelize}Controller".constantize
-              @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list == true
-              @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list == true
-              @parent_action = :index if action_name == 'destroy' && parent_controller.active_scaffold_config.actions.include?(:delete) && parent_controller.active_scaffold_config.delete.refresh_list == true
-            end
-          rescue ActiveScaffold::ControllerNotFound => ex
-            logger.warn "#{ex.message} for parent_sti #{params[:parent_sti]}"
+          @parent_action = :row
+          if parent_sti_controller
+            parent_sti_config = parent_sti_controller.active_scaffold_config
+            @parent_action = :index if action_name == 'create' && parent_sti_config.actions.include?(:create) && parent_sti_config.create.refresh_list == true
+            @parent_action = :index if action_name == 'update' && parent_sti_config.actions.include?(:update) && parent_sti_config.update.refresh_list == true
+            @parent_action = :index if action_name == 'destroy' && parent_sti_config.actions.include?(:delete) && parent_sti_config.delete.refresh_list == true
           end
         end
         @parent_action

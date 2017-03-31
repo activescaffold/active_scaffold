@@ -107,6 +107,9 @@ module ActiveScaffold::Actions
 
     # The actual algorithm to prepare for the list view
     def do_list
+      # id: nil needed in params_for because rails reuse it even
+      # if it was deleted from params (like do_refresh_list does)
+      @remove_id_from_list_links = params[:id].blank?
       set_includes_for_columns
 
       options = {:sorting => active_scaffold_config.list.user.sorting,

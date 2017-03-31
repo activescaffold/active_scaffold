@@ -103,10 +103,10 @@ module ActiveScaffold::Actions
     end
 
     def set_parent(record)
-      controller = "#{params[:parent_controller].camelize}Controller".constantize
-      parent_model = controller.active_scaffold_config.model
+      @parent_controller = "#{params[:parent_controller].camelize}Controller".constantize
+      parent_model = @parent_controller.active_scaffold_config.model
       child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
-      association = controller.active_scaffold_config.columns[child_association.to_sym].try(:association).try(:reverse_association)
+      association = @parent_controller.active_scaffold_config.columns[child_association].try(:association).try(:reverse_association)
       return if association.nil?
 
       parent = parent_model.new
@@ -133,6 +133,15 @@ module ActiveScaffold::Actions
       dst ||= orig.class.new
       orig.attributes.each { |attr, value| dst.send :write_attribute, attr, value }
       dst
+    end
+
+    def parent_sti_controller
+      return unless params[:parent_sti]
+      unless defined? @parent_sti_controller
+        controller = look_for_parent_sti_controller
+        @parent_sti_controller = controller.controller_path == params[:parent_sti] ? controller : false
+      end
+      @parent_sti_controller
     end
 
     # override this method if you want to do something after render_field
@@ -206,7 +215,7 @@ module ActiveScaffold::Actions
       redirect_to main_path_to_return
     end
 
-    # Overide this method on your controller to provide model with named scopes
+    # Overide this method on your @parent_controller to provide model with named scopes
     def beginning_of_chain
       active_scaffold_config.model
     end
@@ -425,6 +434,20 @@ module ActiveScaffold::Actions
         else
           (default_formats + active_scaffold_config.formats).uniq
         end
+    end
+
+    def look_for_parent_sti_controller
+      klass = self.class.active_scaffold_config.model
+      loop do
+        klass = klass.superclass
+        controller = self.class.active_scaffold_controller_for(klass)
+        cfg = controller.active_scaffold_config if controller.uses_active_scaffold?
+        next unless cfg && cfg.add_sti_create_links?
+        return controller if cfg.sti_children.include? controller_path
+      end
+    rescue ActiveScaffold::ControllerNotFound => ex
+      logger.warn "#{ex.message} looking for parent_sti of #{self.class.active_scaffold_config.model.name}"
+      nil
     end
   end
 end
