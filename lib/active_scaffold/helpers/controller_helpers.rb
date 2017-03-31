@@ -4,7 +4,11 @@ module ActiveScaffold
       def self.included(controller)
         if controller.respond_to? :helper_method
           controller.class_eval do
-            helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?, :render_parent_options, :render_parent_action, :nested_singular_association?, :build_associated, :generate_temporary_id, :generated_id
+            helper_method :params_for, :conditions_from_params, :render_parent?,
+                          :main_path_to_return, :render_parent_options,
+                          :render_parent_action, :nested_singular_association?,
+                          :main_form_controller, :build_associated,
+                          :generate_temporary_id, :generated_id
           end
         end
       end
@@ -78,6 +82,10 @@ module ActiveScaffold
 
       def nested_singular_association?
         nested? && (nested.belongs_to? || nested.has_one?)
+      end
+
+      def main_form_controller
+        @main_form_controller ||= "#{params[:parent_controller]}Controller".constantize if params[:parent_controller]
       end
 
       def render_parent?

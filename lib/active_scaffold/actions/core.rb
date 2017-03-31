@@ -71,7 +71,7 @@ module ActiveScaffold::Actions
         else
           updated_record_with_column(@column, params.delete(:value), @scope)
         end
-      set_parent(@record) if params[:parent_controller] && @scope
+      set_parent(@record) if main_form_controller && @scope
       after_render_field(@record, @column)
     end
 
@@ -103,10 +103,9 @@ module ActiveScaffold::Actions
     end
 
     def set_parent(record)
-      @parent_controller = "#{params[:parent_controller].camelize}Controller".constantize
-      parent_model = @parent_controller.active_scaffold_config.model
+      parent_model = main_form_controller.active_scaffold_config.model
       child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
-      association = @parent_controller.active_scaffold_config.columns[child_association].try(:association).try(:reverse_association)
+      association = main_form_controller.active_scaffold_config.columns[child_association].try(:association).try(:reverse_association)
       return if association.nil?
 
       parent = parent_model.new
