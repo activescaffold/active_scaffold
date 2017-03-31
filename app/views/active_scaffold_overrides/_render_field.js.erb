@@ -2,7 +2,7 @@
   column = if render_field.is_a? ActiveScaffold::DataStructures::Column
     render_field
   else
-    active_scaffold_config.columns[render_field.to_sym]
+    active_scaffold_config.columns[render_field]
   end
   return unless @main_columns.include? column.name
   @rendered ||= Set.new
