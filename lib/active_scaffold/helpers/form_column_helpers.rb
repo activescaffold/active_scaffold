@@ -242,6 +242,12 @@ module ActiveScaffold
         options
       end
 
+      def active_scaffold_select_name_with_multiple(options)
+        if options[:multiple] && !options[:name].to_s.ends_with?('[]')
+          options[:name] = "#{options[:name]}[]"
+        end
+      end
+
       def active_scaffold_input_singular_association(column, html_options, options = {})
         record = html_options.delete(:object)
         associated = record.send(column.association.name)
@@ -254,7 +260,7 @@ module ActiveScaffold
 
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
-        html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
+        active_scaffold_select_name_with_multiple html_options
         active_scaffold_translate_select_options(options)
 
         html =
@@ -339,7 +345,7 @@ module ActiveScaffold
         end
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
-        html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
+        active_scaffold_select_name_with_multiple html_options
         active_scaffold_translate_select_options(options)
         select(:record, column.name, options_for_select, options, html_options)
       end
