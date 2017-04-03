@@ -110,9 +110,12 @@ pages:
       - public
   script:
     - bin/codeclimate-test-reporter
-    - mkdir -pv public
-    - mv -v brakeman public
-    - mv -v coverage public
+    - DIR=public/$([ "$CI_COMMIT_REF_SLUG" = master ] || echo $CI_COMMIT_REF_SLUG)
+    - mkdir -pv $DIR
+    - mv -v brakeman $DIR
+    - mv -v coverage $DIR
+  except:
+    - tags
 
 stages:
   - lint
