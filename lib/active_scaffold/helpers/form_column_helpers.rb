@@ -430,8 +430,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_password(column, options)
-        options = active_scaffold_input_text_options(options)
-        password_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :password_field, column, options
       end
 
       def active_scaffold_input_textarea(column, options)
@@ -439,8 +438,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_virtual(column, options)
-        options = active_scaffold_input_text_options(options)
-        text_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :text_field, column, options
       end
 
       # Some fields from HTML5 (primarily for using in-browser validation)
@@ -448,34 +446,40 @@ module ActiveScaffold
 
       # A text box, that accepts only valid email address (in-browser validation)
       def active_scaffold_input_email(column, options)
-        options = active_scaffold_input_text_options(options)
-        email_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :email_field, column, options
       end
 
       # A text box, that accepts only valid URI (in-browser validation)
       def active_scaffold_input_url(column, options)
-        options = active_scaffold_input_text_options(options)
-        url_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :url_field, column, options
       end
 
       # A text box, that accepts only valid phone-number (in-browser validation)
       def active_scaffold_input_telephone(column, options)
-        options = active_scaffold_input_text_options(options)
-        telephone_field :record, column.name, options.merge(column.options).except(:format)
+        active_scaffold_text_input :telephone_field, column, options, :format
       end
 
       # A spinbox control for number values (in-browser validation)
       def active_scaffold_input_number(column, options)
-        options = numerical_constraints_for_column(column, options)
-        options = active_scaffold_input_text_options(options)
-        number_field :record, column.name, options.merge(column.options).except(:format)
+        active_scaffold_number_input :number_field, column, options, :format
       end
 
       # A slider control for number values (in-browser validation)
       def active_scaffold_input_range(column, options)
+        active_scaffold_number_input :range_field, column, options, :format
+      end
+
+      # A slider control for number values (in-browser validation)
+      def active_scaffold_number_input(method, column, options, remove_options = nil)
         options = numerical_constraints_for_column(column, options)
+        active_scaffold_text_input method, column, options, remove_options
+      end
+
+      def active_scaffold_text_input(method, column, options, remove_options = nil)
         options = active_scaffold_input_text_options(options)
-        range_field :record, column.name, options.merge(column.options).except(:format)
+        options = options.merge(column.options)
+        options = options.except(*remove_options) if remove_options.present?
+        send method, :record, column.name, options
       end
 
       # A color picker
