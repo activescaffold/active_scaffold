@@ -83,7 +83,6 @@ cache:
 
 lint:brakeman:
   <<: *lint
-  allow_failure: true
   artifacts:
     expire_in: 1 day
     paths:
@@ -110,9 +109,12 @@ pages:
       - public
   script:
     - bin/codeclimate-test-reporter
-    - mkdir -pv public
-    - mv -v brakeman public
-    - mv -v coverage public
+    - DIR=public/$([ "$CI_COMMIT_REF_SLUG" = master ] || echo $CI_COMMIT_REF_SLUG)
+    - mkdir -pv $DIR
+    - mv -v brakeman $DIR
+    - mv -v coverage $DIR
+  except:
+    - tags
 
 stages:
   - lint
@@ -184,7 +186,6 @@ test:rails-4.2.x:mri:2.4:
 test:rails-5.0.x:jruby:9.1:
   <<: *use_jruby
   <<: *use_rails_5_0_x
-  allow_failure: true
 
 test:rails-5.0.x:mri:2.2:
   <<: *use_mri

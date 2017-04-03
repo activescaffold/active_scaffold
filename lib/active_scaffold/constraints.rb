@@ -57,7 +57,7 @@ module ActiveScaffold
             table = far_association.table_name
 
             active_scaffold_references.concat([{k => far_association.name}]) # e.g. {:den => :park}
-            hash_conditions.merge!("#{table}.#{field}" => v.values.first)
+            hash_conditions.deep_merge!(table => {field => v.values.first})
 
           # association column constraint
           elsif column.association
@@ -70,7 +70,7 @@ module ActiveScaffold
                 active_scaffold_references.concat column.includes
               end
             end
-            hash_conditions.merge!(condition_from_association_constraint(column.association, v))
+            hash_conditions.deep_merge!(condition_from_association_constraint(column.association, v))
 
           # regular column constraints
           elsif column.searchable? && params[column.name] != v
@@ -79,7 +79,7 @@ module ActiveScaffold
           end
         # unknown-to-activescaffold-but-real-database-column constraint
         elsif active_scaffold_config.model.columns_hash[k.to_s] && params[column.name] != v
-          hash_conditions.merge!(k => v)
+          hash_conditions.deep_merge!(k => v)
         else
           raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
         end
@@ -108,17 +108,20 @@ module ActiveScaffold
         value = association.klass.find(value).send(association.primary_key)
       end
 
-      condition = {"#{table}.#{field}" => value}
       if association.polymorphic?
-        raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller unless params[:parent_model]
-        condition["#{table}.#{association.foreign_type}"] = params[:parent_model].constantize.to_s
+        unless value.is_a?(Array) && value.size == 2
+          raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller
+        end
+        condition = {table => {association.foreign_type => value[0], field => value[1]}}
+      else
+        condition = {table => {field.to_s => value}}
       end
 
       condition
     end
 
     def polymorphic_constraint_error(association)
-      "Malformed constraint. You have added a constraint for #{association.name} polymorphic association but parent_model is not set."
+      "Malformed constraint. You have added a constraint for #{association.name} polymorphic association but value is not an array of class name and id."
     end
 
     def constraint_error(klass, column_name)
@@ -144,8 +147,10 @@ module ActiveScaffold
           if column.association.collection?
             record.send(k.to_s).send(:<<, column.association.klass.find(v))
           elsif column.association.polymorphic?
-            raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller unless params[:parent_model]
-            record.send("#{k}=", params[:parent_model].constantize.find(v))
+            unless v.is_a?(Array) && v.size == 2
+              raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller
+            end
+            record.send("#{k}=", v[0].constantize.find(v[1]))
           else # regular singular association
             record.send("#{k}=", column.association.klass.find(v))
 

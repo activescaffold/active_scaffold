@@ -71,7 +71,7 @@ module ActiveScaffold::Actions
         else
           updated_record_with_column(@column, params.delete(:value), @scope)
         end
-      set_parent(@record) if params[:parent_controller] && @scope
+      set_parent(@record) if main_form_controller && @scope
       after_render_field(@record, @column)
     end
 
@@ -102,17 +102,31 @@ module ActiveScaffold::Actions
       record
     end
 
+    def subform_child_association
+      params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '').presence
+    end
+
+    def controller_for_path(column, path)
+      ctrl = self.class.active_scaffold_controller_for(column.association.klass)
+      if ctrl.controller_path == path
+        ctrl
+      else
+        ctrl.subclasses.find do |ctrl|
+          ctrl.controller_path == path
+        end
+      end
+    end
+
     def set_parent(record)
-      controller = "#{params[:parent_controller].camelize}Controller".constantize
-      parent_model = controller.active_scaffold_config.model
-      child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
-      association = controller.active_scaffold_config.columns[child_association].try(:association).try(:reverse_association)
+      cfg = main_form_controller.active_scaffold_config
+      association = cfg.columns[subform_child_association].try(:association).try(:reverse_association)
       return if association.nil?
 
+      parent_model = cfg.model
       parent = parent_model.new
       copy_attributes(parent_model.find(params[:parent_id]), parent) if params[:parent_id]
       parent.id = params[:parent_id]
-      parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
+      parent = update_record_from_params(parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
       apply_constraints_to_record(parent) unless params[:parent_id]
       if association.collection?
         record.send(association.name) << parent
@@ -133,6 +147,15 @@ module ActiveScaffold::Actions
       dst ||= orig.class.new
       orig.attributes.each { |attr, value| dst.send :write_attribute, attr, value }
       dst
+    end
+
+    def parent_sti_controller
+      return unless params[:parent_sti]
+      unless defined? @parent_sti_controller
+        controller = look_for_parent_sti_controller
+        @parent_sti_controller = controller.controller_path == params[:parent_sti] ? controller : false
+      end
+      @parent_sti_controller
     end
 
     # override this method if you want to do something after render_field
@@ -390,7 +413,7 @@ module ActiveScaffold::Actions
     end
 
     def conditional_get_support?
-      request.get? && active_scaffold_config.user.conditional_get_support
+      request.get? && active_scaffold_config.conditional_get_support
     end
 
     def virtual_columns(columns)
@@ -423,6 +446,20 @@ module ActiveScaffold::Actions
         else
           (default_formats + active_scaffold_config.formats).uniq
         end
+    end
+
+    def look_for_parent_sti_controller
+      klass = self.class.active_scaffold_config.model
+      loop do
+        klass = klass.superclass
+        controller = self.class.active_scaffold_controller_for(klass)
+        cfg = controller.active_scaffold_config if controller.uses_active_scaffold?
+        next unless cfg && cfg.add_sti_create_links?
+        return controller if cfg.sti_children.include? controller_path
+      end
+    rescue ActiveScaffold::ControllerNotFound => ex
+      logger.warn "#{ex.message} looking for parent_sti of #{self.class.active_scaffold_config.model.name}"
+      nil
     end
   end
 end

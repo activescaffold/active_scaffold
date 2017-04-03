@@ -4,9 +4,11 @@ module ActiveScaffold
       def self.included(controller)
         if controller.respond_to? :helper_method
           controller.class_eval do
-            helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?,
-                          :render_parent_options, :render_parent_action, :nested_singular_association?,
-                          :build_associated, :generate_temporary_id, :generated_id, :active_scaffold_config_for
+            helper_method :params_for, :conditions_from_params, :render_parent?,
+                          :main_path_to_return, :render_parent_options,
+                          :render_parent_action, :nested_singular_association?,
+                          :main_form_controller, :build_associated,
+                          :generate_temporary_id, :generated_id, :active_scaffold_config_for
           end
         end
       end
@@ -91,6 +93,19 @@ module ActiveScaffold
         nested? && (nested.belongs_to? || nested.has_one?)
       end
 
+      def main_form_controller
+        return unless params[:parent_controller] && subform_child_association
+        @main_form_controller ||= begin
+          controller = nil
+          active_scaffold_config.columns.find do |col|
+            next unless col.association.try(:reverse).to_s == subform_child_association
+            controller = controller_for_path(col, params[:parent_controller])
+            break if controller
+          end
+          controller
+        end
+      end
+
       def render_parent?
         nested_singular_association? || params[:parent_sti]
       end
@@ -98,24 +113,21 @@ module ActiveScaffold
       def render_parent_options
         if nested_singular_association?
           {:controller => nested.parent_scaffold.controller_path, :action => :index, :id => nested.parent_id}
-        elsif params[:parent_sti]
-          options = params_for(:controller => params[:parent_sti], :action => render_parent_action, :parent_sti => nil)
-          options.merge(:action => :index, :id => @record.to_param) if render_parent_action == :row
+        elsif parent_sti_controller
+          options = params_for(:controller => parent_sti_controller.controller_path, :action => render_parent_action, :parent_sti => nil)
+          options.merge!(:action => :index, :id => @record.to_param) if render_parent_action == :row
+          options
         end
       end
 
       def render_parent_action
         if @parent_action.nil?
-          begin
-            @parent_action = :row
-            if params[:parent_sti]
-              parent_controller = "#{params[:parent_sti].to_s.camelize}Controller".constantize
-              @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list == true
-              @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list == true
-              @parent_action = :index if action_name == 'destroy' && parent_controller.active_scaffold_config.actions.include?(:delete) && parent_controller.active_scaffold_config.delete.refresh_list == true
-            end
-          rescue ActiveScaffold::ControllerNotFound => ex
-            logger.warn "#{ex.message} for parent_sti #{params[:parent_sti]}"
+          @parent_action = :row
+          if parent_sti_controller
+            parent_sti_config = parent_sti_controller.active_scaffold_config
+            @parent_action = :index if action_name == 'create' && parent_sti_config.actions.include?(:create) && parent_sti_config.create.refresh_list == true
+            @parent_action = :index if action_name == 'update' && parent_sti_config.actions.include?(:update) && parent_sti_config.update.refresh_list == true
+            @parent_action = :index if action_name == 'destroy' && parent_sti_config.actions.include?(:delete) && parent_sti_config.delete.refresh_list == true
           end
         end
         @parent_action
