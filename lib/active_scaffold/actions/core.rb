@@ -102,16 +102,31 @@ module ActiveScaffold::Actions
       record
     end
 
+    def subform_child_association
+      params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '').presence
+    end
+
+    def controller_for_path(column, path)
+      ctrl = self.class.active_scaffold_controller_for(column.association.klass)
+      if ctrl.controller_path == path
+        ctrl
+      else
+        ctrl.subclasses.find do |ctrl|
+          ctrl.controller_path == path
+        end
+      end
+    end
+
     def set_parent(record)
-      parent_model = main_form_controller.active_scaffold_config.model
-      child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
-      association = main_form_controller.active_scaffold_config.columns[child_association].try(:association).try(:reverse_association)
+      cfg = main_form_controller.active_scaffold_config
+      association = cfg.columns[subform_child_association].try(:association).try(:reverse_association)
       return if association.nil?
 
+      parent_model = cfg.model
       parent = parent_model.new
       copy_attributes(parent_model.find(params[:parent_id]), parent) if params[:parent_id]
       parent.id = params[:parent_id]
-      parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
+      parent = update_record_from_params(parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
       apply_constraints_to_record(parent) unless params[:parent_id]
       if association.collection?
         record.send(association.name) << parent

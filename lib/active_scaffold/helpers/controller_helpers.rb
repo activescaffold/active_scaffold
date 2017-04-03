@@ -85,7 +85,16 @@ module ActiveScaffold
       end
 
       def main_form_controller
-        @main_form_controller ||= "#{params[:parent_controller].camelize}Controller".constantize if params[:parent_controller]
+        return unless params[:parent_controller] && subform_child_association
+        @main_form_controller ||= begin
+          controller = nil
+          active_scaffold_config.columns.find do |col|
+            next unless col.association.try(:reverse).to_s == subform_child_association
+            controller = controller_for_path(col, params[:parent_controller])
+            break if controller
+          end
+          controller
+        end
       end
 
       def render_parent?
