@@ -111,9 +111,7 @@ module ActiveScaffold::Actions
       if ctrl.controller_path == path
         ctrl
       else
-        ctrl.subclasses.find do |ctrl|
-          ctrl.controller_path == path
-        end
+        ctrl.subclasses.find { |c| c.controller_path == path }
       end
     end
 
