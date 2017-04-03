@@ -83,7 +83,6 @@ cache:
 
 lint:brakeman:
   <<: *lint
-  allow_failure: true
   artifacts:
     expire_in: 1 day
     paths:
