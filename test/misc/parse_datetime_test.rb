@@ -29,7 +29,6 @@ class ParseDatetimeTest < MiniTest::Test
 
   def setup
     DateTimeModel.load_schema! if Rails.version >= '5.0'
-    I18n.t('time.formats', locale: :es) # needed so is loaded
     spanish = {
       time: {
         formats: {picker: '%a, %d %b %Y %H:%M:%S'}
