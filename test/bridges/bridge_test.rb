@@ -53,6 +53,7 @@ class BridgeTest < MiniTest::Test
         end
       end
     end
+    ActiveScaffold.js_framework = nil
   end
 
   def test__semantic_attributes_bridge
