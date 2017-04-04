@@ -182,13 +182,18 @@ module ActiveScaffold
           '%B' => 'date.month_names',
           '%b' => 'date.abbr_month_names'
         }
-        keys.each do |f, k|
-          if format.include? f
-            table = Hash[I18n.t(k).compact.zip(I18n.t(k, :locale => :en).compact)]
-            value.gsub!(Regexp.union(table.keys)) { |s| table[s] }
-          end
+        key_index = keys.keys.map { |key| [key, format.index(key)] }.to_h
+        keys.select! { |k, _| key_index[k] }
+        translated = ''
+        keys.sort_by { |k, _| key_index[k] }.each do |f, k|
+          table = Hash[I18n.t(k).compact.zip(I18n.t(k, :locale => :en).compact)]
+          regexp = Regexp.union(table.keys)
+          index = value.index(regexp)
+          next unless index
+          translated << value.slice!(0...index)
+          value.sub!(regexp) { |s| translated << table[s]; '' }
         end
-        value
+        translated << value
       end
 
       def condition_value_for_datetime(column, value, conversion = :to_time)
@@ -204,10 +209,12 @@ module ActiveScaffold
               value.send(conversion)
             end
           elsif conversion == :to_date
-            Date.strptime(value, I18n.t("date.formats.#{column.options[:format] || :default}")) rescue nil
+            format = I18n.t("date.formats.#{column.options[:format] || :default}")
+            value = translate_days_and_months(value, format) if I18n.locale != :en
+            Date.strptime(value, format) rescue nil
           else
             parts = Date._parse(value)
-            format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if ActiveScaffold.js_framework == :jquery
+            format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if conversion == :to_time && ActiveScaffold.js_framework == :jquery
             if format.blank?
               time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect { |part, format_part| format_part if parts[part].present? }.compact
               format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"

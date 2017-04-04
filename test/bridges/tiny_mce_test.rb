@@ -27,8 +27,9 @@ class TinyMceTest < ActionView::TestCase
 
   def test_includes
     ActiveScaffold::Bridges::TinyMce.expects(:install?).returns(true)
-    ActiveScaffold.js_framework = :jquery
-    assert ActiveScaffold::Bridges.all_javascripts.include?('tinymce-jquery')
+    with_js_framework :jquery do
+      assert ActiveScaffold::Bridges.all_javascripts.include?('tinymce-jquery')
+    end
   end
 
   def test_form_ui

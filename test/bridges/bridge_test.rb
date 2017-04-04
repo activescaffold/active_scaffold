@@ -12,14 +12,14 @@ class BridgeTest < MiniTest::Test
   end
 
   def test__cds_bridge
-    js, ActiveScaffold.js_framework = ActiveScaffold.js_framework, :prototype
-    ConstMocker.mock('CalendarDateSelect') do |cm|
-      cm.remove
-      assert(!bridge_will_be_installed('CalendarDateSelect'))
-      cm.declare
-      assert(bridge_will_be_installed('CalendarDateSelect'))
+    with_js_framework :prototype do
+      ConstMocker.mock('CalendarDateSelect') do |cm|
+        cm.remove
+        assert(!bridge_will_be_installed('CalendarDateSelect'))
+        cm.declare
+        assert(bridge_will_be_installed('CalendarDateSelect'))
+      end
     end
-    ActiveScaffold.js_framework = js
   end
 
   def test__file_column_bridge
