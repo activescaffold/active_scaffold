@@ -23,8 +23,17 @@ end
 
 I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))['en']
 
+# rails 4.0
 unless defined? Minitest::Test
   class Minitest::Test < MiniTest::Unit::TestCase
+  end
+
+  class MiniTest::Unit::TestCase
+    def with_js_framework(framework)
+      framework, ActiveScaffold.js_framework = ActiveScaffold.js_framework, framework
+      yield
+      ActiveScaffold.js_framework = framework
+    end
   end
 end
 
