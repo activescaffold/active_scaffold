@@ -285,12 +285,12 @@ module ActiveScaffold
       def active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class)
         required = options.delete(:required)
         case ActiveScaffold.js_framework
-          when :jquery
-            js_remove_file_code = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show()#{".find('input').attr('required', 'required')" if required}; return false;"
-            js_dont_remove_file_code = "jQuery(this).parents('div.#{controls_class}').find('input.remove_file').val('false'); return false;"
-          when :prototype
-            js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show()#{".down().writeAttribute('required', 'required')" if required}; return false;"
-            js_dont_remove_file_code = "jQuery(this).parents('div.#{controls_class}').find('input.remove_file').val('false'); return false;"
+        when :jquery
+          js_remove_file_code = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show()#{".find('input').attr('required', 'required')" if required}; return false;"
+          js_dont_remove_file_code = "jQuery(this).parents('div.#{controls_class}').find('input.remove_file').val('false'); return false;"
+        when :prototype
+          js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show()#{".down().writeAttribute('required', 'required')" if required}; return false;"
+          js_dont_remove_file_code = "jQuery(this).parents('div.#{controls_class}').find('input.remove_file').val('false'); return false;"
         end
 
         object_name, method = options[:name].split(/\[(#{column.name})\]/)

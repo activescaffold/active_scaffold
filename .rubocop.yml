@@ -38,7 +38,7 @@ Metrics/ClassLength:
   Max: 500
 
 Metrics/ModuleLength:
-  Max: 500
+  Max: 600
 
 Performance/RedundantMerge:
   MaxKeyValuePairs: 1

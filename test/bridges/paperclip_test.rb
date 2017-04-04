@@ -67,9 +67,9 @@ class PaperclipTest < ActionView::TestCase
       '<div class="paperclip_controls"><div>',
       '<a href="/system/file" target="_blank">file</a> | ',
       '<input name="record[delete_logo]" type="hidden" class="remove_file" id="record_delete_logo" value="false" />',
-      %{<a href="#" onclick="#{click_js}">Remove or Replace file</a>},
+      %(<a href="#" onclick="#{click_js}">Remove or Replace file</a>),
       '</div><div style="display: none">',
-      %{<input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" onchange="#{change_js}" />},
+      %(<input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" onchange="#{change_js}" />),
       '</div></div>'
     ].join
     assert_dom_equal template, active_scaffold_input_paperclip(config.columns[:logo], :name => 'record[logo]', :id => 'record_logo', :object => @record)
