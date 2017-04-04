@@ -5,7 +5,7 @@ module ActiveScaffold::Bridges
         select_options = {:prompt => as_(:_select_), :priority_countries => column.options[:priority] || [:us], :format => column.options[:format]}
         select_options.merge!(options)
         options.reverse_merge!(column.options).except!(:prompt, :priority, :format)
-        options[:name] += '[]' if options[:multiple]
+        active_scaffold_select_name_with_multiple options
         country_select(:record, column.name, select_options, options.except(:object))
       end
     end

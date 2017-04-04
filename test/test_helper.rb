@@ -36,6 +36,12 @@ end
 class MiniTest::Test
   protected
 
+  def with_js_framework(framework)
+    framework, ActiveScaffold.js_framework = ActiveScaffold.js_framework, framework
+    yield
+    ActiveScaffold.js_framework = framework
+  end
+
   def config_for(klass, namespace = nil)
     ActiveScaffold::Config::Core.new("#{namespace}#{klass.to_s.underscore.downcase}")
   end

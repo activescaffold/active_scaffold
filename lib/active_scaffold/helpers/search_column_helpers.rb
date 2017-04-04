@@ -107,7 +107,7 @@ module ActiveScaffold
         options = options.merge(:selected => associated).merge column.options
         html_options.merge! column.options[:html_options] || {}
         if html_options[:multiple]
-          html_options[:name] += '[]'
+          active_scaffold_select_name_with_multiple html_options
         else
           options[:include_blank] ||= as_(:_select_)
           active_scaffold_translate_select_options(options)

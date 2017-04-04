@@ -242,6 +242,12 @@ module ActiveScaffold
         options
       end
 
+      def active_scaffold_select_name_with_multiple(options)
+        if options[:multiple] && !options[:name].to_s.ends_with?('[]')
+          options[:name] = "#{options[:name]}[]"
+        end
+      end
+
       def active_scaffold_input_singular_association(column, html_options, options = {})
         record = html_options.delete(:object)
         associated = record.send(column.association.name)
@@ -254,7 +260,7 @@ module ActiveScaffold
 
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
-        html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
+        active_scaffold_select_name_with_multiple html_options
         active_scaffold_translate_select_options(options)
 
         html =
@@ -265,6 +271,39 @@ module ActiveScaffold
           end
         html << active_scaffold_refresh_link(column, html_options, record) if column.options[:refresh_link]
         html
+      end
+
+      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class)
+        options = active_scaffold_input_text_options(options.merge(column.options))
+        if content
+          active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class)
+        else
+          file_field(:record, column.name, options)
+        end
+      end
+
+      def active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class)
+        required = options.delete(:required)
+        case ActiveScaffold.js_framework
+        when :jquery
+          js_remove_file_code = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show()#{".find('input').attr('required', 'required')" if required}; return false;"
+          js_dont_remove_file_code = "jQuery(this).parents('div.#{controls_class}').find('input.remove_file').val('false'); return false;"
+        when :prototype
+          js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show()#{".down().writeAttribute('required', 'required')" if required}; return false;"
+          js_dont_remove_file_code = "jQuery(this).parents('div.#{controls_class}').find('input.remove_file').val('false'); return false;"
+        end
+
+        object_name, method = options[:name].split(/\[(#{column.name})\]/)
+        method.sub!(/#{column.name}/, "#{remove_file_prefix}\\0")
+        fields = block_given? ? yield : ''
+        input = file_field(:record, column.name, options.merge(:onchange => js_dont_remove_file_code))
+        content_tag(:div, class: controls_class) do
+          content_tag(:div) do
+            content << ' | ' << fields <<
+              hidden_field(object_name, method, :value => 'false', class: 'remove_file') <<
+              content_tag(:a, as_(:remove_file), :href => '#', :onclick => js_remove_file_code)
+          end << content_tag(:div, input, :style => 'display: none')
+        end
       end
 
       def active_scaffold_refresh_link(column, html_options, record)
@@ -339,7 +378,7 @@ module ActiveScaffold
         end
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
-        html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
+        active_scaffold_select_name_with_multiple html_options
         active_scaffold_translate_select_options(options)
         select(:record, column.name, options_for_select, options, html_options)
       end
@@ -391,8 +430,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_password(column, options)
-        options = active_scaffold_input_text_options(options)
-        password_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :password_field, column, options
       end
 
       def active_scaffold_input_textarea(column, options)
@@ -400,8 +438,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_virtual(column, options)
-        options = active_scaffold_input_text_options(options)
-        text_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :text_field, column, options
       end
 
       # Some fields from HTML5 (primarily for using in-browser validation)
@@ -409,34 +446,40 @@ module ActiveScaffold
 
       # A text box, that accepts only valid email address (in-browser validation)
       def active_scaffold_input_email(column, options)
-        options = active_scaffold_input_text_options(options)
-        email_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :email_field, column, options
       end
 
       # A text box, that accepts only valid URI (in-browser validation)
       def active_scaffold_input_url(column, options)
-        options = active_scaffold_input_text_options(options)
-        url_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :url_field, column, options
       end
 
       # A text box, that accepts only valid phone-number (in-browser validation)
       def active_scaffold_input_telephone(column, options)
-        options = active_scaffold_input_text_options(options)
-        telephone_field :record, column.name, options.merge(column.options).except(:format)
+        active_scaffold_text_input :telephone_field, column, options, :format
       end
 
       # A spinbox control for number values (in-browser validation)
       def active_scaffold_input_number(column, options)
-        options = numerical_constraints_for_column(column, options)
-        options = active_scaffold_input_text_options(options)
-        number_field :record, column.name, options.merge(column.options).except(:format)
+        active_scaffold_number_input :number_field, column, options, :format
       end
 
       # A slider control for number values (in-browser validation)
       def active_scaffold_input_range(column, options)
+        active_scaffold_number_input :range_field, column, options, :format
+      end
+
+      # A slider control for number values (in-browser validation)
+      def active_scaffold_number_input(method, column, options, remove_options = nil)
         options = numerical_constraints_for_column(column, options)
+        active_scaffold_text_input method, column, options, remove_options
+      end
+
+      def active_scaffold_text_input(method, column, options, remove_options = nil)
         options = active_scaffold_input_text_options(options)
-        range_field :record, column.name, options.merge(column.options).except(:format)
+        options = options.merge(column.options)
+        options = options.except(*remove_options) if remove_options.present?
+        send method, :record, column.name, options
       end
 
       # A color picker

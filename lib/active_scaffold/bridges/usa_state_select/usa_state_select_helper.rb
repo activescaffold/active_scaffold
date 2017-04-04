@@ -50,7 +50,7 @@ module ActiveScaffold::Bridges
         select_options = {:prompt => as_(:_select_)}
         select_options.merge!(options)
         options.reverse_merge!(column.options).except!(:prompt, :priority)
-        options[:name] += '[]' if options[:multiple]
+        active_scaffold_select_name_with_multiple options
         usa_state_select(:record, column.name, column.options[:priority], select_options, options.except(:object))
       end
     end
