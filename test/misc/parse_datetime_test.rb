@@ -30,16 +30,19 @@ class ParseDatetimeTest < MiniTest::Test
   def setup
     DateTimeModel.load_schema! if Rails.version >= '5.0'
     I18n.t('time.formats', locale: :es) # needed so is loaded
-    I18n.backend.store_translations :es, {
-      time: {formats: {picker: "%a, %d %b %Y %H:%M:%S"}},
+    spanish = {
+      time: {
+        formats: {picker: '%a, %d %b %Y %H:%M:%S'}
+      },
       date: {
         day_names: %w(Domingo Lunes Martes Miércoles Jueves Viernes Sábado),
         abbr_day_names: %w(Dom Lun Mar Mié Jue Vie Sáb),
-        month_names: [nil, *%w(Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre)],
-        abbr_month_names: [nil, *%w(Ene Feb Mar Abr May Jun Jul Ago Sep Oct Nov Dic)],
-        formats: {default: '%Y-%m-%d', long: "%d de %B de %Y"}
+        month_names: [nil, 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        abbr_month_names: [nil, 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        formats: {default: '%Y-%m-%d', long: '%d de %B de %Y'}
       }
     }
+    I18n.backend.store_translations :es, spanish
 
     @config = config_for('date_time_model')
     @config.create.columns.set_columns @config.columns
@@ -75,18 +78,55 @@ class ParseDatetimeTest < MiniTest::Test
   def test_condition_for_spanish_datetime
     with_js_framework :jquery do
       I18n.locale = :es
-      assert_equal DateTime.new(2017, 4, 3, 16, 30, 26), condition_value('Lun, 03 Abr 2017 16:30:26')
-      assert_equal DateTime.new(2017, 3, 24, 16, 30, 26), condition_value('Vie, 24 Mar 2017 16:30:26')
-      assert_equal DateTime.new(2017, 3, 28, 16, 30, 26), condition_value('Mar, 28 Mar 2017 16:30:26')
+      assert_equal Time.zone.local(2017, 4, 3, 16, 30, 26), condition_value('Lun, 03 Abr 2017 16:30:26')
+      assert_equal Time.zone.local(2017, 3, 24, 16, 30, 26), condition_value('Vie, 24 Mar 2017 16:30:26')
+      assert_equal Time.zone.local(2017, 3, 28, 16, 30, 26), condition_value('Mar, 28 Mar 2017 16:30:26')
     end
   end
 
   def test_condition_for_english_datetime
     with_js_framework :jquery do
-      assert_equal DateTime.new(2017, 4, 3, 16, 30, 26), condition_value('Mon, 03 Apr 2017 16:30:26')
-      assert_equal DateTime.new(2017, 3, 24, 16, 30, 26), condition_value('Fri, 24 Mar 2017 16:30:26')
-      assert_equal DateTime.new(2017, 3, 28, 16, 30, 26), condition_value('Tue, 28 Mar 2017 16:30:26')
+      assert_equal Time.zone.local(2017, 4, 3, 16, 30, 26), condition_value('Mon, 03 Apr 2017 16:30:26')
+      assert_equal Time.zone.local(2017, 3, 24, 16, 30, 26), condition_value('Fri, 24 Mar 2017 16:30:26')
+      assert_equal Time.zone.local(2017, 3, 28, 16, 30, 26), condition_value('Tue, 28 Mar 2017 16:30:26')
     end
+  end
+
+  def test_condition_for_english_datetime_without_time
+    with_js_framework :jquery do
+      assert_equal Time.zone.local(2017, 4, 3, 0, 0, 0), condition_value('Mon, 03 Apr 2017')
+      assert_equal Time.zone.local(2017, 3, 24, 0, 0, 0), condition_value('Fri, 24 Mar 2017')
+      assert_equal Time.zone.local(2017, 3, 28, 0, 0, 0), condition_value('Tue, 28 Mar 2017')
+    end
+  end
+
+  def test_condition_for_default_datetime_without_time
+    assert_equal Time.zone.local(2017, 4, 3, 0, 0, 0), condition_value('2017-04-03')
+    assert_equal Time.zone.local(2017, 3, 24, 0, 0, 0), condition_value('2017-03-24')
+    assert_equal Time.zone.local(2017, 3, 28, 0, 0, 0), condition_value('2017-03-28')
+  end
+
+  def test_condition_for_english_datetime_without_seconds
+    with_js_framework :jquery do
+      assert_equal Time.zone.local(2017, 4, 3, 16, 30), condition_value('Mon, 03 Apr 2017 16:30')
+      assert_equal Time.zone.local(2017, 3, 24, 16, 30), condition_value('Fri, 24 Mar 2017 16:30')
+      assert_equal Time.zone.local(2017, 3, 28, 16, 30), condition_value('Tue, 28 Mar 2017 16:30')
+    end
+  end
+
+  def test_condition_for_default_datetime_without_seconds
+    assert_equal Time.zone.local(2017, 4, 3, 16, 30, 0), condition_value('2017-04-03 16:30')
+    assert_equal Time.zone.local(2017, 3, 24, 16, 30, 0), condition_value('2017-03-24 16:30')
+    assert_equal Time.zone.local(2017, 3, 28, 16, 30, 0), condition_value('2017-03-28 16:30')
+  end
+
+  def test_condition_for_time
+    assert_equal Time.current.change(hour: 16, min: 30), condition_value('16:30')
+    assert_equal Time.current.change(hour: 16, min: 30, sec: 26), condition_value('16:30:26')
+  end
+
+  def test_condition_for_datetime_with_zone
+    assert_equal DateTime.new(2017, 4, 8, 16, 30, 0, '+0300'), condition_value('2017-04-08 16:30 +0300')
   end
 
   def test_condition_for_spanish_date

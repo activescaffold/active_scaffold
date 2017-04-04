@@ -175,7 +175,7 @@ module ActiveScaffold
         end
       end
 
-      def translate_days_and_months(value, format)
+      def tables_for_translating_days_and_months(format)
         keys = {
           '%A' => 'date.day_names',
           '%a' => 'date.abbr_day_names',
@@ -184,16 +184,46 @@ module ActiveScaffold
         }
         key_index = keys.keys.map { |key| [key, format.index(key)] }.to_h
         keys.select! { |k, _| key_index[k] }
+        keys.sort_by { |k, _| key_index[k] }.map do |_, k|
+          I18n.t(k).compact.zip(I18n.t(k, :locale => :en).compact).to_h
+        end
+      end
+
+      def translate_days_and_months(value, format)
         translated = ''
-        keys.sort_by { |k, _| key_index[k] }.each do |f, k|
-          table = Hash[I18n.t(k).compact.zip(I18n.t(k, :locale => :en).compact)]
+        tables_for_translating_days_and_months(format).each do |table|
           regexp = Regexp.union(table.keys)
           index = value.index(regexp)
           next unless index
           translated << value.slice!(0...index)
-          value.sub!(regexp) { |s| translated << table[s]; '' }
+          value.sub!(regexp) do |str|
+            translated << table[str]
+            ''
+          end
         end
         translated << value
+      end
+
+      def format_for_datetime(column, value)
+        parts = Date._parse(value)
+        if ActiveScaffold.js_framework == :jquery
+          format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => ''
+        end
+
+        if format.blank?
+          time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].map do |part, format_part|
+            format_part if parts[part].present?
+          end.compact
+          format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
+        else
+          [[:hour, '%H'], [:min, ':%M'], [:sec, ':%S']].each do |part, f|
+            format.gsub!(f, '') unless parts[part].present?
+          end
+          format += ' %z' if parts[:offset].present? && format !~ /%z/i
+        end
+
+        format.gsub!(/.*(?=%H)/, '') if !parts[:year] && !parts[:month] && !parts[:mday]
+        [format, parts[:offset]]
       end
 
       def condition_value_for_datetime(column, value, conversion = :to_time)
@@ -209,30 +239,15 @@ module ActiveScaffold
               value.send(conversion)
             end
           elsif conversion == :to_date
-            format = I18n.t("date.formats.#{column.options[:format] || :default}")
+            format, offset = I18n.t("date.formats.#{column.options[:format] || :default}")
             value = translate_days_and_months(value, format) if I18n.locale != :en
             Date.strptime(value, format) rescue nil
           else
-            parts = Date._parse(value)
-            format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if conversion == :to_time && ActiveScaffold.js_framework == :jquery
-            if format.blank?
-              time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect { |part, format_part| format_part if parts[part].present? }.compact
-              format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
-            else
-              if parts[:hour]
-                [[:min, '%M'], [:sec, '%S']].each { |part, f| format.gsub!(":#{f}", '') unless parts[part].present? }
-              else
-                value += ' 00:00:00'
-              end
-              format += ' %z' if parts[:offset].present? && format !~ /%z/i
-            end
-            if !parts[:year] && !parts[:month] && !parts[:mday]
-              value = "#{Time.zone.today.strftime(format.gsub(/%[HI].*/, ''))} #{value}"
-            end
+            format, offset = format_for_datetime(column, value)
             value = translate_days_and_months(value, format) if I18n.locale != :en
             time = DateTime.strptime(value, format) rescue nil
             if time
-              time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
+              time = Time.zone.local_to_utc(time).in_time_zone unless offset
               time = time.send(conversion) unless conversion == :to_time
             end
             time

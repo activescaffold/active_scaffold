@@ -32,9 +32,9 @@ class MiniTest::Test
   protected
 
   def with_js_framework(framework)
-    js, ActiveScaffold.js_framework = ActiveScaffold.js_framework, framework
+    framework, ActiveScaffold.js_framework = ActiveScaffold.js_framework, framework
     yield
-    ActiveScaffold.js_framework = js
+    ActiveScaffold.js_framework = framework
   end
 
   def config_for(klass, namespace = nil)
