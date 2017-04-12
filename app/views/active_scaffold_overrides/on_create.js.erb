@@ -9,12 +9,12 @@ var action_link;
 <%= render :partial => 'update_messages' %>
 <% else -%>
 action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
-action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
+if (action_link) action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
 <% end -%>
 <% if successful? -%>
   <% if render_parent? %>
     <% if nested_singular_association? %>
-      action_link.close(true);
+    if (action_link) action_link.close(true);
     <% elsif params[:parent_sti] && render_parent_action == :row %>
       ActiveScaffold.create_record_row_from_url(action_link,'<%= url_for(render_parent_options) %>', <%= {:insert_at => insert_at}.to_json.html_safe %>);
     <% else %>
@@ -35,7 +35,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
       ActiveScaffold.replace('<%= form_selector %>','<%= escape_javascript(render(:partial => 'create_form', :locals => {:xhr => true})) %>');
       ActiveScaffold.focus_first_element_of_form('<%= form_selector %>');
     <% else %>
-      action_link.close();
+      if (action_link) action_link.close();
     <% end %>
     <% if (active_scaffold_config.create.action_after_create) %>
       var link = ActiveScaffold.find_action_link('<%= action_link_id active_scaffold_config.create.action_after_create, @record.id || @saved_record.id %>');
