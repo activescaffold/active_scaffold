@@ -65,7 +65,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def reverse(klass = nil)
-      unless defined? @reverse # rubocop:disable Style/IfUnlessModifier
+      unless polymorphic? || defined?(@reverse)
         @reverse ||= inverse || get_reverse.try(:name)
       end
       @reverse || (get_reverse(klass).try(:name) unless klass.nil?)

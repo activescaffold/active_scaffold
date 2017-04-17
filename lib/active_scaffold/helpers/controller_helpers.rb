@@ -86,10 +86,12 @@ module ActiveScaffold
 
       def main_form_controller
         return unless params[:parent_controller] && subform_child_association
+        klass = active_scaffold_config.model
         @main_form_controller ||= begin
           controller = nil
           active_scaffold_config.columns.find do |col|
-            next unless col.association.try(:reverse).to_s == subform_child_association
+            next unless col.association
+            next unless col.association.reverse(klass).to_s == subform_child_association
             controller = controller_for_path(col, params[:parent_controller])
             break if controller
           end
