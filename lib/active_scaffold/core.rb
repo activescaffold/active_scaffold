@@ -206,7 +206,9 @@ module ActiveScaffold
             end
           end
           raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
-          raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model.to_s == klass.to_s
+          unless controller.active_scaffold_config.model.to_s == klass.to_s
+            raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller
+          end
           return controller
         end
       end
