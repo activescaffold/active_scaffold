@@ -106,13 +106,8 @@ module ActiveScaffold::Actions
       params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '').presence
     end
 
-    def controller_for_path(column, path)
-      ctrl = self.class.active_scaffold_controller_for(column.association.klass)
-      if ctrl.controller_path == path
-        ctrl
-      else
-        ctrl.subclasses.find { |c| c.controller_path == path }
-      end
+    def parent_controller_name
+      "#{params[:parent_controller].camelize}Controller"
     end
 
     def set_parent(record)

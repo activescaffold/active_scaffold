@@ -86,17 +86,10 @@ module ActiveScaffold
 
       def main_form_controller
         return unless params[:parent_controller] && subform_child_association
-        klass = active_scaffold_config.model
-        @main_form_controller ||= begin
-          controller = nil
-          active_scaffold_config.columns.find do |col|
-            next unless col.association
-            next unless col.association.reverse(klass).to_s == subform_child_association
-            controller = controller_for_path(col, params[:parent_controller])
-            break if controller
-          end
-          controller
-        end
+        controller = parent_controller_name.constantize
+        column = controller.active_scaffold_config.columns[subform_child_association] if controller
+        return unless column
+        controller if self.class.active_scaffold_controller_for(column).controller_path == controller_path
       end
 
       def render_parent?
