@@ -89,7 +89,7 @@ module ActiveScaffold
         controller = parent_controller_name.constantize
         column = controller.active_scaffold_config.columns[subform_child_association] if controller
         return unless column
-        controller if self.class.active_scaffold_controller_for(column).controller_path == controller_path
+        controller if self.class.active_scaffold_controller_for(column.klass).controller_path == controller_path
       end
 
       def render_parent?
