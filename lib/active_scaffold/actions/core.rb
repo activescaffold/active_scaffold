@@ -103,7 +103,7 @@ module ActiveScaffold::Actions
     end
 
     def subform_child_association
-      params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '').presence
+      params[:child_association].presence || (@scope.split(']').first.sub(/^\[/, '').presence if @scope)
     end
 
     def parent_controller_name
