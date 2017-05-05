@@ -269,6 +269,9 @@ module ActiveScaffold::DataStructures
     # the association from the ActiveRecord class
     attr_reader :association
 
+    # the singular association which this column belongs to
+    attr_reader :delegated_association
+
     # an interpreted property. the column is virtual if it isn't from the active record model or any associated models
     def virtual?
       column.nil? && association.nil?
@@ -298,10 +301,11 @@ module ActiveScaffold::DataStructures
     end
 
     # instantiation is handled internally through the DataStructures::Columns object
-    def initialize(name, active_record_class) #:nodoc:
+    def initialize(name, active_record_class, delegated_association = nil) #:nodoc:
       self.name = name.to_sym
       @active_record_class = active_record_class
       @column = _columns_hash[self.name.to_s]
+      @delegated_association = delegated_association
       setup_association_info
 
       @autolink = self.association.present?
@@ -333,10 +337,11 @@ module ActiveScaffold::DataStructures
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
 
-      if association && association.allow_join?
-        self.includes = [association.name]
-        self.search_joins = includes.clone
+      self.includes = [association.name] if association && association.allow_join?
+      if delegated_association
+        self.includes = includes ? [delegated_association.name => includes] : [delegated_association.name]
       end
+      self.search_joins = includes.clone if includes
 
       # default all the configurable variables
       self.css_class = ''

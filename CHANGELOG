@@ -15,6 +15,7 @@
 - add :telephone list_ui displaying formatted phone number with tel: link
 - add global config option to display reason for disabled action, authorized methods must return string with reason, and string is interpreted as not authorized
 - stop saving embedded scaffolds info into session, so no more CookieOverflow errors caused by loading many embedded scaffolds
+- add add_association_columns method to config.columns, so columns from has_one or belongs_to association can be added as delegated columns (for list, show, field_search and update_column only)
 - fix select of existing record for nested subform
 - fix apply constraints to parent (fix update columns on subform on embedded scaffold)
 - fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes

@@ -7,6 +7,10 @@ module ActiveScaffold
       def active_scaffold_search_for(column, options = nil)
         options ||= active_scaffold_search_options(column)
         record = options[:object]
+        if column.delegated_association
+          record = record.send(column.delegated_association.name) || column.active_record_class.new
+          options[:object] = record
+        end
 
         # first, check if the dev has created an override for this specific field for search
         if (method = override_search_field(column))
