@@ -1,6 +1,4 @@
 <%
-ActiveSupport::Deprecation.warn "Relying on @record to render form_asssociation partial with no parent_record local variable is deprecated", caller(1) unless local_assigns[:parent_record]
-parent_record ||= @record # TODO: remove when changing @record is removed, save @record, some partial can change @record
 associated = column.association.singular? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a
 if column.show_blank_record?(associated)
   show_blank_record = build_associated(column.association, parent_record)
