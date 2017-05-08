@@ -143,6 +143,7 @@ module ActiveScaffold::Actions
       return unless @record.authorized_for?(:crud_type => :update, :column => column)
       if @column.delegated_association
         value_record = @record.send(@column.delegated_association.name)
+        value_record ||= @record.association(@column.delegated_association.name).build
         return unless value_record.authorized_for?(:crud_type => :update, :column => column)
       end
 
