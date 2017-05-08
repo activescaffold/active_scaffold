@@ -46,20 +46,15 @@ module ActiveScaffold::DataStructures
     # association columns will work for read actions only, not in form actions (create, update, subform)
     def add_association_columns(association, *columns)
       column = self[association]
-      if column.nil?
-        raise ArgumentError, "unknown column #{association}"
-      elsif column.association.nil?
-        raise ArgumentError, "column #{association} is not an association"
-      elsif !column.association.singular?
-        raise ArugmentError, "column #{association} is not singular association"
-      elsif column.association.polymorphic?
-        raise ArugmentError, "column #{association} is polymorphic association"
-      else
-        klass = column.association.klass
-        columns.each do |col|
-          next if find_by_name col
-          @set << ActiveScaffold::DataStructures::Column.new(col, klass, column.association)
-        end
+      raise ArgumentError, "unknown column #{association}" if column.nil?
+      raise ArgumentError, "column #{association} is not an association" if column.association.nil?
+      raise ArugmentError, "column #{association} is not singular association" unless column.association.singular?
+      raise ArugmentError, "column #{association} is polymorphic association" if column.association.polymorphic?
+
+      klass = column.association.klass
+      columns.each do |col|
+        next if find_by_name col
+        @set << ActiveScaffold::DataStructures::Column.new(col, klass, column.association)
       end
     end
 
