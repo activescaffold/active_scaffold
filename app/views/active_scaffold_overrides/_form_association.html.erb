@@ -22,6 +22,5 @@ footer = render(:partial => 'form_association_footer', :locals => {:parent_recor
   <%= footer -%>
 </div>
 <%
-  @record = parent_record # TODO: remove when changing @record is removed, restore @record, some partials can change it
   @disable_required_for_new = disable_required_for_new
 -%>
