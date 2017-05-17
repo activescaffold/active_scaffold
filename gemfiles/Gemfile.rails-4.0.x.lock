@@ -42,8 +42,6 @@ GEM
     ast (2.3.0)
     brakeman (3.4.0)
     builder (3.1.4)
-    codeclimate-test-reporter (1.0.4)
-      simplecov
     concurrent-ruby (1.0.2)
     concurrent-ruby (1.0.2-java)
     docile (1.1.5)
@@ -155,7 +153,6 @@ DEPENDENCIES
   activerecord-jdbcsqlite3-adapter
   brakeman
   bundler (~> 1.0)
-  codeclimate-test-reporter
   jdbc-sqlite3
   localeapp
   minitest-reporters
@@ -166,6 +163,7 @@ DEPENDENCIES
   rdoc
   rubocop
   shoulda
+  simplecov
   sqlite3
 
 BUNDLED WITH
