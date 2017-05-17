@@ -2,11 +2,6 @@ source 'https://rubygems.org'
 
 gemspec path: '../'
 
-group :deployment do
-  # Posts SimpleCov test coverage data from your Ruby test suite to Code Climate's hosted, automated code review service.
-  gem 'codeclimate-test-reporter', require: false
-end
-
 group :development do
   #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
   gem 'localeapp'
@@ -14,15 +9,9 @@ group :development do
   gem 'rdoc'
 end
 
-group :lint, :deployment do
-  gem 'rake', require: false
-end
-
 group :development, :lint do
   # A static analysis security vulnerability scanner for Ruby on Rails applications
   gem 'brakeman', require: false
-  # Patch-level verification for Bundler
-  gem 'bundler-audit', require: false
   # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
   gem 'rubocop', require: false
 end
