@@ -16,8 +16,6 @@ jdk:
 language: ruby
 matrix:
   exclude:
-    - rvm: 2.1.9
-      gemfile: gemfiles/Gemfile
     - rvm: 2.4.1
       gemfile: gemfiles/Gemfile.rails-4.0.x 
     - rvm: 2.4.1
@@ -25,7 +23,6 @@ matrix:
   allow_failures:
     - rvm: rbx-3
 rvm:
-  - 2.1.9
   - 2.2.6
   - 2.3.3
   - 2.4.1
