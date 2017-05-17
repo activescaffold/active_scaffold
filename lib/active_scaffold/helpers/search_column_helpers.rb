@@ -43,7 +43,7 @@ module ActiveScaffold
             # final ultimate fallback: use rails' generic input method
             else
               # for textual fields we pass different options
-              text_types = [:text, :string, :integer, :float, :decimal]
+              text_types = %i[text string integer float decimal]
               options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
               text_field(:record, column.name, options.merge(column.options))
             end
@@ -66,7 +66,7 @@ module ActiveScaffold
       end
 
       def search_label_for(column, options)
-        options[:id] unless [:range, :integer, :decimal, :float, :string, :date_picker, :datetime_picker, :calendar_date_select].include? column.search_ui
+        options[:id] unless %i[range integer decimal float string date_picker datetime_picker calendar_date_select].include? column.search_ui
       end
 
       ##

@@ -26,7 +26,7 @@ class SetTest < MiniTest::Test
   def test_exclude_array
     # exclude with a symbol
     assert @items.include?(:b)
-    @items.exclude [:a, :b]
+    @items.exclude %i[a b]
     refute @items.include?(:b)
     refute @items.include?(:a)
   end
@@ -55,7 +55,7 @@ class SetTest < MiniTest::Test
 
     # try adding an array of columns
     refute @items.include?(:f)
-    @items.add [:f, :g]
+    @items.add %i[f g]
     assert @items.include?(:f)
     assert @items.include?(:g)
   end

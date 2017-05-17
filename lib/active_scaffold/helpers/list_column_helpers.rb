@@ -134,7 +134,7 @@ module ActiveScaffold
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
         if column.association.nil?
-          if [:select, :radio].include?(column.form_ui) && column.options[:options]
+          if %i[select radio].include?(column.form_ui) && column.options[:options]
             text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
@@ -320,7 +320,7 @@ module ActiveScaffold
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
           url = url_for(params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name))
-          plural = column.association.try(:collection?) && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
+          plural = column.association.try(:collection?) && !override_form_field?(column) && %i[select record_select].include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
           data[:ie_plural] = plural

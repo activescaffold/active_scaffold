@@ -10,7 +10,7 @@ module ActiveScaffold::Config
     def self.actions=(val)
       @@actions = ActiveScaffold::DataStructures::Actions.new(*val)
     end
-    self.actions = [:create, :list, :search, :update, :delete, :show, :nested, :subform]
+    self.actions = %i[create list search update delete show nested subform]
 
     # configures where the ActiveScaffold plugin itself is located. there is no instance version of this.
     cattr_accessor :plugin_directory

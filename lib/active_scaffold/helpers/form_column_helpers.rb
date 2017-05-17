@@ -40,13 +40,13 @@ module ActiveScaffold
             # final ultimate fallback: use rails' generic input method
             else
               # for textual fields we pass different options
-              text_types = [:text, :string, :integer, :float, :decimal, :date, :time, :datetime]
+              text_types = %i[text string integer float decimal date time datetime]
               options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
               if column.column.type == :string && options[:maxlength].blank?
                 options[:maxlength] = column.column.limit
                 options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
               end
-              options[:include_blank] = true if column.column.null && [:date, :datetime, :time].include?(column.column.type)
+              options[:include_blank] = true if column.column.null && %i[date datetime time].include?(column.column.type)
               options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
               text_field(:record, column.name, options.merge(column.options).except(:format))
             end
@@ -116,7 +116,7 @@ module ActiveScaffold
       def current_form_columns(record, scope, subform_controller = nil)
         if scope
           subform_controller.active_scaffold_config.subform.columns.names
-        elsif [:new, :create, :edit, :update, :render_field].include? action_name.to_sym
+        elsif %i[new create edit update render_field].include? action_name.to_sym
           # disable update_columns for inplace_edit (GET render_field)
           return if action_name == 'render_field' && request.get?
           active_scaffold_config.send(record.new_record? ? :create : :update).columns.names

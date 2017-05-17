@@ -206,7 +206,7 @@ module ActiveScaffold
           ''
         else
           html = {}
-          [:id, :class].each do |key|
+          %i[id class].each do |key|
             if options.include?(key)
               value = options[key]
               html[key] = value if value.present?

@@ -127,8 +127,8 @@ module Config
     end
 
     def test_count_includes
-      @config.list.count_includes = [:assoc_1, :assoc_2]
-      assert_equal [:assoc_1, :assoc_2], @config.list.count_includes
+      @config.list.count_includes = %i[assoc_1 assoc_2]
+      assert_equal %i[assoc_1 assoc_2], @config.list.count_includes
     end
   end
 end

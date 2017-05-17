@@ -200,7 +200,7 @@ module ActiveScaffold::Actions
     alias index_formats list_formats
 
     def row_formats
-      ([:html, :js] + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
+      (%i[html js] + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
     end
 
     def action_update_formats

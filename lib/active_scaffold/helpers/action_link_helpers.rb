@@ -4,7 +4,7 @@ module ActiveScaffold
     # Also a dumping ground for uncategorized helpers.
     module ActionLinkHelpers
       # params which mustn't be copying to nested links
-      NESTED_PARAMS = [:eid, :embedded, :association, :parent_scaffold].freeze
+      NESTED_PARAMS = %i[eid embedded association parent_scaffold].freeze
 
       def skip_action_link?(link, *args)
         !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *args)

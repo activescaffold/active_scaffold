@@ -11,7 +11,7 @@ class ActiveScaffold::Bridges::DatePicker
     def initialize(model_id)
       super
 
-      date_picker_fields = _columns.collect { |c| {:name => c.name.to_sym, :type => c.type} if [:date, :datetime].include?(c.type) }.compact
+      date_picker_fields = _columns.collect { |c| {:name => c.name.to_sym, :type => c.type} if %i[date datetime].include?(c.type) }.compact
       # check to see if file column was used on the model
       return if date_picker_fields.empty?
 

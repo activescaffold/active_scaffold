@@ -4,7 +4,7 @@ require 'test_helper'
 
 class ActionColumnsTest < MiniTest::Test
   def setup
-    @columns = ActiveScaffold::DataStructures::ActionColumns.new([:a, :b])
+    @columns = ActiveScaffold::DataStructures::ActionColumns.new(%i[a b])
     @columns.action = stub(:core => stub(:model_id => 'model_stub'))
   end
 
@@ -35,7 +35,7 @@ class ActionColumnsTest < MiniTest::Test
   def test_exclude_array
     # exclude with a symbol
     assert @columns.include?(:b)
-    @columns.exclude [:a, :b]
+    @columns.exclude %i[a b]
     refute @columns.include?(:b)
     refute @columns.include?(:a)
   end
@@ -58,7 +58,7 @@ class ActionColumnsTest < MiniTest::Test
 
     # try adding an array of columns
     refute @columns.include?(:f)
-    @columns.add [:f, :g]
+    @columns.add %i[f g]
     assert @columns.include?(:f)
     assert @columns.include?(:g)
   end

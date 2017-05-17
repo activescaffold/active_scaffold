@@ -21,7 +21,7 @@ module ActiveScaffold
           columns[field].form_ui ||= :dragonfly
           columns[field].params.add "remove_#{field}"
 
-          [:name, :uid].each do |f|
+          %i[name uid].each do |f|
             columns.exclude("#{field}_#{f}".to_sym)
           end
         end

@@ -171,7 +171,7 @@ module ActiveScaffold::Actions
     end
 
     def default_formats
-      [:html, :js, :json, :xml]
+      %i[html js json xml]
     end
 
     # Returns true if the client accepts one of the MIME types passed to it
@@ -235,7 +235,7 @@ module ActiveScaffold::Actions
           column = active_scaffold_config._columns_hash[key.to_s]
           next unless column
           key = key.to_sym
-          not_string = [:string, :text].exclude?(column.type)
+          not_string = %i[string text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 

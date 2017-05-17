@@ -70,7 +70,7 @@ module ActiveScaffold
           end
 
           def column_datetime?(column)
-            (!column.column.nil? && [:datetime, :time].include?(column.column.type))
+            (!column.column.nil? && %i[datetime time].include?(column.column.type))
           end
         end
 
@@ -201,7 +201,7 @@ module ActiveScaffold
             end
 
             def date_bridge_column_date?(column)
-              if [:date_picker, :datetime_picker].include? column.form_ui
+              if %i[date_picker datetime_picker].include? column.form_ui
                 column.form_ui == :date_picker
               else
                 (!column.column.nil? && [:date].include?(column.column.type))

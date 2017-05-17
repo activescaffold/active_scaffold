@@ -4,7 +4,7 @@ class ActiveScaffold::Bridges::Chosen < ActiveScaffold::DataStructures::Bridge
   end
 
   def self.install?
-    super && [:jquery, :prototype].include?(ActiveScaffold.js_framework)
+    super && %i[jquery prototype].include?(ActiveScaffold.js_framework)
   end
 
   def self.stylesheets

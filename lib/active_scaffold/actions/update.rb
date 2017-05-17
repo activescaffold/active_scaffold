@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Update
     def self.included(base)
-      base.before_action :update_authorized_filter, :only => [:edit, :update]
+      base.before_action :update_authorized_filter, :only => %i[edit update]
       base.helper_method :update_refresh_list?
     end
 
