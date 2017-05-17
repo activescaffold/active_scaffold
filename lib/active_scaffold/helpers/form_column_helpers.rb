@@ -640,8 +640,8 @@ module ActiveScaffold
                 numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column && column.column.scale.to_i > 0
               elsif options[:min] && options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
                 numerical_constraints[:step] = 2
-                numerical_constraints[:min] += 1 if only_odd_valid  && !options[:min].odd?
-                numerical_constraints[:min] += 1 if only_even_valid && !options[:min].even?
+                numerical_constraints[:min] += 1 if only_odd_valid  && options[:min].even?
+                numerical_constraints[:min] += 1 if only_even_valid && options[:min].odd?
               end
               numerical_constraints[:step] ||= 'any' unless only_integer
             end
