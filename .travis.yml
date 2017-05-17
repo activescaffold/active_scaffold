@@ -10,14 +10,14 @@ gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-4.0.x
   - gemfiles/Gemfile.rails-4.1.x
-  - gemfiles/Gemfile.rails-5.0.x
+  - gemfiles/Gemfile.rails-4.2.x
 jdk:
   - openjdk7
 language: ruby
 matrix:
   exclude:
     - rvm: 2.1.9
-      gemfile: gemfiles/Gemfile.rails-5.0.x 
+      gemfile: gemfiles/Gemfile
     - rvm: 2.4.1
       gemfile: gemfiles/Gemfile.rails-4.0.x 
     - rvm: 2.4.1

@@ -71,11 +71,11 @@
 
 .use_rails_4_2_x: &use_rails_4_2_x
   variables:
-    BUNDLE_GEMFILE: Gemfile
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.2.x
 
 .use_rails_5_0_x: &use_rails_5_0_x
   variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
+    BUNDLE_GEMFILE: Gemfile
 
 cache:
   paths:
