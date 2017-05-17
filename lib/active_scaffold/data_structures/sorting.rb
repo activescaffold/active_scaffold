@@ -39,7 +39,7 @@ module ActiveScaffold::DataStructures
       direction = direction.to_s.upcase
       column = get_column(column_name)
       raise ArgumentError, "Could not find column #{column_name}" if column.nil?
-      raise ArgumentError, 'Sorting direction unknown' unless [:ASC, :DESC].include? direction.to_sym
+      raise ArgumentError, 'Sorting direction unknown' unless %i[ASC DESC].include? direction.to_sym
       @clauses << [column, direction.untaint] if column.sortable?
       raise ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
     end
@@ -82,8 +82,8 @@ module ActiveScaffold::DataStructures
       clause[1]
     end
 
-    SORTING_STAGES = Hash[%w(reset ASC DESC reset).each_cons(2).to_a].freeze
-    DEFAULT_SORTING_STAGES = Hash[%w(ASC DESC ASC).each_cons(2).to_a].freeze
+    SORTING_STAGES = Hash[%w[reset ASC DESC reset].each_cons(2).to_a].freeze
+    DEFAULT_SORTING_STAGES = Hash[%w[ASC DESC ASC].each_cons(2).to_a].freeze
     def next_sorting_of(column, sorted_by_default)
       stages = sorted_by_default ? DEFAULT_SORTING_STAGES : SORTING_STAGES
       stages[direction_of(column)] || 'ASC'
@@ -117,7 +117,7 @@ module ActiveScaffold::DataStructures
       each do |sort_column, sort_direction|
         next if constraint_columns.include? sort_column.name
         sql = grouped_columns_calculations.try(:dig, sort_column.name) || sort_column.sort[:sql]
-        next unless sql.present?
+        next if sql.blank?
         sql = sql.to_sql if sql.respond_to?(:to_sql)
 
         parts = Array(sql).map do |column|
@@ -159,7 +159,7 @@ module ActiveScaffold::DataStructures
     def set_sorting_from_order_clause(order_clause, model_table_name = nil)
       clear
       order_clause.to_s.split(',').each do |criterion|
-        unless criterion.blank?
+        if criterion.present?
           order_parts = extract_order_parts(criterion)
           add(order_parts[:column_name], order_parts[:direction]) unless different_table?(model_table_name, order_parts[:table_name]) || get_column(order_parts[:column_name]).nil?
         end

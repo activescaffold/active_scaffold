@@ -12,12 +12,12 @@ Minitest::Reporters.use!
 def load_schema
   stdout = $stdout
   $stdout = StringIO.new # suppress output while building the schema
-  load File.join(Rails.root, 'db', 'schema.rb')
+  load Rails.root.join('db', 'schema.rb')
   $stdout = stdout
 end
 load_schema
 
-%w(model_stub const_mocker company).each do |file|
+%w[model_stub const_mocker company].each do |file|
   require File.join(File.dirname(__FILE__), file)
 end
 

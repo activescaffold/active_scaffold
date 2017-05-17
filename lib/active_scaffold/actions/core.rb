@@ -171,7 +171,7 @@ module ActiveScaffold::Actions
     end
 
     def default_formats
-      [:html, :js, :json, :xml]
+      %i[html js json xml]
     end
 
     # Returns true if the client accepts one of the MIME types passed to it
@@ -235,11 +235,11 @@ module ActiveScaffold::Actions
           column = active_scaffold_config._columns_hash[key.to_s]
           next unless column
           key = key.to_sym
-          not_string = [:string, :text].exclude?(column.type)
+          not_string = %i[string text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 
-          range = %i(date datetime).include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
+          range = %i[date datetime].include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
           value = value.split('..') if range
           conditions[key] =
             if value.is_a?(Array)
@@ -258,7 +258,7 @@ module ActiveScaffold::Actions
       config = active_scaffold_config_for(relation.klass) if nested? && nested.plural_association?
       if config && config._columns_hash[column = relation.klass.inheritance_column]
         model_name = params.delete(column) # in new action inheritance_column must be in params
-        model_name ||= params[:record].delete(column) unless params[:record].blank? # in create action must be inside record key
+        model_name ||= params[:record].delete(column) if params[:record].present? # in create action must be inside record key
         model_name = model_name.camelize if model_name
         model_name ||= active_scaffold_config.model.name
         build_options = {column.to_sym => model_name} if model_name
@@ -289,7 +289,7 @@ module ActiveScaffold::Actions
 
     def clear_storage
       session_index = active_scaffold_session_storage_key
-      session.delete(session_index) unless session[session_index].present?
+      session.delete(session_index) if session[session_index].blank?
     end
 
     # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.

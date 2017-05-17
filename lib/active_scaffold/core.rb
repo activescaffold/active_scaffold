@@ -121,7 +121,7 @@ module ActiveScaffold
           ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(:refresh_on_close => true))
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
-          actions ||= [:create, :update, :show]
+          actions ||= %i[create update show]
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update
           column.actions_for_association_links.delete :show unless actions.include? :show

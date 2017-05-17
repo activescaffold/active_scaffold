@@ -38,7 +38,7 @@ module ActiveScaffold
       # :authenticity_token is sent on some ajax requests
       # :_added is sent on checkbox-list with update_columns
       # :_removed is sent on checkbox-list with update_columns
-      BLACKLIST_PARAMS = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :dont_close, :auto_pagination, :iframe, :associated_id, :authenticity_token, :_added, :_removed].freeze
+      BLACKLIST_PARAMS = %i[adapter position sort sort_direction page record commit _method dont_close auto_pagination iframe associated_id authenticity_token _added _removed].freeze
 
       def params_for(options = {})
         unless @params_for
@@ -62,7 +62,7 @@ module ActiveScaffold
         if params[:return_to]
           params[:return_to]
         else
-          exclude_parameters = [:utf8, :associated_id]
+          exclude_parameters = %i[utf8 associated_id]
           parameters = {}
           if params[:parent_scaffold] && nested? && nested.singular_association?
             parameters[:controller] = params[:parent_scaffold]

@@ -25,7 +25,7 @@ class ColumnsTest < MiniTest::Test
 
     # try adding an array of columns
     refute @columns.include?(:f)
-    @columns.add [:f, :g]
+    @columns.add %i[f g]
     assert @columns.include?(:f)
     assert @columns.include?(:g)
   end
@@ -47,7 +47,7 @@ class ColumnsTest < MiniTest::Test
 
   def test_each
     @columns.each do |column|
-      assert [:a, :b].include?(column.name)
+      assert %i[a b].include?(column.name)
     end
   end
 

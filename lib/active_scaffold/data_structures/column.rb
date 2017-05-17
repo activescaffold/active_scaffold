@@ -253,7 +253,7 @@ module ActiveScaffold::DataStructures
 
     # methods for automatic links in singular association columns
     cattr_accessor :actions_for_association_links, instance_accessor: false
-    @@actions_for_association_links = [:new, :edit, :show]
+    @@actions_for_association_links = %i[new edit show]
     attr_accessor :actions_for_association_links
 
     cattr_accessor :association_form_ui
@@ -457,7 +457,7 @@ module ActiveScaffold::DataStructures
     end
 
     def column_number?
-      return [:float, :decimal, :integer].include? @column.type if active_record?
+      return %i[float decimal integer].include? @column.type if active_record?
       return @column.type < Numeric if mongoid?
     end
 
@@ -505,9 +505,9 @@ module ActiveScaffold::DataStructures
         400
       elsif association.try(:collection?)
         500
-      elsif [:created_at, :updated_at].include?(name)
+      elsif %i[created_at updated_at].include?(name)
         600
-      elsif [:name, :label, :title].include?(name)
+      elsif %i[name label title].include?(name)
         100
       elsif required?
         200

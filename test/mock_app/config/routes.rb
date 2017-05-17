@@ -4,9 +4,9 @@ Rails.application.routes.draw do
 
   resources :addresses, concerns: :active_scaffold
   resources :buildings, except: :index do
-    concerns :active_scaffold, except: [:mark, :add_existing, :new_existing, :destroy_existing]
+    concerns :active_scaffold, except: %i[mark add_existing new_existing destroy_existing]
   end
-  resources :cars, only: [:edit, :update] do
+  resources :cars, only: %i[edit update] do
     concerns :active_scaffold, association: false, except: [:mark]
   end
 

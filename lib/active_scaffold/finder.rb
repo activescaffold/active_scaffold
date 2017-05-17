@@ -95,7 +95,7 @@ module ActiveScaffold
         if respond_to?("condition_for_#{column.name}_column")
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
-        return unless column && column.search_sql && !value.blank?
+        return unless column && column.search_sql && value.present?
         search_ui = column.search_ui || column.column_type
         begin
           sql, *values =
@@ -217,7 +217,7 @@ module ActiveScaffold
           format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
         else
           [[:hour, '%H'], [:min, ':%M'], [:sec, ':%S']].each do |part, f|
-            format.gsub!(f, '') unless parts[part].present?
+            format.gsub!(f, '') if parts[part].blank?
           end
           format += ' %z' if parts[:offset].present? && format !~ /%z/i
         end
@@ -229,7 +229,7 @@ module ActiveScaffold
       def condition_value_for_datetime(column, value, conversion = :to_time)
         unless value.nil? || value.blank?
           if value.is_a? Hash
-            Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect { |part| value[part].to_i }) rescue nil
+            Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i }) rescue nil
           elsif value.respond_to?(:strftime)
             if conversion == :to_time
               # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
@@ -328,7 +328,7 @@ module ActiveScaffold
       :begins_with => '?%',
       :ends_with   => '%?'
     }.freeze
-    NULL_COMPARATORS = %w(null not_null).freeze
+    NULL_COMPARATORS = %w[null not_null].freeze
 
     def self.included(klass)
       klass.extend ClassMethods
@@ -431,8 +431,8 @@ module ActiveScaffold
     end
 
     def count_items(query, find_options = {}, count_includes = nil)
-      count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
-      options = find_options.reject { |k, _| [:select, :reorder, :order].include? k }
+      count_includes ||= find_options[:includes] if find_options[:conditions].present?
+      options = find_options.reject { |k, _| %i[select reorder order].include? k }
       # NOTE: we must use includes in the count query, because some conditions may reference other tables
       options[:includes] = count_includes
 
@@ -486,7 +486,7 @@ module ActiveScaffold
     def calculate_query
       conditions = all_conditions
       includes = active_scaffold_config.list.count_includes
-      includes ||= active_scaffold_references unless conditions.blank?
+      includes ||= active_scaffold_references if conditions.present?
       left_joins = active_scaffold_outer_joins
       left_joins += includes if includes
       primary_key = active_scaffold_config.model.primary_key

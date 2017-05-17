@@ -88,19 +88,19 @@ module ActiveScaffold
       end
     end
 
-    %i(active_record? mongoid? tableless?).each do |method|
+    %i[active_record? mongoid? tableless?].each do |method|
       define_method method do
         ActiveScaffold::OrmChecks.send method, active_record_class
       end
     end
 
-    %i(_table_name _quoted_table_name _columns _columns_hash _reflect_on_all_associations _content_columns).each do |method|
+    %i[_table_name _quoted_table_name _columns _columns_hash _reflect_on_all_associations _content_columns].each do |method|
       define_method method do
         ActiveScaffold::OrmChecks.send method.to_s[1..-1], active_record_class
       end
     end
 
-    %i(type_for_attribute column_type).each do |method|
+    %i[type_for_attribute column_type].each do |method|
       define_method method do |column_name|
         ActiveScaffold::OrmChecks.send method, active_record_class, column_name
       end

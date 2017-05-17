@@ -206,10 +206,10 @@ module ActiveScaffold
           ''
         else
           html = {}
-          [:id, :class].each do |key|
+          %i[id class].each do |key|
             if options.include?(key)
               value = options[key]
-              html[key] = value unless value.blank?
+              html[key] = value if value.present?
             else
               html[key] = 'errorExplanation'
             end
@@ -238,8 +238,8 @@ module ActiveScaffold
             end
 
           contents = []
-          contents << content_tag(options[:header_tag] || :h2, header_message) unless header_message.blank?
-          contents << content_tag(:p, message) unless message.blank?
+          contents << content_tag(options[:header_tag] || :h2, header_message) if header_message.present?
+          contents << content_tag(:p, message) if message.present?
           contents << error_messages
           contents = safe_join(contents)
           options[:container_tag] ? content_tag(options[:container_tag], contents, html) : contents

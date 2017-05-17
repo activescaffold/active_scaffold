@@ -23,7 +23,7 @@ module ActiveScaffold::Actions
           text_search = active_scaffold_config.search.text_search
           query = query.split(active_scaffold_config.search.split_terms) if active_scaffold_config.search.split_terms
           search_conditions = self.class.conditions_for_columns(query, columns, text_search)
-          @filtered = !search_conditions.blank?
+          @filtered = search_conditions.present?
           active_scaffold_conditions.concat search_conditions if @filtered
 
           references, outer_joins = columns.partition do |column|

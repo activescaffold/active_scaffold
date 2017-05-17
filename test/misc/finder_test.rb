@@ -12,7 +12,7 @@ class FinderTest < MiniTest::Test
       ActiveScaffold::DataStructures::Column.new(:a, ModelStub),
       ActiveScaffold::DataStructures::Column.new(:b, ModelStub)
     ]
-    tokens = %w(foo bar)
+    tokens = %w[foo bar]
 
     expected_conditions = [
       ['"model_stubs"."a" LIKE ? OR "model_stubs"."b" LIKE ?', '%foo%', '%foo%'],

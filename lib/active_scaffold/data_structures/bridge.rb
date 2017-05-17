@@ -4,8 +4,7 @@ module ActiveScaffold::DataStructures
       raise RunTimeError, "install not defined for bridge #{name}"
     end
 
-    def self.prepare
-    end
+    def self.prepare; end
 
     # by convention and default, use the bridge name as the required constant for installation
     def self.install?
@@ -16,10 +15,8 @@ module ActiveScaffold::DataStructures
       install if install?
     end
 
-    def self.stylesheets
-    end
+    def self.stylesheets; end
 
-    def self.javascripts
-    end
+    def self.javascripts; end
   end
 end

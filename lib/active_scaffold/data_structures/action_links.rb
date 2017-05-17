@@ -135,7 +135,7 @@ module ActiveScaffold::DataStructures
         group = ActiveScaffold::DataStructures::ActionLinks.new
         group.label = label || name
         group.name = name
-        group.default_type = self.name == :root ? (name.to_sym if %w(member collection).include?(name.to_s)) : default_type
+        group.default_type = self.name == :root ? (name.to_sym if %w[member collection].include?(name.to_s)) : default_type
         add_to_set group
       end
       group

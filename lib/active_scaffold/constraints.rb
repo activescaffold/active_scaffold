@@ -19,7 +19,7 @@ module ActiveScaffold
       constrained_fields ||= []
       constrained_fields |= active_scaffold_constraints.reject { |_, v| v.is_a? Hash }.keys.collect(&:to_sym)
       exclude_actions = []
-      [:list, :update].each do |action_name|
+      %i[list update].each do |action_name|
         if active_scaffold_config.actions.include? action_name
           exclude_actions << action_name unless active_scaffold_config.send(action_name).hide_nested_column
         end

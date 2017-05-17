@@ -22,7 +22,7 @@ module ActiveScaffold::Actions
     end
 
     def list
-      if %w(index list).include? action_name
+      if %w[index list].include? action_name
         do_list
       else
         do_refresh_list
@@ -114,7 +114,7 @@ module ActiveScaffold::Actions
 
       options = {:sorting => active_scaffold_config.list.user.sorting,
                  :count_includes => active_scaffold_config.list.user.count_includes}
-      paginate = params[:format].nil? ? (accepts? :html, :js) : %w(html js).include?(params[:format])
+      paginate = params[:format].nil? ? (accepts? :html, :js) : %w[html js].include?(params[:format])
       options[:pagination] = active_scaffold_config.list.pagination if paginate
       if options[:pagination]
         options[:per_page] = active_scaffold_config.list.user.per_page
@@ -172,7 +172,7 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_js
-      do_refresh_list unless @record.present?
+      do_refresh_list if @record.blank?
       super
     end
 
@@ -200,7 +200,7 @@ module ActiveScaffold::Actions
     alias index_formats list_formats
 
     def row_formats
-      ([:html, :js] + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
+      (%i[html js] + active_scaffold_config.formats + active_scaffold_config.list.formats).uniq
     end
 
     def action_update_formats

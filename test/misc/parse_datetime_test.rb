@@ -34,8 +34,8 @@ class ParseDatetimeTest < MiniTest::Test
         formats: {picker: '%a, %d %b %Y %H:%M:%S'}
       },
       date: {
-        day_names: %w(Domingo Lunes Martes Miércoles Jueves Viernes Sábado),
-        abbr_day_names: %w(Dom Lun Mar Mié Jue Vie Sáb),
+        day_names: %w[Domingo Lunes Martes Miércoles Jueves Viernes Sábado],
+        abbr_day_names: %w[Dom Lun Mar Mié Jue Vie Sáb],
         month_names: [nil, 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         abbr_month_names: [nil, 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         formats: {default: '%Y-%m-%d', long: '%d de %B de %Y'}

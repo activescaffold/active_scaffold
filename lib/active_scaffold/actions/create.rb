@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Create
     def self.included(base)
-      base.before_action :create_authorized_filter, :only => [:new, :create]
+      base.before_action :create_authorized_filter, :only => %i[new create]
     end
 
     def new

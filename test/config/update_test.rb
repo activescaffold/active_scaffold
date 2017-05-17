@@ -7,11 +7,11 @@ module Config
     end
 
     def test_copy_columns_from_create
-      @config.create.columns = [:a, :c, :d]
-      assert_equal [:a, :d], @config.create.columns.names
+      @config.create.columns = %i[a c d]
+      assert_equal %i[a d], @config.create.columns.names
       @config.update.columns = @config.create.columns
       @config._load_action_columns
-      assert_equal [:a, :c, :d], @config.update.columns.names
+      assert_equal %i[a c d], @config.update.columns.names
     end
 
     def test__params_for_columns__returns_all_params

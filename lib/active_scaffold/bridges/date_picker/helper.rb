@@ -49,7 +49,7 @@ module ActiveScaffold::Bridges
         Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}" if as_date_picker_options.blank?
 
         js_format = to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
-        date_picker_options[:dateFormat] = js_format unless js_format.blank?
+        date_picker_options[:dateFormat] = js_format if js_format.present?
         date_picker_options
       rescue
         raise if locale == I18n.locale
@@ -105,7 +105,7 @@ module ActiveScaffold::Bridges
       def self.split_datetime_format(datetime_format)
         date_format = datetime_format
         time_format = nil
-        time_start_indicators = %w(HH hh mm tt ss)
+        time_start_indicators = %w[HH hh mm tt ss]
         unless datetime_format.nil?
           start_indicator = time_start_indicators.detect { |indicator| datetime_format.include?(indicator) }
           unless start_indicator.nil?
