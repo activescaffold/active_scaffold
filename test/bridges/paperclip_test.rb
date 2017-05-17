@@ -25,7 +25,7 @@ class PaperclipTest < ActionView::TestCase
     assert config.update.multipart?
     assert_equal :paperclip, config.columns[:logo].form_ui
     assert_equal [:delete_logo], config.columns[:logo].params.to_a
-    %w(logo_file_name logo_file_size logo_updated_at logo_content_type).each do |attr|
+    %w[logo_file_name logo_file_size logo_updated_at logo_content_type].each do |attr|
       refute config.columns._inheritable.include?(attr.to_sym)
     end
     assert Company.method_defined?(:delete_logo)

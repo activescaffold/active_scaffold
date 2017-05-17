@@ -20,10 +20,10 @@ class ListColumnHelpersTest < ActionView::TestCase
     @column.options[:options] = [:value_1, :value_2, :value_3]
     assert_equal 'Value 2', format_column_value(@record, @column)
 
-    @column.options[:options] = %w(value_1 value_2 value_3)
+    @column.options[:options] = %w[value_1 value_2 value_3]
     assert_equal 'value_2', format_column_value(@record, @column)
 
-    @column.options[:options] = [%w(text_1 value_1), %w(text_2 value_2), %w(text_3 value_3)]
+    @column.options[:options] = [%w[text_1 value_1], %w[text_2 value_2], %w[text_3 value_3]]
     assert_equal 'text_2', format_column_value(@record, @column)
 
     @column.options[:options] = [[:text_1, :value_1], [:text_2, :value_2], [:text_3, :value_3]]

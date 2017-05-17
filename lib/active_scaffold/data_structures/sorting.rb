@@ -82,8 +82,8 @@ module ActiveScaffold::DataStructures
       clause[1]
     end
 
-    SORTING_STAGES = Hash[%w(reset ASC DESC reset).each_cons(2).to_a].freeze
-    DEFAULT_SORTING_STAGES = Hash[%w(ASC DESC ASC).each_cons(2).to_a].freeze
+    SORTING_STAGES = Hash[%w[reset ASC DESC reset].each_cons(2).to_a].freeze
+    DEFAULT_SORTING_STAGES = Hash[%w[ASC DESC ASC].each_cons(2).to_a].freeze
     def next_sorting_of(column, sorted_by_default)
       stages = sorted_by_default ? DEFAULT_SORTING_STAGES : SORTING_STAGES
       stages[direction_of(column)] || 'ASC'

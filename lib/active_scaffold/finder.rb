@@ -328,7 +328,7 @@ module ActiveScaffold
       :begins_with => '?%',
       :ends_with   => '%?'
     }.freeze
-    NULL_COMPARATORS = %w(null not_null).freeze
+    NULL_COMPARATORS = %w[null not_null].freeze
 
     def self.included(klass)
       klass.extend ClassMethods

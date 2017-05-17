@@ -141,7 +141,7 @@ module ActiveScaffold
                 values.collect!(&conversion) if conversion != :to_time
                 values
               else
-                %w(from to).collect { |field| condition_value_for_datetime(column, value[field], conversion) }
+                %w[from to].collect { |field| condition_value_for_datetime(column, value[field], conversion) }
               end
             end
 
@@ -186,7 +186,7 @@ module ActiveScaffold
                 [date_bridge_now.in(1.day).beginning_of_day, date_bridge_now.in(1.day).end_of_day]
               else
                 range_type, range = value['range'].downcase.split('_')
-                raise ArgumentError unless %w(week month year).include?(range)
+                raise ArgumentError unless %w[week month year].include?(range)
                 case range_type
                 when 'this'
                   return date_bridge_now.send("beginning_of_#{range}".to_sym), date_bridge_now.send("end_of_#{range}")
@@ -214,7 +214,7 @@ module ActiveScaffold
   end
 end
 
-ActiveScaffold::Finder.const_set('DATE_COMPARATORS', %w(PAST FUTURE RANGE))
-ActiveScaffold::Finder.const_set('DATE_UNITS', %w(DAYS WEEKS MONTHS YEARS))
-ActiveScaffold::Finder.const_set('TIME_UNITS', %w(SECONDS MINUTES HOURS))
-ActiveScaffold::Finder.const_set('DATE_RANGES', %w(TODAY YESTERDAY TOMORROW THIS_WEEK PREV_WEEK NEXT_WEEK THIS_MONTH PREV_MONTH NEXT_MONTH THIS_YEAR PREV_YEAR NEXT_YEAR))
+ActiveScaffold::Finder.const_set('DATE_COMPARATORS', %w[PAST FUTURE RANGE])
+ActiveScaffold::Finder.const_set('DATE_UNITS', %w[DAYS WEEKS MONTHS YEARS])
+ActiveScaffold::Finder.const_set('TIME_UNITS', %w[SECONDS MINUTES HOURS])
+ActiveScaffold::Finder.const_set('DATE_RANGES', %w[TODAY YESTERDAY TOMORROW THIS_WEEK PREV_WEEK NEXT_WEEK THIS_MONTH PREV_MONTH NEXT_MONTH THIS_YEAR PREV_YEAR NEXT_YEAR])
