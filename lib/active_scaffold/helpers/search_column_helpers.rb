@@ -297,9 +297,9 @@ module ActiveScaffold
         value = field_search_params[column.name.to_s]
         case value
         when Hash
-          !value['from'].blank?
+          value['from'].present?
         when String
-          !value.blank?
+          value.present?
         else
           false
         end

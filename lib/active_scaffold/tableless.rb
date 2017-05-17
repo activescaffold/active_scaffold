@@ -128,7 +128,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
 
     def where(opts, *rest)
-      unless opts.blank?
+      if opts.present?
         opts = opts.with_indifferent_access if opts.is_a? Hash
         @conditions << (rest.empty? ? opts : [opts, *rest])
       end

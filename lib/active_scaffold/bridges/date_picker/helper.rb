@@ -49,7 +49,7 @@ module ActiveScaffold::Bridges
         Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}" if as_date_picker_options.blank?
 
         js_format = to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
-        date_picker_options[:dateFormat] = js_format unless js_format.blank?
+        date_picker_options[:dateFormat] = js_format if js_format.present?
         date_picker_options
       rescue
         raise if locale == I18n.locale

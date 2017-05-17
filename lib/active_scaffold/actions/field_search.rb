@@ -160,7 +160,7 @@ module ActiveScaffold::Actions
             active_scaffold_conditions << search_condition
             filtered_columns << column
           end
-          unless filtered_columns.blank?
+          if filtered_columns.present?
             @filtered = active_scaffold_config.field_search.human_conditions ? filtered_columns : true
           end
 
