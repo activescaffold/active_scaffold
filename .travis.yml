@@ -12,7 +12,7 @@ gemfile:
   - gemfiles/Gemfile.rails-4.1.x
   - gemfiles/Gemfile.rails-4.2.x
 jdk:
-  - openjdk7
+  - openjdk8
 language: ruby
 matrix:
   exclude:
@@ -23,9 +23,9 @@ matrix:
   allow_failures:
     - rvm: rbx-3
 rvm:
-  - 2.2.6
-  - 2.3.3
+  - 2.2.7
+  - 2.3.4
   - 2.4.1
-  - jruby-9.1.6.0
+  - jruby-9.1.9.0
   - rbx-3
 sudo: required
