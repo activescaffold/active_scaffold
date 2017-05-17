@@ -289,7 +289,7 @@ module ActiveScaffold::Actions
 
     def clear_storage
       session_index = active_scaffold_session_storage_key
-      session.delete(session_index) unless session[session_index].present?
+      session.delete(session_index) if session[session_index].blank?
     end
 
     # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.

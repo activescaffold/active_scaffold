@@ -155,7 +155,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_group_column
-        return unless active_scaffold_config.field_search.group_options.present?
+        return if active_scaffold_config.field_search.group_options.blank?
         @_active_scaffold_group_column ||= begin
           column = ActiveScaffold::DataStructures::Column.new(:active_scaffold_group, active_scaffold_config.model)
           column.label = :group_by

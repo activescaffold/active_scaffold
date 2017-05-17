@@ -122,7 +122,7 @@ module ActiveScaffold::Actions
       end
 
       def grouped_columns
-        return unless active_scaffold_config.field_search.grouped_columns.present?
+        return if active_scaffold_config.field_search.grouped_columns.blank?
         active_scaffold_config.field_search.grouped_columns.map do |col|
           active_scaffold_config.columns[col]
         end.compact

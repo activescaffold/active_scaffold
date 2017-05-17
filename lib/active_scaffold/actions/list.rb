@@ -172,7 +172,7 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_js
-      do_refresh_list unless @record.present?
+      do_refresh_list if @record.blank?
       super
     end
 

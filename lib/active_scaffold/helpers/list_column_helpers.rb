@@ -108,7 +108,7 @@ module ActiveScaffold
 
       def active_scaffold_column_telephone(record, column)
         phone = record.send column.name
-        return unless phone.present?
+        return if phone.blank?
         phone = number_to_phone(phone) unless column.options[:format] == false
         tel_to phone
       end

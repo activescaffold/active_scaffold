@@ -117,7 +117,7 @@ module ActiveScaffold::DataStructures
       each do |sort_column, sort_direction|
         next if constraint_columns.include? sort_column.name
         sql = grouped_columns_calculations.try(:dig, sort_column.name) || sort_column.sort[:sql]
-        next unless sql.present?
+        next if sql.blank?
         sql = sql.to_sql if sql.respond_to?(:to_sql)
 
         parts = Array(sql).map do |column|

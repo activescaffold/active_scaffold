@@ -3,7 +3,7 @@ module ActiveScaffold
     module ListColumnHelpers
       def active_scaffold_column_dragonfly(record, column)
         attachment = record.send(column.name.to_s)
-        return nil unless attachment.present?
+        return nil if attachment.blank?
         content =
           if attachment.image?
             image_tag(attachment.thumb(column.options[:thumb] || ActiveScaffold::Bridges::Dragonfly::DragonflyBridgeHelpers.thumbnail_style).url, :border => 0)

@@ -217,7 +217,7 @@ module ActiveScaffold
           format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
         else
           [[:hour, '%H'], [:min, ':%M'], [:sec, ':%S']].each do |part, f|
-            format.gsub!(f, '') unless parts[part].present?
+            format.gsub!(f, '') if parts[part].blank?
           end
           format += ' %z' if parts[:offset].present? && format !~ /%z/i
         end
