@@ -145,7 +145,7 @@ module ActiveScaffold
       if form_ui && respond_to?("column_value_for_#{form_ui}_type", true)
         send("column_value_for_#{form_ui}_type", parent_record, column, value)
       elsif params_hash? value
-        column_value_from_param_hash_value(parent_record, column, value, avoid_changes)
+        column_value_from_param_hash_value(parent_record, column, params_hash(value), avoid_changes)
       else
         column_value_from_param_simple_value(parent_record, column, value)
       end
@@ -205,7 +205,6 @@ module ActiveScaffold
       if column.association.try :singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.association.try :collection?
-        value = params_hash(value)
         # HACK: to be able to delete all associated records, hash will include "0" => ""
         values = value.values.reject(&:blank?)
         values.collect { |val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }.compact
