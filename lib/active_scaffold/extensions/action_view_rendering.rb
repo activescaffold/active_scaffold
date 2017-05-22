@@ -39,17 +39,15 @@ module ActiveScaffold #:nodoc:
         options = args.first
 
         remote_controller = options[:active_scaffold]
-        constraints = options[:constraints]
-        conditions = options[:conditions]
         # It is important that the EID hash remains short as to not contribute
         # to a large session size and thus a possible cookie overflow exception
         # when using rails CookieStore or EncryptedCookieStore. For example,
         # when rendering many embedded scaffolds with constraints or conditions
         # on a single page.
-        eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
+        eid = Digest::MD5.hexdigest(params[:controller] + options.to_s)
         eid_info = {loading: true}
-        eid_info[:constraints] = constraints if constraints
-        eid_info[:conditions] = conditions if conditions
+        eid_info[:constraints] = options[:constraints] if options[:constraints]
+        eid_info[:conditions] = options[:conditions] if options[:conditions]
         eid_info[:label] = options[:label] if options[:label]
         options[:params] ||= {}
         options[:params].merge! :eid => eid, :embedded => eid_info
