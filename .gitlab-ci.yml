@@ -35,7 +35,7 @@
       - coverage
   script:
     - bundle install --clean --deployment --jobs=$(nproc) --without deployment development lint production
-    - bin/rake
+    - bundle exec rake
   stage: test
   tags:
     - ruby
