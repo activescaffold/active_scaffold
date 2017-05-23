@@ -63,19 +63,19 @@
 
 .use_rails_4_0_x: &use_rails_4_0_x
   variables:
-    BUNDLE_GEMFILE: $PWD/gemfiles/Gemfile.rails-4.0.x
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
 
 .use_rails_4_1_x: &use_rails_4_1_x
   variables:
-    BUNDLE_GEMFILE: $PWD/gemfiles/Gemfile.rails-4.1.x
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
 
 .use_rails_4_2_x: &use_rails_4_2_x
   variables:
-    BUNDLE_GEMFILE: $PWD/gemfiles/Gemfile.rails-4.2.x
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.2.x
 
 .use_rails_5_0_x: &use_rails_5_0_x
   variables:
-    BUNDLE_GEMFILE: $PWD/Gemfile
+    BUNDLE_GEMFILE: Gemfile
 
 cache:
   paths:
