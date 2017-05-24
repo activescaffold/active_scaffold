@@ -9,6 +9,21 @@ AllCops:
     - 'lib/generators/**/templates/**/*'
     - 'vendor/bundle/**/*'
 
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Metrics/ClassLength:
+  Max: 500
+
+Metrics/ModuleLength:
+  Max: 600
+
+Performance/RedundantMerge:
+  MaxKeyValuePairs: 1
+
 Rails:
   Enabled: true
 
@@ -27,18 +42,3 @@ Style/SingleLineBlockParams:
 Style/SingleLineMethods:
   Exclude:
     - 'test/**/*'
-
-Style/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: no_space
-
-Lint/UnusedMethodArgument:
-  Enabled: false
-
-Metrics/ClassLength:
-  Max: 500
-
-Metrics/ModuleLength:
-  Max: 600
-
-Performance/RedundantMerge:
-  MaxKeyValuePairs: 1
