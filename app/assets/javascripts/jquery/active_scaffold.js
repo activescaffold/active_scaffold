@@ -298,36 +298,23 @@ jQuery(document).ready(function($) {
     if (jQuery(this).prop('checked')) color_field.val('');
   });
 
-  /* setup some elements on page/form load */
-  ActiveScaffold.load_embedded(document);
-  ActiveScaffold.enable_js_form_buttons(document);
-  ActiveScaffold.live_search(document);
-  ActiveScaffold.auto_paginate(document);
-  ActiveScaffold.draggable_lists('.draggable-lists', document);
-  ActiveScaffold.sliders(document);
+  ActiveScaffold.setup(document);
   if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
-  jQuery(document).on('as:element_updated as:element_created', function(e) {
-    ActiveScaffold.enable_js_form_buttons(e.target);
-    ActiveScaffold.draggable_lists('.draggable-lists', e.target);
-    ActiveScaffold.sliders(e.target);
+  jQuery(document).on('as:element_updated as:element_created', function(e, action_link) {
+      ActiveScaffold.setup(e.target);
   });
-  jQuery(document).on('as:element_updated', function(e) {
-    ActiveScaffold.load_embedded(e.target);
-    ActiveScaffold.live_search(e.target);
+  jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
+    ActiveScaffold.setup(action_link.adapter);
   });
   jQuery(document).on('as:element_updated', '.active-scaffold', function(e) {
     if (e.target != this) return;
     var search = $(this).find('form.search');
     if (search.length) ActiveScaffold.focus_first_element_of_form(search);
   });
-  jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
-    ActiveScaffold.load_embedded(action_link.adapter);
-    ActiveScaffold.enable_js_form_buttons(action_link.adapter);
-    ActiveScaffold.live_search(action_link.adapter);
-    ActiveScaffold.auto_paginate(action_link.adapter);
-    ActiveScaffold.draggable_lists('.draggable-lists', action_link.adapter);
-    ActiveScaffold.sliders(action_link.adapter);
-  });
+});
+
+jQuery(document).on('turbolinks:load', function($) {
+  ActiveScaffold.setup(document);
 });
 
 
@@ -438,6 +425,15 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
 
 var ActiveScaffold = {
   last_focus: null,
+  setup: function(container) {
+    /* setup some elements on page/form load */
+    ActiveScaffold.load_embedded(container);
+    ActiveScaffold.enable_js_form_buttons(container);
+    ActiveScaffold.live_search(container);
+    ActiveScaffold.auto_paginate(container);
+    ActiveScaffold.draggable_lists('.draggable-lists', container);
+    ActiveScaffold.sliders(container);
+  },
   live_search: function(element) {
     jQuery('form.search.live input[type=search]', element).delayedObserver(function() {
      jQuery(this).parent().trigger("submit");
@@ -1043,7 +1039,12 @@ var ActiveScaffold = {
     });
     window.onbeforeunload = function() {
       if (jQuery('form.need-confirm').length) return unload_message;
-    }
+    };
+    jQuery(document).on('turbolinks:before-visit', function(e) {
+      if (jQuery('form.need-confirm').length) {
+        if (!window.confirm(unload_message)) e.preventDefault();
+      }
+    });
   }
 }
 

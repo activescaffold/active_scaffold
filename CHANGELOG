@@ -2,7 +2,7 @@
 - add support for associations between Mongoid and ActiveRecord with ActiveMongoid
 - use concerns for routes, deprecate as_routes method
 - add install generator
-- rails 5.0 support
+- rails 5.0 support and turbolinks 5.0 support, without jquery.turbolinks
 - rename active_scaffold generator as active_scaffold:resource
 - rename active_scaffold_controller generator as active_scaffold:controller
 - remove deprecations from 3.4.x (active_scaffold_includes and using @record in helpers)
