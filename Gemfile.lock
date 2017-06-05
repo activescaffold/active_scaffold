@@ -90,7 +90,7 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    mini_portile2 (2.1.0)
+    mini_portile2 (2.2.0)
     minitest (5.10.2)
     minitest-reporters (1.1.14)
       ansi
@@ -102,9 +102,9 @@ GEM
     netrc (0.11.0)
     nio4r (2.0.0)
     nio4r (2.0.0-java)
-    nokogiri (1.7.2)
-      mini_portile2 (~> 2.1.0)
-    nokogiri (1.7.2-java)
+    nokogiri (1.8.0)
+      mini_portile2 (~> 2.2.0)
+    nokogiri (1.8.0-java)
     parallel (1.11.2)
     parser (2.4.0.0)
       ast (~> 2.2)
@@ -211,4 +211,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.15.0
+   1.15.1
