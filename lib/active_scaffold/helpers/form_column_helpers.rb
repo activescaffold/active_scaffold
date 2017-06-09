@@ -218,7 +218,8 @@ module ActiveScaffold
 
       def column_show_add_new(column, associated, record)
         assoc = column.association
-        value = (assoc.collection? && !assoc.readonly? && !assoc.through?) || assoc.singular?
+        value = assoc.singular?
+        value ||= assoc.collection? && !assoc.readonly? && (!assoc.through? || !assoc.through_reflection.collection?)
         value &&= false unless assoc.klass.authorized_for?(:crud_type => :create)
         value
       end
