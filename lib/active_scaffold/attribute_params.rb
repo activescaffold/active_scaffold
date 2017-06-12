@@ -121,7 +121,7 @@ module ActiveScaffold
       elsif column.association && counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value.try(:id)
         parent_record.association(column.name).target = value
-      elsif column.association && column.association.through? && !column.association.through_reflection.collection?
+      elsif column.association.try(:collection?) && column.association.through? && !column.association.through_reflection.collection?
         through = column.association.through_reflection.name
         through_record = parent_record.send(through)
         through_record ||= parent_record.send "build_#{through}"
