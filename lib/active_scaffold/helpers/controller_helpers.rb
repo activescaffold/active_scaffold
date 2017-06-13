@@ -85,11 +85,7 @@ module ActiveScaffold
       end
 
       def main_form_controller
-        return unless params[:parent_controller] && subform_child_association
-        controller = parent_controller_name.constantize
-        column = controller.active_scaffold_config.columns[subform_child_association] if controller
-        return unless column
-        controller if column.association.klass.name == active_scaffold_config.model.name
+        parent_controller_name.constantize unless params[:parent_controller]
       end
 
       def render_parent?
