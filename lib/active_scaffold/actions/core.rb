@@ -450,7 +450,7 @@ module ActiveScaffold::Actions
         controller = self.class.active_scaffold_controller_for(klass)
         cfg = controller.active_scaffold_config if controller.uses_active_scaffold?
         next unless cfg && cfg.add_sti_create_links?
-        return controller if cfg.sti_children.include? controller_path
+        return controller if cfg.sti_children.map(&:to_s).include? self.class.active_scaffold_config.model.name.underscore
       end
     rescue ActiveScaffold::ControllerNotFound => ex
       logger.warn "#{ex.message} looking for parent_sti of #{self.class.active_scaffold_config.model.name}"
