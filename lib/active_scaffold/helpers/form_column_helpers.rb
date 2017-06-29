@@ -169,13 +169,17 @@ module ActiveScaffold
         column_options = active_scaffold_input_options(column, scope, :object => record)
         attributes = field_attributes(column, record)
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
-        field =
-          if only_value
-            content_tag(:span, get_column_value(record, column), column_options.except(:name, :object)) <<
-              hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
-          else
-            active_scaffold_input_for column, scope, column_options
+        if only_value
+          field = content_tag(:span, get_column_value(record, column), column_options.except(:name, :object))
+          if column.association.nil? || column.association.belongs_to?
+            # hidden field probably not needed, but leaving it just in case
+            # but it isn't working for assocations which are not belongs_to
+            method = column.association ? column.association.foreign_key : column.name
+            field << hidden_field(:record, method, column_options)
           end
+        else
+          field = active_scaffold_input_for column, scope, column_options
+        end
 
         content_tag :dl, attributes do
           %(<dt>#{label_tag label_for(column, column_options), column.label}</dt><dd>#{field}
