@@ -28,6 +28,7 @@
 - fix human conditions for :chosen and :multi_chosen search_ui
 - fix display of association in list when association_limit is nil
 - fix conversion of i18n date and datetime value, some abbr day and month may be equal in some languages
+- fix hidden form_ui for collection associations (has_many, habtm)
 
 = 3.4.42
 - Fix for protected and private authorized methods

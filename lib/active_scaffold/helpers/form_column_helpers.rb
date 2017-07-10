@@ -198,9 +198,29 @@ module ActiveScaffold
       end
 
       def form_hidden_attribute(column, record, scope = nil)
-        %(<dl style="display: none;"><dt></dt><dd>
-#{hidden_field :record, column.name, active_scaffold_input_options(column, scope).merge(:object => record)}
-</dd></dl>).html_safe
+        content_tag :dl, style: 'display: none' do
+          logger.debug column.name
+          content_tag(:dt, '') <<
+          content_tag(:dd, form_hidden_field(column, record, scope))
+        end
+      end
+
+      def form_hidden_field(column, record, scope)
+        options = active_scaffold_input_options(column, scope)
+        if column.association.try(:collection?)
+          associated = record.send(column.name)
+          if associated.blank?
+            hidden_field_tag options[:name], '', options
+          else
+            options[:name] += '[]'
+            fields = associated.map do |r|
+              hidden_field_tag options[:name], r.id, options.merge(id: options[:id] + "_#{r.id}")
+            end
+            safe_join fields, ''
+          end
+        else
+          hidden_field :record, column.name, options.merge(object: record)
+        end
       end
 
       # Should this column be displayed in the subform?
