@@ -199,9 +199,8 @@ module ActiveScaffold
 
       def form_hidden_attribute(column, record, scope = nil)
         content_tag :dl, style: 'display: none' do
-          logger.debug column.name
           content_tag(:dt, '') <<
-          content_tag(:dd, form_hidden_field(column, record, scope))
+            content_tag(:dd, form_hidden_field(column, record, scope))
         end
       end
 
