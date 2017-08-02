@@ -7,7 +7,7 @@
       require_asset "jquery-ui"
     elsif Jquery.const_defined? 'Ui'
       jquery_ui_prefix = Jquery::Ui::Rails::VERSION < '5.0.0' ? 'jquery.ui.' : 'jquery-ui/'
-      jquery_ui_widgets_prefix = Jquery::Ui::Rails::VERSION >= '6.0.0' ? '/widgets/' : ''
+      jquery_ui_widgets_prefix = Jquery::Ui::Rails::VERSION >= '6.0.0' ? 'widgets/' : ''
       require_asset "#{jquery_ui_prefix}core"
       require_asset "#{jquery_ui_prefix}effect"
       require_asset "#{jquery_ui_prefix}effects/effect-highlight" if Jquery::Ui::Rails::VERSION >= '6.0.0'
