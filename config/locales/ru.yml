@@ -18,6 +18,7 @@ ru:
     between: В интервале
     cancel: Отмена
     cant_destroy_record: Запись %{record} не может быть удалена
+    changes: 
     click_to_edit: Нажмите для редактирования
     click_to_reset: Нажмите для сброса
     close: Закрыть
@@ -26,6 +27,7 @@ ru:
     contains: Содержит
     create: Создать
     create_another: "%{model}: Создать другую запись"
+    create_apply: 
     create_model: "%{model}: создать запись"
     create_new: Создать новую запись
     created_model: "%{model}: запись создана"
@@ -42,6 +44,7 @@ ru:
     days: дней
     delete: Удалить
     deleted_model: "%{model}: запись удалена"
+    deleted_records: 
     delimiter: Разделитель
     download: Загрузить
     edit: Изменить
@@ -64,6 +67,8 @@ ru:
       one: запись
       other: записи
     future: Будущие
+    group_by: 
+    grouped_by: 
     hide: "(Скрыть)"
     hours: часов
     human_conditions:
@@ -85,7 +90,9 @@ ru:
     next_week: На следующей неделе
     next_year: В следующем году
     no_authorization_for_action: Нет прав на выполнение действия "%{action}"
+    no_color: 
     no_entries: Нет записей
+    no_group: 
     no_options: Нет вариантов
     not_null: Не пусто
     'null': Пусто
@@ -128,25 +135,19 @@ ru:
     tomorrow: Завтра
     'true': Да
     update: Обновить запись
+    update_apply: 
     update_model: "%{model}: обновить запись"
     updated_model: "%{model}: запись обновлена"
     version_inconsistency: Эта запись была обновлена с того момента, как вы начали ее редактировать
     weeks: недель
     years: лет
     yesterday: Вчера
-    changes: 
-    create_apply: 
-    deleted_records: 
-    group_by: 
-    no_group: 
-    update_apply: 
-    no_color: 
-  time:
-    formats:
-      picker: "%a, %d %b %Y %H:%M:%S"
   date:
     formats:
       month: 
       quarter: 
       year_month: 
       year_quarter: 
+  time:
+    formats:
+      picker: "%a, %d %b %Y %H:%M:%S"

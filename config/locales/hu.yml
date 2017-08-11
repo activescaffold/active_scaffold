@@ -18,6 +18,7 @@ hu:
     between: Között
     cancel: Mégse
     cant_destroy_record: 'nem törölhető: %{record}'
+    changes: 
     click_to_edit: Kattints a szerkesztéshez
     click_to_reset: Kattints az alapállapothoz
     close: Bezárás
@@ -26,6 +27,7 @@ hu:
     contains: Contains
     create: Létrehozás
     create_another: Create Another %{model}
+    create_apply: 
     create_model: "%{model} létrehozása"
     create_new: Új létrehozása
     created_model: "%{model} létrehozva"
@@ -42,6 +44,7 @@ hu:
     days: Days
     delete: Törlés
     deleted_model: "%{model} törölve"
+    deleted_records: 
     delimiter: Elválasztó
     download: Letöltés
     edit: Szerkesztés
@@ -58,6 +61,8 @@ hu:
     filtered: "(Szűrt)"
     found: Találat
     future: Future
+    group_by: 
+    grouped_by: 
     hide: "(Elrejtés)"
     hours: Hours
     human_conditions:
@@ -79,7 +84,9 @@ hu:
     next_week: Next Week
     next_year: Next Year
     no_authorization_for_action: No Authorization for action %{action}
+    no_color: 
     no_entries: Nincs elem
+    no_group: 
     no_options: nincsenek opciók
     not_null: Not Null
     'null': 'Null'
@@ -120,25 +127,19 @@ hu:
     tomorrow: Tomorrow
     'true': 'True'
     update: Modosítás
+    update_apply: 
     update_model: "%{model} modosítása"
     updated_model: "%{model} módosítva"
     version_inconsistency: Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni.
     weeks: Weeks
     years: Years
     yesterday: Yesterday
-    changes: 
-    create_apply: 
-    deleted_records: 
-    group_by: 
-    no_group: 
-    update_apply: 
-    no_color: 
-  time:
-    formats:
-      picker: "%a, %d %b %Y %H:%M:%S"
   date:
     formats:
       month: 
       quarter: 
       year_month: 
       year_quarter: 
+  time:
+    formats:
+      picker: "%a, %d %b %Y %H:%M:%S"
