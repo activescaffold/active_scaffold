@@ -61,6 +61,7 @@ en:
     found: Found
     future: Future
     group_by: Group by
+    grouped_by: Grouped by %{column}
     hide: "(Hide)"
     hours: Hours
     human_conditions:
