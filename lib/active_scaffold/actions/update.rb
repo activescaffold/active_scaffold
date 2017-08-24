@@ -150,7 +150,7 @@ module ActiveScaffold::Actions
       value ||=
         unless @column.column.nil? || @column.column.null
           default_val = @column.column.default
-          default_val = ActiveScaffold::Core.column_type_cast @column.column, default_val if Rails.version >= '4.2.0'
+          default_val = ActiveScaffold::Core.column_type_cast default_val, @column.column if Rails.version >= '4.2.0'
           default_val == true ? false : default_val
         end
       unless @column.nil?
