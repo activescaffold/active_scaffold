@@ -92,7 +92,7 @@ GEM
     jdbc-sqlite3 (3.8.11.2)
     json (2.1.0)
     json (2.1.0-java)
-    localeapp (2.3.0)
+    localeapp (2.4.0)
       gli
       i18n (~> 0.4)
       json
@@ -108,7 +108,7 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.2.0)
     minitest (5.10.3)
-    minitest-reporters (1.1.16)
+    minitest-reporters (1.1.17)
       ansi
       builder
       minitest (>= 5.0)
