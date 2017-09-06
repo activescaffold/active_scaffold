@@ -84,11 +84,17 @@ search:
 #   api_key: "AbC-dEf5"
 
 ## Do not consider these keys missing:
-#ignore_missing:
+ignore_missing:
+  # translations from rails i18n are used
+  - date.formats.default
+  - number.currency.format
+  - number.format
+  - number.human.format
+  - number.percentage.format
 
 ## Consider these keys used:
 ignore_unused:
-- 'active_scaffold.*' # used indirectly by the ActiveScaffold
+  - 'active_scaffold.*' # used indirectly by the ActiveScaffold
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:
 # ignore_eq_base:
