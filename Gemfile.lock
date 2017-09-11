@@ -108,7 +108,7 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.2.0)
     minitest (5.10.3)
-    minitest-reporters (1.1.17)
+    minitest-reporters (1.1.18)
       ansi
       builder
       minitest (>= 5.0)
