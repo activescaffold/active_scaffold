@@ -19,20 +19,20 @@ class CalculationTest < MiniTest::Test
   def test_calculation_with_conditions
     @klass.expects(:conditions_for_collection).returns(['"buildings"."name" LIKE ? OR "people"."first_name" LIKE ?', '%foo%', '%foo%'])
     @klass.expects(:active_scaffold_references).returns([:owner])
-    @klass.active_scaffold_config.expects(:list).returns(mock { stubs(:count_includes).returns(nil) })
+    @klass.active_scaffold_config.expects(:list).returns(mock.tap { |m| m.stubs(:count_includes).returns(nil) })
 
-    column = mock { stubs(:field).returns('"buildings"."id"') }
-    @klass.active_scaffold_config.expects(:columns).returns(mock { stubs(:"[]").returns(column) })
+    column = mock.tap { |m| m.stubs(:field).returns('"buildings"."id"') }
+    @klass.active_scaffold_config.expects(:columns).returns(mock.tap { |m| m.stubs(:"[]").returns(column) })
     query = @klass.send :calculate_query
     assert_equal 2, query.count
   end
 
   def test_calculation_without_conditions
     @klass.stubs(:active_scaffold_references).returns([:owner])
-    @klass.active_scaffold_config.expects(:list).returns(mock { stubs(:count_includes).returns(nil) })
+    @klass.active_scaffold_config.expects(:list).returns(mock.tap { |m| m.stubs(:count_includes).returns(nil) })
 
-    column = mock { stubs(:field).returns('"buildings"."id"') }
-    @klass.active_scaffold_config.expects(:columns).returns(mock { stubs(:"[]").returns(column) })
+    column = mock.tap { |m| m.stubs(:field).returns('"buildings"."id"') }
+    @klass.active_scaffold_config.expects(:columns).returns(mock.tap { |m| m.stubs(:"[]").returns(column) })
     query = @klass.send :calculate_query
     assert_equal Building.count, query.count
   end
