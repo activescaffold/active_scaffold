@@ -35,7 +35,7 @@
 <%= content_tag record_tag, :class => "sub-form-record" do %>
   <% unless record.errors.empty? -%>
   <%= content_tag error_tag, :class => "association-record-errors", :id => element_messages_id(:action => record.class.name.underscore, :id => "#{parent_record.id}-#{index}") do %>
-            <% errors = active_scaffold_error_messages_for(:record, :object => record) %>
+    <% errors = active_scaffold_error_messages_for(:record, :object => record) %>
     <%= error_inner_tag ? content_tag(error_inner_tag, errors, :colspan => (active_scaffold_config_for(record.class).subform.columns.length + 1 if error_inner_tag == :td)) : errors %>
   <% end %>
   <% end %>
