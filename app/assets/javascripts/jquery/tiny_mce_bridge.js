@@ -12,7 +12,9 @@ jQuery(document).on('submit', 'form.as_form', function() {
 });
 /* for persistent update forms */
 jQuery(document).on('ajax:complete', 'form.as_form', function() {
-  jQuery('textarea.mceEditor', this).each(function() { tinymce.createEditor(jQuery(this).attr('id')); });
+  jQuery('textarea.mceEditor', this).each(function() {
+    tinyMCE.execCommand('mceAddEditor', false, jQuery(elem).attr('id'));
+  });
 });
 jQuery(document).on('as:action_success', 'a.as_action', function(event) {
   var action_link = ActiveScaffold.ActionLink.get(jQuery(this));

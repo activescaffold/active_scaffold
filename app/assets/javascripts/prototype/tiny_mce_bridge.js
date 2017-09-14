@@ -11,5 +11,7 @@ document.on('submit', 'form.as_form', function() {
 });
 /* for persistent update forms */
 document.on('ajax:complete', 'form.as_form', function(event) {
-  this.select('textarea.mceEditor').each(function(elem) { tinymce.createEditor(elem.id); });
+  this.select('textarea.mceEditor').each(function(elem) {
+    tinyMCE.execCommand('mceAddEditor', false, elem.id);
+  });
 });
