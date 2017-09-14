@@ -35,18 +35,16 @@ class TinyMceTest < ActionView::TestCase
   def test_form_ui
     config = ActiveScaffold::Config::Core.new(:company)
     record = Company.new
-    expects(:request).returns(stub(:xhr? => true))
 
-    assert_dom_equal %{<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\">\n</textarea>\n<script>\n//<![CDATA[\ntinyMCE.settings = {\"theme\":\"modern\"};tinyMCE.execCommand('mceAddEditor', false, 'record_name');\n//]]>\n</script>}, active_scaffold_input_text_editor(config.columns[:name], :name => 'record[name]', :id => 'record_name', :class => 'name-input', :object => record)
+    assert_dom_equal %{<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\">\n</textarea>}, active_scaffold_input_text_editor(config.columns[:name], :name => 'record[name]', :id => 'record_name', :class => 'name-input', :object => record)
   end
 
   def test_form_ui_alternate
     config = ActiveScaffold::Config::Core.new(:company)
     record = Company.new
-    expects(:request).returns(stub(:xhr? => true))
     config.columns[:name].options[:tinymce_config] = :alternate
 
-    assert_dom_equal %{<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\">\n</textarea>\n<script>\n//<![CDATA[\ntinyMCE.settings = {\"theme\":\"alternate\",\"toolbar\":\"undo redo | format\"};tinyMCE.execCommand('mceAddEditor', false, 'record_name');\n//]]>\n</script>}, active_scaffold_input_tinymce(config.columns[:name], :name => 'record[name]', :id => 'record_name', :class => 'name-input', :object => record)
+    assert_dom_equal %{<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\">\n</textarea>}, active_scaffold_input_tinymce(config.columns[:name], :name => 'record[name]', :id => 'record_name', :class => 'name-input', :object => record)
   end
 
   protected
