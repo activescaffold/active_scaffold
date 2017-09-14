@@ -13,14 +13,15 @@ jQuery(document).on('submit', 'form.as_form', function() {
 /* for persistent update forms */
 jQuery(document).on('ajax:complete', 'form.as_form', function() {
   jQuery('textarea.mceEditor', this).each(function() {
-    tinyMCE.execCommand('mceAddEditor', false, jQuery(elem).attr('id'));
+    tinyMCE.execCommand('mceAddEditor', false, jQuery(this).attr('id'));
   });
 });
+/* enable tinymce textarea after form open */
 jQuery(document).on('as:action_success', 'a.as_action', function(event) {
   var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
   if (action_link && action_link.adapter) {
-    jQuery(action_link.adapter).find('textarea.mceEditor').each(function(index, elem) {
-      tinyMCE.execCommand('mceAddEditor', false, jQuery(elem).attr('id'));
+    jQuery(action_link.adapter).find('textarea.mceEditor').each(function() {
+      tinyMCE.execCommand('mceAddEditor', false, jQuery(this).attr('id'));
     });
   }
 });
