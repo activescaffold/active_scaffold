@@ -49,7 +49,7 @@ class ActiveScaffold::Bridges::RecordSelect
 
         html =
           if multiple
-            record_multi_select_field(options[:name], value || [], record_select_options)
+            record_multi_select_field(options[:name], value || [], record_select_options.except(:required))
           else
             record_select_field(options[:name], value || klass.new, record_select_options)
           end
