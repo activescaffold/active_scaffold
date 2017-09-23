@@ -11,6 +11,8 @@
   only:
     - master
   stage: deploy
+  tags:
+    - gitlab-org-high-cpu
 
 .lint: &lint
   before_script:
@@ -23,6 +25,8 @@
     - bundle install --clean --deployment --jobs=2 --without default deployment development production test
   image: ruby:alpine
   stage: lint
+  tags:
+    - gitlab-org-high-cpu
 
 .test: &test
   artifacts:
@@ -40,6 +44,8 @@
   script:
     - bundle exec rake
   stage: test
+  tags:
+    - gitlab-org-high-cpu
 
 .use_jruby_9_1: &use_jruby_9_1
   image: jruby:9.1-alpine
