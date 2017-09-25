@@ -19,7 +19,7 @@ module ActiveScaffold
         ActiveScaffold::Bridges.run_all
 
         # converts Foo::BarController to 'bar' and FooBarsController to 'foo_bar' and AddressController to 'address'
-        model_id = to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore unless model_id
+        model_id ||= to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore
 
         # run the configuration
         @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
