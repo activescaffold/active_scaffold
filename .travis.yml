@@ -12,7 +12,7 @@ gemfile:
   - gemfiles/Gemfile.rails-4.1.x
   - gemfiles/Gemfile.rails-4.2.x
 jdk:
-  - openjdk9
+  - openjdk8
 language: ruby
 matrix:
   exclude:
