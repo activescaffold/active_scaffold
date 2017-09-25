@@ -284,11 +284,12 @@ module ActiveScaffold
         column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
         column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name) if column
 
-        # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
+        # datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
         next true if column && parts.length > 1 && part_ignore_column_types.include?(column_type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
+        # booleans always have value, so they are ignored if not changed from default
         default_value = column_default_value(column_name, klass, column)
         casted_value = column ? ActiveScaffold::Core.column_type_cast(value, column) : value
         next true if casted_value == default_value
