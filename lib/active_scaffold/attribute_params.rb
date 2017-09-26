@@ -189,9 +189,10 @@ module ActiveScaffold
         column.number_to_native(value)
       else
         # convert empty strings into nil. this works better with 'null => true' columns (and validations),
-        # and 'null => false' columns should just convert back to an empty string.
-        # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
-        value = nil if value.is_a?(String) && value.empty? && !column.column.nil? && column.column.null
+        # for 'null => false' columns is just converted to default value from column
+        if value.is_a?(String) && value.empty? && !column.column.nil?
+          value = column.column.null ? nil : column.column.default
+        end
         value
       end
     end
