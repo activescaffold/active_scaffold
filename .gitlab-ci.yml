@@ -43,7 +43,6 @@
   stage: test
   tags:
     - ruby
-    - gitlab-org-high-cpu
 
 .use_jruby_9_1: &use_jruby_9_1
   image: jruby:9.1-alpine
