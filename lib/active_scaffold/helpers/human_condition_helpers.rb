@@ -54,7 +54,7 @@ module ActiveScaffold
       def active_scaffold_human_condition_boolean(column, value)
         attribute = column.active_record_class.human_attribute_name(column.name)
         label = as_(ActiveScaffold::Core.column_type_cast(value, column.column) ? :true : :false)
-        as_(:boolean, :scope => :human_conditions, :column => attribute, :value => label)
+        as_('human_conditions.boolean', :column => attribute, :value => label)
       end
       alias active_scaffold_human_condition_checkbox active_scaffold_human_condition_boolean
 
@@ -75,7 +75,7 @@ module ActiveScaffold
             value
           end
         end
-        as_(:association, :scope => :human_conditions, :column => attribute, :value => associated.join(', '))
+        as_('human_conditions.association', :column => attribute, :value => associated.join(', '))
       end
       alias active_scaffold_human_condition_multi_select active_scaffold_human_condition_select
       alias active_scaffold_human_condition_record_select active_scaffold_human_condition_select
