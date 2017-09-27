@@ -1,4 +1,4 @@
-#require 'simplecov' if RUBY_ENGINE == 'ruby'
+require 'simplecov' if RUBY_ENGINE == 'ruby'
 
 ENV['RAILS_ENV'] = 'test'
 require 'mock_app/config/environment'
