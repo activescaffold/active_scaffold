@@ -83,47 +83,6 @@ cache:
   paths:
     - vendor/bundle
 
-lint:brakeman:
-  <<: *lint
-  artifacts:
-    expire_in: 1 day
-    paths:
-      - brakeman
-    when: always
-  script:
-    - bin/brakeman --exit-on-warn --output brakeman/index.html
-
-lint:bundler:audit:
-  <<: *lint
-  script:
-    - bin/bundle-audit check --update --verbose
-
-lint:i18n:
-  <<: *lint
-  allow_failure: true
-  script:
-    - bin/i18n-tasks health
-
-lint:rubocop:
-  <<: *lint
-  script:
-    - bin/rubocop
-
-pages:
-  <<: *deploy
-  artifacts:
-    expire_in: 1 month
-    paths:
-      - public
-  script:
-    - bin/codeclimate-test-reporter
-    - DIR=public/$([ "$CI_COMMIT_REF_SLUG" = master ] || echo $CI_COMMIT_REF_SLUG)
-    - mkdir -pv $DIR
-    - mv -v brakeman $DIR
-    - mv -v coverage $DIR
-  except:
-    - tags
-
 stages:
 #  - lint
   - test
