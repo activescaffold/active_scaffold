@@ -39,7 +39,7 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update build-base git sqlite-dev tzdata
+    - apk add --no-cache --update build-base git sqlite-dev tzdata xz-dev
     - bundle install --clean --deployment --jobs=2 --without deployment development lint production
   script:
     - bundle exec rake
