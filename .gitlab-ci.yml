@@ -35,13 +35,14 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update build-base git sqlite-dev tzdata
+    - apt-get -qq update
+    - apt-get -qq install git
     - bundle install --clean --deployment --jobs=2 --without deployment development lint production
-    - ls -lR test/
   script:
-    - bundle exec rake
+    - bundle exec rake --trace
   stage: test
   tags:
+    - ruby
     - gitlab-org-high-cpu
 
 .use_jruby_9_1: &use_jruby_9_1
@@ -51,7 +52,7 @@
   image: ruby:2.2-alpine
 
 .use_mri_2_3: &use_mri_2_3
-  image: ruby:2.3-alpine
+  image: ruby:2.3
 
 .use_mri_2_4: &use_mri_2_4
   image: ruby:2.4-alpine
@@ -91,4 +92,3 @@ variables:
   JRUBY_OPTS: --debug
   LC_ALL: C.UTF-8
   RAILS_ENV: test
-  TESTOPTS: --verbose
