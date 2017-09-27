@@ -79,10 +79,6 @@
   variables:
     BUNDLE_GEMFILE: Gemfile
 
-cache:
-  paths:
-    - vendor/bundle
-
 stages:
 #  - lint
   - test
