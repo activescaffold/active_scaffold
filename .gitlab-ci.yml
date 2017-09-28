@@ -176,12 +176,16 @@ test:rails-5.0:jruby:9.1:
 test:rails-5.0:mri:2.2:
   <<: *use_mri_2_2
   <<: *use_rails_5_0
-  script: bundle exec rake --trace
+  script:
+    - rm -rf vendor/bundle/
+    - bundle exec rake
 
 test:rails-5.0:mri:2.3:
   <<: *use_mri_2_3
   <<: *use_rails_5_0
-  script: bundle exec rake --trace
+  script:
+    - rm -rf vendor/bundle/
+    - bundle exec rake
 
 test:rails-5.0:mri:2.4:
   <<: *use_mri_2_4
