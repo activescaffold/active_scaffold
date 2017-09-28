@@ -124,7 +124,7 @@ module ActiveScaffold
           link.crud_type = :read
         end
 
-        unless column_link_authorized?(link, link.column, record, associated)
+        unless column_link_authorized?(link, link.column, record, associated)[0]
           link.action = nil
           # if action is edit and is not authorized, fallback to show if it's enabled
           if link.crud_type == :update && actions.include?(:show)
