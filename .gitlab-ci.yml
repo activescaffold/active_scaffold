@@ -40,6 +40,7 @@
     - gem --version
     - bundle --version
     - apk add --no-cache --update build-base git sqlite-dev tzdata
+    - rm -rf vendor/bundle
     - bundle install --clean --deployment --jobs=2 --without deployment development lint production
   script:
     - bundle exec rake
