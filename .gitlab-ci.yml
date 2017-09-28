@@ -40,7 +40,6 @@
     - gem --version
     - bundle --version
     - apk add --no-cache --update build-base git sqlite-dev tzdata
-    - rm -rf vendor/bundle
     - bundle install --clean --deployment --jobs=2 --without deployment development lint production
   script:
     - bundle exec rake
@@ -84,10 +83,95 @@ cache:
   paths:
     - vendor/bundle
 
+lint:brakeman:
+  <<: *lint
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - brakeman
+    when: always
+  script:
+    - bin/brakeman --exit-on-warn --output brakeman/index.html
+
+lint:bundler:audit:
+  <<: *lint
+  script:
+    - bin/bundle-audit check --update --verbose
+
+lint:i18n:
+  <<: *lint
+  allow_failure: true
+  script:
+    - bin/i18n-tasks health
+
+lint:rubocop:
+  <<: *lint
+  script:
+    - bin/rubocop
+
+pages:
+  <<: *deploy
+  artifacts:
+    expire_in: 1 month
+    paths:
+      - public
+  script:
+    - bin/codeclimate-test-reporter
+    - DIR=public/$([ "$CI_COMMIT_REF_SLUG" = master ] || echo $CI_COMMIT_REF_SLUG)
+    - mkdir -pv $DIR
+    - mv -v brakeman $DIR
+    - mv -v coverage $DIR
+  except:
+    - tags
+
 stages:
   - lint
   - test
   - deploy
+
+test:rails-4.0:jruby:9.1:
+  <<: *use_jruby_9_1
+  <<: *use_rails_4_0
+
+test:rails-4.0:mri:2.2:
+  <<: *use_mri_2_2
+  <<: *use_rails_4_0
+
+test:rails-4.0:mri:2.3:
+  <<: *use_mri_2_3
+  <<: *use_rails_4_0
+
+test:rails-4.1:jruby:9.1:
+  <<: *use_jruby_9_1
+  <<: *use_rails_4_1
+
+test:rails-4.1:mri:2.2:
+  <<: *use_mri_2_2
+  <<: *use_rails_4_1
+
+test:rails-4.1:mri:2.3:
+  <<: *use_mri_2_3
+  <<: *use_rails_4_1
+
+test:rails-4.2:jruby:9.1:
+  <<: *use_jruby_9_1
+  <<: *use_rails_4_2
+
+test:rails-4.2:mri:2.2:
+  <<: *use_mri_2_2
+  <<: *use_rails_4_2
+
+test:rails-4.2:mri:2.3:
+  <<: *use_mri_2_3
+  <<: *use_rails_4_2
+
+test:rails-4.2:mri:2.4:
+  <<: *use_mri_2_4
+  <<: *use_rails_4_2
+
+test:rails-5.0:jruby:9.1:
+  <<: *use_jruby_9_1
+  <<: *use_rails_5_0
 
 test:rails-5.0:mri:2.2:
   <<: *use_mri_2_2
@@ -95,6 +179,10 @@ test:rails-5.0:mri:2.2:
 
 test:rails-5.0:mri:2.3:
   <<: *use_mri_2_3
+  <<: *use_rails_5_0
+
+test:rails-5.0:mri:2.4:
+  <<: *use_mri_2_4
   <<: *use_rails_5_0
 
 variables:
