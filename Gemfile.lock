@@ -121,7 +121,7 @@ GEM
     nio4r (2.1.0)
     nio4r (2.1.0-java)
     nokogiri (1.8.0)
-      mini_portile2 (~> 2.3.0)
+      mini_portile2 (~> 2.2.0)
     nokogiri (1.8.1-java)
     parallel (1.12.0)
     parser (2.4.0.0)
