@@ -21,7 +21,7 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update git
+    - apk add --no-cache --update build-base git
     - bundle install --clean --deployment --jobs=2 --without default deployment development production test
   image: ruby:alpine
   stage: lint
