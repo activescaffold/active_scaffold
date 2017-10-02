@@ -1,12 +1,12 @@
 try {
 <% form_selector ||= "#{element_form_id(:action => :update, :id => @record.try(:id) || params[:id])}" %>
 var action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
-action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
+if (action_link) action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
 <% if successful? %>
   <% if params[:dont_close] %>
     <% row_selector = element_row_id(:action => :list, :id => @record.id) %>
     ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
-    action_link.target = $('#<%= row_selector %>');
+    if (action_link) action_link.target = $('#<%= row_selector %>');
     <%= render :partial => 'update_calculations', :formats => [:js] %>
     <% if params[:iframe] == 'true' %>
       ActiveScaffold.enable_form('<%= form_selector %>');
@@ -14,7 +14,7 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
   <% else %>
     <% if render_parent? %>
       <% if nested_singular_association? || render_parent_action == :row %>
-        action_link.close(true);
+        if (action_link) action_link.close(true);
       <% else %>
         ActiveScaffold.reload('<%= url_for render_parent_options %>');
       <% end %>
@@ -22,9 +22,9 @@ action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'mes
       <%= render :partial => 'refresh_list' %>
     <% else %>
       <% if @record %>
-      action_link.close('<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
+      if (action_link) action_link.close('<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
       <% else %>
-      action_link.close();
+      if (action_link) action_link.close();
       ActiveScaffold.delete_record_row('<%= element_row_id(:action => :list, :id => params[:id]) %>');
       <% end %>
       <%= render :partial => 'update_calculations', :formats => [:js] %>
