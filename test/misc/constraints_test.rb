@@ -115,6 +115,10 @@ class ConstraintsTestObject
     @active_scaffold_habtm_joins = []
     @params = {}
   end
+
+  def params_hash?(v)
+    v.is_a? Hash
+  end
 end
 
 class ConstraintsTest < MiniTest::Test
@@ -200,9 +204,5 @@ class ConstraintsTest < MiniTest::Test
 
   def config_for(klass, namespace = nil)
     super(klass, 'model_stubs/')
-  end
-
-  def params_hash?(v)
-    v.is_a? Hash
   end
 end
