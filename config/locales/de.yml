@@ -104,8 +104,8 @@ de:
     range: Zeitraum
     record_not_saved: Eintrag kann nicht gespeichert werden. Ursache unbekannt.
     records_marked:
-      one: 1 %{model} makriert
-      other: "%{count} %{model} makriert"
+      one: 1 %{model} markiert
+      other: "%{count} %{model} markiert"
     refresh: Neu laden
     remove: Entfernen
     remove_file: Entferne oder Ersetze Datei
