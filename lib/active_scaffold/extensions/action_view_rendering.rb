@@ -33,6 +33,8 @@ module ActiveScaffold #:nodoc:
     #
     # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
     #
+    # options[:xhr] force to load embedded scaffold with AJAX even when render_component gem is installed.
+    #
     def render(*args, &block)
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
         require 'digest/md5'
@@ -55,7 +57,7 @@ module ActiveScaffold #:nodoc:
         id = "as_#{eid}-embedded"
         url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
 
-        if controller.respond_to?(:render_component_into_view, true)
+        if controller.respond_to?(:render_component_into_view, true) && !options[:xhr]
           controller.send(:render_component_into_view, url_options)
         else
           url = url_for(url_options)
