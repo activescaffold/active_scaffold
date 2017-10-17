@@ -116,7 +116,7 @@ module ActiveScaffold #:nodoc:
           # might be a namespaced controller (e.g., 'admin/admins')
           model = remote_controller.to_s.sub(/.*\//, '').singularize
           content_tag(:div, :class => 'active-scaffold-header') do
-            content_tag :h2, link_to(args.first[:label] || active_scaffold_config_for(model).list.label, url, :remote => true, :class => 'load-embedded')
+            content_tag :h2, link_to(options[:label] || active_scaffold_config_for(model).list.label, url, :remote => true, :class => 'load-embedded')
           end
         end
       end
