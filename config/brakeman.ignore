@@ -3,24 +3,24 @@
     {
       "warning_type": "Weak Hash",
       "warning_code": 90,
-      "fingerprint": "f6b70c6d14cb3de7288be61bb13f722ffeb9775318ef73bfbb0b58a3bee82adb",
+      "fingerprint": "bca53a490b010fea618ad3791c37086988592b4706fc569f244bca2a3a471bef",
       "check_name": "WeakHash",
       "message": "Weak hashing algorithm (MD5) used",
       "file": "lib/active_scaffold/extensions/action_view_rendering.rb",
-      "line": 47,
+      "line": 99,
       "link": "http://brakemanscanner.org/docs/warning_types/weak_hash/",
-      "code": "Digest::MD5.hexdigest((params[:controller] + args.first.to_s))",
+      "code": "Digest::MD5.hexdigest((params[:controller] + options.to_s))",
       "render_path": null,
       "location": {
         "type": "method",
         "class": "ActiveScaffold::RenderingHelper",
-        "method": "render"
+        "method": "render_embedded"
       },
       "user_input": "params",
       "confidence": "High",
       "note": "Hash used for uniquely identify different embedded scaffolds with fixed length id"
     }
   ],
-  "updated": "2017-05-23 11:48:17 +0200",
-  "brakeman_version": "3.6.2"
+  "updated": "2017-10-18 08:35:45 +0200",
+  "brakeman_version": "4.0.1"
 }
