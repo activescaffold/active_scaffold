@@ -240,10 +240,12 @@ module ActiveScaffold
             end
           elsif conversion == :to_date
             format, offset = I18n.t("date.formats.#{column.options[:format] || :default}")
+            format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
             value = translate_days_and_months(value, format) if I18n.locale != :en
             Date.strptime(value, format) rescue nil
           else
             format, offset = format_for_datetime(column, value)
+            format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
             value = translate_days_and_months(value, format) if I18n.locale != :en
             time = DateTime.strptime(value, format) rescue nil
             if time

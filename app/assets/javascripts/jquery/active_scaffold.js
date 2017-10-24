@@ -298,7 +298,7 @@ jQuery(document).ready(function($) {
     if (jQuery(this).prop('checked')) color_field.val('');
   });
 
-  ActiveScaffold.setup(document);
+  if (typeof(Turbolinks) == 'undefined') ActiveScaffold.setup(document);
   if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
   jQuery(document).on('as:element_updated as:element_created', function(e, action_link) {
       ActiveScaffold.setup(e.target);

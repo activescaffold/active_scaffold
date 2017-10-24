@@ -7,9 +7,10 @@ module ActiveScaffold::Bridges
         /%b/ => 'M',
         /%B/ => 'MM',
         /%d/ => 'dd',
-        /%e/ => 'd',
+        /%e|%-d/ => 'd',
         /%j/ => 'oo',
         /%m/ => 'mm',
+        /%-m|%-m/ => 'm',
         /%y/ => 'y',
         /%Y/ => 'yy',
         /%H/ => 'HH', # options ampm => false

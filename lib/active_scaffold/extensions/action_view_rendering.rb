@@ -33,42 +33,11 @@ module ActiveScaffold #:nodoc:
     #
     # Defining options[:label] lets you completely customize the list title for the embedded scaffold.
     #
+    # options[:xhr] force to load embedded scaffold with AJAX even when render_component gem is installed.
+    #
     def render(*args, &block)
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
-        require 'digest/md5'
-        options = args.first
-
-        remote_controller = options[:active_scaffold]
-        # It is important that the EID hash remains short as to not contribute
-        # to a large session size and thus a possible cookie overflow exception
-        # when using rails CookieStore or EncryptedCookieStore. For example,
-        # when rendering many embedded scaffolds with constraints or conditions
-        # on a single page.
-        eid = Digest::MD5.hexdigest(params[:controller] + options.to_s)
-        eid_info = {loading: true}
-        eid_info[:constraints] = options[:constraints] if options[:constraints]
-        eid_info[:conditions] = options[:conditions] if options[:conditions]
-        eid_info[:label] = options[:label] if options[:label]
-        options[:params] ||= {}
-        options[:params].merge! :eid => eid, :embedded => eid_info
-
-        id = "as_#{eid}-embedded"
-        url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
-
-        if controller.respond_to?(:render_component_into_view, true)
-          controller.send(:render_component_into_view, url_options)
-        else
-          url = url_for(url_options)
-          content_tag(:div, :id => id, :class => 'active-scaffold-component', :data => {:refresh => url}) do
-            # parse the ActiveRecord model name from the controller path, which
-            # might be a namespaced controller (e.g., 'admin/admins')
-            model = remote_controller.to_s.sub(/.*\//, '').singularize
-            content_tag(:div, :class => 'active-scaffold-header') do
-              content_tag :h2, link_to(args.first[:label] || active_scaffold_config_for(model).list.label, url, :remote => true, :class => 'load-embedded')
-            end
-          end
-        end
-
+        render_embedded args.first
       elsif args.first == :super
         @_view_paths ||= lookup_context.view_paths.clone
         @_last_template ||= lookup_context.last_template
@@ -114,6 +83,43 @@ module ActiveScaffold #:nodoc:
 
     def view_stack
       @_view_stack ||= []
+    end
+
+    private
+
+    def render_embedded(options)
+      require 'digest/md5'
+
+      remote_controller = options[:active_scaffold]
+      # It is important that the EID hash remains short as to not contribute
+      # to a large session size and thus a possible cookie overflow exception
+      # when using rails CookieStore or EncryptedCookieStore. For example,
+      # when rendering many embedded scaffolds with constraints or conditions
+      # on a single page.
+      eid = Digest::MD5.hexdigest(params[:controller] + options.to_s)
+      eid_info = {loading: true}
+      eid_info[:constraints] = options[:constraints] if options[:constraints]
+      eid_info[:conditions] = options[:conditions] if options[:conditions]
+      eid_info[:label] = options[:label] if options[:label]
+      options[:params] ||= {}
+      options[:params].merge! :eid => eid, :embedded => eid_info
+
+      id = "as_#{eid}-embedded"
+      url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
+
+      if controller.respond_to?(:render_component_into_view, true) && !options[:xhr]
+        controller.send(:render_component_into_view, url_options)
+      else
+        url = url_for(url_options)
+        content_tag(:div, :id => id, :class => 'active-scaffold-component', :data => {:refresh => url}) do
+          # parse the ActiveRecord model name from the controller path, which
+          # might be a namespaced controller (e.g., 'admin/admins')
+          model = remote_controller.to_s.sub(/.*\//, '').singularize
+          content_tag(:div, :class => 'active-scaffold-header') do
+            content_tag :h2, link_to(options[:label] || active_scaffold_config_for(model).list.label, url, :remote => true, :class => 'load-embedded')
+          end
+        end
+      end
     end
   end
 end
