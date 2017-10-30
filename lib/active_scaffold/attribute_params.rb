@@ -118,6 +118,7 @@ module ActiveScaffold
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
       if avoid_changes && column.association
         parent_record.association(column.name).target = value
+        parent_record.send("#{column.association.foreign_key}=", value.try(:id)) if column.association.belongs_to?
       elsif column.association && counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value.try(:id)
         parent_record.association(column.name).target = value
