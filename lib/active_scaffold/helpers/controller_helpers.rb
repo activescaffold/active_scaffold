@@ -38,7 +38,10 @@ module ActiveScaffold
       # :authenticity_token is sent on some ajax requests
       # :_added is sent on checkbox-list with update_columns
       # :_removed is sent on checkbox-list with update_columns
-      BLACKLIST_PARAMS = %i[adapter position sort sort_direction page record commit _method dont_close auto_pagination iframe associated_id authenticity_token _added _removed].freeze
+      # :_popstate sent when loading previous page from history, after using history.pushState
+      # :_ jQuery param added for GET requests with cache disabled
+      BLACKLIST_PARAMS = %i[adapter position sort sort_direction page record commit _method dont_close auto_pagination
+                            iframe associated_id authenticity_token _added _removed _popstate _].freeze
 
       def params_for(options = {})
         unless @params_for

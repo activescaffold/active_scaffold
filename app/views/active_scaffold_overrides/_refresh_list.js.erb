@@ -3,10 +3,16 @@
 ActiveScaffold.append('<%= active_scaffold_tbody_id %>', '<%= escape_javascript(render(:partial => 'list_record', :collection => @page.items, :locals => {:hidden => false, :columns => list_columns, :action_links => active_scaffold_config.action_links.member})) %>');
 <% if @page.pager.infinite? || @page.number < @page.pager.number_of_pages -%>
 ActiveScaffold.auto_load_page('<%= url_for main_path_to_return %>', {auto_pagination: true, page: <%= @page.number + 1 %>});
-<% end %>
-<% end %>
+<% end # @page.pager.infinite?... %>
+<% end # @page.items.present? %>
 <% elsif active_scaffold_config.list.refresh_with_header -%>
 ActiveScaffold.replace('<%= active_scaffold_id %>', '<%= escape_javascript(render('list_with_header')) %>');
 <% else -%>
 ActiveScaffold.replace_html('<%= active_scaffold_content_id %>', '<%= escape_javascript(render('list')) %>');
+<% end # @auto_pagination -%>
+<% if ActiveScaffold.js_framework == :jquery && !@auto_pagination && !@popstate && !embedded? -%>
+  if (!jQuery('#<%= active_scaffold_id %>').is('.active-scaffold .active-scaffold')) {
+    // main active-scaffold listing loaded in current document <%= active_scaffold_config.list.user.sorting.size %> <%= active_scaffold_config.list.user.sorting.first.inspect %>
+    ActiveScaffold.add_to_history('<%=raw request.fullpath %>', <%=raw history_state.to_json %>);
+  }
 <% end -%>

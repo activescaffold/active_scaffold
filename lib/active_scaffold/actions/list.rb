@@ -43,6 +43,7 @@ module ActiveScaffold::Actions
         render(:partial => 'list_with_header')
       else
         @auto_pagination = params[:auto_pagination]
+        @popstate = params.delete(:_popstate)
         render :partial => 'refresh_list', :formats => [:js]
       end
     end

@@ -108,6 +108,10 @@ module ActiveScaffold::DataStructures
       @clauses.first
     end
 
+    def size
+      @clauses.size
+    end
+
     # builds an order-by clause
     def clause(grouped_columns_calculations = nil)
       return nil if sorts_by_method? || default_sorting?

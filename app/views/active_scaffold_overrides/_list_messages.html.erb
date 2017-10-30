@@ -11,7 +11,9 @@
         <%= render :partial => 'messages' %>
       </div>
 <% end %>
-      <div class="filtered-message" <%= ' style="display:none;" '.html_safe unless @filtered %>>
+      <%= content_tag :div, class: 'filtered-message',
+                      style: ('display:none;' unless @filtered),
+                      data: ({search: search_params || ''} if active_scaffold_config.store_user_settings && respond_to?(:search_params)) do %>
         <%= @filtered.is_a?(Array) ? render(:partial => 'human_conditions', :locals => {:columns => @filtered}) : as_(active_scaffold_config.list.filtered_message) %>
         <% if active_scaffold_config.list.show_search_reset && @filtered -%>
         <div class="reset">
@@ -19,7 +21,7 @@
           <%= render_action_link(active_scaffold_config.list.reset_link) %>
         </div>
         <% end -%>
-      </div>
+      <% end %>
       <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" '.html_safe unless @page.empty? %>>
         <%= as_(active_scaffold_config.list.no_entries_message) %>
       </p>

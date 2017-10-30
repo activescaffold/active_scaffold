@@ -144,8 +144,6 @@ jQuery(document).ready(function($) {
   });
   jQuery(document).on('ajax:before', 'a.as_sort', function(event) {
     var as_sort = jQuery(this);
-    var history_controller_id = as_sort.data('page-history');
-    if (history_controller_id) addActiveScaffoldPageToHistory(as_sort.attr('href'), history_controller_id);
     as_sort.closest('th').addClass('loading');
     return true;
   });
@@ -174,8 +172,6 @@ jQuery(document).ready(function($) {
   });
   jQuery(document).on('ajax:before', 'a.as_paginate',function(event) {
     var as_paginate = jQuery(this);
-    var history_controller_id = as_paginate.data('page-history');
-    if (history_controller_id) addActiveScaffoldPageToHistory(as_paginate.attr('href'), history_controller_id);
     as_paginate.prevAll('img.loading-indicator').css('visibility','visible');
     return true;
   });
@@ -298,7 +294,33 @@ jQuery(document).ready(function($) {
     if (jQuery(this).prop('checked')) color_field.val('');
   });
 
-  if (typeof(Turbolinks) == 'undefined') ActiveScaffold.setup(document);
+  jQuery(window).on('popstate', function(e) {
+    jQuery.ajax({
+      url: document.location.href,
+      data: jQuery.extend({'_popstate': true}, e.originalEvent.state),
+      dataType: 'script',
+      cache: true
+    });
+    jQuery('.active-scaffold:first th .as_sort:first').closest('th').addClass('loading');
+  });
+
+  var current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
+  if (current_search_item.length) {
+    // store user settings enabled, update state with current page, search and sorting
+    var data = {}, sorted_columns = jQuery('th.sorted');
+    data.page = jQuery('.active-scaffold-pagination .current').text();
+    data.search = current_search_item.data('search');
+    if (sorted_columns.length == 1) {
+      data.sort = sorted_columns.attr('class').match(/(.+)-column/)[1];
+      data.sort_direction = sorted_columns.hasClass('asc') ? 'asc' : 'desc';
+    } else { // default search
+      jQuery.extend(data, {sort: '', sort_direction: ''});
+    }
+    ActiveScaffold.add_to_history(document.location.href, data, true);
+  }
+
+  // call setup on document.ready if Turbolinks not enabled
+  if (typeof(Turbolinks) == 'undefined' || !Turbolinks.supported) ActiveScaffold.setup(document);
   if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
   jQuery(document).on('as:element_updated as:element_created', function(e, action_link) {
       ActiveScaffold.setup(e.target);
@@ -522,6 +544,11 @@ var ActiveScaffold = {
       element.removeClass("asc");
       element.removeClass("desc");
     });
+  },
+  add_to_history: function(url, data, replace) {
+    if (!history && !history.pushState) return;
+    if (replace) history.replaceState(data, document.title, url);
+    else history.pushState(data, document.title, url);
   },
   decrement_record_count: function(scaffold) {
     // decrement the last record count, firsts record count are in nested lists
@@ -1048,19 +1075,6 @@ var ActiveScaffold = {
   }
 }
 
-/*
- * DHTML history tie-in
- */
-function addActiveScaffoldPageToHistory(url, active_scaffold_id) {
-  if (typeof dhtmlHistory == 'undefined') return; // it may not be loaded
-
-  var array = url.split('?');
-  var qs = new Querystring(array[1]);
-  var sort = qs.get('sort')
-  var dir = qs.get('sort_direction')
-  var page = qs.get('page')
-  if (sort || dir || page) dhtmlHistory.add(active_scaffold_id+":"+page+":"+sort+":"+dir, url);
-}
 
 /*
  * URL modification support. Incomplete functionality.

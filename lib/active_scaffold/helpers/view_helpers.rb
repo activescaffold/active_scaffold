@@ -171,6 +171,19 @@ module ActiveScaffold
         end
       end
 
+      def history_state
+        if active_scaffold_config.store_user_settings
+          state = {page: @page.try(:number)}
+          if active_scaffold_config.list.user.sorting.size == 1
+            column, state[:sort_direction] = active_scaffold_config.list.user.sorting.first
+            state[:sort] = column.name
+          end
+          state
+        else
+          {}
+        end
+      end
+
       def display_message(message)
         message = safe_join message, tag(:br) if message.is_a?(Array)
         if (highlights = active_scaffold_config.highlight_messages)
