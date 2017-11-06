@@ -2,7 +2,7 @@
 <%
   header_record_class = (show_blank_record && show_blank_record.class) || column.association.klass
 -%>
-  <%= render :partial => 'horizontal_subform_header', :locals => {:parent_record => parent_record, :record_class => header_record_class} %>
+  <%= render :partial => 'horizontal_subform_header', :locals => {:parent_record => parent_record, :record_class => header_record_class, :parent_column => column} %>
 
   <%= render :partial => 'form_association_record', :collection => associated, :locals => {:scope => scope, :parent_record => parent_record, :column => column} %>
   <%= render :partial => 'form_association_record', :object => show_blank_record, :locals => {:scope => scope, :parent_record => parent_record, :column => column, :locked => true, :index => associated.size} if show_blank_record %>

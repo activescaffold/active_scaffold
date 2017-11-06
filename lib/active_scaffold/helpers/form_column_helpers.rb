@@ -223,16 +223,24 @@ module ActiveScaffold
       end
 
       # Should this column be displayed in the subform?
-      def in_subform?(column, parent_record)
+      def in_subform?(column, parent_record, parent_column)
         return true unless column.association
 
-        # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
-        return false if column.association.polymorphic?
+        if column.association.reverse.nil?
+          # Polymorphic associations can't appear because they *might* be the reverse association
+          return false if column.association.polymorphic?
 
-        # A column shouldn't be in the subform if it's the reverse association to the parent
-        return false if column.association.inverse_for?(parent_record.class)
-
-        true
+          # A column shouldn't be in the subform if it's the reverse association to the parent
+          !column.association.inverse_for?(parent_record.class)
+        elsif column.association.reverse == parent_column.name
+          if column.association.polymorphic?
+            column.association.name != parent_column.association.as
+          else
+            !column.association.inverse_for?(parent_record.class)
+          end
+        else
+          true
+        end
       end
 
       def column_show_add_existing(column, record = nil)

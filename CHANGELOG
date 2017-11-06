@@ -20,6 +20,7 @@
 - remove onsubmit tag in forms and move tinymce related JS to assets
 - use html5 history api when listing is refreshed
 - avoid browser mixes html and xhr cache for listing requests, using vary header
+- improve in_subform? check for subforms, so only reverse association is hidden (needed when subform class has multiple associations to main form's class)
 - fix select of existing record for nested subform
 - fix apply constraints to parent (fix update columns on subform on embedded scaffold)
 - fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes

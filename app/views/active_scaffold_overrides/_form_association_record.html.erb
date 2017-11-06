@@ -47,7 +47,7 @@
       next
     end
 
-    next unless in_subform?(column, parent_record)
+    next unless in_subform?(column, parent_record, record_column)
     columns_length += 1
     show_actions = true
     if column.association && column.form_ui.nil?

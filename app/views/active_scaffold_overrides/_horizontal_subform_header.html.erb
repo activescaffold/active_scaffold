@@ -3,7 +3,7 @@
     <%
     active_scaffold_config_for(record_class).subform.columns.each :for => record_class, :crud_type => :read do |column|
       next unless column.is_a? ActiveScaffold::DataStructures::Column
-      next unless in_subform?(column, parent_record)
+      next unless in_subform?(column, parent_record, parent_column)
       hidden = column_renders_as(column) == :hidden
       -%>
       <th class="<%= "#{column.name}-column #{'required' if column.required?} #{'hidden' if hidden}" %>">
