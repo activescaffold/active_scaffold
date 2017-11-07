@@ -40,13 +40,12 @@ module ActiveScaffold
             # final ultimate fallback: use rails' generic input method
             else
               # for textual fields we pass different options
-              text_types = %i[text string integer float decimal date time datetime]
+              text_types = %i[text string integer float decimal]
               options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
               if column.column.type == :string && options[:maxlength].blank?
                 options[:maxlength] = column.column.limit
                 options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
               end
-              options[:include_blank] = true if column.column.null && %i[date datetime time].include?(column.column.type)
               options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
               text_field(:record, column.name, options.merge(column.options).except(:format))
             end
@@ -540,6 +539,18 @@ module ActiveScaffold
         select_options << [as_(:false), false]
 
         select_tag(options[:name], options_for_select(select_options, record.send(column.name)), options)
+      end
+
+      def active_scaffold_input_date(column, options)
+        active_scaffold_text_input :date_field, column, options
+      end
+
+      def active_scaffold_input_time(column, options)
+        active_scaffold_text_input :time_field, column, options
+      end
+
+      def active_scaffold_input_datetime(column, options)
+        active_scaffold_text_input :datetime_field, column, options
       end
 
       ##
