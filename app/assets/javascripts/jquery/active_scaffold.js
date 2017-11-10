@@ -294,33 +294,29 @@ jQuery(document).ready(function($) {
     if (jQuery(this).prop('checked')) color_field.val('');
   });
 
+  jQuery(document).on('turbolinks:before-visit', function() {
+    if (history.state.active_scaffold) {
+      history.replaceState({turbolinks: true, url: document.location.href}, '', document.location.href);
+    }
+  });
+
   jQuery(window).on('popstate', function(e) {
+    var state = e.originalEvent.state;
+    if (!state || !state.active_scaffold) return;
     jQuery.ajax({
       url: document.location.href,
-      data: jQuery.extend({'_popstate': true}, e.originalEvent.state),
+      data: jQuery.extend({'_popstate': true}, state.active_scaffold),
       dataType: 'script',
       cache: true
     });
     jQuery('.active-scaffold:first th .as_sort:first').closest('th').addClass('loading');
   });
 
-  var current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
-  if (current_search_item.length) {
-    // store user settings enabled, update state with current page, search and sorting
-    var data = {}, sorted_columns = jQuery('th.sorted');
-    data.page = jQuery('.active-scaffold-pagination .current').text();
-    data.search = current_search_item.data('search');
-    if (sorted_columns.length == 1) {
-      data.sort = sorted_columns.attr('class').match(/(.+)-column/)[1];
-      data.sort_direction = sorted_columns.hasClass('asc') ? 'asc' : 'desc';
-    } else { // default search
-      jQuery.extend(data, {sort: '', sort_direction: ''});
-    }
-    ActiveScaffold.add_to_history(document.location.href, data, true);
-  }
-
   // call setup on document.ready if Turbolinks not enabled
-  if (typeof(Turbolinks) == 'undefined' || !Turbolinks.supported) ActiveScaffold.setup(document);
+  if (typeof(Turbolinks) == 'undefined' || !Turbolinks.supported) {
+    ActiveScaffold.setup_history_state();
+    ActiveScaffold.setup(document);
+  }
   if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
   jQuery(document).on('as:element_updated as:element_created', function(e, action_link) {
       ActiveScaffold.setup(e.target);
@@ -456,6 +452,22 @@ var ActiveScaffold = {
     ActiveScaffold.draggable_lists('.draggable-lists', container);
     ActiveScaffold.sliders(container);
   },
+  setup_history_state: function() {
+    var current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
+    if (current_search_item.length) {
+      // store user settings enabled, update state with current page, search and sorting
+      var data = {}, sorted_columns = jQuery('th.sorted');
+      data.page = jQuery('.active-scaffold-pagination .current').text();
+      data.search = current_search_item.data('search');
+      if (sorted_columns.length == 1) {
+        data.sort = sorted_columns.attr('class').match(/(.+)-column/)[1];
+        data.sort_direction = sorted_columns.hasClass('asc') ? 'asc' : 'desc';
+      } else { // default search
+        jQuery.extend(data, {sort: '', sort_direction: ''});
+      }
+      ActiveScaffold.add_to_history(document.location.href, data, true);
+    }
+  },
   live_search: function(element) {
     jQuery('form.search.live input[type=search]', element).delayedObserver(function() {
      jQuery(this).parent().trigger("submit");
@@ -547,8 +559,9 @@ var ActiveScaffold = {
   },
   add_to_history: function(url, data, replace) {
     if (!history && !history.pushState) return;
-    if (replace) history.replaceState(data, document.title, url);
-    else history.pushState(data, document.title, url);
+    data = {active_scaffold: data};
+    if (replace) history.replaceState(data, null, url);
+    else history.pushState(data, null, url);
   },
   decrement_record_count: function(scaffold) {
     // decrement the last record count, firsts record count are in nested lists

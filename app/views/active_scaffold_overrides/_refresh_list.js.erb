@@ -13,6 +13,6 @@ ActiveScaffold.replace_html('<%= active_scaffold_content_id %>', '<%= escape_jav
 <% if ActiveScaffold.js_framework == :jquery && !@auto_pagination && !@popstate && !embedded? -%>
   if (!jQuery('#<%= active_scaffold_id %>').is('.active-scaffold .active-scaffold')) {
     // main active-scaffold listing loaded in current document <%= active_scaffold_config.list.user.sorting.size %> <%= active_scaffold_config.list.user.sorting.first.inspect %>
-    ActiveScaffold.add_to_history('<%=raw request.fullpath %>', <%=raw history_state.to_json %>);
+    ActiveScaffold.add_to_history(<%=raw request.original_url.to_json %>, <%=raw history_state.to_json %>);
   }
 <% end -%>
