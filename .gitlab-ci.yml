@@ -5,9 +5,9 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update build-base git
+    - apk add --no-cache --update build-base git curl
     - bundle install --clean --deployment --jobs=2 --without default development lint production test
-    - wget https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 -O ./cc-test-reporter
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
     - ./cc-test-reporter before-build
   image: ruby:alpine
@@ -42,9 +42,9 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update build-base git sqlite-dev tzdata
+    - apk add --no-cache --update build-base git sqlite-dev tzdata curl
     - bundle install --clean --deployment --jobs=2 --without deployment development lint production
-    - wget https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 -O ./cc-test-reporter
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
     - ./cc-test-reporter before-build
   script:
@@ -122,7 +122,7 @@ pages:
     paths:
       - public
   script:
-    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+    - bin/codeclimate-test-reporter
     - DIR=public/$([ "$CI_COMMIT_REF_SLUG" = master ] || echo $CI_COMMIT_REF_SLUG)
     - mkdir -pv $DIR
     - mv -v brakeman $DIR
