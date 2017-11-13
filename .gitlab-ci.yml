@@ -7,7 +7,7 @@
     - bundle --version
     - apk add --no-cache --update build-base git
     - bundle install --clean --deployment --jobs=2 --without default development lint production test
-    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - wget https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 -O ./cc-test-reporter
     - chmod +x ./cc-test-reporter
     - ./cc-test-reporter before-build
   image: ruby:alpine
@@ -44,7 +44,7 @@
     - bundle --version
     - apk add --no-cache --update build-base git sqlite-dev tzdata
     - bundle install --clean --deployment --jobs=2 --without deployment development lint production
-    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - wget https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 -O ./cc-test-reporter
     - chmod +x ./cc-test-reporter
     - ./cc-test-reporter before-build
   script:
