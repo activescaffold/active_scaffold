@@ -3,8 +3,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :deployment do
-  # Posts SimpleCov test coverage data from your Ruby test suite to Code Climate's hosted, automated code review service.
-  gem 'codeclimate-test-reporter', require: false
 end
 
 group :development do
