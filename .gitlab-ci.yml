@@ -39,7 +39,7 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update build-base git sqlite-dev tzdata curl
+    - apk add --no-cache --update build-base curl git sqlite-dev tzdata
     - bundle install --clean --deployment --jobs=2 --without deployment development lint production
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
