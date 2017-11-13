@@ -5,10 +5,8 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update build-base git curl
+    - apk add --no-cache --update build-base git
     - bundle install --clean --deployment --jobs=2 --without default development lint production test
-    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-    - chmod +x ./cc-test-reporter
   image: ruby:alpine
   only:
     - master
