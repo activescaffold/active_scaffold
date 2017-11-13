@@ -238,6 +238,10 @@ module ActiveScaffold::Config
     end
     alias active_record_class model
 
+    def primary_key
+      mongoid? ? '_id' : model.primary_key
+    end
+
     # warning - this won't work as a per-request dynamic attribute in rails 2.0.  You'll need to interact with Controller#generic_view_paths
     def inherited_view_paths
       @inherited_view_paths ||= []

@@ -390,7 +390,7 @@ module ActiveScaffold
     end
 
     def id_condition
-      {active_scaffold_config.model.primary_key => params[:id]} if params[:id]
+      {active_scaffold_config.primary_key => params[:id]} if params[:id]
     end
 
     # returns a single record (the given id) but only if it's allowed for the specified security options.
@@ -491,7 +491,7 @@ module ActiveScaffold
       includes ||= active_scaffold_references if conditions.present?
       left_joins = active_scaffold_outer_joins
       left_joins += includes if includes
-      primary_key = active_scaffold_config.model.primary_key
+      primary_key = active_scaffold_config.primary_key
       subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :left_joins => left_joins, :select => active_scaffold_config.columns[primary_key].field)
       subquery = subquery.unscope(:order)
       active_scaffold_config.model.where(primary_key => subquery)
