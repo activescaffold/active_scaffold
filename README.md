@@ -12,9 +12,9 @@ ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, r
 
 Branch Details
 --------------
-3-4-stable supports rails >= 3.2.x and ruby >= 1.9.3
-3-3-stable supports rails >= 3.2.x and ruby >= 1.8
-rails-3.2 branch on Github supports Rails 3.1 & 3.2, and is the current source of the 3.2.x line of gems.
+3-4-stable supports rails >= 3.2.x and ruby >= 1.9.3  
+3-3-stable supports rails >= 3.2.x and ruby >= 1.8  
+rails-3.2 supports Rails 3.1 & 3.2, and is the current source of the 3.2.x line of gems.
 
 Quick Start
 -----------
