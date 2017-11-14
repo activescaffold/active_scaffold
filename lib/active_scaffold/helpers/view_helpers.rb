@@ -174,9 +174,12 @@ module ActiveScaffold
       def history_state
         if active_scaffold_config.store_user_settings
           state = {page: @page.try(:number)}
-          if active_scaffold_config.list.user.sorting.size == 1
+          state[:search] = search_params if respond_to?(:search_params) && search_params.present?
+          if active_scaffold_config.list.user.user_sorting?
             column, state[:sort_direction] = active_scaffold_config.list.user.sorting.first
             state[:sort] = column.name
+          else
+            state.merge sort: '', sort_direction: ''
           end
           state
         else
