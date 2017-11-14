@@ -375,7 +375,7 @@ module ActiveScaffold
           url_options[:id] = nil if @remove_id_from_list_links
           url_options = params_for(url_options)
           unless active_scaffold_config.store_user_settings
-            url_options[:search] = search_params if search_params.present?
+            url_options[:search] = search_params if respond_to?(:search_params) && search_params.present?
           end
           link_to column_heading_label(column), url_options, options
         else
