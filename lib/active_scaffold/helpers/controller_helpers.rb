@@ -27,7 +27,7 @@ module ActiveScaffold
 
       # These params should not propagate:
       # :adapter and :position are one-use rendering arguments.
-      # :sort, :sort_direction, and :page are arguments that stored in the session.
+      # :sort, :sort_direction, and :page are arguments that stored in the session, if store_user_settings is enabled
       # and wow. no we don't want to propagate :record.
       # :commit is a special rails variable for form buttons
       # :_method is a special rails variable to simulate put, patch and delete actions.
@@ -47,17 +47,41 @@ module ActiveScaffold
         unless @params_for
           @params_for = {}
           params.except(*BLACKLIST_PARAMS).each do |key, value|
-            @params_for[key.to_sym] =
-              if controller_params? value
-                params_hash value
-              else
-                value.duplicable? ? value.clone : value
-              end
+            @params_for[key.to_sym] = copy_param(value)
           end
           @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end
-        @params_for.merge(options)
+
+        url_options = @params_for.merge(options)
+        if !active_scaffold_config.store_user_settings && controller_requested(url_options[:controller]) == controller_path
+          url_options[:search] ||= copy_param search_params if respond_to?(:search_params) && search_params.present?
+          url_options[:page] ||= params[:page] || 1
+          if active_scaffold_config.list.user.user_sorting?
+            column, direction = active_scaffold_config.list.user.sorting.first
+            url_options[:sort] ||= column.name
+            url_options[:sort_direction] ||= direction
+          end
+        end
+        url_options
+      end
+
+      def controller_requested(controller)
+        if controller.to_s.first(1) == '/'
+          controller[1..-1]
+        else
+          path = controller_path.split('/')[0..-2]
+          path << controller
+          path.join('/')
+        end
+      end
+
+      def copy_param(value)
+        if controller_params? value
+          params_hash value
+        else
+          value.duplicable? ? value.clone : value
+        end
       end
 
       # Parameters to generate url to the main page (override if the ActiveScaffold is used as a component on another controllers page)

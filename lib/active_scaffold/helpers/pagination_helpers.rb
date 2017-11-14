@@ -12,14 +12,6 @@ module ActiveScaffold
           url_options[:id] = nil if @remove_id_from_list_links
           url_options = params_for(url_options)
         end
-        unless active_scaffold_config.store_user_settings
-          url_options[:search] = search_params if respond_to?(:search_params) && search_params.present?
-          if active_scaffold_config.list.user.user_sorting?
-            column, direction = active_scaffold_config.list.user.sorting.first
-            url_options[:sort] = column.name
-            url_options[:sort_direction] = direction
-          end
-        end
         url_options
       end
 
