@@ -75,7 +75,9 @@ module ActiveScaffold::Config
       def self.user_attr(*names)
         attr_writer(*names)
         names.each do |name|
-          define_method(name) { instance_variable_get("@#{name}") || @conf.send(name) }
+          define_method(name) do
+            instance_variable_defined?("@#{name}") ? instance_variable_get("@#{name}") : @conf.send(name)
+          end
         end
       end
 
