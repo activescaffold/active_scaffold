@@ -18,6 +18,7 @@ es:
     between: Entre
     cancel: Cancelar
     cant_destroy_record: No se pudo borrar %{record}
+    changes: Cambios
     click_to_edit: Pulsa para editar
     click_to_reset: Pulsa para restaurar
     close: Cerrar
@@ -26,6 +27,7 @@ es:
     contains: Contiene
     create: Crear
     create_another: Crear Otro %{model}
+    create_apply: Crear y continuar
     create_model: Crear %{model}
     create_new: Crear Nuevo
     created_model: "%{model} creado"
@@ -42,6 +44,7 @@ es:
     days: Días
     delete: Borrar
     deleted_model: "%{model} borrado"
+    deleted_records: Ver Eliminados
     delimiter: Delimitador
     download: Descargar
     edit: Editar
@@ -60,6 +63,8 @@ es:
       one: encontrado
       other: encontrados
     future: Futuro
+    group_by: Agrupar por
+    grouped_by: Agrupado por %{column}
     hide: "(Ocultar)"
     hours: Horas
     human_conditions:
@@ -81,7 +86,9 @@ es:
     next_week: Próxima semana
     next_year: Próximo año
     no_authorization_for_action: No dispone de autorización para la acción %{action}
+    no_color: Sin color
     no_entries: Sin entradas
+    no_group: No agrupar
     no_options: sin opciones
     not_null: No Nulo
     'null': Nulo
@@ -122,25 +129,19 @@ es:
     tomorrow: Mañana
     'true': Sí
     update: Actualizar
+    update_apply: Aplicar
     update_model: Actualizar %{model}
     updated_model: "%{model} actualizado"
     version_inconsistency: Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo.
     weeks: Semanas
     years: Años
     yesterday: Ayer
-    changes: Cambios
-    create_apply: Crear y continuar
-    deleted_records: Ver Eliminados
-    group_by: Agrupar por
-    no_group: No agrupar
-    update_apply: Aplicar
-    no_color: Sin color
-  time:
-    formats:
-      picker: "%a, %d %b %Y %H:%M:%S"
   date:
     formats:
       month: "%B"
       quarter: Trimestre %{num}
       year_month: "%b %Y"
       year_quarter: Trimestre %{quarter} %{year}
+  time:
+    formats:
+      picker: "%a, %d %b %Y %H:%M:%S"

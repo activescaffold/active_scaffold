@@ -144,8 +144,6 @@ jQuery(document).ready(function($) {
   });
   jQuery(document).on('ajax:before', 'a.as_sort', function(event) {
     var as_sort = jQuery(this);
-    var history_controller_id = as_sort.data('page-history');
-    if (history_controller_id) addActiveScaffoldPageToHistory(as_sort.attr('href'), history_controller_id);
     as_sort.closest('th').addClass('loading');
     return true;
   });
@@ -174,8 +172,6 @@ jQuery(document).ready(function($) {
   });
   jQuery(document).on('ajax:before', 'a.as_paginate',function(event) {
     var as_paginate = jQuery(this);
-    var history_controller_id = as_paginate.data('page-history');
-    if (history_controller_id) addActiveScaffoldPageToHistory(as_paginate.attr('href'), history_controller_id);
     as_paginate.prevAll('img.loading-indicator').css('visibility','visible');
     return true;
   });
@@ -298,36 +294,45 @@ jQuery(document).ready(function($) {
     if (jQuery(this).prop('checked')) color_field.val('');
   });
 
-  /* setup some elements on page/form load */
-  ActiveScaffold.load_embedded(document);
-  ActiveScaffold.enable_js_form_buttons(document);
-  ActiveScaffold.live_search(document);
-  ActiveScaffold.auto_paginate(document);
-  ActiveScaffold.draggable_lists('.draggable-lists', document);
-  ActiveScaffold.sliders(document);
-  if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
-  jQuery(document).on('as:element_updated as:element_created', function(e) {
-    ActiveScaffold.enable_js_form_buttons(e.target);
-    ActiveScaffold.draggable_lists('.draggable-lists', e.target);
-    ActiveScaffold.sliders(e.target);
+  jQuery(document).on('turbolinks:before-visit', function() {
+    if (history.state.active_scaffold) {
+      history.replaceState({turbolinks: true, url: document.location.href}, '', document.location.href);
+    }
   });
-  jQuery(document).on('as:element_updated', function(e) {
-    ActiveScaffold.load_embedded(e.target);
-    ActiveScaffold.live_search(e.target);
+
+  jQuery(window).on('popstate', function(e) {
+    var state = e.originalEvent.state;
+    if (!state || !state.active_scaffold) return;
+    jQuery.ajax({
+      url: document.location.href,
+      data: jQuery.extend({'_popstate': true}, state.active_scaffold),
+      dataType: 'script',
+      cache: true
+    });
+    jQuery('.active-scaffold:first th .as_sort:first').closest('th').addClass('loading');
+  });
+
+  // call setup on document.ready if Turbolinks not enabled
+  if (typeof(Turbolinks) == 'undefined' || !Turbolinks.supported) {
+    ActiveScaffold.setup_history_state();
+    ActiveScaffold.setup(document);
+  }
+  if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
+  jQuery(document).on('as:element_updated as:element_created', function(e, action_link) {
+      ActiveScaffold.setup(e.target);
+  });
+  jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
+    ActiveScaffold.setup(action_link.adapter);
   });
   jQuery(document).on('as:element_updated', '.active-scaffold', function(e) {
     if (e.target != this) return;
     var search = $(this).find('form.search');
     if (search.length) ActiveScaffold.focus_first_element_of_form(search);
   });
-  jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
-    ActiveScaffold.load_embedded(action_link.adapter);
-    ActiveScaffold.enable_js_form_buttons(action_link.adapter);
-    ActiveScaffold.live_search(action_link.adapter);
-    ActiveScaffold.auto_paginate(action_link.adapter);
-    ActiveScaffold.draggable_lists('.draggable-lists', action_link.adapter);
-    ActiveScaffold.sliders(action_link.adapter);
-  });
+});
+
+jQuery(document).on('turbolinks:load', function($) {
+  ActiveScaffold.setup(document);
 });
 
 
@@ -438,6 +443,31 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
 
 var ActiveScaffold = {
   last_focus: null,
+  setup: function(container) {
+    /* setup some elements on page/form load */
+    ActiveScaffold.load_embedded(container);
+    ActiveScaffold.enable_js_form_buttons(container);
+    ActiveScaffold.live_search(container);
+    ActiveScaffold.auto_paginate(container);
+    ActiveScaffold.draggable_lists('.draggable-lists', container);
+    ActiveScaffold.sliders(container);
+  },
+  setup_history_state: function() {
+    var current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
+    if (current_search_item.length) {
+      // store user settings enabled, update state with current page, search and sorting
+      var data = {}, sorted_columns = jQuery('th.sorted');
+      data.page = jQuery('.active-scaffold-pagination .current').text();
+      data.search = current_search_item.data('search');
+      if (sorted_columns.length == 1) {
+        data.sort = sorted_columns.attr('class').match(/(.+)-column/)[1];
+        data.sort_direction = sorted_columns.hasClass('asc') ? 'asc' : 'desc';
+      } else { // default search
+        jQuery.extend(data, {sort: '', sort_direction: ''});
+      }
+      ActiveScaffold.add_to_history(document.location.href, data, true);
+    }
+  },
   live_search: function(element) {
     jQuery('form.search.live input[type=search]', element).delayedObserver(function() {
      jQuery(this).parent().trigger("submit");
@@ -526,6 +556,12 @@ var ActiveScaffold = {
       element.removeClass("asc");
       element.removeClass("desc");
     });
+  },
+  add_to_history: function(url, data, replace) {
+    if (!history && !history.pushState) return;
+    data = {active_scaffold: data};
+    if (replace) history.replaceState(data, null, url);
+    else history.pushState(data, null, url);
   },
   decrement_record_count: function(scaffold) {
     // decrement the last record count, firsts record count are in nested lists
@@ -1043,23 +1079,15 @@ var ActiveScaffold = {
     });
     window.onbeforeunload = function() {
       if (jQuery('form.need-confirm').length) return unload_message;
-    }
+    };
+    jQuery(document).on('turbolinks:before-visit', function(e) {
+      if (jQuery('form.need-confirm').length) {
+        if (!window.confirm(unload_message)) e.preventDefault();
+      }
+    });
   }
 }
 
-/*
- * DHTML history tie-in
- */
-function addActiveScaffoldPageToHistory(url, active_scaffold_id) {
-  if (typeof dhtmlHistory == 'undefined') return; // it may not be loaded
-
-  var array = url.split('?');
-  var qs = new Querystring(array[1]);
-  var sort = qs.get('sort')
-  var dir = qs.get('sort_direction')
-  var page = qs.get('page')
-  if (sort || dir || page) dhtmlHistory.add(active_scaffold_id+":"+page+":"+sort+":"+dir, url);
-}
 
 /*
  * URL modification support. Incomplete functionality.

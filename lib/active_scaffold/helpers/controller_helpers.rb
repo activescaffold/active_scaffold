@@ -4,9 +4,12 @@ module ActiveScaffold
       def self.included(controller)
         if controller.respond_to? :helper_method
           controller.class_eval do
-            helper_method :params_for, :conditions_from_params, :main_path_to_return, :render_parent?,
-                          :render_parent_options, :render_parent_action, :nested_singular_association?,
-                          :build_associated, :generate_temporary_id, :generated_id, :active_scaffold_config_for
+            helper_method :params_for, :conditions_from_params, :render_parent?,
+                          :main_path_to_return, :render_parent_options,
+                          :render_parent_action, :nested_singular_association?,
+                          :main_form_controller, :build_associated,
+                          :generate_temporary_id, :generated_id,
+                          :active_scaffold_config_for
           end
         end
       end
@@ -34,7 +37,7 @@ module ActiveScaffold
 
       # These params should not propagate:
       # :adapter and :position are one-use rendering arguments.
-      # :sort, :sort_direction, and :page are arguments that stored in the session.
+      # :sort, :sort_direction, and :page are arguments that stored in the session, if store_user_settings is enabled
       # and wow. no we don't want to propagate :record.
       # :commit is a special rails variable for form buttons
       # :_method is a special rails variable to simulate put, patch and delete actions.
@@ -45,23 +48,50 @@ module ActiveScaffold
       # :authenticity_token is sent on some ajax requests
       # :_added is sent on checkbox-list with update_columns
       # :_removed is sent on checkbox-list with update_columns
-      BLACKLIST_PARAMS = [:adapter, :position, :sort, :sort_direction, :page, :record, :commit, :_method, :dont_close, :auto_pagination, :iframe, :associated_id, :authenticity_token, :_added, :_removed].freeze
+      # :_popstate sent when loading previous page from history, after using history.pushState
+      # :_ jQuery param added for GET requests with cache disabled
+      BLACKLIST_PARAMS = %i[adapter position sort sort_direction page record commit _method dont_close auto_pagination
+                            iframe associated_id authenticity_token _added _removed _popstate _].freeze
 
       def params_for(options = {})
         unless @params_for
           @params_for = {}
           params.except(*BLACKLIST_PARAMS).each do |key, value|
-            @params_for[key.to_sym] =
-              if controller_params? value
-                params_hash value
-              else
-                value.duplicable? ? value.clone : value
-              end
+            @params_for[key.to_sym] = copy_param(value)
           end
           @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end
-        @params_for.merge(options)
+
+        url_options = @params_for.merge(options)
+        if !active_scaffold_config.store_user_settings && controller_requested(url_options[:controller]) == controller_path
+          url_options[:search] ||= copy_param search_params if respond_to?(:search_params) && search_params.present?
+          url_options[:page] ||= params[:page] || 1
+          if active_scaffold_config.list.user.user_sorting?
+            column, direction = active_scaffold_config.list.user.sorting.first
+            url_options[:sort] ||= column.name
+            url_options[:sort_direction] ||= direction
+          end
+        end
+        url_options
+      end
+
+      def controller_requested(controller)
+        if controller.to_s.first(1) == '/'
+          controller[1..-1]
+        else
+          path = controller_path.split('/')[0..-2]
+          path << controller
+          path.join('/')
+        end
+      end
+
+      def copy_param(value)
+        if controller_params? value
+          params_hash value
+        else
+          value.duplicable? ? value.clone : value
+        end
       end
 
       # Parameters to generate url to the main page (override if the ActiveScaffold is used as a component on another controllers page)
@@ -69,7 +99,7 @@ module ActiveScaffold
         if params[:return_to]
           params[:return_to]
         else
-          exclude_parameters = [:utf8, :associated_id]
+          exclude_parameters = %i[utf8 associated_id]
           parameters = {}
           if params[:parent_scaffold] && nested? && nested.singular_association?
             parameters[:controller] = params[:parent_scaffold]
@@ -91,6 +121,10 @@ module ActiveScaffold
         nested? && (nested.belongs_to? || nested.has_one?)
       end
 
+      def main_form_controller
+        parent_controller_name.constantize if params[:parent_controller]
+      end
+
       def render_parent?
         nested_singular_association? || params[:parent_sti]
       end
@@ -98,24 +132,21 @@ module ActiveScaffold
       def render_parent_options
         if nested_singular_association?
           {:controller => nested.parent_scaffold.controller_path, :action => :index, :id => nested.parent_id}
-        elsif params[:parent_sti]
-          options = params_for(:controller => params[:parent_sti], :action => render_parent_action, :parent_sti => nil)
-          options.merge(:action => :index, :id => @record.to_param) if render_parent_action == :row
+        elsif parent_sti_controller
+          options = params_for(:controller => parent_sti_controller.controller_path, :action => render_parent_action, :parent_sti => nil)
+          options.merge!(:action => :index, :id => @record.to_param) if render_parent_action == :row
+          options
         end
       end
 
       def render_parent_action
         if @parent_action.nil?
-          begin
-            @parent_action = :row
-            if params[:parent_sti]
-              parent_controller = "#{params[:parent_sti].to_s.camelize}Controller".constantize
-              @parent_action = :index if action_name == 'create' && parent_controller.active_scaffold_config.actions.include?(:create) && parent_controller.active_scaffold_config.create.refresh_list == true
-              @parent_action = :index if action_name == 'update' && parent_controller.active_scaffold_config.actions.include?(:update) && parent_controller.active_scaffold_config.update.refresh_list == true
-              @parent_action = :index if action_name == 'destroy' && parent_controller.active_scaffold_config.actions.include?(:delete) && parent_controller.active_scaffold_config.delete.refresh_list == true
-            end
-          rescue ActiveScaffold::ControllerNotFound => ex
-            logger.warn "#{ex.message} for parent_sti #{params[:parent_sti]}"
+          @parent_action = :row
+          if parent_sti_controller
+            parent_sti_config = parent_sti_controller.active_scaffold_config
+            @parent_action = :index if action_name == 'create' && parent_sti_config.actions.include?(:create) && parent_sti_config.create.refresh_list == true
+            @parent_action = :index if action_name == 'update' && parent_sti_config.actions.include?(:update) && parent_sti_config.update.refresh_list == true
+            @parent_action = :index if action_name == 'destroy' && parent_sti_config.actions.include?(:delete) && parent_sti_config.delete.refresh_list == true
           end
         end
         @parent_action
@@ -123,13 +154,17 @@ module ActiveScaffold
 
       # build an associated record for association
       def build_associated(association, parent_record)
-        if association.through?
+        if association.through? && association.through_reflection.collection?
           # build full chain, only check create_associated on initial parent_record
-          parent_record = build_associated(association.through_reflection, parent_record)
+          parent_record = build_associated(association.class.new(association.through_reflection), parent_record)
           source_assoc = association.class.new(association.source_reflection)
           build_associated(source_assoc, parent_record).tap do |record|
             save_record_to_association(record, source_assoc.reverse_association, parent_record) # set inverse
           end
+        elsif association.through? # through belongs_to/has_one
+          parent_record = parent_record.send(association.through_reflection.name)
+          source_assoc = association.class.new(association.source_reflection)
+          build_associated(source_assoc, parent_record)
         elsif association.collection?
           parent_record.send(association.name).build
         elsif association.belongs_to? || parent_record.new_record? || parent_record.send(association.name).nil?

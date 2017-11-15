@@ -4,7 +4,7 @@ module ActiveScaffold
     # Also a dumping ground for uncategorized helpers.
     module ActionLinkHelpers
       # params which mustn't be copying to nested links
-      NESTED_PARAMS = [:eid, :embedded, :association, :parent_scaffold].freeze
+      NESTED_PARAMS = %i[eid embedded association parent_scaffold].freeze
 
       def skip_action_link?(link, *args)
         !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *args)
@@ -85,7 +85,7 @@ module ActiveScaffold
           options.delete :link if link.crud_type == :create
         end
         if link.action.nil? || (link.type == :member && options.key?(:authorized) && !options[:authorized])
-          action_link_html(link, nil, {:link => action_link_text(link, options), :class => "disabled #{link.action}#{" #{link.html_options[:class]}" unless link.html_options[:class].blank?}", :title => options[:not_authorized_reason]}, record)
+          action_link_html(link, nil, {:link => action_link_text(link, options), :class => "disabled #{link.action}#{" #{link.html_options[:class]}" if link.html_options[:class].present?}", :title => options[:not_authorized_reason]}, record)
         else
           url = action_link_url(link, record)
           html_options = action_link_html_options(link, record, options)
@@ -124,7 +124,7 @@ module ActiveScaffold
           link.crud_type = :read
         end
 
-        unless column_link_authorized?(link, link.column, record, associated)
+        unless column_link_authorized?(link, link.column, record, associated)[0]
           link.action = nil
           # if action is edit and is not authorized, fallback to show if it's enabled
           if link.crud_type == :update && actions.include?(:show)
@@ -303,7 +303,8 @@ module ActiveScaffold
 
       def action_link_selected?(link, record)
         missing_options, url_options = replaced_action_link_url_options(link, record)
-        (url_options - params.to_h.to_a).blank? && missing_options.all? { |k, _| params[k].nil? }
+        safe_params = (Rails.version < '4.2' ? params.to_h : params.to_unsafe_h)
+        (url_options - safe_params.to_a).blank? && missing_options.all? { |k, _| params[k].nil? }
       end
 
       def action_link_html_options(link, record, options)

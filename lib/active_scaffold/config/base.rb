@@ -22,7 +22,7 @@ module ActiveScaffold::Config
         protected
 
         def crud_type=(val)
-          raise ArgumentError, "unknown CRUD type #{val}" unless [:create, :read, :update, :delete].include?(val.to_sym)
+          raise ArgumentError, "unknown CRUD type #{val}" unless %i[create read update delete].include?(val.to_sym)
           @crud_type = val.to_sym
         end
       end

@@ -1,5 +1,12 @@
-after_success:
-  - bin/codeclimate-test-reporter
+addons:
+  code_climate:
+    repo_token: 8a344833c6693733b163f09a5243fa12dd7be0b69f0358b146c64dd4becabc60
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+after_script:
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
 bundler_args: --clean --deployment --jobs=$(nproc) --without development production
 cache: bundler
 dist: trusty
@@ -7,27 +14,22 @@ gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-4.0.x
   - gemfiles/Gemfile.rails-4.1.x
-  - gemfiles/Gemfile.rails-5.0.x
+  - gemfiles/Gemfile.rails-4.2.x
 jdk:
-  - openjdk7
+  - openjdk8
 language: ruby
 matrix:
   exclude:
-    - rvm: 2.1.9
-      gemfile: gemfiles/Gemfile.rails-5.0.x 
-    - rvm: 2.4.1
+    - rvm: 2.4.2
       gemfile: gemfiles/Gemfile.rails-4.0.x 
-    - rvm: 2.4.1
+    - rvm: 2.4.2
       gemfile: gemfiles/Gemfile.rails-4.1.x 
   allow_failures:
     - rvm: rbx-3
-    - rvm: jruby-9.1.6.0
-      gemfile: gemfiles/Gemfile.rails-5.0.x
 rvm:
-  - 2.1.9
-  - 2.2.6
-  - 2.3.3
-  - 2.4.1
-  - jruby-9.1.6.0
+  - 2.2.8
+  - 2.3.5
+  - 2.4.2
+  - jruby-9.1.13.0
   - rbx-3
 sudo: required

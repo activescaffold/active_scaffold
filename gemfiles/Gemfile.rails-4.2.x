@@ -32,16 +32,15 @@ group :test do
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
-  gem 'rails', '~> 5.0.1'
-  # Collects test coverage data from your Ruby test suite and sends it to Code Climate's hosted, automated code review service.
-  # Based on SimpleCov
-  gem 'codeclimate-test-reporter', require: false
+  gem 'rails', '~> 4.2.8'
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
+  # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
+  gem 'simplecov', require: false
 
   platforms :jruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'activerecord-jdbcsqlite3-adapter', '>= 5.0.pre1'
+    gem 'activerecord-jdbcsqlite3-adapter'
     # This module allows Ruby programs to interface with the SQLite3 database engine
     gem 'jdbc-sqlite3'
   end
@@ -49,10 +48,5 @@ group :test do
   platforms :ruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
     gem 'sqlite3'
-  end
-
-  platforms :rbx do
-    # A libyaml wrapper for Ruby
-    gem 'psych'
   end
 end

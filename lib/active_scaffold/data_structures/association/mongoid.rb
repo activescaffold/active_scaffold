@@ -2,7 +2,7 @@ module ActiveScaffold::DataStructures::Association
   class Mongoid < Abstract
     delegate :inverse_klass, :as, :dependent, :inverse, to: :@association
     def collection?
-      %i(has_many has_and_belongs_to_many).include?(@association.macro)
+      %i[has_many has_and_belongs_to_many].include?(@association.macro)
     end
 
     # polymorphic belongs_to

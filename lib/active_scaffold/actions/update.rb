@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Update
     def self.included(base)
-      base.before_action :update_authorized_filter, :only => [:edit, :update]
+      base.before_action :update_authorized_filter, :only => %i[edit update]
       base.helper_method :update_refresh_list?
     end
 
@@ -140,25 +140,30 @@ module ActiveScaffold::Actions
       params.delete(:original_html)
       params.delete(:original_value)
       @column = active_scaffold_config.columns[column]
-      @record = find_if_allowed(params[:id], :read)
+      @record = value_record = find_if_allowed(params[:id], :read)
       return unless @record.authorized_for?(:crud_type => :update, :column => column)
+      if @column.delegated_association
+        value_record = @record.send(@column.delegated_association.name)
+        value_record ||= @record.association(@column.delegated_association.name).build
+        return unless value_record.authorized_for?(:crud_type => :update, :column => column)
+      end
 
       value ||=
         unless @column.column.nil? || @column.column.null
           default_val = @column.column.default
-          default_val = @column.column.cast_type.type_cast_from_user default_val if Rails.version >= '4.2.0'
+          default_val = ActiveScaffold::Core.column_type_cast default_val, @column.column if Rails.version >= '4.2.0'
           default_val == true ? false : default_val
         end
       unless @column.nil?
-        value = column_value_from_param_value(@record, @column, value)
+        value = column_value_from_param_value(value_record, @column, value)
         value = [] if value.nil? && @column.form_ui && @column.association.try(:collection?)
       end
 
-      @record.send("#{@column.name}=", value)
+      value_record.send("#{@column.name}=", value)
       before_update_save(@record)
-      self.successful = @record.save
+      self.successful = value_record.save
       if !successful?
-        flash.now[:error] = @record.errors.full_messages.presence
+        flash.now[:error] = value_record.errors.full_messages.presence
       elsif active_scaffold_config.actions.include?(:list)
         if @column.inplace_edit_update == :table
           params.delete(:id)

@@ -18,6 +18,7 @@ de:
     between: Zwischen
     cancel: Abbrechen
     cant_destroy_record: "%{record} kann nicht gelöscht werden"
+    changes: Änderungen
     click_to_edit: Zum Editieren anklicken
     click_to_reset: Reset
     close: Schließen
@@ -26,6 +27,7 @@ de:
     contains: Enthält
     create: Anlegen
     create_another: Weitere anlegen
+    create_apply: Anlegen und weiter
     create_model: Lege %{model} an
     create_new: Neu anlegen
     created_model: "%{model} angelegt"
@@ -42,8 +44,9 @@ de:
     days: Tage
     delete: Löschen
     deleted_model: "%{model} gelöscht"
+    deleted_records: Gelöschte Records auflisten
     delimiter: Trennzeichen
-    download: 
+    download: Herunterladen
     edit: Bearbeiten
     ends_with: Endet
     error_500: "(code 500, Interner Fehler)"
@@ -58,6 +61,8 @@ de:
     filtered: "(Gefiltert)"
     found: Gefunden
     future: Nächsten
+    group_by: Gruppieren nach
+    grouped_by: Gruppiert nach %{column}
     hide: "(Verstecken)"
     hours: Stunden
     human_conditions:
@@ -79,7 +84,9 @@ de:
     next_week: Nächste Woche
     next_year: Nächstes Jahr
     no_authorization_for_action: Keine Berechtigung für Aktion %{action}
+    no_color: Keine Farbe
     no_entries: Keine Einträge
+    no_group: Keine Gruppierung
     no_options: Keine Optionen
     not_null: Nicht Null
     'null': 'Null'
@@ -120,25 +127,19 @@ de:
     tomorrow: Morgen
     'true': Richtig
     update: Speichern
+    update_apply: Bewerben
     update_model: Editiere %{model}
     updated_model: "%{model} aktualisiert"
     version_inconsistency: Inkonsistente Versionen - dieser Eintrag wurde verändert nachdem Sie mit der Bearbeitung begonnen haben.
     weeks: Wochen
     years: Jahre
     yesterday: Gestern
-    changes: 
-    create_apply: 
-    deleted_records: 
-    group_by: 
-    no_group: 
-    update_apply: 
-    no_color: 
-  time:
-    formats:
-      picker: "%d.%m.%Y %H:%M"
   date:
     formats:
       month: 
-      quarter: 
+      quarter: Quartal %{num}
       year_month: 
-      year_quarter: 
+      year_quarter: Quartal %{quarter} %{year}
+  time:
+    formats:
+      picker: "%d.%m.%Y %H:%M"

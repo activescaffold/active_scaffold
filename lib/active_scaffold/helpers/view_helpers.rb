@@ -117,6 +117,9 @@ module ActiveScaffold
 
       def column_empty?(column_value)
         empty = column_value.nil?
+        # column_value != false would force boolean to be cast to integer
+        # when comparing to column_value of IPAddr class (PostgreSQL inet column type)
+        # rubocop:disable Style/YodaCondition
         empty ||= false != column_value && column_value.blank?
         empty ||= ['&nbsp;', empty_field_text].include? column_value if column_value.is_a? String
         empty
@@ -159,6 +162,22 @@ module ActiveScaffold
         end
       end
 
+      def history_state
+        if active_scaffold_config.store_user_settings
+          state = {page: @page.try(:number)}
+          state[:search] = search_params if respond_to?(:search_params) && search_params.present?
+          if active_scaffold_config.list.user.user_sorting?
+            column, state[:sort_direction] = active_scaffold_config.list.user.sorting.first
+            state[:sort] = column.name
+          else
+            state.merge sort: '', sort_direction: ''
+          end
+          state
+        else
+          {}
+        end
+      end
+
       def display_message(message)
         message = safe_join message, tag(:br) if message.is_a?(Array)
         if (highlights = active_scaffold_config.user.highlight_messages)
@@ -197,10 +216,10 @@ module ActiveScaffold
           ''
         else
           html = {}
-          [:id, :class].each do |key|
+          %i[id class].each do |key|
             if options.include?(key)
               value = options[key]
-              html[key] = value unless value.blank?
+              html[key] = value if value.present?
             else
               html[key] = 'errorExplanation'
             end
@@ -229,8 +248,8 @@ module ActiveScaffold
             end
 
           contents = []
-          contents << content_tag(options[:header_tag] || :h2, header_message) unless header_message.blank?
-          contents << content_tag(:p, message) unless message.blank?
+          contents << content_tag(options[:header_tag] || :h2, header_message) if header_message.present?
+          contents << content_tag(:p, message) if message.present?
           contents << error_messages
           contents = safe_join(contents)
           options[:container_tag] ? content_tag(options[:container_tag], contents, html) : contents

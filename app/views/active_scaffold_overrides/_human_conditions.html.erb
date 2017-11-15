@@ -1,1 +1,3 @@
 <%= columns.collect {|column| active_scaffold_human_condition_for(column)}.compact.to_sentence  %>
+<%= tag(:br) if columns.present? && grouped_search? %>
+<%= as_(:grouped_by, column: active_scaffold_grouped_by_label) if grouped_search? %>

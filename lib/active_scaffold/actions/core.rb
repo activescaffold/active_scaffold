@@ -2,6 +2,7 @@ module ActiveScaffold::Actions
   module Core
     def self.included(base)
       base.class_eval do
+        before_action :set_vary_accept_header
         before_action :check_input_device
         before_action :register_constraints_with_action_columns, :unless => :nested?
         after_action :clear_flashes
@@ -71,7 +72,7 @@ module ActiveScaffold::Actions
         else
           updated_record_with_column(@column, params.delete(:value), @scope)
         end
-      set_parent(@record) if params[:parent_controller] && @scope
+      set_parent(@record) if main_form_controller && @scope
       after_render_field(@record, @column)
     end
 
@@ -102,17 +103,24 @@ module ActiveScaffold::Actions
       record
     end
 
+    def subform_child_association
+      params[:child_association].presence || (@scope.split(']').first.sub(/^\[/, '').presence if @scope)
+    end
+
+    def parent_controller_name
+      "#{params[:parent_controller].camelize}Controller"
+    end
+
     def set_parent(record)
-      controller = "#{params[:parent_controller].camelize}Controller".constantize
-      parent_model = controller.active_scaffold_config.model
-      child_association = params[:child_association].presence || @scope.split(']').first.sub(/^\[/, '')
-      association = controller.active_scaffold_config.columns[child_association].try(:association).try(:reverse_association)
+      cfg = main_form_controller.active_scaffold_config
+      association = cfg.columns[subform_child_association].try(:association).try(:reverse_association)
       return if association.nil?
 
+      parent_model = cfg.model
       parent = parent_model.new
-      copy_attributes(parent_model.find(params[:parent_id]), parent) if params[:parent_id]
+      copy_attributes(find_if_allowed(params[:parent_id], :read, parent_model), parent) if params[:parent_id]
       parent.id = params[:parent_id]
-      parent = update_record_from_params(parent, active_scaffold_config_for(parent_model).send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
+      parent = update_record_from_params(parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
       apply_constraints_to_record(parent) unless params[:parent_id]
       if association.collection?
         record.send(association.name) << parent
@@ -135,6 +143,15 @@ module ActiveScaffold::Actions
       dst
     end
 
+    def parent_sti_controller
+      return unless params[:parent_sti]
+      unless defined? @parent_sti_controller
+        controller = look_for_parent_sti_controller
+        @parent_sti_controller = controller.controller_path == params[:parent_sti] ? controller : false
+      end
+      @parent_sti_controller
+    end
+
     # override this method if you want to do something after render_field
     def after_render_field(record, column); end
 
@@ -155,7 +172,7 @@ module ActiveScaffold::Actions
     end
 
     def default_formats
-      [:html, :js, :json, :xml]
+      %i[html js json xml]
     end
 
     # Returns true if the client accepts one of the MIME types passed to it
@@ -219,11 +236,11 @@ module ActiveScaffold::Actions
           column = active_scaffold_config._columns_hash[key.to_s]
           next unless column
           key = key.to_sym
-          not_string = [:string, :text].exclude?(column.type)
+          not_string = %i[string text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 
-          range = %i(date datetime).include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
+          range = %i[date datetime].include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
           value = value.split('..') if range
           conditions[key] =
             if value.is_a?(Array)
@@ -242,7 +259,7 @@ module ActiveScaffold::Actions
       config = active_scaffold_config_for(relation.klass) if nested? && nested.plural_association?
       if config && config._columns_hash[column = relation.klass.inheritance_column]
         model_name = params.delete(column) # in new action inheritance_column must be in params
-        model_name ||= params[:record].delete(column) unless params[:record].blank? # in create action must be inside record key
+        model_name ||= params[:record].delete(column) if params[:record].present? # in create action must be inside record key
         model_name = model_name.camelize if model_name
         model_name ||= active_scaffold_config.model.name
         build_options = {column.to_sym => model_name} if model_name
@@ -281,7 +298,11 @@ module ActiveScaffold::Actions
 
     def clear_storage
       session_index = active_scaffold_session_storage_key
-      session.delete(session_index) unless session[session_index].present?
+      session.delete(session_index) if session[session_index].blank?
+    end
+
+    def set_vary_accept_header
+      response.headers['Vary'] = 'Accept'
     end
 
     def check_input_device
@@ -423,6 +444,20 @@ module ActiveScaffold::Actions
         else
           (default_formats + active_scaffold_config.formats).uniq
         end
+    end
+
+    def look_for_parent_sti_controller
+      klass = self.class.active_scaffold_config.model
+      loop do
+        klass = klass.superclass
+        controller = self.class.active_scaffold_controller_for(klass)
+        cfg = controller.active_scaffold_config if controller.uses_active_scaffold?
+        next unless cfg && cfg.add_sti_create_links?
+        return controller if cfg.sti_children.map(&:to_s).include? self.class.active_scaffold_config.model.name.underscore
+      end
+    rescue ActiveScaffold::ControllerNotFound => ex
+      logger.warn "#{ex.message} looking for parent_sti of #{self.class.active_scaffold_config.model.name}"
+      nil
     end
   end
 end

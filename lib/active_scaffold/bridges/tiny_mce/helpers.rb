@@ -8,22 +8,6 @@ class ActiveScaffold::Bridges::TinyMce
     end
 
     module FormColumnHelpers
-      def self.included(base)
-        base.prepend OnSubmit
-      end
-
-      module OnSubmit
-        def onsubmit
-          case ActiveScaffold.js_framework
-          when :jquery
-            submit_js = 'tinyMCE.triggerSave();jQuery(\'textarea.mceEditor\').each(function(index, elem) { tinyMCE.execCommand(\'mceRemoveEditor\', false, jQuery(elem).attr(\'id\')); });'
-          when :prototype
-            submit_js = 'tinyMCE.triggerSave();this.select(\'textarea.mceEditor\').each(function(elem) { tinyMCE.execCommand(\'mceRemoveEditor\', false, elem.id); });'
-          end
-          [super, submit_js].compact.join ';'
-        end
-      end
-
       # The two column options that can be set specifically for the text_editor input
       # is :tinymce, which overrides single values in the tinymce config.
       # E.g. column[:foo].options[:tinymce] = {theme: 'other'} will change the theme
@@ -41,7 +25,7 @@ class ActiveScaffold::Bridges::TinyMce
 
         html = []
         html << send(override_input(:textarea), column, options)
-        html << javascript_tag(settings + "tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if request.xhr? || params[:iframe]
+        html << javascript_tag(settings + "tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
         html.join "\n"
       end
 

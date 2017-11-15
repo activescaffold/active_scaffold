@@ -4,7 +4,7 @@ class ModelStub < ActiveRecord::Base
   has_many :other_models, :class_name => 'ModelStub'
 
   cattr_accessor :stubbed_columns
-  self.stubbed_columns = [:a, :b, :c, :d, :id, :created_at]
+  self.stubbed_columns = %i[a b c d id created_at]
   attr_accessor(*stubbed_columns)
   self.primary_key = :id
 

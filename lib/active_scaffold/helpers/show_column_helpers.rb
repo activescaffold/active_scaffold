@@ -3,18 +3,20 @@ module ActiveScaffold
     # Helpers that assist with the rendering of a List Column
     module ShowColumnHelpers
       def show_column_value(record, column)
+        value_record = column.delegated_association ? record.send(column.delegated_association.name) : record
+        return get_column_value(record, column) unless value_record
         # check for an override helper
         if (method = show_column_override(column))
           # we only pass the record as the argument. we previously also passed the formatted_value,
           # but mike perham pointed out that prohibited the usage of overrides to improve on the
           # performance of our default formatting. see issue #138.
-          send(method, record, column)
+          send(method, value_record, column)
         # second, check if the dev has specified a valid list_ui for this column
         elsif column.show_ui && (method = override_show_column_ui(column.show_ui))
-          send(method, record, column)
+          send(method, value_record, column)
         else
           if column.column && (method = override_show_column_ui(column.column.type))
-            send(method, record, column)
+            send(method, value_record, column)
           else
             get_column_value(record, column)
           end

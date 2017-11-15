@@ -40,6 +40,24 @@ module ActiveScaffold::DataStructures
     end
     alias << add
 
+    # add columns from association (belongs_to or has_one)
+    # these columns will use label translation from association model
+    # they will be excluded, so won't be included in action columns
+    # association columns will work for read actions only, not in form actions (create, update, subform)
+    def add_association_columns(association, *columns)
+      column = self[association]
+      raise ArgumentError, "unknown column #{association}" if column.nil?
+      raise ArgumentError, "column #{association} is not an association" if column.association.nil?
+      raise ArugmentError, "column #{association} is not singular association" unless column.association.singular?
+      raise ArugmentError, "column #{association} is polymorphic association" if column.association.polymorphic?
+
+      klass = column.association.klass
+      columns.each do |col|
+        next if find_by_name col
+        @set << ActiveScaffold::DataStructures::Column.new(col, klass, column.association)
+      end
+    end
+
     def exclude(*args)
       # only remove columns from _inheritable. we never want to completely forget about a column.
       args.each { |a| @_inheritable.delete a.to_sym }

@@ -23,7 +23,7 @@ module ActiveScaffold
           columns[field].form_ui ||= :paperclip
           columns[field].params.add "delete_#{field}"
 
-          [:file_name, :content_type, :file_size, :updated_at].each do |f|
+          %i[file_name content_type file_size updated_at].each do |f|
             columns.exclude("#{field}_#{f}".to_sym)
           end
         end

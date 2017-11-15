@@ -31,7 +31,7 @@ module ActiveScaffold
         ActiveScaffold::Bridges.run_all
 
         # converts Foo::BarController to 'bar' and FooBarsController to 'foo_bar' and AddressController to 'address'
-        model_id = to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore unless model_id
+        model_id ||= to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore
 
         # run the configuration
         @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
@@ -138,7 +138,7 @@ module ActiveScaffold
           ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(:refresh_on_close => true))
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
-          actions ||= [:create, :update, :show]
+          actions ||= %i[create update show]
           column.actions_for_association_links.delete :new unless actions.include? :create
           column.actions_for_association_links.delete :edit unless actions.include? :update
           column.actions_for_association_links.delete :show unless actions.include? :show
@@ -224,7 +224,9 @@ module ActiveScaffold
             end
           end
           raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
-          raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller unless controller.active_scaffold_config.model.to_s == klass.to_s
+          unless controller.active_scaffold_config.model.to_s == klass.to_s
+            raise ActiveScaffold::ControllerNotFound, "ActiveScaffold on #{controller} is not for #{klass} model.", caller
+          end
           return controller
         end
       end
@@ -250,7 +252,7 @@ module ActiveScaffold
         column.type_cast value
       elsif Rails.version < '5.0'
         column.type_cast_from_user value
-      elsif column.type.respond_to? :cast
+      elsif column.type.respond_to? :cast # jruby-jdbc and rails 5
         column.type.cast value
       else
         cast_type = ActiveModel::Type.lookup column.type

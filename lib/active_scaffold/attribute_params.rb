@@ -116,11 +116,17 @@ module ActiveScaffold
 
     def update_column_from_params(parent_record, column, attribute, avoid_changes = false)
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
-      if avoid_changes && column.association.try(:collection?)
+      if avoid_changes && column.association
         parent_record.association(column.name).target = value
+        parent_record.send("#{column.association.foreign_key}=", value.try(:id)) if column.association.belongs_to?
       elsif column.association && counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value.try(:id)
         parent_record.association(column.name).target = value
+      elsif column.association.try(:collection?) && column.association.through? && !column.association.through_reflection.collection?
+        through = column.association.through_reflection.name
+        through_record = parent_record.send(through)
+        through_record ||= parent_record.send "build_#{through}"
+        through_record.send "#{column.association.source_reflection.name}=", value
       else
         begin
           if column.association && hack_for_has_many_counter_cache?(parent_record, column)
@@ -145,7 +151,7 @@ module ActiveScaffold
       if form_ui && respond_to?("column_value_for_#{form_ui}_type", true)
         send("column_value_for_#{form_ui}_type", parent_record, column, value)
       elsif params_hash? value
-        column_value_from_param_hash_value(parent_record, column, value, avoid_changes)
+        column_value_from_param_hash_value(parent_record, column, params_hash(value), avoid_changes)
       else
         column_value_from_param_simple_value(parent_record, column, value)
       end
@@ -184,16 +190,17 @@ module ActiveScaffold
         column.number_to_native(value)
       else
         # convert empty strings into nil. this works better with 'null => true' columns (and validations),
-        # and 'null => false' columns should just convert back to an empty string.
-        # ... but we can at least check the ConnectionAdapter::Column object to see if nulls are allowed
-        value = nil if value.is_a?(String) && value.empty? && !column.column.nil? && column.column.null
+        # for 'null => false' columns is just converted to default value from column
+        if value.is_a?(String) && value.empty? && !column.column.nil?
+          value = column.column.null ? nil : column.column.default
+        end
         value
       end
     end
 
     def column_plural_assocation_value_from_value(column, value)
       # it's an array of ids
-      if value && !value.empty?
+      if value.present?
         ids = value.select(&:present?)
         ids.empty? ? [] : column.association.klass.find(ids)
       else
@@ -205,7 +212,6 @@ module ActiveScaffold
       if column.association.try :singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.association.try :collection?
-        value = params_hash(value)
         # HACK: to be able to delete all associated records, hash will include "0" => ""
         values = value.values.reject(&:blank?)
         values.collect { |val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }.compact
@@ -280,11 +286,12 @@ module ActiveScaffold
         column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
         column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name) if column
 
-        # booleans and datetimes will always have a value. so we ignore them when checking whether the hash is empty.
+        # datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
         next true if column && parts.length > 1 && part_ignore_column_types.include?(column_type)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
+        # booleans always have value, so they are ignored if not changed from default
         default_value = column_default_value(column_name, klass, column)
         casted_value = column ? ActiveScaffold::Core.column_type_cast(value, column) : value
         next true if casted_value == default_value

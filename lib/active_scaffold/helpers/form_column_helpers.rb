@@ -40,13 +40,12 @@ module ActiveScaffold
             # final ultimate fallback: use rails' generic input method
             else
               # for textual fields we pass different options
-              text_types = [:text, :string, :integer, :float, :decimal, :date, :time, :datetime]
+              text_types = %i[text string integer float decimal]
               options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
               if column.column.type == :string && options[:maxlength].blank?
                 options[:maxlength] = column.column.limit
                 options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
               end
-              options[:include_blank] = true if column.column.null && [:date, :datetime, :time].include?(column.column.type)
               options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
               text_field(:record, column.name, options.merge(column.options).except(:format))
             end
@@ -116,7 +115,7 @@ module ActiveScaffold
       def current_form_columns(record, scope, subform_controller = nil)
         if scope
           subform_controller.active_scaffold_config.subform.columns.names
-        elsif [:new, :create, :edit, :update, :render_field].include? action_name.to_sym
+        elsif %i[new create edit update render_field].include? action_name.to_sym
           # disable update_columns for inplace_edit (GET render_field)
           return if action_name == 'render_field' && request.get?
           active_scaffold_config.send(record.new_record? ? :create : :update).columns.names
@@ -169,13 +168,17 @@ module ActiveScaffold
         column_options = active_scaffold_input_options(column, scope, :object => record)
         attributes = field_attributes(column, record)
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
-        field =
-          if only_value
-            content_tag(:span, get_column_value(record, column), column_options.except(:name, :object)) <<
-              hidden_field(:record, column.association ? column.association.foreign_key : column.name, column_options)
-          else
-            active_scaffold_input_for column, scope, column_options
+        if only_value
+          field = content_tag(:span, get_column_value(record, column), column_options.except(:name, :object))
+          if column.association.nil? || column.association.belongs_to?
+            # hidden field probably not needed, but leaving it just in case
+            # but it isn't working for assocations which are not belongs_to
+            method = column.association ? column.association.foreign_key : column.name
+            field << hidden_field(:record, method, column_options)
           end
+        else
+          field = active_scaffold_input_for column, scope, column_options
+        end
 
         content_tag :dl, attributes do
           %(<dt>#{label_tag label_for(column, column_options), column.label}</dt><dd>#{field}
@@ -194,22 +197,49 @@ module ActiveScaffold
       end
 
       def form_hidden_attribute(column, record, scope = nil)
-        %(<dl style="display: none;"><dt></dt><dd>
-#{hidden_field :record, column.name, active_scaffold_input_options(column, scope).merge(:object => record)}
-</dd></dl>).html_safe
+        content_tag :dl, style: 'display: none' do
+          content_tag(:dt, '') <<
+            content_tag(:dd, form_hidden_field(column, record, scope))
+        end
+      end
+
+      def form_hidden_field(column, record, scope)
+        options = active_scaffold_input_options(column, scope)
+        if column.association.try(:collection?)
+          associated = record.send(column.name)
+          if associated.blank?
+            hidden_field_tag options[:name], '', options
+          else
+            options[:name] += '[]'
+            fields = associated.map do |r|
+              hidden_field_tag options[:name], r.id, options.merge(id: options[:id] + "_#{r.id}")
+            end
+            safe_join fields, ''
+          end
+        else
+          hidden_field :record, column.name, options.merge(object: record)
+        end
       end
 
       # Should this column be displayed in the subform?
-      def in_subform?(column, parent_record)
+      def in_subform?(column, parent_record, parent_column)
         return true unless column.association
 
-        # Polymorphic associations can't appear because they *might* be the reverse association, and because you generally don't assign an association from the polymorphic side ... I think.
-        return false if column.association.polymorphic?
+        if column.association.reverse.nil?
+          # Polymorphic associations can't appear because they *might* be the reverse association
+          return false if column.association.polymorphic?
 
-        # A column shouldn't be in the subform if it's the reverse association to the parent
-        return false if column.association.inverse_for?(parent_record.class)
-
-        true
+          # A column shouldn't be in the subform if it's the reverse association to the parent
+          !column.association.inverse_for?(parent_record.class)
+        elsif column.association.reverse == parent_column.name
+          if column.association.polymorphic?
+            column.association.name != parent_column.association.as
+          else
+            !column.association.inverse_for?(parent_record.class)
+          end
+        else
+          true
+        end
       end
 
       def column_show_add_existing(column, record = nil)
@@ -218,7 +248,8 @@ module ActiveScaffold
 
       def column_show_add_new(column, associated, record)
         assoc = column.association
-        value = (assoc.collection? && !assoc.readonly? && !assoc.through?) || assoc.singular?
+        value = assoc.singular?
+        value ||= assoc.collection? && !assoc.readonly? && (!assoc.through? || !assoc.through_reflection.collection?)
         value &&= false unless assoc.klass.authorized_for?(:crud_type => :create)
         value
       end
@@ -242,6 +273,12 @@ module ActiveScaffold
         options
       end
 
+      def active_scaffold_select_name_with_multiple(options)
+        if options[:multiple] && !options[:name].to_s.ends_with?('[]')
+          options[:name] = "#{options[:name]}[]"
+        end
+      end
+
       def active_scaffold_input_singular_association(column, html_options, options = {})
         record = html_options.delete(:object)
         associated = record.send(column.association.name)
@@ -254,7 +291,7 @@ module ActiveScaffold
 
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
-        html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
+        active_scaffold_select_name_with_multiple html_options
         active_scaffold_translate_select_options(options)
 
         html =
@@ -265,6 +302,39 @@ module ActiveScaffold
           end
         html << active_scaffold_refresh_link(column, html_options, record) if column.options[:refresh_link]
         html
+      end
+
+      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class)
+        options = active_scaffold_input_text_options(options.merge(column.options))
+        if content
+          active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class)
+        else
+          file_field(:record, column.name, options)
+        end
+      end
+
+      def active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class)
+        required = options.delete(:required)
+        case ActiveScaffold.js_framework
+        when :jquery
+          js_remove_file_code = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show()#{".find('input').attr('required', 'required')" if required}; return false;"
+          js_dont_remove_file_code = "jQuery(this).parents('div.#{controls_class}').find('input.remove_file').val('false'); return false;"
+        when :prototype
+          js_remove_file_code = "$(this).previous().value='true'; $(this).up().hide().next().show()#{".down().writeAttribute('required', 'required')" if required}; return false;"
+          js_dont_remove_file_code = "jQuery(this).parents('div.#{controls_class}').find('input.remove_file').val('false'); return false;"
+        end
+
+        object_name, method = options[:name].split(/\[(#{column.name})\]/)
+        method.sub!(/#{column.name}/, "#{remove_file_prefix}\\0")
+        fields = block_given? ? yield : ''
+        input = file_field(:record, column.name, options.merge(:onchange => js_dont_remove_file_code))
+        content_tag(:div, class: controls_class) do
+          content_tag(:div) do
+            content << ' | ' << fields <<
+              hidden_field(object_name, method, :value => 'false', class: 'remove_file') <<
+              content_tag(:a, as_(:remove_file), :href => '#', :onclick => js_remove_file_code)
+          end << content_tag(:div, input, :style => 'display: none')
+        end
       end
 
       def active_scaffold_refresh_link(column, html_options, record)
@@ -339,7 +409,7 @@ module ActiveScaffold
         end
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
-        html_options[:name] = "#{html_options[:name]}[]" if html_options[:multiple] == true && !html_options[:name].to_s.ends_with?('[]')
+        active_scaffold_select_name_with_multiple html_options
         active_scaffold_translate_select_options(options)
         select(:record, column.name, options_for_select, options, html_options)
       end
@@ -391,8 +461,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_password(column, options)
-        options = active_scaffold_input_text_options(options)
-        password_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :password_field, column, options
       end
 
       def active_scaffold_input_textarea(column, options)
@@ -400,8 +469,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_virtual(column, options)
-        options = active_scaffold_input_text_options(options)
-        text_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :text_field, column, options
       end
 
       # Some fields from HTML5 (primarily for using in-browser validation)
@@ -409,34 +477,40 @@ module ActiveScaffold
 
       # A text box, that accepts only valid email address (in-browser validation)
       def active_scaffold_input_email(column, options)
-        options = active_scaffold_input_text_options(options)
-        email_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :email_field, column, options
       end
 
       # A text box, that accepts only valid URI (in-browser validation)
       def active_scaffold_input_url(column, options)
-        options = active_scaffold_input_text_options(options)
-        url_field :record, column.name, options.merge(column.options)
+        active_scaffold_text_input :url_field, column, options
       end
 
       # A text box, that accepts only valid phone-number (in-browser validation)
       def active_scaffold_input_telephone(column, options)
-        options = active_scaffold_input_text_options(options)
-        telephone_field :record, column.name, options.merge(column.options).except(:format)
+        active_scaffold_text_input :telephone_field, column, options, :format
       end
 
       # A spinbox control for number values (in-browser validation)
       def active_scaffold_input_number(column, options)
-        options = numerical_constraints_for_column(column, options)
-        options = active_scaffold_input_text_options(options)
-        number_field :record, column.name, options.merge(column.options).except(:format)
+        active_scaffold_number_input :number_field, column, options, :format
       end
 
       # A slider control for number values (in-browser validation)
       def active_scaffold_input_range(column, options)
+        active_scaffold_number_input :range_field, column, options, :format
+      end
+
+      # A slider control for number values (in-browser validation)
+      def active_scaffold_number_input(method, column, options, remove_options = nil)
         options = numerical_constraints_for_column(column, options)
+        active_scaffold_text_input method, column, options, remove_options
+      end
+
+      def active_scaffold_text_input(method, column, options, remove_options = nil)
         options = active_scaffold_input_text_options(options)
-        range_field :record, column.name, options.merge(column.options).except(:format)
+        options = options.merge(column.options)
+        options = options.except(*remove_options) if remove_options.present?
+        send method, :record, column.name, options
       end
 
       # A color picker
@@ -467,7 +541,17 @@ module ActiveScaffold
         select_tag(options[:name], options_for_select(select_options, record.send(column.name)), options)
       end
 
-      def onsubmit; end
+      def active_scaffold_input_date(column, options)
+        active_scaffold_text_input :date_field, column, options
+      end
+
+      def active_scaffold_input_time(column, options)
+        active_scaffold_text_input :time_field, column, options
+      end
+
+      def active_scaffold_input_datetime(column, options)
+        active_scaffold_text_input :datetime_local_field, column, options
+      end
 
       ##
       ## Form column override signatures
@@ -597,8 +681,8 @@ module ActiveScaffold
                 numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column && column.column.scale.to_i > 0
               elsif options[:min] && options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
                 numerical_constraints[:step] = 2
-                numerical_constraints[:min] += 1 if only_odd_valid  && !options[:min].odd?
-                numerical_constraints[:min] += 1 if only_even_valid && !options[:min].even?
+                numerical_constraints[:min] += 1 if only_odd_valid  && options[:min].even?
+                numerical_constraints[:min] += 1 if only_even_valid && options[:min].odd?
               end
               numerical_constraints[:step] ||= 'any' unless only_integer
             end

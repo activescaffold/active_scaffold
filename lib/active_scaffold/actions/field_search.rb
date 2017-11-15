@@ -122,7 +122,7 @@ module ActiveScaffold::Actions
       end
 
       def grouped_columns
-        return unless active_scaffold_config.field_search.grouped_columns.present?
+        return if active_scaffold_config.field_search.grouped_columns.blank?
         active_scaffold_config.field_search.grouped_columns.map do |col|
           active_scaffold_config.columns[col]
         end.compact
@@ -160,7 +160,7 @@ module ActiveScaffold::Actions
             active_scaffold_conditions << search_condition
             filtered_columns << column
           end
-          unless filtered_columns.blank?
+          if filtered_columns.present? || grouped_search?
             @filtered = active_scaffold_config.field_search.human_conditions ? filtered_columns : true
           end
 

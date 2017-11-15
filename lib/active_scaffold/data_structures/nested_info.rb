@@ -104,7 +104,7 @@ module ActiveScaffold::DataStructures
 
     def default_sorting(chain)
       return @default_sorting if defined? @default_sorting
-      if association.scope.is_a?(Proc) && chain.respond_to?(:values)
+      if association.scope.is_a?(Proc) && chain.respond_to?(:values) && chain.values[:order]
         @default_sorting = chain.values[:order]
         @default_sorting = @default_sorting.map(&:to_sql) if @default_sorting[0].is_a? Arel::Nodes::Node
         @default_sorting = @default_sorting.join(', ')

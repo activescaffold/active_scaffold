@@ -25,7 +25,7 @@ class SortingTest < MiniTest::Test
     # test adding a lowercase string direction
     assert_equal 'DESC', @sorting.direction_of(:c)
 
-    @sorting << [:d, :desc]
+    @sorting << %i[d desc]
     # testing adding with the alias
     assert @sorting.sorts_on?(:d)
     assert_equal 'DESC', @sorting.direction_of(:d)

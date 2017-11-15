@@ -10,7 +10,7 @@ module ActiveScaffold::Config
     def self.actions=(val)
       @@actions = ActiveScaffold::DataStructures::Actions.new(*val)
     end
-    self.actions = [:create, :list, :search, :update, :delete, :show, :nested, :subform]
+    self.actions = %i[create list search update delete show nested subform]
 
     # configures where the ActiveScaffold plugin itself is located. there is no instance version of this.
     cattr_accessor :plugin_directory
@@ -287,6 +287,10 @@ module ActiveScaffold::Config
     end
     alias active_record_class model
 
+    def primary_key
+      mongoid? ? '_id' : model.primary_key
+    end
+
     # warning - this won't work as a per-request dynamic attribute in rails 2.0.  You'll need to interact with Controller#generic_view_paths
     def inherited_view_paths
       @inherited_view_paths ||= []
@@ -306,7 +310,7 @@ module ActiveScaffold::Config
     end
 
     def self.available_frontends
-      frontends_dir = File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
+      frontends_dir = Rails.root.join('vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
       Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
     end
 

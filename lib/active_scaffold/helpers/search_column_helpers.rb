@@ -7,6 +7,10 @@ module ActiveScaffold
       def active_scaffold_search_for(column, options = nil)
         options ||= active_scaffold_search_options(column)
         record = options[:object]
+        if column.delegated_association
+          record = record.send(column.delegated_association.name) || column.active_record_class.new
+          options[:object] = record
+        end
 
         # first, check if the dev has created an override for this specific field for search
         if (method = override_search_field(column))
@@ -39,7 +43,7 @@ module ActiveScaffold
             # final ultimate fallback: use rails' generic input method
             else
               # for textual fields we pass different options
-              text_types = [:text, :string, :integer, :float, :decimal]
+              text_types = %i[text string integer float decimal]
               options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
               text_field(:record, column.name, options.merge(column.options))
             end
@@ -62,7 +66,7 @@ module ActiveScaffold
       end
 
       def search_label_for(column, options)
-        options[:id] unless [:range, :integer, :decimal, :float, :string, :date_picker, :datetime_picker, :calendar_date_select].include? column.search_ui
+        options[:id] unless %i[range integer decimal float string date_picker datetime_picker calendar_date_select].include? column.search_ui
       end
 
       ##
@@ -107,7 +111,7 @@ module ActiveScaffold
         options = options.merge(:selected => associated).merge column.options
         html_options.merge! column.options[:html_options] || {}
         if html_options[:multiple]
-          html_options[:name] += '[]'
+          active_scaffold_select_name_with_multiple html_options
         else
           options[:include_blank] ||= as_(:_select_)
           active_scaffold_translate_select_options(options)
@@ -151,7 +155,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_group_column
-        return unless active_scaffold_config.field_search.group_options.present?
+        return if active_scaffold_config.field_search.group_options.blank?
         @_active_scaffold_group_column ||= begin
           column = ActiveScaffold::DataStructures::Column.new(:active_scaffold_group, active_scaffold_config.model)
           column.label = :group_by
@@ -293,9 +297,9 @@ module ActiveScaffold
         value = field_search_params[column.name.to_s]
         case value
         when Hash
-          !value['from'].blank?
+          value['from'].present?
         when String
-          !value.blank?
+          value.present?
         else
           false
         end

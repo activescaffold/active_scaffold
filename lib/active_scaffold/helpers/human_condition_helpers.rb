@@ -15,6 +15,13 @@ module ActiveScaffold
         end
       end
 
+      def active_scaffold_grouped_by_label
+        text, = active_scaffold_config.field_search.group_options.find do |text, value|
+          (value || text) == field_search_params['active_scaffold_group']
+        end
+        active_scaffold_translated_option(active_scaffold_group_column, text).first if text
+      end
+
       def format_human_condition(column, opt, from = nil, to = nil)
         attribute = column.active_record_class.human_attribute_name(column.name)
         "#{attribute} #{as_(opt).downcase} #{from} #{to}"

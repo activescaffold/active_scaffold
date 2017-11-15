@@ -2,7 +2,7 @@
 - add support for associations between Mongoid and ActiveRecord with ActiveMongoid
 - use concerns for routes, deprecate as_routes method
 - add install generator
-- rails 5.0 support
+- rails 5.0 support and turbolinks 5.0 support, without jquery.turbolinks
 - rename active_scaffold generator as active_scaffold:resource
 - rename active_scaffold_controller generator as active_scaffold:controller
 - remove deprecations from 3.4.x (active_scaffold_includes and using @record in helpers)
@@ -16,6 +16,13 @@
 - add global config option to display reason for disabled action, authorized methods must return string with reason, and string is interpreted as not authorized
 - add config.column shortcut to set defaults for column settings with ActiveScaffold.set_defaults
 - stop saving embedded scaffolds info into session, so no more CookieOverflow errors caused by loading many embedded scaffolds
+- add add_association_columns method to config.columns, so columns from has_one or belongs_to association can be added as delegated columns (for list, show, field_search and update_column only)
+- support has_many through singular associations (belongs_to or has_one) in forms
+- remove onsubmit tag in forms and move tinymce related JS to assets
+- use html5 history api when listing is refreshed
+- use date, datetime-local and time html5 inputs for date, datetime and time columns without form_ui
+- avoid browser mixes html and xhr cache for listing requests, using vary header
+- improve in_subform? check for subforms, so only reverse association is hidden (needed when subform class has multiple associations to main form's class)
 - fix select of existing record for nested subform
 - fix apply constraints to parent (fix update columns on subform on embedded scaffold)
 - fix for override form field and subform partials on AS controllers which are parent class for AS controllers, so they are shared by children classes
@@ -26,6 +33,8 @@
 - fix searching with :multi_chosen search_ui
 - fix human conditions for :chosen and :multi_chosen search_ui
 - fix display of association in list when association_limit is nil
+- fix conversion of i18n date and datetime value, some abbr day and month may be equal in some languages
+- fix hidden form_ui for collection associations (has_many, habtm)
 
 = 3.4.42
 - Fix for protected and private authorized methods

@@ -5,14 +5,14 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update alpine-sdk # git make gcc ...
+    - apk add --no-cache --update build-base git
     - bundle install --clean --deployment --jobs=2 --without default development lint production test
   image: ruby:alpine
   only:
     - master
   stage: deploy
   tags:
-    - ruby
+    - gitlab-org-high-cpu
 
 .lint: &lint
   before_script:
@@ -21,61 +21,66 @@
     - ruby --version
     - gem --version
     - bundle --version
-    - apk add --no-cache --update git
+    - apk add --no-cache --update build-base git
     - bundle install --clean --deployment --jobs=2 --without default deployment development production test
   image: ruby:alpine
   stage: lint
   tags:
-    - ruby
+    - gitlab-org-high-cpu
 
 .test: &test
   artifacts:
     expire_in: 1 day
     paths:
       - coverage
+  before_script:
+    - cat /etc/os-release
+    - uname -a
+    - ruby --version
+    - gem --version
+    - bundle --version
+    - apk add --no-cache --update build-base curl git sqlite-dev tzdata
+    - bundle install --clean --deployment --jobs=2 --without deployment development lint production
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - ./cc-test-reporter before-build
   script:
-    - bundle install --clean --deployment --jobs=$(nproc) --without deployment development lint production
-    - bin/rake
+    - bundle exec rake
   stage: test
   tags:
-    - ruby
+    - gitlab-org-high-cpu
 
-.use_jruby: &use_jruby
+.use_jruby_9_1: &use_jruby_9_1
+  image: jruby:9.1-alpine
+
+.use_mri_2_2: &use_mri_2_2
+  image: ruby:2.2-alpine
+
+.use_mri_2_3: &use_mri_2_3
+  image: ruby:2.3-alpine
+
+.use_mri_2_4: &use_mri_2_4
+  image: ruby:2.4-alpine
+
+.use_rails_4_0: &use_rails_4_0
   <<: *test
-  before_script:
-    - cat /etc/os-release
-    - uname -a
-    - ruby --version
-    - gem --version
-    - bundle --version
-    - apt-get -qq update
-    - apt-get -qq install git
-  image: jruby:9.1
-
-.use_mri: &use_mri
-  <<: *test
-  before_script:
-    - cat /etc/os-release
-    - uname -a
-    - ruby --version
-    - gem --version
-    - bundle --version
-
-.use_rails_4_0_x: &use_rails_4_0_x
   variables:
     BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
 
-.use_rails_4_1_x: &use_rails_4_1_x
+.use_rails_4_1: &use_rails_4_1
+  <<: *test
   variables:
     BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
 
-.use_rails_4_2_x: &use_rails_4_2_x
+.use_rails_4_2: &use_rails_4_2
+  <<: *test
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.2.x
+
+.use_rails_5_0: &use_rails_5_0
+  <<: *test
   variables:
     BUNDLE_GEMFILE: Gemfile
-
-.use_rails_5_0_x: &use_rails_5_0_x
-  variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
 
 cache:
   paths:
@@ -83,7 +88,6 @@ cache:
 
 lint:brakeman:
   <<: *lint
-  allow_failure: true
   artifacts:
     expire_in: 1 day
     paths:
@@ -97,6 +101,12 @@ lint:bundler:audit:
   script:
     - bin/bundle-audit check --update --verbose
 
+lint:i18n:
+  <<: *lint
+  allow_failure: true
+  script:
+    - bin/i18n-tasks health
+
 lint:rubocop:
   <<: *lint
   script:
@@ -109,97 +119,74 @@ pages:
     paths:
       - public
   script:
-    - bin/codeclimate-test-reporter
-    - mkdir -pv public
-    - mv -v brakeman public
-    - mv -v coverage public
+    - ./cc-test-reporter after-build
+    - DIR=public/$([ "$CI_COMMIT_REF_SLUG" = master ] || echo $CI_COMMIT_REF_SLUG)
+    - mkdir -pv $DIR
+    - mv -v brakeman $DIR
+    - mv -v coverage $DIR
+  except:
+    - tags
 
 stages:
   - lint
   - test
   - deploy
 
-test:rails-4.0.x:jruby:9.1:
-  <<: *use_jruby
-  <<: *use_rails_4_0_x
+test:rails-4.0:jruby:9.1:
+  <<: *use_jruby_9_1
+  <<: *use_rails_4_0
 
-test:rails-4.0.x:mri:2.1:
-  <<: *use_mri
-  <<: *use_rails_4_0_x
-  image: ruby:2.1
+test:rails-4.0:mri:2.2:
+  <<: *use_mri_2_2
+  <<: *use_rails_4_0
 
-test:rails-4.0.x:mri:2.2:
-  <<: *use_mri
-  <<: *use_rails_4_0_x
-  image: ruby:2.2
+test:rails-4.0:mri:2.3:
+  <<: *use_mri_2_3
+  <<: *use_rails_4_0
 
-test:rails-4.0.x:mri:2.3:
-  <<: *use_mri
-  <<: *use_rails_4_0_x
-  image: ruby:2.3
+test:rails-4.1:jruby:9.1:
+  <<: *use_jruby_9_1
+  <<: *use_rails_4_1
 
-test:rails-4.1.x:jruby:9.1:
-  <<: *use_jruby
-  <<: *use_rails_4_1_x
+test:rails-4.1:mri:2.2:
+  <<: *use_mri_2_2
+  <<: *use_rails_4_1
 
-test:rails-4.1.x:mri:2.1:
-  <<: *use_mri
-  <<: *use_rails_4_1_x
-  image: ruby:2.1
+test:rails-4.1:mri:2.3:
+  <<: *use_mri_2_3
+  <<: *use_rails_4_1
 
-test:rails-4.1.x:mri:2.2:
-  <<: *use_mri
-  <<: *use_rails_4_1_x
-  image: ruby:2.2
+test:rails-4.2:jruby:9.1:
+  <<: *use_jruby_9_1
+  <<: *use_rails_4_2
 
-test:rails-4.1.x:mri:2.3:
-  <<: *use_mri
-  <<: *use_rails_4_1_x
-  image: ruby:2.3
+test:rails-4.2:mri:2.2:
+  <<: *use_mri_2_2
+  <<: *use_rails_4_2
 
-test:rails-4.2.x:jruby:9.1:
-  <<: *use_jruby
-  <<: *use_rails_4_2_x
+test:rails-4.2:mri:2.3:
+  <<: *use_mri_2_3
+  <<: *use_rails_4_2
 
-test:rails-4.2.x:mri:2.1:
-  <<: *use_mri
-  <<: *use_rails_4_2_x
-  image: ruby:2.1
+test:rails-4.2:mri:2.4:
+  <<: *use_mri_2_4
+  <<: *use_rails_4_2
 
-test:rails-4.2.x:mri:2.2:
-  <<: *use_mri
-  <<: *use_rails_4_2_x
-  image: ruby:2.2
+test:rails-5.0:jruby:9.1:
+  <<: *use_jruby_9_1
+  <<: *use_rails_5_0
 
-test:rails-4.2.x:mri:2.3:
-  <<: *use_mri
-  <<: *use_rails_4_2_x
-  image: ruby:2.3
+test:rails-5.0:mri:2.2:
+  <<: *use_mri_2_2
+  <<: *use_rails_5_0
 
-test:rails-4.2.x:mri:2.4:
-  <<: *use_mri
-  <<: *use_rails_4_2_x
-  image: ruby:2.4
+test:rails-5.0:mri:2.3:
+  <<: *use_mri_2_3
+  <<: *use_rails_5_0
 
-test:rails-5.0.x:jruby:9.1:
-  <<: *use_jruby
-  <<: *use_rails_5_0_x
-  allow_failure: true
-
-test:rails-5.0.x:mri:2.2:
-  <<: *use_mri
-  <<: *use_rails_5_0_x
-  image: ruby:2.2
-
-test:rails-5.0.x:mri:2.3:
-  <<: *use_mri
-  <<: *use_rails_5_0_x
-  image: ruby:2.3
-
-test:rails-5.0.x:mri:2.4:
-  <<: *use_mri
-  <<: *use_rails_5_0_x
-  image: ruby:2.4
+test:rails-5.0:mri:2.4:
+  <<: *use_mri_2_4
+  <<: *use_rails_5_0
 
 variables:
   JRUBY_OPTS: --debug

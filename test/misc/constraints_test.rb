@@ -115,6 +115,10 @@ class ConstraintsTestObject
     @active_scaffold_habtm_joins = []
     @params = {}
   end
+
+  def params_hash?(v)
+    v.is_a? Hash
+  end
 end
 
 class ConstraintsTest < MiniTest::Test
@@ -125,60 +129,58 @@ class ConstraintsTest < MiniTest::Test
   def test_constraint_conditions_for_default_associations
     @test_object.active_scaffold_config = config_for('user')
     # has_one (vs belongs_to)
-    assert_constraint_condition({:subscription => 5}, [{'subscriptions.id' => 5}], 'find the user with subscription #5')
+    assert_constraint_condition({:subscription => 5}, [{'subscriptions' => {'id' => 5}}], 'find the user with subscription #5')
     # habtm (vs habtm)
-    assert_constraint_condition({:roles => 4}, [{'roles.id' => 4}], 'find all users with role #4')
+    assert_constraint_condition({:roles => 4}, [{'roles' => {'id' => 4}}], 'find all users with role #4')
     # has_one (vs polymorphic)
-    assert_constraint_condition({:address => 11}, [{'addresses.id' => 11}], 'find the user with address #11')
+    assert_constraint_condition({:address => 11}, [{'addresses' => {'id' => 11}}], 'find the user with address #11')
     # reverse of a has_many :through
-    assert_constraint_condition({:subscription => {:service => 5}}, [{'services.id' => 5}], 'find all users subscribed to service #5')
+    assert_constraint_condition({:subscription => {:service => 5}}, [{'services' => {'id' => 5}}], 'find all users subscribed to service #5')
     assert(@test_object.active_scaffold_references.include?(:subscription => :service), 'multi-level association include')
 
     @test_object.active_scaffold_config = config_for('subscription')
     # belongs_to (vs has_one)
-    assert_constraint_condition({:user => 2}, [{'subscriptions.user_id' => 2}], 'find the subscription for user #2')
+    assert_constraint_condition({:user => 2}, [{'subscriptions' => {'user_id' => 2}}], 'find the subscription for user #2')
     # belongs_to (vs has_many)
-    assert_constraint_condition({:service => 1}, [{'subscriptions.service_id' => 1}], 'find all subscriptions for service #1')
+    assert_constraint_condition({:service => 1}, [{'subscriptions' => {'service_id' => 1}}], 'find all subscriptions for service #1')
 
     @test_object.active_scaffold_config = config_for('service')
     # has_many (vs belongs_to)
-    assert_constraint_condition({:subscriptions => 10}, [{'subscriptions.id' => 10}], 'find the service with subscription #10')
+    assert_constraint_condition({:subscriptions => 10}, [{'subscriptions' => {'id' => 10}}], 'find the service with subscription #10')
     # has_many :through (through has_many)
-    assert_constraint_condition({:users => 7}, [{'users.id' => 7}], 'find the service with user #7')
+    assert_constraint_condition({:users => 7}, [{'users' => {'id' => 7}}], 'find the service with user #7')
 
     @test_object.active_scaffold_config = config_for('address')
     # belongs_to :polymorphic => true
-    @test_object.params[:parent_model] = 'ModelStubs::User'
-    assert_constraint_condition({:addressable => 14}, [{'addresses.addressable_id' => 14, 'addresses.addressable_type' => 'ModelStubs::User'}], 'find all addresses for user #14')
+    assert_constraint_condition({:addressable => ['ModelStubs::User', 14]}, [{'addresses' => {'addressable_id' => 14, 'addressable_type' => 'ModelStubs::User'}}], 'find all addresses for user #14')
   end
 
   def test_constraint_conditions_for_configured_associations
     @test_object.active_scaffold_config = config_for('other_user')
     # has_one (vs belongs_to)
-    assert_constraint_condition({:other_subscription => 5}, [{'subscriptions.id' => 5}], 'find the user with subscription #5')
+    assert_constraint_condition({:other_subscription => 5}, [{'subscriptions' => {'id' => 5}}], 'find the user with subscription #5')
     # habtm (vs habtm)
-    assert_constraint_condition({:other_roles => 4}, [{'roles.id' => 4}], 'find all users with role #4')
+    assert_constraint_condition({:other_roles => 4}, [{'roles' => {'id' => 4}}], 'find all users with role #4')
     # has_one (vs polymorphic)
-    assert_constraint_condition({:other_address => 11}, [{'addresses.id' => 11}], 'find the user with address #11')
+    assert_constraint_condition({:other_address => 11}, [{'addresses' => {'id' => 11}}], 'find the user with address #11')
     # reverse of a has_many :through
-    assert_constraint_condition({:other_subscription => {:other_service => 5}}, [{'services.id' => 5}], 'find all users subscribed to service #5')
+    assert_constraint_condition({:other_subscription => {:other_service => 5}}, [{'services' => {'id' => 5}}], 'find all users subscribed to service #5')
 
     @test_object.active_scaffold_config = config_for('other_subscription')
     # belongs_to (vs has_one)
-    assert_constraint_condition({:other_user => 2}, [{'subscriptions.user_id' => 2}], 'find the subscription for user #2')
+    assert_constraint_condition({:other_user => 2}, [{'subscriptions' => {'user_id' => 2}}], 'find the subscription for user #2')
     # belongs_to (vs has_many)
-    assert_constraint_condition({:other_service => 1}, [{'subscriptions.service_id' => 1}], 'find all subscriptions for service #1')
+    assert_constraint_condition({:other_service => 1}, [{'subscriptions' => {'service_id' => 1}}], 'find all subscriptions for service #1')
 
     @test_object.active_scaffold_config = config_for('other_service')
     # has_many (vs belongs_to)
-    assert_constraint_condition({:other_subscriptions => 10}, [{'subscriptions.id' => 10}], 'find the service with subscription #10')
+    assert_constraint_condition({:other_subscriptions => 10}, [{'subscriptions' => {'id' => 10}}], 'find the service with subscription #10')
     # has_many :through (through has_many)
-    assert_constraint_condition({:other_users => 7}, [{'users.id' => 7}], 'find the service with user #7')
+    assert_constraint_condition({:other_users => 7}, [{'users' => {'id' => 7}}], 'find the service with user #7')
 
     @test_object.active_scaffold_config = config_for('other_address')
     # belongs_to :polymorphic => true
-    @test_object.params[:parent_model] = 'ModelStubs::OtherUser'
-    assert_constraint_condition({:other_addressable => 14}, [{'addresses.other_addressable_id' => 14, 'addresses.other_addressable_type' => 'ModelStubs::OtherUser'}], 'find all addresses for user #14')
+    assert_constraint_condition({:other_addressable => ['ModelStubs::OtherUser', 14]}, [{'addresses' => {'other_addressable_id' => 14, 'other_addressable_type' => 'ModelStubs::OtherUser'}}], 'find all addresses for user #14')
   end
 
   def test_constraint_conditions_for_normal_attributes
@@ -190,7 +192,7 @@ class ConstraintsTest < MiniTest::Test
     @test_object.active_scaffold_config = config_for('primary_key_location')
     # user = ModelStubs::PrimaryKeyUser.new(:id => 1, :name => 'User Name')
     ModelStubs::PrimaryKeyUser.expects(:find).with(1).returns(stub(:id => 1, :name => 'User Name'))
-    assert_constraint_condition({'user' => 1}, [{'primary_key_locations.username' => 'User Name'}], 'association with primary-key constraint')
+    assert_constraint_condition({'user' => 1}, [{'primary_key_locations' => {'username' => 'User Name'}}], 'association with primary-key constraint')
   end
 
   protected

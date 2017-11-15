@@ -5,7 +5,7 @@ module ActiveScaffold
         def initialize(model_id)
           initialize_without_calendar_date_select(model_id)
 
-          calendar_date_select_fields = _columns.collect { |c| c.name.to_sym if [:date, :datetime].include?(c.type) }.compact
+          calendar_date_select_fields = _columns.collect { |c| c.name.to_sym if %i[date datetime].include?(c.type) }.compact
           # check to see if file column was used on the model
           return if calendar_date_select_fields.empty?
 

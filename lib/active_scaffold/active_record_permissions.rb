@@ -88,7 +88,7 @@ module ActiveScaffold
         # options[:action] is the name of a method
         # options[:reason] if returning reason is expected, it will return array with authorized and reason, or nil if no reason
         def authorized_for?(options = {})
-          raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] && ![:create, :read, :update, :delete].include?(options[:crud_type])
+          raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] && !%i[create read update delete].include?(options[:crud_type])
 
           not_authorized_reason = ActiveRecordPermissions.not_authorized_reason
           # collect other possibly-related methods that actually exist

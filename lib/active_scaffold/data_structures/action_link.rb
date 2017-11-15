@@ -12,8 +12,8 @@ module ActiveScaffold::DataStructures
       self.inline = true
       self.method = :get
       self.crud_type = :delete if [:destroy].include?(action.try(:to_sym))
-      self.crud_type = :create if [:create, :new].include?(action.try(:to_sym))
-      self.crud_type = :update if [:edit, :update].include?(action.try(:to_sym))
+      self.crud_type = :create if %i[create new].include?(action.try(:to_sym))
+      self.crud_type = :update if %i[edit update].include?(action.try(:to_sym))
       self.crud_type ||= :read
       self.column = nil
       self.image = nil

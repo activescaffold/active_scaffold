@@ -3,7 +3,8 @@
     <%= render :partial => 'update_messages' %>
     <% row = escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) -%>
     <% if @action_link.try(:position) %>
-      ActiveScaffold.find_action_link('<%= element_form_id(:action => action_name) %>').close('<%= row %>');
+var link = ActiveScaffold.find_action_link('<%= element_form_id(:action => action_name) %>');
+if (link) link.close('<%= row %>');
     <% else %>
       ActiveScaffold.update_row('<%= element_row_id(:action => :list, :id => @record.id) %>', '<%= row %>');
       ActiveScaffold.scroll_to('<%= element_row_id(:action => :list, :id => @record.id) %>', true);
@@ -11,7 +12,8 @@
     <%= render :partial => 'update_calculations', :formats => [:js] %>
   <% else %>
     <% if @action_link.try(:position) %>
-      ActiveScaffold.find_action_link('<%= element_form_id(:action => action_name) %>').close();
+var link = ActiveScaffold.find_action_link('<%= element_form_id(:action => action_name) %>');
+if (link) link.close();
     <% end %>
     <%= render :partial => 'refresh_list' %>
   <% end %>

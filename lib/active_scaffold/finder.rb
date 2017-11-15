@@ -95,7 +95,7 @@ module ActiveScaffold
         if respond_to?("condition_for_#{column.name}_column")
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
-        return unless column && column.search_sql && !value.blank?
+        return unless column && column.search_sql && value.present?
         search_ui = column.search_ui || column.column_type
         begin
           sql, *values =
@@ -175,26 +175,61 @@ module ActiveScaffold
         end
       end
 
-      def translate_days_and_months(value, format)
+      def tables_for_translating_days_and_months(format)
         keys = {
           '%A' => 'date.day_names',
           '%a' => 'date.abbr_day_names',
           '%B' => 'date.month_names',
           '%b' => 'date.abbr_month_names'
         }
-        keys.each do |f, k|
-          if format.include? f
-            table = Hash[I18n.t(k).compact.zip(I18n.t(k, :locale => :en).compact)]
-            value.gsub!(Regexp.union(table.keys)) { |s| table[s] }
+        key_index = keys.keys.map { |key| [key, format.index(key)] }.to_h
+        keys.select! { |k, _| key_index[k] }
+        keys.sort_by { |k, _| key_index[k] }.map do |_, k|
+          I18n.t(k).compact.zip(I18n.t(k, :locale => :en).compact).to_h
+        end
+      end
+
+      def translate_days_and_months(value, format)
+        translated = ''
+        tables_for_translating_days_and_months(format).each do |table|
+          regexp = Regexp.union(table.keys)
+          index = value.index(regexp)
+          next unless index
+          translated << value.slice!(0...index)
+          value.sub!(regexp) do |str|
+            translated << table[str]
+            ''
           end
         end
-        value
+        translated << value
+      end
+
+      def format_for_datetime(column, value)
+        parts = Date._parse(value)
+        if ActiveScaffold.js_framework == :jquery
+          format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => ''
+        end
+
+        if format.blank?
+          time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].map do |part, format_part|
+            format_part if parts[part].present?
+          end.compact
+          format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
+        else
+          [[:hour, '%H'], [:min, ':%M'], [:sec, ':%S']].each do |part, f|
+            format.gsub!(f, '') if parts[part].blank?
+          end
+          format += ' %z' if parts[:offset].present? && format !~ /%z/i
+        end
+
+        format.gsub!(/.*(?=%H)/, '') if !parts[:year] && !parts[:month] && !parts[:mday]
+        [format, parts[:offset]]
       end
 
       def condition_value_for_datetime(column, value, conversion = :to_time)
         unless value.nil? || value.blank?
           if value.is_a? Hash
-            Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect { |part| value[part].to_i }) rescue nil
+            Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i }) rescue nil
           elsif value.respond_to?(:strftime)
             if conversion == :to_time
               # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
@@ -204,28 +239,19 @@ module ActiveScaffold
               value.send(conversion)
             end
           elsif conversion == :to_date
-            Date.strptime(value, I18n.t("date.formats.#{column.options[:format] || :default}")) rescue nil
-          else
-            parts = Date._parse(value)
-            format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => '' if ActiveScaffold.js_framework == :jquery
-            if format.blank?
-              time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].collect { |part, format_part| format_part if parts[part].present? }.compact
-              format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
-            else
-              if parts[:hour]
-                [[:min, '%M'], [:sec, '%S']].each { |part, f| format.gsub!(":#{f}", '') unless parts[part].present? }
-              else
-                value += ' 00:00:00'
-              end
-              format += ' %z' if parts[:offset].present? && format !~ /%z/i
-            end
-            if !parts[:year] && !parts[:month] && !parts[:mday]
-              value = "#{Time.zone.today.strftime(format.gsub(/%[HI].*/, ''))} #{value}"
-            end
+            format, offset = I18n.t("date.formats.#{column.options[:format] || :default}")
+            format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
+            value = translate_days_and_months(value, format) if I18n.locale != :en
+            Date.strptime(value, format) rescue nil
+          elsif value.include?('T')
+            time = Time.zone.parse(value)
+          else # datetime
+            format, offset = format_for_datetime(column, value)
+            format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
             value = translate_days_and_months(value, format) if I18n.locale != :en
             time = DateTime.strptime(value, format) rescue nil
             if time
-              time = Time.zone.local_to_utc(time).in_time_zone unless parts[:offset]
+              time = Time.zone.local_to_utc(time).in_time_zone unless offset
               time = time.send(conversion) unless conversion == :to_time
             end
             time
@@ -306,7 +332,7 @@ module ActiveScaffold
       :begins_with => '?%',
       :ends_with   => '%?'
     }.freeze
-    NULL_COMPARATORS = %w(null not_null).freeze
+    NULL_COMPARATORS = %w[null not_null].freeze
 
     def self.included(klass)
       klass.extend ClassMethods
@@ -366,7 +392,7 @@ module ActiveScaffold
     end
 
     def id_condition
-      {active_scaffold_config.model.primary_key => params[:id]} if params[:id]
+      {active_scaffold_config.primary_key => params[:id]} if params[:id]
     end
 
     # returns a single record (the given id) but only if it's allowed for the specified security options.
@@ -409,8 +435,8 @@ module ActiveScaffold
     end
 
     def count_items(query, find_options = {}, count_includes = nil)
-      count_includes ||= find_options[:includes] unless find_options[:conditions].blank?
-      options = find_options.reject { |k, _| [:select, :reorder, :order].include? k }
+      count_includes ||= find_options[:includes] if find_options[:conditions].present?
+      options = find_options.reject { |k, _| %i[select reorder order].include? k }
       # NOTE: we must use includes in the count query, because some conditions may reference other tables
       options[:includes] = count_includes
 
@@ -464,10 +490,10 @@ module ActiveScaffold
     def calculate_query
       conditions = all_conditions
       includes = active_scaffold_config.list.count_includes
-      includes ||= active_scaffold_references unless conditions.blank?
+      includes ||= active_scaffold_references if conditions.present?
       left_joins = active_scaffold_outer_joins
       left_joins += includes if includes
-      primary_key = active_scaffold_config.model.primary_key
+      primary_key = active_scaffold_config.primary_key
       subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :left_joins => left_joins, :select => active_scaffold_config.columns[primary_key].field)
       subquery = subquery.unscope(:order)
       active_scaffold_config.model.where(primary_key => subquery)

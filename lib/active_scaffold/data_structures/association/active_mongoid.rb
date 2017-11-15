@@ -14,19 +14,19 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def belongs_to?
-      %i(belongs_to_record belongs_to_document).include?(@association.macro)
+      %i[belongs_to_record belongs_to_document].include?(@association.macro)
     end
 
     def has_one?
-      %i(has_one_record has_one_document).include?(@association.macro)
+      %i[has_one_record has_one_document].include?(@association.macro)
     end
 
     def has_many?
-      %i(has_many_records has_many_documents).include?(@association.macro)
+      %i[has_many_records has_many_documents].include?(@association.macro)
     end
 
     def collection?
-      %i(has_many_documents has_many_records).include?(@association.macro)
+      %i[has_many_documents has_many_records].include?(@association.macro)
     end
 
     def table_name

@@ -1,11 +1,15 @@
-# coding: utf-8
 module ActiveScaffold
   module Helpers
     # Helpers that assist with the rendering of a List Column
     module ListColumnHelpers
       def get_column_value(record, column)
-        method = get_column_method(record, column)
-        value = send(method, record, column)
+        record = record.send(column.delegated_association.name) if column.delegated_association
+        if record
+          method = get_column_method(record, column)
+          value = send(method, record, column)
+        else
+          value = nil
+        end
         value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
         return value
       rescue StandardError => e
@@ -103,7 +107,7 @@ module ActiveScaffold
 
       def active_scaffold_column_telephone(record, column)
         phone = record.send column.name
-        return unless phone.present?
+        return if phone.blank?
         phone = number_to_phone(phone) unless column.options[:format] == false
         tel_to phone
       end
@@ -128,7 +132,7 @@ module ActiveScaffold
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
         if column.association.nil?
-          if [:select, :radio].include?(column.form_ui) && column.options[:options]
+          if %i[select radio].include?(column.form_ui) && column.options[:options]
             text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
@@ -287,7 +291,7 @@ module ActiveScaffold
           column.options = column.options.dup
         end
         column.form_ui = :select if column.association && column.form_ui.nil?
-        options = active_scaffold_input_options(column).merge(:object => active_scaffold_config.model.new)
+        options = active_scaffold_input_options(column).merge(:object => column.active_record_class.new)
         options[:class] = "#{options[:class]} inplace_field"
         options[:"data-id"] = options[:id]
         options[:id] = nil
@@ -316,7 +320,7 @@ module ActiveScaffold
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
           url = url_for(params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name))
-          plural = column.association.try(:collection?) && !override_form_field?(column) && [:select, :record_select].include?(column.form_ui)
+          plural = column.association.try(:collection?) && !override_form_field?(column) && %i[select record_select].include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
           data[:ie_plural] = plural
@@ -368,11 +372,12 @@ module ActiveScaffold
           options = {:id => nil, :class => 'as_sort',
                      'data-page-history' => controller_id,
                      :remote => true, :method => :get}
-          # :id needed because rails reuse it even if we delete from params (like do_refresh_list does)
-          url_options = params_for(:action => :index, :page => 1, :id => params[:id],
-                                   :sort => column.name, :sort_direction => sort_direction)
+          url_options = {action: :index, page: 1, sort: column.name, sort_direction: sort_direction}
+          # :id needed because rails reuse it even if it was deleted from params (like do_refresh_list does)
+          url_options[:id] = nil if @remove_id_from_list_links
+          url_options = params_for(url_options)
           unless active_scaffold_config.store_user_settings
-            url_options[:search] = search_params if search_params.present?
+            url_options[:search] = search_params if respond_to?(:search_params) && search_params.present?
           end
           link_to column_heading_label(column), url_options, options
         else

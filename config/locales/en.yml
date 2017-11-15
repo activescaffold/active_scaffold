@@ -11,6 +11,7 @@ en:
     add: Add
     add_existing: Add Existing
     add_existing_model: Add Existing %{model}
+    apply: Apply
     are_you_sure_to_delete: Are you sure you want to delete %{label}?
     average: Average
     begins_with: Begins with
@@ -61,6 +62,7 @@ en:
     found: Found
     future: Future
     group_by: Group by
+    grouped_by: Grouped by %{column}
     hide: "(Hide)"
     hours: Hours
     human_conditions:
@@ -135,8 +137,8 @@ en:
   date:
     formats:
       month: "%B"
-      year_month: "%b %Y"
       quarter: Quarter %{num}
+      year_month: "%b %Y"
       year_quarter: Quarter %{quarter} %{year}
   time:
     formats:

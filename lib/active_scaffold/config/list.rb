@@ -180,7 +180,7 @@ module ActiveScaffold::Config
 
     attr_writer :always_show_search
     def always_show_search
-      @always_show_search && !search_partial.blank?
+      @always_show_search && search_partial.present?
     end
 
     def search_partial

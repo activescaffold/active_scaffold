@@ -65,7 +65,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def reverse(klass = nil)
-      unless defined? @reverse # rubocop:disable Style/IfUnlessModifier
+      unless polymorphic? || defined?(@reverse)
         @reverse ||= inverse || get_reverse.try(:name)
       end
       @reverse || (get_reverse(klass).try(:name) unless klass.nil?)
@@ -137,7 +137,7 @@ module ActiveScaffold::DataStructures::Association
       # skip over has_and_belongs_to_many associations
       return false if assoc.macro == :has_and_belongs_to_many
 
-      if assoc.foreign_key.is_a? Array # composite_primary_keys
+      if foreign_key.is_a?(Array) || assoc.foreign_key.is_a?(Array) # composite_primary_keys
         assoc.foreign_key == foreign_key
       else
         assoc.foreign_key.to_sym == foreign_key.to_sym

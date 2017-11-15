@@ -12,6 +12,10 @@ module ActiveScaffoldConfigMock
       def initialize(type = :active_record)
         @type = type
       end
+
+      def primary_key
+        mongoid? ? '_id' : 'id'
+      end
     end
 
     def active_scaffold_config

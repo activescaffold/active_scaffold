@@ -18,6 +18,7 @@ ja:
     between: Between
     cancel: キャンセル
     cant_destroy_record: "%{record}を削除で来ません"
+    changes: 
     click_to_edit: クリックして編集
     click_to_reset: Click to reset
     close: 閉じる
@@ -26,6 +27,7 @@ ja:
     contains: Contains
     create: 作成
     create_another: Create Another %{model}
+    create_apply: 
     create_model: "%{model}を作成"
     create_new: 新規作成
     created_model: "%{model}を作成しました"
@@ -42,6 +44,7 @@ ja:
     days: Days
     delete: 削除
     deleted_model: "%{model}を削除しました"
+    deleted_records: 
     delimiter: Delimiter
     download: ダウンロード
     edit: 編集
@@ -58,6 +61,8 @@ ja:
     filtered: "（フィルタ中）"
     found: 個ありました
     future: Future
+    group_by: 
+    grouped_by: 
     hide: "(隠す)"
     hours: Hours
     human_conditions:
@@ -79,7 +84,9 @@ ja:
     next_week: Next Week
     next_year: Next Year
     no_authorization_for_action: No Authorization for action %{action}
+    no_color: 
     no_entries: 見つかりませんでした
+    no_group: 
     no_options: オプション無し
     not_null: Not Null
     'null': 'Null'
@@ -120,25 +127,19 @@ ja:
     tomorrow: Tomorrow
     'true': 'True'
     update: 更新
+    update_apply: 
     update_model: "%{model}を更新"
     updated_model: "%{model}を更新しました"
     version_inconsistency: バージョンが一致しません - あなたが編集している間にこのレコードが変更されました。
     weeks: Weeks
     years: Years
     yesterday: Yesterday
-    changes: 
-    create_apply: 
-    deleted_records: 
-    group_by: 
-    no_group: 
-    update_apply: 
-    no_color: 
-  time:
-    formats:
-      picker: "%a, %d %b %Y %H:%M:%S"
   date:
     formats:
       month: 
       quarter: 
       year_month: 
       year_quarter: 
+  time:
+    formats:
+      picker: "%a, %d %b %Y %H:%M:%S"
