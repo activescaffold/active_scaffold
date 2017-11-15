@@ -62,6 +62,12 @@ module ActiveScaffold::Config
     # action_group this action should belong to
     attr_accessor :action_group
 
+    def formats
+      return @formats || NO_FORMATS if frozen?
+      @formats ||= NO_FORMATS.dup
+    end
+    attr_writer :formats
+
     class UserSettings
       # define setter and getter for names
       # values will be saved for current request only
@@ -128,12 +134,6 @@ module ActiveScaffold::Config
         proxy
       end
     end
-
-    def formats
-      return @formats || NO_FORMATS if frozen?
-      @formats ||= NO_FORMATS.dup
-    end
-    attr_writer :formats
 
     private
 
