@@ -411,7 +411,7 @@ module ActiveScaffold::Actions
     end
 
     def conditional_get_support?
-      request.get? && active_scaffold_config.user.conditional_get_support
+      request.get? && active_scaffold_config.conditional_get_support
     end
 
     def virtual_columns(columns)

@@ -17,9 +17,11 @@ Lint/UnusedMethodArgument:
 
 Metrics/ClassLength:
   Max: 500
+  CountComments: false
 
 Metrics/ModuleLength:
   Max: 600
+  CountComments: false
 
 Performance/RedundantMerge:
   MaxKeyValuePairs: 1
