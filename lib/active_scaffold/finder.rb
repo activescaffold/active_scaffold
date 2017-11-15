@@ -243,7 +243,9 @@ module ActiveScaffold
             format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
             value = translate_days_and_months(value, format) if I18n.locale != :en
             Date.strptime(value, format) rescue nil
-          else
+          elsif value.include?('T')
+            time = Time.zone.parse(value)
+          else # datetime
             format, offset = format_for_datetime(column, value)
             format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
             value = translate_days_and_months(value, format) if I18n.locale != :en

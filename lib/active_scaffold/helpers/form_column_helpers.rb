@@ -550,7 +550,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_datetime(column, options)
-        active_scaffold_text_input :datetime_field, column, options
+        active_scaffold_text_input :datetime_local_field, column, options
       end
 
       ##
