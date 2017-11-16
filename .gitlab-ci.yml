@@ -33,6 +33,8 @@
     expire_in: 1 day
     paths:
       - coverage
+  after_script:
+    - ./cc-test-reporter after-build
   before_script:
     - cat /etc/os-release
     - uname -a
@@ -119,7 +121,6 @@ pages:
     paths:
       - public
   script:
-    - ./cc-test-reporter after-build
     - DIR=public/$([ "$CI_COMMIT_REF_SLUG" = master ] || echo $CI_COMMIT_REF_SLUG)
     - mkdir -pv $DIR
     - mv -v brakeman $DIR
