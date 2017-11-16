@@ -34,7 +34,7 @@
     paths:
       - coverage
   after_script:
-    - ./cc-test-reporter after-build
+    - ./cc-test-reporter after-build -t simplecov
   before_script:
     - cat /etc/os-release
     - uname -a
