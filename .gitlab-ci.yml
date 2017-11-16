@@ -12,7 +12,7 @@
     - master
   stage: deploy
   tags:
-    - gitlab-org-high-cpu
+    - gitlab-org
 
 .lint: &lint
   before_script:
@@ -26,7 +26,7 @@
   image: ruby:alpine
   stage: lint
   tags:
-    - gitlab-org-high-cpu
+    - gitlab-org
 
 .test: &test
   artifacts:
@@ -48,7 +48,7 @@
     - bundle exec rake
   stage: test
   tags:
-    - gitlab-org-high-cpu
+    - gitlab-org
 
 .use_jruby_9_1: &use_jruby_9_1
   image: jruby:9.1-alpine
