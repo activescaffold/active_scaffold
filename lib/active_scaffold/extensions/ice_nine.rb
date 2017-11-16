@@ -25,7 +25,7 @@ module IceNine
     class ActiveScaffold < ::IceNine::Freezer::Object
       class DataStructures < ::IceNine::Freezer::Object
         class Column < ::IceNine::Freezer::ObjectWithExclussion
-          self.excluded_vars = %i(@active_record_class @column)
+          self.excluded_vars = %i[@active_record_class @column]
         end
 
         class Association < ::IceNine::Freezer::NoFreeze

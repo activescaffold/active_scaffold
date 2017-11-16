@@ -88,7 +88,7 @@ module ActiveScaffold::Config
       def self.session_attr(*names)
         names.each do |name|
           define_method(name) { |value| self[name] = value }
-          define_method(name) { has_key?(name) ? self[name] : @conf.send(name) }
+          define_method(name) { key?(name) ? self[name] : @conf.send(name) }
         end
       end
 
@@ -120,8 +120,8 @@ module ActiveScaffold::Config
         end
       end
 
-      def has_key?(key)
-        @storage[@action].has_key? key.to_s if @action && @storage[@action]
+      def key?(key)
+        @storage[@action].key? key.to_s if @action && @storage[@action]
       end
 
       def method_missing(name, *args)
