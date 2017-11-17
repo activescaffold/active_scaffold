@@ -16,7 +16,7 @@ module ActiveScaffold
         if original_js.include?('require active_scaffold')
           say_status('skipped', 'insert into app/assets/javascripts/application.js', :yellow)
         else
-          insert_into_file 'app/assets/javascripts/application.js', :after => %r{//= require +['"]?jquery['"]?\n} do
+          insert_into_file 'app/assets/javascripts/application.js', :after => %r{//= require +.*ujs['"]?\n} do
             "//= require active_scaffold\n"
           end
         end
