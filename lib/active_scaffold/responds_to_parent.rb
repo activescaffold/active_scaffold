@@ -34,9 +34,12 @@ module ActiveScaffold
         instance_variable_set(:@_response_body, nil)
       end
 
-      # We're returning HTML instead of JS or XML now
-      # render html: script
-      render text: script, content_type: 'text/html' # replace with above line when rails 4.0 is not supported
+      # We're returning HTML instead of JS now
+      if Rails.version < '4.1'
+        render text: script, content_type: 'text/html' # remove when rails 4.0 is not supported
+      else
+        render html: script.html_safe
+      end
     end
     alias respond_to_parent responds_to_parent
   end
