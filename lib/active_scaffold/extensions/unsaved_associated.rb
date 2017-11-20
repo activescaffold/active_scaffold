@@ -20,15 +20,6 @@ class ActiveRecord::Base
     with_unsaved_associated { |a| a.errors.count.zero? && a.no_errors_in_associated? }
   end
 
-  def keeping_errors
-    old_errors = errors.dup if errors.present?
-    yield.tap do
-      (old_errors || []).each do |attr|
-        old_errors[attr].each { |msg| errors.add(attr, msg) unless errors.added?(attr, msg) }
-      end
-    end
-  end
-
   protected
 
   # Provide an override to allow the model to restrict which associations are considered
