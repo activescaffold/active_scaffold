@@ -20,12 +20,21 @@ class ActiveScaffold::Bridges::TinyMce
         settings = tinymce_configuration(column.options[:tinymce_config] || :default).options
                                                                                      .reject { |k, _v| k == 'selector' }
                                                                                      .merge(column.options[:tinymce] || {})
-        settings = settings.to_json
-        settings = "tinyMCE.settings = #{settings};"
 
         html = []
         html << send(override_input(:textarea), column, options)
-        html << javascript_tag(settings + "tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
+
+        case ActiveScaffold.js_framework
+        when :prototype
+          settings = settings.to_json
+          settings = "tinyMCE.settings = #{settings};"
+          html << javascript_tag(settings + "tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if (request.xhr? || params[:iframe])
+        when :jquery
+          # Use the TinyMCE-rails gem specific method to create a tinymce instance for jquery.
+          html << tinymce(settings.merge(selector: options[:id]))
+        else raise("Unknown js_framework for ActiveScaffold::Bridges::TinyMce")
+        end
+
         html.join "\n"
       end
 
