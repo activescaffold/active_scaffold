@@ -57,7 +57,7 @@ module ActiveScaffold
         if !active_scaffold_config.store_user_settings && controller_requested(url_options[:controller]) == controller_path
           url_options[:search] ||= copy_param search_params if respond_to?(:search_params) && search_params.present?
           url_options[:page] ||= params[:page]
-          if active_scaffold_config.list.user.user_sorting?
+          if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.user.user_sorting?
             column, direction = active_scaffold_config.list.user.sorting.first
             url_options[:sort] ||= column.name
             url_options[:sort_direction] ||= direction
