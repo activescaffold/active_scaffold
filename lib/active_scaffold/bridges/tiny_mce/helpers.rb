@@ -21,12 +21,12 @@ class ActiveScaffold::Bridges::TinyMce
                                                                                      .reject { |k, _v| k == 'selector' }
                                                                                      .merge(column.options[:tinymce] || {})
         settings = settings.to_json
-        settings = "tinyMCE.settings = #{settings};"
+        options['data-tinymce'] = settings if ActiveScaffold.js_framework != :prototype
 
         html = []
         html << send(override_input(:textarea), column, options)
-        html << javascript_tag(settings + "tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
-        html.join "\n"
+        html << javascript_tag("tinyMCE.settings = #{settings}; tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
+        safe_join html
       end
 
       # The implementation is very tinymce specific, so it makes sense allowing :form_ui
