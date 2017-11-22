@@ -20,12 +20,11 @@ class ActiveScaffold::Bridges::TinyMce
         settings = tinymce_configuration(column.options[:tinymce_config] || :default).options
                                                                                      .reject { |k, _v| k == 'selector' }
                                                                                      .merge(column.options[:tinymce] || {})
-        settings = settings.to_json
-        options['data-tinymce'] = settings if ActiveScaffold.js_framework != :prototype
+        options['data-tinymce'] = settings.to_json if ActiveScaffold.js_framework != :prototype
 
         html = []
         html << send(override_input(:textarea), column, options)
-        html << javascript_tag("tinyMCE.settings = #{settings}; tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
+        html << javascript_tag("tinyMCE.settings = #{settings.to_json}; tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
         safe_join html
       end
 
