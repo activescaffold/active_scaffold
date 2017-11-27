@@ -1,3 +1,6 @@
+= 3.4.43
+- Fix human conditions for date and datetime columns, not using date picker
+
 = 3.4.42
 - fix do_refresh_list on actions with GET route, it used :id and :action from request for sorting and pagination links
 - Fix for using jquery-ui-rails 6.0
