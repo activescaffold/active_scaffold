@@ -38,7 +38,7 @@ module ActiveScaffold
       def active_scaffold_human_condition_date(column, value)
         conversion = column.column.type == :date ? :to_date : :to_time
         from = I18n.l controller.class.condition_value_for_datetime(column, value['from'], conversion)
-        to = "- #{I18n.l controller.class.condition_value_for_datetime(column, value['to'], conversion)}" if value['opt'] == 'BETWEEN'
+        to = "- #{I18n.l controller.class.condition_value_for_datetime(column, value['to'], conversion)}" if value['opt'] == 'BETWEEN' || (value['opt'].nil? && value['to'])
         format_human_condition column, value['opt'], from, to
       end
       alias_method :active_scaffold_human_condition_time, :active_scaffold_human_condition_date
