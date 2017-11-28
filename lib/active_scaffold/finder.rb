@@ -138,7 +138,8 @@ module ActiveScaffold
 
       def condition_value_for_datetime(column, value, conversion = :to_time)
         if value.is_a? Hash
-          Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect { |part| value[part].to_i }) rescue nil
+          time = Time.zone.local(*[:year, :month, :day, :hour, :minute, :second].collect { |part| value[part].to_i }) rescue nil
+          time.send(conversion) if time
         elsif value.respond_to?(:strftime)
           if conversion == :to_time
             # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
