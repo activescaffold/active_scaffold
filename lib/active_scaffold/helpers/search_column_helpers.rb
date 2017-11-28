@@ -248,10 +248,18 @@ module ActiveScaffold
       def active_scaffold_search_datetime(column, options)
         _, from_value, to_value = field_search_params_range_values(column)
         options = column.options.merge(options)
-        helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
+        type = "#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
+        use_select = options.delete(:use_select)
+        helper = use_select ? "select_#{type}" : "#{type}#{'_local' if type == 'datetime'}_field"
+        if use_select
+          default_from_options = {include_blank: true, prefix: "#{options[:name]}[from]"}
+          default_to_options = {include_blank: true, prefix: "#{options[:name]}[to]"}
+        end
 
-        send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options)) <<
-          ' - '.html_safe << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
+        safe_join [
+          send(helper, field_search_datetime_value(from_value), options.reverse_merge(default_from_options || {})),
+          send(helper, field_search_datetime_value(to_value), options.reverse_merge(default_to_options || {}))
+        ], ' - '
       end
 
       def active_scaffold_search_date(column, options)
