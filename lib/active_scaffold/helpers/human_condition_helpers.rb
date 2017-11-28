@@ -17,6 +17,7 @@ module ActiveScaffold
 
       def format_human_condition(column, opt, from = nil, to = nil)
         attribute = column.active_record_class.human_attribute_name(column.name)
+        opt ||= from && to ? :between : (from ? :'>=' : :'<=')
         "#{attribute} #{as_(opt).downcase} #{from} #{to}"
       end
 
