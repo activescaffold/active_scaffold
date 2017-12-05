@@ -220,7 +220,10 @@ module ActiveScaffold::Actions
 
     # Redirect to the main page (override if the ActiveScaffold is used as a component on another controllers page) for Javascript degradation
     def return_to_main
-      redirect_to main_path_to_return
+      options = main_path_to_return
+      # use url_for in case main_path_to_return returns Hash with status param,
+      # which would be interpreted as status option to redirect_to instead of url param
+      redirect_to Hash === options ? url_for(options) : options
     end
 
     # Overide this method on your controller to provide model with named scopes
