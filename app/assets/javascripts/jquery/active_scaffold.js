@@ -453,10 +453,10 @@ var ActiveScaffold = {
     ActiveScaffold.sliders(container);
   },
   setup_history_state: function() {
-    var current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
+    var data = {}, current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
     if (current_search_item.length) {
       // store user settings enabled, update state with current page, search and sorting
-      var data = {}, sorted_columns = jQuery('th.sorted');
+      var sorted_columns = jQuery('th.sorted');
       data.page = jQuery('.active-scaffold-pagination .current').text();
       data.search = current_search_item.data('search');
       if (sorted_columns.length == 1) {
@@ -465,8 +465,8 @@ var ActiveScaffold = {
       } else { // default search
         jQuery.extend(data, {sort: '', sort_direction: ''});
       }
-      ActiveScaffold.add_to_history(document.location.href, data, true);
     }
+    ActiveScaffold.add_to_history(document.location.href, data, true);
   },
   live_search: function(element) {
     jQuery('form.search.live input[type=search]', element).delayedObserver(function() {
