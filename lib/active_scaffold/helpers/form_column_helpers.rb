@@ -313,7 +313,7 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class, &block)
+      def active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class)
         required = options.delete(:required)
         case ActiveScaffold.js_framework
         when :jquery
@@ -326,7 +326,7 @@ module ActiveScaffold
 
         object_name, method = options[:name].split(/\[(#{column.name})\]/)
         method.sub!(/#{column.name}/, "#{remove_file_prefix}\\0")
-        fields = block? ? yield : ''
+        fields = block_given? ? yield : ''
         input = file_field(:record, column.name, options.merge(:onchange => js_dont_remove_file_code))
         content_tag(:div, class: controls_class) do
           content_tag(:div) do
