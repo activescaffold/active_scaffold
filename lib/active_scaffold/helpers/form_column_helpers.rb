@@ -326,7 +326,7 @@ module ActiveScaffold
 
         object_name, method = options[:name].split(/\[(#{column.name})\]/)
         method.sub!(/#{column.name}/, "#{remove_file_prefix}\\0")
-        fields = block? ? block.call : ''
+        fields = block? ? yield : ''
         input = file_field(:record, column.name, options.merge(:onchange => js_dont_remove_file_code))
         content_tag(:div, class: controls_class) do
           content_tag(:div) do
