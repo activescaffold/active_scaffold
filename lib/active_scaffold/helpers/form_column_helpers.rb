@@ -304,16 +304,16 @@ module ActiveScaffold
         html
       end
 
-      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class)
+      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, &block)
         options = active_scaffold_input_text_options(options.merge(column.options))
         if content
-          active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class)
+          active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class, &block)
         else
           file_field(:record, column.name, options)
         end
       end
 
-      def active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class)
+      def active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class, &block)
         required = options.delete(:required)
         case ActiveScaffold.js_framework
         when :jquery
@@ -326,13 +326,13 @@ module ActiveScaffold
 
         object_name, method = options[:name].split(/\[(#{column.name})\]/)
         method.sub!(/#{column.name}/, "#{remove_file_prefix}\\0")
-        fields = block_given? ? yield : ''
+        fields = block? ? block.call : ''
         input = file_field(:record, column.name, options.merge(:onchange => js_dont_remove_file_code))
         content_tag(:div, class: controls_class) do
           content_tag(:div) do
-            content << ' | ' << fields <<
-              hidden_field(object_name, method, :value => 'false', class: 'remove_file') <<
-              content_tag(:a, as_(:remove_file), :href => '#', :onclick => js_remove_file_code)
+            safe_join [content, ' | ', fields,
+                       hidden_field(object_name, method, :value => 'false', class: 'remove_file'),
+                       content_tag(:a, as_(:remove_file), :href => '#', :onclick => js_remove_file_code)]
           end << content_tag(:div, input, :style => 'display: none')
         end
       end
