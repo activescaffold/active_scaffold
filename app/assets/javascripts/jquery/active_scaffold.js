@@ -558,7 +558,7 @@ var ActiveScaffold = {
     });
   },
   add_to_history: function(url, data, replace) {
-    if (!history && !history.pushState) return;
+    if (!history || !history.pushState) return;
     data = {active_scaffold: data};
     if (replace) history.replaceState(data, null, url);
     else history.pushState(data, null, url);
