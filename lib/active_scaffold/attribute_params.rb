@@ -225,7 +225,8 @@ module ActiveScaffold
       record = find_or_create_for_params(attributes, column, parent_record)
       if record
         record_columns = active_scaffold_config_for(column.association.klass).subform.columns
-        prev_constraints, record_columns.constraint_columns = record_columns.constraint_columns, [column.association.reverse].compact
+        prev_constraints = record_columns.constraint_columns
+        record_columns.constraint_columns = [column.association.reverse].compact
         update_record_from_params(record, record_columns, attributes, avoid_changes)
         record_columns.constraint_columns = prev_constraints
         record.unsaved = true
