@@ -553,6 +553,14 @@ module ActiveScaffold
         active_scaffold_text_input :datetime_local_field, column, options
       end
 
+      def active_scaffold_input_month(column, options)
+        active_scaffold_text_input :month_field, column, options
+      end
+
+      def active_scaffold_input_week(column, options)
+        active_scaffold_text_input :week_field, column, options
+      end
+
       ##
       ## Form column override signatures
       ##

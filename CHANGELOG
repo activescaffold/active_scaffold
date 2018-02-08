@@ -20,6 +20,7 @@
 - remove onsubmit tag in forms and move tinymce related JS to assets
 - use html5 history api when listing is refreshed
 - use date, datetime-local and time html5 inputs for date, datetime and time columns without form_ui
+- add month and week form_ui using html5 inputs
 - avoid browser mixes html and xhr cache for listing requests, using vary header
 - improve in_subform? check for subforms, so only reverse association is hidden (needed when subform class has multiple associations to main form's class)
 - fix select of existing record for nested subform
