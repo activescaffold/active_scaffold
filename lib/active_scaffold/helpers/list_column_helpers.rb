@@ -99,6 +99,14 @@ module ActiveScaffold
         as_slider options.merge(value: value || record.send(column.name))
       end
 
+      def active_scaffold_column_month(record, column)
+        l record.send(column.name), format: :year_month
+      end
+
+      def active_scaffold_column_week(record, column)
+        l record.send(column.name), format: :week
+      end
+
       def tel_to(text)
         groups = text.to_s.scan(/(?:^\+)?\d+/)
         extension = groups.pop if text.to_s =~ /\s*[^\d\s]+\s*\d+$/

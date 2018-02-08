@@ -173,6 +173,10 @@ module ActiveScaffold
       new_value
     end
 
+    def column_value_for_month_type(parent_record, column, value)
+      Date.parse("#{value}-01")
+    end
+
     def column_value_from_param_simple_value(parent_record, column, value)
       if column.association.try :singular?
         if value.present?

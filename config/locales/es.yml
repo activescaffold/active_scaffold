@@ -140,6 +140,7 @@ es:
     formats:
       month: "%B"
       quarter: Trimestre %{num}
+      week: Semana %W de %Y
       year_month: "%b %Y"
       year_quarter: Trimestre %{quarter} %{year}
   time:

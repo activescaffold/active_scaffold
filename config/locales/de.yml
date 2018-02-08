@@ -138,6 +138,7 @@ de:
     formats:
       month: 
       quarter: Quartal %{num}
+      week: 
       year_month: 
       year_quarter: Quartal %{quarter} %{year}
   time:
