@@ -14,7 +14,7 @@
       <% end %>
     <% end %>
   <% elsif (active_scaffold_config.delete.refresh_list) %>
-    <%= render :partial => 'refresh_list' %>
+    <%= render 'refresh_list', no_history: true %>
   <% else %>
     <%
       url = main_path_to_return
