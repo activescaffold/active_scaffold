@@ -64,5 +64,14 @@ module ActiveScaffold::Config
     def live?
       @live
     end
+
+    UserSettings.class_eval do
+      attr_writer :live
+      def live?
+        defined?(@live) ? @live : @conf.live?
+      end
+
+      user_attr :text_search, :split_terms
+    end
   end
 end

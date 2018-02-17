@@ -220,7 +220,12 @@ module ActiveScaffold::Config
     attr_accessor :calculate_etag
 
     UserSettings.class_eval do # defined with columns_accessor
-      def initialize(conf, storage, params)
+      user_attr :page_links_inner_window, :page_links_outer_window, :refresh_with_header, :empty_field_text,
+                :association_join_text, :messages_above_header, :wrap_tag, :auto_select_columns, :calculate_etag,
+                :no_entries_message, :filtered_message, :show_search_reset, :always_show_create, :always_show_search,
+                :hide_nested_column
+
+          def initialize(conf, storage, params)
         super(conf, storage, params, :list)
         @_sorting = nil
       end
