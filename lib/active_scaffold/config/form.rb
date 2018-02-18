@@ -51,5 +51,14 @@ module ActiveScaffold::Config
     def multipart?
       @multipart ? true : false
     end
+
+    UserSettings.class_eval do
+      user_attr :persistent, :refresh_list, :show_unauthorized_columns
+
+      attr_writer :multipart
+      def multipart?
+        defined?(@multipart) ? @multipart : @conf.multipart?
+      end
+    end
   end
 end
