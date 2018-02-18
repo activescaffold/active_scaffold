@@ -320,7 +320,7 @@ module ActiveScaffold::Config
                 :timestamped_messages, :highlight_messages
 
       def method_missing(name, *args)
-        value = super
+        value = config_class?(name) && @conf.actions.include?(name) ? @conf.send(name) : super
         value.is_a?(Base) ? action_user_settings(value) : value
       end
 
