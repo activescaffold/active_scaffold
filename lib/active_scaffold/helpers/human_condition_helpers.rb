@@ -24,6 +24,8 @@ module ActiveScaffold
 
       def format_human_condition(column, opt, from = nil, to = nil)
         attribute = column.active_record_class.human_attribute_name(column.name)
+        opt ||= :between if from && to
+        opt ||= from ? '>=' : '<='
         "#{attribute} #{as_(opt).downcase} #{from} #{to}"
       end
 
@@ -43,8 +45,10 @@ module ActiveScaffold
 
       def active_scaffold_human_condition_date(column, value)
         conversion = column.column.type == :date ? :to_date : :to_time
-        from = I18n.l controller.condition_value_for_datetime(column, value['from'], conversion)
-        to = "- #{I18n.l controller.condition_value_for_datetime(column, value['to'], conversion)}" if value['opt'] == 'BETWEEN'
+        from = controller.class.condition_value_for_datetime(column, value['from'], conversion)
+        from = I18n.l from if from
+        to = controller.class.condition_value_for_datetime(column, value['to'], conversion) if value['opt'] == 'BETWEEN' || (value['opt'].nil? && value['to'])
+        to = "- #{I18n.l to}" if to
         format_human_condition column, value['opt'], from, to
       end
       alias active_scaffold_human_condition_time active_scaffold_human_condition_date

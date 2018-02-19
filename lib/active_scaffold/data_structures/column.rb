@@ -454,7 +454,7 @@ module ActiveScaffold::DataStructures
 
     def inclusion_validator_for_checkbox?(val)
       @form_ui == :checkbox &&
-        [[true, false], [false, true]].include?(val.options[:with] || val.options[:within])
+        [[true, false], [false, true]].include?(val.options[:with] || val.options[:within] || val.options[:in])
     end
 
     def default_select_columns

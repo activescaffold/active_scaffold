@@ -19,7 +19,7 @@ if (action_link) action_link.update_flash_messages('<%= escape_javascript(render
         ActiveScaffold.reload('<%= url_for render_parent_options %>');
       <% end %>
     <% elsif update_refresh_list? %>
-      <%= render :partial => 'refresh_list' %>
+      <%= render 'refresh_list', no_history: true %>
     <% else %>
       <% if @record %>
       if (action_link) action_link.close('<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');

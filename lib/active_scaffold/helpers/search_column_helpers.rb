@@ -201,7 +201,7 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_search_range(column, options)
+      def active_scaffold_search_range(column, options, input_method = :text_field_tag, input_options = {})
         opt_value, from_value, to_value = field_search_params_range_values(column)
 
         select_options = active_scaffold_search_range_comparator_options(column)
@@ -218,22 +218,28 @@ module ActiveScaffold
         to_value = format_number_value(to_value, column.options) if to_value.is_a?(Numeric)
         html = select_tag("#{options[:name]}[opt]", options_for_select(select_options, opt_value),
                           :id => "#{options[:id]}_opt", :class => 'as_search_range_option')
+        from_options = active_scaffold_input_text_options(input_options.merge(:id => options[:id], :size => text_field_size))
+        to_options = from_options.merge(:id => "#{options[:id]}_to")
         html << content_tag('span', :id => "#{options[:id]}_numeric", :style => ActiveScaffold::Finder::NULL_COMPARATORS.include?(opt_value) ? 'display: none' : nil) do
-          text_field_tag("#{options[:name]}[from]", from_value, active_scaffold_input_text_options(:id => options[:id], :size => text_field_size)) <<
+          send(input_method, "#{options[:name]}[from]", from_value, input_options) <<
             content_tag(
-              :span, (
-                ' - ' + text_field_tag("#{options[:name]}[to]", to_value,
-                                       active_scaffold_input_text_options(:id => "#{options[:id]}_to", :size => text_field_size))
-              ).html_safe,
+              :span,
+              safe_join([' - ', send(input_method, "#{options[:name]}[to]", to_value, to_options)]),
               :id => "#{options[:id]}_between", :class => 'as_search_range_between', :style => (opt_value == 'BETWEEN') ? nil : 'display: none'
             )
         end
         content_tag :span, html, :class => 'search_range'
       end
-      alias active_scaffold_search_integer active_scaffold_search_range
-      alias active_scaffold_search_decimal active_scaffold_search_range
-      alias active_scaffold_search_float active_scaffold_search_range
       alias active_scaffold_search_string active_scaffold_search_range
+
+      def active_scaffold_search_integer(column, options)
+        active_scaffold_search_range(column, options, :number_field_tag, step: '1')
+      end
+
+      def active_scaffold_search_decimal(column, options)
+        active_scaffold_search_range(column, options, :number_field_tag, step: :any)
+      end
+      alias active_scaffold_search_float active_scaffold_search_decimal
 
       def field_search_datetime_value(value)
         Time.zone.local(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
@@ -242,10 +248,18 @@ module ActiveScaffold
       def active_scaffold_search_datetime(column, options)
         _, from_value, to_value = field_search_params_range_values(column)
         options = column.options.merge(options)
-        helper = "select_#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
+        type = "#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
+        use_select = options.delete(:use_select)
+        helper = use_select ? "select_#{type}" : "#{type}#{'_local' if type == 'datetime'}_field"
+        if use_select
+          default_from_options = {include_blank: true, prefix: "#{options[:name]}[from]"}
+          default_to_options = {include_blank: true, prefix: "#{options[:name]}[to]"}
+        end
 
-        send(helper, field_search_datetime_value(from_value), {:include_blank => true, :prefix => "#{options[:name]}[from]"}.merge(options)) <<
-          ' - '.html_safe << send(helper, field_search_datetime_value(to_value), {:include_blank => true, :prefix => "#{options[:name]}[to]"}.merge(options))
+        safe_join [
+          send(helper, field_search_datetime_value(from_value), options.reverse_merge(default_from_options || {})),
+          send(helper, field_search_datetime_value(to_value), options.reverse_merge(default_to_options || {}))
+        ], ' - '
       end
 
       def active_scaffold_search_date(column, options)

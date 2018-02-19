@@ -14,5 +14,16 @@ module ActiveScaffold::UnsavedRecord
   def save(*)
     super.tap { self.unsaved = false }
   end
+
+  def keeping_errors
+    old_errors = errors.dup if errors.present?
+    result = yield
+    if old_errors
+      old_errors.each do |attr|
+        old_errors[attr].each { |msg| errors.add(attr, msg) unless errors.added?(attr, msg) }
+      end
+    end
+    result && old_errors.blank?
+  end
 end
 ActiveRecord::Base.class_eval { include ActiveScaffold::UnsavedRecord }

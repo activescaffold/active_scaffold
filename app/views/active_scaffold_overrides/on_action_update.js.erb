@@ -15,7 +15,7 @@ if (link) link.close('<%= row %>');
 var link = ActiveScaffold.find_action_link('<%= element_form_id(:action => action_name) %>');
 if (link) link.close();
     <% end %>
-    <%= render :partial => 'refresh_list' %>
+    <%= render 'refresh_list', no_history: true %>
   <% end %>
 <% else %>
   <% flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br) if @record.try(:errors).present? %>

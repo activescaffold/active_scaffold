@@ -146,6 +146,7 @@ ru:
     formats:
       month: 
       quarter: 
+      week: 
       year_month: 
       year_quarter: 
   time:

@@ -229,7 +229,8 @@ module ActiveScaffold
       def condition_value_for_datetime(column, value, conversion = :to_time)
         unless value.nil? || value.blank?
           if value.is_a? Hash
-            Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i }) rescue nil
+            time = Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i }) rescue nil
+            time.send(conversion) if time
           elsif value.respond_to?(:strftime)
             if conversion == :to_time
               # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
@@ -239,12 +240,12 @@ module ActiveScaffold
               value.send(conversion)
             end
           elsif conversion == :to_date
-            format, offset = I18n.t("date.formats.#{column.options[:format] || :default}")
+            format = I18n.t("date.formats.#{column.options[:format] || :default}")
             format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
             value = translate_days_and_months(value, format) if I18n.locale != :en
             Date.strptime(value, format) rescue nil
           elsif value.include?('T')
-            time = Time.zone.parse(value)
+            Time.zone.parse(value)
           else # datetime
             format, offset = format_for_datetime(column, value)
             format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m

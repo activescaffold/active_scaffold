@@ -21,6 +21,7 @@
 - remove onsubmit tag in forms and move tinymce related JS to assets
 - use html5 history api when listing is refreshed
 - use date, datetime-local and time html5 inputs for date, datetime and time columns without form_ui
+- add month and week form_ui using html5 inputs
 - avoid browser mixes html and xhr cache for listing requests, using vary header
 - improve in_subform? check for subforms, so only reverse association is hidden (needed when subform class has multiple associations to main form's class)
 - fix select of existing record for nested subform
@@ -36,7 +37,12 @@
 - fix conversion of i18n date and datetime value, some abbr day and month may be equal in some languages
 - fix hidden form_ui for collection associations (has_many, habtm)
 
+= 3.4.43
+- Fix human conditions for date and datetime columns, not using date picker
+
 = 3.4.42
+- fix do_refresh_list on actions with GET route, it used :id and :action from request for sorting and pagination links
+- Fix for using jquery-ui-rails 6.0
 - Fix for protected and private authorized methods
 
 = 3.4.41.1
