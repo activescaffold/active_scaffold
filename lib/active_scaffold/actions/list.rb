@@ -141,7 +141,10 @@ module ActiveScaffold::Actions
 
     def do_refresh_list
       params.delete(:id)
-      do_search if respond_to? :do_search, true
+      if respond_to? :do_search, true
+        store_search_params_into_session unless search_params.present?
+        do_search
+      end
       do_list
     end
 
