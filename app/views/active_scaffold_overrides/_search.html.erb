@@ -1,13 +1,14 @@
 <%
   live_search = active_scaffold_config.search.live?
-  url_options =  params_for(:action => :index).delete_if{|k,v| k == 'search'}
+  url_options =  params_for(action: :index, id: nil, search: nil)
   submit_text ||= :search
+  xhr ||= request.xhr?
   options = {
-    :id => element_form_id(:action => 'search'),
-    :class => "as_form search#{' live' if live_search}",
-    :remote => xhr ||= request.xhr?,
-    :'data-loading' => true,
-    :method => :get
+    id: element_form_id(action: 'search'),
+    class: "as_form search#{' live' if live_search}",
+    remote: xhr,
+    data: {loading: true},
+    method: :get
   }
 -%>
 <%= form_tag url_options, options do %>

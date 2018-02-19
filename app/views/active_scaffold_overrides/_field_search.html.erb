@@ -1,12 +1,13 @@
 <%
-  url_options ||= params_for(:action => :index, :search => nil)
+  url_options ||= params_for(action: :index, id: nil, search: nil)
   submit_text ||= :search
+  xhr ||= request.xhr?
   options = {
-    :id => element_form_id(:action => 'search'),
-    :class => "as_form search",
-    :remote => xhr ||= request.xhr?,
-    :method => :get,
-    :'data-loading' => true
+    id: element_form_id(action: 'search'),
+    class: "as_form search",
+    remote: xhr,
+    data: {loading: true},
+    method: :get
   }
 -%>
 <%= form_tag url_options, options %>
