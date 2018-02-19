@@ -225,7 +225,7 @@ module ActiveScaffold::Config
                 :no_entries_message, :filtered_message, :show_search_reset, :always_show_create, :always_show_search,
                 :hide_nested_column
 
-          def initialize(conf, storage, params)
+      def initialize(conf, storage, params)
         super(conf, storage, params, :list)
         @_sorting = nil
       end
