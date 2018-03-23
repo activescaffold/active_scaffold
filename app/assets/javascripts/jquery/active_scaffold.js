@@ -419,7 +419,7 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
           var el = $(this);
           var op = options || {};
           el.data('oldval', el.val())
-            .data('delay', delay || 0.5)
+            .data('delay', delay === 0 ? delay : (delay || 0.5))
             .data('condition', op.condition || function() { return ($(this).data('oldval') == $(this).val()); })
             .data('callback', callback)
             [(op.event||'keyup')](function(){

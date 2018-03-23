@@ -12,7 +12,13 @@ module ActiveScaffold
       end
 
       def add_to_javascript_manifest
-        original_js = File.binread('app/assets/javascripts/application.js')
+        file = 'app/assets/javascripts/application.js'
+        unless File.exist?(file)
+          say_status :missing, file, :red
+          return if options[:pretend]
+          raise Thor::Error, "JS file #{file} is required for ActiveScaffold"
+        end
+        original_js = File.binread(file)
         if original_js.include?('require active_scaffold')
           say_status('skipped', 'insert into app/assets/javascripts/application.js', :yellow)
         else
@@ -23,7 +29,9 @@ module ActiveScaffold
       end
 
       def add_to_stylesheet_manifest
-        original_css = File.binread('app/assets/stylesheets/application.css')
+        file = 'app/assets/stylesheets/application.css'
+        return unless File.exist?(file)
+        original_css = File.binread(file)
         if original_css =~ /require active_scaffold$/
           say_status('skipped', 'insert into app/assets/stylesheets/application.css', :yellow)
         else

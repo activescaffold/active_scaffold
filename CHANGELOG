@@ -1,3 +1,4 @@
+= 3.5.0
 - add basic support for Mongoid
 - add support for associations between Mongoid and ActiveRecord with ActiveMongoid
 - use concerns for routes, deprecate as_routes method
