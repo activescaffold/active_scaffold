@@ -60,7 +60,7 @@ GEM
       thor (~> 0.18)
     concurrent-ruby (1.0.5)
     concurrent-ruby (1.0.5-java)
-    crass (1.0.2)
+    crass (1.0.3)
     docile (1.1.5)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
@@ -96,7 +96,7 @@ GEM
       i18n (~> 0.4)
       json
       rest-client
-    loofah (2.1.1)
+    loofah (2.2.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.0)
@@ -144,8 +144,8 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.0.3)
-      loofah (~> 2.0)
+    rails-html-sanitizer (1.0.4)
+      loofah (~> 2.2, >= 2.2.2)
     railties (5.0.6)
       actionpack (= 5.0.6)
       activesupport (= 5.0.6)
