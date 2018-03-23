@@ -49,7 +49,7 @@ group :test do
 
   platforms :jruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'activerecord-jdbcsqlite3-adapter', '>= 5.0.pre1'
+    gem 'activerecord-jdbcsqlite3-adapter'
     # This module allows Ruby programs to interface with the SQLite3 database engine
     gem 'jdbc-sqlite3'
   end

@@ -40,11 +40,11 @@ GEM
       activemodel (= 5.0.6)
       activesupport (= 5.0.6)
       arel (~> 7.0)
-    activerecord-jdbc-adapter (5.0.pre1)
+    activerecord-jdbc-adapter (50.0)
       activerecord (>= 2.2)
-    activerecord-jdbcsqlite3-adapter (5.0.pre1)
-      activerecord-jdbc-adapter (~> 5.0.pre1)
-      jdbc-sqlite3 (>= 3.7.2, < 3.9)
+    activerecord-jdbcsqlite3-adapter (50.0)
+      activerecord-jdbc-adapter (~> 50.0)
+      jdbc-sqlite3 (~> 3.8, < 3.30)
     activesupport (5.0.6)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (~> 0.7)
@@ -61,7 +61,7 @@ GEM
     concurrent-ruby (1.0.5)
     concurrent-ruby (1.0.5-java)
     crass (1.0.3)
-    docile (1.1.5)
+    docile (1.3.0)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     easy_translate (0.5.1)
@@ -88,14 +88,14 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       terminal-table (>= 1.5.1)
     ice_nine (0.11.2)
-    jdbc-sqlite3 (3.8.11.2)
+    jdbc-sqlite3 (3.20.1)
     json (2.1.0)
     json (2.1.0-java)
-    localeapp (2.5.0)
+    localeapp (3.0.1)
       gli
-      i18n (~> 0.4)
-      json
-      rest-client
+      i18n (>= 0.7, < 2)
+      json (>= 1.7.7)
+      rest-client (>= 1.8.0)
     loofah (2.2.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -109,12 +109,12 @@ GEM
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
     minitest (5.11.3)
-    minitest-reporters (1.1.18)
+    minitest-reporters (1.2.0)
       ansi
       builder
       minitest (>= 5.0)
       ruby-progressbar
-    mocha (1.3.0)
+    mocha (1.4.0)
       metaclass (~> 0.0.1)
     netrc (0.11.0)
     nio4r (2.1.0)
@@ -126,7 +126,7 @@ GEM
     parser (2.5.0.3)
       ast (~> 2.4.0)
     powerpack (0.1.1)
-    rack (2.0.3)
+    rack (2.0.4)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.0.6)
@@ -154,8 +154,8 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rainbow (2.2.2)
       rake
-    rake (12.3.0)
-    rdoc (5.1.0)
+    rake (12.3.1)
+    rdoc (6.0.2)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -174,8 +174,8 @@ GEM
     shoulda-context (1.2.2)
     shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
-    simplecov (0.15.1)
-      docile (~> 1.1.0)
+    simplecov (0.16.1)
+      docile (~> 1.1)
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
@@ -212,7 +212,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_scaffold!
-  activerecord-jdbcsqlite3-adapter (>= 5.0.pre1)
+  activerecord-jdbcsqlite3-adapter
   brakeman
   bundler (~> 1.0)
   bundler-audit
@@ -231,4 +231,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
