@@ -338,7 +338,7 @@ module ActiveScaffold::Actions
 
     def params_hash(value)
       if controller_params?(value)
-        Rails.version < '4.2' ? value.clone.permit! : value.to_unsafe_h.with_indifferent_access
+        value.to_unsafe_h.with_indifferent_access
       else
         value
       end

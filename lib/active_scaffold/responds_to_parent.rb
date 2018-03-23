@@ -35,11 +35,7 @@ module ActiveScaffold
       end
 
       # We're returning HTML instead of JS now
-      if Rails.version < '4.1'
-        render text: script, content_type: 'text/html' # remove when rails 4.0 is not supported
-      else
-        render html: script.html_safe, content_type: 'text/html' # rubocop:disable Rails/OutputSafety
-      end
+      render html: script.html_safe, content_type: 'text/html' # rubocop:disable Rails/OutputSafety
     end
     alias respond_to_parent responds_to_parent
   end

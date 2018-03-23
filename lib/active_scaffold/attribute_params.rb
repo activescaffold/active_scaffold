@@ -41,13 +41,8 @@ module ActiveScaffold
       difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
 
       if parent_record.new_record?
-        if Rails.version >= '4.2.0'
-          parent_record.send "#{column.name}=", value
-          parent_record.send "#{counter_attr}_will_change!"
-        else # < 4.2
-          parent_record.send "#{counter_attr}=", difference
-          parent_record.send "#{column.name}=", value
-        end
+        parent_record.send "#{column.name}=", value
+        parent_record.send "#{counter_attr}_will_change!"
       else
         # don't decrement counter for deleted records, on destroy they will update counter
         difference += (parent_record.send(column.name) - value).size
@@ -317,9 +312,7 @@ module ActiveScaffold
       if ActiveScaffold::OrmChecks.mongoid? klass
         column.default_val
       elsif ActiveScaffold::OrmChecks.active_record? klass
-        if Rails.version < '4.2'
-          column.default
-        elsif Rails.version < '5.0'
+        if Rails.version < '5.0'
           column.type_cast_from_database(column.default)
         else
           column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)

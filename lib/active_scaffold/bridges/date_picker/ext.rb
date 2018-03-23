@@ -49,13 +49,7 @@ class ActiveScaffold::Bridges::DatePicker
     end
   end
 end
-if defined?(ActiveRecord::ConnectionAdapters::Type) # rails >= 4.2
-  ActiveRecord::ConnectionAdapters::Type::Date.send(:prepend, ActiveScaffold::Bridges::DatePicker::CastExtension)
-else
-  class << ActiveRecord::ConnectionAdapters::Column
-    prepend ActiveScaffold::Bridges::DatePicker::CastExtension
-  end
-end
+ActiveRecord::ConnectionAdapters::Type::Date.send(:prepend, ActiveScaffold::Bridges::DatePicker::CastExtension)
 
 ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::DatePicker::DatePickerBridge
 ActionView::Base.class_eval do

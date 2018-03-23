@@ -80,7 +80,7 @@ module ActiveScaffold
       end
 
       module Prefixes
-        define_method Rails.version < '4.2' ? 'parent_prefixes' : 'local_prefixes' do
+        define_method 'local_prefixes' do
           @local_prefixes ||= begin
             prefixes = super()
             unless superclass.uses_active_scaffold? || prefixes.include?('active_scaffold_overrides')
@@ -249,9 +249,7 @@ module ActiveScaffold
     end
 
     def self.active_record_column_type_cast(value, column)
-      if Rails.version < '4.2'
-        column.type_cast value
-      elsif Rails.version < '5.0'
+      if Rails.version < '5.0'
         column.type_cast_from_user value
       elsif column.type.respond_to? :cast # jruby-jdbc and rails 5
         column.type.cast value

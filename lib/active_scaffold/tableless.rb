@@ -1,10 +1,8 @@
 class ActiveScaffold::Tableless < ActiveRecord::Base
   class AssociationScope < ActiveRecord::Associations::AssociationScope
-    if defined?(ActiveRecord::Associations::AssociationScope::INSTANCE) # rails >= 4.1
-      INSTANCE = respond_to?(:create) ? create : new # create for rails >= 4.2
-      def self.scope(association, connection)
-        INSTANCE.scope association, connection
-      end
+    INSTANCE = create
+    def self.scope(association, connection)
+      INSTANCE.scope association, connection
     end
 
     if Rails.version < '5.0.0'
@@ -19,11 +17,9 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
         end
       end
 
-      if Rails.version >= '4.1'
-        def add_constraints(scope, owner, assoc_klass, refl, tracker)
-          tracker.instance_variable_set(:@assoc_klass, assoc_klass)
-          super
-        end
+      def add_constraints(scope, owner, assoc_klass, refl, tracker)
+        tracker.instance_variable_set(:@assoc_klass, assoc_klass)
+        super
       end
     end
   end
@@ -46,7 +42,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
         metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, sql_type
         super(name, default, metadata, null)
       end
-    elsif Rails.version >= '4.2.0'
+    else
       def initialize(name, default, sql_type = nil, null = true)
         cast_type = ActiveRecord::Base.connection.send :lookup_cast_type, sql_type
         super(name, default, cast_type, sql_type, null)
@@ -56,16 +52,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
 
   module Tableless
     def association_scope
-      @association_scope ||= overrided_association_scope if klass < ActiveScaffold::Tableless
+      @association_scope ||= AssociationScope.scope(self, klass.connection) if klass < ActiveScaffold::Tableless
       super
-    end
-
-    def overrided_association_scope
-      if AssociationScope.respond_to?(:scope) # rails >= 4.1
-        AssociationScope.scope(self, klass.connection)
-      else # rails < 4.1
-        AssociationScope.new(self).scope
-      end
     end
 
     def target_scope
@@ -91,7 +79,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
 
   module CollectionAssociation
     def self.included(base)
-      base.prepend TablelessCollectionAssociation if Rails.version >= '4.2'
+      base.prepend TablelessCollectionAssociation
     end
   end
 
@@ -183,25 +171,23 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     end
   end
 
-  unless Rails.version < '4.2'
-    def self.columns_hash
-      if self < ActiveScaffold::Tableless
-        @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
-      else
-        super
-      end
-    end
-    if Rails.version >= '5.0'
-      def self.initialize_find_by_cache
-        @find_by_statement_cache = {
-          true => Hash.new { |h, k| h[k] = StatementCache.new(k) },
-          false => Hash.new { |h, k| h[k] = StatementCache.new(k) }
-        }
-      end
+  def self.columns_hash
+    if self < ActiveScaffold::Tableless
+      @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
     else
-      def self.initialize_find_by_cache
-        self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
-      end
+      super
+    end
+  end
+  if Rails.version >= '5.0'
+    def self.initialize_find_by_cache
+      @find_by_statement_cache = {
+        true => Hash.new { |h, k| h[k] = StatementCache.new(k) },
+        false => Hash.new { |h, k| h[k] = StatementCache.new(k) }
+      }
+    end
+  else
+    def self.initialize_find_by_cache
+      self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
     end
   end
 
@@ -250,10 +236,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   def _create_record #:nodoc:
     run_callbacks(:create) {}
   end
-  alias create_record _create_record # for rails4 < 4.0.6, < 4.1.2
 
   def _update_record(*) #:nodoc:
     run_callbacks(:update) {}
   end
-  alias update_record _update_record # for rails4 < 4.0.6, < 4.1.2
 end
