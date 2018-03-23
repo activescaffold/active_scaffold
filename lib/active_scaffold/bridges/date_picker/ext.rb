@@ -42,14 +42,7 @@ class ActiveScaffold::Bridges::DatePicker
       end
     end
   end
-
-  module CastExtension
-    def fallback_string_to_date(string)
-      Date.strptime(string, I18n.t('date.formats.default')) rescue super
-    end
-  end
 end
-ActiveRecord::ConnectionAdapters::Type::Date.send(:prepend, ActiveScaffold::Bridges::DatePicker::CastExtension)
 
 ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::DatePicker::DatePickerBridge
 ActionView::Base.class_eval do
