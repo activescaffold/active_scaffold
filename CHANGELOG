@@ -1,3 +1,5 @@
+- Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
+
 = 3.5.0
 - add basic support for Mongoid
 - add support for associations between Mongoid and ActiveRecord with ActiveMongoid

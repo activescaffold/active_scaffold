@@ -43,6 +43,13 @@ Commands for Rails 5
 
 Run the app and visit localhost:3000/users
 
+Threadsafe
+----------
+
+Threadsafe can be enabled calling ActiveScaffold.threadsafe! in an initializer.
+ It should be enabled on app start and it can't be disabled. Threadsafety is a
+ new feature and not well tested yet.  
+
 Configuration
 -------------
 See Wiki for instructions on customising ActiveScaffold and to find the full API details.
