@@ -95,7 +95,7 @@ module ActiveScaffold
         if respond_to?("condition_for_#{column.name}_column")
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
-        return unless column && column.search_sql && value.present?
+        return unless column&.search_sql && value.present?
         search_ui = column.search_ui || column.column_type
         begin
           sql, *values =
@@ -462,7 +462,7 @@ module ActiveScaffold
 
       query = append_to_query(query, find_options)
       # we build the paginator differently for method- and sql-based sorting
-      pager = if options[:sorting] && options[:sorting].sorts_by_method?
+      pager = if options[:sorting]&.sorts_by_method?
                 ::Paginator.new(count, options[:per_page]) do |offset, per_page|
                   calculate_last_modified(query)
                   sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)

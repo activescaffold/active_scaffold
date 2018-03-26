@@ -249,7 +249,7 @@ module ActiveScaffold
         # we are not using eager loading, cache firsts records in order not to query the database for whole association in a future
         if column.associated_limit.nil?
           logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
-        elsif column.associated_limit > 0
+        elsif column.associated_limit.positive?
           # load at least one record more, is needed to display '...'
           association.target = association.reader.limit(column.associated_limit + 1).select(column.select_associated_columns || "#{association.klass.quoted_table_name}.*").to_a
         elsif @cache_associations

@@ -243,7 +243,7 @@ module ActiveScaffold
       end
 
       def column_show_add_existing(column, record = nil)
-        column.allow_add_existing && options_for_association_count(column.association, record) > 0
+        column.allow_add_existing && options_for_association_count(column.association, record).positive?
       end
 
       def column_show_add_new(column, associated, record)
@@ -686,7 +686,7 @@ module ActiveScaffold
               only_odd_valid  = validators.any? { |v| v.options[:odd] }
               only_even_valid = validators.any? { |v| v.options[:even] } unless only_odd_valid
               if !only_integer
-                numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column && column.column.scale.to_i > 0
+                numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column&.scale.to_i.positive?
               elsif options[:min] && options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
                 numerical_constraints[:step] = 2
                 numerical_constraints[:min] += 1 if only_odd_valid  && options[:min].even?

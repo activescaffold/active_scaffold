@@ -104,7 +104,7 @@ module ActiveScaffold::Actions
     end
 
     def subform_child_association
-      params[:child_association].presence || (@scope.split(']').first.sub(/^\[/, '').presence if @scope)
+      params[:child_association].presence || @scope&.split(']')&.first&.sub(/^\[/, '').presence
     end
 
     def parent_controller_name
@@ -260,9 +260,10 @@ module ActiveScaffold::Actions
     def new_model
       relation = beginning_of_chain
       config = active_scaffold_config_for(relation.klass) if nested? && nested.plural_association?
-      if config && config._columns_hash[column = relation.klass.inheritance_column]
+      column = relation.klass.inheritance_column
+      if config&._columns_hash&.dig(column)
         model_name = params.delete(column) # in new action inheritance_column must be in params
-        model_name ||= params[:record].delete(column) if params[:record].present? # in create action must be inside record key
+        model_name ||= params[:record]&.delete(column) # in create action must be inside record key
         model_name = model_name.camelize if model_name
         model_name ||= active_scaffold_config.model.name
         build_options = {column.to_sym => model_name} if model_name
@@ -310,7 +311,7 @@ module ActiveScaffold::Actions
 
     def check_input_device
       if session[:input_device_type].nil?
-        if request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'][/(iPhone|iPod|iPad)/i]
+        if request.env['HTTP_USER_AGENT'] =~ /(iPhone|iPod|iPad)/i
           session[:input_device_type] = 'TOUCH'
           session[:hover_supported] = false
         else
@@ -455,7 +456,7 @@ module ActiveScaffold::Actions
         klass = klass.superclass
         controller = self.class.active_scaffold_controller_for(klass)
         cfg = controller.active_scaffold_config if controller.uses_active_scaffold?
-        next unless cfg && cfg.add_sti_create_links?
+        next unless cfg&.add_sti_create_links?
         return controller if cfg.sti_children.map(&:to_s).include? self.class.active_scaffold_config.model.name.underscore
       end
     rescue ActiveScaffold::ControllerNotFound => ex

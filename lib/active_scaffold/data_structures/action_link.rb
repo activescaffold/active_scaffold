@@ -204,7 +204,7 @@ module ActiveScaffold::DataStructures
 
     # indicates that this a nested_link
     def nested_link?
-      @column || (parameters && parameters[:named_scope])
+      @column || parameters&.dig(:named_scope)
     end
 
     def name_to_cache

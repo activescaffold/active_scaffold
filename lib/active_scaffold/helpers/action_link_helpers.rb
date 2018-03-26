@@ -377,7 +377,7 @@ module ActiveScaffold
           url_options[:id] = if column.association.singular? && url_options[:action].to_sym != :index
                                '--CHILD_ID--'
                              end
-        elsif link.parameters && link.parameters[:named_scope]
+        elsif link.parameters&.dig(:named_scope)
           url_options[:parent_scaffold] = controller_path
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
         end

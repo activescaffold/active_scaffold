@@ -143,7 +143,7 @@ module ActiveScaffold
       config = record.is_a?(active_scaffold_config.model) ? active_scaffold_config : active_scaffold_config_for(record.class)
       constraints.each do |k, v|
         column = config.columns[k]
-        if column && column.association
+        if column&.association
           if column.association.collection?
             record.send(k.to_s).send(:<<, column.association.klass.find(v))
           elsif column.association.polymorphic?
