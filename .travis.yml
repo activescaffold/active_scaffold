@@ -10,6 +10,7 @@ dist: trusty
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-4.2.x
+  - gemfiles/Gemfile.rails-5.0.x
 jdk:
   - openjdk8
 language: ruby
@@ -18,7 +19,6 @@ matrix:
   allow_failures:
     - rvm: rbx-3
 rvm:
-  - 2.2.8
   - 2.3.5
   - 2.4.2
   - 2.5.0
