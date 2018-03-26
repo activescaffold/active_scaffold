@@ -17,7 +17,7 @@
    submit_text ||= form_action
    apply_text ||= :"#{form_action}_apply"
    body_partial ||= 'form'
-   form_id = element_form_id(:action => form_action, :id => @record.try(:id))
+   form_id = element_form_id(action: form_action, id: @record&.id)
 %>
 <%=
 options = {:id => form_id,
@@ -54,7 +54,7 @@ end
     <%= submit_tag as_(submit_text), :class => "submit" if !persistent || persistent == :optional %>
     <%= submit_tag as_(apply_text), :class => "submit", :name => 'dont_close' if persistent %>
     <%= link_to(as_(:cancel), main_path_to_return, cancel_options) if cancel_link %>
-    <%= loading_indicator_tag(:action => form_action, :id => @record.try(:id)) %>
+    <%= loading_indicator_tag(action: form_action, id: @record&.id) %>
     <%= render :partial => footer_extension, :locals => { :form_action => form_action } if footer_extension %>
   </p>
 

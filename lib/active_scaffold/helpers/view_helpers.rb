@@ -164,7 +164,7 @@ module ActiveScaffold
 
       def history_state
         if active_scaffold_config.store_user_settings
-          state = {page: @page.try(:number)}
+          state = {page: @page&.number}
           state[:search] = search_params if respond_to?(:search_params) && search_params.present?
           if active_scaffold_config.list.user.user_sorting?
             column, state[:sort_direction] = active_scaffold_config.list.user.sorting.first

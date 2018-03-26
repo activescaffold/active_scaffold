@@ -14,7 +14,7 @@ module ActiveScaffold
     end
 
     def method_missing(name, *args)
-      if @configuration_binding.try :respond_to?, name, true
+      if @configuration_binding&.respond_to?(name, true)
         @configuration_binding.send(name, *args)
       else
         super

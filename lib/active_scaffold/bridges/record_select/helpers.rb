@@ -11,11 +11,10 @@ class ActiveScaffold::Bridges::RecordSelect
       # requires RecordSelect plugin to be installed and configured.
       def active_scaffold_input_record_select(column, options)
         record = options.delete(:object)
-        if column.association.try(:singular?)
-          multiple = false
-          multiple = column.options[:html_options][:multiple] if column.options[:html_options] && column.options[:html_options][:multiple]
+        if column.association&.singular?
+          multiple = column.options.dig(:html_options, :multiple)
           active_scaffold_record_select(record, column, options, record.send(column.name), multiple)
-        elsif column.association.try(:collection?)
+        elsif column.association&.collection?
           active_scaffold_record_select(record, column, options, record.send(column.name), true)
         else
           active_scaffold_record_select_autocomplete(record, column, options)

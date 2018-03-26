@@ -50,7 +50,7 @@ module ActiveScaffold
         module ClassMethods
           # Class-level access to the current user
           def current_user
-            ActiveScaffold::Registry.current_user_proc.try :call
+            ActiveScaffold::Registry.current_user_proc&.call
           end
         end
 

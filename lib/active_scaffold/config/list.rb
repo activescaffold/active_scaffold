@@ -237,7 +237,7 @@ module ActiveScaffold::Config
       end
 
       def embedded_label
-        @params[:embedded][:label] if @params[:embedded]
+        @params.dig :embedded, :label
       end
 
       def per_page

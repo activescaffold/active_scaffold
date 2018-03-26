@@ -84,7 +84,7 @@ module ActiveScaffold::Actions
         if nested.association.collection?
           nested_parent_record.send(nested.association.name)
         elsif nested.association.through? # has_one :through
-          active_scaffold_config.model.where(active_scaffold_config.model.primary_key => nested_parent_record.send(nested.association.name).try(:id))
+          active_scaffold_config.model.where(active_scaffold_config.model.primary_key => nested_parent_record.send(nested.association.name)&.id)
         elsif nested.association.has_one?
           active_scaffold_config.model.where(nested.child_association.foreign_key => nested_parent_record.send(nested.association.association_primary_key))
         elsif nested.association.belongs_to?

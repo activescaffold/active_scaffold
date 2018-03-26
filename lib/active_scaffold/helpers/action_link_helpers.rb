@@ -79,8 +79,8 @@ module ActiveScaffold
       end
 
       def render_action_link(link, record = nil, options = {})
-        if link.action.nil? || link.column.try(:association).try(:polymorphic?)
-          link = action_link_to_inline_form(link, record) if link.column.try(:association)
+        if link.action.nil? || link.column&.association&.polymorphic?
+          link = action_link_to_inline_form(link, record) if link.column&.association
           options[:authorized] = false if link.action.nil? || link.controller.nil?
           options.delete :link if link.crud_type == :create
         end
@@ -97,7 +97,7 @@ module ActiveScaffold
       def action_link_to_inline_form(link, record)
         link = link.dup
         associated = record.send(link.column.association.name)
-        if link.column.association.try(:polymorphic?)
+        if link.column.association&.polymorphic?
           link.controller = controller_path_for_activerecord(associated.class)
           return link if link.controller.nil?
         end
@@ -178,8 +178,8 @@ module ActiveScaffold
 
       def replace_id_params_in_action_link_url(link, record, url)
         url = record ? url.sub('--ID--', record.to_param.to_s) : url.clone
-        if link.column.try(:association).try(:singular?)
-          child_id = record.send(link.column.association.name).try(:to_param)
+        if link.column&.association&.singular?
+          child_id = record.send(link.column.association.name)&.to_param
           if child_id.present?
             url.sub!('--CHILD_ID--', child_id)
           else
@@ -290,8 +290,8 @@ module ActiveScaffold
         missing_options, url_options = url.partition { |_, v| v.nil? }
         replacements = {}
         replacements['--ID--'] = record.id.to_s if record
-        if link.column.try(:association).try(:singular?)
-          replacements['--CHILD_ID--'] = record.send(link.column.association.name).try(:id).to_s
+        if link.column&.association&.singular?
+          replacements['--CHILD_ID--'] = record.send(link.column.association.name)&.id.to_s
         elsif nested?
           replacements['--CHILD_ID--'] = params[nested.param_name].to_s
         end
@@ -316,7 +316,7 @@ module ActiveScaffold
         html_options[:method] = link.method if link.method != :get
 
         html_options[:data] ||= {}
-        html_options[:data][:confirm] = link.confirm(h(record.try(:to_label))) if link.confirm?
+        html_options[:data][:confirm] = link.confirm(h(record&.to_label)) if link.confirm?
         if !options[:page] && !options[:popup] && (options[:inline] || link.inline?)
           html_options[:class] << ' as_action'
           html_options[:data][:position] = link.position if link.position
@@ -346,7 +346,7 @@ module ActiveScaffold
 
       def get_action_link_id(link, record = nil, column = nil)
         column ||= link.column
-        if column.try(:association) && record
+        if column&.association && record
           id = if column.association.collection?
                  "#{column.association.name}-#{record.id}"
                elsif record.send(column.association.name).present?
@@ -355,7 +355,7 @@ module ActiveScaffold
                  "#{column.association.name}-#{record.id}"
                end
         end
-        id ||= record.try(:id) || (nested? ? nested_parent_id : '')
+        id ||= record&.id || (nested? ? nested_parent_id : '')
         action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
         action_link_id(action_id, id)
       end
@@ -371,7 +371,7 @@ module ActiveScaffold
       end
 
       def url_options_for_nested_link(column, record, link, url_options)
-        if column.try(:association)
+        if column&.association
           url_options[:parent_scaffold] = controller_path
           url_options[column.model.name.foreign_key.to_sym] = url_options.delete(:id)
           url_options[:id] = if column.association.singular? && url_options[:action].to_sym != :index

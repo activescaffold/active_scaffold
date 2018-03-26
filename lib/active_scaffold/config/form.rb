@@ -43,7 +43,7 @@ module ActiveScaffold::Config
 
     columns_accessor :columns do
       columns.exclude :created_on, :created_at, :updated_on, :updated_at, :as_marked
-      columns.exclude(*@core.columns.collect { |c| c.name if c.association.try(:polymorphic?) }.compact)
+      columns.exclude(*@core.columns.collect { |c| c.name if c.association&.polymorphic? }.compact)
     end
 
     # whether the form should be multipart

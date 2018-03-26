@@ -70,7 +70,7 @@ module ActiveScaffold::Bridges
         module ClassMethods
           # Class-level access to the current ability
           def current_ability
-            ::ActiveScaffold::Registry.current_ability_proc.try :call
+            ::ActiveScaffold::Registry.current_ability_proc&.call
           end
         end
 

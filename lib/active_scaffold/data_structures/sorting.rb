@@ -123,7 +123,7 @@ module ActiveScaffold::DataStructures
       order = []
       each do |sort_column, sort_direction|
         next if constraint_columns.include? sort_column.name
-        sql = grouped_columns_calculations.try(:dig, sort_column.name) || sort_column.sort[:sql]
+        sql = grouped_columns_calculations&.dig(sort_column.name) || sort_column.sort[:sql]
         next if sql.blank?
         sql = sql.to_sql if sql.respond_to?(:to_sql)
 
@@ -203,7 +203,7 @@ module ActiveScaffold::DataStructures
     end
 
     def postgres?
-      model.connection.try(:adapter_name) == 'PostgreSQL'
+      model.connection&.adapter_name == 'PostgreSQL'
     end
 
     def setup_primary_key_order_clause

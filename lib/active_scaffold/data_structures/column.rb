@@ -460,7 +460,7 @@ module ActiveScaffold::DataStructures
     def default_select_columns
       if association.nil? && column
         [field]
-      elsif association.try(:polymorphic?)
+      elsif association&.polymorphic?
         [field, quoted_field(quoted_field_name(association.foreign_type))]
       elsif association
         if association.belongs_to?
@@ -470,7 +470,7 @@ module ActiveScaffold::DataStructures
           if _columns_hash[count_column = "#{association.name}_count"]
             columns << quoted_field(quoted_field_name(count_column))
           end
-          if association.through_reflection.try(:belongs_to?)
+          if association.through_reflection&.belongs_to?
             columns << quoted_field(quoted_field_name(association.through_reflection.foreign_key))
           end
           columns
@@ -518,9 +518,9 @@ module ActiveScaffold::DataStructures
     attr_reader :table
 
     def estimate_weight
-      if association.try(:singular?)
+      if association&.singular?
         400
-      elsif association.try(:collection?)
+      elsif association&.collection?
         500
       elsif %i[created_at updated_at].include?(name)
         600

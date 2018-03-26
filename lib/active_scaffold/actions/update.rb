@@ -156,7 +156,7 @@ module ActiveScaffold::Actions
         end
       unless @column.nil?
         value = column_value_from_param_value(value_record, @column, value)
-        value = [] if value.nil? && @column.form_ui && @column.association.try(:collection?)
+        value = [] if value.nil? && @column.form_ui && @column.association&.collection?
       end
 
       value_record.send("#{@column.name}=", value)

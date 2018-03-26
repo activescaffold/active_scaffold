@@ -97,7 +97,7 @@ module ActiveScaffold::Actions
     end
 
     def scoped_habtm?(column)
-      assoc = column.association if column.association.try :collection?
+      assoc = column.association if column.association&.collection?
       assoc && assoc.habtm? && assoc.scope
     end
 
@@ -136,7 +136,7 @@ module ActiveScaffold::Actions
     end
 
     def quoted_select_columns(columns)
-      columns.map { |c| active_scaffold_config.columns[c].try(:field) || c } if columns
+      columns.map { |c| active_scaffold_config.columns[c]&.field || c } if columns
     end
 
     def do_refresh_list

@@ -317,7 +317,7 @@ module ActiveScaffold
         data[:ie_loading_text] = column.options[:loading_text] || as_(:loading)
         data[:ie_save_text] = column.options[:save_text] || as_(:update)
         data[:ie_saving_text] = column.options[:saving_text] || as_(:saving)
-        data[:ie_rows] = column.options[:rows] || 5 if column.column.try(:type) == :text
+        data[:ie_rows] = column.options[:rows] || 5 if column.column&.type == :text
         data[:ie_cols] = column.options[:cols] if column.options[:cols]
         data[:ie_size] = column.options[:size] if column.options[:size]
         data[:ie_use_html] = column.options[:use_html] if column.options[:use_html]
@@ -328,7 +328,7 @@ module ActiveScaffold
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
           url = url_for(params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name))
-          plural = column.association.try(:collection?) && !override_form_field?(column) && %i[select record_select].include?(column.form_ui)
+          plural = column.association&.collection? && !override_form_field?(column) && %i[select record_select].include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
           data[:ie_plural] = plural

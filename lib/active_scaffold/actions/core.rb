@@ -113,7 +113,7 @@ module ActiveScaffold::Actions
 
     def set_parent(record)
       cfg = main_form_controller.active_scaffold_config
-      association = cfg.columns[subform_child_association].try(:association).try(:reverse_association)
+      association = cfg.columns[subform_child_association]&.association&.reverse_association
       return if association.nil?
 
       parent_model = cfg.model
@@ -418,11 +418,11 @@ module ActiveScaffold::Actions
     end
 
     def virtual_columns(columns)
-      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.columns[col].try(:association) }
+      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.columns[col]&.association }
     end
 
     def association_columns(columns)
-      columns.select { |col| active_scaffold_config.columns[col].try(:association) }
+      columns.select { |col| active_scaffold_config.columns[col]&.association }
     end
 
     private

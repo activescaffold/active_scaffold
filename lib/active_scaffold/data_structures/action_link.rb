@@ -11,9 +11,9 @@ module ActiveScaffold::DataStructures
       self.type = :collection
       self.inline = true
       self.method = :get
-      self.crud_type = :delete if [:destroy].include?(action.try(:to_sym))
-      self.crud_type = :create if %i[create new].include?(action.try(:to_sym))
-      self.crud_type = :update if %i[edit update].include?(action.try(:to_sym))
+      self.crud_type = :delete if [:destroy].include?(action&.to_sym)
+      self.crud_type = :create if %i[create new].include?(action&.to_sym)
+      self.crud_type = :update if %i[edit update].include?(action&.to_sym)
       self.crud_type ||= :read
       self.column = nil
       self.image = nil
@@ -25,7 +25,7 @@ module ActiveScaffold::DataStructures
         setter = "#{k}="
         send(setter, v) if respond_to? setter
       end
-      self.toggle = self.action.try(:to_sym) == :index && (parameters.present? || dynamic_parameters) unless options.include? :toggle
+      self.toggle = self.action&.to_sym == :index && (parameters.present? || dynamic_parameters) unless options.include? :toggle
     end
 
     def initialize_copy(action_link)

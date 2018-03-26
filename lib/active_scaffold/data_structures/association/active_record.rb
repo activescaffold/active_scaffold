@@ -48,7 +48,7 @@ module ActiveScaffold::DataStructures::Association
 
     # name of inverse
     def inverse
-      @association.inverse_of.try(:name)
+      @association.inverse_of&.name
     end
 
     def quoted_table_name

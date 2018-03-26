@@ -74,7 +74,7 @@ module ActiveScaffold::DataStructures
       column = parent_scaffold.active_scaffold_config.columns[params[:association].to_sym]
       @param_name = column.model.name.foreign_key.to_sym
       @parent_id = params[@param_name]
-      @association = column.try(:association)
+      @association = column&.association
       @child_association = association.reverse_association(model) if association
       setup_constrained_fields
     end
