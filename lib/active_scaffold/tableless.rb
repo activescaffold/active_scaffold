@@ -123,9 +123,9 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       self
     end
 
-    def merge(r)
+    def merge(rel)
       super.tap do |merged|
-        merged.conditions.concat r.conditions unless r.nil? || r.is_a?(Array)
+        merged.conditions.concat rel.conditions unless rel.nil? || rel.is_a?(Array)
       end
     end
 

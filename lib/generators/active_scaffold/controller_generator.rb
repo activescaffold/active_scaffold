@@ -2,10 +2,10 @@
 
 module ActiveScaffold
   module Generators
-    class ControllerGenerator < Rails::Generators::NamedBase # metagenerator
+    class ControllerGenerator < Rails::Generators::NamedBase
       include Rails::Generators::ResourceHelpers
 
-      source_root File.expand_path('../../templates', __FILE__)
+      source_root File.expand_path('../templates', __dir__)
 
       check_class_collision :suffix => 'Controller'
 

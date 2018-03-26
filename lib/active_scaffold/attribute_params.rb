@@ -100,7 +100,7 @@ module ActiveScaffold
           elsif attributes.key? column.name
             value = update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
           end
-        rescue => e
+        rescue StandardError => e
           Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
           raise
         end

@@ -11,7 +11,7 @@ module ActiveScaffold
           value = nil
         end
         value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
-        return value
+        value
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
         raise e

@@ -1,10 +1,11 @@
+require 'active_support/concern'
+
 class ActiveScaffold::Bridges::Chosen
   module Helpers
-    def self.included(base)
-      base.class_eval do
-        include FormColumnHelpers
-        include SearchColumnHelpers
-      end
+    extend ActiveSupport::Concern
+    included do
+      include FormColumnHelpers
+      include SearchColumnHelpers
     end
 
     module FormColumnHelpers

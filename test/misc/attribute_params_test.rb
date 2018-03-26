@@ -447,11 +447,11 @@ class Controller
     @flash ||= ActionDispatch::Flash::FlashHash.new
   end
 
-  def params_hash?(v)
-    v.is_a? Hash
+  def params_hash?(value)
+    value.is_a? Hash
   end
 
-  def params_hash(v)
-    v
+  def params_hash(value)
+    value
   end
 end

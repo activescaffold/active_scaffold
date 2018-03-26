@@ -230,7 +230,7 @@ module ActiveScaffold
         unless value.nil? || value.blank?
           if value.is_a? Hash
             time = Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i }) rescue nil
-            time.send(conversion) if time
+            time&.send(conversion)
           elsif value.respond_to?(:strftime)
             if conversion == :to_time
               # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
@@ -250,11 +250,8 @@ module ActiveScaffold
             format, offset = format_for_datetime(column, value)
             format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
             value = translate_days_and_months(value, format) if I18n.locale != :en
-            time = DateTime.strptime(value, format) rescue nil
-            if time
-              time = Time.zone.local_to_utc(time).in_time_zone unless offset
-              time = time.send(conversion) unless conversion == :to_time
-            end
+            time = Time.strptime(value, format) rescue nil
+            time = time&.send(conversion) unless conversion == :to_time
             time
           end
         end

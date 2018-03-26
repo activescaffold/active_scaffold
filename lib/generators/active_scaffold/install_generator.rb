@@ -3,7 +3,7 @@ require 'rails/generators/base'
 
 module ActiveScaffold
   module Generators
-    class InstallGenerator < Rails::Generators::Base # metagenerator
+    class InstallGenerator < Rails::Generators::Base
       desc 'Add concerns to routes and require lines to assets manifest files'
 
       def add_concern_routes

@@ -26,7 +26,7 @@ ActiveScaffold::Config::Core.stubs(:freeze)
   require File.join(File.dirname(__FILE__), file)
 end
 
-I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))['en']
+I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../config/locales/en.yml', __dir__))['en']
 
 # rails 4.0
 unless defined? Minitest::Test

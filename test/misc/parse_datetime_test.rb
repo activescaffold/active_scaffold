@@ -125,7 +125,7 @@ class ParseDatetimeTest < MiniTest::Test
   end
 
   def test_condition_for_datetime_with_zone
-    assert_equal DateTime.new(2017, 4, 8, 16, 30, 0, '+0300'), condition_value('2017-04-08 16:30 +0300')
+    assert_equal ActiveSupport::TimeZone[3].local(2017, 4, 8, 16, 30, 0), condition_value('2017-04-08 16:30 +0300')
   end
 
   def test_condition_for_spanish_date
@@ -154,7 +154,7 @@ class ParseDatetimeTest < MiniTest::Test
     self.class.condition_value_for_datetime(@config.columns[:run_at], value, conversion || :to_time)
   end
 
-  def params_hash?(v)
-    v.is_a? Hash
+  def params_hash?(value)
+    value.is_a? Hash
   end
 end

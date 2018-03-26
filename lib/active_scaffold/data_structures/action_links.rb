@@ -148,7 +148,7 @@ module ActiveScaffold::DataStructures
 
     def method_missing(name, *args, &block)
       class_eval %{
-        def #{name}(label = nil)
+        def #{name}(label = nil) # rubocop:disable Style/CommentedKeyword
           @#{name} ||= subgroup('#{name}'.to_sym, label)
           yield @#{name} if block_given?
           @#{name}
