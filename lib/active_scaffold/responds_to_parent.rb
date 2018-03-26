@@ -34,7 +34,7 @@ module ActiveScaffold
         instance_variable_set(:@_response_body, nil)
       end
 
-      # We're returning HTML instead of JS now
+      # We're returning HTML instead of JS now, content_type needed if not inside respond_to block
       render html: script.html_safe, content_type: 'text/html' # rubocop:disable Rails/OutputSafety
     end
     alias respond_to_parent responds_to_parent
