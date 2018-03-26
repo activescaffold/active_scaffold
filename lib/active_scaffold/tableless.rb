@@ -51,6 +51,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   module Tableless
+    def skip_statement_cache?
+      true
+    end
+
     def association_scope
       @association_scope ||= AssociationScope.scope(self, klass.connection) if klass < ActiveScaffold::Tableless
       super

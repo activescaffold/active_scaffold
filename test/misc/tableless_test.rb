@@ -27,6 +27,12 @@ class TablelessTest < MiniTest::Test
     assert Person.new.files.empty?
   end
 
+  def test_tableless_assoc_with_dependent
+    @person = Person.new
+    @person.save(validate: false)
+    assert @person.destroy
+  end
+
   def test_find_with_through_association
     assert Building.new.files.empty?
   end
