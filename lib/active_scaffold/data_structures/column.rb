@@ -2,6 +2,8 @@ module ActiveScaffold::DataStructures
   class Column
     include ActiveScaffold::Configurable
     include ActiveScaffold::OrmChecks
+    NO_PARAMS = Set.new.freeze
+    NO_OPTIONS = {}.freeze
 
     attr_reader :active_record_class
     alias model active_record_class
@@ -31,8 +33,8 @@ module ActiveScaffold::DataStructures
 
     # Any extra parameters this particular column uses.  This is for create/update purposes.
     def params
-      # lazy initialize
-      @params ||= Set.new
+      return @params || NO_PARAMS if frozen?
+      @params ||= NO_PARAMS.dup
     end
 
     # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.
@@ -140,10 +142,12 @@ module ActiveScaffold::DataStructures
     # a place to store dev's column specific options
     attr_writer :options
     def options
-      @options ||= {}
+      return @options || NO_OPTIONS if frozen?
+      @options ||= NO_OPTIONS.dup
     end
 
     def link
+      return @link.call(self) if frozen? && @link.is_a?(Proc)
       @link = @link.call(self) if @link.is_a? Proc
       @link
     end
@@ -337,7 +341,7 @@ module ActiveScaffold::DataStructures
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
 
-      self.includes = [association.name] if association && association.allow_join?
+      self.includes = [association.name] if association&.allow_join?
       if delegated_association
         self.includes = includes ? [delegated_association.name => includes] : [delegated_association.name]
       end
@@ -386,10 +390,27 @@ module ActiveScaffold::DataStructures
     end
 
     # to cache method to get value in list
-    attr_accessor :list_method
+    def list_method
+      Rails.cache.fetch(cache_key(:list_method))
+    end
+
+    def list_method=(value)
+      Rails.cache.write(cache_key(:list_method), value)
+    end
 
     # cache constraints for numeric columns (get in ActiveScaffold::Helpers::FormColumnHelpers::numerical_constraints_for_column)
-    attr_accessor :numerical_constraints
+    def numerical_constraints
+      Rails.cache.fetch(cache_key(:numerical_constraints))
+    end
+
+    def numerical_constraints=(value)
+      Rails.cache.write(cache_key(:numerical_constraints), value)
+    end
+
+    # cache key to cache column info
+    def cache_key(attr)
+      [@active_record_class.name, name, attr].compact.map(&:to_s).join('#')
+    end
 
     # the table.field name for this column, if applicable
     def field
@@ -408,15 +429,16 @@ module ActiveScaffold::DataStructures
 
     def setup_association_info
       assoc = active_record_class.reflect_on_association(self.name)
-      @association = if assoc
-                       case
-                       when active_record? then Association::ActiveRecord.new(assoc)
-                       when mongoid? then Association::Mongoid.new(assoc)
-                       end
-                     elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
-                       assoc = active_record_class.reflect_on_am_association(name)
-                       Association::ActiveMongoid.new(assoc) if assoc
-      end
+      @association =
+        if assoc
+          case
+          when active_record? then Association::ActiveRecord.new(assoc)
+          when mongoid? then Association::Mongoid.new(assoc)
+          end
+        elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
+          assoc = active_record_class.reflect_on_am_association(name)
+          Association::ActiveMongoid.new(assoc) if assoc
+        end
     end
 
     def validator_force_required?(val)
@@ -438,7 +460,7 @@ module ActiveScaffold::DataStructures
     def default_select_columns
       if association.nil? && column
         [field]
-      elsif association.try(:polymorphic?)
+      elsif association&.polymorphic?
         [field, quoted_field(quoted_field_name(association.foreign_type))]
       elsif association
         if association.belongs_to?
@@ -448,7 +470,7 @@ module ActiveScaffold::DataStructures
           if _columns_hash[count_column = "#{association.name}_count"]
             columns << quoted_field(quoted_field_name(count_column))
           end
-          if association.through_reflection.try(:belongs_to?)
+          if association.through_reflection&.belongs_to?
             columns << quoted_field(quoted_field_name(association.through_reflection.foreign_key))
           end
           columns
@@ -474,15 +496,10 @@ module ActiveScaffold::DataStructures
     end
 
     def initialize_sort
-      if virtual?
-        # we don't automatically enable method sorting for virtual columns because it's slow, and we expect fewer complaints this way.
-        self.sort = false
+      if column && !tableless?
+        self.sort = {:sql => field}
       else
-        if column && !tableless?
-          self.sort = {:sql => field}
-        else
-          self.sort = false
-        end
+        self.sort = false
       end
     end
 
@@ -501,9 +518,9 @@ module ActiveScaffold::DataStructures
     attr_reader :table
 
     def estimate_weight
-      if association.try(:singular?)
+      if association&.singular?
         400
-      elsif association.try(:collection?)
+      elsif association&.collection?
         500
       elsif %i[created_at updated_at].include?(name)
         600

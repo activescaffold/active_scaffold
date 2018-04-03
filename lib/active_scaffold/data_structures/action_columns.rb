@@ -112,7 +112,7 @@ module ActiveScaffold::DataStructures
       # skip if this matches a constrained column
       return true if constraint_columns.include?(column.name.to_sym)
       # skip this field if it's not authorized
-      unless options[:for].authorized_for?(:action => options[:action], :crud_type => options[:crud_type] || action.try(:crud_type) || :read, :column => column.name)
+      unless options[:for].authorized_for?(action: options[:action], crud_type: options[:crud_type] || action&.crud_type || :read, column: column.name)
         unauthorized_columns << column.name.to_sym
         return true
       end
@@ -137,23 +137,19 @@ module ActiveScaffold::DataStructures
     end
 
     def constraint_columns=(columns)
-      Thread.current[:constraint_columns] ||= {}
-      Thread.current[:constraint_columns][columns_key] = columns
+      ActiveScaffold::Registry.constraint_columns[columns_key] = columns
     end
 
     def constraint_columns
-      constraints = Thread.current[:constraint_columns]
-      (constraints[columns_key] if constraints) || []
+      ActiveScaffold::Registry.constraint_columns[columns_key]
     end
 
     def unauthorized_columns=(columns)
-      Thread.current[:unauthorized_columns] ||= {}
-      Thread.current[:unauthorized_columns][columns_key] = columns
+      ActiveScaffold::Registry.unauthorized_columns[columns_key] = columns
     end
 
     def unauthorized_columns
-      Thread.current[:unauthorized_columns] ||= {}
-      Thread.current[:unauthorized_columns][columns_key] ||= []
+      ActiveScaffold::Registry.unauthorized_columns[columns_key]
     end
 
     def length

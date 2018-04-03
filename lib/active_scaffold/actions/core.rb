@@ -3,13 +3,13 @@ module ActiveScaffold::Actions
     def self.included(base)
       base.class_eval do
         before_action :set_vary_accept_header
-        before_action :handle_user_settings
         before_action :check_input_device
         before_action :register_constraints_with_action_columns, :unless => :nested?
         after_action :clear_flashes
         after_action :clear_storage
         rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
+      base.helper_method :active_scaffold_config
       base.helper_method :successful?
       base.helper_method :nested?
       base.helper_method :grouped_search?
@@ -104,7 +104,7 @@ module ActiveScaffold::Actions
     end
 
     def subform_child_association
-      params[:child_association].presence || (@scope.split(']').first.sub(/^\[/, '').presence if @scope)
+      params[:child_association].presence || @scope&.split(']')&.first&.sub(/^\[/, '').presence
     end
 
     def parent_controller_name
@@ -113,7 +113,7 @@ module ActiveScaffold::Actions
 
     def set_parent(record)
       cfg = main_form_controller.active_scaffold_config
-      association = cfg.columns[subform_child_association].try(:association).try(:reverse_association)
+      association = cfg.columns[subform_child_association]&.association&.reverse_association
       return if association.nil?
 
       parent_model = cfg.model
@@ -260,9 +260,10 @@ module ActiveScaffold::Actions
     def new_model
       relation = beginning_of_chain
       config = active_scaffold_config_for(relation.klass) if nested? && nested.plural_association?
-      if config && config._columns_hash[column = relation.klass.inheritance_column]
+      column = relation.klass.inheritance_column
+      if config&._columns_hash&.dig(column)
         model_name = params.delete(column) # in new action inheritance_column must be in params
-        model_name ||= params[:record].delete(column) if params[:record].present? # in create action must be inside record key
+        model_name ||= params[:record]&.delete(column) # in create action must be inside record key
         model_name = model_name.camelize if model_name
         model_name ||= active_scaffold_config.model.name
         build_options = {column.to_sym => model_name} if model_name
@@ -287,6 +288,14 @@ module ActiveScaffold::Actions
       session[session_index]
     end
 
+    def user_settings_storage
+      if self.class.active_scaffold_config.store_user_settings
+        active_scaffold_session_storage
+      else
+        {}
+      end
+    end
+
     def active_scaffold_embedded_params
       params[:embedded] || {}
     end
@@ -300,19 +309,9 @@ module ActiveScaffold::Actions
       response.headers['Vary'] = 'Accept'
     end
 
-    # at some point we need to pass the session and params into config. we'll just take care of that before any particular action occurs by passing those hashes off to the UserSettings class of each action.
-    def handle_user_settings
-      storage = active_scaffold_config.store_user_settings ? active_scaffold_session_storage : {}
-      active_scaffold_config.actions.each do |action_name|
-        conf_instance = active_scaffold_config.send(action_name) rescue next
-        next if conf_instance.class::UserSettings == ActiveScaffold::Config::Base::UserSettings # if it hasn't been extended, skip it
-        conf_instance.user = conf_instance.class::UserSettings.new(conf_instance, storage, params)
-      end
-    end
-
     def check_input_device
       if session[:input_device_type].nil?
-        if request.env['HTTP_USER_AGENT'] && request.env['HTTP_USER_AGENT'][/(iPhone|iPod|iPad)/i]
+        if request.env['HTTP_USER_AGENT'] =~ /(iPhone|iPod|iPad)/i
           session[:input_device_type] = 'TOUCH'
           session[:hover_supported] = false
         else
@@ -340,7 +339,7 @@ module ActiveScaffold::Actions
 
     def params_hash(value)
       if controller_params?(value)
-        Rails.version < '4.2' ? value.clone.permit! : value.to_unsafe_h.with_indifferent_access
+        value.to_unsafe_h.with_indifferent_access
       else
         value
       end
@@ -420,11 +419,11 @@ module ActiveScaffold::Actions
     end
 
     def virtual_columns(columns)
-      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.columns[col].try(:association) }
+      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.columns[col]&.association }
     end
 
     def association_columns(columns)
-      columns.select { |col| active_scaffold_config.columns[col].try(:association) }
+      columns.select { |col| active_scaffold_config.columns[col]&.association }
     end
 
     private
@@ -457,7 +456,7 @@ module ActiveScaffold::Actions
         klass = klass.superclass
         controller = self.class.active_scaffold_controller_for(klass)
         cfg = controller.active_scaffold_config if controller.uses_active_scaffold?
-        next unless cfg && cfg.add_sti_create_links?
+        next unless cfg&.add_sti_create_links?
         return controller if cfg.sti_children.map(&:to_s).include? self.class.active_scaffold_config.model.name.underscore
       end
     rescue ActiveScaffold::ControllerNotFound => ex

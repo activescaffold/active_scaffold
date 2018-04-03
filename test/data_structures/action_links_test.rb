@@ -70,7 +70,7 @@ class ActionLinksTest < MiniTest::Test
     begin
       @links.delete :foo
       @links.delete 'foo'
-    rescue
+    rescue StandardError
       assert false, "deleting from action links when item doesn't exist should not throw an error"
     end
     refute @links['bar'].nil?

@@ -219,10 +219,15 @@ module ActiveScaffold::Config
     # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
     attr_accessor :calculate_etag
 
-    class UserSettings < UserSettings
+    UserSettings.class_eval do # defined with columns_accessor
+      user_attr :page_links_inner_window, :page_links_outer_window, :refresh_with_header, :empty_field_text,
+                :association_join_text, :messages_above_header, :wrap_tag, :auto_select_columns, :calculate_etag,
+                :no_entries_message, :filtered_message, :show_search_reset, :always_show_create, :always_show_search,
+                :hide_nested_column
+
       def initialize(conf, storage, params)
         super(conf, storage, params, :list)
-        @sorting = nil
+        @_sorting = nil
       end
 
       attr_writer :label
@@ -232,12 +237,16 @@ module ActiveScaffold::Config
       end
 
       def embedded_label
-        @params[:embedded][:label] if @params[:embedded]
+        @params.dig :embedded, :label
       end
 
       def per_page
         self['per_page'] = @params['limit'].to_i if @params.key? 'limit'
         self['per_page'] || @conf.per_page
+      end
+
+      def per_page=(value)
+        self['per_page'] = value
       end
 
       def page
@@ -252,36 +261,43 @@ module ActiveScaffold::Config
       attr_reader :nested_default_sorting
 
       def nested_default_sorting=(options)
-        @nested_default_sorting ||= @conf.sorting.clone
+        @nested_default_sorting ||= @conf.sorting.dup
         @nested_default_sorting.set_nested_sorting(options[:table_name], options[:default_sorting])
       end
 
       def default_sorting
-        nested_default_sorting.nil? ? @conf.sorting.clone : nested_default_sorting
+        nested_default_sorting.nil? || @sorting.present? ? @conf.sorting.dup : nested_default_sorting
       end
+
+      # TODO: programatically set sorting, for per-request configuration, priority @params, then @sort
 
       def user_sorting?
         @params['sort'] && @params['sort_direction'] != 'reset'
       end
 
+      # change list sorting for this request, unless sorting is defined
+      # {column => direction, column => direction}
+      attr_writer :sorting
+
       def sorting
-        if @sorting.nil?
+        if @_sorting.nil?
           # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
           self['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] && @params['sort_direction']
           self['sort'] = nil if @params['sort_direction'] == 'reset'
 
           if self['sort'] && @conf.columns.include?(self['sort'][0])
-            sorting = @conf.sorting.clone
+            sorting = @conf.sorting.dup
             sorting.set(*self['sort'])
-            @sorting = sorting
+            @_sorting = sorting
           else
-            @sorting = default_sorting
+            @_sorting = default_sorting
+            @_sorting.set(@sorting) if @sorting
             if @conf.columns.constraint_columns.present?
-              @sorting.constraint_columns = @conf.columns.constraint_columns
+              @_sorting.constraint_columns = @conf.columns.constraint_columns
             end
           end
         end
-        @sorting
+        @_sorting
       end
 
       def count_includes

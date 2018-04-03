@@ -9,24 +9,19 @@ cache: bundler
 dist: trusty
 gemfile:
   - Gemfile
-  - gemfiles/Gemfile.rails-4.0.x
-  - gemfiles/Gemfile.rails-4.1.x
   - gemfiles/Gemfile.rails-4.2.x
+  - gemfiles/Gemfile.rails-5.0.x
 jdk:
   - openjdk8
 language: ruby
 matrix:
   exclude:
-    - rvm: 2.4.2
-      gemfile: gemfiles/Gemfile.rails-4.0.x 
-    - rvm: 2.4.2
-      gemfile: gemfiles/Gemfile.rails-4.1.x 
   allow_failures:
     - rvm: rbx-3
 rvm:
-  - 2.2.8
   - 2.3.5
   - 2.4.2
+  - 2.5.0
   - jruby-9.1.13.0
   - rbx-3
 sudo: required

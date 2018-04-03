@@ -66,13 +66,13 @@ module ActiveScaffold::DataStructures::Association
 
     def reverse(klass = nil)
       unless polymorphic? || defined?(@reverse)
-        @reverse ||= inverse || get_reverse.try(:name)
+        @reverse ||= inverse || get_reverse&.name
       end
-      @reverse || (get_reverse(klass).try(:name) unless klass.nil?)
+      @reverse || (get_reverse(klass)&.name unless klass.nil?)
     end
 
     def inverse_for?(klass)
-      inverse_class = reverse_association(klass).try(:inverse_klass)
+      inverse_class = reverse_association(klass)&.inverse_klass
       inverse_class.present? && (inverse_class == klass || klass < inverse_class)
     end
 
@@ -116,7 +116,7 @@ module ActiveScaffold::DataStructures::Association
 
     def reverse_match?(assoc)
       return false if assoc == @association
-      return false unless assoc.polymorphic? || assoc.class_name == inverse_klass.try(:name)
+      return false unless assoc.polymorphic? || assoc.class_name == inverse_klass&.name
 
       if through?
         reverse_through_match?(assoc)

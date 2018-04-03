@@ -23,7 +23,7 @@ module ActiveScaffold::Bridges
                           options_for_select([])
                         end
 
-        state_options += if priority_states && priority_states.include?(selected)
+        state_options += if priority_states&.include?(selected)
                            options_for_select(USASTATES - priority_states, :selected => selected)
                          else
                            options_for_select(USASTATES, :selected => selected)

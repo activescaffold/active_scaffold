@@ -1,17 +1,18 @@
+require 'active_support/concern'
+
 class ActiveScaffold::Bridges::Chosen
   module Helpers
-    def self.included(base)
-      base.class_eval do
-        include FormColumnHelpers
-        include SearchColumnHelpers
-      end
+    extend ActiveSupport::Concern
+    included do
+      include FormColumnHelpers
+      include SearchColumnHelpers
     end
 
     module FormColumnHelpers
       # requires RecordSelect plugin to be installed and configured.
       def active_scaffold_input_chosen(column, html_options)
         html_options[:class] << ' chosen'
-        if column.association.try(:collection?)
+        if column.association&.collection?
           associated_options, select_options = active_scaffold_plural_association_options(column)
           options = {:selected => associated_options.collect(&:id), :include_blank => as_(:_select_)}
 

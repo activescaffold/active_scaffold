@@ -4,12 +4,24 @@ module ActiveScaffold
       base.extend(ClassMethods)
     end
 
-    def active_scaffold_config
-      self.class.active_scaffold_config
+    def setup_user_settings
+      config = self.class.active_scaffold_config
+      config.new_user_settings(user_settings_storage, params)
+      unless ActiveScaffold.threadsafe
+        config.actions.each do |action_name|
+          conf_instance = config.send(action_name) rescue next # rubocop:disable Style/RescueModifier
+          config.user.action_user_settings(conf_instance)
+        end
+      end
     end
 
-    def active_scaffold_config_for(klass)
-      self.class.active_scaffold_config_for(klass)
+    def active_scaffold_config
+      setup_user_settings unless self.class.active_scaffold_config.user
+      if ActiveScaffold.threadsafe
+        self.class.active_scaffold_config.user
+      else
+        self.class.active_scaffold_config
+      end
     end
 
     module ClassMethods
@@ -46,6 +58,7 @@ module ActiveScaffold
           active_scaffold_config.actions.each do |mod|
             include "ActiveScaffold::Actions::#{mod.to_s.camelize}".constantize
             mod_conf = active_scaffold_config.send(mod)
+            active_scaffold_config._setup_action(mod) if ActiveScaffold.threadsafe
             next unless mod_conf.respond_to?(:link) && (link = mod_conf.link)
 
             # sneak the action links from the actions into the main set
@@ -59,10 +72,14 @@ module ActiveScaffold
           end
         end
         _add_sti_create_links if active_scaffold_config.add_sti_create_links?
+        if ActiveScaffold.threadsafe
+          active_scaffold_config._cache_lazy_values
+          active_scaffold_config.deep_freeze!
+        end
       end
 
       module Prefixes
-        define_method Rails.version < '4.2' ? 'parent_prefixes' : 'local_prefixes' do
+        define_method 'local_prefixes' do
           @local_prefixes ||= begin
             prefixes = super()
             unless superclass.uses_active_scaffold? || prefixes.include?('active_scaffold_overrides')
@@ -178,6 +195,7 @@ module ActiveScaffold
 
       def active_scaffold_controller_for(klass)
         return self if uses_active_scaffold? && klass == active_scaffold_config.model
+        # noinspection RubyArgCount
         ActiveScaffold::Core.active_scaffold_controller_for(klass, to_s.deconstantize + '::')
       end
 
@@ -230,9 +248,7 @@ module ActiveScaffold
     end
 
     def self.active_record_column_type_cast(value, column)
-      if Rails.version < '4.2'
-        column.type_cast value
-      elsif Rails.version < '5.0'
+      if Rails.version < '5.0'
         column.type_cast_from_user value
       elsif column.type.respond_to? :cast # jruby-jdbc and rails 5
         column.type.cast value

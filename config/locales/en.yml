@@ -138,6 +138,7 @@ en:
     formats:
       month: "%B"
       quarter: Quarter %{num}
+      week: Week %W, %Y
       year_month: "%b %Y"
       year_quarter: Quarter %{quarter} %{year}
   time:

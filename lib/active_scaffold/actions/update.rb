@@ -65,7 +65,8 @@ module ActiveScaffold::Actions
           else
             @updated_record = @record
             # get_row so associations are cached like in list action
-            @record = get_row rescue nil # if record doesn't fullfil current conditions remove it from list
+            # if record doesn't fullfil current conditions remove it from list
+            @record = get_row rescue nil # rubocop:disable Style/RescueModifier
           end
         end
         flash.now[:info] = as_(:updated_model, :model => ERB::Util.h((@updated_record || @record).to_label)) if active_scaffold_config.update.persistent
@@ -150,12 +151,12 @@ module ActiveScaffold::Actions
       value ||=
         unless @column.column.nil? || @column.column.null
           default_val = @column.column.default
-          default_val = ActiveScaffold::Core.column_type_cast default_val, @column.column if Rails.version >= '4.2.0'
+          default_val = ActiveScaffold::Core.column_type_cast default_val, @column.column
           default_val == true ? false : default_val
         end
       unless @column.nil?
         value = column_value_from_param_value(value_record, @column, value)
-        value = [] if value.nil? && @column.form_ui && @column.association.try(:collection?)
+        value = [] if value.nil? && @column.form_ui && @column.association&.collection?
       end
 
       value_record.send("#{@column.name}=", value)

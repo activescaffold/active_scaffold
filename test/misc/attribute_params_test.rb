@@ -417,15 +417,15 @@ class AttributeParamsTest < MiniTest::Test
       record = record.class.find(record.id) if record.persisted?
       new_record = @controller.update_record_from_params(record, build_action_columns(record, action, columns), params)
       yield if block_given?
-      Thread.current[:constraint_columns] = nil
+      ActiveScaffold::Registry.constraint_columns.clear
     end
     new_record
   end
 
   def build_action_columns(record, action, *columns)
-    controller = ActiveScaffold::Core.active_scaffold_controller_for record.class
-    controller.active_scaffold_config.send(action).columns = columns
-    controller.active_scaffold_config.send(action).columns
+    config = @controller.active_scaffold_config_for record.class
+    config.send(action).columns = columns
+    config.send(action).columns
   end
 end
 
@@ -447,11 +447,11 @@ class Controller
     @flash ||= ActionDispatch::Flash::FlashHash.new
   end
 
-  def params_hash?(v)
-    v.is_a? Hash
+  def params_hash?(value)
+    value.is_a? Hash
   end
 
-  def params_hash(v)
-    v
+  def params_hash(value)
+    value
   end
 end

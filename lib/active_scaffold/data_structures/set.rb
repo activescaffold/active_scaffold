@@ -7,6 +7,10 @@ module ActiveScaffold::DataStructures
       set_values(*args)
     end
 
+    def initialize_dup(other)
+      @set = other.set.dup
+    end
+
     def set_values(*args)
       @set = []
       add(*args)
@@ -56,5 +60,9 @@ module ActiveScaffold::DataStructures
     def empty?
       @set.empty?
     end
+
+    protected
+
+    attr_reader :set
   end
 end

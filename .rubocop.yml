@@ -1,6 +1,7 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
+  TargetRubyVersion: 2.3
   Include:
     - 'gemfiles/Gemfile*'
   Exclude:
@@ -8,6 +9,9 @@ AllCops:
     - 'bin/*'
     - 'lib/generators/**/templates/**/*'
     - 'vendor/bundle/**/*'
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
 
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
@@ -17,9 +21,11 @@ Lint/UnusedMethodArgument:
 
 Metrics/ClassLength:
   Max: 500
+  CountComments: false
 
 Metrics/ModuleLength:
   Max: 600
+  CountComments: false
 
 Performance/RedundantMerge:
   MaxKeyValuePairs: 1

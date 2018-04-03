@@ -41,7 +41,7 @@ module ActiveScaffold
           versions = options[:magick][:versions]
           raise unless versions.stringify_keys[version]
           true
-        rescue
+        rescue StandardError
           false
         end
 

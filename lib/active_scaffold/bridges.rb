@@ -35,9 +35,9 @@ module ActiveScaffold
     def self.run_all
       return false if bridges_run
       bridges.keys.each do |bridge_name|
-        bridge = self[bridge_name]
-        bridge.run if bridge
+        self[bridge_name]&.run
       end
+      ActiveScaffold::Config::Core.freeze if ActiveScaffold.threadsafe
       self.bridges_run = true
     end
 
@@ -45,7 +45,7 @@ module ActiveScaffold
       return false if bridges_prepared
       bridges.keys.each do |bridge_name|
         bridge = self[bridge_name]
-        bridge.prepare if bridge && bridge.install?
+        bridge.prepare if bridge&.install?
       end
       self.bridges_prepared = true
     end
@@ -53,14 +53,14 @@ module ActiveScaffold
     def self.all_stylesheets
       bridges.keys.collect do |bridge_name|
         bridge = self[bridge_name]
-        bridge.stylesheets if bridge && bridge.install?
+        bridge.stylesheets if bridge&.install?
       end.compact.flatten
     end
 
     def self.all_javascripts
       bridges.keys.collect do |bridge_name|
         bridge = self[bridge_name]
-        bridge.javascripts if bridge && bridge.install?
+        bridge.javascripts if bridge&.install?
       end.compact.flatten
     end
   end

@@ -32,5 +32,9 @@ module ActiveScaffold::Config
     def hide_nested_column
       @hide_nested_column.nil? ? true : @hide_nested_column
     end
+
+    UserSettings.class_eval do
+      user_attr :nested_links, :hide_nested_column
+    end
   end
 end

@@ -37,8 +37,8 @@ class Company < ActiveRecord::Base
   end
 
   # not the real signature of the method, but forgive me
-  def self.before_destroy(s = nil)
-    @@before = s
+  def self.before_destroy(string = nil)
+    @@before = string
   end
 
   if respond_to?(:create_reflection)

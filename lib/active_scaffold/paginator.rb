@@ -28,7 +28,7 @@ class Paginator
 
   # Total number of pages
   def number_of_pages
-    (@count / @per_page).to_i + (@count % @per_page > 0 ? 1 : 0)
+    (@count / @per_page).to_i + ((@count % @per_page).positive? ? 1 : 0)
   end
 
   # First page object
@@ -57,7 +57,7 @@ class Paginator
 
   # Retrieve page object by number
   def page(number)
-    number = (n = number.to_i) > 0 ? n : 1
+    number = [1, number.to_i].max
     Page.new(self, number) do
       offset = (number - 1) * @per_page
       args = [offset]

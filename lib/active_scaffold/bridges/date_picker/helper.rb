@@ -52,7 +52,7 @@ module ActiveScaffold::Bridges
         js_format = to_datepicker_format(I18n.translate!('date.formats.default', :locale => locale, :default => ''))
         date_picker_options[:dateFormat] = js_format if js_format.present?
         date_picker_options
-      rescue
+      rescue StandardError
         raise if locale == I18n.locale
       end
 
@@ -85,7 +85,7 @@ module ActiveScaffold::Bridges
           datetime_picker_options[:ampm] = true if rails_time_format.include?('%I')
         end
         datetime_picker_options
-      rescue
+      rescue StandardError
         raise if locale == I18n.locale
       end
 

@@ -140,11 +140,7 @@ class ActiveRecordPermissionsTest < MiniTest::Test
   end
 
   def test_method_combinations_with_default_false
-    old_permission = nil
-    ActiveScaffold.set_defaults do |config|
-      old_permission = config.security.default_permission
-      config.security.default_permission = false
-    end
+    ActiveScaffold::Config::Core.security.stubs(default_permission: false)
 
     miss(@model.authorized_for?(:column => :a3), '_a_')
     miss(@model.authorized_for?(:column => :a2), '_f_')
@@ -183,10 +179,6 @@ class ActiveRecordPermissionsTest < MiniTest::Test
     pass(@model.authorized_for?(:crud_type => :read, :column => :c1), 'tta')
     miss(@model.authorized_for?(:crud_type => :read, :column => :b1), 'ttf')
     pass(@model.authorized_for?(:crud_type => :read, :column => :a1), 'ttt')
-
-    ActiveScaffold.set_defaults do |config|
-      config.security.default_permission = old_permission
-    end
   end
 
   private

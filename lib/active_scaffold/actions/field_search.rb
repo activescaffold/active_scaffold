@@ -56,10 +56,10 @@ module ActiveScaffold::Actions
 
       def custom_finder_options
         if grouped_search?
-          group_sql = calculation_for_group_by(search_group_column.try(:field) || search_group_name)
+          group_sql = calculation_for_group_by(search_group_column&.field || search_group_name)
           group_by = group_sql.respond_to?(:to_sql) ? group_sql.to_sql : group_sql
 
-          select_query = quoted_select_columns(search_group_column.try(:select_columns))
+          select_query = quoted_select_columns(search_group_column&.select_columns)
           select_query << group_sql.as(search_group_column.name.to_s) if search_group_column && group_sql.respond_to?(:to_sql)
           if active_scaffold_config.model.columns_hash.include?(active_scaffold_config.model.inheritance_column)
             select_query << active_scaffold_config.columns[active_scaffold_config.model.inheritance_column].field

@@ -11,7 +11,7 @@ module ActiveScaffold
           value = nil
         end
         value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
-        return value
+        value
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
         raise e
@@ -97,6 +97,14 @@ module ActiveScaffold
         options = options.merge(max: record.send(options[:max_method])) if options[:max_method]
         value = record.send(options[:value_method]) if options[:value_method]
         as_slider options.merge(value: value || record.send(column.name))
+      end
+
+      def active_scaffold_column_month(record, column)
+        l record.send(column.name), format: :year_month
+      end
+
+      def active_scaffold_column_week(record, column)
+        l record.send(column.name), format: :week
       end
 
       def tel_to(text)
@@ -241,7 +249,7 @@ module ActiveScaffold
         # we are not using eager loading, cache firsts records in order not to query the database for whole association in a future
         if column.associated_limit.nil?
           logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
-        elsif column.associated_limit > 0
+        elsif column.associated_limit.positive?
           # load at least one record more, is needed to display '...'
           association.target = association.reader.limit(column.associated_limit + 1).select(column.select_associated_columns || "#{association.klass.quoted_table_name}.*").to_a
         elsif @cache_associations
@@ -286,8 +294,10 @@ module ActiveScaffold
 
       def inplace_edit_control(column)
         return unless inplace_edit?(active_scaffold_config.model, column) && inplace_edit_cloning?(column)
-        column = column.clone
-        column.options = column.options.clone
+        unless ActiveScaffold.threadsafe
+          column = column.dup
+          column.options = column.options.dup
+        end
         column.form_ui = :select if column.association && column.form_ui.nil?
         options = active_scaffold_input_options(column).merge(:object => column.active_record_class.new)
         options[:class] = "#{options[:class]} inplace_field"
@@ -307,7 +317,7 @@ module ActiveScaffold
         data[:ie_loading_text] = column.options[:loading_text] || as_(:loading)
         data[:ie_save_text] = column.options[:save_text] || as_(:update)
         data[:ie_saving_text] = column.options[:saving_text] || as_(:saving)
-        data[:ie_rows] = column.options[:rows] || 5 if column.column.try(:type) == :text
+        data[:ie_rows] = column.options[:rows] || 5 if column.column&.type == :text
         data[:ie_cols] = column.options[:cols] if column.options[:cols]
         data[:ie_size] = column.options[:size] if column.options[:size]
         data[:ie_use_html] = column.options[:use_html] if column.options[:use_html]
@@ -318,7 +328,7 @@ module ActiveScaffold
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
           url = url_for(params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name))
-          plural = column.association.try(:collection?) && !override_form_field?(column) && %i[select record_select].include?(column.form_ui)
+          plural = column.association&.collection? && !override_form_field?(column) && %i[select record_select].include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
           data[:ie_plural] = plural

@@ -41,13 +41,8 @@ module ActiveScaffold
       difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
 
       if parent_record.new_record?
-        if Rails.version >= '4.2.0'
-          parent_record.send "#{column.name}=", value
-          parent_record.send "#{counter_attr}_will_change!"
-        else # < 4.2
-          parent_record.send "#{counter_attr}=", difference
-          parent_record.send "#{column.name}=", value
-        end
+        parent_record.send "#{column.name}=", value
+        parent_record.send "#{counter_attr}_will_change!"
       else
         # don't decrement counter for deleted records, on destroy they will update counter
         difference += (parent_record.send(column.name) - value).size
@@ -105,7 +100,7 @@ module ActiveScaffold
           elsif attributes.key? column.name
             value = update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
           end
-        rescue => e
+        rescue StandardError => e
           Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
           raise
         end
@@ -118,11 +113,11 @@ module ActiveScaffold
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
       if avoid_changes && column.association
         parent_record.association(column.name).target = value
-        parent_record.send("#{column.association.foreign_key}=", value.try(:id)) if column.association.belongs_to?
+        parent_record.send("#{column.association.foreign_key}=", value&.id) if column.association.belongs_to?
       elsif column.association && counter_cache_hack?(column.association, attribute)
-        parent_record.send "#{column.association.foreign_key}=", value.try(:id)
+        parent_record.send "#{column.association.foreign_key}=", value&.id
         parent_record.association(column.name).target = value
-      elsif column.association.try(:collection?) && column.association.through? && !column.association.through_reflection.collection?
+      elsif column.association&.collection? && column.association.through? && !column.association.through_reflection.collection?
         through = column.association.through_reflection.name
         through_record = parent_record.send(through)
         through_record ||= parent_record.send "build_#{through}"
@@ -139,7 +134,7 @@ module ActiveScaffold
           parent_record.association(column.name).target = value if column.association
         end
       end
-      if column.association.try(:reverse_association).try(:belongs_to?)
+      if column.association&.reverse_association&.belongs_to?
         Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
       end
       value
@@ -147,7 +142,7 @@ module ActiveScaffold
 
     def column_value_from_param_value(parent_record, column, value, avoid_changes = false)
       # convert the value, possibly by instantiating associated objects
-      form_ui = column.form_ui || column.column.try(:type)
+      form_ui = column.form_ui || column.column&.type
       if form_ui && respond_to?("column_value_for_#{form_ui}_type", true)
         send("column_value_for_#{form_ui}_type", parent_record, column, value)
       elsif params_hash? value
@@ -173,8 +168,12 @@ module ActiveScaffold
       new_value
     end
 
+    def column_value_for_month_type(parent_record, column, value)
+      Date.parse("#{value}-01")
+    end
+
     def column_value_from_param_simple_value(parent_record, column, value)
-      if column.association.try :singular?
+      if column.association&.singular?
         if value.present?
           if column.association.polymorphic?
             class_name = parent_record.send(column.association.foreign_type)
@@ -184,7 +183,7 @@ module ActiveScaffold
             column.association.klass.find(value)
           end
         end
-      elsif column.association.try :collection?
+      elsif column.association&.collection?
         column_plural_assocation_value_from_value(column, Array(value))
       elsif column.number? && column.options[:format] && column.form_ui != :number
         column.number_to_native(value)
@@ -209,9 +208,9 @@ module ActiveScaffold
     end
 
     def column_value_from_param_hash_value(parent_record, column, value, avoid_changes = false)
-      if column.association.try :singular?
+      if column.association&.singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
-      elsif column.association.try :collection?
+      elsif column.association&.collection?
         # HACK: to be able to delete all associated records, hash will include "0" => ""
         values = value.values.reject(&:blank?)
         values.collect { |val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }.compact
@@ -225,8 +224,10 @@ module ActiveScaffold
       record = find_or_create_for_params(attributes, column, parent_record)
       if record
         record_columns = active_scaffold_config_for(column.association.klass).subform.columns
+        prev_constraints = record_columns.constraint_columns
         record_columns.constraint_columns = [column.association.reverse].compact
         update_record_from_params(record, record_columns, attributes, avoid_changes)
+        record_columns.constraint_columns = prev_constraints
         record.unsaved = true
       end
       record
@@ -266,7 +267,7 @@ module ActiveScaffold
     end
 
     def save_record_to_association(record, association, value)
-      if association.try(:collection?)
+      if association&.collection?
         record.send(association.name) << value
       elsif association
         record.send("#{association.name}=", value)
@@ -311,9 +312,7 @@ module ActiveScaffold
       if ActiveScaffold::OrmChecks.mongoid? klass
         column.default_val
       elsif ActiveScaffold::OrmChecks.active_record? klass
-        if Rails.version < '4.2'
-          column.default
-        elsif Rails.version < '5.0'
+        if Rails.version < '5.0'
           column.type_cast_from_database(column.default)
         else
           column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)

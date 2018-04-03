@@ -161,7 +161,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
     record.number
   end
 
-  def params_hash?(v)
-    v.is_a? Hash
+  def params_hash?(value)
+    value.is_a? Hash
   end
 end

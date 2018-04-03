@@ -32,7 +32,7 @@ module ActiveScaffold
           klass = association_klass_scoped(association, klass, record)
           relation = klass.where(conditions)
           column = column_for_association(association, record)
-          if column && column.try(:sort) && column.sort[:sql]
+          if column && column&.sort&.dig(:sql)
             if column.includes
               include_assoc = column.includes.find { |assoc| assoc.is_a?(Hash) && assoc.include?(association.name) }
               relation = relation.includes(include_assoc[association.name]) if include_assoc
@@ -49,12 +49,12 @@ module ActiveScaffold
       end
 
       def association_klass_scoped(association, klass, record)
-        if nested? && nested.through_association? && nested.child_association.try(:through_reflection) == association
+        if nested? && nested.through_association? && nested.child_association&.through_reflection == association
           # only ActiveRecord associations
           if nested.association.through_reflection.collection?
             nested_parent_record.send(nested.association.through_reflection.name)
           else
-            klass.where(association.association_primary_key => nested_parent_record.send(nested.association.through_reflection.name).try(:id))
+            klass.where(association.association_primary_key => nested_parent_record.send(nested.association.through_reflection.name)&.id)
           end
         else
           klass
@@ -65,7 +65,7 @@ module ActiveScaffold
       def sorted_association_options_find(association, conditions = nil, record = nil)
         options = association_options_find(association, conditions, nil, record)
         column = column_for_association(association, record)
-        unless column && column.try(:sort) && column.sort[:sql]
+        unless column && column&.sort&.dig(:sql)
           method = column.options[:label_method] if column
           options = options.sort_by(&(method || :to_label).to_sym)
         end

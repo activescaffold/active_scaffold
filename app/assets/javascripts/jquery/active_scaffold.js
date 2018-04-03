@@ -57,6 +57,9 @@ jQuery(document).ready(function($) {
   jQuery(document).on('ajax:complete', 'form.live', function(event) {
     ActiveScaffold.focus_first_element_of_form(jQuery(this).closest("form"));
   });
+  jQuery(document).on('keyup keypress', 'form.search.live input', function(e) {
+    if (e.keyCode == 13) e.preventDefault();
+  });
   jQuery(document).on('ajax:error', 'form.as_form', function(event, xhr, status, error) {
     var as_div = jQuery(this).closest("div.active-scaffold");
     if (as_div.length) {
@@ -416,7 +419,7 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
           var el = $(this);
           var op = options || {};
           el.data('oldval', el.val())
-            .data('delay', delay || 0.5)
+            .data('delay', delay === 0 ? delay : (delay || 0.5))
             .data('condition', op.condition || function() { return ($(this).data('oldval') == $(this).val()); })
             .data('callback', callback)
             [(op.event||'keyup')](function(){

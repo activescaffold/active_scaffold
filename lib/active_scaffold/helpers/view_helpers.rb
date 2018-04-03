@@ -17,15 +17,6 @@ module ActiveScaffold
       ## Delegates
       ##
 
-      # access to the configuration variable
-      def active_scaffold_config
-        controller.class.active_scaffold_config
-      end
-
-      def active_scaffold_config_for(*args)
-        controller.class.active_scaffold_config_for(*args)
-      end
-
       def active_scaffold_controller_for(*args)
         controller.class.active_scaffold_controller_for(*args)
       end
@@ -173,7 +164,7 @@ module ActiveScaffold
 
       def history_state
         if active_scaffold_config.store_user_settings
-          state = {page: @page.try(:number)}
+          state = {page: @page&.number}
           state[:search] = search_params if respond_to?(:search_params) && search_params.present?
           if active_scaffold_config.list.user.user_sorting?
             column, state[:sort_direction] = active_scaffold_config.list.user.sorting.first
@@ -189,12 +180,12 @@ module ActiveScaffold
 
       def display_message(message)
         message = safe_join message, tag(:br) if message.is_a?(Array)
-        if (highlights = active_scaffold_config.highlight_messages)
+        if (highlights = active_scaffold_config.user.highlight_messages)
           message = highlights.inject(message) do |msg, (phrases, highlighter)|
             highlight(msg, phrases, highlighter || {})
           end
         end
-        if (format = active_scaffold_config.timestamped_messages)
+        if (format = active_scaffold_config.user.timestamped_messages)
           format = :short if format == true
           messages = [content_tag(:div, l(Time.current, :format => format), :class => 'timestamp')]
           messages << content_tag(:div, message, :class => 'message-content')

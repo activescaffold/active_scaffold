@@ -97,8 +97,8 @@ module ActiveScaffold::Actions
     end
 
     def scoped_habtm?(column)
-      assoc = column.association if column.association.try :collection?
-      assoc && assoc.habtm? && assoc.scope
+      assoc = column.association if column.association&.collection?
+      assoc&.habtm? && assoc.scope
     end
 
     def get_row(crud_type_or_security_options = :read)
@@ -136,12 +136,15 @@ module ActiveScaffold::Actions
     end
 
     def quoted_select_columns(columns)
-      columns.map { |c| active_scaffold_config.columns[c].try(:field) || c } if columns
+      columns&.map { |c| active_scaffold_config.columns[c]&.field || c }
     end
 
     def do_refresh_list
       params.delete(:id)
-      do_search if respond_to? :do_search, true
+      if respond_to? :do_search, true
+        store_search_params_into_session if search_params.blank?
+        do_search
+      end
       do_list
     end
 

@@ -95,7 +95,7 @@ module ActiveScaffold
         if respond_to?("condition_for_#{column.name}_column")
           return send("condition_for_#{column.name}_column", column, value, like_pattern)
         end
-        return unless column && column.search_sql && value.present?
+        return unless column&.search_sql && value.present?
         search_ui = column.search_ui || column.column_type
         begin
           sql, *values =
@@ -230,7 +230,7 @@ module ActiveScaffold
         unless value.nil? || value.blank?
           if value.is_a? Hash
             time = Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i }) rescue nil
-            time.send(conversion) if time
+            time&.send(conversion)
           elsif value.respond_to?(:strftime)
             if conversion == :to_time
               # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
@@ -250,11 +250,8 @@ module ActiveScaffold
             format, offset = format_for_datetime(column, value)
             format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
             value = translate_days_and_months(value, format) if I18n.locale != :en
-            time = DateTime.strptime(value, format) rescue nil
-            if time
-              time = Time.zone.local_to_utc(time).in_time_zone unless offset
-              time = time.send(conversion) unless conversion == :to_time
-            end
+            time = Time.strptime(value, format) rescue nil
+            time = time&.send(conversion) unless conversion == :to_time
             time
           end
         end
@@ -267,11 +264,7 @@ module ActiveScaffold
         when :integer   then value.to_i rescue value ? 1 : 0
         when :float     then value.to_f
         when :decimal
-          if Rails.version >= '4.2.0'
-            ::ActiveRecord::Type::Decimal.new.type_cast_from_user(value)
-          else
-            ::ActiveRecord::ConnectionAdapters::Column.value_to_decimal(value)
-          end
+          ::ActiveRecord::Type::Decimal.new.type_cast_from_user(value)
         else
           value
         end
@@ -415,7 +408,7 @@ module ActiveScaffold
 
       # create a general-use options array that's compatible with Rails finders
       finder_options = {
-        :reorder => options[:sorting].try(:clause, (grouped_columns_calculations if grouped_search?)),
+        :reorder => options[:sorting]&.clause((grouped_columns_calculations if grouped_search?)),
         :conditions => search_conditions
       }
       if active_scaffold_config.mongoid?
@@ -466,7 +459,7 @@ module ActiveScaffold
 
       query = append_to_query(query, find_options)
       # we build the paginator differently for method- and sql-based sorting
-      pager = if options[:sorting] && options[:sorting].sorts_by_method?
+      pager = if options[:sorting]&.sorts_by_method?
                 ::Paginator.new(count, options[:per_page]) do |offset, per_page|
                   calculate_last_modified(query)
                   sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)

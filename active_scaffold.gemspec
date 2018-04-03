@@ -11,18 +11,20 @@ Gem::Specification.new do |s|
   s.summary = 'Rails 4.x and 5.x versions of ActiveScaffold supporting prototype and jquery'
   s.description = 'Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, leaving you more time to focus on more challenging (and interesting!) problems.'
   s.require_paths = ['lib']
-  s.files = `git ls-files {app,config,lib,public,shoulda_macros,vendor}`.split("\n") + %w[LICENSE CHANGELOG README.md]
+  s.files = `git ls-files {app,config,lib,public,shoulda_macros,vendor}`.split("\n") + %w[LICENSE.md CHANGELOG README.md]
   s.extra_rdoc_files = [
     'README.md'
   ]
   s.license = 'MIT'
   s.test_files = `git ls-files test`.split("\n")
 
-  s.required_ruby_version = '>= 2.0'
+  s.required_ruby_version = '>= 2.3'
 
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
   s.add_runtime_dependency('rails', '>= 4.0.5')
   # Deep Freeze Ruby Objects
+  s.add_runtime_dependency('cow_proxy', '~> 0.2.0')
   s.add_runtime_dependency('ice_nine', '~> 0.11')
+  s.add_runtime_dependency('request_store', '~> 1.3')
 end

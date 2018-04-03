@@ -35,28 +35,13 @@ if Rails.version < '5.0.0'
         left_outer_joins!(*args)
       end
 
-      if Rails.version < '4.1'
-        def build_arel
-          if left_outer_joins_values.empty?
-            super
-          else
-            relation = except(:left_outer_joins)
-            join_dependency = ActiveRecord::Associations::JoinDependency.new(@klass, left_outer_joins_values, [])
-            join_dependency.join_associations.each do |association|
-              relation = association.join_relation(relation)
-            end
-            relation.build_arel
-          end
-        end
-      else
-        def build_arel
-          if left_outer_joins_values.empty?
-            super
-          else
-            relation = except(:left_outer_joins)
-            relation.joins! ActiveRecord::Associations::JoinDependency.new(@klass, left_outer_joins_values, [])
-            relation.build_arel
-          end
+      def build_arel
+        if left_outer_joins_values.empty?
+          super
+        else
+          relation = except(:left_outer_joins)
+          relation.joins! ActiveRecord::Associations::JoinDependency.new(@klass, left_outer_joins_values, [])
+          relation.build_arel
         end
       end
     end

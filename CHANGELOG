@@ -1,3 +1,6 @@
+- Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
+
+= 3.5.0
 - add basic support for Mongoid
 - add support for associations between Mongoid and ActiveRecord with ActiveMongoid
 - use concerns for routes, deprecate as_routes method
@@ -14,12 +17,14 @@
 - add inline_links config to show action, display member links in show action loaded in page
 - add :telephone list_ui displaying formatted phone number with tel: link
 - add global config option to display reason for disabled action, authorized methods must return string with reason, and string is interpreted as not authorized
+- add config.column shortcut to set defaults for column settings with ActiveScaffold.set_defaults
 - stop saving embedded scaffolds info into session, so no more CookieOverflow errors caused by loading many embedded scaffolds
 - add add_association_columns method to config.columns, so columns from has_one or belongs_to association can be added as delegated columns (for list, show, field_search and update_column only)
 - support has_many through singular associations (belongs_to or has_one) in forms
 - remove onsubmit tag in forms and move tinymce related JS to assets
 - use html5 history api when listing is refreshed
 - use date, datetime-local and time html5 inputs for date, datetime and time columns without form_ui
+- add month and week form_ui using html5 inputs
 - avoid browser mixes html and xhr cache for listing requests, using vary header
 - improve in_subform? check for subforms, so only reverse association is hidden (needed when subform class has multiple associations to main form's class)
 - fix select of existing record for nested subform

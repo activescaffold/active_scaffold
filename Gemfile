@@ -41,7 +41,7 @@ group :test do
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
-  gem 'rails', '~> 5.0.1'
+  gem 'rails', '~> 5.1.0'
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
   # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
@@ -49,7 +49,7 @@ group :test do
 
   platforms :jruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'activerecord-jdbcsqlite3-adapter', '>= 5.0.pre1'
+    gem 'activerecord-jdbcsqlite3-adapter'
     # This module allows Ruby programs to interface with the SQLite3 database engine
     gem 'jdbc-sqlite3'
   end

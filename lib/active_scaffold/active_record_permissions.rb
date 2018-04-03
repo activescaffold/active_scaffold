@@ -37,7 +37,7 @@ module ActiveScaffold
         # because the object may change (someone may log in or out). So we give ActiveRecord a proc that ties to the
         # current_user_method on this ApplicationController.
         def assign_current_user_to_models
-          ActiveRecord::Base.current_user_proc = proc { send(ActiveRecordPermissions.current_user_method) }
+          ActiveScaffold::Registry.current_user_proc = proc { send(ActiveRecordPermissions.current_user_method) }
         end
       end
 
@@ -48,18 +48,9 @@ module ActiveScaffold
         end
 
         module ClassMethods
-          # The proc to call that retrieves the current_user from the ApplicationController.
-          def current_user_proc
-            Thread.current[:current_user_proc]
-          end
-
-          def current_user_proc=(proc_value)
-            Thread.current[:current_user_proc] = proc_value
-          end
-
           # Class-level access to the current user
           def current_user
-            ActiveRecord::Base.current_user_proc.call if ActiveRecord::Base.current_user_proc
+            ActiveScaffold::Registry.current_user_proc&.call
           end
         end
 

@@ -8,10 +8,11 @@ Overview
 [![Inline docs](https://inch-ci.org/github/activescaffold/active_scaffold.svg?branch=master)](https://inch-ci.org/github/activescaffold/active_scaffold)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 4.0.5 is supported, ruby >= 2.1 supported, although it should work with ruby >= 2.0.0, it's too old and not tested. Ruby < 2.0.0 won't work.
+ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 4.2.0 is supported, ruby >= 2.3 required.
 
 Branch Details
 --------------
+3-5-stable supports rails >= 4.0.x and ruby >= 2.0.0  
 3-4-stable supports rails >= 3.2.x and ruby >= 1.9.3  
 3-3-stable supports rails >= 3.2.x and ruby >= 1.8  
 rails-3.2 supports Rails 3.1 & 3.2, and is the current source of the 3.2.x line of gems.
@@ -42,6 +43,13 @@ Commands for Rails 5
     
 
 Run the app and visit localhost:3000/users
+
+Threadsafe
+----------
+
+Threadsafe can be enabled calling ActiveScaffold.threadsafe! in an initializer.
+ It should be enabled on app start and it can't be disabled. Threadsafety is a
+ new feature and not well tested yet.  
 
 Configuration
 -------------

@@ -69,22 +69,6 @@ Lint/NonLocalExitFromIterator:
     - 'lib/active_scaffold/config/base.rb'
 
 # Offense count: 18
-Lint/RescueWithoutErrorClass:
-  Exclude:
-    - 'lib/active_scaffold/actions/core.rb'
-    - 'lib/active_scaffold/actions/update.rb'
-    - 'lib/active_scaffold/attribute_params.rb'
-    - 'lib/active_scaffold/bridges/date_picker/ext.rb'
-    - 'lib/active_scaffold/bridges/date_picker/helper.rb'
-    - 'lib/active_scaffold/bridges/file_column/as_file_column_bridge.rb'
-    - 'lib/active_scaffold/bridges/file_column/file_column_helpers.rb'
-    - 'lib/active_scaffold/bridges/record_select/helpers.rb'
-    - 'lib/active_scaffold/config/core.rb'
-    - 'lib/active_scaffold/data_structures/association/active_record.rb'
-    - 'lib/active_scaffold/finder.rb'
-    - 'lib/active_scaffold/helpers/association_helpers.rb'
-    - 'test/data_structures/action_links_test.rb'
-
 # Offense count: 1
 Lint/ShadowedException:
   Exclude:
@@ -103,7 +87,7 @@ Metrics/AbcSize:
 # Offense count: 2
 # Configuration parameters: CountComments, ExcludedMethods.
 Metrics/BlockLength:
-  Max: 57
+  Max: 80
 
 # Offense count: 18
 # Configuration parameters: CountBlocks.
@@ -335,8 +319,6 @@ Style/IfInsideElse:
 # Offense count: 4
 Style/MethodMissing:
   Exclude:
-    - 'lib/active_scaffold/config/core.rb'
-    - 'lib/active_scaffold/configurable.rb'
     - 'lib/active_scaffold/data_structures/action_links.rb'
 
 # Offense count: 8
@@ -372,10 +354,8 @@ Style/RegexpLiteral:
 Style/RescueModifier:
   Exclude:
     - 'lib/active_scaffold/actions/core.rb'
-    - 'lib/active_scaffold/actions/update.rb'
     - 'lib/active_scaffold/bridges/date_picker/ext.rb'
     - 'lib/active_scaffold/bridges/record_select/helpers.rb'
-    - 'lib/active_scaffold/config/core.rb'
     - 'lib/active_scaffold/data_structures/association/active_record.rb'
     - 'lib/active_scaffold/finder.rb'
     - 'lib/active_scaffold/helpers/association_helpers.rb'

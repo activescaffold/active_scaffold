@@ -97,7 +97,7 @@ module ActiveScaffold
         record = options[:object]
 
         # Add some HTML5 attributes for in-browser validation and better user experience
-        if column.required? && (!@disable_required_for_new || scope.nil? || record.try(:persisted?))
+        if column.required? && (!@disable_required_for_new || scope.nil? || record&.persisted?)
           options[:required] = true
         end
         options[:placeholder] = column.placeholder if column.placeholder.present?
@@ -125,7 +125,7 @@ module ActiveScaffold
       def update_columns_options(column, scope, options, force = false)
         record = options[:object]
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
-        form_columns = @main_columns.try(:names) if scope.nil? || subform_controller == controller.class
+        form_columns = @main_columns&.names if scope.nil? || subform_controller == controller.class
         form_columns ||= current_form_columns(record, scope, subform_controller)
         if force || (form_columns && column.update_columns && (column.update_columns & form_columns).present?)
           url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
@@ -189,7 +189,7 @@ module ActiveScaffold
       end
 
       def label_for(column, options)
-        options[:id] unless column.form_ui == :select && column.association.try(:collection?)
+        options[:id] unless column.form_ui == :select && column.association&.collection?
       end
 
       def subform_label(column, hidden)
@@ -205,7 +205,7 @@ module ActiveScaffold
 
       def form_hidden_field(column, record, scope)
         options = active_scaffold_input_options(column, scope)
-        if column.association.try(:collection?)
+        if column.association&.collection?
           associated = record.send(column.name)
           if associated.blank?
             hidden_field_tag options[:name], '', options
@@ -243,7 +243,7 @@ module ActiveScaffold
       end
 
       def column_show_add_existing(column, record = nil)
-        column.allow_add_existing && options_for_association_count(column.association, record) > 0
+        column.allow_add_existing && options_for_association_count(column.association, record).positive?
       end
 
       def column_show_add_new(column, associated, record)
@@ -261,7 +261,7 @@ module ActiveScaffold
       def active_scaffold_grouped_options(column, select_options, optgroup)
         group_column = active_scaffold_config_for(column.association.klass).columns[optgroup]
         group_label = group_column.options[:label_method] if group_column
-        group_label ||= group_column.try(:association) ? :to_label : :to_s
+        group_label ||= group_column&.association ? :to_label : :to_s
         select_options.group_by(&optgroup.to_sym).collect do |group, options|
           [group.send(group_label), options.collect { |r| [r.send(column.options[:label_method] || :to_label), r.id] }]
         end
@@ -287,7 +287,7 @@ module ActiveScaffold
         select_options.unshift(associated) unless associated.nil? || select_options.include?(associated)
 
         method = column.name
-        options.merge! :selected => associated.try(:id), :include_blank => as_(:_select_), :object => record
+        options.merge! :selected => associated&.id, :include_blank => as_(:_select_), :object => record
 
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
@@ -343,7 +343,7 @@ module ActiveScaffold
           link_options['data-update_send_form'] = html_options['data-update_send_form']
           link_options['data-update_send_form_selector'] = html_options['data-update_send_form_selector']
         else
-          scope = html_options[:name].scan(/^record((\[[^\]]*\])*)\[#{column.name}\]/)[0].try(:first) if html_options[:name]
+          scope = html_options[:name].scan(/^record((\[[^\]]*\])*)\[#{column.name}\]/).dig(0, 0) if html_options[:name]
           link_options = update_columns_options(column, scope.presence, link_options, true)
         end
         link_options[:class] = 'refresh-link'
@@ -415,9 +415,9 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_select(column, html_options)
-        if column.association.try :singular?
+        if column.association&.singular?
           active_scaffold_input_singular_association(column, html_options)
-        elsif column.association.try :collection?
+        elsif column.association&.collection?
           active_scaffold_input_plural_association(column, html_options)
         else
           active_scaffold_input_enum(column, html_options)
@@ -449,7 +449,7 @@ module ActiveScaffold
             active_scaffold_enum_options(column, record)
           end
 
-        selected = record.send(column.association.name).try(:id) if column.association
+        selected = record.send(column.association.name)&.id if column.association
         radios = options.map do |option|
           active_scaffold_radio_option(option, selected, column, html_options)
         end
@@ -516,7 +516,7 @@ module ActiveScaffold
       # A color picker
       def active_scaffold_input_color(column, options)
         options = active_scaffold_input_text_options(options)
-        if column.column.try(:null)
+        if column.column&.null
           no_color = options[:object].send(column.name).nil?
           method = no_color ? :hidden_field : :color_field
           html = content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ column.options[:no_color] || :no_color}")
@@ -551,6 +551,14 @@ module ActiveScaffold
 
       def active_scaffold_input_datetime(column, options)
         active_scaffold_text_input :datetime_local_field, column, options
+      end
+
+      def active_scaffold_input_month(column, options)
+        active_scaffold_text_input :month_field, column, options
+      end
+
+      def active_scaffold_input_week(column, options)
+        active_scaffold_text_input :week_field, column, options
       end
 
       ##
@@ -611,7 +619,7 @@ module ActiveScaffold
       end
 
       def column_scope(column, scope = nil, record = nil)
-        if column.association.try(:collection?)
+        if column.association&.collection?
           "#{scope}[#{column.name}][#{record.id || generate_temporary_id(record)}]"
         else
           "#{scope}[#{column.name}]"
@@ -678,7 +686,7 @@ module ActiveScaffold
               only_odd_valid  = validators.any? { |v| v.options[:odd] }
               only_even_valid = validators.any? { |v| v.options[:even] } unless only_odd_valid
               if !only_integer
-                numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column && column.column.scale.to_i > 0
+                numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column&.scale.to_i.positive?
               elsif options[:min] && options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
                 numerical_constraints[:step] = 2
                 numerical_constraints[:min] += 1 if only_odd_valid  && options[:min].even?

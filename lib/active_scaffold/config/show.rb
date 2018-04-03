@@ -25,5 +25,9 @@ module ActiveScaffold::Config
     attr_writer :label
 
     columns_accessor :columns
+
+    UserSettings.class_eval do
+      user_attr :inline_links
+    end
   end
 end

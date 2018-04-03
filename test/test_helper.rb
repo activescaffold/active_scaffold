@@ -5,6 +5,7 @@ require 'mock_app/config/environment'
 require 'rails/test_help'
 require 'minitest/autorun'
 require 'mocha/setup'
+require 'cow_proxy'
 
 require 'minitest/reporters'
 Minitest::Reporters.use!
@@ -17,11 +18,15 @@ def load_schema
 end
 load_schema
 
+ActiveScaffold.threadsafe!
+# avoid freezing defaults so we can stubs in tests for testing with different defaults
+ActiveScaffold::Config::Core.stubs(:freeze)
+
 %w[model_stub const_mocker company].each do |file|
   require File.join(File.dirname(__FILE__), file)
 end
 
-I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../../config/locales/en.yml', __FILE__))['en']
+I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../config/locales/en.yml', __dir__))['en']
 
 # rails 4.0
 unless defined? Minitest::Test

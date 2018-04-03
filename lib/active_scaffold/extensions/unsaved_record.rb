@@ -18,10 +18,8 @@ module ActiveScaffold::UnsavedRecord
   def keeping_errors
     old_errors = errors.dup if errors.present?
     result = yield
-    if old_errors
-      old_errors.each do |attr|
-        old_errors[attr].each { |msg| errors.add(attr, msg) unless errors.added?(attr, msg) }
-      end
+    old_errors&.each do |attr|
+      old_errors[attr].each { |msg| errors.add(attr, msg) unless errors.added?(attr, msg) }
     end
     result && old_errors.blank?
   end

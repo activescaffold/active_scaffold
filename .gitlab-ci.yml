@@ -55,24 +55,14 @@
 .use_jruby_9_1: &use_jruby_9_1
   image: jruby:9.1-alpine
 
-.use_mri_2_2: &use_mri_2_2
-  image: ruby:2.2-alpine
-
 .use_mri_2_3: &use_mri_2_3
   image: ruby:2.3-alpine
 
 .use_mri_2_4: &use_mri_2_4
   image: ruby:2.4-alpine
 
-.use_rails_4_0: &use_rails_4_0
-  <<: *test
-  variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.0.x
-
-.use_rails_4_1: &use_rails_4_1
-  <<: *test
-  variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.1.x
+.use_mri_2_5: &use_mri_2_5
+  image: ruby:2.5-alpine
 
 .use_rails_4_2: &use_rails_4_2
   <<: *test
@@ -80,6 +70,11 @@
     BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.2.x
 
 .use_rails_5_0: &use_rails_5_0
+  <<: *test
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
+
+.use_rails_5_1: &use_rails_5_1
   <<: *test
   variables:
     BUNDLE_GEMFILE: Gemfile
@@ -133,36 +128,8 @@ stages:
   - test
   - deploy
 
-test:rails-4.0:jruby:9.1:
-  <<: *use_jruby_9_1
-  <<: *use_rails_4_0
-
-test:rails-4.0:mri:2.2:
-  <<: *use_mri_2_2
-  <<: *use_rails_4_0
-
-test:rails-4.0:mri:2.3:
-  <<: *use_mri_2_3
-  <<: *use_rails_4_0
-
-test:rails-4.1:jruby:9.1:
-  <<: *use_jruby_9_1
-  <<: *use_rails_4_1
-
-test:rails-4.1:mri:2.2:
-  <<: *use_mri_2_2
-  <<: *use_rails_4_1
-
-test:rails-4.1:mri:2.3:
-  <<: *use_mri_2_3
-  <<: *use_rails_4_1
-
 test:rails-4.2:jruby:9.1:
   <<: *use_jruby_9_1
-  <<: *use_rails_4_2
-
-test:rails-4.2:mri:2.2:
-  <<: *use_mri_2_2
   <<: *use_rails_4_2
 
 test:rails-4.2:mri:2.3:
@@ -173,12 +140,12 @@ test:rails-4.2:mri:2.4:
   <<: *use_mri_2_4
   <<: *use_rails_4_2
 
+test:rails-4.2:mri:2.5:
+  <<: *use_mri_2_5
+  <<: *use_rails_4_2
+
 test:rails-5.0:jruby:9.1:
   <<: *use_jruby_9_1
-  <<: *use_rails_5_0
-
-test:rails-5.0:mri:2.2:
-  <<: *use_mri_2_2
   <<: *use_rails_5_0
 
 test:rails-5.0:mri:2.3:
@@ -188,6 +155,26 @@ test:rails-5.0:mri:2.3:
 test:rails-5.0:mri:2.4:
   <<: *use_mri_2_4
   <<: *use_rails_5_0
+
+test:rails-5.0:mri:2.5:
+  <<: *use_mri_2_5
+  <<: *use_rails_5_0
+
+test:rails-5.1:jruby:9.1:
+  <<: *use_jruby_9_1
+  <<: *use_rails_5_1
+
+test:rails-5.1:mri:2.3:
+  <<: *use_mri_2_3
+  <<: *use_rails_5_1
+
+test:rails-5.1:mri:2.4:
+  <<: *use_mri_2_4
+  <<: *use_rails_5_1
+
+test:rails-5.1:mri:2.5:
+  <<: *use_mri_2_5
+  <<: *use_rails_5_1
 
 variables:
   JRUBY_OPTS: --debug

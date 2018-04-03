@@ -3,7 +3,7 @@ require 'rails/generators/rails/resource/resource_generator'
 
 module ActiveScaffold
   module Generators
-    class ResourceGenerator < Rails::Generators::ResourceGenerator # metagenerator
+    class ResourceGenerator < Rails::Generators::ResourceGenerator
       remove_hook_for :resource_controller
       remove_hook_for :resource_route
       remove_class_option :actions

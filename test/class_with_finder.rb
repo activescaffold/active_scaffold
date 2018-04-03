@@ -18,8 +18,8 @@ class ClassWithFinder
     {}
   end
 
-  def params_hash(v)
-    v
+  def params_hash(value)
+    value
   end
 
   def joins_for_collection; end

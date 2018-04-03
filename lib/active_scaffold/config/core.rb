@@ -60,6 +60,11 @@ module ActiveScaffold::Config
       ActiveScaffold::ActiveRecordPermissions
     end
 
+    # access to default column configuration.
+    def self.column
+      ActiveScaffold::DataStructures::Column
+    end
+
     # columns that should be ignored for every model. these should be metadata columns like change dates, versions, etc.
     # values in this array may be symbols or strings.
     def self.ignore_columns
@@ -82,6 +87,12 @@ module ActiveScaffold::Config
     # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use highlight rails helper
     cattr_accessor :highlight_messages, instance_accessor: false
     @@highlight_messages = nil
+
+    def self.freeze
+      super
+      security.freeze
+      column.freeze
+    end
 
     # instance-level configuration
     # ----------------------------
@@ -182,6 +193,15 @@ module ActiveScaffold::Config
       @highlight_messages = self.class.highlight_messages
     end
 
+    # To be called before freezing
+    def _cache_lazy_values
+      action_links.each(&:name_to_cache) if cache_action_link_urls
+      # ensure member and collection groups are cached, if no custom link has been added
+      action_links.member
+      action_links.collection
+      columns.select(&:sortable?).each(&:sort)
+    end
+
     # To be called after your finished configuration
     def _load_action_columns
       # then, register the column objects
@@ -205,28 +225,57 @@ module ActiveScaffold::Config
       end
     end
 
+    def _setup_action(action)
+      define_singleton_method action do
+        self[action]
+      end
+    end
+
     # configuration routing.
     # we want to route calls named like an activated action to that action's global or local Config class.
     # ---------------------------
     def method_missing(name, *args)
-      @action_configs ||= {}
-      titled_name = name.to_s.camelcase
-      underscored_name = name.to_s.underscore.to_sym
-      klass = "ActiveScaffold::Config::#{titled_name}".constantize rescue nil
-      if klass
-        if @actions.include? underscored_name
-          return @action_configs[underscored_name] ||= klass.new(self)
-        else
-          raise "#{titled_name} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
-        end
-      end
-      super
+      self[name] || super
     end
 
+    def respond_to_missing?(name, include_all = false)
+      self.class.config_class?(name) && @actions.include?(action_name.to_s.underscore.to_sym) || super
+    end
+
+    def [](action_name)
+      klass = self.class.config_class(action_name)
+      return unless klass
+
+      underscored_name = action_name.to_s.underscore.to_sym
+      if @actions.include? underscored_name
+        @action_configs ||= {}
+        @action_configs[underscored_name] ||= klass.new(self)
+      else
+        raise "#{action_name.to_s.camelcase} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
+      end
+    end
+
+    def []=(action_name, action_config)
+      @action_configs ||= {}
+      @action_configs[action_name] = action_config
+    end
+    private :[]=
+
     def self.method_missing(name, *args)
-      klass = "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize rescue nil
-      return klass if @@actions.include?(name.to_s.underscore) && klass
-      super
+      klass = config_class(name) if @@actions.include?(name.to_s.underscore)
+      klass || super
+    end
+
+    def self.config_class(name)
+      "ActiveScaffold::Config::#{name.to_s.camelcase}".constantize if config_class?(name)
+    end
+
+    def self.config_class?(name)
+      ActiveScaffold::Config.const_defined? name.to_s.camelcase
+    end
+
+    def self.respond_to_missing?(name, include_all = false)
+      config_class?(name) && @@actions.include?(name.to_s.underscore) || super
     end
     # some utility methods
     # --------------------
@@ -263,6 +312,55 @@ module ActiveScaffold::Config
     def self.available_frontends
       frontends_dir = Rails.root.join('vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
       Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
+    end
+
+    class UserSettings < UserSettings
+      include ActiveScaffold::Configurable
+      user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
+                :timestamped_messages, :highlight_messages
+
+      def method_missing(name, *args)
+        value = @conf.actions.include?(name) ? @conf.send(name) : super
+        value.is_a?(Base) ? action_user_settings(value) : value
+      end
+
+      def respond_to_missing?(name, include_all = false)
+        super # avoid rubocop warning
+      end
+
+      def action_user_settings(action_config)
+        if action_config.user.nil? && action_config.respond_to?(:new_user_settings)
+          action_config.new_user_settings @storage, @params
+        end
+        action_config.user || action_config
+      end
+
+      def columns
+        @columns ||= UserColumns.new(@conf.columns)
+      end
+    end
+
+    class UserColumns
+      def initialize(columns)
+        @global_columns = columns
+        @columns = {}
+      end
+
+      def [](name)
+        @columns[name.to_sym] ||= CowProxy.wrap @global_columns[name]
+      end
+
+      def method_missing(name, *args)
+        if @global_columns.respond_to?(name, true)
+          @global_columns.send(name, *args)
+        else
+          super
+        end
+      end
+
+      def respond_to_missing?(name, include_all = false)
+        @global_columns.respond_to?(name, include_all) || super
+      end
     end
   end
 end
