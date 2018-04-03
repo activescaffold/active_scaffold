@@ -270,7 +270,7 @@ module ActiveScaffold::Config
           self['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] && @params['sort_direction']
           self['sort'] = nil if @params['sort_direction'] == 'reset'
 
-          if self['sort'] && @conf.core.columns[self['sort'][0]]
+          if self['sort'] && @conf.columns.include?(self['sort'][0])
             sorting = @conf.sorting.clone
             sorting.set(*self['sort'])
             @sorting = sorting
