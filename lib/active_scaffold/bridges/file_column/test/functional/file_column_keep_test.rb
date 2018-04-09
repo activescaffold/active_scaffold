@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '../test_helper.rb')
+require File.expand_path('../test_helper.rb', __dir__)
 
 class DeleteFileColumnTest < MiniTest::Test
   def setup

@@ -251,7 +251,10 @@ module ActiveScaffold
             format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
             value = translate_days_and_months(value, format) if I18n.locale != :en
             time = Time.strptime(value, format) rescue nil
-            time = time&.send(conversion) unless conversion == :to_time
+            if time
+              time = Time.zone.local_to_utc(time).in_time_zone unless offset
+              time = time.send(conversion) unless conversion == :to_time
+            end
             time
           end
         end
