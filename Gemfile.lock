@@ -93,7 +93,7 @@ GEM
     jdbc-sqlite3 (3.20.1)
     json (2.1.0)
     json (2.1.0-java)
-    localeapp (3.0.1)
+    localeapp (3.1.0)
       gli
       i18n (>= 0.7, < 2)
       json (>= 1.7.7)
@@ -116,7 +116,7 @@ GEM
       builder
       minitest (>= 5.0)
       ruby-progressbar
-    mocha (1.4.0)
+    mocha (1.5.0)
       metaclass (~> 0.0.1)
     netrc (0.11.0)
     nio4r (2.3.0)
@@ -154,7 +154,8 @@ GEM
       method_source
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
-    rainbow (3.0.0)
+    rainbow (2.2.2)
+      rake
     rake (12.3.1)
     rdoc (6.0.3)
     request_store (1.4.1)
