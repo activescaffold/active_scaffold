@@ -91,7 +91,7 @@ GEM
       builder
       minitest (>= 5.0)
       ruby-progressbar
-    mocha (1.2.1)
+    mocha (1.5.0)
       metaclass (~> 0.0.1)
     netrc (0.11.0)
     nokogiri (1.7.1)
@@ -195,4 +195,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
