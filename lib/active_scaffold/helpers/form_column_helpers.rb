@@ -216,6 +216,8 @@ module ActiveScaffold
             end
             safe_join fields, ''
           end
+        elsif column.association
+          hidden_field :record, record.send(column.name).try(:id), options.merge(object: record)
         else
           hidden_field :record, column.name, options.merge(object: record)
         end

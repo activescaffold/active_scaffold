@@ -1,4 +1,5 @@
 - Fix set false options for date picker
+- Fix :hidden form_ui for singular associations
 
 = 3.5.0
 - add basic support for Mongoid
