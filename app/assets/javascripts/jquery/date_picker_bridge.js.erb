@@ -7,7 +7,7 @@ jQuery.extend(Object.getPrototypeOf(jQuery.datepicker), {
     for (var attrName in this._defaults) {
       if(this._defaults.hasOwnProperty(attrName)){
         var attrValue = $target.data(attrName.toLowerCase());
-        if (attrValue) {
+        if (attrValue !== undefined) {
           try {
             inlineSettings[attrName] = eval(attrValue);
           } catch (err) {
