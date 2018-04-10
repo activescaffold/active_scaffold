@@ -217,7 +217,7 @@ module ActiveScaffold
             safe_join fields, ''
           end
         elsif column.association
-          hidden_field :record, record.send(column.name)&.id, options.merge(object: record)
+          hidden_field_tag options[:name], record.send(column.name)&.id, options
         else
           hidden_field :record, column.name, options.merge(object: record)
         end
