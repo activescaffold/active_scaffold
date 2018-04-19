@@ -1,5 +1,6 @@
 - Fix set false options for date picker
 - Fix :hidden form_ui for singular associations
+- Fix sorting by columns not included in list for SQL Server
 
 = 3.5.0
 - add basic support for Mongoid
