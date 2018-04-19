@@ -11,5 +11,11 @@ module ActiveScaffold
         true
       end
     end
+
+    module SQLServerAdapter
+      def needs_order_expressions_in_select?
+        true
+      end
+    end
   end
 end

@@ -30,6 +30,9 @@ module ActiveScaffold
           if defined?(PostgreSQLAdapter)
             PostgreSQLAdapter.send :include, ActiveScaffold::ConnectionAdapters::PostgreSQLAdapter
           end
+          if defined?(SQLServerAdapter)
+            SQLServerAdapter.send :include, ActiveScaffold::ConnectionAdapters::SQLServerAdapter
+          end
         end
       end
     end
