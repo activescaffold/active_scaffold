@@ -2,7 +2,9 @@ module ActiveScaffold::Actions
   module Subform
     def edit_associated
       do_edit_associated
-      render :action => 'edit_associated', :formats => [:js], :readonly => @column.association.readonly?
+      respond_to do |format|
+        format.js { render :action => 'edit_associated', :formats => [:js], :readonly => @column.association.readonly? }
+      end
     end
 
     protected
