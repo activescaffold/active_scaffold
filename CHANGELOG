@@ -1,3 +1,6 @@
+= 3.5.x
+- Load chosen on turbolinks:load event
+
 = 3.5.1
 - Fix set false options for date picker
 - Fix :hidden form_ui for singular associations
@@ -20,6 +23,7 @@
 - add inline_links config to show action, display member links in show action loaded in page
 - add :telephone list_ui displaying formatted phone number with tel: link
 - add global config option to display reason for disabled action, authorized methods must return string with reason, and string is interpreted as not authorized
+- add config.column shortcut to set defaults for column settings with ActiveScaffold.set_defaults
 - stop saving embedded scaffolds info into session, so no more CookieOverflow errors caused by loading many embedded scaffolds
 - add add_association_columns method to config.columns, so columns from has_one or belongs_to association can be added as delegated columns (for list, show, field_search and update_column only)
 - support has_many through singular associations (belongs_to or has_one) in forms
