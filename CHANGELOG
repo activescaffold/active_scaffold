@@ -1,5 +1,8 @@
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
 
+= 3.5.x
+- Load chosen on turbolinks:load event
+
 = 3.5.1
 - Fix set false options for date picker
 - Fix :hidden form_ui for singular associations

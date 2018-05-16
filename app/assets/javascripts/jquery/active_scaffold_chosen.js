@@ -8,4 +8,7 @@ jQuery(document).ready(function() {
     }
   });
   jQuery('select.chosen').chosen();
+  jQuery(document).on('turbolinks:load', function($) {
+      jQuery('select.chosen').chosen();
+  });
 });
