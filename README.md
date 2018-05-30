@@ -25,6 +25,10 @@ Added to Gemfile
 
     gem 'active_scaffold'
 
+For rails >= 5.1, add
+
+    gem 'jquery-rails'
+
 Run the following commands
 
     bundle install
