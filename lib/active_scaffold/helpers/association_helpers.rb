@@ -65,7 +65,7 @@ module ActiveScaffold
       def sorted_association_options_find(association, conditions = nil, record = nil)
         options = association_options_find(association, conditions, nil, record)
         column = column_for_association(association, record)
-        unless column && column&.sort&.dig(:sql)
+        unless column&.sort && column.sort&.dig(:sql)
           method = column.options[:label_method] if column
           options = options.sort_by(&(method || :to_label).to_sym)
         end
