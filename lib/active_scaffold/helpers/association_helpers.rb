@@ -32,7 +32,7 @@ module ActiveScaffold
           klass = association_klass_scoped(association, klass, record)
           relation = klass.where(conditions)
           column = column_for_association(association, record)
-          if column && column&.sort&.dig(:sql)
+          if column&.sort && column.sort&.dig(:sql)
             if column.includes
               include_assoc = column.includes.find { |assoc| assoc.is_a?(Hash) && assoc.include?(association.name) }
               relation = relation.includes(include_assoc[association.name]) if include_assoc
