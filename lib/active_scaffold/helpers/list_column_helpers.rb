@@ -253,7 +253,8 @@ module ActiveScaffold
           # load at least one record more, is needed to display '...'
           association.target = association.reader.limit(column.associated_limit + 1).select(column.select_associated_columns || "#{association.klass.quoted_table_name}.*").to_a
         elsif @cache_associations
-          association.target = []
+          # set array with at least one element if size > 0, so blank? or present? works, saving [nil] may cause exceptions
+          association.target = size.to_i.zero? ? [] : [association.klass.new]
         end
       end
 

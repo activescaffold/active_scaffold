@@ -2,6 +2,7 @@
 
 = 3.5.x
 - Load chosen on turbolinks:load event
+- Fix association.blank? when associated_limit=0 and includes=nil
 
 = 3.5.1
 - Fix set false options for date picker
