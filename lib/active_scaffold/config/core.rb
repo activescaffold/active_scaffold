@@ -298,8 +298,8 @@ module ActiveScaffold::Config
 
     def build_action_columns(action, columns)
       action_columns =
-        if val.is_a?(ActiveScaffold::DataStructures::ActionColumns)
-          val.dup
+        if columns.is_a?(ActiveScaffold::DataStructures::ActionColumns)
+          columns.dup
         else
           ActiveScaffold::DataStructures::ActionColumns.new(*columns)
         end
