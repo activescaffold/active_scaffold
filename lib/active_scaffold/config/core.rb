@@ -296,6 +296,18 @@ module ActiveScaffold::Config
       @inherited_view_paths ||= []
     end
 
+    def build_action_columns(action, columns)
+      action_columns =
+        if val.is_a?(ActiveScaffold::DataStructures::ActionColumns)
+          val.dup
+        else
+          ActiveScaffold::DataStructures::ActionColumns.new(*columns)
+        end
+      action_columns.action = action.is_a?(Symbol) ? send(action) : action
+      action_columns.set_columns(self.columns)
+      action_columns
+    end
+
     # must be a class method so the layout doesn't depend on a controller that uses active_scaffold
     # note that this is unaffected by per-controller frontend configuration.
     def self.asset_path(filename, frontend = self.frontend)

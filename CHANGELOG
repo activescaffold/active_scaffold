@@ -1,4 +1,5 @@
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
+- Added active_scaffold_config.build_action_columns method to easily create action columns for custom form actions.
 
 = 3.5.x
 - Load chosen on turbolinks:load event

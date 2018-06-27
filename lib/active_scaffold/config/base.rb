@@ -144,15 +144,7 @@ module ActiveScaffold::Config
     private
 
     def build_action_columns(val)
-      columns =
-        if val.is_a?(ActiveScaffold::DataStructures::ActionColumns)
-          val.dup
-        else
-          ActiveScaffold::DataStructures::ActionColumns.new(*val)
-        end
-      columns.action = self
-      columns.set_columns(@core.columns)
-      columns
+      @core.build_action_columns self, val
     end
 
     def self.columns_accessor(*names, &block)
