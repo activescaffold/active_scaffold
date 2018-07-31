@@ -51,7 +51,7 @@ class PaperclipTest < ActionView::TestCase
     assert_dom_equal '<a href="/system/file" target="_blank">file</a>', active_scaffold_column_paperclip(company, config.columns[:logo])
 
     company.stubs(:logo).returns(stub(:file? => true, :original_filename => 'file', :url => '/system/file', :styles => {:thumbnail => '40x40'}))
-    assert_dom_equal '<a href="/system/file" target="_blank"><img src="/system/file" border="0" alt="File"/></a>', active_scaffold_column_paperclip(company, config.columns[:logo])
+    assert_dom_equal '<a href="/system/file" target="_blank"><img src="/system/file" border="0"/></a>', active_scaffold_column_paperclip(company, config.columns[:logo])
   end
 
   def test_form_ui

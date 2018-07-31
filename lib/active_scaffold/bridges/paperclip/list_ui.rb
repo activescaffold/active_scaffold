@@ -6,7 +6,7 @@ module ActiveScaffold
         return nil unless paperclip.file?
         content =
           if paperclip.styles.include?(ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style)
-            image_tag(paperclip.url(ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style), :border => 0)
+            image_tag(paperclip.url(ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style), :border => 0, :alt => nil)
           else
             paperclip.original_filename
           end
