@@ -2,6 +2,7 @@
 - Added active_scaffold_config.build_action_columns method to easily create action columns for custom form actions.
 
 = 3.5.x
+= 3.5.2
 - Load chosen on turbolinks:load event
 - Fix association.blank? when associated_limit=0 and includes=nil
 
