@@ -55,15 +55,15 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       def skip_statement_cache?
         klass < ActiveScaffold::Tableless ? true : super
       end
+
+      def association_scope
+        @association_scope ||= AssociationScope.scope(self, klass.connection) if klass < ActiveScaffold::Tableless
+        super
+      end
     else
       def skip_statement_cache?(scope)
         klass < ActiveScaffold::Tableless ? true : super
       end
-    end
-
-    def association_scope
-      @association_scope ||= AssociationScope.scope(self, klass.connection) if klass < ActiveScaffold::Tableless
-      super
     end
 
     def target_scope
@@ -108,16 +108,9 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   module RelationExtension
     attr_reader :conditions
 
-    if Rails.version >= '5.0'
-      def initialize(klass, table, predicate_builder, values = {})
-        super
-        @conditions ||= []
-      end
-    else
-      def initialize(klass, table)
-        super
-        @conditions ||= []
-      end
+    def initialize(klass, *)
+      super
+      @conditions ||= []
     end
 
     def initialize_copy(other)
@@ -165,19 +158,35 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     private
 
     def relation
-      args = [self, arel_table]
-      args << predicate_builder if Rails.version >= '5.0.0'
+      args = [self]
+      if Rails.version < '5.2.0'
+        args << arel_table
+        args << predicate_builder if Rails.version >= '5.0.0'
+      end
       ActiveScaffold::Tableless::Relation.new(*args)
+    end
+
+    if Rails.version >= '5.2'
+      def cached_find_by_statement(key, &block)
+        StatementCache.new(key, self, &block)
+      end
     end
   end
 
   class StatementCache
-    def initialize(key)
+    def initialize(key, model = nil)
       @key = key
+      @model = model
     end
 
-    def execute(values, model, connection)
-      model.where(@key => values)
+    if Rails.version < '5.2' # 5.0 and 5.1
+      def execute(values, model, connection)
+        model.where(@key => values)
+      end
+    else
+      def execute(values, connection)
+        @model.where(@key => values)
+      end
     end
   end
 
@@ -188,14 +197,14 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       super
     end
   end
-  if Rails.version >= '5.0'
+  if Rails.version < '5.2' # 5.0 and 5.1
     def self.initialize_find_by_cache
       @find_by_statement_cache = {
         true => Hash.new { |h, k| h[k] = StatementCache.new(k) },
         false => Hash.new { |h, k| h[k] = StatementCache.new(k) }
       }
     end
-  else
+  elsif Rails.version < '5.0' # 4.2.x
     def self.initialize_find_by_cache
       self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
     end
