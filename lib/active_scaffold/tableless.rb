@@ -51,8 +51,14 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   module Tableless
-    def skip_statement_cache?
-      true
+    if Rails.version < '5.2.0'
+      def skip_statement_cache?
+        klass < ActiveScaffold::Tableless ? true : super
+      end
+    else
+      def skip_statement_cache?(scope)
+        klass < ActiveScaffold::Tableless ? true : super
+      end
     end
 
     def association_scope
