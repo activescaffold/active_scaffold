@@ -121,9 +121,9 @@ GEM
     netrc (0.11.0)
     nio4r (2.3.0)
     nio4r (2.3.0-java)
-    nokogiri (1.8.2)
+    nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
-    nokogiri (1.8.2-java)
+    nokogiri (1.8.4-java)
     parallel (1.12.1)
     parser (2.5.0.5)
       ast (~> 2.4.0)
@@ -235,4 +235,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.16.2
+   1.16.3
