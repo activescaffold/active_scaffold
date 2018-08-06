@@ -237,7 +237,7 @@ module ActiveScaffold
       elsif column.type.respond_to? :cast # jruby-jdbc and rails 5
         column.type.cast value
       else
-        cast_type = ActiveModel::Type.lookup column.type
+        cast_type = ActiveRecord::Type.lookup column.type
         cast_type ? cast_type.cast(value) : value
       end
     end
