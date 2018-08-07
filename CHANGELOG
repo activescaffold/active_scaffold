@@ -1,3 +1,5 @@
+- Fix :text fields for rails >= 5.1
+
 = 3.5.2
 - Load chosen on turbolinks:load event
 - Fix association.blank? when associated_limit=0 and includes=nil
