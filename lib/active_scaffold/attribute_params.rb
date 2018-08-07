@@ -323,7 +323,7 @@ module ActiveScaffold
           column.type_cast_from_database(column.default)
         else
           column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
-          cast_type = ActiveModel::Type.lookup column_type
+          cast_type = ActiveRecord::Type.lookup column_type
           cast_type ? cast_type.deserialize(column.default) : column.default
         end
       end
