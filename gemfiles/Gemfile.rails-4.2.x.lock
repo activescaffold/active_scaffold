@@ -4,7 +4,7 @@ PATH
     active_scaffold (3.5.99)
       cow_proxy (~> 0.2.0)
       ice_nine (~> 0.11)
-      rails (>= 4.0.5)
+      rails (>= 4.2.0)
       request_store (~> 1.3)
 
 GEM
@@ -196,4 +196,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.16.2
+   1.16.3
