@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
-  s.add_runtime_dependency('rails', '>= 4.0.5')
+  s.add_runtime_dependency('rails', '>= 4.0.5', '< 5.2.0')
   # Deep Freeze Ruby Objects
   s.add_runtime_dependency('ice_nine', '~> 0.11')
 end
