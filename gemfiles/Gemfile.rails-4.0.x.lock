@@ -3,7 +3,7 @@ PATH
   specs:
     active_scaffold (3.5.2)
       ice_nine (~> 0.11)
-      rails (>= 4.0.5)
+      rails (>= 4.0.5, < 5.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -168,4 +168,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   1.16.2
+   1.16.3
