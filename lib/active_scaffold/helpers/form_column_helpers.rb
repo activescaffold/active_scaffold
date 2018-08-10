@@ -363,7 +363,8 @@ module ActiveScaffold
 
         html =
           if select_options.empty?
-            content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id])
+            content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id]) <<
+              hidden_field_tag("#{options[:name]}[]", '', :id => nil)
           else
             active_scaffold_checkbox_list(column, select_options, associated_options.collect(&:id), options)
           end
