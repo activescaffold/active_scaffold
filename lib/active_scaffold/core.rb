@@ -24,6 +24,25 @@ module ActiveScaffold
       end
     end
 
+    def active_scaffold_session_storage_key(id = nil)
+      id ||= params[:eid] || "#{params[:controller]}#{"_#{nested_parent_id}" if nested?}"
+      "as:#{id}"
+    end
+
+    def active_scaffold_session_storage(id = nil)
+      session_index = active_scaffold_session_storage_key(id)
+      session[session_index] ||= {}
+      session[session_index]
+    end
+
+    def user_settings_storage
+      if self.class.active_scaffold_config.store_user_settings
+        active_scaffold_session_storage
+      else
+        {}
+      end
+    end
+
     module ClassMethods
       def active_scaffold(model_id = nil, &block)
         extend Prefixes
