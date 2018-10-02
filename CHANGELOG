@@ -2,6 +2,7 @@
 - Added active_scaffold_config.build_action_columns method to easily create action columns for custom form actions.
 - Support rails 5.2
 - Fix has_one/belongs_to nested for polymorphic associations, leave rails to build conditions from {assoc_name: record} hash
+- Cast blank into nil for null string columns in conditions_from_params
 
 = 3.5.x
 - Fix :text fields for rails >= 5.1

@@ -248,8 +248,10 @@ module ActiveScaffold::Actions
           conditions[key] =
             if value.is_a?(Array)
               value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
+            elsif value == '' && (not_string || column.null)
+              ActiveScaffold::Core.column_type_cast(column.default, column)
             else
-              value == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(value, column)
+              ActiveScaffold::Core.column_type_cast(value, column)
             end
           conditions[key] = Range.new(*conditions[key]) if range
         end
