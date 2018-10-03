@@ -3,6 +3,7 @@
 - Support rails 5.2
 - Fix has_one/belongs_to nested for polymorphic associations, leave rails to build conditions from {assoc_name: record} hash
 - Cast blank into nil for null string columns in conditions_from_params
+- Support multipart with iframe in process_action_link_action default response
 
 = 3.5.x
 - Fix :text fields for rails >= 5.1

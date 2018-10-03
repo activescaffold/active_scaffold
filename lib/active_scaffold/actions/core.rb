@@ -364,11 +364,15 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_html
-      redirect_to :action => 'index'
+      if params[:iframe] == 'true' # was this an iframe post ?
+        responds_to_parent { action_update_respond_to_js }
+      else
+        redirect_to :action => 'index'
+      end
     end
 
     def action_update_respond_to_js
-      render(:action => 'on_action_update')
+      render :action => 'on_action_update', :formats => [:js], :layout => false
     end
 
     def action_update_respond_to_xml
