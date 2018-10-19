@@ -22,7 +22,6 @@ if (link) link.close();
 <% else %>
   <% flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br) if @record&.errors.present? %>
   <% messages = escape_javascript(render(:partial => 'messages')) %>
-var action_link;
   <% if @action_link&.position %>
 if (link) {
   link.update_flash_messages('<%= messages %>');
