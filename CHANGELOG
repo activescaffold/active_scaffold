@@ -1,6 +1,7 @@
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
 - Added active_scaffold_config.build_action_columns method to easily create action columns for custom form actions.
-- Support rails 5.2
+- Support rails 5.2, drop support for 4.0 and 4.1
+- Require ruby 2.3.1, drop support for 2.0, 2.1 and 2.2.
 - Fix has_one/belongs_to nested for polymorphic associations, leave rails to build conditions from {assoc_name: record} hash
 - Cast blank into nil for null string columns in conditions_from_params
 - Support multipart with iframe in process_action_link_action default response
@@ -58,6 +59,7 @@
 - fix display of association in list when association_limit is nil
 - fix conversion of i18n date and datetime value, some abbr day and month may be equal in some languages
 - fix hidden form_ui for collection associations (has_many, habtm)
+- Drop rails 3.2.x and ruby 1.9 support
 
 = 3.4.43
 - Fix human conditions for date and datetime columns, not using date picker
