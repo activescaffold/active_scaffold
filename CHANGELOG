@@ -1,3 +1,4 @@
+= 3.5.3
 - Fix :text fields for rails >= 5.1
 - Send empty array in collection associations with select form_ui (checkbox or draggable list) when no option is available
 
