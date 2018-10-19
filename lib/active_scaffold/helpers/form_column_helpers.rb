@@ -66,9 +66,7 @@ module ActiveScaffold
           col_class = col_class.join(' ')
         end
         if readonly && !record.new_record? || !record.authorized_for?(:crud_type => crud_type, :column => column.name)
-          options = active_scaffold_input_options(column, scope).except(:name)
-          options[:class] = "#{options[:class]} #{col_class}" if col_class
-          content_tag :span, get_column_value(record, column), options
+          form_attribute(column, record, scope, true, col_class)
         else
           renders_as = column_renders_as(column)
           html = render_column(column, record, renders_as, scope, false, col_class)
