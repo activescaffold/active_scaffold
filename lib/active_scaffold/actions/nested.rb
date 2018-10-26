@@ -90,7 +90,7 @@ module ActiveScaffold::Actions
         elsif nested.association.belongs_to?
           nested_belongs_to_chain
         else # never should get here
-          active_scaffold_config.model
+          raise 'missing condition for nested beginning_of_chain'
         end
       elsif nested? && nested.scope
         nested_parent_record.send(nested.scope)

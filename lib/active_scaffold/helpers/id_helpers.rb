@@ -14,8 +14,8 @@ module ActiveScaffold
         nested_parent_record.id
       end
 
-      def nested_id(controller = params[:controller])
-        "#{nested.parent_scaffold.controller_path}-#{nested_parent_id}-#{controller}" if nested?
+      def nested_id(controller = nil)
+        "#{nested.parent_scaffold.controller_path}-#{nested_parent_id}-#{controller || params[:parent_controller] || params[:controller]}" if nested?
       end
 
       def active_scaffold_id

@@ -6,6 +6,7 @@
 - Cast blank into nil for null string columns in conditions_from_params
 - Support multipart with iframe in process_action_link_action default response
 - Fix hidding and showing columns based on permissions with update_columns on subforms
+- Fix subform crud in subform subgroup, when form is on nested scaffold
 
 = 3.5.3
 - Fix :text fields for rails >= 5.1

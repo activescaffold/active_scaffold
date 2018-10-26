@@ -260,6 +260,10 @@ module ActiveScaffold::Actions
     end
 
     def new_model
+      # ignore nested unrelated to current controller, e.g. adding record in subform inside subform, would create wrong parent_record
+      if nested? && nested.association && nested.association.klass != active_scaffold_config.model
+        return active_scaffold_config.model.new
+      end
       relation = beginning_of_chain
       config = active_scaffold_config_for(relation.klass) if nested? && nested.plural_association?
       column = relation.klass.inheritance_column if config
