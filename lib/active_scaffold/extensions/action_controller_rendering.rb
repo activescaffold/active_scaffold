@@ -5,7 +5,13 @@ module ActiveScaffold
       if self.class.uses_active_scaffold? && params[:adapter] && @rendering_adapter.nil? && request.xhr?
         @rendering_adapter = true # recursion control
         # if we need an adapter, then we render the actual stuff to a string and insert it into the adapter template
-        opts = args.blank? ? {} : args.first
+
+        # NOTE this line fails when integrating with wicked_pdf.  An array with a nil value is passed in and thus fails in the render
+        # opts = args.blank? ? {} : args.first
+
+        # NOTE replaced with this line which will take into account nil entries in array
+        opts = args.any? ? args.first : {}
+
         render :partial => params[:adapter][1..-1],
                :locals => {:payload => render_to_string(opts.merge(:layout => false), &block).html_safe},
                :use_full_path => true, :layout => false, :content_type => :html
