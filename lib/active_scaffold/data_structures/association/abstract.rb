@@ -4,10 +4,14 @@ module ActiveScaffold::DataStructures::Association
       @association = association
     end
     attr_writer :reverse
-    delegate :name, :klass, :foreign_key, :==, to: :@association
+    delegate :name, :foreign_key, :==, to: :@association
 
     def allow_join?
       !polymorphic?
+    end
+
+    def klass
+      @association.klass unless polymorphic?
     end
 
     def belongs_to?
