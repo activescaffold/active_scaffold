@@ -25,28 +25,30 @@ Added to Gemfile
 
     gem 'active_scaffold'
 
-For rails >= 5.1, add
+For rails >= 5.1, add jquery to application.js before rails-ujs (with jquery-rails), or load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
+
+    //= require jquery
 
     gem 'jquery-rails'
 
-Run the following commands
+Run the following commands, for rails 4.2
 
     bundle install
     rails g active_scaffold:install
     bundle exec rake db:create
-    rails g active_scaffold:resource User name:string
+    rails g active_scaffold:resource Model [attrs]
     bundle exec rake db:migrate
     
-Commands for Rails 5
+Or run the following commands, for rails 5
 
     bundle install
     rails g active_scaffold:install
     rails db:create
-    rails g active_scaffold:resource User name:string
+    rails g active_scaffold:resource Model [attrs]
     rails db:migrate
     
 
-Run the app and visit localhost:3000/users
+Run the app and visit localhost:3000/<plural_model>
 
 Threadsafe
 ----------
