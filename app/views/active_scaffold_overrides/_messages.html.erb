@@ -2,6 +2,7 @@
   <% if flash[name].present? %>
     <div class="<%= "#{name}-message message" %>">
       <%= display_message flash[name] %>
+      <% flash.delete name %>
       <% if request.xhr? %>
         <a href="#" class="close" title="<%= as_(:close) %>"><%= as_(:close) %></a>
       <% end %>
