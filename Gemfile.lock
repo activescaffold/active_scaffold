@@ -128,7 +128,7 @@ GEM
     parser (2.5.0.5)
       ast (~> 2.4.0)
     powerpack (0.1.1)
-    rack (2.0.5)
+    rack (2.0.6)
     rack-test (0.8.3)
       rack (>= 1.0, < 3)
     rails (5.1.5)
