@@ -12,7 +12,7 @@
 
 = 3.5.4 (not released yet)
 - Fix chosen form_ui for plural associations
-- Eager load with includes in association options query, if includes has a hash with own association key, see #611
+- Eager load with includes in association options query, if includes has a hash with own association key, see #612
 
 = 3.5.3
 - Fix :text fields for rails >= 5.1
