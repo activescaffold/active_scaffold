@@ -1,4 +1,4 @@
-= 3.5.4 (not released yet)
+= 3.5.4
 - Fix chosen form_ui for plural associations
 - Eager load with includes in association options query, if includes has a hash with own association key, see #612
 
