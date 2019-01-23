@@ -10,7 +10,7 @@
 - Fix JS when rails-ujs is used instead of jquery_ujs (rails >= 5.1)
 - Display flash messages only inside create form, when conf.list.always_show_create is enabled, instead of displaying twice (in form and above list).
 
-= 3.5.4 (not released yet)
+= 3.5.4
 - Fix chosen form_ui for plural associations
 - Eager load with includes in association options query, if includes has a hash with own association key, see #612
 
