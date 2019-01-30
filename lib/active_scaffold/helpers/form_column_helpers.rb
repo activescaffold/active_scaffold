@@ -84,7 +84,7 @@ module ActiveScaffold
 
       # the standard active scaffold options used for textual inputs
       def active_scaffold_input_text_options(options = {})
-        options[:autocomplete] = 'off'
+        options[:autocomplete] ||= 'off'
         options[:class] = "#{options[:class]} text-input".strip
         options
       end
@@ -462,7 +462,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_password(column, options)
-        active_scaffold_text_input :password_field, column, options
+        active_scaffold_text_input :password_field, column, options.reverse_merge(autocomplete: 'new-password')
       end
 
       def active_scaffold_input_textarea(column, options)
