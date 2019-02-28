@@ -29,6 +29,20 @@ module CowProxy
           end
         end
       end
+
+      class ActionLinks < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::ActionLinks)
+        def method_missing(name, *args, &block)
+          __copy_on_write__ if frozen?
+          subgroup =
+            if _instance_variable_defined?("@#{name}")
+              _instance_variable_get("@#{name}")
+            else
+              _instance_variable_set("@#{name}", __wrap__(__getobj__.subgroup(name, args.first)))
+            end
+          yield subgroup if block
+          subgroup
+        end
+      end
     end
   end
 end

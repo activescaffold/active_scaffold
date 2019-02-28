@@ -350,6 +350,10 @@ module ActiveScaffold::Config
       def columns
         @columns ||= UserColumns.new(@conf.columns)
       end
+
+      def action_links
+        @action_links ||= CowProxy.wrap(@conf.action_links)
+      end
     end
 
     class UserColumns
