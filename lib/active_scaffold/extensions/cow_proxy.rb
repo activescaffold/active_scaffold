@@ -24,8 +24,14 @@ module CowProxy
         attr_writer :columns
 
         def each(options = {}, &proc)
-          __getobj__.each do |column|
-            yield @columns[column.name]
+          __getobj__.each(options) do |column|
+            if column.is_a?(::ActiveScaffold::DataStructures::ActionColumns)
+              column = __wrap__(column)
+              column.columns = @columns
+            else
+              column = @columns[column.name]
+            end
+            yield column
           end
         end
       end
