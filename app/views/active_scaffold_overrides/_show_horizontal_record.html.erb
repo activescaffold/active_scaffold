@@ -3,7 +3,7 @@
   columns_groups = []
 %>
 <tr>
-<% columns.each :for => record do |column| -%>
+<% each_column(columns.action, columns: columns, for: record) do |column| -%>
   <%
     if column.respond_to? :each
       columns_groups << column
@@ -14,10 +14,10 @@
   <%= content_tag :td, content_tag(:span, show_column_value(record, column)), :class => "#{column.name}-column #{:numeric if column.number?}" %>
 <% end -%>
 </tr>
-<% columns_groups.each do |columns| %>
+<% columns_groups.each do |columns_group| %>
 <tr>
   <td colspan="<%= columns_length %>">
-<% columns.each do |column| %>
+<% each_column(columns.action, columns: columns_group) do |column| %>
     <%= show_column_value(record, column) %>
 <% end %>
   </td>

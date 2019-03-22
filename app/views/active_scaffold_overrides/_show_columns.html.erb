@@ -1,5 +1,5 @@
 <dl>
-<% columns.each :for => record do |column| %>
+<% each_column(columns.action, columns: columns, for: record) do |column| %>
   <dt><%= show_label(column) -%></dt>
 <% if column.respond_to? :each -%>
   <dd>

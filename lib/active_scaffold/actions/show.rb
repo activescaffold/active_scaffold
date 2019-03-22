@@ -35,7 +35,7 @@ module ActiveScaffold::Actions
     end
 
     def show_columns_names
-      active_scaffold_config.show.columns.names
+      visible_columns_names(active_scaffold_config.show)
     end
 
     # A simple method to retrieve and prepare a record for showing.

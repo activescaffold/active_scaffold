@@ -26,6 +26,7 @@ class ConvertNumbersFormatTest < MiniTest::Test
   include ActiveScaffoldConfigMock
   include ActiveScaffold::AttributeParams
   include ActiveScaffold::Finder
+  include ActiveScaffold::Helpers::ControllerHelpers
 
   def setup
     NumberModel.load_schema! if Rails.version >= '5.0'
@@ -46,7 +47,6 @@ class ConvertNumbersFormatTest < MiniTest::Test
 
     @config = config_for('number_model')
     @config.columns[:number].form_ui = nil
-    @config.create.columns.set_columns @config.columns
   end
 
   def teardown

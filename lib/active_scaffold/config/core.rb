@@ -200,14 +200,9 @@ module ActiveScaffold::Config
       action_links.member
       action_links.collection
       columns.select(&:sortable?).each(&:sort)
-    end
-
-    # To be called after your finished configuration
-    def _load_action_columns
-      # then, register the column objects
       actions.each do |action_name|
         action = send(action_name)
-        action.columns.set_columns(columns) if action.respond_to?(:columns)
+        Array(action.class.columns_collections).each { |method| action.send(method) }
       end
     end
 
@@ -304,7 +299,6 @@ module ActiveScaffold::Config
           ActiveScaffold::DataStructures::ActionColumns.new(*columns)
         end
       action_columns.action = action.is_a?(Symbol) ? send(action) : action
-      action_columns.set_columns(self.columns)
       action_columns
     end
 

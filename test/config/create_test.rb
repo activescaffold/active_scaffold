@@ -2,6 +2,8 @@ require 'test_helper'
 
 module Config
   class CreateTest < MiniTest::Test
+    include ActiveScaffold::Helpers::ControllerHelpers
+
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.create.link
@@ -12,7 +14,7 @@ module Config
     end
 
     def test_default_columns
-      assert_equal %i[a d other_model other_models], @config.create.columns.names
+      assert_equal %i[a d other_model other_models], visible_columns_names(@config.create)
     end
 
     def test_default_options

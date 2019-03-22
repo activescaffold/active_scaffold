@@ -1,10 +1,11 @@
 <%
   columns_hash = {}
+  heading_columns = show_columns_for(associated.first, column, columns_hash)
 %>
 <table>
   <thead>
     <tr>
-<% show_columns_for(associated.first, column, columns_hash).each(:skip_groups => true) do |column| -%>
+<% each_column(heading_columns.action, columns: heading_columns, skip_groups: true) do |column| -%>
       <th><%= show_label(column) %></th>
 <% end -%>
     </tr>

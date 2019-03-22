@@ -15,7 +15,7 @@
        ActiveScaffold.update_inplace_edit('<%= @column_span_id %>','<%= escape_javascript(formatted_value) %>', <%= column_empty?(formatted_value).to_json %>);
     <% if ipe_update == :columns && @column.update_columns && !@column.update_columns.empty?
          @rendered = Set.new([@column.name]) -%>
-         <%= render :partial => 'update_column', :collection => @column.update_columns & active_scaffold_config.list.columns.names, :locals => {:row_id => element_row_id(:action => :list, :id => @record.id)} %>
+         <%= render :partial => 'update_column', :collection => visible_columns_names(active_scaffold_config.list, column_names: @column.update_columns), :locals => {:row_id => element_row_id(:action => :list, :id => @record.id)} %>
     <% end %>
   <% end -%>
 <% else -%>

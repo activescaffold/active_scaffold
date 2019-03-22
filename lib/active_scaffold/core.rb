@@ -61,7 +61,6 @@ module ActiveScaffold
         active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
         active_scaffold_config.configure(&block) if block_given?
         active_scaffold_config._configure_sti unless active_scaffold_config.sti_children.nil?
-        active_scaffold_config._load_action_columns
 
         # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
         # define_attribute_methods is safe to call multiple times since rails 4.0.4
@@ -203,13 +202,9 @@ module ActiveScaffold
       end
 
       def active_scaffold_config_for(klass)
-        controller = active_scaffold_controller_for(klass)
+        active_scaffold_controller_for(klass).active_scaffold_config
       rescue ActiveScaffold::ControllerNotFound
-        config = ActiveScaffold::Config::Core.new(klass)
-        config._load_action_columns
-        config
-      else
-        controller.active_scaffold_config
+        ActiveScaffold::Config::Core.new(klass)
       end
 
       def active_scaffold_controller_for(klass)

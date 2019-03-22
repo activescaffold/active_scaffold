@@ -44,7 +44,6 @@ class ParseDatetimeTest < MiniTest::Test
     I18n.backend.store_translations :es, spanish
 
     @config = config_for('date_time_model')
-    @config.create.columns.set_columns @config.columns
   end
 
   def teardown

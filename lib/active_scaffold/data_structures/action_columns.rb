@@ -52,80 +52,19 @@ module ActiveScaffold::DataStructures
       false
     end
 
-    def names
-      if @columns
-        collect_visible(:flatten => true, &:name)
-      else
-        names_without_auth_check
-      end
-    end
-
-    def names_without_auth_check
+    def to_a
       Array(@set)
     end
 
-    # Redefine the each method to yield actual Column objects.
-    # It will skip constrained and unauthorized columns.
-    #
-    # Options:
-    #  * :flatten - whether to recursively iterate on nested sets. default is false.
-    #  * :for - the record (or class) being iterated over. used for column-level security. default is the class.
-    def each(options = {}, &proc)
-      options[:for] ||= @columns.active_record_class unless @columns.nil?
-      self.unauthorized_columns = []
-      @set.each do |item|
-        unless item.is_a?(ActiveScaffold::DataStructures::ActionColumns) || @columns.nil?
-          item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
-          next if skip_column?(item, options)
-        end
-        if item.is_a? ActiveScaffold::DataStructures::ActionColumns
-          if options[:flatten]
-            item.each(options, &proc)
-          elsif !options[:skip_groups]
-            yield item
-          end
-        else
-          yield item
-        end
-      end
-    end
-
-    def collect_visible(options = {}, &proc)
-      columns = []
-      options[:for] ||= @columns.active_record_class
-      self.unauthorized_columns = []
-      @set.each do |item|
-        unless item.is_a?(ActiveScaffold::DataStructures::ActionColumns) || @columns.nil?
-          item = (@columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, @columns.active_record_class))
-          next if skip_column?(item, options)
-        end
-        if item.is_a?(ActiveScaffold::DataStructures::ActionColumns) && options.key?(:flatten) && options[:flatten]
-          columns += item.collect_visible(options, &proc)
-        else
-          columns << (block_given? ? yield(item) : item)
-        end
-      end
-      columns
-    end
-
-    def skip_column?(column, options)
+    def skip_column?(column_name, options)
       # skip if this matches a constrained column
-      return true if constraint_columns.include?(column.name.to_sym)
+      return true if constraint_columns.include?(column_name.to_sym)
       # skip this field if it's not authorized
-      unless options[:for].authorized_for?(action: options[:action], crud_type: options[:crud_type] || action&.crud_type || :read, column: column.name)
-        unauthorized_columns << column.name.to_sym
+      unless options[:for].authorized_for?(action: options[:action], crud_type: options[:crud_type] || action&.crud_type || :read, column: column_name)
+        unauthorized_columns << column_name.to_sym
         return true
       end
       false
-    end
-
-    # registers a set of column objects (recursively, for all nested ActionColumns)
-    def set_columns(columns)
-      @columns = columns
-      # iterate over @set instead of self to avoid dealing with security queries
-      @set.each do |item|
-        item.set_columns(columns) if item.respond_to? :set_columns
-      end
     end
 
     def action_name
