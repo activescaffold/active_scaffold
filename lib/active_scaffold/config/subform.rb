@@ -17,7 +17,5 @@ module ActiveScaffold::Config
     attr_accessor :layout
 
     columns_accessor :columns, :copy => :update
-
-    undef_method :new_user_settings
   end
 end
