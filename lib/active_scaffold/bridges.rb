@@ -34,7 +34,7 @@ module ActiveScaffold
 
     def self.run_all
       return false if bridges_run
-      bridges.keys.each do |bridge_name|
+      bridges.each_key do |bridge_name|
         self[bridge_name]&.run
       end
       ActiveScaffold::Config::Core.freeze if ActiveScaffold.threadsafe
@@ -43,7 +43,7 @@ module ActiveScaffold
 
     def self.prepare_all
       return false if bridges_prepared
-      bridges.keys.each do |bridge_name|
+      bridges.each_key do |bridge_name|
         bridge = self[bridge_name]
         bridge.prepare if bridge&.install?
       end

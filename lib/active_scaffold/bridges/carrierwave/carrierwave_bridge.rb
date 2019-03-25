@@ -9,7 +9,7 @@ module ActiveScaffold
           update.multipart = true
           create.multipart = true
 
-          model.uploaders.keys.each do |field|
+          model.uploaders.each_key do |field|
             configure_carrierwave_field(field.to_sym)
           end
         end

@@ -128,15 +128,6 @@ Naming/AccessorMethodName:
     - 'lib/active_scaffold/data_structures/set.rb'
     - 'lib/active_scaffold/tableless.rb'
 
-# Offense count: 3
-# Configuration parameters: ExpectMatchingDefinition, Regex, IgnoreExecutableScripts, AllowedAcronyms.
-# AllowedAcronyms: CLI, DSL, ACL, API, ASCII, CPU, CSS, DNS, EOF, GUID, HTML, HTTP, HTTPS, ID, IP, JSON, LHS, QPS, RAM, RHS, RPC, SLA, SMTP, SQL, SSH, TCP, TLS, TTL, UDP, UI, UID, UUID, URI, URL, UTF8, VM, XML, XMPP, XSRF, XSS
-Naming/FileName:
-  Exclude:
-    - 'Gemfile'
-    - 'Rakefile'
-    - 'test/mock_app/Rakefile'
-
 # Offense count: 2
 # Configuration parameters: Blacklist.
 # Blacklist: END, (?-mix:EO[A-Z]{1})
@@ -158,17 +149,6 @@ Naming/PredicateName:
     - 'lib/active_scaffold/data_structures/nested_info.rb'
     - 'test/company.rb'
 
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: AutoCorrect.
-Performance/HashEachMethods:
-  Exclude:
-    - 'lib/active_scaffold/actions/list.rb'
-    - 'lib/active_scaffold/bridges.rb'
-    - 'lib/active_scaffold/bridges/bitfields/bitfields_bridge.rb'
-    - 'lib/active_scaffold/bridges/carrierwave/carrierwave_bridge.rb'
-    - 'lib/active_scaffold/bridges/paperclip/paperclip_bridge.rb'
-
 # Offense count: 14
 # Cop supports --auto-correct.
 Rails/ApplicationRecord:
@@ -187,16 +167,6 @@ Rails/ApplicationRecord:
     - 'test/mock_app/app/models/person.rb'
     - 'test/mock_app/app/models/role.rb'
     - 'test/model_stub.rb'
-
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: Whitelist.
-# Whitelist: find_by_sql
-Rails/DynamicFindBy:
-  Exclude:
-    - 'lib/active_scaffold/data_structures/columns.rb'
-    - 'lib/active_scaffold/tableless.rb'
-    - 'test/data_structures/columns_test.rb'
 
 # Offense count: 19
 Rails/OutputSafety:

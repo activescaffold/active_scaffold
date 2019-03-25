@@ -199,6 +199,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
   if Rails.version < '5.0' # 4.2.x
     def self.initialize_find_by_cache
+      # rubocop:disable Rails/DynamicFindBy
       self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
     end
   elsif Rails.version < '5.2' # 5.0 and 5.1

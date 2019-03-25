@@ -9,7 +9,7 @@ module ActiveScaffold
 
           def generate_delete_helpers(klass)
             file_column_fields(klass).each do |field|
-              klass.send :class_eval, <<-EOF, __FILE__, __LINE__ + 1 unless klass.method_defined?(:"#{field}_with_delete=")
+              klass.send :class_eval, <<-END, __FILE__, __LINE__ + 1 unless klass.method_defined?(:"#{field}_with_delete=")
                 attr_reader :delete_#{field}
 
                 def delete_#{field}=(value)
@@ -19,7 +19,7 @@ module ActiveScaffold
                   # passing nil to the file column causes the file to be deleted.  Don't delete if we just uploaded a file!
                   self.#{field} = nil unless self.#{field}_just_uploaded?
                 end
-              EOF
+              END
             end
           end
 

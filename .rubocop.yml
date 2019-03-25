@@ -19,6 +19,17 @@ Layout/SpaceInsideHashLiteralBraces:
 Lint/UnusedMethodArgument:
   Enabled: false
 
+Naming/FileName:
+  Exclude:
+    - 'Gemfile'
+    - 'Rakefile'
+    - 'test/mock_app/Rakefile'
+
+Naming/PredicateName:
+  NameWhitelist:
+    - has_one
+    - has_many
+
 Metrics/ClassLength:
   Max: 500
   CountComments: false
@@ -32,6 +43,11 @@ Performance/RedundantMerge:
 
 Rails:
   Enabled: true
+
+Rails/DynamicFindBy:
+  Whitelist:
+    - find_by_name
+    - find_by_names
 
 Style/BracesAroundHashParameters:
   EnforcedStyle: context_dependent

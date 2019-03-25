@@ -9,7 +9,7 @@ module ActiveScaffold
           update.multipart = true
           create.multipart = true
 
-          model.attachment_definitions.keys.each do |field|
+          model.attachment_definitions.each_key do |field|
             configure_paperclip_field(field.to_sym)
             # define the "delete" helper for use with active scaffold, unless it's already defined
             ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.generate_delete_helper(model, field)
