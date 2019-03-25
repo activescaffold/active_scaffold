@@ -29,13 +29,13 @@ module ActiveScaffold
         actions = get_actions(ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING, options)
 
         mapper.collection do
-          ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:collection].each do |name, type|
+          ActiveScaffold::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:collection].each do |name, type|
             mapper.match(name, via: type) if actions.include? name
           end
         end
 
         mapper.member do
-          ActionDispatch::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:member].each do |name, type|
+          ActiveScaffold::Routing::ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING[:member].each do |name, type|
             mapper.match(name, via: type) if actions.include? name
           end
         end
@@ -52,13 +52,13 @@ module ActiveScaffold
         actions = get_actions(ACTIVE_SCAFFOLD_CORE_ROUTING, options)
 
         mapper.collection do
-          ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each do |name, type|
+          ActiveScaffold::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:collection].each do |name, type|
             mapper.match(name, via: type) if actions.include? name
           end
         end
 
         mapper.member do
-          ActionDispatch::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each do |name, type|
+          ActiveScaffold::Routing::ACTIVE_SCAFFOLD_CORE_ROUTING[:member].each do |name, type|
             mapper.match(name, via: type) if actions.include? name
           end
           mapper.get 'list', action: :index if mapper.send(:parent_resource).actions.include? :index
