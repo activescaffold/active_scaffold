@@ -18,22 +18,12 @@ if Rails.version < '5.0.0'
       end
       alias left_joins left_outer_joins
 
-      def outer_joins(*args)
-        ActiveSupport::Deprecation.warn 'use left_outer_joins or left_joins which is added to Rails 5.0.0'
-        left_outer_joins(*args)
-      end
-
       def left_outer_joins!(*args)
         self.joins_values += [''] # HACK: for using left_outer_joins in update_all/delete_all
         self.left_outer_joins_values += args
         self
       end
       alias left_joins! left_outer_joins!
-
-      def outer_joins!(*args)
-        ActiveSupport::Deprecation.warn 'use left_outer_joins! or left_joins! which is added to Rails 5.0.0'
-        left_outer_joins!(*args)
-      end
 
       def build_arel
         if left_outer_joins_values.empty?
@@ -48,6 +38,6 @@ if Rails.version < '5.0.0'
   end
   ActiveRecord::Relation.send :include, ActiveScaffold::OuterJoins
   module ActiveRecord::Querying
-    delegate :left_outer_joins, :left_joins, :outer_joins, :to => :all
+    delegate :left_outer_joins, :left_joins, :to => :all
   end
 end
