@@ -14,7 +14,7 @@ module Config
     end
 
     def test_default_columns
-      assert_equal %i[a d other_model other_models], visible_columns_names(@config.create)
+      assert_equal %i[a d other_model other_models], @config.create.columns.visible_columns_names
     end
 
     def test_default_options

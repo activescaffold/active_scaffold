@@ -10,9 +10,9 @@ module Config
 
     def test_copy_columns_from_create
       @config.create.columns = %i[a c d]
-      assert_equal %i[a d], visible_columns_names(@config.create)
+      assert_equal %i[a d], @config.create.columns.visible_columns_names
       @config.update.columns = @config.create.columns
-      assert_equal %i[a c d], visible_columns_names(@config.update)
+      assert_equal %i[a c d], @config.update.columns.visible_columns_names
     end
 
     def test__params_for_columns__returns_all_params

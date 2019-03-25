@@ -9,7 +9,6 @@ module ActiveScaffold
                           :render_parent_action, :nested_singular_association?,
                           :main_form_controller, :build_associated,
                           :generate_temporary_id, :generated_id,
-                          :each_column, :visible_columns, :visible_columns_names,
                           :active_scaffold_config_for
           end
         end
@@ -177,39 +176,6 @@ module ActiveScaffold
             save_record_to_association(record, association.reverse_association, parent_record) # set inverse
           end
         end
-      end
-
-      def each_column(action, options = {}, &proc)
-        columns = action.core.columns
-        action_columns = options[:columns] || action.columns
-        action_columns.unauthorized_columns = []
-        options[:for] ||= columns.active_record_class
-
-        action_columns.each do |item|
-          if item.is_a? ActiveScaffold::DataStructures::ActionColumns
-            if options[:flatten]
-              each_column(action, options.merge(columns: item), &proc)
-            elsif !options[:skip_groups]
-              yield item
-            end
-          else
-            next if action_columns.skip_column?(item, options)
-            yield columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, columns.active_record_class)
-          end
-        end
-      end
-
-      def visible_columns(action, options = {})
-        columns = []
-        each_column(action, options) do |column|
-          columns << column
-        end
-        columns
-      end
-
-      def visible_columns_names(action, options = {})
-        names = visible_columns(action, options).map(&:name)
-        options[:column_names] ? options[:column_names] & names : names
       end
     end
   end

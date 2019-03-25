@@ -76,7 +76,7 @@ module ActiveScaffold::Actions
     end
 
     def create_columns_names
-      visible_columns_names(active_scaffold_config.create)
+      active_scaffold_config.create.columns.visible_columns_names
     end
 
     # A simple method to find and prepare an example new record for the form

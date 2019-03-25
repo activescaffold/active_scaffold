@@ -83,7 +83,7 @@ module ActiveScaffold::Actions
     end
 
     def update_columns_names
-      visible_columns_names(active_scaffold_config.update)
+      active_scaffold_config.update.columns.visible_columns_names
     end
 
     # A simple method to find and prepare a record for editing

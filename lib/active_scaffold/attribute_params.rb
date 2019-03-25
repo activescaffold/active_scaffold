@@ -88,7 +88,7 @@ module ActiveScaffold
         multi_parameter_attributes[column_name] << [k, v]
       end
 
-      each_column(columns.action, columns: columns, for: parent_record, crud_type: crud_type, flatten: true) do |column|
+      columns.each_column(for: parent_record, crud_type: crud_type, flatten: true) do |column|
         begin
           # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
           unless column.params.empty?

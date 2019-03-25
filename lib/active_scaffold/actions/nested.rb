@@ -181,11 +181,11 @@ module ActiveScaffold::Actions::Nested
     end
 
     def add_existing_respond_to_xml
-      render :xml => response_object, :only => visible_columns_names(active_scaffold_config.list), :status => response_status
+      render :xml => response_object, :only => active_scaffold_config.list.columns.visible_columns_names, :status => response_status
     end
 
     def add_existing_respond_to_json
-      render :json => response_object, :only => visible_columns_names(active_scaffold_config.list), :status => response_status
+      render :json => response_object, :only => active_scaffold_config.list.columns.visible_columns_names, :status => response_status
     end
 
     def destroy_existing_respond_to_html
@@ -198,11 +198,11 @@ module ActiveScaffold::Actions::Nested
     end
 
     def destroy_existing_respond_to_xml
-      render :xml => successful? ? '' : response_object, :only => visible_columns_names(active_scaffold_config.list), :status => response_status
+      render :xml => successful? ? '' : response_object, :only => active_scaffold_config.list.columns.visible_columns_names, :status => response_status
     end
 
     def destroy_existing_respond_to_json
-      render :json => successful? ? '' : response_object, :only => visible_columns_names(active_scaffold_config.list), :status => response_status
+      render :json => successful? ? '' : response_object, :only => active_scaffold_config.list.columns.visible_columns_names, :status => response_status
     end
 
     def add_existing_authorized?(record = nil)

@@ -112,11 +112,11 @@ module ActiveScaffold
 
       def current_form_columns(record, scope, subform_controller = nil)
         if scope
-          visible_columns_names(subform_controller.active_scaffold_config.subform)
+          subform_controller.active_scaffold_config.subform.columns.visible_columns_names
         elsif %i[new create edit update render_field].include? action_name.to_sym
           # disable update_columns for inplace_edit (GET render_field)
           return if action_name == 'render_field' && request.get?
-          visible_columns_names(active_scaffold_config.send(record.new_record? ? :create : :update))
+          active_scaffold_config.send(record.new_record? ? :create : :update).columns.visible_columns_names
         end
       end
 
@@ -124,7 +124,7 @@ module ActiveScaffold
         record = options[:object]
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
         if @main_columns && (scope.nil? || subform_controller == controller.class)
-          form_columns = visible_columns_names(@main_columns.action, columns: @main_columns)
+          form_columns = @main_columns.visible_columns_names
         end
         form_columns ||= current_form_columns(record, scope, subform_controller)
         if force || (form_columns && column.update_columns && (column.update_columns & form_columns).present?)

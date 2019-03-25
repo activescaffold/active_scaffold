@@ -5,7 +5,7 @@
 <table>
   <thead>
     <tr>
-<% each_column(heading_columns.action, columns: heading_columns, skip_groups: true) do |column| -%>
+<% heading_columns.each_column(skip_groups: true) do |column| -%>
       <th><%= show_label(column) %></th>
 <% end -%>
     </tr>

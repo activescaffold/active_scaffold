@@ -3,9 +3,9 @@
   columns_groups = []
 %>
 <tr>
-<% each_column(columns.action, columns: columns, for: record) do |column| -%>
+<% columns.each_column(for: record) do |column| -%>
   <%
-    if column.respond_to? :each
+    if column.respond_to? :each_column
       columns_groups << column
       next
     end
@@ -17,7 +17,7 @@
 <% columns_groups.each do |columns_group| %>
 <tr>
   <td colspan="<%= columns_length %>">
-<% each_column(columns.action, columns: columns_group) do |column| %>
+<% columns_group.each_column do |column| %>
     <%= show_column_value(record, column) %>
 <% end %>
   </td>

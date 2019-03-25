@@ -1,7 +1,7 @@
 <dl>
-<% each_column(columns.action, columns: columns, for: record) do |column| %>
+<% columns.each_column(for: record) do |column| %>
   <dt><%= show_label(column) -%></dt>
-<% if column.respond_to? :each -%>
+<% if column.respond_to? :each_column -%>
   <dd>
     <%= render :partial => 'show_columns', :locals => {:columns => column, :record => record} %>
 <% else -%>

@@ -1,5 +1,10 @@
+= 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
 - Added active_scaffold_config.build_action_columns method to easily create action columns for custom form actions.
+- Replaced each(options) with each_column(options) in ActionColumns
+- Replaced collect_visible(options, &proc) with visible_columns(options).map(&proc) in ActionColumns
+- Replaced names with visible_columns_names in ActionColumns
+- Replaced names_without_auth_check with to_a in ActionColumns
 - Support rails 5.2, drop support for 4.0 and 4.1
 - Require ruby 2.3.1, drop support for 2.0, 2.1 and 2.2.
 - Fix has_one/belongs_to nested for polymorphic associations, leave rails to build conditions from {assoc_name: record} hash

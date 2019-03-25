@@ -71,7 +71,7 @@ module ActiveScaffold::Actions
         if respond_to?(:"#{action}_columns", true)
           send(:"#{action}_columns")
         else
-          visible_columns(active_scaffold_config.send(action), flatten: true)
+          active_scaffold_config.send(action).columns.visible_columns(flatten: true)
         end
       joins_cols, preload_cols = columns.select { |c| c.includes.present? }.partition do |col|
         includes_need_join?(col, sorting) && !grouped_search?
@@ -216,7 +216,7 @@ module ActiveScaffold::Actions
     end
 
     def list_columns
-      @list_columns ||= visible_columns(active_scaffold_config.list)
+      @list_columns ||= active_scaffold_config.list.columns.visible_columns
     end
 
     def list_columns_names

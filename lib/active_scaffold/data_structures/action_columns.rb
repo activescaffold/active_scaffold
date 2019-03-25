@@ -67,6 +67,62 @@ module ActiveScaffold::DataStructures
       false
     end
 
+    def each_column(options = {}, &proc)
+      columns = action.core.columns
+      self.unauthorized_columns = []
+      options[:for] ||= columns.active_record_class
+
+      each do |item|
+        if item.is_a? ActiveScaffold::DataStructures::ActionColumns
+          if options[:flatten]
+            item.each_column(options, &proc)
+          elsif !options[:skip_groups]
+            yield item
+          end
+        else
+          next if skip_column?(item, options)
+          yield columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, columns.active_record_class)
+        end
+      end
+    end
+
+    def visible_columns(options = {})
+      columns = []
+      each_column(options) do |column|
+        columns << column
+      end
+      columns
+    end
+
+    def visible_columns_names(options = {})
+      visible_columns(options.reverse_merge(flatten: true)).map(&:name)
+    end
+
+    def each(options = nil, &proc)
+      if options
+        ActiveSupport::Deprecation.warn 'use each_column'
+        each_column(options, &proc)
+      else
+        super(&proc)
+      end
+    end
+
+    def collect_visible(options = {}, &proc)
+      ActiveSupport::Deprecation.warn "use visible_columns#{"(#{options.inspect})" if options.present?}#{'.map(&proc)' if proc}"
+      columns = visible_columns(options)
+      proc ? columns.map(&proc) : columns
+    end
+
+    def names
+      ActiveSupport::Deprecation.warn 'use visible_columns.map(&:name)'
+      visible_columns(flatten: true).map(&:name)
+    end
+
+    def names_without_auth_check
+      ActiveSupport::Deprecation.warn 'use to_a'
+      to_a
+    end
+
     def action_name
       @action.class.name.demodulize.underscore
     end

@@ -40,9 +40,9 @@
   <% end %>
   <% end %>
   <%= content_tag row_tag, :id => tr_id, :class => "association-record#{' association-record-new' if record.new_record?}#{' locked' if locked}" do %>
-  <% each_column(config.subform, for: record.class, crud_type: :read, flatten: flatten) do |column| %>
+  <% config.subform.columns.each_column(for: record.class, crud_type: :read, flatten: flatten) do |column| %>
   <%
-    if column.respond_to? :each
+    if column.respond_to? :each_column
       columns_groups << column
       next
     end
@@ -83,7 +83,7 @@
   <% columns_groups.each do |columns_group| %>
   <%= content_tag row_tag, :class => 'associated-record' do %>
     <%= content_tag column_tag, :colspan => (columns_length if column_tag == :td) do %>
-    <% each_column(config.subform, columns: columns_group, for: record.class, crud_type: :read, flatten: true) do |col| %>
+    <% columns_group.each_column(for: record.class, crud_type: :read, flatten: true) do |col| %>
       <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, true, record) %>
     <% end %>
     <% end %>
