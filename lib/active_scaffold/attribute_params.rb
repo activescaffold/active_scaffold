@@ -52,7 +52,7 @@ module ActiveScaffold
       # update counters on old parents if belongs_to is changed
       value.select(&:persisted?).each do |record|
         key = record.send(column.association.foreign_key)
-        parent_record.class.decrement_counter counter_attr, key if key && key != parent_record.id
+        parent_record.class.decrement_counter counter_attr, key if key && key != parent_record.id # rubocop:disable Rails/SkipsModelValidations
       end
       parent_record.send "#{column.name}=", value if parent_record.persisted?
     end

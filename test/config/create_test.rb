@@ -54,7 +54,7 @@ module Config
       label = 'create new monkeys'
       @config.create.label = label
       assert_equal label, @config.create.label
-      I18n.backend.store_translations :en, :active_scaffold => {:create_new_model => 'Create new %{model}'}
+      I18n.backend.store_translations :en, :active_scaffold => {:create_new_model => 'Create new %<model>s'}
       @config.create.label = :create_new_model
       assert_equal 'Create new Model stub', @config.create.label
     end

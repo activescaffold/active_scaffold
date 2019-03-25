@@ -36,6 +36,9 @@ Rails:
 Style/BracesAroundHashParameters:
   EnforcedStyle: context_dependent
 
+Style/FormatString:
+  EnforcedStyle: percent
+
 Style/HashSyntax:
   Enabled: false
 

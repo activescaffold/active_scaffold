@@ -90,7 +90,6 @@ module ActiveScaffold::DataStructures
           break
         else
           group.delete_group(name)
-          break
         end
       end
     end

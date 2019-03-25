@@ -248,9 +248,9 @@ module ActiveScaffold
     end
 
     def self.column_type_cast(value, column)
-      if defined?(ActiveRecord) && ActiveRecord::ConnectionAdapters::Column === column
+      if defined?(ActiveRecord) && column.is_a?(ActiveRecord::ConnectionAdapters::Column)
         active_record_column_type_cast(value, column)
-      elsif defined?(Mongoid) && Mongoid::Fields::Standard === column
+      elsif defined?(Mongoid) && column.is_a?(Mongoid::Fields::Standard)
         mongoid_column_type_cast(value, column)
       else
         value

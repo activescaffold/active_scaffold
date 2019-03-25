@@ -212,26 +212,6 @@ Rails/OutputSafety:
     - 'lib/active_scaffold/helpers/search_column_helpers.rb'
     - 'test/helpers/list_column_helpers_test.rb'
 
-# Offense count: 1
-# Configuration parameters: Blacklist.
-# Blacklist: decrement!, decrement_counter, increment!, increment_counter, toggle!, touch, update_all, update_attribute, update_column, update_columns, update_counters
-Rails/SkipsModelValidations:
-  Exclude:
-    - 'lib/active_scaffold/attribute_params.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: braces, no_braces, context_dependent
-Style/BracesAroundHashParameters:
-  Exclude:
-    - 'lib/generators/active_scaffold/resource_generator.rb'
-
-# Offense count: 2
-Style/CaseEquality:
-  Exclude:
-    - 'lib/active_scaffold/core.rb'
-
 # Offense count: 84
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
@@ -255,26 +235,6 @@ Style/ConditionalAssignment:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/EmptyCaseCondition:
-  Exclude:
-    - 'lib/active_scaffold/data_structures/column.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: format, sprintf, percent
-Style/FormatString:
-  Exclude:
-    - 'lib/active_scaffold/finder.rb'
-
-# Offense count: 26
-# Configuration parameters: SupportedStyles.
-# SupportedStyles: annotated, template
-Style/FormatStringToken:
-  EnforcedStyle: template
-
 # Offense count: 19
 # Configuration parameters: MinBodyLength.
 Style/GuardClause:
@@ -294,11 +254,6 @@ Style/GuardClause:
     - 'lib/active_scaffold/helpers/form_column_helpers.rb'
     - 'lib/active_scaffold/helpers/list_column_helpers.rb'
     - 'lib/active_scaffold/tableless.rb'
-
-# Offense count: 2
-Style/IdenticalConditionalBranches:
-  Exclude:
-    - 'lib/active_scaffold/data_structures/action_links.rb'
 
 # Offense count: 17
 Style/IfInsideElse:

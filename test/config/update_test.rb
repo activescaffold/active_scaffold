@@ -43,7 +43,7 @@ module Config
       label = 'update new monkeys'
       @config.update.label = label
       assert_equal label, @config.update.label
-      I18n.backend.store_translations :en, :active_scaffold => {:change_model => 'Change %{model}'}
+      I18n.backend.store_translations :en, :active_scaffold => {:change_model => 'Change %<model>s'}
       @config.update.label = :change_model
       assert_equal 'Change Model stub', @config.update.label
       assert_equal 'Change record', @config.update.label('record')
