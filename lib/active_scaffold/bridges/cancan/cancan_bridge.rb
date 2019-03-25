@@ -105,7 +105,7 @@ module ActiveScaffold::Bridges
             crud_type_result = options[:crud_type].nil? ? true : current_ability.can?(options[:crud_type], self)
             action_result = options[:action].nil? ? true : current_ability.can?(options[:action].to_sym, self)
           else
-            crud_type_result, action_result = false, false
+            crud_type_result = action_result = false
           end
           result = (crud_type_result && action_result) || super(options.merge(:reason => nil))
           # return array with nil reason if requested with options[:reason], we don't have reason but caller expects array

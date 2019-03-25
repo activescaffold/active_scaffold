@@ -132,7 +132,8 @@ module ActiveScaffold::Actions
         page = page.pager.last
         active_scaffold_config.list.user.page = page.number
       end
-      @page, @records = page, page.items
+      @page = page
+      @records = page.items
     end
 
     def quoted_select_columns(columns)

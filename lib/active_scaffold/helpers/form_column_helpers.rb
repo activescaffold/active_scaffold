@@ -430,7 +430,8 @@ module ActiveScaffold
       def active_scaffold_radio_option(option, selected, column, radio_options)
         if column.association
           label_method = column.options[:label_method] || :to_label
-          text, value = [option.send(label_method), option.id]
+          text = option.send(label_method)
+          value = option.id
           checked = {:checked => selected == value}
         else
           text, value = active_scaffold_translated_option(column, *option)

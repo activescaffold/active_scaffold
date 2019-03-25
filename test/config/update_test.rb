@@ -33,7 +33,8 @@ module Config
     end
 
     def test_nested_links
-      old, @config.update.nested_links = @config.update.nested_links, true
+      old = @config.update.nested_links
+      @config.update.nested_links = true
       assert @config.update.nested_links
       @config.update.nested_links = old
     end

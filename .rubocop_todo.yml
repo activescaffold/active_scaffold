@@ -316,18 +316,6 @@ Style/IfInsideElse:
     - 'lib/active_scaffold/helpers/search_column_helpers.rb'
     - 'lib/active_scaffold/helpers/show_column_helpers.rb'
 
-# Offense count: 8
-# Cop supports --auto-correct.
-Style/ParallelAssignment:
-  Exclude:
-    - 'lib/active_scaffold/actions/list.rb'
-    - 'lib/active_scaffold/bridges/cancan/cancan_bridge.rb'
-    - 'lib/active_scaffold/delayed_setup.rb'
-    - 'lib/active_scaffold/helpers/form_column_helpers.rb'
-    - 'lib/active_scaffold/helpers/view_helpers.rb'
-    - 'lib/active_scaffold/paginator.rb'
-    - 'test/config/update_test.rb'
-
 # Offense count: 12
 # Cop supports --auto-correct.
 Style/RescueModifier:

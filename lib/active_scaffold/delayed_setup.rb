@@ -17,7 +17,8 @@ module ActiveScaffold
       def config_active_scaffold_delayed
         return unless @active_scaffold_delayed
         @_prefixes = nil # clean prefixes in case is already cached, so our local_prefixes override is picked up
-        block, @active_scaffold_delayed = @active_scaffold_delayed, nil
+        block = @active_scaffold_delayed
+        @active_scaffold_delayed = nil
         block.call
       end
 

@@ -19,7 +19,8 @@ class Paginator
   #     (and the number of items to show per page, for
   #     convenience, if the arity is 2)
   def initialize(count, per_page, &select)
-    @count, @per_page = count, per_page
+    @count = count
+    @per_page = per_page
     unless select
       raise MissingSelectError, 'Must provide block to select data for each page'
     end
@@ -80,7 +81,8 @@ class Paginator
     attr_reader :number, :pager
 
     def initialize(pager, number, &select) #:nodoc:
-      @pager, @number = pager, number
+      @pager = pager
+      @number = number
       @offset = (number - 1) * pager.per_page
       @select = select
     end
