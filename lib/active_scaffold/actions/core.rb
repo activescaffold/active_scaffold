@@ -72,7 +72,7 @@ module ActiveScaffold::Actions
         else
           updated_record_with_column(@column, params.delete(:value), @scope)
         end
-      set_parent(@record) if main_form_controller && @scope
+      setup_parent(@record) if main_form_controller && @scope
       after_render_field(@record, @column)
     end
 
@@ -111,7 +111,7 @@ module ActiveScaffold::Actions
       "#{params[:parent_controller].camelize}Controller"
     end
 
-    def set_parent(record)
+    def setup_parent(record)
       cfg = main_form_controller.active_scaffold_config
       association = cfg.columns[subform_child_association]&.association&.reverse_association
       return if association.nil?

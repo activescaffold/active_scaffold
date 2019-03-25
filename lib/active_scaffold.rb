@@ -84,7 +84,12 @@ module ActiveScaffold
     File.dirname(__FILE__) + '/..'
   end
 
-  def self.set_defaults(&block)
+  def self.set_defaults(&block) # rubocop:disable Naming/AccessorMethodName
+    ActiveSupport::Deprecation.warn 'use ActiveScaffold.defaults'
+    defaults(&block)
+  end
+
+  def self.defaults(&block)
     ActiveScaffold::Config::Core.configure(&block)
   end
 end

@@ -7,16 +7,6 @@
 # versions of RuboCop, may require this file to be generated again.
 
 # Offense count: 18
-Lint/AmbiguousBlockAssociation:
-  Exclude:
-    - 'lib/active_scaffold/helpers/action_link_helpers.rb'
-    - 'lib/active_scaffold/helpers/search_column_helpers.rb'
-    - 'test/bridges/paperclip_test.rb'
-    - 'test/data_structures/action_columns_test.rb'
-    - 'test/data_structures/columns_test.rb'
-    - 'test/misc/configurable_test.rb'
-
-# Offense count: 18
 # Offense count: 1
 Lint/ShadowedException:
   Exclude:
@@ -60,15 +50,10 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Max: 29
 
-# Offense count: 7
+# Offense count: 1
 Naming/AccessorMethodName:
   Exclude:
-    - 'lib/active_scaffold.rb'
-    - 'lib/active_scaffold/actions/core.rb'
-    - 'lib/active_scaffold/actions/field_search.rb'
-    - 'lib/active_scaffold/data_structures/action_columns.rb'
     - 'lib/active_scaffold/data_structures/set.rb'
-    - 'lib/active_scaffold/tableless.rb'
 
 # Offense count: 84
 # Configuration parameters: EnforcedStyle, SupportedStyles.

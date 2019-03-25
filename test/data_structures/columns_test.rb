@@ -41,8 +41,8 @@ class ColumnsTest < MiniTest::Test
 
     # test the collection finders
     found = @columns.find_by_names(:a, :b)
-    assert found.any? { |c| c.name == :a }
-    assert found.any? { |c| c.name == :b }
+    assert(found.any? { |c| c.name == :a })
+    assert(found.any? { |c| c.name == :b })
   end
 
   def test_each

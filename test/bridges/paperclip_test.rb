@@ -16,7 +16,7 @@ class PaperclipTest < ActionView::TestCase
     config = PaperclipCore.new(:company)
     refute config.create.multipart?
     refute config.update.multipart?
-    refute config.columns.any? { |column| column.form_ui == :paperclip }
+    refute(config.columns.any? { |column| column.form_ui == :paperclip })
   end
 
   def test_initialization

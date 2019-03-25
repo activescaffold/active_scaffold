@@ -24,7 +24,7 @@ module ActiveScaffold
         ul_options = record_or_ul_options if ul_options.nil? && record_or_ul_options.is_a?(Hash)
         record = record_or_ul_options unless record_or_ul_options.is_a?(Hash)
         html = content_tag :ul, ul_options do
-          safe_join links.map { |link| content_tag :li, link }
+          safe_join(links.map { |link| content_tag :li, link })
         end
         raw "ActiveScaffold.display_dynamic_action_group('#{get_action_link_id action_link, record}', '#{escape_javascript html}');" # rubocop:disable Rails/OutputSafety
       end

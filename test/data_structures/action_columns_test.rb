@@ -71,12 +71,12 @@ class ActionColumnsTest < MiniTest::Test
     # first, use @columns.add directly
     @c2 = ActiveScaffold::DataStructures::ActionColumns.new
     @columns.add @c2
-    assert @columns.any? { |c| c == @c2 }
+    assert(@columns.any? { |c| c == @c2 })
 
     # then use the shortcut
     @columns.add_subgroup 'foo' do
     end
-    assert @columns.any? { |c| c.respond_to?(:label) && c.label == 'foo' }
+    assert(@columns.any? { |c| c.respond_to?(:label) && c.label == 'foo' })
   end
 
   def test_block_config

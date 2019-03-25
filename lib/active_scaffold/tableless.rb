@@ -83,7 +83,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   module TablelessCollectionAssociation
-    def get_records
+    def get_records # rubocop:disable Naming/AccessorMethodName
       klass < ActiveScaffold::Tableless ? scope.to_a : super
     end
   end
@@ -95,7 +95,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
 
   module TablelessSingularAssociation
-    def get_records
+    def get_records # rubocop:disable Naming/AccessorMethodName
       klass < ActiveScaffold::Tableless ? scope.limit(1).to_a : super
     end
   end

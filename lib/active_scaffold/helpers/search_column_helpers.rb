@@ -165,7 +165,7 @@ module ActiveScaffold
       def active_scaffold_search_null(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
-        select_options.concat ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] }
+        select_options.concat(ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] })
         select_tag(options[:name], options_for_select(select_options, options[:value]), :id => options[:id])
       end
 
@@ -186,7 +186,7 @@ module ActiveScaffold
           select_options.unshift(*comparators)
         end
         if include_null_comparators? column
-          select_options.concat ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] }
+          select_options.concat(ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] })
         end
         select_options
       end
