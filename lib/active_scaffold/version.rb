@@ -1,8 +1,8 @@
 module ActiveScaffold
   module Version
     MAJOR = 3
-    MINOR = 5
-    PATCH = 99
+    MINOR = 6
+    PATCH = '0.pre'
 
     STRING = [MAJOR, MINOR, PATCH].compact.join('.')
   end
