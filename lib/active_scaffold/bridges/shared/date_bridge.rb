@@ -66,7 +66,7 @@ module ActiveScaffold
                                         :class => 'text-input', :id => nil)
             content_tag('span', range_controls.html_safe,
                         :id => "#{options[:id]}_range", :class => 'search-date-range',
-                        :style => (current_search['opt'] == 'RANGE') ? nil : 'display: none')
+                        :style => ('display: none' unless current_search['opt'] == 'RANGE'))
           end
 
           def column_datetime?(column)

@@ -36,7 +36,7 @@ module ActiveScaffold
             :class => 'text-input',
             :id => "#{options[:id]}_#{name}",
             :time => column_datetime?(column) ? true : false,
-            :style => (options[:show].nil? || options[:show]) ? nil : 'display: none'
+            :style => ('display: none' if options[:show] == false) # hide only if asked to hide
           )
         end
       end

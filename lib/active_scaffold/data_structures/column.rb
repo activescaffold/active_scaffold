@@ -214,7 +214,7 @@ module ActiveScaffold::DataStructures
     def search_sql=(value)
       @search_sql =
         if value
-          (value == true || value.is_a?(Proc)) ? value : Array(value)
+          value == true || value.is_a?(Proc) ? value : Array(value)
         else
           value
         end

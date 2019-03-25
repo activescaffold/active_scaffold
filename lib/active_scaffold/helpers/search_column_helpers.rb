@@ -225,7 +225,7 @@ module ActiveScaffold
             content_tag(
               :span,
               safe_join([' - ', send(input_method, "#{options[:name]}[to]", to_value, to_options)]),
-              :id => "#{options[:id]}_between", :class => 'as_search_range_between', :style => (opt_value == 'BETWEEN') ? nil : 'display: none'
+              :id => "#{options[:id]}_between", :class => 'as_search_range_between', :style => ('display: none' unless opt_value == 'BETWEEN')
             )
         end
         content_tag :span, html, :class => 'search_range'
