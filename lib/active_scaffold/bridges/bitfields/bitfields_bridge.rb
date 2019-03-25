@@ -6,7 +6,7 @@ module ActiveScaffold
           super
           return unless model.respond_to?(:bitfields) && model.bitfields.present?
 
-          model.bitfields.each_value do |_, options|
+          model.bitfields.each_value do |options|
             columns << options.keys
             options.each do |column, value|
               columns[column].form_ui = :checkbox
