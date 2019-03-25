@@ -96,17 +96,15 @@ module ActiveScaffold
       #
       # please see the relevant tests for concrete examples.
 
-      field = if association.belongs_to?
-                association.foreign_key
-              else
-                association.klass.primary_key
+      field =
+        if association.belongs_to?
+          association.foreign_key
+        else
+          association.klass.primary_key
         end
 
       table = association.belongs_to? ? active_scaffold_config.model.table_name : association.table_name
-
-      if association.primary_key
-        value = association.klass.find(value).send(association.primary_key)
-      end
+      value = association.klass.find(value).send(association.primary_key) if association.primary_key
 
       if association.polymorphic?
         unless value.is_a?(Array) && value.size == 2

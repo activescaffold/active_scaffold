@@ -16,19 +16,6 @@ Lint/AmbiguousBlockAssociation:
     - 'test/data_structures/columns_test.rb'
     - 'test/misc/configurable_test.rb'
 
-# Offense count: 10
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleAlignWith, SupportedStylesAlignWith, AutoCorrect.
-# SupportedStylesAlignWith: keyword, variable, start_of_line
-Lint/EndAlignment:
-  Exclude:
-    - 'lib/active_scaffold/actions/field_search.rb'
-    - 'lib/active_scaffold/constraints.rb'
-    - 'lib/active_scaffold/data_structures/association/abstract.rb'
-    - 'lib/active_scaffold/data_structures/column.rb'
-    - 'lib/active_scaffold/helpers/list_column_helpers.rb'
-    - 'lib/active_scaffold/responds_to_parent.rb'
-
 # Offense count: 18
 # Offense count: 1
 Lint/ShadowedException:
