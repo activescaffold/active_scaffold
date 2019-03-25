@@ -186,8 +186,8 @@ module ActiveScaffold::Config
     def search_partial
       if @always_show_search == true
         auto_search_partial
-      else
-        @always_show_search.to_s if @core.actions.include? @always_show_search
+      elsif @core.actions.include? @always_show_search
+        @always_show_search.to_s
       end
     end
 

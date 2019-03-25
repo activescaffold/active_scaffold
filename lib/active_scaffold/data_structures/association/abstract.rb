@@ -18,11 +18,11 @@ module ActiveScaffold::DataStructures::Association
       @association.macro == :belongs_to
     end
 
-    def has_one?
+    def has_one? # rubocop:disable Naming/PredicateName
       @association.macro == :has_one
     end
 
-    def has_many?
+    def has_many? # rubocop:disable Naming/PredicateName
       @association.macro == :has_many
     end
 

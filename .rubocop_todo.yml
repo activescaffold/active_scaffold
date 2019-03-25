@@ -55,30 +55,11 @@ Lint/EndAlignment:
     - 'lib/active_scaffold/helpers/list_column_helpers.rb'
     - 'lib/active_scaffold/responds_to_parent.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: runtime_error, standard_error
-Lint/InheritException:
-  Exclude:
-    - 'lib/active_scaffold.rb'
-
-# Offense count: 1
-Lint/NonLocalExitFromIterator:
-  Exclude:
-    - 'lib/active_scaffold/config/base.rb'
-
 # Offense count: 18
 # Offense count: 1
 Lint/ShadowedException:
   Exclude:
     - 'lib/active_scaffold/configurable.rb'
-
-# Offense count: 2
-Lint/UselessAssignment:
-  Exclude:
-    - 'lib/active_scaffold/bridges/shared/date_bridge.rb'
-    - 'lib/active_scaffold/finder.rb'
 
 # Offense count: 256
 Metrics/AbcSize:
@@ -128,60 +109,6 @@ Naming/AccessorMethodName:
     - 'lib/active_scaffold/data_structures/set.rb'
     - 'lib/active_scaffold/tableless.rb'
 
-# Offense count: 2
-# Configuration parameters: Blacklist.
-# Blacklist: END, (?-mix:EO[A-Z]{1})
-Naming/HeredocDelimiterNaming:
-  Exclude:
-    - 'lib/active_scaffold/bridges/file_column/file_column_helpers.rb'
-    - 'lib/active_scaffold/bridges/paperclip/paperclip_bridge_helpers.rb'
-
-# Offense count: 8
-# Configuration parameters: NamePrefix, NamePrefixBlacklist, NameWhitelist.
-# NamePrefix: is_, has_, have_
-# NamePrefixBlacklist: is_, has_, have_
-# NameWhitelist: is_a?
-Naming/PredicateName:
-  Exclude:
-    - 'spec/**/*'
-    - 'lib/active_scaffold/data_structures/association/abstract.rb'
-    - 'lib/active_scaffold/data_structures/association/active_mongoid.rb'
-    - 'lib/active_scaffold/data_structures/nested_info.rb'
-    - 'test/company.rb'
-
-# Offense count: 14
-# Cop supports --auto-correct.
-Rails/ApplicationRecord:
-  Exclude:
-    - 'lib/active_scaffold/tableless.rb'
-    - 'test/company.rb'
-    - 'test/misc/active_record_permissions_test.rb'
-    - 'test/misc/constraints_test.rb'
-    - 'test/misc/convert_numbers_format_test.rb'
-    - 'test/misc/parse_datetime_test.rb'
-    - 'test/mock_app/app/models/address.rb'
-    - 'test/mock_app/app/models/building.rb'
-    - 'test/mock_app/app/models/car.rb'
-    - 'test/mock_app/app/models/contact.rb'
-    - 'test/mock_app/app/models/floor.rb'
-    - 'test/mock_app/app/models/person.rb'
-    - 'test/mock_app/app/models/role.rb'
-    - 'test/model_stub.rb'
-
-# Offense count: 19
-Rails/OutputSafety:
-  Exclude:
-    - 'lib/active_scaffold/bridges/carrierwave/list_ui.rb'
-    - 'lib/active_scaffold/bridges/file_column/form_ui.rb'
-    - 'lib/active_scaffold/bridges/shared/date_bridge.rb'
-    - 'lib/active_scaffold/extensions/action_controller_rendering.rb'
-    - 'lib/active_scaffold/extensions/localize.rb'
-    - 'lib/active_scaffold/helpers/action_link_helpers.rb'
-    - 'lib/active_scaffold/helpers/form_column_helpers.rb'
-    - 'lib/active_scaffold/helpers/list_column_helpers.rb'
-    - 'lib/active_scaffold/helpers/search_column_helpers.rb'
-    - 'test/helpers/list_column_helpers_test.rb'
-
 # Offense count: 84
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
@@ -191,15 +118,6 @@ Style/ClassAndModuleChildren:
 # Offense count: 72
 Style/ClassVars:
   Enabled: false
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, SingleLineConditionsOnly, IncludeTernaryExpressions.
-# SupportedStyles: assign_to_condition, assign_inside_condition
-Style/ConditionalAssignment:
-  Exclude:
-    - 'lib/active_scaffold/data_structures/column.rb'
-    - 'lib/active_scaffold/helpers/search_column_helpers.rb'
 
 # Offense count: 190
 Style/Documentation:
@@ -224,22 +142,6 @@ Style/GuardClause:
     - 'lib/active_scaffold/helpers/form_column_helpers.rb'
     - 'lib/active_scaffold/helpers/list_column_helpers.rb'
     - 'lib/active_scaffold/tableless.rb'
-
-# Offense count: 17
-Style/IfInsideElse:
-  Exclude:
-    - 'lib/active_scaffold/actions/create.rb'
-    - 'lib/active_scaffold/actions/update.rb'
-    - 'lib/active_scaffold/bridges/shared/date_bridge.rb'
-    - 'lib/active_scaffold/config/list.rb'
-    - 'lib/active_scaffold/data_structures/action_links.rb'
-    - 'lib/active_scaffold/data_structures/column.rb'
-    - 'lib/active_scaffold/finder.rb'
-    - 'lib/active_scaffold/helpers/form_column_helpers.rb'
-    - 'lib/active_scaffold/helpers/list_column_helpers.rb'
-    - 'lib/active_scaffold/helpers/pagination_helpers.rb'
-    - 'lib/active_scaffold/helpers/search_column_helpers.rb'
-    - 'lib/active_scaffold/helpers/show_column_helpers.rb'
 
 # Offense count: 12
 # Cop supports --auto-correct.

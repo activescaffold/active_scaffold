@@ -16,40 +16,38 @@ module ActiveScaffold
         # first, check if the dev has created an override for this specific field
         if (method = override_form_field(column))
           send(method, record, options)
+
         # second, check if the dev has specified a valid form_ui for this column
         elsif column.form_ui && (method = override_input(column.form_ui))
           send(method, column, options)
-        # fallback: we get to make the decision
-        else
-          if column.association
-            if column.form_ui.nil?
-              # its an association and nothing is specified, we will assume form_ui :select
-              active_scaffold_input_select(column, options)
-            else
-              # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
-              raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
-            end
-          elsif column.virtual?
-            options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
-            active_scaffold_input_virtual(column, options)
 
-          else # regular model attribute column
-            # if we (or someone else) have created a custom render option for the column type, use that
-            if (method = override_input(column.column.type))
-              send(method, column, options)
-            # final ultimate fallback: use rails' generic input method
-            else
-              # for textual fields we pass different options
-              text_types = %i[text string integer float decimal]
-              options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
-              if column.column.type == :string && options[:maxlength].blank?
-                options[:maxlength] = column.column.limit
-                options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
-              end
-              options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
-              text_field(:record, column.name, options.merge(column.options).except(:format))
-            end
+        elsif column.association
+          if column.form_ui.nil?
+            # its an association and nothing is specified, we will assume form_ui :select
+            active_scaffold_input_select(column, options)
+          else
+            # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
+            raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
           end
+
+        elsif column.virtual?
+          options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
+          active_scaffold_input_virtual(column, options)
+
+        elsif (method = override_input(column.column.type)) # regular model attribute column
+          # if we (or someone else) have created a custom render option for the column type, use that
+          send(method, column, options)
+
+        else # final ultimate fallback: use rails' generic input method
+          # for textual fields we pass different options
+          text_types = %i[text string integer float decimal]
+          options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
+          if column.column.type == :string && options[:maxlength].blank?
+            options[:maxlength] = column.column.limit
+            options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
+          end
+          options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
+          text_field(:record, column.name, options.merge(column.options).except(:format))
         end
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
@@ -179,12 +177,12 @@ module ActiveScaffold
         else
           field = active_scaffold_input_for column, scope, column_options
         end
+        field << loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns
+        field << content_tag(:span, column.description, :class => 'description') if column.description.present?
 
         content_tag :dl, attributes do
-          %(<dt>#{label_tag label_for(column, column_options), column.label}</dt><dd>#{field}
-#{loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns}
-#{content_tag :span, column.description, :class => 'description' if column.description.present?}
-</dd>).html_safe
+          content_tag(:dt, label_tag(label_for(column, column_options), column.label)) <<
+            content_tag(:dd, field)
         end
       end
 
@@ -385,11 +383,11 @@ module ActiveScaffold
         label_method = column.options[:label_method] || :to_label
         html = hidden_field_tag("#{options[:name]}[]", '', :id => nil)
         html << content_tag(:ul, options.merge(:class => "#{options[:class]} checkbox-list#{' draggable-lists' if column.options[:draggable_lists]}")) do
-          content = ''.html_safe
+          content = []
           select_options.each_with_index do |option, i|
             content << active_scaffold_checkbox_option(option, label_method, associated_ids, :name => "#{options[:name]}[]", :id => "#{options[:id]}_#{i}_id")
           end
-          content
+          safe_join content
         end
         html
       end
@@ -519,16 +517,17 @@ module ActiveScaffold
 
       # A color picker
       def active_scaffold_input_color(column, options)
+        html = []
         options = active_scaffold_input_text_options(options)
         if column.column&.null
           no_color = options[:object].send(column.name).nil?
           method = no_color ? :hidden_field : :color_field
-          html = content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ column.options[:no_color] || :no_color}")
+          html << content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ column.options[:no_color] || :no_color}")
         else
           method = :color_field
-          html = ''.html_safe
         end
         html << send(method, :record, column.name, options.merge(column.options).except(:format, :no_color))
+        safe_join html
       end
 
       #
@@ -641,7 +640,7 @@ module ActiveScaffold
           select_options = sorted_association_options_find(nested.association, nil, record)
           select_options ||= active_scaffold_config.model.all
           select_options = options_from_collection_for_select(select_options, :id, :to_label)
-          select_tag 'associated_id', ('<option value="">' + as_(:_select_) + '</option>' + select_options).html_safe unless select_options.empty?
+          select_tag 'associated_id', (content_tag(:option, as_(:_select_), value: '') + select_options) unless select_options.empty?
         end
       end
 

@@ -25,11 +25,6 @@ Naming/FileName:
     - 'Rakefile'
     - 'test/mock_app/Rakefile'
 
-Naming/PredicateName:
-  NameWhitelist:
-    - has_one
-    - has_many
-
 Metrics/ClassLength:
   Max: 500
   CountComments: false
@@ -43,6 +38,10 @@ Performance/RedundantMerge:
 
 Rails:
   Enabled: true
+
+Rails/ApplicationRecord:
+  Exclude:
+    - 'test/**/*'
 
 Rails/DynamicFindBy:
   Whitelist:

@@ -38,23 +38,19 @@ module ActiveScaffold::Actions
         responds_to_parent do
           render :action => 'on_create', :formats => [:js], :layout => false
         end
-      else
-        if successful?
-          flash[:info] = as_(:created_model, :model => ERB::Util.h(@record.to_label))
-          if (action = active_scaffold_config.create.action_after_create)
-            redirect_to params_for(:action => action, :id => @record.to_param)
-          elsif params[:dont_close]
-            redirect_to params_for(:action => 'new')
-          else
-            return_to_main
-          end
+      elsif successful?
+        flash[:info] = as_(:created_model, :model => ERB::Util.h(@record.to_label))
+        if (action = active_scaffold_config.create.action_after_create)
+          redirect_to params_for(:action => action, :id => @record.to_param)
+        elsif params[:dont_close]
+          redirect_to params_for(:action => 'new')
         else
-          if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
-            list
-          else
-            render(:action => 'create')
-          end
+          return_to_main
         end
+      elsif active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
+        list
+      else
+        render(:action => 'create')
       end
     end
 

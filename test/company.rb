@@ -53,11 +53,11 @@ class Company < ActiveRecord::Base
     end
   end
 
-  def self.has_many(association_id, options = {})
+  def self.has_many(association_id, options = {}) # rubocop:disable Naming/PredicateName
     create_reflection(:has_many, association_id, nil, options, self)
   end
 
-  def self.has_one(association_id, options = {})
+  def self.has_one(association_id, options = {}) # rubocop:disable Naming/PredicateName
     create_reflection(:has_one, association_id, nil, options, self)
   end
 

@@ -10,7 +10,7 @@ module ActiveScaffold
         else
           value = nil
         end
-        value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
+        value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6 # rubocop:disable Rails/OutputSafety
         value
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
@@ -368,8 +368,8 @@ module ActiveScaffold
             :ie_mode => :inline_checkbox,
             :ie_url => url_for(params_for(:action => 'mark', :id => '__id__'))
           }
-        else
-          tag_options[:data] = inplace_edit_data(column) if column.inplace_edit
+        elsif column.inplace_edit
+          tag_options[:data] = inplace_edit_data(column)
         end
         content_tag(:th, column_heading_value(column, sorting, sort_direction) + inplace_edit_control(column), tag_options)
       end

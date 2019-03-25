@@ -497,11 +497,12 @@ module ActiveScaffold::DataStructures
     end
 
     def initialize_sort
-      if column && !tableless?
-        self.sort = {:sql => field}
-      else
-        self.sort = false
-      end
+      self.sort =
+        if column && !tableless?
+          {:sql => field}
+        else
+          false
+        end
     end
 
     def initialize_search_sql

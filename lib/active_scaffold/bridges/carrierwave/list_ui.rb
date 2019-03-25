@@ -7,7 +7,7 @@ module ActiveScaffold
         thumbnail_style = ActiveScaffold::Bridges::Carrierwave::CarrierwaveBridgeHelpers.thumbnail_style
         content =
           if carrierwave.versions.keys.include?(thumbnail_style)
-            image_tag(carrierwave.url(thumbnail_style), :border => 0).html_safe
+            image_tag(carrierwave.url(thumbnail_style), :border => 0)
           else
             record.send(record.send(:_mounter, column.name).send(:serialization_column))
           end

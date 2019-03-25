@@ -1,3 +1,4 @@
+# rubocop:disable Rails/ApplicationRecord
 class ActiveScaffold::Tableless < ActiveRecord::Base
   class AssociationScope < ActiveRecord::Associations::AssociationScope
     INSTANCE = create

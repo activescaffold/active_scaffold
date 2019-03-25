@@ -21,8 +21,8 @@ module ActiveScaffold
         start_number = 1 if start_number <= 0
         if current_page.pager.infinite?
           offsets = [20, 100]
-        else
-          end_number = current_page.pager.last.number if end_number > current_page.pager.last.number
+        elsif end_number > current_page.pager.last.number
+          end_number = current_page.pager.last.number
         end
 
         html = []

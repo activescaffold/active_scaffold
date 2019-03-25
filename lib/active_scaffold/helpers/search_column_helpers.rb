@@ -29,25 +29,22 @@ module ActiveScaffold
           send(method, record, options)
 
         # fallback: we get to make the decision
-        else
-          if column.association || column.virtual?
-            active_scaffold_search_text(column, options)
+        elsif column.association || column.virtual?
+          active_scaffold_search_text(column, options)
 
-          else # regular model attribute column
-            # if we (or someone else) have created a custom render option for the column type, use that
-            if (method = override_search(column.column.type))
-              send(method, column, options)
-            # if we (or someone else) have created a custom render option for the column type, use that
-            elsif (method = override_input(column.column.type))
-              send(method, column, options)
-            # final ultimate fallback: use rails' generic input method
-            else
-              # for textual fields we pass different options
-              text_types = %i[text string integer float decimal]
-              options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
-              text_field(:record, column.name, options.merge(column.options))
-            end
-          end
+        elsif (method = override_search(column.column.type))
+          # if we (or someone else) have created a custom render option for the column type, use that
+          send(method, column, options)
+
+        elsif (method = override_input(column.column.type))
+          # if we (or someone else) have created a custom render option for the column type, use that
+          send(method, column, options)
+
+        else # final ultimate fallback: use rails' generic input method
+          # for textual fields we pass different options
+          text_types = %i[text string integer float decimal]
+          options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
+          text_field(:record, column.name, options.merge(column.options))
         end
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
@@ -61,8 +58,10 @@ module ActiveScaffold
 
       def search_attribute(column, record)
         column_options = active_scaffold_search_options(column).merge(:object => record)
-        field = active_scaffold_search_for column, column_options
-        %(<dl><dt>#{label_tag search_label_for(column, column_options), search_column_label(column, record)}</dt><dd>#{field}</dd></dl>).html_safe
+        content_tag :dl do
+          content_tag(:dt, label_tag(search_label_for(column, column_options), search_column_label(column, record))) <<
+            content_tag(:dd, active_scaffold_search_for(column, column_options))
+        end
       end
 
       def search_label_for(column, options)
@@ -205,11 +204,7 @@ module ActiveScaffold
         opt_value, from_value, to_value = field_search_params_range_values(column)
 
         select_options = active_scaffold_search_range_comparator_options(column)
-        if active_scaffold_search_range_string?(column)
-          text_field_size = 15
-        else
-          text_field_size = 10
-        end
+        text_field_size = active_scaffold_search_range_string?(column) ? 15 : 10
         opt_value ||= select_options[0][1]
 
         from_value = controller.class.condition_value_for_numeric(column, from_value)

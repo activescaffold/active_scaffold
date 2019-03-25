@@ -12,7 +12,7 @@ module ActiveScaffold
             tags << active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
             tags << active_scaffold_search_date_bridge_numeric_tag(column, options, current_search)
             tags << active_scaffold_search_date_bridge_range_tag(column, options, current_search)
-            safe_join tags, '&nbsp;'.html_safe
+            safe_join tags, '&nbsp;'.html_safe # rubocop:disable Rails/OutputSafety
           end
 
           def active_scaffold_search_date_bridge_comparator_options(column)
@@ -25,13 +25,13 @@ module ActiveScaffold
           end
 
           def active_scaffold_search_date_bridge_numeric_tag(column, options, current_search)
-            numeric_controls =
-              '' <<
-              active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'from') <<
-              content_tag(:span, (' - ' + active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'to')).html_safe,
+            numeric_controls = [
+              active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'from'),
+              content_tag(:span, safe_join([' - ', active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'to')]),
                           :id => "#{options[:id]}_between", :class => 'as_search_range_between',
                           :style => current_search['opt'] == 'BETWEEN' ? nil : 'display: none')
-            content_tag('span', numeric_controls.html_safe,
+            ]
+            content_tag('span', safe_join(numeric_controls),
                         :id => "#{options[:id]}_numeric", :class => 'search-date-numeric',
                         :style => ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(current_search['opt']) ? nil : 'display: none')
           end
@@ -44,12 +44,13 @@ module ActiveScaffold
           end
 
           def active_scaffold_date_bridge_trend_tag(column, options, trend_options)
-            trend_controls =
-              text_field_tag("#{options[:name]}[number]", trend_options[:number_value], :class => 'text-input', :size => 10, :autocomplete => 'off') << ' ' <<
+            trend_controls = [
+              text_field_tag("#{options[:name]}[number]", trend_options[:number_value], :class => 'text-input', :size => 10, :autocomplete => 'off'),
               select_tag("#{options[:name]}[unit]",
                          options_for_select(active_scaffold_search_date_bridge_trend_units(column), trend_options[:unit_value]),
                          :class => 'text-input')
-            content_tag('span', trend_controls.html_safe,
+            ]
+            content_tag('span', safe_join(trend_controls, ' '),
                         :id => "#{options[:id]}_trend", :class => 'search-date-trend',
                         :style => trend_options[:show] ? nil : 'display: none')
           end
@@ -61,10 +62,11 @@ module ActiveScaffold
           end
 
           def active_scaffold_search_date_bridge_range_tag(column, options, current_search)
+            values = ActiveScaffold::Finder::DATE_RANGES.collect { |range| [as_(range.downcase.to_sym), range] }
             range_controls = select_tag("#{options[:name]}[range]",
-                                        options_for_select(ActiveScaffold::Finder::DATE_RANGES.collect { |range| [as_(range.downcase.to_sym), range] }, current_search['range']),
+                                        options_for_select(values, current_search['range']),
                                         :class => 'text-input', :id => nil)
-            content_tag('span', range_controls.html_safe,
+            content_tag('span', range_controls,
                         :id => "#{options[:id]}_range", :class => 'search-date-range',
                         :style => ('display: none' unless current_search['opt'] == 'RANGE'))
           end
@@ -80,7 +82,7 @@ module ActiveScaffold
             when 'RANGE'
               range_type, range = value['range'].downcase.split('_')
               format = active_scaffold_human_condition_date_bridge_range_format(range_type, range)
-              from, to = controller.class.date_bridge_from_to(column, value)
+              from, = controller.class.date_bridge_from_to(column, value)
               "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value['range'].downcase).downcase} (#{I18n.l(from, :format => format)})"
             when 'PAST', 'FUTURE'
               from, to = controller.class.date_bridge_from_to(column, value)
@@ -118,12 +120,10 @@ module ActiveScaffold
 
               if column.search_sql.is_a? Proc
                 column.search_sql.call(from_value, to_value, operator)
+              elsif operator.nil?
+                ['%<search_sql>s BETWEEN ? AND ?', from_value.to_s(:db), to_value.to_s(:db)] unless from_value.nil? || to_value.nil?
               else
-                if operator.nil?
-                  ['%<search_sql>s BETWEEN ? AND ?', from_value.to_s(:db), to_value.to_s(:db)] unless from_value.nil? || to_value.nil?
-                else
-                  ["%<search_sql>s #{value['opt']} ?", from_value.to_s(:db)] unless from_value.nil?
-                end
+                ["%<search_sql>s #{value['opt']} ?", from_value.to_s(:db)] unless from_value.nil?
               end
             end
 

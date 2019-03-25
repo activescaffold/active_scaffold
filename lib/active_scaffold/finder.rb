@@ -101,12 +101,10 @@ module ActiveScaffold
           sql, *values =
             if search_ui && respond_to?("condition_for_#{search_ui}_type")
               send("condition_for_#{search_ui}_type", column, value, like_pattern)
+            elsif column.search_sql.instance_of? Proc
+              column.search_sql.call(value)
             else
-              if column.search_sql.instance_of? Proc
-                column.search_sql.call(value)
-              else
-                condition_for_search_ui(column, value, like_pattern, search_ui)
-              end
+              condition_for_search_ui(column, value, like_pattern, search_ui)
             end
           return nil unless sql
 

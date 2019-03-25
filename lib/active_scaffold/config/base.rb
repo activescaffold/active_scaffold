@@ -173,7 +173,7 @@ module ActiveScaffold::Config
           end
         end
 
-        return if method_defined? name
+        next if method_defined? name
         define_method name do
           unless instance_variable_defined?(var) # lazy evaluation
             action, columns = options[:copy] if options[:copy]

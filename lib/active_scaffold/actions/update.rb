@@ -41,19 +41,17 @@ module ActiveScaffold::Actions
         responds_to_parent do
           render :action => 'on_update', :formats => [:js], :layout => false
         end
-      else # just a regular post
-        if successful?
-          message = as_(:updated_model, :model => ERB::Util.h(@record.to_label))
-          if params[:dont_close]
-            flash.now[:info] = message
-            render(:action => 'update')
-          else
-            flash[:info] = message
-            return_to_main
-          end
-        else
+      elsif successful? # just a regular post
+        message = as_(:updated_model, :model => ERB::Util.h(@record.to_label))
+        if params[:dont_close]
+          flash.now[:info] = message
           render(:action => 'update')
+        else
+          flash[:info] = message
+          return_to_main
         end
+      else
+        render(:action => 'update')
       end
     end
 

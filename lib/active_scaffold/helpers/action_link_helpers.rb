@@ -26,7 +26,7 @@ module ActiveScaffold
         html = content_tag :ul, ul_options do
           safe_join links.map { |link| content_tag :li, link }
         end
-        raw "ActiveScaffold.display_dynamic_action_group('#{get_action_link_id action_link, record}', '#{escape_javascript html}');"
+        raw "ActiveScaffold.display_dynamic_action_group('#{get_action_link_id action_link, record}', '#{escape_javascript html}');" # rubocop:disable Rails/OutputSafety
       end
 
       def display_action_links(action_links, record, options, &block)

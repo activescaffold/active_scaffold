@@ -53,8 +53,8 @@ module ActiveScaffold::DataStructures
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
           collected = item[val]
           links << collected unless collected.nil?
-        else
-          links << item if item.action.to_s == val.to_s
+        elsif item.action.to_s == val.to_s
+          links << item
         end
       end
       links.first
@@ -66,8 +66,8 @@ module ActiveScaffold::DataStructures
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
           collected = item.find_duplicate(link)
           links << collected unless collected.nil?
-        else
-          links << item if item.action == link.action && item.static_controller? && item.controller == link.controller && item.parameters == link.parameters
+        elsif item.action == link.action && item.static_controller? && item.controller == link.controller && item.parameters == link.parameters
+          links << item
         end
       end
       links.first
@@ -100,12 +100,10 @@ module ActiveScaffold::DataStructures
       @set.sort_by(&:weight).send(method) do |item|
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks) && !options[:groups]
           item.each(options, &block)
+        elsif options[:include_set]
+          yield item, @set
         else
-          if options[:include_set]
-            yield item, @set
-          else
-            yield item
-          end
+          yield item
         end
       end
     end

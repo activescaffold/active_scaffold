@@ -41,8 +41,8 @@ module ActiveScaffold
 
   class ControllerNotFound < RuntimeError; end
   class MalformedConstraint < RuntimeError; end
-  class RecordNotAllowed < SecurityError; end
-  class ActionNotAllowed < SecurityError; end
+  class RecordNotAllowed < RuntimeError; end
+  class ActionNotAllowed < RuntimeError; end
   class ReverseAssociationRequired < RuntimeError; end
 
   mattr_accessor :delayed_setup, instance_writer: false

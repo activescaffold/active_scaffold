@@ -8,7 +8,7 @@ module ActiveScaffold
         opts = args.any? ? args.first : {}
 
         render :partial => params[:adapter][1..-1],
-               :locals => {:payload => render_to_string(opts.merge(:layout => false), &block).html_safe},
+               :locals => {:payload => render_to_string(opts.merge(:layout => false), &block).html_safe}, # rubocop:disable Rails/OutputSafety
                :use_full_path => true, :layout => false, :content_type => :html
         @rendering_adapter = nil # recursion control
       else

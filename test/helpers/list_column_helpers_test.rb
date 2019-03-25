@@ -35,7 +35,7 @@ class ListColumnHelpersTest < ActionView::TestCase
     assert_equal '1, 2, 3, … (4)', format_association_value(value, @association_column, value.size)
     @config.list.stubs(:association_join_text => ',<br/>')
     assert_equal '1,&lt;br/&gt;2,&lt;br/&gt;3,&lt;br/&gt;… (4)', format_association_value(value, @association_column, value.size)
-    @config.list.stubs(:association_join_text => ',<br/>'.html_safe)
+    @config.list.stubs(:association_join_text => ',<br/>'.html_safe) # rubocop:disable Rails/OutputSafety
     assert_equal '1,<br/>2,<br/>3,<br/>… (4)', format_association_value(value, @association_column, value.size)
   end
 
