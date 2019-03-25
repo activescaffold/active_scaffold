@@ -147,6 +147,7 @@ module ActiveScaffold::DataStructures
     end
 
     def method_missing(name, *args, &block)
+      return super if name =~ /[!?]$/
       class_eval %{
         def #{name}(label = nil) # rubocop:disable Style/CommentedKeyword
           @#{name} ||= subgroup('#{name}'.to_sym, label)
@@ -157,8 +158,8 @@ module ActiveScaffold::DataStructures
       send(name, args.first, &block)
     end
 
-    def respond_to_missing?(*)
-      true
+    def respond_to_missing?(name, *)
+      name !~ /[!?]$/
     end
 
     attr_accessor :name

@@ -22,6 +22,7 @@ module CowProxy
 
       class ActionLinks < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::ActionLinks)
         def method_missing(name, *args, &block)
+          return super if name =~ /[!?]$/
           __copy_on_write__ if frozen?
           subgroup =
             if _instance_variable_defined?("@#{name}")
@@ -33,8 +34,8 @@ module CowProxy
           subgroup
         end
 
-        def respond_to_missing?(*)
-          true
+        def respond_to_missing?(name, *)
+          name !~ /[!?]$/
         end
       end
     end
