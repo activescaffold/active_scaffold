@@ -145,24 +145,48 @@ module ActiveScaffold::Config
 
     class_attribute :columns_collections
 
+    def self.columns_writer(name)
+      var = "@#{name}"
+      define_method "#{name}=" do |val|
+        if instance_variable_defined?(var)
+          instance_variable_get(var).set_values(*val)
+          instance_variable_get(var)
+        else
+          instance_variable_set(var, build_action_columns(val))
+        end
+      end
+    end
+
+    def self.columns_reader(name, options, &block)
+      var = "@#{name}"
+      define_method name do
+        unless instance_variable_defined?(var) # lazy evaluation
+          action, columns = options[:copy] if options[:copy]
+          if action && @core.actions.include?(action)
+            action_columns = @core.send(action).send(columns || :columns).clone
+            action_columns.action = self
+            instance_variable_set(var, action_columns)
+          else
+            send("#{name}=", @core.columns._inheritable)
+          end
+          instance_exec(&block) if block
+        end
+        instance_variable_get(var)
+      end
+    end
+
     def self.columns_accessor(*names, &block)
       options = names.extract_options!
       self.columns_collections = ((columns_collections || []) + names).uniq
       names.each do |name|
-        var = "@#{name}"
-        define_method "#{name}=" do |val|
-          if instance_variable_defined?(var)
-            instance_variable_get(var).set_values(*val)
-            instance_variable_get(var)
-          else
-            instance_variable_set(var, build_action_columns(val))
-          end
-        end
+        columns_writer name
+        columns_reader name, options, &block unless method_defined? name
 
         if self::UserSettings == ActiveScaffold::Config::Base::UserSettings
           const_set 'UserSettings', Class.new(ActiveScaffold::Config::Base::UserSettings)
         end
 
+        var = "@#{name}"
         self::UserSettings.class_eval do
           define_method "#{name}=" do |val|
             instance_variable_set var, ::CowProxy.wrap(build_action_columns(val))
@@ -172,25 +196,9 @@ module ActiveScaffold::Config
               instance_variable_set(var, ::CowProxy.wrap(@conf.send(name)))
           end
         end
-
-        next if method_defined? name
-        define_method name do
-          unless instance_variable_defined?(var) # lazy evaluation
-            action, columns = options[:copy] if options[:copy]
-            if action && @core.actions.include?(action)
-              action_columns = @core.send(action).send(columns || :columns).clone
-              action_columns.action = self
-              instance_variable_set(var, action_columns)
-            else
-              send("#{name}=", @core.columns._inheritable)
-            end
-            instance_exec(&block) if block
-          end
-          instance_variable_get(var)
-        end
       end
     end
 
-    private_class_method :columns_accessor
+    private_class_method :columns_accessor, :columns_reader, :columns_writer
   end
 end
