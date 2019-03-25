@@ -114,7 +114,7 @@ module ActiveScaffold #:nodoc:
         content_tag(:div, :id => id, :class => 'active-scaffold-component', :data => {:refresh => url}) do
           # parse the ActiveRecord model name from the controller path, which
           # might be a namespaced controller (e.g., 'admin/admins')
-          model = remote_controller.to_s.sub(/.*\//, '').singularize
+          model = remote_controller.to_s.sub(%r{/.*//}, '').singularize
           content_tag(:div, :class => 'active-scaffold-header') do
             content_tag :h2, link_to(options[:label] || active_scaffold_config_for(model).list.label, url, :remote => true, :class => 'load-embedded')
           end

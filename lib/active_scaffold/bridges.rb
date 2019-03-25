@@ -11,7 +11,7 @@ module ActiveScaffold
     self.bridges = {}
 
     def self.register(file)
-      match = file.match(/(active_scaffold\/bridges\/(.*))\.rb\Z/)
+      match = file.match(%r{(active_scaffold/bridges/(.*))\.rb\Z})
       bridges[match[2].to_sym] = match[1] if match
     end
 

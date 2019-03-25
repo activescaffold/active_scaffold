@@ -308,17 +308,17 @@ module ActiveScaffold::DataStructures
     def initialize(name, active_record_class, delegated_association = nil) #:nodoc:
       self.name = name.to_sym
       @active_record_class = active_record_class
-      @column = _columns_hash[self.name.to_s]
+      @column = _columns_hash[name.to_s]
       @delegated_association = delegated_association
       setup_association_info
 
-      @autolink = self.association.present?
+      @autolink = association.present?
       @table = _table_name
       @associated_limit = self.class.associated_limit
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
       @send_form_on_update_column = self.class.send_form_on_update_column
-      @actions_for_association_links = self.class.actions_for_association_links.clone if self.association
+      @actions_for_association_links = self.class.actions_for_association_links.clone if association
       @select_columns = default_select_columns
 
       @text = @column.nil? || [:string, :text, String].include?(column_type)
@@ -349,7 +349,7 @@ module ActiveScaffold::DataStructures
 
       # default all the configurable variables
       self.css_class = ''
-      self.required = active_record_class.validators_on(self.name).any? do |val|
+      self.required = active_record_class.validators_on(name).any? do |val|
         validator_force_required?(val)
       end
       self.sort = true
@@ -428,7 +428,7 @@ module ActiveScaffold::DataStructures
     protected
 
     def setup_association_info
-      assoc = active_record_class.reflect_on_association(self.name)
+      assoc = active_record_class.reflect_on_association(name)
       @association =
         if assoc
           case

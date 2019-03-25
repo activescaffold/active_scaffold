@@ -328,22 +328,6 @@ Style/ParallelAssignment:
     - 'lib/active_scaffold/paginator.rb'
     - 'test/config/update_test.rb'
 
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/RedundantSelf:
-  Exclude:
-    - 'lib/active_scaffold/data_structures/column.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
-Style/RegexpLiteral:
-  Exclude:
-    - 'lib/active_scaffold/bridges.rb'
-    - 'lib/active_scaffold/extensions/action_view_rendering.rb'
-    - 'lib/active_scaffold/helpers/form_column_helpers.rb'
-
 # Offense count: 12
 # Cop supports --auto-correct.
 Style/RescueModifier:
