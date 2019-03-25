@@ -134,8 +134,8 @@ module ActiveScaffold
       def active_scaffold_search_boolean(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
-        select_options << [as_(:true), true]
-        select_options << [as_(:false), false]
+        select_options << [as_(:true), true] # rubocop:disable Lint/BooleanSymbol
+        select_options << [as_(:false), false] # rubocop:disable Lint/BooleanSymbol
 
         select_tag(options[:name], options_for_select(select_options, ActiveScaffold::Core.column_type_cast(options[:value], column.column)), :id => options[:id])
       end

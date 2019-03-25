@@ -23,9 +23,9 @@ module ActiveScaffold
                 next unless actions.include? action
                 if send(action).columns.include? column_name
                   send(action).columns.exclude column_name
-                  send(action).columns.add_subgroup(column_name) { |group| group.add *columns }
+                  send(action).columns.add_subgroup(column_name) { |group| group.add(*columns) }
                 else
-                  send(action).columns.exclude *columns
+                  send(action).columns.exclude(*columns)
                 end
               end
             end

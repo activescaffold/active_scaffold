@@ -16,9 +16,9 @@ module ActiveScaffold
 
       def get_actions(actions_hash, options)
         default_actions = default_actions(actions_hash)
-        if only = options[:only]
+        if (only = options[:only])
           Array(only).map(&:to_sym)
-        elsif except = options[:except]
+        elsif (except = options[:except])
           default_actions - Array(except).map(&:to_sym)
         else
           default_actions

@@ -113,12 +113,13 @@ module ActiveScaffold::Actions
       end
 
       def list_columns
-        @list_columns ||= if grouped_search?
-                            columns = grouped_columns || super.select(&:calculation?)
-                            [search_group_column || search_group_name].concat columns
-        else
-          super
-        end
+        @list_columns ||=
+          if grouped_search?
+            columns = grouped_columns || super.select(&:calculation?)
+            [search_group_column || search_group_name].concat columns
+          else
+            super
+          end
       end
 
       def grouped_columns

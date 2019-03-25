@@ -6,12 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Layout/ElseAlignment:
-  Exclude:
-    - 'lib/active_scaffold/actions/field_search.rb'
-
 # Offense count: 18
 Lint/AmbiguousBlockAssociation:
   Exclude:
@@ -21,26 +15,6 @@ Lint/AmbiguousBlockAssociation:
     - 'test/data_structures/action_columns_test.rb'
     - 'test/data_structures/columns_test.rb'
     - 'test/misc/configurable_test.rb'
-
-# Offense count: 2
-Lint/AmbiguousOperator:
-  Exclude:
-    - 'lib/active_scaffold/bridges/bitfields/bitfields_bridge.rb'
-
-# Offense count: 4
-# Configuration parameters: AllowSafeAssignment.
-Lint/AssignmentInCondition:
-  Exclude:
-    - 'lib/active_scaffold/data_structures/association/abstract.rb'
-    - 'lib/active_scaffold/extensions/routing_mapper.rb'
-    - 'lib/active_scaffold/helpers/form_column_helpers.rb'
-
-# Offense count: 6
-Lint/BooleanSymbol:
-  Exclude:
-    - 'lib/active_scaffold/helpers/form_column_helpers.rb'
-    - 'lib/active_scaffold/helpers/human_condition_helpers.rb'
-    - 'lib/active_scaffold/helpers/search_column_helpers.rb'
 
 # Offense count: 10
 # Cop supports --auto-correct.

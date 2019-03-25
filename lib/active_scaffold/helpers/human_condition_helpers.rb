@@ -57,7 +57,7 @@ module ActiveScaffold
 
       def active_scaffold_human_condition_boolean(column, value)
         attribute = column.active_record_class.human_attribute_name(column.name)
-        label = as_(ActiveScaffold::Core.column_type_cast(value, column.column) ? :true : :false)
+        label = as_(ActiveScaffold::Core.column_type_cast(value, column.column) ? :true : :false) # rubocop:disable Lint/BooleanSymbol
         as_(:boolean, :scope => :human_conditions, :column => attribute, :value => label)
       end
       alias active_scaffold_human_condition_checkbox active_scaffold_human_condition_boolean

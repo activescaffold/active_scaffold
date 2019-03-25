@@ -151,7 +151,7 @@ module ActiveScaffold
       end
 
       def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil)
-        if partial = override_form_field_partial(column)
+        if (partial = override_form_field_partial(column))
           render :partial => partial, :locals => {:column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record}
         elsif renders_as == :field || override_form_field?(column)
           form_attribute(column, record, scope, only_value, col_class)
@@ -538,8 +538,8 @@ module ActiveScaffold
         record = options.delete(:object)
         select_options = []
         select_options << [as_(:_select_), nil] if !column.virtual? && column.column.null
-        select_options << [as_(:true), true]
-        select_options << [as_(:false), false]
+        select_options << [as_(:true), true] # rubocop:disable Lint/BooleanSymbol
+        select_options << [as_(:false), false] # rubocop:disable Lint/BooleanSymbol
 
         select_tag(options[:name], options_for_select(select_options, record.send(column.name)), options)
       end

@@ -81,12 +81,13 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def reverse_association(klass = nil)
-      assoc = if polymorphic?
-                get_reverse(klass) unless klass.nil?
-              else
-                return unless reverse_name = reverse(klass)
-                reflect_on_association(reverse_name)
-      end
+      assoc =
+        if polymorphic?
+          get_reverse(klass) unless klass.nil?
+        else
+          reverse_name = reverse(klass)
+          reflect_on_association(reverse_name) if reverse_name
+        end
       self.class.new(assoc) if assoc
     end
 
