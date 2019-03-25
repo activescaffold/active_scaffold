@@ -32,6 +32,10 @@ module CowProxy
           yield subgroup if block
           subgroup
         end
+
+        def respond_to_missing?(*)
+          true
+        end
       end
     end
   end

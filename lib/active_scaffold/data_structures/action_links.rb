@@ -157,6 +157,10 @@ module ActiveScaffold::DataStructures
       send(name, args.first, &block)
     end
 
+    def respond_to_missing?(*)
+      true
+    end
+
     attr_accessor :name
     attr_accessor :weight
 

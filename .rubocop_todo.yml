@@ -316,11 +316,6 @@ Style/IfInsideElse:
     - 'lib/active_scaffold/helpers/search_column_helpers.rb'
     - 'lib/active_scaffold/helpers/show_column_helpers.rb'
 
-# Offense count: 4
-Style/MethodMissing:
-  Exclude:
-    - 'lib/active_scaffold/data_structures/action_links.rb'
-
 # Offense count: 8
 # Cop supports --auto-correct.
 Style/ParallelAssignment:
