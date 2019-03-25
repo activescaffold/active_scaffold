@@ -82,7 +82,7 @@ module ActiveScaffold::Actions
     end
 
     def set_includes_for_sorting(columns, sorting)
-      sorting.each_key do |col|
+      sorting.each_column do |col|
         next unless col.includes.present? && !columns.include?(col)
         if active_scaffold_config.model.connection.needs_order_expressions_in_select?
           active_scaffold_references << col.includes

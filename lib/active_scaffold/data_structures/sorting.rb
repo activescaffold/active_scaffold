@@ -106,6 +106,10 @@ module ActiveScaffold::DataStructures
       @clauses.each { |clause| yield clause }
     end
 
+    def each_column
+      @clauses.each { |clause| yield clause[0] }
+    end
+
     # provides quick access to the first (and sometimes only) clause
     def first
       @clauses.first
