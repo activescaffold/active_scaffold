@@ -1,4 +1,5 @@
 - Cleanup: deprecate ActiveScaffold.set_defaults for ActiveScaffold.defaults, rename some setters
+- Fix adding new action links on request with threadsafety enabled
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.

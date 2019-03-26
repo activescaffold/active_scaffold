@@ -196,9 +196,6 @@ module ActiveScaffold::Config
     # To be called before freezing
     def _cache_lazy_values
       action_links.each(&:name_to_cache) if cache_action_link_urls
-      # ensure member and collection groups are cached, if no custom link has been added
-      action_links.member
-      action_links.collection
       columns.select(&:sortable?).each(&:sort)
       columns.select(&:searchable?).each(&:search_sql)
       actions.each do |action_name|
