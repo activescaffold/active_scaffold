@@ -266,14 +266,9 @@ module ActiveScaffold
       def inplace_edit?(record, column)
         return unless column.inplace_edit
         if controller.respond_to?(:update_authorized?, true)
-          if controller.method(:update_authorized?).parameters.size == 2
-            return Array(controller.send(:update_authorized?, record, column.name))[0]
-          else
-            ActiveSupport::Deprecation.warn 'add column = nil parameter to update_authorized? on your controller'
-            editable = Array(controller.send(:update_authorized?, record))[0]
-          end
+          return Array(controller.send(:update_authorized?, record, column.name))[0]
         end
-        editable || record.authorized_for?(:crud_type => :update, :column => column.name)
+        record.authorized_for?(:crud_type => :update, :column => column.name)
       end
 
       def inplace_edit_cloning?(column)

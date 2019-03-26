@@ -22,13 +22,11 @@ module ActiveScaffold
           send(method, column, options)
 
         elsif column.association
-          if column.form_ui.nil?
-            # its an association and nothing is specified, we will assume form_ui :select
-            active_scaffold_input_select(column, options)
-          else
-            # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
-            raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'"
-          end
+          # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
+          raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'" if column.form_ui
+
+          # its an association and nothing is specified, we will assume form_ui :select
+          active_scaffold_input_select(column, options)
 
         elsif column.virtual?
           options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
@@ -274,9 +272,8 @@ module ActiveScaffold
       end
 
       def active_scaffold_select_name_with_multiple(options)
-        if options[:multiple] && !options[:name].to_s.ends_with?('[]')
-          options[:name] = "#{options[:name]}[]"
-        end
+        return if !options[:multiple] || options[:name].to_s.ends_with?('[]')
+        options[:name] = "#{options[:name]}[]"
       end
 
       def active_scaffold_input_singular_association(column, html_options, options = {})

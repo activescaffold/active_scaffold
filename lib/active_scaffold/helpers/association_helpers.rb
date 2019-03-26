@@ -16,11 +16,8 @@ module ActiveScaffold
       def association_options_find(association, conditions = nil, klass = nil, record = nil)
         if klass.nil? && association.polymorphic?
           class_name = record.send(association.foreign_type) if association.belongs_to?
-          if class_name.present?
-            klass = class_name.constantize
-          else
-            return []
-          end
+          return [] if class_name.blank?
+          klass = class_name.constantize
           cache = !block_given?
         else
           cache = !block_given? && klass.nil?
@@ -86,10 +83,9 @@ module ActiveScaffold
       # Check association.name to specialize the conditions per-column.
       def options_for_association_conditions(association, record = nil)
         return nil if association.through?
-        if association.has_one? || association.has_many?
-          # Find only orphaned objects
-          {association.foreign_key => nil}
-        end
+        return nil unless association.has_one? || association.has_many?
+        # Find only orphaned objects
+        {association.foreign_key => nil}
       end
 
       def record_select_params_for_add_existing(association, edit_associated_url_options, record)

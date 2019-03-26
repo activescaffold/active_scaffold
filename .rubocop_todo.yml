@@ -83,11 +83,6 @@ Style/GuardClause:
     - 'lib/active_scaffold/core.rb'
     - 'lib/active_scaffold/data_structures/nested_info.rb'
     - 'lib/active_scaffold/finder.rb'
-    - 'lib/active_scaffold/helpers/association_helpers.rb'
-    - 'lib/active_scaffold/helpers/controller_helpers.rb'
-    - 'lib/active_scaffold/helpers/form_column_helpers.rb'
-    - 'lib/active_scaffold/helpers/list_column_helpers.rb'
-    - 'lib/active_scaffold/tableless.rb'
 
 # Offense count: 12
 # Cop supports --auto-correct.

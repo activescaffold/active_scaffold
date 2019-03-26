@@ -10,20 +10,11 @@ AllCops:
     - 'lib/generators/**/templates/**/*'
     - 'vendor/bundle/**/*'
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
 Lint/UnusedMethodArgument:
   Enabled: false
-
-Naming/FileName:
-  Exclude:
-    - 'Gemfile'
-    - 'Rakefile'
-    - 'test/mock_app/Rakefile'
 
 Metrics/ClassLength:
   Max: 500
@@ -32,6 +23,12 @@ Metrics/ClassLength:
 Metrics/ModuleLength:
   Max: 600
   CountComments: false
+
+Naming/FileName:
+  Exclude:
+    - 'Gemfile'
+    - 'Rakefile'
+    - 'test/mock_app/Rakefile'
 
 Performance/RedundantMerge:
   MaxKeyValuePairs: 1
@@ -54,11 +51,11 @@ Style/BracesAroundHashParameters:
 Style/FormatString:
   EnforcedStyle: percent
 
-Style/HashSyntax:
+Style/FrozenStringLiteralComment:
   Enabled: false
 
-Style/SignalException:
-  EnforcedStyle: only_raise
+Style/HashSyntax:
+  Enabled: false # FIXME
 
 Style/SingleLineBlockParams:
   Enabled: false
