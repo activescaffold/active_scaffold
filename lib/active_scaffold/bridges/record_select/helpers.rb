@@ -22,13 +22,20 @@ class ActiveScaffold::Bridges::RecordSelect
         end
       end
 
+      def get_foreign_type_class(record, column)
+        record.send(column.association.foreign_type).constantize
+      rescue NameError => e
+        Rails.logger.warn "#{e.message}\n#{e.backtrace.join("\n")}"
+        nil
+      end
+
       def active_scaffold_record_select(record, column, options, value, multiple)
         unless column.association
           raise ArgumentError, "record_select can only work against associations (and #{column.name} is not).  A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user)."
         end
         klass =
           if column.association.polymorphic?
-            record.send(column.association.foreign_type).constantize rescue nil
+            get_foreign_type_class(record, column.association.foreign_type)
           else
             column.association.klass
           end

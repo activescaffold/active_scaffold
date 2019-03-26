@@ -69,28 +69,3 @@ Style/ClassVars:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 19
-# Configuration parameters: MinBodyLength.
-Style/GuardClause:
-  Exclude:
-    - 'lib/active_scaffold/actions/common_search.rb'
-    - 'lib/active_scaffold/actions/core.rb'
-    - 'lib/active_scaffold/actions/nested.rb'
-    - 'lib/active_scaffold/actions/update.rb'
-    - 'lib/active_scaffold/bridges/date_picker/helper.rb'
-    - 'lib/active_scaffold/config/core.rb'
-    - 'lib/active_scaffold/configurable.rb'
-    - 'lib/active_scaffold/core.rb'
-    - 'lib/active_scaffold/data_structures/nested_info.rb'
-    - 'lib/active_scaffold/finder.rb'
-
-# Offense count: 12
-# Cop supports --auto-correct.
-Style/RescueModifier:
-  Exclude:
-    - 'lib/active_scaffold/actions/core.rb'
-    - 'lib/active_scaffold/bridges/date_picker/ext.rb'
-    - 'lib/active_scaffold/bridges/record_select/helpers.rb'
-    - 'lib/active_scaffold/data_structures/association/active_record.rb'
-    - 'lib/active_scaffold/finder.rb'
-    - 'lib/active_scaffold/helpers/association_helpers.rb'

@@ -75,7 +75,11 @@ module ActiveScaffold::DataStructures::Association
 
     def scope_values
       return {} unless @association.scope
-      @scope_values ||= @association.klass.instance_exec(&@association.scope).values rescue {}
+      @scope_values ||= @association.klass.instance_exec(&@association.scope).values
+    rescue RuntimeError => e
+      message = "Error evaluating scope for #{@association.name} in #{@association.klass.name}:"
+      Rails.logger.warn "#{message}\n#{e.message}\n#{e.backtrace.join("\n")}"
+      {}
     end
 
     def reverse_through_match?(assoc)

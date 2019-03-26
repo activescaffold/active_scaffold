@@ -224,11 +224,45 @@ module ActiveScaffold
         [format, parts[:offset]]
       end
 
+      def local_time_from_hash(value, conversion = :to_time)
+        time = Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i })
+        time.send(conversion)
+      rescue RuntimeError => e
+        message = "Error creating time from #{value.inspect}:"
+        Rails.logger.warn "#{message}\n#{e.message}\n#{e.backtrace.join("\n")}"
+        nil
+      end
+
+      def parse_date_with_format(value, format_name)
+        format = I18n.t("date.formats.#{format_name || :default}")
+        format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
+        en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
+        Date.strptime(en_value, format)
+      rescue RuntimeError => e
+        message = "Error parsing date from #{en_value}"
+        message << " (#{value})" if en_value != value
+        message << ", with format #{format}" if format
+        Rails.logger.warn "#{message}:\n#{e.message}\n#{e.backtrace.join("\n")}"
+        nil
+      end
+
+      def parse_time_with_format(value, format, offset)
+        format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
+        en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
+        time = Time.strptime(en_value, format)
+        offset ? time : Time.zone.local_to_utc(time).in_time_zone
+      rescue RuntimeError => e
+        message = "Error parsing time from #{en_value}"
+        message << " (#{value})" if en_value != value
+        message << ", with format #{format}" if format
+        Rails.logger.warn "#{message}:\n#{e.message}\n#{e.backtrace.join("\n")}"
+        nil
+      end
+
       def condition_value_for_datetime(column, value, conversion = :to_time)
         return if value.nil? || value.blank?
         if value.is_a? Hash
-          time = Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i }) rescue nil
-          time&.send(conversion)
+          local_time_from_hash(value, conversion)
         elsif value.respond_to?(:strftime)
           if conversion == :to_time
             # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
@@ -238,22 +272,12 @@ module ActiveScaffold
             value.send(conversion)
           end
         elsif conversion == :to_date
-          format = I18n.t("date.formats.#{column.options[:format] || :default}")
-          format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
-          value = translate_days_and_months(value, format) if I18n.locale != :en
-          Date.strptime(value, format) rescue nil
+          parse_date_with_format(value, column.options[:format])
         elsif value.include?('T')
           Time.zone.parse(value)
         else # datetime
-          format, offset = format_for_datetime(column, value)
-          format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
-          value = translate_days_and_months(value, format) if I18n.locale != :en
-          time = Time.strptime(value, format) rescue nil
-          if time
-            time = Time.zone.local_to_utc(time).in_time_zone unless offset
-            time = time.send(conversion) unless conversion == :to_time
-          end
-          time
+          time = parse_time_with_format(value, *format_for_datetime(column, value))
+          conversion == :to_time ? time : time.send(conversion)
         end
       end
 
@@ -261,7 +285,12 @@ module ActiveScaffold
         return value if value.nil?
         value = column.number_to_native(value) if column.options[:format] && column.search_ui != :number
         case (column.search_ui || column.column.type)
-        when :integer   then value.to_i rescue value ? 1 : 0
+        when :integer   then
+          if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+            value ? 1 : 0
+          else
+            value.to_i
+          end
         when :float     then value.to_f
         when :decimal
           ::ActiveRecord::Type::Decimal.new.type_cast_from_user(value)
