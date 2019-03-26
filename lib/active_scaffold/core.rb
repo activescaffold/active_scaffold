@@ -7,11 +7,10 @@ module ActiveScaffold
     def setup_user_settings
       config = self.class.active_scaffold_config
       config.new_user_settings(user_settings_storage, params)
-      unless ActiveScaffold.threadsafe
-        config.actions.each do |action_name|
-          conf_instance = config.send(action_name) rescue next # rubocop:disable Style/RescueModifier
-          config.user.action_user_settings(conf_instance)
-        end
+      return if ActiveScaffold.threadsafe
+      config.actions.each do |action_name|
+        conf_instance = config.send(action_name) rescue next # rubocop:disable Style/RescueModifier
+        config.user.action_user_settings(conf_instance)
       end
     end
 
@@ -90,10 +89,9 @@ module ActiveScaffold
           end
         end
         _add_sti_create_links if active_scaffold_config.add_sti_create_links?
-        if ActiveScaffold.threadsafe
-          active_scaffold_config._cache_lazy_values
-          active_scaffold_config.deep_freeze!
-        end
+        return unless ActiveScaffold.threadsafe
+        active_scaffold_config._cache_lazy_values
+        active_scaffold_config.deep_freeze!
       end
 
       module Prefixes
@@ -230,12 +228,9 @@ module ActiveScaffold
             controller = "#{namespace}#{controller_name.camelize}Controller".constantize
           rescue NameError => error
             # Only rescue NameError associated with the controller constant not existing - not other compile errors
-            if error.message["uninitialized constant #{controller}"]
-              error_message << "#{namespace}#{controller_name.camelize}Controller"
-              next
-            else
-              raise
-            end
+            raise unless error.message["uninitialized constant #{controller}"]
+            error_message << "#{namespace}#{controller_name.camelize}Controller"
+            next
           end
           raise ActiveScaffold::ControllerNotFound, "#{controller} missing ActiveScaffold", caller unless controller.uses_active_scaffold?
           unless controller.active_scaffold_config.model.to_s == klass.to_s

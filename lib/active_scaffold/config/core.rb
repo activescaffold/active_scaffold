@@ -240,12 +240,11 @@ module ActiveScaffold::Config
       return unless klass
 
       underscored_name = action_name.to_s.underscore.to_sym
-      if @actions.include? underscored_name
-        @action_configs ||= {}
-        @action_configs[underscored_name] ||= klass.new(self)
-      else
+      unless @actions.include? underscored_name
         raise "#{action_name.to_s.camelcase} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
       end
+      @action_configs ||= {}
+      @action_configs[underscored_name] ||= klass.new(self)
     end
 
     def []=(action_name, action_config)

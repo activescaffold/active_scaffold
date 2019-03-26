@@ -179,14 +179,12 @@ module ActiveScaffold::Actions
     # ex: accepts? :html, :xml
     def accepts?(*types)
       request.accepts.compact.each do |priority|
-        if priority == Mime::ALL
-          # Because IE always sends */* in the accepts header and we assume
-          # that if you really wanted XML or something else you would say so
-          # explicitly, we will assume */* to only ask for :html
-          return types.include?(:html)
-        elsif types.include?(priority.to_sym)
-          return true
-        end
+        # Because IE always sends */* in the accepts header and we assume
+        # that if you really wanted XML or something else you would say so
+        # explicitly, we will assume */* to only ask for :html
+        return types.include?(:html) if priority == Mime::ALL
+
+        return true if types.include?(priority.to_sym)
       end
       false
     end
@@ -297,14 +295,13 @@ module ActiveScaffold::Actions
     end
 
     def check_input_device
-      if session[:input_device_type].nil?
-        if request.env['HTTP_USER_AGENT'] =~ /(iPhone|iPod|iPad)/i
-          session[:input_device_type] = 'TOUCH'
-          session[:hover_supported] = false
-        else
-          session[:input_device_type] = 'MOUSE'
-          session[:hover_supported] = true
-        end
+      return unless session[:input_device_type].nil?
+      if request.env['HTTP_USER_AGENT'] =~ /(iPhone|iPod|iPad)/i
+        session[:input_device_type] = 'TOUCH'
+        session[:hover_supported] = false
+      else
+        session[:input_device_type] = 'MOUSE'
+        session[:hover_supported] = true
       end
     end
 

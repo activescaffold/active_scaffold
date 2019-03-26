@@ -1,13 +1,12 @@
 module ActiveScaffold::Actions
   module CommonSearch
     def self.included(base)
-      unless base < InstanceMethods
-        base.send :include, InstanceMethods
-        base.before_action :search_authorized_filter, :only => :show_search
-        base.before_action :store_search_params_into_session, :only => [:index]
-        base.before_action :do_search, :only => [:index]
-        base.helper_method :search_params
-      end
+      return if base < InstanceMethods
+      base.send :include, InstanceMethods
+      base.before_action :search_authorized_filter, :only => :show_search
+      base.before_action :store_search_params_into_session, :only => [:index]
+      base.before_action :do_search, :only => [:index]
+      base.helper_method :search_params
     end
 
     module InstanceMethods

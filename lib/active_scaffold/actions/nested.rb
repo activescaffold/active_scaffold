@@ -34,10 +34,9 @@ module ActiveScaffold::Actions
       return unless nested?
       register_constraints_with_action_columns(nested.constrained_fields)
       active_scaffold_config.list.user.label = nested_label
-      unless active_scaffold_config.nested.ignore_order_from_association
-        chain = beginning_of_chain
-        active_scaffold_config.list.user.nested_default_sorting = nested_default_sorting(chain) if nested.sorted?(chain)
-      end
+      return if active_scaffold_config.nested.ignore_order_from_association
+      chain = beginning_of_chain
+      active_scaffold_config.list.user.nested_default_sorting = nested_default_sorting(chain) if nested.sorted?(chain)
     end
 
     def nested_label

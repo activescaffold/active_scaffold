@@ -225,36 +225,35 @@ module ActiveScaffold
       end
 
       def condition_value_for_datetime(column, value, conversion = :to_time)
-        unless value.nil? || value.blank?
-          if value.is_a? Hash
-            time = Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i }) rescue nil
-            time&.send(conversion)
-          elsif value.respond_to?(:strftime)
-            if conversion == :to_time
-              # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
-              # https://github.com/rails/rails/pull/2453
-              value.to_time.in_time_zone
-            else
-              value.send(conversion)
-            end
-          elsif conversion == :to_date
-            format = I18n.t("date.formats.#{column.options[:format] || :default}")
-            format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
-            value = translate_days_and_months(value, format) if I18n.locale != :en
-            Date.strptime(value, format) rescue nil
-          elsif value.include?('T')
-            Time.zone.parse(value)
-          else # datetime
-            format, offset = format_for_datetime(column, value)
-            format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
-            value = translate_days_and_months(value, format) if I18n.locale != :en
-            time = Time.strptime(value, format) rescue nil
-            if time
-              time = Time.zone.local_to_utc(time).in_time_zone unless offset
-              time = time.send(conversion) unless conversion == :to_time
-            end
-            time
+        return if value.nil? || value.blank?
+        if value.is_a? Hash
+          time = Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i }) rescue nil
+          time&.send(conversion)
+        elsif value.respond_to?(:strftime)
+          if conversion == :to_time
+            # Explicitly get the current zone, because TimeWithZone#to_time in rails 3.2.3 returns UTC.
+            # https://github.com/rails/rails/pull/2453
+            value.to_time.in_time_zone
+          else
+            value.send(conversion)
           end
+        elsif conversion == :to_date
+          format = I18n.t("date.formats.#{column.options[:format] || :default}")
+          format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
+          value = translate_days_and_months(value, format) if I18n.locale != :en
+          Date.strptime(value, format) rescue nil
+        elsif value.include?('T')
+          Time.zone.parse(value)
+        else # datetime
+          format, offset = format_for_datetime(column, value)
+          format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
+          value = translate_days_and_months(value, format) if I18n.locale != :en
+          time = Time.strptime(value, format) rescue nil
+          if time
+            time = Time.zone.local_to_utc(time).in_time_zone unless offset
+            time = time.send(conversion) unless conversion == :to_time
+          end
+          time
         end
       end
 

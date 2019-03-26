@@ -104,11 +104,10 @@ module ActiveScaffold::DataStructures
 
     def default_sorting(chain)
       return @default_sorting if defined? @default_sorting
-      if association.scope.is_a?(Proc) && chain.respond_to?(:values) && chain.values[:order]
-        @default_sorting = chain.values[:order]
-        @default_sorting = @default_sorting.map(&:to_sql) if @default_sorting[0].is_a? Arel::Nodes::Node
-        @default_sorting = @default_sorting.join(', ')
-      end
+      return unless association.scope.is_a?(Proc) && chain.respond_to?(:values) && chain.values[:order]
+      @default_sorting = chain.values[:order]
+      @default_sorting = @default_sorting.map(&:to_sql) if @default_sorting[0].is_a? Arel::Nodes::Node
+      @default_sorting = @default_sorting.join(', ')
     end
 
     def to_params
@@ -120,9 +119,7 @@ module ActiveScaffold::DataStructures
     def setup_constrained_fields
       @constrained_fields = []
       @constrained_fields << Array(association.foreign_key).map(&:to_sym) unless association.belongs_to?
-      if child_association && child_association != association
-        @constrained_fields << child_association.name
-      end
+      @constrained_fields << child_association.name if child_association && child_association != association
     end
   end
 
