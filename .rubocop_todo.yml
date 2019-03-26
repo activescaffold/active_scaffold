@@ -6,12 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 18
-# Offense count: 1
-Lint/ShadowedException:
-  Exclude:
-    - 'lib/active_scaffold/configurable.rb'
-
 # Offense count: 256
 Metrics/AbcSize:
   Max: 122
@@ -40,11 +34,6 @@ Metrics/LineLength:
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 63
-
-# Offense count: 2
-# Configuration parameters: CountKeywordArgs.
-Metrics/ParameterLists:
-  Max: 6
 
 # Offense count: 93
 Metrics/PerceivedComplexity:

@@ -52,7 +52,7 @@ module ActiveScaffold
         raise e
       end
 
-      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil)
+      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil) # rubocop:disable Metrics/ParameterLists
         if add_class
           col_class = []
           col_class << 'required' if column.required?
@@ -148,7 +148,7 @@ module ActiveScaffold
         {}
       end
 
-      def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil)
+      def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil) # rubocop:disable Metrics/ParameterLists
         if (partial = override_form_field_partial(column))
           render :partial => partial, :locals => {:column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record}
         elsif renders_as == :field || override_form_field?(column)
@@ -301,7 +301,7 @@ module ActiveScaffold
         html
       end
 
-      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, &block)
+      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, &block) # rubocop:disable Metrics/ParameterLists
         options = active_scaffold_input_text_options(options.merge(column.options))
         if content
           active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class, &block)
