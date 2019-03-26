@@ -22,7 +22,7 @@ module CowProxy
 
       class ActionLinks < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::ActionLinks)
         def method_missing(name, *args, &block)
-          puts "method missing #{name} in #{__getobj__.name}" if ENV['DEBUG']
+          CowProxy.debug { "method missing #{name} in #{__getobj__.name}" }
           return super if name =~ /[!?]$/
           subgroup =
             if _instance_variable_defined?("@#{name}")
@@ -30,8 +30,11 @@ module CowProxy
             else
               __copy_on_write__ if __getobj__.frozen?
               group = __getobj__.subgroup(name, args.first)
-              puts "created subgroup #{group.name}" if ENV['DEBUG'] && !group.frozen?
-              group = __wrap__(group) if group.frozen?
+              if group.frozen?
+                group = __wrap__(group)
+              else
+                CowProxy.debug { "created subgroup #{group.name}" }
+              end
               _instance_variable_set("@#{name}", group)
             end
           yield subgroup if block
@@ -50,7 +53,7 @@ module CowProxy
         def __copy_on_write__(*)
           index = @parent_proxy.instance_variable_get(:@set).index(__getobj__) if @parent_proxy
           super.tap do
-            puts "replace #{index} with proxy obj in parent #{@parent_proxy.name}" if ENV['DEBUG'] && index
+            CowProxy.debug { "replace #{index} with proxy obj in parent #{@parent_proxy.name}" } if index
             @parent_proxy.instance_variable_get(:@set)[index] = self if index
             new_set = __getobj__.instance_variable_get(:@set).dup
             __getobj__.instance_variable_set(:@set, new_set)
