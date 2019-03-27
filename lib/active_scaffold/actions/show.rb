@@ -19,11 +19,11 @@ module ActiveScaffold::Actions
     protected
 
     def show_respond_to_json
-      render :json => response_object, :only => show_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(show_columns_names), :methods => virtual_columns(show_columns_names), :status => response_status
+      response_to_api(:json, show_columns_names)
     end
 
     def show_respond_to_xml
-      render :xml => response_object, :only => show_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(show_columns_names), :methods => virtual_columns(show_columns_names), :status => response_status
+      response_to_api(:xml, show_columns_names)
     end
 
     def show_respond_to_js

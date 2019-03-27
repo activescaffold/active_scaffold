@@ -202,6 +202,18 @@ module ActiveScaffold::Actions
       @response_object ||= successful? ? (@record || @records) : @record.errors
     end
 
+    def response_to_api(format, columns_names, options = {})
+      render(
+        options.reverse_merge(
+          format => response_object,
+          :only => columns_names + [active_scaffold_config.model.primary_key],
+          :include => association_columns(columns_names),
+          :methods => virtual_columns(columns_names),
+          :status => response_status
+        )
+      )
+    end
+
     # Success is the existence of one or more model objects. Most actions
     # circumvent this method by setting @success directly.
     def successful?
@@ -377,11 +389,11 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_xml
-      render :xml => successful? ? '' : response_object, :only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names), :status => response_status
+      response_to_api(:xml, list_columns_names)
     end
 
     def action_update_respond_to_json
-      render :json => successful? ? '' : response_object, :only => list_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(list_columns_names), :methods => virtual_columns(list_columns_names), :status => response_status
+      response_to_api(:json, list_columns_names)
     end
 
     def objects_for_etag

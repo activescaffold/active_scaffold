@@ -1,5 +1,7 @@
 module ActiveScaffold::Actions
-  # The Nested module basically handles automatically linking controllers together. It does this by creating column links with the right parameters, and by providing any supporting systems (like a /:controller/nested action for returning associated scaffolds).
+  # The Nested module basically handles automatically linking controllers together.
+  # It does this by creating column links with the right parameters, and by providing
+  # any supporting systems (like a /:controller/nested action for returning associated scaffolds).
   module Nested
     def self.included(base)
       super
@@ -63,7 +65,8 @@ module ActiveScaffold::Actions
         end
         if active_scaffold_config.nested.shallow_delete
           unless active_scaffold_config.action_links['destroy_existing']
-            active_scaffold_config.action_links.add('destroy_existing', :label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?)
+            link_options = {:label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?}
+            active_scaffold_config.action_links.add('destroy_existing', link_options)
           end
           if active_scaffold_config.actions.include?(:delete) && active_scaffold_config.action_links['destroy']
             active_scaffold_config.action_links.delete('destroy')

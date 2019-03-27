@@ -9,7 +9,9 @@ Gem::Specification.new do |s|
   s.authors = ['Many, see README']
   s.homepage = 'https://github.com/activescaffold/active_scaffold'
   s.summary = 'Rails 4.x and 5.x versions of ActiveScaffold supporting prototype and jquery'
-  s.description = 'Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, leaving you more time to focus on more challenging (and interesting!) problems.'
+  s.description = 'Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. '\
+                  'ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, '\
+                  'leaving you more time to focus on more challenging (and interesting!) problems.'
   s.require_paths = ['lib']
   s.files = `git ls-files {app,config,lib,public,shoulda_macros,vendor}`.split("\n") + %w[LICENSE.md CHANGELOG README.md]
   s.extra_rdoc_files = [

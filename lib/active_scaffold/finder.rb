@@ -388,10 +388,12 @@ module ActiveScaffold
       @active_scaffold_references ||= []
     end
 
-    # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
+    # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List).
+    # The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
     def conditions_for_collection; end
 
-    # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).  The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
+    # Override this method on your controller to define joins to be used when querying a recordset (e.g. for List).
+    # The return of this method should be any format compatible with the :joins clause of ActiveRecord::Base's find.
     def joins_for_collection; end
 
     # Override this method on your controller to provide custom finder options to the find() call. The return of this method should be a hash.
@@ -429,7 +431,10 @@ module ActiveScaffold
     end
 
     # valid options may include:
-    # * :sorting - a Sorting DataStructure (basically an array of hashes of field => direction, e.g. [{:field1 => 'asc'}, {:field2 => 'desc'}]). please note that multi-column sorting has some limitations: if any column in a multi-field sort uses method-based sorting, it will be ignored. method sorting only works for single-column sorting.
+    # * :sorting - a Sorting DataStructure (basically an array of hashes of field => direction,
+    #     e.g. [{:field1 => 'asc'}, {:field2 => 'desc'}]).
+    #     please note that multi-column sorting has some limitations: if any column in a multi-field
+    #     sort uses method-based sorting, it will be ignored. method sorting only works for single-column sorting.
     # * :per_page
     # * :page
     def finder_options(options = {})
@@ -523,7 +528,9 @@ module ActiveScaffold
     end
 
     def append_to_query(relation, options)
-      options.assert_valid_keys :where, :select, :having, :group, :reorder, :order, :limit, :offset, :joins, :left_joins, :left_outer_joins, :includes, :lock, :readonly, :from, :conditions, :preload, :references
+      options.assert_valid_keys :where, :select, :having, :group, :reorder, :order, :limit, :offset,
+                                :joins, :left_joins, :left_outer_joins, :includes, :lock, :readonly,
+                                :from, :conditions, :preload, :references
       relation = options.reject { |_, v| v.blank? }.inject(relation) do |rel, (k, v)|
         k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
       end

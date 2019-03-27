@@ -24,7 +24,9 @@ class ActiveScaffold::Bridges::TinyMce
 
         html = []
         html << send(override_input(:textarea), column, options)
-        html << javascript_tag("tinyMCE.settings = #{settings.to_json}; tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');") if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
+        if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
+          html << javascript_tag("tinyMCE.settings = #{settings.to_json}; tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');")
+        end
         safe_join html
       end
 

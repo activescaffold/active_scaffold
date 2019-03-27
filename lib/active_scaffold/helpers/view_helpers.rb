@@ -60,13 +60,15 @@ module ActiveScaffold
       end
 
       # Creates a javascript-based link that toggles the visibility of some element on the page.
-      # By default, it toggles the visibility of the sibling after the one it's nested in. You may pass custom javascript logic in options[:of] to change that, though. For example, you could say :of => '$("my_div_id")'.
+      # By default, it toggles the visibility of the sibling after the one it's nested in.
+      # You may pass custom javascript logic in options[:of] to change that, though. For example, you could say :of => '$("my_div_id")'.
       # You may also flag whether the other element is visible by default or not, and the initial text will adjust accordingly.
       def link_to_visibility_toggle(id, options = {})
-        options[:default_visible] = true if options[:default_visible].nil?
         options[:hide_label] ||= as_(:hide)
         options[:show_label] ||= as_(:show_block)
-        link_to options[:default_visible] ? options[:hide_label] : options[:show_label], '#', :data => {:show => options[:show_label], :hide => options[:hide_label], :toggable => id}, :style => 'display: none;', :class => 'as-js-button visibility-toggle'
+        label = options[:default_visible].nil? || options[:default_visible] ? options[:hide_label] : options[:show_label]
+        data = {:show => options[:show_label], :hide => options[:hide_label], :toggable => id}
+        link_to label, '#', :data => data, :style => 'display: none;', :class => 'as-js-button visibility-toggle'
       end
 
       def list_row_class_method(record)

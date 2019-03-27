@@ -20,6 +20,10 @@ Metrics/ClassLength:
   Max: 500
   CountComments: false
 
+Metrics/LineLength:
+  Exclude:
+    - 'test/**/*'
+
 Metrics/ModuleLength:
   Max: 600
   CountComments: false

@@ -127,7 +127,9 @@ class ActiveSupport::TestCase
       script = script.gsub('\n', '\\\\\\n')
                      .gsub(/['"]/, '\\\\\\\\\&')
                      .gsub('</script>', '</scr"+"ipt>')
-      assert_select 'script[type=text/javascript]', Regexp.new('.*' + Regexp.quote("with(window.parent) { setTimeout(function() { window.eval('") + script + Regexp.quote("'); if (typeof(loc) !== 'undefined') loc.replace('about:blank'); }, 1) };") + '.*')
+      pre_regex = Regexp.quote("with(window.parent) { setTimeout(function() { window.eval('")
+      post_regex = Regexp.quote("'); if (typeof(loc) !== 'undefined') loc.replace('about:blank'); }, 1) };")
+      assert_select 'script[type=text/javascript]', Regexp.new('.*' + pre_regex + script + post_regex + '.*')
     end
   end
 

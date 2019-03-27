@@ -120,7 +120,8 @@ module ActiveScaffold
         end
       end
 
-      # Create the automatic column links. Note that this has to happen when configuration is *done*, because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?
+      # Create the automatic column links. Note that this has to happen when configuration is *done*,
+      # because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?
       def links_for_associations
         return unless active_scaffold_config.actions.include?(:list) && active_scaffold_config.actions.include?(:nested)
         active_scaffold_config.columns.each do |column|

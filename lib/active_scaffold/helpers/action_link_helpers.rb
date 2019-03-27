@@ -85,7 +85,9 @@ module ActiveScaffold
           options.delete :link if link.crud_type == :create
         end
         if link.action.nil? || (link.type == :member && options.key?(:authorized) && !options[:authorized])
-          action_link_html(link, nil, {:link => action_link_text(link, options), :class => "disabled #{link.action}#{" #{link.html_options[:class]}" if link.html_options[:class].present?}", :title => options[:not_authorized_reason]}, record)
+          html_class = "disabled #{link.action}#{" #{link.html_options[:class]}" if link.html_options[:class].present?}"
+          html_options = {:link => action_link_text(link, options), :class => html_class, :title => options[:not_authorized_reason]}
+          action_link_html(link, nil, html_options, record)
         else
           url = action_link_url(link, record)
           html_options = action_link_html_options(link, record, options)

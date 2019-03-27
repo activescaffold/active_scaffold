@@ -64,11 +64,11 @@ module ActiveScaffold::Actions
     end
 
     def create_respond_to_xml
-      render :xml => response_object, :only => create_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(create_columns_names), :methods => virtual_columns(create_columns_names), :status => response_status, :location => response_location
+      response_to_api(:xml, create_columns_names, location: response_location)
     end
 
     def create_respond_to_json
-      render :json => response_object, :only => create_columns_names + [active_scaffold_config.model.primary_key], :include => association_columns(create_columns_names), :methods => virtual_columns(create_columns_names), :status => response_status, :location => response_location
+      response_to_api(:json, create_columns_names, location: response_location)
     end
 
     def create_columns_names

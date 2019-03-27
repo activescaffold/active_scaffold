@@ -92,7 +92,11 @@ module ActiveScaffold::Bridges
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
         if rails_format =~ /%[cUWwxXZz]/
-          Rails.logger.warn("AS DatePicker::Helper: rails date format #{rails_format} includes options which can't be converted to jquery datepicker format. Options %c, %U, %W, %w, %x %X, %z, %Z are not supported by datepicker and will be removed")
+          Rails.logger.warn(
+            "AS DatePicker::Helper: rails date format #{rails_format} includes options "\
+            "which can't be converted to jquery datepicker format. "\
+            'Options %c, %U, %W, %w, %x %X, %z, %Z are not supported by datepicker and will be removed'
+          )
           nil
         end
         js_format = rails_format.dup
@@ -157,7 +161,9 @@ module ActiveScaffold::Bridges
           options[:style] = 'display: none' if options[:show] == false # hide only if asked to hide
           format = options.delete(:format) || (column.search_ui == :date_picker ? :default : :picker)
           datepicker_format_options(column, format, options)
-          text_field_tag("#{options[:name]}[#{name}]", value ? l(value, :format => format) : nil, options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]", :object => nil))
+          value = l(value, :format => format) if value
+          options = options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]", :object => nil)
+          text_field_tag("#{options[:name]}[#{name}]", value, options)
         end
       end
 
