@@ -219,7 +219,7 @@ module ActiveScaffold::Config
     # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
     attr_accessor :calculate_etag
 
-    UserSettings.class_eval do # defined with columns_accessor
+    class UserSettings # don't inherit, defined with columns_accessor
       user_attr :page_links_inner_window, :page_links_outer_window, :refresh_with_header, :empty_field_text,
                 :association_join_text, :messages_above_header, :wrap_tag, :auto_select_columns, :calculate_etag,
                 :no_entries_message, :filtered_message, :show_search_reset, :always_show_create, :always_show_search,

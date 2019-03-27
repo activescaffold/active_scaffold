@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/BlockLength
 ActiveRecord::Schema.define do
   create_table 'addresses' do |t|
     t.integer 'addressable_id'
