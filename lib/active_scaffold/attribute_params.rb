@@ -174,14 +174,13 @@ module ActiveScaffold
 
     def column_value_from_param_simple_value(parent_record, column, value)
       if column.association&.singular?
-        if value.present?
-          if column.association.polymorphic?
-            class_name = parent_record.send(column.association.foreign_type)
-            class_name.constantize.find(value) if class_name.present?
-          else
-            # it's a single id
-            column.association.klass.find(value)
-          end
+        return if value.blank?
+        if column.association.polymorphic?
+          class_name = parent_record.send(column.association.foreign_type)
+          class_name.constantize.find(value) if class_name.present?
+        else
+          # it's a single id
+          column.association.klass.find(value)
         end
       elsif column.association&.collection?
         column_plural_assocation_value_from_value(column, Array(value))

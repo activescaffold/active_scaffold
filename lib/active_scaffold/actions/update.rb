@@ -55,18 +55,26 @@ module ActiveScaffold::Actions
       end
     end
 
+    def record_to_refresh_on_update
+      if update_refresh_list?
+        do_refresh_list
+      else
+        reload_record_on_update
+      end
+    end
+
+    def reload_record_on_update
+      @updated_record = @record
+      # get_row so associations are cached like in list action
+      # if record doesn't fullfil current conditions remove it from list
+      @record = get_row
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+
     def update_respond_to_js
       if successful?
-        if !render_parent? && active_scaffold_config.actions.include?(:list)
-          if update_refresh_list?
-            do_refresh_list
-          else
-            @updated_record = @record
-            # get_row so associations are cached like in list action
-            # if record doesn't fullfil current conditions remove it from list
-            @record = get_row rescue nil # rubocop:disable Style/RescueModifier
-          end
-        end
+        record_to_refresh_on_update if !render_parent? && active_scaffold_config.actions.include?(:list)
         flash.now[:info] = as_(:updated_model, :model => ERB::Util.h((@updated_record || @record).to_label)) if active_scaffold_config.update.persistent
       end
       render :action => 'on_update'

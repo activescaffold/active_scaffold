@@ -91,7 +91,7 @@ class ActiveRecordPermissionsTest < MiniTest::Test
   #   symbols are: is (a)bsent, returns (f)alse, returns (t)rue, or n/a (_)
   def test_method_combinations_with_default_true
     old_permission = nil
-    ActiveScaffold.set_defaults do |config|
+    ActiveScaffold.defaults do |config|
       old_permission = config.security.default_permission
       config.security.default_permission = true
     end
@@ -134,7 +134,7 @@ class ActiveRecordPermissionsTest < MiniTest::Test
     miss(@model.authorized_for?(:crud_type => :read, :column => :b1), 'ttf')
     pass(@model.authorized_for?(:crud_type => :read, :column => :a1), 'ttt')
 
-    ActiveScaffold.set_defaults do |config|
+    ActiveScaffold.defaults do |config|
       config.security.default_permission = old_permission
     end
   end

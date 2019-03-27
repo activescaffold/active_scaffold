@@ -650,53 +650,60 @@ module ActiveScaffold
       end
 
       # Try to get numerical constraints from model's validators
+      def column_numerical_constraints(column, options)
+        validators = column.active_record_class.validators.select do |v|
+          v.is_a?(ActiveModel::Validations::NumericalityValidator) && v.attributes.include?(column.name)
+        end
+
+        equal_validator = validators.find { |v| v.options[:equal_to] }
+        # If there is equal_to constraint - use it (unless otherwise specified by user)
+        if equal_validator && !(options[:min] || options[:max])
+          equal_to = equal_validator.options[:equal_to]
+          return {min: equal_to, max: equal_to}
+        end
+
+        numerical_constraints = {}
+
+        # find minimum and maximum from validators
+        # we can safely modify :min and :max by 1 for :greater_tnan or :less_than value only for integer values
+        only_integer = column.column.type == :integer if column.column
+        only_integer ||= validators.find { |v| v.options[:only_integer] }.present?
+        margin = only_integer ? 1 : 0
+
+        # Minimum
+        unless options[:min]
+          min = validators.map { |v| v.options[:greater_than_or_equal] }.compact.max
+          greater_than = validators.map { |v| v.options[:greater_than] }.compact.max
+          numerical_constraints[:min] = [min, (greater_than + margin if greater_than)].compact.max
+        end
+
+        # Maximum
+        unless options[:max]
+          max = validators.map { |v| v.options[:less_than_or_equal] }.compact.min
+          less_than = validators.map { |v| v.options[:less_than] }.compact.min
+          numerical_constraints[:max] = [max, (less_than - margin if less_than)].compact.min
+        end
+
+        # Set step = 2 for column values restricted to be odd or even (but only if minimum is set)
+        unless options[:step]
+          only_odd_valid  = validators.any? { |v| v.options[:odd] }
+          only_even_valid = validators.any? { |v| v.options[:even] } unless only_odd_valid
+          if !only_integer
+            numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column&.scale.to_i.positive?
+          elsif options[:min] && options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
+            numerical_constraints[:step] = 2
+            numerical_constraints[:min] += 1 if only_odd_valid  && options[:min].even?
+            numerical_constraints[:min] += 1 if only_even_valid && options[:min].odd?
+          end
+          numerical_constraints[:step] ||= 'any' unless only_integer
+        end
+
+        numerical_constraints
+      end
+
       def numerical_constraints_for_column(column, options)
         if column.numerical_constraints.nil?
-          numerical_constraints = {}
-          validators = column.active_record_class.validators.select do |v|
-            v.is_a?(ActiveModel::Validations::NumericalityValidator) && v.attributes.include?(column.name)
-          end
-          equal_to = (val = validators.find { |v| v.options[:equal_to] }) ? val.options[:equal_to] : nil
-
-          # If there is equal_to constraint - use it (unless otherwise specified by user)
-          if equal_to && !(options[:min] || options[:max])
-            numerical_constraints[:min] = numerical_constraints[:max] = equal_to
-          else # find minimum and maximum from validators
-            # we can safely modify :min and :max by 1 for :greater_tnan or :less_than value only for integer values
-            only_integer = column.column.type == :integer if column.column
-            only_integer ||= validators.find { |v| v.options[:only_integer] }.present?
-            margin = only_integer ? 1 : 0
-
-            # Minimum
-            unless options[:min]
-              min = validators.map { |v| v.options[:greater_than_or_equal] }.compact.max
-              greater_than = validators.map { |v| v.options[:greater_than] }.compact.max
-              numerical_constraints[:min] = [min, (greater_than + margin if greater_than)].compact.max
-            end
-
-            # Maximum
-            unless options[:max]
-              max = validators.map { |v| v.options[:less_than_or_equal] }.compact.min
-              less_than = validators.map { |v| v.options[:less_than] }.compact.min
-              numerical_constraints[:max] = [max, (less_than - margin if less_than)].compact.min
-            end
-
-            # Set step = 2 for column values restricted to be odd or even (but only if minimum is set)
-            unless options[:step]
-              only_odd_valid  = validators.any? { |v| v.options[:odd] }
-              only_even_valid = validators.any? { |v| v.options[:even] } unless only_odd_valid
-              if !only_integer
-                numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column&.scale.to_i.positive?
-              elsif options[:min] && options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
-                numerical_constraints[:step] = 2
-                numerical_constraints[:min] += 1 if only_odd_valid  && options[:min].even?
-                numerical_constraints[:min] += 1 if only_even_valid && options[:min].odd?
-              end
-              numerical_constraints[:step] ||= 'any' unless only_integer
-            end
-          end
-
-          column.numerical_constraints = numerical_constraints
+          column.numerical_constraints ||= column_numerical_constraints(column, options)
         end
         column.numerical_constraints.merge(options)
       end

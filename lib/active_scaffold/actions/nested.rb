@@ -58,21 +58,25 @@ module ActiveScaffold::Actions
     def include_habtm_actions
       if nested? && nested.habtm?
         # Production mode is ok with adding a link everytime the scaffold is nested - we are not ok with that.
-        active_scaffold_config.action_links.add('new_existing', :label => :add_existing, :type => :collection, :security_method => :add_existing_authorized?) unless active_scaffold_config.action_links['new_existing']
+        unless active_scaffold_config.action_links['new_existing']
+          active_scaffold_config.action_links.add('new_existing', :label => :add_existing, :type => :collection, :security_method => :add_existing_authorized?)
+        end
         if active_scaffold_config.nested.shallow_delete
-          active_scaffold_config.action_links.add('destroy_existing', :label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?) unless active_scaffold_config.action_links['destroy_existing']
-          if active_scaffold_config.actions.include?(:delete)
-            active_scaffold_config.action_links.delete('destroy') if active_scaffold_config.action_links['destroy']
+          unless active_scaffold_config.action_links['destroy_existing']
+            active_scaffold_config.action_links.add('destroy_existing', :label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?)
+          end
+          if active_scaffold_config.actions.include?(:delete) && active_scaffold_config.action_links['destroy']
+            active_scaffold_config.action_links.delete('destroy')
           end
         end
-      else
-        # Production mode is caching this link into a non nested scaffold
+      elsif !ActiveScaffold.threadsafe
+        # Production mode is caching this link into a non nested scaffold, when threadsafe is disabled
         active_scaffold_config.action_links.delete('new_existing') if active_scaffold_config.action_links['new_existing']
 
         if active_scaffold_config.nested.shallow_delete
           active_scaffold_config.action_links.delete('destroy_existing') if active_scaffold_config.action_links['destroy_existing']
-          if active_scaffold_config.actions.include?(:delete) && active_scaffold_config.delete.link
-            active_scaffold_config.action_links.add(active_scaffold_config.delete.link) unless active_scaffold_config.action_links['destroy']
+          if active_scaffold_config.actions.include?(:delete) && active_scaffold_config.delete.link && !active_scaffold_config.action_links['destroy']
+            active_scaffold_config.action_links.add(active_scaffold_config.delete.link)
           end
         end
       end

@@ -61,15 +61,7 @@ module ActiveScaffold
 
           # association column constraint
           elsif column.association
-            if column.association.habtm?
-              active_scaffold_habtm_joins.concat column.includes
-            elsif !column.association.polymorphic?
-              if column.association.belongs_to?
-                active_scaffold_preload.concat column.includes
-              else
-                active_scaffold_references.concat column.includes
-              end
-            end
+            join_from_association_constraint(column)
             hash_conditions.deep_merge!(condition_from_association_constraint(column.association, v))
 
           # regular column constraints
@@ -85,6 +77,18 @@ module ActiveScaffold
         end
       end
       conditions.reject(&:blank?)
+    end
+
+    def join_from_association_constraint(column)
+      if column.association.habtm?
+        active_scaffold_habtm_joins.concat column.includes
+      elsif !column.association.polymorphic?
+        if column.association.belongs_to?
+          active_scaffold_preload.concat column.includes
+        else
+          active_scaffold_references.concat column.includes
+        end
+      end
     end
 
     # We do NOT want to use .search_sql. If anything, search_sql will refer
