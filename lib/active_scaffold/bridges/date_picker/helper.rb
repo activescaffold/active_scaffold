@@ -78,12 +78,7 @@ module ActiveScaffold::Bridges
         datetime_picker_options.merge!(as_datetime_picker_options) if as_datetime_picker_options.is_a? Hash
         Rails.logger.warn "ActiveScaffold: Missing datetime picker localization for your locale: #{locale}" if as_datetime_picker_options.blank?
 
-        date_format, time_format = split_datetime_format(to_datepicker_format(rails_time_format))
-        datetime_picker_options[:dateFormat] = date_format unless date_format.nil?
-        unless time_format.nil?
-          datetime_picker_options[:timeFormat] = time_format
-          datetime_picker_options[:ampm] = true if rails_time_format.include?('%I')
-        end
+        datetime_picker_options.merge! format_to_datetime_picker(rails_time_format)
         datetime_picker_options
       rescue StandardError
         raise if locale == I18n.locale
@@ -107,6 +102,17 @@ module ActiveScaffold::Bridges
         js_format
       end
 
+      def self.format_to_datetime_picker(rails_time_format)
+        date_format, time_format = split_datetime_format(to_datepicker_format(rails_time_format))
+        datetime_picker_options = {}
+        datetime_picker_options[:dateFormat] = date_format unless date_format.nil?
+        unless time_format.nil?
+          datetime_picker_options[:timeFormat] = time_format
+          datetime_picker_options[:ampm] = true if rails_time_format.include?('%I')
+        end
+        datetime_picker_options
+      end
+
       def self.split_datetime_format(datetime_format)
         date_format = datetime_format
         time_format = nil
@@ -123,10 +129,6 @@ module ActiveScaffold::Bridges
       end
 
       module DatepickerColumnHelpers
-        def datepicker_split_datetime_format(datetime_format)
-          ActiveScaffold::Bridges::DatePicker::Helper.split_datetime_format(datetime_format)
-        end
-
         def to_datepicker_format(rails_format)
           ActiveScaffold::Bridges::DatePicker::Helper.to_datepicker_format(rails_format)
         end
@@ -137,29 +139,33 @@ module ActiveScaffold::Bridges
             js_format = to_datepicker_format(I18n.translate!("date.formats.#{format}"))
             options['data-dateFormat'] = js_format unless js_format.nil?
           else
-            rails_time_format = I18n.translate!("time.formats.#{format}")
-            date_format, time_format = datepicker_split_datetime_format(to_datepicker_format(rails_time_format))
-            options['data-dateFormat'] = date_format unless date_format.nil?
-            unless time_format.nil?
-              options['data-timeFormat'] = time_format
-              options['data-ampm'] = true if rails_time_format.include?('%I')
-            end
+            datetimepicker_format_options(format, options)
           end
+        end
+
+        def datetimepicker_format_options(format, options)
+          rails_time_format = I18n.translate!("time.formats.#{format}")
+          options.merge! ActiveScaffold::Bridges::DatePicker::Helper.format_to_datetime_picker(rails_time_format)
+        end
+
+        def datepicker_format(options, ui)
+          options.delete(:format) || (ui == :date_picker ? :default : :picker)
         end
       end
 
       module SearchColumnHelpers
         def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
-          value = if current_search.is_a? Hash
-                    controller.class.condition_value_for_datetime(column, current_search[name], column.search_ui == :date_picker ? :to_date : :to_time)
-                  else
-                    current_search
-                  end
+          value =
+            if current_search.is_a? Hash
+              controller.class.condition_value_for_datetime(column, current_search[name], column.search_ui == :date_picker ? :to_date : :to_time)
+            else
+              current_search
+            end
           options = column.options.merge(options).except!(:include_blank, :discard_time, :discard_date, :value)
           options = active_scaffold_input_text_options(options.merge(column.options))
           options[:class] << " #{column.search_ui}"
           options[:style] = 'display: none' if options[:show] == false # hide only if asked to hide
-          format = options.delete(:format) || (column.search_ui == :date_picker ? :default : :picker)
+          format = datepicker_format(options, column.search_ui)
           datepicker_format_options(column, format, options)
           value = l(value, :format => format) if value
           options = options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]", :object => nil)
@@ -174,7 +180,7 @@ module ActiveScaffold::Bridges
           options[:class] << " #{column.form_ui}"
 
           value = controller.class.condition_value_for_datetime(column, record.send(column.name), column.form_ui == :date_picker ? :to_date : :to_time)
-          format = options.delete(:format) || (column.form_ui == :date_picker ? :default : :picker)
+          format = datepicker_format(options, column.form_ui)
           datepicker_format_options(column, format, options)
           options[:value] = (value ? l(value, :format => format) : nil)
           text_field(:record, column.name, options)
