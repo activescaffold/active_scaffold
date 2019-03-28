@@ -376,12 +376,12 @@ module ActiveScaffold::Actions
       render :action => 'action_confirmation', :locals => {:record => @record, :link => link}
     end
 
+    def action_update_respond_on_iframe
+      responds_to_parent { action_update_respond_to_js }
+    end
+
     def action_update_respond_to_html
-      if params[:iframe] == 'true' # was this an iframe post ?
-        responds_to_parent { action_update_respond_to_js }
-      else
-        redirect_to :action => 'index'
-      end
+      redirect_to :action => 'index'
     end
 
     def action_update_respond_to_js
@@ -433,12 +433,20 @@ module ActiveScaffold::Actions
       respond_to do |type|
         action_formats.each do |format|
           type.send(format) do
-            if respond_to?(method_name = "#{action}_respond_to_#{format}", true)
-              send(method_name)
-            end
+            method_name = respond_method_for(action, format)
+            send(method_name) if method_name
           end
         end
       end
+    end
+
+    def respond_method_for(action, format)
+      if format == :html && params[:iframe] == 'true'
+        method_name = "#{action}_respond_on_iframe"
+        return method_name if respond_to?(method_name, true)
+      end
+      method_name = "#{action}_respond_to_#{format}"
+      method_name if respond_to?(method_name, true)
     end
 
     def action_formats

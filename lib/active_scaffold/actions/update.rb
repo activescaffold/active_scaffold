@@ -35,13 +35,15 @@ module ActiveScaffold::Actions
       render(:partial => 'update_form')
     end
 
+    def update_respond_on_iframe
+      do_refresh_list if successful? && active_scaffold_config.update.refresh_list && !render_parent?
+      responds_to_parent do
+        render :action => 'on_update', :formats => [:js], :layout => false
+      end
+    end
+
     def update_respond_to_html
-      if params[:iframe] == 'true' # was this an iframe post ?
-        do_refresh_list if successful? && active_scaffold_config.update.refresh_list && !render_parent?
-        responds_to_parent do
-          render :action => 'on_update', :formats => [:js], :layout => false
-        end
-      elsif successful? # just a regular post
+      if successful? # just a regular post
         message = as_(:updated_model, :model => ERB::Util.h(@record.to_label))
         if params[:dont_close]
           flash.now[:info] = message
@@ -98,7 +100,8 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], :update)
     end
 
-    # A complex method to update a record. The complexity comes from the support for subforms, and saving associated records.
+    # A complex method to update a record. The complexity comes from the support for subforms,
+    # and saving associated records.
     # If you want to customize this algorithm, consider using the +before_update_save+ callback
     def do_update
       do_edit

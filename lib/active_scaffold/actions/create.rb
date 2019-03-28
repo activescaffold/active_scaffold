@@ -32,13 +32,15 @@ module ActiveScaffold::Actions
       render(:partial => 'create_form')
     end
 
+    def create_respond_on_iframe
+      do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
+      responds_to_parent do
+        render :action => 'on_create', :formats => [:js], :layout => false
+      end
+    end
+
     def create_respond_to_html
-      if params[:iframe] == 'true' # was this an iframe post ?
-        do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
-        responds_to_parent do
-          render :action => 'on_create', :formats => [:js], :layout => false
-        end
-      elsif successful?
+      if successful?
         flash[:info] = as_(:created_model, :model => ERB::Util.h(@record.to_label))
         if (action = active_scaffold_config.create.action_after_create)
           redirect_to params_for(:action => action, :id => @record.to_param)
@@ -55,10 +57,12 @@ module ActiveScaffold::Actions
     end
 
     def create_respond_to_js
-      do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
-      if successful? && params[:dont_close] && !render_parent?
-        @saved_record = @record
-        do_new
+      if successful? && !render_parent?
+        do_refresh_list if active_scaffold_config.create.refresh_list
+        if params[:dont_close]
+          @saved_record = @record
+          do_new
+        end
       end
       render :action => 'on_create'
     end
