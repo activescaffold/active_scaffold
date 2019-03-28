@@ -57,20 +57,21 @@ module ActiveScaffold::Actions
       def custom_finder_options
         if grouped_search?
           group_sql = calculation_for_group_by(search_group_column&.field || search_group_name)
-          group_by = group_sql.respond_to?(:to_sql) ? group_sql.to_sql : group_sql
-
-          select_query = quoted_select_columns(search_group_column&.select_columns)
+          select_query = grouped_search_select
           select_query << group_sql.as(search_group_column.name.to_s) if search_group_column && group_sql.respond_to?(:to_sql)
-          if active_scaffold_config.model.columns_hash.include?(active_scaffold_config.model.inheritance_column)
-            select_query << active_scaffold_config.columns[active_scaffold_config.model.inheritance_column].field
-          end
-          grouped_columns_calculations.each do |name, part|
-            select_query << (part.respond_to?(:as) ? part : Arel::Nodes::SqlLiteral.new(part)).as(name.to_s)
-          end
-
-          {group: group_by, select: select_query}
+          {group: group_sql, select: select_query}
         else
           super
+        end
+      end
+
+      def grouped_search_select
+        select_query = quoted_select_columns(search_group_column&.select_columns || [search_group_name])
+        if active_scaffold_config.model.columns_hash.include?(active_scaffold_config.model.inheritance_column)
+          select_query << active_scaffold_config.columns[active_scaffold_config.model.inheritance_column].field
+        end
+        grouped_columns_calculations.each do |name, part|
+          select_query << (part.respond_to?(:as) ? part : Arel::Nodes::SqlLiteral.new(part)).as(name.to_s)
         end
       end
 
@@ -116,7 +117,7 @@ module ActiveScaffold::Actions
         @list_columns ||=
           if grouped_search?
             columns = grouped_columns || super.select(&:calculation?)
-            [search_group_column || search_group_name].concat columns
+            columns.unshift(search_group_column || search_group_name)
           else
             super
           end
@@ -143,31 +144,39 @@ module ActiveScaffold::Actions
 
       def do_search
         if field_search_params.present?
-          filtered_columns = []
-          text_search = active_scaffold_config.field_search.text_search
-          columns = active_scaffold_config.field_search.columns
-          count_includes = active_scaffold_config.list.user.count_includes
-          search_params.each do |key, value|
-            next unless columns.include? key
-            column = active_scaffold_config.columns[key]
-            search_condition = self.class.condition_for_column(column, value, text_search)
-            next if search_condition.blank?
-
-            if count_includes.nil? && column.includes.present? && list_columns.include?(column) && !grouped_search?
-              active_scaffold_references << column.includes
-            elsif column.search_joins.present?
-              active_scaffold_outer_joins << column.search_joins
-            end
-            active_scaffold_conditions << search_condition
-            filtered_columns << column
-          end
-          if filtered_columns.present? || grouped_search?
-            @filtered = active_scaffold_config.field_search.human_conditions ? filtered_columns : true
-          end
-
-          active_scaffold_config.list.user.page = nil
+          do_field_search
         else
           super
+        end
+      end
+
+      def do_field_search
+        filtered_columns = []
+        text_search = active_scaffold_config.field_search.text_search
+        columns = active_scaffold_config.field_search.columns
+        count_includes = active_scaffold_config.list.user.count_includes
+        search_params.each do |key, value|
+          next unless columns.include? key
+          column = active_scaffold_config.columns[key]
+          search_condition = self.class.condition_for_column(column, value, text_search)
+          next if search_condition.blank?
+
+          joins_for_search_on_column(column, count_includes)
+          active_scaffold_conditions << search_condition
+          filtered_columns << column
+        end
+        if filtered_columns.present? || grouped_search?
+          @filtered = active_scaffold_config.field_search.human_conditions ? filtered_columns : true
+        end
+
+        active_scaffold_config.list.user.page = nil
+      end
+
+      def joins_for_search_on_column(column, count_includes)
+        if count_includes.nil? && column.includes.present? && list_columns.include?(column) && !grouped_search?
+          active_scaffold_references << column.includes
+        elsif column.search_joins.present?
+          active_scaffold_outer_joins << column.search_joins
         end
       end
 
