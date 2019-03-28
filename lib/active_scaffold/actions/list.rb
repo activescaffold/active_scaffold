@@ -113,20 +113,7 @@ module ActiveScaffold::Actions
       @remove_id_from_list_links = params[:id].blank?
       set_includes_for_columns
 
-      options = {:sorting => active_scaffold_config.list.user.sorting,
-                 :count_includes => active_scaffold_config.list.user.count_includes}
-      paginate = params[:format].nil? ? (accepts? :html, :js) : %w[html js].include?(params[:format])
-      options[:pagination] = active_scaffold_config.list.pagination if paginate
-      if options[:pagination]
-        options[:per_page] = active_scaffold_config.list.user.per_page
-        options[:page] = active_scaffold_config.list.user.page
-      end
-      if active_scaffold_config.list.auto_select_columns
-        auto_select_columns = list_columns + [active_scaffold_config.columns[active_scaffold_config.model.primary_key]]
-        options[:select] = auto_select_columns.map { |c| quoted_select_columns(c.select_columns) }.compact.flatten
-      end
-
-      page = find_page(options)
+      page = find_page(find_page_options)
       total_pages = page.pager.number_of_pages
       if !page.pager.infinite? && !total_pages.zero? && page.number > total_pages
         page = page.pager.last
@@ -134,6 +121,27 @@ module ActiveScaffold::Actions
       end
       @page = page
       @records = page.items
+    end
+
+    def find_page_options
+      options = {
+        :sorting => active_scaffold_config.list.user.sorting,
+        :count_includes => active_scaffold_config.list.user.count_includes
+      }
+
+      paginate = params[:format].nil? ? accepts?(:html, :js) : %w[html js].include?(params[:format])
+      options[:pagination] = active_scaffold_config.list.pagination if paginate
+      if options[:pagination]
+        options[:per_page] = active_scaffold_config.list.user.per_page
+        options[:page] = active_scaffold_config.list.user.page
+      end
+
+      if active_scaffold_config.list.auto_select_columns
+        auto_select_columns = list_columns + [active_scaffold_config.columns[active_scaffold_config.model.primary_key]]
+        options[:select] = auto_select_columns.map { |c| quoted_select_columns(c.select_columns) }.compact.flatten
+      end
+
+      options
     end
 
     def quoted_select_columns(columns)
