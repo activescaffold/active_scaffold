@@ -398,7 +398,7 @@ module ActiveScaffold::DataStructures
     end
 
     def default_for_empty_value
-      column.null ? nil : column.default if column
+      (column.null ? nil : column.default) if column
     end
 
     # to cache method to get value in list
