@@ -108,38 +108,39 @@ module ActiveScaffold::Actions
       update_save
     end
 
-    def update_save(options = {})
-      attributes = options[:attributes] || params[:record]
-      begin
-        active_scaffold_config.model.transaction do
-          @record = update_record_from_params(@record, active_scaffold_config.update.columns, attributes) unless options[:no_record_param_update]
-          before_update_save(@record)
-          # errors to @record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
-          self.successful = [@record.keeping_errors { @record.valid? }, @record.associated_valid?].all? # this syntax avoids a short-circuit
+    def update_save(attributes: params[:record], no_record_param_update: false)
+      active_scaffold_config.model.transaction do
+        unless no_record_param_update
+          @record = update_record_from_params(@record, active_scaffold_config.update.columns, attributes)
+        end
+        before_update_save(@record)
+        # errors to @record can be added by update_record_from_params when association fails
+        # to set and ActiveRecord::RecordNotSaved is raised
+        # this syntax avoids a short-circuit, so we run validations on record and associations
+        self.successful = [@record.keeping_errors { @record.valid? }, @record.associated_valid?].all?
 
-          unless successful?
-            # some associations such as habtm are saved before saved is called on parent object
-            # we have to revert these changes if validation fails
-            raise ActiveRecord::Rollback, "don't save habtm associations unless record is valid"
-          end
-          @record.save! && @record.save_associated!
-          after_update_save(@record)
+        unless successful?
+          # some associations such as habtm are saved before saved is called on parent object
+          # we have to revert these changes if validation fails
+          raise ActiveRecord::Rollback, "don't save habtm associations unless record is valid"
         end
-      rescue ActiveRecord::StaleObjectError
-        @record.errors.add(:base, as_(:version_inconsistency))
-        self.successful = false
-      rescue ActiveRecord::RecordNotSaved => exception
-        logger.warn do
-          "\n\n#{exception.class} (#{exception.message}):\n    " +
-            Rails.backtrace_cleaner.clean(exception.backtrace).join("\n    ") +
-            "\n\n"
-        end
-        @record.errors.add(:base, as_(:record_not_saved)) if @record.errors.empty?
-        self.successful = false
-      rescue ActiveRecord::ActiveRecordError => ex
-        flash[:error] = ex.message
-        self.successful = false
+        @record.save! && @record.save_associated!
+        after_update_save(@record)
       end
+    rescue ActiveRecord::StaleObjectError
+      @record.errors.add(:base, as_(:version_inconsistency))
+      self.successful = false
+    rescue ActiveRecord::RecordNotSaved => exception
+      logger.warn do
+        "\n\n#{exception.class} (#{exception.message}):\n    " +
+          Rails.backtrace_cleaner.clean(exception.backtrace).join("\n    ") +
+          "\n\n"
+      end
+      @record.errors.add(:base, as_(:record_not_saved)) if @record.errors.empty?
+      self.successful = false
+    rescue ActiveRecord::ActiveRecordError => ex
+      flash[:error] = ex.message
+      self.successful = false
     end
 
     def do_update_column
@@ -149,25 +150,10 @@ module ActiveScaffold::Actions
       params.delete(:original_html)
       params.delete(:original_value)
       @column = active_scaffold_config.columns[column]
-      @record = value_record = find_if_allowed(params[:id], :read)
-      return unless @record.authorized_for?(:crud_type => :update, :column => column)
-      if @column.delegated_association
-        value_record = @record.send(@column.delegated_association.name)
-        value_record ||= @record.association(@column.delegated_association.name).build
-        return unless value_record.authorized_for?(:crud_type => :update, :column => column)
-      end
+      value_record = record_for_update_column
+      return unless value_record
 
-      value ||=
-        unless @column.column.nil? || @column.column.null
-          default_val = @column.column.default
-          default_val = ActiveScaffold::Core.column_type_cast default_val, @column.column
-          default_val == true ? false : default_val
-        end
-      unless @column.nil?
-        value = column_value_from_param_value(value_record, @column, value)
-        value = [] if value.nil? && @column.form_ui && @column.association&.collection?
-      end
-
+      value = value_for_update_column(value, @column, value_record)
       value_record.send("#{@column.name}=", value)
       before_update_save(@record)
       self.successful = value_record.save
@@ -182,6 +168,29 @@ module ActiveScaffold::Actions
         end
       end
       after_update_save(@record)
+    end
+
+    def record_for_update_column
+      @record = find_if_allowed(params[:id], :read)
+      return unless @record.authorized_for?(:crud_type => :update, :column => column)
+
+      if @column.delegated_association
+        value_record = @record.send(@column.delegated_association.name)
+        value_record ||= @record.association(@column.delegated_association.name).build
+        value_record if value_record.authorized_for?(:crud_type => :update, :column => column)
+      else
+        @record
+      end
+    end
+
+    def value_for_update_column(param_value, column, record)
+      unless param_value
+        param_value = ActiveScaffold::Core.column_type_cast @column.default_for_empty_value, @column.column
+        param_value = false if value == true
+      end
+      value = column_value_from_param_value(record, @column, param_value)
+      value = [] if value.nil? && @column.form_ui && @column.association&.collection?
+      value
     end
 
     # override this method if you want to inject data in the record (or its associated objects) before the save
