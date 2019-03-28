@@ -272,10 +272,13 @@ module ActiveScaffold
       end
     end
 
-    def save_record_to_association(record, association, value)
-      if association&.collection?
+    def save_record_to_association(record, association, value, reverse = nil)
+      return unless association
+      if association.collection?
         record.send(association.name) << value
-      elsif association
+      elsif reverse&.belongs_to?
+        value.send("#{reverse.name}=", record)
+      else
         record.send("#{association.name}=", value)
       end
     end

@@ -12,7 +12,17 @@ Metrics/AbcSize:
 
 # Offense count: 99
 Metrics/CyclomaticComplexity:
-  Max: 27
+  Exclude:
+    - lib/active_scaffold/helpers/*
+    - lib/active_scaffold/extensions/*
+    - lib/active_scaffold/bridges/**/*
+    - lib/active_scaffold/config/*
+    - lib/active_scaffold/data_structures/*
+    - lib/active_scaffold/actions/core.rb
+    - lib/active_scaffold/finder.rb
+    - lib/active_scaffold/constraints.rb
+    - lib/active_scaffold/active_record_permissions.rb
+    - lib/active_scaffold/core.rb
 
 # Offense count: 1857
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.

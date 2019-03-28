@@ -26,8 +26,12 @@ module ActiveScaffold
 
       def generate_temporary_id(record = nil, generated_id = nil)
         (generated_id || (Time.now.to_f * 1000).to_i.to_s).tap do |id|
-          (@temporary_ids ||= {})[record.class.name] = id if record
+          cache_generated_id record, id
         end
+      end
+
+      def cache_generated_id(record, generated_id)
+        (@temporary_ids ||= {})[record.class.name] = id if record && generated_id
       end
 
       def generated_id(record)
