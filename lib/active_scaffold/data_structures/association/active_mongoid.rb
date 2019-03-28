@@ -25,10 +25,6 @@ module ActiveScaffold::DataStructures::Association
       %i[has_many_records has_many_documents].include?(@association.macro)
     end
 
-    def collection?
-      %i[has_many_documents has_many_records].include?(@association.macro)
-    end
-
     def table_name
       @association.klass < ActiveRecord::Base ? @association.klass.table_name : super
     end

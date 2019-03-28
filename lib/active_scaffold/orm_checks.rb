@@ -71,7 +71,7 @@ module ActiveScaffold
         if active_record? klass
           klass.type_for_attribute column_name.to_s
         elsif mongoid? klass
-          klass.fields[column_name.to_s].type
+          klass.fields[column_name.to_s]&.type
         end
       end
 

@@ -71,6 +71,15 @@ module ActiveScaffold
       !params_hash?(value) && association.belongs_to? && association.counter_cache_hack?
     end
 
+    def multi_parameter_attributes(attributes)
+      attributes.each_with_object({}) do |(k, v), result|
+        next unless k.include? '('
+        column_name = k.split('(').first
+        result[column_name] ||= []
+        result[column_name] << [k, v]
+      end
+    end
+
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
     # association attributes and attempts to instantiate them as associated objects.
     #
@@ -80,28 +89,22 @@ module ActiveScaffold
       crud_type = parent_record.new_record? ? :create : :update
       return parent_record unless parent_record.authorized_for?(:crud_type => crud_type)
 
-      multi_parameter_attributes = {}
-      attributes.each do |k, v|
-        next unless k.include? '('
-        column_name = k.split('(').first
-        multi_parameter_attributes[column_name] ||= []
-        multi_parameter_attributes[column_name] << [k, v]
-      end
+      multi_parameter_attrs = multi_parameter_attributes(attributes)
 
       columns.each_column(for: parent_record, crud_type: crud_type, flatten: true) do |column|
         begin
           # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
-          unless column.params.empty?
-            column.params.each { |p| parent_record.send("#{p}=", attributes[p]) if attributes.key? p }
-          end
+          column.params.select { |p| attributes.key? p }.each { |p| parent_record.send("#{p}=", attributes[p]) }
 
-          if multi_parameter_attributes.key? column.name.to_s
-            parent_record.send(:assign_multiparameter_attributes, multi_parameter_attributes[column.name.to_s])
+          if multi_parameter_attrs.key? column.name.to_s
+            parent_record.send(:assign_multiparameter_attributes, multi_parameter_attrs[column.name.to_s])
           elsif attributes.key? column.name
-            value = update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
+            update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
           end
         rescue StandardError => e
-          Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect}#{" with value #{value}" if value}"
+          message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} "\
+                    "(value from params #{attributes[column.name].inspect})"
+          Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
           raise
         end
       end
@@ -111,33 +114,39 @@ module ActiveScaffold
 
     def update_column_from_params(parent_record, column, attribute, avoid_changes = false)
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
-      if avoid_changes && column.association
-        parent_record.association(column.name).target = value
-        parent_record.send("#{column.association.foreign_key}=", value&.id) if column.association.belongs_to?
-      elsif column.association && counter_cache_hack?(column.association, attribute)
-        parent_record.send "#{column.association.foreign_key}=", value&.id
-        parent_record.association(column.name).target = value
-      elsif column.association&.collection? && column.association.through? && !column.association.through_reflection.collection?
-        through = column.association.through_reflection.name
-        through_record = parent_record.send(through)
-        through_record ||= parent_record.send "build_#{through}"
-        through_record.send "#{column.association.source_reflection.name}=", value
-      else
-        begin
-          if column.association && hack_for_has_many_counter_cache?(parent_record, column)
-            hack_for_has_many_counter_cache(parent_record, column, value)
-          else
-            parent_record.send "#{column.name}=", value
-          end
-        rescue ActiveRecord::RecordNotSaved
-          parent_record.errors.add column.name, :invalid
-          parent_record.association(column.name).target = value if column.association
+      if column.association
+        if avoid_changes
+          parent_record.association(column.name).target = value
+          parent_record.send("#{column.association.foreign_key}=", value&.id) if column.association.belongs_to?
+        else
+          update_column_association(parent_record, column, attribute, value)
         end
+      else
+        parent_record.send "#{column.name}=", value
       end
       if column.association&.reverse_association&.belongs_to?
         Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
       end
       value
+    end
+
+    def update_column_association(parent_record, column, attribute, value)
+      if counter_cache_hack?(column.association, attribute)
+        parent_record.send "#{column.association.foreign_key}=", value&.id
+        parent_record.association(column.name).target = value
+      elsif column.association.collection? && column.association.through_singular?
+        through = column.association.through_reflection.name
+        through_record = parent_record.send(through)
+        through_record ||= parent_record.send "build_#{through}"
+        through_record.send "#{column.association.source_reflection.name}=", value
+      elsif hack_for_has_many_counter_cache?(parent_record, column)
+        hack_for_has_many_counter_cache(parent_record, column, value)
+      else
+        parent_record.send "#{column.name}=", value
+      end
+    rescue ActiveRecord::RecordNotSaved
+      parent_record.errors.add column.name, :invalid
+      parent_record.association(column.name).target = value
     end
 
     def column_value_from_param_value(parent_record, column, value, avoid_changes = false)
@@ -172,26 +181,24 @@ module ActiveScaffold
       Date.parse("#{value}-01")
     end
 
-    def column_value_from_param_simple_value(parent_record, column, value)
-      if column.association&.singular?
-        return if value.blank?
-        if column.association.polymorphic?
-          class_name = parent_record.send(column.association.foreign_type)
-          class_name.constantize.find(value) if class_name.present?
-        else
-          # it's a single id
-          column.association.klass.find(value)
-        end
-      elsif column.association&.collection?
+    def association_value_from_param_simple_value(parent_record, column, value)
+      if column.association.singular?
+        column.association.klass(parent_record)&.find(value) if value.present?
+      else # column.association.collection?
         column_plural_assocation_value_from_value(column, Array(value))
-      elsif column.number? && column.options[:format] && column.form_ui != :number
+      end
+    end
+
+    def column_value_from_param_simple_value(parent_record, column, value)
+      if column.association
+        association_value_from_param_simple_value(parent_record, column, value)
+      elsif column.convert_to_native?
         column.number_to_native(value)
-      else
+      elsif value.is_a?(String) && value.empty? && !column.virtual?
         # convert empty strings into nil. this works better with 'null => true' columns (and validations),
         # for 'null => false' columns is just converted to default value from column
-        if value.is_a?(String) && value.empty? && !column.column.nil?
-          value = column.column.null ? nil : column.column.default
-        end
+        column.default_for_empty_value
+      else
         value
       end
     end
@@ -254,10 +261,10 @@ module ActiveScaffold
     # Attempts to find an instance of klass (which must be an ActiveRecord object) with id primary key
     # Returns record from current if it's included or find from DB
     def record_from_current_or_find(klass, id, current)
-      if current && current.is_a?(ActiveRecord::Base) && current.id.to_s == id
+      if current.is_a?(ActiveRecord::Base) && current.id.to_s == id
         # modifying the current object of a singular association
         current
-      elsif current && current.respond_to?(:any?) && current.any? { |o| o.id.to_s == id }
+      elsif current.respond_to?(:any?) && current.any? { |o| o.id.to_s == id }
         # modifying one of the current objects in a plural association
         current.detect { |o| o.id.to_s == id }
       else # attaching an existing but not-current object
@@ -276,25 +283,17 @@ module ActiveScaffold
     # Determines whether the given attributes hash is "empty".
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
-      # old style date form management... ignore them too
-      part_ignore_column_types = [:datetime, :date, :time, Time, Date]
-
       hash.all? do |key, value|
         # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
-        parts = key.to_s.split('(')
-        column_name = parts.first
-        column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
-        column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name) if column
+        column_name = key.to_s.split('(', 2)[0]
 
         # datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
-        next true if column && parts.length > 1 && part_ignore_column_types.include?(column_type)
+        next true if mulitpart_ignored?(key, klass)
 
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
         # booleans always have value, so they are ignored if not changed from default
-        default_value = column_default_value(column_name, klass, column)
-        casted_value = column ? ActiveScaffold::Core.column_type_cast(value, column) : value
-        next true if casted_value == default_value
+        next true if default_value?(column_name, klass, value)
 
         if params_hash? value
           attributes_hash_is_empty?(value, klass)
@@ -306,7 +305,25 @@ module ActiveScaffold
       end
     end
 
-    def column_default_value(column_name, klass, column)
+    # old style date form management... ignore them
+    MULTIPART_IGNORE_TYPES = [:datetime, :date, :time, Time, Date].freeze
+
+    def mulitpart_ignored?(param_name, klass)
+      column_name, multipart = param_name.to_s.split('(', 2)
+      return false unless multipart
+      column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
+      MULTIPART_IGNORE_TYPES.include?(column_type) if column_type
+    end
+
+    def default_value?(column_name, klass, value)
+      column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
+      default_value = column_default_value(column_name, klass)
+      casted_value = ActiveScaffold::Core.column_type_cast(value, column)
+      casted_value == default_value
+    end
+
+    def column_default_value(column_name, klass)
+      column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
       return unless column
       if ActiveScaffold::OrmChecks.mongoid? klass
         column.default_val

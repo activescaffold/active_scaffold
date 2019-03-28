@@ -372,6 +372,10 @@ module ActiveScaffold::DataStructures
       order_weight.nonzero? ? order_weight : name.to_s <=> other.name.to_s
     end
 
+    def convert_to_native?
+      number? && options[:format] && form_ui != :number
+    end
+
     def number_to_native(value)
       return value if value.blank? || !value.is_a?(String)
       native = '.' # native ruby separator
@@ -391,6 +395,10 @@ module ActiveScaffold::DataStructures
       else
         value.gsub(/[^0-9\-#{format[:separator]}]/, '').gsub(format[:separator], native)
       end
+    end
+
+    def default_for_empty_value
+      column.null ? nil : column.default if column
     end
 
     # to cache method to get value in list

@@ -10,8 +10,15 @@ module ActiveScaffold::DataStructures::Association
       !polymorphic?
     end
 
-    def klass
-      @association.klass unless polymorphic?
+    def klass(record = nil)
+      if polymorphic?
+        record&.send(foreign_type)&.constantize
+      else
+        @association.klass
+      end
+    rescue NameError => e
+      Rails.logger.warn "#{e.message}\n#{e.backtrace.join("\n")}"
+      nil
     end
 
     def belongs_to?
@@ -34,8 +41,20 @@ module ActiveScaffold::DataStructures::Association
       !collection?
     end
 
+    def collection?
+      has_many? || habtm?
+    end
+
     def through?
       false
+    end
+
+    def through_singular?
+      through? && !through_reflection.collection?
+    end
+
+    def through_collection?
+      through? && through_reflection.collection?
     end
 
     def polymorphic?
