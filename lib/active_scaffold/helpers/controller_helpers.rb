@@ -31,7 +31,7 @@ module ActiveScaffold
       end
 
       def cache_generated_id(record, generated_id)
-        (@temporary_ids ||= {})[record.class.name] = id if record && generated_id
+        (@temporary_ids ||= {})[record.class.name] = generated_id if record && generated_id
       end
 
       def generated_id(record)
