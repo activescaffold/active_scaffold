@@ -135,6 +135,14 @@ module ActiveScaffold::Config
       def respond_to_missing?(name, include_all = false)
         @conf.respond_to?(name, include_all) || super
       end
+
+      private
+
+      def proxy_columns(columns)
+        proxy = ::CowProxy.wrap(columns)
+        proxy.action = self
+        proxy
+      end
     end
 
     private
@@ -189,11 +197,11 @@ module ActiveScaffold::Config
         var = "@#{name}"
         self::UserSettings.class_eval do
           define_method "#{name}=" do |val|
-            instance_variable_set var, ::CowProxy.wrap(build_action_columns(val))
+            instance_variable_set var, proxy_columns(build_action_columns(val))
           end
           define_method name do
             instance_variable_get(var) ||
-              instance_variable_set(var, ::CowProxy.wrap(@conf.send(name)))
+              instance_variable_set(var, proxy_columns(@conf.send(name)))
           end
         end
       end
