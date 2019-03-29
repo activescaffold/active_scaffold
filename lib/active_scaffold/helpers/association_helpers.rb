@@ -34,7 +34,9 @@ module ActiveScaffold
             relation = relation.includes(include_assoc[association.name]) if include_assoc
           end
           if column&.sort && column.sort&.dig(:sql)
-            relation = relation.order(column.sort[:sql])
+            # with threasafe enabled, column.sort[:sql] returns proxied strings and
+            # regexp capture won't work, which rails uses internally, so to_s is needed
+            relation = relation.order(Array(column.sort[:sql]).map(&:to_s))
           end
           relation = yield(relation) if block_given?
           relation.to_a
