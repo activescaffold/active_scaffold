@@ -320,7 +320,7 @@ module ActiveScaffold::DataStructures
       @associated_number = self.class.associated_number
       @show_blank_record = self.class.show_blank_record
       @send_form_on_update_column = self.class.send_form_on_update_column
-      @actions_for_association_links = self.class.actions_for_association_links.clone if association
+      @actions_for_association_links = self.class.actions_for_association_links.dup if association
       @select_columns = default_select_columns
 
       @text = @column.nil? || [:string, :text, String].include?(column_type)

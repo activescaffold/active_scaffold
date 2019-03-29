@@ -4,6 +4,17 @@ module CowProxy
   module ActiveScaffold
     module DataStructures
       class Column < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::Column)
+        def link
+          return @link if defined?(@link)
+          if __getobj__.frozen?
+            link_var = __getobj__.instance_variable_get(:@link)
+            if link_var.is_a?(Proc)
+              @link = link_var.call self
+              return @link
+            end
+          end
+          super
+        end
       end
 
       class Set < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::Set)
