@@ -172,12 +172,12 @@ module ActiveScaffold::Actions
 
     def record_for_update_column
       @record = find_if_allowed(params[:id], :read)
-      return unless @record.authorized_for?(:crud_type => :update, :column => column)
+      return unless @record.authorized_for?(:crud_type => :update, :column => @column.name)
 
       if @column.delegated_association
         value_record = @record.send(@column.delegated_association.name)
         value_record ||= @record.association(@column.delegated_association.name).build
-        value_record if value_record.authorized_for?(:crud_type => :update, :column => column)
+        value_record if value_record.authorized_for?(:crud_type => :update, :column => @column.name)
       else
         @record
       end
