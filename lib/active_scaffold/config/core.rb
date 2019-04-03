@@ -232,7 +232,7 @@ module ActiveScaffold::Config
     end
 
     def respond_to_missing?(name, include_all = false)
-      self.class.config_class?(name) && @actions.include?(action_name.to_s.underscore.to_sym) || super
+      self.class.config_class?(name) && @actions.include?(name.to_sym) || super
     end
 
     def [](action_name)
