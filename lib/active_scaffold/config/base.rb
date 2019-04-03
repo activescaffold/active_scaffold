@@ -129,11 +129,15 @@ module ActiveScaffold::Config
       end
 
       def method_missing(name, *args)
-        @conf.respond_to?(name, true) ? @conf.send(name, *args) : super
+        proxy_to_conf?(name, true) ? @conf.send(name, *args) : super
       end
 
       def respond_to_missing?(name, include_all = false)
-        @conf.respond_to?(name, include_all) || super
+        proxy_to_conf?(name, include_all) || super
+      end
+
+      def proxy_to_conf?(name, include_all)
+        name !~ /=$/ && @conf.respond_to?(name, include_all)
       end
 
       private
