@@ -45,7 +45,7 @@ module ActiveScaffold
 
       def column_for_association(association, record)
         active_scaffold_config_for(record.class).columns[association.name]
-      rescue RuntimeError => e
+      rescue StandardError => e
         message = "Error on config for #{record.class.name}:"
         Rails.logger.warn "#{message}\n#{e.message}\n#{e.backtrace.join("\n")}"
         nil

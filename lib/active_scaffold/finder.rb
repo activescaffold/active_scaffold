@@ -227,7 +227,7 @@ module ActiveScaffold
       def local_time_from_hash(value, conversion = :to_time)
         time = Time.zone.local(*%i[year month day hour minute second].collect { |part| value[part].to_i })
         time.send(conversion)
-      rescue RuntimeError => e
+      rescue StandardError => e
         message = "Error creating time from #{value.inspect}:"
         Rails.logger.warn "#{message}\n#{e.message}\n#{e.backtrace.join("\n")}"
         nil
@@ -238,7 +238,7 @@ module ActiveScaffold
         format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
         en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
         Date.strptime(en_value, format)
-      rescue RuntimeError => e
+      rescue StandardError => e
         message = "Error parsing date from #{en_value}"
         message << " (#{value})" if en_value != value
         message << ", with format #{format}" if format
@@ -251,7 +251,7 @@ module ActiveScaffold
         en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
         time = Time.strptime(en_value, format)
         offset ? time : Time.zone.local_to_utc(time).in_time_zone
-      rescue RuntimeError => e
+      rescue StandardError => e
         message = "Error parsing time from #{en_value}"
         message << " (#{value})" if en_value != value
         message << ", with format #{format}" if format
