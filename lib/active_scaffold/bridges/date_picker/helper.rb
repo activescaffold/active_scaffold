@@ -133,19 +133,15 @@ module ActiveScaffold::Bridges
           ActiveScaffold::Bridges::DatePicker::Helper.to_datepicker_format(rails_format)
         end
 
-        def datepicker_format_options(column, format, options)
+        def datepicker_format_options(column, format)
           return if format == :default
           if column.form_ui == :date_picker
             js_format = to_datepicker_format(I18n.translate!("date.formats.#{format}"))
-            options['data-dateFormat'] = js_format unless js_format.nil?
+            js_format.nil? ? {} : {dateFormat: js_format}
           else
-            datetimepicker_format_options(format, options)
+            rails_time_format = I18n.translate!("time.formats.#{format}")
+            ActiveScaffold::Bridges::DatePicker::Helper.format_to_datetime_picker(rails_time_format)
           end
-        end
-
-        def datetimepicker_format_options(format, options)
-          rails_time_format = I18n.translate!("time.formats.#{format}")
-          options.merge! ActiveScaffold::Bridges::DatePicker::Helper.format_to_datetime_picker(rails_time_format)
         end
 
         def datepicker_format(options, ui)
@@ -165,8 +161,8 @@ module ActiveScaffold::Bridges
           options = active_scaffold_input_text_options(options.merge(column.options))
           options[:class] << " #{column.search_ui}"
           options[:style] = 'display: none' if options[:show] == false # hide only if asked to hide
-          format = datepicker_format(options, column.search_ui)
-          datepicker_format_options(column, format, options)
+          options[:data] ||= {}
+          options[:data].merge! datepicker_format_options(column, datepicker_format(options, column.search_ui))
           value = l(value, :format => format) if value
           options = options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]", :object => nil)
           text_field_tag("#{options[:name]}[#{name}]", value, options)
@@ -180,8 +176,8 @@ module ActiveScaffold::Bridges
           options[:class] << " #{column.form_ui}"
 
           value = controller.class.condition_value_for_datetime(column, record.send(column.name), column.form_ui == :date_picker ? :to_date : :to_time)
-          format = datepicker_format(options, column.form_ui)
-          datepicker_format_options(column, format, options)
+          options[:data] ||= {}
+          options[:data].merge! datepicker_format_options(column, format = datepicker_format(options, column.form_ui))
           options[:value] = (value ? l(value, :format => format) : nil)
           text_field(:record, column.name, options)
         end
