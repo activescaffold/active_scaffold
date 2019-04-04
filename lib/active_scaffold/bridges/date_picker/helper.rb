@@ -134,7 +134,7 @@ module ActiveScaffold::Bridges
         end
 
         def datepicker_format_options(column, format)
-          return if format == :default
+          return {} if format == :default
           if column.form_ui == :date_picker
             js_format = to_datepicker_format(I18n.translate!("date.formats.#{format}"))
             js_format.nil? ? {} : {dateFormat: js_format}
@@ -175,9 +175,10 @@ module ActiveScaffold::Bridges
           options = active_scaffold_input_text_options(options.merge(column.options))
           options[:class] << " #{column.form_ui}"
 
+          format = datepicker_format(options, column.form_ui)
           value = controller.class.condition_value_for_datetime(column, record.send(column.name), column.form_ui == :date_picker ? :to_date : :to_time)
           options[:data] ||= {}
-          options[:data].merge! datepicker_format_options(column, format = datepicker_format(options, column.form_ui))
+          options[:data].merge! datepicker_format_options(column, format)
           options[:value] = (value ? l(value, :format => format) : nil)
           text_field(:record, column.name, options)
         end
