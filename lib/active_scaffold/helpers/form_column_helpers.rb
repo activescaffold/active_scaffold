@@ -175,8 +175,10 @@ module ActiveScaffold
         else
           field = active_scaffold_input_for column, scope, column_options
         end
-        field << loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns
-        field << content_tag(:span, column.description, :class => 'description') if column.description.present?
+        if field
+          field << loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns
+          field << content_tag(:span, column.description, :class => 'description') if column.description.present?
+        end
 
         content_tag :dl, attributes do
           content_tag(:dt, label_tag(label_for(column, column_options), column.label)) <<
