@@ -354,12 +354,20 @@ module ActiveScaffold::Config
       end
 
       def [](name)
+        return nil unless @global_columns[name]
         @columns[name.to_sym] ||= CowProxy.wrap @global_columns[name]
       end
 
-      def method_missing(name, *args)
+      def each
+        return enum_for(:each) unless block_given?
+        @global_columns.each do |col|
+          yield self[col.name]
+        end
+      end
+
+      def method_missing(name, *args, &block)
         if @global_columns.respond_to?(name, true)
-          @global_columns.send(name, *args)
+          @global_columns.send(name, *args, &block)
         else
           super
         end
