@@ -136,7 +136,7 @@ module ActiveScaffold::Actions
     private
 
     def create_authorized_filter
-      link = active_scaffold_config.create.link || active_scaffold_config.create.class.link
+      link = active_scaffold_config.create.link || self.class.active_scaffold_config.create.class.link
       raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)
     end
 
