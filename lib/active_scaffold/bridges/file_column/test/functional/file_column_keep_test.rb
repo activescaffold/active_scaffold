@@ -1,4 +1,6 @@
-require File.expand_path('../test_helper.rb', __dir__)
+require 'test_helper'
+require File.expand_path('../mock_model.rb', __dir__)
+require File.expand_path('../../file_column_helpers.rb', __dir__)
 
 class DeleteFileColumnTest < MiniTest::Test
   def setup
