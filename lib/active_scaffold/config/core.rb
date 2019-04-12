@@ -348,6 +348,8 @@ module ActiveScaffold::Config
     end
 
     class UserColumns
+      include Enumerable
+
       def initialize(columns)
         @global_columns = columns
         @columns = {}
