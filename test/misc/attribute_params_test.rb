@@ -46,6 +46,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_nil model.last_name
     assert_equal buildings.map(&:id), model.building_ids
     assert_equal buildings.map(&:id), model.buildings.map(&:id)
+    assert_equal model, model.buildings[0].owner
     assert model.save
     assert_equal 2, model.reload.buildings_count
 
@@ -134,6 +135,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 'Name', model.first_name
     assert model.floor.present?
     assert_equal floor.id, model.floor.id
+    assert_equal model, model.floor.tenant
     assert_nil floor.reload.tenant_id, 'tenant_id should not be saved yet'
     assert model.save
     assert_equal model.id, floor.reload.tenant_id, 'tenant_id should be saved'
@@ -224,6 +226,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 3, model.floors.size
     assert_equal floor.id, model.floors.first.id
     assert_equal [nil, *people.map(&:id)], model.floors.map(&:tenant_id)
+    assert_equal model, model.floors[0].building
     assert model.save
     assert_equal [1, 1], people.map(&:reload).map(&:floors_count)
     assert_equal 3, model.reload.floors_count
@@ -299,6 +302,7 @@ class AttributeParamsTest < MiniTest::Test
     assert_equal 'First', model.first_name
     assert model.car.present?
     assert model.car.new_record?
+    assert_equal model, model.car.person
     assert model.save
     assert model.car.persisted?
 

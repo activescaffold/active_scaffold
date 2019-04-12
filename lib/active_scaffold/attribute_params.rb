@@ -124,6 +124,7 @@ module ActiveScaffold
       else
         parent_record.send "#{column.name}=", value
       end
+      # needed? probably done on find_or_create_for_params, need more testing
       if column.association&.reverse_association&.belongs_to?
         Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
       end
