@@ -19,8 +19,6 @@ end
 group :development, :test do
   # A make-like build utility for Ruby
   gem 'rake'
-  # Bundler provides a consistent environment for Ruby projects by tracking and installing the exact gems and versions that are needed
-  gem 'bundler', '~> 1.0'
   # Rack provides a minimal interface between webservers that support Ruby and Ruby frameworks
   gem 'rack'
 end
@@ -47,6 +45,6 @@ group :test do
 
   platforms :ruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'sqlite3'
+    gem 'sqlite3', '~> 1.3.0'
   end
 end

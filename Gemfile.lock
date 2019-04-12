@@ -217,7 +217,6 @@ DEPENDENCIES
   active_scaffold!
   activerecord-jdbcsqlite3-adapter
   brakeman
-  bundler (~> 1.0)
   bundler-audit
   i18n-tasks
   jdbc-sqlite3
@@ -231,7 +230,7 @@ DEPENDENCIES
   rubocop
   shoulda
   simplecov
-  sqlite3
+  sqlite3 (~> 1.3.0)
 
 BUNDLED WITH
    1.16.6
