@@ -254,7 +254,12 @@ module ActiveScaffold
       if params.key? klass.primary_key
         record_from_current_or_find(klass, params[klass.primary_key], current)
       elsif klass.authorized_for?(:crud_type => :create)
-        parent_column.association.klass.new
+        association = parent_column.association
+        record = association.klass.new
+        if association.reverse_association&.belongs_to? && (association.collection? || current.nil?)
+          record.send("#{parent_column.association.reverse}=", parent_record)
+        end
+        record
       end
     end
 
