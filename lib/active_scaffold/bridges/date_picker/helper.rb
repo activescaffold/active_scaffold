@@ -159,7 +159,7 @@ module ActiveScaffold::Bridges
             end
           options = column.options.merge(options).except!(:include_blank, :discard_time, :discard_date, :value)
           options = active_scaffold_input_text_options(options.merge(column.options))
-          datepicker_format(options, column.search_ui)
+          format = datepicker_format(options, column.search_ui)
           options[:class] << " #{column.search_ui}"
           options[:style] = 'display: none' if options[:show] == false # hide only if asked to hide
           options[:data] ||= {}
