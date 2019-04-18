@@ -72,7 +72,7 @@ module ActiveScaffold
     end
 
     def multi_parameter_attributes(attributes)
-      attributes.each_with_object({}) do |(k, v), result|
+      params_hash(attributes).each_with_object({}) do |(k, v), result|
         next unless k.include? '('
         column_name = k.split('(').first
         result[column_name] ||= []
