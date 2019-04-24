@@ -22,8 +22,6 @@ matrix:
   exclude:
   allow_failures:
     - rvm: rbx-3
-    - rvm: jruby-9.1.15.0
-      gemfile: gemfiles/Gemfile.rails-5.2.x
 rvm:
   - 2.3.5
   - 2.4.2
