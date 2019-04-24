@@ -79,7 +79,7 @@
   variables:
     BUNDLE_GEMFILE: Gemfile
 
-.use_rails_5_0: &use_rails_5_2
+.use_rails_5_2: &use_rails_5_2
   <<: *test
   variables:
     BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.2.x
