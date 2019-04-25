@@ -275,14 +275,14 @@ module ActiveScaffold::Actions
         return active_scaffold_config.model.new
       end
       relation = beginning_of_chain
-      build_options = sti_nested_build_options if nested? && nested.plural_association?
+      build_options = sti_nested_build_options(relation.klass) if nested? && nested.plural_association?
       relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
     end
 
-    def sti_nested_build_options
-      config = active_scaffold_config_for(relation.klass)
+    def sti_nested_build_options(klass)
+      config = active_scaffold_config_for(klass)
       return unless config
-      column = relation.klass.inheritance_column
+      column = klass.inheritance_column
       return unless column && config._columns_hash[column]
 
       model_name = params.delete(column) # in new action inheritance_column must be in params
