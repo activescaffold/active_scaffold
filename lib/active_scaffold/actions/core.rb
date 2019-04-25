@@ -283,13 +283,13 @@ module ActiveScaffold::Actions
       config = active_scaffold_config_for(relation.klass)
       return unless config
       column = relation.klass.inheritance_column
-      if column && config._columns_hash[column]
-        model_name = params.delete(column) # in new action inheritance_column must be in params
-        model_name ||= params[:record]&.delete(column) # in create action must be inside record key
-        model_name = model_name.camelize if model_name
-        model_name ||= active_scaffold_config.model.name
-        {column.to_sym => model_name} if model_name
-      end
+      return unless column && config._columns_hash[column]
+
+      model_name = params.delete(column) # in new action inheritance_column must be in params
+      model_name ||= params[:record]&.delete(column) # in create action must be inside record key
+      model_name = model_name.camelize if model_name
+      model_name ||= active_scaffold_config.model.name
+      {column.to_sym => model_name} if model_name
     end
 
     def get_row(crud_type_or_security_options = :read)

@@ -116,18 +116,21 @@ module ActiveScaffold::Actions
       @nested_parent_record ||= find_if_allowed(nested.parent_id, crud, nested.parent_model)
     end
 
-    def create_association_with_parent(record)
+    def create_association_with_parent?
       # has_many is done by beginning_of_chain and rails if direct association, not in through associations
-      return if nested.has_many? && !nested.association.through?
-      return unless nested.child_association
-      return if (parent = nested_parent_record).nil?
+      return false if nested.has_many? && !nested.association.through?
+      nested.child_association && nested_parent_record
+    end
+
+    def create_association_with_parent(record)
+      return unless create_association_with_parent?
       if nested.child_association.singular?
-        record.send("#{nested.child_association.name}=", parent)
-      elsif nested.association.through_singular? && nested.child_association.through_singular?
-        through = parent.send(nested.association.through_reflection.name)
+        record.send("#{nested.child_association.name}=", nested_parent_record)
+      elsif nested.association.through_singular? # && nested.child_association.through_singular?
+        through = nested_parent_record.send(nested.association.through_reflection.name)
         record.send("#{nested.child_association.through_reflection.name}=", through)
       else
-        record.send(nested.child_association.name) << parent
+        record.send(nested.child_association.name) << nested_parent_record
       end
     end
 
