@@ -275,16 +275,21 @@ module ActiveScaffold::Actions
         return active_scaffold_config.model.new
       end
       relation = beginning_of_chain
-      config = active_scaffold_config_for(relation.klass) if nested? && nested.plural_association?
-      column = relation.klass.inheritance_column if config
+      build_options = sti_nested_build_options if nested? && nested.plural_association?
+      relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
+    end
+
+    def sti_nested_build_options
+      config = active_scaffold_config_for(relation.klass)
+      return unless config
+      column = relation.klass.inheritance_column
       if column && config._columns_hash[column]
         model_name = params.delete(column) # in new action inheritance_column must be in params
         model_name ||= params[:record]&.delete(column) # in create action must be inside record key
         model_name = model_name.camelize if model_name
         model_name ||= active_scaffold_config.model.name
-        build_options = {column.to_sym => model_name} if model_name
+        {column.to_sym => model_name} if model_name
       end
-      relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
     end
 
     def get_row(crud_type_or_security_options = :read)
