@@ -2,6 +2,7 @@
 - Fix adding new action links on request with threadsafety enabled
 - Fix iterating in config.columns with threadsafety enabled
 - Fix changing pagination enabled/disabled with threadsafety enabled
+- Allow create action in has_many through singular association
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
