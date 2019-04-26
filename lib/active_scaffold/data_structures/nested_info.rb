@@ -89,6 +89,7 @@ module ActiveScaffold::DataStructures
     def readonly_through_association?(columns)
       return false unless through_association?
       return true if association.through_reflection.options[:through] # create not possible, too many levels
+      return true if association.source_reflection.macro == :has_and_belongs_to_many # create not possible, too many levels
       return false if association.through_singular? # create allowed, AS has code for this
 
       # create allowed only if through reflection in record to be created is included in create columns
