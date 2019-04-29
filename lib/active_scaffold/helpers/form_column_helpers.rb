@@ -451,10 +451,15 @@ module ActiveScaffold
           end
 
         selected = record.send(column.association.name)&.id if column.association
-        radios = options.map do |option|
-          active_scaffold_radio_option(option, selected, column, html_options)
+        if options.present?
+          radios = options.map do |option|
+            active_scaffold_radio_option(option, selected, column, html_options)
+          end
+          safe_join radios
+        else
+          content_tag(:span, as_(:no_options), :class => "#{html_options[:class]} no-options", :id => html_options[:id]) <<
+            hidden_field_tag(html_options[:name], '', :id => nil)
         end
-        safe_join radios
       end
 
       def active_scaffold_input_checkbox(column, options)
