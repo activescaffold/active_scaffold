@@ -120,6 +120,10 @@ module ActiveScaffold
         classes
       end
 
+      def as_main_div_data
+        params[:eid] ? {eid: id_from_controller(params[:eid])} : {}
+      end
+
       def column_empty?(column_value)
         empty = column_value.nil?
         # column_value != false would force boolean to be cast to integer

@@ -4,6 +4,7 @@
 - Fix changing pagination enabled/disabled with threadsafety enabled
 - Allow create action in has_many through singular association
 - Display no options in radio form_ui when no option is available, so column can be refreshed with update_columns
+- Add as_main_div_data to override data attributes on main div
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
