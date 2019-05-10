@@ -278,7 +278,7 @@ color: $msg_filtered_color;
 color: $msg_color;
 }
 
-.active-scaffold .error-message {
+.active-scaffold .error-message, .active-scaffold-component .error-message {
 border-color: $msg_error_border_color;
 background-color: $msg_error_bg;
 }

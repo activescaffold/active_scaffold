@@ -525,8 +525,13 @@ var ActiveScaffold = {
   load_embedded: function(element) {
     jQuery('.active-scaffold-component .load-embedded', element).each(function(index, item) {
       item = jQuery(item);
-      item.closest('.active-scaffold-component').load(item.attr('href'), function() {
-        jQuery(this).trigger('as:element_updated');
+      var indicator = item.closest('.active-scaffold-component').find('.loading-indicator');
+      indicator.css({visibility: 'visible'});
+      item.closest('.active-scaffold-component').load(item.attr('href'), function(response, status, xhr) {
+        if (status == 'error') {
+          indicator.css({visibility: 'hidden'});
+          indicator.after($('<p>').html(item.data('error-msg')).addClass("error-message message server-error"));
+        } else jQuery(this).trigger('as:element_updated');
       });
     });
   },
