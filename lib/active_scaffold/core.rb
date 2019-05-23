@@ -59,7 +59,13 @@ module ActiveScaffold
         active_scaffold_superclasses_blocks.each { |superblock| active_scaffold_config.configure(&superblock) }
         active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
         active_scaffold_config.configure(&block) if block_given?
-        active_scaffold_config._configure_sti unless active_scaffold_config.sti_children.nil?
+        active_scaffold_config.class.after_config_callbacks.each do |callback|
+          if callback.is_a?(Proc)
+            callback.call
+          elsif active_scaffold_config.respond_to?(callback)
+            active_scaffold_config.send(callback)
+          end
+        end
 
         # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
         # define_attribute_methods is safe to call multiple times since rails 4.0.4

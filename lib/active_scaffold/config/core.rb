@@ -88,6 +88,10 @@ module ActiveScaffold::Config
     cattr_accessor :highlight_messages, instance_accessor: false
     @@highlight_messages = nil
 
+    # method names or procs to be called after all configure blocks
+    cattr_reader :after_config_callbacks, instance_accessor: false
+    @@after_config_callbacks = [:_configure_sti]
+
     def self.freeze
       super
       security.freeze
@@ -206,6 +210,7 @@ module ActiveScaffold::Config
 
     # To be called after your finished configuration
     def _configure_sti
+      return if sti_children.nil?
       column = model.inheritance_column
       if sti_create_links
         columns[column].form_ui ||= :hidden
