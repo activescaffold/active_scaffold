@@ -202,6 +202,11 @@ module ActiveScaffold::DataStructures
       @keep_open
     end
 
+    # for links in singular associations, copied from
+    # column.actions_for_association_links, excluding
+    # actions not available in association's controller
+    attr_accessor :controller_actions
+
     # indicates that this a nested_link
     def nested_link?
       @column || parameters&.dig(:named_scope)

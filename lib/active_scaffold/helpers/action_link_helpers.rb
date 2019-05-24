@@ -108,7 +108,7 @@ module ActiveScaffold
       end
 
       def configure_column_link(link, record, associated, actions = nil)
-        actions ||= link.column.actions_for_association_links
+        actions ||= link.controller_actions || []
         if column_empty?(associated) # if association is empty, we only can link to create form
           if actions.include?(:new)
             link.action = 'new'
