@@ -23,8 +23,10 @@ module ActiveScaffold
           Thread.current["#{name}_running_delayed_init"] = true
           block = @active_scaffold_delayed
           @active_scaffold_delayed = nil # clear before called, active_scaffold_config may be called inside block
-          block.call.tap { Thread.current["#{name}_running_delayed_init"] = nil }
-        end.tap { @delayed_mutex = nil }
+          block.call
+          Thread.current["#{name}_running_delayed_init"] = nil
+        end
+        @delayed_mutex = nil
       end
 
       def active_scaffold_config
