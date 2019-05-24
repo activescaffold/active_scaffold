@@ -162,10 +162,13 @@ module ActiveScaffold
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
           actions ||= %i[create update show]
-          column.actions_for_association_links.delete :new unless actions.include? :create
-          column.actions_for_association_links.delete :edit unless actions.include? :update
-          column.actions_for_association_links.delete :show unless actions.include? :show
-          ActiveScaffold::DataStructures::ActionLink.new(nil, options.merge(:html_options => {:class => column.name}))
+          link_actions = column.actions_for_association_links
+          link_actions = link_actions.dup if link_actions.frozen?
+          link_actions.delete :new unless actions.include? :create
+          link_actions.delete :edit unless actions.include? :update
+          link_actions.delete :show unless actions.include? :show
+          link_action = link_actions[0] if link_actions.one?
+          ActiveScaffold::DataStructures::ActionLink.new(link_action, options.merge(:html_options => {:class => column.name}))
         end
       end
 
