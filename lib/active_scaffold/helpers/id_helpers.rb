@@ -10,6 +10,10 @@ module ActiveScaffold
         'as_' + id_from_controller(controller)
       end
 
+      def nested?
+        false # will be overrided in AS controllers with helper_method
+      end
+
       def nested_parent_id
         nested_parent_record.id
       end
@@ -89,7 +93,7 @@ module ActiveScaffold
       def loading_indicator_id(options = {})
         options[:action] ||= params[:action]
         options[:id] ||= params[:id]
-        options[:id] ||= nested_parent_id if respond_to?(:nested?) && nested?
+        options[:id] ||= nested_parent_id if nested?
         clean_id "#{controller_id}-#{options[:action]}-#{options[:id]}-loading-indicator"
       end
 
