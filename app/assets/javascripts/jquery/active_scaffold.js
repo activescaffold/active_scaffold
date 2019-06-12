@@ -505,7 +505,9 @@ var ActiveScaffold = {
   auto_paginate: function(element) {
     var paginate_link = jQuery('.active-scaffold-pagination.auto-paginate a:first', element);
     if (paginate_link.length) {
-      jQuery('.active-scaffold-pagination.auto-paginate', element).hide();
+      var pagination = paginate_link.closest('.auto-paginate');
+      pagination.find('.as_paginate').hide();
+      pagination.find('.loading-indicator').css({visibility: 'visible'});
       ActiveScaffold.auto_load_page(paginate_link.attr('href'), {auto_pagination: true});
     }
   },

@@ -430,6 +430,9 @@ float: right;
 white-space: nowrap;
 margin-right: 5px;
 }
+.active-scaffold-footer .active-scaffold-pagination.auto-paginate {
+float: left;
+}
 
 .active-scaffold-footer a {
 text-decoration: none;
