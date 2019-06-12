@@ -8,6 +8,7 @@
 - Add loading indicator to embedded scaffolds, display error if fails
 - Fix race condition in threadsafe mode with delayed setup
 - Add ActiveScaffold::Config::Core.after_config_callbacks, so custom methods or procs can be added to be called after active_scaffold config block (used by bitfields bridge)
+- Display loading indicator at bottom on auto pagination
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
