@@ -47,14 +47,19 @@ module ActiveScaffold
           render_action_link(link, record, :link => text, :authorized => authorized, :not_authorized_reason => reason)
         elsif inplace_edit?(record, column)
           active_scaffold_inplace_edit(record, column, :formatted_column => text)
-        elsif active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.wrap_tag
-          content_tag active_scaffold_config.list.wrap_tag, text
+        elsif column_wrap_tag
+          content_tag column_wrap_tag, text
         else
           text
         end
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
         raise e
+      end
+
+      def column_wrap_tag
+        return @_column_wrap_tag if defined? @_column_wrap_tag
+        @_column_wrap_tag = (active_scaffold_config.list.wrap_tag if active_scaffold_config.actions.include?(:list))
       end
 
       # There are two basic ways to clean a column's value: h() and sanitize(). The latter is useful
@@ -127,10 +132,10 @@ module ActiveScaffold
 
       # the naming convention for overriding column types with helpers
       def override_column_ui(list_ui)
-        @_column_ui_overrides ||= {}
-        return @_column_ui_overrides[list_ui] if @_column_ui_overrides.include? list_ui
-        method = "active_scaffold_column_#{list_ui}"
-        @_column_ui_overrides[list_ui] = (method if respond_to? method)
+        ActiveScaffold::Registry.cache :column_ui_overrides, list_ui do
+          method = "active_scaffold_column_#{list_ui}"
+          method if respond_to? method
+        end
       end
       alias override_column_ui? override_column_ui
 
@@ -276,17 +281,21 @@ module ActiveScaffold
       end
 
       def active_scaffold_inplace_edit_tag_options(record, column)
-        id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
-        tag_options = {:id => element_cell_id(id_options), :class => 'in_place_editor_field',
-                       :title => as_(:click_to_edit), :data => {:ie_id => record.to_param}}
+        @_inplace_edit_title ||= as_(:click_to_edit)
+        cell_id = ActiveScaffold::Registry.cache :inplace_edit_id, column.cache_key do
+          element_cell_id(id: '--ID--', action: 'update_column', name: column.name.to_s)
+        end
+        tag_options = {id: cell_id.sub('--ID--', record.id.to_s), class: 'in_place_editor_field',
+                       title: @_inplace_edit_title, data: {:ie_id => record.to_param}}
         tag_options[:data][:ie_update] = column.inplace_edit if column.inplace_edit != true
         tag_options
       end
 
       def active_scaffold_inplace_edit(record, column, options = {})
         formatted_column = options[:formatted_column] || format_column_value(record, column)
-        content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<
-          content_tag(:span, formatted_column, active_scaffold_inplace_edit_tag_options(record, column))
+        @_inplace_edit_handle ||= content_tag(:span, as_(:inplace_edit_handle), :class => 'handle')
+        span = content_tag(:span, formatted_column, active_scaffold_inplace_edit_tag_options(record, column))
+        @_inplace_edit_handle + span
       end
 
       def inplace_edit_control(column)

@@ -357,9 +357,12 @@ module ActiveScaffold
                  "#{column.association.name}-#{record.id}"
                end
         end
-        id ||= record&.id || (nested? ? nested_parent_id : '')
-        action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
-        action_link_id(action_id, id)
+        id ||= record&.id&.to_s || (nested? ? nested_parent_id.to_s : '')
+        action_link_id = ActiveScaffold::Registry.cache :action_link_id, [link.controller, link.action] do
+          action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
+          action_link_id(action_id, '--ID--')
+        end
+        action_link_id.sub('--ID--', id)
       end
 
       def action_link_html(link, url, html_options, record)

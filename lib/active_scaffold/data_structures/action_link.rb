@@ -78,7 +78,7 @@ module ActiveScaffold::DataStructures
     # what string to use to represent this action
     attr_writer :label
     def label
-      @label.is_a?(Symbol) ? as_(@label) : @label
+      @label.is_a?(Symbol) ? ActiveScaffold::Registry.cache(:translations, @label) { as_(@label) } : @label
     end
 
     # image to use {:name => 'arrow.png', :size => '16x16'}
@@ -91,7 +91,8 @@ module ActiveScaffold::DataStructures
     end
 
     def confirm(label = '')
-      @confirm.is_a?(String) ? @confirm : as_(@confirm, :label => label)
+      return @confirm if @confirm.is_a?(String)
+      ActiveScaffold::Registry.cache(:translations, @confirm) { as_(@confirm) } % {label: label}
     end
 
     def confirm?
