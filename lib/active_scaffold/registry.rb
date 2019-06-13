@@ -19,7 +19,7 @@ module ActiveScaffold
       full_key = key ? "#{kind}/#{key}" : kind
       @cache ||= {}
       return @cache[full_key] if @cache.include? full_key
-      @cache[full_key] ||= block.call
+      @cache[full_key] ||= yield
     end
 
     def self.instance

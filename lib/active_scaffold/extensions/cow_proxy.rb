@@ -4,6 +4,8 @@ module CowProxy
   module ActiveScaffold
     module DataStructures
       class Column < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::Column)
+        delegate :name, to: :__getobj__
+
         def link
           return @link if defined?(@link)
           if __getobj__.frozen?

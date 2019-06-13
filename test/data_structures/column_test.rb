@@ -16,9 +16,6 @@ class ColumnTest < MiniTest::Test
   def test_basic_properties
     # test that it was set during initialization
     assert_equal @column.name, :a
-    # test that we can change it
-    @column.name = :b
-    assert_equal @column.name, :b
 
     # label
     @column.label = 'foo'
