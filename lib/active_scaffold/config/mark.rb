@@ -11,7 +11,7 @@ module ActiveScaffold::Config
     attr_accessor :mark_all_mode
 
     def initialize(core_config)
-      @core = core_config
+      super
       @mark_all_mode = self.class.mark_all_mode
       @core.model.send(:include, ActiveScaffold::MarkedModel) unless @core.model < ActiveScaffold::MarkedModel
       add_mark_column
