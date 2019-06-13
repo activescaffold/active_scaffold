@@ -10,8 +10,13 @@ module ActiveScaffold::Config
 
       # start with the ActionLink defined globally
       @link = self.class.link.clone if self.class.respond_to?(:link) && self.class.link
+      setup_user_setting_key
+    end
+
+    def setup_user_setting_key
       @user_settings_key = :"#{model_id}_#{self.class.name.underscore}"
     end
+
     attr_reader :core
 
     def self.inherited(subclass)

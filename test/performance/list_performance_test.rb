@@ -20,13 +20,12 @@ class ListPerformanceTest < ActionDispatch::PerformanceTest
   def test_list
     get '/cars'
   end
-=begin
-  def test_list2
-    get '/cars?t=2'
-  end
 
-  def test_list3
-    get '/cars?t=3'
-  end
-=end
+  # def test_list2
+  #   get '/cars?t=2'
+  # end
+  #
+  # def test_list3
+  #   get '/cars?t=3'
+  # end
 end
