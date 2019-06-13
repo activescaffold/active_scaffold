@@ -314,6 +314,7 @@ module ActiveScaffold::DataStructures
       @delegated_association = delegated_association
       setup_association_info
 
+      @link = nil
       @autolink = association.present?
       @table = _table_name
       @associated_limit = self.class.associated_limit

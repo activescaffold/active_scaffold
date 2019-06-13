@@ -5,20 +5,26 @@ module ActiveScaffold::DataStructures
     # provides a quick way to set any property of the object from a hash
     def initialize(action, options = {})
       # set defaults
-      self.action = action
-      self.label = action
-      self.confirm = false
-      self.type = :collection
+      @action = action
+      @label = action
+      @confirm = false
+      @type = :collection
+      @method = :get
+      @crud_type =
+        case action&.to_sym
+        when :destroy then :delete
+        when :create, :new then :create
+        when :update, :edit then :update
+        else :read
+        end
+      @column = nil
+      @image = nil
+      @controller = nil
+      @parameters = nil
+      @dynamic_parameters = nil
+      @html_options = nil
+      @weight = 0
       self.inline = true
-      self.method = :get
-      self.crud_type = :delete if [:destroy].include?(action&.to_sym)
-      self.crud_type = :create if %i[create new].include?(action&.to_sym)
-      self.crud_type = :update if %i[edit update].include?(action&.to_sym)
-      self.crud_type ||= :read
-      self.column = nil
-      self.image = nil
-      self.dynamic_parameters = nil
-      self.weight = 0
 
       # apply quick properties
       options.each_pair do |k, v|
