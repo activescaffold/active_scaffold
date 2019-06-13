@@ -42,6 +42,8 @@ group :test do
   gem 'rails', '~> 5.1.0'
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
+  gem 'rails-perftest', github: 'letsevents/rails-perftest'
+  gem 'ruby-prof'
   # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
   gem 'simplecov', require: false
 
