@@ -15,6 +15,13 @@ module ActiveScaffold
       @unauthorized_columns ||= Hash.new { |h, k| h[k] = [] }
     end
 
+    def cache(kind, key = nil, &block)
+      full_key = key ? "#{kind}/#{key}" : kind
+      @cache ||= {}
+      return @cache[full_key] if @cache.include? full_key
+      @cache[full_key] ||= block.call
+    end
+
     def self.instance
       RequestStore.store[@per_thread_registry_key] ||= new
     end

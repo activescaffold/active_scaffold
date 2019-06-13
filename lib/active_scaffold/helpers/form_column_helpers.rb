@@ -709,10 +709,10 @@ module ActiveScaffold
       end
 
       def numerical_constraints_for_column(column, options)
-        if column.numerical_constraints.nil?
-          column.numerical_constraints ||= column_numerical_constraints(column, options)
+        constraints = Rails.cache.fetch("#{column.cache_key}#numerical_constarints") do
+          column_numerical_constraints(column, options)
         end
-        column.numerical_constraints.merge(options)
+        constraints.merge(options)
       end
     end
   end

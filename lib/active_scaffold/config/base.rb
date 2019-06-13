@@ -10,6 +10,7 @@ module ActiveScaffold::Config
 
       # start with the ActionLink defined globally
       @link = self.class.link.clone if self.class.respond_to?(:link) && self.class.link
+      @user_settings_key = :"#{model_id}_#{self.class.name.underscore}"
     end
     attr_reader :core
 
@@ -42,9 +43,7 @@ module ActiveScaffold::Config
       (core || self).model_id
     end
 
-    def user_settings_key
-      :"#{model_id}_#{self.class.name.underscore}"
-    end
+    attr_reader :user_settings_key
 
     # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
     def user

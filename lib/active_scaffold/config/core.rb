@@ -350,6 +350,14 @@ module ActiveScaffold::Config
       def action_links
         @action_links ||= CowProxy.wrap(@conf.action_links)
       end
+
+      def model
+        @conf.model # for performance, called many times, so we avoid method_missing
+      end
+
+      def actions
+        @conf.actions # for performance, called many times, so we avoid method_missing
+      end
     end
 
     class UserColumns

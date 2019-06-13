@@ -56,7 +56,10 @@ module ActiveScaffold
 
       # a general-use loading indicator (the "stuff is happening, please wait" feedback)
       def loading_indicator_tag(options)
-        image_tag 'active_scaffold/indicator.gif', :style => 'visibility:hidden;', :id => loading_indicator_id(options), :alt => 'loading indicator', :class => 'loading-indicator'
+        # it's call many times and we can cache same result
+        @_loading_indicator_path ||= image_path('active_scaffold/indicator.gif')
+        # it's call many times in long lists, image_tag is a bit slower
+        tag :img, src: @_loading_indicator_path, style: 'visibility:hidden;', id: loading_indicator_id(options), alt: 'loading indicator', class: 'loading-indicator'
       end
 
       # Creates a javascript-based link that toggles the visibility of some element on the page.
@@ -89,15 +92,14 @@ module ActiveScaffold
       end
 
       def column_class(column, column_value, record)
-        @_column_classes ||= {}
-        @_column_classes[column.name] ||= begin
+        classes = ActiveScaffold::Registry.cache :column_classes, column.cache_key do
           classes = "#{column.name}-column "
           classes << 'sorted ' if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.user.sorting.sorts_on?(column)
           classes << 'numeric ' if column.number?
-          classes << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
+          classes << column.css_class << ' ' unless column.css_class.nil? || column.css_class.is_a?(Proc)
           classes
         end
-        classes = "#{@_column_classes[column.name]} "
+        classes = classes.dup
         classes << 'empty ' if column_empty? column_value
         classes << 'in_place_editor_field ' if inplace_edit?(record, column) || column.list_ui == :marked
         if column.css_class.is_a?(Proc)
@@ -135,7 +137,8 @@ module ActiveScaffold
       end
 
       def empty_field_text
-        active_scaffold_config.list.empty_field_text if active_scaffold_config.actions.include?(:list)
+        return @_empty_field_text if defined? @_empty_field_text
+        @_empty_field_text = (active_scaffold_config.list.empty_field_text if active_scaffold_config.actions.include?(:list))
       end
 
       def as_slider(options)
@@ -156,11 +159,7 @@ module ActiveScaffold
       end
 
       def override_helper(column, suffix)
-        hash = @_override_helpers ||= {}
-        hash = hash[suffix] ||= {}
-        hash = hash[column.active_record_class.name] ||= {}
-        return hash[column.name] if hash.include? column.name
-        hash[column.name] = begin
+        ActiveScaffold::Registry.cache suffix, column.cache_key do
           method_with_class = override_helper_name(column, suffix, true)
           if respond_to?(method_with_class)
             method_with_class

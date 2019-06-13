@@ -19,7 +19,7 @@ module ActiveScaffold
 
       def get_column_method(record, column)
         # check for an override helper
-        column.list_method ||= begin
+        ActiveScaffold::Registry.cache :column_methods, column.cache_key do
           if (method = column_override(column))
             # we only pass the record as the argument. we previously also passed the formatted_value,
             # but mike perham pointed out that prohibited the usage of overrides to improve on the

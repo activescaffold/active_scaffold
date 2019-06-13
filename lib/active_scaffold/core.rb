@@ -15,11 +15,13 @@ module ActiveScaffold
     end
 
     def active_scaffold_config
-      setup_user_settings unless self.class.active_scaffold_config.user
-      if ActiveScaffold.threadsafe
-        self.class.active_scaffold_config.user
-      else
-        self.class.active_scaffold_config
+      @active_scaffold_config ||= begin
+        setup_user_settings unless self.class.active_scaffold_config.user
+        if ActiveScaffold.threadsafe
+          self.class.active_scaffold_config.user
+        else
+          self.class.active_scaffold_config
+        end
       end
     end
 
