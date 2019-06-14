@@ -91,7 +91,7 @@ module ActiveScaffold::DataStructures
     end
 
     def confirm(label = '')
-      return @confirm if @confirm.is_a?(String)
+      return @confirm if !confirm? || @confirm.is_a?(String)
       ActiveScaffold::Registry.cache(:translations, @confirm) { as_(@confirm) } % {label: label}
     end
 
