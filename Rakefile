@@ -12,7 +12,8 @@ require 'rake/testtask'
 require 'rdoc/task'
 begin
   load 'rails/perftest/railties/testing.tasks'
-rescue LoadError # it's failing in Gitlab CI
+rescue LoadError => e # it's failing in Gitlab CI
+  warn e.message
 end
 
 desc 'Test ActiveScaffold.'
