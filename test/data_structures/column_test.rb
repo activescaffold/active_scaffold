@@ -71,7 +71,7 @@ class ColumnTest < MiniTest::Test
     # comparison with different object of same type
     column2 = ActiveScaffold::DataStructures::Column.new(:fake, ModelStub)
     refute_equal @column, column2
-    column2.name = 'a'
+    column2 = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
     assert_equal @column, column2
 
     # special comparisons
@@ -149,12 +149,12 @@ class ColumnTest < MiniTest::Test
   def test_config_block
     @column.configure do |config|
       # we can use the config object
-      config.name = 'foo'
+      config.form_ui = :select
       # or not
       self.label = 'hello'
     end
 
-    assert_equal 'foo', @column.name
+    assert_equal :select, @column.form_ui
     assert_equal 'hello', @column.label
   end
 
