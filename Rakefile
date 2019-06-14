@@ -10,7 +10,10 @@ end
 Bundler::GemHelper.install_tasks
 require 'rake/testtask'
 require 'rdoc/task'
-load 'rails/perftest/railties/testing.tasks'
+begin
+  load 'rails/perftest/railties/testing.tasks'
+rescue LoadError # it's failing in Gitlab CI
+end
 
 desc 'Test ActiveScaffold.'
 Rake::TestTask.new(:test) do |t|
