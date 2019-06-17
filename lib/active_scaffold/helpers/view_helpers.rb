@@ -17,9 +17,9 @@ module ActiveScaffold
       ## Delegates
       ##
 
-      def active_scaffold_controller_for(*args)
+      def active_scaffold_controller_for(klass)
         ActiveScaffold::Registry.cache :as_controller, klass do
-          controller.class.active_scaffold_controller_for(*args)
+          controller.class.active_scaffold_controller_for(klass)
         end
       end
 
