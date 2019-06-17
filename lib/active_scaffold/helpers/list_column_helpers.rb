@@ -142,10 +142,11 @@ module ActiveScaffold
       ##
       ## Formatting
       ##
+      FORM_UI_WITH_OPTIONS = %i[select radio]
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
         if column.association.nil?
-          if %i[select radio].include?(column.form_ui) && column.options[:options]
+          if FORM_UI_WITH_OPTIONS.include?(column.form_ui) && column.options[:options]
             text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
@@ -243,7 +244,7 @@ module ActiveScaffold
             empty_field_text
           elsif column_value.is_a?(Time) || column_value.is_a?(Date)
             l(column_value, :format => options[:format] || :default)
-          elsif [FalseClass, TrueClass].include?(column_value.class)
+          elsif !!column_value == column_value # fast check for boolean
             as_(column_value.to_s.to_sym)
           else
             column_value.to_s
@@ -316,6 +317,7 @@ module ActiveScaffold
         'as_inplace_pattern'
       end
 
+      INPLACE_EDIT_PLURAL_FORM_UI = %i[select record_select]
       def inplace_edit_data(column)
         data = {}
         data[:ie_url] = url_for(params_for(:action => 'update_column', :column => column.name, :id => '__id__'))
@@ -334,7 +336,7 @@ module ActiveScaffold
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
           url = url_for(params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name))
-          plural = column.association&.collection? && !override_form_field?(column) && %i[select record_select].include?(column.form_ui)
+          plural = column.association&.collection? && !override_form_field?(column) && INPLACE_EDIT_PLURAL_FORM_UI.include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
           data[:ie_plural] = plural
