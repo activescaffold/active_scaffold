@@ -346,19 +346,19 @@ module ActiveScaffold
         html_options
       end
 
-      def get_action_link_id(link, record = nil, column = nil)
-        column ||= link.column
+      def get_action_link_id(link, record = nil)
+        column = link.column
         if column&.association && record
-          id = if column.association.collection?
-                 "#{column.association.name}-#{record.id}"
-               elsif record.send(column.association.name).present?
-                 "#{column.association.name}-#{record.send(column.association.name).id}-#{record.id}"
-               else
-                 "#{column.association.name}-#{record.id}"
-               end
+          associated = record.send(column.association.name) unless column.association.collection?
+          id =
+            if associated
+              "#{column.association.name}-#{associated.id}-#{record.id}"
+            else
+              "#{column.association.name}-#{record.id}"
+            end
         end
         id ||= record&.id&.to_s || (nested? ? nested_parent_id.to_s : '')
-        action_link_id = ActiveScaffold::Registry.cache :action_link_id, [link.controller, link.action] do
+        action_link_id = ActiveScaffold::Registry.cache :action_link_id, link.name_to_cache do
           action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
           action_link_id(action_id, '--ID--')
         end
