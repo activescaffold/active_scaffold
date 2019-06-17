@@ -5,7 +5,7 @@ module CowProxy
     module DataStructures
       class Column < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::Column)
         # readonly and called many times in list action
-        delegate :name, :cache_key, to: :__getobj__
+        delegate :name, :cache_key, :delegated_association, :association, to: :__getobj__
 
         def link
           return @link if defined?(@link)
