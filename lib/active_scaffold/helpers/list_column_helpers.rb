@@ -142,7 +142,7 @@ module ActiveScaffold
       ##
       ## Formatting
       ##
-      FORM_UI_WITH_OPTIONS = %i[select radio]
+      FORM_UI_WITH_OPTIONS = %i[select radio].freeze
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
         if column.association.nil?
@@ -244,7 +244,7 @@ module ActiveScaffold
             empty_field_text
           elsif column_value.is_a?(Time) || column_value.is_a?(Date)
             l(column_value, :format => options[:format] || :default)
-          elsif !!column_value == column_value # fast check for boolean
+          elsif !!column_value == column_value # rubocop:disable Style/DoubleNegation fast check for boolean
             as_(column_value.to_s.to_sym)
           else
             column_value.to_s
@@ -317,7 +317,7 @@ module ActiveScaffold
         'as_inplace_pattern'
       end
 
-      INPLACE_EDIT_PLURAL_FORM_UI = %i[select record_select]
+      INPLACE_EDIT_PLURAL_FORM_UI = %i[select record_select].freeze
       def inplace_edit_data(column)
         data = {}
         data[:ie_url] = url_for(params_for(:action => 'update_column', :column => column.name, :id => '__id__'))

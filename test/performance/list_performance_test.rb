@@ -2,7 +2,12 @@ require 'test_helper'
 require 'performance_test_help'
 
 class ListPerformanceTest < ActionDispatch::PerformanceTest
-  self.profile_options = {metrics: [:process_time]}
+  self.profile_options =
+    if ENV['BENCHMARK_TESTS']
+      {metrics: [:wall_time]}
+    else
+      {metrics: %i[process_time objects], formats: %i[flat graph_html call_stack]}
+    end
   def setup
     500.times { Car.create(brand: 'Skoda', model: 'Fabia') }
     CarsController.class_eval do
