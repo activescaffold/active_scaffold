@@ -18,7 +18,9 @@ module ActiveScaffold
       ##
 
       def active_scaffold_controller_for(*args)
-        controller.class.active_scaffold_controller_for(*args)
+        ActiveScaffold::Registry.cache :as_controller, klass do
+          controller.class.active_scaffold_controller_for(*args)
+        end
       end
 
       ##

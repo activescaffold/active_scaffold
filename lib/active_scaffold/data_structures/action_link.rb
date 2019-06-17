@@ -230,5 +230,11 @@ module ActiveScaffold::DataStructures
         @name_to_cache = name_to_cache unless frozen?
       end
     end
+
+    def freeze
+      # force generating cache_key, except for column's link without action, or polymorphic associations
+      name_to_cache if action && !column&.association&.polymorphic?
+      super
+    end
   end
 end

@@ -169,7 +169,7 @@ module ActiveScaffold
           controller_actions.delete :new unless actions.include? :create
           controller_actions.delete :edit unless actions.include? :update
           controller_actions.delete :show unless actions.include? :show
-          options.merge!(html_options: {class: column.name}, controller_actions: controller_actions)
+          options.merge!(html_options: {class: column.name}, controller_actions: Set.new(controller_actions))
           ActiveScaffold::DataStructures::ActionLink.new(nil, options)
         end
       end

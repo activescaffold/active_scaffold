@@ -113,7 +113,7 @@ module ActiveScaffold
           if actions.include?(:new)
             link.action = 'new'
             link.crud_type = :create
-            link.label ||= as_(:create_new)
+            link.label ||= :create_new
           end
         elsif actions.include?(:edit)
           link.action = 'edit'
@@ -139,7 +139,7 @@ module ActiveScaffold
       def column_link_authorized?(link, column, record, associated)
         if column.association
           associated_for_authorized =
-            if column.association.collection? || (associated.respond_to?(:blank?) && associated.blank?)
+            if column.association.collection? || associated.nil?
               column.association.klass
             else
               associated
