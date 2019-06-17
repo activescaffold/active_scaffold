@@ -16,10 +16,14 @@ module ActiveScaffold
     end
 
     def cache(kind, key = nil, &block)
-      full_key = key ? "#{kind}/#{key}" : kind
+      unless key
+        key = kind
+        kind = :cache
+      end
       @cache ||= {}
-      return @cache[full_key] if @cache.include? full_key
-      @cache[full_key] ||= yield
+      cache = @cache[kind] ||= {}
+      return cache[key] if cache.include? key
+      cache[key] ||= yield
     end
 
     def self.instance
