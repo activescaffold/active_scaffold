@@ -260,7 +260,8 @@ module ActiveScaffold::Config
     private :[]=
 
     def self.method_missing(name, *args)
-      config_class(name) || super
+      klass = config_class(name) if @@actions.include?(name.to_s.underscore)
+      klass || super
     end
 
     def self.config_class(name)
