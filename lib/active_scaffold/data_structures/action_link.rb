@@ -31,7 +31,7 @@ module ActiveScaffold::DataStructures
         setter = "#{k}="
         send(setter, v) if respond_to? setter
       end
-      self.toggle = self.action&.to_sym == :index && (parameters.present? || dynamic_parameters) unless options.include? :toggle
+      self.toggle = self.action&.to_sym == :index && !position && (parameters.present? || dynamic_parameters) unless options.include? :toggle
     end
 
     def initialize_copy(action_link)
