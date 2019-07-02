@@ -10,8 +10,8 @@ class ListPeoplePerformanceTest < ActionDispatch::PerformanceTest
     end
   def setup
     200.times do |i|
-      p = Person.create(first_name: "Name#{i}", last_name: "Last")
-      p.buildings = Array.new(4) { |i| Building.create name: "B#{i} of #{p.first_name}" } unless i % 4 == 0
+      p = Person.create(first_name: "Name#{i}", last_name: 'Last')
+      p.buildings = Array.new(4) { |j| Building.create name: "B#{j} of #{p.first_name}" } unless (i % 4).zero?
     end
     PeopleController.class_eval do
       before_action :setup
