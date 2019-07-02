@@ -1,20 +1,18 @@
 require 'test_helper'
 require 'performance_test_help'
 
-class ListPerformanceTest < ActionDispatch::PerformanceTest
+class ListCarsPerformanceTest < ActionDispatch::PerformanceTest
   self.profile_options =
     if ENV['BENCHMARK_TESTS']
       {metrics: [:wall_time]}
     else
-      {metrics: %i[process_time objects], formats: %i[flat graph_html call_stack]}
+      {metrics: %i[process_time], formats: %i[flat graph_html call_stack]}
     end
   def setup
-    500.times { Car.create(brand: 'Skoda', model: 'Fabia') }
+    owners = Array.new(4) { |i| Person.create first_name: "Name#{i}" } << nil
+    500.times { |i| Car.create(brand: 'Skoda', model: 'Fabia', person: owners[i % 5]) }
     CarsController.class_eval do
       before_action :setup
-      def list_columns
-        active_scaffold_config.columns.select { |col| %i[brand model].include?(col.name) }
-      end
 
       def setup
         active_scaffold_config.list.pagination = false
