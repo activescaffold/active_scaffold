@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   resources :cars, only: %i[index edit update] do
     concerns :active_scaffold, association: false, except: [:mark]
   end
+  resources :people do
+    concerns :active_scaffold, except: %i[mark]
+  end
 
   match ':controller(/:action(/:id))', :via => :any
 end
