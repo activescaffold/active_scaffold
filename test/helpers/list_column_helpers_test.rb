@@ -34,10 +34,8 @@ class ListColumnHelpersTest < ActionView::TestCase
     value.each { |v| v.stubs(:to_label).returns(v) }
     assert_equal '1, 2, 3, … (4)', format_association_value(value, @association_column, value.size)
     @config.list.stubs(:association_join_text => ',<br/>')
-    remove_instance_variable :@_association_join_text
     assert_equal '1,&lt;br/&gt;2,&lt;br/&gt;3,&lt;br/&gt;… (4)', format_association_value(value, @association_column, value.size)
     @config.list.stubs(:association_join_text => ',<br/>'.html_safe) # rubocop:disable Rails/OutputSafety
-    remove_instance_variable :@_association_join_text
     assert_equal '1,<br/>2,<br/>3,<br/>… (4)', format_association_value(value, @association_column, value.size)
   end
 
