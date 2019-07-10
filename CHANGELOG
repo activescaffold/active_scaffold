@@ -30,6 +30,9 @@
 - Display flash messages only inside create form, when conf.list.always_show_create is enabled, instead of displaying twice (in form and above list).
 - Fix default autocomplete value for password form_ui, new-password has to be used because off is ignored by browsers in password fields now
 
+= 3.5.5
+- Fix creating new records, when using cancan and allowing access based on id (fixes #617)
+
 = 3.5.4
 - Fix chosen form_ui for plural associations
 - Eager load with includes in association options query, if includes has a hash with own association key, see #612

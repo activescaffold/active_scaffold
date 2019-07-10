@@ -45,6 +45,12 @@ module ActiveScaffold::Bridges
         def beginning_of_chain
           super.accessible_by(current_ability)
         end
+
+        # fix when ability allow access base on id
+        # can [:manage], Client, id: Client.of_employee(user).pluck(:id)
+        def new_model
+          super.tap { |record| record.id = nil }
+        end
       end
     end
 
