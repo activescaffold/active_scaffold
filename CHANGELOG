@@ -1,3 +1,6 @@
+= 3.5.5
+- Fix creating new records, when using cancan and allowing access based on id (fixes #617)
+
 = 3.5.4
 - Fix chosen form_ui for plural associations
 - Eager load with includes in association options query, if includes has a hash with own association key, see #612
