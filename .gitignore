@@ -51,3 +51,4 @@
 /gemfiles/Gemfile.rails-master.lock
 
 .localeapp
+/tmp/

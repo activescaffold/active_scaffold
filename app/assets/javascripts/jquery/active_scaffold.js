@@ -505,7 +505,9 @@ var ActiveScaffold = {
   auto_paginate: function(element) {
     var paginate_link = jQuery('.active-scaffold-pagination.auto-paginate a:first', element);
     if (paginate_link.length) {
-      jQuery('.active-scaffold-pagination.auto-paginate', element).hide();
+      var pagination = paginate_link.closest('.auto-paginate');
+      pagination.find('.as_paginate').hide();
+      pagination.find('.loading-indicator').css({visibility: 'visible'});
       ActiveScaffold.auto_load_page(paginate_link.attr('href'), {auto_pagination: true});
     }
   },
@@ -525,8 +527,13 @@ var ActiveScaffold = {
   load_embedded: function(element) {
     jQuery('.active-scaffold-component .load-embedded', element).each(function(index, item) {
       item = jQuery(item);
-      item.closest('.active-scaffold-component').load(item.attr('href'), function() {
-        jQuery(this).trigger('as:element_updated');
+      var indicator = item.closest('.active-scaffold-component').find('.loading-indicator');
+      indicator.css({visibility: 'visible'});
+      item.closest('.active-scaffold-component').load(item.attr('href'), function(response, status, xhr) {
+        if (status == 'error') {
+          indicator.css({visibility: 'hidden'});
+          indicator.after($('<p>').html(item.data('error-msg')).addClass("error-message message server-error"));
+        } else jQuery(this).trigger('as:element_updated');
       });
     });
   },

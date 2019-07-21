@@ -52,7 +52,12 @@ module ActiveScaffold::Bridges
       def to_usa_state_select_tag(priority_states, options, html_options)
         html_options = html_options.stringify_keys
         add_default_name_and_id(html_options)
-        selected_value = options.key?(:selected) ? options[:selected] : (method(:value).parameters.any? ? value(object) : value)
+        selected_value =
+          if options.key?(:selected)
+            options[:selected]
+          else
+            method(:value).parameters.any? ? value(object) : value
+          end
         content_tag('select', add_options(usa_state_options_for_select(selected_value, priority_states), options, selected_value), html_options)
       end
     end

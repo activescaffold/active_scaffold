@@ -24,8 +24,8 @@ module ActiveScaffold
     end
 
     def respond_to_missing?(name, include_all = false)
-      if @configuration_binding
-        @configuration_binding.respond_to?(name, include_all)
+      if defined? @configuration_binding
+        @configuration_binding&.respond_to?(name, include_all)
       else
         super
       end

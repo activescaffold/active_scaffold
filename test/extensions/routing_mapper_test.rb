@@ -54,8 +54,8 @@ class RoutingMapperTest < ActionController::TestCase
     assert_routing 'cars/1/edit', controller: 'cars', action: 'edit', id: '1'
     assert_routing({method: :patch, path: 'cars/1'}, {controller: 'cars', action: 'update', id: '1'})
 
-    assert_raises(ActionController::RoutingError) { @routes.recognize_path '/cars' }
-    assert_raises(ActionController::RoutingError) { @routes.recognize_path '/cars/1/list' }
+    assert_raises(ActionController::RoutingError) { @routes.recognize_path '/cars', method: :post }
+    assert_raises(ActionController::RoutingError) { @routes.recognize_path '/cars/1' }
     assert_raises(ActionController::RoutingError) { @routes.recognize_path '/cars/1/destroy', method: :delete }
   end
 

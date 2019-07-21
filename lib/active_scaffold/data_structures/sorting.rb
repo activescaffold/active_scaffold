@@ -14,6 +14,7 @@ module ActiveScaffold::DataStructures
       @clauses = []
       @constraint_columns = []
       @model = model
+      @sorting_by_primary_key = false
     end
 
     def set_default_sorting

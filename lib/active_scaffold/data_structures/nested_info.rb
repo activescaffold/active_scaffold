@@ -83,15 +83,17 @@ module ActiveScaffold::DataStructures
 
     # A through association with has_one or has_many as source association
     # create cannot be called in nested through associations, and not-nested through associations
-    # unless create columns include through reflection of reverse association
+    # unless is through singular or create columns include through reflection of reverse association
     # e.g. customer -> networks -> firewall, reverse is firewall -> network -> customer,
     # firewall can be created if create columns include network
     def readonly_through_association?(columns)
       return false unless through_association?
-      return true if association.through_reflection.options[:through]
-      !association.source_reflection.belongs_to? && (
-        !child_association || !columns.include?(child_association.through_reflection.name)
-      )
+      return true if association.through_reflection.options[:through] # create not possible, too many levels
+      return true if association.source_reflection.options[:through] # create not possible, too many levels
+      return false if association.through_singular? # create allowed, AS has code for this
+
+      # create allowed only if through reflection in record to be created is included in create columns
+      !child_association || !columns.include?(child_association.through_reflection.name)
     end
 
     def through_association?

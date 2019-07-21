@@ -88,6 +88,10 @@ module ActiveScaffold::Config
     cattr_accessor :highlight_messages, instance_accessor: false
     @@highlight_messages = nil
 
+    # method names or procs to be called after all configure blocks
+    cattr_reader :after_config_callbacks, instance_accessor: false
+    @@after_config_callbacks = [:_configure_sti]
+
     def self.freeze
       super
       security.freeze
@@ -160,6 +164,7 @@ module ActiveScaffold::Config
     def initialize(model_id)
       # model_id is the only absolutely required configuration value. it is also not publicly accessible.
       @model_id = model_id
+      setup_user_setting_key
 
       # inherit the actions list directly from the global level
       @actions = self.class.actions.clone
@@ -206,6 +211,7 @@ module ActiveScaffold::Config
 
     # To be called after your finished configuration
     def _configure_sti
+      return if sti_children.nil?
       column = model.inheritance_column
       if sti_create_links
         columns[column].form_ui ||= :hidden
@@ -254,8 +260,7 @@ module ActiveScaffold::Config
     private :[]=
 
     def self.method_missing(name, *args)
-      klass = config_class(name) if @@actions.include?(name.to_s.underscore)
-      klass || super
+      config_class(name) || super
     end
 
     def self.config_class(name)
@@ -344,6 +349,14 @@ module ActiveScaffold::Config
 
       def action_links
         @action_links ||= CowProxy.wrap(@conf.action_links)
+      end
+
+      def model
+        @conf.model # for performance, called many times, so we avoid method_missing
+      end
+
+      def actions
+        @conf.actions # for performance, called many times, so we avoid method_missing
       end
     end
 

@@ -181,13 +181,17 @@ module ActiveScaffold
         end
 
         content_tag :dl, attributes do
-          content_tag(:dt, label_tag(label_for(column, column_options), column.label)) <<
+          content_tag(:dt, label_tag(label_for(column, column_options), form_column_label(column))) <<
             content_tag(:dd, field)
         end
       end
 
       def label_for(column, options)
         options[:id] unless column.form_ui == :select && column.association&.collection?
+      end
+
+      def form_column_label(column)
+        column.label
       end
 
       def subform_label(column, hidden)
@@ -451,10 +455,15 @@ module ActiveScaffold
           end
 
         selected = record.send(column.association.name)&.id if column.association
-        radios = options.map do |option|
-          active_scaffold_radio_option(option, selected, column, html_options)
+        if options.present?
+          radios = options.map do |option|
+            active_scaffold_radio_option(option, selected, column, html_options)
+          end
+          safe_join radios
+        else
+          content_tag(:span, as_(:no_options), :class => "#{html_options[:class]} no-options", :id => html_options[:id]) <<
+            hidden_field_tag(html_options[:name], '', :id => nil)
         end
-        safe_join radios
       end
 
       def active_scaffold_input_checkbox(column, options)
@@ -704,10 +713,10 @@ module ActiveScaffold
       end
 
       def numerical_constraints_for_column(column, options)
-        if column.numerical_constraints.nil?
-          column.numerical_constraints ||= column_numerical_constraints(column, options)
+        constraints = Rails.cache.fetch("#{column.cache_key}#numerical_constarints") do
+          column_numerical_constraints(column, options)
         end
-        column.numerical_constraints.merge(options)
+        constraints.merge(options)
       end
     end
   end

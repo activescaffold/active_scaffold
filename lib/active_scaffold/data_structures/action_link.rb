@@ -5,27 +5,33 @@ module ActiveScaffold::DataStructures
     # provides a quick way to set any property of the object from a hash
     def initialize(action, options = {})
       # set defaults
-      self.action = action
-      self.label = action
-      self.confirm = false
-      self.type = :collection
+      @action = action
+      @label = action
+      @confirm = false
+      @type = :collection
+      @method = :get
+      @crud_type =
+        case action&.to_sym
+        when :destroy then :delete
+        when :create, :new then :create
+        when :update, :edit then :update
+        else :read
+        end
+      @column = nil
+      @image = nil
+      @controller = nil
+      @parameters = nil
+      @dynamic_parameters = nil
+      @html_options = nil
+      @weight = 0
       self.inline = true
-      self.method = :get
-      self.crud_type = :delete if [:destroy].include?(action&.to_sym)
-      self.crud_type = :create if %i[create new].include?(action&.to_sym)
-      self.crud_type = :update if %i[edit update].include?(action&.to_sym)
-      self.crud_type ||= :read
-      self.column = nil
-      self.image = nil
-      self.dynamic_parameters = nil
-      self.weight = 0
 
       # apply quick properties
       options.each_pair do |k, v|
         setter = "#{k}="
         send(setter, v) if respond_to? setter
       end
-      self.toggle = self.action&.to_sym == :index && (parameters.present? || dynamic_parameters) unless options.include? :toggle
+      self.toggle = self.action&.to_sym == :index && !position && (parameters.present? || dynamic_parameters) unless options.include? :toggle
     end
 
     def initialize_copy(action_link)
@@ -72,7 +78,7 @@ module ActiveScaffold::DataStructures
     # what string to use to represent this action
     attr_writer :label
     def label
-      @label.is_a?(Symbol) ? as_(@label) : @label
+      @label.is_a?(Symbol) ? ActiveScaffold::Registry.cache(:translations, @label) { as_(@label) } : @label
     end
 
     # image to use {:name => 'arrow.png', :size => '16x16'}
@@ -85,7 +91,8 @@ module ActiveScaffold::DataStructures
     end
 
     def confirm(label = '')
-      @confirm.is_a?(String) ? @confirm : as_(@confirm, :label => label)
+      return @confirm if !confirm? || @confirm.is_a?(String)
+      ActiveScaffold::Registry.cache(:translations, @confirm) { as_(@confirm) } % {label: label}
     end
 
     def confirm?
@@ -202,6 +209,11 @@ module ActiveScaffold::DataStructures
       @keep_open
     end
 
+    # for links in singular associations, copied from
+    # column.actions_for_association_links, excluding
+    # actions not available in association's controller
+    attr_accessor :controller_actions
+
     # indicates that this a nested_link
     def nested_link?
       @column || parameters&.dig(:named_scope)
@@ -217,6 +229,12 @@ module ActiveScaffold::DataStructures
       ].compact.join('_').tap do |name_to_cache|
         @name_to_cache = name_to_cache unless frozen?
       end
+    end
+
+    def freeze
+      # force generating cache_key, except for column's link without action, or polymorphic associations
+      name_to_cache if action && !column&.association&.polymorphic?
+      super
     end
   end
 end

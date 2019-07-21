@@ -10,11 +10,16 @@ end
 Bundler::GemHelper.install_tasks
 require 'rake/testtask'
 require 'rdoc/task'
+begin
+  load 'rails/perftest/railties/testing.tasks'
+rescue LoadError => e # it's failing in Gitlab CI
+  warn e.message
+end
 
 desc 'Test ActiveScaffold.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib' << 'test'
-  t.pattern = 'test/**/*_test.rb'
+  t.test_files = FileList['test/**/*_test.rb'].exclude('test/performance/**/*')
   t.verbose = true
   t.warning = false
 end

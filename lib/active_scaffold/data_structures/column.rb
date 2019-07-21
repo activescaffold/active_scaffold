@@ -9,7 +9,7 @@ module ActiveScaffold::DataStructures
     alias model active_record_class
 
     # this is the name of the getter on the ActiveRecord model. it is the only absolutely required attribute ... all others will be inferred from this name.
-    attr_accessor :name
+    attr_reader :name
 
     # Whether to enable inplace editing for this column. Currently works for text columns, in the List.
     attr_reader :inplace_edit
@@ -114,16 +114,9 @@ module ActiveScaffold::DataStructures
     # supported options:
     #   * for association columns
     #     * :select - displays a simple <select> or a collection of checkboxes to (dis)associate records
-    def form_ui=(value)
-      self.list_method = nil if @list_ui.nil? && value != @form_ui
-      @form_ui = value
-    end
-    attr_reader :form_ui
+    attr_accessor :form_ui
 
-    def list_ui=(value)
-      self.list_method = nil if value != @list_ui
-      @list_ui = value
-    end
+    attr_writer :list_ui
 
     def list_ui
       @list_ui || form_ui
@@ -306,14 +299,19 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    # cache key to cache column info
+    attr_reader :cache_key
+
     # instantiation is handled internally through the DataStructures::Columns object
     def initialize(name, active_record_class, delegated_association = nil) #:nodoc:
-      self.name = name.to_sym
+      @name = name.to_sym
       @active_record_class = active_record_class
       @column = _columns_hash[name.to_s]
       @delegated_association = delegated_association
+      @cache_key = [@active_record_class.name, name].compact.map(&:to_s).join('#')
       setup_association_info
 
+      @link = nil
       @autolink = association.present?
       @table = _table_name
       @associated_limit = self.class.associated_limit
@@ -399,29 +397,6 @@ module ActiveScaffold::DataStructures
 
     def default_for_empty_value
       (column.null ? nil : column.default) if column
-    end
-
-    # to cache method to get value in list
-    def list_method
-      Rails.cache.fetch(cache_key(:list_method))
-    end
-
-    def list_method=(value)
-      Rails.cache.write(cache_key(:list_method), value)
-    end
-
-    # cache constraints for numeric columns (get in ActiveScaffold::Helpers::FormColumnHelpers::numerical_constraints_for_column)
-    def numerical_constraints
-      Rails.cache.fetch(cache_key(:numerical_constraints))
-    end
-
-    def numerical_constraints=(value)
-      Rails.cache.write(cache_key(:numerical_constraints), value)
-    end
-
-    # cache key to cache column info
-    def cache_key(attr)
-      [@active_record_class.name, name, attr].compact.map(&:to_s).join('#')
     end
 
     # the table.field name for this column, if applicable

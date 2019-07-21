@@ -108,12 +108,12 @@ module ActiveScaffold
       end
 
       def configure_column_link(link, record, associated, actions = nil)
-        actions ||= link.column.actions_for_association_links
+        actions ||= link.controller_actions || []
         if column_empty?(associated) # if association is empty, we only can link to create form
           if actions.include?(:new)
             link.action = 'new'
             link.crud_type = :create
-            link.label ||= as_(:create_new)
+            link.label ||= :create_new
           end
         elsif actions.include?(:edit)
           link.action = 'edit'
@@ -139,7 +139,7 @@ module ActiveScaffold
       def column_link_authorized?(link, column, record, associated)
         if column.association
           associated_for_authorized =
-            if column.association.collection? || (associated.respond_to?(:blank?) && associated.blank?)
+            if column.association.collection? || associated.nil?
               column.association.klass
             else
               associated
@@ -346,20 +346,23 @@ module ActiveScaffold
         html_options
       end
 
-      def get_action_link_id(link, record = nil, column = nil)
-        column ||= link.column
+      def get_action_link_id(link, record = nil)
+        column = link.column
         if column&.association && record
-          id = if column.association.collection?
-                 "#{column.association.name}-#{record.id}"
-               elsif record.send(column.association.name).present?
-                 "#{column.association.name}-#{record.send(column.association.name).id}-#{record.id}"
-               else
-                 "#{column.association.name}-#{record.id}"
-               end
+          associated = record.send(column.association.name) unless column.association.collection?
+          id =
+            if associated
+              "#{column.association.name}-#{associated.id}-#{record.id}"
+            else
+              "#{column.association.name}-#{record.id}"
+            end
         end
-        id ||= record&.id || (nested? ? nested_parent_id : '')
-        action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
-        action_link_id(action_id, id)
+        id ||= record&.id&.to_s || (nested? ? nested_parent_id.to_s : '')
+        action_link_id = ActiveScaffold::Registry.cache :action_link_id, link.name_to_cache do
+          action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
+          action_link_id(action_id, '--ID--')
+        end
+        action_link_id.sub('--ID--', id)
       end
 
       def action_link_html(link, url, html_options, record)

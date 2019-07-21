@@ -23,6 +23,7 @@ module ActiveScaffold::DataStructures
       @active_record_class = active_record_class
       @_inheritable = []
       @set = []
+      @sorted = nil
 
       add(*args)
     end

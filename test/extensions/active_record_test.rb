@@ -14,7 +14,7 @@ class ActiveRecordTest < MiniTest::Test
         'to_s'
       end
     end
-
+    RequestStore.clear!
     assert_equal 'to_s', @record.to_label
 
     class << @record
@@ -22,7 +22,7 @@ class ActiveRecordTest < MiniTest::Test
         'title'
       end
     end
-
+    RequestStore.clear!
     assert_equal 'title', @record.to_label
 
     class << @record
@@ -30,7 +30,7 @@ class ActiveRecordTest < MiniTest::Test
         'label'
       end
     end
-
+    RequestStore.clear!
     assert_equal 'label', @record.to_label
 
     class << @record
@@ -38,7 +38,7 @@ class ActiveRecordTest < MiniTest::Test
         'name'
       end
     end
-
+    RequestStore.clear!
     assert_equal 'name', @record.to_label
   end
 end

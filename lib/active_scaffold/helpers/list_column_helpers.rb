@@ -19,7 +19,7 @@ module ActiveScaffold
 
       def get_column_method(record, column)
         # check for an override helper
-        column.list_method ||= begin
+        ActiveScaffold::Registry.cache :column_methods, column.cache_key do
           if (method = column_override(column))
             # we only pass the record as the argument. we previously also passed the formatted_value,
             # but mike perham pointed out that prohibited the usage of overrides to improve on the
@@ -47,14 +47,19 @@ module ActiveScaffold
           render_action_link(link, record, :link => text, :authorized => authorized, :not_authorized_reason => reason)
         elsif inplace_edit?(record, column)
           active_scaffold_inplace_edit(record, column, :formatted_column => text)
-        elsif active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.wrap_tag
-          content_tag active_scaffold_config.list.wrap_tag, text
+        elsif column_wrap_tag
+          content_tag column_wrap_tag, text
         else
           text
         end
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
         raise e
+      end
+
+      def column_wrap_tag
+        return @_column_wrap_tag if defined? @_column_wrap_tag
+        @_column_wrap_tag = (active_scaffold_config.list.wrap_tag if active_scaffold_config.actions.include?(:list))
       end
 
       # There are two basic ways to clean a column's value: h() and sanitize(). The latter is useful
@@ -127,20 +132,21 @@ module ActiveScaffold
 
       # the naming convention for overriding column types with helpers
       def override_column_ui(list_ui)
-        @_column_ui_overrides ||= {}
-        return @_column_ui_overrides[list_ui] if @_column_ui_overrides.include? list_ui
-        method = "active_scaffold_column_#{list_ui}"
-        @_column_ui_overrides[list_ui] = (method if respond_to? method)
+        ActiveScaffold::Registry.cache :column_ui_overrides, list_ui do
+          method = "active_scaffold_column_#{list_ui}"
+          method if respond_to? method
+        end
       end
       alias override_column_ui? override_column_ui
 
       ##
       ## Formatting
       ##
+      FORM_UI_WITH_OPTIONS = %i[select radio].freeze
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
         if column.association.nil?
-          if %i[select radio].include?(column.form_ui) && column.options[:options]
+          if FORM_UI_WITH_OPTIONS.include?(column.form_ui) && column.options[:options]
             text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
@@ -197,18 +203,24 @@ module ActiveScaffold
         end
       end
 
+      def association_join_text
+        return @_association_join_text if defined? @_association_join_text
+        @_association_join_text = active_scaffold_config.list.association_join_text
+      end
+
       def format_collection_association_value(value, column, label_method, size)
-        if column.associated_limit.nil?
+        associated_limit = column.associated_limit
+        if associated_limit.nil?
           firsts = value.collect(&label_method)
-          safe_join firsts, active_scaffold_config.list.association_join_text
-        elsif column.associated_limit.zero?
+          safe_join firsts, association_join_text
+        elsif associated_limit.zero?
           size if column.associated_number?
         else
-          firsts = value.loaded? ? value[0, column.associated_limit] : value.limit(column.associated_limit)
+          firsts = value.loaded? ? value[0, associated_limit] : value.limit(associated_limit)
           firsts = firsts.map(&label_method)
-          firsts << '…' if value.size > column.associated_limit
-          text = safe_join firsts, active_scaffold_config.list.association_join_text
-          text << " (#{size})" if column.associated_number? && column.associated_limit && value.size > column.associated_limit
+          firsts << '…' if value.size > associated_limit
+          text = safe_join firsts, association_join_text
+          text << " (#{size})" if column.associated_number? && associated_limit && value.size > associated_limit
           text
         end
       end
@@ -238,7 +250,7 @@ module ActiveScaffold
             empty_field_text
           elsif column_value.is_a?(Time) || column_value.is_a?(Date)
             l(column_value, :format => options[:format] || :default)
-          elsif [FalseClass, TrueClass].include?(column_value.class)
+          elsif !!column_value == column_value # rubocop:disable Style/DoubleNegation fast check for boolean
             as_(column_value.to_s.to_sym)
           else
             column_value.to_s
@@ -247,15 +259,21 @@ module ActiveScaffold
       end
 
       def cache_association(association, column, size)
+        associated_limit = column.associated_limit
         # we are not using eager loading, cache firsts records in order not to query the database for whole association in a future
-        if column.associated_limit.nil?
+        if associated_limit.nil?
           logger.warn "ActiveScaffold: Enable eager loading for #{column.name} association to reduce SQL queries"
-        elsif column.associated_limit.positive?
+        elsif associated_limit.positive?
           # load at least one record more, is needed to display '...'
-          association.target = association.reader.limit(column.associated_limit + 1).select(column.select_associated_columns || "#{association.klass.quoted_table_name}.*").to_a
+          association.target = association.reader.limit(associated_limit + 1).select(column.select_associated_columns || "#{association.klass.quoted_table_name}.*").to_a
         elsif @cache_associations
           # set array with at least one element if size > 0, so blank? or present? works, saving [nil] may cause exceptions
-          association.target = size.to_i.zero? ? [] : [association.klass.new]
+          association.target =
+            if size.to_i.zero?
+              []
+            else
+              ActiveScaffold::Registry.cache(:cached_empty_association, association.klass) { [association.klass.new] }
+            end
         end
       end
 
@@ -276,17 +294,21 @@ module ActiveScaffold
       end
 
       def active_scaffold_inplace_edit_tag_options(record, column)
-        id_options = {:id => record.id.to_s, :action => 'update_column', :name => column.name.to_s}
-        tag_options = {:id => element_cell_id(id_options), :class => 'in_place_editor_field',
-                       :title => as_(:click_to_edit), :data => {:ie_id => record.to_param}}
+        @_inplace_edit_title ||= as_(:click_to_edit)
+        cell_id = ActiveScaffold::Registry.cache :inplace_edit_id, column.cache_key do
+          element_cell_id(id: '--ID--', action: 'update_column', name: column.name.to_s)
+        end
+        tag_options = {id: cell_id.sub('--ID--', record.id.to_s), class: 'in_place_editor_field',
+                       title: @_inplace_edit_title, data: {:ie_id => record.to_param}}
         tag_options[:data][:ie_update] = column.inplace_edit if column.inplace_edit != true
         tag_options
       end
 
       def active_scaffold_inplace_edit(record, column, options = {})
         formatted_column = options[:formatted_column] || format_column_value(record, column)
-        content_tag(:span, as_(:inplace_edit_handle), :class => 'handle') <<
-          content_tag(:span, formatted_column, active_scaffold_inplace_edit_tag_options(record, column))
+        @_inplace_edit_handle ||= content_tag(:span, as_(:inplace_edit_handle), :class => 'handle')
+        span = content_tag(:span, formatted_column, active_scaffold_inplace_edit_tag_options(record, column))
+        @_inplace_edit_handle + span
       end
 
       def inplace_edit_control(column)
@@ -307,6 +329,7 @@ module ActiveScaffold
         'as_inplace_pattern'
       end
 
+      INPLACE_EDIT_PLURAL_FORM_UI = %i[select record_select].freeze
       def inplace_edit_data(column)
         data = {}
         data[:ie_url] = url_for(params_for(:action => 'update_column', :column => column.name, :id => '__id__'))
@@ -325,7 +348,7 @@ module ActiveScaffold
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
           url = url_for(params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name))
-          plural = column.association&.collection? && !override_form_field?(column) && %i[select record_select].include?(column.form_ui)
+          plural = column.association&.collection? && !override_form_field?(column) && INPLACE_EDIT_PLURAL_FORM_UI.include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
           data[:ie_plural] = plural

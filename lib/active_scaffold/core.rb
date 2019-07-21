@@ -15,11 +15,13 @@ module ActiveScaffold
     end
 
     def active_scaffold_config
-      setup_user_settings unless self.class.active_scaffold_config.user
-      if ActiveScaffold.threadsafe
-        self.class.active_scaffold_config.user
-      else
-        self.class.active_scaffold_config
+      @active_scaffold_config ||= begin
+        setup_user_settings unless self.class.active_scaffold_config.user
+        if ActiveScaffold.threadsafe
+          self.class.active_scaffold_config.user
+        else
+          self.class.active_scaffold_config
+        end
       end
     end
 
@@ -59,7 +61,13 @@ module ActiveScaffold
         active_scaffold_superclasses_blocks.each { |superblock| active_scaffold_config.configure(&superblock) }
         active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
         active_scaffold_config.configure(&block) if block_given?
-        active_scaffold_config._configure_sti unless active_scaffold_config.sti_children.nil?
+        active_scaffold_config.class.after_config_callbacks.each do |callback|
+          if callback.is_a?(Proc)
+            callback.call
+          elsif active_scaffold_config.respond_to?(callback)
+            active_scaffold_config.send(callback)
+          end
+        end
 
         # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
         # define_attribute_methods is safe to call multiple times since rails 4.0.4
@@ -156,10 +164,13 @@ module ActiveScaffold
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
           actions ||= %i[create update show]
-          column.actions_for_association_links.delete :new unless actions.include? :create
-          column.actions_for_association_links.delete :edit unless actions.include? :update
-          column.actions_for_association_links.delete :show unless actions.include? :show
-          ActiveScaffold::DataStructures::ActionLink.new(nil, options.merge(:html_options => {:class => column.name}))
+          controller_actions = column.actions_for_association_links
+          controller_actions = controller_actions.dup if controller_actions.frozen?
+          controller_actions.delete :new unless actions.include? :create
+          controller_actions.delete :edit unless actions.include? :update
+          controller_actions.delete :show unless actions.include? :show
+          options.merge!(html_options: {class: column.name}, controller_actions: Set.new(controller_actions))
+          ActiveScaffold::DataStructures::ActionLink.new(nil, options)
         end
       end
 
