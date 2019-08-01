@@ -11,6 +11,7 @@
 - Display loading indicator at bottom on auto pagination
 - List rendering speed up
 - Remove font family from CSS, it was preventing from changing it easily in body
+- Fix search for mongoid models in with threadsafety enabled
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.

@@ -68,7 +68,9 @@ module ActiveScaffold
               value = columns_token[column.name]
               value = /#{value}/ if column.text?
               column.search_sql.map do |search_sql|
-                {search_sql => value}
+                # call .to_s so String is returned from CowProxy::String in threadsafe mode
+                # in other case, or method from Mongoid would fail
+                {search_sql.to_s => value}
               end
             end.flatten
             active_scaffold_config.model.or(token_conditions).selector
