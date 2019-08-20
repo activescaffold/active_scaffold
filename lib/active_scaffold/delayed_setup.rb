@@ -16,6 +16,7 @@ module ActiveScaffold
       end
 
       def config_active_scaffold_delayed
+        # Thread variable is used to disable this method while block is being eval'ed
         return if @delayed_mutex.nil? || Thread.current["#{name}_running_delayed_init"]
         @delayed_mutex.synchronize do
           return unless @active_scaffold_delayed
@@ -24,9 +25,10 @@ module ActiveScaffold
           block = @active_scaffold_delayed
           @active_scaffold_delayed = nil # clear before called, active_scaffold_config may be called inside block
           block.call
-          Thread.current["#{name}_running_delayed_init"] = nil
         end
-        @delayed_mutex = nil
+        @delayed_mutex = nil # cleared only when config was loaded successfully
+      ensure
+        Thread.current["#{name}_running_delayed_init"] = nil # ensure is cleared if exception is raised
       end
 
       def active_scaffold_config
