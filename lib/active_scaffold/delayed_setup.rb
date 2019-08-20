@@ -24,11 +24,13 @@ module ActiveScaffold
           Thread.current["#{name}_running_delayed_init"] = true
           block = @active_scaffold_delayed
           @active_scaffold_delayed = nil # clear before called, active_scaffold_config may be called inside block
-          block.call
+          begin
+            block.call
+          ensure
+            Thread.current["#{name}_running_delayed_init"] = nil # ensure is cleared if exception is raised
+          end
         end
         @delayed_mutex = nil # cleared only when config was loaded successfully
-      ensure
-        Thread.current["#{name}_running_delayed_init"] = nil # ensure is cleared if exception is raised
       end
 
       def active_scaffold_config
