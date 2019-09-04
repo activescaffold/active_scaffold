@@ -35,6 +35,7 @@ module ActiveScaffold::Actions
     def configure_nested
       return unless nested?
       register_constraints_with_action_columns(nested.constrained_fields)
+      return unless active_scaffold_config.actions.include? :list
       active_scaffold_config.list.user.label = nested_label
       return if active_scaffold_config.nested.ignore_order_from_association
       chain = beginning_of_chain
