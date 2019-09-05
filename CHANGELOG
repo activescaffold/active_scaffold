@@ -14,6 +14,7 @@
 - Fix search for mongoid models in with threadsafety enabled
 - Keep nested params after calling render_field for column in subform
 - Fix nested for controllers without list action (for example, for nested create on singular assocations)
+- Fix delayed setup issues with threads
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
