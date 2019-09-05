@@ -1056,6 +1056,7 @@ var ActiveScaffold = {
       url: url,
       data: params,
       type: 'post',
+      dataType: 'script',
       beforeSend: function(xhr, settings) {
         element.nextAll('img.loading-indicator').css('visibility','visible');
         /* force to blur and save previous last_focus, because disable_form will trigger
