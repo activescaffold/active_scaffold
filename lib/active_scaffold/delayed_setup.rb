@@ -22,12 +22,12 @@ module ActiveScaffold
           return unless @active_scaffold_delayed
           @_prefixes = nil # clean prefixes in case is already cached, so our local_prefixes override is picked up
           Thread.current["#{name}_running_delayed_init"] = true
-          block = @active_scaffold_delayed
-          @active_scaffold_delayed = nil # clear before called, active_scaffold_config may be called inside block
           begin
-            block.call
+            @active_scaffold_delayed.call
+            @active_scaffold_delayed = nil # not cleared if exception is raised, try again on next request
           ensure
-            Thread.current["#{name}_running_delayed_init"] = nil # ensure is cleared if exception is raised
+            # ensure is cleared if exception is raised, to try again on next request
+            Thread.current["#{name}_running_delayed_init"] = nil
           end
         end
         @delayed_mutex = nil # cleared only when config was loaded successfully
