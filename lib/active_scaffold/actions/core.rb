@@ -130,7 +130,7 @@ module ActiveScaffold::Actions
 
       if params[:nested] # form in nested scaffold, set nested parent_record to parent
         nested = ActiveScaffold::DataStructures::NestedInfo.get(parent.class, params[:nested])
-        if nested.child_association
+        if nested&.child_association && !nested.child_association.polymorphic?
           apply_constraints_to_record(parent, constraints: {nested.child_association.name => nested.parent_id})
         end
       end
