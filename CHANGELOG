@@ -16,6 +16,7 @@
 - Fix nested for controllers without list action (for example, for nested create on singular assocations)
 - Fix delayed setup issues with threads
 - Fix render_field under nested list for polymorphic association
+- Add foreign_type column to constrained columns in nested list for polymorphic association
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
