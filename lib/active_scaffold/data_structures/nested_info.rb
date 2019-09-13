@@ -121,10 +121,10 @@ module ActiveScaffold::DataStructures
     def setup_constrained_fields
       @constrained_fields = Array(association.foreign_key).map(&:to_sym) unless association.belongs_to?
       @constrained_fields ||= []
-      if child_association && child_association != association
-        @constrained_fields << child_association.name
-        @constrained_fields << child_association.foreign_type.to_sym if child_association.polymorphic?
-      end
+      return unless child_association && child_association != association
+
+      @constrained_fields << child_association.name
+      @constrained_fields << child_association.foreign_type.to_sym if child_association.polymorphic?
     end
   end
 
