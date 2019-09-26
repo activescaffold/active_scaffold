@@ -104,7 +104,7 @@ module ActiveScaffold
         else
           exclude_parameters = %i[utf8 associated_id]
           parameters = {}
-          if params[:parent_scaffold] && nested? && nested.singular_association?
+          if params[:parent_scaffold] && nested_singular_association?
             parameters[:controller] = params[:parent_scaffold]
             exclude_parameters.concat [nested.param_name, :association, :parent_scaffold]
             # parameters[:eid] = params[:parent_scaffold] # not neeeded anymore?

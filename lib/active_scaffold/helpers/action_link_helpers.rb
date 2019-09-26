@@ -232,6 +232,11 @@ module ActiveScaffold
             query_string_options[key] = value
           end
         end
+        if nested_singular_association? && action_name == 'index'
+          # pass current path as return_to, for nested listing on singular association, so forms doesn't return to parent listing
+          @query_string_params << :return_to
+          non_nested_query_string_options[:return_to] = request.fullpath
+        end
 
         query_string = query_string_options.to_query if query_string_options.present?
         if non_nested_query_string_options.present?

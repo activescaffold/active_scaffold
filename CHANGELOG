@@ -17,6 +17,7 @@
 - Fix delayed setup issues with threads
 - Fix render_field under nested list for polymorphic association
 - Add foreign_type column to constrained columns in nested list for polymorphic association
+- Add return_to to action links on nested list for singular associations, so forms would return to list
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
