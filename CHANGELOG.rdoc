@@ -19,6 +19,8 @@
 - Add foreign_type column to constrained columns in nested list for polymorphic association
 - Add return_to to action links on nested list for singular associations, so forms would return to list
 - Case insensitive search with PostGIS adapter
+- Use clear_storage with around_action and ensure, so empty hash is removed from session storage when exception is raised too
+- Delete search from session when search is reset
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.

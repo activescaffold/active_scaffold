@@ -33,7 +33,11 @@ module ActiveScaffold::Actions
 
       def store_search_params_into_session
         if active_scaffold_config.store_user_settings
-          active_scaffold_session_storage['search'] = permitted_search_params if params[:search]
+          if params[:search].present?
+            active_scaffold_session_storage['search'] = permitted_search_params
+          else
+            active_scaffold_session_storage.delete 'search'
+          end
         else
           @search_params = permitted_search_params
         end

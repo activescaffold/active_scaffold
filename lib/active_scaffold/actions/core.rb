@@ -6,7 +6,7 @@ module ActiveScaffold::Actions
         before_action :check_input_device
         before_action :register_constraints_with_action_columns, :unless => :nested?
         after_action :clear_flashes
-        after_action :clear_storage
+        around_action :clear_storage
         rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
       base.helper_method :active_scaffold_config
@@ -303,6 +303,8 @@ module ActiveScaffold::Actions
     end
 
     def clear_storage
+      yield if block_given?
+    ensure
       session_index = active_scaffold_session_storage_key
       session.delete(session_index) if session[session_index].blank?
     end
