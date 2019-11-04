@@ -35,7 +35,7 @@ module ActiveScaffold::Actions
         if active_scaffold_config.store_user_settings
           if params[:search].present?
             active_scaffold_session_storage['search'] = permitted_search_params
-          else
+          elsif params.key? :search
             active_scaffold_session_storage.delete 'search'
           end
         else
