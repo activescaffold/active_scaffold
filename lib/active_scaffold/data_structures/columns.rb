@@ -49,8 +49,8 @@ module ActiveScaffold::DataStructures
       column = self[association]
       raise ArgumentError, "unknown column #{association}" if column.nil?
       raise ArgumentError, "column #{association} is not an association" if column.association.nil?
-      raise ArugmentError, "column #{association} is not singular association" unless column.association.singular?
-      raise ArugmentError, "column #{association} is polymorphic association" if column.association.polymorphic?
+      raise ArgumentError, "column #{association} is not singular association" unless column.association.singular?
+      raise ArgumentError, "column #{association} is polymorphic association" if column.association.polymorphic?
 
       klass = column.association.klass
       columns.each do |col|
