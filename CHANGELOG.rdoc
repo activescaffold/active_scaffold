@@ -21,6 +21,7 @@
 - Case insensitive search with PostGIS adapter
 - Use clear_storage with around_action and ensure, so empty hash is removed from session storage when exception is raised too
 - Delete search from session when search is reset
+- Add cache_column_counts method to get counts with one query for associations which are not preloaded, query per column is overridable with count_query_for_column
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.

@@ -159,13 +159,18 @@ module ActiveScaffold
           end
         else
           if column.association.collection?
-            associated_size = value.size if column.associated_number? # get count before cache association
+            associated_size = column_association_size(record, column, value) if column.associated_number? # get count before cache association
             if column.association.respond_to_target? && !value.loaded?
               cache_association(record.association(column.name), column, associated_size)
             end
           end
           format_association_value(value, column, associated_size)
         end
+      end
+
+      def column_association_size(record, column, value)
+        cached_counts = @counts&.dig(column.name)
+        cached_counts ? cached_counts[record.id] || 0 : value.size
       end
 
       def format_number_value(value, options = {})

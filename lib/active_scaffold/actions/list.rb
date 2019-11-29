@@ -121,6 +121,30 @@ module ActiveScaffold::Actions
       end
       @page = page
       @records = page.items
+      cache_column_counts
+    end
+
+    def cache_column_counts
+      count_columns = list_columns.select do |col|
+        col.association&.collection? && col.includes.blank? && col.associated_number?
+      end
+      @counts = count_columns.each_with_object({}) do |column, counts|
+        counts[column.name] = count_query_for_column(column).count
+      end
+    end
+
+    def count_query_for_column(column)
+      if column.association.has_many? && !column.association.through? && !column.association.scope
+        (!column.association.as || column.association.reverse_association)
+        query = column.association.klass.where(column.association.foreign_key => @records.map(&:id))
+        if column.association.as
+          query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
+        end
+        query.group(column.association.foreign_key)
+      else
+        active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id)).
+          joins(column.name).group(active_scaffold_config.primary_key)
+      end
     end
 
     def find_page_options
