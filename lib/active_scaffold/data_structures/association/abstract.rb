@@ -71,6 +71,8 @@ module ActiveScaffold::DataStructures::Association
 
     def scope; end
 
+    def as; end
+
     def respond_to_target?
       false
     end

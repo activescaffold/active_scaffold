@@ -126,16 +126,25 @@ module ActiveScaffold::Actions
 
     def cache_column_counts
       count_columns = list_columns.select do |col|
-        col.association&.collection? && col.includes.blank? && col.associated_number?
+        col.association&.collection? && col.includes.blank? && col.associated_number? &&
+          !ActiveScaffold::OrmChecks.tableless?(col.association.klass)
       end
       @counts = count_columns.each_with_object({}) do |column, counts|
-        counts[column.name] = count_query_for_column(column).count
+        if ActiveScaffold::OrmChecks.active_record?(column.association.klass)
+          counts[column.name] = count_query_for_column(column).count
+        elsif ActiveScaffold::OrmChecks.mongoid?(column.association.klass)
+          counts[column.name] = mongoid_count_for_column(column)
+        end
       end
     end
 
-    def count_query_for_column(column)
-      if column.association.has_many? && !column.association.through? && !column.association.scope
+    def count_on_association_class?(column)
+      column.association.has_many? && !column.association.through? && !column.association.scope &&
         (!column.association.as || column.association.reverse_association)
+    end
+
+    def count_query_for_column(column)
+      if count_on_association_class?(column)
         query = column.association.klass.where(column.association.foreign_key => @records.map(&:id))
         if column.association.as
           query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
@@ -146,6 +155,18 @@ module ActiveScaffold::Actions
         active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id))
                               .joins(column.name).group(active_scaffold_config.primary_key)
                               .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
+      end
+    end
+
+    def mongoid_count_for_column(column)
+      matches = {column.association.foreign_key => {'$in': @records.map(&:id)}}
+      if column.association.as
+        matches[column.association.reverse_association.foreign_type] = {'$eq': active_scaffold_config.model.name}
+      end
+      group = {_id: "$#{column.association.foreign_key}", count: {'$sum' => 1}}
+      query = column.association.klass.collection.aggregate([{'$match' => matches}, {'$group' => group}])
+      query.each_with_object({}) do |row, hash|
+        hash[row['_id']] = row['count']
       end
     end
 
