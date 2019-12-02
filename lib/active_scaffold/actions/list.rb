@@ -142,7 +142,7 @@ module ActiveScaffold::Actions
         end
         query.group(column.association.foreign_key)
       else
-        klass = column.association.klass.quoted_table_name
+        klass = column.association.klass
         active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id))
                               .joins(column.name).group(active_scaffold_config.primary_key)
                               .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
