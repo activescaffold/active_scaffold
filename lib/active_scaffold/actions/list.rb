@@ -142,8 +142,8 @@ module ActiveScaffold::Actions
         end
         query.group(column.association.foreign_key)
       else
-        active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id)).
-          joins(column.name).group(active_scaffold_config.primary_key)
+        active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id))
+          .joins(column.name).group(active_scaffold_config.primary_key)
       end
     end
 
