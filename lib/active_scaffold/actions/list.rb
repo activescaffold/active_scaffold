@@ -139,7 +139,7 @@ module ActiveScaffold::Actions
     end
 
     def count_on_association_class?(column)
-      column.association.has_many? && !column.association.through? && !column.association.scope &&
+      column.association.has_many? && !column.association.through? &&
         (!column.association.as || column.association.reverse_association)
     end
 
@@ -148,6 +148,9 @@ module ActiveScaffold::Actions
         query = column.association.klass.where(column.association.foreign_key => @records.map(&:id))
         if column.association.as
           query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
+        end
+        if column.association.scope
+          query = query.instance_exec(&column.association.scope)
         end
         query.group(column.association.foreign_key)
       else
