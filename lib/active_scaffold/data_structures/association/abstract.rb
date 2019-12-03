@@ -142,7 +142,8 @@ module ActiveScaffold::DataStructures::Association
 
     def reverse_match?(assoc)
       return false if assoc == @association
-      return false unless assoc.polymorphic? || assoc.class_name == inverse_klass&.name
+      return assoc.polymorphic? && assoc.name == as if as
+      return false if assoc.polymorphic? && assoc.class_name != inverse_klass&.name
 
       if through?
         reverse_through_match?(assoc)
