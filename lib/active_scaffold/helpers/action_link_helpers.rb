@@ -170,6 +170,7 @@ module ActiveScaffold
         @action_links_urls[link.name_to_cache] || begin
           url_options = cached_action_link_url_options(link, record)
           if cache_action_link_url?(link, record)
+            url_options[:id] = nil if url_options[:action] == "index"
             @action_links_urls[link.name_to_cache] = url_for(url_options)
           else
             url_options.merge! eid: nil, embedded: nil if link.nested_link?
