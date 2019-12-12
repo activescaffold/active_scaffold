@@ -390,6 +390,7 @@ module ActiveScaffold
         elsif link.parameters&.dig(:named_scope)
           url_options[:parent_scaffold] = controller_path
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
+          url_options[:id] = nil
         end
       end
 
