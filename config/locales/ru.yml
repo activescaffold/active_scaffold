@@ -116,6 +116,7 @@ ru:
     refresh: Обновить
     remove: Удалить
     remove_file: Удалить или заменить файл
+    remove_files: Удалить или Добавить файлы
     replace_existing: Заменить существующим
     replace_with_new: Заменить новым
     reset: Сброс
