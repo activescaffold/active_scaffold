@@ -108,6 +108,7 @@ ja:
     refresh: Refresh
     remove: 削除
     remove_file: ファイルを削除または置換
+    remove_files: ファイルを削除または追加する
     replace_existing: Replace existing
     replace_with_new: 新しいもので置換
     reset: リセット

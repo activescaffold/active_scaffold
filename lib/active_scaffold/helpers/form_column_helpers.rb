@@ -330,12 +330,13 @@ module ActiveScaffold
         object_name, method = options[:name].split(/\[(#{column.name})\]/)
         method.sub!(/#{column.name}/, "#{remove_file_prefix}\\0")
         fields = block_given? ? yield : ''
+        link_key = options[:multiple] ? :remove_files : :remove_file
         input = file_field(:record, column.name, options.merge(:onchange => js_dont_remove_file_code))
         content_tag(:div, class: controls_class) do
           content_tag(:div) do
             safe_join [content, ' | ', fields,
                        hidden_field(object_name, method, :value => 'false', class: 'remove_file'),
-                       content_tag(:a, as_(:remove_file), :href => '#', :onclick => js_remove_file_code)]
+                       content_tag(:a, as_(link_key), :href => '#', :onclick => js_remove_file_code)]
           end << content_tag(:div, input, :style => 'display: none')
         end
       end

@@ -108,6 +108,7 @@ en:
     refresh: Refresh
     remove: Remove
     remove_file: Remove or Replace file
+    remove_files: Remove or Add files
     replace_existing: Replace Existing
     replace_with_new: Replace With New
     reset: Reset
