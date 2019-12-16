@@ -136,14 +136,13 @@ module ActiveScaffold::DataStructures::Association
       associations = self.class.reflect_on_all_associations(klass)
       # collect associations that point back to this model and use the same foreign_key
       associations.each_with_object([]) do |assoc, reverse_matches|
-        reverse_matches << assoc if reverse_match? assoc
+        reverse_matches << assoc if assoc != @association && reverse_match?(assoc)
       end
     end
 
     def reverse_match?(assoc)
-      return false if assoc == @association
-      return assoc.polymorphic? && assoc.name == as if as
-      return false if assoc.polymorphic? && assoc.class_name != inverse_klass&.name
+      return assoc.name == as if as || assoc.polymorphic?
+      return false if assoc.class_name != inverse_klass&.name
 
       if through?
         reverse_through_match?(assoc)
