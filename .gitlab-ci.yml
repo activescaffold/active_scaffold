@@ -7,7 +7,6 @@
     - gem install bundler
     - bundle --version
     - apk add --no-cache --update build-base git
-    - bundle update --bundler
     - bundle install --clean --deployment --jobs=2 --without default development lint production test
   image: ruby:alpine
   only:
@@ -25,7 +24,6 @@
     - gem install bundler
     - bundle --version
     - apk add --no-cache --update build-base git
-    - bundle update --bundler
     - bundle install --clean --deployment --jobs=2 --without default deployment development production test
   image: ruby:alpine
   stage: lint
@@ -47,7 +45,6 @@
     - gem install bundler
     - bundle --version
     - apk add --no-cache --update build-base curl git sqlite-dev tzdata
-    - bundle update --bundler
     - bundle install --clean --deployment --jobs=2 --without deployment development lint production
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
