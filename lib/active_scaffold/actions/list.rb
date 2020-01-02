@@ -106,11 +106,7 @@ module ActiveScaffold::Actions
       super
     end
 
-    # The actual algorithm to prepare for the list view
-    def do_list
-      # id: nil needed in params_for because rails reuse it even
-      # if it was deleted from params (like do_refresh_list does)
-      @remove_id_from_list_links = params[:id].blank?
+    def current_page
       set_includes_for_columns
 
       page = find_page(find_page_options)
@@ -119,7 +115,15 @@ module ActiveScaffold::Actions
         page = page.pager.last
         active_scaffold_config.list.user.page = page.number
       end
-      @page = page
+      page
+    end
+
+    # The actual algorithm to prepare for the list view
+    def do_list
+      # id: nil needed in params_for because rails reuse it even
+      # if it was deleted from params (like do_refresh_list does)
+      @remove_id_from_list_links = params[:id].blank?
+      @page = current_page
       @records = page.items
       cache_column_counts
     end
@@ -208,15 +212,20 @@ module ActiveScaffold::Actions
     end
 
     def each_record_in_page
-      current_page = active_scaffold_config.list.user.page
-      do_search if respond_to? :do_search, true
-      active_scaffold_config.list.user.page = current_page
-      do_list
-      @page.items.each { |record| yield record }
+      page_items.each { |record| yield record }
     end
 
     def each_record_in_scope
       scoped_query.each { |record| yield record }
+    end
+
+    def page_items
+      @page_items ||= begin
+        current_page = active_scaffold_config.list.user.page
+        do_search if respond_to? :do_search, true
+        active_scaffold_config.list.user.page = current_page
+        @page = current_page
+      end
     end
 
     def scoped_query
