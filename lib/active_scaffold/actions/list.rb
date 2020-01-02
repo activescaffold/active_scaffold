@@ -221,9 +221,9 @@ module ActiveScaffold::Actions
 
     def page_items
       @page_items ||= begin
-        current_page = active_scaffold_config.list.user.page
+        page_number = active_scaffold_config.list.user.page
         do_search if respond_to? :do_search, true
-        active_scaffold_config.list.user.page = current_page
+        active_scaffold_config.list.user.page = page_number
         @page = current_page
       end
     end
