@@ -124,7 +124,7 @@ module ActiveScaffold::Actions
       # if it was deleted from params (like do_refresh_list does)
       @remove_id_from_list_links = params[:id].blank?
       @page = current_page
-      @records = page.items
+      @records = @page.items
       cache_column_counts
     end
 
