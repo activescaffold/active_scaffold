@@ -127,7 +127,7 @@ module ActiveScaffold::Actions
       return unless create_association_with_parent?
       if nested.child_association.singular?
         record.send("#{nested.child_association.name}=", nested_parent_record)
-      elsif nested.association.through_singular? # && nested.child_association.through_singular?
+      elsif nested.association.through_singular? && nested.child_association.through_singular?
         through = nested_parent_record.send(nested.association.through_reflection.name)
         record.send("#{nested.child_association.through_reflection.name}=", through)
       else
