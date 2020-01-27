@@ -513,7 +513,7 @@ module ActiveScaffold
     end
 
     def calculate_last_modified(query)
-      return unless conditional_get_support? && query.klass.columns_hash['updated_at']
+      return unless conditional_get_support? && ActiveScaffold::OrmChecks.columns_hash(query.klass)['updated_at']
       @last_modified = query.maximum(:updated_at)
     end
 
