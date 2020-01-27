@@ -6,7 +6,7 @@ tr_class = "#{cycle("", "even-record")} #{list_row_class(record)}"
 action_links ||= active_scaffold_config.action_links.member
 data_refresh ||= record.to_param
 -%>
-<tr class="record <%= tr_class %>" id="<%= row_id %>" data-refresh="<%= data_refresh %>">
+<%= content_tag :tr, list_row_attributes(tr_class, row_id, data_refresh) do %>
   <% columns.each do |column| %>
     <% authorized = record.authorized_for?(:crud_type => :read, :column => column.name) -%>
     <% column_value = authorized ? get_column_value(record, column) : empty_field_text -%>
@@ -25,4 +25,4 @@ data_refresh ||= record.to_param
     </tr>
   </table></td>
   <% end -%>
-</tr>
+<% end %>

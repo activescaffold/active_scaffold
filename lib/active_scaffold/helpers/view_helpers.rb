@@ -87,6 +87,10 @@ module ActiveScaffold
         class_override_helper ? send(class_override_helper, record) : ''
       end
 
+      def list_row_attributes(tr_class, tr_id, data_refresh)
+        {class: "record #{tr_class}", id: tr_id, data: {refresh: data_refresh}}
+      end
+
       def column_attributes(column, record)
         method = override_helper column, 'column_attributes'
         return send(method, record) if method
