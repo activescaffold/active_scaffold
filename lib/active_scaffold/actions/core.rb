@@ -434,8 +434,7 @@ module ActiveScaffold::Actions
 
     def virtual_columns(columns)
       columns.reject do |col|
-        ActiveScaffold::OrmChecks.columns_hash(active_scaffold_config.model)[col.to_s] ||
-          active_scaffold_config.columns[col]&.association
+        active_scaffold_config._columns_hash[col.to_s] || active_scaffold_config.columns[col]&.association
       end
     end
 

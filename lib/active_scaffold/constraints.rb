@@ -70,7 +70,7 @@ module ActiveScaffold
             conditions << [column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR '), *([v] * column.search_sql.size)]
           end
         # unknown-to-activescaffold-but-real-database-column constraint
-        elsif ActiveScaffold::OrmChecks.columns_hash(active_scaffold_config.model)[k.to_s] && params[column.name] != v
+        elsif active_scaffold_config._columns_hash[k.to_s] && params[column.name] != v
           hash_conditions.deep_merge!(k => v)
         else
           raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
