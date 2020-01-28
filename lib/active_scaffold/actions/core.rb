@@ -244,26 +244,33 @@ module ActiveScaffold::Actions
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
     def conditions_from_params
       @conditions_from_params ||= begin
-        conditions = {}
+        conditions = [{}]
         params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
-          column = active_scaffold_config._columns_hash[key.to_s]
+          distinct = true if key =~ /!$/
+          column = active_scaffold_config._columns_hash[key.to_s[0..(distinct ? -2 : -1)]]
           next unless column
-          key = key.to_sym
+          key = column.name.to_sym
           not_string = %i[string text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 
           range = %i[date datetime].include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
           value = value.split('..') if range
-          conditions[key] =
-            if value.is_a?(Array)
+          value =
+            if range
+              Range.new(*value)
+            elsif value.is_a?(Array)
               value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
             elsif value == '' && (not_string || column.null)
               ActiveScaffold::Core.column_type_cast(column.default, column)
             else
               ActiveScaffold::Core.column_type_cast(value, column)
             end
-          conditions[key] = Range.new(*conditions[key]) if range
+          if distinct
+            conditions << active_scaffold_config.model.arel_table[key].not_eq(value)
+          else
+            conditions[0][key] = value
+          end
         end
         conditions
       end
