@@ -257,15 +257,14 @@ module ActiveScaffold::Actions
           range = %i[date datetime].include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
           value = value.split('..') if range
           value =
-            if range
-              Range.new(*value)
-            elsif value.is_a?(Array)
+            if value.is_a?(Array)
               value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
             elsif value == '' && (not_string || column.null)
               ActiveScaffold::Core.column_type_cast(column.default, column)
             else
               ActiveScaffold::Core.column_type_cast(value, column)
             end
+          value = Range.new(*value) if range
           if distinct
             conditions << active_scaffold_config.model.arel_table[key].not_eq(value)
           else
