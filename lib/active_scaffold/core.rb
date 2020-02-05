@@ -265,12 +265,12 @@ module ActiveScaffold
     end
 
     def self.mongoid_column_type_cast(value, column)
-      return Time.at(value.to_i) if value =~ /\A\d+\z/ && [Time, DateTime].include?(column.type)
+      return Time.zone.at(value.to_i) if value =~ /\A\d+\z/ && [Time, DateTime].include?(column.type)
       column.type.evolve value
     end
 
     def self.active_record_column_type_cast(value, column)
-      return Time.at(value.to_i) if value =~ /\A\d+\z/ && [:time, :datetime].include?(column.type)
+      return Time.zone.at(value.to_i) if value =~ /\A\d+\z/ && %i[time datetime].include?(column.type)
       if Rails.version < '5.0'
         column.type_cast_from_user value
       elsif column.type.respond_to? :cast # jruby-jdbc and rails 5
