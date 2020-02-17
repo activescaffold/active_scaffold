@@ -128,13 +128,16 @@ module ActiveScaffold::Actions
       cache_column_counts
     end
 
-    def cache_column_counts
-      count_columns = list_columns.select do |col|
+    def columns_to_cache_counts
+      list_columns.select do |col|
         col.association&.collection? && col.includes.blank? && col.associated_number? &&
           !ActiveScaffold::OrmChecks.tableless?(col.association.klass) &&
           !col.association.reverse_association&.counter_cache
       end
-      @counts = count_columns.each_with_object({}) do |column, counts|
+    end
+
+    def cache_column_counts
+      @counts = columns_to_cache_counts.each_with_object({}) do |column, counts|
         if ActiveScaffold::OrmChecks.active_record?(column.association.klass)
           counts[column.name] = count_query_for_column(column).count
         elsif ActiveScaffold::OrmChecks.mongoid?(column.association.klass)
