@@ -161,7 +161,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rainbow (2.2.2)
       rake
-    rake (12.3.2)
+    rake (13.0.1)
     rdoc (6.0.3)
     request_store (1.4.1)
       rack (>= 1.4)
