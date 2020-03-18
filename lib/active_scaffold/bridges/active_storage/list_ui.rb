@@ -22,7 +22,14 @@ module ActiveScaffold
       private
 
       def link_for_attachment(attachment)
-        link_to(attachment.filename, rails_blob_url(attachment, disposition: 'attachment'), target: '_blank')
+        variant = column.options[:thumb] || ActiveScaffold::Bridges::ActiveStorage::ActiveStorageBridgeHelpers.thumbnail_variant
+        content =
+          if variant && attachment.variable?
+            image_tag(attachment.variant(variant))
+          else
+            attachment.filename
+          end
+        link_to(content, rails_blob_url(attachment, disposition: 'attachment'), target: '_blank')
       end
     end
   end
