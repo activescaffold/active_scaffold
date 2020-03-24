@@ -340,7 +340,7 @@ module ActiveScaffold
 
         if !options[:page] && !options[:inline] && (options[:popup] || link.popup?)
           html_options[:target] = '_blank'
-          html_options[:rel] = [html_options[:rel], "noopener noreferrer"].compact.join(' ')
+          html_options[:rel] = [html_options[:rel], 'noopener noreferrer'].compact.join(' ')
         end
         html_options[:id] = link_id
         if link.dhtml_confirm?

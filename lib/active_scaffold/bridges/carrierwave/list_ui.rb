@@ -11,7 +11,7 @@ module ActiveScaffold
           else
             record.send(record.send(:_mounter, column.name).send(:serialization_column))
           end
-        link_to(content, carrierwave.url, :target => '_blank', rel: "noopener noreferrer")
+        link_to(content, carrierwave.url, :target => '_blank', rel: 'noopener noreferrer')
       end
     end
   end
