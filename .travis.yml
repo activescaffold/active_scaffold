@@ -6,7 +6,7 @@ before_script:
   - ./cc-test-reporter before-build
 after_script:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
-bundler_args: --clean --deployment --jobs=$(nproc) --without development production
+bundler_args: --clean --deployment --jobs=$(nproc) --without development production performance
 cache: bundler
 dist: trusty
 gemfile:
