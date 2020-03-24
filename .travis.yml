@@ -20,12 +20,14 @@ language: ruby
 matrix:
   fast_finish: true
   exclude:
+    - rvm: 2.3.8
+      gemfile: Gemfile
   allow_failures:
     - rvm: rbx-3
 rvm:
-  - 2.3.5
+  - 2.3.8
   - 2.4.2
-  - 2.5.0
-  - jruby-9.1.15.0
+  - 2.5.5
+  - jruby-9.2.11.0
   - rbx-3
 sudo: required

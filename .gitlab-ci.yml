@@ -55,8 +55,8 @@
   tags:
     - gitlab-org
 
-.use_jruby_9_1: &use_jruby_9_1
-  image: jruby:9.1-alpine
+.use_jruby_9_2: &use_jruby_9_2
+  image: jruby:9.2-alpine
 
 .use_mri_2_3: &use_mri_2_3
   image: ruby:2.3-alpine
@@ -136,8 +136,8 @@ stages:
   - test
   - deploy
 
-test:rails-4.2:jruby:9.1:
-  <<: *use_jruby_9_1
+test:rails-4.2:jruby:9.2:
+  <<: *use_jruby_9_2
   <<: *use_rails_4_2
 
 test:rails-4.2:mri:2.3:
@@ -152,8 +152,8 @@ test:rails-4.2:mri:2.5:
   <<: *use_mri_2_5
   <<: *use_rails_4_2
 
-test:rails-5.0:jruby:9.1:
-  <<: *use_jruby_9_1
+test:rails-5.0:jruby:9.2:
+  <<: *use_jruby_9_2
   <<: *use_rails_5_0
 
 test:rails-5.0:mri:2.3:
@@ -168,8 +168,8 @@ test:rails-5.0:mri:2.5:
   <<: *use_mri_2_5
   <<: *use_rails_5_0
 
-test:rails-5.1:jruby:9.1:
-  <<: *use_jruby_9_1
+test:rails-5.1:jruby:9.2:
+  <<: *use_jruby_9_2
   <<: *use_rails_5_1
 
 test:rails-5.1:mri:2.3:
@@ -184,12 +184,8 @@ test:rails-5.1:mri:2.5:
   <<: *use_mri_2_5
   <<: *use_rails_5_1
 
-test:rails-5.2:jruby:9.1:
-  <<: *use_jruby_9_1
-  <<: *use_rails_5_2
-
-test:rails-5.2:mri:2.3:
-  <<: *use_mri_2_3
+test:rails-5.2:jruby:9.2:
+  <<: *use_jruby_9_2
   <<: *use_rails_5_2
 
 test:rails-5.2:mri:2.4:
