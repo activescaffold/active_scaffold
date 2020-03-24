@@ -13,7 +13,7 @@ gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-4.2.x
   - gemfiles/Gemfile.rails-5.0.x
-  - gemfiles/Gemfile.rails-5.2.x
+  - gemfiles/Gemfile.rails-5.1.x
 jdk:
   - openjdk8
 language: ruby

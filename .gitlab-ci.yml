@@ -80,12 +80,12 @@
 .use_rails_5_1: &use_rails_5_1
   <<: *test
   variables:
-    BUNDLE_GEMFILE: Gemfile
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.1.x
 
 .use_rails_5_2: &use_rails_5_2
   <<: *test
   variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.2.x
+    BUNDLE_GEMFILE: Gemfile
 
 cache:
   paths:

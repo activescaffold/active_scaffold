@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gemspec
+gemspec path: '../'
 
 group :development do
   #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
@@ -36,10 +36,9 @@ group :test do
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
-  gem 'rails', '~> 5.2.0'
+  gem 'rails', '~> 5.1.0'
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
-  gem 'rails-perftest', github: 'letsevents/rails-perftest'
   # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
   gem 'simplecov', require: false
 
@@ -51,7 +50,6 @@ group :test do
   end
 
   platforms :ruby do
-    gem 'ruby-prof'
     # This module allows Ruby programs to interface with the SQLite3 database engine
     gem 'sqlite3', '~> 1.3.0'
   end
