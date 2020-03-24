@@ -60,4 +60,5 @@ end
 
 Config = RbConfig # HACK: needed some comments
 
-class ColumnMock < ActiveScaffold::Tableless::Column; end
+class ColumnMock < ActiveScaffold::Tableless::Column
+end

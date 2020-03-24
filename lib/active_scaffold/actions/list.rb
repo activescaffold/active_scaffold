@@ -262,7 +262,7 @@ module ActiveScaffold::Actions
             {:etag => active_scaffold_config.list.user.sorting.clause}
           end
         end
-      objects.present? ? objects : super
+      objects.presence || super
     end
 
     private

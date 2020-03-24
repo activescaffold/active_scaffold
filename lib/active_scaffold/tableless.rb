@@ -1,5 +1,4 @@
-# rubocop:disable Rails/ApplicationRecord
-class ActiveScaffold::Tableless < ActiveRecord::Base
+class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/ApplicationRecord
   class AssociationScope < ActiveRecord::Associations::AssociationScope
     INSTANCE = create
     def self.scope(association, connection)
@@ -200,8 +199,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
   end
   if Rails.version < '5.0' # 4.2.x
     def self.initialize_find_by_cache
-      # rubocop:disable Rails/DynamicFindBy
-      self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
+      self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) } # rubocop:disable Rails/DynamicFindBy
     end
   elsif Rails.version < '5.2' # 5.0 and 5.1
     def self.initialize_find_by_cache

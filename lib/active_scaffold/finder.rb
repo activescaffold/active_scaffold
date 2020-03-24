@@ -176,12 +176,14 @@ module ActiveScaffold
       end
 
       def tables_for_translating_days_and_months(format)
+        # rubocop:disable Style/FormatStringToken
         keys = {
           '%A' => 'date.day_names',
           '%a' => 'date.abbr_day_names',
           '%B' => 'date.month_names',
           '%b' => 'date.abbr_month_names'
         }
+        # rubocop:enable Style/FormatStringToken
         key_index = keys.keys.map { |key| [key, format.index(key)] }.to_h
         keys.select! { |k, _| key_index[k] }
         keys.sort_by { |k, _| key_index[k] }.map do |_, k|
@@ -536,9 +538,7 @@ module ActiveScaffold
       relation = options.reject { |_, v| v.blank? }.inject(relation) do |rel, (k, v)|
         k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
       end
-      if options[:left_outer_joins].present? || options[:left_joins].present?
-        relation.distinct_value = true
-      end
+      relation.distinct_value = true if options[:left_outer_joins].present? || options[:left_joins].present?
       relation
     end
 

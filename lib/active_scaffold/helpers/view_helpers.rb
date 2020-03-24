@@ -137,8 +137,7 @@ module ActiveScaffold
         empty = column_value.nil?
         # column_value != false would force boolean to be cast to integer
         # when comparing to column_value of IPAddr class (PostgreSQL inet column type)
-        # rubocop:disable Style/YodaCondition
-        empty ||= false != column_value && column_value.blank?
+        empty ||= false != column_value && column_value.blank? # rubocop:disable Style/YodaCondition
         empty ||= @_empty_values.include? column_value
         empty
       end
@@ -217,9 +216,7 @@ module ActiveScaffold
           object = instance_variable_get("@#{object}") unless object.respond_to?(:to_model)
           object = convert_to_model(object)
 
-          if object.class.respond_to?(:model_name)
-            options[:object_name] ||= object.class.model_name.human.downcase
-          end
+          options[:object_name] ||= object.class.model_name.human.downcase if object.class.respond_to?(:model_name)
 
           object
         end

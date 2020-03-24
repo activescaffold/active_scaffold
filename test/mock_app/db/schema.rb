@@ -65,3 +65,4 @@ ActiveRecord::Schema.define do
     t.integer 'role_id'
   end
 end
+# rubocop:enable Metrics/BlockLength

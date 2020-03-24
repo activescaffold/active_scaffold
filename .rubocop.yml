@@ -8,6 +8,10 @@ AllCops:
     - 'lib/generators/**/templates/**/*'
     - 'vendor/bundle/**/*'
 
+# we allow long lines yet, because there are many to fix, and it would enforce to create long lines
+Style/IfUnlessModifier:
+  Enabled: false
+
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
