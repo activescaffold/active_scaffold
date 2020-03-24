@@ -10,7 +10,7 @@ module ActiveScaffold
           else
             attachment.name
           end
-        link_to(content, dragonfly_url_for_attachment(attachment, record, column), :target => '_blank')
+        link_to(content, dragonfly_url_for_attachment(attachment, record, column), :target => '_blank', rel: "noopener noreferrer")
       end
 
       def dragonfly_url_for_attachment(attachment, record, column)
