@@ -170,7 +170,8 @@ module ActiveScaffold
 
       def column_association_size(record, column, value)
         cached_counts = @counts&.dig(column.name)
-        cached_counts ? cached_counts[record.id] || 0 : value.size
+        key = column.association.primary_key if count_on_association_class?(column)
+        cached_counts ? cached_counts[record.send(key || :id)] || 0 : value.size
       end
 
       def format_number_value(value, options = {})

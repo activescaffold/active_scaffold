@@ -2,7 +2,7 @@ module ActiveScaffold::Actions
   module List
     def self.included(base)
       base.before_action :list_authorized_filter, :only => :index
-      base.helper_method :list_columns
+      base.helper_method :list_columns, :count_on_association_class?
     end
 
     def index
@@ -153,7 +153,8 @@ module ActiveScaffold::Actions
 
     def count_query_for_column(column)
       if count_on_association_class?(column)
-        query = column.association.klass.where(column.association.foreign_key => @records.map(&:id))
+        key = column.association.primary_key || :id
+        query = column.association.klass.where(column.association.foreign_key => @records.map(&key))
         if column.association.as
           query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
         end
