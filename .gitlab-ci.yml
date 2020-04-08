@@ -87,6 +87,11 @@
   variables:
     BUNDLE_GEMFILE: Gemfile
 
+.use_rails_6_0: &use_rails_6_0
+  <<: *test
+  variables:
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-6.0.x
+
 cache:
   paths:
     - vendor/bundle
@@ -195,6 +200,11 @@ test:rails-5.2:mri:2.4:
 test:rails-5.2:mri:2.5:
   <<: *use_mri_2_5
   <<: *use_rails_5_2
+
+test:rails-6.0:mri:2.5:
+  <<: *use_mri_2_5
+  <<: *use_rails_6_0
+  allow_failure: true
 
 variables:
   JRUBY_OPTS: --debug
