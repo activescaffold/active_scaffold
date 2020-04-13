@@ -39,12 +39,8 @@ module ActiveScaffold #:nodoc:
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
         render_embedded args.first
       elsif args.first == :super
-        if @lookup_context # rails 6
-          @_lookup_context ||= lookup_context
-        else # rails < 6
-          @_view_paths ||= lookup_context.view_paths.clone
-          @_last_template ||= lookup_context.last_template
-        end
+        @_view_paths ||= lookup_context.view_paths.clone
+        @_last_template ||= lookup_context.last_template
         parts = @virtual_path.split('/')
         template = parts.pop
         prefix = parts.join('/')
@@ -62,34 +58,22 @@ module ActiveScaffold #:nodoc:
         else
           options[:prefixes] = ['active_scaffold_overrides']
           last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
-          new_view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
-          if @lookup_context
-            @lookup_context = build_lookup_context(new_view_paths)
-          else
-            lookup_context.view_paths = new_view_paths
-          end
+          lookup_context.view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
         end
         result = super options
-        @lookup_context = @_lookup_context if @_lookup_context # rails 6
-        lookup_context.view_paths = @_view_paths if @_view_paths # rails < 6
-        lookup_context.last_template = @_last_template if @_last_template # rails < 6
+        lookup_context.view_paths = @_view_paths if @_view_paths
+        lookup_context.last_template = @_last_template if @_last_template
         result
       else
-        if @lookup_context # rails 6
-          @_lookup_context ||= lookup_context
-        else # rails < 6
-          @_view_paths ||= lookup_context.view_paths.clone
-        end
+        @_view_paths ||= lookup_context.view_paths.clone
         last_template = lookup_context.last_template
-        current_view =
-          if args[0].is_a?(Hash)
-            {locals: args[0][:locals], object: args[0][:object]}
-          else # call is render 'partial', locals_hash
-            {locals: args[1]}
-          end
+        current_view = if args[0].is_a?(Hash)
+                         {:locals => args[0][:locals], :object => args[0][:object]}
+                       else # call is render 'partial', locals_hash
+                         {:locals => args[1]}
+                       end
         view_stack << current_view if current_view
-        @lookup_context = @_lookup_context if @_lookup_context # rails 6, reset lookup_context in case a view render :super, and then render :partial
-        lookup_context.view_paths = @_view_paths if @_view_paths # rails < 6, reset view_paths in case a view render :super, and then render :partial
+        lookup_context.view_paths = @_view_paths # reset view_paths in case a view render :super, and then render :partial
         result = super
         view_stack.pop if current_view.present?
         lookup_context.last_template = last_template

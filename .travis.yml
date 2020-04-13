@@ -22,13 +22,8 @@ matrix:
   exclude:
     - rvm: 2.3.8
       gemfile: Gemfile
-  include:
-    - rvm: 2.5.5
-      gemfile: gemfiles/Gemfile.rails-6.0.x
   allow_failures:
     - rvm: rbx-3
-    - rvm: 2.5.5
-      gemfile: gemfiles/Gemfile.rails-6.0.x
 rvm:
   - 2.3.8
   - 2.4.2

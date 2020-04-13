@@ -26,22 +26,6 @@ module ActiveScaffold
       cache[key] ||= yield
     end
 
-    def cache_if(condition, kind, key = nil, &block)
-      if condition
-        cache(kind, key, &block)
-      else
-        yield
-      end
-    end
-
-    def cache_unless(condition, kind, key = nil, &block)
-      if condition
-        yield
-      else
-        cache(kind, key, &block)
-      end
-    end
-
     def self.instance
       RequestStore.store[@per_thread_registry_key] ||= new
     end
