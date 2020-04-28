@@ -93,7 +93,7 @@ module ActiveScaffold::Actions
     end
 
     def includes_need_join?(column, sorting = active_scaffold_config.list.user.sorting)
-      sorting.sorts_on?(column) || scoped_habtm?(column)
+      (sorting.sorts_by_sql? && sorting.sorts_on?(column)) || scoped_habtm?(column)
     end
 
     def scoped_habtm?(column)

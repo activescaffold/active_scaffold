@@ -25,6 +25,7 @@
 - ActiveStorage support with bridge
 - Add list_row_attributes helper so more HTML attributes can be added to tr.record in list, overriding the helper
 - Support column!=value param for not equal condition (column!= means column is not null)
+- Don't force to use join for column's includes when sorting by method
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
