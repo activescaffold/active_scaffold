@@ -644,7 +644,7 @@ module ActiveScaffold
           remote_controller = active_scaffold_controller_for(record_select_config.model).controller_path
           options[:controller] = remote_controller
           options.merge!(active_scaffold_input_text_options)
-          record_select_field(options[:name], record, options)
+          record_select_field(options[:name], nil, options)
         else
           select_options = sorted_association_options_find(nested.association, nil, record)
           select_options ||= active_scaffold_config.model.all
