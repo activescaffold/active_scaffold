@@ -254,7 +254,7 @@ module ActiveScaffold::Actions
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 
-          range = %i[date datetime].include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
+          range = %i[date datetime integer decimal float bigint].include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
           value = value.split('..') if range
           value =
             if value.is_a?(Array)
