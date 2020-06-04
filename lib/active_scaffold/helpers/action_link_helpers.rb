@@ -213,7 +213,7 @@ module ActiveScaffold
 
       def column_in_params_conditions?(key)
         if key =~ /!$/
-          conditions_from_params[1..-1].any? { |node| node.left.name == key }
+          conditions_from_params[1..-1].any? { |node| node.left.name.to_s == key[0..-2] }
         else
           conditions_from_params[0].include?(key)
         end
