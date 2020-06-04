@@ -211,6 +211,18 @@ module ActiveScaffold
         url
       end
 
+      def column_in_params_conditions?(key)
+        if key =~ /!$/
+          conditions_from_params[1..-1].any? { |node| node.left.name == key }
+        else
+          conditions_from_params[0].include?(key)
+        end
+      end
+
+      def ignore_param_for_nested?(key)
+        NESTED_PARAMS.include?(key) || column_in_params_conditions?(key) || (nested? && nested.param_name == key)
+      end
+
       def query_string_for_action_links(link)
         if defined?(@query_string) && link.parameters.none? { |k, _| @query_string_params.include? k }
           return [@query_string, @non_nested_query_string]
@@ -226,7 +238,7 @@ module ActiveScaffold
             keep = false
             next
           end
-          if NESTED_PARAMS.include?(key) || conditions_from_params.include?(key) || (nested? && nested.param_name == key)
+          if ignore_param_for_nested?(key)
             non_nested_query_string_options[key] = value
           else
             query_string_options[key] = value
