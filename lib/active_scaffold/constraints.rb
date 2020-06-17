@@ -153,7 +153,7 @@ module ActiveScaffold
               raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller
             end
             record.send("#{k}=", v[0].constantize.find(v[1]))
-          else # regular singular association
+          elsif !column.association.source_reflection&.options&.include?(:through) # regular singular association, or one-level through association
             record.send("#{k}=", column.association.klass.find(v))
 
             # setting the belongs_to side of a has_one isn't safe. if the has_one was already
