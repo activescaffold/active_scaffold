@@ -165,8 +165,8 @@ module ActiveScaffold::Actions
       else
         klass = column.association.klass
         query = active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id))
-                              .joins(column.name).group(active_scaffold_config.primary_key)
-                              .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
+                                      .joins(column.name).group(active_scaffold_config.primary_key)
+                                      .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
         query = query.uniq if column.association.scope && klass.instance_exec(&column.association.scope).values[:distinct]
         query
       end
