@@ -27,6 +27,7 @@
 - Support column!=value param for not equal condition (column!= means column is not null)
 - Don't force to use join for column's includes when sorting by method
 - Add support for range conditions in url params for numeric (integer, decimal, float, bigint) columns too
+- Support include_blank option in :radio form_ui
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.

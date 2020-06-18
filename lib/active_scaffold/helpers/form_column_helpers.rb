@@ -460,6 +460,11 @@ module ActiveScaffold
           radios = options.map do |option|
             active_scaffold_radio_option(option, selected, column, html_options)
           end
+          if column.options[:include_blank]
+            label = column.options[:include_blank]
+            label = as_(column.options[:include_blank]) if column.options[:include_blank].is_a?(Symbol)
+            radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: nil)) + label)
+          end
           safe_join radios
         else
           content_tag(:span, as_(:no_options), :class => "#{html_options[:class]} no-options", :id => html_options[:id]) <<
