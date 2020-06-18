@@ -153,23 +153,31 @@ module ActiveScaffold::Actions
 
     def count_query_for_column(column)
       if count_on_association_class?(column)
-        key = column.association.primary_key || :id
-        query = column.association.klass.where(column.association.foreign_key => @records.map(&key))
-        if column.association.as
-          query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
-        end
-        if column.association.scope
-          query = query.instance_exec(&column.association.scope)
-        end
-        query.group(column.association.foreign_key)
+        count_query_on_association_class(column)
       else
-        klass = column.association.klass
-        query = active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id))
-                                      .joins(column.name).group(active_scaffold_config.primary_key)
-                                      .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
-        query = query.uniq if column.association.scope && klass.instance_exec(&column.association.scope).values[:distinct]
-        query
+        count_query_with_join(column)
       end
+    end
+
+    def count_query_on_association_class(column)
+      key = column.association.primary_key || :id
+      query = column.association.klass.where(column.association.foreign_key => @records.map(&key))
+      if column.association.as
+        query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
+      end
+      if column.association.scope
+        query = query.instance_exec(&column.association.scope)
+      end
+      query.group(column.association.foreign_key)
+    end
+
+    def count_query_with_join(column)
+      klass = column.association.klass
+      query = active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id))
+                                    .joins(column.name).group(active_scaffold_config.primary_key)
+                                    .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
+      query = query.uniq if column.association.scope && klass.instance_exec(&column.association.scope).values[:distinct]
+      query
     end
 
     def mongoid_count_for_column(column)
