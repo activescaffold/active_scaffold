@@ -52,3 +52,4 @@
 
 .localeapp
 /tmp/
+/node_modules/

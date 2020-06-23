@@ -11,22 +11,22 @@ module ActiveScaffold
         route 'concern :active_scaffold_association, ActiveScaffold::Routing::Association.new'
       end
 
-      def add_to_javascript_manifest
-        file = 'app/assets/javascripts/application.js'
-        unless File.exist?(file)
-          say_status :missing, file, :red
-          return if options[:pretend]
-          raise Thor::Error, "JS file #{file} is required for ActiveScaffold"
-        end
-        original_js = File.binread(file)
-        if original_js.include?('require active_scaffold')
-          say_status('skipped', 'insert into app/assets/javascripts/application.js', :yellow)
-        else
-          insert_into_file 'app/assets/javascripts/application.js', :after => %r{//= require +.*ujs['"]?\n} do
-            "//= require active_scaffold\n"
-          end
-        end
-      end
+      # def add_to_javascript_manifest
+      #   file = 'app/assets/javascripts/application.js'
+      #   unless File.exist?(file)
+      #     say_status :missing, file, :red
+      #     return if options[:pretend]
+      #     raise Thor::Error, "JS file #{file} is required for ActiveScaffold"
+      #   end
+      #   original_js = File.binread(file)
+      #   if original_js.include?('require active_scaffold')
+      #     say_status('skipped', 'insert into app/assets/javascripts/application.js', :yellow)
+      #   else
+      #     insert_into_file 'app/assets/javascripts/application.js', :after => %r{//= require +.*ujs['"]?\n} do
+      #       "//= require active_scaffold\n"
+      #     end
+      #   end
+      # end
 
       def add_to_stylesheet_manifest
         file = 'app/assets/stylesheets/application.css'

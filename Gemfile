@@ -7,6 +7,7 @@ group :development do
   gem 'localeapp'
   # RDoc produces HTML and command-line documentation for Ruby projects
   gem 'rdoc'
+  gem 'blade'
 end
 
 group :performance do

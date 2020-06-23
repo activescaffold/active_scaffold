@@ -367,29 +367,29 @@ jQuery(document).on('turbolinks:load', function($) {
 
 /* Simple Inheritance
  http://ejohn.org/blog/simple-javascript-inheritance/
+ Adapted for ES5.1: https://stackoverflow.com/a/15052240
 */
-(function(){
-  var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+(function(global) {
+  "use strict";
+  var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
   // The base Class implementation (does nothing)
-  this.Class = function(){};
+  function BaseClass(){}
 
   // Create a new Class that inherits from this class
-  Class.extend = function(prop) {
+  BaseClass.extend = function(props) {
     var _super = this.prototype;
 
-    // Instantiate a base class (but only create the instance,
-    // don't run the init constructor)
-    initializing = true;
-    var prototype = new this();
-    initializing = false;
+    // Set up the prototype to inherit from the base class
+    // (but without running the init constructor)
+    var proto = Object.create(_super);
 
     // Copy the properties over onto the new prototype
-    for (var name in prop) {
+    for (var name in props) {
       // Check if we're overwriting an existing function
-      prototype[name] = typeof prop[name] == "function" &&
-        typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-        (function(name, fn){
+      proto[name] = typeof props[name] === "function" &&
+      typeof _super[name] == "function" && fnTest.test(props[name])
+        ? (function(name, fn){
           return function() {
             var tmp = this._super;
 
@@ -404,29 +404,32 @@ jQuery(document).on('turbolinks:load', function($) {
 
             return ret;
           };
-        })(name, prop[name]) :
-        prop[name];
+        })(name, props[name])
+        : props[name];
     }
 
-    // The dummy class constructor
-    function Class() {
-      // All construction is actually done in the init method
-      if ( !initializing && this.init )
-        this.init.apply(this, arguments);
-    }
+    // The new constructor
+    var newClass = typeof proto.init === "function"
+      ? proto.hasOwnProperty("init")
+        ? proto.init // All construction is actually done in the init method
+        : function SubClass(){ _super.init.apply(this, arguments); }
+      : function EmptyClass(){};
 
     // Populate our constructed prototype object
-    Class.prototype = prototype;
+    newClass.prototype = proto;
 
     // Enforce the constructor to be what we expect
-    Class.constructor = Class;
+    proto.constructor = newClass;
 
     // And make this class extendable
-    Class.extend = arguments.callee;
+    newClass.extend = BaseClass.extend;
 
-    return Class;
+    return newClass;
   };
-})();
+
+  // export
+  global.Class = BaseClass;
+})(window);
 
 /*
  $ delayed observer
@@ -449,7 +452,7 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
             .data('condition', op.condition || function() { return ($(this).data('oldval') == $(this).val()); })
             .data('callback', callback)
             [(op.event||'keyup')](function(){
-              if (el.data('condition').apply(el)) { return; }
+              if (el.data('condition').apply(el)) {  }
               else {
                 if (el.data('timer')) { clearTimeout(el.data('timer')); }
                 el.data('timer', setTimeout(function(){
@@ -463,7 +466,7 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
       }
     });
   })(jQuery);
-};
+}
 
 
 /*
@@ -472,6 +475,9 @@ if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
 
 var ActiveScaffold = {
   last_focus: null,
+  config: {
+    scroll_on_close: 'checkInViewport'
+  },
   setup: function(container) {
     /* setup some elements on page/form load */
     ActiveScaffold.load_embedded(container);
@@ -499,7 +505,7 @@ var ActiveScaffold = {
   },
   live_search: function(element) {
     jQuery('form.search.live input[type=search]', element).delayedObserver(function() {
-     jQuery(this).parent().trigger("submit");
+      jQuery(this).parent().trigger("submit");
     }, ActiveScaffold.config.live_search_delay || 0.5);
   },
   auto_paginate: function(element) {
@@ -553,7 +559,7 @@ var ActiveScaffold = {
     var rows = this.records_for(tbody_id);
 
     rows.each(function (index, row_node) {
-      row = jQuery(row_node);
+      var row = jQuery(row_node);
       if (row_node.tagName != 'SCRIPT'
         && !row.hasClass("create")
         && !row.hasClass("update")
@@ -603,14 +609,14 @@ var ActiveScaffold = {
     // decrement the last record count, firsts record count are in nested lists
     if (typeof(scaffold) == 'string') scaffold = '#' + scaffold;
     scaffold = jQuery(scaffold);
-    count = scaffold.find('span.active-scaffold-records').last();
+    var count = scaffold.find('span.active-scaffold-records').last();
     if (count) count.html(parseInt(count.html(), 10) - 1);
   },
   increment_record_count: function(scaffold) {
     // increment the last record count, firsts record count are in nested lists
     if (typeof(scaffold) == 'string') scaffold = '#' + scaffold;
     scaffold = jQuery(scaffold);
-    count = scaffold.find('span.active-scaffold-records').last();
+    var count = scaffold.find('span.active-scaffold-records').last();
     if (count) count.html(parseInt(count.html(), 10) + 1);
   },
   update_row: function(row, html) {
@@ -718,7 +724,7 @@ var ActiveScaffold = {
 
   create_record_row: function(active_scaffold_id, html, options) {
     if (typeof(active_scaffold_id) == 'string') active_scaffold_id = '#' + active_scaffold_id;
-    tbody = jQuery(active_scaffold_id).find('tbody.records').first();
+    var tbody = jQuery(active_scaffold_id).find('tbody.records').first();
     var new_row;
 
     if (options.insert_at == 'top') {
@@ -764,7 +770,7 @@ var ActiveScaffold = {
     row = jQuery(row);
     var tbody = row.closest('tbody.records');
 
-    row.find('a.disabled').each(function() {;
+    row.find('a.disabled').each(function() {
       var action_link = ActiveScaffold.ActionLink.get(this);
       if (action_link) action_link.close();
     });
@@ -1147,7 +1153,7 @@ String.prototype.append_params = function(params) {
 /**
  * A set of links. As a set, they can be controlled such that only one is "open" at a time, etc.
  */
-ActiveScaffold.Actions = new Object();
+ActiveScaffold.Actions = {};
 ActiveScaffold.Actions.Abstract = Class.extend({
   init: function(links, target, loading_indicator, options) {
     this.target = jQuery(target);
@@ -1268,7 +1274,7 @@ ActiveScaffold.ActionLink.Abstract = Class.extend({
   },
 
   update_flash_messages: function(messages) {
-    message_node = jQuery(this.scaffold_id().replace(/-active-scaffold/, '-messages'));
+    var message_node = jQuery(this.scaffold_id().replace(/-active-scaffold/, '-messages'));
     if (message_node) message_node.html(messages);
   },
   set_adapter: function(element) {

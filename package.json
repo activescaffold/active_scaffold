@@ -1,0 +1,11 @@
+{
+  "name": "active_scaffold",
+  "version": "3.6.0",
+  "main": "app/javascripts/index.js",
+  "scripts": {
+    "build": "bundle exec blade build"
+  },
+  "dependencies": {
+    "jquery": "^1.8 || ^3.0"
+  }
+}
