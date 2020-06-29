@@ -330,13 +330,11 @@ jQuery(document).ready(function($) {
       subform = line.find('#' + $this.data('subform-id'));
     if (select.is(':visible')) {
       select.hide().prop('disabled', true);
-      subform.show();
-      jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', false);
+      subform.show().find("input:disabled,select:disabled,textarea:disabled").prop('disabled', false);
       $this.data('select-text', $this.html());
       $this.html($this.data('subform-text'));
     } else {
-      subform.hide();
-      jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', true);
+      subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
       select.show().prop('disabled', false);
       $this.html($this.data('select-text'));
     }
@@ -539,7 +537,7 @@ var ActiveScaffold = {
   },
   disable_optional_subforms: function(element) {
     jQuery('.form-element select + .sub-form').each(function() {
-      jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', true);;
+      jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', true);
     });
   },
   sliders: function(element) {
