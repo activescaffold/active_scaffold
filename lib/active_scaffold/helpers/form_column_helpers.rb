@@ -311,7 +311,8 @@ module ActiveScaffold
       def active_scaffold_new_record_subform(column, record, html_options)
         subform_attrs = active_scaffold_subform_attributes(column).merge(style: 'display: none')
         scope = html_options[:name].scan(/record(.*)\[#{column.name}\]/).dig(0, 0)
-        subform = render(partial: subform_partial_for_column(column), locals: {column: column, parent_record: record, associated: [], show_blank_record: build_associated(column.association, record), scope: scope})
+        new_record = build_associated(column.association, record)
+        subform = render(partial: subform_partial_for_column(column), locals: {column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope})
         html = content_tag(:div, subform, subform_attrs)
         html << active_scaffold_show_new_subform_link(column, record, html_options[:id], subform_attrs[:id])
       end
