@@ -331,12 +331,12 @@ jQuery(document).ready(function($) {
     if (select.is(':visible')) {
       select.hide().prop('disabled', true);
       subform.show();
-      ActiveScaffold.enable_form(subform, true);
+      jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', false);
       $this.data('select-text', $this.html());
       $this.html($this.data('subform-text'));
     } else {
       subform.hide();
-      ActiveScaffold.disable_form(subform, true);
+      jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', true);
       select.show().prop('disabled', false);
       $this.html($this.data('select-text'));
     }
@@ -539,7 +539,7 @@ var ActiveScaffold = {
   },
   disable_optional_subforms: function(element) {
     jQuery('.form-element select + .sub-form').each(function() {
-      ActiveScaffold.disable_form(this, true);
+      jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', true);;
     });
   },
   sliders: function(element) {
