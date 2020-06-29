@@ -304,7 +304,20 @@ module ActiveScaffold
             collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
           end
         html << active_scaffold_refresh_link(column, html_options, record) if column.options[:refresh_link]
+        html << active_scaffold_new_record_subform(column, record, html_options) if column.options[:add_new]
         html
+      end
+
+      def active_scaffold_new_record_subform(column, record, html_options)
+        subform_attrs = active_scaffold_subform_attributes(column).merge(style: 'display: none')
+        scope = html_options[:name].scan(/record(.*)\[#{column.name}\]/).dig(0, 0)
+        subform = render(partial: subform_partial_for_column(column), locals: {column: column, parent_record: record, associated: [], show_blank_record: build_associated(column.association, record), scope: scope})
+        html = content_tag(:div, subform, subform_attrs)
+        html << active_scaffold_show_new_subform_link(column, record, html_options[:id], subform_attrs[:id])
+      end
+
+      def active_scaffold_show_new_subform_link(column, record, select_id, subform_id)
+        link_to(as_(:create_new), '#', data: {select_id: select_id, subform_id: subform_id, subform_text: as_(:add_existing)}, class: 'show-new-subform')
       end
 
       def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, &block) # rubocop:disable Metrics/ParameterLists

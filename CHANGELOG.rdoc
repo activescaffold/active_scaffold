@@ -28,6 +28,7 @@
 - Don't force to use join for column's includes when sorting by method
 - Add support for range conditions in url params for numeric (integer, decimal, float, bigint) columns too
 - Support include_blank option in :radio form_ui
+- Add add_new option for :select form_ui in singular associations, in column.options, it adds link to toggle between select and subform
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
