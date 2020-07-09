@@ -13,7 +13,7 @@ module ActiveScaffold
         attachments = active_storage_files.attachments
         if attachments.size <= 3 # Lets display up to three links, otherwise just show the count.
           links = attachments.map { |attachment| link_for_attachment(attachment) }
-          safe_join links, association_join_text
+          safe_join links, association_join_text(column)
         else
           pluralize attachments.size, column.name.to_s
         end
