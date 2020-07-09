@@ -3,11 +3,11 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
+  gem 'blade'
   #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
   gem 'localeapp'
   # RDoc produces HTML and command-line documentation for Ruby projects
   gem 'rdoc'
-  gem 'blade'
 end
 
 group :performance do

@@ -66,8 +66,9 @@ module ActiveScaffold
       end
   end
 
+  # TODO: deprecate, it should be changed in JS
   mattr_writer :js_config, instance_writer: false
-  def self.js_config # TODO: deprecate, it should be changed in JS
+  def self.js_config
     @@js_config ||= {:scroll_on_close => :checkInViewport}
   end
 
