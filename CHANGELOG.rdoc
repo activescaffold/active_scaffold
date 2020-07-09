@@ -30,6 +30,8 @@
 - Support include_blank option in :radio form_ui
 - Add add_new option for :select form_ui in singular associations, in column.options, it adds link to toggle between select and subform
 - Fix subform crud in subform subgroup, when form is on nested scaffold, when record on first subform is persisted
+- Add association_join_text setting to column, so it can be changed for one column only
+- Use Arel.sql with sorting.clause before passing to reorder method
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.
