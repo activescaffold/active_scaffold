@@ -323,6 +323,23 @@ jQuery(document).ready(function($) {
     if (jQuery(this).prop('checked')) color_field.val('');
   });
 
+  jQuery(document).on('click', '.show-new-subform', function(e) {
+    e.preventDefault();
+    var $this = jQuery(this), line = $this.closest('.form-element'),
+      select = line.find('#' + $this.data('select-id')),
+      subform = line.find('#' + $this.data('subform-id'));
+    if (select.is(':visible')) {
+      select.hide().prop('disabled', true);
+      subform.show().find("input:disabled,select:disabled,textarea:disabled").prop('disabled', false);
+      $this.data('select-text', $this.html());
+      $this.html($this.data('subform-text'));
+    } else {
+      subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
+      select.show().prop('disabled', false);
+      $this.html($this.data('select-text'));
+    }
+  });
+
   jQuery(document).on('turbolinks:before-visit', function() {
     if (history.state.active_scaffold) {
       history.replaceState({turbolinks: true, url: document.location.href}, '', document.location.href);
@@ -486,6 +503,7 @@ var ActiveScaffold = {
     ActiveScaffold.auto_paginate(container);
     ActiveScaffold.draggable_lists('.draggable-lists', container);
     ActiveScaffold.sliders(container);
+    ActiveScaffold.disable_optional_subforms(container);
   },
   setup_history_state: function() {
     var data = {}, current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
@@ -522,6 +540,11 @@ var ActiveScaffold = {
   },
   enable_js_form_buttons: function(element) {
     jQuery('.as-js-button', element).show();
+  },
+  disable_optional_subforms: function(element) {
+    jQuery('.form-element select + .sub-form').each(function() {
+      jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', true);
+    });
   },
   sliders: function(element) {
     jQuery('.as-slider', element).each(function() {
@@ -692,7 +715,7 @@ var ActiveScaffold = {
 
   disable_form: function(as_form, skip_loading_indicator) {
     if (typeof(as_form) == 'string') as_form = '#' + as_form;
-    as_form = jQuery(as_form)
+    as_form = jQuery(as_form);
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','visible');
     jQuery('input[type=submit]', as_form).attr('disabled', 'disabled');

@@ -89,7 +89,8 @@ module ActiveScaffold::Actions
     end
 
     def beginning_of_chain
-      if nested? && nested.association
+      # only if nested is related to current controller, e.g. not when adding record in subform inside subform
+      if nested? && nested.association && nested.association.klass == active_scaffold_config.model
         nested_chain_with_association
       elsif nested? && nested.scope
         nested_parent_record.send(nested.scope)

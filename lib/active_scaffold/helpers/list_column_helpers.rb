@@ -209,7 +209,9 @@ module ActiveScaffold
         end
       end
 
-      def association_join_text
+      def association_join_text(column = nil)
+        column_value = column&.association_join_text
+        return column_value if column_value
         return @_association_join_text if defined? @_association_join_text
         @_association_join_text = active_scaffold_config.list.association_join_text
       end
@@ -218,14 +220,14 @@ module ActiveScaffold
         associated_limit = column.associated_limit
         if associated_limit.nil?
           firsts = value.collect(&label_method)
-          safe_join firsts, association_join_text
+          safe_join firsts, association_join_text(column)
         elsif associated_limit.zero?
           size if column.associated_number?
         else
           firsts = value.loaded? ? value[0, associated_limit] : value.limit(associated_limit)
           firsts = firsts.map(&label_method)
           firsts << '…' if value.size > associated_limit
-          text = safe_join firsts, association_join_text
+          text = safe_join firsts, association_join_text(column)
           text << " (#{size})" if column.associated_number? && associated_limit && value.size > associated_limit
           text
         end
