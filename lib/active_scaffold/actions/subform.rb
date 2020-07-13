@@ -11,8 +11,10 @@ module ActiveScaffold::Actions
 
     def do_edit_associated
       @parent_record = params[:id].nil? ? new_model : find_if_allowed(params[:id], :update)
+      @scope = params[:scope]
       if @parent_record.new_record?
-        apply_constraints_to_record @parent_record
+        # don't apply if scope, subform inside subform, because constraints won't apply to parent_record
+        apply_constraints_to_record @parent_record unless @scope
         create_association_with_parent @parent_record if nested?
       end
 
@@ -21,7 +23,6 @@ module ActiveScaffold::Actions
 
       @record = find_associated_record if params[:associated_id]
       @record ||= build_associated(@column.association, @parent_record)
-      @scope = params[:scope]
     end
 
     def find_associated_record
