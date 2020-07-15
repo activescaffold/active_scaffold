@@ -1,4 +1,5 @@
 - Fix subform crud in subform subgroup when controller is embedded
+- Fix sorting for mongoid models, broken in 3.6.0.rc1
 
 = 3.6.0.rc1
 - Cleanup: deprecate ActiveScaffold.set_defaults for ActiveScaffold.defaults, rename some setters
