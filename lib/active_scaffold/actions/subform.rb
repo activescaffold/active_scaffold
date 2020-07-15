@@ -15,7 +15,9 @@ module ActiveScaffold::Actions
       if @parent_record.new_record?
         # don't apply if scope, subform inside subform, because constraints won't apply to parent_record
         apply_constraints_to_record @parent_record unless @scope
-        create_association_with_parent @parent_record if nested?
+        if nested? && nested.association && nested.association.klass == active_scaffold_config.model
+          create_association_with_parent @parent_record
+        end
       end
 
       cache_generated_id(@parent_record, params[:generated_id]) if @parent_record.new_record?
