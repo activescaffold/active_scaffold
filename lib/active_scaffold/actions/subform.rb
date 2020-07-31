@@ -9,16 +9,19 @@ module ActiveScaffold::Actions
 
     protected
 
-    def do_edit_associated
-      @parent_record = params[:id].nil? ? new_model : find_if_allowed(params[:id], :update)
-      @scope = params[:scope]
-      if @parent_record.new_record?
-        # don't apply if scope, subform inside subform, because constraints won't apply to parent_record
-        apply_constraints_to_record @parent_record unless @scope
-        if nested? && nested.association && nested.association.klass == active_scaffold_config.model
-          create_association_with_parent @parent_record
-        end
+    def new_parent_record
+      parent_record = new_model
+      # don't apply if scope, subform inside subform, because constraints won't apply to parent_record
+      apply_constraints_to_record parent_record unless @scope
+      if nested? && nested.match_model?(active_scaffold_config.model)
+        create_association_with_parent parent_record
       end
+      parent_record
+    end
+
+    def do_edit_associated
+      @scope = params[:scope]
+      @parent_record = params[:id].nil? ? new_parent_record : find_if_allowed(params[:id], :update)
 
       cache_generated_id(@parent_record, params[:generated_id]) if @parent_record.new_record?
       @column = active_scaffold_config.columns[params[:child_association]]
