@@ -66,6 +66,10 @@ module ActiveScaffold::DataStructures
     def sorted?(*)
       false
     end
+
+    def match_model?(model)
+      false
+    end
   end
 
   class NestedInfoAssociation < NestedInfo
@@ -98,6 +102,14 @@ module ActiveScaffold::DataStructures
 
     def through_association?
       association.through?
+    end
+
+    def match_model?(model)
+      if association.polymorphic?
+        child_association&.inverse_klass == model
+      else
+        association.klass == model
+      end
     end
 
     def sorted?(chain)
