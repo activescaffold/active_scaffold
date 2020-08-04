@@ -11,7 +11,9 @@ module ActiveScaffold::Actions
 
     def deleted
       query = PaperTrail::Version.destroys.where(:item_type => active_scaffold_config.model)
-      query = query.where_object(nested.child_association.foreign_key => nested.parent_id) if nested? && nested.child_association.belongs_to? && PaperTrail::Version.respond_to?(:where_object)
+      if nested? && nested.child_association&.belongs_to? && PaperTrail::Version.respond_to?(:where_object)
+        query = query.where_object(nested.child_association.foreign_key => nested.parent_id)
+      end
       pager = Paginator.new(query.count, active_scaffold_config.list.per_page) do |offset, per_page|
         query.offset(offset).limit(per_page).map(&:reify)
       end
