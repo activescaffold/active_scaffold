@@ -72,7 +72,8 @@ module ActiveScaffold::Actions
         else
           updated_record_with_column(@column, params.delete(:value), @scope)
         end
-      setup_parent(@record) if main_form_controller && @scope
+      # if @scope has more than 2 ] then it's subform inside subform, and assign parent would fail (found associotion may be through association)
+      setup_parent(@record) if main_form_controller && @scope && @scope.scan(']').size == 2
       after_render_field(@record, @column)
     end
 
