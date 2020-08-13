@@ -13,7 +13,7 @@ footer = render(:partial => 'form_association_footer', :locals => {:parent_recor
 -%>
 <h5>
   <%= column.label -%>
-  <%= link_to_visibility_toggle(subform_div_id, {:default_visible => !column.collapsed}) -%>
+  <%= link_to_visibility_toggle(subform_div_id, default_visible: !column.collapsed) -%>
 </h5>
 <div id ="<%= subform_div_id %>" <%= 'style="display: none;"'.html_safe if column.collapsed -%>>
 <%# HACK: to be able to delete all associated records %>
