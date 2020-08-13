@@ -328,7 +328,7 @@ jQuery(document).ready(function($) {
       subform = line.find('#' + $this.data('subform-id')), radio = false, hide, select;
     if ($this.is('[type=radio]')) {
       radio = true;
-      hide = $this.is('.hide-new-subform7');
+      hide = $this.is('.hide-new-subform');
     } else {
       e.preventDefault();
       hide = subform.is(':visible');
