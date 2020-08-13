@@ -1,7 +1,7 @@
 - Fix subform crud in subform subgroup when controller is embedded
 - Fix sorting for mongoid models, broken in 3.6.0.rc1
 - Improve add_new option, allow to change subform columns (with helper override calling super and add columns to locals argument)
-- Support add_new option for record_select form_ui
+- Support add_new option for record_select or radio form_ui
 
 = 3.6.0.rc1
 - Cleanup: deprecate ActiveScaffold.set_defaults for ActiveScaffold.defaults, rename some setters

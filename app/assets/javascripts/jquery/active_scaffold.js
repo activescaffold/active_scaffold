@@ -323,20 +323,28 @@ jQuery(document).ready(function($) {
     if (jQuery(this).prop('checked')) color_field.val('');
   });
 
-  jQuery(document).on('click', '.show-new-subform', function(e) {
-    e.preventDefault();
+  jQuery(document).on('click', '.hide-new-subform, .show-new-subform', function(e) {
     var $this = jQuery(this), line = $this.closest('.form-element'),
-      select = line.find('#' + $this.data('select-id')),
-      subform = line.find('#' + $this.data('subform-id'));
-    if (subform.is(':visible')) {
-      subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
-      select.show().prop('disabled', false);
-      $this.html($this.data('select-text'));
+      subform = line.find('#' + $this.data('subform-id')), radio = false, hide, select;
+    if ($this.is('[type=radio]')) {
+      radio = true;
+      hide = $this.is('.hide-new-subform7');
     } else {
-      select.hide().prop('disabled', true);
+      e.preventDefault();
+      hide = subform.is(':visible');
+    }
+    if ($this.data('select-id')) select = line.find('#' + $this.data('select-id'));
+    if (hide) {
+      subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
+      if (select) select.show().prop('disabled', false);
+      if (!radio) $this.html($this.data('select-text'));
+    } else {
+      if (select) select.hide().prop('disabled', true);
       subform.show().find("input:disabled,select:disabled,textarea:disabled").prop('disabled', false);
-      $this.data('select-text', $this.html());
-      $this.html($this.data('subform-text'));
+      if (!radio) {
+        $this.data('select-text', $this.html());
+        $this.html($this.data('subform-text'));
+      }
     }
   });
 

@@ -478,13 +478,25 @@ module ActiveScaffold
 
         selected = record.send(column.association.name)&.id if column.association
         if options.present?
+          if column.options[:add_new]
+            html_options[:data] ||= {}
+            html_options[:data][:subform_id] = active_scaffold_subform_attributes(column)[:id]
+            radio_html_options = html_options.merge(class: html_options[:class] + ' hide-new-subform7')
+          else
+            radio_html_options = html_options
+          end
           radios = options.map do |option|
-            active_scaffold_radio_option(option, selected, column, html_options)
+            active_scaffold_radio_option(option, selected, column, radio_html_options)
           end
           if column.options[:include_blank]
             label = column.options[:include_blank]
             label = as_(column.options[:include_blank]) if column.options[:include_blank].is_a?(Symbol)
             radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: nil)) + label)
+          end
+          if column.options[:add_new]
+            create_new_button = radio_button(:record, column.name, '', html_options.merge(id: nil, class: html_options[:class] + ' show-new-subform7'))
+            radios << content_tag(:label, create_new_button << as_(:create_new)) <<
+              active_scaffold_new_record_subform(column, record, html_options, skip_link: true)
           end
           safe_join radios
         else
