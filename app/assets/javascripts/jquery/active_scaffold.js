@@ -328,15 +328,15 @@ jQuery(document).ready(function($) {
     var $this = jQuery(this), line = $this.closest('.form-element'),
       select = line.find('#' + $this.data('select-id')),
       subform = line.find('#' + $this.data('subform-id'));
-    if (select.is(':visible')) {
+    if (subform.is(':visible')) {
+      subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
+      select.show().prop('disabled', false);
+      $this.html($this.data('select-text'));
+    } else {
       select.hide().prop('disabled', true);
       subform.show().find("input:disabled,select:disabled,textarea:disabled").prop('disabled', false);
       $this.data('select-text', $this.html());
       $this.html($this.data('subform-text'));
-    } else {
-      subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
-      select.show().prop('disabled', false);
-      $this.html($this.data('select-text'));
     }
   });
 
@@ -536,7 +536,7 @@ var ActiveScaffold = {
     jQuery('.as-js-button', element).show();
   },
   disable_optional_subforms: function(element) {
-    jQuery('.form-element select + .sub-form').each(function() {
+    jQuery('.form-element .sub-form.optional').each(function() {
       jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', true);
     });
   },

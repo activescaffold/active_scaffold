@@ -10,8 +10,9 @@
   scope = column_scope(record_column, scope, record)
   options = active_scaffold_input_options(config.columns[record.class.primary_key], scope, :object => record)
   tr_id = "association-#{options[:id]}"
+  layout ||= config.subform.layout
 
-  if config.subform.layout == :vertical
+  if layout == :vertical
     record_tag ||= :div
     row_tag ||= :ol
     column_tag ||= :li

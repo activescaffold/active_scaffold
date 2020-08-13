@@ -308,11 +308,13 @@ module ActiveScaffold
         html
       end
 
-      def active_scaffold_new_record_subform(column, record, html_options)
+      def active_scaffold_new_record_subform(column, record, html_options, new_record_attributes: nil, locals: {})
         subform_attrs = active_scaffold_subform_attributes(column).merge(style: 'display: none')
+        subform_attrs[:class] << ' optional'
         scope = html_options[:name].scan(/record(.*)\[#{column.name}\]/).dig(0, 0)
         new_record = build_associated(column.association, record)
-        subform = render(partial: subform_partial_for_column(column), locals: {column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope})
+        new_record.attributes = new_record_attributes if new_record_attributes
+        subform = render(partial: subform_partial_for_column(column), locals: locals.reverse_merge(column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope))
         html = content_tag(:div, subform, subform_attrs)
         html << active_scaffold_show_new_subform_link(column, record, html_options[:id], subform_attrs[:id])
       end
@@ -629,7 +631,7 @@ module ActiveScaffold
       alias override_input? override_input
 
       def subform_partial_for_column(column)
-        subform_partial = "#{active_scaffold_config_for(column.association.klass).subform.layout}_subform"
+        subform_partial = "#{column.options[:layout] || active_scaffold_config_for(column.association.klass).subform.layout}_subform"
         override_subform_partial(column, subform_partial) || subform_partial
       end
 

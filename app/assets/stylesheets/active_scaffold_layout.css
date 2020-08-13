@@ -841,7 +841,7 @@ clear: left;
 padding: 5px 0;
 padding-left: 5px;
 }
-.active-scaffold .form-element select + .sub-form {
+.active-scaffold .form-element .sub-form.optional {
 float: none;
 }
 .active-scaffold .form-element .show-new-subform {
