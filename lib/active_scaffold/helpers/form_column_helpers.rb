@@ -500,8 +500,10 @@ module ActiveScaffold
           end
           safe_join radios
         else
-          content_tag(:span, as_(:no_options), :class => "#{html_options[:class]} no-options", :id => html_options[:id]) <<
+          html = content_tag(:span, as_(:no_options), :class => "#{html_options[:class]} no-options", :id => html_options[:id]) <<
             hidden_field_tag(html_options[:name], '', :id => nil)
+          html << active_scaffold_new_record_subform(column, record, html_options) if column.options[:add_new]
+          html
         end
       end
 
