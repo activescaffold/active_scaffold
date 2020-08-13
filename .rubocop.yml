@@ -27,7 +27,7 @@ Metrics/LineLength:
     - 'test/**/*'
 
 Metrics/ModuleLength:
-  Max: 600
+  Max: 650
   CountComments: false
 
 Naming/FileName:
