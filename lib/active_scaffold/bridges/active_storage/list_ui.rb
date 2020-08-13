@@ -24,7 +24,7 @@ module ActiveScaffold
       def link_for_attachment(attachment, column)
         variant = column.options[:thumb] || ActiveScaffold::Bridges::ActiveStorage::ActiveStorageBridgeHelpers.thumbnail_variant
         content =
-          if variant && attachment.variable?
+          if variant && attachment.variable? && column.options[:thumb] != false
             image_tag(attachment.variant(variant))
           else
             attachment.filename
