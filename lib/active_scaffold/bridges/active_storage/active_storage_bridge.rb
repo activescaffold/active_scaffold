@@ -24,6 +24,7 @@ module ActiveScaffold
           columns << field
           columns.exclude "#{field}_attachment#{'s' if field_type == :has_many}".to_sym
           columns.exclude "#{field}_blob#{'s' if field_type == :has_many}".to_sym
+          columns[field].includes ||= "#{field}_attachment#{'s' if field_type == :has_many}".to_sym
           columns[field].form_ui ||= "active_storage_#{field_type}".to_sym
           columns[field].params.add "delete_#{field}"
         end
