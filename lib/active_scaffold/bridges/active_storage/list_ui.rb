@@ -3,7 +3,7 @@ module ActiveScaffold
     module ListColumnHelpers
       def active_scaffold_column_active_storage_has_one(record, column)
         attachment = record.send(column.name.to_s)
-        attachment.attached? ? link_for_attachment(attachment) : nil
+        attachment.attached? ? link_for_attachment(attachment, column) : nil
       end
 
       def active_scaffold_column_active_storage_has_many(record, column)
@@ -12,7 +12,7 @@ module ActiveScaffold
 
         attachments = active_storage_files.attachments
         if attachments.size <= 3 # Lets display up to three links, otherwise just show the count.
-          links = attachments.map { |attachment| link_for_attachment(attachment) }
+          links = attachments.map { |attachment| link_for_attachment(attachment, column) }
           safe_join links, association_join_text(column)
         else
           pluralize attachments.size, column.name.to_s
@@ -21,7 +21,7 @@ module ActiveScaffold
 
       private
 
-      def link_for_attachment(attachment)
+      def link_for_attachment(attachment, column)
         variant = column.options[:thumb] || ActiveScaffold::Bridges::ActiveStorage::ActiveStorageBridgeHelpers.thumbnail_variant
         content =
           if variant && attachment.variable?
