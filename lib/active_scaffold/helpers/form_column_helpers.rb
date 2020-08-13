@@ -315,6 +315,10 @@ module ActiveScaffold
         new_record = build_associated(column.association, record)
         new_record.attributes = new_record_attributes if new_record_attributes
         subform = render(partial: subform_partial_for_column(column), locals: locals.reverse_merge(column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope))
+        if column.options[:hide_subgroups]
+          toggable_id = "#{sub_form_id(association: column.name, id: record.id || generated_id(record) || 99999999999)}-div"
+          subform << link_to_visibility_toggle(toggable_id, {:default_visible => false})
+        end
         html = content_tag(:div, subform, subform_attrs)
         html << active_scaffold_show_new_subform_link(column, record, html_options[:id], subform_attrs[:id])
       end

@@ -536,7 +536,18 @@ var ActiveScaffold = {
     jQuery('.as-js-button', element).show();
   },
   disable_optional_subforms: function(element) {
-    jQuery('.form-element .sub-form.optional').each(function() {
+    jQuery('.form-element .sub-form.optional').each(function () {
+      var toggle = jQuery('>.visibility-toggle', this);
+      if (toggle.length) {
+        var hide = toggle.text() == toggle.data('show');
+        jQuery('> [id] > .sub-form-record > .associated-record dl:first', this).each(function (i) {
+          var parent = jQuery(this).parent(), div_id = toggle.data('toggable') + i;
+          parent.children().wrapAll('<div id="' + div_id + '">');
+          if (hide) parent.find('> div').hide();
+          parent.prepend(toggle.clone().data('toggable', div_id));
+        });
+        toggle.remove();
+      }
       jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', true);
     });
   },
