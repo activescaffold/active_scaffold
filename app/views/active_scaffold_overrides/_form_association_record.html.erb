@@ -6,6 +6,7 @@
   show_actions = false
   locked ||= false
   config = active_scaffold_config_for(record.class)
+  columns ||= config.subform.columns
   scope = column_scope(record_column, scope, record)
   options = active_scaffold_input_options(config.columns[record.class.primary_key], scope, :object => record)
   tr_id = "association-#{options[:id]}"
@@ -40,7 +41,7 @@
   <% end %>
   <% end %>
   <%= content_tag row_tag, :id => tr_id, :class => "association-record#{' association-record-new' if record.new_record?}#{' locked' if locked}" do %>
-  <% config.subform.columns.each_column(for: record.class, crud_type: :read, flatten: flatten) do |column| %>
+  <% columns.each_column(for: record.class, crud_type: :read, flatten: flatten) do |column| %>
   <%
     if column.respond_to? :each_column
       columns_groups << column
