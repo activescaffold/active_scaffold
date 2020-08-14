@@ -337,11 +337,14 @@ jQuery(document).ready(function($) {
     if (hide) {
       subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
       if (select) select.show().prop('disabled', false);
-      if (!radio) $this.html($this.data('select-text'));
+      if (radio) {
+        $this.closest('.form-element').find('[name="' + $this.attr('name') + '"].show-new-subform').prop('disabled', false);
+      } else $this.html($this.data('select-text'));
     } else {
       if (select) select.hide().prop('disabled', true);
       subform.show().find("input:disabled,select:disabled,textarea:disabled").prop('disabled', false);
-      if (!radio) {
+      if (radio) $this.prop('disabled', true);
+      else {
         $this.data('select-text', $this.html());
         $this.html($this.data('subform-text'));
       }
