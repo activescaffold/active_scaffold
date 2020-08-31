@@ -278,7 +278,9 @@ module ActiveScaffold::Actions
 
     def new_model
       relation = beginning_of_chain
-      build_options = sti_nested_build_options(relation.klass) if nested? && nested.plural_association?
+      if nested? && nested.plural_association? && nested.match_model?(active_scaffold_config.model)
+        build_options = sti_nested_build_options(relation.klass)
+      end
       relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
     end
 
