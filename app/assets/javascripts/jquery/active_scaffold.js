@@ -511,6 +511,7 @@ var ActiveScaffold = {
     ActiveScaffold.disable_optional_subforms(container);
   },
   setup_history_state: function() {
+    if (!jQuery('.active-scaffold').length) return;
     var data = {}, current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
     if (current_search_item.length) {
       // store user settings enabled, update state with current page, search and sorting
