@@ -18,6 +18,10 @@ module CowProxy
           end
           super
         end
+
+        def sort_by(options)
+          @sort = options
+        end
       end
 
       class Set < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::Set)
