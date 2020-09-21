@@ -335,7 +335,7 @@ jQuery(document).ready(function($) {
     }
     if ($this.data('select-id')) {
       select = line.find('#' + $this.data('select-id'));
-      if (select.hasClass('recordselect')) select = select.next(':hidden').andSelf();
+      if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').andSelf();
     }
     if (hide) {
       subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
