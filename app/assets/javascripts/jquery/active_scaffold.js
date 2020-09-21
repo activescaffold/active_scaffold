@@ -333,7 +333,10 @@ jQuery(document).ready(function($) {
       e.preventDefault();
       hide = subform.is(':visible');
     }
-    if ($this.data('select-id')) select = line.find('#' + $this.data('select-id'));
+    if ($this.data('select-id')) {
+      select = line.find('#' + $this.data('select-id'));
+      if (select.hasClass('recordselect')) select = select.next(':hidden').andSelf();
+    }
     if (hide) {
       subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
       if (select) select.show().prop('disabled', false);
