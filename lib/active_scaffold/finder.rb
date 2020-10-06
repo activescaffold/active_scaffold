@@ -409,9 +409,9 @@ module ActiveScaffold
       params_hash active_scaffold_embedded_params[:conditions]
     end
 
-    def all_conditions
+    def all_conditions(include_id_condition = true)
       [
-        id_condition,                                 # for list with id (e.g. /users/:id/index)
+        (id_condition if include_id_condition),       # for list with id (e.g. /users/:id/index)
         active_scaffold_conditions,                   # from the search modules
         conditions_for_collection,                    # from the dev
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
@@ -521,8 +521,8 @@ module ActiveScaffold
       @last_modified = query.maximum(:updated_at)
     end
 
-    def calculate_query
-      conditions = all_conditions
+    def calculate_query(id_condition = true)
+      conditions = all_conditions(id_condition)
       includes = active_scaffold_config.list.count_includes
       includes ||= active_scaffold_references if conditions.present?
       left_joins = active_scaffold_outer_joins

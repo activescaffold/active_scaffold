@@ -427,16 +427,16 @@ module ActiveScaffold
 
       # CALCULATIONS
 
-      def column_calculation(column)
+      def column_calculation(column, id_condition: true)
         if column.calculate.instance_of? Proc
           column.calculate.call(@records)
         else
-          calculate_query.calculate(column.calculate, column.name)
+          calculate_query(id_condition).calculate(column.calculate, column.name)
         end
       end
 
-      def render_column_calculation(column)
-        calculation = column_calculation(column)
+      def render_column_calculation(column, id_condition: true)
+        calculation = column_calculation(column, id_condition: id_condition)
         override_formatter = "render_#{column.name}_#{column.calculate.is_a?(Proc) ? :calculate : column.calculate}"
         calculation = send(override_formatter, calculation) if respond_to? override_formatter
         format_column_calculation(column, calculation)
