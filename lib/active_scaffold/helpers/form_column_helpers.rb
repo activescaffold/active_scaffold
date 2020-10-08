@@ -312,7 +312,7 @@ module ActiveScaffold
         klass =
           if column.association.polymorphic? && column.association.belongs_to?
             type = record.send(column.association.foreign_type)
-            type&.safe_constantize if type.present? && (type == true || type.in?(column.options[:add_new]))
+            column.association.klass(record) if type.present? && (column.options[:add_new] == true || type.in?(column.options[:add_new]))
           else
             column.association.klass
           end

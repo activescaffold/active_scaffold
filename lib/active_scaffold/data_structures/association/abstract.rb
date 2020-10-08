@@ -12,13 +12,10 @@ module ActiveScaffold::DataStructures::Association
 
     def klass(record = nil)
       if polymorphic?
-        record&.send(foreign_type)&.constantize
+        record&.send(foreign_type)&.safe_constantize
       else
         @association.klass
       end
-    rescue NameError => e
-      Rails.logger.warn "#{e.message}\n#{e.backtrace.join("\n")}"
-      nil
     end
 
     def belongs_to?

@@ -230,7 +230,7 @@ module ActiveScaffold
       return nil unless build_record_from_params?(attributes, column, parent_record)
       record = find_or_create_for_params(attributes, column, parent_record)
       if record
-        record_columns = active_scaffold_config_for(column.association.klass).subform.columns
+        record_columns = active_scaffold_config_for(record.class).subform.columns
         prev_constraints = record_columns.constraint_columns
         record_columns.constraint_columns = [column.association.reverse].compact
         update_record_from_params(record, record_columns, attributes, avoid_changes)
@@ -242,8 +242,9 @@ module ActiveScaffold
 
     def build_record_from_params?(params, column, record)
       current = record.send(column.name)
-      klass = column.association.klass
-      (column.association.collection? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
+      return true if column.association.collection? && !column.show_blank_record?(current)
+      klass = column.association.klass(record)
+      klass && !attributes_hash_is_empty?(params, klass)
     end
 
     # Attempts to create or find an instance of the klass of the association in parent_column from the
@@ -251,12 +252,12 @@ module ActiveScaffold
     # otherwise it will build a new one.
     def find_or_create_for_params(params, parent_column, parent_record)
       current = parent_record.send(parent_column.name)
-      klass = parent_column.association.klass
+      klass = parent_column.association.klass(parent_record)
       if params.key? klass.primary_key
         record_from_current_or_find(klass, params[klass.primary_key], current)
       elsif klass.authorized_for?(:crud_type => :create)
         association = parent_column.association
-        record = association.klass.new
+        record = klass.new
         if association.reverse_association&.belongs_to? && (association.collection? || current.nil?)
           record.send("#{parent_column.association.reverse}=", parent_record)
         end
