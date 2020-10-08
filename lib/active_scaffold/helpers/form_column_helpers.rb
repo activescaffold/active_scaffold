@@ -71,9 +71,9 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_subform_attributes(column, column_css_class = nil)
+      def active_scaffold_subform_attributes(column, column_css_class = nil, klass = nil)
         {
-          :class => "sub-form #{active_scaffold_config_for(column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
+          :class => "sub-form #{active_scaffold_config_for(klass || column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
           :id => sub_form_id(:association => column.name)
         }
       end
@@ -309,11 +309,19 @@ module ActiveScaffold
       end
 
       def active_scaffold_new_record_subform(column, record, html_options, new_record_attributes: nil, locals: {}, skip_link: false) # rubocop:disable Metrics/ParameterLists
-        subform_attrs = active_scaffold_subform_attributes(column).merge(style: 'display: none')
+        klass =
+          if column.association.polymorphic? && column.association.belongs_to?
+            type = record.send(column.association.foreign_type)
+            type&.safe_constantize if type.present? && (type == true || type.in?(column.options[:add_new]))
+          else
+            column.association.klass
+          end
+        return content_tag(:div, '') unless klass
+        subform_attrs = active_scaffold_subform_attributes(column, nil, klass).merge(style: 'display: none')
         subform_attrs[:class] << ' optional'
         scope = html_options[:name].scan(/record(.*)\[#{column.name}\]/).dig(0, 0)
-        new_record = column.association.klass.new(new_record_attributes)
-        subform = render(partial: subform_partial_for_column(column), locals: locals.reverse_merge(column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope))
+        new_record = klass.new(new_record_attributes)
+        subform = render(partial: subform_partial_for_column(column, klass), locals: locals.reverse_merge(column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope))
         if column.options[:hide_subgroups]
           toggable_id = "#{sub_form_id(association: column.name, id: record.id || generated_id(record) || 99_999_999_999)}-div"
           subform << link_to_visibility_toggle(toggable_id, default_visible: false)
@@ -648,8 +656,8 @@ module ActiveScaffold
       end
       alias override_input? override_input
 
-      def subform_partial_for_column(column)
-        subform_partial = "#{column.options[:layout] || active_scaffold_config_for(column.association.klass).subform.layout}_subform"
+      def subform_partial_for_column(column, klass = nil)
+        subform_partial = "#{column.options[:layout] || active_scaffold_config_for(klass || column.association.klass).subform.layout}_subform"
         override_subform_partial(column, subform_partial) || subform_partial
       end
 

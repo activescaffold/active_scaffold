@@ -2,6 +2,7 @@
 - Fix sorting for mongoid models, broken in 3.6.0.rc1
 - Improve add_new option, allow to change subform columns (with helper override calling super and add columns to locals argument)
 - Support add_new option for record_select or radio form_ui
+- Support add_new option for polymorphic associations (add_new may be array with class names to allow add new, or true to allow add new for any model)
 - Support description for columns displayed as subform
 - Don't mess with history if current page is not using activescaffold when is loaded
 - Fix changing sort_by per request when threadsafe is enabled
