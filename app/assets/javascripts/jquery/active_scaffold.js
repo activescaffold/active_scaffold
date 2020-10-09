@@ -552,10 +552,10 @@ var ActiveScaffold = {
   },
   disable_optional_subforms: function(element) {
     jQuery('.sub-form.optional', element).each(function () {
-      var toggle = jQuery('>.visibility-toggle', this);
+      var $this = jQuery(this), toggle = $this.find('>.visibility-toggle');
       if (toggle.length) {
         var hide = toggle.text() == toggle.data('show');
-        jQuery('> [id] > .sub-form-record > .associated-record dl:first', this).each(function (i) {
+        $this.find('> [id] > .sub-form-record > .associated-record dl:first').each(function (i) {
           var parent = jQuery(this).parent(), div_id = toggle.data('toggable') + i;
           parent.children().wrapAll('<div id="' + div_id + '">');
           if (hide) parent.find('> div').hide();
@@ -563,7 +563,15 @@ var ActiveScaffold = {
         });
         toggle.remove();
       }
-      jQuery("input:enabled,select:enabled,textarea:enabled", this).prop('disabled', true);
+      if ($this.is(':visible')) {
+        var line = $this.closest('.form-element'), toggle = line.find('.show-new-subform[data-subform-id="' + $this.attr('id') + '"]').first();
+        if (toggle.is('[type=radio]')) toggle.prop('disabled', true);
+        else if (toggle.data('select-id')) {
+          select = line.find('#' + toggle.data('select-id'));
+          if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').andSelf();
+          select.hide().prop('disabled', true);
+        }
+      } else $this.find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
     });
   },
   sliders: function(element) {

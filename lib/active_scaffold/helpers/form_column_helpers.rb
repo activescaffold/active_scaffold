@@ -317,10 +317,15 @@ module ActiveScaffold
             column.association.klass
           end
         return content_tag(:div, '') unless klass
-        subform_attrs = active_scaffold_subform_attributes(column, nil, klass).merge(style: 'display: none')
+        subform_attrs = active_scaffold_subform_attributes(column, nil, klass)
+        if record.send(column.name)&.new_record?
+          new_record = record.send(column.name)
+        else
+          subform_attrs.merge!(style: 'display: none')
+        end
         subform_attrs[:class] << ' optional'
         scope = html_options[:name].scan(/record(.*)\[#{column.name}\]/).dig(0, 0)
-        new_record = klass.new(new_record_attributes)
+        new_record ||= klass.new(new_record_attributes)
         locals = locals.reverse_merge(column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope)
         subform = render(partial: subform_partial_for_column(column, klass), locals: locals)
         if column.options[:hide_subgroups]
@@ -333,7 +338,9 @@ module ActiveScaffold
       end
 
       def active_scaffold_show_new_subform_link(column, record, select_id, subform_id)
-        link_to(as_(:create_new), '#', data: {select_id: select_id, subform_id: subform_id, subform_text: as_(:add_existing)}, class: 'show-new-subform')
+        data = {select_id: select_id, subform_id: subform_id, subform_text: as_(:add_existing), select_text: as_(:create_new)}
+        label = data[record.send(column.name)&.new_record? ? :subform_text : :select_text]
+        link_to(label, '#', data: data, class: 'show-new-subform')
       end
 
       def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, &block) # rubocop:disable Metrics/ParameterLists
@@ -484,7 +491,8 @@ module ActiveScaffold
             active_scaffold_enum_options(column, record)
           end
 
-        selected = record.send(column.association.name)&.id if column.association
+        selected = record.send(column.association.name) if column.association
+        selected_id = selected&.id
         if options.present?
           if column.options[:add_new]
             html_options[:data] ||= {}
@@ -494,7 +502,7 @@ module ActiveScaffold
             radio_html_options = html_options
           end
           radios = options.map do |option|
-            active_scaffold_radio_option(option, selected, column, radio_html_options)
+            active_scaffold_radio_option(option, selected_id, column, radio_html_options)
           end
           if column.options[:include_blank]
             label = column.options[:include_blank]
@@ -502,7 +510,7 @@ module ActiveScaffold
             radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: nil)) + label)
           end
           if column.options[:add_new]
-            create_new_button = radio_button_tag(html_options[:name], '', false, html_options.merge(id: nil, class: html_options[:class] + ' show-new-subform'))
+            create_new_button = radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(id: nil, class: html_options[:class] + ' show-new-subform'))
             radios << content_tag(:label, create_new_button << as_(:create_new)) <<
               active_scaffold_new_record_subform(column, record, html_options, skip_link: true)
           end
