@@ -321,7 +321,7 @@ module ActiveScaffold
         if record.send(column.name)&.new_record?
           new_record = record.send(column.name)
         else
-          subform_attrs.merge!(style: 'display: none')
+          subform_attrs[:style] = 'display: none'
         end
         subform_attrs[:class] << ' optional'
         scope = html_options[:name].scan(/record(.*)\[#{column.name}\]/).dig(0, 0)
