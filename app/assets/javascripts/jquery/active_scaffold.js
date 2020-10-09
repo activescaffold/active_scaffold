@@ -551,7 +551,7 @@ var ActiveScaffold = {
     jQuery('.as-js-button', element).show();
   },
   disable_optional_subforms: function(element) {
-    jQuery('.form-element .sub-form.optional', element).each(function () {
+    jQuery('.sub-form.optional', element).each(function () {
       var toggle = jQuery('>.visibility-toggle', this);
       if (toggle.length) {
         var hide = toggle.text() == toggle.data('show');
