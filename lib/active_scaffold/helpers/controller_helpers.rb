@@ -180,6 +180,17 @@ module ActiveScaffold
           end
         end
       end
+
+      def save_record_to_association(record, association, value, reverse = nil)
+        return unless association
+        if association.collection?
+          record.association(association.name).target << value
+        elsif reverse&.belongs_to?
+          value.send("#{reverse.name}=", record)
+        else
+          record.send("#{association.name}=", value)
+        end
+      end
     end
   end
 end

@@ -279,17 +279,6 @@ module ActiveScaffold
       end
     end
 
-    def save_record_to_association(record, association, value, reverse = nil)
-      return unless association
-      if association.collection?
-        record.send(association.name) << value
-      elsif reverse&.belongs_to?
-        value.send("#{reverse.name}=", record)
-      else
-        record.send("#{association.name}=", value)
-      end
-    end
-
     # Determines whether the given attributes hash is "empty".
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
