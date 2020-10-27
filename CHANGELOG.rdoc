@@ -1,3 +1,4 @@
+= 3.6.0.rc2
 - Fix subform crud in subform subgroup when controller is embedded
 - Fix sorting for mongoid models, broken in 3.6.0.rc1
 - Improve add_new option, allow to change subform columns (with helper override calling super and add columns to locals argument)
