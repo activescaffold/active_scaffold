@@ -1464,7 +1464,7 @@ ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       throw 'Unknown position "' + this.position + '"'
     }
-    ActiveScaffold.highlight(this.adapter.find('td').first().children());
+    ActiveScaffold.highlight(this.adapter.find('td').first().children().not('script'));
     ActiveScaffold.focus_first_element_of_form(this.adapter);
   }
 });
