@@ -170,7 +170,7 @@ module ActiveScaffold
 
       def column_association_size(record, column, value)
         cached_counts = @counts&.dig(column.name)
-        key = column.association.primary_key if count_on_association_class?(column)
+        key = column.association.primary_key if controller.send(:count_on_association_class?, column)
         cached_counts ? cached_counts[record.send(key || :id)] || 0 : value.size
       end
 
