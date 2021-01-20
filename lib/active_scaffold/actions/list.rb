@@ -69,7 +69,7 @@ module ActiveScaffold::Actions
       @cache_associations = true
       columns =
         if respond_to?(:"#{action}_columns", true)
-          send(:"#{action}_columns").map { |c| active_scaffold_config.columns[c] }
+          send(:"#{action}_columns").map { |c| active_scaffold_config.columns[c] }.compact
         else
           active_scaffold_config.send(action).columns.visible_columns(flatten: true)
         end
