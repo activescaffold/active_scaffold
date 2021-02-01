@@ -1,6 +1,6 @@
 Overview
 ========
-[![Build status](https://travis-ci.org/activescaffold/active_scaffold.svg?branch=master)](https://travis-ci.org/activescaffold/active_scaffold)
+[![Build status](https://travis-ci.com/activescaffold/active_scaffold.svg?branch=master)](https://travis-ci.com/activescaffold/active_scaffold)
 [![Code Climate](https://codeclimate.com/github/activescaffold/active_scaffold/badges/gpa.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
 [![Test Coverage](https://codeclimate.com/github/activescaffold/active_scaffold/badges/coverage.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
 [![Dependency Status](https://gemnasium.com/activescaffold/active_scaffold.svg)](https://gemnasium.com/activescaffold/active_scaffold)
