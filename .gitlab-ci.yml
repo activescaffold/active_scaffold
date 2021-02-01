@@ -7,7 +7,10 @@
     - gem install bundler
     - bundle --version
     - apk add --no-cache --update build-base git
-    - bundle install --clean --deployment --jobs=2 --without default development lint production test performance
+    - bundle config set --local clean 'true'
+    - bundle config set --local deployment 'true'
+    - bundle config set --local without 'default development lint production test performance'
+    - bundle install --jobs=2
   image: ruby:alpine
   only:
     - master
@@ -24,7 +27,10 @@
     - gem install bundler
     - bundle --version
     - apk add --no-cache --update build-base git
-    - bundle install --clean --deployment --jobs=2 --without default deployment development production test performance
+    - bundle config set --local clean 'true'
+    - bundle config set --local deployment 'true'
+    - bundle config set --local without 'default deployment development production test performance'
+    - bundle install --jobs=2
   image: ruby:2.6-alpine
   stage: lint
   tags:
@@ -45,7 +51,10 @@
     - gem install bundler
     - bundle --version
     - apk add --no-cache --update build-base curl git sqlite-dev tzdata
-    - bundle install --clean --deployment --jobs=2 --without deployment development lint production performance
+    - bundle config set --local clean 'true'
+    - bundle config set --local deployment 'true'
+    - bundle config set --local without 'deployment development lint production test performance'
+    - bundle install --jobs=2
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
     - ./cc-test-reporter before-build
