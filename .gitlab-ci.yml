@@ -46,7 +46,7 @@
   - apk add --no-cache --update build-base curl git sqlite-dev tzdata
   - bundle config set --local clean 'true'
   - bundle config set --local deployment 'true'
-  - bundle config set --local without 'deployment development lint production test performance'
+  - bundle config set --local without 'deployment development lint production performance'
   - bundle install --jobs=2
 
 .test:
