@@ -218,7 +218,7 @@ test:rails-5.2:mri:2.5:
     - .use_mri_2_5
     - .use_rails_5_2
   variables:
-    COVERAGE: true
+    COVERAGE: 'true'
   before_script:
     - *test_before_script
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
