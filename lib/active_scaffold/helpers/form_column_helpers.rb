@@ -740,14 +740,14 @@ module ActiveScaffold
 
         # Minimum
         unless options[:min]
-          min = validators.map { |v| v.options[:greater_than_or_equal] }.compact.max
+          min = validators.map { |v| v.options[:greater_than_or_equal_to] }.compact.max
           greater_than = validators.map { |v| v.options[:greater_than] }.compact.max
           numerical_constraints[:min] = [min, (greater_than + margin if greater_than)].compact.max
         end
 
         # Maximum
         unless options[:max]
-          max = validators.map { |v| v.options[:less_than_or_equal] }.compact.min
+          max = validators.map { |v| v.options[:less_than_or_equal_to] }.compact.min
           less_than = validators.map { |v| v.options[:less_than] }.compact.min
           numerical_constraints[:max] = [max, (less_than - margin if less_than)].compact.min
         end
