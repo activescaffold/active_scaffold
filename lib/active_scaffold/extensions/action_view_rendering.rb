@@ -73,6 +73,7 @@ module ActiveScaffold #:nodoc:
               build_lookup_context(new_view_paths)
             else # rails 6.1
               @lookup_context = ActionView::LookupContext.new(new_view_paths)
+            end
           else
             lookup_context.view_paths = new_view_paths
           end
