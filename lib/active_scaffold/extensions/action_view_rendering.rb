@@ -61,10 +61,15 @@ module ActiveScaffold #:nodoc:
           options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
         else
           options[:prefixes] = ['active_scaffold_overrides']
+          if @lookup_context # rails 6
+            last_view_path = File.expand_path(File.dirname(File.dirname(@lookup_context.last_template.short_identifier.to_s)), Rails.root)
+          else
+            last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
+          end
           last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
           new_view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
-          if @lookup_context
-            @lookup_context = build_lookup_context(new_view_paths)
+          if @lookup_context # rails 6
+            @lookup_context = ActionView::LookupContext.new(new_view_paths)
           else
             lookup_context.view_paths = new_view_paths
           end
