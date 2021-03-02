@@ -66,10 +66,9 @@ module ActiveScaffold #:nodoc:
           else
             last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
           end
-          last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
           new_view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
           if @lookup_context # rails 6
-            if respond_to? build_lookup_context # rails 6.0
+            if respond_to? :build_lookup_context # rails 6.0
               build_lookup_context(new_view_paths)
             else # rails 6.1
               @lookup_context = ActionView::LookupContext.new(new_view_paths)
