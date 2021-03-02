@@ -161,5 +161,29 @@ module ActionView
     Base.class_eval do
       include ActiveScaffold::RenderingHelper
     end
+
+    RenderingHelper.class_eval do
+      # override the render method to use our @lookup_context instead of the
+      # memoized @_lookup_context present on the
+      def render(options = {}, locals = {}, &block)
+        case options
+        when Hash
+          in_rendering_context(options) do |renderer|
+            if block_given?
+              view_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
+            else
+              #view_renderer.render(self, options)
+              # previously set view paths and lookup context are lost here
+              # if you use view_renderer.render, so instead create a new renderer
+              # with our context
+              @_view_renderer = ActionView::Renderer.new(@lookup_context)
+              @_view_renderer.render(self, options)
+            end
+          end
+        else
+          view_renderer.render_partial(self, partial: options, locals: locals, &block)
+        end
+      end
+    end
   end
 end
