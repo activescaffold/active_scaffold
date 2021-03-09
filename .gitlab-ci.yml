@@ -111,23 +111,23 @@ lint:brakeman:
       - brakeman
     when: always
   script:
-    - bin/brakeman --exit-on-warn --output brakeman/index.html
+    - bundle exec brakeman --exit-on-warn --output brakeman/index.html
 
 lint:bundler:audit:
   extends: .lint
   script:
-    - bin/bundle-audit check --update --verbose
+    - bundle exec bundle-audit check --update --verbose
 
 lint:i18n:
   extends: .lint
   allow_failure: true
   script:
-    - bin/i18n-tasks health
+    - bundle exec i18n-tasks health
 
 lint:rubocop:
   extends: .lint
   script:
-    - bin/rubocop
+    - bundle exec rubocop
 
 pages:
   extends: .deploy
