@@ -51,6 +51,7 @@
   - apk add --no-cache --update build-base curl git sqlite-dev tzdata
 
 .test_debian_before_script: &test_debian_before_script
+  - apt-get update
   - apt-get install -y build-essential curl git libsqlite3-dev tzdata
 
 .test:
