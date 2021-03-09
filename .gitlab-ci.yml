@@ -43,11 +43,16 @@
   - gem --version
   - gem install bundler
   - bundle --version
-  - apk add --no-cache --update build-base curl git sqlite-dev tzdata
   - bundle config set --local clean 'true'
   - bundle config set --local deployment 'true'
   - bundle config set --local without 'deployment development lint production performance'
   - bundle install --jobs=2
+
+.test_alpine_before_script: &test_alpine_before_script
+  - apk add --no-cache --update build-base curl git sqlite-dev tzdata
+
+.test_debian_before_script: &test_debian_before_script
+  - apt-get install -y build-essential curl git libsqlite3-dev tzdata
 
 .test:
   artifacts:
@@ -56,6 +61,7 @@
       - coverage
   before_script:
     - *test_before_script
+    - *test_alpine_before_script
   script:
     - bundle exec rake
   stage: test
@@ -64,6 +70,9 @@
 
 .use_jruby_9_2:
   image: jruby:9.2
+  before_script:
+    - *test_before_script
+    - *test_debian_before_script
 
 .use_mri_2_3:
   image: ruby:2.3-alpine
