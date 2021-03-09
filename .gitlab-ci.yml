@@ -70,7 +70,7 @@
     - gitlab-org
 
 .use_jruby_9_2:
-  image: jruby:9.2
+  image: bitnami/jruby:9.2
   before_script:
     - *test_before_script
     - *test_debian_before_script
