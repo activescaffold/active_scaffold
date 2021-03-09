@@ -159,8 +159,8 @@ stages:
 
 test:rails-4.2:jruby:9.2:
   extends:
-    - .use_jruby_9_2
     - .use_rails_4_2
+    - .use_jruby_9_2
 
 test:rails-4.2:mri:2.3:
   extends:
@@ -179,8 +179,8 @@ test:rails-4.2:mri:2.5:
 
 test:rails-5.0:jruby:9.2:
   extends:
-    - .use_jruby_9_2
     - .use_rails_5_0
+    - .use_jruby_9_2
 
 test:rails-5.0:mri:2.3:
   extends:
@@ -199,8 +199,8 @@ test:rails-5.0:mri:2.5:
 
 test:rails-5.1:jruby:9.2:
   extends:
-    - .use_jruby_9_2
     - .use_rails_5_1
+    - .use_jruby_9_2
 
 test:rails-5.1:mri:2.3:
   extends:
@@ -219,8 +219,8 @@ test:rails-5.1:mri:2.5:
 
 test:rails-5.2:jruby:9.2:
   extends:
-    - .use_jruby_9_2
     - .use_rails_5_2
+    - .use_jruby_9_2
 
 test:rails-5.2:mri:2.5:
   extends:
@@ -230,6 +230,7 @@ test:rails-5.2:mri:2.5:
     COVERAGE: 'true'
   before_script:
     - *test_before_script
+    - *test_alpine_before_script
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
     - ./cc-test-reporter before-build
