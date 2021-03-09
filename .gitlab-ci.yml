@@ -63,7 +63,7 @@
     - gitlab-org
 
 .use_jruby_9_2:
-  image: jruby:9.2-alpine
+  image: jruby:9.2
 
 .use_mri_2_3:
   image: ruby:2.3-alpine

@@ -35,6 +35,6 @@ rvm:
   - 2.3.8
   - 2.4.2
   - 2.5.5
-  - jruby-9.2.11.0
+  - jruby-9.2.16.0
   - rbx-3
 sudo: required
