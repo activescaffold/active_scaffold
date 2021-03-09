@@ -12,6 +12,7 @@ ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, r
 
 Branch Details
 --------------
+3-6-stable supports rails >= 4.2.x and ruby >= 2.3.0
 3-5-stable supports rails >= 4.0.x and ruby >= 2.0.0  
 3-4-stable supports rails >= 3.2.x and ruby >= 1.9.3  
 3-3-stable supports rails >= 3.2.x and ruby >= 1.8  
@@ -25,11 +26,11 @@ Added to Gemfile
 
     gem 'active_scaffold'
 
-For rails >= 5.1, add jquery to application.js before rails-ujs (with jquery-rails), or load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
-
-    //= require jquery
+For rails >= 5.1, add jquery-rails to Gemfile, and install generator will jquery to application.js before rails-ujs. Also it's possible to load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
 
     gem 'jquery-rails'
+
+For rails >= 6.0, installer generator will create app/assets/javascripts/application.js, add it to assets.precompile array and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack yet. Jquery may be loaded by packs or assets pipeline.
 
 Run the following commands, for rails 4.2
 
@@ -39,7 +40,7 @@ Run the following commands, for rails 4.2
     rails g active_scaffold:resource Model [attrs]
     bundle exec rake db:migrate
     
-Or run the following commands, for rails 5
+Or run the following commands, for rails >= 5
 
     bundle install
     rails g active_scaffold:install
