@@ -37,21 +37,12 @@ module ActiveScaffold
       # This is the template finder logic, keep it updated with however we find stuff in rails
       # currently this very similar to the logic in ActionBase::Base.render for options file
       def template_exists?(template_name, partial = false)
-        majorv, minorv, patchv = Gem.loaded_specs["rails"].version.segments
         if @_view_paths
           restore_view_paths = lookup_context.view_paths
-          if majorv >= 6 && minorv >= 1
-            lookup_context.send(:build_view_paths, @_view_paths)
-          else
-            lookup_context.view_paths = @_view_paths
-          end
+          lookup_context.view_paths = @_view_paths
         end
         (@_lookup_context || lookup_context).exists?(template_name, '', partial).tap do
-          if majorv >= 6 && minorv >= 1
-            lookup_context.send(:build_view_paths, restore_view_paths)
-          else
-            lookup_context.view_paths = restore_view_paths if @_view_paths
-          end
+          lookup_context.view_paths = restore_view_paths if @_view_paths
         end
       end
 
