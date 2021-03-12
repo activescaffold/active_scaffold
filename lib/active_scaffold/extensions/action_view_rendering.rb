@@ -162,29 +162,33 @@ module ActionView
       include ActiveScaffold::RenderingHelper
     end
 
-    RenderingHelper.class_eval do
-      # override the render method to use our @lookup_context instead of the
-      # memoized @_lookup_context
-      def render(options = {}, locals = {}, &block)
-        case options
-        when Hash
-          in_rendering_context(options) do |renderer|
-            # previously set view paths and lookup context are lost here
-            # if you use view_renderer.render, so instead create a new renderer
-            # with our context
-            temp_renderer = ActionView::Renderer.new(@lookup_context)
-            if block_given?
-              #view_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
-              temp_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
-            else
-              #view_renderer.render(self, options)
-              temp_renderer.render(self, options)
+    if Gem.loaded_specs["rails"].version.segments.first >= 6
+
+      RenderingHelper.class_eval do
+        # override the render method to use our @lookup_context instead of the
+        # memoized @_lookup_context
+        def render(options = {}, locals = {}, &block)
+          case options
+          when Hash
+            in_rendering_context(options) do |renderer|
+              # previously set view paths and lookup context are lost here
+              # if you use view_renderer, so instead create a new renderer
+              # with our context
+              temp_renderer = ActionView::Renderer.new(@lookup_context)
+              if block_given?
+                #view_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
+                temp_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
+              else
+                #view_renderer.render(self, options)
+                temp_renderer.render(self, options)
+              end
             end
+          else
+            view_renderer.render_partial(self, partial: options, locals: locals, &block)
           end
-        else
-          view_renderer.render_partial(self, partial: options, locals: locals, &block)
         end
       end
+      
     end
   end
 end

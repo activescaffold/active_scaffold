@@ -46,7 +46,7 @@ module ActiveScaffold
             lookup_context.view_paths = @_view_paths
           end
         end
-        lookup_context.exists?(template_name, '', partial).tap do
+        (@_lookup_context || lookup_context).exists?(template_name, '', partial).tap do
           if majorv >= 6 && minorv >= 1
             lookup_context.send(:build_view_paths, restore_view_paths)
           else
