@@ -1,4 +1,8 @@
 class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/ApplicationRecord
+  if Rails.version > '6.0'
+    class_attribute :implicit_order_column, instance_accessor: false
+  end
+
   class AssociationScope < ActiveRecord::Associations::AssociationScope
     INSTANCE = create
     def self.scope(association, connection)
