@@ -1,5 +1,5 @@
 class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/ApplicationRecord
-  if Rails.version > '6.0'
+  if Rails.version >= '6.0'
     class_attribute :implicit_order_column, instance_accessor: false
   end
 
@@ -153,9 +153,13 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     def execute_simple_calculation(operation, column_name, distinct)
       @klass.execute_simple_calculation(self, operation, column_name, distinct)
     end
+
+    def implicit_order_column
+      @klass.implicit_order_column
+    end
   end
 
-  class Relation < ActiveRecord::Relation
+  class Relation < ::ActiveRecord::Relation
     include RelationExtension
   end
   class << self
