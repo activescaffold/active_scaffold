@@ -1,6 +1,6 @@
 - Fix i18n at ruby 3.0.0
 - Add list helper for bitfield column, so it display labels of selected checkboxes in list
-- Initial support rails 6.0 (tableless not working yet)
+- Support rails 6.0
 
 = 3.6.0.rc2
 - Fix subform crud in subform subgroup when controller is embedded
