@@ -159,6 +159,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     def implicit_order_column
       @klass.implicit_order_column
     end
+
+    def exists?
+      limit(1).to_a.present?
+    end
   end
 
   class Relation < ::ActiveRecord::Relation

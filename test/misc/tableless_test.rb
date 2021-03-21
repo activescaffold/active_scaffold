@@ -25,6 +25,10 @@ class TablelessTest < MiniTest::Test
 
   def test_find_with_association
     assert Person.new.files.empty?
+    @person = Person.new
+    @person.save(validate: false)
+    assert @person.files.empty?
+    assert_equal [], @person.files.to_a
   end
 
   def test_tableless_assoc_with_dependent
@@ -35,6 +39,10 @@ class TablelessTest < MiniTest::Test
 
   def test_find_with_through_association
     assert Building.new.files.empty?
+    @building = Building.new
+    @building.save(validate: false)
+    assert @building.files.empty?
+    assert_equal [], @building.files.to_a
   end
 
   def test_new
