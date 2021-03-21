@@ -75,39 +75,24 @@
     - *test_before_script
     - *test_debian_before_script
 
-.use_mri_2_3:
-  image: ruby:2.3-alpine
-
-.use_mri_2_4:
-  image: ruby:2.4-alpine
-
 .use_mri_2_5:
   image: ruby:2.5-alpine
 
-.use_rails_4_2:
-  extends: .test
-  variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-4.2.x
+.use_mri_2_6:
+  image: ruby:2.6-alpine
 
-.use_rails_5_0:
-  extends: .test
-  variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.0.x
-
-.use_rails_5_1:
-  extends: .test
-  variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.1.x
+.use_mri_2_7:
+  image: ruby:2.7-alpine
 
 .use_rails_5_2:
   extends: .test
   variables:
-    BUNDLE_GEMFILE: Gemfile
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.2.x
 
 .use_rails_6_0:
   extends: .test
   variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-6.0.x
+    BUNDLE_GEMFILE: Gemfile
 
 .use_rails_6_1:
   extends: .test
@@ -163,66 +148,6 @@ stages:
   - test
   - deploy
 
-test:rails-4.2:jruby:9.2:
-  extends:
-    - .use_rails_4_2
-    - .use_jruby_9_2
-
-test:rails-4.2:mri:2.3:
-  extends:
-    - .use_mri_2_3
-    - .use_rails_4_2
-
-test:rails-4.2:mri:2.4:
-  extends:
-    - .use_mri_2_4
-    - .use_rails_4_2
-
-test:rails-4.2:mri:2.5:
-  extends:
-    - .use_mri_2_5
-    - .use_rails_4_2
-
-test:rails-5.0:jruby:9.2:
-  extends:
-    - .use_rails_5_0
-    - .use_jruby_9_2
-
-test:rails-5.0:mri:2.3:
-  extends:
-    - .use_mri_2_3
-    - .use_rails_5_0
-
-test:rails-5.0:mri:2.4:
-  extends:
-    - .use_mri_2_4
-    - .use_rails_5_0
-
-test:rails-5.0:mri:2.5:
-  extends:
-    - .use_mri_2_5
-    - .use_rails_5_0
-
-test:rails-5.1:jruby:9.2:
-  extends:
-    - .use_rails_5_1
-    - .use_jruby_9_2
-
-test:rails-5.1:mri:2.3:
-  extends:
-    - .use_mri_2_3
-    - .use_rails_5_1
-
-test:rails-5.1:mri:2.4:
-  extends:
-    - .use_mri_2_4
-    - .use_rails_5_1
-
-test:rails-5.1:mri:2.5:
-  extends:
-    - .use_mri_2_5
-    - .use_rails_5_1
-
 test:rails-5.2:jruby:9.2:
   extends:
     - .use_rails_5_2
@@ -232,6 +157,26 @@ test:rails-5.2:mri:2.5:
   extends:
     - .use_mri_2_5
     - .use_rails_5_2
+
+test:rails-5.2:mri:2.6:
+  extends:
+    - .use_mri_2_6
+    - .use_rails_5_2
+
+test:rails-5.2:mri:2.7:
+  extends:
+    - .use_mri_2_7
+    - .use_rails_5_2
+
+test:rails-6.0:jruby:9.2:
+  extends:
+    - .use_rails_6_0
+    - .use_jruby_9_2
+
+test:rails-6.0:mri:2.5:
+  extends:
+    - .use_mri_2_5
+    - .use_rails_6_0
   variables:
     COVERAGE: 'true'
   before_script:
@@ -243,9 +188,14 @@ test:rails-5.2:mri:2.5:
   after_script:
     - ./cc-test-reporter after-build -t simplecov
 
-test:rails-6.0:mri:2.5:
+test:rails-6.0:mri:2.6:
   extends:
-    - .use_mri_2_5
+    - .use_mri_2_6
+    - .use_rails_6_0
+
+test:rails-6.0:mri:2.7:
+  extends:
+    - .use_mri_2_7
     - .use_rails_6_0
 
 test:rails-6.1:mri:2.5:

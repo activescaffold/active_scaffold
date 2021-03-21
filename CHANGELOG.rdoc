@@ -1,3 +1,6 @@
+- Drop support for rails < 5.2 and ruby < 2.5
+
+= 3.6.0
 - Fix i18n at ruby 3.0.0
 - Add list helper for bitfield column, so it display labels of selected checkboxes in list
 - Support rails 6.0
