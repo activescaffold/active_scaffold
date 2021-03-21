@@ -37,11 +37,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
 
     if Rails.version >= '6.0.0'
       def data_sources
-        []
-      end
-
-      def data_source_exists?(name)
-        name == klass.table_name
+        klass ? [klass.table_name] : []
       end
     end
   end
