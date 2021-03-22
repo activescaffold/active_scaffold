@@ -84,10 +84,18 @@
 
   <% columns_groups.each do |columns_group| %>
   <%= content_tag row_tag, :class => 'associated-record' do %>
-    <%= content_tag column_tag, :colspan => (columns_length if column_tag == :td) do %>
-    <% columns_group.each_column(for: record.class, crud_type: :read, flatten: true) do |col| %>
-      <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, true, record) %>
-    <% end %>
+    <% if layout == :vertical %>
+      <% columns_group.each_column(for: record.class, crud_type: :read, flatten: true) do |col| %>
+        <%= content_tag column_tag, :class => 'form-element', :colspan => (columns_length if column_tag == :td) do %>
+          <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, false, record) %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <%= content_tag column_tag, :colspan => (columns_length if column_tag == :td) do %>
+      <% columns_group.each_column(for: record.class, crud_type: :read, flatten: true) do |col| %>
+        <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, true, record) %>
+      <% end %>
+      <% end %>
     <% end %>
   <% end %>
   <% end %>
