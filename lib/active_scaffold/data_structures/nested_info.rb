@@ -131,8 +131,8 @@ module ActiveScaffold::DataStructures
     protected
 
     def setup_constrained_fields
-      @constrained_fields = Array(association.foreign_key).map(&:to_sym) unless association.belongs_to?
-      @constrained_fields ||= []
+      @constrained_fields = [] if association.belongs_to? || association.through?
+      @constrained_fields ||= Array(association.foreign_key).map(&:to_sym)
       return unless child_association && child_association != association
 
       @constrained_fields << child_association.name
