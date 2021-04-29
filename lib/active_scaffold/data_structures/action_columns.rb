@@ -98,31 +98,6 @@ module ActiveScaffold::DataStructures
       visible_columns(options.reverse_merge(flatten: true)).map(&:name)
     end
 
-    def each(options = nil, &proc)
-      if options
-        ActiveSupport::Deprecation.warn 'use each_column'
-        each_column(options, &proc)
-      else
-        super(&proc)
-      end
-    end
-
-    def collect_visible(options = {}, &proc)
-      ActiveSupport::Deprecation.warn "use visible_columns#{"(#{options.inspect})" if options.present?}#{'.map(&proc)' if proc}"
-      columns = visible_columns(options)
-      proc ? columns.map(&proc) : columns
-    end
-
-    def names
-      ActiveSupport::Deprecation.warn 'use visible_columns.map(&:name)'
-      visible_columns(flatten: true).map(&:name)
-    end
-
-    def names_without_auth_check
-      ActiveSupport::Deprecation.warn 'use to_a'
-      to_a
-    end
-
     def action_name
       @action.class.name.demodulize.underscore
     end
