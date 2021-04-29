@@ -4,6 +4,7 @@
 - Display group cols vertically when subform layout is vertical
 - Fix html attributes for input datetime on field search, when jquery ui is not used
 - Fix constraint columns for nested list on through assocaitions
+- Support rails 6.1
 
 = 3.6.0
 - Fix i18n at ruby 3.0.0
