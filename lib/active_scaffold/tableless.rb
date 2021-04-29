@@ -44,7 +44,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
 
   class Column < ActiveRecord::ConnectionAdapters::Column
     if Rails.version >= '5.0.0'
-      def initialize(name, default, sql_type = nil, null = true)
+      def initialize(name, default, sql_type = nil, null = true, **)
         metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, sql_type
         super(name, default, metadata, null)
       end
