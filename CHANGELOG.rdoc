@@ -1,6 +1,6 @@
 - Drop support for rails < 5.2 and ruby < 2.5
 
-= 3.6.1 (not released yet)
+= 3.6.1
 - Display group cols vertically when subform layout is vertical
 - Fix html attributes for input datetime on field search, when jquery ui is not used
 - Fix constraint columns for nested list on through assocaitions
