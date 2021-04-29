@@ -33,41 +33,10 @@ module ActiveScaffold
   module AttributeParams
     protected
 
-    # workaround to update counters when polymorphic has_many changes on persisted record
-    # TODO: remove when rails4 support is removed or counter cache for polymorphic has_many association works on rails4
-    def hack_for_has_many_counter_cache(parent_record, column, value)
-      association = parent_record.association(column.name)
-      counter_attr = association.send(:cached_counter_attribute_name)
-      difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
-
-      if parent_record.new_record?
-        parent_record.send "#{column.name}=", value
-        parent_record.send "#{counter_attr}_will_change!"
-      else
-        # don't decrement counter for deleted records, on destroy they will update counter
-        difference += (parent_record.send(column.name) - value).size
-        association.send :update_counter, difference unless difference.zero?
-      end
-
-      # update counters on old parents if belongs_to is changed
-      value.select(&:persisted?).each do |record|
-        key = record.send(column.association.foreign_key)
-        parent_record.class.decrement_counter counter_attr, key if key && key != parent_record.id # rubocop:disable Rails/SkipsModelValidations
-      end
-      parent_record.send "#{column.name}=", value if parent_record.persisted?
-    end
-
-    # rails 4 needs this hack for polymorphic has_many
-    # TODO: remove when hack_for_has_many_counter_cache is not needed
-    def hack_for_has_many_counter_cache?(parent_record, column)
-      column.association.counter_cache_hack? && parent_record.association(column.name).send(:has_cached_counter?)
-    end
-
     # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
-    # rails 4 needs this hack for non-polymorphic belongs_to, when selecting record, not creating new one (value is Hash)
     # rails 5 needs this hack for belongs_to, when selecting record, not creating new one (value is Hash)
-    # TODO: remove when pull request is merged and no version with bug is supported
-    def counter_cache_hack?(association, value)
+    # TODO: remove when rails5 support is removed
+    def belongs_to_counter_cache_hack?(association, value)
       !params_hash?(value) && association.belongs_to? && association.counter_cache_hack?
     end
 
@@ -132,7 +101,7 @@ module ActiveScaffold
     end
 
     def update_column_association(parent_record, column, attribute, value)
-      if counter_cache_hack?(column.association, attribute)
+      if belongs_to_counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value&.id
         parent_record.association(column.name).target = value
       elsif column.association.collection? && column.association.through_singular?
@@ -140,8 +109,6 @@ module ActiveScaffold
         through_record = parent_record.send(through)
         through_record ||= parent_record.send "build_#{through}"
         through_record.send "#{column.association.source_reflection.name}=", value
-      elsif hack_for_has_many_counter_cache?(parent_record, column)
-        hack_for_has_many_counter_cache(parent_record, column, value)
       else
         parent_record.send "#{column.name}=", value
       end
@@ -327,13 +294,9 @@ module ActiveScaffold
       if ActiveScaffold::OrmChecks.mongoid? klass
         column.default_val
       elsif ActiveScaffold::OrmChecks.active_record? klass
-        if Rails.version < '5.0'
-          column.type_cast_from_database(column.default)
-        else
-          column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
-          cast_type = ActiveRecord::Type.lookup column_type
-          cast_type ? cast_type.deserialize(column.default) : column.default
-        end
+        column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
+        cast_type = ActiveRecord::Type.lookup column_type
+        cast_type ? cast_type.deserialize(column.default) : column.default
       end
     end
   end

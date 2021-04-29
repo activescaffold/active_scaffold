@@ -64,11 +64,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def counter_cache_hack?
-      if has_many?
-        Rails.version < '5.0' && as
-      elsif belongs_to?
-        counter_cache && (Rails.version >= '5.0' || !polymorphic?)
-      end
+      belongs_to? && counter_cache && Rails.version < '6.0'
     end
 
     protected

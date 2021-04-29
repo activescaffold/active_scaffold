@@ -271,14 +271,8 @@ module ActiveScaffold
 
     def self.active_record_column_type_cast(value, column)
       return Time.zone.at(value.to_i) if value =~ /\A\d+\z/ && %i[time datetime].include?(column.type)
-      if Rails.version < '5.0'
-        column.type_cast_from_user value
-      elsif column.type.respond_to? :cast # jruby-jdbc and rails 5
-        column.type.cast value
-      else
-        cast_type = ActiveRecord::Type.lookup column.type
-        cast_type ? cast_type.cast(value) : value
-      end
+      cast_type = ActiveRecord::Type.lookup column.type
+      cast_type ? cast_type.cast(value) : value
     end
   end
 end
