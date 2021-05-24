@@ -161,7 +161,7 @@ module ActiveScaffold::Actions
 
     def count_query_on_association_class(column)
       key = column.association.primary_key || :id
-      query = column.association.klass.where(column.association.foreign_key => @records.map(&key))
+      query = column.association.klass.where(column.association.foreign_key => @records.map(&key.to_sym))
       if column.association.as
         query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
       end

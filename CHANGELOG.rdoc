@@ -1,3 +1,5 @@
+- Fix count query when association's primary key is string
+
 = 3.6.1
 - Display group cols vertically when subform layout is vertical
 - Fix html attributes for input datetime on field search, when jquery ui is not used
