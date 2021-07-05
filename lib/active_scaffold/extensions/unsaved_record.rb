@@ -11,7 +11,7 @@ module ActiveScaffold::UnsavedRecord
   end
 
   # automatically unsets the unsaved flag
-  def save(*)
+  ruby2_keywords def save(*)
     super.tap { self.unsaved = false }
   end
 
