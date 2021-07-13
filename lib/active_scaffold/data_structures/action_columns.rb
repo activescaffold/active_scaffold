@@ -124,7 +124,7 @@ module ActiveScaffold::DataStructures
     end
 
     def action_name
-      @action.class.name.demodulize.underscore
+      @action.user_settings_key
     end
 
     def columns_key

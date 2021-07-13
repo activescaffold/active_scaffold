@@ -1,4 +1,5 @@
 - Fix count query when association's primary key is string
+- Fix unauthorized_columns and constraint_columns with threadsafe enabled
 
 = 3.6.1
 - Display group cols vertically when subform layout is vertical
