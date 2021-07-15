@@ -7,7 +7,7 @@ GIT
 PATH
   remote: .
   specs:
-    active_scaffold (3.6.1)
+    active_scaffold (3.6.2)
       cow_proxy (~> 0.3)
       ice_nine (~> 0.11)
       rails (>= 4.2.0, < 6.2)
@@ -48,11 +48,6 @@ GEM
       activemodel (= 5.2.6)
       activesupport (= 5.2.6)
       arel (>= 9.0)
-    activerecord-jdbc-adapter (52.2-java)
-      activerecord (~> 5.2.0)
-    activerecord-jdbcsqlite3-adapter (52.2-java)
-      activerecord-jdbc-adapter (= 52.2)
-      jdbc-sqlite3 (~> 3.8, < 3.30)
     activestorage (5.2.6)
       actionpack (= 5.2.6)
       activerecord (= 5.2.6)
@@ -97,7 +92,6 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       terminal-table (>= 1.5.1)
     ice_nine (0.11.2)
-    jdbc-sqlite3 (3.20.1)
     json (2.3.0)
     json (2.3.0-java)
     localeapp (3.1.2)
