@@ -3,6 +3,7 @@
 = 3.6.2 (not released)
 - Fix count query when association's primary key is string
 - Fix unauthorized_columns and constraint_columns with threadsafe enabled
+- Fix changing list.sorting and column.sort_by per request when threadsafe is enabled
 
 = 3.6.1
 - Display group cols vertically when subform layout is vertical
