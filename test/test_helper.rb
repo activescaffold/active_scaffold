@@ -8,7 +8,7 @@ require 'mocha/minitest'
 require 'cow_proxy'
 
 require 'minitest/reporters'
-Minitest::Reporters.use!
+Minitest::Reporters.use! unless ENV['RM_INFO']
 
 def load_schema
   stdout = $stdout
