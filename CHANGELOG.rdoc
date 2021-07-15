@@ -1,6 +1,6 @@
 - Drop support for rails < 5.2 and ruby < 2.5
 
-= 3.6.2 (not released)
+= 3.6.2
 - Fix count query when association's primary key is string
 - Fix unauthorized_columns and constraint_columns with threadsafe enabled
 - Fix changing list.sorting and column.sort_by per request when threadsafe is enabled
