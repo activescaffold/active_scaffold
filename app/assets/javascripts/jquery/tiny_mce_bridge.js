@@ -9,6 +9,7 @@
 
   function loadTinyMCE() {
     var settings = jQuery(this).data('tinymce');
+    if (tiny_mce_settings) settings += tiny_mce_settings;
     if (settings) tinyMCE.settings = settings;
     tinyMCE.execCommand('mceAddEditor', false, jQuery(this).attr('id'));
   }
