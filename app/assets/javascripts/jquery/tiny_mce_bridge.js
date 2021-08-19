@@ -1,3 +1,5 @@
+var tiny_mce_settings = {};
+
 (function() {
   var action_link_close = ActiveScaffold.ActionLink.Abstract.prototype.close;
   ActiveScaffold.ActionLink.Abstract.prototype.close = function() {
@@ -9,7 +11,9 @@
 
   function loadTinyMCE() {
     var settings = jQuery(this).data('tinymce');
-    if (tiny_mce_settings) settings += tiny_mce_settings;
+    for (key in tiny_mce_settings) {
+      settings[key] = tiny_mce_settings[key];
+    }
     if (settings) tinyMCE.settings = settings;
     tinyMCE.execCommand('mceAddEditor', false, jQuery(this).attr('id'));
   }
