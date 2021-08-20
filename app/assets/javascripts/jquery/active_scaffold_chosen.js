@@ -1,4 +1,4 @@
-var chosen_options = {};
+chosen_options = {};
 
 jQuery(document).ready(function() {
   jQuery(document).on('as:element_updated as:element_created', function(event) {
@@ -11,6 +11,6 @@ jQuery(document).ready(function() {
   });
   jQuery('select.chosen').chosen(chosen_options);
   jQuery(document).on('turbolinks:load', function($) {
-      jQuery('select.chosen').chosen(chosen_options);
+    jQuery('select.chosen').chosen(chosen_options);
   });
 });
