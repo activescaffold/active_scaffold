@@ -1,4 +1,4 @@
-var tiny_mce_settings = {};
+tiny_mce_settings = {};
 
 (function() {
   var action_link_close = ActiveScaffold.ActionLink.Abstract.prototype.close;
