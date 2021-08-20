@@ -1,5 +1,3 @@
-chosen_options = {};
-
 jQuery(document).ready(function() {
   jQuery(document).on('as:element_updated as:element_created', function(event) {
     jQuery('select.chosen', event.target).chosen(chosen_options);
