@@ -12,6 +12,8 @@ class ActiveScaffold::Bridges::Chosen < ActiveScaffold::DataStructures::Bridge
   end
 
   def self.javascripts
-    ["chosen-#{ActiveScaffold.js_framework}", "#{ActiveScaffold.js_framework}/active_scaffold_chosen"]
+    ["chosen-#{ActiveScaffold.js_framework}",
+     "#{ActiveScaffold.js_framework}/active_scaffold_chosen",
+     "#{ActiveScaffold.js_framework}/active_scaffold_chosen_options"]
   end
 end
