@@ -1,1 +1,0 @@
-chosen_options = {};
