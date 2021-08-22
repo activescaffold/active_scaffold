@@ -9,7 +9,7 @@
 
   function loadTinyMCE() {
     var settings = jQuery(this).data('tinymce');
-    var tiny_mce_settings = ActiveScaffold.config.tiny_mce_settings || {};
+    var tiny_mce_settings = ActiveScaffold.tiny_mce_settings || {};
     for (key in tiny_mce_settings) {
       settings[key] = tiny_mce_settings[key];
     }
