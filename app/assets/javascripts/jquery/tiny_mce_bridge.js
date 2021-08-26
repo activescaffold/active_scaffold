@@ -8,12 +8,16 @@
   };
 
   function loadTinyMCE() {
-    var settings = jQuery(this).data('tinymce');
-    var tiny_mce_settings = ActiveScaffold.config.tiny_mce_settings || {};
-    for (key in tiny_mce_settings) {
-      settings[key] = tiny_mce_settings[key];
+    var global_settings = ActiveScaffold.config.tiny_mce_settings || {};
+    var local_settings = jQuery(this).data('tinymce');
+    var settings = {};
+    for (key in global_settings) {
+      settings[key] = global_settings[key];
     }
-    if (settings) tinyMCE.settings = settings;
+    for (key in local_settings) {
+      settings[key] = local_settings[key];
+    }
+    tinyMCE.settings = settings;
     tinyMCE.execCommand('mceAddEditor', false, jQuery(this).attr('id'));
   }
 
