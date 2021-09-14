@@ -84,6 +84,9 @@
 .use_mri_2_7:
   image: ruby:2.7-alpine
 
+.use_mri_3_0:
+  image: ruby:3.0-alpine
+
 .use_rails_5_2:
   extends: .test
   variables:
@@ -163,11 +166,6 @@ test:rails-5.2:mri:2.6:
     - .use_mri_2_6
     - .use_rails_5_2
 
-test:rails-5.2:mri:2.7:
-  extends:
-    - .use_mri_2_7
-    - .use_rails_5_2
-
 test:rails-6.0:jruby:9.2:
   extends:
     - .use_rails_6_0
@@ -198,11 +196,30 @@ test:rails-6.0:mri:2.7:
     - .use_mri_2_7
     - .use_rails_6_0
 
+test:rails-6.0:mri:3.0:
+  extends:
+    - .use_mri_3_0
+    - .use_rails_6_0
+
 test:rails-6.1:mri:2.5:
   extends:
     - .use_mri_2_5
     - .use_rails_6_1
-  allow_failure: true
+
+test:rails-6.1:mri:2.6:
+  extends:
+    - .use_mri_2_6
+    - .use_rails_6_1
+
+test:rails-6.1:mri:2.7:
+  extends:
+    - .use_mri_2_7
+    - .use_rails_6_1
+
+test:rails-6.1:mri:3.0:
+  extends:
+    - .use_mri_3_0
+    - .use_rails_6_1
 
 variables:
   JRUBY_OPTS: --debug

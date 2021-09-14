@@ -12,23 +12,24 @@ dist: trusty
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-5.2.x
-  - gemfiles/Gemfile.rails-6.0.x
+  - gemfiles/Gemfile.rails-6.1.x
 jdk:
   - openjdk8
 language: ruby
 matrix:
   fast_finish: true
-  include:
-    - rvm: 2.5.8
-      gemfile: gemfiles/Gemfile.rails-6.1.x
+  exclude:
+    - rvm: 3.0.2
+      gemfile: gemfiles/Gemfile.rails-5.2.x
+    - rvm: 2.7.4
+      gemfile: gemfiles/Gemfile.rails-5.2.x
   allow_failures:
     - rvm: rbx-3
-    - rvm: 2.5.8
-      gemfile: gemfiles/Gemfile.rails-6.1.x
 rvm:
-  - 2.5.8
-  - 2.6.6
-  - 2.7.1
+  - 2.5.9
+  - 2.6.8
+  - 2.7.4
+  - 3.0.2
   - jruby-9.2.16.0
   - rbx-3
 sudo: required
