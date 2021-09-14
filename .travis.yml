@@ -2,7 +2,7 @@ before_install:
   - gem install bundler
   - bundle config set --local clean 'true'
   - bundle config set --local deployment 'true'
-  - bundle config set --local without 'development lint production test performance'
+  - bundle config set --local without 'deployment development lint production performance'
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
