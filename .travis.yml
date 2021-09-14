@@ -8,28 +8,25 @@ after_script:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
 bundler_args: --clean --deployment --jobs=$(nproc) --without development production performance
 cache: bundler
-dist: trusty
+dist: focal
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-5.2.x
   - gemfiles/Gemfile.rails-6.1.x
 jdk:
   - openjdk8
-language: ruby
-matrix:
+jobs:
   fast_finish: true
   exclude:
     - rvm: 3.0.2
       gemfile: gemfiles/Gemfile.rails-5.2.x
     - rvm: 2.7.4
       gemfile: gemfiles/Gemfile.rails-5.2.x
-  allow_failures:
-    - rvm: rbx-3
+language: ruby
 rvm:
   - 2.5.9
   - 2.6.8
   - 2.7.4
   - 3.0.2
   - jruby-9.2.16.0
-  - rbx-3
-sudo: required
+virt: lxd
