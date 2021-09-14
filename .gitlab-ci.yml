@@ -201,6 +201,11 @@ test:rails-6.0:mri:3.0:
     - .use_mri_3_0
     - .use_rails_6_0
 
+test:rails-6.1:jruby:9.2:
+  extends:
+    - .use_rails_6_1
+    - .use_jruby_9_2
+
 test:rails-6.1:mri:2.5:
   extends:
     - .use_mri_2_5
