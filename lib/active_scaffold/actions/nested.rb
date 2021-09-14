@@ -161,7 +161,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     def destroy_existing
-      return redirect_to(params.merge(:action => :delete, :only_path => true)) if request.get?
+      return redirect_to(params.merge(:action => :delete, :only_path => true)) if request.get? || request.head?
       do_destroy_existing
       respond_to_action(:destroy_existing)
     end

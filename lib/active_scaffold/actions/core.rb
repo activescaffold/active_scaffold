@@ -22,7 +22,7 @@ module ActiveScaffold::Actions
     end
 
     def render_field
-      if request.get?
+      if request.get? || request.head?
         render_field_for_inplace_editing
         respond_to do |format|
           format.js { render :action => 'render_field_inplace', :layout => false }
@@ -361,7 +361,7 @@ module ActiveScaffold::Actions
     #   flash[:info] = 'Player fired'
     # end
     def process_action_link_action(render_action = :action_update, crud_type_or_security_options = nil)
-      if request.get?
+      if request.get? || request.head?
         # someone has disabled javascript, we have to show confirmation form first
         @record = find_if_allowed(params[:id], :read) if params[:id]
         respond_to_action(:action_confirmation)
