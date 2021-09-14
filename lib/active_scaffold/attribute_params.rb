@@ -61,21 +61,19 @@ module ActiveScaffold
       multi_parameter_attrs = multi_parameter_attributes(attributes)
 
       columns.each_column(for: parent_record, crud_type: crud_type, flatten: true) do |column|
-        begin
-          # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
-          column.params.select { |p| attributes.key? p }.each { |p| parent_record.send("#{p}=", attributes[p]) }
+        # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
+        column.params.select { |p| attributes.key? p }.each { |p| parent_record.send("#{p}=", attributes[p]) }
 
-          if multi_parameter_attrs.key? column.name.to_s
-            parent_record.send(:assign_multiparameter_attributes, multi_parameter_attrs[column.name.to_s])
-          elsif attributes.key? column.name
-            update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
-          end
-        rescue StandardError => e
-          message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} "\
-                    "(value from params #{attributes[column.name].inspect})"
-          Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
-          raise
+        if multi_parameter_attrs.key? column.name.to_s
+          parent_record.send(:assign_multiparameter_attributes, multi_parameter_attrs[column.name.to_s])
+        elsif attributes.key? column.name
+          update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
         end
+      rescue StandardError => e
+        message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} "\
+                  "(value from params #{attributes[column.name].inspect})"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise
       end
 
       parent_record

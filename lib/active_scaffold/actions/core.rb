@@ -247,7 +247,7 @@ module ActiveScaffold::Actions
       @conditions_from_params ||= begin
         conditions = [{}]
         params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
-          distinct = true if key =~ /!$/
+          distinct = true if key.match?(/!$/)
           column = active_scaffold_config._columns_hash[key.to_s[0..(distinct ? -2 : -1)]]
           next unless column
           key = column.name.to_sym
@@ -320,7 +320,7 @@ module ActiveScaffold::Actions
 
     def check_input_device
       return unless session[:input_device_type].nil?
-      if request.env['HTTP_USER_AGENT'] =~ /(iPhone|iPod|iPad)/i
+      if request.env['HTTP_USER_AGENT'].match?(/(iPhone|iPod|iPad)/i)
         session[:input_device_type] = 'TOUCH'
         session[:hover_supported] = false
       else

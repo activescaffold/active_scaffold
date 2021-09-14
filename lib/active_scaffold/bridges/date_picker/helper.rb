@@ -82,7 +82,7 @@ module ActiveScaffold::Bridges
 
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
-        if rails_format =~ /%[cUWwxXZz]/
+        if rails_format.match?(/%[cUWwxXZz]/)
           Rails.logger.warn(
             "AS DatePicker::Helper: rails date format #{rails_format} includes options "\
             "which can't be converted to jquery datepicker format. "\

@@ -37,7 +37,7 @@ module ActiveScaffold
         file = 'app/assets/stylesheets/application.css'
         return unless File.exist?(file)
         original_css = File.binread(file)
-        if original_css =~ /require active_scaffold$/
+        if original_css.match?(/require active_scaffold$/)
           say_status('skipped', 'insert into app/assets/stylesheets/application.css', :yellow)
         else
           insert_into_file 'app/assets/stylesheets/application.css', before: %r{[ ]*\*/} do
