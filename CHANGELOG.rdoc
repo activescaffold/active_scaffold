@@ -1,5 +1,6 @@
 - Drop support for rails < 5.2 and ruby < 2.5
 - Support adding settings for chosen and tinyMCE in initializer (Active scaffold.js_config) or JavaScript code (Active scaffold.config, needed for callbacks)
+- Support ruby 3.0
 
 = 3.6.2
 - Fix count query when association's primary key is string
