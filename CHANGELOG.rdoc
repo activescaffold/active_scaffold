@@ -1,5 +1,5 @@
 - Drop support for rails < 5.2 and ruby < 2.5
-- Support adding settings for chosen and tinyMCE in initializer (Active scaffold.js_config) or JavaScript code (Active scaffold.config, needed for callbacks)
+- Support adding settings for chosen and tinyMCE in initializer (ActiveScaffold.js_config) or JavaScript code (ActiveScaffold.config, needed for callbacks)
 - Support ruby 3.0
 
 = 3.6.2
@@ -42,7 +42,7 @@
 - Display loading indicator at bottom on auto pagination
 - List rendering speed up
 - Remove font family from CSS, it was preventing from changing it easily in body
-- Fix search for mongoid models in with threadsafety enabled
+- Fix search for mongoid models with threadsafety enabled
 - Keep nested params after calling render_field for column in subform
 - Fix nested for controllers without list action (for example, for nested create on singular assocations)
 - Fix delayed setup issues with threads
