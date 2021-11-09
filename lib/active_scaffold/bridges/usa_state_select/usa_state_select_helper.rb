@@ -1,13 +1,8 @@
 module ActiveScaffold::Bridges
   class UsaStateSelect
     module UsaStateSelectHelpers
-      def usa_state_select_options(options)
-        # TODO: remove when rails 3.2 support is dropped
-        defined?(ActionView::Helpers::InstanceTag) ? options[:object] : options
-      end
-
       def usa_state_select(object, method, priority_states = nil, options = {}, html_options = {})
-        ActionView::Helpers::Tags::UsaStateSelect.new(object, method, self, usa_state_select_options(options)).to_usa_state_select_tag(priority_states, options, html_options)
+        ActionView::Helpers::Tags::UsaStateSelect.new(object, method, self, options).to_usa_state_select_tag(priority_states, options, html_options)
       end
     end
 

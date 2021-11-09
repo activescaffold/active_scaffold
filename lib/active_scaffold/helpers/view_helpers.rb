@@ -41,7 +41,7 @@ module ActiveScaffold
           restore_view_paths = lookup_context.view_paths
           lookup_context.view_paths = @_view_paths
         end
-        lookup_context.exists?(template_name, '', partial).tap do
+        (@_lookup_context || lookup_context).exists?(template_name, '', partial).tap do
           lookup_context.view_paths = restore_view_paths if @_view_paths
         end
       end
@@ -85,6 +85,10 @@ module ActiveScaffold
       def list_row_class(record)
         class_override_helper = list_row_class_method(record)
         class_override_helper ? send(class_override_helper, record) : ''
+      end
+
+      def list_row_attributes(tr_class, tr_id, data_refresh)
+        {class: "record #{tr_class}", id: tr_id, data: {refresh: data_refresh}}
       end
 
       def column_attributes(column, record)
@@ -133,8 +137,7 @@ module ActiveScaffold
         empty = column_value.nil?
         # column_value != false would force boolean to be cast to integer
         # when comparing to column_value of IPAddr class (PostgreSQL inet column type)
-        # rubocop:disable Style/YodaCondition
-        empty ||= false != column_value && column_value.blank?
+        empty ||= false != column_value && column_value.blank? # rubocop:disable Style/YodaCondition
         empty ||= @_empty_values.include? column_value
         empty
       end
@@ -213,9 +216,7 @@ module ActiveScaffold
           object = instance_variable_get("@#{object}") unless object.respond_to?(:to_model)
           object = convert_to_model(object)
 
-          if object.class.respond_to?(:model_name)
-            options[:object_name] ||= object.class.model_name.human.downcase
-          end
+          options[:object_name] ||= object.class.model_name.human.downcase if object.class.respond_to?(:model_name)
 
           object
         end

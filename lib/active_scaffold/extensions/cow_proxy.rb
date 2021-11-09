@@ -35,12 +35,21 @@ module CowProxy
       end
 
       class ActionColumns < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::ActionColumns)
+        def each_column(options = {})
+          __getobj__.each_column(options.reverse_merge(core_columns: action.core.columns)) do |column|
+            if column.is_a?(::ActiveScaffold::DataStructures::ActionColumns)
+              yield ::CowProxy.wrap(column).tap { |group| group.action = action }
+            else
+              yield column
+            end
+          end
+        end
       end
 
       class ActionLinks < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::ActionLinks)
         def method_missing(name, *args, &block)
           CowProxy.debug { "method missing #{name} in #{__getobj__.name}" }
-          return super if name =~ /[!?]$/
+          return super if name.match?(/[!?]$/)
           subgroup =
             if _instance_variable_defined?("@#{name}")
               _instance_variable_get("@#{name}")

@@ -108,6 +108,7 @@ hu:
     refresh: Frissítés
     remove: Törlés
     remove_file: Fájl törlése, vagy cseréje
+    remove_files: Fájlok törlése, vagy hozzáadása
     replace_existing: Replace existing
     replace_with_new: Csere újjal
     reset: Alapállapot

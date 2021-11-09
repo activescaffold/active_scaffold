@@ -120,7 +120,7 @@ module ActiveScaffold::Config
 
       def []=(key, value)
         @storage[@action] ||= {}
-        if value
+        if value.present?
           @storage[@action][key.to_s] = value
         else
           @storage[@action].delete key.to_s

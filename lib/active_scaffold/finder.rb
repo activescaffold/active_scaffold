@@ -1,7 +1,7 @@
 module ActiveScaffold
   module Finder
     def self.like_operator
-      @@like_operator ||= ::ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' ? 'ILIKE' : 'LIKE'
+      @@like_operator ||= ::ActiveRecord::Base.connection.adapter_name.in?(%w[PostgreSQL PostGIS]) ? 'ILIKE' : 'LIKE'
     end
 
     module ClassMethods
@@ -68,7 +68,9 @@ module ActiveScaffold
               value = columns_token[column.name]
               value = /#{value}/ if column.text?
               column.search_sql.map do |search_sql|
-                {search_sql => value}
+                # call .to_s so String is returned from CowProxy::String in threadsafe mode
+                # in other case, or method from Mongoid would fail
+                {search_sql.to_s => value}
               end
             end.flatten
             active_scaffold_config.model.or(token_conditions).selector
@@ -174,12 +176,14 @@ module ActiveScaffold
       end
 
       def tables_for_translating_days_and_months(format)
+        # rubocop:disable Style/FormatStringToken
         keys = {
           '%A' => 'date.day_names',
           '%a' => 'date.abbr_day_names',
           '%B' => 'date.month_names',
           '%b' => 'date.abbr_month_names'
         }
+        # rubocop:enable Style/FormatStringToken
         key_index = keys.keys.map { |key| [key, format.index(key)] }.to_h
         keys.select! { |k, _| key_index[k] }
         keys.sort_by { |k, _| key_index[k] }.map do |_, k|
@@ -405,9 +409,9 @@ module ActiveScaffold
       params_hash active_scaffold_embedded_params[:conditions]
     end
 
-    def all_conditions
+    def all_conditions(include_id_condition = true)
       [
-        id_condition,                                 # for list with id (e.g. /users/:id/index)
+        (id_condition if include_id_condition),       # for list with id (e.g. /users/:id/index)
         active_scaffold_conditions,                   # from the search modules
         conditions_for_collection,                    # from the dev
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
@@ -440,9 +444,11 @@ module ActiveScaffold
     def finder_options(options = {})
       search_conditions = all_conditions
 
+      sorting = options[:sorting]&.clause((grouped_columns_calculations if grouped_search?))
+      sorting = sorting.map(&Arel.method(:sql)) if sorting && active_scaffold_config.active_record?
       # create a general-use options array that's compatible with Rails finders
       finder_options = {
-        :reorder => options[:sorting]&.clause((grouped_columns_calculations if grouped_search?)),
+        :reorder => sorting,
         :conditions => search_conditions
       }
       if active_scaffold_config.mongoid?
@@ -511,12 +517,12 @@ module ActiveScaffold
     end
 
     def calculate_last_modified(query)
-      return unless conditional_get_support? && query.klass.columns_hash['updated_at']
+      return unless conditional_get_support? && ActiveScaffold::OrmChecks.columns_hash(query.klass)['updated_at']
       @last_modified = query.maximum(:updated_at)
     end
 
-    def calculate_query
-      conditions = all_conditions
+    def calculate_query(id_condition = true)
+      conditions = all_conditions(id_condition)
       includes = active_scaffold_config.list.count_includes
       includes ||= active_scaffold_references if conditions.present?
       left_joins = active_scaffold_outer_joins
@@ -534,9 +540,7 @@ module ActiveScaffold
       relation = options.reject { |_, v| v.blank? }.inject(relation) do |rel, (k, v)|
         k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
       end
-      if options[:left_outer_joins].present? || options[:left_joins].present?
-        relation.distinct_value = true
-      end
+      relation.distinct_value = true if options[:left_outer_joins].present? || options[:left_joins].present?
       relation
     end
 

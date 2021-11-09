@@ -1,27 +1,8 @@
-# rubocop:disable Rails/ApplicationRecord
-class ActiveScaffold::Tableless < ActiveRecord::Base
+class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/ApplicationRecord
   class AssociationScope < ActiveRecord::Associations::AssociationScope
     INSTANCE = create
     def self.scope(association, connection)
       INSTANCE.scope association, connection
-    end
-
-    if Rails.version < '5.0.0'
-      def column_for(table_name, column_name, alias_tracker = nil)
-        klass = alias_tracker ? alias_tracker.connection.klass : self.klass
-        if table_name == klass.table_name
-          klass.columns_hash[column_name]
-        elsif alias_tracker && (klass = alias_tracker.instance_variable_get(:@assoc_klass))
-          klass.columns_hash[column_name]
-        else # rails < 4.1
-          association.klass.columns_hash[column_name]
-        end
-      end
-
-      def add_constraints(scope, owner, assoc_klass, refl, tracker)
-        tracker.instance_variable_set(:@assoc_klass, assoc_klass)
-        super
-      end
     end
   end
 
@@ -35,36 +16,24 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     def columns(table_name)
       klass.columns
     end
-  end
 
-  class Column < ActiveRecord::ConnectionAdapters::Column
-    if Rails.version >= '5.0.0'
-      def initialize(name, default, sql_type = nil, null = true)
-        metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, sql_type
-        super(name, default, metadata, null)
-      end
-    else
-      def initialize(name, default, sql_type = nil, null = true)
-        cast_type = ActiveRecord::Base.connection.send :lookup_cast_type, sql_type
-        super(name, default, cast_type, sql_type, null)
+    if Rails.version >= '6.0.0'
+      def data_sources
+        klass ? [klass.table_name] : []
       end
     end
   end
 
-  module Tableless
-    if Rails.version < '5.2.0'
-      def skip_statement_cache?
-        klass < ActiveScaffold::Tableless ? true : super
-      end
+  class Column < ActiveRecord::ConnectionAdapters::Column
+    def initialize(name, default, sql_type = nil, null = true, **)
+      metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, sql_type
+      super(name, default, metadata, null)
+    end
+  end
 
-      def association_scope
-        @association_scope ||= AssociationScope.scope(self, klass.connection) if klass < ActiveScaffold::Tableless
-        super
-      end
-    else
-      def skip_statement_cache?(scope)
-        klass < ActiveScaffold::Tableless ? true : super
-      end
+  module Tableless
+    def skip_statement_cache?(scope)
+      klass < ActiveScaffold::Tableless ? true : super
     end
 
     def target_scope
@@ -150,27 +119,28 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     def execute_simple_calculation(operation, column_name, distinct)
       @klass.execute_simple_calculation(self, operation, column_name, distinct)
     end
+
+    def implicit_order_column
+      @klass.implicit_order_column
+    end
+
+    def exists?
+      limit(1).to_a.present?
+    end
   end
 
-  class Relation < ActiveRecord::Relation
+  class Relation < ::ActiveRecord::Relation
     include RelationExtension
   end
   class << self
     private
 
     def relation
-      args = [self]
-      if Rails.version < '5.2.0'
-        args << arel_table
-        args << predicate_builder if Rails.version >= '5.0.0'
-      end
-      ActiveScaffold::Tableless::Relation.new(*args)
+      ActiveScaffold::Tableless::Relation.new(self)
     end
 
-    if Rails.version >= '5.2'
-      def cached_find_by_statement(key, &block)
-        StatementCache.new(key, self, &block)
-      end
+    def cached_find_by_statement(key, &block)
+      StatementCache.new(key, self, &block)
     end
   end
 
@@ -180,14 +150,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       @model = model
     end
 
-    if Rails.version < '5.2' # 5.0 and 5.1
-      def execute(values, model, connection)
-        model.where(@key => values)
-      end
-    else
-      def execute(values, connection)
-        @model.where(@key => values)
-      end
+    def execute(values, connection)
+      @model.where(@key => values)
     end
   end
 
@@ -196,19 +160,6 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
       @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
     else
       super
-    end
-  end
-  if Rails.version < '5.0' # 4.2.x
-    def self.initialize_find_by_cache
-      # rubocop:disable Rails/DynamicFindBy
-      self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) }
-    end
-  elsif Rails.version < '5.2' # 5.0 and 5.1
-    def self.initialize_find_by_cache
-      @find_by_statement_cache = {
-        true => Hash.new { |h, k| h[k] = StatementCache.new(k) },
-        false => Hash.new { |h, k| h[k] = StatementCache.new(k) }
-      }
     end
   end
 

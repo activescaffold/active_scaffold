@@ -12,13 +12,10 @@ module ActiveScaffold::DataStructures::Association
 
     def klass(record = nil)
       if polymorphic?
-        record&.send(foreign_type)&.constantize
+        record&.send(foreign_type)&.safe_constantize
       else
         @association.klass
       end
-    rescue NameError => e
-      Rails.logger.warn "#{e.message}\n#{e.backtrace.join("\n")}"
-      nil
     end
 
     def belongs_to?
@@ -70,6 +67,8 @@ module ActiveScaffold::DataStructures::Association
     def source_reflection; end
 
     def scope; end
+
+    def as; end
 
     def respond_to_target?
       false
@@ -134,13 +133,13 @@ module ActiveScaffold::DataStructures::Association
       associations = self.class.reflect_on_all_associations(klass)
       # collect associations that point back to this model and use the same foreign_key
       associations.each_with_object([]) do |assoc, reverse_matches|
-        reverse_matches << assoc if reverse_match? assoc
+        reverse_matches << assoc if assoc != @association && reverse_match?(assoc)
       end
     end
 
     def reverse_match?(assoc)
-      return false if assoc == @association
-      return false unless assoc.polymorphic? || assoc.class_name == inverse_klass&.name
+      return assoc.name == as if as || assoc.polymorphic?
+      return false if assoc.class_name != inverse_klass&.name
 
       if through?
         reverse_through_match?(assoc)

@@ -67,7 +67,7 @@ module ActiveScaffold
             html_classes << 'top' if options[:first_action]
             group_tag = :li
           end
-          content = content_tag(group_tag, :class => (html_classes if html_classes.present?), :onclick => ('' if hover_via_click?)) do
+          content = content_tag(group_tag, :class => html_classes.presence, :onclick => ('' if hover_via_click?)) do
             content_tag(:div, as_(link.label), :class => link.name.to_s.downcase) << content_tag(:ul, content)
           end
         else
@@ -211,6 +211,18 @@ module ActiveScaffold
         url
       end
 
+      def column_in_params_conditions?(key)
+        if key.match?(/!$/)
+          conditions_from_params[1..-1].any? { |node| node.left.name.to_s == key[0..-2] }
+        else
+          conditions_from_params[0].include?(key)
+        end
+      end
+
+      def ignore_param_for_nested?(key)
+        NESTED_PARAMS.include?(key) || column_in_params_conditions?(key) || (nested? && nested.param_name == key)
+      end
+
       def query_string_for_action_links(link)
         if defined?(@query_string) && link.parameters.none? { |k, _| @query_string_params.include? k }
           return [@query_string, @non_nested_query_string]
@@ -226,11 +238,16 @@ module ActiveScaffold
             keep = false
             next
           end
-          if NESTED_PARAMS.include?(key) || conditions_from_params.include?(key) || (nested? && nested.param_name == key)
+          if ignore_param_for_nested?(key)
             non_nested_query_string_options[key] = value
           else
             query_string_options[key] = value
           end
+        end
+        if nested_singular_association? && action_name == 'index'
+          # pass current path as return_to, for nested listing on singular association, so forms doesn't return to parent listing
+          @query_string_params << :return_to
+          non_nested_query_string_options[:return_to] = request.fullpath
         end
 
         query_string = query_string_options.to_query if query_string_options.present?
@@ -333,7 +350,10 @@ module ActiveScaffold
           html_options[:class] << ' active' if action_link_selected?(link, record)
         end
 
-        html_options[:target] = '_blank' if !options[:page] && !options[:inline] && (options[:popup] || link.popup?)
+        if !options[:page] && !options[:inline] && (options[:popup] || link.popup?)
+          html_options[:target] = '_blank'
+          html_options[:rel] = [html_options[:rel], 'noopener noreferrer'].compact.join(' ')
+        end
         html_options[:id] = link_id
         if link.dhtml_confirm?
           unless link.inline?
@@ -385,6 +405,7 @@ module ActiveScaffold
         elsif link.parameters&.dig(:named_scope)
           url_options[:parent_scaffold] = controller_path
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)
+          url_options[:id] = nil
         end
       end
 

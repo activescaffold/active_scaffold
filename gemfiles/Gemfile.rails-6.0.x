@@ -12,13 +12,19 @@ end
 group :development, :lint do
   # A static analysis security vulnerability scanner for Ruby on Rails applications
   gem 'brakeman', require: false
+  # Patch-level verification for Bundler
+  gem 'bundler-audit', require: false
   # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
   gem 'rubocop', require: false
 end
 
+group :development, :lint, :test do
+  # Manage translation and localization with static analysis, for Ruby i18n
+  gem 'i18n-tasks', require: false
+  gem 'rake', require: false
+end
+
 group :development, :test do
-  # A make-like build utility for Ruby
-  gem 'rake'
   # Rack provides a minimal interface between webservers that support Ruby and Ruby frameworks
   gem 'rack'
 end
@@ -30,7 +36,7 @@ group :test do
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
-  gem 'rails', '~> 4.2.8'
+  gem 'rails', '~> 6.0.0'
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
   # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
@@ -38,13 +44,13 @@ group :test do
 
   platforms :jruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
+    gem 'activerecord-jdbcsqlite3-adapter'
     # This module allows Ruby programs to interface with the SQLite3 database engine
     gem 'jdbc-sqlite3'
   end
 
   platforms :ruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'sqlite3', '~> 1.3.0'
+    gem 'sqlite3', '~> 1.4.0'
   end
 end

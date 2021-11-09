@@ -39,41 +39,33 @@ module ActiveScaffold #:nodoc:
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
         render_embedded args.first
       elsif args.first == :super
-        @_view_paths ||= lookup_context.view_paths.clone
-        @_last_template ||= lookup_context.last_template
-        parts = @virtual_path.split('/')
-        template = parts.pop
-        prefix = parts.join('/')
-
-        options = args[1] || {}
-        options[:locals] ||= {}
-        if view_stack.last
-          options[:locals] = view_stack.last[:locals].merge!(options[:locals]) if view_stack.last[:locals]
-          options[:object] ||= view_stack.last[:object] if view_stack.last[:object]
+        if @lookup_context # rails 6
+          @_lookup_context ||= lookup_context
+        else # rails < 6
+          @_view_paths ||= lookup_context.view_paths.clone
+          @_last_template ||= lookup_context.last_template
         end
-        options[:template] = template
-        # if prefix is active_scaffold_overrides we must try to render with this prefix in following paths
-        if prefix != 'active_scaffold_overrides'
-          options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
-        else
-          options[:prefixes] = ['active_scaffold_overrides']
-          last_view_path = File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
-          lookup_context.view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
-        end
-        result = super options
-        lookup_context.view_paths = @_view_paths if @_view_paths
-        lookup_context.last_template = @_last_template if @_last_template
+        result = super options_for_render_super(args[1])
+        @lookup_context = @_lookup_context if @_lookup_context # rails 6
+        lookup_context.view_paths = @_view_paths if @_view_paths # rails < 6
+        lookup_context.last_template = @_last_template if @_last_template # rails < 6
         result
       else
-        @_view_paths ||= lookup_context.view_paths.clone
+        if @lookup_context # rails 6
+          @_lookup_context ||= lookup_context
+        else # rails < 6
+          @_view_paths ||= lookup_context.view_paths.clone
+        end
         last_template = lookup_context.last_template
-        current_view = if args[0].is_a?(Hash)
-                         {:locals => args[0][:locals], :object => args[0][:object]}
-                       else # call is render 'partial', locals_hash
-                         {:locals => args[1]}
-                       end
+        current_view =
+          if args[0].is_a?(Hash)
+            {locals: args[0][:locals], object: args[0][:object]}
+          else # call is render 'partial', locals_hash
+            {locals: args[1]}
+          end
         view_stack << current_view if current_view
-        lookup_context.view_paths = @_view_paths # reset view_paths in case a view render :super, and then render :partial
+        @lookup_context = @_lookup_context if @_lookup_context # rails 6, reset lookup_context in case a view render :super, and then render :partial
+        lookup_context.view_paths = @_view_paths if @_view_paths # rails < 6, reset view_paths in case a view render :super, and then render :partial
         result = super
         view_stack.pop if current_view.present?
         lookup_context.last_template = last_template
@@ -86,6 +78,46 @@ module ActiveScaffold #:nodoc:
     end
 
     private
+
+    def options_for_render_super(options)
+      options ||= {}
+      options[:locals] ||= {}
+      if view_stack.last
+        options[:locals] = view_stack.last[:locals].merge!(options[:locals]) if view_stack.last[:locals]
+        options[:object] ||= view_stack.last[:object] if view_stack.last[:object]
+      end
+
+      parts = @virtual_path.split('/')
+      options[:template] = parts.pop
+      prefix = parts.join('/')
+      # if prefix is active_scaffold_overrides we must try to render with this prefix in following paths
+      if prefix != 'active_scaffold_overrides'
+        options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
+      else
+        options[:prefixes] = ['active_scaffold_overrides']
+        update_view_paths
+      end
+      options
+    end
+
+    def update_view_paths
+      last_view_path =
+        if @lookup_context # rails 6
+          File.expand_path(File.dirname(File.dirname(@lookup_context.last_template.short_identifier.to_s)), Rails.root)
+        else
+          File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
+        end
+      new_view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
+      if @lookup_context # rails 6
+        if respond_to? :build_lookup_context # rails 6.0
+          build_lookup_context(new_view_paths)
+        else # rails 6.1
+          @lookup_context = ActionView::LookupContext.new(new_view_paths)
+        end
+      else
+        lookup_context.view_paths = new_view_paths
+      end
+    end
 
     def render_embedded(options)
       require 'digest/md5'
@@ -136,6 +168,31 @@ module ActionView
   module Helpers
     Base.class_eval do
       include ActiveScaffold::RenderingHelper
+    end
+
+    if Gem.loaded_specs['rails'].version.segments.first >= 6
+      RenderingHelper.class_eval do
+        # override the render method to use our @lookup_context instead of the
+        # memoized @_lookup_context
+        def render(options = {}, locals = {}, &block)
+          case options
+          when Hash
+            in_rendering_context(options) do |_|
+              # previously set view paths and lookup context are lost here
+              # if you use view_renderer, so instead create a new renderer
+              # with our context
+              temp_renderer = ActionView::Renderer.new(@lookup_context)
+              if block_given?
+                temp_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
+              else
+                temp_renderer.render(self, options)
+              end
+            end
+          else
+            view_renderer.render_partial(self, partial: options, locals: locals, &block)
+          end
+        end
+      end
     end
   end
 end

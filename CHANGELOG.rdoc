@@ -1,3 +1,34 @@
+- Drop support for rails < 5.2 and ruby < 2.5
+- Support adding settings for chosen and tinyMCE in initializer (ActiveScaffold.js_config) or JavaScript code (ActiveScaffold.config, needed for callbacks)
+- Support ruby 3.0
+
+= 3.6.2
+- Fix count query when association's primary key is string
+- Fix unauthorized_columns and constraint_columns with threadsafe enabled
+- Fix changing list.sorting and column.sort_by per request when threadsafe is enabled
+
+= 3.6.1
+- Display group cols vertically when subform layout is vertical
+- Fix html attributes for input datetime on field search, when jquery ui is not used
+- Fix constraint columns for nested list on through assocaitions
+- Support rails 6.1
+
+= 3.6.0
+- Fix i18n at ruby 3.0.0
+- Add list helper for bitfield column, so it display labels of selected checkboxes in list
+- Support rails 6.0
+
+= 3.6.0.rc2
+- Fix subform crud in subform subgroup when controller is embedded
+- Fix sorting for mongoid models, broken in 3.6.0.rc1
+- Improve add_new option, allow to change subform columns (with helper override calling super and add columns to locals argument)
+- Support add_new option for record_select or radio form_ui
+- Support add_new option for polymorphic associations (add_new may be array with class names to allow add new, or true to allow add new for any model)
+- Support description for columns displayed as subform
+- Don't mess with history if current page is not using activescaffold when is loaded
+- Fix changing sort_by per request when threadsafe is enabled
+
+= 3.6.0.rc1
 - Cleanup: deprecate ActiveScaffold.set_defaults for ActiveScaffold.defaults, rename some setters
 - Fix adding new action links on request with threadsafety enabled
 - Fix iterating in config.columns with threadsafety enabled
@@ -11,6 +42,27 @@
 - Display loading indicator at bottom on auto pagination
 - List rendering speed up
 - Remove font family from CSS, it was preventing from changing it easily in body
+- Fix search for mongoid models with threadsafety enabled
+- Keep nested params after calling render_field for column in subform
+- Fix nested for controllers without list action (for example, for nested create on singular assocations)
+- Fix delayed setup issues with threads
+- Fix render_field under nested list for polymorphic association
+- Add foreign_type column to constrained columns in nested list for polymorphic association
+- Add return_to to action links on nested list for singular associations, so forms would return to list
+- Case insensitive search with PostGIS adapter
+- Use clear_storage with around_action and ensure, so empty hash is removed from session storage when exception is raised too
+- Delete search from session when search is reset
+- Add cache_column_counts method to get counts with one query for associations which are not preloaded, query per column is overridable with count_query_for_column
+- ActiveStorage support with bridge
+- Add list_row_attributes helper so more HTML attributes can be added to tr.record in list, overriding the helper
+- Support column!=value param for not equal condition (column!= means column is not null)
+- Don't force to use join for column's includes when sorting by method
+- Add support for range conditions in url params for numeric (integer, decimal, float, bigint) columns too
+- Support include_blank option in :radio form_ui
+- Add add_new option for :select form_ui in singular associations, in column.options, it adds link to toggle between select and subform
+- Fix subform crud in subform subgroup, when form is on nested scaffold, when record on first subform is persisted
+- Add association_join_text setting to column, so it can be changed for one column only
+- Use Arel.sql with sorting.clause before passing to reorder method
 
 = 3.6.0.pre
 - Added threadsafety as tech preview, enabled with ActiveScaffold.threadsafe! in initializer.

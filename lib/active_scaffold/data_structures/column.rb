@@ -240,6 +240,9 @@ module ActiveScaffold::DataStructures
       @associated_number
     end
 
+    # what string to use to join records from plural associations
+    attr_accessor :association_join_text
+
     # whether a blank row must be shown in the subform
     cattr_accessor :show_blank_record, instance_accessor: false
     @@show_blank_record = true

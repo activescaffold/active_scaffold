@@ -2,14 +2,18 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :deployment do
-end
-
 group :development do
   #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
   gem 'localeapp'
   # RDoc produces HTML and command-line documentation for Ruby projects
   gem 'rdoc'
+end
+
+group :performance do
+  gem 'rails-perftest', github: 'letsevents/rails-perftest'
+  platforms :ruby do
+    gem 'ruby-prof'
+  end
 end
 
 group :development, :lint do
@@ -18,7 +22,7 @@ group :development, :lint do
   # Patch-level verification for Bundler
   gem 'bundler-audit', require: false
   # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
-  gem 'rubocop', require: false
+  gem 'rubocop', '0.52.1', require: false
 end
 
 group :development, :lint, :test do
@@ -39,10 +43,9 @@ group :test do
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
-  gem 'rails', '~> 5.1.0'
+  gem 'rails', '~> 6.0.0'
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
-  gem 'rails-perftest', github: 'letsevents/rails-perftest'
   # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
   gem 'simplecov', require: false
 
@@ -54,8 +57,7 @@ group :test do
   end
 
   platforms :ruby do
-    gem 'ruby-prof'
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'sqlite3', '~> 1.3.0'
+    gem 'sqlite3', '~> 1.4.0'
   end
 end

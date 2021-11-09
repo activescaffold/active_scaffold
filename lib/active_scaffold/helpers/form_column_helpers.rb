@@ -71,9 +71,9 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_subform_attributes(column, column_css_class = nil)
+      def active_scaffold_subform_attributes(column, column_css_class = nil, klass = nil)
         {
-          :class => "sub-form #{active_scaffold_config_for(column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
+          :class => "sub-form #{active_scaffold_config_for(klass || column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
           :id => sub_form_id(:association => column.name)
         }
       end
@@ -304,7 +304,43 @@ module ActiveScaffold
             collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
           end
         html << active_scaffold_refresh_link(column, html_options, record) if column.options[:refresh_link]
+        html << active_scaffold_new_record_subform(column, record, html_options) if column.options[:add_new]
         html
+      end
+
+      def active_scaffold_new_record_subform(column, record, html_options, new_record_attributes: nil, locals: {}, skip_link: false) # rubocop:disable Metrics/ParameterLists
+        klass =
+          if column.association.polymorphic? && column.association.belongs_to?
+            type = record.send(column.association.foreign_type)
+            column.association.klass(record) if type.present? && (column.options[:add_new] == true || type.in?(column.options[:add_new]))
+          else
+            column.association.klass
+          end
+        return content_tag(:div, '') unless klass
+        subform_attrs = active_scaffold_subform_attributes(column, nil, klass)
+        if record.send(column.name)&.new_record?
+          new_record = record.send(column.name)
+        else
+          subform_attrs[:style] = 'display: none'
+        end
+        subform_attrs[:class] << ' optional'
+        scope = html_options[:name].scan(/record(.*)\[#{column.name}\]/).dig(0, 0)
+        new_record ||= klass.new(new_record_attributes)
+        locals = locals.reverse_merge(column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope)
+        subform = render(partial: subform_partial_for_column(column, klass), locals: locals)
+        if column.options[:hide_subgroups]
+          toggable_id = "#{sub_form_id(association: column.name, id: record.id || generated_id(record) || 99_999_999_999)}-div"
+          subform << link_to_visibility_toggle(toggable_id, default_visible: false)
+        end
+        html = content_tag(:div, subform, subform_attrs)
+        return html if skip_link
+        html << active_scaffold_show_new_subform_link(column, record, html_options[:id], subform_attrs[:id])
+      end
+
+      def active_scaffold_show_new_subform_link(column, record, select_id, subform_id)
+        data = {select_id: select_id, subform_id: subform_id, subform_text: as_(:add_existing), select_text: as_(:create_new)}
+        label = data[record.send(column.name)&.new_record? ? :subform_text : :select_text]
+        link_to(label, '#', data: data, class: 'show-new-subform')
       end
 
       def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, &block) # rubocop:disable Metrics/ParameterLists
@@ -330,12 +366,13 @@ module ActiveScaffold
         object_name, method = options[:name].split(/\[(#{column.name})\]/)
         method.sub!(/#{column.name}/, "#{remove_file_prefix}\\0")
         fields = block_given? ? yield : ''
+        link_key = options[:multiple] ? :remove_files : :remove_file
         input = file_field(:record, column.name, options.merge(:onchange => js_dont_remove_file_code))
         content_tag(:div, class: controls_class) do
           content_tag(:div) do
             safe_join [content, ' | ', fields,
                        hidden_field(object_name, method, :value => 'false', class: 'remove_file'),
-                       content_tag(:a, as_(:remove_file), :href => '#', :onclick => js_remove_file_code)]
+                       content_tag(:a, as_(link_key), :href => '#', :onclick => js_remove_file_code)]
           end << content_tag(:div, input, :style => 'display: none')
         end
       end
@@ -454,15 +491,35 @@ module ActiveScaffold
             active_scaffold_enum_options(column, record)
           end
 
-        selected = record.send(column.association.name)&.id if column.association
+        selected = record.send(column.association.name) if column.association
+        selected_id = selected&.id
         if options.present?
+          if column.options[:add_new]
+            html_options[:data] ||= {}
+            html_options[:data][:subform_id] = active_scaffold_subform_attributes(column)[:id]
+            radio_html_options = html_options.merge(class: html_options[:class] + ' hide-new-subform')
+          else
+            radio_html_options = html_options
+          end
           radios = options.map do |option|
-            active_scaffold_radio_option(option, selected, column, html_options)
+            active_scaffold_radio_option(option, selected_id, column, radio_html_options)
+          end
+          if column.options[:include_blank]
+            label = column.options[:include_blank]
+            label = as_(column.options[:include_blank]) if column.options[:include_blank].is_a?(Symbol)
+            radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: nil)) + label)
+          end
+          if column.options[:add_new]
+            create_new_button = radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(id: nil, class: html_options[:class] + ' show-new-subform'))
+            radios << content_tag(:label, create_new_button << as_(:create_new)) <<
+              active_scaffold_new_record_subform(column, record, html_options, skip_link: true)
           end
           safe_join radios
         else
-          content_tag(:span, as_(:no_options), :class => "#{html_options[:class]} no-options", :id => html_options[:id]) <<
-            hidden_field_tag(html_options[:name], '', :id => nil)
+          html = content_tag(:span, as_(:no_options), :class => "#{html_options[:class]} no-options", :id => html_options[:id])
+          html << hidden_field_tag(html_options[:name], '', :id => nil)
+          html << active_scaffold_new_record_subform(column, record, html_options) if column.options[:add_new]
+          html
         end
       end
 
@@ -608,8 +665,8 @@ module ActiveScaffold
       end
       alias override_input? override_input
 
-      def subform_partial_for_column(column)
-        subform_partial = "#{active_scaffold_config_for(column.association.klass).subform.layout}_subform"
+      def subform_partial_for_column(column, klass = nil)
+        subform_partial = "#{column.options[:layout] || active_scaffold_config_for(klass || column.association.klass).subform.layout}_subform"
         override_subform_partial(column, subform_partial) || subform_partial
       end
 
@@ -643,7 +700,7 @@ module ActiveScaffold
           remote_controller = active_scaffold_controller_for(record_select_config.model).controller_path
           options[:controller] = remote_controller
           options.merge!(active_scaffold_input_text_options)
-          record_select_field(options[:name], record, options)
+          record_select_field(options[:name], nil, options)
         else
           select_options = sorted_association_options_find(nested.association, nil, record)
           select_options ||= active_scaffold_config.model.all
@@ -683,14 +740,14 @@ module ActiveScaffold
 
         # Minimum
         unless options[:min]
-          min = validators.map { |v| v.options[:greater_than_or_equal] }.compact.max
+          min = validators.map { |v| v.options[:greater_than_or_equal_to] }.compact.max
           greater_than = validators.map { |v| v.options[:greater_than] }.compact.max
           numerical_constraints[:min] = [min, (greater_than + margin if greater_than)].compact.max
         end
 
         # Maximum
         unless options[:max]
-          max = validators.map { |v| v.options[:less_than_or_equal] }.compact.min
+          max = validators.map { |v| v.options[:less_than_or_equal_to] }.compact.min
           less_than = validators.map { |v| v.options[:less_than] }.compact.min
           numerical_constraints[:max] = [max, (less_than - margin if less_than)].compact.min
         end

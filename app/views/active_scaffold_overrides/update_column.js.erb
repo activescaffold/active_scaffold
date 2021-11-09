@@ -22,5 +22,5 @@
   ActiveScaffold.replace_html('<%= @column_span_id %>','<%= escape_javascript(get_column_value(@record, @column)) %>');
 <% end -%>
 <% if @column.calculation? -%>
-  ActiveScaffold.replace_html('<%= active_scaffold_calculations_id(:column => @column) %>', '<%= escape_javascript(render_column_calculation(@column)) %>');
+  ActiveScaffold.replace_html('<%= active_scaffold_calculations_id(:column => @column) %>', '<%= escape_javascript(render_column_calculation(@column, id_condition: false)) %>');
 <% end -%>

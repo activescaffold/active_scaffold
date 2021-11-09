@@ -245,16 +245,23 @@ module ActiveScaffold
         options = column.options.merge(options)
         type = "#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
         use_select = options.delete(:use_select)
-        helper = use_select ? "select_#{type}" : "#{type}#{'_local' if type == 'datetime'}_field"
+        from_name = "#{options[:name]}[from]"
+        to_name = "#{options[:name]}[to]"
         if use_select
-          default_from_options = {include_blank: true, prefix: "#{options[:name]}[from]"}
-          default_to_options = {include_blank: true, prefix: "#{options[:name]}[to]"}
+          helper = "select_#{type}"
+          fields = [
+            send(helper, field_search_datetime_value(from_value), options.reverse_merge(include_blank: true, prefix: from_name)),
+            send(helper, field_search_datetime_value(to_value), options.reverse_merge(include_blank: true, prefix: to_name))
+          ]
+        else
+          helper = "#{type}#{'_local' if type == 'datetime'}_field_tag"
+          fields = [
+            send(helper, from_name, field_search_datetime_value(from_value), options.except(:name, :object).merge(id: "#{options[:id]}_from")),
+            send(helper, to_name, field_search_datetime_value(to_value), options.except(:name, :object).merge(id: "#{options[:id]}_to"))
+          ]
         end
 
-        safe_join [
-          send(helper, field_search_datetime_value(from_value), options.reverse_merge(default_from_options || {})),
-          send(helper, field_search_datetime_value(to_value), options.reverse_merge(default_to_options || {}))
-        ], ' - '
+        safe_join fields, ' - '
       end
 
       def active_scaffold_search_date(column, options)

@@ -35,6 +35,7 @@ module ActiveScaffold::Actions
     def configure_nested
       return unless nested?
       register_constraints_with_action_columns(nested.constrained_fields)
+      return unless active_scaffold_config.actions.include? :list
       active_scaffold_config.list.user.label = nested_label
       return if active_scaffold_config.nested.ignore_order_from_association
       chain = beginning_of_chain
@@ -88,7 +89,8 @@ module ActiveScaffold::Actions
     end
 
     def beginning_of_chain
-      if nested? && nested.association
+      # only if nested is related to current controller, e.g. not when adding record in subform inside subform
+      if nested? && nested.match_model?(active_scaffold_config.model)
         nested_chain_with_association
       elsif nested? && nested.scope
         nested_parent_record.send(nested.scope)
@@ -126,7 +128,7 @@ module ActiveScaffold::Actions
       return unless create_association_with_parent?
       if nested.child_association.singular?
         record.send("#{nested.child_association.name}=", nested_parent_record)
-      elsif nested.association.through_singular? # && nested.child_association.through_singular?
+      elsif nested.association.through_singular? && nested.child_association.through_singular?
         through = nested_parent_record.send(nested.association.through_reflection.name)
         record.send("#{nested.child_association.through_reflection.name}=", through)
       else
@@ -159,7 +161,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     def destroy_existing
-      return redirect_to(params.merge(:action => :delete, :only_path => true)) if request.get?
+      return redirect_to(params.merge(:action => :delete, :only_path => true)) if request.get? || request.head?
       do_destroy_existing
       respond_to_action(:destroy_existing)
     end

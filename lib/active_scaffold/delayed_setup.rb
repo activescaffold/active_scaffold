@@ -11,22 +11,23 @@ module ActiveScaffold
 
     module ClassMethods
       def active_scaffold(model_id = nil, &block)
-        @delayed_mutex ||= Mutex.new
-        @active_scaffold_delayed = proc { super(model_id, &block) }
+        @delayed_monitor ||= Monitor.new
+        @active_scaffold_delayed = proc do
+          @_prefixes = nil # clean prefixes in case is already cached, so our local_prefixes override is picked up
+          super(model_id, &block)
+          @active_scaffold_delayed = @delayed_monitor = nil # after configuring, no need to keep proc or monitor
+        rescue StandardError
+          # clear config variable if failed, so next request tries again
+          @active_scaffold_config = nil
+          raise
+        end
       end
 
       def config_active_scaffold_delayed
-        return if @delayed_mutex.nil? || Thread.current["#{name}_running_delayed_init"]
-        @delayed_mutex.synchronize do
-          return unless @active_scaffold_delayed
-          @_prefixes = nil # clean prefixes in case is already cached, so our local_prefixes override is picked up
-          Thread.current["#{name}_running_delayed_init"] = true
-          block = @active_scaffold_delayed
-          @active_scaffold_delayed = nil # clear before called, active_scaffold_config may be called inside block
-          block.call
-          Thread.current["#{name}_running_delayed_init"] = nil
+        @delayed_monitor&.synchronize do
+          # if called in same thread while running config, do nothing
+          @active_scaffold_delayed&.call unless @active_scaffold_config
         end
-        @delayed_mutex = nil
       end
 
       def active_scaffold_config

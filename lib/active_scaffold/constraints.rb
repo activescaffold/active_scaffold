@@ -70,7 +70,7 @@ module ActiveScaffold
             conditions << [column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR '), *([v] * column.search_sql.size)]
           end
         # unknown-to-activescaffold-but-real-database-column constraint
-        elsif active_scaffold_config.model.columns_hash[k.to_s] && params[column.name] != v
+        elsif active_scaffold_config._columns_hash[k.to_s] && params[column.name] != v
           hash_conditions.deep_merge!(k => v)
         else
           raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
@@ -153,7 +153,7 @@ module ActiveScaffold
               raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller
             end
             record.send("#{k}=", v[0].constantize.find(v[1]))
-          else # regular singular association
+          elsif !column.association.source_reflection&.options&.include?(:through) # regular singular association, or one-level through association
             record.send("#{k}=", column.association.klass.find(v))
 
             # setting the belongs_to side of a has_one isn't safe. if the has_one was already

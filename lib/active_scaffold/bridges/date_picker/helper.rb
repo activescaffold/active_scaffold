@@ -24,9 +24,7 @@ module ActiveScaffold::Bridges
       def self.date_options_for_locales
         I18n.available_locales.collect do |locale|
           locale_date_options = date_options(locale)
-          if locale_date_options
-            "$.datepicker.regional['#{locale}'] = #{locale_date_options.to_json};"
-          end
+          "$.datepicker.regional['#{locale}'] = #{locale_date_options.to_json};" if locale_date_options
         end.compact.join('')
       end
 
@@ -59,9 +57,7 @@ module ActiveScaffold::Bridges
       def self.datetime_options_for_locales
         I18n.available_locales.collect do |locale|
           locale_datetime_options = datetime_options(locale)
-          if locale_datetime_options
-            "$.timepicker.regional['#{locale}'] = #{locale_datetime_options.to_json};"
-          end
+          "$.timepicker.regional['#{locale}'] = #{locale_datetime_options.to_json};" if locale_datetime_options
         end.compact.join('')
       end
 
@@ -86,7 +82,7 @@ module ActiveScaffold::Bridges
 
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
-        if rails_format =~ /%[cUWwxXZz]/
+        if rails_format.match?(/%[cUWwxXZz]/)
           Rails.logger.warn(
             "AS DatePicker::Helper: rails date format #{rails_format} includes options "\
             "which can't be converted to jquery datepicker format. "\

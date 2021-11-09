@@ -43,7 +43,7 @@ module ActiveScaffold
         elsif mongoid? klass
           klass.fields
         else
-          []
+          {}
         end
       end
 

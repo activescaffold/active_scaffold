@@ -323,6 +323,37 @@ jQuery(document).ready(function($) {
     if (jQuery(this).prop('checked')) color_field.val('');
   });
 
+  jQuery(document).on('click', '.hide-new-subform, .show-new-subform', function(e) {
+    var $this = jQuery(this), line = $this.closest('.form-element'),
+      subform = line.find('#' + $this.data('subform-id')), radio = false, hide, select;
+    if ($this.is('[type=radio]')) {
+      radio = true;
+      hide = $this.is('.hide-new-subform');
+    } else {
+      e.preventDefault();
+      hide = subform.is(':visible');
+    }
+    if ($this.data('select-id')) {
+      select = line.find('#' + $this.data('select-id'));
+      if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').andSelf();
+    }
+    if (hide) {
+      subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
+      if (select) select.show().prop('disabled', false);
+      if (radio) {
+        $this.closest('.form-element').find('[name="' + $this.attr('name') + '"].show-new-subform').prop('disabled', false);
+      } else $this.html($this.data('select-text'));
+    } else {
+      if (select) select.hide().prop('disabled', true);
+      subform.show().find("input:disabled,select:disabled,textarea:disabled").prop('disabled', false);
+      if (radio) $this.prop('disabled', true);
+      else {
+        $this.data('select-text', $this.html());
+        $this.html($this.data('subform-text'));
+      }
+    }
+  });
+
   jQuery(document).on('turbolinks:before-visit', function() {
     if (history.state.active_scaffold) {
       history.replaceState({turbolinks: true, url: document.location.href}, '', document.location.href);
@@ -480,8 +511,10 @@ var ActiveScaffold = {
     ActiveScaffold.auto_paginate(container);
     ActiveScaffold.draggable_lists('.draggable-lists', container);
     ActiveScaffold.sliders(container);
+    ActiveScaffold.disable_optional_subforms(container);
   },
   setup_history_state: function() {
+    if (!jQuery('.active-scaffold').length) return;
     var data = {}, current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
     if (current_search_item.length) {
       // store user settings enabled, update state with current page, search and sorting
@@ -516,6 +549,30 @@ var ActiveScaffold = {
   },
   enable_js_form_buttons: function(element) {
     jQuery('.as-js-button', element).show();
+  },
+  disable_optional_subforms: function(element) {
+    jQuery('.sub-form.optional', element).each(function () {
+      var $this = jQuery(this), toggle = $this.find('>.visibility-toggle');
+      if (toggle.length) {
+        var hide = toggle.text() == toggle.data('show');
+        $this.find('> [id] > .sub-form-record > .associated-record dl:first').each(function (i) {
+          var parent = jQuery(this).parent(), div_id = toggle.data('toggable') + i;
+          parent.children().wrapAll('<div id="' + div_id + '">');
+          if (hide) parent.find('> div').hide();
+          parent.prepend(toggle.clone().data('toggable', div_id));
+        });
+        toggle.remove();
+      }
+      if ($this.is(':visible')) {
+        var line = $this.closest('.form-element'), toggle = line.find('.show-new-subform[data-subform-id="' + $this.attr('id') + '"]').first();
+        if (toggle.is('[type=radio]')) toggle.prop('disabled', true);
+        else if (toggle.data('select-id')) {
+          select = line.find('#' + toggle.data('select-id'));
+          if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').andSelf();
+          select.hide().prop('disabled', true);
+        }
+      } else $this.find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
+    });
   },
   sliders: function(element) {
     jQuery('.as-slider', element).each(function() {
@@ -686,7 +743,7 @@ var ActiveScaffold = {
 
   disable_form: function(as_form, skip_loading_indicator) {
     if (typeof(as_form) == 'string') as_form = '#' + as_form;
-    as_form = jQuery(as_form)
+    as_form = jQuery(as_form);
     var loading_indicator = jQuery('#' + as_form.attr('id').replace(/-form$/, '-loading-indicator'));
     if (!skip_loading_indicator && loading_indicator) loading_indicator.css('visibility','visible');
     jQuery('input[type=submit]', as_form).attr('disabled', 'disabled');
@@ -1056,6 +1113,7 @@ var ActiveScaffold = {
       url: url,
       data: params,
       type: 'post',
+      dataType: 'script',
       beforeSend: function(xhr, settings) {
         element.nextAll('img.loading-indicator').css('visibility','visible');
         /* force to blur and save previous last_focus, because disable_form will trigger
@@ -1406,7 +1464,7 @@ ActiveScaffold.ActionLink.Table = ActiveScaffold.ActionLink.Abstract.extend({
     else {
       throw 'Unknown position "' + this.position + '"'
     }
-    ActiveScaffold.highlight(this.adapter.find('td').first().children());
+    ActiveScaffold.highlight(this.adapter.find('td').first().children().not('script'));
     ActiveScaffold.focus_first_element_of_form(this.adapter);
   }
 });

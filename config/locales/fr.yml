@@ -107,7 +107,8 @@ fr:
       other: "%{count} %{model} marqués"
     refresh: Rafraîchir
     remove: Supprimer
-    remove_file: Supprimer et remplacer le fichier
+    remove_file: Supprimer ou remplacer le fichier
+    remove_files: Supprimer ou Ajouter des fichiers
     replace_existing: Remplacer existant(e)
     replace_with_new: Remplacer avec le nouveau
     reset: Annuler

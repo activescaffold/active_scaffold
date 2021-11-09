@@ -262,12 +262,12 @@ module ActiveScaffold::Config
       attr_reader :nested_default_sorting
 
       def nested_default_sorting=(options)
-        @nested_default_sorting ||= @conf.sorting.dup
+        @nested_default_sorting ||= sorting_dup
         @nested_default_sorting.set_nested_sorting(options[:table_name], options[:default_sorting])
       end
 
       def default_sorting
-        nested_default_sorting.nil? || @sorting.present? ? @conf.sorting.dup : nested_default_sorting
+        nested_default_sorting.nil? || @sorting.present? ? sorting_dup : nested_default_sorting
       end
 
       # TODO: programatically set sorting, for per-request configuration, priority @params, then @sort
@@ -287,12 +287,12 @@ module ActiveScaffold::Config
           self['sort'] = nil if @params['sort_direction'] == 'reset'
 
           if self['sort'] && @conf.core.columns[self['sort'][0]]
-            sorting = @conf.sorting.dup
+            sorting = sorting_dup
             sorting.set(*self['sort'])
             @_sorting = sorting
           else
             @_sorting = default_sorting
-            @_sorting.set(@sorting) if @sorting
+            @_sorting.set(*@sorting) if @sorting
             if @conf.columns.constraint_columns.present?
               @_sorting.constraint_columns = @conf.columns.constraint_columns
             end
@@ -303,6 +303,15 @@ module ActiveScaffold::Config
 
       def count_includes
         @conf.count_includes
+      end
+
+      protected
+
+      def sorting_dup
+        sorting = @conf.sorting.dup
+        # access to config instance columns instead of config class columns, in case columns are changed in this request
+        sorting.instance_variable_set :@columns, core.columns
+        sorting
       end
     end
   end

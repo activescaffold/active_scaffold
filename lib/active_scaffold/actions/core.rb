@@ -6,7 +6,7 @@ module ActiveScaffold::Actions
         before_action :check_input_device
         before_action :register_constraints_with_action_columns, :unless => :nested?
         after_action :clear_flashes
-        after_action :clear_storage
+        around_action :clear_storage
         rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
       base.helper_method :active_scaffold_config
@@ -22,7 +22,7 @@ module ActiveScaffold::Actions
     end
 
     def render_field
-      if request.get?
+      if request.get? || request.head?
         render_field_for_inplace_editing
         respond_to do |format|
           format.js { render :action => 'render_field_inplace', :layout => false }
@@ -72,7 +72,8 @@ module ActiveScaffold::Actions
         else
           updated_record_with_column(@column, params.delete(:value), @scope)
         end
-      setup_parent(@record) if main_form_controller && @scope
+      # if @scope has more than 2 ] then it's subform inside subform, and assign parent would fail (found associotion may be through association)
+      setup_parent(@record) if main_form_controller && @scope && @scope.scan(']').size == 2
       after_render_field(@record, @column)
     end
 
@@ -129,8 +130,8 @@ module ActiveScaffold::Actions
       end
 
       if params[:nested] # form in nested scaffold, set nested parent_record to parent
-        nested = ActiveScaffold::DataStructures::NestedInfo.get(parent.class, params.delete(:nested))
-        if nested.child_association
+        nested = ActiveScaffold::DataStructures::NestedInfo.get(parent.class, params[:nested])
+        if nested&.child_association && !nested.child_association.polymorphic?
           apply_constraints_to_record(parent, constraints: {nested.child_association.name => nested.parent_id})
         end
       end
@@ -244,18 +245,19 @@ module ActiveScaffold::Actions
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
     def conditions_from_params
       @conditions_from_params ||= begin
-        conditions = {}
+        conditions = [{}]
         params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
-          column = active_scaffold_config._columns_hash[key.to_s]
+          distinct = true if key.match?(/!$/)
+          column = active_scaffold_config._columns_hash[key.to_s[0..(distinct ? -2 : -1)]]
           next unless column
-          key = key.to_sym
+          key = column.name.to_sym
           not_string = %i[string text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 
-          range = %i[date datetime].include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
+          range = %i[date datetime integer decimal float bigint].include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
           value = value.split('..') if range
-          conditions[key] =
+          value =
             if value.is_a?(Array)
               value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
             elsif value == '' && (not_string || column.null)
@@ -263,19 +265,22 @@ module ActiveScaffold::Actions
             else
               ActiveScaffold::Core.column_type_cast(value, column)
             end
-          conditions[key] = Range.new(*conditions[key]) if range
+          value = Range.new(*value) if range
+          if distinct
+            conditions << active_scaffold_config.model.arel_table[key].not_eq(value)
+          else
+            conditions[0][key] = value
+          end
         end
         conditions
       end
     end
 
     def new_model
-      # ignore nested unrelated to current controller, e.g. adding record in subform inside subform, would create wrong parent_record
-      if nested? && nested.association && nested.association.klass != active_scaffold_config.model
-        return active_scaffold_config.model.new
-      end
       relation = beginning_of_chain
-      build_options = sti_nested_build_options(relation.klass) if nested? && nested.plural_association?
+      if nested? && nested.plural_association? && nested.match_model?(active_scaffold_config.model)
+        build_options = sti_nested_build_options(relation.klass)
+      end
       relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
     end
 
@@ -303,6 +308,8 @@ module ActiveScaffold::Actions
     end
 
     def clear_storage
+      yield if block_given?
+    ensure
       session_index = active_scaffold_session_storage_key
       session.delete(session_index) if session[session_index].blank?
     end
@@ -313,7 +320,7 @@ module ActiveScaffold::Actions
 
     def check_input_device
       return unless session[:input_device_type].nil?
-      if request.env['HTTP_USER_AGENT'] =~ /(iPhone|iPod|iPad)/i
+      if request.env['HTTP_USER_AGENT'].match?(/(iPhone|iPod|iPad)/i)
         session[:input_device_type] = 'TOUCH'
         session[:hover_supported] = false
       else
@@ -354,7 +361,7 @@ module ActiveScaffold::Actions
     #   flash[:info] = 'Player fired'
     # end
     def process_action_link_action(render_action = :action_update, crud_type_or_security_options = nil)
-      if request.get?
+      if request.get? || request.head?
         # someone has disabled javascript, we have to show confirmation form first
         @record = find_if_allowed(params[:id], :read) if params[:id]
         respond_to_action(:action_confirmation)
@@ -424,7 +431,9 @@ module ActiveScaffold::Actions
     end
 
     def virtual_columns(columns)
-      columns.reject { |col| active_scaffold_config.model.columns_hash[col.to_s] || active_scaffold_config.columns[col]&.association }
+      columns.reject do |col|
+        active_scaffold_config._columns_hash[col.to_s] || active_scaffold_config.columns[col]&.association
+      end
     end
 
     def association_columns(columns)

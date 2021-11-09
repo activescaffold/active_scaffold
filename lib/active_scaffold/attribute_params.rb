@@ -33,41 +33,10 @@ module ActiveScaffold
   module AttributeParams
     protected
 
-    # workaround to update counters when polymorphic has_many changes on persisted record
-    # TODO: remove when rails4 support is removed or counter cache for polymorphic has_many association works on rails4
-    def hack_for_has_many_counter_cache(parent_record, column, value)
-      association = parent_record.association(column.name)
-      counter_attr = association.send(:cached_counter_attribute_name)
-      difference = value.select(&:persisted?).size - parent_record.send(counter_attr)
-
-      if parent_record.new_record?
-        parent_record.send "#{column.name}=", value
-        parent_record.send "#{counter_attr}_will_change!"
-      else
-        # don't decrement counter for deleted records, on destroy they will update counter
-        difference += (parent_record.send(column.name) - value).size
-        association.send :update_counter, difference unless difference.zero?
-      end
-
-      # update counters on old parents if belongs_to is changed
-      value.select(&:persisted?).each do |record|
-        key = record.send(column.association.foreign_key)
-        parent_record.class.decrement_counter counter_attr, key if key && key != parent_record.id # rubocop:disable Rails/SkipsModelValidations
-      end
-      parent_record.send "#{column.name}=", value if parent_record.persisted?
-    end
-
-    # rails 4 needs this hack for polymorphic has_many
-    # TODO: remove when hack_for_has_many_counter_cache is not needed
-    def hack_for_has_many_counter_cache?(parent_record, column)
-      column.association.counter_cache_hack? && parent_record.association(column.name).send(:has_cached_counter?)
-    end
-
     # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
-    # rails 4 needs this hack for non-polymorphic belongs_to, when selecting record, not creating new one (value is Hash)
     # rails 5 needs this hack for belongs_to, when selecting record, not creating new one (value is Hash)
-    # TODO: remove when pull request is merged and no version with bug is supported
-    def counter_cache_hack?(association, value)
+    # TODO: remove when rails5 support is removed
+    def belongs_to_counter_cache_hack?(association, value)
       !params_hash?(value) && association.belongs_to? && association.counter_cache_hack?
     end
 
@@ -92,21 +61,19 @@ module ActiveScaffold
       multi_parameter_attrs = multi_parameter_attributes(attributes)
 
       columns.each_column(for: parent_record, crud_type: crud_type, flatten: true) do |column|
-        begin
-          # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
-          column.params.select { |p| attributes.key? p }.each { |p| parent_record.send("#{p}=", attributes[p]) }
+        # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
+        column.params.select { |p| attributes.key? p }.each { |p| parent_record.send("#{p}=", attributes[p]) }
 
-          if multi_parameter_attrs.key? column.name.to_s
-            parent_record.send(:assign_multiparameter_attributes, multi_parameter_attrs[column.name.to_s])
-          elsif attributes.key? column.name
-            update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
-          end
-        rescue StandardError => e
-          message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} "\
-                    "(value from params #{attributes[column.name].inspect})"
-          Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
-          raise
+        if multi_parameter_attrs.key? column.name.to_s
+          parent_record.send(:assign_multiparameter_attributes, multi_parameter_attrs[column.name.to_s])
+        elsif attributes.key? column.name
+          update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
         end
+      rescue StandardError => e
+        message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} "\
+                  "(value from params #{attributes[column.name].inspect})"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise
       end
 
       parent_record
@@ -132,7 +99,7 @@ module ActiveScaffold
     end
 
     def update_column_association(parent_record, column, attribute, value)
-      if counter_cache_hack?(column.association, attribute)
+      if belongs_to_counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value&.id
         parent_record.association(column.name).target = value
       elsif column.association.collection? && column.association.through_singular?
@@ -140,8 +107,6 @@ module ActiveScaffold
         through_record = parent_record.send(through)
         through_record ||= parent_record.send "build_#{through}"
         through_record.send "#{column.association.source_reflection.name}=", value
-      elsif hack_for_has_many_counter_cache?(parent_record, column)
-        hack_for_has_many_counter_cache(parent_record, column, value)
       else
         parent_record.send "#{column.name}=", value
       end
@@ -230,7 +195,7 @@ module ActiveScaffold
       return nil unless build_record_from_params?(attributes, column, parent_record)
       record = find_or_create_for_params(attributes, column, parent_record)
       if record
-        record_columns = active_scaffold_config_for(column.association.klass).subform.columns
+        record_columns = active_scaffold_config_for(record.class).subform.columns
         prev_constraints = record_columns.constraint_columns
         record_columns.constraint_columns = [column.association.reverse].compact
         update_record_from_params(record, record_columns, attributes, avoid_changes)
@@ -242,8 +207,9 @@ module ActiveScaffold
 
     def build_record_from_params?(params, column, record)
       current = record.send(column.name)
-      klass = column.association.klass
-      (column.association.collection? && !column.show_blank_record?(current)) || !attributes_hash_is_empty?(params, klass)
+      return true if column.association.collection? && !column.show_blank_record?(current)
+      klass = column.association.klass(record)
+      klass && !attributes_hash_is_empty?(params, klass)
     end
 
     # Attempts to create or find an instance of the klass of the association in parent_column from the
@@ -251,12 +217,12 @@ module ActiveScaffold
     # otherwise it will build a new one.
     def find_or_create_for_params(params, parent_column, parent_record)
       current = parent_record.send(parent_column.name)
-      klass = parent_column.association.klass
+      klass = parent_column.association.klass(parent_record)
       if params.key? klass.primary_key
         record_from_current_or_find(klass, params[klass.primary_key], current)
       elsif klass.authorized_for?(:crud_type => :create)
         association = parent_column.association
-        record = association.klass.new
+        record = klass.new
         if association.reverse_association&.belongs_to? && (association.collection? || current.nil?)
           record.send("#{parent_column.association.reverse}=", parent_record)
         end
@@ -275,17 +241,6 @@ module ActiveScaffold
         current.detect { |o| o.id.to_s == id }
       else # attaching an existing but not-current object
         klass.find(id)
-      end
-    end
-
-    def save_record_to_association(record, association, value, reverse = nil)
-      return unless association
-      if association.collection?
-        record.send(association.name) << value
-      elsif reverse&.belongs_to?
-        value.send("#{reverse.name}=", record)
-      else
-        record.send("#{association.name}=", value)
       end
     end
 
@@ -337,13 +292,9 @@ module ActiveScaffold
       if ActiveScaffold::OrmChecks.mongoid? klass
         column.default_val
       elsif ActiveScaffold::OrmChecks.active_record? klass
-        if Rails.version < '5.0'
-          column.type_cast_from_database(column.default)
-        else
-          column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
-          cast_type = ActiveRecord::Type.lookup column_type
-          cast_type ? cast_type.deserialize(column.default) : column.default
-        end
+        column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
+        cast_type = ActiveRecord::Type.lookup column_type
+        cast_type ? cast_type.deserialize(column.default) : column.default
       end
     end
   end

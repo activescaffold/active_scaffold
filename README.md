@@ -1,6 +1,7 @@
+
 Overview
 ========
-[![Build status](https://travis-ci.org/activescaffold/active_scaffold.svg?branch=master)](https://travis-ci.org/activescaffold/active_scaffold)
+[![Build status](https://api.travis-ci.com/activescaffold/active_scaffold.svg?branch=master)](https://app.travis-ci.com/activescaffold/active_scaffold)
 [![Code Climate](https://codeclimate.com/github/activescaffold/active_scaffold/badges/gpa.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
 [![Test Coverage](https://codeclimate.com/github/activescaffold/active_scaffold/badges/coverage.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
 [![Dependency Status](https://gemnasium.com/activescaffold/active_scaffold.svg)](https://gemnasium.com/activescaffold/active_scaffold)
@@ -8,13 +9,16 @@ Overview
 [![Inline docs](https://inch-ci.org/github/activescaffold/active_scaffold.svg?branch=master)](https://inch-ci.org/github/activescaffold/active_scaffold)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 4.2.0 is supported, ruby >= 2.3 required.
+ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 5.2.0 is supported, ruby >= 2.5 required.
 
 Branch Details
 --------------
-3-5-stable supports rails >= 4.0.x and ruby >= 2.0.0  
-3-4-stable supports rails >= 3.2.x and ruby >= 1.9.3  
-3-3-stable supports rails >= 3.2.x and ruby >= 1.8  
+3-6-stable supports rails >= 4.2.x and <= 6.1.x, and ruby >= 2.3.0
+
+These versions are not supported anymore:  
+3-5-stable supports rails >= 4.0.x and <= 5.1.x, and ruby >= 2.0.0  
+3-4-stable supports rails >= 3.2.x and <= 4.2.x, and ruby >= 1.9.3  
+3-3-stable supports rails 3.2.x and ruby >= 1.8  
 rails-3.2 supports Rails 3.1 & 3.2, and is the current source of the 3.2.x line of gems.
 
 Quick Start
@@ -25,11 +29,11 @@ Added to Gemfile
 
     gem 'active_scaffold'
 
-For rails >= 5.1, add jquery to application.js before rails-ujs (with jquery-rails), or load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
-
-    //= require jquery
+For rails >= 5.1, add jquery-rails to Gemfile, and install generator will jquery to application.js before rails-ujs. Also it's possible to load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
 
     gem 'jquery-rails'
+
+For rails >= 6.0, installer generator will create app/assets/javascripts/application.js, add it to assets.precompile array and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack yet. Jquery may be loaded by packs or assets pipeline.
 
 Run the following commands, for rails 4.2
 
@@ -39,7 +43,7 @@ Run the following commands, for rails 4.2
     rails g active_scaffold:resource Model [attrs]
     bundle exec rake db:migrate
     
-Or run the following commands, for rails 5
+Or run the following commands, for rails >= 5
 
     bundle install
     rails g active_scaffold:install

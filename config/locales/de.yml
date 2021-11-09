@@ -107,7 +107,8 @@ de:
       other: "%{count} %{model} makriert"
     refresh: Neu laden
     remove: Entfernen
-    remove_file: Entferne oder Ersetze Datei
+    remove_file: Entferne oder Ersetzte Datei
+    remove_files: Entfernen oder Hinzufügen Dateien
     replace_existing: Existierenden ersetzen
     replace_with_new: Mit Neuer ersetzen
     reset: Zurücksetzen

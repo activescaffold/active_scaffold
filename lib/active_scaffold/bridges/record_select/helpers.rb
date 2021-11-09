@@ -14,7 +14,9 @@ class ActiveScaffold::Bridges::RecordSelect
         record = options.delete(:object)
         if column.association&.singular?
           multiple = column.options.dig(:html_options, :multiple)
-          active_scaffold_record_select(record, column, options, record.send(column.name), multiple)
+          html = active_scaffold_record_select(record, column, options, record.send(column.name), multiple)
+          html << active_scaffold_new_record_subform(column, record, options) if column.options[:add_new]
+          html
         elsif column.association&.collection?
           active_scaffold_record_select(record, column, options, record.send(column.name), true)
         else

@@ -2,7 +2,7 @@ module ActiveScaffold::Actions
   module List
     def self.included(base)
       base.before_action :list_authorized_filter, :only => :index
-      base.helper_method :list_columns
+      base.helper_method :list_columns, :count_on_association_class?
     end
 
     def index
@@ -93,7 +93,7 @@ module ActiveScaffold::Actions
     end
 
     def includes_need_join?(column, sorting = active_scaffold_config.list.user.sorting)
-      sorting.sorts_on?(column) || scoped_habtm?(column)
+      (sorting.sorts_by_sql? && sorting.sorts_on?(column)) || scoped_habtm?(column)
     end
 
     def scoped_habtm?(column)
@@ -106,11 +106,7 @@ module ActiveScaffold::Actions
       super
     end
 
-    # The actual algorithm to prepare for the list view
-    def do_list
-      # id: nil needed in params_for because rails reuse it even
-      # if it was deleted from params (like do_refresh_list does)
-      @remove_id_from_list_links = params[:id].blank?
+    def current_page
       set_includes_for_columns
 
       page = find_page(find_page_options)
@@ -119,8 +115,81 @@ module ActiveScaffold::Actions
         page = page.pager.last
         active_scaffold_config.list.user.page = page.number
       end
-      @page = page
-      @records = page.items
+      page
+    end
+
+    # The actual algorithm to prepare for the list view
+    def do_list
+      # id: nil needed in params_for because rails reuse it even
+      # if it was deleted from params (like do_refresh_list does)
+      @remove_id_from_list_links = params[:id].blank?
+      @page = current_page
+      @records = @page.items
+      cache_column_counts
+    end
+
+    def columns_to_cache_counts
+      list_columns.select do |col|
+        col.association&.collection? && col.includes.blank? && col.associated_number? &&
+          !ActiveScaffold::OrmChecks.tableless?(col.association.klass) &&
+          !col.association.reverse_association&.counter_cache
+      end
+    end
+
+    def cache_column_counts
+      @counts = columns_to_cache_counts.each_with_object({}) do |column, counts|
+        if ActiveScaffold::OrmChecks.active_record?(column.association.klass)
+          counts[column.name] = count_query_for_column(column).count
+        elsif ActiveScaffold::OrmChecks.mongoid?(column.association.klass)
+          counts[column.name] = mongoid_count_for_column(column)
+        end
+      end
+    end
+
+    def count_on_association_class?(column)
+      column.association.has_many? && !column.association.through? &&
+        (!column.association.as || column.association.reverse_association)
+    end
+
+    def count_query_for_column(column)
+      if count_on_association_class?(column)
+        count_query_on_association_class(column)
+      else
+        count_query_with_join(column)
+      end
+    end
+
+    def count_query_on_association_class(column)
+      key = column.association.primary_key || :id
+      query = column.association.klass.where(column.association.foreign_key => @records.map(&key.to_sym))
+      if column.association.as
+        query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
+      end
+      if column.association.scope
+        query = query.instance_exec(&column.association.scope)
+      end
+      query.group(column.association.foreign_key)
+    end
+
+    def count_query_with_join(column)
+      klass = column.association.klass
+      query = active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id))
+                                    .joins(column.name).group(active_scaffold_config.primary_key)
+                                    .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
+      query = query.uniq if column.association.scope && klass.instance_exec(&column.association.scope).values[:distinct]
+      query
+    end
+
+    def mongoid_count_for_column(column)
+      matches = {column.association.foreign_key => {'$in': @records.map(&:id)}}
+      if column.association.as
+        matches[column.association.reverse_association.foreign_type] = {'$eq': active_scaffold_config.model.name}
+      end
+      group = {_id: "$#{column.association.foreign_key}", count: {'$sum' => 1}}
+      query = column.association.klass.collection.aggregate([{'$match' => matches}, {'$group' => group}])
+      query.each_with_object({}) do |row, hash|
+        hash[row['_id']] = row['count']
+      end
     end
 
     def find_page_options
@@ -158,15 +227,21 @@ module ActiveScaffold::Actions
     end
 
     def each_record_in_page
-      current_page = active_scaffold_config.list.user.page
-      do_search if respond_to? :do_search, true
-      active_scaffold_config.list.user.page = current_page
-      do_list
-      @page.items.each { |record| yield record }
+      page_items.each { |record| yield record }
     end
 
     def each_record_in_scope
       scoped_query.each { |record| yield record }
+    end
+
+    def page_items
+      @page_items ||= begin
+        page_number = active_scaffold_config.list.user.page
+        do_search if respond_to? :do_search, true
+        active_scaffold_config.list.user.page = page_number
+        @page = current_page
+        @page.items
+      end
     end
 
     def scoped_query
@@ -198,7 +273,7 @@ module ActiveScaffold::Actions
             {:etag => active_scaffold_config.list.user.sorting.clause}
           end
         end
-      objects.present? ? objects : super
+      objects.presence || super
     end
 
     private

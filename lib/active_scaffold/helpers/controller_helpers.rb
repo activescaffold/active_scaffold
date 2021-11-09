@@ -104,7 +104,7 @@ module ActiveScaffold
         else
           exclude_parameters = %i[utf8 associated_id]
           parameters = {}
-          if params[:parent_scaffold] && nested? && nested.singular_association?
+          if params[:parent_scaffold] && nested_singular_association?
             parameters[:controller] = params[:parent_scaffold]
             exclude_parameters.concat [nested.param_name, :association, :parent_scaffold]
             # parameters[:eid] = params[:parent_scaffold] # not neeeded anymore?
@@ -178,6 +178,17 @@ module ActiveScaffold
           association.klass.new.tap do |record|
             save_record_to_association(record, association.reverse_association, parent_record) # set inverse
           end
+        end
+      end
+
+      def save_record_to_association(record, association, value, reverse = nil)
+        return unless association
+        if association.collection?
+          record.association(association.name).target << value
+        elsif reverse&.belongs_to?
+          value.send("#{reverse.name}=", record)
+        else
+          record.send("#{association.name}=", value)
         end
       end
     end

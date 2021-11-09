@@ -113,8 +113,9 @@ module ActiveScaffold
       end
 
       def tel_to(text)
-        groups = text.to_s.scan(/(?:^\+)?\d+/)
-        extension = groups.pop if text.to_s =~ /\s*[^\d\s]+\s*\d+$/
+        text = text.to_s
+        groups = text.scan(/(?:^\+)?\d+/)
+        extension = groups.pop if text.match?(/\s*[^\d\s]+\s*\d+$/)
         link_to text, "tel:#{[groups.join('-'), extension].compact.join(',')}"
       end
 
@@ -159,12 +160,22 @@ module ActiveScaffold
           end
         else
           if column.association.collection?
-            associated_size = value.size if column.associated_number? # get count before cache association
+            associated_size = column_association_size(record, column, value) if column.associated_number? # get count before cache association
             if column.association.respond_to_target? && !value.loaded?
               cache_association(record.association(column.name), column, associated_size)
             end
           end
           format_association_value(value, column, associated_size)
+        end
+      end
+
+      def column_association_size(record, column, value)
+        cached_counts = @counts&.dig(column.name)
+        if cached_counts
+          key = column.association.primary_key if count_on_association_class?(column)
+          cached_counts[record.send(key || :id)] || 0
+        else
+          value.size
         end
       end
 
@@ -203,7 +214,9 @@ module ActiveScaffold
         end
       end
 
-      def association_join_text
+      def association_join_text(column = nil)
+        column_value = column&.association_join_text
+        return column_value if column_value
         return @_association_join_text if defined? @_association_join_text
         @_association_join_text = active_scaffold_config.list.association_join_text
       end
@@ -212,14 +225,14 @@ module ActiveScaffold
         associated_limit = column.associated_limit
         if associated_limit.nil?
           firsts = value.collect(&label_method)
-          safe_join firsts, association_join_text
+          safe_join firsts, association_join_text(column)
         elsif associated_limit.zero?
           size if column.associated_number?
         else
           firsts = value.loaded? ? value[0, associated_limit] : value.limit(associated_limit)
           firsts = firsts.map(&label_method)
           firsts << '…' if value.size > associated_limit
-          text = safe_join firsts, association_join_text
+          text = safe_join firsts, association_join_text(column)
           text << " (#{size})" if column.associated_number? && associated_limit && value.size > associated_limit
           text
         end
@@ -419,16 +432,16 @@ module ActiveScaffold
 
       # CALCULATIONS
 
-      def column_calculation(column)
+      def column_calculation(column, id_condition: true)
         if column.calculate.instance_of? Proc
           column.calculate.call(@records)
         else
-          calculate_query.calculate(column.calculate, column.name)
+          calculate_query(id_condition).calculate(column.calculate, column.name)
         end
       end
 
-      def render_column_calculation(column)
-        calculation = column_calculation(column)
+      def render_column_calculation(column, id_condition: true)
+        calculation = column_calculation(column, id_condition: id_condition)
         override_formatter = "render_#{column.name}_#{column.calculate.is_a?(Proc) ? :calculate : column.calculate}"
         calculation = send(override_formatter, calculation) if respond_to? override_formatter
         format_column_calculation(column, calculation)
