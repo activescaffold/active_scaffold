@@ -1,6 +1,6 @@
 <%
   live_search = active_scaffold_config.search.live?
-  url_options =  params_for(action: :index, id: nil, search: nil)
+  url_options =  params_for(action: :index)
   submit_text ||= :search
   xhr ||= request.xhr?
   options = {
@@ -11,7 +11,7 @@
     method: :get
   }
   
-  hidden_params = params_for(action: :index).except(:controller, :action).to_query.split(Rack::Utils::DEFAULT_SEP)
+  hidden_params = url_options.except(:controller, :action).to_query.split(Rack::Utils::DEFAULT_SEP)
 -%>
 
 <%= form_tag url_options, options do %>
