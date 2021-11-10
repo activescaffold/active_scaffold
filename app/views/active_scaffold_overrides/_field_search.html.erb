@@ -9,8 +9,16 @@
     data: {loading: true},
     method: :get
   }
+  
+  hidden_params = params_for(action: :index).except(:controller, :action).to_query.split(Rack::Utils::DEFAULT_SEP)
 -%>
+
 <%= form_tag url_options, options %>
+  <% hidden_params.each do |pair| -%>
+    <% key, value = pair.split('=', 2).map { |str| Rack::Utils.unescape(str) } -%>
+    <%= hidden_field_tag(key, value) %>
+  <% end -%>
+  
   <ol class="form">
     <% visibles, hiddens = visibles_and_hiddens(active_scaffold_config.field_search) %>
     <% visibles.each do |column| -%>
