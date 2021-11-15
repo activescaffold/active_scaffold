@@ -1,6 +1,8 @@
 - Drop support for rails < 5.2 and ruby < 2.5
 - Support adding settings for chosen and tinyMCE in initializer (ActiveScaffold.js_config) or JavaScript code (ActiveScaffold.config, needed for callbacks)
 - Support ruby 3.0
+
+= 3.6.3 (not released yet)
 - Fix search on nested or embedded lists with rails_ujs
 
 = 3.6.2
