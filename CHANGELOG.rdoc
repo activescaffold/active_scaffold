@@ -2,8 +2,9 @@
 - Support adding settings for chosen and tinyMCE in initializer (ActiveScaffold.js_config) or JavaScript code (ActiveScaffold.config, needed for callbacks)
 - Support ruby 3.0
 
-= 3.6.3 (not released yet)
+= 3.6.3
 - Fix search on nested or embedded lists with rails_ujs
+- Fix inplace edit when collection action link opens a view with table and th
 
 = 3.6.2
 - Fix count query when association's primary key is string
