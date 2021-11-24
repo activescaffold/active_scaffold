@@ -1,5 +1,6 @@
 = 3.6.3 (not released yet)
 - Fix search on nested or embedded lists with rails_ujs
+- Fix inplace edit when collection action link opens a view with table and th
 
 = 3.6.2
 - Fix count query when association's primary key is string
