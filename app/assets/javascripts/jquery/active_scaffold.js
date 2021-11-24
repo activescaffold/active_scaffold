@@ -1024,7 +1024,7 @@ var ActiveScaffold = {
 
       if (my_parent.is('td')) {
         var column_no = my_parent.prevAll('td').length;
-        column_heading = my_parent.closest('.active-scaffold').find('th:eq(' + column_no + ')');
+        column_heading = my_parent.closest('table').find('th:eq(' + column_no + ')');
       } else if (my_parent.is('th')) {
         column_heading = my_parent;
       }
