@@ -1,4 +1,4 @@
-= 3.6.3 (not released yet)
+= 3.6.3
 - Fix search on nested or embedded lists with rails_ujs
 - Fix inplace edit when collection action link opens a view with table and th
 
