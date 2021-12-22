@@ -377,6 +377,9 @@ module ActiveScaffold::Actions
             yield @record
           end
         else
+          if @action_link && respond_to?(@action_link.security_method, true) && !send(@action_link.security_method)
+            raise ActiveScaffold::ActionNotAllowed
+          end
           yield
         end
         respond_to_action(render_action)
