@@ -4,6 +4,9 @@
 - Check action link security method in process_action_link_action with no id
 - Add thumbnail_variant setting to ActiveStorage bridge
 
+= 3.6.4
+- Fix country_select bridge for latest gem version
+
 = 3.6.3
 - Fix search on nested or embedded lists with rails_ujs
 - Fix inplace edit when collection action link opens a view with table and th
