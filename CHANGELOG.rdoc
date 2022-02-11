@@ -1,3 +1,6 @@
+= 3.6.4.1
+- Actually fix country_select bridge for latest gem version
+
 = 3.6.4
 - Fix country_select bridge for latest gem version
 
@@ -45,7 +48,7 @@
 - Display loading indicator at bottom on auto pagination
 - List rendering speed up
 - Remove font family from CSS, it was preventing from changing it easily in body
-- Fix search for mongoid models in with threadsafety enabled
+- Fix search for mongoid models with threadsafety enabled
 - Keep nested params after calling render_field for column in subform
 - Fix nested for controllers without list action (for example, for nested create on singular assocations)
 - Fix delayed setup issues with threads
