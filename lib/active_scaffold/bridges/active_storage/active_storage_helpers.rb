@@ -2,9 +2,6 @@ module ActiveScaffold
   module Bridges
     class ActiveStorage
       module ActiveStorageBridgeHelpers
-        mattr_accessor :thumbnail_variant
-        self.thumbnail_variant = {resize_to_limit: [nil, 30]}
-
         class << self
           # has_one :"#{name}_attachment", -> { where(name: name) }, class_name: "ActiveStorage::Attachment", as: :record, inverse_of: :record, dependent: false
           def active_storage_has_one_fields(klass)

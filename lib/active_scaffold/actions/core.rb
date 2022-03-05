@@ -320,6 +320,7 @@ module ActiveScaffold::Actions
 
     def check_input_device
       return unless session[:input_device_type].nil?
+      return if request.env['HTTP_USER_AGENT'].nil?
       if request.env['HTTP_USER_AGENT'].match?(/(iPhone|iPod|iPad)/i)
         session[:input_device_type] = 'TOUCH'
         session[:hover_supported] = false
@@ -377,6 +378,9 @@ module ActiveScaffold::Actions
             yield @record
           end
         else
+          if @action_link && respond_to?(@action_link.security_method, true) && !send(@action_link.security_method)
+            raise ActiveScaffold::ActionNotAllowed
+          end
           yield
         end
         respond_to_action(render_action)
