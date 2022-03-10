@@ -3,6 +3,7 @@
 - Support ruby 3.0
 - Check action link security method in process_action_link_action with no id
 - Add thumbnail_variant setting to ActiveStorage bridge
+- Support Postgres citext column type
 
 = 3.6.4.1
 - Actually fix country_select bridge for latest gem version
