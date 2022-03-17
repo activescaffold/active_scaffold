@@ -41,6 +41,7 @@ de:
       closeText: Schließen
       currentText: Jetzt
       timeText: Uhrzeit
+      timezoneText: Timezone
     days: Tage
     delete: Löschen
     deleted_model: "%{model} gelöscht"

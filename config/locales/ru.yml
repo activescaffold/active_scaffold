@@ -40,7 +40,8 @@ ru:
     datetime_picker_options:
       closeText: Закрыть
       currentText: Текущее время
-      timeText: 
+      timeText:
+      timezoneText: Timezone
     days: дней
     delete: Удалить
     deleted_model: "%{model}: запись удалена"

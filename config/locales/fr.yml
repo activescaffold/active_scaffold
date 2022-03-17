@@ -41,6 +41,7 @@ fr:
       closeText: Fermer
       currentText: Maintenant
       timeText: Heure
+      timezoneText: Timezone
     days: Jours
     delete: Supprimer
     deleted_model: Suppression de %{model}

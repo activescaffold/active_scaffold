@@ -40,7 +40,8 @@ hu:
     datetime_picker_options:
       closeText: 
       currentText: 
-      timeText: 
+      timeText:
+      timezoneText: Timezone
     days: Days
     delete: Törlés
     deleted_model: "%{model} törölve"

@@ -1,3 +1,5 @@
+- Support timezone in jquery timepicker
+
 = 3.6.4.1
 - Actually fix country_select bridge for latest gem version
 
