@@ -40,7 +40,8 @@ ja:
     datetime_picker_options:
       closeText: 
       currentText: 
-      timeText: 
+      timeText:
+      timezoneText: Timezone
     days: Days
     delete: 削除
     deleted_model: "%{model}を削除しました"

@@ -5,6 +5,9 @@
 - Add thumbnail_variant setting to ActiveStorage bridge
 - Support Postgres citext column type
 
+= 3.6.5
+- Support timezone in jquery timepicker
+
 = 3.6.4.1
 - Actually fix country_select bridge for latest gem version
 
@@ -22,7 +25,6 @@
 
 = 3.6.1
 - Display group cols vertically when subform layout is vertical
-- Fix html attributes for input datetime on field search, when jquery ui is not used
 - Fix html attributes for input datetime on field search, when jquery ui is not used
 - Fix constraint columns for nested list on through assocaitions
 - Support rails 6.1

@@ -18,7 +18,8 @@ module ActiveScaffold::Bridges
         /%M/ => 'mm',
         /%p/ => 'tt',
         /%S/ => 'ss',
-        /%[cUWwxXZz]/ => ''
+        /%z/ => 'Z',
+        /%[cUWwxXZ]/ => ''
       }.freeze
 
       def self.date_options_for_locales
@@ -82,13 +83,14 @@ module ActiveScaffold::Bridges
 
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
-        if rails_format.match?(/%[cUWwxXZz]/)
+        unsupported = DATE_FORMAT_CONVERSION.index ''
+        if rails_format.match?(unsupported)
+          options = unsupported.to_s.scan(/\[(.*)\]/).dig(0, 0)&.each_char&.map { |c| "%#{c}" }
           Rails.logger.warn(
             "AS DatePicker::Helper: rails date format #{rails_format} includes options "\
             "which can't be converted to jquery datepicker format. "\
-            'Options %c, %U, %W, %w, %x %X, %z, %Z are not supported by datepicker and will be removed'
+            "Options #{options.join(', ')} are not supported by datepicker and will be removed"
           )
-          nil
         end
         js_format = rails_format.dup
         js_format.gsub!(/([ ]|^)([^% ]\S*)/, " '\\2'")
