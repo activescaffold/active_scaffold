@@ -1,3 +1,4 @@
+= 3.6.5
 - Support timezone in jquery timepicker
 
 = 3.6.4.1
