@@ -1,3 +1,6 @@
+= 3.6.7
+- Upgrade jquery ui timepicker addon to 1.6.3
+
 = 3.6.6
 - Fix format string for timezone in jquery timepicker
 
