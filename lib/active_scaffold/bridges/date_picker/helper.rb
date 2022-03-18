@@ -18,7 +18,7 @@ module ActiveScaffold::Bridges
         /%M/ => 'mm',
         /%p/ => 'tt',
         /%S/ => 'ss',
-        /%z/ => 'Z',
+        /%z/ => 'z',
         /%[cUWwxXZ]/ => ''
       }.freeze
 

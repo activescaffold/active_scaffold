@@ -5,6 +5,9 @@
 - Add thumbnail_variant setting to ActiveStorage bridge
 - Support Postgres citext column type
 
+= 3.6.6
+- Fix format string for timezone in jquery timepicker
+
 = 3.6.5
 - Support timezone in jquery timepicker
 
