@@ -13,6 +13,10 @@ module ActiveScaffold::Bridges
       Jquery::Rails.const_defined?('JQUERY_UI_VERSION') || Jquery.const_defined?('Ui') if Object.const_defined?('Jquery')
     end
 
+    def self.stylesheets
+      'jquery-ui-timepicker-addon'
+    end
+
     def self.localization
       "jQuery(function($){
   if (typeof($.datepicker) === 'object') {
