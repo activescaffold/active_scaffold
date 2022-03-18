@@ -1,3 +1,6 @@
+= 3.6.6
+- Fix format string for timezone in jquery timepicker
+
 = 3.6.5
 - Support timezone in jquery timepicker
 
