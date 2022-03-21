@@ -5,6 +5,9 @@
 - Add thumbnail_variant setting to ActiveStorage bridge
 - Support Postgres citext column type
 
+= 3.6.8 (not released yet)
+- Add depend_on available translations in app to data picker bridge JS
+
 = 3.6.7
 - Upgrade jquery ui timepicker addon to 1.6.3
 
