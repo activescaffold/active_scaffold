@@ -1,4 +1,6 @@
 - Add depend_on available translations in app to data picker bridge JS
+- Fix live search with rails-ujs
+- Replace delayedObserver with $.debounce
 
 = 3.6.7
 - Upgrade jquery ui timepicker addon to 1.6.3
