@@ -1,3 +1,4 @@
+= 3.6.8
 - Add depend_on available translations in app to data picker bridge JS
 - Fix live search with rails-ujs
 - Replace delayedObserver with $.debounce
