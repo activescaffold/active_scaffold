@@ -5,8 +5,10 @@
 - Add thumbnail_variant setting to ActiveStorage bridge
 - Support Postgres citext column type
 
-= 3.6.8 (not released yet)
+= 3.6.8
 - Add depend_on available translations in app to data picker bridge JS
+- Fix live search with rails-ujs
+- Replace delayedObserver with $.debounce
 
 = 3.6.7
 - Upgrade jquery ui timepicker addon to 1.6.3
