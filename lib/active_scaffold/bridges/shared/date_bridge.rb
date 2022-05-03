@@ -122,9 +122,9 @@ module ActiveScaffold
               if column.search_sql.is_a? Proc
                 column.search_sql.call(from_value, to_value, operator)
               elsif operator.nil?
-                ['%<search_sql>s BETWEEN ? AND ?', from_value.to_s(:db), to_value.to_s(:db)] unless from_value.nil? || to_value.nil?
+                ['%<search_sql>s BETWEEN ? AND ?', from_value, to_value] unless from_value.nil? || to_value.nil?
               else
-                ["%<search_sql>s #{value['opt']} ?", from_value.to_s(:db)] unless from_value.nil?
+                ["%<search_sql>s #{value['opt']} ?", from_value] unless from_value.nil?
               end
             end
 

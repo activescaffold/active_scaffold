@@ -254,7 +254,7 @@ module ActiveScaffold
         format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
         en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
         time = Time.strptime(en_value, format)
-        offset ? time.utc : Time.zone.local_to_utc(time).in_time_zone
+        offset ? time : Time.zone.local_to_utc(time).in_time_zone
       rescue StandardError => e
         message = "Error parsing time from #{en_value}"
         message << " (#{value})" if en_value != value
@@ -319,11 +319,11 @@ module ActiveScaffold
         if from_value.nil? && to_value.nil?
           nil
         elsif !from_value
-          ['%<search_sql>s <= ?', to_value.to_s(:db)]
+          ['%<search_sql>s <= ?', to_value]
         elsif !to_value
-          ['%<search_sql>s >= ?', from_value.to_s(:db)]
+          ['%<search_sql>s >= ?', from_value]
         else
-          ['%<search_sql>s BETWEEN ? AND ?', from_value.to_s(:db), to_value.to_s(:db)]
+          ['%<search_sql>s BETWEEN ? AND ?', from_value, to_value]
         end
       end
 
