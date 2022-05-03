@@ -319,11 +319,11 @@ module ActiveScaffold
         if from_value.nil? && to_value.nil?
           nil
         elsif !from_value
-          ['%<search_sql>s <= ?', to_value.to_s(:db)]
+          ['%<search_sql>s <= ?', to_value]
         elsif !to_value
-          ['%<search_sql>s >= ?', from_value.to_s(:db)]
+          ['%<search_sql>s >= ?', from_value]
         else
-          ['%<search_sql>s BETWEEN ? AND ?', from_value.to_s(:db), to_value.to_s(:db)]
+          ['%<search_sql>s BETWEEN ? AND ?', from_value, to_value]
         end
       end
 

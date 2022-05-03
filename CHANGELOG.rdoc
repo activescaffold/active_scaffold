@@ -7,6 +7,7 @@
 
 = 3.6.9 (not released yet)
 - Support depend on .rb or .json locale files for date picker bridge
+- Fix search with dates entered with timezone in datepicker
 
 = 3.6.8
 - Add depend_on available translations in app to data picker bridge JS
