@@ -254,7 +254,7 @@ module ActiveScaffold
         format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
         en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
         time = Time.strptime(en_value, format)
-        offset ? time : Time.zone.local_to_utc(time).in_time_zone
+        offset ? time.utc : Time.zone.local_to_utc(time).in_time_zone
       rescue StandardError => e
         message = "Error parsing time from #{en_value}"
         message << " (#{value})" if en_value != value
