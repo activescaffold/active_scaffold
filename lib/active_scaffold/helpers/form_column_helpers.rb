@@ -720,7 +720,9 @@ module ActiveScaffold
       # Try to get numerical constraints from model's validators
       def column_numerical_constraints(column, options)
         validators = column.active_record_class.validators.select do |v|
-          v.is_a?(ActiveModel::Validations::NumericalityValidator) && v.attributes.include?(column.name)
+          v.is_a?(ActiveModel::Validations::NumericalityValidator) &&
+            v.attributes.include?(column.name) &&
+            !v.options[:if] && !v.options[:unless]
         end
 
         equal_validator = validators.find { |v| v.options[:equal_to] }
@@ -770,7 +772,7 @@ module ActiveScaffold
       end
 
       def numerical_constraints_for_column(column, options)
-        constraints = Rails.cache.fetch("#{column.cache_key}#numerical_constarints") do
+        constraints = Rails.cache.fetch("#{column.cache_key}#numerical_constraints") do
           column_numerical_constraints(column, options)
         end
         constraints.merge(options)

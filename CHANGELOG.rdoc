@@ -1,5 +1,7 @@
 - Support depend on .rb or .json locale files for date picker bridge
 - Fix search with dates entered with timezone in datepicker
+- Don't add numerical constraints based on conditional validation
+- Fix typo in cache key for numerical constraints
 
 = 3.6.8
 - Add depend_on available translations in app to data picker bridge JS
