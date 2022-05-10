@@ -5,6 +5,10 @@
 - Add thumbnail_variant setting to ActiveStorage bridge
 - Support Postgres citext column type
 
+= 3.6.10 (not released yet)
+- Don't add numerical constraints based on conditional validation
+- Fix typo in cache key for numerical constraints
+
 = 3.6.9
 - Support depend on .rb or .json locale files for date picker bridge
 - Fix search with dates entered with timezone in datepicker
