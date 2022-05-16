@@ -4,6 +4,7 @@
 - Check action link security method in process_action_link_action with no id
 - Add thumbnail_variant setting to ActiveStorage bridge
 - Support Postgres citext column type
+- Fix date picker bridge for ruby >= 2.7
 
 = 3.6.10 (not released yet)
 - Don't add numerical constraints based on conditional validation

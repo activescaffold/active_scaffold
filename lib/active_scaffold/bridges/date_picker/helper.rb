@@ -83,7 +83,7 @@ module ActiveScaffold::Bridges
 
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
-        unsupported = DATE_FORMAT_CONVERSION.index ''
+        unsupported = DATE_FORMAT_CONVERSION.key ''
         if rails_format.match?(unsupported)
           options = unsupported.to_s.scan(/\[(.*)\]/).dig(0, 0)&.each_char&.map { |c| "%#{c}" }
           Rails.logger.warn(
