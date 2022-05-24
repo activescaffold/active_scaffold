@@ -14,7 +14,7 @@
   hidden_params = url_options.except(:controller, :action, :id, :search).to_query.split(Rack::Utils::DEFAULT_SEP)
 -%>
 
-<%= form_tag url_options, options do %>
+<%= form_tag url_options.slice(:controller, :action, :id, :search), options do %>
   <% hidden_params.each do |pair| -%>
     <% key, value = pair.split('=', 2).map { |str| Rack::Utils.unescape(str) } -%>
     <%= hidden_field_tag(key, value) %>
