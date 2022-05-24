@@ -1,3 +1,4 @@
+= 3.6.10
 - Don't add numerical constraints based on conditional validation
 - Fix typo in cache key for numerical constraints
 - Fix duplicated params in search form, e.g. embedded constraints
