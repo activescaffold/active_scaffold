@@ -1,3 +1,5 @@
+- Fix inplace edit cloning with jquery >= 1.9, when more than one child is cloned
+
 = 3.6.10
 - Don't add numerical constraints based on conditional validation
 - Fix typo in cache key for numerical constraints

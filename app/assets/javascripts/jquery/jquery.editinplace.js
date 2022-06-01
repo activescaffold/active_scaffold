@@ -326,7 +326,7 @@ $.extend(InlineEditor.prototype, {
 				if (patternNode.data('id')) {
 					patternNode.attr('id', patternNode.data('id') + this.settings.clone_id_suffix);
 				}
-				clonedNodes = clonedNodes.after(patternNode);
+				clonedNodes.push(patternNode[0]);
 			});
 		}
 		return clonedNodes;
