@@ -350,7 +350,7 @@ $.extend(InlineEditor.prototype, {
 	},
 	
 	setValue: function(editFields, textValue) {
-		var editField = editFields.find(':input'),
+		var editField = editFields.find(':input').addBack(':input'),
 			type = editField.get(0).nodeName.toLowerCase();
 		if (type === 'input') type = editField.attr('type').toLowerCase();
 		var function_name = 'setValueFor' + type;
@@ -362,7 +362,7 @@ $.extend(InlineEditor.prototype, {
 	},
 
 	setValueForselect: function(editFields, textValue) {
-		var editField = editFields.find('select:first'),
+		var editField = editFields.find('select').addBack('select').first(),
 			option_value = editField.children("option:contains('" + textValue + "')").val();
 
 		if (typeof(option_value) !== 'undefined') {
@@ -371,7 +371,7 @@ $.extend(InlineEditor.prototype, {
 	},
 
 	setValueForradio: function(editFields, textValue) {
-		var editField = editFields.find('input[type=radio]').filter(function() {
+		var editField = editFields.find('input[type=radio]').addBack('input[type=radio]').filter(function() {
 			var contains = ':contains("' + textValue + '")';
 			return editFields.find('label[for="' + $(this).attr('id') + '"]' + contains).length ||
 				$(this).closest('label' + contains).length;
