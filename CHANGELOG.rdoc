@@ -1,4 +1,5 @@
 - Fix inplace edit cloning with jquery >= 1.9, when more than one child is cloned
+- Support inplace edit cloning for :radio form_ui
 
 = 3.6.10
 - Don't add numerical constraints based on conditional validation

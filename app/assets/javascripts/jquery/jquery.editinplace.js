@@ -317,7 +317,6 @@ $.extend(InlineEditor.prototype, {
 		if (editorNode.data('id')) editorNode.attr('id', editorNode.data('id') + this.settings.clone_id_suffix);
 		editorNode.attr('name', 'inplace_value');
 		editorNode.addClass('editor_field');
-		this.setValue(editorNode, this.originalValue);
 		clonedNodes = editorNode;
 
 		if (patternNodes.additionalNodes) {
@@ -329,6 +328,7 @@ $.extend(InlineEditor.prototype, {
 				clonedNodes.push(patternNode[0]);
 			});
 		}
+		this.setValue(clonedNodes, this.originalValue);
 		return clonedNodes;
 	},
 
@@ -349,21 +349,35 @@ $.extend(InlineEditor.prototype, {
 		return nodes;
 	},
 	
-	setValue: function(editField, textValue) {
-		var function_name = 'setValueFor' + editField.get(0).nodeName.toLowerCase();
+	setValue: function(editFields, textValue) {
+		var editField = editFields.find(':input'),
+			type = editField.get(0).nodeName.toLowerCase();
+		if (type === 'input') type = editField.attr('type').toLowerCase();
+		var function_name = 'setValueFor' + type;
 		if (typeof(this[function_name]) == 'function') {
-			this[function_name](editField, textValue);
+			this[function_name](editFields, textValue);
 		} else {
 			editField.val(textValue);
 		}
 	},
 
-	setValueForselect: function(editField, textValue) {
-		var option_value = editField.children("option:contains('" + textValue + "')").val();
+	setValueForselect: function(editFields, textValue) {
+		var editField = editFields.find('select:first'),
+			option_value = editField.children("option:contains('" + textValue + "')").val();
 
 		if (typeof(option_value) !== 'undefined') {
 			editField.val(option_value);
 		}
+	},
+
+	setValueForradio: function(editFields, textValue) {
+		var editField = editFields.find('input[type=radio]').filter(function() {
+			var contains = ':contains("' + textValue + '")';
+			return editFields.find('label[for="' + $(this).attr('id') + '"]' + contains).length ||
+				$(this).closest('label' + contains).length;
+		}).first();
+
+		if (editField.length) editField.prop('checked', true);
 	},
 
 	inputNameAndClass: function() {
