@@ -361,7 +361,7 @@ module ActiveScaffold::DataStructures
                                                        .map { |val| validator_force_required?(val) }
                                                        .select(&:present?)
       self.required = validators_force_require_on.any? { |opt| opt == true } ||
-                      validators_force_require_on.reject { |opt| opt == true }.flatten
+                      validators_force_require_on.reject { |opt| opt == true }.flatten.presence
       self.sort = true
       self.search_sql = true
 

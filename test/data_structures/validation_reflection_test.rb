@@ -9,6 +9,16 @@ class ValidationReflectionTest < MiniTest::Test
     assert column.required?
   end
 
+  def test_set_required_for_validates_presence_of_with_on
+    column = ActiveScaffold::DataStructures::Column.new(:name, Company)
+    refute column.required?
+    Company.expects(:validators_on).with(:name).returns([ActiveModel::Validations::PresenceValidator.new(:attributes => :name, :on => [:create])])
+    column = ActiveScaffold::DataStructures::Column.new(:name, Company)
+    assert column.required?
+    assert column.required?(:create)
+    refute column.required?(:update)
+  end
+
   def test_set_required_for_validates_inclusion_of
     column = ActiveScaffold::DataStructures::Column.new(:name, Company)
     refute column.required?
