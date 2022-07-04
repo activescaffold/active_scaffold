@@ -6,10 +6,11 @@
 - Support Postgres citext column type
 - Fix date picker bridge for ruby >= 2.7
 
-= 3.6.11 (not released yet)
+= 3.6.11
 - Fix inplace edit cloning with jquery >= 1.9, when more than one child is cloned
 - Support inplace edit cloning for :radio form_ui
 - Add records parameter to cache_columns_count and related methods (count_query_for_column, mongoid_count_for_column)
+- Fix required attribute when validator uses :on option, so on: :update only set required on update form, and :create only set required on create form
 
 = 3.6.10
 - Don't add numerical constraints based on conditional validation

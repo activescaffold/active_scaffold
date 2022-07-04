@@ -24,7 +24,7 @@
     <%= render_column(column, @record, renders_as, scope) %>
   <% end %>
   <% else -%>
-  <li class="form-element <%= 'required' if column.required? %> <%= column.form_ui %> <%= column_css_class %>">
+  <li class="form-element <%= 'required' if column.required?(action_for_validation?(@record)) %> <%= column.form_ui %> <%= column_css_class %>">
     <%= render_column(column, @record, renders_as, scope, !authorized) %>
   </li>
   <% end -%>
