@@ -166,14 +166,14 @@ test:rails-5.2:mri:2.6:
     - .use_mri_2_6
     - .use_rails_5_2
 
-test:rails-6.0:jruby:9.2:
-  extends:
-    - .use_rails_6_0
-    - .use_jruby_9_2
+#test:rails-6.0:jruby:9.2:
+#  extends:
+#    - .use_rails_6_0
+#    - .use_jruby_9_2
 
-test:rails-6.0:mri:2.5:
+test:rails-6.0:mri:2.6:
   extends:
-    - .use_mri_2_5
+    - .use_mri_2_6
     - .use_rails_6_0
   variables:
     COVERAGE: 'true'
@@ -186,10 +186,6 @@ test:rails-6.0:mri:2.5:
   after_script:
     - ./cc-test-reporter after-build -t simplecov
 
-test:rails-6.0:mri:2.6:
-  extends:
-    - .use_mri_2_6
-    - .use_rails_6_0
 
 test:rails-6.0:mri:2.7:
   extends:

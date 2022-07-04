@@ -25,6 +25,10 @@ jobs:
       gemfile: gemfiles/Gemfile.rails-5.2.x
     - rvm: 2.7.4
       gemfile: gemfiles/Gemfile.rails-5.2.x
+    - rvm: 2.5.9
+      gemfile: Gemfile
+    - rvm: jruby-9.2.16.0
+      gemfile: Gemfile
 language: ruby
 rvm:
   - 2.5.9
