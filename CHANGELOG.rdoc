@@ -1,3 +1,6 @@
+= 3.6.11.1
+- Fix required attribute broken on previous version when no validation was found
+
 = 3.6.11
 - Fix inplace edit cloning with jquery >= 1.9, when more than one child is cloned
 - Support inplace edit cloning for :radio form_ui
