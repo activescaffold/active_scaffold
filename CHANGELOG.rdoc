@@ -1,3 +1,5 @@
+- Fix getting proxy for action link when iterating over action links and threadsafe is enabled, so link can be changed
+
 = 3.6.11.1
 - Fix required attribute broken on previous version when no validation was found
 
