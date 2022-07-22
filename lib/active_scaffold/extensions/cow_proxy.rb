@@ -73,7 +73,7 @@ module CowProxy
 
         def each(options = {}, &block)
           super(options) do |item|
-            item = __wrap__(item) unless item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
+            item = __wrap__(item) || item unless item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
             if options[:include_set]
               yield item, __getobj__.instance_variable_get(:@set)
             else
