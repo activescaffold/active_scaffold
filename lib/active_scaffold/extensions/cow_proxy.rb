@@ -71,6 +71,17 @@ module CowProxy
           name !~ /[!?]$/
         end
 
+        def each(options = {}, &block)
+          super(options) do |item|
+            item = __wrap__(item) unless item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
+            if options[:include_set]
+              yield item, __getobj__.instance_variable_get(:@set)
+            else
+              yield item
+            end
+          end
+        end
+
         protected
 
         # Copy wrapped values to duplicated wrapped object
