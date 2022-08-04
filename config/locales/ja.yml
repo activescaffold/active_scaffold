@@ -11,20 +11,20 @@ ja:
     add: 追加
     add_existing: 既存のものを追加
     add_existing_model: 既存の%{model}を追加
-    apply: Apply
-    are_you_sure_to_delete: Are you sure you want to delete %{label}?
-    average: Average
-    begins_with: Begins with
-    between: Between
+    apply: 適用
+    are_you_sure_to_delete: "%{label}を消去してもよろしいですか？"
+    average: 平均
+    begins_with: 開始時間
+    between: 範囲指定
     cancel: キャンセル
-    cant_destroy_record: "%{record}を削除で来ません"
-    changes: 
+    cant_destroy_record: "%{record}を削除できません"
+    changes: 差分
     click_to_edit: クリックして編集
-    click_to_reset: Click to reset
+    click_to_reset: クリックしてリセット
     close: 閉じる
     config_list: Configure
     config_list_model: Configure Columns for %{model}
-    contains: Contains
+    contains: 部分一致検索
     create: 作成
     create_another: Create Another %{model}
     create_apply: 
@@ -36,36 +36,36 @@ ja:
       firstDay: 0
       isRTL: false
       showMonthAfterYear: false
-      weekHeader: Wk
+      weekHeader: 週
     datetime_picker_options:
-      closeText: 
-      currentText: 
-      timeText:
-      timezoneText: Timezone
-    days: Days
+      closeText: 閉じる
+      currentText: 現在時刻
+      timeText: 時間
+      timezoneText: 時間帯
+    days: 日分
     delete: 削除
     deleted_model: "%{model}を削除しました"
     deleted_records: 
-    delimiter: Delimiter
+    delimiter: 区切り文字
     download: ダウンロード
     edit: 編集
-    ends_with: Ends with
-    error_500: "（コード500: 内部エラー）"
+    ends_with: 終了時間
+    error_500: "（コード500：内部エラー）"
     errors:
       template:
-        body: 'There were problems with the following fields:'
+        body: '次のフィールドに問題がありました：'
         header:
-          one: 1 error prohibited this %{model} from being saved.
-          other: "%{count} errors prohibited this %{model} from being saved"
-    export: Export
+          one: 1件のエラーにより、この%{model}が保存できませんでした
+          other: "%{count}件のエラーにより、この%{model}が保存できませんでした"
+    export: エクスポート
     'false': 'False'
     filtered: "（フィルタ中）"
     found: 個ありました
-    future: Future
+    future: 未来
     group_by: 
     grouped_by: 
-    hide: "(隠す)"
-    hours: Hours
+    hide: "（隠す）"
+    hours: 時間分
     human_conditions:
       association: "%{column} = %{value}"
       boolean: "%{column} = %{value}"
@@ -73,17 +73,17 @@ ja:
     internal_error: リクエストが失敗しました
     live_search: その場で検索
     loading: 読み込み中…
-    mark_all_records: Mark all
-    maximum: Maximum
-    minimum: Minimum
-    minutes: Minutes
-    months: Months
+    mark_all_records: すべて選択
+    maximum: 最大値
+    minimum: 最小値
+    minutes: 分間
+    months: か月分
     nested_for_model: "%{parent_model}の%{nested_model}"
     nested_of_model: "%{nested_model} of %{parent_model}"
     next: 次
-    next_month: Next Month
-    next_week: Next Week
-    next_year: Next Year
+    next_month: 来月
+    next_week: 来週
+    next_year: 来年
     no_authorization_for_action: No Authorization for action %{action}
     no_color: 
     no_entries: 見つかりませんでした
@@ -94,19 +94,19 @@ ja:
     omit_header: Omit Header
     optional_attributes: Further Options
     options: オプション
-    past: Past
+    past: 過去
     pdf: PDF
-    prev_month: Last Month
-    prev_week: Last Week
-    prev_year: Last Year
+    prev_month: 先月
+    prev_week: 先週
+    prev_year: 去年
     previous: 前
     print: 印刷
-    range: Range
-    record_not_saved: Failed to save record cause of an unknown error
+    range: 範囲検索
+    record_not_saved: 不明なエラーによって保存できませんでした
     records_marked:
-      one: 1 marked %{model}
-      other: "%{count} marked %{model}"
-    refresh: Refresh
+      one: "%{model}を1件選択"
+      other: "%{model}を%{count}件選択"
+    refresh: 更新
     remove: 削除
     remove_file: ファイルを削除または置換
     remove_files: ファイルを削除または追加する
@@ -117,32 +117,32 @@ ja:
     saving: 保存中…
     search: 検索
     search_terms: 検索単語
-    seconds: Seconds
+    seconds: 秒分
     show: 表示
-    show_block: "(表示)"
+    show_block: "（表示）"
     show_model: "%{model}を表示"
-    sum: Sum
-    this_month: This Month
-    this_week: This Week
-    this_year: This Year
-    today: Today
-    tomorrow: Tomorrow
+    sum: 合計値
+    this_month: 今月
+    this_week: 今週
+    this_year: 今年
+    today: 今日
+    tomorrow: 明日
     'true': 'True'
     update: 更新
     update_apply: 
     update_model: "%{model}を更新"
     updated_model: "%{model}を更新しました"
     version_inconsistency: バージョンが一致しません - あなたが編集している間にこのレコードが変更されました。
-    weeks: Weeks
-    years: Years
-    yesterday: Yesterday
+    weeks: 週間分
+    years: 年分
+    yesterday: 昨日
   date:
     formats:
-      month: 
-      quarter: 
-      week: 
-      year_month: 
-      year_quarter: 
+      month: "%m月"
+      quarter: 第%{quarter}四半期
+      week: 週
+      year_month: "%Y年%m月"
+      year_quarter: "%{year}年第%{quarter}四半期"
   time:
     formats:
-      picker: "%a, %d %b %Y %H:%M:%S"
+      picker: "%Y年%m月%d日（%a） %H:%M:%S"
