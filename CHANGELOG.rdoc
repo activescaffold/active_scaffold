@@ -1,3 +1,4 @@
+= 3.6.13
 - Fix link caching on action when threadsafe is enabled
 
 = 3.6.12
