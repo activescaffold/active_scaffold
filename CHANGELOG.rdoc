@@ -6,6 +6,9 @@
 - Support Postgres citext column type
 - Fix date picker bridge for ruby >= 2.7
 
+= 3.6.13 (not released yet)
+- Fix link caching on action when threadsafe is enabled
+
 = 3.6.12
 - Fix getting proxy for action link when iterating over action links and threadsafe is enabled, so link can be changed
 
