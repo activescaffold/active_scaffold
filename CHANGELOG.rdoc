@@ -1,3 +1,5 @@
+- Fix link caching on action when threadsafe is enabled
+
 = 3.6.12
 - Fix getting proxy for action link when iterating over action links and threadsafe is enabled, so link can be changed
 
