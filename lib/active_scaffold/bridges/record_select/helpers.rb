@@ -51,7 +51,7 @@ class ActiveScaffold::Bridges::RecordSelect
           else
             record_select_field(options[:name], value || klass.new, record_select_options)
           end
-        html = self.class.field_error_proc.call(html, self) if record.errors[column.name].any?
+        html = self.instance_exec(html, self, &self.class.field_error_proc) if record.errors[column.name].any?
         html
       end
 
@@ -60,7 +60,7 @@ class ActiveScaffold::Bridges::RecordSelect
           :controller => active_scaffold_controller_for(record.class).controller_path
         ).merge(column.options)
         html = record_select_autocomplete(options[:name], record, record_select_options)
-        html = self.class.field_error_proc.call(html, self) if record.errors[column.name].any?
+        html = self.instance_exec(html, self, &self.class.field_error_proc) if record.errors[column.name].any?
         html
       end
     end
