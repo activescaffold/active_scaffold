@@ -5,6 +5,8 @@
 - Add thumbnail_variant setting to ActiveStorage bridge
 - Support Postgres citext column type
 - Fix date picker bridge for ruby >= 2.7
+- Fix keeping_errors for rails >= 6.1
+- Fix usage of field_error_proc on record_select bridge for rails 7
 
 = 3.6.13
 - Fix link caching on action when threadsafe is enabled
