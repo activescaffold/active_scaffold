@@ -8,6 +8,9 @@
 - Fix keeping_errors for rails >= 6.1
 - Fix usage of field_error_proc on record_select bridge for rails 7
 
+= 3.6.14 (not released yet)
+- Fix setting data on html_options when threadsafe is enabled
+
 = 3.6.13
 - Fix link caching on action when threadsafe is enabled
 

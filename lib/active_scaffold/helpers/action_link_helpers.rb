@@ -335,6 +335,7 @@ module ActiveScaffold
         html_options[:method] = link.method if link.method != :get
 
         html_options[:data] ||= {}
+        html_options[:data] = html_options[:data].deep_dup if html_options[:data].frozen?
         html_options[:data][:confirm] = link.confirm(h(record&.to_label)) if link.confirm?
         if !options[:page] && !options[:popup] && (options[:inline] || link.inline?)
           html_options[:class] << ' as_action'
