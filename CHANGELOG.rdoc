@@ -10,6 +10,7 @@
 
 = 3.6.14 (not released yet)
 - Fix setting data on html_options when threadsafe is enabled
+- Fill nested association on render field, as done in new action
 
 = 3.6.13
 - Fix link caching on action when threadsafe is enabled

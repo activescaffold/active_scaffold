@@ -124,8 +124,9 @@ module ActiveScaffold::Actions
       nested.child_association && nested_parent_record
     end
 
-    def create_association_with_parent(record)
+    def create_association_with_parent(record, check_match = false)
       return unless create_association_with_parent?
+      return if check_match && !nested.match_model?(active_scaffold_config.model)
       if nested.child_association.singular?
         record.send("#{nested.child_association.name}=", nested_parent_record)
       elsif nested.association.through_singular? && nested.child_association.through_singular?
