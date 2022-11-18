@@ -1,4 +1,64 @@
 - Drop support for rails < 5.2 and ruby < 2.5
+- Support adding settings for chosen and tinyMCE in initializer (ActiveScaffold.js_config) or JavaScript code (ActiveScaffold.config, needed for callbacks)
+- Support ruby 3.0
+- Check action link security method in process_action_link_action with no id
+- Add thumbnail_variant setting to ActiveStorage bridge
+- Support Postgres citext column type
+- Fix date picker bridge for ruby >= 2.7
+- Fix keeping_errors for rails >= 6.1
+- Fix usage of field_error_proc on record_select bridge for rails 7
+
+= 3.6.14 (not released yet)
+- Fix setting data on html_options when threadsafe is enabled
+- Fill nested association on render field, as done in new action
+
+= 3.6.13
+- Fix link caching on action when threadsafe is enabled
+
+= 3.6.12
+- Fix getting proxy for action link when iterating over action links and threadsafe is enabled, so link can be changed
+
+= 3.6.11.1
+- Fix required attribute broken on previous version when no validation was found
+
+= 3.6.11
+- Fix inplace edit cloning with jquery >= 1.9, when more than one child is cloned
+- Support inplace edit cloning for :radio form_ui
+- Add records parameter to cache_columns_count and related methods (count_query_for_column, mongoid_count_for_column)
+- Fix required attribute when validator uses :on option, so on: :update only set required on update form, and :create only set required on create form
+
+= 3.6.10
+- Don't add numerical constraints based on conditional validation
+- Fix typo in cache key for numerical constraints
+- Fix duplicated params in search form, e.g. embedded constraints
+
+= 3.6.9
+- Support depend on .rb or .json locale files for date picker bridge
+- Fix search with dates entered with timezone in datepicker
+
+= 3.6.8
+- Add depend_on available translations in app to data picker bridge JS
+- Fix live search with rails-ujs
+- Replace delayedObserver with $.debounce
+
+= 3.6.7
+- Upgrade jquery ui timepicker addon to 1.6.3
+
+= 3.6.6
+- Fix format string for timezone in jquery timepicker
+
+= 3.6.5
+- Support timezone in jquery timepicker
+
+= 3.6.4.1
+- Actually fix country_select bridge for latest gem version
+
+= 3.6.4
+- Fix country_select bridge for latest gem version
+
+= 3.6.3
+- Fix search on nested or embedded lists with rails_ujs
+- Fix inplace edit when collection action link opens a view with table and th
 
 = 3.6.2
 - Fix count query when association's primary key is string
@@ -40,7 +100,7 @@
 - Display loading indicator at bottom on auto pagination
 - List rendering speed up
 - Remove font family from CSS, it was preventing from changing it easily in body
-- Fix search for mongoid models in with threadsafety enabled
+- Fix search for mongoid models with threadsafety enabled
 - Keep nested params after calling render_field for column in subform
 - Fix nested for controllers without list action (for example, for nested create on singular assocations)
 - Fix delayed setup issues with threads

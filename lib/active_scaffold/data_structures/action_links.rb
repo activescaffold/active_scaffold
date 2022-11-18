@@ -144,7 +144,7 @@ module ActiveScaffold::DataStructures
     end
 
     def method_missing(name, *args, &block)
-      return super if name =~ /[!?]$/
+      return super if name.match?(/[!?]$/)
       class_eval <<-METHOD, __FILE__, __LINE__ + 1
         def #{name}(label = nil) # rubocop:disable Style/CommentedKeyword
           @#{name} ||= subgroup('#{name}'.to_sym, label)

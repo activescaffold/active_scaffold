@@ -167,10 +167,10 @@ module ActiveScaffold
 
       def cached_action_link_url(link, record)
         @action_links_urls ||= {}
-        @action_links_urls[link.name_to_cache] || begin
+        @action_links_urls[link.name_to_cache.to_s] || begin
           url_options = cached_action_link_url_options(link, record)
           if cache_action_link_url?(link, record)
-            @action_links_urls[link.name_to_cache] = url_for(url_options)
+            @action_links_urls[link.name_to_cache.to_s] = url_for(url_options)
           else
             url_options.merge! eid: nil, embedded: nil if link.nested_link?
             url_for(params_for(url_options))
@@ -207,12 +207,12 @@ module ActiveScaffold
 
       def action_link_url(link, record)
         url = replace_id_params_in_action_link_url(link, record, cached_action_link_url(link, record))
-        url = add_query_string_to_cached_url(link, url) if @action_links_urls[link.name_to_cache]
+        url = add_query_string_to_cached_url(link, url) if @action_links_urls[link.name_to_cache.to_s]
         url
       end
 
       def column_in_params_conditions?(key)
-        if key =~ /!$/
+        if key.match?(/!$/)
           conditions_from_params[1..-1].any? { |node| node.left.name.to_s == key[0..-2] }
         else
           conditions_from_params[0].include?(key)
@@ -267,10 +267,10 @@ module ActiveScaffold
 
       def cached_action_link_url_options(link, record)
         @action_links_url_options ||= {}
-        @action_links_url_options[link.name_to_cache] || begin
+        @action_links_url_options[link.name_to_cache.to_s] || begin
           options = action_link_url_options(link, record)
           if cache_action_link_url_options?(link, record)
-            @action_links_url_options[link.name_to_cache] = options
+            @action_links_url_options[link.name_to_cache.to_s] = options
           end
           options
         end
@@ -335,6 +335,7 @@ module ActiveScaffold
         html_options[:method] = link.method if link.method != :get
 
         html_options[:data] ||= {}
+        html_options[:data] = html_options[:data].deep_dup if html_options[:data].frozen?
         html_options[:data][:confirm] = link.confirm(h(record&.to_label)) if link.confirm?
         if !options[:page] && !options[:popup] && (options[:inline] || link.inline?)
           html_options[:class] << ' as_action'
@@ -378,7 +379,7 @@ module ActiveScaffold
             end
         end
         id ||= record&.id&.to_s || (nested? ? nested_parent_id.to_s : '')
-        action_link_id = ActiveScaffold::Registry.cache :action_link_id, link.name_to_cache do
+        action_link_id = ActiveScaffold::Registry.cache :action_link_id, link.name_to_cache.to_s do
           action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
           action_link_id(action_id, '--ID--')
         end

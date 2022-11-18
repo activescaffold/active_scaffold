@@ -3,6 +3,7 @@
   when :jquery
     jquery_ui = true
     require_asset "getprototypeof"
+    require_asset "jquery.ba-throttle-debounce"
     if Jquery::Rails.const_defined? 'JQUERY_UI_VERSION'
       require_asset "jquery-ui"
     elsif Jquery.const_defined? 'Ui'

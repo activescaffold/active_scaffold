@@ -66,8 +66,12 @@ module ActiveScaffold::DataStructures
     # whether the field is required or not. used on the form for visually indicating the fact to the user.
     # TODO: move into predicate
     attr_writer :required
-    def required?
-      @required
+    def required?(action = nil)
+      if action && @required
+        @required == true || @required.include?(action)
+      else
+        @required
+      end
     end
 
     attr_reader :update_columns
@@ -324,7 +328,7 @@ module ActiveScaffold::DataStructures
       @actions_for_association_links = self.class.actions_for_association_links.dup if association
       @select_columns = default_select_columns
 
-      @text = @column.nil? || [:string, :text, String].include?(column_type)
+      @text = @column.nil? || [:string, :text, :citext, String].include?(column_type)
       @number = false
       if @column
         if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
@@ -353,9 +357,11 @@ module ActiveScaffold::DataStructures
 
       # default all the configurable variables
       self.css_class = ''
-      self.required = active_record_class.validators_on(name).any? do |val|
-        validator_force_required?(val)
-      end
+      validators_force_require_on = active_record_class.validators_on(name)
+                                                       .map { |val| validator_force_required?(val) }
+                                                       .select(&:present?)
+      self.required = validators_force_require_on.any? { |opt| opt == true } ||
+                      validators_force_require_on.reject { |opt| opt == true }.flatten.presence
       self.sort = true
       self.search_sql = true
 
@@ -436,11 +442,16 @@ module ActiveScaffold::DataStructures
       return false if val.options[:if] || val.options[:unless]
       case val
       when ActiveModel::Validations::PresenceValidator
-        true
+        validator_required_on(val)
       when ActiveModel::Validations::InclusionValidator
-        !val.options[:allow_nil] && !val.options[:allow_blank] &&
-          !inclusion_validator_for_checkbox?(val)
+        if !val.options[:allow_nil] && !val.options[:allow_blank] && !inclusion_validator_for_checkbox?(val)
+          validator_required_on(val)
+        end
       end
+    end
+
+    def validator_required_on(val)
+      val.options[:on] ? Array(val.options[:on]) : true
     end
 
     def inclusion_validator_for_checkbox?(val)

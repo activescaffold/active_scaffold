@@ -42,8 +42,7 @@ module ActiveScaffold
 
         else # final ultimate fallback: use rails' generic input method
           # for textual fields we pass different options
-          text_types = %i[text string integer float decimal]
-          options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
+          options = active_scaffold_input_text_options(options) if column.text? || column.number?
           text_field(:record, column.name, options.merge(column.options))
         end
       rescue StandardError => e

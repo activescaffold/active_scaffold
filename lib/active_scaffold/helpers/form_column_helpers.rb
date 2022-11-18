@@ -38,8 +38,7 @@ module ActiveScaffold
 
         else # final ultimate fallback: use rails' generic input method
           # for textual fields we pass different options
-          text_types = %i[text string integer float decimal]
-          options = active_scaffold_input_text_options(options) if text_types.include?(column.column.type)
+          options = active_scaffold_input_text_options(options) if column.text? || column.number?
           if column.column.type == :string && options[:maxlength].blank?
             options[:maxlength] = column.column.limit
             options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
@@ -55,7 +54,7 @@ module ActiveScaffold
       def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil) # rubocop:disable Metrics/ParameterLists
         if add_class
           col_class = []
-          col_class << 'required' if column.required?
+          col_class << 'required' if column.required?(action_for_validation?(record))
           col_class << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
           col_class << 'hidden' if column_renders_as(column) == :hidden
           col_class << 'checkbox' if column.form_ui == :checkbox
@@ -85,13 +84,17 @@ module ActiveScaffold
         options
       end
 
+      def action_for_validation?(record)
+        record&.persisted? ? :update : :create
+      end
+
       # the standard active scaffold options used for class, name and scope
       def active_scaffold_input_options(column, scope = nil, options = {})
         name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
         record = options[:object]
 
         # Add some HTML5 attributes for in-browser validation and better user experience
-        if column.required? && (!@disable_required_for_new || scope.nil? || record&.persisted?)
+        if column.required?(action_for_validation?(record)) && (!@disable_required_for_new || scope.nil? || record&.persisted?)
           options[:required] = true
         end
         options[:placeholder] = column.placeholder if column.placeholder.present?
@@ -720,7 +723,9 @@ module ActiveScaffold
       # Try to get numerical constraints from model's validators
       def column_numerical_constraints(column, options)
         validators = column.active_record_class.validators.select do |v|
-          v.is_a?(ActiveModel::Validations::NumericalityValidator) && v.attributes.include?(column.name)
+          v.is_a?(ActiveModel::Validations::NumericalityValidator) &&
+            v.attributes.include?(column.name) &&
+            !v.options[:if] && !v.options[:unless]
         end
 
         equal_validator = validators.find { |v| v.options[:equal_to] }
@@ -770,7 +775,7 @@ module ActiveScaffold
       end
 
       def numerical_constraints_for_column(column, options)
-        constraints = Rails.cache.fetch("#{column.cache_key}#numerical_constarints") do
+        constraints = Rails.cache.fetch("#{column.cache_key}#numerical_constraints") do
           column_numerical_constraints(column, options)
         end
         constraints.merge(options)

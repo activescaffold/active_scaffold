@@ -13,9 +13,7 @@ module ActiveScaffold::Actions
       parent_record = new_model
       # don't apply if scope, subform inside subform, because constraints won't apply to parent_record
       apply_constraints_to_record parent_record unless @scope
-      if nested? && nested.match_model?(active_scaffold_config.model)
-        create_association_with_parent parent_record
-      end
+      create_association_with_parent parent_record, true if nested?
       parent_record
     end
 

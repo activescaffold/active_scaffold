@@ -22,7 +22,7 @@ module ActiveScaffold::Actions
     end
 
     def render_field
-      if request.get?
+      if request.get? || request.head?
         render_field_for_inplace_editing
         respond_to do |format|
           format.js { render :action => 'render_field_inplace', :layout => false }
@@ -92,12 +92,14 @@ module ActiveScaffold::Actions
       record = new_model
       copy_attributes(saved_record, record) if saved_record
       apply_constraints_to_record(record) unless scope
+      create_association_with_parent record, true if nested?
       update_record_from_params(record, columns, attributes || {}, true)
     end
 
     def updated_record_with_column(column, value, scope)
       record = params[:id] ? copy_attributes(find_if_allowed(params[:id], :read)) : new_model
       apply_constraints_to_record(record) unless scope || params[:id]
+      create_association_with_parent record, true if nested?
       value = column_value_from_param_value(record, column, value)
       record.send "#{column.name}=", value
       record.id = params[:id]
@@ -247,7 +249,7 @@ module ActiveScaffold::Actions
       @conditions_from_params ||= begin
         conditions = [{}]
         params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
-          distinct = true if key =~ /!$/
+          distinct = true if key.match?(/!$/)
           column = active_scaffold_config._columns_hash[key.to_s[0..(distinct ? -2 : -1)]]
           next unless column
           key = column.name.to_sym
@@ -320,7 +322,8 @@ module ActiveScaffold::Actions
 
     def check_input_device
       return unless session[:input_device_type].nil?
-      if request.env['HTTP_USER_AGENT'] =~ /(iPhone|iPod|iPad)/i
+      return if request.env['HTTP_USER_AGENT'].nil?
+      if request.env['HTTP_USER_AGENT'].match?(/(iPhone|iPod|iPad)/i)
         session[:input_device_type] = 'TOUCH'
         session[:hover_supported] = false
       else
@@ -361,7 +364,7 @@ module ActiveScaffold::Actions
     #   flash[:info] = 'Player fired'
     # end
     def process_action_link_action(render_action = :action_update, crud_type_or_security_options = nil)
-      if request.get?
+      if request.get? || request.head?
         # someone has disabled javascript, we have to show confirmation form first
         @record = find_if_allowed(params[:id], :read) if params[:id]
         respond_to_action(:action_confirmation)
@@ -377,6 +380,9 @@ module ActiveScaffold::Actions
             yield @record
           end
         else
+          if @action_link && respond_to?(@action_link.security_method, true) && !send(@action_link.security_method)
+            raise ActiveScaffold::ActionNotAllowed
+          end
           yield
         end
         respond_to_action(render_action)

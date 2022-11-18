@@ -354,6 +354,10 @@ jQuery(document).ready(function($) {
     }
   });
 
+  jQuery(document).on('input paste', 'form.search.live input[type=search]', $.debounce((ActiveScaffold.config.live_search_delay || 0.5) * 1000, function() {
+    jQuery(this).parent().find('[type=submit]').click();
+  }));
+
   jQuery(document).on('turbolinks:before-visit', function() {
     if (history.state.active_scaffold) {
       history.replaceState({turbolinks: true, url: document.location.href}, '', document.location.href);
@@ -460,44 +464,6 @@ jQuery(document).on('turbolinks:load', function($) {
 })();
 
 /*
- $ delayed observer
- (c) 2007 - Maxime Haineault (max@centdessin.com)
-
- Special thanks to Stephen Goguen & Tane Piper.
-
- Slight modifications by Elliot Winkler
-*/
-
-if (typeof(jQuery.fn.delayedObserver) === 'undefined') {
-  (function($){
-    $.extend($.fn, {
-      delayedObserver: function(callback, delay, options){
-        return this.each(function(){
-          var el = $(this);
-          var op = options || {};
-          el.data('oldval', el.val())
-            .data('delay', delay === 0 ? delay : (delay || 0.5))
-            .data('condition', op.condition || function() { return ($(this).data('oldval') == $(this).val()); })
-            .data('callback', callback)
-            [(op.event||'keyup')](function(){
-              if (el.data('condition').apply(el)) { return; }
-              else {
-                if (el.data('timer')) { clearTimeout(el.data('timer')); }
-                el.data('timer', setTimeout(function(){
-                  var callback = el.data('callback')
-                  if (callback) callback.apply(el);
-                }, el.data('delay') * 1000));
-                el.data('oldval', el.val());
-              }
-            });
-          });
-      }
-    });
-  })(jQuery);
-};
-
-
-/*
  * Simple utility methods
  */
 
@@ -507,7 +473,6 @@ var ActiveScaffold = {
     /* setup some elements on page/form load */
     ActiveScaffold.load_embedded(container);
     ActiveScaffold.enable_js_form_buttons(container);
-    ActiveScaffold.live_search(container);
     ActiveScaffold.auto_paginate(container);
     ActiveScaffold.draggable_lists('.draggable-lists', container);
     ActiveScaffold.sliders(container);
@@ -529,11 +494,6 @@ var ActiveScaffold = {
       }
     }
     ActiveScaffold.add_to_history(document.location.href, data, true);
-  },
-  live_search: function(element) {
-    jQuery('form.search.live input[type=search]', element).delayedObserver(function() {
-     jQuery(this).parent().trigger("submit");
-    }, ActiveScaffold.config.live_search_delay || 0.5);
   },
   auto_paginate: function(element) {
     var paginate_link = jQuery('.active-scaffold-pagination.auto-paginate a:first', element);
@@ -1024,7 +984,7 @@ var ActiveScaffold = {
 
       if (my_parent.is('td')) {
         var column_no = my_parent.prevAll('td').length;
-        column_heading = my_parent.closest('.active-scaffold').find('th:eq(' + column_no + ')');
+        column_heading = my_parent.closest('table').find('th:eq(' + column_no + ')');
       } else if (my_parent.is('th')) {
         column_heading = my_parent;
       }

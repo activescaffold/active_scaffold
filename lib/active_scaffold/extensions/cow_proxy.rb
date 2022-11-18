@@ -49,7 +49,7 @@ module CowProxy
       class ActionLinks < ::CowProxy::WrapClass(::ActiveScaffold::DataStructures::ActionLinks)
         def method_missing(name, *args, &block)
           CowProxy.debug { "method missing #{name} in #{__getobj__.name}" }
-          return super if name =~ /[!?]$/
+          return super if name.match?(/[!?]$/)
           subgroup =
             if _instance_variable_defined?("@#{name}")
               _instance_variable_get("@#{name}")
@@ -69,6 +69,17 @@ module CowProxy
 
         def respond_to_missing?(name, *)
           name !~ /[!?]$/
+        end
+
+        def each(options = {}, &block)
+          super(options) do |item|
+            item = __wrap__(item) || item unless item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
+            if options[:include_set]
+              yield item, __getobj__.instance_variable_get(:@set)
+            else
+              yield item
+            end
+          end
         end
 
         protected

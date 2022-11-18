@@ -125,7 +125,7 @@ module ActiveScaffold::Actions
       @remove_id_from_list_links = params[:id].blank?
       @page = current_page
       @records = @page.items
-      cache_column_counts
+      cache_column_counts @records
     end
 
     def columns_to_cache_counts
@@ -136,12 +136,12 @@ module ActiveScaffold::Actions
       end
     end
 
-    def cache_column_counts
+    def cache_column_counts(records)
       @counts = columns_to_cache_counts.each_with_object({}) do |column, counts|
         if ActiveScaffold::OrmChecks.active_record?(column.association.klass)
-          counts[column.name] = count_query_for_column(column).count
+          counts[column.name] = count_query_for_column(column, records).count
         elsif ActiveScaffold::OrmChecks.mongoid?(column.association.klass)
-          counts[column.name] = mongoid_count_for_column(column)
+          counts[column.name] = mongoid_count_for_column(column, records)
         end
       end
     end
@@ -151,17 +151,17 @@ module ActiveScaffold::Actions
         (!column.association.as || column.association.reverse_association)
     end
 
-    def count_query_for_column(column)
+    def count_query_for_column(column, records)
       if count_on_association_class?(column)
-        count_query_on_association_class(column)
+        count_query_on_association_class(column, records)
       else
-        count_query_with_join(column)
+        count_query_with_join(column, records)
       end
     end
 
-    def count_query_on_association_class(column)
+    def count_query_on_association_class(column, records)
       key = column.association.primary_key || :id
-      query = column.association.klass.where(column.association.foreign_key => @records.map(&key.to_sym))
+      query = column.association.klass.where(column.association.foreign_key => records.map(&key.to_sym))
       if column.association.as
         query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
       end
@@ -171,17 +171,17 @@ module ActiveScaffold::Actions
       query.group(column.association.foreign_key)
     end
 
-    def count_query_with_join(column)
+    def count_query_with_join(column, records)
       klass = column.association.klass
-      query = active_scaffold_config.model.where(active_scaffold_config.primary_key => @records.map(&:id))
+      query = active_scaffold_config.model.where(active_scaffold_config.primary_key => records.map(&:id))
                                     .joins(column.name).group(active_scaffold_config.primary_key)
                                     .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
       query = query.uniq if column.association.scope && klass.instance_exec(&column.association.scope).values[:distinct]
       query
     end
 
-    def mongoid_count_for_column(column)
-      matches = {column.association.foreign_key => {'$in': @records.map(&:id)}}
+    def mongoid_count_for_column(column, records)
+      matches = {column.association.foreign_key => {'$in': records.map(&:id)}}
       if column.association.as
         matches[column.association.reverse_association.foreign_type] = {'$eq': active_scaffold_config.model.name}
       end

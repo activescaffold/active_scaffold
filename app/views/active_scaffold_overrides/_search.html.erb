@@ -10,8 +10,15 @@
     data: {loading: true},
     method: :get
   }
+  
+  hidden_params = url_options.except(:controller, :action, :id, :search).to_query.split(Rack::Utils::DEFAULT_SEP)
 -%>
-<%= form_tag url_options, options do %>
+
+<%= form_tag url_options.slice(:controller, :action, :id, :search), options do %>
+  <% hidden_params.each do |pair| -%>
+    <% key, value = pair.split('=', 2).map { |str| Rack::Utils.unescape(str) } -%>
+    <%= hidden_field_tag(key, value) %>
+  <% end -%>
   <%= search_field_tag :search, (search_params if search_params.is_a? String), :class => 'text-input', :id => search_input_id, :size => 50, :autocomplete => :off, :placeholder => as_(live_search ? :live_search : :search_terms) %>
   <%= submit_tag as_(submit_text), :class => "submit", :style => ('display:none;' if live_search) %>
   <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), :class => 'as_cancel reset', :remote => true, :data => {:refresh => true} unless local_assigns[:skip_reset] %>

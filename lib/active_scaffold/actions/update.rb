@@ -69,7 +69,7 @@ module ActiveScaffold::Actions
       @updated_record = @record
       # get_row so associations are cached like in list action
       # if record doesn't fullfil current conditions remove it from list
-      @record = get_row
+      get_row
     rescue ActiveRecord::RecordNotFound
       nil
     end

@@ -118,14 +118,15 @@ module ActiveScaffold::Actions
       @nested_parent_record ||= find_if_allowed(nested.parent_id, crud, nested.parent_model)
     end
 
-    def create_association_with_parent?
+    def create_association_with_parent?(check_match = false)
       # has_many is done by beginning_of_chain and rails if direct association, not in through associations
       return false if nested.has_many? && !nested.association.through?
+      return false if check_match && !nested.match_model?(active_scaffold_config.model)
       nested.child_association && nested_parent_record
     end
 
-    def create_association_with_parent(record)
-      return unless create_association_with_parent?
+    def create_association_with_parent(record, check_match = false)
+      return unless create_association_with_parent?(check_match)
       if nested.child_association.singular?
         record.send("#{nested.child_association.name}=", nested_parent_record)
       elsif nested.association.through_singular? && nested.child_association.through_singular?
@@ -161,7 +162,7 @@ module ActiveScaffold::Actions::Nested
     end
 
     def destroy_existing
-      return redirect_to(params.merge(:action => :delete, :only_path => true)) if request.get?
+      return redirect_to(params.merge(:action => :delete, :only_path => true)) if request.get? || request.head?
       do_destroy_existing
       respond_to_action(:destroy_existing)
     end

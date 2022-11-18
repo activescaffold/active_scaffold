@@ -1,7 +1,7 @@
 
 Overview
 ========
-[![Build status](https://travis-ci.com/activescaffold/active_scaffold.svg?branch=master)](https://travis-ci.com/activescaffold/active_scaffold)
+[![Build status](https://api.travis-ci.com/activescaffold/active_scaffold.svg?branch=master)](https://app.travis-ci.com/activescaffold/active_scaffold)
 [![Code Climate](https://codeclimate.com/github/activescaffold/active_scaffold/badges/gpa.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
 [![Test Coverage](https://codeclimate.com/github/activescaffold/active_scaffold/badges/coverage.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
 [![Dependency Status](https://gemnasium.com/activescaffold/active_scaffold.svg)](https://gemnasium.com/activescaffold/active_scaffold)
@@ -27,30 +27,37 @@ To get started with a new Rails project
 
 Added to Gemfile
 
-    gem 'active_scaffold'
+```ruby
+gem 'active_scaffold'
+```
 
 For rails >= 5.1, add jquery-rails to Gemfile, and install generator will jquery to application.js before rails-ujs. Also it's possible to load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
 
-    gem 'jquery-rails'
+```ruby
+gem 'jquery-rails'
+```
 
 For rails >= 6.0, installer generator will create app/assets/javascripts/application.js, add it to assets.precompile array and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack yet. Jquery may be loaded by packs or assets pipeline.
 
 Run the following commands, for rails 4.2
 
-    bundle install
-    rails g active_scaffold:install
-    bundle exec rake db:create
-    rails g active_scaffold:resource Model [attrs]
-    bundle exec rake db:migrate
-    
+```console
+bundle install
+rails g active_scaffold:install
+bundle exec rake db:create
+rails g active_scaffold:resource Model [attrs]
+bundle exec rake db:migrate
+```
+
 Or run the following commands, for rails >= 5
 
-    bundle install
-    rails g active_scaffold:install
-    rails db:create
-    rails g active_scaffold:resource Model [attrs]
-    rails db:migrate
-    
+```console
+bundle install
+rails g active_scaffold:install
+rails db:create
+rails g active_scaffold:resource Model [attrs]
+rails db:migrate
+```    
 
 Run the app and visit localhost:3000/<plural_model>
 
