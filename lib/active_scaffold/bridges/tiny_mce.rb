@@ -11,7 +11,7 @@ class ActiveScaffold::Bridges::TinyMce < ActiveScaffold::DataStructures::Bridge
   def self.javascripts
     case ActiveScaffold.js_framework
     when :jquery
-      ['tinymce-jquery', 'jquery/tiny_mce_bridge']
+      ['tinymce', 'jquery/tiny_mce_bridge']
     when :prototype
       ['tinymce', 'prototype/tiny_mce_bridge']
     end

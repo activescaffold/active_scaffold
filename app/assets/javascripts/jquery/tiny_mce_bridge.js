@@ -17,8 +17,14 @@
     for (key in local_settings) {
       settings[key] = local_settings[key];
     }
-    tinyMCE.settings = settings;
-    tinyMCE.execCommand('mceAddEditor', false, jQuery(this).attr('id'));
+    var id = jQuery(this).attr('id');
+    if (tinymce && tinymce.majorVersion >= 6) {
+      settings.selector = '#' + id;
+      tinymce.init(settings);
+    } else { // tinyMCE.majorVersion < 6
+      tinyMCE.settings = settings;
+      tinyMCE.execCommand('mceAddEditor', false, id);
+    }
   }
 
   jQuery(document).on('submit', 'form.as_form', function() {
