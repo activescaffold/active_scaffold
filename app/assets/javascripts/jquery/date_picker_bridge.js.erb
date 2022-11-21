@@ -41,3 +41,12 @@ jQuery(document).on("focus", "input.datetime_picker", function(){
   }
   return true;
 });
+
+jQuery(document).on('change', 'input.datetime_picker', function(e) {
+  var $this = $(this);
+  if ($this.data('first-event')) $this.removeData('first-event');
+  else {
+    $this.data('first-event', true);
+    e.stopImmediatePropagation();
+  }
+});
