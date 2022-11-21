@@ -160,8 +160,7 @@ module ActiveScaffold::Bridges
           format = datepicker_format(options, column.search_ui)
           options[:class] << " #{column.search_ui}"
           options[:style] = 'display: none' if options[:show] == false # hide only if asked to hide
-          options[:data] ||= {}
-          options[:data].merge! datepicker_format_options(column, format)
+          options[:data] = datepicker_format_options(column, format).reverse_merge!(options[:data] || {})
           value = l(value, :format => format) if value
           options = options.merge(:id => "#{options[:id]}_#{name}", :name => "#{options[:name]}[#{name}]", :object => nil)
           text_field_tag("#{options[:name]}[#{name}]", value, options)
@@ -176,8 +175,7 @@ module ActiveScaffold::Bridges
 
           format = datepicker_format(options, column.form_ui)
           value = controller.class.condition_value_for_datetime(column, record.send(column.name), column.form_ui == :date_picker ? :to_date : :to_time)
-          options[:data] ||= {}
-          options[:data].merge! datepicker_format_options(column, format)
+          options[:data] = datepicker_format_options(column, format).reverse_merge!(options[:data] || {})
           options[:value] = (value ? l(value, :format => format) : nil)
           text_field(:record, column.name, options)
         end
