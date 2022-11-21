@@ -10,6 +10,7 @@
 
 = 3.6.15 (not released yet)
 - Prevent firing 2 change events on jquery datetime pickers
+- Fix setting data options on columns for date and datetime pickers
 
 = 3.6.14
 - Fix setting data on html_options when threadsafe is enabled
