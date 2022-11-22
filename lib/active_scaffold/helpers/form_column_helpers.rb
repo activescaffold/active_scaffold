@@ -152,7 +152,14 @@ module ActiveScaffold
       end
 
       def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil) # rubocop:disable Metrics/ParameterLists
-        if (partial = override_form_field_partial(column))
+        if (column.hide_column_if.respond_to?(:call) ? column.hide_column_if.call(record, column, scope) : column.hide_column_if)
+          # creates an element that can be replaced by the update_columns routine,
+          # but will not affect the value of the submitted form in this state:
+          # <dl><input type="hidden" class="<%= column.name %>-input"></dl>
+          content_tag :dl, style: 'display: none' do
+            hidden_field_tag(nil, nil, :class => "#{column.name}-input")
+          end
+        elsif (partial = override_form_field_partial(column))
           render :partial => partial, :locals => {:column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record}
         elsif renders_as == :field || override_form_field?(column)
           form_attribute(column, record, scope, only_value, col_class)
