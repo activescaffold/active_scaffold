@@ -152,7 +152,7 @@ module ActiveScaffold
       end
 
       def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil) # rubocop:disable Metrics/ParameterLists
-        if (column.hide_column_if.respond_to?(:call) ? column.hide_column_if.call(record, column, scope) : column.hide_column_if)
+        if form_column_is_hidden?(column, record, scope)
           # creates an element that can be replaced by the update_columns routine,
           # but will not affect the value of the submitted form in this state:
           # <dl><input type="hidden" class="<%= column.name %>-input"></dl>
@@ -167,6 +167,20 @@ module ActiveScaffold
           render :partial => 'form_association', :locals => {:column => column, :scope => scope, :parent_record => record}
         else
           form_hidden_attribute(column, record, scope)
+        end
+      end
+
+      def form_column_is_hidden?(column, record, scope = nil)
+        if column.hide_form_column_if
+          if column.hide_form_column_if.respond_to?(:call)
+            return column.hide_form_column_if.call(record, column, scope)
+          elsif column.hide_form_column_if.is_a?(Symbol)
+            return record.send(column.hide_form_column_if)
+          else
+            return column.hide_form_column_if
+          end
+        else
+          return false
         end
       end
 

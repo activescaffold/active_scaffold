@@ -92,10 +92,10 @@ module ActiveScaffold::DataStructures
     # show the column with an element that can be replaced by update_columns,
     # but won't affect the form submission.
     # The value can be set in the scaffold controller as follows:
-    # config.columns[:my_column].hide_column_if = Proc.new { |record, column, scope| record.should_be_hidden? }
+    # config.columns[:my_column].hide_form_column_if = Proc.new { |record, column, scope| record.should_be_hidden? }
     # OR
-    # config.columns[:my_column].hide_column_if = true
-    attr_accessor :hide_column_if
+    # config.columns[:my_column].hide_form_column_if = true
+    attr_accessor :hide_form_column_if
 
     # sorting on a column can be configured four ways:
     #   sort = true               default, uses intelligent sorting sql default
