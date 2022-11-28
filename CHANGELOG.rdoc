@@ -1,3 +1,4 @@
+= 3.6.15
 - Prevent firing 2 change events on jquery datetime pickers
 - Fix setting data options on columns for date and datetime pickers
 
