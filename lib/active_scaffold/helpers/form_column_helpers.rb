@@ -171,16 +171,12 @@ module ActiveScaffold
       end
 
       def form_column_is_hidden?(column, record, scope = nil)
-        if column.hide_form_column_if
-          if column.hide_form_column_if.respond_to?(:call)
-            return column.hide_form_column_if.call(record, column, scope)
-          elsif column.hide_form_column_if.is_a?(Symbol)
-            return record.send(column.hide_form_column_if)
-          else
-            return column.hide_form_column_if
-          end
+        if column.hide_form_column_if&.respond_to?(:call)
+          column.hide_form_column_if.call(record, column, scope)
+        elsif column.hide_form_column_if&.is_a?(Symbol)
+          record.send(column.hide_form_column_if)
         else
-          return false
+          column.hide_form_column_if
         end
       end
 
