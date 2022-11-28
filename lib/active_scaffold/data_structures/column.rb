@@ -87,6 +87,19 @@ module ActiveScaffold::DataStructures
     cattr_accessor :send_form_on_update_column, instance_accessor: false
     attr_accessor :send_form_on_update_column
 
+    # add a custom attr_accessor that can contain a Proc (or boolean or symbol)
+    # that will be called when the column renders, such that we can dynamically
+    # hide or show the column with an element that can be replaced by
+    # update_columns, but won't affect the form submission.
+    # The value can be set in the scaffold controller as follows to dynamically
+    # hide the column based on a Proc's output:
+    # config.columns[:my_column].hide_form_column_if = Proc.new { |record, column, scope| record.vehicle_type == 'tractor' }
+    # OR to always hide the column:
+    # config.columns[:my_column].hide_form_column_if = true
+    # OR to call a method on the record to determine whether to hide the column:
+    # config.columns[:my_column].hide_form_column_if = :hide_tractor_fields?
+    attr_accessor :hide_form_column_if
+
     # sorting on a column can be configured four ways:
     #   sort = true               default, uses intelligent sorting sql default
     #   sort = false              sometimes sorting doesn't make sense
