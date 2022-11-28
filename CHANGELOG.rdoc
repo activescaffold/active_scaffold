@@ -8,7 +8,7 @@
 - Fix keeping_errors for rails >= 6.1
 - Fix usage of field_error_proc on record_select bridge for rails 7
 
-= 3.6.15 (not released yet)
+= 3.6.15
 - Prevent firing 2 change events on jquery datetime pickers
 - Fix setting data options on columns for date and datetime pickers
 
