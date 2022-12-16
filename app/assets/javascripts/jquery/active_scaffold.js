@@ -72,9 +72,18 @@ jQuery(document).ready(function($) {
     }
   });
   jQuery(document).on('submit', 'form.as_form:not([data-remote])', function(event) {
-    var as_form = jQuery(this).closest("form");
+    var as_form = jQuery(this).closest("form"), form_id = as_form.attr('id'), iframe, interval;
     if (as_form.data('loading') == true) {
-      setTimeout("ActiveScaffold.disable_form('" + as_form.attr('id') + "')", 10);
+      setTimeout(function() { ActiveScaffold.disable_form(form_id); }, 10);
+      if (as_form.attr('target')) {
+        iframe = jQuery('iframe[name="' + jQuery(this).attr('target') + '"]')[0];
+        interval = setInterval(function() {
+          if ((iframe.contentDocument || iframe.contentWindow.document).readyState === 'complete') {
+            ActiveScaffold.enable_form(form_id);
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
     }
     return true;
   });

@@ -9,6 +9,7 @@
 - Fix usage of field_error_proc on record_select bridge for rails 7
 - Support TinyMCE 6
 - Add hide_form_column_if to columns
+- Re-enable form which is sent to iframe when response is received, e.g. if form is downloading a file
 
 = 3.6.15
 - Prevent firing 2 change events on jquery datetime pickers
