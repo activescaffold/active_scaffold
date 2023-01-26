@@ -10,7 +10,7 @@ module ActiveScaffold::Actions
     end
 
     def deleted
-      query = PaperTrail::Version.destroys.where(:item_type => active_scaffold_config.model)
+      query = PaperTrail::Version.destroys.where(:item_type => active_scaffold_config.model.name)
       if nested? && nested.child_association&.belongs_to? && PaperTrail::Version.respond_to?(:where_object)
         query = query.where_object(nested.child_association.foreign_key => nested.parent_id)
       end
