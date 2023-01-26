@@ -11,6 +11,9 @@
 - Add hide_form_column_if to columns
 - Re-enable form which is sent to iframe when response is received, e.g. if form is downloading a file
 
+= 3.6.16 (not released yet)
+- Fix query on paper_trail action
+
 = 3.6.15
 - Prevent firing 2 change events on jquery datetime pickers
 - Fix setting data options on columns for date and datetime pickers
