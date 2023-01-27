@@ -40,6 +40,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       super.tap do |scope|
         if klass < ActiveScaffold::Tableless
           class << scope; include RelationExtension; end
+          assoc_conditions = scope.proxy_association&.send(:association_scope)&.conditions
+          if assoc_conditions&.present?
+            scope.conditions.concat assoc_conditions.map { |c| c.is_a?(Hash) ? c[klass.table_name] || c : c }
+          end
         end
       end
     end
@@ -76,8 +80,6 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   end
 
   module RelationExtension
-    attr_reader :conditions
-
     def initialize(klass, *)
       super
       @conditions ||= []
@@ -88,6 +90,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       super
     end
 
+    def conditions
+      @conditions ||= []
+    end
+
     def where(opts, *rest)
       if opts.present?
         opts = opts.with_indifferent_access if opts.is_a? Hash
@@ -95,6 +101,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       end
       self
     end
+    alias where! where
 
     def merge(rel)
       super.tap do |merged|
@@ -104,12 +111,11 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
 
     def except(*skips)
       super.tap do |new_relation|
-        new_relation.conditions = conditions unless skips.include? :where
+        unless new_relation.is_a?(RelationExtension)
+          class << new_relation; include RelationExtension; end
+        end
+        new_relation.conditions.concat conditions unless skips.include? :where
       end
-    end
-
-    def to_a
-      @klass.find_all(self)
     end
 
     def find_one(id)
@@ -125,7 +131,14 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     end
 
     def exists?
-      limit(1).to_a.present?
+      size > 0
+    end
+
+    private
+    def exec_queries
+      @records = @klass.find_all(self)
+      @loaded = true
+      @records
     end
   end
 
