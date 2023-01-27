@@ -144,10 +144,6 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       end
     end
 
-    def to_a
-      @klass.find_all(self)
-    end
-
     def find_one(id)
       @klass.find_one(id, self) || raise(ActiveRecord::RecordNotFound)
     end
@@ -162,6 +158,13 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
 
     def exists?
       limit(1).to_a.present?
+    end
+
+    private
+    def exec_queries
+      @records = @klass.find_all(self)
+      @loaded = true
+      @records
     end
   end
 
