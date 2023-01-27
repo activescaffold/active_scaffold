@@ -76,7 +76,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       super.tap do |scope|
         if klass < ActiveScaffold::Tableless
           class << scope; include RelationExtension; end
-          assoc_conditions = scope.proxy_association&.association_scope&.conditions
+          assoc_conditions = scope.proxy_association&.send(:association_scope)&.conditions
           if assoc_conditions&.present?
             scope.conditions.concat assoc_conditions.map { |c| c.is_a?(Hash) ? c[klass.table_name] || c : c }
           end
