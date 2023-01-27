@@ -27,8 +27,9 @@ class TablelessTest < MiniTest::Test
     assert Person.new.files.empty?
     @person = Person.new
     @person.save(validate: false)
-    assert @person.files.empty?
-    assert_equal [], @person.files.to_a
+    assert !@person.files.empty?
+    assert @person.files.all.exists?
+    assert_equal @person.id, @person.files.first.person_id
   end
 
   def test_tableless_assoc_with_dependent

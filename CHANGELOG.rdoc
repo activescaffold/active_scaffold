@@ -1,5 +1,7 @@
 - Fix query on paper_trail action
 - Fix one? on tableless relation
+- Fix exists? on tableless relation
+- Fix getting conditions from association in the tableless relation
 
 = 3.6.15
 - Prevent firing 2 change events on jquery datetime pickers

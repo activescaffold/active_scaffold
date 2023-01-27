@@ -76,6 +76,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       super.tap do |scope|
         if klass < ActiveScaffold::Tableless
           class << scope; include RelationExtension; end
+          assoc_conditions = scope.proxy_association&.association_scope&.conditions
+          if assoc_conditions&.present?
+            scope.conditions.concat assoc_conditions.map { |c| c.is_a?(Hash) ? c[klass.table_name] || c : c }
+          end
         end
       end
     end
@@ -112,8 +116,6 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   end
 
   module RelationExtension
-    attr_reader :conditions
-
     def initialize(klass, *)
       super
       @conditions ||= []
@@ -122,6 +124,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     def initialize_copy(other)
       @conditions = @conditions&.dup || []
       super
+    end
+
+    def conditions
+      @conditions ||= []
     end
 
     def where(opts, *rest)
@@ -140,7 +146,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
 
     def except(*skips)
       super.tap do |new_relation|
-        new_relation.conditions = conditions unless skips.include? :where
+        unless new_relation.is_a?(RelationExtension)
+          class << new_relation; include RelationExtension; end
+        end
+        new_relation.conditions.concat conditions unless skips.include? :where
       end
     end
 
@@ -157,7 +166,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     end
 
     def exists?
-      limit(1).to_a.present?
+      size > 0
     end
 
     private
