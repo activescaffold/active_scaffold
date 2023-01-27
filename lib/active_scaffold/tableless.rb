@@ -137,6 +137,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       end
       self
     end
+    alias where! where
 
     def merge(rel)
       super.tap do |merged|
