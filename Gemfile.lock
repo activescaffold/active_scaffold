@@ -7,7 +7,7 @@ GIT
 PATH
   remote: .
   specs:
-    active_scaffold (3.6.15)
+    active_scaffold (3.6.16)
       cow_proxy (~> 0.3)
       ice_nine (~> 0.11)
       rails (>= 4.2.0, < 6.2)

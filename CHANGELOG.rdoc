@@ -1,3 +1,4 @@
+= 3.6.16
 - Fix query on paper_trail action
 - Fix one? on tableless relation
 - Fix exists? on tableless relation
