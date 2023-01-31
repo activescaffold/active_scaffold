@@ -13,6 +13,7 @@
 
 = 3.6.17 (not released yet)
 - Don't add includes or left joins for constrained columns, as they are ignored on sorting clause
+- Fix deprecation on cache counts with rails 5, and fix the queries for rails >= 5.1
 
 = 3.6.16
 - Fix query on paper_trail action
