@@ -1,3 +1,4 @@
+= 3.6.17
 - Don't add includes or left joins for constrained columns, as they are ignored on sorting clause
 - Fix deprecation on cache counts with rails 5, and fix the queries for rails >= 5.1
 - Fix new for tableless models on rails 5.0
