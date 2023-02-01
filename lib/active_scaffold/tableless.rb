@@ -216,15 +216,15 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       end
     end
   end
-
-  def self.columns_hash
-    if self < ActiveScaffold::Tableless
-      @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
-    else
-      super
-    end
-  end
   if Rails.version < '5.0' # 4.2.x
+    def self.columns_hash
+      if self < ActiveScaffold::Tableless
+        @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
+      else
+        super
+      end
+    end
+
     def self.initialize_find_by_cache
       self.find_by_statement_cache = Hash.new { |h, k| h[k] = StatementCache.new(k) } # rubocop:disable Rails/DynamicFindBy
     end
