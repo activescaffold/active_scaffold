@@ -168,14 +168,6 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     end
   end
 
-  def self.columns_hash
-    if self < ActiveScaffold::Tableless
-      @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
-    else
-      super
-    end
-  end
-
   def self.columns
     @tableless_columns ||= []
   end

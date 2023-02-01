@@ -11,9 +11,10 @@
 - Add hide_form_column_if to columns
 - Re-enable form which is sent to iframe when response is received, e.g. if form is downloading a file
 
-= 3.6.17 (not released yet)
+= 3.6.17
 - Don't add includes or left joins for constrained columns, as they are ignored on sorting clause
 - Fix deprecation on cache counts with rails 5, and fix the queries for rails >= 5.1
+- Fix new for tableless models on rails 5.0
 
 = 3.6.16
 - Fix query on paper_trail action
