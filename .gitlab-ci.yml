@@ -41,7 +41,7 @@
   - uname -a
   - ruby --version
   - gem --version
-  - gem install bundler
+  - gem install bundler -v 2.3.26 # bundler 2.3.26 for ruby 2.5 and jruby 9.2
   - bundle --version
   - bundle config set --local clean 'true'
   - bundle config set --local deployment 'true'
