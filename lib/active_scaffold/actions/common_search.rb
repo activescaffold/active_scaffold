@@ -31,6 +31,22 @@ module ActiveScaffold::Actions
         params_hash params[:search]
       end
 
+      def set_outer_joins_for_search(columns)
+        references = []
+        outer_joins = []
+        columns.each do |column|
+          next unless column.search_joins.present?
+          if column.includes.present? && list_columns.include?(column)
+            references << (column.search_joins & column.includes)
+            outer_joins << (column.search_joins - column.includes)
+          else
+            outer_joins << column.search_joins
+          end
+        end
+        active_scaffold_references.concat references.flatten.uniq.compact
+        active_scaffold_outer_joins.concat outer_joins.flatten.uniq.compact
+      end
+
       def store_search_params_into_session
         if active_scaffold_config.store_user_settings
           if params[:search].present?

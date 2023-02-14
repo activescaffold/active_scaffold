@@ -161,23 +161,19 @@ module ActiveScaffold::Actions
           search_condition = self.class.condition_for_column(column, value, text_search)
           next if search_condition.blank?
 
-          joins_for_search_on_column(column, count_includes)
           active_scaffold_conditions << search_condition
           filtered_columns << column
+        end
+        if grouped_search? || active_scaffold_config.list.user.count_includes.present?
+          active_scaffold_outer_joins.concat filtered_columns.map(&:search_joins).flatten.uniq.compact
+        else
+          set_outer_joins_for_search filtered_columns
         end
         if filtered_columns.present? || grouped_search?
           @filtered = active_scaffold_config.field_search.human_conditions ? filtered_columns : true
         end
 
         active_scaffold_config.list.user.page = nil
-      end
-
-      def joins_for_search_on_column(column, count_includes)
-        if count_includes.nil? && column.search_joins.present? && list_columns.include?(column) && !grouped_search?
-          active_scaffold_references << column.search_joins
-        elsif column.search_joins.present?
-          active_scaffold_outer_joins << column.search_joins
-        end
       end
 
       def field_search_ignore?
