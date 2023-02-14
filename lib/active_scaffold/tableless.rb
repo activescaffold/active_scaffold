@@ -78,7 +78,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
           class << scope; include RelationExtension; end
           assoc_conditions = scope.proxy_association&.send(:association_scope)&.conditions
           if assoc_conditions&.present?
-            scope.conditions.concat assoc_conditions.map { |c| c.is_a?(Hash) ? c[klass.table_name] || c : c }
+            scope.conditions.concat(assoc_conditions.map { |c| c.is_a?(Hash) ? c[klass.table_name] || c : c })
           end
         end
       end
@@ -167,10 +167,11 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     end
 
     def exists?
-      size > 0
+      size.positive?
     end
 
     private
+
     def exec_queries
       @records = @klass.find_all(self)
       @loaded = true
