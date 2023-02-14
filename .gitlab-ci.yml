@@ -95,12 +95,12 @@
 .use_rails_6_0:
   extends: .test
   variables:
-    BUNDLE_GEMFILE: Gemfile
+    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-6.0.x
 
 .use_rails_6_1:
   extends: .test
   variables:
-    BUNDLE_GEMFILE: gemfiles/Gemfile.rails-6.1.x
+    BUNDLE_GEMFILE: Gemfile
 
 cache:
   paths:

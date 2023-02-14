@@ -15,7 +15,7 @@ dist: focal
 gemfile:
   - Gemfile
   - gemfiles/Gemfile.rails-5.2.x
-  - gemfiles/Gemfile.rails-6.1.x
+  - gemfiles/Gemfile.rails-6.0.x
 jdk:
   - openjdk9
 jobs:
@@ -26,9 +26,9 @@ jobs:
     - rvm: 2.7.4
       gemfile: gemfiles/Gemfile.rails-5.2.x
     - rvm: 2.5.9
-      gemfile: Gemfile
+      gemfile: gemfiles/Gemfile.rails-6.0.x
     - rvm: jruby-9.2.16.0
-      gemfile: Gemfile
+      gemfile: gemfiles/Gemfile.rails-6.0.x
 language: ruby
 rvm:
   - 2.5.9
