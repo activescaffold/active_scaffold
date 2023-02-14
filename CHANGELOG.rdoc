@@ -11,6 +11,9 @@
 - Add hide_form_column_if to columns
 - Re-enable form which is sent to iframe when response is received, e.g. if form is downloading a file
 
+= 3.6.18 (not released yet)
+- Use always column.search_joins instead of column.includes on search actions, search_joins default to includes, so won't change behaviour on most cases, but allows to preload some associations without joining in the query
+
 = 3.6.17
 - Don't add includes or left joins for constrained columns, as they are ignored on sorting clause
 - Fix deprecation on cache counts with rails 5, and fix the queries for rails >= 5.1
