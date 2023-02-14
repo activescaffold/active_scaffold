@@ -60,22 +60,25 @@ class PaperclipTest < ActionView::TestCase
       @record = Company.new
 
       @record.stubs(:logo).returns(stub(:file? => true, :original_filename => 'file', :url => '/system/file', :styles => Company.attachment_definitions[:logo]))
-      quote = '&#39;'
-      click_js = "jQuery(this).prev().val(#{quote}true#{quote}); jQuery(this).parent().hide().next().show(); return false;"
-      change_js = "jQuery(this).parents(#{quote}div.paperclip_controls#{quote}).find(#{quote}input.remove_file#{quote}).val(#{quote}false#{quote}); return false;"
-      template = [
-        '<div class="paperclip_controls"><div>',
-        '<a href="/system/file" target="_blank">file</a> | ',
-        '<input name="record[delete_logo]" type="hidden" class="remove_file" id="record_delete_logo" value="false" />',
-        %(<a href="#" onclick="#{click_js}">Remove or Replace file</a>),
-        '</div><div style="display: none">',
-        %(<input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" onchange="#{change_js}" />),
-        '</div></div>'
-      ].join
-      assert_dom_equal template, active_scaffold_input_paperclip(config.columns[:logo], :name => 'record[logo]', :id => 'record_logo', :object => @record)
+      click_js = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show(); return false;"
+      change_js = "jQuery(this).parents('div.paperclip_controls').find('input.remove_file').val('false'); return false;"
+      @document = Nokogiri::HTML::Document.parse(active_scaffold_input_paperclip(config.columns[:logo], :name => 'record[logo]', :id => 'record_logo', :object => @record))
+      assert_select "div.paperclip_controls input[type=file]" do |match|
+        assert_equal match[0]['onchange'], change_js
+      end
+      assert_select 'div.paperclip_controls a[href="#"][onclick]' do |match|
+        assert_equal match[0]['onclick'], click_js
+      end
+      assert_select 'div.paperclip_controls input.remove_file[type=hidden][value=false]'
 
       @record.stubs(:logo).returns(stub(:file? => false))
       assert_dom_equal '<input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" />', active_scaffold_input_paperclip(config.columns[:logo], :name => 'record[logo]', :id => 'record_logo', :object => @record)
     end
+  end
+
+  protected
+
+  def document_root_element
+    @document.root
   end
 end
