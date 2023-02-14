@@ -173,8 +173,8 @@ module ActiveScaffold::Actions
       end
 
       def joins_for_search_on_column(column, count_includes)
-        if count_includes.nil? && column.includes.present? && list_columns.include?(column) && !grouped_search?
-          active_scaffold_references << column.includes
+        if count_includes.nil? && column.search_joins.present? && list_columns.include?(column) && !grouped_search?
+          active_scaffold_references << column.search_joins
         elsif column.search_joins.present?
           active_scaffold_outer_joins << column.search_joins
         end
