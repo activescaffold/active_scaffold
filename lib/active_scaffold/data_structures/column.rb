@@ -353,7 +353,6 @@ module ActiveScaffold::DataStructures
       if delegated_association
         self.includes = includes ? [delegated_association.name => includes] : [delegated_association.name]
       end
-      self.search_joins = includes.clone if includes
 
       # default all the configurable variables
       self.css_class = ''
