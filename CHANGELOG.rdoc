@@ -1,5 +1,6 @@
 - Add references only for column.search_joins which are in column.includes, and do search_joins for the rest, search_joins default to includes, so won't change behaviour on most cases, but allows to preload some associations without joining in the query
 - Don't define default search_joins, as it may return includes, so search_joins will default to includes unless is defined, and the previous change won't change the behaviour if user doesn't define search_joins
+- Fix update_columns on through association
 
 = 3.6.17
 - Don't add includes or left joins for constrained columns, as they are ignored on sorting clause

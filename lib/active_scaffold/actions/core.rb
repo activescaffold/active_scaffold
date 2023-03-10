@@ -100,8 +100,7 @@ module ActiveScaffold::Actions
       record = params[:id] ? copy_attributes(find_if_allowed(params[:id], :read)) : new_model
       apply_constraints_to_record(record) unless scope || params[:id]
       create_association_with_parent record, true if nested?
-      value = column_value_from_param_value(record, column, value)
-      record.send "#{column.name}=", value
+      update_column_from_params(record, column, value, true)
       record.id = params[:id]
       record
     end
