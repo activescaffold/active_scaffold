@@ -154,7 +154,6 @@ module ActiveScaffold::Actions
         filtered_columns = []
         text_search = active_scaffold_config.field_search.text_search
         columns = active_scaffold_config.field_search.columns
-        count_includes = active_scaffold_config.list.user.count_includes
         search_params.each do |key, value|
           next unless columns.include? key
           column = active_scaffold_config.columns[key]

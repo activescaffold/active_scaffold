@@ -35,7 +35,7 @@ module ActiveScaffold::Actions
         references = []
         outer_joins = []
         columns.each do |column|
-          next unless column.search_joins.present?
+          next if column.search_joins.blank?
           if column.includes.present? && list_columns.include?(column)
             references << (column.search_joins & column.includes)
             outer_joins << (column.search_joins - column.includes)
