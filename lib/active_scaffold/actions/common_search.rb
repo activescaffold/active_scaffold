@@ -31,7 +31,7 @@ module ActiveScaffold::Actions
         params_hash params[:search]
       end
 
-      def set_outer_joins_for_search(columns)
+      def set_outer_joins_for_search(columns) # rubocop:disable Naming/AccessorMethodName
         references = []
         outer_joins = []
         columns.each do |column|

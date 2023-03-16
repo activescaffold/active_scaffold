@@ -163,11 +163,7 @@ module ActiveScaffold::Actions
           active_scaffold_conditions << search_condition
           filtered_columns << column
         end
-        if grouped_search? || active_scaffold_config.list.user.count_includes.present?
-          active_scaffold_outer_joins.concat filtered_columns.map(&:search_joins).flatten.uniq.compact
-        else
-          set_outer_joins_for_search filtered_columns
-        end
+        setup_joins_for_filtered_columns(filtered_columns)
         if filtered_columns.present? || grouped_search?
           @filtered = active_scaffold_config.field_search.human_conditions ? filtered_columns : true
         end
@@ -180,6 +176,14 @@ module ActiveScaffold::Actions
       end
 
       private
+
+      def setup_joins_for_filtered_columns(filtered_columns)
+        if grouped_search? || active_scaffold_config.list.user.count_includes.present?
+          active_scaffold_outer_joins.concat filtered_columns.map(&:search_joins).flatten.uniq.compact
+        else
+          set_outer_joins_for_search filtered_columns
+        end
+      end
 
       def field_search_formats
         (default_formats + active_scaffold_config.formats + active_scaffold_config.field_search.formats).uniq
