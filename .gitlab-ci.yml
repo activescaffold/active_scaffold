@@ -87,6 +87,9 @@
 .use_mri_3_0:
   image: ruby:3.0-alpine
 
+.use_mri_3_1:
+  image: ruby:3.0-alpine
+
 .use_rails_5_2:
   extends: .test
   variables:
@@ -220,6 +223,11 @@ test:rails-6.1:mri:2.7:
 test:rails-6.1:mri:3.0:
   extends:
     - .use_mri_3_0
+    - .use_rails_6_1
+
+test:rails-6.1:mri:3.1:
+  extends:
+    - .use_mri_3_1
     - .use_rails_6_1
 
 variables:

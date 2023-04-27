@@ -1,6 +1,7 @@
 module ActiveScaffold::Bridges
   class DatePicker
     module Helper
+      UNSUPPORTED_FORMAT_OPTIONS = /%[cUWwxXZ]/
       DATE_FORMAT_CONVERSION = {
         /%a/ => 'D',
         /%A/ => 'DD',
@@ -19,7 +20,7 @@ module ActiveScaffold::Bridges
         /%p/ => 'tt',
         /%S/ => 'ss',
         /%z/ => 'z',
-        /%[cUWwxXZ]/ => ''
+        UNSUPPORTED_FORMAT_OPTIONS => ''
       }.freeze
 
       def self.date_options_for_locales
@@ -83,9 +84,8 @@ module ActiveScaffold::Bridges
 
       def self.to_datepicker_format(rails_format)
         return nil if rails_format.nil?
-        unsupported = DATE_FORMAT_CONVERSION.key ''
-        if rails_format.match?(unsupported)
-          options = unsupported.to_s.scan(/\[(.*)\]/).dig(0, 0)&.each_char&.map { |c| "%#{c}" }
+        if rails_format.match?(UNSUPPORTED_FORMAT_OPTIONS)
+          options = UNSUPPORTED_FORMAT_OPTIONS.to_s.scan(/\[(.*)\]/).dig(0, 0)&.each_char&.map { |c| "%#{c}" }
           Rails.logger.warn(
             "AS DatePicker::Helper: rails date format #{rails_format} includes options "\
             "which can't be converted to jquery datepicker format. "\

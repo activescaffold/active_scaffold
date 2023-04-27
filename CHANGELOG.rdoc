@@ -1,6 +1,6 @@
 - Drop support for rails < 5.2 and ruby < 2.5
 - Support adding settings for chosen and tinyMCE in initializer (ActiveScaffold.js_config) or JavaScript code (ActiveScaffold.config, needed for callbacks)
-- Support ruby 3.0
+- Support ruby 3.0 and 3.1
 - Check action link security method in process_action_link_action with no id
 - Add thumbnail_variant setting to ActiveStorage bridge
 - Support Postgres citext column type
