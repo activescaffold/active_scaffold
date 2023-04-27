@@ -11,6 +11,9 @@
 - Add hide_form_column_if to columns
 - Re-enable form which is sent to iframe when response is received, e.g. if form is downloading a file
 
+= 3.6.19 (not released yet)
+- Improve create action in has_many through singular association, supporting more cases
+
 = 3.6.18
 - Add references only for column.search_joins which are in column.includes, and do search_joins for the rest, search_joins default to includes, so won't change behaviour on most cases, but allows to preload some associations without joining in the query
 - Don't define default search_joins, as it may return includes, so search_joins will default to includes unless is defined, and the previous change won't change the behaviour if user doesn't define search_joins
@@ -91,7 +94,7 @@
 = 3.6.1
 - Display group cols vertically when subform layout is vertical
 - Fix html attributes for input datetime on field search, when jquery ui is not used
-- Fix constraint columns for nested list on through assocaitions
+- Fix constraint columns for nested list on through associations
 - Support rails 6.1
 
 = 3.6.0

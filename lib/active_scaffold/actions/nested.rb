@@ -122,16 +122,21 @@ module ActiveScaffold::Actions
       # has_many is done by beginning_of_chain and rails if direct association, not in through associations
       return false if nested.has_many? && !nested.association.through?
       return false if check_match && !nested.match_model?(active_scaffold_config.model)
-      nested.child_association && nested_parent_record
+      (nested.child_association || nested.create_through_singular?) && nested_parent_record
     end
 
     def create_association_with_parent(record, check_match = false)
       return unless create_association_with_parent?(check_match)
-      if nested.child_association.singular?
+      if nested.child_association&.singular?
         record.send("#{nested.child_association.name}=", nested_parent_record)
-      elsif nested.association.through_singular? && nested.child_association.through_singular?
-        through = nested_parent_record.send(nested.association.through_reflection.name)
-        record.send("#{nested.child_association.through_reflection.name}=", through)
+      elsif nested.create_through_singular?
+        through = nested_parent_record.send(nested.association.through_reflection.name) ||
+          nested_parent_record.send("build_#{nested.association.through_reflection.name}")
+        if nested.source_reflection.reverse_association.collection?
+          record.send(nested.source_reflection.reverse) << through
+        else
+          record.send("#{nested.source_reflection.reverse}=", through)
+        end
       else
         record.send(nested.child_association.name) << nested_parent_record
       end
