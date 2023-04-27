@@ -94,10 +94,18 @@ module ActiveScaffold::DataStructures
       return false unless through_association?
       return true if association.through_reflection.options[:through] # create not possible, too many levels
       return true if association.source_reflection.options[:through] # create not possible, too many levels
-      return false if association.through_singular? # create allowed, AS has code for this
+      return false if create_through_singular? # create allowed, AS has code for this
 
       # create allowed only if through reflection in record to be created is included in create columns
       !child_association || !columns.include?(child_association.through_reflection.name)
+    end
+
+    def create_through_singular?
+      association.through_singular? && source_reflection.reverse
+    end
+
+    def source_reflection
+      @source_reflection ||= ActiveScaffold::DataStructures::Association::ActiveRecord.new(association.source_reflection)
     end
 
     def through_association?
