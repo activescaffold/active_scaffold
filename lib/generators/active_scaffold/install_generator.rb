@@ -68,7 +68,7 @@ module ActiveScaffold
           say_status('create', file)
         end
         insert_into_file 'app/views/layouts/application.html.erb', after: /javascript_pack_tag 'application'.*\n/ do
-          "    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>\n"
+          "    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload', 'data-turbo-track': 'reload' %>\n"
         end
         append_to_file 'config/initializers/assets.rb' do
           "Rails.application.config.assets.precompile += %w( application.js )\n"

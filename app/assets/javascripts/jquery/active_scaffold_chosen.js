@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
     }
   });
   jQuery('select.chosen').chosen(chosen_options);
-  jQuery(document).on('turbolinks:load', function($) {
+  jQuery(document).on('turbolinks:load turbo:load', function($) {
     jQuery('select.chosen').chosen(chosen_options);
   });
 });
