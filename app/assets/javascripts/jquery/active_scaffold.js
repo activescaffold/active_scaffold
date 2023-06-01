@@ -367,7 +367,7 @@ jQuery(document).ready(function($) {
     jQuery(this).parent().find('[type=submit]').click();
   }));
 
-  jQuery(document).on('turbolinks:before-visit', function() {
+  jQuery(document).on('turbolinks:before-visit turbo:before-visit', function() {
     if (history.state.active_scaffold) {
       history.replaceState({turbolinks: true, url: document.location.href}, '', document.location.href);
     }
@@ -386,7 +386,7 @@ jQuery(document).ready(function($) {
   });
 
   // call setup on document.ready if Turbolinks not enabled
-  if (typeof(Turbolinks) == 'undefined' || !Turbolinks.supported) {
+  if ((typeof(Turbolinks) == 'undefined' || !Turbolinks.supported) && typeof(Turbo) == 'undefined') {
     ActiveScaffold.setup_history_state();
     ActiveScaffold.setup(document);
   }
@@ -404,7 +404,7 @@ jQuery(document).ready(function($) {
   });
 });
 
-jQuery(document).on('turbolinks:load', function($) {
+jQuery(document).on('turbolinks:load turbo:load', function($) {
   ActiveScaffold.setup(document);
 });
 
@@ -1143,7 +1143,7 @@ var ActiveScaffold = {
     window.onbeforeunload = function() {
       if (jQuery('form.need-confirm').length) return unload_message;
     };
-    jQuery(document).on('turbolinks:before-visit', function(e) {
+    jQuery(document).on('turbolinks:before-visit turbolinks:before-visit', function(e) {
       if (jQuery('form.need-confirm').length) {
         if (!window.confirm(unload_message)) e.preventDefault();
       }
