@@ -11,7 +11,7 @@
 - Add hide_form_column_if to columns
 - Re-enable form which is sent to iframe when response is received, e.g. if form is downloading a file
 
-= 3.6.19 (not released yet)
+= 3.6.19
 - Improve create action in has_many through singular association, supporting more cases
 
 = 3.6.18
