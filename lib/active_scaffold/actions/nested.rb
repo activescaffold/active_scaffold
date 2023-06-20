@@ -130,19 +130,15 @@ module ActiveScaffold::Actions
       if nested.child_association&.singular?
         record.send("#{nested.child_association.name}=", nested_parent_record)
       elsif nested.create_through_singular?
-        create_through_association_with_parent(record)
+        through = nested_parent_record.send(nested.association.through_reflection.name) ||
+          nested_parent_record.send("build_#{nested.association.through_reflection.name}")
+        if nested.source_reflection.reverse_association.collection?
+          record.send(nested.source_reflection.reverse) << through
+        else
+          record.send("#{nested.source_reflection.reverse}=", through)
+        end
       else
         record.send(nested.child_association.name) << nested_parent_record
-      end
-    end
-
-    def create_through_association_with_parent(record)
-      through = nested_parent_record.send(nested.association.through_reflection.name) ||
-        nested_parent_record.send("build_#{nested.association.through_reflection.name}")
-      if nested.source_reflection.reverse_association.collection?
-        record.send(nested.source_reflection.reverse) << through
-      else
-        record.send("#{nested.source_reflection.reverse}=", through)
       end
     end
 
