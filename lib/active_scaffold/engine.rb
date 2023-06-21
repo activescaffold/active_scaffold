@@ -3,7 +3,6 @@ module ActiveScaffold
     initializer 'active_scaffold.action_controller' do
       ActiveSupport.on_load :action_controller do
         include ActiveScaffold::Core
-        include ActiveScaffold::DelayedSetup if ActiveScaffold.delayed_setup
         include ActiveScaffold::RespondsToParent
         include ActiveScaffold::Helpers::ControllerHelpers
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Controller
