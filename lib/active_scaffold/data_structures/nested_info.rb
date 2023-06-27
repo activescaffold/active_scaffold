@@ -70,6 +70,10 @@ module ActiveScaffold::DataStructures
     def match_model?(model)
       false
     end
+
+    def create_with_parent?
+      false
+    end
   end
 
   class NestedInfoAssociation < NestedInfo
@@ -102,6 +106,14 @@ module ActiveScaffold::DataStructures
 
     def create_through_singular?
       association.through_singular? && source_reflection.reverse
+    end
+
+    def create_with_parent?
+      if nested.has_many? && !nested.association.through?
+        false
+      elsif nested.child_association || nested.create_through_singular?
+        true
+      end
     end
 
     def source_reflection

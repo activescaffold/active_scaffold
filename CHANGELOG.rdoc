@@ -10,8 +10,10 @@
 - Support TinyMCE 6
 - Add hide_form_column_if to columns
 - Re-enable form which is sent to iframe when response is received, e.g. if form is downloading a file
+- Use hash order for bitfields value instead of bit order, so options can be re-ordered as `2**1 => opt1, 2**0 => opt0, 2**2 => opt2`
+- Remove delayed_setup, as it didn't work since rails 5.2
 
-= 3.6.19 (not released yet)
+= 3.6.19
 - Improve create action in has_many through singular association, supporting more cases
 
 = 3.6.18
