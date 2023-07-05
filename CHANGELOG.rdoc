@@ -1,3 +1,6 @@
+= 3.6.20
+- Fix numeric search on field search for rails >= 5.0
+
 = 3.6.19
 - Improve create action in has_many through singular association, supporting more cases
 
