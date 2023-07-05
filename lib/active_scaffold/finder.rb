@@ -297,7 +297,7 @@ module ActiveScaffold
           end
         when :float     then value.to_f
         when :decimal
-          ::ActiveRecord::Type::Decimal.new.type_cast_from_user(value)
+          ::ActiveRecord::Type::Decimal.new.send(Rails.version < '5.0' ? :type_cast_from_user : :cast, value)
         else
           value
         end
