@@ -149,8 +149,20 @@ module ActiveScaffold #:nodoc:
           model = remote_controller.to_s.sub(%r{.*/}, '').singularize
           content_tag(:div, :class => 'active-scaffold-header') do
             content_tag(:h2) do
-              link_label = options[:label] || active_scaffold_config_for(model).list.label
-              link_to(link_label, url, remote: true, class: 'load-embedded', data: {error_msg: as_(:error_500)}) <<
+              label = options[:label] || begin
+                # attempt to retrieve the active_scaffold_config by constantizing
+                # the controller path
+                controller_config = "#{remote_controller}_controller".camelize.constantize.active_scaffold_config rescue nil
+                controller_config.try(:label) || begin
+                  # if we couldn't determine the controller config by instantiating the
+                  # controller class, parse the ActiveRecord model name from the
+                  # controller path, which might be a namespaced controller (e.g., 'admin/admins')
+                  model = remote_controller.to_s.sub(%r{.*/}, '').singularize
+                  active_scaffold_config_for(model).list.label
+                end
+              end
+            
+              link_to(label, url, remote: true, class: 'load-embedded', data: {error_msg: as_(:error_500)}) <<
                 loading_indicator_tag(url_options)
             end
           end
