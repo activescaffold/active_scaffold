@@ -119,6 +119,17 @@ module ActiveScaffold #:nodoc:
       end
     end
 
+    def remote_controller_config(controller_path)
+      # attempt to retrieve the active_scaffold_config by constantizing the controller path
+      "#{controller_path}_controller".camelize.constantize.active_scaffold_config
+    rescue NameError
+      # if we couldn't determine the controller config by instantiating the
+      # controller class, parse the ActiveRecord model name from the
+      # controller path, which might be a namespaced controller (e.g., 'admin/admins')
+      model = remote_controller.to_s.sub(%r{.*/}, '').singularize
+      active_scaffold_config_for(model)
+    end
+
     def render_embedded(options)
       require 'digest/md5'
 
@@ -146,19 +157,7 @@ module ActiveScaffold #:nodoc:
         content_tag(:div, :id => id, :class => 'active-scaffold-component', :data => {:refresh => url}) do
           content_tag(:div, :class => 'active-scaffold-header') do
             content_tag(:h2) do
-              label = options[:label] || begin
-                # attempt to retrieve the active_scaffold_config by constantizing
-                # the controller path
-                controller_config = "#{remote_controller}_controller".camelize.constantize.active_scaffold_config rescue nil
-                controller_config.try(:label) || begin
-                  # if we couldn't determine the controller config by instantiating the
-                  # controller class, parse the ActiveRecord model name from the
-                  # controller path, which might be a namespaced controller (e.g., 'admin/admins')
-                  model = remote_controller.to_s.sub(%r{.*/}, '').singularize
-                  active_scaffold_config_for(model).list.label
-                end
-              end
-            
+              label = options[:label] || remote_controller_config(remote_controller).list.label
               link_to(label, url, remote: true, class: 'load-embedded', data: {error_msg: as_(:error_500)}) <<
                 loading_indicator_tag(url_options)
             end
