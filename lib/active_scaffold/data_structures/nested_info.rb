@@ -109,9 +109,9 @@ module ActiveScaffold::DataStructures
     end
 
     def create_with_parent?
-      if nested.has_many? && !nested.association.through?
+      if has_many? && !association.through?
         false
-      elsif nested.child_association || nested.create_through_singular?
+      elsif child_association || create_through_singular?
         true
       end
     end
