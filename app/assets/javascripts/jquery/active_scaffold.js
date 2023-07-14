@@ -77,8 +77,10 @@ jQuery(document).ready(function($) {
       setTimeout(function() { ActiveScaffold.disable_form(form_id); }, 10);
       if (as_form.attr('target')) {
         iframe = jQuery('iframe[name="' + jQuery(this).attr('target') + '"]')[0];
+        iframe.src = 'about:blank';
         interval = setInterval(function() {
-          if ((iframe.contentDocument || iframe.contentWindow.document).readyState === 'complete') {
+          var doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+          if (doc && doc.readyState === 'complete' && doc.location.href !== 'about:blank') {
             ActiveScaffold.enable_form(form_id);
             clearInterval(interval);
           }

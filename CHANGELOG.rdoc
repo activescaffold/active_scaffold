@@ -13,6 +13,7 @@
 - Use hash order for bitfields value instead of bit order, so options can be re-ordered as `2**1 => opt1, 2**0 => opt0, 2**2 => opt2`
 - Remove delayed_setup, as it didn't work since rails 5.2
 - Support Turbo
+- Fix detecting when form submit to iframe has ended
 
 = 3.6.20
 - Fix numeric search on field search for rails >= 5.0
