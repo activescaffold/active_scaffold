@@ -80,7 +80,7 @@ jQuery(document).ready(function($) {
         iframe.src = 'about:blank';
         interval = setInterval(function() {
           var doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
-          if (doc && doc.readyState === 'complete' && doc.location.href !== 'about:blank') {
+          if (doc && doc.readyState !== 'loading' && doc.location.href !== 'about:blank') {
             ActiveScaffold.enable_form(form_id);
             clearInterval(interval);
           }
