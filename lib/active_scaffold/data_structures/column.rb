@@ -46,8 +46,10 @@ module ActiveScaffold::DataStructures
 
     # a textual description of the column and its contents. this will be displayed with any associated form input widget, so you may want to consider adding a content example.
     attr_writer :description
-    def description
-      if @description
+    def description(record=nil, scope=nil)
+      if @description&.respond_to?(:call)
+        @description.call(record, self, scope)
+      elsif @description
         @description
       else
         I18n.t name, :scope => [:activerecord, :description, active_record_class.to_s.underscore.to_sym], :default => ''
