@@ -6,6 +6,7 @@ module ActiveScaffold::Actions
         before_action :check_input_device
         before_action :register_constraints_with_action_columns, :unless => :nested?
         after_action :clear_flashes
+        after_action :dl_cookie
         around_action :clear_storage
         rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
       end
@@ -163,6 +164,10 @@ module ActiveScaffold::Actions
 
     def clear_flashes
       flash.clear if request.xhr?
+    end
+
+    def dl_cookie
+      cookies[params[:_dl_cookie]] = {value: Time.now.to_i, expires: 1.day.since} if params[:_dl_cookie]
     end
 
     def each_marked_record(&block)
