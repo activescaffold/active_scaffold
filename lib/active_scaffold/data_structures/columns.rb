@@ -13,7 +13,7 @@ module ActiveScaffold::DataStructures
     # IT IS NOT MEANT FOR PUBLIC USE (but if you know what you're doing, go ahead)
     def _inheritable=(value)
       @sorted = true
-      @_inheritable = value
+      @_inheritable = ::Set.new(value)
     end
 
     # This accessor is used by ActionColumns to create new Column objects without adding them to this set
@@ -21,8 +21,8 @@ module ActiveScaffold::DataStructures
 
     def initialize(active_record_class, *args)
       @active_record_class = active_record_class
-      @_inheritable = []
-      @set = []
+      @_inheritable = ::Set.new
+      @set = {}
       @sorted = nil
 
       add(*args)
@@ -35,9 +35,11 @@ module ActiveScaffold::DataStructures
       args = args.collect(&:to_sym)
 
       # make the columns inheritable
-      @_inheritable.concat(args)
+      @_inheritable.merge(args)
       # then add columns to @set (unless they already exist)
-      args.each { |a| @set << ActiveScaffold::DataStructures::Column.new(a.to_sym, @active_record_class) unless find_by_name(a) }
+      args.each do |a|
+        @set[a.to_sym] = ActiveScaffold::DataStructures::Column.new(a, @active_record_class) unless find_by_name(a)
+      end
     end
     alias << add
 
@@ -54,8 +56,8 @@ module ActiveScaffold::DataStructures
 
       klass = column.association.klass
       columns.each do |col|
-        next if find_by_name col
-        @set << ActiveScaffold::DataStructures::Column.new(col, klass, column.association)
+        next if known_column? col
+        @set[col.to_sym] = ActiveScaffold::DataStructures::Column.new(col, klass, column.association)
       end
     end
 
@@ -66,24 +68,22 @@ module ActiveScaffold::DataStructures
 
     # returns an array of columns with the provided names
     def find_by_names(*names)
-      @set.find_all { |column| names.include? column.name }
+      names.map { |name| find_by_name name }
     end
 
     # returns the column of the given name.
     def find_by_name(name)
-      # this works because of `def column.=='
-      column = @set.find { |c| c == name }
-      column
+      @set[name.to_sym]
     end
     alias [] find_by_name
 
     def each
-      @set.each { |i| yield i }
+      @set.each_value { |name| yield name }
     end
 
     def _inheritable
       if @sorted
-        @_inheritable
+        @_inheritable.to_a
       else
         @_inheritable.sort do |a, b|
           self[a] <=> self[b]

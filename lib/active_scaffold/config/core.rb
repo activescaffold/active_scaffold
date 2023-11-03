@@ -112,7 +112,7 @@ module ActiveScaffold::Config
     def columns=(val)
       @columns._inheritable = val.collect(&:to_sym)
       # Add virtual columns
-      @columns << val.collect { |c| c.to_sym unless @columns[c.to_sym] }.compact
+      @columns.add *val
     end
 
     # lets you override the global ActiveScaffold frontend for a specific controller
