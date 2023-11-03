@@ -32,10 +32,10 @@ I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../config/
 
 # rails 4.0
 unless defined? Minitest::Test
-  class Minitest::Test < MiniTest::Unit::TestCase
+  class Minitest::Test < Minitest::Unit::TestCase
   end
 
-  class MiniTest::Unit::TestCase
+  class Minitest::Unit::TestCase
     def with_js_framework(framework)
       framework, ActiveScaffold.js_framework = ActiveScaffold.js_framework, framework
       yield
@@ -44,7 +44,7 @@ unless defined? Minitest::Test
   end
 end
 
-class MiniTest::Test
+class Minitest::Test
   protected
 
   def with_js_framework(framework)

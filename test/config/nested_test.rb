@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class NestedTest < MiniTest::Test
+  class NestedTest < Minitest::Test
     class ModelStubsController < ActionController::Base
       include ActiveScaffold::Core
       active_scaffold

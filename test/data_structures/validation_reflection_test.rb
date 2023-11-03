@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ValidationReflectionTest < MiniTest::Test
+class ValidationReflectionTest < Minitest::Test
   def test_set_required_for_validates_presence_of
     column = ActiveScaffold::DataStructures::Column.new(:name, Company)
     refute column.required?

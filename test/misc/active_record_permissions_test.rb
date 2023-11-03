@@ -81,7 +81,7 @@ class PermissionModel < ActiveRecord::Base
   # def c1_authorized_for_update?; end
 end
 
-class ActiveRecordPermissionsTest < MiniTest::Test
+class ActiveRecordPermissionsTest < Minitest::Test
   def setup
     @model = PermissionModel.new
   end

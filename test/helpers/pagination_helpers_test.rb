@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PaginationHelpersTest < MiniTest::Test
+class PaginationHelpersTest < Minitest::Test
   include ActiveScaffold::Helpers::PaginationHelpers
   include ActionView::Helpers::OutputSafetyHelper
 

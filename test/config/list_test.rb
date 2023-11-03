@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class ListTest < MiniTest::Test
+  class ListTest < Minitest::Test
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
     end

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ActionLinkTest < MiniTest::Test
+class ActionLinkTest < Minitest::Test
   def setup
     @link = ActiveScaffold::DataStructures::ActionLink.new('foo')
   end

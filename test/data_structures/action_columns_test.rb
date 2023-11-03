@@ -2,7 +2,7 @@ require 'test_helper'
 # require 'test/model_stub'
 # require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/data_structures/set.rb')
 
-class ActionColumnsTest < MiniTest::Test
+class ActionColumnsTest < Minitest::Test
   def setup
     @columns = ActiveScaffold::DataStructures::ActionColumns.new(%i[a b])
     @columns.action = stub(core: stub(model_id: 'model_stub'), user_settings_key: :"model_stub_active_scaffold/config/test")

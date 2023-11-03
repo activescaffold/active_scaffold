@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class DeleteTest < MiniTest::Test
+  class DeleteTest < Minitest::Test
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.delete.link

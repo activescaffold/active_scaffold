@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class TablelessTest < MiniTest::Test
+class TablelessTest < Minitest::Test
   def test_find_all
     assert FileModel.all.to_a.empty?
   end

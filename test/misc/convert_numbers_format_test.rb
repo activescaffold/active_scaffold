@@ -22,7 +22,7 @@ class NumberModel < ActiveRecord::Base
   end
 end
 
-class ConvertNumbersFormatTest < MiniTest::Test
+class ConvertNumbersFormatTest < Minitest::Test
   include ActiveScaffoldConfigMock
   include ActiveScaffold::AttributeParams
   include ActiveScaffold::Finder

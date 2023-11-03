@@ -121,7 +121,7 @@ class ConstraintsTestObject
   end
 end
 
-class ConstraintsTest < MiniTest::Test
+class ConstraintsTest < Minitest::Test
   def setup
     @test_object = ConstraintsTestObject.new
   end

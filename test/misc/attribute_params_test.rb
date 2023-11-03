@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class AttributeParamsTest < MiniTest::Test
+class AttributeParamsTest < Minitest::Test
   def setup
     @controller = Controller.new
   end

@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class UpdateTest < MiniTest::Test
+  class UpdateTest < Minitest::Test
     include ActiveScaffold::Helpers::ControllerHelpers
 
     def setup

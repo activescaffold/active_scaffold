@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class BridgeTest < MiniTest::Test
+class BridgeTest < Minitest::Test
   def setup
     @const_store = {}
   end

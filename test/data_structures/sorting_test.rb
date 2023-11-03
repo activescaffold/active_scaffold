@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SortingTest < MiniTest::Test
+class SortingTest < Minitest::Test
   def setup
     @columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b, :c, :d, :id)
     @sorting = ActiveScaffold::DataStructures::Sorting.new(@columns, ModelStub)

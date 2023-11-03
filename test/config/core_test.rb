@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class CoreTest < MiniTest::Test
+  class CoreTest < Minitest::Test
     class ModelStubsController < ActionController::Base
       include ActiveScaffold::Core
     end

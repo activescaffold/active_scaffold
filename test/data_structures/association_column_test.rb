@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'model_stub'
 
-class AssociationColumnTest < MiniTest::Test
+class AssociationColumnTest < Minitest::Test
   def setup
     @association_column = ActiveScaffold::DataStructures::Column.new('other_model', ModelStub)
   end

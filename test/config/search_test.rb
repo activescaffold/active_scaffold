@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class SearchTest < MiniTest::Test
+  class SearchTest < Minitest::Test
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.search.link

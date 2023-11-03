@@ -22,7 +22,7 @@ class DateTimeModel < ActiveRecord::Base
   end
 end
 
-class ParseDatetimeTest < MiniTest::Test
+class ParseDatetimeTest < Minitest::Test
   include ActiveScaffoldConfigMock
   include ActiveScaffold::AttributeParams
   include ActiveScaffold::Finder

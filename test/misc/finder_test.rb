@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'class_with_finder'
 
-class FinderTest < MiniTest::Test
+class FinderTest < Minitest::Test
   def setup
     @klass = ClassWithFinder.new
     @klass.active_scaffold_config.stubs(model: ModelStub)

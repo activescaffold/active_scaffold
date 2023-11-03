@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'class_with_finder'
 
-class CalculationTest < MiniTest::Test
+class CalculationTest < Minitest::Test
   def setup
     @buildings = []
     @buildings << Building.create { |b| b.build_owner(:first_name => 'foo') }
