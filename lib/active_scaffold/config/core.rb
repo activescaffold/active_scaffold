@@ -1,4 +1,4 @@
-module ActiveScaffold::Config
+UUmodule ActiveScaffold::Config
   # to fix the ckeditor bridge problem inherit from full class name
   class Core < ActiveScaffold::Config::Base
     include ActiveScaffold::OrmChecks
@@ -112,7 +112,7 @@ module ActiveScaffold::Config
     def columns=(val)
       @columns._inheritable = val.collect(&:to_sym)
       # Add virtual columns
-      @columns.add *val
+      @columns.add(*val)
     end
 
     # lets you override the global ActiveScaffold frontend for a specific controller
