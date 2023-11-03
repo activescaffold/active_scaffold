@@ -1,4 +1,4 @@
-UUmodule ActiveScaffold::Config
+module ActiveScaffold::Config
   # to fix the ckeditor bridge problem inherit from full class name
   class Core < ActiveScaffold::Config::Base
     include ActiveScaffold::OrmChecks
