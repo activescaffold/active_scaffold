@@ -126,7 +126,7 @@ module ActiveScaffold #:nodoc:
       # if we couldn't determine the controller config by instantiating the
       # controller class, parse the ActiveRecord model name from the
       # controller path, which might be a namespaced controller (e.g., 'admin/admins')
-      model = remote_controller.to_s.sub(%r{.*/}, '').singularize
+      model = controller_path.to_s.sub(%r{.*/}, '').singularize
       active_scaffold_config_for(model)
     end
 
