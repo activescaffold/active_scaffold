@@ -1,33 +1,28 @@
 module ActiveScaffold
   class Registry
-    extend ActiveSupport::PerThreadRegistry
-    attr_accessor :current_user_proc, :current_ability_proc, :marked_records
+    thread_mattr_accessor :current_user_proc, :current_ability_proc, :marked_records
 
-    def user_settings
-      @user_settings ||= {}
+    def self.user_settings
+       RequestStore.store[:attr_Registry_user_settings] ||= {}
     end
 
-    def constraint_columns
-      @constraint_columns ||= Hash.new { |h, k| h[k] = [] }
+    def self.constraint_columns
+       RequestStore.store[:attr_Registry_constraint_columns] ||= Hash.new { |h, k| h[k] = [] }
     end
 
-    def unauthorized_columns
-      @unauthorized_columns ||= Hash.new { |h, k| h[k] = [] }
+    def self.unauthorized_columns
+       RequestStore.store[:attr_Registry_unauthorized_columns] ||= Hash.new { |h, k| h[k] = [] }
     end
 
-    def cache(kind, key = nil, &block)
+    def self.cache(kind, key = nil, &block)
       unless key
         key = kind
         kind = :cache
       end
-      @cache ||= {}
-      cache = @cache[kind] ||= {}
+      RequestStore.store[:attr_Registry_cache] ||= {}
+      cache = RequestStore.store[:attr_Registry_cache][kind] ||= {}
       return cache[key] if cache.include? key
       cache[key] ||= yield
-    end
-
-    def self.instance
-      RequestStore.store[@per_thread_registry_key] ||= new
     end
   end
 end
