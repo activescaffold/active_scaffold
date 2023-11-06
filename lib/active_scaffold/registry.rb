@@ -3,15 +3,15 @@ module ActiveScaffold
     thread_mattr_accessor :current_user_proc, :current_ability_proc, :marked_records
 
     def self.user_settings
-       RequestStore.store[:attr_Registry_user_settings] ||= {}
+      RequestStore.store[:attr_Registry_user_settings] ||= {}
     end
 
     def self.constraint_columns
-       RequestStore.store[:attr_Registry_constraint_columns] ||= Hash.new { |h, k| h[k] = [] }
+      RequestStore.store[:attr_Registry_constraint_columns] ||= Hash.new { |h, k| h[k] = [] }
     end
 
     def self.unauthorized_columns
-       RequestStore.store[:attr_Registry_unauthorized_columns] ||= Hash.new { |h, k| h[k] = [] }
+      RequestStore.store[:attr_Registry_unauthorized_columns] ||= Hash.new { |h, k| h[k] = [] }
     end
 
     def self.cache(kind, key = nil, &block)
