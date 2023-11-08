@@ -201,7 +201,7 @@ module ActiveScaffold
         end
 
         content_tag :dl, attributes do
-          content_tag(:dt, label_tag(label_for(column, column_options), form_column_label(column))) <<
+          content_tag(:dt, label_tag(label_for(column, column_options), form_column_label(column, record: record, scope: scope))) <<
             content_tag(:dd, field)
         end
       end
@@ -210,8 +210,8 @@ module ActiveScaffold
         options[:id] unless column.form_ui == :select && column.association&.collection?
       end
 
-      def form_column_label(column)
-        column.label
+      def form_column_label(column, record: nil, scope: nil)
+        column.label(record, scope)
       end
 
       def subform_label(column, hidden)
