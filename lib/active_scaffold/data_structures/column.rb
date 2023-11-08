@@ -40,8 +40,19 @@ module ActiveScaffold::DataStructures
     # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.
     # if left alone it will utilize human_attribute_name which includes localization
     attr_writer :label
-    def label
-      as_(@label) || active_record_class.human_attribute_name(name.to_s)
+    def label(record=nil, scope=nil)
+      if @label.respond_to?(:call)
+        if record
+          @label.call(record, self, scope)
+        else
+          # sometimes label is called without a record in context (ie, from table
+          # headers).  In this case fall back to the humanized attribute name
+          # instead of the Proc
+          active_record_class.human_attribute_name(name.to_s)
+        end
+      else
+        as_(@label) || active_record_class.human_attribute_name(name.to_s)
+      end
     end
 
     # a textual description of the column and its contents. this will be displayed with any associated form input widget, so you may want to consider adding a content example.
