@@ -247,7 +247,7 @@ module ActiveScaffold
 
           message = options.include?(:message) ? options[:message] : as_('errors.template.body')
 
-          error_messages = objects.sum do |object|
+          error_messages = objects.map do |object|
             object.errors.full_messages.map do |msg|
               options[:list_type] != :br ? content_tag(:li, msg) : msg
             end
