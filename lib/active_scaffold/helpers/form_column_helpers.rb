@@ -197,11 +197,11 @@ module ActiveScaffold
         end
         if field
           field << loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns
-          field << content_tag(:span, column.description(record, scope), :class => 'description') if column.description.present?
+          field << content_tag(:span, column.description(record, scope), :class => 'description') if column.description(record, scope).present?
         end
 
         content_tag :dl, attributes do
-          content_tag(:dt, label_tag(label_for(column, column_options), form_column_label(column, record: record, scope: scope))) <<
+          content_tag(:dt, label_tag(label_for(column, column_options), form_column_label(column, record, scope))) <<
             content_tag(:dd, field)
         end
       end
@@ -210,7 +210,7 @@ module ActiveScaffold
         options[:id] unless column.form_ui == :select && column.association&.collection?
       end
 
-      def form_column_label(column, record: nil, scope: nil)
+      def form_column_label(column, record = nil, scope = nil)
         column.label(record, scope)
       end
 
