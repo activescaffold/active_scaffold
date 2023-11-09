@@ -197,7 +197,7 @@ module ActiveScaffold
         end
         if field
           field << loading_indicator_tag(:action => :render_field, :id => params[:id]) if column.update_columns
-          field << content_tag(:span, column.description(record, scope), :class => 'description') if column.description(record, scope).present?
+          field << content_tag(:span, desc, :class => 'description') if desc = column.description(record, scope).presence
         end
 
         content_tag :dl, attributes do
