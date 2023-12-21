@@ -5,6 +5,14 @@ module ActiveScaffold::DataStructures::Association
       klass.am_relations.values
     end
 
+    def primary_key
+      @association[:primary_key]
+    end
+
+    def counter_cache
+      @association[:counter_cache]
+    end
+
     def inverse_klass
       as ? @association[:inverse_class_name].constantize : super
     end
