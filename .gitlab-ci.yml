@@ -11,7 +11,7 @@
     - bundle config set --local deployment 'true'
     - bundle config set --local without 'default development lint production test performance'
     - bundle install --jobs=2
-  image: ruby:alpine
+  image: ruby:3.0-alpine
   only:
     - master
   stage: deploy
@@ -31,7 +31,7 @@
     - bundle config set --local deployment 'true'
     - bundle config set --local without 'default deployment development production test performance'
     - bundle install --jobs=2
-  image: ruby:2.6-alpine
+  image: ruby:3.0-alpine
   stage: lint
   tags:
     - gitlab-org
@@ -88,7 +88,7 @@
   image: ruby:3.0-alpine
 
 .use_mri_3_1:
-  image: ruby:3.0-alpine
+  image: ruby:3.1-alpine
 
 .use_rails_5_2:
   extends: .test
