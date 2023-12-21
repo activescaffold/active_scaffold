@@ -3,19 +3,19 @@ module ActiveScaffold::DataStructures::Association
     delegate :inverse_klass, :as, :dependent, :inverse, to: :@association
 
     def belongs_to?
-      defined?(Mongoid::Association) ? macro_mapping?(:belongs_to) : super
+      defined?(::Mongoid::Association) ? macro_mapping?(:belongs_to) : super
     end
 
     def has_one? # rubocop:disable Naming/PredicateName
-      defined?(Mongoid::Association) ? macro_mapping?(:has_one) : super
+      defined?(::Mongoid::Association) ? macro_mapping?(:has_one) : super
     end
 
     def has_many? # rubocop:disable Naming/PredicateName
-      defined?(Mongoid::Association) ? macro_mapping?(:has_many) : super
+      defined?(::Mongoid::Association) ? macro_mapping?(:has_many) : super
     end
 
     def habtm?
-      defined?(Mongoid::Association) ? macro_mapping?(:has_and_belongs_to_many) : super
+      defined?(::Mongoid::Association) ? macro_mapping?(:has_and_belongs_to_many) : super
     end
 
     # polymorphic belongs_to
@@ -48,7 +48,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def macro_mapping?(macro)
-      @association.is_a? Mongoid::Association::MACRO_MAPPING[macro]
+      @association.is_a? ::Mongoid::Association::MACRO_MAPPING[macro]
     end
   end
 end
