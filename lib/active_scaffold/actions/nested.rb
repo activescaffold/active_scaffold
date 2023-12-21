@@ -8,7 +8,7 @@ module ActiveScaffold::Actions
       base.module_eval do
         before_action :set_nested
         before_action :configure_nested
-        include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.model.reflect_on_all_associations.any? { |a| a.macro == :has_and_belongs_to_many }
+        include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.columns.map(&:association).compact.any?(&:habtm?)
       end
       base.before_action :include_habtm_actions
       base.helper_method :nested
