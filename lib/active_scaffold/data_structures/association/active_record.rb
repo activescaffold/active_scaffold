@@ -30,14 +30,6 @@ module ActiveScaffold::DataStructures::Association
       @association.active_record
     end
 
-    def primary_key
-      @association.options[:primary_key]
-    end
-
-    def counter_cache
-      @association.options[:counter_cache]
-    end
-
     def as
       @association.options[:as]
     end

@@ -2,13 +2,25 @@ module ActiveScaffold::DataStructures::Association
   class Mongoid < Abstract
     delegate :inverse_klass, :as, :dependent, :inverse, to: :@association
 
+    def belongs_to?
+      defined?(Mongoid::Association) ? macro_mapping?(:belongs_to) : super
+    end
+
+    def has_one? # rubocop:disable Naming/PredicateName
+      defined?(Mongoid::Association) ? macro_mapping?(:has_one) : super
+    end
+
+    def has_many? # rubocop:disable Naming/PredicateName
+      defined?(Mongoid::Association) ? macro_mapping?(:has_many) : super
+    end
+
+    def habtm?
+      defined?(Mongoid::Association) ? macro_mapping?(:has_and_belongs_to_many) : super
+    end
+
     # polymorphic belongs_to
     def polymorphic?
       belongs_to? && @association.polymorphic?
-    end
-
-    def primary_key
-      @association[:primary_key]
     end
 
     def association_primary_key
@@ -17,10 +29,6 @@ module ActiveScaffold::DataStructures::Association
 
     def foreign_type
       @association.type
-    end
-
-    def counter_cache
-      @association[:counter_cache]
     end
 
     def table_name
@@ -37,6 +45,10 @@ module ActiveScaffold::DataStructures::Association
 
     def self.reflect_on_all_associations(klass)
       klass.relations.values
+    end
+
+    def macro_mapping?(macro)
+      @association.is_a? Mongoid::Association::MACRO_MAPPING[macro]
     end
   end
 end

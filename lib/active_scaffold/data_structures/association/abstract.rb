@@ -54,6 +54,14 @@ module ActiveScaffold::DataStructures::Association
       through? && through_reflection.collection?
     end
 
+    def primary_key
+      @association.options[:primary_key]
+    end
+
+    def counter_cache
+      @association.options[:counter_cache]
+    end
+
     def polymorphic?
       false
     end
