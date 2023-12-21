@@ -3,6 +3,7 @@ module ActiveScaffold::DataStructures::Association
     delegate :inverse_klass, :as, :dependent, :inverse, to: :@association
 
     def belongs_to?
+      # once Ruby 2.6 support is dropped, use macro_mapping? always
       defined?(::Mongoid::Association) ? macro_mapping?(:belongs_to) : super
     end
 
