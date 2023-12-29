@@ -329,7 +329,7 @@ module ActiveScaffold
         html
       end
 
-      def active_scaffold_new_record_subform(column, record, html_options, new_record_attributes: nil, locals: {}, skip_link: false) # rubocop:disable Metrics/ParameterLists
+      def active_scaffold_new_record_subform(column, record, html_options, new_record_attributes: nil, locals: {}, skip_link: false)
         klass =
           if column.association.polymorphic? && column.association.belongs_to?
             type = record.send(column.association.foreign_type)
