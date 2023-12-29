@@ -62,14 +62,14 @@ module ActiveScaffold::Actions
       @source_id = params.delete(:source_id)
       @columns = @column.update_columns || []
       @scope = params.delete(:scope)
-      action = :subform if @scope
-      action ||= params[:id] ? :update : :create
-      @main_columns = active_scaffold_config.send(action).columns
+      @form_action = :subform if @scope
+      @form_action ||= params.delete(:form_action)&.to_sym || (params[:id] ? :update : :create)
+      @main_columns = active_scaffold_config.send(@form_action).columns
       @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
 
       @record =
         if @column.send_form_on_update_column
-          updated_record_with_form(@main_columns, params[:record], @scope)
+          updated_record_with_form(@main_columns, params[:record] || params[:search], @scope)
         else
           updated_record_with_column(@column, params.delete(:value), @scope)
         end
@@ -101,7 +101,14 @@ module ActiveScaffold::Actions
       record = params[:id] ? copy_attributes(find_if_allowed(params[:id], :read)) : new_model
       apply_constraints_to_record(record) unless scope || params[:id]
       create_association_with_parent record, true if nested?
-      update_column_from_params(record, column, value, true)
+      if @form_action == :field_search && value.is_a?(Array) && column.association&.singular?
+        # don't assign value if it's an array and column is singular association,
+        # e.g. value came from multi-select on search form
+        # use instance variable so it's available in the view and helpers
+        @value = value
+      else
+        update_column_from_params(record, column, value, true)
+      end
       record.id = params[:id]
       record
     end

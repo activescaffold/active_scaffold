@@ -149,7 +149,8 @@ module ActiveScaffold
 
     def association_value_from_param_simple_value(parent_record, column, value)
       if column.association.singular?
-        column.association.klass(parent_record)&.find(value) if value.present?
+        # value may be Array if using update_columns in field_search with multi-select
+        column.association.klass(parent_record)&.find(value) if value.present? && !value.is_a?(Array)
       else # column.association.collection?
         column_plural_assocation_value_from_value(column, Array(value))
       end

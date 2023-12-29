@@ -6,6 +6,8 @@ module ActiveScaffold
       # It does not do any rendering. It only decides which method is responsible for rendering.
       def active_scaffold_search_for(column, options = nil)
         options ||= active_scaffold_search_options(column)
+        search_columns = active_scaffold_config.field_search.columns.visible_columns_names
+        options = update_columns_options(column, nil, options, form_columns: search_columns, url_params: {form_action: :field_search})
         record = options[:object]
         if column.delegated_association
           record = record.send(column.delegated_association.name) || column.active_record_class.new

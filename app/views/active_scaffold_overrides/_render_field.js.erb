@@ -8,23 +8,31 @@
   @rendered ||= Set.new
   return if @rendered.include? column.name
   @rendered << column.name
-  renders_as = column_renders_as(column)
+  if @form_action == :field_search
+    form_ui = column.search_ui
+  else
+    renders_as = column_renders_as(column)
+    form_ui = column.form_ui
+  end
   if renders_as == :subform
-    options = {:is_subform => true, :field_class => "#{column.name}-sub-form"}
+    options = {is_subform: true, field_class: "#{column.name}-sub-form"}
   else
-    options = {:is_subform => false, :field_class => "#{column.name}-input", :hidden => column.form_ui == :hidden}
+    options = {is_subform: false, field_class: "#{column.name}-input", hidden: form_ui == :hidden}
   end
-  html = if scope
-    readonly = @record.readonly? || !@record.authorized_for?(:crud_type => :update)
-    crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
-    # subform.columns.to_a.include? so it doesn't check inside subgroups
-    active_scaffold_render_subform_column(column, scope, crud_type, readonly, !active_scaffold_config.subform.columns.to_a.include?(column.name), @record)
-  else
-    render_column(column, @record, renders_as, scope)
-  end
+  html =
+    if scope
+      readonly = @record.readonly? || !@record.authorized_for?(:crud_type => :update)
+      crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
+      # subform.columns.to_a.include? so it doesn't check inside subgroups
+      active_scaffold_render_subform_column(column, scope, crud_type, readonly, !active_scaffold_config.subform.columns.to_a.include?(column.name), @record)
+    elsif @form_action == :field_search
+      search_attribute(column, @record)
+    else
+      render_column(column, @record, renders_as, scope)
+    end
 -%>
 
 ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(html) %>', <%= options.to_json.html_safe %>);
 <%if column.update_columns && !column.update_columns.empty?%>
-  <%=  render(:partial => "render_field", :collection => column.update_columns, :locals => {:source_id => source_id, :scope => scope})%>
+  <%=  render(partial: "render_field", collection: column.update_columns, locals: {source_id: source_id, scope: scope})%>
 <%end%>

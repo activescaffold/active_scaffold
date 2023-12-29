@@ -119,15 +119,15 @@ module ActiveScaffold
         end
       end
 
-      def update_columns_options(column, scope, options, force = false)
+      def update_columns_options(column, scope, options, force = false, form_columns: nil, url_params: {})
         record = options[:object]
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
         if @main_columns && (scope.nil? || subform_controller == controller.class)
           form_columns = @main_columns.visible_columns_names
         end
-        form_columns ||= current_form_columns(record, scope, subform_controller)
+        form_columns ||= options[:form_columns] || current_form_columns(record, scope, subform_controller)
         if force || (form_columns && column.update_columns && (column.update_columns & form_columns).present?)
-          url_params = params_for(:action => 'render_field', :column => column.name, :id => record.to_param)
+          url_params.reverse_merge! params_for(action: 'render_field', column: column.name, id: record.to_param)
           if nested? && scope
             url_params[:nested] = url_params.slice(:parent_scaffold, :association, nested.param_name)
             url_params = url_params.except(:parent_scaffold, :association, nested.param_name)
