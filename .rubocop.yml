@@ -30,6 +30,9 @@ Metrics/ModuleLength:
   Max: 650
   CountComments: false
 
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
 Naming/FileName:
   Exclude:
     - 'Gemfile'
