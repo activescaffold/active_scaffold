@@ -123,7 +123,7 @@ module ActiveScaffold
         record = options[:object]
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
         if @main_columns && (scope.nil? || subform_controller == controller.class)
-          form_columns = @main_columns.visible_columns_names
+          form_columns ||= @main_columns.visible_columns_names
         end
         form_columns ||= options[:form_columns] || current_form_columns(record, scope, subform_controller)
         if force || (form_columns && column.update_columns && (column.update_columns & form_columns).present?)
