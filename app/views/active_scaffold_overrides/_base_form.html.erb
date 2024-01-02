@@ -7,11 +7,15 @@
      multipart ||= action_config.multipart? unless local_assigns.has_key? :multipart
      columns ||= action_config.columns unless local_assigns.has_key? :columns
      persistent ||= action_config.persistent unless local_assigns.has_key? :persistent
+     unless local_assigns.has_key? :floating_footer
+       floating_footer ||= action_config.floating_footer if action_config.respond_to? :floating_footer
+     end
    else
      multipart ||= false
      columns ||= nil
      persistent ||= false
    end
+   floating_footer ||= false
    method ||= :post
    cancel_link = true if cancel_link.nil?
    submit_text ||= form_action
@@ -26,7 +30,7 @@ options = {:id => form_id,
            :method => method,
            'data-loading' => defined?(loading) ? loading : true}
 cancel_options = {:class => 'as_cancel'}
-
+options[:class] << ' floating-footer' if floating_footer
 cancel_options[:remote] = true if xhr #cancel link does nt have to care about multipart forms
 if xhr && multipart # file_uploads
   form_remote_upload_tag url_options.merge({:iframe => true}), options

@@ -19,6 +19,7 @@
 - Fix displaying errors in forms in rails 7.1
 - Support for mongoid 7
 - Support update_columns in field_search, so cascading behaviour is available to field search as in create or update forms
+- Support floating footer in field_search, create and update, so footer may float to keep it visible when form is too long to fit
 
 = 3.6.20
 - Fix numeric search on field search for rails >= 5.0

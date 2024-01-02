@@ -402,6 +402,9 @@ jQuery(document).ready(function($) {
   jQuery(document).on('as:element_updated as:element_created', function(e, action_link) {
       ActiveScaffold.setup(e.target);
   });
+  jQuery(document).on('as:element_removed', function(e, action_link) {
+    setTimeout(ActiveScaffold.update_floating_form_footer); // delay so form is already removed
+  });
   jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
     ActiveScaffold.setup(action_link.adapter);
   });
@@ -494,6 +497,7 @@ var ActiveScaffold = {
     ActiveScaffold.draggable_lists('.draggable-lists', container);
     ActiveScaffold.sliders(container);
     ActiveScaffold.disable_optional_subforms(container);
+    ActiveScaffold.update_floating_form_footer(); // check other forms too, state may change
   },
   setup_history_state: function() {
     if (!jQuery('.active-scaffold').length) return;
@@ -1156,9 +1160,20 @@ var ActiveScaffold = {
         if (!window.confirm(unload_message)) e.preventDefault();
       }
     });
+  },
+
+  update_floating_form_footer: function() {
+    jQuery('.active-scaffold form.floating-footer .form-footer').each(function () {
+      var $footer = jQuery(this), $form = $footer.closest('form.floating-footer');
+      $footer.removeClass('floating');
+      if ($form.visible(true) && !$footer.visible(true)) $footer.addClass('floating');
+    });
   }
+
 }
 
+
+jQuery(window).on('scroll resize', ActiveScaffold.update_floating_form_footer);
 
 /*
  * URL modification support. Incomplete functionality.

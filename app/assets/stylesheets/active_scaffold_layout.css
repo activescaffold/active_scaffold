@@ -672,6 +672,17 @@ clear: both;
 .active-scaffold p.form-footer {
 clear: both;
 }
+.active-scaffold .form-footer.floating {
+position: fixed;
+bottom: 10px;
+z-index: 10;
+top: auto;
+left: auto;
+border: none;
+padding: 10px;
+background: white;
+}
+
 
 .active-scaffold a.as_cancel,
 .active-scaffold p.form-footer a {

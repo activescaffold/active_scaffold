@@ -5,6 +5,7 @@ module ActiveScaffold::Config
       @show_unauthorized_columns = self.class.show_unauthorized_columns
       @refresh_list = self.class.refresh_list
       @persistent = self.class.persistent
+      @floating_footer = self.class.floating_footer
 
       # no global setting here because multipart should only be set for specific forms
       @multipart = false
@@ -22,6 +23,10 @@ module ActiveScaffold::Config
     # whether we should refresh list after update or not
     class_attribute :refresh_list, instance_accessor: false
     @@refresh_list = false
+
+    # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
+    class_attribute :floating_footer, instance_accessor: false
+    @@floating_footer = false
 
     # instance-level configuration
     # ----------------------------
@@ -41,6 +46,9 @@ module ActiveScaffold::Config
     # whether we should refresh list after create or not
     attr_accessor :refresh_list
 
+    # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
+    attr_accessor :floating_footer
+
     columns_accessor :columns do
       columns.exclude :created_on, :created_at, :updated_on, :updated_at, :as_marked
       columns.exclude(*@core.columns.collect { |c| c.name if c.association&.polymorphic? }.compact)
@@ -53,7 +61,7 @@ module ActiveScaffold::Config
     end
 
     UserSettings.class_eval do
-      user_attr :persistent, :refresh_list, :show_unauthorized_columns
+      user_attr :persistent, :refresh_list, :show_unauthorized_columns, :floating_footer
 
       attr_writer :multipart
       def multipart?
