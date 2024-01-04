@@ -201,9 +201,10 @@ module ActiveScaffold
           field << content_tag(:span, desc, :class => 'description') if desc.present?
         end
 
+        label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))
+        label << link_to_visibility_toggle(column_options[:id]) if column.options[:collapsible]
         content_tag :dl, attributes do
-          content_tag(:dt, label_tag(label_for(column, column_options), form_column_label(column, record, scope))) <<
-            content_tag(:dd, field)
+          content_tag(:dt, label) << content_tag(:dd, field)
         end
       end
 
