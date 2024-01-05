@@ -106,7 +106,11 @@ module ActiveScaffold
         classes = "#{column.name}-input"
         classes += ' numeric-input' if column.number?
 
-        {:name => name, :class => classes, :id => id_control}.merge(options)
+        if column.options[:collapsible]
+          collapsible_id = "container_#{id_control}"
+        end
+
+        {name: name, class: classes, id: id_control, collapsible_id: collapsible_id}.merge(options)
       end
 
       def current_form_columns(record, scope, subform_controller = nil)
@@ -202,9 +206,10 @@ module ActiveScaffold
         end
 
         label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))
-        label << link_to_visibility_toggle(column_options[:id]) if column.options[:collapsible]
+        collapsible_id = column_options.delete :collapsible_id
+        label << link_to_visibility_toggle(collapsible_id) if collapsible_id
         content_tag :dl, attributes do
-          content_tag(:dt, label) << content_tag(:dd, field)
+          content_tag(:dt, label) << content_tag(:dd, field, id: collapsible_id)
         end
       end
 
