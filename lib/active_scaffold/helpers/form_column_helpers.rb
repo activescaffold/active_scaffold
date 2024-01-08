@@ -207,7 +207,7 @@ module ActiveScaffold
 
         label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))
         collapsible_id = column_options.delete :collapsible_id
-        label << link_to_visibility_toggle(collapsible_id) if collapsible_id
+        label << h(' ') << link_to_visibility_toggle(collapsible_id) if collapsible_id
         content_tag :dl, attributes do
           content_tag(:dt, label) << content_tag(:dd, field, id: collapsible_id)
         end

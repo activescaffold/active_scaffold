@@ -705,7 +705,7 @@ letter-spacing: 0;
 clear: both;
 }
 
-.active-scaffold label {
+.active-scaffold label, .active-scaffold label + a.visibility-toggle {
 font-weight: normal;
 font-size: 11px;
 }
