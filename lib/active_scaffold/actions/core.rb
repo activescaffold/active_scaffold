@@ -386,7 +386,7 @@ module ActiveScaffold::Actions
       else
         @action_link = active_scaffold_config.action_links[action_name]
         if params[:id]
-          crud_type_or_security_options ||= {:crud_type => request.post? || request.put? ? :update : :delete, :action => action_name}
+          crud_type_or_security_options ||= {:crud_type => request.delete? ? :delete : :update, :action => action_name}
           get_row(crud_type_or_security_options)
           if @record.nil?
             self.successful = false
