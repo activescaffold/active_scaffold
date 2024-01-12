@@ -22,6 +22,8 @@
 - Support update_columns in field_search, so cascading behaviour is available to field search as in create or update forms
 - Support floating footer in field_search, create and update, so footer may float to keep it visible when form is too long to fit
 - Support hide/show link in form columns with option :collapsible
+- Improve support for three-state boolean (nullable boolean columns), allowing to change the label for NULL
+- Improve support for nullable boolean columns in field search, allowing to search for NULL
 
 = 3.6.20
 - Fix numeric search on field search for rails >= 5.0

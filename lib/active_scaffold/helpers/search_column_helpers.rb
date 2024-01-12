@@ -135,6 +135,11 @@ module ActiveScaffold
       def active_scaffold_search_boolean(column, options)
         select_options = []
         select_options << [as_(:_select_), nil]
+        if column.column&.null
+          null_label = column.options[:include_blank] || :null
+          null_label = as_(null_label) if null_label.is_a?(Symbol)
+          select_options << [null_label, 'null']
+        end
         select_options << [as_(:true), true] # rubocop:disable Lint/BooleanSymbol
         select_options << [as_(:false), false] # rubocop:disable Lint/BooleanSymbol
 

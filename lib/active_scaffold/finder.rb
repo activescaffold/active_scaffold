@@ -122,7 +122,11 @@ module ActiveScaffold
       def condition_for_search_ui(column, value, like_pattern, search_ui)
         case search_ui
         when :boolean, :checkbox
-          ['%<search_sql>s = ?', column.column ? ActiveScaffold::Core.column_type_cast(value, column.column) : value]
+          if value == 'null'
+            condition_for_null_type(column, value)
+          else
+            ['%<search_sql>s = ?', column.column ? ActiveScaffold::Core.column_type_cast(value, column.column) : value]
+          end
         when :integer, :decimal, :float
           condition_for_numeric(column, value)
         when :string, :range

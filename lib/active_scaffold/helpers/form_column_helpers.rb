@@ -626,14 +626,17 @@ module ActiveScaffold
       # Column.type-based inputs
       #
 
-      def active_scaffold_input_boolean(column, options)
-        record = options.delete(:object)
-        select_options = []
-        select_options << [as_(:_select_), nil] if !column.virtual? && column.column.null
-        select_options << [as_(:true), true] # rubocop:disable Lint/BooleanSymbol
-        select_options << [as_(:false), false] # rubocop:disable Lint/BooleanSymbol
+      def active_scaffold_input_boolean(column, html_options)
+        record = html_options.delete(:object)
+        html_options.merge!(column.options[:html_options] || {})
 
-        select_tag(options[:name], options_for_select(select_options, record.send(column.name)), options)
+        options = {selected: record.send(column.name), object: record}
+        options[:include_blank] = :_select_ if column.column&.null
+        options.merge!(column.options)
+        active_scaffold_translate_select_options(options)
+
+        options_for_select = [[as_(:true), true], [as_(:false), false]] # rubocop:disable Lint/BooleanSymbol
+        select(:record, column.name, options_for_select, options, html_options)
       end
 
       def active_scaffold_input_date(column, options)
