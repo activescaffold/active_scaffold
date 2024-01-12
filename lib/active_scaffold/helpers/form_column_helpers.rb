@@ -321,7 +321,7 @@ module ActiveScaffold
 
         html_options.merge!(column.options[:html_options] || {})
         options.merge!(column.options)
-        active_scaffold_select_name_with_multiple html_options
+        html_options.delete(:multiple) # no point using multiple in a form for singular assoc, but may be set for field search
         active_scaffold_translate_select_options(options)
 
         html =
