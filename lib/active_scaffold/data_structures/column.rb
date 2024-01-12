@@ -367,7 +367,7 @@ module ActiveScaffold::DataStructures
         else
           @form_ui =
             case @column.type
-            when :boolean then :checkbox
+            when :boolean then @column.null ? :boolean : :checkbox
             when :text then :textarea
             end
         end
