@@ -126,6 +126,14 @@ module ActiveScaffold
         end
       end
 
+      def active_scaffold_search_select_multiple(column, options)
+        active_scaffold_search_select(column, options.merge(multiple: true))
+      end
+
+      def active_scaffold_search_draggable(column, options)
+        active_scaffold_search_multi_select(column, options.merge(draggable_lists: true))
+      end
+
       def active_scaffold_search_text(column, options)
         text_field :record, column.name, active_scaffold_input_text_options(options)
       end

@@ -133,7 +133,7 @@ module ActiveScaffold
           condition_for_range(column, value, like_pattern)
         when :date, :time, :datetime, :timestamp
           condition_for_datetime(column, value)
-        when :select, :multi_select, :country, :usa_state, :chosen, :multi_chosen
+        when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state, :chosen, :multi_chosen
           values = Array(value).select(&:present?)
           ['%<search_sql>s in (?)', values] if values.present?
         else
