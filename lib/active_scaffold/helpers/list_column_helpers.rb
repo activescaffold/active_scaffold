@@ -96,6 +96,16 @@ module ActiveScaffold
         check_box(:record, column.name, options)
       end
 
+      def active_scaffold_column_boolean(record, column)
+        value = record.send(column.name)
+        if value.nil? && column.options[:include_blank]
+          value = column.options[:include_blank]
+          value.is_a?(Symbol) ? as_(value) : value
+        else
+          format_column_value(record, column, value)
+        end
+      end
+
       def active_scaffold_column_percentage(record, column)
         options = column.options[:slider] || {}
         options = options.merge(min: record.send(options[:min_method])) if options[:min_method]
