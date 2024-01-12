@@ -27,7 +27,7 @@ Metrics/LineLength:
     - 'test/**/*'
 
 Metrics/ModuleLength:
-  Max: 650
+  Max: 700
   CountComments: false
 
 Metrics/ParameterLists:

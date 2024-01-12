@@ -356,22 +356,7 @@ module ActiveScaffold::DataStructures
 
       @text = @column.nil? || [:string, :text, :citext, String].include?(column_type)
       @number = false
-      if @column
-        if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
-          @form_ui = :select
-          @options = {:options => active_record_class.send(name.to_s.pluralize).keys.map(&:to_sym)}
-        elsif column_number?
-          @number = true
-          @form_ui = :number
-          @options = {:format => :i18n_number}
-        else
-          @form_ui =
-            case @column.type
-            when :boolean then @column.null ? :boolean : :checkbox
-            when :text then :textarea
-            end
-        end
-      end
+      setup_defaults_for_column if @column
       @allow_add_existing = true
       @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
 
@@ -447,6 +432,23 @@ module ActiveScaffold::DataStructures
     end
 
     protected
+
+    def setup_defaults_for_column
+      if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
+        @form_ui = :select
+        @options = {:options => active_record_class.send(name.to_s.pluralize).keys.map(&:to_sym)}
+      elsif column_number?
+        @number = true
+        @form_ui = :number
+        @options = {:format => :i18n_number}
+      else
+        @form_ui =
+          case @column.type
+          when :boolean then @column.null ? :boolean : :checkbox
+          when :text then :textarea
+          end
+      end
+    end
 
     def setup_association_info
       assoc = active_record_class.reflect_on_association(name)
