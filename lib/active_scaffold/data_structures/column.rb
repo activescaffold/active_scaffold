@@ -144,22 +144,56 @@ module ActiveScaffold::DataStructures
     # supported options:
     #   * for association columns
     #     * :select - displays a simple <select> or a collection of checkboxes to (dis)associate records
-    attr_accessor :form_ui
+    attr_reader :form_ui
 
-    attr_writer :list_ui
+    attr_reader :form_ui_options
+
+    # value must be a Symbol, or an Array of form_ui and options hash which will be used with form_ui only
+    def form_ui=(value)
+      check_valid_action_ui_params(value)
+      @form_ui, @form_ui_options = *value
+    end
+
+    # value must be a Symbol, or an Array of list_ui and options hash which will be used with list_ui only
+    def list_ui=(value)
+      check_valid_action_ui_params(value)
+      @list_ui, @list_ui_options = *value
+    end
 
     def list_ui
       @list_ui || form_ui
     end
 
-    attr_writer :show_ui
+    def list_ui_options
+      @list_ui ? @list_ui_options : form_ui_options
+    end
+
+    # value must be a Symbol, or an Array of show_ui and options hash which will be used with show_ui only
+    def show_ui=(value)
+      check_valid_action_ui_params(value)
+      @show_ui, @show_ui_options = *value
+    end
+
     def show_ui
       @show_ui || list_ui
     end
 
-    attr_writer :search_ui
+    def show_ui_options
+      @show_ui ? @show_ui_options : list_ui_options
+    end
+
+    # value must be a Symbol, or an Array of search_ui and options hash which will be used with search_ui only
+    def search_ui=(value)
+      check_valid_action_ui_params(value)
+      @search_ui, @search_ui_options = *value
+    end
+
     def search_ui
       @search_ui || @form_ui || (:select if association && !association.polymorphic?)
+    end
+
+    def search_ui_options
+      @search_ui ? @search_ui_options : form_ui_options
     end
 
     # a place to store dev's column specific options
@@ -560,6 +594,19 @@ module ActiveScaffold::DataStructures
         200
       else
         300
+      end
+    end
+
+    def check_valid_action_ui_params(value)
+      return true if valid_action_ui_params?(value)
+      raise ArgumentError, "value must be a Symbol, or an array of Symbol and Hash"
+    end
+
+    def valid_action_ui_params?(value)
+      if value.is_a?(Array)
+        value.size <= 2 && value[0].is_a?(Symbol) && (value[1].nil? || value[1].is_a?(Hash))
+      else
+        value.is_a?(Symbol)
       end
     end
   end
