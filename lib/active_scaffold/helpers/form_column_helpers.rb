@@ -129,7 +129,7 @@ module ActiveScaffold
         if @main_columns && (scope.nil? || subform_controller == controller.class)
           form_columns ||= @main_columns.visible_columns_names
         end
-        form_columns ||= options[:form_columns] || current_form_columns(record, scope, subform_controller)
+        form_columns ||= current_form_columns(record, scope, subform_controller)
         if force || (form_columns && column.update_columns && (column.update_columns & form_columns).present?)
           url_params.reverse_merge! params_for(action: 'render_field', column: column.name, id: record.to_param)
           if nested? && scope
