@@ -12,7 +12,7 @@ module ActiveScaffold::Bridges
     end
 
     module ListColumnHelpers
-      def active_scaffold_column_country(record, column)
+      def active_scaffold_column_country(record, column, ui_options: column.options)
         country_code = record.send(column.name)
         return if country_code.blank?
         country = ISO3166::Country[country_code]

@@ -13,7 +13,7 @@ module ActiveScaffold
           send(method, value_record, column)
         # second, check if the dev has specified a valid list_ui for this column
         elsif column.show_ui && (method = override_show_column_ui(column.show_ui))
-          send(method, value_record, column)
+          send(method, value_record, column, ui_options: column.show_ui_options || column.options)
         elsif column.column && (method = override_show_column_ui(column.column.type))
           send(method, value_record, column)
         else
@@ -21,16 +21,16 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_show_text(record, column)
-        simple_format(clean_column_value(record.send(column.name)))
+      def active_scaffold_show_text(record, column, ui_options: column.options)
+        simple_format(clean_column_value(record.send(column.name)), ui_options[:html_options], ui_options)
       end
 
-      def active_scaffold_show_horizontal(record, column)
+      def active_scaffold_show_horizontal(record, column, ui_options: column.options)
         raise ':horizontal show_ui must be used on association column' unless column.association
         render :partial => 'show_association', :locals => {:column => column, :parent_record => record, :show_partial => :horizontal}
       end
 
-      def active_scaffold_show_vertical(record, column)
+      def active_scaffold_show_vertical(record, column, ui_options: column.options)
         raise ':vertical show_ui must be used on association column' unless column.association
         render :partial => 'show_association', :locals => {:column => column, :parent_record => record, :show_partial => :vertical}
       end

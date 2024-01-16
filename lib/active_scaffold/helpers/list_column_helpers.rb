@@ -5,8 +5,13 @@ module ActiveScaffold
       def get_column_value(record, column)
         record = record.send(column.delegated_association.name) if column.delegated_association
         if record
-          method = get_column_method(record, column)
-          value = send(method, record, column)
+          method, list_ui = get_column_method(record, column)
+          value =
+            if list_ui
+              send(method, record, column, ui_options: column.list_ui_options || column.options)
+            else
+              send(method, record, column)
+            end
         else
           value = nil
         end
@@ -27,7 +32,7 @@ module ActiveScaffold
             method
           # second, check if the dev has specified a valid list_ui for this column
           elsif column.list_ui && (method = override_column_ui(column.list_ui))
-            method
+            [method, true]
           elsif column.column && (method = override_column_ui(column.column.type))
             method
           else
@@ -76,49 +81,49 @@ module ActiveScaffold
       ##
       ## Overrides
       ##
-      def active_scaffold_column_text(record, column)
+      def active_scaffold_column_text(record, column, ui_options: column.options)
         # `to_s` is necessary to convert objects in serialized columns to string before truncation.
-        clean_column_value(truncate(record.send(column.name).to_s, :length => column.options[:truncate] || 50))
+        clean_column_value(truncate(record.send(column.name).to_s, length: ui_options[:truncate] || 50))
       end
 
-      def active_scaffold_column_fulltext(record, column)
+      def active_scaffold_column_fulltext(record, column, ui_options: column.options)
         clean_column_value(record.send(column.name))
       end
 
-      def active_scaffold_column_marked(record, column)
+      def active_scaffold_column_marked(record, column, ui_options: column.options)
         options = {:id => nil, :object => record}
         content_tag(:span, check_box(:record, column.name, options), :class => 'in_place_editor_field', :data => {:ie_id => record.to_param})
       end
 
-      def active_scaffold_column_checkbox(record, column)
+      def active_scaffold_column_checkbox(record, column, ui_options: column.options)
         options = {:disabled => true, :id => nil, :object => record}
         options.delete(:disabled) if inplace_edit?(record, column)
         check_box(:record, column.name, options)
       end
 
-      def active_scaffold_column_boolean(record, column)
+      def active_scaffold_column_boolean(record, column, ui_options: column.options)
         value = record.send(column.name)
-        if value.nil? && column.options[:include_blank]
-          value = column.options[:include_blank]
+        if value.nil? && ui_options[:include_blank]
+          value = ui_options[:include_blank]
           value.is_a?(Symbol) ? as_(value) : value
         else
           format_column_value(record, column, value)
         end
       end
 
-      def active_scaffold_column_percentage(record, column)
-        options = column.options[:slider] || {}
+      def active_scaffold_column_percentage(record, column, ui_options: column.options)
+        options = ui_options[:slider] || {}
         options = options.merge(min: record.send(options[:min_method])) if options[:min_method]
         options = options.merge(max: record.send(options[:max_method])) if options[:max_method]
         value = record.send(options[:value_method]) if options[:value_method]
         as_slider options.merge(value: value || record.send(column.name))
       end
 
-      def active_scaffold_column_month(record, column)
+      def active_scaffold_column_month(record, column, ui_options: column.options)
         l record.send(column.name), format: :year_month
       end
 
-      def active_scaffold_column_week(record, column)
+      def active_scaffold_column_week(record, column, ui_options: column.options)
         l record.send(column.name), format: :week
       end
 
@@ -129,10 +134,10 @@ module ActiveScaffold
         link_to text, "tel:#{[groups.join('-'), extension].compact.join(',')}"
       end
 
-      def active_scaffold_column_telephone(record, column)
+      def active_scaffold_column_telephone(record, column, ui_options: column.options)
         phone = record.send column.name
         return if phone.blank?
-        phone = number_to_phone(phone) unless column.options[:format] == false
+        phone = number_to_phone(phone) unless ui_options[:format] == false
         tel_to phone
       end
 
@@ -157,8 +162,9 @@ module ActiveScaffold
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
         if column.association.nil?
-          if FORM_UI_WITH_OPTIONS.include?(column.form_ui) && column.options[:options]
-            text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
+          form_ui_options = column.form_ui_options || column.options if FORM_UI_WITH_OPTIONS.include?(column.form_ui)
+          if form_ui_options&.dig(:options)
+            text, val = form_ui_options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
           if grouped_search? && column == search_group_column && search_group_function
