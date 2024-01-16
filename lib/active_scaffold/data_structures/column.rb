@@ -599,7 +599,7 @@ module ActiveScaffold::DataStructures
 
     def check_valid_action_ui_params(value)
       return true if valid_action_ui_params?(value)
-      raise ArgumentError, "value must be a Symbol, or an array of Symbol and Hash"
+      raise ArgumentError, 'value must be a Symbol, or an array of Symbol and Hash'
     end
 
     def valid_action_ui_params?(value)
