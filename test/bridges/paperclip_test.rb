@@ -58,11 +58,12 @@ class PaperclipTest < ActionView::TestCase
     with_js_framework :jquery do
       config = PaperclipCore.new(:company)
       @record = Company.new
+      opts = {name: 'record[logo]', id: 'record_logo', object: @record}
 
       @record.stubs(:logo).returns(stub(:file? => true, :original_filename => 'file', :url => '/system/file', :styles => Company.attachment_definitions[:logo]))
       click_js = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show(); return false;"
       change_js = "jQuery(this).parents('div.paperclip_controls').find('input.remove_file').val('false'); return false;"
-      @document = Nokogiri::HTML::Document.parse(active_scaffold_input_paperclip(config.columns[:logo], {name: 'record[logo]', id: 'record_logo', object: @record}))
+      @document = Nokogiri::HTML::Document.parse(active_scaffold_input_paperclip(config.columns[:logo], opts))
       assert_select 'div.paperclip_controls input[type=file]' do |match|
         assert_equal match[0]['onchange'], change_js
       end
@@ -72,7 +73,7 @@ class PaperclipTest < ActionView::TestCase
       assert_select 'div.paperclip_controls input.remove_file[type=hidden][value=false]'
 
       @record.stubs(:logo).returns(stub(:file? => false))
-      assert_dom_equal '<input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" />', active_scaffold_input_paperclip(config.columns[:logo], {name: 'record[logo]', id: 'record_logo', object: @record})
+      assert_dom_equal '<input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" />', active_scaffold_input_paperclip(config.columns[:logo], opts)
     end
   end
 
