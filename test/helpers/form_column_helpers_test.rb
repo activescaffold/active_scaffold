@@ -11,16 +11,16 @@ class FormColumnHelpersTest < ActionView::TestCase
   def test_choices_for_select_form_ui_for_simple_column
     opts = {object: @record}
     @column.options[:options] = %i[value_1 value_2 value_3]
-    assert_dom_equal "<select name=\"record[a]\" id=\"record_a\"><option value=\"value_1\">Value 1</option>\n<option value=\"value_2\">Value 2</option>\n<option value=\"value_3\">Value 3</option></select>", active_scaffold_input_select(@column, opts)
+    assert_dom_equal "<select name=\"record[a]\" id=\"record_a\"><option value=\"value_1\">Value 1</option>\n<option value=\"value_2\">Value 2</option>\n<option value=\"value_3\">Value 3</option></select>", active_scaffold_input_select(@column, opts.dup)
 
     @column.options[:options] = %w[value_1 value_2 value_3]
-    assert_dom_equal "<select name=\"record[a]\" id=\"record_a\"><option value=\"value_1\">value_1</option>\n<option value=\"value_2\">value_2</option>\n<option value=\"value_3\">value_3</option></select>", active_scaffold_input_select(@column, opts)
+    assert_dom_equal "<select name=\"record[a]\" id=\"record_a\"><option value=\"value_1\">value_1</option>\n<option value=\"value_2\">value_2</option>\n<option value=\"value_3\">value_3</option></select>", active_scaffold_input_select(@column, opts.dup)
 
     @column.options[:options] = [%w[text_1 value_1], %w[text_2 value_2], %w[text_3 value_3]]
-    assert_dom_equal "<select name=\"record[a]\" id=\"record_a\"><option value=\"value_1\">text_1</option>\n<option value=\"value_2\">text_2</option>\n<option value=\"value_3\">text_3</option></select>", active_scaffold_input_select(@column, opts)
+    assert_dom_equal "<select name=\"record[a]\" id=\"record_a\"><option value=\"value_1\">text_1</option>\n<option value=\"value_2\">text_2</option>\n<option value=\"value_3\">text_3</option></select>", active_scaffold_input_select(@column, opts.dup)
 
     @column.options[:options] = [%i[text_1 value_1], %i[text_2 value_2], %i[text_3 value_3]]
-    assert_dom_equal "<select name=\"record[a]\" id=\"record_a\"><option value=\"value_1\">Text 1</option>\n<option value=\"value_2\">Text 2</option>\n<option value=\"value_3\">Text 3</option></select>", active_scaffold_input_select(@column, opts)
+    assert_dom_equal "<select name=\"record[a]\" id=\"record_a\"><option value=\"value_1\">Text 1</option>\n<option value=\"value_2\">Text 2</option>\n<option value=\"value_3\">Text 3</option></select>", active_scaffold_input_select(@column, opts.dup)
   end
 
   def test_options_for_select_form_ui_for_simple_column
