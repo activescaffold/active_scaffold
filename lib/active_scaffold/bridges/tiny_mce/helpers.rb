@@ -18,8 +18,8 @@ class ActiveScaffold::Bridges::TinyMce
         options[:class] = "#{options[:class]} mceEditor #{ui_options[:class]}".strip
 
         settings = tinymce_configuration(ui_options[:tinymce_config] || :default).options
-                                                                                     .reject { |k, _v| k == 'selector' }
-                                                                                     .merge(ui_options[:tinymce] || {})
+                                                                                 .reject { |k, _v| k == 'selector' }
+                                                                                 .merge(ui_options[:tinymce] || {})
         options['data-tinymce'] = settings.to_json if ActiveScaffold.js_framework != :prototype
 
         html = []
