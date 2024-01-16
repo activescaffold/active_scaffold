@@ -16,14 +16,14 @@ module ActiveScaffold
 
       # Helpers that assist with the rendering of a Form Column
       module FormColumnHelpers
-        def active_scaffold_input_calendar_date_select(column, options)
+        def active_scaffold_input_calendar_date_select(column, options, ui_options: column.options)
           options[:class] = "#{options[:class]} text-input".strip
-          calendar_date_select('record', column.name, options.merge(column.options))
+          calendar_date_select('record', column.name, options.merge(ui_options))
         end
       end
 
       module SearchColumnHelpers
-        def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name)
+        def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name, ui_options: column.options)
           value = if current_search.is_a? Hash
                     controller.class.condition_value_for_datetime(column, current_search[name], column.column.type == :date ? :to_date : :to_time)
                   else

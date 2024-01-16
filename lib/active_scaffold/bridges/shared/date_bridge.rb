@@ -3,14 +3,14 @@ module ActiveScaffold
     module Shared
       module DateBridge
         module SearchColumnHelpers
-          def active_scaffold_search_date_bridge(column, options)
+          def active_scaffold_search_date_bridge(column, options, ui_options: column.options)
             current_search = {'from' => nil, 'to' => nil, 'opt' => 'BETWEEN',
                               'number' => 1, 'unit' => 'DAYS', 'range' => nil}
             current_search.merge!(options[:value]) unless options[:value].nil?
             tags = []
             tags << active_scaffold_search_date_bridge_comparator_tag(column, options, current_search)
             tags << active_scaffold_search_date_bridge_trend_tag(column, options, current_search)
-            tags << active_scaffold_search_date_bridge_numeric_tag(column, options, current_search)
+            tags << active_scaffold_search_date_bridge_numeric_tag(column, options, current_search, ui_options: ui_options)
             tags << active_scaffold_search_date_bridge_range_tag(column, options, current_search)
             safe_join tags, '&nbsp;'.html_safe # rubocop:disable Rails/OutputSafety
           end
@@ -25,10 +25,10 @@ module ActiveScaffold
             select_tag("#{options[:name]}[opt]", choices, :id => "#{options[:id]}_opt", :class => 'as_search_range_option as_search_date_time_option')
           end
 
-          def active_scaffold_search_date_bridge_numeric_tag(column, options, current_search)
+          def active_scaffold_search_date_bridge_numeric_tag(column, options, current_search, ui_options: column.options)
             numeric_controls = [
-              active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'from'),
-              content_tag(:span, safe_join([' - ', active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'to')]),
+              active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'from', ui_options: ui_options),
+              content_tag(:span, safe_join([' - ', active_scaffold_search_date_bridge_calendar_control(column, options, current_search, 'to', ui_options: ui_options)]),
                           :id => "#{options[:id]}_between", :class => 'as_search_range_between',
                           :style => current_search['opt'] == 'BETWEEN' ? nil : 'display: none')
             ]

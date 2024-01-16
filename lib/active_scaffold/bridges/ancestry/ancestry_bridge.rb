@@ -15,12 +15,12 @@ module ActiveScaffold::Bridges
     end
 
     module FormColumnHelpers
-      def active_scaffold_input_ancestry(column, options)
+      def active_scaffold_input_ancestry(column, options, ui_options: column.options)
         record = options[:object]
         select_options = []
         select_control_options = {:selected => record.parent_id}
         select_control_options[:include_blank] = as_(:_select_) if record.parent_id.nil?
-        method = column.options[:label_method] || :to_label
+        method = ui_options[:label_method] || :to_label
         traverse_ancestry = proc do |key, value|
           unless key == record
             select_options << ["#{'__' * key.depth}#{key.send(method)}", key.id]

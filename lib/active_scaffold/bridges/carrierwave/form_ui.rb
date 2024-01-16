@@ -1,11 +1,11 @@
 module ActiveScaffold
   module Helpers
     module FormColumnHelpers
-      def active_scaffold_input_carrierwave(column, options)
+      def active_scaffold_input_carrierwave(column, options, ui_options: column.options)
         record = options[:object]
         carrierwave = record.send(column.name.to_s)
         content = get_column_value(record, column) if carrierwave.file.present?
-        active_scaffold_file_with_remove_link(column, options, content, 'remove_', 'carrierwave_controls') do
+        active_scaffold_file_with_remove_link(column, options, content, 'remove_', 'carrierwave_controls', ui_options: ui_options) do
           cache_field_options = {
             name: options[:name].gsub(/\[#{column.name}\]$/, "[#{column.name}_cache]"),
             id: options[:id] + '_cache'

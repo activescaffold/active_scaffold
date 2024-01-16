@@ -14,16 +14,16 @@ class ActiveScaffold::Bridges::TinyMce
       # but not the plugins, toolbars etc.
       # The other one is :tinymce_config, which selects the config to use from tinymce.yml.
       # See the tinymce-rails gem documentation for usage.
-      def active_scaffold_input_text_editor(column, options)
-        options[:class] = "#{options[:class]} mceEditor #{column.options[:class]}".strip
+      def active_scaffold_input_text_editor(column, options, ui_options: column.options)
+        options[:class] = "#{options[:class]} mceEditor #{ui_options[:class]}".strip
 
-        settings = tinymce_configuration(column.options[:tinymce_config] || :default).options
+        settings = tinymce_configuration(ui_options[:tinymce_config] || :default).options
                                                                                      .reject { |k, _v| k == 'selector' }
-                                                                                     .merge(column.options[:tinymce] || {})
+                                                                                     .merge(ui_options[:tinymce] || {})
         options['data-tinymce'] = settings.to_json if ActiveScaffold.js_framework != :prototype
 
         html = []
-        html << send(override_input(:textarea), column, options)
+        html << send(override_input(:textarea), column, options, ui_options: ui_options)
         if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
           html << javascript_tag("tinyMCE.settings = #{settings.to_json}; tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');")
         end

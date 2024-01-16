@@ -10,21 +10,21 @@ class ActiveScaffold::Bridges::RecordSelect
 
     module FormColumnHelpers
       # requires RecordSelect plugin to be installed and configured.
-      def active_scaffold_input_record_select(column, options)
+      def active_scaffold_input_record_select(column, options, ui_options: column.options)
         record = options.delete(:object)
         if column.association&.singular?
-          multiple = column.options.dig(:html_options, :multiple)
-          html = active_scaffold_record_select(record, column, options, record.send(column.name), multiple)
-          html << active_scaffold_new_record_subform(column, record, options) if column.options[:add_new]
+          multiple = ui_options.dig(:html_options, :multiple)
+          html = active_scaffold_record_select(record, column, options, record.send(column.name), multiple, ui_options: ui_options)
+          html << active_scaffold_new_record_subform(column, record, options, ui_options: ui_options) if ui_options[:add_new]
           html
         elsif column.association&.collection?
-          active_scaffold_record_select(record, column, options, record.send(column.name), true)
+          active_scaffold_record_select(record, column, options, record.send(column.name), true, ui_options: ui_options)
         else
-          active_scaffold_record_select_autocomplete(record, column, options)
+          active_scaffold_record_select_autocomplete(record, column, options, ui_options: ui_options)
         end
       end
 
-      def active_scaffold_record_select(record, column, options, value, multiple)
+      def active_scaffold_record_select(record, column, options, value, multiple, ui_options: column.options)
         unless column.association
           raise ArgumentError, "record_select can only work against associations (and #{column.name} is not). "\
           'A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user).'
@@ -43,7 +43,7 @@ class ActiveScaffold::Bridges::RecordSelect
         record_select_options = active_scaffold_input_text_options(options).merge(
           :controller => remote_controller
         )
-        record_select_options.merge!(column.options)
+        record_select_options.merge!(ui_options)
 
         html =
           if multiple
@@ -55,10 +55,10 @@ class ActiveScaffold::Bridges::RecordSelect
         html
       end
 
-      def active_scaffold_record_select_autocomplete(record, column, options)
+      def active_scaffold_record_select_autocomplete(record, column, options, ui_options: column.options)
         record_select_options = active_scaffold_input_text_options(options).reverse_merge(
           :controller => active_scaffold_controller_for(record.class).controller_path
-        ).merge(column.options)
+        ).merge(ui_options)
         html = record_select_autocomplete(options[:name], record, record_select_options)
         html = instance_exec(html, self, &self.class.field_error_proc) if record.errors[column.name].any?
         html
@@ -66,14 +66,14 @@ class ActiveScaffold::Bridges::RecordSelect
     end
 
     module SearchColumnHelpers
-      def active_scaffold_search_record_select(column, options)
-        value = field_search_record_select_value(column, options[:value])
-        active_scaffold_record_select(options[:object], column, options, value, column.options[:multiple])
+      def active_scaffold_search_record_select(column, options, ui_options: column.options)
+        value = field_search_record_select_value(column, options[:value], ui_options: ui_options)
+        active_scaffold_record_select(options[:object], column, options, value, ui_options[:multiple], ui_options: ui_options)
       end
 
-      def field_search_record_select_value(column, value)
+      def field_search_record_select_value(column, value, ui_options: column.options)
         return if value.blank?
-        if column.options[:multiple]
+        if ui_options[:multiple]
           column.association.klass.find value.collect!(&:to_i)
         else
           column.association.klass.find(value.to_i)

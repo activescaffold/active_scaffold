@@ -58,18 +58,18 @@ module ActiveScaffold::Bridges
     end
 
     module FormColumnHelpers
-      def active_scaffold_input_usa_state(column, options)
+      def active_scaffold_input_usa_state(column, options, ui_options: column.options)
         select_options = {:prompt => as_(:_select_)}
         select_options.merge!(options)
-        options.reverse_merge!(column.options).except!(:prompt, :priority)
+        options.reverse_merge!(ui_options).except!(:prompt, :priority)
         active_scaffold_select_name_with_multiple options
-        usa_state_select(:record, column.name, column.options[:priority], select_options, options.except(:object))
+        usa_state_select(:record, column.name, ui_options[:priority], select_options, options.except(:object))
       end
     end
 
     module SearchColumnHelpers
-      def active_scaffold_search_usa_state(column, options)
-        active_scaffold_input_usa_state(column, options.merge!(:selected => options.delete(:value)))
+      def active_scaffold_search_usa_state(column, options, ui_options: column.options)
+        active_scaffold_input_usa_state(column, options.merge!(:selected => options.delete(:value)), ui_options: ui_options)
       end
     end
   end

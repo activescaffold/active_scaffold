@@ -20,11 +20,11 @@ module ActiveScaffold
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
         elsif column.search_ui && (method = override_search(column.search_ui))
-          send(method, column, options)
+          send(method, column, options, ui_options: column.search_ui_options)
 
         # third, check if the dev has specified a valid search_ui for this column, using generic ui for forms
         elsif column.search_ui && (method = override_input(column.search_ui))
-          send(method, column, options)
+          send(method, column, options, ui_options: column.search_ui_options)
 
         # fourth, check if the dev has created an override for this specific field
         elsif (method = override_form_field(column))
@@ -73,28 +73,28 @@ module ActiveScaffold
       ## Search input methods
       ##
 
-      def active_scaffold_search_multi_select(column, options)
+      def active_scaffold_search_multi_select(column, options, ui_options: column.options)
         record = options.delete(:object)
         associated = options.delete :value
         associated = [associated].compact unless associated.is_a? Array
 
         if column.association
           associated.collect!(&:to_i)
-          method = column.options[:label_method] || :to_label
+          method = ui_options[:label_method] || :to_label
           select_options = sorted_association_options_find(column.association, nil, record).collect do |r|
             [r.send(method), r.id]
           end
         else
-          select_options = column.options[:options].collect do |text, value|
+          select_options = active_scaffold_enum_options(column, record, ui_options: ui_options).collect do |text, value|
             active_scaffold_translated_option(column, text, value)
           end
         end
         return as_(:no_options) if select_options.empty?
 
-        active_scaffold_checkbox_list(column, select_options, associated, options)
+        active_scaffold_checkbox_list(column, select_options, associated, options, ui_options: ui_options)
       end
 
-      def active_scaffold_search_select(column, html_options, options = {})
+      def active_scaffold_search_select(column, html_options, options = {}, ui_options: column.options)
         record = html_options.delete(:object)
         associated = html_options.delete :value
         if column.association
@@ -103,13 +103,13 @@ module ActiveScaffold
           select_options = sorted_association_options_find(column.association, false, record)
         else
           method = column.name
-          select_options = active_scaffold_enum_options(column, record).collect do |text, value|
+          select_options = active_scaffold_enum_options(column, record, ui_options: ui_options).collect do |text, value|
             active_scaffold_translated_option(column, text, value)
           end
         end
 
-        options = options.merge(:selected => associated).merge column.options
-        html_options.merge! column.options[:html_options] || {}
+        options = options.merge(selected: associated).merge ui_options
+        html_options.merge! ui_options[:html_options] || {}
         if html_options[:multiple]
           active_scaffold_select_name_with_multiple html_options
         else
@@ -120,31 +120,31 @@ module ActiveScaffold
         if (optgroup = options.delete(:optgroup))
           select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
         elsif column.association
-          collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
+          collection_select(:record, method, select_options, :id, ui_options[:label_method] || :to_label, options, html_options)
         else
           select(:record, method, select_options, options, html_options)
         end
       end
 
-      def active_scaffold_search_select_multiple(column, options)
-        active_scaffold_search_select(column, options.merge(multiple: true))
+      def active_scaffold_search_select_multiple(column, options, ui_options: column.options)
+        active_scaffold_search_select(column, options.merge(multiple: true), ui_options: ui_options)
       end
 
-      def active_scaffold_search_draggable(column, options)
-        active_scaffold_search_multi_select(column, options.merge(draggable_lists: true))
+      def active_scaffold_search_draggable(column, options, ui_options: column.options)
+        active_scaffold_search_multi_select(column, options.merge(draggable_lists: true), ui_options: ui_options)
       end
 
-      def active_scaffold_search_text(column, options)
+      def active_scaffold_search_text(column, options, ui_options: column.options)
         text_field :record, column.name, active_scaffold_input_text_options(options)
       end
 
       # we can't use active_scaffold_input_boolean because we need to have a nil value even when column can't be null
       # to decide whether search for this field or not
-      def active_scaffold_search_boolean(column, options)
+      def active_scaffold_search_boolean(column, options, ui_options: column.options)
         select_options = []
         select_options << [as_(:_select_), nil]
         if column.column&.null
-          null_label = column.options[:include_blank] || :null
+          null_label = ui_options[:include_blank] || :null
           null_label = as_(null_label) if null_label.is_a?(Symbol)
           select_options << [null_label, 'null']
         end
@@ -176,7 +176,7 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_search_null(column, options)
+      def active_scaffold_search_null(column, options, ui_options: column.options)
         select_options = []
         select_options << [as_(:_select_), nil]
         select_options.concat(ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] })
@@ -193,20 +193,20 @@ module ActiveScaffold
         column.text? || column.search_ui == :string
       end
 
-      def active_scaffold_search_range_comparator_options(column)
+      def active_scaffold_search_range_comparator_options(column, ui_options: column.options)
         select_options = ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
         if active_scaffold_search_range_string?(column)
           comparators = ActiveScaffold::Finder::STRING_COMPARATORS.collect { |title, comp| [as_(title), comp] }
           select_options.unshift(*comparators)
         end
-        if include_null_comparators? column
+        if include_null_comparators? column, ui_options: ui_options
           select_options.concat(ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] })
         end
         select_options
       end
 
-      def include_null_comparators?(column)
-        return column.options[:null_comparators] if column.options.key? :null_comparators
+      def include_null_comparators?(column, ui_options: column.options)
+        return ui_options[:null_comparators] if ui_options.key? :null_comparators
         if column.association
           !column.association.belongs_to? || active_scaffold_config.columns[column.association.foreign_key].column&.null
         else
@@ -214,17 +214,17 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_search_range(column, options, input_method = :text_field_tag, input_options = {})
+      def active_scaffold_search_range(column, options, input_method = :text_field_tag, input_options = {}, ui_options: column.options)
         opt_value, from_value, to_value = field_search_params_range_values(column)
 
-        select_options = active_scaffold_search_range_comparator_options(column)
+        select_options = active_scaffold_search_range_comparator_options(column, ui_options: ui_options)
         text_field_size = active_scaffold_search_range_string?(column) ? 15 : 10
         opt_value ||= select_options[0][1]
 
         from_value = controller.class.condition_value_for_numeric(column, from_value)
         to_value = controller.class.condition_value_for_numeric(column, to_value)
-        from_value = format_number_value(from_value, column.options) if from_value.is_a?(Numeric)
-        to_value = format_number_value(to_value, column.options) if to_value.is_a?(Numeric)
+        from_value = format_number_value(from_value, ui_options) if from_value.is_a?(Numeric)
+        to_value = format_number_value(to_value, ui_options) if to_value.is_a?(Numeric)
         html = select_tag("#{options[:name]}[opt]", options_for_select(select_options, opt_value),
                           :id => "#{options[:id]}_opt", :class => 'as_search_range_option')
         from_options = active_scaffold_input_text_options(input_options.merge(:id => options[:id], :size => text_field_size))
@@ -241,12 +241,12 @@ module ActiveScaffold
       end
       alias active_scaffold_search_string active_scaffold_search_range
 
-      def active_scaffold_search_integer(column, options)
-        active_scaffold_search_range(column, options, :number_field_tag, step: '1')
+      def active_scaffold_search_integer(column, options, ui_options: column.options)
+        active_scaffold_search_range(column, options, :number_field_tag, step: '1', ui_options: ui_options)
       end
 
-      def active_scaffold_search_decimal(column, options)
-        active_scaffold_search_range(column, options, :number_field_tag, step: :any)
+      def active_scaffold_search_decimal(column, options, ui_options: column.options)
+        active_scaffold_search_range(column, options, :number_field_tag, step: :any, ui_options: ui_options)
       end
       alias active_scaffold_search_float active_scaffold_search_decimal
 
@@ -254,9 +254,9 @@ module ActiveScaffold
         Time.zone.local(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
       end
 
-      def active_scaffold_search_datetime(column, options)
+      def active_scaffold_search_datetime(column, options, ui_options: column.options)
         _, from_value, to_value = field_search_params_range_values(column)
-        options = column.options.merge(options)
+        options = ui_options.merge(options)
         type = "#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
         use_select = options.delete(:use_select)
         from_name = "#{options[:name]}[from]"
@@ -278,12 +278,12 @@ module ActiveScaffold
         safe_join fields, ' - '
       end
 
-      def active_scaffold_search_date(column, options)
-        active_scaffold_search_datetime(column, options.merge!(:discard_time => true))
+      def active_scaffold_search_date(column, options, ui_options: column.options)
+        active_scaffold_search_datetime(column, options.merge!(:discard_time => true), ui_options: ui_options)
       end
 
-      def active_scaffold_search_time(column, options)
-        active_scaffold_search_datetime(column, options.merge!(:discard_date => true))
+      def active_scaffold_search_time(column, options, ui_options: column.options)
+        active_scaffold_search_datetime(column, options.merge!(:discard_date => true), ui_options: ui_options)
       end
       alias active_scaffold_search_timestamp active_scaffold_search_datetime
 

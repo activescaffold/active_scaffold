@@ -19,7 +19,7 @@ module ActiveScaffold
 
         # second, check if the dev has specified a valid form_ui for this column
         elsif column.form_ui && (method = override_input(column.form_ui))
-          send(method, column, options)
+          send(method, column, options, ui_options: column.form_ui_options || column.options)
 
         elsif column.association
           # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
@@ -309,7 +309,7 @@ module ActiveScaffold
         options[:name] = "#{options[:name]}[]"
       end
 
-      def active_scaffold_input_singular_association(column, html_options, options = {})
+      def active_scaffold_input_singular_association(column, html_options, options = {}, ui_options: column.options)
         record = html_options.delete(:object)
         associated = record.send(column.association.name)
 
@@ -319,8 +319,8 @@ module ActiveScaffold
         method = column.name
         options.merge! :selected => associated&.id, :include_blank => as_(:_select_), :object => record
 
-        html_options.merge!(column.options[:html_options] || {})
-        options.merge!(column.options)
+        html_options.merge!(ui_options[:html_options] || {})
+        options.merge!(ui_options)
         html_options.delete(:multiple) # no point using multiple in a form for singular assoc, but may be set for field search
         active_scaffold_translate_select_options(options)
 
@@ -328,18 +328,18 @@ module ActiveScaffold
           if (optgroup = options.delete(:optgroup))
             select(:record, method, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
           else
-            collection_select(:record, method, select_options, :id, column.options[:label_method] || :to_label, options, html_options)
+            collection_select(:record, method, select_options, :id, ui_options[:label_method] || :to_label, options, html_options)
           end
-        html << active_scaffold_refresh_link(column, html_options, record) if column.options[:refresh_link]
-        html << active_scaffold_new_record_subform(column, record, html_options) if column.options[:add_new]
+        html << active_scaffold_refresh_link(column, html_options, record) if ui_options[:refresh_link]
+        html << active_scaffold_new_record_subform(column, record, html_options, ui_options: ui_options) if ui_options[:add_new]
         html
       end
 
-      def active_scaffold_new_record_subform(column, record, html_options, new_record_attributes: nil, locals: {}, skip_link: false)
+      def active_scaffold_new_record_subform(column, record, html_options, ui_options: column.options, new_record_attributes: nil, locals: {}, skip_link: false)
         klass =
           if column.association.polymorphic? && column.association.belongs_to?
             type = record.send(column.association.foreign_type)
-            column.association.klass(record) if type.present? && (column.options[:add_new] == true || type.in?(column.options[:add_new]))
+            column.association.klass(record) if type.present? && (ui_options[:add_new] == true || type.in?(ui_options[:add_new]))
           else
             column.association.klass
           end
@@ -354,8 +354,8 @@ module ActiveScaffold
         scope = html_options[:name].scan(/record(.*)\[#{column.name}\]/).dig(0, 0)
         new_record ||= klass.new(new_record_attributes)
         locals = locals.reverse_merge(column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope)
-        subform = render(partial: subform_partial_for_column(column, klass), locals: locals)
-        if column.options[:hide_subgroups]
+        subform = render(partial: subform_partial_for_column(column, klass, ui_options: ui_options), locals: locals)
+        if ui_options[:hide_subgroups]
           toggable_id = "#{sub_form_id(association: column.name, id: record.id || generated_id(record) || 99_999_999_999)}-div"
           subform << link_to_visibility_toggle(toggable_id, default_visible: false)
         end
@@ -370,8 +370,8 @@ module ActiveScaffold
         link_to(label, '#', data: data, class: 'show-new-subform')
       end
 
-      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, &block) # rubocop:disable Metrics/ParameterLists
-        options = active_scaffold_input_text_options(options.merge(column.options))
+      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, ui_options: column.options, &block) # rubocop:disable Metrics/ParameterLists
+        options = active_scaffold_input_text_options(options.merge(ui_options))
         if content
           active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class, &block)
         else
@@ -422,7 +422,7 @@ module ActiveScaffold
         [associated_options, associated_options | sorted_association_options_find(column.association, nil, record)]
       end
 
-      def active_scaffold_input_plural_association(column, options)
+      def active_scaffold_input_plural_association(column, options, ui_options: column.options)
         record = options.delete(:object)
         associated_options, select_options = active_scaffold_plural_association_options(column, record)
 
@@ -431,14 +431,14 @@ module ActiveScaffold
             content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id]) <<
               hidden_field_tag("#{options[:name]}[]", '', :id => nil)
           else
-            active_scaffold_checkbox_list(column, select_options, associated_options.collect(&:id), options)
+            active_scaffold_checkbox_list(column, select_options, associated_options.collect(&:id), options, ui_options: ui_options)
           end
-        html << active_scaffold_refresh_link(column, options, record) if column.options[:refresh_link]
+        html << active_scaffold_refresh_link(column, options, record) if ui_options[:refresh_link]
         html
       end
 
-      def active_scaffold_input_draggable(column, options)
-        active_scaffold_input_plural_association(column, options.merge(draggable_lists: true))
+      def active_scaffold_input_draggable(column, options, ui_options: column.options)
+        active_scaffold_input_plural_association(column, options.merge(draggable_lists: true), ui_options: ui_options)
       end
 
       def active_scaffold_checkbox_option(option, label_method, associated_ids, checkbox_options, li_options = {})
@@ -450,10 +450,10 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_checkbox_list(column, select_options, associated_ids, options)
-        label_method = column.options[:label_method] || :to_label
+      def active_scaffold_checkbox_list(column, select_options, associated_ids, options, ui_options: column.options)
+        label_method = ui_options[:label_method] || :to_label
         html = hidden_field_tag("#{options[:name]}[]", '', :id => nil)
-        draggable = options.delete(:draggable_lists) || column.options[:draggable_lists]
+        draggable = options.delete(:draggable_lists) || ui_options[:draggable_lists]
         html << content_tag(:ul, options.merge(:class => "#{options[:class]} checkbox-list#{' draggable-lists' if draggable}")) do
           content = []
           select_options.each_with_index do |option, i|
@@ -469,37 +469,37 @@ module ActiveScaffold
         [(text.is_a?(Symbol) ? column.active_record_class.human_attribute_name(text) : text), value]
       end
 
-      def active_scaffold_enum_options(column, record = nil)
-        column.options[:options]
+      def active_scaffold_enum_options(column, record = nil, ui_options: column.options)
+        ui_options[:options]
       end
 
-      def active_scaffold_input_enum(column, html_options, options = {})
+      def active_scaffold_input_enum(column, html_options, options = {}, ui_options: column.options)
         record = html_options.delete(:object)
         options[:selected] = record.send(column.name)
         options[:object] = record
-        options_for_select = active_scaffold_enum_options(column, record).collect do |text, value|
+        options_for_select = active_scaffold_enum_options(column, record, ui_options: ui_options).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
         end
-        html_options.merge!(column.options[:html_options] || {})
-        options.merge!(column.options)
+        html_options.merge!(ui_options[:html_options] || {})
+        options.merge!(ui_options)
         active_scaffold_select_name_with_multiple html_options
         active_scaffold_translate_select_options(options)
         select(:record, column.name, options_for_select, options, html_options)
       end
 
-      def active_scaffold_input_select(column, html_options)
+      def active_scaffold_input_select(column, html_options, ui_options: column.options)
         if column.association&.singular?
-          active_scaffold_input_singular_association(column, html_options)
+          active_scaffold_input_singular_association(column, html_options, ui_options: ui_options)
         elsif column.association&.collection?
-          active_scaffold_input_plural_association(column, html_options)
+          active_scaffold_input_plural_association(column, html_options, ui_options: ui_options)
         else
-          active_scaffold_input_enum(column, html_options)
+          active_scaffold_input_enum(column, html_options, ui_options: ui_options)
         end
       end
 
-      def active_scaffold_radio_option(option, selected, column, radio_options)
+      def active_scaffold_radio_option(option, selected, column, radio_options, ui_options: column.options)
         if column.association
-          label_method = column.options[:label_method] || :to_label
+          label_method = ui_options[:label_method] || :to_label
           text = option.send(label_method)
           value = option.id
           checked = {:checked => selected == value}
@@ -513,20 +513,20 @@ module ActiveScaffold
         content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
       end
 
-      def active_scaffold_input_radio(column, html_options)
+      def active_scaffold_input_radio(column, html_options, ui_options: column.options)
         record = html_options[:object]
-        html_options.merge!(column.options[:html_options] || {})
+        html_options.merge!(ui_options[:html_options] || {})
         options =
           if column.association
             sorted_association_options_find(column.association, nil, record)
           else
-            active_scaffold_enum_options(column, record)
+            active_scaffold_enum_options(column, record, ui_options: ui_options)
           end
 
         selected = record.send(column.association.name) if column.association
         selected_id = selected&.id
         if options.present?
-          if column.options[:add_new]
+          if ui_options[:add_new]
             html_options[:data] ||= {}
             html_options[:data][:subform_id] = active_scaffold_subform_attributes(column)[:id]
             radio_html_options = html_options.merge(class: html_options[:class] + ' hide-new-subform')
@@ -534,37 +534,37 @@ module ActiveScaffold
             radio_html_options = html_options
           end
           radios = options.map do |option|
-            active_scaffold_radio_option(option, selected_id, column, radio_html_options)
+            active_scaffold_radio_option(option, selected_id, column, radio_html_options, ui_options: ui_options)
           end
-          if column.options[:include_blank]
-            label = column.options[:include_blank]
-            label = as_(column.options[:include_blank]) if column.options[:include_blank].is_a?(Symbol)
+          if ui_options[:include_blank]
+            label = ui_options[:include_blank]
+            label = as_(ui_options[:include_blank]) if ui_options[:include_blank].is_a?(Symbol)
             radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: nil)) + label)
           end
-          if column.options[:add_new]
+          if ui_options[:add_new]
             create_new_button = radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(id: nil, class: html_options[:class] + ' show-new-subform'))
             radios << content_tag(:label, create_new_button << as_(:create_new)) <<
-              active_scaffold_new_record_subform(column, record, html_options, skip_link: true)
+              active_scaffold_new_record_subform(column, record, html_options, ui_options: ui_options, skip_link: true)
           end
           safe_join radios
         else
           html = content_tag(:span, as_(:no_options), :class => "#{html_options[:class]} no-options", :id => html_options[:id])
           html << hidden_field_tag(html_options[:name], '', :id => nil)
-          html << active_scaffold_new_record_subform(column, record, html_options) if column.options[:add_new]
+          html << active_scaffold_new_record_subform(column, record, html_options, ui_options: ui_options) if ui_options[:add_new]
           html
         end
       end
 
-      def active_scaffold_input_checkbox(column, options)
-        check_box(:record, column.name, options.merge(column.options))
+      def active_scaffold_input_checkbox(column, options, ui_options: column.options)
+        check_box(:record, column.name, options.merge(ui_options))
       end
 
-      def active_scaffold_input_password(column, options)
-        active_scaffold_text_input :password_field, column, options.reverse_merge(autocomplete: 'new-password')
+      def active_scaffold_input_password(column, options, ui_options: column.options)
+        active_scaffold_text_input :password_field, column, options.reverse_merge(autocomplete: 'new-password'), ui_options: ui_options
       end
 
-      def active_scaffold_input_textarea(column, options)
-        text_area(:record, column.name, options.merge(:cols => column.options[:cols], :rows => column.options[:rows], :size => column.options[:size]))
+      def active_scaffold_input_textarea(column, options, ui_options: column.options)
+        text_area(:record, column.name, options.merge(cols: ui_options[:cols], rows: ui_options[:rows], size: ui_options[:size]))
       end
 
       def active_scaffold_input_virtual(column, options)
@@ -575,55 +575,55 @@ module ActiveScaffold
       # Sadly, many of them lacks browser support
 
       # A text box, that accepts only valid email address (in-browser validation)
-      def active_scaffold_input_email(column, options)
-        active_scaffold_text_input :email_field, column, options
+      def active_scaffold_input_email(column, options, ui_options: column.options)
+        active_scaffold_text_input :email_field, column, options, ui_options: ui_options
       end
 
       # A text box, that accepts only valid URI (in-browser validation)
-      def active_scaffold_input_url(column, options)
-        active_scaffold_text_input :url_field, column, options
+      def active_scaffold_input_url(column, options, ui_options: column.options)
+        active_scaffold_text_input :url_field, column, options, ui_options: ui_options
       end
 
       # A text box, that accepts only valid phone-number (in-browser validation)
-      def active_scaffold_input_telephone(column, options)
-        active_scaffold_text_input :telephone_field, column, options, :format
+      def active_scaffold_input_telephone(column, options, ui_options: column.options)
+        active_scaffold_text_input :telephone_field, column, options, :format, ui_options: ui_options
       end
 
       # A spinbox control for number values (in-browser validation)
-      def active_scaffold_input_number(column, options)
-        active_scaffold_number_input :number_field, column, options, :format
+      def active_scaffold_input_number(column, options, ui_options: column.options)
+        active_scaffold_number_input :number_field, column, options, :format, ui_options: ui_options
       end
 
       # A slider control for number values (in-browser validation)
-      def active_scaffold_input_range(column, options)
-        active_scaffold_number_input :range_field, column, options, :format
+      def active_scaffold_input_range(column, options, ui_options: column.options)
+        active_scaffold_number_input :range_field, column, options, :format, ui_options: ui_options
       end
 
       # A slider control for number values (in-browser validation)
-      def active_scaffold_number_input(method, column, options, remove_options = nil)
+      def active_scaffold_number_input(method, column, options, remove_options = nil, ui_options: column.options)
         options = numerical_constraints_for_column(column, options)
-        active_scaffold_text_input method, column, options, remove_options
+        active_scaffold_text_input method, column, options, remove_options, ui_options: ui_options
       end
 
-      def active_scaffold_text_input(method, column, options, remove_options = nil)
+      def active_scaffold_text_input(method, column, options, remove_options = nil, ui_options: column.options)
         options = active_scaffold_input_text_options(options)
-        options = options.merge(column.options)
+        options = options.merge(ui_options)
         options = options.except(*remove_options) if remove_options.present?
         send method, :record, column.name, options
       end
 
       # A color picker
-      def active_scaffold_input_color(column, options)
+      def active_scaffold_input_color(column, options, ui_options: column.options)
         html = []
         options = active_scaffold_input_text_options(options)
         if column.column&.null
           no_color = options[:object].send(column.name).nil?
           method = no_color ? :hidden_field : :color_field
-          html << content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ column.options[:no_color] || :no_color}")
+          html << content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ ui_options[:no_color] || :no_color}")
         else
           method = :color_field
         end
-        html << send(method, :record, column.name, options.merge(column.options).except(:format, :no_color))
+        html << send(method, :record, column.name, options.merge(ui_options).except(:format, :no_color))
         safe_join html
       end
 
@@ -631,37 +631,37 @@ module ActiveScaffold
       # Column.type-based inputs
       #
 
-      def active_scaffold_input_boolean(column, html_options)
+      def active_scaffold_input_boolean(column, html_options, ui_options: column.options)
         record = html_options.delete(:object)
-        html_options.merge!(column.options[:html_options] || {})
+        html_options.merge!(ui_options[:html_options] || {})
 
         options = {selected: record.send(column.name), object: record}
         options[:include_blank] = :_select_ if column.column&.null
-        options.merge!(column.options)
+        options.merge!(ui_options)
         active_scaffold_translate_select_options(options)
 
         options_for_select = [[as_(:true), true], [as_(:false), false]] # rubocop:disable Lint/BooleanSymbol
         select(:record, column.name, options_for_select, options, html_options)
       end
 
-      def active_scaffold_input_date(column, options)
-        active_scaffold_text_input :date_field, column, options
+      def active_scaffold_input_date(column, options, ui_options: column.options)
+        active_scaffold_text_input :date_field, column, options, ui_options: ui_options
       end
 
-      def active_scaffold_input_time(column, options)
-        active_scaffold_text_input :time_field, column, options
+      def active_scaffold_input_time(column, options, ui_options: column.options)
+        active_scaffold_text_input :time_field, column, options, ui_options: ui_options
       end
 
-      def active_scaffold_input_datetime(column, options)
-        active_scaffold_text_input :datetime_local_field, column, options
+      def active_scaffold_input_datetime(column, options, ui_options: column.options)
+        active_scaffold_text_input :datetime_local_field, column, options, ui_options: ui_options
       end
 
-      def active_scaffold_input_month(column, options)
-        active_scaffold_text_input :month_field, column, options
+      def active_scaffold_input_month(column, options, ui_options: column.options)
+        active_scaffold_text_input :month_field, column, options, ui_options: ui_options
       end
 
-      def active_scaffold_input_week(column, options)
-        active_scaffold_text_input :week_field, column, options
+      def active_scaffold_input_week(column, options, ui_options: column.options)
+        active_scaffold_text_input :week_field, column, options, ui_options: ui_options
       end
 
       ##
@@ -700,8 +700,8 @@ module ActiveScaffold
       end
       alias override_input? override_input
 
-      def subform_partial_for_column(column, klass = nil)
-        subform_partial = "#{column.options[:layout] || active_scaffold_config_for(klass || column.association.klass).subform.layout}_subform"
+      def subform_partial_for_column(column, klass = nil, ui_options: column.options)
+        subform_partial = "#{ui_options[:layout] || active_scaffold_config_for(klass || column.association.klass).subform.layout}_subform"
         override_subform_partial(column, subform_partial) || subform_partial
       end
 
