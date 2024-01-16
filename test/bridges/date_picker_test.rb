@@ -24,7 +24,7 @@ class DatePickerTest < ActionView::TestCase
   def test_form_ui
     config = ActiveScaffold::Config::Core.new(:company)
     @record = Company.new
-    assert active_scaffold_input_date_picker(config.columns[:date], :name => 'record[date]', :id => 'record_date', :object => @record)
-    assert active_scaffold_input_date_picker(config.columns[:datetime], :name => 'record[datetime]', :id => 'record_datetime', :object => @record)
+    assert active_scaffold_input_date_picker(config.columns[:date], {name: 'record[date]', id: 'record_date', object: @record})
+    assert active_scaffold_input_date_picker(config.columns[:datetime], {name: 'record[datetime]', id: 'record_datetime', object: @record})
   end
 end
