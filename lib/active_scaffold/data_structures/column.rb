@@ -606,7 +606,7 @@ module ActiveScaffold::DataStructures
       if value.is_a?(Array)
         value.size <= 2 && value[0].is_a?(Symbol) && (value[1].nil? || value[1].is_a?(Hash))
       else
-        value.is_a?(Symbol)
+        value.nil? || value.is_a?(Symbol)
       end
     end
   end
