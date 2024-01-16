@@ -20,11 +20,11 @@ module ActiveScaffold
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
         elsif column.search_ui && (method = override_search(column.search_ui))
-          send(method, column, options, ui_options: column.search_ui_options)
+          send(method, column, options, ui_options: column.search_ui_options || column.options)
 
         # third, check if the dev has specified a valid search_ui for this column, using generic ui for forms
         elsif column.search_ui && (method = override_input(column.search_ui))
-          send(method, column, options, ui_options: column.search_ui_options)
+          send(method, column, options, ui_options: column.search_ui_options || column.options)
 
         # fourth, check if the dev has created an override for this specific field
         elsif (method = override_form_field(column))
