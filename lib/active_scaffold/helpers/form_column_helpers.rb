@@ -19,7 +19,7 @@ module ActiveScaffold
 
         # second, check if the dev has specified a valid form_ui for this column
         elsif column.form_ui && (method = override_input(column.form_ui))
-          send(method, column, options, ui_options: column.form_ui_options || column.options)
+          send(method, column, options, ui_options: (column.form_ui_options || column.options).except(:collapsible))
 
         elsif column.association
           # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
@@ -186,6 +186,7 @@ module ActiveScaffold
 
       def form_attribute(column, record, scope = nil, only_value = false, col_class = nil)
         column_options = active_scaffold_input_options(column, scope, :object => record)
+        collapsible_id = column_options.delete :collapsible_id
         attributes = field_attributes(column, record)
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
         if only_value
@@ -206,7 +207,6 @@ module ActiveScaffold
         end
 
         label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))
-        collapsible_id = column_options.delete :collapsible_id
         label << h(' ') << link_to_visibility_toggle(collapsible_id) if collapsible_id
         content_tag :dl, attributes do
           content_tag(:dt, label) << content_tag(:dd, field, id: collapsible_id)
