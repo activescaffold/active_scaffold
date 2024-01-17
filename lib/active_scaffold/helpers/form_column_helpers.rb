@@ -106,7 +106,7 @@ module ActiveScaffold
         classes = "#{column.name}-input"
         classes += ' numeric-input' if column.number?
 
-        if column.options[:collapsible]
+        if (column.form_ui_options || column.options)[:collapsible]
           collapsible_id = "container_#{id_control}"
         end
 
