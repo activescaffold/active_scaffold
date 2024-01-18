@@ -489,7 +489,7 @@ module ActiveScaffold
         options.merge!(ui_options)
         active_scaffold_select_name_with_multiple html_options
         active_scaffold_translate_select_options(options)
-        html << select(:record, column.name, options_for_select, options, html_options)
+        html = select(:record, column.name, options_for_select, options, html_options)
         html << active_scaffold_refresh_link(column, html_options, record, ui_options) if ui_options[:refresh_link]
         html
       end
