@@ -330,7 +330,7 @@ module ActiveScaffold
           else
             collection_select(:record, method, select_options, :id, ui_options[:label_method] || :to_label, options, html_options)
           end
-        html << active_scaffold_refresh_link(column, html_options, record) if ui_options[:refresh_link]
+        html << active_scaffold_refresh_link(column, html_options, record, ui_options) if ui_options[:refresh_link]
         html << active_scaffold_new_record_subform(column, record, html_options, ui_options: ui_options) if ui_options[:add_new]
         html
       end
@@ -404,7 +404,7 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_refresh_link(column, html_options, record)
+      def active_scaffold_refresh_link(column, html_options, record, ui_options = {})
         link_options = {:object => record}
         if html_options['data-update_url']
           link_options['data-update_send_form'] = html_options['data-update_send_form']
@@ -414,7 +414,12 @@ module ActiveScaffold
           link_options = update_columns_options(column, scope.presence, link_options, true)
         end
         link_options[:class] = 'refresh-link'
-        link_to(as_(:refresh), link_options.delete('data-update_url') || html_options['data-update_url'], link_options)
+        if ui_options[:refresh_link].is_a?(Hash)
+          text = ui_options.dig(:refresh_link, :text)
+          text = as_(text) if text.is_a?(Symbol)
+          link_options.merge! ui_options[:refresh_link].except(:text)
+        end
+        link_to(text || as_(:refresh), link_options.delete('data-update_url') || html_options['data-update_url'], link_options.except(:object))
       end
 
       def active_scaffold_plural_association_options(column, record = nil)
@@ -433,7 +438,7 @@ module ActiveScaffold
           else
             active_scaffold_checkbox_list(column, select_options, associated_options.collect(&:id), options, ui_options: ui_options)
           end
-        html << active_scaffold_refresh_link(column, options, record) if ui_options[:refresh_link]
+        html << active_scaffold_refresh_link(column, options, record, ui_options) if ui_options[:refresh_link]
         html
       end
 
