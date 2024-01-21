@@ -549,7 +549,7 @@ module ActiveScaffold
             radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: nil)) + label)
           end
           if ui_options[:add_new]
-            create_new_button = radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(id: nil, class: html_options[:class] + ' show-new-subform'))
+            create_new_button = radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(id: nil, class: html_options[:class] + ' show-new-subform').except(:object))
             radios << content_tag(:label, create_new_button << as_(:create_new)) <<
               active_scaffold_new_record_subform(column, record, html_options, ui_options: ui_options, skip_link: true)
           end
