@@ -432,7 +432,11 @@ module ActiveScaffold
         associated_options, select_options = active_scaffold_plural_association_options(column, record)
 
         html =
-          if select_options.empty?
+          if options[:multiple] || ui_options.dig(:html_options, :multiple)
+            html_options = options.merge(ui_options[:html_options] || {})
+            active_scaffold_select_name_with_multiple html_options
+            collection_select(:record, column.name, select_options, :id, ui_options[:label_method] || :to_label, ui_options, html_options)
+          elsif select_options.empty?
             content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id]) <<
               hidden_field_tag("#{options[:name]}[]", '', :id => nil)
           else
@@ -502,6 +506,10 @@ module ActiveScaffold
         else
           active_scaffold_input_enum(column, html_options, ui_options: ui_options)
         end
+      end
+
+      def active_scaffold_input_select_multiple(column, options, ui_options: column.options)
+        active_scaffold_input_select(column, options.merge(multiple: true), ui_options: ui_options)
       end
 
       def active_scaffold_radio_option(option, selected, column, radio_options, ui_options: column.options)
