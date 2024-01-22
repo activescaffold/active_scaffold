@@ -4,6 +4,7 @@
 - Support assigning options next to the UI type in form_ui, list_ui, show_ui, search_ui, so they are used instead of common options
 - Support :refresh_link option in :select form_ui for non-association columns
 - Support using a hash in :refresh_link option instead of true, with html
+- Support select with multiple attribute for plural associations using :select form_ui, instead of checkboxes, using {html_options: {multiple: true}}, or :select_multiple
 
 = 3.7.0
 - Drop support for rails < 5.2 and ruby < 2.5
