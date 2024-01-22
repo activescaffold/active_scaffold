@@ -266,6 +266,7 @@ jQuery(document).ready(function($) {
     var element = jQuery(this);
     var form_element = element.prev();
     var value;
+    if (form_element.is(".field_with_errors")) form_element = form_element.children().last();
     if (form_element.is(".checkbox-list")) {
       value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
       form_element = form_element.parent().find("input:checkbox"); // parent is needed for draggable-list, checked list may be empty
