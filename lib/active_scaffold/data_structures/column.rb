@@ -465,6 +465,12 @@ module ActiveScaffold::DataStructures
       ActiveScaffold::OrmChecks.column_type active_record_class, name
     end
 
+    def attributes=(opts)
+      opts.each do |k,v|
+        send "#{k}=", v
+      end
+    end
+
     protected
 
     def setup_defaults_for_column
