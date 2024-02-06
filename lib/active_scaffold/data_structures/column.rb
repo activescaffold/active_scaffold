@@ -466,8 +466,8 @@ module ActiveScaffold::DataStructures
     end
 
     def attributes=(opts)
-      opts.each do |k,v|
-        send "#{k}=", v
+      opts.each do |setting, value|
+        send "#{setting}=", value
       end
     end
 
