@@ -150,7 +150,10 @@ module ActiveScaffold
     def association_value_from_param_simple_value(parent_record, column, value)
       if column.association.singular?
         # value may be Array if using update_columns in field_search with multi-select
-        column.association.klass(parent_record)&.find(value) if value.present? && !value.is_a?(Array)
+        klass = column.association.klass(parent_record)
+        # find_by needed when using update_columns in type foreign type key of polymorphic association,
+        # and foreign key had value, it will try to find record with id of previous type
+        klass&.find_by(klass&.primary_key => value) if value.present? && !value.is_a?(Array)
       else # column.association.collection?
         column_plural_assocation_value_from_value(column, Array(value))
       end
