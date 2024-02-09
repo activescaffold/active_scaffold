@@ -14,11 +14,14 @@
     renders_as = column_renders_as(column)
     form_ui = column.form_ui
   end
-  if renders_as == :subform
-    options = {is_subform: true, field_class: "#{column.name}-sub-form"}
-  else
-    options = {is_subform: false, field_class: "#{column.name}-input", hidden: form_ui == :hidden}
-  end
+  options = {field_class: "#{column.name}-input", hidden: form_ui == :hidden}
+  options[:subform_class] = "#{column.name}-sub-form" if column.association
+  options[:attrs] =
+    if renders_as == :subform
+      active_scaffold_subform_attributes(column, (column.css_class unless column.css_class.is_a?(Proc)))
+    else
+      {class: 'form-element', id: ''}
+    end
   html =
     if scope
       readonly = @record.readonly? || !@record.authorized_for?(:crud_type => :update)
@@ -34,5 +37,5 @@
 
 ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(html) %>', <%= options.to_json.html_safe %>);
 <%if column.update_columns && !column.update_columns.empty?%>
-  <%=  render(partial: "render_field", collection: column.update_columns, locals: {source_id: source_id, scope: scope})%>
+<%=  render(partial: "render_field", collection: column.update_columns, locals: {source_id: source_id, scope: scope})%>
 <%end%>

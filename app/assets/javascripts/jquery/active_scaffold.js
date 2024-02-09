@@ -1,34 +1,34 @@
 jQuery(document).ready(function($) {
-/* It should not be needed, latest chrome is caching by itself
-  if (ActiveScaffold.config.conditional_get) jQuery.ajaxSettings.ifModified = true;
-  jQuery(document).on('ajax:beforeSend', function(event, xhr, settings){
-    xhr.cacheUrl = settings.url;
-  });
-  jQuery(document).on('ajax:success', function(event, data, status, xhr){
-    var etag=xhr.getResponseHeader("etag");
-    if (etag && xhr.status==304) {
-      var key = etag + xhr.cacheUrl;
-      xhr.responseText=jQuery(document).data(key);
-      var conv = jQuery(document).data('type-'+key);
-      if (conv) conv(xhr.responseText);
-    }
-  });
-  jQuery(document).ajaxComplete(function(event, xhr, settings){
-    var etag=xhr.getResponseHeader("etag");
-    if (etag && settings.ifModified && xhr.responseText) {
-      var key = etag + xhr.cacheUrl;
-      jQuery(document).data(key, xhr.responseText);
-      var contentType = xhr.getResponseHeader('Content-Type');
-      for(s in settings.contents) {
-        if (settings.contents[s].test(contentType)) {
-          var conv = settings.converters['text '+s];
-          if (typeof conv == 'function') jQuery(document).data('type-'+key, conv);
-          break;
+  /* It should not be needed, latest chrome is caching by itself
+    if (ActiveScaffold.config.conditional_get) jQuery.ajaxSettings.ifModified = true;
+    jQuery(document).on('ajax:beforeSend', function(event, xhr, settings){
+      xhr.cacheUrl = settings.url;
+    });
+    jQuery(document).on('ajax:success', function(event, data, status, xhr){
+      var etag=xhr.getResponseHeader("etag");
+      if (etag && xhr.status==304) {
+        var key = etag + xhr.cacheUrl;
+        xhr.responseText=jQuery(document).data(key);
+        var conv = jQuery(document).data('type-'+key);
+        if (conv) conv(xhr.responseText);
+      }
+    });
+    jQuery(document).ajaxComplete(function(event, xhr, settings){
+      var etag=xhr.getResponseHeader("etag");
+      if (etag && settings.ifModified && xhr.responseText) {
+        var key = etag + xhr.cacheUrl;
+        jQuery(document).data(key, xhr.responseText);
+        var contentType = xhr.getResponseHeader('Content-Type');
+        for(s in settings.contents) {
+          if (settings.contents[s].test(contentType)) {
+            var conv = settings.converters['text '+s];
+            if (typeof conv == 'function') jQuery(document).data('type-'+key, conv);
+            break;
+          }
         }
       }
-    }
-  });
-*/
+    });
+  */
   if (/1\.[2-7]\..*/.test(jQuery().jquery)) {
     var error = 'ActiveScaffold requires jquery 1.8.0 or greater, please use jquery-rails 2.1.x gem or greater';
     if (typeof console != 'undefined') console.error(error);
@@ -198,7 +198,7 @@ jQuery(document).ready(function($) {
     var td = jQuery(this), span = td.find('span.in_place_editor_field');
     if (event.type == 'mouseenter') {
       if (td.hasClass('empty') || typeof(span.data('editInPlace')) === 'undefined') td.find('span').addClass("hover");
-     }
+    }
     if (event.type == 'mouseleave') {
       if (td.hasClass('empty') || typeof(span.data('editInPlace')) === 'undefined') td.find('span').removeClass("hover");
     }
@@ -401,7 +401,7 @@ jQuery(document).ready(function($) {
   }
   if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
   jQuery(document).on('as:element_updated as:element_created', function(e, action_link) {
-      ActiveScaffold.setup(e.target);
+    ActiveScaffold.setup(e.target);
   });
   jQuery(document).on('as:element_removed', function(e, action_link) {
     setTimeout(ActiveScaffold.update_floating_form_footer); // delay so form is already removed
@@ -444,7 +444,7 @@ jQuery(document).on('turbolinks:load turbo:load', function($) {
     for (var name in prop) {
       // Check if we're overwriting an existing function
       prototype[name] = typeof prop[name] == "function" &&
-        typeof _super[name] == "function" && fnTest.test(prop[name]) ?
+      typeof _super[name] == "function" && fnTest.test(prop[name]) ?
         (function(name, fn){
           return function() {
             var tmp = this._super;
@@ -931,25 +931,28 @@ var ActiveScaffold = {
   render_form_field: function(source, content, options) {
     if (typeof(source) == 'string') source = '#' + source;
     var source = jQuery(source);
-    var element = source.closest('.sub-form-record'), selector = '';
-    if (element.length == 0) {
-      element = source.closest('form > ol.form');
+    var element, container = source.closest('.sub-form-record'), selector = '';
+    if (container.length == 0) {
+      container = source.closest('form > ol.form');
       selector = 'li';
     }
     // find without entering new subforms
-    selector = options.is_subform ? '' : selector + ':not(.sub-form) ';
-    element = element.find(selector + '.' + options.field_class).first();
+    element = container.find(selector + ':not(.sub-form) .' + options.field_class).first();
+    if (element.length)
+      element = element.closest('dl');
+    else if (options.subform_class)
+      element = container.find(selector + '.' + options.subform_class).first();
 
     if (element.length) {
-      if (options.is_subform == false) {
-        if (typeof(options.hidden) != 'undefined') {
-          var li = element.closest('li');
-          li[options.hidden ? 'addClass' : 'removeClass'].call(li, 'hidden')
-        }
-        this.replace(element.closest('dl'), content);
-      } else {
+      var li = element.closest('li');
+      if (element.is('.sub-form'))
         this.replace_html(element, content);
-      }
+      else
+        this.replace(element, content);
+      for(var attr in options.attrs)
+        li.attr(attr, options.attrs[attr]);
+      if (typeof(options.hidden) != 'undefined')
+        li[options.hidden ? 'addClass' : 'removeClass'].call(li, 'hidden')
     }
   },
 
@@ -982,23 +985,23 @@ var ActiveScaffold = {
     // test editor is open
     if (typeof(span.data('editInPlace')) === 'undefined') {
       var options = {show_buttons: true,
-                     hover_class: 'hover',
-                     element_id: 'editor_id',
-                     ajax_data_type: "script",
-                     delegate: {
-                       willCloseEditInPlace: function(span, options) {
-                         if (span.data('addEmptyOnCancel')) span.closest('td').addClass('empty');
-                         span.closest('tr').find('td.actions .loading-indicator').css('visibility','visible');
-                       },
-                       didCloseEditInPlace: function(span, options) {
-                         span.closest('tr').find('td.actions .loading-indicator').css('visibility','hidden');
-                       }
-                     },
-                     update_value: 'value'},
-          csrf_param = jQuery('meta[name=csrf-param]').first(),
-          csrf_token = jQuery('meta[name=csrf-token]').first(),
-          my_parent = span.parent(),
-          column_heading = null;
+          hover_class: 'hover',
+          element_id: 'editor_id',
+          ajax_data_type: "script",
+          delegate: {
+            willCloseEditInPlace: function(span, options) {
+              if (span.data('addEmptyOnCancel')) span.closest('td').addClass('empty');
+              span.closest('tr').find('td.actions .loading-indicator').css('visibility','visible');
+            },
+            didCloseEditInPlace: function(span, options) {
+              span.closest('tr').find('td.actions .loading-indicator').css('visibility','hidden');
+            }
+          },
+          update_value: 'value'},
+        csrf_param = jQuery('meta[name=csrf-param]').first(),
+        csrf_token = jQuery('meta[name=csrf-token]').first(),
+        my_parent = span.parent(),
+        column_heading = null;
 
       if(!(my_parent.is('td') || my_parent.is('th'))){
         my_parent = span.parents('td').eq(0);
@@ -1012,8 +1015,8 @@ var ActiveScaffold = {
       }
 
       var render_url = column_heading.data('ie-render-url'),
-          mode = column_heading.data('ie-mode'),
-          record_id = span.data('ie-id') || '';
+        mode = column_heading.data('ie-mode'),
+        record_id = span.data('ie-id') || '';
 
       ActiveScaffold.read_inplace_edit_heading_attributes(column_heading, options);
 

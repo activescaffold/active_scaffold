@@ -7,6 +7,7 @@
 - Support select with multiple attribute for plural associations using :select form_ui, instead of checkboxes, using {html_options: {multiple: true}}, or :select_multiple
 - Support attributes= in column, to set multiple settings with a hash
 - Fix update_columns in type column of polymorphic association, when foreign key has value, it will look for old id with new type and may fail
+- Support changing between subform and form_ui with update_columns
 
 = 3.7.0
 - Drop support for rails < 5.2 and ruby < 2.5
