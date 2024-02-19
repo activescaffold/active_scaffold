@@ -52,7 +52,8 @@
     next unless in_subform?(column, parent_record, record_column)
     columns_length += 1
     show_actions = true
-    if column.association && column.form_ui.nil?
+    if !ActiveScaffold.nested_subforms && column.association && column.form_ui.nil?
+      ActiveSupport::Deprecation.warn "Nested subforms are allowed now, set form_ui = :select for #{column.name} in controller for #{config.model.name}"
       column = column.dup unless ActiveScaffold.threadsafe
       column.form_ui = :select
     end

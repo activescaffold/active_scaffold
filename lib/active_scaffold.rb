@@ -78,6 +78,8 @@ module ActiveScaffold
     @@exclude_bridges ||= []
   end
 
+  mattr_accessor :nested_subforms, instance_writer: false
+
   def self.root
     File.dirname(__FILE__) + '/..'
   end
