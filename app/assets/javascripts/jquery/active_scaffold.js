@@ -944,15 +944,17 @@ var ActiveScaffold = {
       element = container.find(selector + '.' + options.subform_class).first();
 
     if (element.length) {
-      var li = element.closest('li');
-      if (element.is('.sub-form'))
+      var parent = element.is('li, td') ? element : element.parent('li, td');
+      if (element.is('li'))
         this.replace_html(element, content);
       else
         this.replace(element, content);
-      for(var attr in options.attrs)
-        li.attr(attr, options.attrs[attr]);
+      if (parent.is('li')) {
+        for (var attr in options.attrs)
+          parent.attr(attr, options.attrs[attr]);
+      }
       if (typeof(options.hidden) != 'undefined')
-        li[options.hidden ? 'addClass' : 'removeClass'].call(li, 'hidden')
+        parent[options.hidden ? 'addClass' : 'removeClass'].call(parent, 'hidden')
     }
   },
 
