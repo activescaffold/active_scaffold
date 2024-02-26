@@ -25,13 +25,18 @@ module ActiveScaffold
       end
 
       def generate_temporary_id(record = nil, generated_id = nil)
-        (generated_id || (Time.now.to_f * 1000).to_i.to_s).tap do |id|
-          cache_generated_id record, id
+        unless generated_id
+          temp_id = (Time.now.to_f * 1_000_000).to_i.to_s
+          temp_id.succ! while @temporary_ids&.dig(record.class.name)&.include?(temp_id)
+          generated_id = temp_id
         end
+        cache_generated_id record, generated_id
+        generated_id
       end
 
       def cache_generated_id(record, generated_id)
-        (@temporary_ids ||= {})[record.class.name] = generated_id if record && generated_id
+        # cache all generated ids for the same class, so generate_temporary_id can check and ensure ids are unique
+        ((@temporary_ids ||= {})[record.class.name] ||= []) << generated_id if record && generated_id
       end
 
       def generated_id(record)
