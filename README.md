@@ -62,6 +62,8 @@ rails db:migrate
 
 Run the app and visit localhost:3000/<plural_model>
 
+It's recommended to call `clear_helpers` in ApplicationController, as some helpers defined by ActiveScaffold, such as active_scaffold_enum_options, options_for_association_conditions, association_klass_scoped, are usually overrided for different controllers, and it may cause issues when all helper modules are available to every controller, specially when models have associations or columns with the same name but need different code for those overrided helper methods.
+
 Threadsafe
 ----------
 
