@@ -26,6 +26,7 @@ module ActiveScaffold
         attribute = column.active_record_class.human_attribute_name(column.name)
         opt ||= :between if from && to
         opt ||= from ? '>=' : '<='
+        from = to = nil if opt&.in? %w[null not_null]
         "#{attribute} #{as_(opt).downcase} #{from} #{to}"
       end
 
