@@ -26,6 +26,7 @@ module ActiveScaffold
         attribute = column.active_record_class.human_attribute_name(column.name)
         opt ||= :between if from && to
         opt ||= from ? '>=' : '<='
+        from = to = nil if opt&.in? %w[null not_null]
         "#{attribute} #{as_(opt).downcase} #{from} #{to}"
       end
 
@@ -37,11 +38,12 @@ module ActiveScaffold
       alias active_scaffold_human_condition_decimal active_scaffold_human_condition_integer
       alias active_scaffold_human_condition_float active_scaffold_human_condition_integer
 
-      def active_scaffold_human_condition_string(column, value)
+      def active_scaffold_human_condition_range(column, value)
         opt = ActiveScaffold::Finder::STRING_COMPARATORS.key(value['opt']) || value['opt']
         to = "- #{value['to']}" if opt == 'BETWEEN'
         format_human_condition column, opt, "'#{value['from']}'", to
       end
+      alias active_scaffold_human_condition_string active_scaffold_human_condition_range
 
       def active_scaffold_human_condition_date(column, value)
         conversion = column.column.type == :date ? :to_date : :to_time
@@ -57,8 +59,7 @@ module ActiveScaffold
 
       def active_scaffold_human_condition_boolean(column, value)
         attribute = column.active_record_class.human_attribute_name(column.name)
-        label = as_(ActiveScaffold::Core.column_type_cast(value, column.column) ? :true : :false) # rubocop:disable Lint/BooleanSymbol
-        as_(:boolean, :scope => :human_conditions, :column => attribute, :value => label)
+        as_(:boolean, :scope => :human_conditions, :column => attribute, :value => as_(value))
       end
       alias active_scaffold_human_condition_checkbox active_scaffold_human_condition_boolean
 
