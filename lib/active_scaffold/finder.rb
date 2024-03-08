@@ -171,7 +171,10 @@ module ActiveScaffold
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::STRING_COMPARATORS.values.include?(value[:opt])
-          ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", value[:opt].sub('?', value[:from])]
+          [
+            "%<search_sql>s #{'NOT ' if value[:opt].start_with?('not_')}#{ActiveScaffold::Finder.like_operator} ?",
+            value[:opt].sub('not_', '').sub('?', value[:from])
+          ]
         elsif value[:opt] == 'BETWEEN'
           ['(%<search_sql>s BETWEEN ? AND ?)', value[:from], value[:to]]
         elsif ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt])
@@ -361,7 +364,10 @@ module ActiveScaffold
     STRING_COMPARATORS = {
       :contains    => '%?%',
       :begins_with => '?%',
-      :ends_with   => '%?'
+      :ends_with   => '%?',
+      :doesnt_contain    => 'not_%?%',
+      :doesnt_begin_with => 'not_?%',
+      :doesnt_end_with   => 'not_%?'
     }.freeze
     NULL_COMPARATORS = %w[null not_null].freeze
 
