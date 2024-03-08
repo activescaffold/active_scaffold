@@ -10,6 +10,7 @@
 - Support changing between subform and form_ui with update_columns
 - Deprecate automatic :select form_ui for associations in subforms, set :select in the controller config to remove deprecation warning, or enable new behaviour of nested subforms with ActiveScaffold.nested_subforms = true
 - Some fixes for human conditions with some search UI
+- Add more string comparators in field search
 
 = 3.7.0
 - Drop support for rails < 5.2 and ruby < 2.5
