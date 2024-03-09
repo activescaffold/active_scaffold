@@ -47,6 +47,9 @@ es:
     deleted_model: "%{model} borrado"
     deleted_records: Ver Eliminados
     delimiter: Delimitador
+    doesnt_begin_with: No empieza con
+    doesnt_contain: No contiene
+    doesnt_end_with: No termina con
     download: Descargar
     edit: Editar
     ends_with: Termina con

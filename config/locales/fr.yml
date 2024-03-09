@@ -47,6 +47,9 @@ fr:
     deleted_model: Suppression de %{model}
     deleted_records: Lister les enregistrements supprimés
     delimiter: Délimiteur
+    doesnt_begin_with:
+    doesnt_contain:
+    doesnt_end_with:
     download: Télécharger
     edit: Éditer
     ends_with: Se terminant par
@@ -63,7 +66,7 @@ fr:
     found: Trouvé
     future: Futur
     group_by: Grouper par
-    grouped_by: 
+    grouped_by:
     hide: "(Cacher)"
     hours: Heures
     human_conditions:
@@ -138,11 +141,11 @@ fr:
     yesterday: Hier
   date:
     formats:
-      month: 
-      quarter: 
-      week: 
-      year_month: 
-      year_quarter: 
+      month: "%B"
+      quarter:
+      week:
+      year_month: "%b %Y"
+      year_quarter:
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"

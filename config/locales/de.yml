@@ -47,6 +47,9 @@ de:
     deleted_model: "%{model} gelöscht"
     deleted_records: Gelöschte Records auflisten
     delimiter: Trennzeichen
+    doesnt_begin_with:
+    doesnt_contain:
+    doesnt_end_with:
     download: Herunterladen
     edit: Bearbeiten
     ends_with: Endet
@@ -138,10 +141,10 @@ de:
     yesterday: Gestern
   date:
     formats:
-      month: 
+      month: "%B"
       quarter: Quartal %{num}
-      week: 
-      year_month: 
+      week:
+      year_month: "%b %Y"
       year_quarter: Quartal %{quarter} %{year}
   time:
     formats:

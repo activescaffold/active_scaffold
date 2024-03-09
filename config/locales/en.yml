@@ -47,6 +47,9 @@ en:
     deleted_model: Deleted %{model}
     deleted_records: List Deleted Records
     delimiter: Delimiter
+    doesnt_begin_with: Doesn't begin with
+    doesnt_contain: Doesn't contain
+    doesnt_end_with: Doesn't end with
     download: Download
     edit: Edit
     ends_with: Ends with
