@@ -290,7 +290,7 @@ module ActiveScaffold
         numeric_controls = [
           send(helper, column, options, current_search, 'from', ui_options: ui_options),
           content_tag(:span, id: "#{options[:id]}_between", class: 'as_search_range_between',
-                      style: current_search['opt'] == 'BETWEEN' ? nil : 'display: none') do
+                      style: ('display: none' unless current_search['opt'] == 'BETWEEN')) do
             safe_join([' - ', send(helper, column, options, current_search, 'to', ui_options: ui_options)])
           end
         ]
