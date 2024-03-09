@@ -45,7 +45,6 @@ module ActiveScaffold
       end
       alias active_scaffold_human_condition_string active_scaffold_human_condition_range
 
-
       def active_scaffold_human_condition_datetime(column, value)
         case value['opt']
         when 'RANGE'

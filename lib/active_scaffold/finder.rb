@@ -454,7 +454,6 @@ module ActiveScaffold
     TIME_UNITS = %w[SECONDS MINUTES HOURS].freeze
     DATE_RANGES = %w[TODAY YESTERDAY TOMORROW THIS_WEEK PREV_WEEK NEXT_WEEK THIS_MONTH PREV_MONTH NEXT_MONTH THIS_YEAR PREV_YEAR NEXT_YEAR].freeze
 
-
     def self.included(klass)
       klass.extend ClassMethods
     end
