@@ -250,42 +250,110 @@ module ActiveScaffold
       end
       alias active_scaffold_search_float active_scaffold_search_decimal
 
+      def active_scaffold_search_datetime(column, options, ui_options: column.options, field_ui: column.search_ui || :datetime)
+        current_search = {'from' => nil, 'to' => nil, 'opt' => 'BETWEEN',
+                          'number' => 1, 'unit' => 'DAYS', 'range' => nil}
+        current_search.merge!(options[:value]) unless options[:value].nil?
+        tags = [
+          active_scaffold_search_datetime_comparator_tag(column, options, current_search),
+          active_scaffold_search_datetime_trend_tag(column, options, current_search),
+          active_scaffold_search_datetime_numeric_tag(column, options, current_search, ui_options: ui_options, field_ui: field_ui),
+          active_scaffold_search_datetime_range_tag(column, options, current_search)
+        ]
+        safe_join tags, '&nbsp;'.html_safe # rubocop:disable Rails/OutputSafety
+      end
+
+      def active_scaffold_search_timestamp(column, options, ui_options: column.options)
+        active_scaffold_search_datetime(column, options, ui_options: ui_options, field_ui: :datetime)
+      end
+
+      def active_scaffold_search_time(column, options, ui_options: column.options)
+        active_scaffold_search_datetime(column, options, ui_options: ui_options, field_ui: :time)
+      end
+
+      def active_scaffold_search_date(column, options, ui_options: column.options)
+        active_scaffold_search_datetime(column, options, ui_options: ui_options, field_ui: :date)
+      end
+
+      def active_scaffold_search_datetime_comparator_options(column)
+        select_options = ActiveScaffold::Finder::DATE_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+        select_options + ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+      end
+
+      def active_scaffold_search_datetime_comparator_tag(column, options, current_search)
+        choices = options_for_select(active_scaffold_search_datetime_comparator_options(column), current_search['opt'])
+        select_tag("#{options[:name]}[opt]", choices, id: "#{options[:id]}_opt", class: 'as_search_range_option as_search_date_time_option')
+      end
+
+      def active_scaffold_search_datetime_numeric_tag(column, options, current_search, ui_options: column.options, field_ui: column.search_ui)
+        helper = "active_scaffold_search_#{field_ui}_field"
+        numeric_controls = [
+          send(helper, column, options, current_search, 'from', ui_options: ui_options),
+          content_tag(:span, id: "#{options[:id]}_between", class: 'as_search_range_between',
+                      style: current_search['opt'] == 'BETWEEN' ? nil : 'display: none') do
+            safe_join([' - ', send(helper, column, options, current_search, 'to', ui_options: ui_options)])
+          end
+        ]
+        content_tag('span', safe_join(numeric_controls),
+                    :id => "#{options[:id]}_numeric", :class => 'search-date-numeric',
+                    :style => ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(current_search['opt']) ? nil : 'display: none')
+      end
+
+      def active_scaffold_search_datetime_trend_tag(column, options, current_search)
+        trend_controls = [
+          text_field_tag("#{options[:name]}[number]", current_search['number'], class: 'text-input', size: 10, autocomplete: 'off'),
+          select_tag("#{options[:name]}[unit]",
+                     options_for_select(active_scaffold_search_datetime_trend_units(column), current_search['unit']),
+                     class: 'text-input')
+        ]
+        content_tag('span', safe_join(trend_controls, ' '),
+                    id: "#{options[:id]}_trend", class: 'search-date-trend',
+                    style: ('display: none' unless current_search['opt'] == 'PAST' || current_search['opt'] == 'FUTURE'))
+      end
+
+      def active_scaffold_search_datetime_trend_units(column)
+        options = ActiveScaffold::Finder::DATE_UNITS.collect { |unit| [as_(unit.downcase.to_sym), unit] }
+        options = ActiveScaffold::Finder::TIME_UNITS.collect { |unit| [as_(unit.downcase.to_sym), unit] } + options if column_datetime?(column)
+        options
+      end
+
+      def active_scaffold_search_datetime_range_tag(column, options, current_search)
+        values = ActiveScaffold::Finder::DATE_RANGES.collect { |range| [as_(range.downcase.to_sym), range] }
+        range_controls = select_tag("#{options[:name]}[range]",
+                                    options_for_select(values, current_search['range']),
+                                    class: 'text-input', id: nil)
+        content_tag('span', range_controls,
+                    id: "#{options[:id]}_range", class: 'search-date-range',
+                    style: ('display: none' unless current_search['opt'] == 'RANGE'))
+      end
+
+      def column_datetime?(column)
+        (!column.column.nil? && %i[datetime time].include?(column.column.type))
+      end
+
       def field_search_datetime_value(value)
         Time.zone.local(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
       end
 
-      def active_scaffold_search_datetime(column, options, ui_options: column.options)
-        _, from_value, to_value = field_search_params_range_values(column)
+      def active_scaffold_search_datetime_field(column, options, current_search, name, ui_options: column.options)
         options = ui_options.merge(options)
         type = "#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
-        use_select = options.delete(:use_select)
-        from_name = "#{options[:name]}[from]"
-        to_name = "#{options[:name]}[to]"
-        if use_select
-          helper = "select_#{type}"
-          fields = [
-            send(helper, field_search_datetime_value(from_value), options.reverse_merge(include_blank: true, prefix: from_name)),
-            send(helper, field_search_datetime_value(to_value), options.reverse_merge(include_blank: true, prefix: to_name))
-          ]
+        field_name = "#{options[:name]}[#{name}]"
+        if options[:use_select]
+          send("select_#{type}", current_search[name], options.reverse_merge(include_blank: true, prefix: field_name))
         else
           helper = "#{type}#{'_local' if type == 'datetime'}_field_tag"
-          fields = [
-            send(helper, from_name, field_search_datetime_value(from_value), options.except(:name, :object).merge(id: "#{options[:id]}_from")),
-            send(helper, to_name, field_search_datetime_value(to_value), options.except(:name, :object).merge(id: "#{options[:id]}_to"))
-          ]
+          send(helper, field_name, current_search[name], options.except(:name, :object, :use_select).merge(id: "#{options[:id]}_#{name}"))
         end
-
-        safe_join fields, ' - '
       end
 
-      def active_scaffold_search_date(column, options, ui_options: column.options)
-        active_scaffold_search_datetime(column, options.merge!(:discard_time => true), ui_options: ui_options)
+      def active_scaffold_search_date_field(column, options, current_search, name, ui_options: column.options)
+        active_scaffold_search_datetime_field(column, options.merge!(:discard_time => true), current_search, name, ui_options: ui_options)
       end
 
-      def active_scaffold_search_time(column, options, ui_options: column.options)
-        active_scaffold_search_datetime(column, options.merge!(:discard_date => true), ui_options: ui_options)
+      def active_scaffold_search_time_field(column, options, current_search, name, ui_options: column.options)
+        active_scaffold_search_datetime_field(column, options.merge!(:discard_date => true), current_search, name, ui_options: ui_options)
       end
-      alias active_scaffold_search_timestamp active_scaffold_search_datetime
 
       ##
       ## Search column override signatures

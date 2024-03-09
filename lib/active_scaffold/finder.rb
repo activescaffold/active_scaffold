@@ -244,14 +244,19 @@ module ActiveScaffold
         nil
       end
 
-      def parse_date_with_format(value, format_name)
-        format = I18n.t("date.formats.#{format_name || :default}")
-        format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
-        en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
-        Date.strptime(en_value, format)
+      def format_for_date(column, value, format_name = column.options[:format])
+        if format_name
+          format = I18n.t("date.formats.#{format_name}")
+          format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
+          en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
+        end
+        [en_value || value, format]
+      end
+
+      def parse_date_with_format(value, format)
+        Date.strptime(value, *format)
       rescue StandardError => e
-        message = "Error parsing date from #{en_value}"
-        message << " (#{value})" if en_value != value
+        message = "Error parsing date from #{value}"
         message << ", with format #{format}" if format
         Rails.logger.warn "#{message}:\n#{e.message}\n#{e.backtrace.join("\n")}"
         nil
@@ -283,7 +288,7 @@ module ActiveScaffold
             value.send(conversion)
           end
         elsif conversion == :to_date
-          parse_date_with_format(value, column.options[:format])
+          parse_date_with_format(*format_for_date(column, value))
         elsif value.include?('T')
           Time.zone.parse(value)
         else # datetime
@@ -319,19 +324,93 @@ module ActiveScaffold
       end
 
       def condition_for_datetime(column, value, like_pattern = nil)
-        conversion = datetime_conversion_for_condition(column)
-        from_value = condition_value_for_datetime(column, value[:from], conversion)
-        to_value = condition_value_for_datetime(column, value[:to], conversion)
+        operator = ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value['opt']) && value['opt'] != 'BETWEEN' ? value['opt'] : nil
+        from_value, to_value = datetime_from_to(column, value)
 
-        if from_value.nil? && to_value.nil?
-          nil
-        elsif !from_value
-          ['%<search_sql>s <= ?', to_value]
-        elsif !to_value
-          ['%<search_sql>s >= ?', from_value]
+        if column.search_sql.is_a? Proc
+          column.search_sql.call(from_value, to_value, operator)
+        elsif operator.nil?
+          ['%<search_sql>s BETWEEN ? AND ?', from_value, to_value] unless from_value.nil? || to_value.nil?
         else
-          ['%<search_sql>s BETWEEN ? AND ?', from_value, to_value]
+          ["%<search_sql>s #{value['opt']} ?", from_value] unless from_value.nil?
         end
+      end
+
+      def datetime_from_to(column, value)
+        conversion = datetime_conversion_for_condition(column)
+        case value['opt']
+        when 'RANGE'
+          values = datetime_from_to_for_range(column, value)
+          # Avoid calling to_time, not needed and broken on rails >= 4, because return local time instead of UTC
+          values.collect!(&conversion) if conversion != :to_time
+          values
+        when 'PAST', 'FUTURE'
+          values = datetime_from_to_for_trend(column, value)
+          # Avoid calling to_time, not needed and broken on rails >= 4, because return local time instead of UTC
+          values.collect!(&conversion) if conversion != :to_time
+          values
+        else
+          %w[from to].collect { |field| condition_value_for_datetime(column, value[field], conversion) }
+        end
+      end
+
+      def datetime_now
+        Time.zone.now
+      end
+
+      def datetime_from_to_for_trend(column, value)
+        case value['opt']
+        when 'PAST'
+          trend_number = [value['number'].to_i, 1].max
+          now = datetime_now
+          if datetime_column_date?(column)
+            from = now.beginning_of_day.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
+            to = now.end_of_day
+          else
+            from = now.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
+            to = now
+          end
+          [from, to]
+        when 'FUTURE'
+          trend_number = [value['number'].to_i, 1].max
+          now = datetime_now
+          if datetime_column_date?(column)
+            from = now.beginning_of_day
+            to = now.end_of_day.in(trend_number.send(value['unit'].downcase.singularize.to_sym))
+          else
+            from = now
+            to = now.in(trend_number.send(value['unit'].downcase.singularize.to_sym))
+          end
+          [from, to]
+        end
+      end
+
+      def datetime_from_to_for_range(column, value)
+        case value['range']
+        when 'TODAY'
+          [datetime_now.beginning_of_day, datetime_now.end_of_day]
+        when 'YESTERDAY'
+          [datetime_now.ago(1.day).beginning_of_day, datetime_now.ago(1.day).end_of_day]
+        when 'TOMORROW'
+          [datetime_now.in(1.day).beginning_of_day, datetime_now.in(1.day).end_of_day]
+        else
+          range_type, range = value['range'].downcase.split('_')
+          raise ArgumentError unless %w[week month year].include?(range)
+          case range_type
+          when 'this'
+            return datetime_now.send("beginning_of_#{range}".to_sym), datetime_now.send("end_of_#{range}")
+          when 'prev'
+            return datetime_now.ago(1.send(range.to_sym)).send("beginning_of_#{range}".to_sym), datetime_now.ago(1.send(range.to_sym)).send("end_of_#{range}".to_sym)
+          when 'next'
+            return datetime_now.in(1.send(range.to_sym)).send("beginning_of_#{range}".to_sym), datetime_now.in(1.send(range.to_sym)).send("end_of_#{range}".to_sym)
+          else
+            return nil, nil
+          end
+        end
+      end
+
+      def datetime_column_date?(column)
+        column.column&.type == :date
       end
 
       def condition_for_record_select_type(column, value, like_pattern = nil)
@@ -370,6 +449,11 @@ module ActiveScaffold
       :doesnt_end_with   => 'not_%?'
     }.freeze
     NULL_COMPARATORS = %w[null not_null].freeze
+    DATE_COMPARATORS = %w[PAST FUTURE RANGE].freeze
+    DATE_UNITS = %w[DAYS WEEKS MONTHS YEARS].freeze
+    TIME_UNITS = %w[SECONDS MINUTES HOURS].freeze
+    DATE_RANGES = %w[TODAY YESTERDAY TOMORROW THIS_WEEK PREV_WEEK NEXT_WEEK THIS_MONTH PREV_MONTH NEXT_MONTH THIS_YEAR PREV_YEAR NEXT_YEAR].freeze
+
 
     def self.included(klass)
       klass.extend ClassMethods

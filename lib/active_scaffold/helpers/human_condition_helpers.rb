@@ -45,17 +45,51 @@ module ActiveScaffold
       end
       alias active_scaffold_human_condition_string active_scaffold_human_condition_range
 
-      def active_scaffold_human_condition_date(column, value)
-        conversion = column.column.type == :date ? :to_date : :to_time
-        from = controller.class.condition_value_for_datetime(column, value['from'], conversion)
-        from = I18n.l from if from
-        to = controller.class.condition_value_for_datetime(column, value['to'], conversion) if value['opt'] == 'BETWEEN' || (value['opt'].nil? && value['to'])
-        to = "- #{I18n.l to}" if to
-        format_human_condition column, value['opt'], from, to
+
+      def active_scaffold_human_condition_datetime(column, value)
+        case value['opt']
+        when 'RANGE'
+          range_type, range = value['range'].downcase.split('_')
+          format = active_scaffold_human_condition_datetime_range_format(range_type, range)
+          from, = controller.class.datetime_from_to(column, value)
+          "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value['range'].downcase).downcase} (#{I18n.l(from, :format => format)})"
+        when 'PAST', 'FUTURE'
+          from, to = controller.class.datetime_from_to(column, value)
+          "#{column.active_record_class.human_attribute_name(column.name)} #{as_('BETWEEN'.downcase).downcase} #{I18n.l(from)} - #{I18n.l(to)}"
+        else
+          from, to = controller.class.datetime_from_to(column, value)
+          "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value['opt'].downcase).downcase} #{I18n.l(from)} #{value['opt'] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"
+        end
       end
-      alias active_scaffold_human_condition_time active_scaffold_human_condition_date
-      alias active_scaffold_human_condition_datetime active_scaffold_human_condition_date
-      alias active_scaffold_human_condition_timestamp active_scaffold_human_condition_date
+      alias active_scaffold_human_condition_time active_scaffold_human_condition_datetime
+      alias active_scaffold_human_condition_date active_scaffold_human_condition_datetime
+      alias active_scaffold_human_condition_timestamp active_scaffold_human_condition_datetime
+
+      def active_scaffold_human_condition_datetime_range_format(range_type, range)
+        case range
+        when 'week'
+          first_day_of_week = I18n.translate 'active_scaffold.date_picker_options.firstDay'
+          if first_day_of_week == 1
+            '%W %Y'
+          else
+            '%U %Y'
+          end
+        when 'month'
+          '%b %Y'
+        when 'year'
+          '%Y'
+        else
+          I18n.translate 'date.formats.default'
+        end
+      end
+      # def active_scaffold_human_condition_date(column, value)
+      #   conversion = column.column.type == :date ? :to_date : :to_time
+      #   from = controller.class.condition_value_for_datetime(column, value['from'], conversion)
+      #   from = I18n.l from if from
+      #   to = controller.class.condition_value_for_datetime(column, value['to'], conversion) if value['opt'] == 'BETWEEN' || (value['opt'].nil? && value['to'])
+      #   to = "- #{I18n.l to}" if to
+      #   format_human_condition column, value['opt'], from, to
+      # end
 
       def active_scaffold_human_condition_boolean(column, value)
         attribute = column.active_record_class.human_attribute_name(column.name)

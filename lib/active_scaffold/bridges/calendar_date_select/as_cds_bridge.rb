@@ -23,12 +23,13 @@ module ActiveScaffold
       end
 
       module SearchColumnHelpers
-        def active_scaffold_search_date_bridge_calendar_control(column, options, current_search, name, ui_options: column.options)
-          value = if current_search.is_a? Hash
-                    controller.class.condition_value_for_datetime(column, current_search[name], column.column.type == :date ? :to_date : :to_time)
-                  else
-                    current_search
-                  end
+        def active_scaffold_search_calendar_date_select_field(column, options, current_search, name, ui_options: column.options)
+          value =
+            if current_search.is_a? Hash
+              controller.class.condition_value_for_datetime(column, current_search[name], column.column.type == :date ? :to_date : :to_time)
+            else
+              current_search
+            end
           calendar_date_select(
             'record', column.name,
             :name => "#{options[:name]}[#{name}]",
@@ -46,15 +47,12 @@ end
 
 ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::CalendarDateSelect::FormColumnHelpers
-  include ActiveScaffold::Bridges::Shared::DateBridge::SearchColumnHelpers
-  alias_method :active_scaffold_search_calendar_date_select, :active_scaffold_search_date_bridge
-  include ActiveScaffold::Bridges::Shared::DateBridge::HumanConditionHelpers
-  alias_method :active_scaffold_human_condition_calendar_date_select, :active_scaffold_human_condition_date_bridge
+  alias_method :active_scaffold_search_calendar_date_select, :active_scaffold_search_datetime
+  alias_method :active_scaffold_human_condition_calendar_date_select, :active_scaffold_human_condition_datetime
   include ActiveScaffold::Bridges::CalendarDateSelect::SearchColumnHelpers
 end
 
 ActiveScaffold::Finder::ClassMethods.module_eval do
-  include ActiveScaffold::Bridges::Shared::DateBridge::Finder::ClassMethods
-  alias_method :condition_for_calendar_date_select_type, :condition_for_date_bridge_type
+  alias_method :condition_for_calendar_date_select_type, :condition_for_datetime
 end
 ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::CalendarDateSelect::CalendarDateSelectBridge

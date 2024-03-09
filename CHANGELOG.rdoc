@@ -11,6 +11,7 @@
 - Deprecate automatic :select form_ui for associations in subforms, set :select in the controller config to remove deprecation warning, or enable new behaviour of nested subforms with ActiveScaffold.nested_subforms = true
 - Some fixes for human conditions with some search UI
 - Add more string comparators in field search
+- Support date and datetime searches with operators using html5 inputs, as was supported when using date picker. The different bridges, date_picker and calendar_date_select, will just replace the input fields.
 
 = 3.7.0
 - Drop support for rails < 5.2 and ruby < 2.5
