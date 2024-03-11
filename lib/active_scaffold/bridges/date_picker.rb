@@ -12,6 +12,8 @@ module ActiveScaffold::Bridges
     def self.jquery_ui_included?
       Jquery::Rails.const_defined?('JQUERY_UI_VERSION') || Jquery.const_defined?('Ui') if Object.const_defined?('Jquery')
     end
+    mattr_accessor :default_ui
+    @@default_ui = true
 
     def self.stylesheets
       'jquery-ui-timepicker-addon'
