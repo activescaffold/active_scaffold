@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
                   'ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, '\
                   'leaving you more time to focus on more challenging (and interesting!) problems.'
   s.require_paths = ['lib']
-  s.files = `git ls-files {app,config,lib,public,shoulda_macros,vendor}`.split("\n") + %w[LICENSE.md CHANGELOG.rdoc README.md]
+  s.files = `git ls-files {app,config/locales,lib,public,shoulda_macros,vendor}`.split("\n") + %w[LICENSE.md CHANGELOG.rdoc README.md]
   s.extra_rdoc_files = [
     'README.md'
   ]
