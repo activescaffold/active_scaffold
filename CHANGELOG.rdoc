@@ -12,6 +12,7 @@
 - Some fixes for human conditions with some search UI
 - Add more string comparators in field search
 - Support date and datetime searches with operators using html5 inputs, as was supported when using date picker. The different bridges, date_picker and calendar_date_select, will just replace the input fields.
+- Support disabling default usage of jquery UI date picker, in case of sortable is wanted, so jquery-ui-rails is loaded, but wants to use HTML5 date input.
 
 = 3.7.0
 - Drop support for rails < 5.2 and ruby < 2.5
