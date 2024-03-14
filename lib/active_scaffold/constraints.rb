@@ -168,7 +168,7 @@ module ActiveScaffold
             end
             record.send("#{k}=", v[0].constantize.find(v[1])) if v.size == 2
           elsif !column.association.source_reflection&.options&.include?(:through) && # regular singular association, or one-level through association
-            !v.is_a?(Array)
+                !v.is_a?(Array)
             record.send("#{k}=", column.association.klass.find(v))
 
             # setting the belongs_to side of a has_one isn't safe. if the has_one was already
