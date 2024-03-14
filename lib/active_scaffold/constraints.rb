@@ -163,10 +163,10 @@ module ActiveScaffold
           if column.association.collection?
             record.send(k.to_s).send(:<<, column.association.klass.find(v))
           elsif column.association.polymorphic?
-            unless v.is_a?(Array) && v.size == 2
+            unless v.is_a?(Array) && v.size >= 2
               raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller
             end
-            record.send("#{k}=", v[0].constantize.find(v[1]))
+            record.send("#{k}=", v[0].constantize.find(v[1])) if v.size == 2
           elsif !column.association.source_reflection&.options&.include?(:through) # regular singular association, or one-level through association
             record.send("#{k}=", column.association.klass.find(v))
 
