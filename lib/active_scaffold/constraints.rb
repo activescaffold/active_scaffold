@@ -11,13 +11,27 @@ module ActiveScaffold
       @active_scaffold_constraints ||= active_scaffold_embedded_params[:constraints] || {}
     end
 
+    def register_constraint?(column_name, value)
+      if params_hash?(value)
+        false
+      elsif value.is_a?(Array)
+        column = active_scaffold_config.columns[column_name]
+        column && value.size > (column.association&.polymorphic? ? 2 : 1)
+      else
+        true
+      end
+    end
+
     # For each enabled action, adds the constrained columns to the ActionColumns object (if it exists).
     # This lets the ActionColumns object skip constrained columns.
     #
-    # If the constraint value is a Hash, then we assume the constraint is a multi-level association constraint (the reverse of a has_many :through) and we do NOT register the constraint column.
+    # If the constraint value is a Hash, then we assume the constraint is a multi-level association constraint
+    # (the reverse of a has_many :through) and we do NOT register the constraint column.
+    # If the constraint value is an Array, or Array with more than 2 items for polymorphic column,
+    # we do NOT register the constraint column, as records will have different values in the column.
     def register_constraints_with_action_columns(constrained_fields = nil)
       constrained_fields ||= []
-      constrained_fields |= active_scaffold_constraints.reject { |_, v| params_hash?(v) }.keys.collect(&:to_sym)
+      constrained_fields |= active_scaffold_constraints.select { |k, v| register_constraint?(k, v) }.keys.collect(&:to_sym)
       exclude_actions = []
       %i[list update].each do |action_name|
         if active_scaffold_config.actions.include? action_name
@@ -111,10 +125,10 @@ module ActiveScaffold
       value = association.klass.find(value).send(association.primary_key) if association.primary_key
 
       if association.polymorphic?
-        unless value.is_a?(Array) && value.size == 2
+        unless value.is_a?(Array) && value.size >= 2
           raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller
         end
-        condition = {table => {association.foreign_type => value[0], field => value[1]}}
+        condition = {table => {association.foreign_type => value[0], field => value.size == 2 ? value[1] : value[1..-1]}}
       else
         condition = {table => {field.to_s => value}}
       end
