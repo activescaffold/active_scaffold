@@ -2,7 +2,7 @@ require 'test_helper'
 require File.expand_path('../mock_model.rb', __dir__)
 require File.expand_path('../../file_column_helpers.rb', __dir__)
 
-class DeleteFileColumnTest < MiniTest::Test
+class DeleteFileColumnTest < Minitest::Test
   def setup
     MockModel.extend ActiveScaffold::Bridges::FileColumn::FileColumnHelpers
     ActiveScaffold::Bridges::FileColumn::FileColumnHelpers.generate_delete_helpers(MockModel)
