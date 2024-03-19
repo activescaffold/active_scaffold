@@ -415,7 +415,7 @@ module ActiveScaffold::DataStructures
     # just the field (not table.field)
     def field_name
       return nil if virtual?
-      @field_name ||= column ? quoted_field_name(column.name) : association.foreign_key
+      @field_name ||= column ? quoted_field_name(column.name) : quoted_field_name(association.foreign_key)
     end
 
     def <=>(other)
@@ -455,6 +455,10 @@ module ActiveScaffold::DataStructures
     # the table.field name for this column, if applicable
     def field
       @field ||= quoted_field(field_name)
+    end
+
+    def quoted_foreign_type
+      quoted_field(quoted_field_name(association.foreign_type))
     end
 
     def type_for_attribute

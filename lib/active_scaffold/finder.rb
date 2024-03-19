@@ -110,13 +110,40 @@ module ActiveScaffold
             end
           return nil unless sql
 
-          conditions = [column.search_sql.collect { |search_sql| sql % {:search_sql => search_sql} }.join(' OR ')]
-          conditions += values * column.search_sql.size if values.present?
-          conditions
+          where_values = []
+          sql_conditions = []
+          column.search_sql.each do |search_sql|
+            if search_sql.is_a?(Hash)
+              subquery_sql, *subquery_values = subquery_condition(column, sql, search_sql, values)
+              sql_conditions << subquery_sql
+              where_values.concat subquery_values
+            else
+              sql_conditions << sql % {:search_sql => search_sql}
+              where_values.concat values
+            end
+          end
+          [sql_conditions.join(' OR '), *where_values]
         rescue StandardError => e
           Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
           raise e
         end
+      end
+
+      def subquery_condition(column, sql, options, values)
+        relation, *columns = options[:subquery]
+        conditions = [columns.map { |search_sql| sql % {:search_sql => search_sql} }.join(' OR ')]
+        conditions += values * columns.size if values.present?
+        subquery = relation.where(conditions)
+        subquery = subquery.select(relation.primary_key) unless subquery.select_values.present?
+
+        conditions = [["#{column.field} IN (?)", options[:conditions]&.first].compact.join(' AND ')]
+        conditions << subquery
+        conditions.concat options[:conditions][1..-1] if options[:conditions]
+        if column.association&.polymorphic?
+          conditions[0] << " AND #{column.quoted_foreign_type} = ?"
+          conditions << relation.name
+        end
+        conditions
       end
 
       def condition_for_search_ui(column, value, like_pattern, search_ui)
