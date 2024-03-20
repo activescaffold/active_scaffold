@@ -136,7 +136,7 @@ module ActiveScaffold
         subquery = relation.where(conditions)
         subquery = subquery.select(relation.primary_key) if subquery.select_values.blank?
 
-        conditions = [["#{column.field} IN (?)", options[:conditions]&.first].compact.join(' AND ')]
+        conditions = [["#{options[:field] || column.field} IN (?)", options[:conditions]&.first].compact.join(' AND ')]
         conditions << subquery
         conditions.concat options[:conditions][1..-1] if options[:conditions]
         if column.association&.polymorphic?
