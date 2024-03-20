@@ -134,7 +134,7 @@ module ActiveScaffold
         conditions = [columns.map { |search_sql| sql % {:search_sql => search_sql} }.join(' OR ')]
         conditions += values * columns.size if values.present?
         subquery = relation.where(conditions)
-        subquery = subquery.select(relation.primary_key) unless subquery.select_values.present?
+        subquery = subquery.select(relation.primary_key) if subquery.select_values.blank?
 
         conditions = [["#{column.field} IN (?)", options[:conditions]&.first].compact.join(' AND ')]
         conditions << subquery
