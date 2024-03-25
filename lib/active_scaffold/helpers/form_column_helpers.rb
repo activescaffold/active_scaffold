@@ -435,7 +435,7 @@ module ActiveScaffold
           if options[:multiple] || ui_options.dig(:html_options, :multiple)
             html_options = options.merge(ui_options[:html_options] || {})
             active_scaffold_select_name_with_multiple html_options
-            collection_select(:record, column.name, select_options, :id, ui_options[:label_method] || :to_label, ui_options, html_options)
+            collection_select(:record, column.name, select_options, :id, ui_options[:label_method] || :to_label, ui_options.merge(object: record), html_options)
           elsif select_options.empty?
             content_tag(:span, as_(:no_options), :class => "#{options[:class]} no-options", :id => options[:id]) <<
               hidden_field_tag("#{options[:name]}[]", '', :id => nil)
