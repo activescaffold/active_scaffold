@@ -327,7 +327,7 @@ module ActiveScaffold
       def condition_value_for_numeric(column, value)
         return value if value.nil?
         value = column.number_to_native(value) if column.options[:format] && column.search_ui != :number
-        case (column.search_ui || column.column.type)
+        case (column.search_ui || column.column_type)
         when :integer   then
           if value.is_a?(TrueClass) || value.is_a?(FalseClass)
             value ? 1 : 0
@@ -335,8 +335,7 @@ module ActiveScaffold
             value.to_i
           end
         when :float     then value.to_f
-        when :decimal
-          ::ActiveRecord::Type::Decimal.new.send(Rails.version < '5.0' ? :type_cast_from_user : :cast, value)
+        when :decimal   then ::ActiveRecord::Type::Decimal.new.cast(value)
         else
           value
         end
@@ -344,7 +343,7 @@ module ActiveScaffold
 
       def datetime_conversion_for_condition(column)
         if column.column
-          column.column.type == :date ? :to_date : :to_time
+          column.column_type == :date ? :to_date : :to_time
         else
           :to_time
         end

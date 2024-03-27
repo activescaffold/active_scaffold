@@ -17,6 +17,7 @@ module ModelStubs
       @table_name || to_s.split('::').last.underscore.pluralize
     end
     self.store_full_sti_class = false
+    def self.load_schema; end
   end
 
   ##

@@ -32,15 +32,15 @@ module ActiveScaffold
           options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
           active_scaffold_input_virtual(column, options)
 
-        elsif (method = override_input(column.column.type)) # regular model attribute column
+        elsif (method = override_input(column.column_type)) # regular model attribute column
           # if we (or someone else) have created a custom render option for the column type, use that
           send(method, column, options)
 
         else # final ultimate fallback: use rails' generic input method
           # for textual fields we pass different options
           options = active_scaffold_input_text_options(options) if column.text? || column.number?
-          if column.column.type == :string && options[:maxlength].blank?
-            options[:maxlength] = column.column.limit
+          if column.column_type == :string && options[:maxlength].blank?
+            options[:maxlength] = column.type_for_attribute.limit
             options[:size] ||= options[:maxlength].to_i > 30 ? 30 : options[:maxlength]
           end
           options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
@@ -631,7 +631,7 @@ module ActiveScaffold
       def active_scaffold_input_color(column, options, ui_options: column.options)
         html = []
         options = active_scaffold_input_text_options(options)
-        if column.column&.null
+        if column.null?
           no_color = options[:object].send(column.name).nil?
           method = no_color ? :hidden_field : :color_field
           html << content_tag(:label, check_box_tag('disable', '1', no_color, id: nil, name: nil, class: 'no-color') << " #{as_ ui_options[:no_color] || :no_color}")
@@ -651,7 +651,7 @@ module ActiveScaffold
         html_options.merge!(ui_options[:html_options] || {})
 
         options = {selected: record.send(column.name), object: record}
-        options[:include_blank] = :_select_ if column.column&.null
+        options[:include_blank] = :_select_ if column.null?
         options.merge!(ui_options)
         active_scaffold_translate_select_options(options)
 
@@ -786,7 +786,7 @@ module ActiveScaffold
 
         # find minimum and maximum from validators
         # we can safely modify :min and :max by 1 for :greater_tnan or :less_than value only for integer values
-        only_integer = column.column.type == :integer if column.column
+        only_integer = column.column_type == :integer if column.column
         only_integer ||= validators.find { |v| v.options[:only_integer] }.present?
         margin = only_integer ? 1 : 0
 

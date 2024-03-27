@@ -5,7 +5,7 @@ module ActiveScaffold
       def active_scaffold_human_condition_for(column)
         return if (value = field_search_params[column.name.to_s]).nil?
         search_ui = column.search_ui
-        search_ui ||= column.column.type if column.column
+        search_ui ||= column.column_type if column.column
         if override_human_condition_column?(column)
           send(override_human_condition_column(column), value, {})
         elsif search_ui && override_human_condition?(search_ui)
@@ -82,7 +82,7 @@ module ActiveScaffold
         end
       end
       # def active_scaffold_human_condition_date(column, value)
-      #   conversion = column.column.type == :date ? :to_date : :to_time
+      #   conversion = column.column_type == :date ? :to_date : :to_time
       #   from = controller.class.condition_value_for_datetime(column, value['from'], conversion)
       #   from = I18n.l from if from
       #   to = controller.class.condition_value_for_datetime(column, value['to'], conversion) if value['opt'] == 'BETWEEN' || (value['opt'].nil? && value['to'])

@@ -15,6 +15,7 @@
 - Support disabling default usage of jquery UI date picker, in case of sortable is wanted, so jquery-ui-rails is loaded, but wants to use HTML5 date input.
 - Support multiple id in constraints for polymorphic association, and don't register constrained field if value is an array.
 - Support subqueries in field_search, with new syntax for search_sql, so search in polymorphic associations is possible.
+- Better support for active model attributes
 
 = 3.7.0
 - Drop support for rails < 5.2 and ruby < 2.5
