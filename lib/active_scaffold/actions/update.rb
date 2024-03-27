@@ -185,11 +185,11 @@ module ActiveScaffold::Actions
 
     def value_for_update_column(param_value, column, record)
       unless param_value
-        param_value = ActiveScaffold::Core.column_type_cast @column.default_for_empty_value, @column.column
+        param_value = ActiveScaffold::Core.column_type_cast column.default_for_empty_value, column.column
         param_value = false if param_value == true
       end
-      value = column_value_from_param_value(record, @column, param_value)
-      value = [] if value.nil? && @column.form_ui && @column.association&.collection?
+      value = column_value_from_param_value(record, column, param_value)
+      value = [] if value.nil? && column.form_ui && column.association&.collection?
       value
     end
 
