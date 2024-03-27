@@ -26,7 +26,7 @@ module ActiveScaffold
         def active_scaffold_search_calendar_date_select_field(column, options, current_search, name, ui_options: column.options)
           value =
             if current_search.is_a? Hash
-              controller.class.condition_value_for_datetime(column, current_search[name], column.column.type == :date ? :to_date : :to_time)
+              controller.class.condition_value_for_datetime(column, current_search[name], column.column_type == :date ? :to_date : :to_time)
             else
               current_search
             end

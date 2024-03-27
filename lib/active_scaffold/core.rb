@@ -257,6 +257,8 @@ module ActiveScaffold
     def self.column_type_cast(value, column)
       if defined?(ActiveRecord) && column.is_a?(ActiveRecord::ConnectionAdapters::Column)
         active_record_column_type_cast(value, column)
+      elsif defined?(ActiveModel) && column.is_a?(ActiveModel::Attribute)
+        active_record_column_type_cast(value, column.type)
       elsif defined?(Mongoid) && column.is_a?(Mongoid::Fields::Standard)
         mongoid_column_type_cast(value, column)
       else
@@ -269,9 +271,9 @@ module ActiveScaffold
       column.type.evolve value
     end
 
-    def self.active_record_column_type_cast(value, column)
-      return Time.zone.at(value.to_i) if value =~ /\A\d+\z/ && %i[time datetime].include?(column.type)
-      cast_type = ActiveRecord::Type.lookup column.type
+    def self.active_record_column_type_cast(value, column_or_type)
+      return Time.zone.at(value.to_i) if value =~ /\A\d+\z/ && %i[time datetime].include?(column_or_type.type)
+      cast_type = column_or_type.is_a?(ActiveRecord::ConnectionAdapters::Column) ? ActiveRecord::Type.lookup(column_or_type.type) : column_or_type
       cast_type ? cast_type.cast(value) : value
     end
   end

@@ -34,11 +34,11 @@ module ActiveScaffold
         elsif column.association || column.virtual?
           active_scaffold_search_text(column, options)
 
-        elsif (method = override_search(column.column.type))
+        elsif (method = override_search(column.column_type))
           # if we (or someone else) have created a custom render option for the column type, use that
           send(method, column, options)
 
-        elsif (method = override_input(column.column.type))
+        elsif (method = override_input(column.column_type))
           # if we (or someone else) have created a custom render option for the column type, use that
           send(method, column, options)
 
@@ -143,7 +143,7 @@ module ActiveScaffold
       def active_scaffold_search_boolean(column, options, ui_options: column.options)
         select_options = []
         select_options << [as_(:_select_), nil]
-        if column.column&.null
+        if column.null?
           null_label = ui_options[:include_blank] || :null
           null_label = as_(null_label) if null_label.is_a?(Symbol)
           select_options << [null_label, 'null']
@@ -208,9 +208,9 @@ module ActiveScaffold
       def include_null_comparators?(column, ui_options: column.options)
         return ui_options[:null_comparators] if ui_options.key? :null_comparators
         if column.association
-          !column.association.belongs_to? || active_scaffold_config.columns[column.association.foreign_key].column&.null
+          !column.association.belongs_to? || active_scaffold_config.columns[column.association.foreign_key].null?
         else
-          column.column&.null
+          column.null?
         end
       end
 
@@ -328,7 +328,7 @@ module ActiveScaffold
       end
 
       def column_datetime?(column)
-        (!column.column.nil? && %i[datetime time].include?(column.column.type))
+        (!column.column.nil? && %i[datetime time].include?(column.column_type))
       end
 
       def field_search_datetime_value(value)
