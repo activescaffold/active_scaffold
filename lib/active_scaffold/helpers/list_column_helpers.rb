@@ -33,7 +33,7 @@ module ActiveScaffold
           # second, check if the dev has specified a valid list_ui for this column
           elsif column.list_ui && (method = override_column_ui(column.list_ui))
             [method, true]
-          elsif column.column && (method = override_column_ui(column.column.type))
+          elsif column.column && (method = override_column_ui(column.column_type))
             method
           else
             :format_column_value
@@ -319,7 +319,7 @@ module ActiveScaffold
       end
 
       def inplace_edit_cloning?(column)
-        column.inplace_edit != :ajax && (override_form_field?(column) || column.form_ui || (column.column && override_input?(column.column.type)))
+        column.inplace_edit != :ajax && (override_form_field?(column) || column.form_ui || (column.column && override_input?(column.column_type)))
       end
 
       def active_scaffold_inplace_edit_tag_options(record, column)

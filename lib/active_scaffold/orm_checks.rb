@@ -82,6 +82,22 @@ module ActiveScaffold
           type_for_attribute(klass, column_name)
         end
       end
+
+      def default_value(klass, column_name)
+        if ActiveScaffold::OrmChecks.mongoid? klass
+          columns_hash(klass)[column_name]&.default_val
+        elsif ActiveScaffold::OrmChecks.active_record? klass
+          klass._default_attributes[column_name]&.value
+        end
+      end
+
+      def cast(klass, column_name, value)
+        if active_record? klass
+          type_for_attribute(klass, column_name).cast value
+        elsif mongoid? klass
+          type_for_attribute(klass, column_name)&.evolve value
+        end
+      end
     end
 
     %i[active_record? mongoid? tableless?].each do |method|
@@ -96,10 +112,14 @@ module ActiveScaffold
       end
     end
 
-    %i[type_for_attribute column_type].each do |method|
+    %i[type_for_attribute column_type default_value].each do |method|
       define_method method do |column_name|
         ActiveScaffold::OrmChecks.send method, active_record_class, column_name
       end
+    end
+
+    def cast(column_name, value)
+      ActiveScaffold::OrmChecks.cast active_record_class, column_name, value
     end
   end
 end

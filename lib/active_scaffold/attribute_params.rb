@@ -129,7 +129,7 @@ module ActiveScaffold
 
     def datetime_conversion_for_value(column)
       if column.column
-        column.column.type == :date ? :to_date : :to_time
+        column.column_type == :date ? :to_date : :to_time
       else
         :to_time
       end
@@ -284,22 +284,9 @@ module ActiveScaffold
     end
 
     def default_value?(column_name, klass, value)
-      column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
-      default_value = column_default_value(column_name, klass)
-      casted_value = ActiveScaffold::Core.column_type_cast(value, column)
+      casted_value = ActiveScaffold::OrmChecks.cast(klass, column_name, value)
+      default_value = ActiveScaffold::OrmChecks.default_value(klass, column_name)
       casted_value == default_value
-    end
-
-    def column_default_value(column_name, klass)
-      column = ActiveScaffold::OrmChecks.columns_hash(klass)[column_name]
-      return unless column
-      if ActiveScaffold::OrmChecks.mongoid? klass
-        column.default_val
-      elsif ActiveScaffold::OrmChecks.active_record? klass
-        column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
-        cast_type = ActiveRecord::Type.lookup column_type
-        cast_type ? cast_type.deserialize(column.default) : column.default
-      end
     end
   end
 end

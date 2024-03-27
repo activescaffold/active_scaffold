@@ -374,6 +374,9 @@ module ActiveScaffold::DataStructures
       @name = name.to_sym
       @active_record_class = active_record_class
       @column = _columns_hash[name.to_s]
+      if @column.nil? && active_record? && active_record_class._default_attributes.key?(name.to_s)
+        @column = active_record_class._default_attributes[name.to_s]
+      end
       @delegated_association = delegated_association
       @cache_key = [@active_record_class.name, name].compact.map(&:to_s).join('#')
       setup_association_info
@@ -449,7 +452,22 @@ module ActiveScaffold::DataStructures
     end
 
     def default_for_empty_value
-      (column.null ? nil : column.default) if column
+      return nil unless column
+      if column.is_a?(ActiveModel::Attribute)
+        column.value
+      elsif active_record?
+        null? ? nil : column.default
+      elsif mongoid?
+        column.default_val
+      end
+    end
+
+    def null?
+      if active_record? && !column.is_a?(ActiveModel::Attribute)
+        column.null
+      else
+        true
+      end
     end
 
     # the table.field name for this column, if applicable
@@ -469,10 +487,18 @@ module ActiveScaffold::DataStructures
       ActiveScaffold::OrmChecks.column_type active_record_class, name
     end
 
+    def default_value
+      ActiveScaffold::OrmChecks.column_type active_record_class, name
+    end
+
     def attributes=(opts)
       opts.each do |setting, value|
         send "#{setting}=", value
       end
+    end
+
+    def cast(value)
+      ActiveScaffold::OrmChecks.cast active_record_class, name, value
     end
 
     protected
@@ -487,8 +513,8 @@ module ActiveScaffold::DataStructures
         @options = {:format => :i18n_number}
       else
         @form_ui =
-          case @column.type
-          when :boolean then @column.null ? :boolean : :checkbox
+          case column_type
+          when :boolean then null? ? :boolean : :checkbox
           when :text then :textarea
           end
       end
@@ -552,7 +578,7 @@ module ActiveScaffold::DataStructures
     end
 
     def column_number?
-      return %i[float decimal integer].include? @column.type if active_record?
+      return %i[float decimal integer].include? column_type if active_record?
       return @column.type < Numeric if mongoid?
     end
 
