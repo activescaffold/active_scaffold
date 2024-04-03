@@ -464,7 +464,7 @@ module ActiveScaffold::DataStructures
 
     def null?
       if active_record? && !column.is_a?(ActiveModel::Attribute)
-        column.null
+        column&.null
       else
         true
       end
