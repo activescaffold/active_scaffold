@@ -40,7 +40,7 @@ module ActiveScaffold
       end
 
       def generated_id(record)
-        @temporary_ids[record.class.name] if record && @temporary_ids
+        @temporary_ids[record.class.name]&.last if record && @temporary_ids
       end
 
       # These params should not propagate:
