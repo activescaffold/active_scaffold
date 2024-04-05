@@ -3,6 +3,7 @@ module ActiveScaffold
   autoload :AttributeParams, 'active_scaffold/attribute_params'
   autoload :Bridges, 'active_scaffold/bridges'
   autoload :Configurable, 'active_scaffold/configurable'
+  autoload :ConnectionAdapters, 'active_scaffold/extensions/connection_adapter.rb'
   autoload :Constraints, 'active_scaffold/constraints'
   autoload :Core, 'active_scaffold/core'
   autoload :Finder, 'active_scaffold/finder'
@@ -92,5 +93,3 @@ require 'active_scaffold/engine'
 require 'ice_nine'
 require 'ice_nine/core_ext/object'
 require 'request_store'
-# TODO: clean up extensions. some could be organized for autoloading, and others could be removed entirely.
-Dir["#{File.dirname __FILE__}/active_scaffold/extensions/*.rb"].each { |file| require file }
