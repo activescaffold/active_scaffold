@@ -11,7 +11,7 @@ module ActiveScaffold
       end
     end
 
-    initializer 'active_scaffold.routes', before: 'set_routes_reloader' do
+    config.after_initialize do
       require 'active_scaffold/extensions/routing_mapper'
       ActiveScaffold::Bridges.prepare_all
     end
