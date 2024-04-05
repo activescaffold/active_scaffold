@@ -68,6 +68,7 @@ module ActiveScaffold
       end
     end
   end
+  ActiveSupport.run_load_hooks(:active_scaffold_routing, Routing)
 end
 
 module ActionDispatch

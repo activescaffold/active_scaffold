@@ -16,6 +16,7 @@
 - Support multiple id in constraints for polymorphic association, and don't register constrained field if value is an array.
 - Support subqueries in field_search, with new syntax for search_sql, so search in polymorphic associations is possible.
 - Better support for active model attributes
+- Load files on boot using initializer blocks and use hooks to patch rails classes, run hook :active_scaffold_routing when routing is loaded so other plugins can extend routes
 
 = 3.7.0
 - Drop support for rails < 5.2 and ruby < 2.5
