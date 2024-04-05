@@ -11,6 +11,7 @@ module ActiveScaffold
   autoload :OrmChecks, 'active_scaffold/orm_checks'
   autoload :Registry, 'active_scaffold/registry'
   autoload :RespondsToParent, 'active_scaffold/responds_to_parent'
+  autoload :Routing, 'active_scaffold/extensions/routing_mapper'
   autoload :Tableless, 'active_scaffold/tableless'
   autoload :Version, 'active_scaffold/version'
 
