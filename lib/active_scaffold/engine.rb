@@ -4,13 +4,16 @@ module ActiveScaffold
       ActiveSupport.on_load :action_controller do
         require 'active_scaffold/extensions/action_controller_rescueing'
         require 'active_scaffold/extensions/action_controller_rendering'
-        require 'active_scaffold/extensions/routing_mapper'
         include ActiveScaffold::Core
         include ActiveScaffold::RespondsToParent
         include ActiveScaffold::Helpers::ControllerHelpers
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Controller
-        ActiveScaffold::Bridges.prepare_all
       end
+    end
+
+    initializer 'active_scaffold.routes', before: 'set_routes_reloader' do
+      require 'active_scaffold/extensions/routing_mapper'
+      ActiveScaffold::Bridges.prepare_all
     end
 
     initializer 'active_scaffold.action_view' do
