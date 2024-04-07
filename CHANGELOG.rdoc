@@ -1,3 +1,6 @@
+= 3.7.2
+- Fix routes
+
 = 3.7.1
 - Nullable boolean columns default to use :boolean form_ui instead of :checkbox
 - Display the value set in options[:include_blank] for boolean columns when value is nil, to match the label in the form

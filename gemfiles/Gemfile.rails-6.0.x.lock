@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    active_scaffold (3.7.1)
+    active_scaffold (3.7.2)
       cow_proxy (~> 0.3)
       ice_nine (~> 0.11)
       rails (>= 5.2.0)
@@ -194,7 +194,7 @@ GEM
     rainbow (3.0.0)
     rake (13.0.6)
     rdoc (6.3.1)
-    request_store (1.5.1)
+    request_store (1.6.0)
       rack (>= 1.4)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
