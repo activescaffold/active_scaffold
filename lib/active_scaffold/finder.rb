@@ -29,7 +29,12 @@ module ActiveScaffold
       def type_casted_tokens(tokens, columns, like_pattern)
         tokens.map do |value|
           columns.each_with_object({}) do |column, column_tokens|
-            column_tokens[column.name] = column.text? ? like_pattern.sub('?', value) : ActiveScaffold::Core.column_type_cast(value, column.column)
+            column_tokens[column.name] =
+              if column.text?
+                like_pattern.sub('?', column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value)
+              else
+                ActiveScaffold::Core.column_type_cast(value, column.column)
+              end
           end
         end
       end
@@ -165,6 +170,7 @@ module ActiveScaffold
           ['%<search_sql>s in (?)', values] if values.present?
         else
           if column.text?
+            value = column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value
             ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
           else
             ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
@@ -189,6 +195,7 @@ module ActiveScaffold
       def condition_for_range(column, value, like_pattern = nil)
         if !value.is_a?(Hash)
           if column.text?
+            value = column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value
             ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
           else
             ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
@@ -198,9 +205,10 @@ module ActiveScaffold
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::STRING_COMPARATORS.values.include?(value[:opt])
+          text = column.active_record? ? column.active_record_class.sanitize_sql_like(value[:from]) : value[:from]
           [
             "%<search_sql>s #{'NOT ' if value[:opt].start_with?('not_')}#{ActiveScaffold::Finder.like_operator} ?",
-            value[:opt].sub('not_', '').sub('?', value[:from])
+            value[:opt].sub('not_', '').sub('?', text)
           ]
         elsif value[:opt] == 'BETWEEN'
           ['(%<search_sql>s BETWEEN ? AND ?)', value[:from], value[:to]]

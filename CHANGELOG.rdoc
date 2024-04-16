@@ -1,3 +1,5 @@
+- Escape _ and % when using search with LIKE
+
 = 3.7.2
 - Fix routes
 
