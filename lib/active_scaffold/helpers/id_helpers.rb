@@ -15,7 +15,7 @@ module ActiveScaffold
       end
 
       def nested_parent_id
-        nested_parent_record.id
+        clean_id nested_parent_record.id.to_s
       end
 
       def nested_id(controller = nil)

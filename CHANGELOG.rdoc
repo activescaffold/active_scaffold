@@ -1,4 +1,5 @@
 - Escape _ and % when using search with LIKE
+- Fix ID in nested scaffolds when parent record has string primary key, with invalid chars for HTML ID
 
 = 3.7.2
 - Fix routes
