@@ -449,7 +449,8 @@ module ActiveScaffold
 
       def condition_for_record_select_type(column, value, like_pattern = nil)
         if value.is_a?(Array)
-          ['%<search_sql>s IN (?)', value]
+          value = value.select(&:present?)
+          ['%<search_sql>s IN (?)', value] if value.present?
         else
           ['%<search_sql>s = ?', value]
         end

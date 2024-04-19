@@ -27,7 +27,7 @@ class ActiveScaffold::Bridges::RecordSelect
       def active_scaffold_record_select(record, column, options, value, multiple, ui_options: column.options)
         unless column.association
           raise ArgumentError, "record_select can only work against associations (and #{column.name} is not). "\
-          'A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user).'
+            'A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user).'
         end
         klass = column.association.klass(record)
         return content_tag :span, '', :class => options[:class] unless klass
@@ -68,13 +68,13 @@ class ActiveScaffold::Bridges::RecordSelect
     module SearchColumnHelpers
       def active_scaffold_search_record_select(column, options, ui_options: column.options)
         value = field_search_record_select_value(column, options[:value], ui_options: ui_options)
-        active_scaffold_record_select(options[:object], column, options, value, ui_options[:multiple], ui_options: ui_options)
+        active_scaffold_record_select(options[:object], column, options.except(:value), value, ui_options[:multiple], ui_options: ui_options)
       end
 
       def field_search_record_select_value(column, value, ui_options: column.options)
         return if value.blank?
         if ui_options[:multiple]
-          column.association.klass.find value.collect!(&:to_i)
+          column.association.klass.find value.select(&:present?).collect!(&:to_i)
         else
           column.association.klass.find(value.to_i)
         end
