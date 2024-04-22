@@ -11,10 +11,10 @@
     var global_settings = ActiveScaffold.config.tiny_mce_settings || {};
     var local_settings = jQuery(this).data('tinymce');
     var settings = {};
-    for (key in global_settings) {
+    for (let key in global_settings) {
       settings[key] = global_settings[key];
     }
-    for (key in local_settings) {
+    for (let key in local_settings) {
       settings[key] = local_settings[key];
     }
     var id = jQuery(this).attr('id');

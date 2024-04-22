@@ -60,7 +60,8 @@
 // the `Cowboy` namespace. Usage will be exactly the same, but instead of
 // $.method() or jQuery.method(), you'll need to use Cowboy.method().
 
-(function(window,undefined){
+(function() {
+var jqueryThrottleDebounceInit = function($, undefined) {
   '$:nomunge'; // Used by YUI compressor.
   
   // Since jQuery really isn't required for this plugin, use `jQuery` as the
@@ -248,5 +249,11 @@
       ? jq_throttle( delay, at_begin, false )
       : jq_throttle( delay, callback, at_begin !== false );
   };
-  
-})(this);
+};
+
+if (window.jQuery) {
+  jqueryThrottleDebounceInit(jQuery);
+} else if (typeof exports === 'object' && typeof module === 'object') {
+  module.exports = jqueryThrottleDebounceInit;
+}
+})();

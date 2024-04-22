@@ -21,8 +21,10 @@
     jQuery(element).sortable(jQuery.extend(options, {connectWith: '#'+list_selected.attr('id')}));
     jQuery(list_selected).sortable(jQuery.extend(options, {connectWith: '#'+element.attr('id')}));
     return element;
-  };
-  jQuery.fn.draggableLists = function() {
-    this.each(function() { enableDraggableLists(jQuery(this)); });
-  };
+  }
+  if (typeof(jQuery.fn.sortable) !== 'undefined') {
+    jQuery.fn.draggableLists = function() {
+      this.each(function() { enableDraggableLists(jQuery(this)); });
+    };
+  }
 })();
