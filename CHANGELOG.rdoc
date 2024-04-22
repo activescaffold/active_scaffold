@@ -1,6 +1,8 @@
 - Escape _ and % when using search with LIKE
 - Fix ID in nested scaffolds when parent record has string primary key, with invalid chars for HTML ID
 - Fix search with recordselect multiple
+- Support loading jquery-ui externally, without jquery-ui-rails gem and ask AS to load JS/CSS for addons based on jquery-ui
+
 
 = 3.7.2
 - Fix routes

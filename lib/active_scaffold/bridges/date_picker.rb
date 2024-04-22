@@ -10,7 +10,7 @@ module ActiveScaffold::Bridges
     end
 
     def self.jquery_ui_included?
-      Jquery::Rails.const_defined?('JQUERY_UI_VERSION') || Jquery.const_defined?('Ui') if Object.const_defined?('Jquery')
+      ActiveScaffold.jquery_ui_included?
     end
     mattr_accessor :default_ui
     @@default_ui = true

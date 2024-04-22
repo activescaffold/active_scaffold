@@ -66,6 +66,12 @@ module ActiveScaffold
       end
   end
 
+  mattr_writer :jquery_ui_loaded, instance_writer: false
+  def self.jquery_ui_included?
+    return true if @@jquery_ui_loaded
+    Jquery::Rails.const_defined?('JQUERY_UI_VERSION') || Jquery.const_defined?('Ui') if Object.const_defined?('Jquery')
+  end
+
   mattr_writer :js_config, instance_writer: false
   def self.js_config
     @@js_config ||= {:scroll_on_close => :checkInViewport}

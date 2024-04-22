@@ -1,11 +1,10 @@
 <% if Jquery::Rails.const_defined? 'JQUERY_UI_VERSION' %>
-<% require_asset "jquery-ui" %>
-<% require_asset "jquery-ui-theme" %>
+  <% require_asset "jquery-ui" %>
 <% elsif Jquery.const_defined? 'Ui' %>
-<% if Jquery::Ui::Rails::VERSION < '5.0.0' %>
-<% require_asset "jquery.ui.datepicker" %>
-<% else %>
-<% require_asset "jquery-ui/datepicker" %>
+  <% if Jquery::Ui::Rails::VERSION < '5.0.0' %>
+    <% require_asset "jquery.ui.datepicker" %>
+  <% else %>
+    <% require_asset "jquery-ui/datepicker" %>
+  <% end %>
 <% end %>
-<% require_asset "jquery-ui-theme" %>
-<% end %>
+<% require_asset "jquery-ui-theme" if ActiveScaffold.jquery_ui_included? %>
