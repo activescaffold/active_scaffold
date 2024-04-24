@@ -378,6 +378,11 @@
         jQuery(this).parent().find('[type=submit]').click();
       }));
 
+      jQuery(document).on('click', 'form.search .reset[data-reset]', function(e){
+        e.preventDefault();
+        jQuery(this).closest('form.search').find(':input:not([type=button]):not([type=submit]):not([type=reset]):not([type=hidden])').val('');
+      });
+
       jQuery(document).on('turbolinks:before-visit turbo:before-visit', function() {
         if (history.state.active_scaffold) {
           history.replaceState({turbolinks: true, url: document.location.href}, '', document.location.href);

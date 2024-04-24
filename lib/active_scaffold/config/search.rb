@@ -7,6 +7,7 @@ module ActiveScaffold::Config
       @text_search = self.class.text_search
       @live = self.class.live?
       @split_terms = self.class.split_terms
+      @reset_form = self.class.reset_form
     end
 
     # global level configuration
@@ -33,6 +34,8 @@ module ActiveScaffold::Config
     cattr_accessor :split_terms, instance_accessor: false
     @@split_terms = ' '
 
+    cattr_accessor :reset_form, instance_accessor: false
+
     # instance-level configuration
     # ----------------------------
 
@@ -55,6 +58,8 @@ module ActiveScaffold::Config
     attr_accessor :text_search
 
     attr_accessor :split_terms
+
+    attr_accessor :reset_form
 
     # the ActionLink for this action
     attr_accessor :link

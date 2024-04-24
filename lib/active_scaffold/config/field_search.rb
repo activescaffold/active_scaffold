@@ -8,6 +8,7 @@ module ActiveScaffold::Config
       @text_search = self.class.text_search
       @human_conditions = self.class.human_conditions
       @floating_footer = self.class.floating_footer
+      @reset_form = self.class.reset_form
     end
 
     # global level configuration
@@ -33,6 +34,8 @@ module ActiveScaffold::Config
     # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
     class_attribute :floating_footer, instance_accessor: false
     @@floating_footer = false
+
+    cattr_accessor :reset_form, instance_accessor: false
 
     # instance-level configuration
     # ----------------------------
@@ -78,6 +81,8 @@ module ActiveScaffold::Config
 
     # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
     attr_accessor :floating_footer
+
+    attr_accessor :reset_form
 
     UserSettings.class_eval do
       user_attr :optional_columns, :group_options, :grouped_columns, :human_conditions, :floating_footer
