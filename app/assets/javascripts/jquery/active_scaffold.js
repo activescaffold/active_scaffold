@@ -21,7 +21,7 @@
             var key = etag + xhr.cacheUrl;
             jQuery(document).data(key, xhr.responseText);
             var contentType = xhr.getResponseHeader('Content-Type');
-            for(s in settings.contents) {
+            for(var s in settings.contents) {
               if (settings.contents[s].test(contentType)) {
                 var conv = settings.converters['text '+s];
                 if (typeof conv == 'function') jQuery(document).data('type-'+key, conv);
@@ -560,7 +560,7 @@
             var line = $this.closest('.form-element'), toggle = line.find('.show-new-subform[data-subform-id="' + $this.attr('id') + '"]').first();
             if (toggle.is('[type=radio]')) toggle.prop('disabled', true);
             else if (toggle.data('select-id')) {
-              select = line.find('#' + toggle.data('select-id'));
+              var select = line.find('#' + toggle.data('select-id'));
               if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').andSelf();
               select.hide().prop('disabled', true);
             }
@@ -603,7 +603,7 @@
         var rows = this.records_for(tbody_id);
 
         rows.each(function (index, row_node) {
-          row = jQuery(row_node);
+          var row = jQuery(row_node);
           if (row_node.tagName != 'SCRIPT'
             && !row.hasClass("create")
             && !row.hasClass("update")
@@ -653,14 +653,14 @@
         // decrement the last record count, firsts record count are in nested lists
         if (typeof(scaffold) == 'string') scaffold = '#' + scaffold;
         scaffold = jQuery(scaffold);
-        count = scaffold.find('span.active-scaffold-records').last();
+        var count = scaffold.find('span.active-scaffold-records').last();
         if (count) count.html(parseInt(count.html(), 10) - 1);
       },
       increment_record_count: function(scaffold) {
         // increment the last record count, firsts record count are in nested lists
         if (typeof(scaffold) == 'string') scaffold = '#' + scaffold;
         scaffold = jQuery(scaffold);
-        count = scaffold.find('span.active-scaffold-records').last();
+        var count = scaffold.find('span.active-scaffold-records').last();
         if (count) count.html(parseInt(count.html(), 10) + 1);
       },
       update_row: function(row, html) {
@@ -763,13 +763,14 @@
         var input = jQuery(form_selector + ":input:visible:first", jQuery(form_element));
         if (input.is('.no-autofocus :input')) return;
         input.focus();
-        try { if (input[0] && input[0].value) input[0].selectionStart = input[0].selectionEnd = input[0].value.length; } catch(e) {}
+        try {
+          if (input[0] && input[0].value) input[0].selectionStart = input[0].selectionEnd = input[0].value.length;
+        } catch(e) {}
       },
 
       create_record_row: function(active_scaffold_id, html, options) {
         if (typeof(active_scaffold_id) == 'string') active_scaffold_id = '#' + active_scaffold_id;
-        tbody = jQuery(active_scaffold_id).find('tbody.records').first();
-        var new_row;
+        var tbody = jQuery(active_scaffold_id).find('tbody.records').first(), new_row;
 
         if (options.insert_at == 'top') {
           tbody.prepend(html);
@@ -1221,8 +1222,7 @@
         this.options = options;
         var _this = this;
         this.links = jQuery.map(links, function(link) {
-          var my_link = _this.instantiate_link(link);
-          return my_link;
+          return _this.instantiate_link(link);
         });
       },
 
@@ -1238,7 +1238,7 @@
     ActiveScaffold.ActionLink = {
       get: function(element) {
         if (typeof(element) == 'string') element = '#' + element;
-        var element = jQuery(element);
+        element = jQuery(element);
         if (element.length > 0) {
           element.data(); // $ 1.4.2 workaround
           if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
