@@ -380,7 +380,13 @@
 
       jQuery(document).on('click', 'form.search .reset[data-reset]', function(e){
         e.preventDefault();
-        jQuery(this).closest('form.search').find(':input:not([type=button]):not([type=submit]):not([type=reset]):not([type=hidden])').val('');
+        var form = jQuery(this).closest('form.search');
+        form.find(
+          'input:not([type=button]):not([type=submit]):not([type=reset]):not([type=hidden]),' +
+          'textarea, select:has(option[value=""])'
+        ).val('');
+        form.find('select.as_search_range_option').each(function() { $(this).val($(this).find('option:first').val()) });
+        form.find('select.as_search_date_time_option').val('BETWEEN');
       });
 
       jQuery(document).on('turbolinks:before-visit turbo:before-visit', function() {
