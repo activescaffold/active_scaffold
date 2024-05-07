@@ -1,9 +1,11 @@
+= 3.7.3
 - Escape _ and % when using search with LIKE
 - Fix ID in nested scaffolds when parent record has string primary key, with invalid chars for HTML ID
 - Fix search with recordselect multiple
 - Support loading jquery-ui externally, without jquery-ui-rails gem and ask AS to load JS/CSS for addons based on jquery-ui
 - Support usage with importmap
 - Add reset_form to search and field_search, when enabled, reset link will clear input fields in the search form, instead of refreshing the list without search and closing the form.
+- Add active support load hook :active_scaffold when ActiveScaffold module is ready
 
 = 3.7.2
 - Fix routes
