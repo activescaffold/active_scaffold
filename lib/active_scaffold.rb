@@ -96,7 +96,6 @@ module ActiveScaffold
     ActiveScaffold::Config::Core.configure(&block)
   end
 end
-ActiveSupport.run_load_hooks(:active_scaffold, ActiveScaffold)
 require 'active_scaffold/engine'
 require 'ice_nine'
 require 'ice_nine/core_ext/object'
