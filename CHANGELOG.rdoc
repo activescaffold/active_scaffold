@@ -4,6 +4,7 @@
 - Support loading jquery-ui externally, without jquery-ui-rails gem and ask AS to load JS/CSS for addons based on jquery-ui
 - Support usage with importmap
 - Add reset_form to search and field_search, when enabled, reset link will clear input fields in the search form, instead of refreshing the list without search and closing the form.
+- Fix for mongoid 7
 
 = 3.7.2
 - Fix routes
