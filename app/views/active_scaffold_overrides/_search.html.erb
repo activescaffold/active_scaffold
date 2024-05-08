@@ -23,7 +23,7 @@
   <%= submit_tag as_(submit_text), :class => "submit", :style => ('display:none;' if live_search) %>
   <%
     reset_attrs = {class: 'as_cancel reset'}
-    if active_scaffold_config.field_search.reset_form
+    if active_scaffold_config.search.reset_form
       reset_attrs[:data] = {reset: true}
     else
       reset_attrs.merge! remote: true, data: {refresh: true}
