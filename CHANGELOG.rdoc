@@ -1,4 +1,5 @@
 - Support loading both jquery and jquery-ui externally
+- Fix subquery in search with STI
 
 = 3.7.3.1
 - Fix search, view was broken when reset_form was added

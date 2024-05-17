@@ -146,7 +146,7 @@ module ActiveScaffold
         conditions.concat options[:conditions][1..-1] if options[:conditions]
         if column.association&.polymorphic?
           conditions[0] << " AND #{column.quoted_foreign_type} = ?"
-          conditions << relation.name
+          conditions << relation.base_class.sti_name
         end
         conditions
       end
