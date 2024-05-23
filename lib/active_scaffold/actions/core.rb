@@ -17,6 +17,7 @@ module ActiveScaffold::Actions
       base.helper_method :embedded?
       base.helper_method :loading_embedded?
       base.helper_method :calculate_query
+      base.helper_method :calculate_subquery
       base.helper_method :new_model
       base.helper_method :touch_device?
       base.helper_method :hover_via_click?
