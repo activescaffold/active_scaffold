@@ -662,7 +662,7 @@ module ActiveScaffold
     end
 
     def calculate_query(id_condition = true)
-      active_scaffold_config.model.where(primary_key => calculate_subquery(id_condition))
+      active_scaffold_config.model.where(active_scaffold_config.primary_key => calculate_subquery(id_condition))
     end
 
     def append_to_query(relation, options)
