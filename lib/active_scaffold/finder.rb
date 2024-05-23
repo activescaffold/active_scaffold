@@ -650,7 +650,7 @@ module ActiveScaffold
       @last_modified = query.maximum(:updated_at)
     end
 
-    def calculate_query(id_condition = true)
+    def calculate_subquery(id_condition = true)
       conditions = all_conditions(id_condition)
       includes = active_scaffold_config.list.count_includes
       includes ||= active_scaffold_references if conditions.present?
@@ -658,8 +658,11 @@ module ActiveScaffold
       left_joins += includes if includes
       primary_key = active_scaffold_config.primary_key
       subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :left_joins => left_joins, :select => active_scaffold_config.columns[primary_key].field)
-      subquery = subquery.unscope(:order)
-      active_scaffold_config.model.where(primary_key => subquery)
+      subquery.unscope(:order)
+    end
+
+    def calculate_query(id_condition = true)
+      active_scaffold_config.model.where(primary_key => calculate_subquery(id_condition))
     end
 
     def append_to_query(relation, options)
