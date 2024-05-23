@@ -1,3 +1,5 @@
+- Fix always show search for nested list on multi-level through associations
+
 = 3.7.4
 - Support loading both jquery and jquery-ui externally
 - Fix subquery in search with STI
