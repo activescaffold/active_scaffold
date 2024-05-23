@@ -5,7 +5,7 @@
   <table>
     <tbody class="before-header" id="<%= before_header_id -%>">
       <% if active_scaffold_config.list.always_show_search %>
-      <% old_record, @record = @record, new_model %>
+      <% old_record, @record = @record, active_scaffold_config.model.new %>
         <tr>
           <td>
             <div class="active-scaffold show_search-view <%= "#{id_from_controller params[:controller]}-view" %> view">
