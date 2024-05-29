@@ -1,4 +1,5 @@
 - Fix always show search for nested list on multi-level through associations
+- Support changing step, min and max options with column options or search_ui options for decimal and integer search_ui
 
 = 3.7.4
 - Support loading both jquery and jquery-ui externally

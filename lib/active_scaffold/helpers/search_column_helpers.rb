@@ -242,11 +242,11 @@ module ActiveScaffold
       alias active_scaffold_search_string active_scaffold_search_range
 
       def active_scaffold_search_integer(column, options, ui_options: column.options)
-        active_scaffold_search_range(column, options, :number_field_tag, {step: '1'}, ui_options: ui_options) # rubocop:disable Style/BracesAroundHashParameters
+        active_scaffold_search_range(column, options, :number_field_tag, ui_options.slice(:step, :min, :max).reverse_merge(step: '1'), ui_options: ui_options) # rubocop:disable Style/BracesAroundHashParameters
       end
 
       def active_scaffold_search_decimal(column, options, ui_options: column.options)
-        active_scaffold_search_range(column, options, :number_field_tag, {step: :any}, ui_options: ui_options) # rubocop:disable Style/BracesAroundHashParameters
+        active_scaffold_search_range(column, options, :number_field_tag, ui_options.slice(:step, :min, :max).reverse_merge(step: :any), ui_options: ui_options) # rubocop:disable Style/BracesAroundHashParameters
       end
       alias active_scaffold_search_float active_scaffold_search_decimal
 
