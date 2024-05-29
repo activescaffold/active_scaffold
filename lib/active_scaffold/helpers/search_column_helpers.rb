@@ -255,7 +255,7 @@ module ActiveScaffold
                           'number' => 1, 'unit' => 'DAYS', 'range' => nil}
         current_search.merge!(options[:value]) unless options[:value].nil?
         tags = [
-          active_scaffold_search_datetime_comparator_tag(column, options, current_search),
+          active_scaffold_search_datetime_comparator_tag(column, options, current_search, ui_options: column.options),
           active_scaffold_search_datetime_trend_tag(column, options, current_search),
           active_scaffold_search_datetime_numeric_tag(column, options, current_search, ui_options: ui_options, field_ui: field_ui),
           active_scaffold_search_datetime_range_tag(column, options, current_search)
@@ -275,13 +275,17 @@ module ActiveScaffold
         active_scaffold_search_datetime(column, options, ui_options: ui_options, field_ui: :date)
       end
 
-      def active_scaffold_search_datetime_comparator_options(column)
+      def active_scaffold_search_datetime_comparator_options(column, ui_options: column.options)
         select_options = ActiveScaffold::Finder::DATE_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
-        select_options + ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+        select_options.concat ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+        if include_null_comparators? column, ui_options: ui_options
+          select_options.concat(ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] })
+        end
+        select_options
       end
 
-      def active_scaffold_search_datetime_comparator_tag(column, options, current_search)
-        choices = options_for_select(active_scaffold_search_datetime_comparator_options(column), current_search['opt'])
+      def active_scaffold_search_datetime_comparator_tag(column, options, current_search, ui_options: column.options)
+        choices = options_for_select(active_scaffold_search_datetime_comparator_options(column, ui_options: ui_options), current_search['opt'])
         select_tag("#{options[:name]}[opt]", choices, id: "#{options[:id]}_opt", class: 'as_search_range_option as_search_date_time_option')
       end
 
