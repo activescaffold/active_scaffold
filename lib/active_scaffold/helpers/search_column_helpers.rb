@@ -242,11 +242,13 @@ module ActiveScaffold
       alias active_scaffold_search_string active_scaffold_search_range
 
       def active_scaffold_search_integer(column, options, ui_options: column.options)
-        active_scaffold_search_range(column, options, :number_field_tag, ui_options.slice(:step, :min, :max).reverse_merge(step: '1'), ui_options: ui_options) # rubocop:disable Style/BracesAroundHashParameters
+        number_opts = ui_options.slice(:step, :min, :max).reverse_merge(step: '1')
+        active_scaffold_search_range(column, options, :number_field_tag, number_opts, ui_options: ui_options)
       end
 
       def active_scaffold_search_decimal(column, options, ui_options: column.options)
-        active_scaffold_search_range(column, options, :number_field_tag, ui_options.slice(:step, :min, :max).reverse_merge(step: :any), ui_options: ui_options) # rubocop:disable Style/BracesAroundHashParameters
+        number_opts = ui_options.slice(:step, :min, :max).reverse_merge(step: :any)
+        active_scaffold_search_range(column, options, :number_field_tag, number_opts, ui_options: ui_options)
       end
       alias active_scaffold_search_float active_scaffold_search_decimal
 
@@ -277,7 +279,7 @@ module ActiveScaffold
 
       def active_scaffold_search_datetime_comparator_options(column, ui_options: column.options)
         select_options = ActiveScaffold::Finder::DATE_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
-        select_options.concat ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+        select_options.concat(ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] })
         if include_null_comparators? column, ui_options: ui_options
           select_options.concat(ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] })
         end
