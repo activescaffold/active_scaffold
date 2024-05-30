@@ -1,3 +1,4 @@
+
 module ActiveScaffold
   module Helpers
     module AssociationHelpers
@@ -12,6 +13,11 @@ module ActiveScaffold
         end
       end
 
+      def association_helper_method(association, method)
+        model = association.inverse_klass
+        override_helper_per_model(method, model, [method, model.name])
+      end
+
       # Provides a way to honor the :conditions on an association while searching the association's klass
       def association_options_find(association, conditions = nil, klass = nil, record = nil)
         if klass.nil? && association.polymorphic?
@@ -24,9 +30,9 @@ module ActiveScaffold
           klass ||= association.klass
         end
 
-        conditions ||= options_for_association_conditions(association, record)
+        conditions ||= send(association_helper_method(association, :options_for_association_conditions), association, record)
         cache_association_options(association, conditions, klass, cache) do
-          klass = association_klass_scoped(association, klass, record)
+          klass = send(association_helper_method(association, :association_klass_scoped), association, klass, record)
           relation = klass.where(conditions)
           column = column_for_association(association, record)
           if column&.includes
@@ -80,7 +86,7 @@ module ActiveScaffold
       end
 
       def options_for_association_count(association, record)
-        conditions = options_for_association_conditions(association, record)
+        conditions = send(association_helper_method(association, :options_for_association_conditions), association, record)
         association_options_count(association, conditions)
       end
 

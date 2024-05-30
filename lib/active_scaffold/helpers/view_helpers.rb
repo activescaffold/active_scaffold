@@ -159,21 +159,20 @@ module ActiveScaffold
         name.underscore.tr('/', '_')
       end
 
-      # the naming convention for overriding with helpers
-      def override_helper_name(column, suffix, class_prefix = false)
-        "#{clean_class_name(column.active_record_class.name) + '_' if class_prefix}#{clean_column_name(column.name)}_#{suffix}"
+      def override_helper_per_model(method, model, cache_keys)
+        ActiveScaffold::Registry.cache(*cache_keys) do
+          method_with_class = "#{clean_class_name(model.name)}_#{method}"
+          if respond_to?(method_with_class)
+            method_with_class
+          elsif respond_to?(method)
+            method
+          end
+        end
       end
 
       def override_helper(column, suffix)
-        ActiveScaffold::Registry.cache suffix, column.cache_key do
-          method_with_class = override_helper_name(column, suffix, true)
-          if respond_to?(method_with_class)
-            method_with_class
-          else
-            method = override_helper_name(column, suffix)
-            method if respond_to?(method)
-          end
-        end
+        method = "#{clean_column_name(column.name)}_#{suffix}"
+        override_helper_per_model(method, column.active_record_class, [suffix, column.cache_key])
       end
 
       def history_state
