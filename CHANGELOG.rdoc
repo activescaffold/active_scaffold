@@ -2,6 +2,7 @@
 - Support changing step, min and max options with column options or search_ui options for decimal and integer search_ui
 - Support null and not null comparators in date and datetime search_ui
 - Support defining options_for_association_conditions and association_klass_scoped helpers prefixed with model name. Useful when clear_helpers is not called in ApplicationController.
+- Fix class for columns with form_ui or css_class when refreshing column
 
 = 3.7.4
 - Support loading both jquery and jquery-ui externally
