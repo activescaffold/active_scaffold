@@ -63,7 +63,7 @@ module ActiveScaffold
         active_scaffold_config.configure(&block) if block_given?
         active_scaffold_config.class.after_config_callbacks.each do |callback|
           if callback.is_a?(Proc)
-            callback.call
+            instance_eval &callback
           elsif active_scaffold_config.respond_to?(callback)
             active_scaffold_config.send(callback)
           end
