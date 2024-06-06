@@ -8,7 +8,7 @@ module ActiveScaffold
 
     # Returns the current constraints
     def active_scaffold_constraints
-      @active_scaffold_constraints ||= active_scaffold_embedded_params[:constraints] || {}
+      @active_scaffold_constraints ||= active_scaffold_embedded_params[:constraints]&.to_unsafe_h || {}
     end
 
     def columns_from_constraint(column_name, value)
@@ -34,7 +34,7 @@ module ActiveScaffold
     # we do NOT register the constraint column, as records will have different values in the column.
     def register_constraints_with_action_columns(constrained_fields = nil)
       constrained_fields ||= []
-      constrained_fields |= active_scaffold_constraints.to_unsafe_h.flat_map { |k, v| columns_from_constraint(k, v) }.compact
+      constrained_fields |= active_scaffold_constraints.flat_map { |k, v| columns_from_constraint(k, v) }.compact
       exclude_actions = []
       %i[list update].each do |action_name|
         if active_scaffold_config.actions.include? action_name
