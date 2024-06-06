@@ -11,14 +11,17 @@ module ActiveScaffold
       @active_scaffold_constraints ||= active_scaffold_embedded_params[:constraints] || {}
     end
 
-    def register_constraint?(column_name, value)
-      if params_hash?(value)
-        false
-      elsif value.is_a?(Array)
+    def columns_from_constraint(column_name, value)
+      return if params_hash?(value)
+      if value.is_a?(Array)
         column = active_scaffold_config.columns[column_name]
-        column && value.size > (column.association&.polymorphic? ? 2 : 1)
+        if column&.association&.polymorphic? && value.size == 2
+          [column.association.foreign_type.to_sym, column.name]
+        elsif column && value.size == 1
+          column.name
+        end
       else
-        true
+        column_name.to_sym
       end
     end
 
@@ -31,7 +34,7 @@ module ActiveScaffold
     # we do NOT register the constraint column, as records will have different values in the column.
     def register_constraints_with_action_columns(constrained_fields = nil)
       constrained_fields ||= []
-      constrained_fields |= active_scaffold_constraints.select { |k, v| register_constraint?(k, v) }.keys.collect(&:to_sym)
+      constrained_fields |= active_scaffold_constraints.to_unsafe_h.flat_map { |k, v| columns_from_constraint(k, v) }.compact
       exclude_actions = []
       %i[list update].each do |action_name|
         if active_scaffold_config.actions.include? action_name

@@ -4,6 +4,7 @@
 - Support defining options_for_association_conditions and association_klass_scoped helpers prefixed with model name. Useful when clear_helpers is not called in ApplicationController.
 - Fix class for columns with form_ui or css_class when refreshing column
 - Eval after_config_callback proc in the context of AS config
+- Fix registering constrained fields on polymorphic association
 
 = 3.7.4
 - Support loading both jquery and jquery-ui externally
