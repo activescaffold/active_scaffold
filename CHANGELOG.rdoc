@@ -5,6 +5,7 @@
 - Fix class for columns with form_ui or css_class when refreshing column
 - Eval after_config_callback proc in the context of AS config
 - Fix registering constrained fields on polymorphic association
+- Improve applying constraints for polymorphic associations when constraining with multiple ids, set only the foreign type
 
 = 3.7.4
 - Support loading both jquery and jquery-ui externally

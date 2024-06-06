@@ -15,8 +15,8 @@ module ActiveScaffold
       return if params_hash?(value)
       if value.is_a?(Array)
         column = active_scaffold_config.columns[column_name]
-        if column&.association&.polymorphic? && value.size == 2
-          [column.association.foreign_type.to_sym, column.name]
+        if column&.association&.polymorphic?
+          [column.association.foreign_type.to_sym, (column.name if value.size == 2)].compact
         elsif column && value.size == 1
           column.name
         end
@@ -169,7 +169,11 @@ module ActiveScaffold
             unless v.is_a?(Array) && v.size >= 2
               raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller
             end
-            record.send("#{k}=", v[0].constantize.find(v[1])) if v.size == 2
+            if v.size == 2
+              record.send("#{k}=", v[0].constantize.find(v[1]))
+            else
+              record.send("#{column.association.foreign_type}=", v[0])
+            end
           elsif !column.association.source_reflection&.options&.include?(:through) && # regular singular association, or one-level through association
                 !v.is_a?(Array)
             record.send("#{k}=", column.association.klass.find(v))
