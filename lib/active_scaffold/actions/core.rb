@@ -135,8 +135,8 @@ module ActiveScaffold::Actions
       parent = parent_model.new
       copy_attributes(find_if_allowed(params[:parent_id], :read, parent_model), parent) if params[:parent_id]
       parent.id = params[:parent_id]
-      parent = update_record_from_params(parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
       apply_constraints_to_record(parent) unless params[:parent_id]
+      parent = update_record_from_params(parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
       if association.collection?
         record.send(association.name) << parent
       else

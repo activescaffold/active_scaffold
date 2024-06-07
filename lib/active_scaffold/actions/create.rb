@@ -93,8 +93,10 @@ module ActiveScaffold::Actions
     def do_create(options = {})
       attributes = options[:attributes] || params[:record]
       active_scaffold_config.model.transaction do
-        @record = update_record_from_params(new_model, active_scaffold_config.create.columns, attributes)
+        @record = new_model
+        # before assign params, to set foreign_type of constraints in polymorphic association with multiple id
         apply_constraints_to_record(@record, :allow_autosave => true)
+        @record = update_record_from_params(@record, active_scaffold_config.create.columns, attributes)
         create_association_with_parent(@record) if nested?
         before_create_save(@record)
         # errors to @record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
