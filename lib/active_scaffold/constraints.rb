@@ -184,7 +184,7 @@ module ActiveScaffold
             # note that we can't take the extra step to correct this unless we're permitted to
             # run operations where activerecord auto-saves the object.
             reverse = column.association.reverse_association
-            if reverse.singular? && !reverse.belongs_to? && options[:allow_autosave]
+            if reverse&.singular? && !reverse.belongs_to? && options[:allow_autosave]
               record.send(k).send("#{reverse.name}=", record)
             end
           end
