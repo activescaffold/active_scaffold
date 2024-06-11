@@ -2,10 +2,11 @@ require 'test_helper'
 
 class FormColumnHelpersTest < ActionView::TestCase
   include ActiveScaffold::Helpers::FormColumnHelpers
+  include ActiveScaffold::Helpers::ViewHelpers
 
   def setup
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
-    @record = stub(:a => nil)
+    @record = ModelStub.new(a: nil)
   end
 
   def test_choices_for_select_form_ui_for_simple_column
