@@ -1,7 +1,7 @@
 - Fix always show search for nested list on multi-level through associations
 - Support changing step, min and max options with column options or search_ui options for decimal and integer search_ui
 - Support null and not null comparators in date and datetime search_ui
-- Support defining options_for_association_conditions and association_klass_scoped helpers prefixed with model name. Useful when clear_helpers is not called in ApplicationController.
+- Support defining options_for_association_conditions, association_klass_scoped and active_scaffold_enum_options helpers prefixed with model name. Useful when clear_helpers is not called in ApplicationController.
 - Fix class for columns with form_ui or css_class when refreshing column
 - Eval after_config_callback proc in the context of AS config
 - Fix registering constrained fields on polymorphic association

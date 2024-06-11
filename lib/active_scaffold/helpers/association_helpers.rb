@@ -15,7 +15,7 @@ module ActiveScaffold
 
       def association_helper_method(association, method)
         model = association.inverse_klass
-        override_helper_per_model(method, model, [method, model.name])
+        override_helper_per_model(method, model)
       end
 
       # Provides a way to honor the :conditions on an association while searching the association's klass

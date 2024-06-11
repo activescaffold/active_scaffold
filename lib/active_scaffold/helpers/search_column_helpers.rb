@@ -85,7 +85,8 @@ module ActiveScaffold
             [r.send(method), r.id]
           end
         else
-          select_options = active_scaffold_enum_options(column, record, ui_options: ui_options).collect do |text, value|
+          enum_options_method = override_helper_per_model(:active_scaffold_enum_options, record.class)
+          select_options = send(enum_options_method, column, record, ui_options: ui_options).collect do |text, value|
             active_scaffold_translated_option(column, text, value)
           end
         end
@@ -103,7 +104,8 @@ module ActiveScaffold
           select_options = sorted_association_options_find(column.association, false, record)
         else
           method = column.name
-          select_options = active_scaffold_enum_options(column, record, ui_options: ui_options).collect do |text, value|
+          enum_options_method = override_helper_per_model(:active_scaffold_enum_options, record.class)
+          select_options = send(enum_options_method, column, record, ui_options: ui_options).collect do |text, value|
             active_scaffold_translated_option(column, text, value)
           end
         end

@@ -77,7 +77,7 @@ module ActiveScaffold
       end
 
       def list_row_class(record)
-        class_override_helper = override_helper_per_model(:list_row_class, record.class, [:list_row_class, record.class.name])
+        class_override_helper = override_helper_per_model(:list_row_class, record.class)
         class_override_helper != :list_row_class ? send(class_override_helper, record) : ''
       end
 
@@ -153,7 +153,8 @@ module ActiveScaffold
         name.underscore.tr('/', '_')
       end
 
-      def override_helper_per_model(method, model, cache_keys)
+      def override_helper_per_model(method, model, cache_keys = nil)
+        cache_keys ||= [method, model.name]
         ActiveScaffold::Registry.cache(*cache_keys) do
           model_names = [model.name]
           model_names << model.base_class.name if model.base_class != model

@@ -486,7 +486,8 @@ module ActiveScaffold
         record = html_options.delete(:object)
         options[:selected] = record.send(column.name)
         options[:object] = record
-        options_for_select = active_scaffold_enum_options(column, record, ui_options: ui_options).collect do |text, value|
+        enum_options_method = override_helper_per_model(:active_scaffold_enum_options, record.class)
+        options_for_select = send(enum_options_method, column, record, ui_options: ui_options).collect do |text, value|
           active_scaffold_translated_option(column, text, value)
         end
         html_options.merge!(ui_options[:html_options] || {})
@@ -535,7 +536,8 @@ module ActiveScaffold
           if column.association
             sorted_association_options_find(column.association, nil, record)
           else
-            active_scaffold_enum_options(column, record, ui_options: ui_options)
+            enum_options_method = override_helper_per_model(:active_scaffold_enum_options, record.class)
+            send(enum_options_method, column, record, ui_options: ui_options)
           end
 
         selected = record.send(column.association.name) if column.association
