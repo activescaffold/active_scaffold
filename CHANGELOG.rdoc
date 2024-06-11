@@ -6,6 +6,7 @@
 - Eval after_config_callback proc in the context of AS config
 - Fix registering constrained fields on polymorphic association
 - Improve applying constraints for polymorphic associations when constraining with multiple ids, set only the foreign type
+- Support prefixing helpers with base class for models using STI besides model name prefix
 
 = 3.7.4
 - Support loading both jquery and jquery-ui externally

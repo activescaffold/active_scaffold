@@ -76,15 +76,9 @@ module ActiveScaffold
         link_to label, '#', :data => data, :style => 'display: none;', :class => 'as-js-button visibility-toggle'
       end
 
-      def list_row_class_method(record)
-        return @_list_row_class_method if defined? @_list_row_class_method
-        class_override_helper = "#{clean_class_name(record.class.name)}_list_row_class"
-        @_list_row_class_method = (class_override_helper if respond_to?(class_override_helper))
-      end
-
       def list_row_class(record)
-        class_override_helper = list_row_class_method(record)
-        class_override_helper ? send(class_override_helper, record) : ''
+        class_override_helper = override_helper_per_model(:list_row_class, record.class, [:list_row_class, record.class.name])
+        class_override_helper != :list_row_class ? send(class_override_helper, record) : ''
       end
 
       def list_row_attributes(tr_class, tr_id, data_refresh)
@@ -161,12 +155,13 @@ module ActiveScaffold
 
       def override_helper_per_model(method, model, cache_keys)
         ActiveScaffold::Registry.cache(*cache_keys) do
-          method_with_class = "#{clean_class_name(model.name)}_#{method}"
-          if respond_to?(method_with_class)
-            method_with_class
-          elsif respond_to?(method)
-            method
+          model_names = [model.name]
+          model_names << model.base_class.name if model.base_class != model
+          method_with_class = model_names.find do |model_name|
+            method_with_class = "#{clean_class_name(model_name)}_#{method}"
+            break method_with_class if respond_to?(method_with_class)
           end
+          method_with_class || (method if respond_to?(method))
         end
       end
 
