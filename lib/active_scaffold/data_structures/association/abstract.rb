@@ -46,6 +46,10 @@ module ActiveScaffold::DataStructures::Association
       false
     end
 
+    def nested?
+      false
+    end
+
     def through_singular?
       through? && !through_reflection.collection?
     end

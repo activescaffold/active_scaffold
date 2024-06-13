@@ -164,7 +164,7 @@ module ActiveScaffold
         column = config.columns[k]
         if column&.association
           if column.association.collection?
-            record.send(k.to_s).send(:<<, column.association.klass.find(v))
+            record.send(k.to_s).send(:<<, column.association.klass.find(v)) unless column.association.nested?
           elsif column.association.polymorphic?
             unless v.is_a?(Array) && v.size >= 2
               raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller

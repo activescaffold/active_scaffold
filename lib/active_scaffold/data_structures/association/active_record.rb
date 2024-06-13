@@ -10,6 +10,10 @@ module ActiveScaffold::DataStructures::Association
       @association.options[:through].present?
     end
 
+    def nested?
+      @association.nested?
+    end
+
     def readonly?
       scope_values[:readonly]
     end
