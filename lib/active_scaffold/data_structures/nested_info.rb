@@ -90,15 +90,22 @@ module ActiveScaffold::DataStructures
     delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :readonly?, :to => :association
 
     # A through association with has_one or has_many as source association
-    # create cannot be called in nested through associations, and not-nested through associations
-    # unless is through singular or create columns include through reflection of reverse association
-    # e.g. customer -> networks -> firewall, reverse is firewall -> network -> customer,
-    # firewall can be created if create columns include network
+    # create cannot be called in nested through associations, and not-nested through associations, unless:
+    # 1. is through singular and source association has reverse, e.g.:
+    #    Employee belongs to vendor, Vendor has many rates, Rate belongs to vendor, Employee has many rates through vendor
+    #    Rates association through singular association vendor, source association in Vendor (rates) has reverse (vendor in Rate)
+    #    AS will assign the vendor of the employee to the new Rate
+    # 2. source association is singular, e.g.:
+    #    Customer has many networks, Network has one (or belongs to) firewall, Customer has many firewalls through networks
+    # 3. create columns include through association of reverse association, e.g.:
+    #    Vendor has many employees, Employee has many rates, Vendor has many rates through employees, Rate has one vendor through employee
+    #    RatesController has employee in create action columns (reverse is vendor, and through association employee is in create form).
     def readonly_through_association?(columns)
       return false unless through_association?
       return true if association.through_reflection.options[:through] # create not possible, too many levels
       return true if association.source_reflection.options[:through] # create not possible, too many levels
       return false if create_through_singular? # create allowed, AS has code for this
+      return false unless association.source_reflection.collection? # create allowed if source is singular, rails creates joint model
 
       # create allowed only if through reflection in record to be created is included in create columns
       !child_association || !columns.include?(child_association.through_reflection.name)
