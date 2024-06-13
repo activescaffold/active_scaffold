@@ -55,6 +55,8 @@ module ActiveScaffold
         when 'PAST', 'FUTURE'
           from, to = controller.class.datetime_from_to(column, value)
           "#{column.active_record_class.human_attribute_name(column.name)} #{as_('BETWEEN'.downcase).downcase} #{I18n.l(from)} - #{I18n.l(to)}"
+        when 'null', 'not_null'
+          "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value['opt'].downcase).downcase}"
         else
           from, to = controller.class.datetime_from_to(column, value)
           "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value['opt'].downcase).downcase} #{I18n.l(from)} #{value['opt'] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"

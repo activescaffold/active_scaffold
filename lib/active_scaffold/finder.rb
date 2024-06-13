@@ -363,6 +363,8 @@ module ActiveScaffold
 
         if column.search_sql.is_a? Proc
           column.search_sql.call(from_value, to_value, operator)
+        elsif ActiveScaffold::Finder::NULL_COMPARATORS.include?(value['opt'])
+          condition_for_null_type(column, value['opt'], like_pattern)
         elsif operator.nil?
           ['%<search_sql>s BETWEEN ? AND ?', from_value, to_value] unless from_value.nil? || to_value.nil?
         else
