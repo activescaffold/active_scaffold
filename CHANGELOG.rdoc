@@ -8,6 +8,7 @@
 - Improve applying constraints for polymorphic associations when constraining with multiple ids, set only the foreign type
 - Support prefixing helpers with base class for models using STI besides model name prefix
 - Support create when nested on through association when source association is singular, as rails creates the joint model
+- Allow to set controller nil for association columns to STI models
 
 = 3.7.4
 - Support loading both jquery and jquery-ui externally

@@ -99,7 +99,7 @@ module ActiveScaffold
       def action_link_to_inline_form(link, record)
         link = link.dup
         associated = record.send(link.column.association.name)
-        if link.column.association&.polymorphic?
+        if link.column.association&.polymorphic? || link.controller.nil?
           link.controller = controller_path_for_activerecord(associated.class)
           return link if link.controller.nil?
         end
