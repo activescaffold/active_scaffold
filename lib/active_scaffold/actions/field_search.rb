@@ -157,7 +157,7 @@ module ActiveScaffold::Actions
         search_params.each do |key, value|
           next unless columns.include? key
           column = active_scaffold_config.columns[key]
-          search_condition = self.class.condition_for_column(column, value, text_search)
+          search_condition = self.class.condition_for_column(column, value, text_search, session)
           next if search_condition.blank?
 
           active_scaffold_conditions << search_condition

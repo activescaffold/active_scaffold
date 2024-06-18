@@ -9,6 +9,7 @@
 - Support prefixing helpers with base class for models using STI besides model name prefix
 - Support create when nested on through association when source association is singular, as rails creates the joint model
 - Allow to set controller nil for association columns to STI models
+- Add session argument to condition_for_column and condition_for_<column>_column, so custom conditions on columns may use the session, make it optional so it's backwards compatible
 
 = 3.7.4
 - Support loading both jquery and jquery-ui externally

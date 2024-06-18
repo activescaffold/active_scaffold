@@ -96,11 +96,14 @@ module ActiveScaffold
       # Generates an SQL condition for the given ActiveScaffold column based on
       # that column's database type (or form_ui ... for virtual columns?).
       # TODO: this should reside on the column, not the controller
-      def condition_for_column(column, value, text_search = :full)
+      def condition_for_column(column, value, text_search, session)
         like_pattern = like_pattern(text_search)
         value = value.with_indifferent_access if value.is_a? Hash
-        if respond_to?("condition_for_#{column.name}_column")
-          return send("condition_for_#{column.name}_column", column, value, like_pattern)
+        column_method = "condition_for_#{column.name}_column"
+        if respond_to?(column_method)
+          args = [column, value, like_pattern]
+          args << session if method(column_method).arity == 4
+          return send("condition_for_#{column.name}_column", *args)
         end
         return unless column&.search_sql && value.present?
         search_ui = column.search_ui || column.column_type
