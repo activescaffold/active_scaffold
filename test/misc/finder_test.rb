@@ -75,13 +75,13 @@ class FinderTest < Minitest::Test
 
   def test_condition_for_column
     column = ActiveScaffold::DataStructures::Column.new('adult', Person)
-    assert_equal ['"people"."adult" = ?', false], ClassWithFinder.condition_for_column(column, '0')
+    assert_equal ['"people"."adult" = ?', false], ClassWithFinder.condition_for_column(column, '0', :full, {})
   end
 
   def test_condition_for_polymorphic_column
     column = ActiveScaffold::DataStructures::Column.new('addressable', Address)
     column.search_sql = [{subquery: [Building, 'name']}]
-    condition = ClassWithFinder.condition_for_column(column, 'test search')
+    condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Building.where(['name LIKE ?', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"addresses"."addressable_id" IN (?) AND "addresses"."addressable_type" = ?', condition[0]
     assert_equal ['Building'], condition[2..-1]
@@ -90,7 +90,7 @@ class FinderTest < Minitest::Test
   def test_condition_for_polymorphic_column_with_relation
     column = ActiveScaffold::DataStructures::Column.new('contactable', Contact)
     column.search_sql = [{subquery: [Person.joins(:buildings), 'first_name', 'last_name']}]
-    condition = ClassWithFinder.condition_for_column(column, 'test search')
+    condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Person.joins(:buildings).where(['first_name LIKE ? OR last_name LIKE ?', '%test search%', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"contacts"."contactable_id" IN (?) AND "contacts"."contactable_type" = ?', condition[0]
     assert_equal ['Person'], condition[2..-1]
@@ -100,7 +100,7 @@ class FinderTest < Minitest::Test
     column = ActiveScaffold::DataStructures::Column.new('owner', Building)
     column.search_sql = [{subquery: [Person, 'first_name', 'last_name'], conditions: ['floor_count > 0']}]
     column.search_ui = :text
-    condition = ClassWithFinder.condition_for_column(column, 'test search')
+    condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Person.where(['first_name LIKE ? OR last_name LIKE ?', '%test search%', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"buildings"."owner_id" IN (?) AND floor_count > 0', condition[0]
     assert_equal [], condition[2..-1]
@@ -110,7 +110,7 @@ class FinderTest < Minitest::Test
     column = ActiveScaffold::DataStructures::Column.new('owner', Building)
     column.search_sql = [{subquery: [Person, 'first_name', 'last_name'], conditions: ['floor_count > 0 AND name != ?', '']}]
     column.search_ui = :text
-    condition = ClassWithFinder.condition_for_column(column, 'test search')
+    condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Person.where(['first_name LIKE ? OR last_name LIKE ?', '%test search%', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"buildings"."owner_id" IN (?) AND floor_count > 0 AND name != ?', condition[0]
     assert_equal [''], condition[2..-1]
