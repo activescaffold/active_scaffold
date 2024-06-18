@@ -1,3 +1,4 @@
+= 3.7.5
 - Fix always show search for nested list on multi-level through associations
 - Support changing step, min and max options with column options or search_ui options for decimal and integer search_ui
 - Support null and not null comparators in date and datetime search_ui
