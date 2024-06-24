@@ -1,5 +1,6 @@
 - Respect :label_method set in form_ui_options on list.
 - Fix grouped search for PostgreSQL
+- Fix loading current search params when search form is open and store_user_settings is disabled
 
 = 3.7.5
 - Fix always show search for nested list on multi-level through associations
