@@ -1,3 +1,5 @@
+- Respect :label_method set in form_ui_options on list.
+
 = 3.7.5
 - Fix always show search for nested list on multi-level through associations
 - Support changing step, min and max options with column options or search_ui options for decimal and integer search_ui

@@ -263,7 +263,7 @@ module ActiveScaffold
       end
 
       def format_association_value(value, column, size)
-        method = column.options[:label_method] || :to_label
+        method = (column.list_ui_options || column.options)[:label_method] || :to_label
         value =
           if column.association.collection?
             format_collection_association_value(value, column, method, size)
