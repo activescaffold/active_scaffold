@@ -56,24 +56,31 @@ module ActiveScaffold::Actions
 
       def custom_finder_options
         if grouped_search?
-          group_sql = calculation_for_group_by(search_group_column&.field || search_group_name, search_group_function) if search_group_function
-          group_by = group_sql&.to_sql || quoted_select_columns(search_group_column&.select_columns || [search_group_name])
-          select_query = group_sql ? [group_sql.as(search_group_column.name.to_s)] : group_by.dup
-          grouped_columns_calculations.each do |name, part|
-            select_query << (part.respond_to?(:as) ? part : Arel::Nodes::SqlLiteral.new(part)).as(name.to_s)
-          end
-          if search_group_column
-            if search_group_column.sortable?
-              group_sort = group_sql ? group_by : search_group_column.sort[:sql]
-              grouped_columns = grouped_columns_calculations.merge(search_group_column.name => group_sort)
-            end
-            sorting = active_scaffold_config.list.user.sorting&.clause(grouped_columns || grouped_columns_calculations)
-            sorting = sorting.map(&Arel.method(:sql)) if sorting && active_scaffold_config.active_record?
-          end
-          {group: group_by, select: select_query, reorder: sorting}
+          grouped_search_finder_options
         else
           super
         end
+      end
+
+      def grouped_search_finder_options
+        group_sql = calculation_for_group_by(search_group_column&.field || search_group_name, search_group_function) if search_group_function
+        group_by = group_sql&.to_sql || quoted_select_columns(search_group_column&.select_columns || [search_group_name])
+        select_query = grouped_search_select + (group_sql ? [group_sql.as(search_group_column.name.to_s)] : group_by)
+        {group: group_by, select: select_query, reorder: grouped_sorting(group_by)}
+      end
+
+      def grouped_search_select
+        grouped_columns_calculations.map do |name, part|
+          (part.respond_to?(:as) ? part : Arel::Nodes::SqlLiteral.new(part)).as(name.to_s)
+        end
+      end
+
+      def grouped_sorting(group_sql)
+        return unless search_group_column && active_scaffold_config.list.user.sorting
+        group_sort = search_group_function ? group_sql : search_group_column.sort[:sql] if search_group_column.sortable?
+        grouped_columns = grouped_columns_calculations.merge(search_group_column.name => group_sort)
+        sorting = active_scaffold_config.list.user.sorting.clause(grouped_columns)
+        active_scaffold_config.active_record? ? sorting&.map(&Arel.method(:sql)) : sorting
       end
 
       def grouped_columns_calculations
@@ -87,7 +94,6 @@ module ActiveScaffold::Actions
       end
 
       def calculation_for_group_by(group_sql, group_function)
-        return group_sql unless group_function
         group_sql = Arel::Nodes::SqlLiteral.new(group_sql)
         case group_function
         when 'year', 'month', 'quarter'
