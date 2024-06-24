@@ -577,7 +577,7 @@ module ActiveScaffold
     def finder_options(options = {})
       search_conditions = all_conditions
 
-      sorting = options[:sorting]&.clause((grouped_columns_calculations if grouped_search?))
+      sorting = options[:sorting]&.clause
       sorting = sorting.map(&Arel.method(:sql)) if sorting && active_scaffold_config.active_record?
       # create a general-use options array that's compatible with Rails finders
       finder_options = {

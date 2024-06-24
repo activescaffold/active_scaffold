@@ -121,14 +121,14 @@ module ActiveScaffold::DataStructures
     end
 
     # builds an order-by clause
-    def clause(grouped_columns_calculations = nil)
+    def clause(grouped_columns = nil)
       return nil if sorts_by_method? || default_sorting?
 
       # unless the sorting is by method, create the sql string
       order = []
       each do |sort_column, sort_direction|
         next if constraint_columns.include? sort_column.name
-        sql = grouped_columns_calculations&.dig(sort_column.name) || sort_column.sort[:sql]
+        sql = grouped_columns ? grouped_columns[sort_column.name] : sort_column.sort[:sql]
         next if sql.blank?
         sql = sql.to_sql if sql.respond_to?(:to_sql)
 
@@ -138,7 +138,7 @@ module ActiveScaffold::DataStructures
         order << parts
       end
 
-      order << @primary_key_order_clause if @sorting_by_primary_key
+      order << @primary_key_order_clause if @sorting_by_primary_key && grouped_columns.nil?
       order.flatten!(1)
       order unless order.empty?
     end

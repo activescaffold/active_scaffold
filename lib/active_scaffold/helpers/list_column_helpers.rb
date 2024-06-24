@@ -226,7 +226,10 @@ module ActiveScaffold
           I18n.t(options[:group_format] || search_group_function, scope: 'date.formats', num: value)
         when 'month'
           I18n.l(Date.new(Time.zone.today.year, value, 1), format: options[:group_format] || search_group_function.to_sym)
-        else value
+        when 'year'
+          value.to_i
+        else
+          value
         end
       end
 
@@ -263,7 +266,7 @@ module ActiveScaffold
       end
 
       def format_association_value(value, column, size)
-        method = column.options[:label_method] || :to_label
+        method = (column.list_ui_options || column.options)[:label_method] || :to_label
         value =
           if column.association.collection?
             format_collection_association_value(value, column, method, size)
