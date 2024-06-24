@@ -56,22 +56,19 @@ module ActiveScaffold::Actions
 
       def custom_finder_options
         if grouped_search?
-          group_sql = calculation_for_group_by(search_group_column&.field || search_group_name)
-          select_query = grouped_search_select
-          select_query << group_sql.as(search_group_column.name.to_s) if search_group_column && group_sql.respond_to?(:to_sql)
-          {group: group_sql, select: select_query}
+          group_sql = calculation_for_group_by(search_group_column&.field || search_group_name, search_group_function) if search_group_function
+          group_by = group_sql&.to_sql || quoted_select_columns(search_group_column&.select_columns || [search_group_name])
+          select_query = group_sql ? [group_sql.as(search_group_column.name.to_s)] : group_by.dup
+          grouped_columns_calculations.each do |name, part|
+            select_query << (part.respond_to?(:as) ? part : Arel::Nodes::SqlLiteral.new(part)).as(name.to_s)
+          end
+          if search_group_column
+            sql = group_sql ? group_by : (search_group_column.sort[:sql] if search_group_column.sortable?)
+            @_grouped_columns = grouped_columns_calculations.merge(search_group_column.name => sql)
+          end
+          {group: group_by, select: select_query}
         else
           super
-        end
-      end
-
-      def grouped_search_select
-        select_query = quoted_select_columns(search_group_column&.select_columns || [search_group_name])
-        if active_scaffold_config.model.columns_hash.include?(active_scaffold_config.model.inheritance_column)
-          select_query << active_scaffold_config.columns[active_scaffold_config.model.inheritance_column].field
-        end
-        grouped_columns_calculations.each do |name, part|
-          select_query << (part.respond_to?(:as) ? part : Arel::Nodes::SqlLiteral.new(part)).as(name.to_s)
         end
       end
 
@@ -85,19 +82,23 @@ module ActiveScaffold::Actions
         sql_function column.calculate.to_s, column.active_record_class.arel_table[column.name]
       end
 
-      def calculation_for_group_by(group_sql)
-        return group_sql unless search_group_function
+      def calculation_for_group_by(group_sql, group_function)
+        return group_sql unless group_function
         group_sql = Arel::Nodes::SqlLiteral.new(group_sql)
-        case search_group_function
+        case group_function
         when 'year', 'month', 'quarter'
-          sql_function(search_group_function, group_sql)
+          extract_sql_fn(group_function, group_sql)
         when 'year_month'
-          sql_function('extract', sql_operator(Arel::Nodes::SqlLiteral.new('YEAR_MONTH'), 'FROM', group_sql))
+          sql_operator(sql_operator(extract_sql_fn('year', group_sql), '*', 100), '+', extract_sql_fn('month', group_sql))
         when 'year_quarter'
-          sql_operator(sql_operator(sql_function('year', group_sql), '*', 10), '+', sql_function('quarter', group_sql))
+          sql_operator(sql_operator(extract_sql_fn('year', group_sql), '*', 10), '+', extract_sql_fn('quarter', group_sql))
         else
-          raise "#{search_group_function} unsupported, override calculation_for_group_by in #{self.class.name}"
+          raise "#{group_function} unsupported, override calculation_for_group_by in #{self.class.name}"
         end
+      end
+
+      def extract_sql_fn(part, column)
+        sql_function('extract', sql_operator(Arel::Nodes::SqlLiteral.new(part), 'FROM', column))
       end
 
       def sql_function(function, *args)

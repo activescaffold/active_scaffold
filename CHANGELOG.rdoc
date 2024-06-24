@@ -1,4 +1,5 @@
 - Respect :label_method set in form_ui_options on list.
+- Fix grouped search for PostgreSQL
 
 = 3.7.5
 - Fix always show search for nested list on multi-level through associations
