@@ -63,9 +63,11 @@ module ActiveScaffold::Actions
             select_query << (part.respond_to?(:as) ? part : Arel::Nodes::SqlLiteral.new(part)).as(name.to_s)
           end
           if search_group_column
-            group_sort = group_sql ? group_by : search_group_column.sort[:sql] if search_group_column.sortable?
-            grouped_columns = grouped_columns_calculations.merge(search_group_column.name => group_sort)
-            sorting = active_scaffold_config.list.user.sorting&.clause(grouped_columns)
+            if search_group_column.sortable?
+              group_sort = group_sql ? group_by : search_group_column.sort[:sql]
+              grouped_columns = grouped_columns_calculations.merge(search_group_column.name => group_sort)
+            end
+            sorting = active_scaffold_config.list.user.sorting&.clause(grouped_columns || grouped_columns_calculations)
             sorting = sorting.map(&Arel.method(:sql)) if sorting && active_scaffold_config.active_record?
           end
           {group: group_by, select: select_query, reorder: sorting}
