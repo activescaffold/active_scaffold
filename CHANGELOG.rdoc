@@ -1,3 +1,4 @@
+= 3.7.6
 - Respect :label_method set in form_ui_options on list.
 - Fix grouped search for PostgreSQL
 - Fix loading current search params when search form is open and store_user_settings is disabled
