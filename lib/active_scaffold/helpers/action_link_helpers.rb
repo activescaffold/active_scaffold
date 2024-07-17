@@ -68,7 +68,7 @@ module ActiveScaffold
             group_tag = :li
           end
           content = content_tag(group_tag, :class => html_classes.presence, :onclick => ('' if hover_via_click?)) do
-            content_tag(:div, as_(link.label), :class => link.name.to_s.downcase) << content_tag(:ul, content)
+            content_tag(:div, as_(link.label(record)), :class => link.name.to_s.downcase) << content_tag(:ul, content)
           end
         else
           content = render_action_link(link, record, options)
@@ -388,7 +388,7 @@ module ActiveScaffold
 
       def action_link_html(link, url, html_options, record)
         label = html_options.delete(:link)
-        label ||= link.label
+        label ||= link.label(record)
         if url.nil?
           content_tag(:a, label, html_options)
         else
