@@ -77,8 +77,15 @@ module ActiveScaffold::DataStructures
 
     # what string to use to represent this action
     attr_writer :label
-    def label
-      @label.is_a?(Symbol) ? ActiveScaffold::Registry.cache(:translations, @label) { as_(@label) } : @label
+    def label(record=nil)
+      case @label
+      when Symbol
+        ActiveScaffold::Registry.cache(:translations, @label) { as_(@label) }
+      when Proc
+        @label.call(record)
+      else
+        @label
+      end
     end
 
     # image to use {:name => 'arrow.png', :size => '16x16'}
