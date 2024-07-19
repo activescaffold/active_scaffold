@@ -77,7 +77,7 @@ module ActiveScaffold::DataStructures
 
     # what string to use to represent this action
     attr_writer :label
-    def label(record=nil)
+    def label(record = nil)
       case @label
       when Symbol
         ActiveScaffold::Registry.cache(:translations, @label) { as_(@label) }
