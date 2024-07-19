@@ -157,7 +157,7 @@ module ActiveScaffold
         cache_keys ||= [method, model.name]
         ActiveScaffold::Registry.cache(*cache_keys) do
           model_names = [model.name]
-          model_names << model.base_class.name if model.base_class != model
+          model_names << model.base_class.name if model.respond_to?(:base_class) && model.base_class != model
           method_with_class = model_names.find do |model_name|
             method_with_class = "#{clean_class_name(model_name)}_#{method}"
             break method_with_class if respond_to?(method_with_class)
