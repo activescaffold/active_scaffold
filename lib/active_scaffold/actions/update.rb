@@ -150,9 +150,8 @@ module ActiveScaffold::Actions
       params.delete(:original_html)
       params.delete(:original_value)
       @column = active_scaffold_config.columns[column]
-      value_record = record_for_update_column
-      return unless value_record
 
+      value_record = record_for_update_column
       value = value_for_update_column(value, @column, value_record)
       value_record.send("#{@column.name}=", value)
       before_update_save(@record)
@@ -168,16 +167,19 @@ module ActiveScaffold::Actions
         end
       end
       after_update_save(@record)
+    rescue ActiveScaffold::ActionNotAllowed
+      self.successful = false
     end
 
     def record_for_update_column
       @record = find_if_allowed(params[:id], :read)
-      return unless @record.authorized_for?(:crud_type => :update, :column => @column.name)
+      raise ActiveScaffold::ActionNotAllowed unless @record.authorized_for?(:crud_type => :update, :column => @column.name)
 
       if @column.delegated_association
         value_record = @record.send(@column.delegated_association.name)
         value_record ||= @record.association(@column.delegated_association.name).build
-        value_record if value_record.authorized_for?(:crud_type => :update, :column => @column.name)
+        raise ActiveScaffold::ActionNotAllowed unless value_record.authorized_for?(:crud_type => :update, :column => @column.name)
+        value_record
       else
         @record
       end

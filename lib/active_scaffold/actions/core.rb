@@ -391,7 +391,7 @@ module ActiveScaffold::Actions
           get_row(crud_type_or_security_options)
           if @record.nil?
             self.successful = false
-            flash[:error] = as_(:no_authorization_for_action, :action => action_name)
+            flash[:error] = as_(:no_authorization_for_action, :action => @action_link&.label(nil) || action_name)
           else
             yield @record
           end
