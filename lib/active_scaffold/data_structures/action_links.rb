@@ -139,8 +139,15 @@ module ActiveScaffold::DataStructures
     end
 
     attr_writer :label
-    def label
-      as_(@label) if @label
+    def label(record)
+      case @label
+      when Symbol
+        ActiveScaffold::Registry.cache(:translations, @label) { as_(@label) }
+      when Proc
+        @label.call(record)
+      else
+        @label
+      end
     end
 
     def method_missing(name, *args, &block)
