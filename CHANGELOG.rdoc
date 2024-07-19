@@ -1,6 +1,7 @@
 - Fix usage with mongoid, broken on 3.7.5
 - Support proc or lambda in label of action links
 - Set successful to false when update_column is not authorized for the column
+- Use action link's label for flash message when custom action is not authorized
 
 = 3.7.6
 - Respect :label_method set in form_ui_options on list.
