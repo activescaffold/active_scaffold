@@ -102,26 +102,17 @@ module ActiveScaffold
       if belongs_to_counter_cache_hack?(column.association, attribute)
         parent_record.send "#{column.association.foreign_key}=", value&.id
         parent_record.association(column.name).target = value
-      elsif column.association.through_singular? && (column.association.collection? || value.nil?)
-        # has_one through works except for setting nil
-        update_column_through_singular_association(parent_record, column, value)
+      elsif column.association.collection? && column.association.through_singular?
+        through = column.association.through_reflection.name
+        through_record = parent_record.send(through)
+        through_record ||= parent_record.send "build_#{through}"
+        through_record.send "#{column.association.source_reflection.name}=", value
       else
         parent_record.send "#{column.name}=", value
       end
     rescue ActiveRecord::RecordNotSaved
       parent_record.errors.add column.name, :invalid
       parent_record.association(column.name).target = value
-    end
-
-    def update_column_through_singular_association(parent_record, column, value)
-      # has_one through works except for setting nil, we need to set through association too, and set unsaved flag to ensure through record is saved
-      parent_record.send "#{column.name}=", value if column.association.singular? && value.nil?
-      through = column.association.through_reflection.name
-      through_record = parent_record.send(through)
-      through_record ||= parent_record.send "build_#{through}"
-      through_record.send "#{column.association.source_reflection.name}=", value
-      through_record.unsaved = true
-      through_record
     end
 
     def column_value_from_param_value(parent_record, column, value, avoid_changes = false)
