@@ -107,6 +107,11 @@ module ActiveScaffold
         through_record = parent_record.send(through)
         through_record ||= parent_record.send "build_#{through}"
         through_record.send "#{column.association.source_reflection.name}=", value
+      elsif column.association.singular? && column.association.through? && value.nil?
+        through = column.association.through_reflection.name
+        through_record = parent_record.send(through)
+        through_record.unsaved = true
+        through_record.send "#{column.association.source_reflection.name}=", value
       else
         parent_record.send "#{column.name}=", value
       end
