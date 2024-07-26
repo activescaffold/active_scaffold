@@ -375,7 +375,7 @@ module ActiveScaffold::Actions
     # call this method in your action_link action to simplify processing of actions
     # eg for member action_link :fire
     # process_action_link_action do |record|
-    #   record.update_attributes(:fired => true)
+    #   record.update(:fired => true)
     #   self.successful = true
     #   flash[:info] = 'Player fired'
     # end
