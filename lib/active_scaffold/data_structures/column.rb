@@ -37,6 +37,19 @@ module ActiveScaffold::DataStructures
       @params ||= NO_PARAMS.dup
     end
 
+    def default_value
+      @default_value || @db_default_value
+    end
+
+    def default_value=(value)
+      raise ArgumentError, "Can't set default value for non-DB columns (virtual columns or associations)" unless column
+      @default_value = value
+    end
+
+    def default_value?
+      defined? @default_value
+    end
+
     # the display-name of the column. this will be used, for instance, as the column title in the table and as the field name in the form.
     # if left alone it will utilize human_attribute_name which includes localization
     attr_writer :label
@@ -377,6 +390,7 @@ module ActiveScaffold::DataStructures
       if @column.nil? && active_record? && active_record_class._default_attributes.key?(name.to_s)
         @column = active_record_class._default_attributes[name.to_s]
       end
+      @db_default_value = ActiveScaffold::OrmChecks.default_value active_record_class, name if @column
       @delegated_association = delegated_association
       @cache_key = [@active_record_class.name, name].compact.map(&:to_s).join('#')
       setup_association_info
@@ -455,10 +469,8 @@ module ActiveScaffold::DataStructures
       return nil unless column
       if column.is_a?(ActiveModel::Attribute)
         column.value
-      elsif active_record?
-        null? ? nil : column.default
-      elsif mongoid?
-        column.default_val
+      else
+        default_value
       end
     end
 
@@ -484,10 +496,6 @@ module ActiveScaffold::DataStructures
     end
 
     def column_type
-      ActiveScaffold::OrmChecks.column_type active_record_class, name
-    end
-
-    def default_value
       ActiveScaffold::OrmChecks.column_type active_record_class, name
     end
 

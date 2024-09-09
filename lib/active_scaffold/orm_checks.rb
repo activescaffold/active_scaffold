@@ -85,9 +85,9 @@ module ActiveScaffold
 
       def default_value(klass, column_name)
         if ActiveScaffold::OrmChecks.mongoid? klass
-          columns_hash(klass)[column_name]&.default_val
+          columns_hash(klass)[column_name.to_s]&.default_val
         elsif ActiveScaffold::OrmChecks.active_record? klass
-          klass._default_attributes[column_name]&.value
+          klass._default_attributes[column_name.to_s]&.value
         end
       end
 
