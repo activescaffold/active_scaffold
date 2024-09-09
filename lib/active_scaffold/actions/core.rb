@@ -300,11 +300,11 @@ module ActiveScaffold::Actions
         build_options = sti_nested_build_options(relation.klass)
       end
       record = relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
-      set_default_attributes record if set_defaults
+      assign_default_attributes record if set_defaults
       record
     end
 
-    def set_default_attributes(record)
+    def assign_default_attributes(record)
       active_scaffold_config.columns.each do |column|
         record.write_attribute column.name, column.default_value if column.default_value?
       end

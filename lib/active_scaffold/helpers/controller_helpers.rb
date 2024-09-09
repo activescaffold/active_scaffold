@@ -181,7 +181,7 @@ module ActiveScaffold
           parent_record.send("build_#{association.name}")
         else
           association.klass.new.tap do |record|
-            set_default_attributes record
+            assign_default_attributes record
             save_record_to_association(record, association.reverse_association, parent_record) # set inverse
           end
         end
