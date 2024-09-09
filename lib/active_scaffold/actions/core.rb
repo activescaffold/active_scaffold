@@ -294,12 +294,20 @@ module ActiveScaffold::Actions
       end
     end
 
-    def new_model
+    def new_model(set_defaults = true)
       relation = beginning_of_chain
       if nested? && nested.plural_association? && nested.match_model?(active_scaffold_config.model)
         build_options = sti_nested_build_options(relation.klass)
       end
-      relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
+      record = relation.respond_to?(:build) ? relation.build(build_options || {}) : relation.new
+      set_default_attributes record if set_defaults
+      record
+    end
+
+    def set_default_attributes(record)
+      active_scaffold_config.columns.each do |column|
+        record.write_attribute column.name, column.default_value if column.default_value?
+      end
     end
 
     def sti_nested_build_options(klass)
