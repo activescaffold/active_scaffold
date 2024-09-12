@@ -3,6 +3,7 @@
 - Set successful to false when update_column is not authorized for the column
 - Use action link's label for flash message when custom action is not authorized
 - Add default_value to columns, so default_value can be defined in AS config, overriding DB default
+- Fix caching query from association_klass_scoped in subforms, when returns different queries for the same association on different rows
 
 = 3.7.6
 - Respect :label_method set in form_ui_options on list.
