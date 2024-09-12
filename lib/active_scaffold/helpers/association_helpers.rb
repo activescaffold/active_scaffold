@@ -6,7 +6,7 @@ module ActiveScaffold
       def cache_association_options(association, conditions, klass, cache = true)
         if active_scaffold_config.cache_association_options && cache
           @_associations_cache ||= Hash.new { |h, k| h[k] = {} }
-          key = [association.name, association.inverse_klass.name, klass.name].join('/')
+          key = [association.name, association.inverse_klass.name, klass.respond_to?(:cache_key) ? klass.cache_key : klass.name].join('/')
           @_associations_cache[key][conditions] ||= yield
         else
           yield
@@ -31,8 +31,8 @@ module ActiveScaffold
         end
 
         conditions ||= send(association_helper_method(association, :options_for_association_conditions), association, record)
+        klass = send(association_helper_method(association, :association_klass_scoped), association, klass, record)
         cache_association_options(association, conditions, klass, cache) do
-          klass = send(association_helper_method(association, :association_klass_scoped), association, klass, record)
           relation = klass.where(conditions)
           column = column_for_association(association, record)
           if column&.includes
