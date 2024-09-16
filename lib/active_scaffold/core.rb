@@ -267,12 +267,12 @@ module ActiveScaffold
     end
 
     def self.mongoid_column_type_cast(value, column)
-      return Time.zone.at(value.to_i) if value =~ /\A\d+\z/ && [Time, DateTime].include?(column.type)
+      return Time.zone.at(value.to_i) if [Time, DateTime].include?(column.type) && value =~ /\A\d+\z/
       column.type.evolve value
     end
 
     def self.active_record_column_type_cast(value, column_or_type)
-      return Time.zone.at(value.to_i) if value =~ /\A\d+\z/ && %i[time datetime].include?(column_or_type.type)
+      return Time.zone.at(value.to_i) if %i[time datetime].include?(column_or_type.type) && value =~ /\A\d+\z/
       cast_type = column_or_type.is_a?(ActiveRecord::ConnectionAdapters::Column) ? ActiveRecord::Type.lookup(column_or_type.type) : column_or_type
       cast_type ? cast_type.cast(value) : value
     end
