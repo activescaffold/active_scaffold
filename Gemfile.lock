@@ -7,7 +7,7 @@ GIT
 PATH
   remote: .
   specs:
-    active_scaffold (3.7.6)
+    active_scaffold (3.7.7)
       cow_proxy (~> 0.3)
       ice_nine (~> 0.11)
       rails (>= 5.2.0)
@@ -212,7 +212,7 @@ GEM
     rake (13.2.1)
     rdoc (6.6.3.1)
       psych (>= 4.0.0)
-    request_store (1.6.0)
+    request_store (1.7.0)
       rack (>= 1.4)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
