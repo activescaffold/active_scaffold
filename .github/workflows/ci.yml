@@ -17,6 +17,7 @@ jobs:
           lfs: true
       - uses: ruby/setup-ruby@v1
         with:
+          ruby-version: '3.1'
           bundler-cache: true
       - run: bundle exec brakeman --exit-on-warn --output brakeman/index.html
       - uses: actions/upload-artifact@v4.1.0
@@ -34,6 +35,7 @@ jobs:
           lfs: true
       - uses: ruby/setup-ruby@v1
         with:
+          ruby-version: '3.1'
           bundler-cache: true
       - run: bundle exec bundle-audit check --update --verbose
   lint-i18n:
@@ -48,6 +50,7 @@ jobs:
           lfs: true
       - uses: ruby/setup-ruby@v1
         with:
+          ruby-version: '3.1'
           bundler-cache: true
       - run: bundle exec i18n-tasks health
   lint-rubocop:
@@ -61,6 +64,7 @@ jobs:
           lfs: true
       - uses: ruby/setup-ruby@v1
         with:
+          ruby-version: '3.1'
           bundler-cache: true
       - run: bundle exec rubocop
   test:
