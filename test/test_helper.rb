@@ -1,4 +1,4 @@
-require 'simplecov' if ENV['COVERAGE']
+require 'simplecov' if ENV['COVERAGE'] == 'true'
 
 ENV['RAILS_ENV'] = 'test'
 require 'mock_app/config/environment'
