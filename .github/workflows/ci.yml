@@ -69,6 +69,7 @@ jobs:
     env:
       BUNDLE_CLEAN: true
       BUNDLE_DEPLOYMENT: true
+      BUNDLE_GEMFILE: gemfiles/Gemfile.rails-5.2.x # remove when using newer ruby version
       BUNDLE_WITHOUT: 'default deployment development production test performance'
     steps:
       - uses: actions/checkout@v4.1.0
@@ -77,7 +78,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.5'
-          rubygems: 3.2.3
+          rubygems: 3.2.3 # remove when using newer ruby version
           bundler-cache: true
       - run: bundle exec rubocop
   test:
