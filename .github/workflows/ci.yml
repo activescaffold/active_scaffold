@@ -99,6 +99,7 @@ jobs:
             rails: '5.2'
           - ruby: '3.2'
             rails: '6.1'
+            env: COVERAGE=true
             coverage: true
     timeout-minutes: 60
     env:
@@ -121,9 +122,10 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      - run: env
       - run: bundle exec rake
-      - run: "./cc-test-reporter after-build -t simplecov"
-        if: ${{ matrix.coverage }}
+#      - run: "./cc-test-reporter after-build -t simplecov"
+#        if: ${{ matrix.coverage }}
       - uses: actions/upload-artifact@v4.1.0
         if: success()
         with:
