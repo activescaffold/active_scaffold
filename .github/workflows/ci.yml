@@ -127,6 +127,6 @@ jobs:
       - uses: actions/upload-artifact@v4.1.0
         if: success()
         with:
-          name: "${{ github.job }}"
+          name: "${{ github.job }}"-coverage
           retention-days: 1
           path: coverage
