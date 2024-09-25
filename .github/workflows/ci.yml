@@ -115,10 +115,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
       - name: Setup Code Climate test-reporter
         if: ${{ matrix.coverage }}
         run: |
