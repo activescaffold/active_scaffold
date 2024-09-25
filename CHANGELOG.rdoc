@@ -1,3 +1,5 @@
+- Rollback previous behaviour when submitting empty values, broken when default_value was added. Default value set in column is not used when trying to save empty value, DB default is used in that case, and save NULL when string is empty, as before.
+
 = 3.7.7
 - Fix usage with mongoid, broken on 3.7.5
 - Support proc or lambda in label of action links
