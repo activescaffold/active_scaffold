@@ -68,7 +68,6 @@ jobs:
     timeout-minutes: 60
     env:
       BUNDLE_CLEAN: true
-      BUNDLE_DEPLOYMENT: true
       BUNDLE_WITHOUT: 'default deployment development production test performance'
     steps:
       - uses: actions/checkout@v4.1.0
