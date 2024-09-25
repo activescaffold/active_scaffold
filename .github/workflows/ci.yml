@@ -103,6 +103,10 @@ jobs:
             rails: '5.2'
           - ruby: jruby-9.4
             rails: '5.2'
+          - ruby: '2.5'
+            rails: '6.0'
+          - ruby: '2.5'
+            rails: '6.1'
     timeout-minutes: 60
     env:
       JRUBY_OPTS: "--debug"
@@ -116,6 +120,10 @@ jobs:
       - uses: actions/checkout@v4.1.0
         with:
           lfs: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
