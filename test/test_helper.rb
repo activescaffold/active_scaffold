@@ -1,4 +1,11 @@
-require 'simplecov' if ENV['COVERAGE']
+if ENV['COVERAGE'] == 'true'
+  require 'simplecov'
+  require 'simplecov_json_formatter'
+  SimpleCov.formatters = [
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::JSONFormatter
+  ]
+end
 
 ENV['RAILS_ENV'] = 'test'
 require 'mock_app/config/environment'
