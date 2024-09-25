@@ -3,7 +3,7 @@ if ENV['COVERAGE'] == 'true'
   require 'simplecov_json_formatter'
   SimpleCov.formatters = [
     SimpleCov::Formatter::HTMLFormatter,
-    SimpleCov::Formatter::JSONFormatter,
+    SimpleCov::Formatter::JSONFormatter
   ]
 end
 
