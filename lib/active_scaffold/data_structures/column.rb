@@ -469,8 +469,10 @@ module ActiveScaffold::DataStructures
       return nil unless column
       if column.is_a?(ActiveModel::Attribute)
         column.value
+      elsif active_record? && null?
+        nil
       else
-        default_value
+        @db_default_value
       end
     end
 
