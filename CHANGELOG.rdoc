@@ -1,4 +1,5 @@
 - Rollback previous behaviour when submitting empty values, broken when default_value was added. Default value set in column is not used when trying to save empty value, DB default is used in that case, and save NULL when string is empty, as before.
+- Support operators =, null and not null for :select search_ui, so it's possible to search for NULL with :select search UI.
 
 = 3.7.7
 - Fix usage with mongoid, broken on 3.7.5

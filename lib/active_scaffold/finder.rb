@@ -155,6 +155,7 @@ module ActiveScaffold
       end
 
       def condition_for_search_ui(column, value, like_pattern, search_ui)
+        Rails.logger.debug "param for #{column.name} #{value.inspect} #{value.is_a? Hash}"
         case search_ui
         when :boolean, :checkbox
           if value == 'null'
@@ -164,13 +165,17 @@ module ActiveScaffold
           end
         when :integer, :decimal, :float
           condition_for_numeric(column, value)
-        when :string, :range
-          condition_for_range(column, value, like_pattern)
         when :date, :time, :datetime, :timestamp
           condition_for_datetime(column, value)
+        when :string, :range
+          condition_for_range(column, value, like_pattern)
         when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state, :chosen, :multi_chosen
-          values = Array(value).select(&:present?)
-          ['%<search_sql>s in (?)', values] if values.present?
+          if value.is_a?(Hash)
+            condition_for_range(column, value, like_pattern)
+          else
+            values = Array(value).select(&:present?)
+            ['%<search_sql>s in (?)', values] if values.present?
+          end
         else
           if column.text?
             value = column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value
@@ -178,7 +183,7 @@ module ActiveScaffold
           else
             ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
           end
-        end
+        end.tap{|v|Rails.logger.debug "conditions for #{column.name}: #{v.inspect}"}
       end
 
       def condition_for_numeric(column, value)
