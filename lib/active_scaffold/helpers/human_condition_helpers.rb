@@ -105,11 +105,8 @@ module ActiveScaffold
       def active_scaffold_human_condition_select(column, associated)
         attribute = column.active_record_class.human_attribute_name(column.name)
         if associated.is_a?(Hash)
-          if associated['opt'] == '='
-            associated = associated['from']
-          else
-            return active_scaffold_human_condition_range(column, associated)
-          end
+          return active_scaffold_human_condition_range(column, associated) unless associated['opt'] == '='
+          associated = associated['from']
         end
         associated = [associated].compact unless associated.is_a? Array
         if column.association
