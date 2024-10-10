@@ -104,6 +104,13 @@ module ActiveScaffold
 
       def active_scaffold_human_condition_select(column, associated)
         attribute = column.active_record_class.human_attribute_name(column.name)
+        if associated.is_a?(Hash)
+          if associated['opt'] == '='
+            associated = associated['from']
+          else
+            return active_scaffold_human_condition_range(column, associated)
+          end
+        end
         associated = [associated].compact unless associated.is_a? Array
         if column.association
           method = column.options[:label_method] || :to_label
