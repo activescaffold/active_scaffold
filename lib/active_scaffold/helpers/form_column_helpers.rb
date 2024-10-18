@@ -209,7 +209,7 @@ module ActiveScaffold
         hidden_style = 'display: none;'
         blank_choice = content_tag(:option, as_(:_select_), value: '')
         option_tags = tab_options.inject(blank_choice) do |html, (label, value, tab_record)|
-          used = used_tabs.include? tab_record || value
+          used = used_tabs.include?(tab_record || value)
           html << content_tag(:option, label, value: value, style: (hidden_style if used))
         end
         select_tag(nil, option_tags, class: "#{column.tabbed_by}-input", id: "#{subsection_id}_input")
@@ -260,7 +260,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs)
-        used_tabs = used_tabs.map { |value, value_id| [value, "#{clean_id(value_id || value.to_s)}"] }
+        used_tabs = used_tabs.map { |value, value_id| [value, clean_id(value_id || value.to_s)] }
         content_tag(:div, id: subsection_id, class: 'tabbed') do
           content_tag(:ul, class: 'nav nav-tabs') do
             tabs = used_tabs.map.with_index do |(tab_value, id), i|
