@@ -389,6 +389,15 @@
         form.find('select.as_search_date_time_option').val('BETWEEN');
       });
 
+      jQuery(document).on('click', '.active-scaffold .tabbed .nav-tabs a', function(e) {
+        e.preventDefault();
+        var tab_ctrl = jQuery(this), tabbed = tab_ctrl.closest('.tabbed')
+        tabbed.find('.nav-tabs .active').removeClass('active');
+        tabbed.find('.tab-content .active').removeClass('in active');
+        tab_ctrl.closest('li').addClass('active');
+        jQuery(tab_ctrl.attr('href')).addClass('in active');
+      })
+
       jQuery(document).on('turbolinks:before-visit turbo:before-visit', function() {
         if (history.state.active_scaffold) {
           history.replaceState({turbolinks: true, url: document.location.href}, '', document.location.href);
