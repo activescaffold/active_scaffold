@@ -13,7 +13,7 @@
   <% authorized = show_unauthorized_columns || renders_as == :subsection ? @record.authorized_for?(crud_type: form_action, column: column.name) : true %>
   <% if renders_as == :subsection || renders_as == :tabbed -%>
     <% next unless authorized %>
-  <li class="<%= column.tabbed_by ? 'form-element' : 'sub-section' %> <%= column_css_class %>">
+  <li class="sub-section <%= column_css_class %>">
     <%= render_subsection(column, @record, scope, form_action) %>
   </li>
   <% elsif renders_as == :subform and authorized -%>
