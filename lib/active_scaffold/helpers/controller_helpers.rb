@@ -184,7 +184,7 @@ module ActiveScaffold
             assign_default_attributes record
             save_record_to_association(record, association.reverse_association, parent_record) # set inverse
           end
-        end
+        end.tap { |record| yield record if block_given? }
       end
 
       def save_record_to_association(record, association, value, reverse = nil)
