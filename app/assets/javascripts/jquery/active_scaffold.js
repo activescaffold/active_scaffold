@@ -390,13 +390,14 @@
       });
 
       jQuery(document).on('click', '.active-scaffold .tabbed .nav-tabs a', function(e) {
+        if (typeof $().tab == 'function') return; // bootstrap tab plugin is loaded and will handle tabs
         e.preventDefault();
         var tab_ctrl = jQuery(this), tabbed = tab_ctrl.closest('.tabbed')
         tabbed.find('.nav-tabs .active').removeClass('active');
         tabbed.find('.tab-content .active').removeClass('in active');
         tab_ctrl.closest('li').addClass('active');
         jQuery(tab_ctrl.attr('href')).addClass('in active');
-      })
+      });
 
       jQuery(document).on('turbolinks:before-visit turbo:before-visit', function() {
         if (history.state.active_scaffold) {
