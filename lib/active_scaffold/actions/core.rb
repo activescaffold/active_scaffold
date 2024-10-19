@@ -29,6 +29,11 @@ module ActiveScaffold::Actions
         respond_to do |format|
           format.js { render :action => 'render_field_inplace', :layout => false }
         end
+      elsif params[:tabbed_by]
+        add_tab
+        respond_to do |format|
+          format.js { render :action => 'add_tab', :layout => false }
+        end
       else
         render_field_for_update_columns
         respond_to { |format| format.js }
@@ -58,10 +63,14 @@ module ActiveScaffold::Actions
       @record = find_if_allowed(params[:id], :crud_type => :update, :column => params[:update_column])
     end
 
-    def render_field_for_update_columns
-      return if (@column = active_scaffold_config.columns[params.delete(:column)]).nil?
+    def add_tab
+      process_render_field_params
+      @column = @main_columns.find_by_name(params[:column])
+      @record = updated_record_with_form(@main_columns, {}, @scope)
+    end
+
+    def process_render_field_params
       @source_id = params.delete(:source_id)
-      @columns = @column.update_columns || []
       @scope = params.delete(:scope)
       if @scope
         @form_action = :subform
@@ -70,7 +79,13 @@ module ActiveScaffold::Actions
       end
       @form_action ||= params[:id] ? :update : :create
       @main_columns = active_scaffold_config.send(@form_action).columns
+    end
+
+    def render_field_for_update_columns
+      return if (@column = active_scaffold_config.columns[params.delete(:column)]).nil?
+      @columns = @column.update_columns || []
       @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
+      process_render_field_params
 
       @record =
         if @column.send_form_on_update_column

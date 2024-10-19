@@ -1,0 +1,15 @@
+<%
+  subsection_id = sub_section_id(:sub_section => @column.label)
+  tab_options = active_scaffold_tab_options(@column, @record)
+  tab_label, tab_value, tab_record = tab_options.find { |_, value, _| params[:value] == value.to_s }
+  if tab_label
+    tab_id_suffix = clean_id(tab_record&.id&.to_s || tab_value.to_s)
+    tab_id = "#{subsection_id}-#{tab_id_suffix}-tab"
+    tab_content = render('form', columns: @column, subsection_id: "#{subsection_id}-#{tab_id_suffix}", form_action: @form_action, scope: @scope, tab_value: tab_record || tab_value, tab_id: tab_id_suffix, tabbed_by: @column.tabbed_by)
+    tab = active_scaffold_tab_content(tab_id, true, tab_content)
+%>
+$('#<%= subsection_id %> .tab-content > .tab-pane.active').removeClass('in active');
+ActiveScaffold.create_associated_record_form('<%= subsection_id %> .tab-content', '<%= j tab %>', {singular: false});
+$('#<%= subsection_id %> .nav-tabs').find('.nav-item.active').removeClass('active').end().append('<%= j active_scaffold_tab(tab_label, tab_id, true) %>');
+$('#<%= @source_id %> option[value=<%= tab_value %>]').hide().parent().val('');
+<% end %>

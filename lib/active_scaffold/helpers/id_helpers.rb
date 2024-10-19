@@ -106,13 +106,13 @@ module ActiveScaffold
       def sub_form_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= nested_parent_id if nested?
-        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform"
+        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}#{'-' if options[:tab_id]}#{options[:tab_id]}-subform"
       end
 
       def sub_form_list_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= nested_parent_id if nested?
-        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform-list"
+        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}#{'-' if options[:tab_id]}#{options[:tab_id]}-subform-list"
       end
 
       def element_messages_id(options = {})

@@ -64,16 +64,16 @@ module ActiveScaffold
           form_attribute(column, record, scope, true, col_class)
         else
           renders_as = column_renders_as(column)
-          html = render_column(column, record, renders_as, scope, false, col_class)
+          html = render_column(column, record, renders_as, scope, only_value: false, col_class: col_class)
           html = content_tag(:div, html, active_scaffold_subform_attributes(column)) if renders_as == :subform
           html
         end
       end
 
-      def active_scaffold_subform_attributes(column, column_css_class = nil, klass = nil)
+      def active_scaffold_subform_attributes(column, column_css_class = nil, klass = nil, tab_id: nil)
         {
-          :class => "sub-form #{active_scaffold_config_for(klass || column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
-          :id => sub_form_id(:association => column.name)
+          class: "sub-form #{active_scaffold_config_for(klass || column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
+          id: sub_form_id(association: column.name, tab_id: tab_id)
         }
       end
 
@@ -155,7 +155,26 @@ module ActiveScaffold
         {}
       end
 
-      def render_column(column, record, renders_as, scope = nil, only_value = false, col_class = nil) # rubocop:disable Metrics/ParameterLists
+      def render_subsection(column, record, scope, form_action)
+        subsection_id = sub_section_id(:sub_section => column.label)
+        locals = {columns: column, form_action: form_action, scope: scope}
+        header = content_tag(:h5) do
+          h(column.label) <<
+            link_to_visibility_toggle(subsection_id, default_visible: !column.collapsed)
+        end
+        if column.tabbed_by
+          locals[:tabbed_by] = column.tabbed_by
+          header << content_tag(:div, id: subsection_id) do
+            active_scaffold_tabbed_by(column, record, scope, subsection_id) do |tab_value, tab_id|
+              render 'form', locals.merge(subsection_id: "#{subsection_id}-#{tab_id}", tab_id: tab_id, tab_value: tab_value)
+            end
+          end
+        else
+          header << render('form', locals.merge(subsection_id: subsection_id))
+        end
+      end
+
+      def render_column(column, record, renders_as, scope = nil, only_value: false, col_class: nil, **subform_locals)
         if form_column_is_hidden?(column, record, scope)
           # creates an element that can be replaced by the update_columns routine,
           # but will not affect the value of the submitted form in this state:
@@ -164,11 +183,11 @@ module ActiveScaffold
             hidden_field_tag(nil, nil, :class => "#{column.name}-input")
           end
         elsif (partial = override_form_field_partial(column))
-          render :partial => partial, :locals => {:column => column, :only_value => only_value, :scope => scope, :col_class => col_class, :record => record}
+          render partial, column: column, only_value: only_value, scope: scope, col_class: col_class, record: record
         elsif renders_as == :field || override_form_field?(column)
           form_attribute(column, record, scope, only_value, col_class)
         elsif renders_as == :subform
-          render :partial => 'form_association', :locals => {:column => column, :scope => scope, :parent_record => record}
+          render 'form_association', subform_locals.slice(:tabbed_by, :tab_value, :tab_id).merge(column: column, scope: scope, parent_record: record)
         else
           form_hidden_attribute(column, record, scope)
         end

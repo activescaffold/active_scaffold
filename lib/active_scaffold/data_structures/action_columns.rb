@@ -9,6 +9,11 @@ module ActiveScaffold::DataStructures
 
     # labels are useful for the Create/Update forms, when we display columns in a grouped fashion and want to name them separately
     attr_writer :label
+
+    # a common column in the association columns included in the group, used to group the records from the
+    # association columns and split them in tabs
+    attr_accessor :tabbed_by
+
     def label
       as_(@label) if @label
     end

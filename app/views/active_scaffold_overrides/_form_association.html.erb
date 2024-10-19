@@ -1,15 +1,24 @@
 <%
-associated = column.association.singular? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a
-if column.show_blank_record?(associated)
-  show_blank_record = build_associated(column.association, parent_record)
-end
-disable_required_for_new = @disable_required_for_new
-@disable_required_for_new = !!show_blank_record unless (column.association.singular? && column.required?(action_for_validation?(parent_record)))
-subform_div_id = "#{sub_form_id(:association => column.name, :id => parent_record.id || generated_id(parent_record) || 99999999999)}-div"
+  tabbed_by ||= nil
+  tab_value ||= nil
+  tab_id ||= nil
+  associated = column.association.singular? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a
+  associated = associated.select { |record| record.send(tabbed_by) == tab_value } if tabbed_by && tab_value
+  if column.show_blank_record?(associated)
+    show_blank_record = build_associated(column.association, parent_record) do |blank_record|
+      blank_record.send("#{tabbed_by}=", tab_value) if tabbed_by && tab_value
+    end
+  end
+  if column == :labor_line_items
+    @financial_months = (associated.first || show_blank_record)&.monthly_task_costs.map(&:financial_month)
+  end
+  disable_required_for_new = @disable_required_for_new
+  @disable_required_for_new = !!show_blank_record unless (column.association.singular? && column.required?(action_for_validation?(parent_record)))
+  subform_div_id = "#{sub_form_id(association: column.name, tab_id: tab_id, id: parent_record.id || generated_id(parent_record) || 99999999999)}-div"
 
-# render footer before rendering associated records, fixes create new on self-associations
-# so generated_id for blank associated record is not used in create new button
-footer = render(:partial => 'form_association_footer', :locals => {:parent_record => parent_record, :column => column, :associated => associated, :scope => scope})
+  # render footer before rendering associated records, fixes create new on self-associations
+  # so generated_id for blank associated record is not used in create new button
+  footer = render('form_association_footer', parent_record: parent_record, column: column, associated: associated, scope: scope, subform_div_id: subform_div_id)
 -%>
 <h5>
   <%= column.label -%>
@@ -19,7 +28,7 @@ footer = render(:partial => 'form_association_footer', :locals => {:parent_recor
 <div id ="<%= subform_div_id %>" <%= 'style="display: none;"'.html_safe if column.collapsed -%>>
 <%# HACK: to be able to delete all associated records %>
   <%= hidden_field_tag "#{(opts = active_scaffold_input_options(column, scope, :object => parent_record))[:name]}[0]", '', :id => "#{opts[:id]}_0" if column.association.collection? %>
-  <%= render :partial => subform_partial_for_column(column), :locals => {:column => column, :parent_record => parent_record, :associated => associated, :show_blank_record => show_blank_record, :scope => scope} %>
+  <%= render subform_partial_for_column(column), column: column, parent_record: parent_record, associated: associated, show_blank_record: show_blank_record, scope: scope, tab_id: tab_id %>
   <%= footer -%>
 </div>
 <%

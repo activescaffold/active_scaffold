@@ -1,3 +1,6 @@
+- Add tabbed_by to group of columns in forms. The columns in the group must be collection associations, with a common column or association, used to partition them in different tabs.
+
+= 3.7.8
 - Rollback previous behaviour when submitting empty values, broken when default_value was added. Default value set in column is not used when trying to save empty value, DB default is used in that case, and save NULL when string is empty, as before.
 - Support operators =, null and not null for :select search_ui, so it's possible to search for NULL with :select search UI.
 

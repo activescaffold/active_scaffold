@@ -28,7 +28,7 @@ add_new_url = params_for(url_options) if show_add_new
          add_label = as_(:replace_with_new)
          add_class = 'as_replace_with_new'
        end
-       create_another_id = "#{sub_form_id(:association => column.name, :id => parent_record.id || temporary_id || 99999999999)}-create-another" %>
+       create_another_id = "#{subform_div_id}-create-another" %>
     <%= link_to add_label, add_new_url, :id => create_another_id, :remote => true, :class => "as-js-button #{add_class}", :style=> "display: none;" %>
     <% end -%>
 
@@ -39,7 +39,7 @@ add_new_url = params_for(url_options) if show_add_new
         <%= link_to_record_select as_(:add_existing), remote_controller.controller_path, record_select_params_for_add_existing(column.association, edit_associated_url, parent_record) -%>
       <% else -%>
         <% select_options = options_from_collection_for_select(sorted_association_options_find(column.association, nil, parent_record), :to_param, :to_label)
-           add_existing_id = "#{sub_form_id(:association => column.name, :id => parent_record.id || temporary_id || 99999999999)}-add-existing"
+           add_existing_id = "#{subform_div_id}-add-existing"
            add_existing_label = column.association.collection? ? :add_existing : :replace_existing %>
         <%= select_tag 'associated_id', content_tag(:option, as_(:_select_), value: '') + select_options %>
         <%= link_to as_(add_existing_label), edit_associated_url, :id => add_existing_id, :remote => true, :class=> "as-js-button as_#{add_existing_label}", :style => "display: none;" %>

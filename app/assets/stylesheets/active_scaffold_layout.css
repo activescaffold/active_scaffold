@@ -957,6 +957,60 @@ font-size: 100%;
   float:left;
 }
 
+.active-scaffold .tabbed .nav-tabs {
+  border-bottom: 1px solid #ddd;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.active-scaffold .tabbed .nav-tabs:before,
+.active-scaffold .tabbed .nav-tabs:after {
+  display: table;
+  content: ' ';
+}
+.active-scaffold .tabbed .nav-tabs:after {
+  clear: both;
+}
+
+.active-scaffold .tabbed .nav-tabs > li {
+  float: left;
+  margin-bottom: -1px;
+  position: relative;
+  display: block;
+}
+
+.active-scaffold .tabbed .nav-tabs > li > a {
+  margin-right: 2px;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+.active-scaffold .tabbed .nav-tabs > li > a:focus,
+.active-scaffold .tabbed .nav-tabs > li > a:hover {
+  border-color: #eee #eee #ddd;
+  text-decoration: none;
+  background-color: #eee;
+}
+.active-scaffold .tabbed .nav-tabs > li.active > a,
+.active-scaffold .tabbed .nav-tabs > li.active > a:focus,
+.active-scaffold .tabbed .nav-tabs > li.active > a:hover {
+  border-color: #ddd;
+  border-bottom-color: transparent;
+  cursor: default;
+  background-color: #fff;
+}
+
+.active-scaffold .tabbed .tab-content > .tab-pane {
+  display: none;
+}
+.active-scaffold .tabbed .tab-content > .active {
+  display: block;
+}
+
+
 .as_touch a.inline-adapter-close {
 width: 25px;
 height: 27px;
