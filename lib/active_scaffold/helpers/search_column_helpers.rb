@@ -407,7 +407,7 @@ module ActiveScaffold
       def visibles_and_hiddens(search_config)
         visibles = []
         hiddens = []
-        search_config.columns.each_column do |column|
+        search_config.columns.each_column(flatten: true) do |column|
           next unless column.search_sql
           if search_config.optional_columns.include?(column.name) && !searched_by?(column)
             hiddens << column
