@@ -174,7 +174,7 @@ module ActiveScaffold
         end
       end
 
-      def render_column(column, record, renders_as, scope = nil, only_value: false, col_class: nil, **opts)
+      def render_column(column, record, renders_as, scope = nil, only_value: false, col_class: nil, **subform_locals)
         if form_column_is_hidden?(column, record, scope)
           # creates an element that can be replaced by the update_columns routine,
           # but will not affect the value of the submitted form in this state:
@@ -183,11 +183,11 @@ module ActiveScaffold
             hidden_field_tag(nil, nil, :class => "#{column.name}-input")
           end
         elsif (partial = override_form_field_partial(column))
-          render :partial => partial, :locals => {column: column, only_value: only_value, scope: scope, col_class: col_class, record: record}
+          render partial, column: column, only_value: only_value, scope: scope, col_class: col_class, record: record
         elsif renders_as == :field || override_form_field?(column)
           form_attribute(column, record, scope, only_value, col_class)
         elsif renders_as == :subform
-          render 'form_association', opts.slice(:tabbed_by, :tab_value, :tab_id).merge(column: column, scope: scope, parent_record: record)
+          render 'form_association', subform_locals.slice(:tabbed_by, :tab_value, :tab_id).merge(column: column, scope: scope, parent_record: record)
         else
           form_hidden_attribute(column, record, scope)
         end
