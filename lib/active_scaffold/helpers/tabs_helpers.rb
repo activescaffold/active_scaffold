@@ -7,13 +7,8 @@ module ActiveScaffold
         refresh_opts = {refresh_link: {text: 'Add tab', class: 'refresh-link add-tab'}}
         tab_options = active_scaffold_tab_options(column, record)
         used_tabs = active_scaffold_current_tabs(column, record)
-        #field = content_tag :dl do
-        #  content_tag(:dt, label_tag("#{subsection_id}_input", column.label)) << content_tag(:dd) do
-            active_scaffold_input_for_tabbed(column, record, subsection_id, tab_options, used_tabs.map(&:first)) <<
-              active_scaffold_refresh_link(nil, {'data-update_url' => url_for(add_tab_url)}, record, refresh_opts) <<
-        #  end
-        #end
-        #field <<
+        active_scaffold_input_for_tabbed(column, record, subsection_id, tab_options, used_tabs.map(&:first)) <<
+          active_scaffold_refresh_link(nil, {'data-update_url' => url_for(add_tab_url)}, record, refresh_opts) <<
           active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs, &block)
       end
 
