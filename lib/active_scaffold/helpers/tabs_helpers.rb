@@ -6,7 +6,7 @@ module ActiveScaffold
         add_tab_url = params_for(action: 'render_field', tabbed_by: column.tabbed_by, id: record.to_param, column: column.label)
         refresh_opts = {refresh_link: {text: 'Add tab', class: 'refresh-link add-tab'}}
         tab_options = send(override_helper_per_model(:active_scaffold_tab_options, record.class), column, record)
-        used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record)
+        used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record, tab_options)
         input_helper = override_helper_per_model(:active_scaffold_input_for_tabbed, record.class)
         send(input_helper, column, record, subsection_id, tab_options, used_tabs.map(&:first)) <<
           active_scaffold_refresh_link(nil, {'data-update_url' => url_for(add_tab_url)}, record, refresh_opts) <<
@@ -23,12 +23,16 @@ module ActiveScaffold
         select_tag(nil, option_tags, class: "#{column.tabbed_by}-input", id: "#{subsection_id}_input")
       end
 
-      def active_scaffold_current_tabs(column, record)
+      def active_scaffold_current_tabs(column, record, tab_options)
         used_choices = Set.new
         column.each_column do |col|
           tabbed_by = col.options[:tabbed_by] || column.tabbed_by
           tab_values = record.send(col.name).map(&tabbed_by).compact
-          tab_values.map! { |value| [value, value.id.to_s] } if tabbed_by_association?(col, tabbed_by)
+          if tabbed_by_association?(col, tabbed_by)
+            tab_values.map! { |value| [value, value.id.to_s] }
+          else
+            tab_values.map! { |value| [tab_options.find { |_, tab_value, _| value == tab_value }&.first || value, value] }
+          end
           used_choices.merge tab_values
         end
         used_choices
