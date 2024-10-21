@@ -5,9 +5,10 @@ module ActiveScaffold
       def active_scaffold_tabbed_by(column, record, scope, subsection_id, &block)
         add_tab_url = params_for(action: 'render_field', tabbed_by: column.tabbed_by, id: record.to_param, column: column.label)
         refresh_opts = {refresh_link: {text: 'Add tab', class: 'refresh-link add-tab'}}
-        tab_options = active_scaffold_tab_options(column, record)
-        used_tabs = active_scaffold_current_tabs(column, record)
-        active_scaffold_input_for_tabbed(column, record, subsection_id, tab_options, used_tabs.map(&:first)) <<
+        tab_options = send(override_helper_per_model(:active_scaffold_tab_options, record.class), column, record)
+        used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record)
+        input_helper = override_helper_per_model(:active_scaffold_input_for_tabbed, record.class)
+        send(input_helper, column, record, subsection_id, tab_options, used_tabs.map(&:first)) <<
           active_scaffold_refresh_link(nil, {'data-update_url' => url_for(add_tab_url)}, record, refresh_opts) <<
           active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs, &block)
       end
