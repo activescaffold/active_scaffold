@@ -25,7 +25,9 @@ module ActiveScaffold::Actions
       @column = active_scaffold_config.columns[params[:child_association]]
 
       @record = find_associated_record if params[:associated_id]
-      @record ||= build_associated(@column.association, @parent_record)
+      @record ||= build_associated(@column.association, @parent_record) do |blank_record|
+        blank_record.send("#{params[:tabbed_by]}=", params[:value]) if params[:tabbed_by] && params[:value]
+      end
     end
 
     def find_associated_record
