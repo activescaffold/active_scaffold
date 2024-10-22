@@ -18,7 +18,7 @@
 
   # render footer before rendering associated records, fixes create new on self-associations
   # so generated_id for blank associated record is not used in create new button
-  footer = render('form_association_footer', parent_record: parent_record, column: column, associated: associated, scope: scope, subform_div_id: subform_div_id)
+  footer = render('form_association_footer', parent_record: parent_record, column: column, associated: associated, scope: scope, subform_div_id: subform_div_id, tabbed_by: tabbed_by, tab_value: tab_value)
 -%>
 <h5>
   <%= column.label -%>

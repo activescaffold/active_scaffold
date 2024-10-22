@@ -9,7 +9,7 @@ module ActiveScaffold
                         :render_parent_action, :nested_singular_association?,
                         :main_form_controller, :build_associated,
                         :generate_temporary_id, :generated_id,
-                        :active_scaffold_config_for
+                        :active_scaffold_config_for, :tabbed_by_association
         end
       end
 
@@ -158,6 +158,10 @@ module ActiveScaffold
           end
         end
         @parent_action
+      end
+
+      def tabbed_by_association(assoc_column, tabbed_by)
+        assoc_column.association.klass.reflect_on_association(tabbed_by)
       end
 
       # build an associated record for association

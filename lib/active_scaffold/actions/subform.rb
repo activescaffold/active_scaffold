@@ -26,8 +26,17 @@ module ActiveScaffold::Actions
 
       @record = find_associated_record if params[:associated_id]
       @record ||= build_associated(@column.association, @parent_record) do |blank_record|
-        blank_record.send("#{params[:tabbed_by]}=", params[:value]) if params[:tabbed_by] && params[:value]
+        if params[:tabbed_by] && params[:value]
+          assign_tabbed_by(blank_record, @column, params[:tabbed_by], params[:value], params[:value_type])
+        end
       end
+    end
+
+    def assign_tabbed_by(record, parent_column, tabbed_by, value, value_type)
+      if (association = tabbed_by_association(parent_column, tabbed_by))
+        klass = value_type&.constantize || association.klass
+      end
+      record.send "#{tabbed_by}=", klass&.find(value) || value
     end
 
     def find_associated_record

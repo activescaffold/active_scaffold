@@ -28,7 +28,7 @@ module ActiveScaffold
         column.each_column do |col|
           tabbed_by = col.options[:tabbed_by] || column.tabbed_by
           tab_values = record.send(col.name).map(&tabbed_by).compact
-          if tabbed_by_association?(col, tabbed_by)
+          if tabbed_by_association(col, tabbed_by)
             tab_values.map! { |value| [value, value.id.to_s] }
           else
             tab_values.map! { |value| [tab_options.find { |_, tab_value, _| value == tab_value }&.first || value, value] }
@@ -38,15 +38,11 @@ module ActiveScaffold
         used_choices
       end
 
-      def tabbed_by_association?(assoc_column, tabbed_by)
-        assoc_column.association.klass.reflect_on_association(tabbed_by).present?
-      end
-
       def active_scaffold_tab_options(column, record)
         subform_column = column.each_column { |col| break col }
         if subform_column
           tabbed_by = subform_column.options[:tabbed_by] || column.tabbed_by
-          if tabbed_by_association?(subform_column, tabbed_by)
+          if tabbed_by_association(subform_column, tabbed_by)
             subform_record = record.send(subform_column.name).first_or_initialize
             tab_column = active_scaffold_config_for(subform_column.association.klass).columns[tabbed_by]
           end

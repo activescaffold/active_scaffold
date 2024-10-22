@@ -15,7 +15,16 @@ controller_path = active_scaffold_controller_for(parent_record.class).controller
 parent_controller = (main_form_controller || controller).controller_path
 url_options = {:controller => controller_path, :action => 'edit_associated', :child_association => column.name, :scope => scope, :id => parent_record.to_param, :generated_id => temporary_id, :parent_controller => parent_controller}
 edit_associated_url = params_for(url_options.merge(:associated_id => '--ID--')) if show_add_existing
-add_new_url = params_for(url_options) if show_add_new
+if show_add_new
+  if local_assigns[:tabbed_by]
+    url_options.merge! tabbed_by: tabbed_by, value: tab_value
+    if (tabbed_association = tabbed_by_association(column, tabbed_by))
+      url_options[:value] = tab_value.id
+      url_options[:value_type] = tab_value.class.base_class.sti_name if tabbed_association.polymorphic?
+    end
+  end
+  add_new_url = params_for(url_options)
+end
 
 -%>
 <div class="footer-wrapper">
