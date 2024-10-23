@@ -88,7 +88,7 @@ module ActiveScaffold
 
   mattr_accessor :nested_subforms, instance_writer: false
   def nested_subforms=(*)
-    ActiveSupport::Deprecation.warn "Nested subforms are enabled by default already"
+    ActiveSupport::Deprecation.warn 'Nested subforms are enabled by default already'
   end
 
   def self.root
