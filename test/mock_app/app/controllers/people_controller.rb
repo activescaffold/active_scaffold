@@ -3,6 +3,6 @@ class PeopleController < ApplicationController
     conf.columns.exclude :files
     conf.columns[:buildings].includes = nil
     conf.columns[:buildings].associated_limit = 0
-    conf.create.columns.exclude :address
+    conf.create.columns.exclude :address, :home
   end
 end
