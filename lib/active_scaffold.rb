@@ -87,6 +87,9 @@ module ActiveScaffold
   end
 
   mattr_accessor :nested_subforms, instance_writer: false
+  def nested_subforms=(*)
+    ActiveSupport::Deprecation.warn "Nested subforms are enabled by default already"
+  end
 
   def self.root
     File.dirname(__FILE__) + '/..'

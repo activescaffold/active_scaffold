@@ -172,11 +172,6 @@ module ActiveScaffold::DataStructures
     attr_accessor :weight
     attr_accessor :css_class
 
-    def name=(value)
-      ActiveSupport::Deprecation.warn "Changing name is deprecated, use css_class to change the class html attribute"
-      self.css_class = value
-    end
-
     protected
 
     # called during clone or dup. makes the clone/dup deeper.
