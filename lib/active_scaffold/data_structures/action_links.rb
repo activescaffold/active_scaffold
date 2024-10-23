@@ -130,7 +130,7 @@ module ActiveScaffold::DataStructures
       end
 
       if group.nil?
-        raise RuntimeError, "Can't add new subgroup '#{name}', links are frozen" if frozen?
+        raise "Can't add new subgroup '#{name}', links are frozen" if frozen?
         group = ActiveScaffold::DataStructures::ActionLinks.new(name)
         group.label = label || name
         group.default_type = self.name == :root ? (name.to_sym if %w[member collection].include?(name.to_s)) : default_type
