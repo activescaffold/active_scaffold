@@ -130,7 +130,6 @@ module ActiveScaffold::DataStructures
       end
 
       if group.nil?
-        group = ActiveScaffold::DataStructures::ActionLinks.new
         group = ActiveScaffold::DataStructures::ActionLinks.new(name)
         group.label = label || name
         group.default_type = self.name == :root ? (name.to_sym if %w[member collection].include?(name.to_s)) : default_type
@@ -172,7 +171,7 @@ module ActiveScaffold::DataStructures
     attr_accessor :css_class
 
     def name=(value)
-      ActiveSupport::Deprecation.warn "Changing name is deprecated, use css_class to change the class html attribute"
+      ActiveSupport::Deprecation.warn 'Changing name is deprecated, use css_class to change the class html attribute'
       self.css_class = value
     end
 
