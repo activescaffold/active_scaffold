@@ -130,7 +130,8 @@ module ActiveScaffold::DataStructures
       end
 
       if group.nil?
-        group = ActiveScaffold::DataStructures::ActionLinks.new
+        raise RuntimeError, "Can't add new subgroup '#{name}', links are frozen" if frozen?
+        group = ActiveScaffold::DataStructures::ActionLinks.new(name)
         group.label = label || name
         group.default_type = self.name == :root ? (name.to_sym if %w[member collection].include?(name.to_s)) : default_type
         add_to_set group
@@ -152,6 +153,7 @@ module ActiveScaffold::DataStructures
 
     def method_missing(name, *args, &block)
       return super if name.match?(/[!?]$/)
+      return subgroup(name.to_sym, args.first, &block) if frozen?
       class_eval <<-METHOD, __FILE__, __LINE__ + 1
         def #{name}(label = nil) # rubocop:disable Style/CommentedKeyword
           @#{name} ||= subgroup('#{name}'.to_sym, label)

@@ -348,7 +348,7 @@ module ActiveScaffold::Config
       end
 
       def action_links
-        @action_links ||= CowProxy.wrap(@conf.action_links)
+        @conf.action_links
       end
 
       def model
