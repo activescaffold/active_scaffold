@@ -3,9 +3,10 @@ module ActiveScaffold::DataStructures
     include Enumerable
     attr_accessor :default_type
 
-    def initialize
+    def initialize(name = :root)
       @set = []
-      @name = :root
+      @name = name
+      @css_class = name.to_s.downcase
       @weight = 0
     end
 
@@ -130,8 +131,8 @@ module ActiveScaffold::DataStructures
 
       if group.nil?
         group = ActiveScaffold::DataStructures::ActionLinks.new
+        group = ActiveScaffold::DataStructures::ActionLinks.new(name)
         group.label = label || name
-        group.name = name
         group.default_type = self.name == :root ? (name.to_sym if %w[member collection].include?(name.to_s)) : default_type
         add_to_set group
       end
@@ -166,8 +167,14 @@ module ActiveScaffold::DataStructures
       name !~ /[!?]$/
     end
 
-    attr_accessor :name
+    attr_reader :name
     attr_accessor :weight
+    attr_accessor :css_class
+
+    def name=(value)
+      ActiveSupport::Deprecation.warn "Changing name is deprecated, use css_class to change the class html attribute"
+      self.css_class = value
+    end
 
     protected
 
