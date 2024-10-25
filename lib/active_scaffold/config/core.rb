@@ -322,7 +322,7 @@ module ActiveScaffold::Config
       Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
     end
 
-    class UserSettings < UserSettings
+    class UserSettings < Base::UserSettings
       include ActiveScaffold::Configurable
       user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
                 :timestamped_messages, :highlight_messages

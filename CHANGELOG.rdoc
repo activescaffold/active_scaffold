@@ -1,8 +1,10 @@
 - Add tabbed_by to group of columns in forms. The columns in the group must be collection associations, with a common column or association, used to partition them in different tabs.
 
 = 3.7.9 (not released yet)
-- Add css_class to action links, to avoid changing name, it may result confusing, deprecate name setter
-- Add buttons to check all and uncheck all on :select form ui for collection associations, and draggable lists (active_scaffold_checkbox_list)
+- Add css_class to action links, to avoid changing name, it may result confusing, deprecate name setter.
+- Add buttons to check all and uncheck all on :select form ui for collection associations, and draggable lists (active_scaffold_checkbox_list).
+- Add hidden field with locking column in base_form partial for persisted records automatically, if model uses optimistic locking.
+- Add on_stale_object_error when StaleObjectError is rescued, to allow customization.
 
 = 3.7.8
 - Rollback previous behaviour when submitting empty values, broken when default_value was added. Default value set in column is not used when trying to save empty value, DB default is used in that case, and save NULL when string is empty, as before.

@@ -49,6 +49,12 @@ module ActiveScaffold
       end
     end
 
+    def assign_locking_column(parent_record, attributes)
+      return unless parent_record.persisted? && parent_record.locking_enabled? &&
+        attributes.include?(parent_record.class.locking_column)
+      parent_record.write_attribute parent_record.class.locking_column, attributes[parent_record.class.locking_column]
+    end
+
     # Takes attributes (as from params[:record]) and applies them to the parent_record. Also looks for
     # association attributes and attempts to instantiate them as associated objects.
     #
@@ -59,6 +65,7 @@ module ActiveScaffold
       return parent_record unless parent_record.authorized_for?(:crud_type => crud_type)
 
       multi_parameter_attrs = multi_parameter_attributes(attributes)
+      assign_locking_column(parent_record, attributes)
 
       columns.each_column(for: parent_record, crud_type: crud_type, flatten: true) do |column|
         # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)

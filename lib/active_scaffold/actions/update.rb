@@ -130,6 +130,7 @@ module ActiveScaffold::Actions
     rescue ActiveRecord::StaleObjectError
       @record.errors.add(:base, as_(:version_inconsistency))
       self.successful = false
+      on_stale_object_error(@record)
     rescue ActiveRecord::RecordNotSaved => exception
       logger.warn do
         "\n\n#{exception.class} (#{exception.message}):\n    " +
@@ -200,6 +201,9 @@ module ActiveScaffold::Actions
 
     # override this method if you want to do something after the save
     def after_update_save(record); end
+
+    # override this method if you want to do something when stale object error is raised
+    def on_stale_object_error(record); end
 
     # should we refresh whole list after update operation
     def update_refresh_list?

@@ -19,21 +19,6 @@ module ActiveScaffold::Config
 
     attr_reader :core
 
-    def self.inherited(subclass)
-      class << subclass
-        # the crud type of the action. possible values are :create, :read, :update, :delete, and nil.
-        # this is not a setting for the developer. it's self-description for the actions.
-        attr_reader :crud_type
-
-        protected
-
-        def crud_type=(val)
-          raise ArgumentError, "unknown CRUD type #{val}" unless %i[create read update delete].include?(val.to_sym)
-          @crud_type = val.to_sym
-        end
-      end
-    end
-
     # delegate
     def crud_type
       self.class.crud_type
@@ -153,6 +138,22 @@ module ActiveScaffold::Config
       end
     end
 
+    def self.inherited(subclass)
+      subclass.const_set 'UserSettings', Class.new(subclass.superclass::UserSettings)
+      class << subclass
+        # the crud type of the action. possible values are :create, :read, :update, :delete, and nil.
+        # this is not a setting for the developer. it's self-description for the actions.
+        attr_reader :crud_type
+
+        protected
+
+        def crud_type=(val)
+          raise ArgumentError, "unknown CRUD type #{val}" unless %i[create read update delete].include?(val.to_sym)
+          @crud_type = val.to_sym
+        end
+      end
+    end
+
     private
 
     def build_action_columns(val)
@@ -197,10 +198,6 @@ module ActiveScaffold::Config
       names.each do |name|
         columns_writer name
         columns_reader name, options, &block unless method_defined? name
-
-        if self::UserSettings == ActiveScaffold::Config::Base::UserSettings
-          const_set 'UserSettings', Class.new(ActiveScaffold::Config::Base::UserSettings)
-        end
 
         var = "@#{name}"
         self::UserSettings.class_eval do
