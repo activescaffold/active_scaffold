@@ -8,7 +8,10 @@
      columns ||= action_config.columns unless local_assigns.has_key? :columns
      persistent ||= action_config.persistent unless local_assigns.has_key? :persistent
      unless local_assigns.has_key? :floating_footer
-       floating_footer ||= action_config.floating_footer if action_config.respond_to? :floating_footer
+       floating_footer = action_config.floating_footer if action_config.respond_to? :floating_footer
+     end
+     unless local_assigns.has_key? :add_locking_column
+       add_locking_column = action_config.add_locking_column if action_config.respond_to? :add_locking_column
      end
    else
      multipart ||= false
@@ -39,7 +42,7 @@ else
   form_tag url_options, options
 end
 -%>
-
+  <%= hidden_field :record, @record.class.locking_column if add_locking_column && @record.persisted? && @record.locking_enabled? %>
   <h4><%= headline -%></h4>
 
   <div id="<%= element_messages_id(:action => form_action) %>" class="messages-container">
