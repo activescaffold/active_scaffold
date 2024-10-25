@@ -459,9 +459,17 @@ module ActiveScaffold
         end
       end
 
+      def active_scaffold_check_all_buttons(column, options, ui_options: column.options)
+        content_tag(:div, class: 'check-buttons') do
+          link_to(as_(:check_all), '#', class: 'check-all') <<
+            link_to(as_(:uncheck_all), '#', class: 'uncheck-all')
+        end
+      end
+
       def active_scaffold_checkbox_list(column, select_options, associated_ids, options, ui_options: column.options)
         label_method = ui_options[:label_method] || :to_label
-        html = hidden_field_tag("#{options[:name]}[]", '', :id => nil)
+        html = active_scaffold_check_all_buttons(column, options, ui_options: ui_options)
+        html << hidden_field_tag("#{options[:name]}[]", '', :id => nil)
         draggable = options.delete(:draggable_lists) || ui_options[:draggable_lists]
         html << content_tag(:ul, options.merge(:class => "#{options[:class]} checkbox-list#{' draggable-lists' if draggable}")) do
           content = []

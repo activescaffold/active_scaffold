@@ -19,6 +19,7 @@ ru:
     cancel: Отмена
     cant_destroy_record: Запись %{record} не может быть удалена
     changes:
+    check_all:
     click_to_edit: Нажмите для редактирования
     click_to_reset: Нажмите для сброса
     close: Закрыть
@@ -41,7 +42,7 @@ ru:
       closeText: Закрыть
       currentText: Текущее время
       timeText:
-      timezoneText:
+      timezoneText: Timezone
     days: дней
     delete: Удалить
     deleted_model: "%{model}: запись удалена"
@@ -139,6 +140,7 @@ ru:
     today: Сегодня
     tomorrow: Завтра
     'true': Да
+    uncheck_all:
     update: Обновить запись
     update_apply:
     update_model: "%{model}: обновить запись"

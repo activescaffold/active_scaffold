@@ -19,6 +19,7 @@ en:
     cancel: Cancel
     cant_destroy_record: "%{record} can't be destroyed"
     changes: Changes
+    check_all: Check all
     click_to_edit: Click to edit
     click_to_reset: Click to reset
     close: Close
@@ -131,6 +132,7 @@ en:
     today: Today
     tomorrow: Tomorrow
     'true': 'True'
+    uncheck_all: Uncheck all
     update: Update
     update_apply: Apply
     update_model: Update %{model}

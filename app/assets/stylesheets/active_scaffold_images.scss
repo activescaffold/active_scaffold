@@ -23,6 +23,22 @@ background-image: image-url('active_scaffold/arrow_up.png');
 background-image: image-url('active_scaffold/arrow_down.png');
 }
 
+
+.active-scaffold .draggable-lists-container .check-buttons {
+  .check-all, .uncheck-all {
+    background-image: image-url('active_scaffold/fast-arrow-right.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 16px;
+    text-indent: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .uncheck-all {
+    background-image: image-url('active_scaffold/fast-arrow-left.svg');
+  }
+}
+
 .active-scaffold th.loading a {
 background-image: image-url('active_scaffold/indicator-small.gif');
 }
