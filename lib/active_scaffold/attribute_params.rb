@@ -51,7 +51,7 @@ module ActiveScaffold
 
     def assign_locking_column(parent_record, attributes)
       return unless parent_record.persisted? && parent_record.locking_enabled? &&
-        attributes.include?(parent_record.class.locking_column)
+                    attributes.include?(parent_record.class.locking_column)
       parent_record.write_attribute parent_record.class.locking_column, attributes[parent_record.class.locking_column]
     end
 
