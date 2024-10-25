@@ -253,7 +253,8 @@
         var form_element;
         var value;
         if (element.is(".checkbox-list input:checkbox")) {
-          form_element = element.closest('.checkbox-list')
+          form_element = element.closest('.checkbox-list');
+          if (form_element.is('.draggable-list')) form_element = form_element.closest('.draggable-lists-container').find('.checkbox-list') // draggable lists will have 2 lists
           value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
           if (!additional_params) additional_params = (element.is(':checked') ? '_added=' : '_removed=') + element.val();
         } else {
