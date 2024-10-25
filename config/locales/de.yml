@@ -19,6 +19,7 @@ de:
     cancel: Abbrechen
     cant_destroy_record: "%{record} kann nicht gelöscht werden"
     changes: Änderungen
+    check_all:
     click_to_edit: Zum Editieren anklicken
     click_to_reset: Reset
     close: Schließen
@@ -131,6 +132,7 @@ de:
     today: Heute
     tomorrow: Morgen
     'true': Richtig
+    uncheck_all:
     update: Speichern
     update_apply: Bewerben
     update_model: Editiere %{model}

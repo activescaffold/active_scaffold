@@ -19,6 +19,7 @@ es:
     cancel: Cancelar
     cant_destroy_record: No se pudo borrar %{record}
     changes: Cambios
+    check_all: Seleccionar todo
     click_to_edit: Pulsa para editar
     click_to_reset: Pulsa para restaurar
     close: Cerrar
@@ -133,6 +134,7 @@ es:
     today: Hoy
     tomorrow: Mañana
     'true': Sí
+    uncheck_all: Deseleccionar todo
     update: Actualizar
     update_apply: Aplicar
     update_model: Actualizar %{model}

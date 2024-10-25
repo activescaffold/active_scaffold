@@ -800,8 +800,9 @@ padding: 0 0 0 2px;
 .active-scaffold .checkbox-list + .refresh-link {
 float: left;
 }
-
-.active-scaffold .draggable-lists + .loading-indicator { float: left; }
+.active-scaffold .check-buttons .check-all {
+  margin-right: 10px;
+}
 
 .active-scaffold .draggable-list {
 float: left;
@@ -811,9 +812,25 @@ min-height: 30px;
 max-height: 100px;
 overflow: auto;
 }
-
 .active-scaffold .draggable-list.hover {
-opacity: 0.5;
+  opacity: 0.5;
+}
+.active-scaffold .draggable-lists-container {
+  display: flex;
+  align-items: start;
+}
+.active-scaffold .draggable-lists-container .loading-indicator { align-self: end; }
+
+.active-scaffold .draggable-lists-container .check-buttons {
+  margin-right: 15px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.active-scaffold .draggable-lists-container .check-buttons a {
+  display: block;
+  margin: 0;
 }
 
 

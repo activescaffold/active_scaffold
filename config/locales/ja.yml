@@ -19,6 +19,7 @@ ja:
     cancel: キャンセル
     cant_destroy_record: "%{record}を削除できません"
     changes: 差分
+    check_all:
     click_to_edit: クリックして編集
     click_to_reset: クリックしてリセット
     close: 閉じる
@@ -131,6 +132,7 @@ ja:
     today: 今日
     tomorrow: 明日
     'true':
+    uncheck_all:
     update: 更新
     update_apply:
     update_model: "%{model}を更新"
