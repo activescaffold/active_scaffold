@@ -108,7 +108,8 @@ module ActiveScaffold
           return active_scaffold_human_condition_range(column, associated) unless associated['opt'] == '='
           associated = associated['from']
         end
-        associated = [associated].compact unless associated.is_a? Array
+        associated = [associated] unless associated.is_a? Array
+        associated = associated.select(&:present?)
         if column.association
           method = column.options[:label_method] || :to_label
           associated = column.association.klass.where(:id => associated.map(&:to_i)).map(&method)
@@ -122,6 +123,7 @@ module ActiveScaffold
         as_(:association, :scope => :human_conditions, :column => attribute, :value => associated.join(', '))
       end
       alias active_scaffold_human_condition_multi_select active_scaffold_human_condition_select
+      alias active_scaffold_human_condition_select_multiple active_scaffold_human_condition_select
       alias active_scaffold_human_condition_record_select active_scaffold_human_condition_select
       alias active_scaffold_human_condition_chosen active_scaffold_human_condition_select
       alias active_scaffold_human_condition_multi_chosen active_scaffold_human_condition_select
