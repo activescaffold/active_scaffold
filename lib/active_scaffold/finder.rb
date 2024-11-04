@@ -212,8 +212,7 @@ module ActiveScaffold
           condition_for_null_type(column, value[:opt], like_pattern)
         elsif value[:from].is_a?(Array) # opt can be only =
           from = Array(value[:from]).select(&:present?)
-          return unless from.present?
-          ["%<search_sql>s in (?)", from]
+          ['%<search_sql>s in (?)', from] if from.present?
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::STRING_COMPARATORS.values.include?(value[:opt])
