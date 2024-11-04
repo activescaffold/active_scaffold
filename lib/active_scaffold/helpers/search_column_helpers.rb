@@ -98,7 +98,7 @@ module ActiveScaffold
       def active_scaffold_search_select(column, html_options, options = {}, ui_options: column.options)
         record = html_options.delete(:object)
         associated = html_options.delete :value
-        if include_null_comparators?(column)
+        if include_null_comparators?(column, ui_options: ui_options)
           range_opts = html_options.slice(:name, :id)
           range_opts[:opt_value], associated, = field_search_params_range_values(column)
           operators = active_scaffold_search_select_comparator_options(column, ui_options: ui_options)

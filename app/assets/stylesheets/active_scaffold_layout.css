@@ -974,6 +974,11 @@ font-size: 100%;
   float:left;
 }
 
+.active-scaffold .search .search_range .as_search_range_option {
+  vertical-align: top;
+  margin-right: 5px;
+}
+
 .active-scaffold .tabbed .nav-tabs {
   border-bottom: 1px solid #ddd;
   padding-left: 0;
@@ -1026,7 +1031,6 @@ font-size: 100%;
 .active-scaffold .tabbed .tab-content > .active {
   display: block;
 }
-
 
 .as_touch a.inline-adapter-close {
 width: 25px;
