@@ -974,6 +974,11 @@ font-size: 100%;
   float:left;
 }
 
+.active-scaffold .search .search_range .as_search_range_option {
+  vertical-align: top;
+  margin-right: 5px;
+}
+
 .as_touch a.inline-adapter-close {
 width: 25px;
 height: 27px;
