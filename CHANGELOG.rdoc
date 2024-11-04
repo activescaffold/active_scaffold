@@ -2,7 +2,7 @@
 - Add buttons to check all and uncheck all on :select form ui for collection associations, and draggable lists (active_scaffold_checkbox_list).
 - Add hidden field with locking column in base_form partial for persisted records automatically, if model uses optimistic locking.
 - Add on_stale_object_error when StaleObjectError is rescued, to allow customization.
-- Improve styles on search_ui :multi_select with operator select.
+- Fix search_ui :select_multiple, which was broken when operator select was added.
 
 = 3.7.8
 - Rollback previous behaviour when submitting empty values, broken when default_value was added. Default value set in column is not used when trying to save empty value, DB default is used in that case, and save NULL when string is empty, as before.

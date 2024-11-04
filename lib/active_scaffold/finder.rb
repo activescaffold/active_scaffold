@@ -165,7 +165,11 @@ module ActiveScaffold
         when :integer, :decimal, :float
           condition_for_numeric(column, value)
         when :string, :range
-          condition_for_range(column, value, like_pattern)
+          if value.is_a?(Hash)
+            condition_for_range(column, value, like_pattern)
+          else
+            condition_for_single_value(column, value, like_pattern)
+          end
         when :date, :time, :datetime, :timestamp
           condition_for_datetime(column, value)
         when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state, :chosen, :multi_chosen
@@ -176,12 +180,7 @@ module ActiveScaffold
             ['%<search_sql>s in (?)', values] if values.present?
           end
         else
-          if column.text?
-            value = column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value
-            ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
-          else
-            ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
-          end
+          condition_for_single_value(column, value, like_pattern)
         end
       end
 
@@ -199,16 +198,22 @@ module ActiveScaffold
         end
       end
 
+      def condition_for_single_value(column, value, like_pattern = nil)
+        if column.text?
+          value = column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value
+          ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
+        else
+          ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
+        end
+      end
+
       def condition_for_range(column, value, like_pattern = nil)
-        if !value.is_a?(Hash)
-          if column.text?
-            value = column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value
-            ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
-          else
-            ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
-          end
-        elsif ActiveScaffold::Finder::NULL_COMPARATORS.include?(value[:opt])
+        if ActiveScaffold::Finder::NULL_COMPARATORS.include?(value[:opt])
           condition_for_null_type(column, value[:opt], like_pattern)
+        elsif value[:from].is_a?(Array) # opt can be only =
+          from = Array(value[:from]).select(&:present?)
+          return unless from.present?
+          ["%<search_sql>s in (?)", from]
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::STRING_COMPARATORS.values.include?(value[:opt])
