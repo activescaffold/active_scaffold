@@ -33,13 +33,6 @@ module ActiveScaffold
   module AttributeParams
     protected
 
-    # workaround for updating counters twice bug on rails4 (https://github.com/rails/rails/pull/14849)
-    # rails 5 needs this hack for belongs_to, when selecting record, not creating new one (value is Hash)
-    # TODO: remove when rails5 support is removed
-    def belongs_to_counter_cache_hack?(association, value)
-      !params_hash?(value) && association.belongs_to? && association.counter_cache_hack?
-    end
-
     def multi_parameter_attributes(attributes)
       params_hash(attributes).each_with_object({}) do |(k, v), result|
         next unless k.include? '('
@@ -106,10 +99,7 @@ module ActiveScaffold
     end
 
     def update_column_association(parent_record, column, attribute, value)
-      if belongs_to_counter_cache_hack?(column.association, attribute)
-        parent_record.send "#{column.association.foreign_key}=", value&.id
-        parent_record.association(column.name).target = value
-      elsif column.association.collection? && column.association.through_singular?
+      if column.association.collection? && column.association.through_singular?
         through = column.association.through_reflection.name
         through_record = parent_record.send(through)
         through_record ||= parent_record.send "build_#{through}"

@@ -14,13 +14,8 @@ module ActiveScaffold
       def add_to_javascript_manifest
         file = 'app/assets/javascripts/application.js'
         unless File.exist?(file)
-          if Rails.version >= '6.0'
-            create_javascript_manifest file
-            return
-          end
-          say_status :missing, file, :red
-          return if options[:pretend]
-          raise Thor::Error, "JS file #{file} is required for ActiveScaffold"
+          create_javascript_manifest file
+          return
         end
         original_js = File.binread(file)
         if original_js.include?('require active_scaffold')

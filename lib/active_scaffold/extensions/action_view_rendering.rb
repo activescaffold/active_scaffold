@@ -178,27 +178,25 @@ module ActionView
       include ActiveScaffold::RenderingHelper
     end
 
-    if Gem.loaded_specs['rails'].version.segments.first >= 6
-      RenderingHelper.class_eval do
-        # override the render method to use our @lookup_context instead of the
-        # memoized @_lookup_context
-        def render(options = {}, locals = {}, &block)
-          case options
-          when Hash
-            in_rendering_context(options) do |_|
-              # previously set view paths and lookup context are lost here
-              # if you use view_renderer, so instead create a new renderer
-              # with our context
-              temp_renderer = ActionView::Renderer.new(@lookup_context)
-              if block_given?
-                temp_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
-              else
-                temp_renderer.render(self, options)
-              end
+    RenderingHelper.class_eval do
+      # override the render method to use our @lookup_context instead of the
+      # memoized @_lookup_context
+      def render(options = {}, locals = {}, &block)
+        case options
+        when Hash
+          in_rendering_context(options) do |_|
+            # previously set view paths and lookup context are lost here
+            # if you use view_renderer, so instead create a new renderer
+            # with our context
+            temp_renderer = ActionView::Renderer.new(@lookup_context)
+            if block_given?
+              temp_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
+            else
+              temp_renderer.render(self, options)
             end
-          else
-            view_renderer.render_partial(self, partial: options, locals: locals, &block)
           end
+        else
+          view_renderer.render_partial(self, partial: options, locals: locals, &block)
         end
       end
     end

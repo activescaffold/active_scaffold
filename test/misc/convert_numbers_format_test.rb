@@ -29,7 +29,7 @@ class ConvertNumbersFormatTest < Minitest::Test
   include ActiveScaffold::Helpers::ControllerHelpers
 
   def setup
-    NumberModel.load_schema! if Rails.version >= '5.0'
+    NumberModel.load_schema!
     I18n.backend.store_translations :en, :number => {:format => {
       :delimiter => ',',
       :separator => '.'

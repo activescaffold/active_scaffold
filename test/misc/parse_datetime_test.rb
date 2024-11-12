@@ -28,7 +28,7 @@ class ParseDatetimeTest < Minitest::Test
   include ActiveScaffold::Finder
 
   def setup
-    DateTimeModel.load_schema! if Rails.version >= '5.0'
+    DateTimeModel.load_schema!
     spanish = {
       time: {
         formats: {picker: '%a, %d %b %Y %H:%M:%S'}

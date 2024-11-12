@@ -59,10 +59,6 @@ module ActiveScaffold::DataStructures::Association
       true
     end
 
-    def counter_cache_hack?
-      belongs_to? && counter_cache && Rails.version < '6.0'
-    end
-
     protected
 
     def scope_values
