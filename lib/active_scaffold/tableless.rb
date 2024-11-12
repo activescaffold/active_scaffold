@@ -17,10 +17,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       klass.columns
     end
 
-    if Rails.version >= '6.0.0'
-      def data_sources
-        klass ? [klass.table_name] : []
-      end
+    def data_sources
+      klass ? [klass.table_name] : []
     end
   end
 
@@ -147,6 +145,11 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     include RelationExtension
   end
   class << self
+
+    def find(*ids)
+      ids.length == 1 ? all.find(*ids[0]) : super
+    end
+
     private
 
     def relation
