@@ -61,6 +61,10 @@ module ActiveScaffold::DataStructures
       @set.empty?
     end
 
+    def +(other)
+      self.class.new(*[@set, *other])
+    end
+
     protected
 
     attr_reader :set

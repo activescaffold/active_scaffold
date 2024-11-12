@@ -128,14 +128,6 @@ module ActiveScaffold::Config
       def proxy_to_conf?(name, include_all)
         name !~ /=$/ && @conf.respond_to?(name, include_all)
       end
-
-      private
-
-      def proxy_columns(columns)
-        proxy = ::CowProxy.wrap(columns)
-        proxy.action = self
-        proxy
-      end
     end
 
     def self.inherited(subclass)
@@ -202,11 +194,10 @@ module ActiveScaffold::Config
         var = "@#{name}"
         self::UserSettings.class_eval do
           define_method "#{name}=" do |val|
-            instance_variable_set var, proxy_columns(build_action_columns(val))
+            instance_variable_set var, build_action_columns(val)
           end
           define_method name do
-            instance_variable_get(var) ||
-              instance_variable_set(var, proxy_columns(@conf.send(name)))
+            instance_variable_get(var) || @conf.send(name)
           end
         end
       end

@@ -369,8 +369,12 @@ module ActiveScaffold::Config
       end
 
       def [](name)
-        return nil unless @global_columns[name]
-        @columns[name.to_sym] ||= CowProxy.wrap @global_columns[name]
+        @columns[name.to_sym] || @global_columns[name]
+      end
+
+      def override(name)
+        raise ArgumentError, "column '#{name}' doesn't exist" unless @global_columns[name]
+        @columns[name.to_sym] ||= ActiveScaffold::DataStructures::ProxyColumn.new(@global_columns[name])
       end
 
       def each
@@ -381,15 +385,16 @@ module ActiveScaffold::Config
       end
 
       def method_missing(name, *args, &block)
-        if @global_columns.respond_to?(name, true)
+        if respond_to_missing?(name, true)
           @global_columns.send(name, *args, &block)
         else
           super
         end
       end
 
+      DONT_DELEGATE = %i[add exclude add_association_columns _inheritable=]
       def respond_to_missing?(name, include_all = false)
-        @global_columns.respond_to?(name, include_all) || super
+        DONT_DELEGATE.exclude?(name) && @global_columns.respond_to?(name, include_all) || super
       end
     end
   end

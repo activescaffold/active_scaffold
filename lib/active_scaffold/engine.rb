@@ -52,7 +52,6 @@ module ActiveScaffold
     end
 
     initializer 'active_scaffold.extensions' do
-      require 'active_scaffold/extensions/cow_proxy'
       require 'active_scaffold/extensions/ice_nine'
       require 'active_scaffold/extensions/localize'
       require 'active_scaffold/extensions/paginator_extensions'
