@@ -1,19 +1,12 @@
 source 'https://rubygems.org'
 
-gemspec
+gemspec path: '../'
 
 group :development do
   #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
   gem 'localeapp'
   # RDoc produces HTML and command-line documentation for Ruby projects
   gem 'rdoc'
-end
-
-group :performance do
-  gem 'rails-perftest', github: 'letsevents/rails-perftest'
-  platforms :ruby do
-    gem 'ruby-prof'
-  end
 end
 
 group :development, :lint do

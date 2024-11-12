@@ -1,11 +1,5 @@
-GIT
-  remote: https://github.com/letsevents/rails-perftest.git
-  revision: bf7cd437e2c325a86350c407f86aabee662bedb2
-  specs:
-    rails-perftest (0.0.7)
-
 PATH
-  remote: .
+  remote: ..
   specs:
     active_scaffold (3.7.8)
       cow_proxy (~> 0.3)
@@ -265,7 +259,6 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
-    ruby-prof (1.7.1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     securerandom (0.3.2)
@@ -315,11 +308,9 @@ DEPENDENCIES
   mocha
   rack
   rails (~> 7.2.0)
-  rails-perftest!
   rake
   rdoc
   rubocop (= 0.52.1)
-  ruby-prof
   shoulda
   simplecov
   sqlite3
