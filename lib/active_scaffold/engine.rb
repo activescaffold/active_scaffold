@@ -48,7 +48,7 @@ module ActiveScaffold
     end
 
     initializer 'active_scaffold.assets' do
-      config.assets.precompile << 'active_scaffold/indicator.gif'
+      config.assets.precompile << 'active_scaffold_manifest.js' if Rails::VERSION::MAJOR < 7
     end
 
     initializer 'active_scaffold.extensions' do
