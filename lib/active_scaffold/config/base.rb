@@ -199,6 +199,9 @@ module ActiveScaffold::Config
           define_method name do
             instance_variable_get(var) || @conf.send(name)
           end
+          define_method "override_#{name}" do |&block|
+            self.send("#{name}=", send(name)).tap { |columns| block&.call columns }
+          end
         end
       end
     end
