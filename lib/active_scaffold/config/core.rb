@@ -374,7 +374,9 @@ module ActiveScaffold::Config
 
       def override(name)
         raise ArgumentError, "column '#{name}' doesn't exist" unless @global_columns[name]
-        @columns[name.to_sym] ||= ActiveScaffold::DataStructures::ProxyColumn.new(@global_columns[name])
+        (@columns[name.to_sym] ||= ActiveScaffold::DataStructures::ProxyColumn.new(@global_columns[name])).tap do |col|
+          yield col if block_given?
+        end
       end
 
       def each
