@@ -151,7 +151,8 @@ module ActiveScaffold::Bridges
         def active_scaffold_search_date_picker_field(column, options, current_search, name, ui_options: column.options)
           value =
             if current_search.is_a? Hash
-              controller.class.condition_value_for_datetime(column, current_search[name], column.search_ui == :date_picker ? :to_date : :to_time)
+              conversion = column.search_ui == :date_picker ? :to_date : :to_time
+              controller.class.condition_value_for_datetime(column, current_search[name], conversion, ui_method: :search_ui, ui_options: ui_options)
             else
               current_search
             end
@@ -173,8 +174,9 @@ module ActiveScaffold::Bridges
           options = active_scaffold_input_text_options(options.merge(ui_options))
           options[:class] << " #{column.form_ui}"
 
-          format = datepicker_format(options, column.form_ui)
-          value = controller.class.condition_value_for_datetime(column, record.send(column.name), column.form_ui == :date_picker ? :to_date : :to_time)
+          format = datepicker_format(ui_options, column.form_ui)
+          conversion = column.form_ui == :date_picker ? :to_date : :to_time
+          value = controller.class.condition_value_for_datetime(column, record.send(column.name), conversion, ui_method: :form_ui, ui_options: ui_options)
           options[:data] = datepicker_format_options(column, format).reverse_merge!(options[:data] || {})
           options[:value] = (value ? l(value, :format => format) : nil)
           text_field(:record, column.name, options)

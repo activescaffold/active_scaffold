@@ -259,23 +259,12 @@ module ActiveScaffold
         translated << value
       end
 
-      def format_for_datetime(column, value)
+      def format_for_datetime(column, value, ui, ui_options)
         parts = Date._parse(value)
-        if ActiveScaffold.js_framework == :jquery
-          format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => ''
-        end
-
-        if format.blank?
-          time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].map do |part, format_part|
-            format_part if parts[part].present?
-          end.compact
-          format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
-        else
-          [[:hour, '%H'], [:min, ':%M'], [:sec, ':%S']].each do |part, f|
-            format.gsub!(f, '') if parts[part].blank?
-          end
-          format += ' %z' if parts[:offset].present? && format !~ /%z/i
-        end
+        time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].map do |part, format_part|
+          format_part if parts[part].present?
+        end.compact
+        format = "%Y-%m-%d #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
 
         format.gsub!(/.*(?=%H)/, '') if !parts[:year] && !parts[:month] && !parts[:mday]
         [format, parts[:offset]]
@@ -290,9 +279,9 @@ module ActiveScaffold
         nil
       end
 
-      def format_for_date(column, value, format_name = column.options[:format])
-        if format_name
-          format = I18n.t("date.formats.#{format_name}")
+      def format_for_date(column, value, ui, ui_options)
+        if ui_options[:format]
+          format = I18n.t("date.formats.#{ui_options[:format]}")
           format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
           en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
         end
@@ -321,8 +310,9 @@ module ActiveScaffold
         nil
       end
 
-      def condition_value_for_datetime(column, value, conversion = :to_time)
+      def condition_value_for_datetime(column, value, conversion = :to_time, ui_method: :search_ui, ui_options: nil)
         return if value.nil? || value.blank?
+        ui_options ||= column.send("#{ui_method}_options") || column.options
         if value.is_a? Hash
           local_time_from_hash(value, conversion)
         elsif value.respond_to?(:strftime)
@@ -334,11 +324,11 @@ module ActiveScaffold
             value.send(conversion)
           end
         elsif conversion == :to_date
-          parse_date_with_format(*format_for_date(column, value))
+          parse_date_with_format(*format_for_date(column, value, column.send(ui_method), ui_options))
         elsif value.include?('T')
           Time.zone.parse(value)
         else # datetime
-          time = parse_time_with_format(value, *format_for_datetime(column, value))
+          time = parse_time_with_format(value, *format_for_datetime(column, value, column.send(ui_method), ui_options))
           conversion == :to_time ? time : time.send(conversion)
         end
       end

@@ -41,8 +41,23 @@ class ActiveScaffold::Bridges::DatePicker
       end
     end
 
-    def format_for_date(column, value, format_name = column.options[:format])
-      super column, value, format_name || (:default if column.search_ui == :date_picker)
+    def format_for_date(column, value, ui, ui_options)
+      ui_options = ui_options.reverse_merge(format: :default) if ui == :date_picker
+      super column, value, ui, ui_options
+    end
+
+    def format_for_datetime(column, value, ui, ui_options)
+      format = I18n.translate "time.formats.#{ui_options[:format] || :picker}", :default => '' if ui == :datetime_picker
+      return super if format.blank?
+
+      parts = Date._parse(value)
+      [[:hour, '%H'], [:min, ':%M'], [:sec, ':%S']].each do |part, f|
+        format.gsub!(f, '') if parts[part].blank?
+      end
+      format += ' %z' if parts[:offset].present? && format !~ /%z/i
+
+      format.gsub!(/.*(?=%H)/, '') if !parts[:year] && !parts[:month] && !parts[:mday]
+      [format, parts[:offset]]
     end
   end
 
