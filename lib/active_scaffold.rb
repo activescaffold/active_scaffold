@@ -71,6 +71,7 @@ module ActiveScaffold
     ActiveSupport::Deprecation.warn warning
     @@js_framework = framework
   end
+
   def self.js_framework
     @@js_framework ||=
       if defined? Jquery
