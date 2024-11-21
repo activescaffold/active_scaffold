@@ -56,7 +56,19 @@ module ActiveScaffold
     @@threadsafe = true
   end
 
-  mattr_writer :js_framework, instance_writer: false
+  def self.js_framework=(framework)
+    warning = 'js_framework is deprecated as prototype support will be removed in 4.0'
+    case framework
+    when :jquery then
+      if defined? Jquery
+        warning += ', it can be removed as it defaults to :jquery'
+      else
+        warning += ", it's still needed in this version, as you are not using jquery-rails gem"
+      end
+    when :prototype then ', convert your app to jQuery, and remove this call'
+    ActiveSupport::Deprecation.warn warning
+    @@js_framework = framework
+  end
   def self.js_framework
     @@js_framework ||=
       if defined? Jquery
