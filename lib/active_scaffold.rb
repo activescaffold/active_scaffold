@@ -65,7 +65,8 @@ module ActiveScaffold
       else
         warning += ", it's still needed in this version, as you are not using jquery-rails gem"
       end
-    when :prototype then ', convert your app to jQuery, and remove this call'
+    when :prototype then warning += ', convert your app to jQuery, and remove this call'
+    end
     ActiveSupport::Deprecation.warn warning
     @@js_framework = framework
   end
