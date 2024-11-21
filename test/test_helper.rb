@@ -25,7 +25,6 @@ def load_schema
 end
 load_schema
 
-ActiveScaffold.threadsafe!
 # avoid freezing defaults so we can stubs in tests for testing with different defaults
 class << ActiveScaffold::Config::Core
   def freeze; end

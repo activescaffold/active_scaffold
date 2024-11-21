@@ -345,10 +345,6 @@ module ActiveScaffold
 
       def inplace_edit_control(column)
         return unless inplace_edit?(active_scaffold_config.model, column) && inplace_edit_cloning?(column)
-        unless ActiveScaffold.threadsafe
-          column = column.dup
-          column.options = column.options.dup
-        end
         column.form_ui = :select if column.association && column.form_ui.nil?
         options = active_scaffold_input_options(column).merge(:object => column.active_record_class.new)
         options[:class] = "#{options[:class]} inplace_field"

@@ -2,7 +2,7 @@
 - Fix tableless in rails >= 7.1
 - Stop using cow_proxy for thread safety, added ProxyColumn and require using active_scaffold_config.columns.override(:column_name) to change a column per request, action links can't be changed
 - Require using active_scaffold_config.<a.override_columns to exclude or add columns
-- Thread safety enabled by default, can't be disabled
+- Thread safety enabled by default, can't be disabled, deprecate ActiveScaffold.threadsafe!
 
 = 3.7.9 (not released yet)
 - Add css_class to action links, to avoid changing name, it may result confusing, deprecate name setter.

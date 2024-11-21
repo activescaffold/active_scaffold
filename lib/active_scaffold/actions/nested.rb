@@ -65,10 +65,6 @@ module ActiveScaffold::Actions
           active_scaffold_config.action_links.add('new_existing', :label => :add_existing, :type => :collection, :security_method => :add_existing_authorized?)
         end
         add_shallow_links if active_scaffold_config.nested.shallow_delete
-      elsif !ActiveScaffold.threadsafe
-        # Production mode is caching this link into a non nested scaffold, when threadsafe is disabled
-        active_scaffold_config.action_links.delete('new_existing')
-        restore_shallow_links if active_scaffold_config.nested.shallow_delete
       end
     end
 

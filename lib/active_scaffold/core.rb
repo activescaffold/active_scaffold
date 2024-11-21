@@ -7,21 +7,12 @@ module ActiveScaffold
     def setup_user_settings
       config = self.class.active_scaffold_config
       config.new_user_settings(user_settings_storage, params)
-      return if ActiveScaffold.threadsafe
-      config.actions.each do |action_name|
-        conf_instance = config.send(action_name) rescue next # rubocop:disable Style/RescueModifier
-        config.user.action_user_settings(conf_instance)
-      end
     end
 
     def active_scaffold_config
       @active_scaffold_config ||= begin
         setup_user_settings unless self.class.active_scaffold_config.user
-        if ActiveScaffold.threadsafe
-          self.class.active_scaffold_config.user
-        else
-          self.class.active_scaffold_config
-        end
+        self.class.active_scaffold_config.user
       end
     end
 
@@ -33,7 +24,6 @@ module ActiveScaffold
     def active_scaffold_session_storage(id = nil)
       session_index = active_scaffold_session_storage_key(id)
       session[session_index] ||= {}
-      session[session_index]
     end
 
     def user_settings_storage
@@ -83,7 +73,7 @@ module ActiveScaffold
           active_scaffold_config.actions.each do |mod|
             include "ActiveScaffold::Actions::#{mod.to_s.camelize}".constantize
             mod_conf = active_scaffold_config.send(mod)
-            active_scaffold_config._setup_action(mod) if ActiveScaffold.threadsafe
+            active_scaffold_config._setup_action(mod)
             next unless mod_conf.respond_to?(:link) && (link = mod_conf.link)
 
             # sneak the action links from the actions into the main set
@@ -97,7 +87,6 @@ module ActiveScaffold
           end
         end
         _add_sti_create_links if active_scaffold_config.add_sti_create_links?
-        return unless ActiveScaffold.threadsafe
         active_scaffold_config._cache_lazy_values
         active_scaffold_config.deep_freeze!
       end

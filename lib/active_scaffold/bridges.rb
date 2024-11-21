@@ -34,7 +34,7 @@ module ActiveScaffold
       bridges.each_key do |bridge_name|
         self[bridge_name]&.run
       end
-      ActiveScaffold::Config::Core.freeze if ActiveScaffold.threadsafe
+      ActiveScaffold::Config::Core.freeze
       self.bridges_run = true
     end
 

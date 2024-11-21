@@ -51,9 +51,8 @@ module ActiveScaffold
   mattr_accessor :javascripts, instance_writer: false
   self.javascripts = []
 
-  mattr_reader :threadsafe
   def self.threadsafe!
-    @@threadsafe = true
+    ActiveSupport::Deprecation.warn 'Threadsafe is enabled always, no need to require it anymore'
   end
 
   mattr_writer :jquery_ui_loaded, instance_writer: false
