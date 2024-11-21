@@ -17,7 +17,7 @@
     ActiveScaffold.replace_html('<%= active_scaffold_content_id %>', '<%= escape_javascript(render('list')) %>');
 <% end # @auto_pagination -%>
 
-<% if ActiveScaffold.js_framework == :jquery && !@auto_pagination && !@popstate && !embedded? && !local_assigns[:no_history] -%>
+<% if !@auto_pagination && !@popstate && !embedded? && !local_assigns[:no_history] -%>
   if (!jQuery('#<%= active_scaffold_id %>').is('.active-scaffold .active-scaffold')) {
     ActiveScaffold.add_to_history(<%=raw request.original_url.to_json %>, <%=raw history_state.to_json %>);
   }

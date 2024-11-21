@@ -39,7 +39,7 @@ if (action_link) action_link.update_flash_messages('<%= escape_javascript(render
     <% end %>
     <% if (active_scaffold_config.create.action_after_create) %>
       var link = ActiveScaffold.find_action_link('<%= action_link_id active_scaffold_config.create.action_after_create, @record.id || @saved_record.id %>');
-      if (link) (function() { link.open() })<%= '.defer' if ActiveScaffold.js_framework == :prototype %>();
+      if (link) link.open();
     <% end %>
   <% end %>
 <% else %>

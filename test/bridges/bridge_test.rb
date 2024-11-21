@@ -11,17 +11,6 @@ class BridgeTest < Minitest::Test
     ActiveScaffold::Bridges.run_all
   end
 
-  def test__cds_bridge
-    with_js_framework :prototype do
-      ConstMocker.mock('CalendarDateSelect') do |cm|
-        cm.remove
-        assert(!bridge_will_be_installed('CalendarDateSelect'))
-        cm.declare
-        assert(bridge_will_be_installed('CalendarDateSelect'))
-      end
-    end
-  end
-
   def test__file_column_bridge
     ConstMocker.mock('FileColumn') do |cm|
       cm.remove
@@ -53,7 +42,6 @@ class BridgeTest < Minitest::Test
         end
       end
     end
-    ActiveScaffold.js_framework = nil
   end
 
   def test__semantic_attributes_bridge

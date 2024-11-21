@@ -73,7 +73,7 @@ module ActiveScaffold
 
       def setup_jquery(file, original_js = nil, where: 'ujs')
         original_js ||= File.binread(file)
-        if ActiveScaffold.js_framework == :jquery
+        if defined? Jquery
           unless original_js.include?('require jquery')
             insert_into_file file, before: %r{//= require +.*#{where}['"]?\n} do
               "//= require jquery\n"

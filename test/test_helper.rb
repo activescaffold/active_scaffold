@@ -41,24 +41,10 @@ I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../config/
 unless defined? Minitest::Test
   class Minitest::Test < Minitest::Unit::TestCase
   end
-
-  class Minitest::Unit::TestCase
-    def with_js_framework(framework)
-      framework, ActiveScaffold.js_framework = ActiveScaffold.js_framework, framework
-      yield
-      ActiveScaffold.js_framework = framework
-    end
-  end
 end
 
 class Minitest::Test
   protected
-
-  def with_js_framework(framework)
-    framework, ActiveScaffold.js_framework = ActiveScaffold.js_framework, framework
-    yield
-    ActiveScaffold.js_framework = framework
-  end
 
   def config_for(klass, namespace = nil)
     ActiveScaffold::Config::Core.new("#{namespace}#{klass.to_s.underscore.downcase}")

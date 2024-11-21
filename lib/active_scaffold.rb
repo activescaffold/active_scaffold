@@ -56,16 +56,6 @@ module ActiveScaffold
     @@threadsafe = true
   end
 
-  mattr_writer :js_framework, instance_writer: false
-  def self.js_framework
-    @@js_framework ||=
-      if defined? Jquery
-        :jquery
-      elsif defined? PrototypeRails
-        :prototype
-      end
-  end
-
   mattr_writer :jquery_ui_loaded, instance_writer: false
   def self.jquery_ui_included?
     return true if @@jquery_ui_loaded

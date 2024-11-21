@@ -68,6 +68,5 @@ module ActiveScaffold::DataStructures
     def is_a?(klass)
       super || @column.is_a?(klass)
     end
-    # TODO: export_options in active_scaffold_export
   end
 end

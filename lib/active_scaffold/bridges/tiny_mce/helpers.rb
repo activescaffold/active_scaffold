@@ -17,16 +17,12 @@ class ActiveScaffold::Bridges::TinyMce
       def active_scaffold_input_text_editor(column, options, ui_options: column.options)
         options[:class] = "#{options[:class]} mceEditor #{ui_options[:class]}".strip
 
-        settings = tinymce_configuration(ui_options[:tinymce_config] || :default).options
-                                                                                 .reject { |k, _v| k == 'selector' }
-                                                                                 .merge(ui_options[:tinymce] || {})
-        options['data-tinymce'] = settings.to_json if ActiveScaffold.js_framework != :prototype
+        settings = tinymce_configuration(ui_options[:tinymce_config] || :default).
+          options.reject { |k, _v| k == 'selector' }.merge(ui_options[:tinymce] || {})
+        options['data-tinymce'] = settings.to_json
 
         html = []
         html << send(override_input(:textarea), column, options, ui_options: ui_options)
-        if ActiveScaffold.js_framework == :prototype && (request.xhr? || params[:iframe])
-          html << javascript_tag("tinyMCE.settings = #{settings.to_json}; tinyMCE.execCommand('mceAddEditor', false, '#{options[:id]}');")
-        end
         safe_join html
       end
 
