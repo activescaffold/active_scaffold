@@ -311,9 +311,12 @@ module ActiveScaffold::DataStructures
       end
 
       def link
-        return @link.call(self) if frozen? && @link.is_a?(Proc)
-        @link = @link.call(self) if @link.is_a? Proc
-        @link
+        if frozen? && @link&.is_a?(Proc)
+          ActiveScaffold::Registry.cache(:column_links, cache_key) { @link.call(self).deep_freeze! }
+        else
+          @link = @link.call(self) if @link.is_a? Proc
+          @link
+        end
       end
 
       # associate an action_link with this column
