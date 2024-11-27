@@ -10,7 +10,6 @@ module ActiveScaffold::Actions
         before_action :configure_nested
         include ActiveScaffold::Actions::Nested::ChildMethods if active_scaffold_config.columns.map(&:association).compact.any?(&:habtm?)
       end
-      base.before_action :include_habtm_actions
       base.helper_method :nested
       base.helper_method :nested_parent_record
     end
@@ -56,32 +55,6 @@ module ActiveScaffold::Actions
 
     def nested_authorized?(record = nil)
       true
-    end
-
-    def include_habtm_actions
-      if nested&.habtm?
-        # Production mode is ok with adding a link everytime the scaffold is nested - we are not ok with that.
-        unless active_scaffold_config.action_links['new_existing']
-          active_scaffold_config.action_links.add('new_existing', :label => :add_existing, :type => :collection, :security_method => :add_existing_authorized?)
-        end
-        add_shallow_links if active_scaffold_config.nested.shallow_delete
-      end
-    end
-
-    def add_shallow_links
-      unless active_scaffold_config.action_links['destroy_existing']
-        link_options = {:label => :remove, :type => :member, :confirm => :are_you_sure_to_delete, :method => :delete, :position => false, :security_method => :delete_existing_authorized?}
-        active_scaffold_config.action_links.add('destroy_existing', link_options)
-      end
-      active_scaffold_config.action_links.delete('destroy') if active_scaffold_config.actions.include?(:delete)
-    end
-
-    def restore_shallow_links
-      if active_scaffold_config.actions.include?(:delete) && active_scaffold_config.delete.link
-        link = active_scaffold_config.delete.link
-        active_scaffold_config.action_links.add(link) unless active_scaffold_config.action_links[link.action]
-      end
-      active_scaffold_config.action_links.delete('destroy_existing')
     end
 
     def beginning_of_chain
@@ -150,6 +123,21 @@ module ActiveScaffold::Actions::Nested
   module ChildMethods
     def self.included(base)
       super
+      self.include_habtm_actions base.active_scaffold_config
+    end
+
+    def self.include_habtm_actions(config)
+      # Production mode is ok with adding a link everytime the scaffold is nested - we are not ok with that.
+      unless config.action_links['new_existing']
+        config.action_links.add('new_existing', label: :add_existing, type: :collection, security_method: :add_existing_authorized?, ignore_method: :add_existing_ignore?)
+      end
+      if config.nested.shallow_delete
+        unless config.action_links['destroy_existing']
+          link_options = {label: :remove, type: :member, confirm: :are_you_sure_to_delete, method: :delete, position: false, security_method: :delete_existing_authorized?, ignore_method: :delete_existing_ignore?}
+          config.action_links.add('destroy_existing', link_options)
+        end
+        config.action_links['destroy'].ignore_method = :habtm_delete_ignore? if config.actions.include?(:delete)
+      end
     end
 
     def new_existing
@@ -230,6 +218,18 @@ module ActiveScaffold::Actions::Nested
 
     def delete_existing_authorized?(record = nil)
       nested_parent_record.authorized_for?(:crud_type => :update, :column => nested.association.try(:name), :reason => true)
+    end
+
+    def add_existing_ignore?(record = nil)
+      !nested&.habtm?
+    end
+
+    def delete_existing_ignore?(record = nil)
+      !nested&.habtm?
+    end
+
+    def habtm_delete_ignore?(record = nil)
+      !delete_existing_ignore?(record) || delete_ignore?(record)
     end
 
     def after_create_save(record)
