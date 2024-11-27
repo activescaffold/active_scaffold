@@ -1,7 +1,9 @@
 - Add tabbed_by to group of columns in forms. The columns in the group must be collection associations, with a common column or association, used to partition them in different tabs.
 - Fix tableless in rails >= 7.1
-- Stop using cow_proxy for thread safety, added ProxyColumn and require using active_scaffold_config.columns.override(:column_name) to change a column per request, action links can't be changed
-- Require using active_scaffold_config.<a.override_columns to exclude or add columns
+- Stop using cow_proxy for thread safety:
+  - Added ProxyColumn and require using active_scaffold_config.columns.override(:column_name) to change a column per request
+  - Action links can't be changed, added or removed, add all links and use ignore_method to control when they are displayed
+  - Require using active_scaffold_config.override_columns to exclude or add columns
 - Thread safety enabled by default, can't be disabled, deprecate ActiveScaffold.threadsafe!
 
 = 3.7.9 (not released yet)
