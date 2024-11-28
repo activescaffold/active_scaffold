@@ -16,10 +16,6 @@ module ActiveScaffold::Config
     cattr_accessor :plugin_directory
     @@plugin_directory = File.expand_path(__FILE__).match(%{(^.*)/lib/active_scaffold/config/core.rb})[1]
 
-    # lets you specify a global ActiveScaffold frontend.
-    cattr_accessor :frontend, instance_accessor: false
-    @@frontend = :default
-
     # lets you specify a global ActiveScaffold theme for your frontend.
     cattr_accessor :theme, instance_accessor: false
     @@theme = :default
@@ -115,9 +111,6 @@ module ActiveScaffold::Config
       @columns.add(*val)
     end
 
-    # lets you override the global ActiveScaffold frontend for a specific controller
-    attr_accessor :frontend
-
     # lets you override the global ActiveScaffold theme for a specific controller
     attr_accessor :theme
 
@@ -183,8 +176,6 @@ module ActiveScaffold::Config
       @columns.exclude(*@columns.find_all { |c| c.column && content_columns.exclude?(c.column.name) }.collect(&:name))
       @columns.exclude(*model.reflect_on_all_associations.collect { |a| a.foreign_type.to_sym if a.options[:polymorphic] }.compact)
 
-      # inherit the global frontend
-      @frontend = self.class.frontend
       @theme = self.class.theme
       @cache_action_link_urls = self.class.cache_action_link_urls
       @cache_association_options = self.class.cache_association_options
@@ -302,24 +293,6 @@ module ActiveScaffold::Config
         end
       action_columns.action = action.is_a?(Symbol) ? send(action) : action
       action_columns
-    end
-
-    # must be a class method so the layout doesn't depend on a controller that uses active_scaffold
-    # note that this is unaffected by per-controller frontend configuration.
-    def self.asset_path(filename, frontend = self.frontend)
-      "active_scaffold/#{frontend}/#{filename}"
-    end
-
-    # must be a class method so the layout doesn't depend on a controller that uses active_scaffold
-    # note that this is unaffected by per-controller frontend configuration.
-    def self.javascripts(frontend = self.frontend)
-      javascript_dir = File.join(Rails.public_path, 'javascripts', asset_path('', frontend))
-      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js$/) || (!dhtml_history? && e.match('dhtml_history')) }
-    end
-
-    def self.available_frontends
-      frontends_dir = Rails.root.join('vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
-      Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
     end
 
     class UserSettings < Base::UserSettings
