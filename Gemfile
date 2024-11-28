@@ -22,7 +22,9 @@ group :development, :lint do
   # Patch-level verification for Bundler
   gem 'bundler-audit', require: false
   # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
-  gem 'rubocop', '0.52.1', require: false
+  gem 'rubocop', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
 end
 
 group :development, :lint, :test do

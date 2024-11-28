@@ -18,7 +18,7 @@ module ActiveScaffold::DataStructures
     end
 
     def to_params
-      {:parent_scaffold => parent_scaffold.controller_path}
+      {parent_scaffold: parent_scaffold.controller_path}
     end
 
     def new_instance?
@@ -87,7 +87,7 @@ module ActiveScaffold::DataStructures
       setup_constrained_fields
     end
 
-    delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :readonly?, :to => :association
+    delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :readonly?, to: :association
 
     # A through association with has_one or has_many as source association
     # create cannot be called in nested through associations, and not-nested through associations, unless:
@@ -108,7 +108,7 @@ module ActiveScaffold::DataStructures
       return false unless association.source_reflection.collection? # create allowed if source is singular, rails creates joint model
 
       # create allowed only if through reflection in record to be created is included in create columns
-      !child_association || !columns.include?(child_association.through_reflection.name)
+      !child_association || columns.exclude?(child_association.through_reflection.name)
     end
 
     def create_through_singular?
@@ -146,6 +146,7 @@ module ActiveScaffold::DataStructures
     def default_sorting(chain)
       return @default_sorting if defined? @default_sorting
       return unless association.scope.is_a?(Proc) && chain.respond_to?(:values) && chain.values[:order]
+
       @default_sorting = chain.values[:order]
       @default_sorting = @default_sorting.map(&:to_sql) if @default_sorting[0].is_a? Arel::Nodes::Node
       @default_sorting = @default_sorting.join(', ')
@@ -177,7 +178,7 @@ module ActiveScaffold::DataStructures
     end
 
     def to_params
-      super.merge(:named_scope => @scope)
+      super.merge(named_scope: @scope)
     end
 
     def name

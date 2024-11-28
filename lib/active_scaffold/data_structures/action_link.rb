@@ -59,8 +59,10 @@ module ActiveScaffold::DataStructures
 
     # a hash of request parameters
     attr_writer :parameters
+
     def parameters
       return @parameters || NO_OPTIONS if frozen?
+
       @parameters ||= NO_OPTIONS.dup
     end
 
@@ -77,6 +79,7 @@ module ActiveScaffold::DataStructures
 
     # what string to use to represent this action
     attr_writer :label
+
     def label(record = nil)
       case @label
       when Symbol
@@ -99,6 +102,7 @@ module ActiveScaffold::DataStructures
 
     def confirm(label = '')
       return @confirm if !confirm? || @confirm.is_a?(String)
+
       ActiveScaffold::Registry.cache(:translations, @confirm) { as_(@confirm) } % {label: label}
     end
 
@@ -108,6 +112,7 @@ module ActiveScaffold::DataStructures
 
     # if the action uses a DHTML based (i.e. 2-phase) confirmation
     attr_reader :dhtml_confirm
+
     def dhtml_confirm=(value)
       @confirm = nil if value
       @dhtml_confirm = value
@@ -121,6 +126,7 @@ module ActiveScaffold::DataStructures
     # if method return false, link will be disabled
     # note that this is only the UI part of the security. to prevent URL hax0rz, you also need security on requests (e.g. don't execute update method unless authorized).
     attr_writer :security_method
+
     def security_method
       @security_method || "#{action}_authorized?"
     end
@@ -157,6 +163,7 @@ module ActiveScaffold::DataStructures
     def popup=(val)
       @popup = (val == true)
       return unless @popup
+
       self.inline = self.page = false
 
       # the :method parameter doesn't mix with the :popup parameter
@@ -190,10 +197,12 @@ module ActiveScaffold::DataStructures
     #   :after
     #   false (no attempt at positioning)
     attr_writer :position
+
     def position
       return @position unless @position.nil? || @position == true
       return :replace if type == :member
       return :top if type == :collection
+
       raise "what should the default position be for #{type}?"
     end
 
@@ -202,8 +211,10 @@ module ActiveScaffold::DataStructures
 
     # html options for the link
     attr_writer :html_options
+
     def html_options
       return @html_options || NO_OPTIONS if frozen?
+
       @html_options ||= NO_OPTIONS.dup
     end
 
@@ -212,6 +223,7 @@ module ActiveScaffold::DataStructures
 
     # don't close the panel when another action link is open
     attr_writer :keep_open
+
     def keep_open?
       @keep_open
     end
@@ -228,6 +240,7 @@ module ActiveScaffold::DataStructures
 
     def name_to_cache
       return @name_to_cache if defined? @name_to_cache
+
       [
         controller || 'self',
         type,

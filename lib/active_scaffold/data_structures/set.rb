@@ -43,13 +43,12 @@ module ActiveScaffold::DataStructures
     # returns the item of the given name.
     def find_by_name(name)
       # this works because of `def item.=='
-      item = @set.find { |c| c == name }
-      item
+      @set.find { |c| c == name }
     end
     alias [] find_by_name
 
-    def each
-      @set.each { |i| yield i }
+    def each(&block)
+      @set.each(&block)
     end
 
     # returns the number of items in the set
@@ -62,7 +61,7 @@ module ActiveScaffold::DataStructures
     end
 
     def +(other)
-      self.class.new(*[@set, *other])
+      self.class.new(@set, *other)
     end
 
     protected

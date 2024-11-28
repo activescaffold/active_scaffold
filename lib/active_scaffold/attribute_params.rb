@@ -36,6 +36,7 @@ module ActiveScaffold
     def multi_parameter_attributes(attributes)
       params_hash(attributes).each_with_object({}) do |(k, v), result|
         next unless k.include? '('
+
         column_name = k.split('(').first
         result[column_name] ||= []
         result[column_name] << [k, v]
@@ -45,6 +46,7 @@ module ActiveScaffold
     def assign_locking_column(parent_record, attributes)
       return unless parent_record.persisted? && parent_record.locking_enabled? &&
                     attributes.include?(parent_record.class.locking_column)
+
       parent_record.write_attribute parent_record.class.locking_column, attributes[parent_record.class.locking_column]
     end
 
@@ -55,14 +57,14 @@ module ActiveScaffold
     # set. The columns set will not yield unauthorized columns, and it will not yield unregistered columns.
     def update_record_from_params(parent_record, columns, attributes, avoid_changes = false)
       crud_type = parent_record.new_record? ? :create : :update
-      return parent_record unless parent_record.authorized_for?(:crud_type => crud_type)
+      return parent_record unless parent_record.authorized_for?(crud_type: crud_type)
 
       multi_parameter_attrs = multi_parameter_attributes(attributes)
       assign_locking_column(parent_record, attributes)
 
       columns.each_column(for: parent_record, crud_type: crud_type, flatten: true) do |column|
         # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
-        column.params.select { |p| attributes.key? p }.each { |p| parent_record.send("#{p}=", attributes[p]) }
+        assign_column_params(parent_record, column, attributes)
 
         if multi_parameter_attrs.key? column.name.to_s
           parent_record.send(:assign_multiparameter_attributes, multi_parameter_attrs[column.name.to_s])
@@ -70,7 +72,7 @@ module ActiveScaffold
           update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
         end
       rescue StandardError => e
-        message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} "\
+        message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} " \
                   "(value from params #{attributes[column.name].inspect})"
         Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
         raise
@@ -79,33 +81,39 @@ module ActiveScaffold
       parent_record
     end
 
+    def assign_column_params(parent_record, column, attributes)
+      column.params.select { |p| attributes.key? p }.each { |p| parent_record.send(:"#{p}=", attributes[p]) }
+    end
+
     def update_column_from_params(parent_record, column, attribute, avoid_changes = false)
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
       if column.association
-        if avoid_changes
-          parent_record.association(column.name).target = value
-          parent_record.send("#{column.association.foreign_key}=", value&.id) if column.association.belongs_to?
-        else
-          update_column_association(parent_record, column, attribute, value)
-        end
+        update_column_association(parent_record, column, attribute, value, avoid_changes)
       else
-        parent_record.send "#{column.name}=", value
+        parent_record.send :"#{column.name}=", value
       end
       # needed? probably done on find_or_create_for_params, need more testing
       if column.association&.reverse_association&.belongs_to?
-        Array(value).each { |v| v.send("#{column.association.reverse}=", parent_record) if v.new_record? }
+        Array(value).each { |v| v.send(:"#{column.association.reverse}=", parent_record) if v.new_record? }
       end
       value
     end
 
-    def update_column_association(parent_record, column, attribute, value)
-      if column.association.collection? && column.association.through_singular?
+    def assign_column_association(parent_record, column, attribute, value)
+      parent_record.association(column.name).target = value
+      parent_record.send(:"#{column.association.foreign_key}=", value&.id) if column.association.belongs_to?
+    end
+
+    def update_column_association(parent_record, column, attribute, value, avoid_changes = false)
+      if avoid_changes
+        assign_column_association(parent_record, column, attribute, value)
+      elsif column.association.collection? && column.association.through_singular?
         through = column.association.through_reflection.name
         through_record = parent_record.send(through)
-        through_record ||= parent_record.send "build_#{through}"
-        through_record.send "#{column.association.source_reflection.name}=", value
+        through_record ||= parent_record.send :"build_#{through}"
+        through_record.send :"#{column.association.source_reflection.name}=", value
       else
-        parent_record.send "#{column.name}=", value
+        parent_record.send :"#{column.name}=", value
       end
     rescue ActiveRecord::RecordNotSaved
       parent_record.errors.add column.name, :invalid
@@ -115,8 +123,8 @@ module ActiveScaffold
     def column_value_from_param_value(parent_record, column, value, avoid_changes = false)
       # convert the value, possibly by instantiating associated objects
       form_ui = column.form_ui || column.column&.type
-      if form_ui && respond_to?("column_value_for_#{form_ui}_type", true)
-        send("column_value_for_#{form_ui}_type", parent_record, column, value)
+      if form_ui && respond_to?(:"column_value_for_#{form_ui}_type", true)
+        send(:"column_value_for_#{form_ui}_type", parent_record, column, value)
       elsif params_hash? value
         column_value_from_param_hash_value(parent_record, column, params_hash(value), avoid_changes)
       else
@@ -173,7 +181,7 @@ module ActiveScaffold
     def column_plural_assocation_value_from_value(column, value)
       # it's an array of ids
       if value.present?
-        ids = value.select(&:present?)
+        ids = value.compact_blank
         ids.empty? ? [] : column.association.klass.find(ids)
       else
         []
@@ -185,8 +193,8 @@ module ActiveScaffold
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.association&.collection?
         # HACK: to be able to delete all associated records, hash will include "0" => ""
-        values = value.values.reject(&:blank?)
-        values.collect { |val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }.compact
+        value.values.compact_blank
+          .filter_map { |val| manage_nested_record_from_params(parent_record, column, val, avoid_changes) }
       else
         value
       end
@@ -194,6 +202,7 @@ module ActiveScaffold
 
     def manage_nested_record_from_params(parent_record, column, attributes, avoid_changes = false)
       return nil unless build_record_from_params?(attributes, column, parent_record)
+
       record = find_or_create_for_params(attributes, column, parent_record)
       if record
         record_columns = active_scaffold_config_for(record.class).subform.columns
@@ -209,6 +218,7 @@ module ActiveScaffold
     def build_record_from_params?(params, column, record)
       current = record.send(column.name)
       return true if column.association.collection? && !column.show_blank_record?(current)
+
       klass = column.association.klass(record)
       klass && !attributes_hash_is_empty?(params, klass)
     end
@@ -221,11 +231,11 @@ module ActiveScaffold
       klass = parent_column.association.klass(parent_record)
       if params.key? klass.primary_key
         record_from_current_or_find(klass, params[klass.primary_key], current)
-      elsif klass.authorized_for?(:crud_type => :create)
+      elsif klass.authorized_for?(crud_type: :create)
         association = parent_column.association
         record = klass.new
         if association.reverse_association&.belongs_to? && (association.collection? || current.nil?)
-          record.send("#{parent_column.association.reverse}=", parent_record)
+          record.send(:"#{parent_column.association.reverse}=", parent_record)
         end
         record
       end
@@ -249,24 +259,27 @@ module ActiveScaffold
     # This isn't a literal emptiness - it's an attempt to discern whether the user intended it to be empty or not.
     def attributes_hash_is_empty?(hash, klass)
       hash.all? do |key, value|
-        # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
-        column_name = key.to_s.split('(', 2)[0]
-
         # datetimes will always have a value. so we ignore them when checking whether the hash is empty.
         # this could be a bad idea. but the current situation (excess record entry) seems worse.
         next true if mulitpart_ignored?(key, klass)
 
+        # convert any possible multi-parameter attributes like 'created_at(5i)' to simply 'created_at'
+        column_name = key.to_s.split('(', 2)[0]
+        attribute_is_empty?(column_name, klass, value)
+      end
+    end
+
+    def attribute_is_empty?(column_name, klass, value)
+      if default_value?(column_name, klass, value)
         # defaults are pre-filled on the form. we can't use them to determine if the user intends a new row.
         # booleans always have value, so they are ignored if not changed from default
-        next true if default_value?(column_name, klass, value)
-
-        if params_hash? value
-          attributes_hash_is_empty?(value, klass)
-        elsif value.is_a?(Array)
-          value.all?(&:blank?)
-        else
-          value.respond_to?(:empty?) ? value.empty? : false
-        end
+        true
+      elsif params_hash? value
+        attributes_hash_is_empty?(value, klass)
+      elsif value.is_a?(Array)
+        value.all?(&:blank?)
+      else
+        value.respond_to?(:empty?) ? value.empty? : false
       end
     end
 
@@ -276,6 +289,7 @@ module ActiveScaffold
     def mulitpart_ignored?(param_name, klass)
       column_name, multipart = param_name.to_s.split('(', 2)
       return false unless multipart
+
       column_type = ActiveScaffold::OrmChecks.column_type(klass, column_name)
       MULTIPART_IGNORE_TYPES.include?(column_type) if column_type
     end

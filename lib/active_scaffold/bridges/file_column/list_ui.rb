@@ -4,21 +4,24 @@ module ActiveScaffold
     module ListColumnHelpers
       def active_scaffold_column_download_link_with_filename(record, column, ui_options: column.options)
         return nil if record.send(column.name).nil?
+
         active_scaffold_column_download_link(record, column, File.basename(record.send(column.name)))
       end
 
       def active_scaffold_column_download_link(record, column, label = nil, ui_options: column.options)
         return nil if record.send(column.name).nil?
+
         label ||= as_(:download)
-        link_to(label, url_for_file_column(record, column.name.to_s), :popup => true)
+        link_to(label, url_for_file_column(record, column.name.to_s), popup: true)
       end
 
       def active_scaffold_column_thumbnail(record, column, ui_options: column.options)
         return nil if record.send(column.name).nil?
+
         link_to(
-          image_tag(url_for_file_column(record, column.name.to_s, 'thumb'), :border => 0),
+          image_tag(url_for_file_column(record, column.name.to_s, 'thumb'), border: 0),
           url_for_file_column(record, column.name.to_s),
-          :popup => true
+          popup: true
         )
       end
     end

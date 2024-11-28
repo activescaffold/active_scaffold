@@ -99,12 +99,14 @@ module ActiveScaffold::Config
 
     # provides read/write access to the local Actions DataStructure
     attr_reader :actions
+
     def actions=(args)
       @actions = ActiveScaffold::DataStructures::Actions.new(*args)
     end
 
     # provides read/write access to the local Columns DataStructure
     attr_reader :columns
+
     def columns=(val)
       @columns._inheritable = val.collect(&:to_sym)
       # Add virtual columns
@@ -128,6 +130,7 @@ module ActiveScaffold::Config
 
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
+
     def add_sti_create_links?
       sti_create_links && !sti_children.nil?
     end
@@ -137,8 +140,9 @@ module ActiveScaffold::Config
 
     # a generally-applicable name for this ActiveScaffold ... will be used for generating page/section headers
     attr_writer :label
+
     def label(options = {})
-      as_(@label, options) || model.model_name.human(options.merge(options[:count].to_i == 1 ? {} : {:default => model.name.pluralize}))
+      as_(@label, options) || model.model_name.human(options.merge(options[:count].to_i == 1 ? {} : {default: model.name.pluralize}))
     end
 
     # STI children models, use an array of model names
@@ -154,7 +158,7 @@ module ActiveScaffold::Config
     ## internal usage only below this point
     ## ------------------------------------
 
-    def initialize(model_id)
+    def initialize(model_id) # rubocop:disable Lint/MissingSuper
       # model_id is the only absolutely required configuration value. it is also not publicly accessible.
       @model_id = model_id
       setup_user_setting_key
@@ -174,7 +178,7 @@ module ActiveScaffold::Config
       content_columns = Set.new(_content_columns.map(&:name))
       @columns.exclude(*self.class.ignore_columns)
       @columns.exclude(*@columns.find_all { |c| c.column && content_columns.exclude?(c.column.name) }.collect(&:name))
-      @columns.exclude(*model.reflect_on_all_associations.collect { |a| a.foreign_type.to_sym if a.options[:polymorphic] }.compact)
+      @columns.exclude(*model.reflect_on_all_associations.filter_map { |a| a.foreign_type.to_sym if a.options[:polymorphic] })
 
       @theme = self.class.theme
       @cache_action_link_urls = self.class.cache_action_link_urls
@@ -203,6 +207,7 @@ module ActiveScaffold::Config
     # To be called after your finished configuration
     def _configure_sti
       return if sti_children.nil?
+
       column = model.inheritance_column
       if sti_create_links
         columns[column].form_ui ||= :hidden
@@ -229,7 +234,7 @@ module ActiveScaffold::Config
     end
 
     def respond_to_missing?(name, include_all = false)
-      self.class.config_class?(name) && @actions.include?(name.to_sym) || super
+      (self.class.config_class?(name) && @actions.include?(name.to_sym)) || super
     end
 
     def [](action_name)
@@ -240,6 +245,7 @@ module ActiveScaffold::Config
       unless @actions.include? underscored_name
         raise "#{action_name.to_s.camelcase} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
       end
+
       @action_configs ||= {}
       @action_configs[underscored_name] ||= klass.new(self)
     end
@@ -263,7 +269,7 @@ module ActiveScaffold::Config
     end
 
     def self.respond_to_missing?(name, include_all = false)
-      config_class?(name) && @@actions.include?(name.to_s.underscore) || super
+      (config_class?(name) && @@actions.include?(name.to_s.underscore)) || super
     end
     # some utility methods
     # --------------------
@@ -347,6 +353,7 @@ module ActiveScaffold::Config
 
       def override(name)
         raise ArgumentError, "column '#{name}' doesn't exist" unless @global_columns[name]
+
         (@columns[name.to_sym] ||= ActiveScaffold::DataStructures::ProxyColumn.new(@global_columns[name])).tap do |col|
           yield col if block_given?
         end
@@ -354,22 +361,23 @@ module ActiveScaffold::Config
 
       def each
         return enum_for(:each) unless block_given?
+
         @global_columns.each do |col|
           yield self[col.name]
         end
       end
 
-      def method_missing(name, *args, &block)
+      def method_missing(name, ...)
         if respond_to_missing?(name, true)
-          @global_columns.send(name, *args, &block)
+          @global_columns.send(name, ...)
         else
           super
         end
       end
 
-      DONT_DELEGATE = %i[add exclude add_association_columns _inheritable=]
+      DONT_DELEGATE = %i[add exclude add_association_columns _inheritable=].freeze
       def respond_to_missing?(name, include_all = false)
-        DONT_DELEGATE.exclude?(name) && @global_columns.respond_to?(name, include_all) || super
+        (DONT_DELEGATE.exclude?(name) && @global_columns.respond_to?(name, include_all)) || super
       end
     end
   end

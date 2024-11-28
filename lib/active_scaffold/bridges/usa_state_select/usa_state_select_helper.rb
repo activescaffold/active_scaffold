@@ -13,21 +13,21 @@ module ActiveScaffold::Bridges
       # NOTE: Only the option tags are returned from this method, wrap it in a <select>
       def usa_state_options_for_select(selected = nil, priority_states = nil)
         state_options = if priority_states
-                          options_for_select(priority_states + [['-------------', '']], :selected => selected, :disabled => '')
+                          options_for_select(priority_states + [['-------------', '']], selected: selected, disabled: '')
                         else
                           options_for_select([])
                         end
 
         state_options += if priority_states&.include?(selected)
-                           options_for_select(USASTATES - priority_states, :selected => selected)
+                           options_for_select(USASTATES - priority_states, selected: selected)
                          else
-                           options_for_select(USASTATES, :selected => selected)
+                           options_for_select(USASTATES, selected: selected)
                          end
 
         state_options
       end
 
-      unless const_defined?('USASTATES')
+      unless const_defined?(:USASTATES)
         USASTATES = [
           %w[Alabama AL], %w[Alaska AK], %w[Arizona AZ], %w[Arkansas AR], %w[California CA], %w[Colorado CO],
           %w[Connecticut CT], %w[Delaware DE], ['District of Columbia', 'DC'], %w[Florida FL], %w[Georgia GA],
@@ -59,7 +59,7 @@ module ActiveScaffold::Bridges
 
     module FormColumnHelpers
       def active_scaffold_input_usa_state(column, options, ui_options: column.options)
-        select_options = {:prompt => as_(:_select_)}
+        select_options = {prompt: as_(:_select_)}
         select_options.merge!(options)
         options.reverse_merge!(ui_options).except!(:prompt, :priority)
         active_scaffold_select_name_with_multiple options
@@ -69,7 +69,7 @@ module ActiveScaffold::Bridges
 
     module SearchColumnHelpers
       def active_scaffold_search_usa_state(column, options, ui_options: column.options)
-        active_scaffold_input_usa_state(column, options.merge!(:selected => options.delete(:value)), ui_options: ui_options)
+        active_scaffold_input_usa_state(column, options.merge!(selected: options.delete(:value)), ui_options: ui_options)
       end
     end
   end
@@ -89,7 +89,7 @@ if defined? ActionView::Helpers::InstanceTag # TODO: remove when rails 3.2 suppo
     end
   end
 else
-  class ActionView::Helpers::Tags::UsaStateSelect < ActionView::Helpers::Tags::Base #:nodoc:
+  class ActionView::Helpers::Tags::UsaStateSelect < ActionView::Helpers::Tags::Base # :nodoc:
     include ActiveScaffold::Bridges::UsaStateSelect::UsaStateSelectOptionsHelpers
     include ActiveScaffold::Bridges::UsaStateSelect::InstanceTagMethods
   end

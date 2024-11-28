@@ -3,7 +3,9 @@ module ActiveScaffold::DataStructures::Association
     def initialize(association)
       @association = association
     end
+
     attr_writer :reverse
+
     delegate :name, :foreign_key, :==, to: :@association
 
     def allow_join?
@@ -99,10 +101,10 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def reverse(klass = nil)
-      unless polymorphic? || defined?(@reverse)
+      unless polymorphic?
         @reverse ||= inverse || get_reverse&.name
       end
-      @reverse || (get_reverse(klass)&.name unless klass.nil?)
+      @reverse || get_reverse(klass)&.name
     end
 
     def inverse_for?(klass)
@@ -119,6 +121,10 @@ module ActiveScaffold::DataStructures::Association
           reflect_on_association(reverse_name) if reverse_name
         end
       self.class.new(assoc) if assoc
+    end
+
+    def cache_count?
+      collection? && !ActiveScaffold::OrmChecks.tableless?(klass) && !reverse_association&.counter_cache
     end
 
     protected

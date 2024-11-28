@@ -2,14 +2,14 @@ module ActiveScaffold
   module LookupContext
     attr_accessor :last_template
 
-    def find_template(name, prefixes = [], partial = false, keys = [], options = {})
-      self.last_template = super(name, prefixes, partial, keys, options)
+    def find_template(name, prefixes = [], partial = false, keys = [], options = {}) # rubocop:disable Metrics, Style
+      self.last_template = super
     end
   end
 end
 
 # wrap the action rendering for ActiveScaffold views
-module ActiveScaffold #:nodoc:
+module ActiveScaffold # :nodoc:
   module RenderingHelper
     #
     # Adds two rendering options.
@@ -45,7 +45,7 @@ module ActiveScaffold #:nodoc:
           @_view_paths ||= lookup_context.view_paths.clone
           @_last_template ||= lookup_context.last_template
         end
-        result = super options_for_render_super(args[1])
+        result = super(options_for_render_super(args[1]))
         @lookup_context = @_lookup_context if @_lookup_context # rails 6
         lookup_context.view_paths = @_view_paths if @_view_paths # rails < 6
         lookup_context.last_template = @_last_template if @_last_template # rails < 6
@@ -74,7 +74,7 @@ module ActiveScaffold #:nodoc:
     end
 
     def view_stack
-      @_view_stack ||= []
+      @view_stack ||= []
     end
 
     private
@@ -91,11 +91,11 @@ module ActiveScaffold #:nodoc:
       options[:template] = parts.pop
       prefix = parts.join('/')
       # if prefix is active_scaffold_overrides we must try to render with this prefix in following paths
-      if prefix != 'active_scaffold_overrides'
-        options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
-      else
+      if prefix == 'active_scaffold_overrides'
         options[:prefixes] = ['active_scaffold_overrides']
         update_view_paths
+      else
+        options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
       end
       options
     end
@@ -145,7 +145,7 @@ module ActiveScaffold #:nodoc:
       eid_info[:conditions] = options[:conditions] if options[:conditions]
       eid_info[:label] = options[:label] if options[:label]
       options[:params] ||= {}
-      options[:params].merge! :eid => eid, :embedded => eid_info
+      options[:params].merge! eid: eid, embedded: eid_info
 
       id = "as_#{eid}-embedded"
       url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
@@ -154,8 +154,8 @@ module ActiveScaffold #:nodoc:
         controller.send(:render_component_into_view, url_options)
       else
         url = url_for(url_options)
-        content_tag(:div, :id => id, :class => 'active-scaffold-component', :data => {:refresh => url}) do
-          content_tag(:div, :class => 'active-scaffold-header') do
+        content_tag(:div, id: id, class: 'active-scaffold-component', data: {refresh: url}) do
+          content_tag(:div, class: 'active-scaffold-header') do
             content_tag(:h2) do
               label = options[:label] || remote_controller_config(remote_controller).list.label
               link_to(label, url, remote: true, class: 'load-embedded', data: {error_msg: as_(:error_500)}) <<

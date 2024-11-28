@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Mark
     def self.included(base)
-      base.before_action :mark_authorized_filter, :only => :mark
+      base.before_action :mark_authorized_filter, only: :mark
       base.before_action :assign_marked_records_to_model
       base.helper_method :marked_records
     end
@@ -14,7 +14,7 @@ module ActiveScaffold::Actions
       end
       if marked_records.any?
         count = marked_records.length
-        flash[:info] = as_(:records_marked, :count => count, :model => active_scaffold_config.label(:count => count))
+        flash[:info] = as_(:records_marked, count: count, model: active_scaffold_config.label(count: count))
       end
       respond_to_action(:mark)
     end
@@ -30,11 +30,11 @@ module ActiveScaffold::Actions
       if params.delete(:id) # so find_page doesn't filter by :id
         do_search if respond_to? :do_search, true
         set_includes_for_columns if active_scaffold_config.actions.include? :list
-        @page = find_page(:pagination => active_scaffold_config.mark.mark_all_mode != :page)
-        render :action => 'on_mark'
+        @page = find_page(pagination: active_scaffold_config.mark.mark_all_mode != :page)
+        render action: 'on_mark'
       else
         @include_checkboxes = true
-        render :action => 'on_mark', :locals => {:checked => mark?}
+        render action: 'on_mark', locals: {checked: mark?}
       end
     end
 

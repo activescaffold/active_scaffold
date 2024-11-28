@@ -79,7 +79,7 @@ module ActiveScaffold::Config
 
     # the ActionLink to reset search
     cattr_reader :reset_link, instance_reader: false
-    @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :collection, :position => false, :parameters => {:search => ''})
+    @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, parameters: {search: ''})
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling
@@ -164,21 +164,21 @@ module ActiveScaffold::Config
 
     # the label for this List action. used for the header.
     attr_writer :label
+
     def label
-      @label ? as_(@label, :count => 2) : @core.label(:count => 2)
+      @label ? as_(@label, count: 2) : @core.label(count: 2)
     end
 
-    attr_writer :no_entries_message
+    attr_writer :no_entries_message, :filtered_message, :always_show_search
+
     def no_entries_message
-      @no_entries_message ? @no_entries_message : :no_entries
+      @no_entries_message || :no_entries
     end
 
-    attr_writer :filtered_message
     def filtered_message
-      @filtered_message ? @filtered_message : :filtered
+      @filtered_message || :filtered
     end
 
-    attr_writer :always_show_search
     def always_show_search
       @always_show_search && search_partial.present?
     end
@@ -192,18 +192,23 @@ module ActiveScaffold::Config
     end
 
     def auto_search_partial
-      return 'search' if @core.actions.include?(:search)
-      return 'field_search' if @core.actions.include?(:field_search)
+      if @core.actions.include?(:search)
+        'search'
+      elsif @core.actions.include?(:field_search)
+        'field_search'
+      end
     end
 
     # always show create
     attr_writer :always_show_create
+
     def always_show_create
       @always_show_create && @core.actions.include?(:create)
     end
 
     # if list view is nested hide nested_column
     attr_writer :hide_nested_column
+
     def hide_nested_column
       @hide_nested_column.nil? ? true : @hide_nested_column
     end
@@ -232,6 +237,7 @@ module ActiveScaffold::Config
       end
 
       attr_writer :label
+
       # This label has already been localized.
       def label
         self['label'] || embedded_label || @label || @conf.label

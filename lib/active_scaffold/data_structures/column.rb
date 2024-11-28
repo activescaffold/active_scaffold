@@ -3,7 +3,7 @@ module ActiveScaffold::DataStructures
     module ProxyableMethods
       extend ActiveSupport::Concern
 
-      included do
+      included do # rubocop:disable Metrics/BlockLength
         # Whether to enable inplace editing for this column. Currently works for text columns, in the List.
         attr_reader :inplace_edit
 
@@ -115,7 +115,7 @@ module ActiveScaffold::DataStructures
       end
 
       def placeholder
-        @placeholder || I18n.t(name, :scope => [:activerecord, :placeholder, active_record_class.to_s.underscore.to_sym], :default => '')
+        @placeholder || I18n.t(name, scope: [:activerecord, :placeholder, active_record_class.to_s.underscore.to_sym], default: '')
       end
 
       def label(record = nil, scope = nil)
@@ -131,12 +131,12 @@ module ActiveScaffold::DataStructures
       end
 
       def description(record = nil, scope = nil)
-        if @description&.respond_to?(:call)
+        if @description.respond_to?(:call)
           @description.call(record, self, scope)
         elsif @description
           @description
         else
-          I18n.t name, :scope => [:activerecord, :description, active_record_class.to_s.underscore.to_sym], :default => ''
+          I18n.t name, scope: [:activerecord, :description, active_record_class.to_s.underscore.to_sym], default: ''
         end
       end
 
@@ -181,7 +181,8 @@ module ActiveScaffold::DataStructures
 
       def show_blank_record?(associated)
         return false unless @show_blank_record
-        return false unless association.klass.authorized_for?(:crud_type => :create) && !association.readonly?
+        return false unless association.klass.authorized_for?(crud_type: :create) && !association.readonly?
+
         association.collection? || (association.singular? && associated.blank?)
       end
 
@@ -200,19 +201,20 @@ module ActiveScaffold::DataStructures
 
       def number_to_native(value)
         return value if value.blank? || !value.is_a?(String)
+
         native = '.' # native ruby separator
-        format = {:separator => '', :delimiter => ''}.merge! I18n.t('number.format', :default => {})
+        format = {separator: '', delimiter: ''}.merge! I18n.t('number.format', default: {})
         specific =
           case options[:format]
           when :currency
-            I18n.t('number.currency.format', :default => nil)
+            I18n.t('number.currency.format', default: nil)
           when :size
-            I18n.t('number.human.format', :default => nil)
+            I18n.t('number.human.format', default: nil)
           when :percentage
-            I18n.t('number.percentage.format', :default => nil)
+            I18n.t('number.percentage.format', default: nil)
           end
         format.merge! specific unless specific.nil?
-        if format[:separator].blank? || !value.include?(format[:separator]) && value.include?(native) && (format[:delimiter] != native || value !~ /\.\d{3}$/)
+        if format[:separator].blank? || (value.exclude?(format[:separator]) && value.include?(native) && (format[:delimiter] != native || value !~ /\.\d{3}$/))
           value
         else
           value.gsub(/[^0-9\-#{format[:separator]}]/, '').gsub(format[:separator], native)
@@ -311,7 +313,7 @@ module ActiveScaffold::DataStructures
       end
 
       def link
-        if frozen? && @link&.is_a?(Proc)
+        if frozen? && @link.is_a?(Proc)
           ActiveScaffold::Registry.cache(:column_links, cache_key) { @link.call(self).deep_freeze! }
         else
           @link = @link.call(self) if @link.is_a? Proc
@@ -331,9 +333,13 @@ module ActiveScaffold::DataStructures
         end
       end
 
+      def cache_count?
+        includes.blank? && associated_number? && association&.cache_count?
+      end
+
       def attributes=(opts)
         opts.each do |setting, value|
-          send "#{setting}=", value
+          send :"#{setting}=", value
         end
       end
 
@@ -342,7 +348,7 @@ module ActiveScaffold::DataStructures
       def initialize_sort
         self.sort =
           if column && !tableless?
-            {:sql => field}
+            {sql: field}
           else
             false
           end
@@ -376,6 +382,7 @@ module ActiveScaffold::DataStructures
     # Any extra parameters this particular column uses.  This is for create/update purposes.
     def params
       return @params || NO_PARAMS if frozen?
+
       @params ||= NO_PARAMS.dup
     end
 
@@ -385,6 +392,7 @@ module ActiveScaffold::DataStructures
 
     def default_value=(value)
       raise ArgumentError, "Can't set default value for non-DB columns (virtual columns or associations)" unless column
+
       @default_value = value
     end
 
@@ -397,6 +405,7 @@ module ActiveScaffold::DataStructures
 
     def options
       return @options || NO_OPTIONS if frozen?
+
       @options ||= NO_OPTIONS.dup
     end
 
@@ -447,7 +456,7 @@ module ActiveScaffold::DataStructures
     end
 
     # this is so that array.delete and array.include?, etc., will work by column name
-    def ==(other) #:nodoc:
+    def ==(other) # :nodoc:
       # another column
       if other.respond_to?(:name) && other.class == self.class
         name == other.name.to_sym
@@ -464,7 +473,7 @@ module ActiveScaffold::DataStructures
     attr_reader :cache_key
 
     # instantiation is handled internally through the DataStructures::Columns object
-    def initialize(name, active_record_class, delegated_association = nil) #:nodoc:
+    def initialize(name, active_record_class, delegated_association = nil) # :nodoc:
       @name = name.to_sym
       @active_record_class = active_record_class
       @column = _columns_hash[name.to_s]
@@ -500,9 +509,9 @@ module ActiveScaffold::DataStructures
       # default all the configurable variables
       self.css_class = ''
       validators_force_require_on = active_record_class.validators_on(name)
-                                                       .map { |val| validator_force_required?(val) }
-                                                       .select(&:present?)
-      self.required = validators_force_require_on.any? { |opt| opt == true } ||
+                                      .map { |val| validator_force_required?(val) }
+                                      .compact_blank
+      self.required = validators_force_require_on.any?(true) ||
                       validators_force_require_on.reject { |opt| opt == true }.flatten.presence
       self.sort = true
       self.search_sql = true
@@ -513,11 +522,13 @@ module ActiveScaffold::DataStructures
     # just the field (not table.field)
     def field_name
       return nil if virtual?
+
       @field_name ||= column ? quoted_field_name(column.name) : quoted_field_name(association.foreign_key)
     end
 
     def default_for_empty_value
       return nil unless column
+
       if column.is_a?(ActiveModel::Attribute)
         column.value
       elsif active_record? && null?
@@ -561,11 +572,11 @@ module ActiveScaffold::DataStructures
     def setup_defaults_for_column
       if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
         @form_ui = :select
-        @options = {:options => active_record_class.send(name.to_s.pluralize).keys.map(&:to_sym)}
+        @options = {options: active_record_class.send(name.to_s.pluralize).keys.map(&:to_sym)}
       elsif column_number?
         @number = true
         @form_ui = :number
-        @options = {:format => :i18n_number}
+        @options = {format: :i18n_number}
       else
         @form_ui =
           case column_type
@@ -592,6 +603,7 @@ module ActiveScaffold::DataStructures
 
     def validator_force_required?(val)
       return false if val.options[:if] || val.options[:unless]
+
       case val
       when ActiveModel::Validations::PresenceValidator
         validator_required_on(val)
@@ -633,8 +645,11 @@ module ActiveScaffold::DataStructures
     end
 
     def column_number?
-      return %i[float decimal integer].include? column_type if active_record?
-      return @column.type < Numeric if mongoid?
+      if active_record?
+        %i[float decimal integer].include? column_type
+      elsif mongoid?
+        @column.type < Numeric
+      end
     end
 
     def quoted_field_name(column_name)
@@ -670,6 +685,7 @@ module ActiveScaffold::DataStructures
 
     def check_valid_action_ui_params(value)
       return true if valid_action_ui_params?(value)
+
       raise ArgumentError, 'value must be a Symbol, or an array of Symbol and Hash'
     end
 

@@ -69,11 +69,6 @@ GEM
       activemodel (= 7.2.2)
       activesupport (= 7.2.2)
       timeout (>= 0.4.0)
-    activerecord-jdbc-adapter (70.2-java)
-      activerecord (~> 7.0)
-    activerecord-jdbcsqlite3-adapter (70.2-java)
-      activerecord-jdbc-adapter (= 70.2)
-      jdbc-sqlite3 (~> 3.8)
     activestorage (7.2.2)
       actionpack (= 7.2.2)
       activejob (= 7.2.2)
@@ -104,7 +99,6 @@ GEM
       parser (>= 2.4)
       smart_properties
     bigdecimal (3.1.8)
-    bigdecimal (3.1.8-java)
     brakeman (6.2.2)
       racc
     builder (3.3.0)
@@ -116,7 +110,6 @@ GEM
     cow_proxy (0.3.3)
     crass (1.0.6)
     date (3.4.0)
-    date (3.4.0-java)
     docile (1.4.1)
     domain_name (0.6.20240107)
     drb (2.2.1)
@@ -144,14 +137,12 @@ GEM
       terminal-table (>= 1.5.1)
     ice_nine (0.11.2)
     io-console (0.7.2)
-    io-console (0.7.2-java)
     irb (1.14.1)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    jar-dependencies (0.4.1)
     jdbc-sqlite3 (3.46.1.1)
-    json (2.8.1)
-    json (2.8.1-java)
+    json (2.8.2)
+    language_server-protocol (3.17.0.3)
     localeapp (3.3.0)
       gli
       i18n (>= 0.7, < 2)
@@ -172,7 +163,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2024.1105)
     mini_mime (1.1.5)
-    minitest (5.25.1)
+    minitest (5.25.2)
     minitest-reporters (1.7.1)
       ansi
       builder
@@ -191,21 +182,15 @@ GEM
       net-protocol
     netrc (0.11.0)
     nio4r (2.7.4)
-    nio4r (2.7.4-java)
-    nokogiri (1.16.7-java)
-      racc (~> 1.4)
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
     parallel (1.26.3)
-    parser (2.7.2.0)
+    parser (3.3.6.0)
       ast (~> 2.4.1)
-    powerpack (0.1.3)
+      racc
     psych (5.2.0)
       stringio
-    psych (5.2.0-java)
-      jar-dependencies (>= 0.1.7)
     racc (1.8.1)
-    racc (1.8.1-java)
     rack (3.1.8)
     rack-session (2.0.0)
       rack (>= 3.0.0)
@@ -249,6 +234,7 @@ GEM
     rake (13.2.1)
     rdoc (6.7.0)
       psych (>= 4.0.0)
+    regexp_parser (2.9.2)
     reline (0.5.11)
       io-console (~> 0.5)
     request_store (1.7.0)
@@ -258,13 +244,26 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-    rubocop (0.52.1)
+    rubocop (1.69.0)
+      json (~> 2.3)
+      language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
-      parser (>= 2.4.0.2, < 3.0)
-      powerpack (~> 0.1)
+      parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 2.4, < 3.0)
+      rubocop-ast (>= 1.36.1, < 2.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (~> 1.0, >= 1.0.1)
+      unicode-display_width (>= 2.4.0, < 4.0)
+    rubocop-ast (1.36.2)
+      parser (>= 3.3.1.0)
+    rubocop-performance (1.23.0)
+      rubocop (>= 1.48.1, < 2.0)
+      rubocop-ast (>= 1.31.1, < 2.0)
+    rubocop-rails (2.27.0)
+      activesupport (>= 4.2.0)
+      rack (>= 1.1)
+      rubocop (>= 1.52.0, < 2.0)
+      rubocop-ast (>= 1.31.1, < 2.0)
     ruby-prof (1.7.1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
@@ -290,17 +289,14 @@ GEM
     timeout (0.4.2)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    unicode-display_width (1.8.0)
+    unicode-display_width (2.6.0)
     useragent (0.16.10)
     websocket-driver (0.7.6)
-      websocket-extensions (>= 0.1.0)
-    websocket-driver (0.7.6-java)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     zeitwerk (2.7.1)
 
 PLATFORMS
-  java
   x86_64-linux
 
 DEPENDENCIES
@@ -318,7 +314,9 @@ DEPENDENCIES
   rails-perftest!
   rake
   rdoc
-  rubocop (= 0.52.1)
+  rubocop
+  rubocop-performance
+  rubocop-rails
   ruby-prof
   shoulda
   simplecov

@@ -33,13 +33,14 @@ module ActiveScaffold
         end
 
         def options_for_file_column_field(field)
-          allocate.send("#{field}_options")
+          allocate.send(:"#{field}_options")
         end
 
         def field_has_image_version?(field, version = 'thumb')
           options = options_for_file_column_field(field)
           versions = options[:magick][:versions]
           raise unless versions.stringify_keys[version]
+
           true
         rescue StandardError
           false

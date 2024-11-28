@@ -27,7 +27,7 @@ module ActiveScaffold::DataStructures
     end
 
     # this is so that array.delete and array.include?, etc., will work by column name
-    def ==(other) #:nodoc:
+    def ==(other) # :nodoc:
       # another ActionColumns
       if other.class == self.class
         label == other.label
@@ -64,6 +64,7 @@ module ActiveScaffold::DataStructures
     def skip_column?(column_name, options)
       # skip if this matches a constrained column
       return true if constraint_columns.include?(column_name.to_sym)
+
       # skip this field if it's not authorized
       unless options[:for].authorized_for?(action: options[:action], crud_type: options[:crud_type] || action&.crud_type || :read, column: column_name)
         unauthorized_columns << column_name.to_sym
@@ -86,6 +87,7 @@ module ActiveScaffold::DataStructures
           end
         else
           next if skip_column?(item, options)
+
           yield columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, columns.active_record_class)
         end
       end
@@ -139,7 +141,7 @@ module ActiveScaffold::DataStructures
 
     # called during clone or dup. makes the clone/dup deeper.
     def initialize_copy(from)
-      @set = from.instance_variable_get('@set').clone
+      @set = from.instance_variable_get(:@set).clone
     end
   end
 end

@@ -5,6 +5,7 @@ end
 class ActiveScaffold::Bridges::FileColumn
   module FileColumnBridge
     attr_accessor :file_column_fields
+
     def initialize(model_id)
       super
 
@@ -32,10 +33,10 @@ class ActiveScaffold::Bridges::FileColumn
 
       # set null to false so active_scaffold wont set it to null
       # delete_file_column will take care of deleting a file or not.
-      _columns_hash[field.to_s].instance_variable_set('@null', false)
+      _columns_hash[field.to_s].instance_variable_set(:@null, false)
     rescue StandardError
       false
     end
   end
 end
-ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::FileColumn::FileColumnBridge
+ActiveScaffold::Config::Core.prepend ActiveScaffold::Bridges::FileColumn::FileColumnBridge

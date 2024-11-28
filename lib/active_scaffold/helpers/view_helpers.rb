@@ -73,8 +73,8 @@ module ActiveScaffold
         options[:hide_label] ||= as_(:hide)
         options[:show_label] ||= as_(:show_block)
         label = options[:default_visible].nil? || options[:default_visible] ? options[:hide_label] : options[:show_label]
-        data = {:show => options[:show_label], :hide => options[:hide_label], :toggable => id}
-        link_to label, '#', :data => data, :style => 'display: none;', :class => 'as-js-button visibility-toggle'
+        data = {show: options[:show_label], hide: options[:hide_label], toggable: id}
+        link_to label, '#', data: data, style: 'display: none;', class: 'as-js-button visibility-toggle'
       end
 
       def list_row_class(record)
@@ -89,6 +89,7 @@ module ActiveScaffold
       def column_attributes(column, record)
         method = override_helper column, 'column_attributes'
         return send(method, record) if method
+
         {}
       end
 
@@ -139,6 +140,7 @@ module ActiveScaffold
 
       def empty_field_text
         return @_empty_field_text if defined? @_empty_field_text
+
         @_empty_field_text = (active_scaffold_config.list.empty_field_text if active_scaffold_config.actions.include?(:list))
       end
 
@@ -197,8 +199,8 @@ module ActiveScaffold
         end
         if (format = active_scaffold_config.user.timestamped_messages)
           format = :short if format == true
-          messages = [content_tag(:div, l(Time.current, :format => format), :class => 'timestamp')]
-          messages << content_tag(:div, message, :class => 'message-content')
+          messages = [content_tag(:div, l(Time.current, format: format), class: 'timestamp')]
+          messages << content_tag(:div, message, class: 'message-content')
           message = safe_join messages, ' '
         end
         message
@@ -206,10 +208,10 @@ module ActiveScaffold
 
       def active_scaffold_error_messages_for(*params)
         options = params.extract_options!.symbolize_keys
-        options.reverse_merge!(:container_tag => :div, :list_type => :ul)
+        options.reverse_merge!(container_tag: :div, list_type: :ul)
 
         objects = Array.wrap(options.delete(:object) || params).map do |object|
-          object = instance_variable_get("@#{object}") unless object.respond_to?(:to_model)
+          object = instance_variable_get(:"@#{object}") unless object.respond_to?(:to_model)
           object = convert_to_model(object)
 
           options[:object_name] ||= object.class.model_name.human.downcase if object.class.respond_to?(:model_name)
@@ -238,7 +240,7 @@ module ActiveScaffold
             if options.include?(:header_message)
               options[:header_message]
             else
-              as_('errors.template.header', :count => count, :model => options[:object_name].to_s.tr('_', ' '))
+              as_('errors.template.header', count: count, model: options[:object_name].to_s.tr('_', ' '))
             end
 
           message = options.include?(:message) ? options[:message] : as_('errors.template.body')

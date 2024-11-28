@@ -75,7 +75,7 @@ module ActiveScaffold::DataStructures
     end
 
     def delete(val)
-      each(:include_set => true) do |link, set|
+      each(include_set: true) do |link, set|
         if link.action.to_s == val.to_s
           set.delete link
           break
@@ -86,6 +86,7 @@ module ActiveScaffold::DataStructures
     def delete_group(name)
       @set.each do |group|
         next unless group.is_a?(ActiveScaffold::DataStructures::ActionLinks)
+
         if group.name == name
           @set.delete group
           break
@@ -131,6 +132,7 @@ module ActiveScaffold::DataStructures
 
       if group.nil?
         raise "Can't add new subgroup '#{name}', links are frozen" if frozen?
+
         group = ActiveScaffold::DataStructures::ActionLinks.new(name)
         group.label = label || name
         group.default_type = self.name == :root ? (name.to_sym if %w[member collection].include?(name.to_s)) : default_type
@@ -140,6 +142,7 @@ module ActiveScaffold::DataStructures
     end
 
     attr_writer :label
+
     def label(record)
       case @label
       when Symbol
@@ -154,12 +157,13 @@ module ActiveScaffold::DataStructures
     def method_missing(name, *args, &block)
       return super if name.match?(/[=!?]$/)
       return subgroup(name.to_sym, args.first, &block) if frozen?
+
       class_eval <<-METHOD, __FILE__, __LINE__ + 1
-        def #{name}(label = nil) # rubocop:disable Style/CommentedKeyword
-          @#{name} ||= subgroup('#{name}'.to_sym, label)
-          yield @#{name} if block_given?
-          @#{name}
-        end
+        def #{name}(label = nil)                     # def group_name(label = nil)
+          @#{name} ||= subgroup(:'#{name}', label)   #   @group_name ||= subgroup(:'group_name', label)
+          yield @#{name} if block_given?             #   yield @group_name if block_given?
+          @#{name}                                   #   @group_name
+        end                                          # end
       METHOD
       send(name, args.first, &block)
     end
@@ -169,15 +173,14 @@ module ActiveScaffold::DataStructures
     end
 
     attr_reader :name
-    attr_accessor :weight
-    attr_accessor :css_class
+    attr_accessor :weight, :css_class
 
     protected
 
     # called during clone or dup. makes the clone/dup deeper.
     def initialize_copy(from)
       @set = []
-      from.instance_variable_get('@set').each { |link| @set << link.clone }
+      from.instance_variable_get(:@set).each { |link| @set << link.clone }
     end
   end
 end

@@ -63,6 +63,7 @@ module ActiveScaffold::DataStructures::Association
 
     def scope_values
       return {} unless @association.scope
+
       @scope_values ||= @association.klass.instance_exec(&@association.scope).values
     rescue StandardError => e
       message = "Error evaluating scope for #{@association.name} in #{@association.klass.name}:"

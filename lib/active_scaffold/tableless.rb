@@ -8,6 +8,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
 
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
     attr_reader :klass
+
     def initialize(klass, *args)
       super(nil, *args)
       @klass = klass
@@ -23,7 +24,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   end
 
   class Column < ActiveRecord::ConnectionAdapters::Column
-    def initialize(name, default, sql_type = nil, null = true, **)
+    def initialize(name, default, sql_type = nil, null = true, **) # rubocop:disable Style/OptionalBooleanParameter
       metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, sql_type
       super(name, default, metadata, null)
     end
@@ -39,7 +40,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
         if klass < ActiveScaffold::Tableless
           class << scope; include RelationExtension; end
           assoc_conditions = scope.proxy_association&.send(:association_scope)&.conditions
-          if assoc_conditions&.present?
+          if assoc_conditions.present?
             scope.conditions.concat(assoc_conditions.map { |c| c.is_a?(Hash) ? c[klass.table_name] || c : c })
           end
         end
@@ -145,9 +146,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     include RelationExtension
   end
   class << self
-
     def find(*ids)
-      ids.length == 1 ? all.find(*ids[0]) : super
+      ids.length == 1 ? all.find(*ids[0]) : super # rubocop:disable Rails/RedundantActiveRecordAllMethod
     end
 
     private
@@ -173,7 +173,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   end
 
   def self.columns
-    @tableless_columns ||= []
+    @tableless_columns ||= [] # rubocop:disable Naming/MemoizedInstanceVariableName
   end
 
   def self.table_name
@@ -206,6 +206,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     unless operation == 'count' && [relation.klass.primary_key, :all].include?(column_name)
       raise "self.execute_simple_calculation must be implemented in a Tableless model to support #{operation} #{column_name}#{' distinct' if distinct} columns"
     end
+
     find_all(relation).size
   end
 
@@ -213,11 +214,11 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     raise 'destroy must be implemented in a Tableless model'
   end
 
-  def _create_record #:nodoc:
-    run_callbacks(:create) {}
+  def _create_record # :nodoc:
+    run_callbacks(:create) {} # run callbacks but do nothing
   end
 
-  def _update_record(*) #:nodoc:
-    run_callbacks(:update) {}
+  def _update_record(*) # :nodoc:
+    run_callbacks(:update) {} # run callbacks but do nothing
   end
 end

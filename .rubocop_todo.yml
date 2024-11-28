@@ -24,10 +24,14 @@ Metrics/CyclomaticComplexity:
     - lib/active_scaffold/active_record_permissions.rb
     - lib/active_scaffold/core.rb
 
+Style/OptionalBooleanParameter:
+  Exclude:
+    - lib/active_scaffold/attribute_params.rb
+
 # Offense count: 1857
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
-Metrics/LineLength:
+Layout/LineLength:
   Max: 200
 
 # Offense count: 195

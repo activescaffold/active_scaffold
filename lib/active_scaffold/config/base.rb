@@ -17,7 +17,7 @@ module ActiveScaffold::Config
       @user_settings_key = :"#{model_id}_#{self.class.name.underscore}"
     end
 
-    attr_reader :core
+    attr_reader :core, :user_settings_key
 
     # delegate
     def crud_type
@@ -25,15 +25,13 @@ module ActiveScaffold::Config
     end
 
     def label(model = nil)
-      model ||= @core.label(:count => 1)
-      @label.nil? ? model : as_(@label, :model => model)
+      model ||= @core.label(count: 1)
+      @label.nil? ? model : as_(@label, model: model)
     end
 
     def model_id
       (core || self).model_id
     end
-
-    attr_reader :user_settings_key
 
     # the user property gets set to the instantiation of the local UserSettings class during the automatic instantiation of this class.
     def user
@@ -53,6 +51,7 @@ module ActiveScaffold::Config
 
     def formats
       return @formats || NO_FORMATS if frozen?
+
       @formats ||= NO_FORMATS.dup
     end
     attr_writer :formats
@@ -63,9 +62,10 @@ module ActiveScaffold::Config
       # getter will return value set with setter, or value from conf
       def self.user_attr(*names)
         attr_writer(*names)
+
         names.each do |name|
           define_method(name) do
-            instance_variable_defined?("@#{name}") ? instance_variable_get("@#{name}") : @conf.send(name)
+            instance_variable_defined?(:"@#{name}") ? instance_variable_get(:"@#{name}") : @conf.send(name)
           end
         end
       end
@@ -131,7 +131,8 @@ module ActiveScaffold::Config
     end
 
     def self.inherited(subclass)
-      subclass.const_set 'UserSettings', Class.new(subclass.superclass::UserSettings)
+      super
+      subclass.const_set :UserSettings, Class.new(subclass.superclass::UserSettings)
       class << subclass
         # the crud type of the action. possible values are :create, :read, :update, :delete, and nil.
         # this is not a setting for the developer. it's self-description for the actions.
@@ -141,6 +142,7 @@ module ActiveScaffold::Config
 
         def crud_type=(val)
           raise ArgumentError, "unknown CRUD type #{val}" unless %i[create read update delete].include?(val.to_sym)
+
           @crud_type = val.to_sym
         end
       end
@@ -155,8 +157,8 @@ module ActiveScaffold::Config
     class_attribute :columns_collections
 
     def self.columns_writer(name)
-      var = "@#{name}"
-      define_method "#{name}=" do |val|
+      var = :"@#{name}"
+      define_method :"#{name}=" do |val|
         if instance_variable_defined?(var)
           instance_variable_get(var).set_values(*val)
           instance_variable_get(var)
@@ -167,7 +169,7 @@ module ActiveScaffold::Config
     end
 
     def self.columns_reader(name, options, &block)
-      var = "@#{name}"
+      var = :"@#{name}"
       define_method name do
         unless instance_variable_defined?(var) # lazy evaluation
           action, columns = options[:copy] if options[:copy]
@@ -176,7 +178,7 @@ module ActiveScaffold::Config
             action_columns.action = self
             instance_variable_set(var, action_columns)
           else
-            send("#{name}=", @core.columns._inheritable)
+            send(:"#{name}=", @core.columns._inheritable)
           end
           instance_exec(&block) if block
         end
@@ -191,16 +193,16 @@ module ActiveScaffold::Config
         columns_writer name
         columns_reader name, options, &block unless method_defined? name
 
-        var = "@#{name}"
+        var = :"@#{name}"
         self::UserSettings.class_eval do
-          define_method "#{name}=" do |val|
+          define_method :"#{name}=" do |val|
             instance_variable_set var, build_action_columns(val)
           end
           define_method name do
             instance_variable_get(var) || @conf.send(name)
           end
-          define_method "override_#{name}" do |&block|
-            self.send("#{name}=", send(name)).tap { |columns| block&.call columns }
+          define_method :"override_#{name}" do |&blck|
+            send(:"#{name}=", send(name)).tap(&blck)
           end
         end
       end

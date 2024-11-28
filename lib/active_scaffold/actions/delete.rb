@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Delete
     def self.included(base)
-      base.before_action :delete_authorized_filter, :only => [:destroy]
+      base.before_action :delete_authorized_filter, only: [:destroy]
     end
 
     def destroy
@@ -14,21 +14,21 @@ module ActiveScaffold::Actions
     protected
 
     def destroy_respond_to_html
-      flash[:info] = as_(:deleted_model, :model => ERB::Util.h(@record.to_label)) if successful?
+      flash[:info] = as_(:deleted_model, model: ERB::Util.h(@record.to_label)) if successful?
       return_to_main
     end
 
     def destroy_respond_to_js
       do_refresh_list if successful? && active_scaffold_config.delete.refresh_list && !render_parent?
-      render(:action => 'destroy')
+      render(action: 'destroy')
     end
 
     def destroy_respond_to_xml
-      render :xml => successful? ? '' : response_object, :only => active_scaffold_config.list.columns.visible_columns_names, :status => response_status
+      render xml: successful? ? '' : response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
     end
 
     def destroy_respond_to_json
-      render :json => successful? ? '' : response_object, :only => active_scaffold_config.list.columns.visible_columns_names, :status => response_status
+      render json: successful? ? '' : response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
     end
 
     def destroy_find_record
@@ -41,13 +41,11 @@ module ActiveScaffold::Actions
       record ||= destroy_find_record
       begin
         self.successful = record.destroy
-      rescue StandardError => exception
-        flash[:warning] = as_(:cant_destroy_record, :record => ERB::Util.h(record.to_label))
+      rescue StandardError => e
+        flash[:warning] = as_(:cant_destroy_record, record: ERB::Util.h(record.to_label))
         self.successful = false
         logger.warn do
-          "\n\n#{exception.class} (#{exception.message}):\n    " +
-            Rails.backtrace_cleaner.clean(exception.backtrace).join("\n    ") +
-            "\n\n"
+          "\n\n#{e.class} (#{e.message}):\n    #{Rails.backtrace_cleaner.clean(e.backtrace).join("\n    ")}\n\n"
         end
       end
     end
@@ -59,7 +57,7 @@ module ActiveScaffold::Actions
     end
 
     def delete_ignore?(record = nil)
-      (nested? && nested.readonly?) || !authorized_for?(:crud_type => :delete)
+      (nested? && nested.readonly?) || !authorized_for?(crud_type: :delete)
     end
 
     private

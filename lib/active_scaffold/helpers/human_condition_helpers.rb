@@ -4,6 +4,7 @@ module ActiveScaffold
     module HumanConditionHelpers
       def active_scaffold_human_condition_for(column)
         return if (value = field_search_params[column.name.to_s]).nil?
+
         search_ui = column.search_ui
         search_ui ||= column.column_type if column.column
         if override_human_condition_column?(column)
@@ -51,7 +52,7 @@ module ActiveScaffold
           range_type, range = value['range'].downcase.split('_')
           format = active_scaffold_human_condition_datetime_range_format(range_type, range)
           from, = controller.class.datetime_from_to(column, value)
-          "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value['range'].downcase).downcase} (#{I18n.l(from, :format => format)})"
+          "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value['range'].downcase).downcase} (#{I18n.l(from, format: format)})"
         when 'PAST', 'FUTURE'
           from, to = controller.class.datetime_from_to(column, value)
           "#{column.active_record_class.human_attribute_name(column.name)} #{as_('BETWEEN'.downcase).downcase} #{I18n.l(from)} - #{I18n.l(to)}"
@@ -94,7 +95,7 @@ module ActiveScaffold
 
       def active_scaffold_human_condition_boolean(column, value)
         attribute = column.active_record_class.human_attribute_name(column.name)
-        as_(:boolean, :scope => :human_conditions, :column => attribute, :value => as_(value))
+        as_(:boolean, scope: :human_conditions, column: attribute, value: as_(value))
       end
       alias active_scaffold_human_condition_checkbox active_scaffold_human_condition_boolean
 
@@ -106,13 +107,14 @@ module ActiveScaffold
         attribute = column.active_record_class.human_attribute_name(column.name)
         if associated.is_a?(Hash)
           return active_scaffold_human_condition_range(column, associated) unless associated['opt'] == '='
+
           associated = associated['from']
         end
         associated = [associated] unless associated.is_a? Array
-        associated = associated.select(&:present?)
+        associated = associated.compact_blank
         if column.association
           method = column.options[:label_method] || :to_label
-          associated = column.association.klass.where(:id => associated.map(&:to_i)).map(&method)
+          associated = column.association.klass.where(id: associated.map(&:to_i)).map(&method)
         elsif column.options[:options]
           associated = associated.collect do |value|
             text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
@@ -120,7 +122,7 @@ module ActiveScaffold
             value
           end
         end
-        as_(:association, :scope => :human_conditions, :column => attribute, :value => associated.join(', '))
+        as_(:association, scope: :human_conditions, column: attribute, value: associated.join(', '))
       end
       alias active_scaffold_human_condition_multi_select active_scaffold_human_condition_select
       alias active_scaffold_human_condition_select_multiple active_scaffold_human_condition_select

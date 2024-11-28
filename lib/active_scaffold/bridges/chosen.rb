@@ -8,6 +8,6 @@ class ActiveScaffold::Bridges::Chosen < ActiveScaffold::DataStructures::Bridge
   end
 
   def self.javascripts
-    ["chosen-jquery", "jquery/active_scaffold_chosen"]
+    ['chosen-jquery', 'jquery/active_scaffold_chosen']
   end
 end

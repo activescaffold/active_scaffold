@@ -17,8 +17,8 @@ class ActiveScaffold::Bridges::TinyMce
       def active_scaffold_input_text_editor(column, options, ui_options: column.options)
         options[:class] = "#{options[:class]} mceEditor #{ui_options[:class]}".strip
 
-        settings = tinymce_configuration(ui_options[:tinymce_config] || :default).
-          options.reject { |k, _v| k == 'selector' }.merge(ui_options[:tinymce] || {})
+        settings = tinymce_configuration(ui_options[:tinymce_config] || :default)
+                     .options.except('selector').merge(ui_options[:tinymce] || {})
         options['data-tinymce'] = settings.to_json
 
         html = []

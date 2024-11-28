@@ -31,6 +31,7 @@ module ActiveScaffold
       def add_to_stylesheet_manifest
         file = 'app/assets/stylesheets/application.css'
         return unless File.exist?(file)
+
         original_css = File.binread(file)
         if original_css.match?(/require active_scaffold$/)
           say_status('skipped', 'insert into app/assets/stylesheets/application.css', :yellow)

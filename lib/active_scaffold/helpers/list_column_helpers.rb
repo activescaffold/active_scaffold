@@ -49,9 +49,9 @@ module ActiveScaffold
           associated = record.send(column.association.name) if column.association
           authorized = link.action.nil?
           authorized, reason = column_link_authorized?(link, column, record, associated) unless authorized
-          render_action_link(link, record, :link => text, :authorized => authorized, :not_authorized_reason => reason)
+          render_action_link(link, record, link: text, authorized: authorized, not_authorized_reason: reason)
         elsif inplace_edit?(record, column)
-          active_scaffold_inplace_edit(record, column, :formatted_column => text)
+          active_scaffold_inplace_edit(record, column, formatted_column: text)
         elsif column_wrap_tag
           content_tag column_wrap_tag, text
         else
@@ -64,6 +64,7 @@ module ActiveScaffold
 
       def column_wrap_tag
         return @_column_wrap_tag if defined? @_column_wrap_tag
+
         @_column_wrap_tag = (active_scaffold_config.list.wrap_tag if active_scaffold_config.actions.include?(:list))
       end
 
@@ -91,12 +92,12 @@ module ActiveScaffold
       end
 
       def active_scaffold_column_marked(record, column, ui_options: column.options)
-        options = {:id => nil, :object => record}
-        content_tag(:span, check_box(:record, column.name, options), :class => 'in_place_editor_field', :data => {:ie_id => record.to_param})
+        options = {id: nil, object: record}
+        content_tag(:span, check_box(:record, column.name, options), class: 'in_place_editor_field', data: {ie_id: record.to_param})
       end
 
       def active_scaffold_column_checkbox(record, column, ui_options: column.options)
-        options = {:disabled => true, :id => nil, :object => record}
+        options = {disabled: true, id: nil, object: record}
         options.delete(:disabled) if inplace_edit?(record, column)
         check_box(:record, column.name, options)
       end
@@ -137,6 +138,7 @@ module ActiveScaffold
       def active_scaffold_column_telephone(record, column, ui_options: column.options)
         phone = record.send column.name
         return if phone.blank?
+
         phone = number_to_phone(phone) unless ui_options[:format] == false
         tel_to phone
       end
@@ -237,6 +239,7 @@ module ActiveScaffold
         column_value = column&.association_join_text
         return column_value if column_value
         return @_association_join_text if defined? @_association_join_text
+
         @_association_join_text = active_scaffold_config.list.association_join_text
       end
 
@@ -281,7 +284,7 @@ module ActiveScaffold
           if column_empty?(column_value)
             empty_field_text
           elsif column_value.is_a?(Time) || column_value.is_a?(Date)
-            l(column_value, :format => options[:format] || :default)
+            l(column_value, format: options[:format] || :default)
           elsif !!column_value == column_value # rubocop:disable Style/DoubleNegation fast check for boolean
             as_(column_value.to_s.to_sym)
           else
@@ -318,7 +321,8 @@ module ActiveScaffold
         if controller.respond_to?(:update_authorized?, true)
           return Array(controller.send(:update_authorized?, record, column.name))[0]
         end
-        record.authorized_for?(:crud_type => :update, :column => column.name)
+
+        record.authorized_for?(crud_type: :update, column: column.name)
       end
 
       def inplace_edit_cloning?(column)
@@ -331,26 +335,27 @@ module ActiveScaffold
           element_cell_id(id: '--ID--', action: 'update_column', name: column.name.to_s)
         end
         tag_options = {id: cell_id.sub('--ID--', record.id.to_s), class: 'in_place_editor_field',
-                       title: @_inplace_edit_title, data: {:ie_id => record.to_param}}
+                       title: @_inplace_edit_title, data: {ie_id: record.to_param}}
         tag_options[:data][:ie_update] = column.inplace_edit if column.inplace_edit != true
         tag_options
       end
 
       def active_scaffold_inplace_edit(record, column, options = {})
         formatted_column = options[:formatted_column] || format_column_value(record, column)
-        @_inplace_edit_handle ||= content_tag(:span, as_(:inplace_edit_handle), :class => 'handle')
+        @_inplace_edit_handle ||= content_tag(:span, as_(:inplace_edit_handle), class: 'handle')
         span = content_tag(:span, formatted_column, active_scaffold_inplace_edit_tag_options(record, column))
         @_inplace_edit_handle + span
       end
 
       def inplace_edit_control(column)
         return unless inplace_edit?(active_scaffold_config.model, column) && inplace_edit_cloning?(column)
+
         column.form_ui = :select if column.association && column.form_ui.nil?
-        options = active_scaffold_input_options(column).merge(:object => column.active_record_class.new)
+        options = active_scaffold_input_options(column).merge(object: column.active_record_class.new)
         options[:class] = "#{options[:class]} inplace_field"
         options[:"data-id"] = options[:id]
         options[:id] = nil
-        content_tag(:div, active_scaffold_input_for(column, nil, options), :style => 'display:none;', :class => inplace_edit_control_css_class)
+        content_tag(:div, active_scaffold_input_for(column, nil, options), style: 'display:none;', class: inplace_edit_control_css_class)
       end
 
       def inplace_edit_control_css_class
@@ -360,7 +365,7 @@ module ActiveScaffold
       INPLACE_EDIT_PLURAL_FORM_UI = %i[select record_select].freeze
       def inplace_edit_data(column)
         data = {}
-        data[:ie_url] = url_for(params_for(:action => 'update_column', :column => column.name, :id => '__id__'))
+        data[:ie_url] = url_for(params_for(action: 'update_column', column: column.name, id: '__id__'))
         data[:ie_cancel_text] = column.options[:cancel_text] || as_(:cancel)
         data[:ie_loading_text] = column.options[:loading_text] || as_(:loading)
         data[:ie_save_text] = column.options[:save_text] || as_(:update)
@@ -375,7 +380,7 @@ module ActiveScaffold
         elsif inplace_edit_cloning?(column)
           data[:ie_mode] = :clone
         elsif column.inplace_edit == :ajax
-          url = url_for(params_for(:controller => params_for[:controller], :action => 'render_field', :id => '__id__', :update_column => column.name))
+          url = url_for(params_for(controller: params_for[:controller], action: 'render_field', id: '__id__', update_column: column.name))
           plural = column.association&.collection? && !override_form_field?(column) && INPLACE_EDIT_PLURAL_FORM_UI.include?(column.form_ui)
           data[:ie_render_url] = url
           data[:ie_mode] = :ajax
@@ -396,8 +401,8 @@ module ActiveScaffold
 
       def mark_column_heading
         tag_options = {
-          :id => "#{controller_id}_mark_heading",
-          :class => 'mark_heading in_place_editor_field'
+          id: "#{controller_id}_mark_heading",
+          class: 'mark_heading in_place_editor_field'
         }
         content_tag(:span, check_box_tag("#{controller_id}_mark_heading_span_input", '1', all_marked?), tag_options)
       end
@@ -405,15 +410,15 @@ module ActiveScaffold
       # COLUMN HEADINGS
 
       def column_heading_attributes(column, sorting, sort_direction)
-        {:id => active_scaffold_column_header_id(column), :class => column_heading_class(column, sorting), :title => strip_tags(column.description).presence}
+        {id: active_scaffold_column_header_id(column), class: column_heading_class(column, sorting), title: strip_tags(column.description).presence}
       end
 
       def render_column_heading(column, sorting, sort_direction)
         tag_options = column_heading_attributes(column, sorting, sort_direction)
         if column.name == :as_marked
           tag_options[:data] = {
-            :ie_mode => :inline_checkbox,
-            :ie_url => url_for(params_for(:action => 'mark', :id => '__id__'))
+            ie_mode: :inline_checkbox,
+            ie_url: url_for(params_for(action: 'mark', id: '__id__'))
           }
         elsif column.inplace_edit
           tag_options[:data] = inplace_edit_data(column)
@@ -451,7 +456,7 @@ module ActiveScaffold
         if column.calculate.instance_of? Proc
           column.calculate.call(@records)
         else
-          calculate_query(id_condition).calculate(column.calculate, column.name)
+          calculate_query(id_condition: id_condition).calculate(column.calculate, column.name)
         end
       end
 

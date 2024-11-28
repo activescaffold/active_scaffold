@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module PaginationHelpers
       def pagination_ajax_link(page_number, url_options, options)
-        link_to page_number, url_options.merge(:page => page_number), options.merge(:class => 'as_paginate')
+        link_to page_number, url_options.merge(page: page_number), options.merge(class: 'as_paginate')
       end
 
       def pagination_url_options(url_options = nil)
@@ -49,7 +49,7 @@ module ActiveScaffold
 
         [start_number, last_page + 1].max.upto(end_number) do |num|
           html << if current_page.number == num
-                    content_tag(:span, num.to_s, :class => 'as_paginate current')
+                    content_tag(:span, num.to_s, class: 'as_paginate current')
                   else
                     pagination_ajax_link(num, url_options, options)
                   end

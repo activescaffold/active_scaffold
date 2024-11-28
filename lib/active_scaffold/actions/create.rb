@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Create
     def self.included(base)
-      base.before_action :create_authorized_filter, :only => %i[new create]
+      base.before_action :create_authorized_filter, only: %i[new create]
     end
 
     def new
@@ -17,42 +17,42 @@ module ActiveScaffold::Actions
     protected
 
     def response_location
-      url_for(params_for(:action => 'show', :id => @record.to_param)) if successful?
+      url_for(params_for(action: 'show', id: @record.to_param)) if successful?
     end
 
     def new_respond_to_html
       if successful?
-        render(:action => 'create')
+        render(action: 'create')
       else
         return_to_main
       end
     end
 
     def new_respond_to_js
-      render(:partial => 'create_form')
+      render(partial: 'create_form')
     end
 
     def create_respond_on_iframe
       do_refresh_list if successful? && active_scaffold_config.create.refresh_list && !render_parent?
       responds_to_parent do
-        render :action => 'on_create', :formats => [:js], :layout => false
+        render action: 'on_create', formats: [:js], layout: false
       end
     end
 
     def create_respond_to_html
       if successful?
-        flash[:info] = as_(:created_model, :model => ERB::Util.h(@record.to_label))
+        flash[:info] = as_(:created_model, model: ERB::Util.h(@record.to_label))
         if (action = active_scaffold_config.create.action_after_create)
-          redirect_to params_for(:action => action, :id => @record.to_param)
+          redirect_to params_for(action: action, id: @record.to_param)
         elsif params[:dont_close]
-          redirect_to params_for(:action => 'new')
+          redirect_to params_for(action: 'new')
         else
           return_to_main
         end
       elsif active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
         list
       else
-        render(:action => 'create')
+        render(action: 'create')
       end
     end
 
@@ -64,7 +64,7 @@ module ActiveScaffold::Actions
           do_new
         end
       end
-      render :action => 'on_create'
+      render action: 'on_create'
     end
 
     def create_respond_to_xml
@@ -95,7 +95,7 @@ module ActiveScaffold::Actions
       active_scaffold_config.model.transaction do
         @record = new_model
         # before assign params, to set foreign_type of constraints in polymorphic association with multiple id
-        apply_constraints_to_record(@record, :allow_autosave => true)
+        apply_constraints_to_record(@record, allow_autosave: true)
         @record = update_record_from_params(@record, active_scaffold_config.create.columns, attributes)
         create_association_with_parent(@record) if nested?
         before_create_save(@record)
@@ -103,14 +103,15 @@ module ActiveScaffold::Actions
         self.successful = [@record.keeping_errors { @record.valid? }, @record.associated_valid?].all? # this syntax avoids a short-circuit
         create_save(@record) unless options[:skip_save]
       end
-    rescue ActiveRecord::ActiveRecordError => ex
-      flash[:error] = ex.message
+    rescue ActiveRecord::ActiveRecordError => e
+      flash[:error] = e.message
       self.successful = false
       @record ||= new_model # ensure @record exists or display form will fail
     end
 
     def create_save(record)
       return unless successful?
+
       record.save! && record.save_associated!
       after_create_save(record)
     end
@@ -129,10 +130,11 @@ module ActiveScaffold::Actions
     end
 
     def create_authorized?
-      if nested?
-        return false if nested.readonly? || nested.readonly_through_association?(active_scaffold_config.create.columns)
+      if nested? && (nested.readonly? || nested.readonly_through_association?(active_scaffold_config.create.columns))
+        return false
       end
-      authorized_for?(:crud_type => :create)
+
+      authorized_for?(crud_type: :create)
     end
 
     private

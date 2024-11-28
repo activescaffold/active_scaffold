@@ -66,8 +66,7 @@ module ActiveScaffold
         base.extend SecurityMethods
         base.send :include, SecurityMethods
         class << base
-          attr_accessor :class_security_methods
-          attr_accessor :instance_security_methods
+          attr_accessor :class_security_methods, :instance_security_methods
         end
       end
 
@@ -88,12 +87,13 @@ module ActiveScaffold
         # options[:action] is the name of a method
         # options[:reason] if returning reason is expected, it will return array with authorized and reason, or nil if no reason
         def authorized_for?(options = {})
-          raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] && !%i[create read update delete].include?(options[:crud_type])
+          raise ArgumentError, "unknown crud type #{options[:crud_type]}" if options[:crud_type] && %i[create read update delete].exclude?(options[:crud_type])
 
           not_authorized_reason = ActiveRecordPermissions.not_authorized_reason
           # collect other possibly-related methods that actually exist
           methods = cached_authorized_for_methods(options)
           return ActiveRecordPermissions.default_permission if methods.empty?
+
           if methods.one?
             result = send(methods.first)
             # if not_authorized_reason enabled interpret String as reason for not authorized
@@ -108,6 +108,7 @@ module ActiveScaffold
             # if not_authorized_reason enabled interpret String as reason for not authorized
             authorized, reason = not_authorized_reason && result.is_a?(String) ? [false, result] : [result, nil]
             next if authorized
+
             # return array with reason only if requested with options[:reason]
             return options[:reason] ? [authorized, reason] : authorized
           end

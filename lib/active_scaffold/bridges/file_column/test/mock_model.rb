@@ -1,9 +1,6 @@
 class MockModel
-  attr_accessor :name
-  attr_accessor :bio
+  attr_accessor :name, :bio, :band_image, :band_image_just_uploaded
 
-  attr_accessor :band_image
-  attr_accessor :band_image_just_uploaded
   def band_image_just_uploaded?
     band_image_just_uploaded
   end

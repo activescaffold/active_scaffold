@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module Update
     def self.included(base)
-      base.before_action :update_authorized_filter, :only => %i[edit update]
+      base.before_action :update_authorized_filter, only: %i[edit update]
       base.helper_method :update_refresh_list?
     end
 
@@ -25,35 +25,35 @@ module ActiveScaffold::Actions
 
     def edit_respond_to_html
       if successful?
-        render(:action => 'update')
+        render action: 'update'
       else
         return_to_main
       end
     end
 
     def edit_respond_to_js
-      render(:partial => 'update_form')
+      render partial: 'update_form'
     end
 
     def update_respond_on_iframe
       do_refresh_list if successful? && active_scaffold_config.update.refresh_list && !render_parent?
       responds_to_parent do
-        render :action => 'on_update', :formats => [:js], :layout => false
+        render action: 'on_update', formats: [:js], layout: false
       end
     end
 
     def update_respond_to_html
       if successful? # just a regular post
-        message = as_(:updated_model, :model => ERB::Util.h(@record.to_label))
+        message = as_(:updated_model, model: ERB::Util.h(@record.to_label))
         if params[:dont_close]
           flash.now[:info] = message
-          render(:action => 'update')
+          render action: 'update'
         else
           flash[:info] = message
           return_to_main
         end
       else
-        render(:action => 'update')
+        render action: 'update'
       end
     end
 
@@ -77,9 +77,9 @@ module ActiveScaffold::Actions
     def update_respond_to_js
       if successful?
         record_to_refresh_on_update if !render_parent? && active_scaffold_config.actions.include?(:list)
-        flash.now[:info] = as_(:updated_model, :model => ERB::Util.h((@updated_record || @record).to_label)) if active_scaffold_config.update.persistent
+        flash.now[:info] = as_(:updated_model, model: ERB::Util.h((@updated_record || @record).to_label)) if active_scaffold_config.update.persistent
       end
-      render :action => 'on_update'
+      render action: 'on_update'
     end
 
     def update_respond_to_xml
@@ -124,6 +124,7 @@ module ActiveScaffold::Actions
           # we have to revert these changes if validation fails
           raise ActiveRecord::Rollback, "don't save habtm associations unless record is valid"
         end
+
         @record.save! && @record.save_associated!
         after_update_save(@record)
       end
@@ -131,16 +132,14 @@ module ActiveScaffold::Actions
       @record.errors.add(:base, as_(:version_inconsistency))
       self.successful = false
       on_stale_object_error(@record)
-    rescue ActiveRecord::RecordNotSaved => exception
+    rescue ActiveRecord::RecordNotSaved => e
       logger.warn do
-        "\n\n#{exception.class} (#{exception.message}):\n    " +
-          Rails.backtrace_cleaner.clean(exception.backtrace).join("\n    ") +
-          "\n\n"
+        "\n\n#{e.class} (#{e.message}):\n    #{Rails.backtrace_cleaner.clean(e.backtrace).join("\n    ")}\n\n"
       end
       @record.errors.add(:base, as_(:record_not_saved)) if @record.errors.empty?
       self.successful = false
-    rescue ActiveRecord::ActiveRecordError => ex
-      flash[:error] = ex.message
+    rescue ActiveRecord::ActiveRecordError => e
+      flash[:error] = e.message
       self.successful = false
     end
 
@@ -154,7 +153,7 @@ module ActiveScaffold::Actions
 
       value_record = record_for_update_column
       value = value_for_update_column(value, @column, value_record)
-      value_record.send("#{@column.name}=", value)
+      value_record.send(:"#{@column.name}=", value)
       before_update_save(@record)
       self.successful = value_record.save
       if !successful?
@@ -174,12 +173,13 @@ module ActiveScaffold::Actions
 
     def record_for_update_column
       @record = find_if_allowed(params[:id], :read)
-      raise ActiveScaffold::ActionNotAllowed unless @record.authorized_for?(:crud_type => :update, :column => @column.name)
+      raise ActiveScaffold::ActionNotAllowed unless @record.authorized_for?(crud_type: :update, column: @column.name)
 
       if @column.delegated_association
         value_record = @record.send(@column.delegated_association.name)
         value_record ||= @record.association(@column.delegated_association.name).build
-        raise ActiveScaffold::ActionNotAllowed unless value_record.authorized_for?(:crud_type => :update, :column => @column.name)
+        raise ActiveScaffold::ActionNotAllowed unless value_record.authorized_for?(crud_type: :update, column: @column.name)
+
         value_record
       else
         @record
@@ -217,7 +217,7 @@ module ActiveScaffold::Actions
     end
 
     def update_ignore?(record = nil)
-      !authorized_for?(:crud_type => :update)
+      !authorized_for?(crud_type: :update)
     end
 
     private

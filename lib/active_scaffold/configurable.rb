@@ -9,6 +9,7 @@ module ActiveScaffold
   module Configurable
     def configure(&configuration_block)
       return unless configuration_block
+
       @configuration_binding = configuration_block.binding.eval('self')
       ret = instance_exec(self, &configuration_block)
       @configuration_binding = nil
@@ -16,7 +17,7 @@ module ActiveScaffold
     end
 
     def method_missing(name, *args)
-      if @configuration_binding&.respond_to?(name, true)
+      if @configuration_binding&.respond_to?(name, true) # rubocop:disable Lint/RedundantSafeNavigation
         @configuration_binding.send(name, *args)
       else
         super

@@ -26,6 +26,7 @@ module ActiveScaffold
       RequestStore.store[:attr_Registry_cache] ||= {}
       cache = RequestStore.store[:attr_Registry_cache][kind] ||= {}
       return cache[key] if cache.include? key
+
       cache[key] ||= yield
     end
   end

@@ -16,44 +16,40 @@ module ActiveScaffold::DataStructures
     def self.attr_reader(*names)
       names.each do |name|
         define_method name do
-          instance_variable_defined?("@#{name}") ? instance_variable_get("@#{name}") : @column.send(name)
+          instance_variable_defined?(:"@#{name}") ? instance_variable_get(:"@#{name}") : @column.send(name)
         end
       end
     end
 
     def self.attr_accessor(*names)
-      attr_reader *names
-      attr_writer *names
+      attr_reader(*names)
+      attr_writer(*names)
     end
 
     def self.override_or_delegate(*names)
       location = caller_locations(1, 1).first
-      file, line = location.path, location.lineno
-      method_def = []
-
-      names.each do |name|
-        method_def <<
-          "def #{name}(...)
+      method_def = names.map do |name|
+        "def #{name}(...)
             instance_variable_defined?(\"@#{name.to_s.gsub(/\?$/, '')}\") ? super : @column.send(\"#{name}\", ...)
           end"
       end
 
-      module_eval method_def.join(';'), file, line
+      module_eval method_def.join(';'), location.path, location.lineno
       names
     end
 
     include Column::ProxyableMethods
 
-    def method_missing(name, *args, &block)
+    def method_missing(name, ...)
       if respond_to_missing?(name, true)
-        @column.send(name, *args, &block)
+        @column.send(name, ...)
       else
         super
       end
     end
 
     def respond_to_missing?(name, include_all = false)
-      !name.match?(/[!=]$/) && @column.respond_to?(name, include_all) || super
+      (!name.match?(/[!=]$/) && @column.respond_to?(name, include_all)) || super
     end
 
     def params=(value)
