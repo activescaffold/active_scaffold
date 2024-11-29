@@ -1,5 +1,5 @@
 class Company < ActiveRecord::Base
-  def initialize(with_or_without = nil)
+  def initialize(with_or_without = nil) # rubocop:disable Lint/MissingSuper
     @companies = with_or_without == :with_companies
     @company = with_or_without == :with_company
     @main_company = with_or_without == :with_main_company
@@ -76,8 +76,7 @@ class Company < ActiveRecord::Base
     end
   end
 
-  attr_reader :company
-  attr_reader :main_company
+  attr_reader :company, :main_company
 
   def name; end
 

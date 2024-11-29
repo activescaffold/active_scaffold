@@ -42,6 +42,21 @@ Layout/LineLength:
   Exclude:
     - 'test/**/*'
 
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - test/**/*
+    # TODO: cleanup the next files
+    - lib/active_scaffold/helpers/*
+    - lib/active_scaffold/extensions/*
+    - lib/active_scaffold/bridges/**/*
+    - lib/active_scaffold/config/*
+    - lib/active_scaffold/data_structures/*
+    - lib/active_scaffold/actions/core.rb
+    - lib/active_scaffold/finder.rb
+    - lib/active_scaffold/constraints.rb
+    - lib/active_scaffold/active_record_permissions.rb
+    - lib/active_scaffold/core.rb
+
 Metrics/ModuleLength:
   Max: 700
   CountComments: false
@@ -79,6 +94,9 @@ Rails/DynamicFindBy:
 Rails/RakeEnvironment:
   Exclude:
     - lib/tasks/brakeman.rake
+
+Rails/ActionControllerTestCase:
+  Enabled: false
 
 Style/FormatString:
   EnforcedStyle: percent

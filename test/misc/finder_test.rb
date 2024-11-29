@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'class_with_finder'
 
-class FinderTest < Minitest::Test
+class FinderTest < ActiveSupport::TestCase
   def setup
     @klass = ClassWithFinder.new
     @klass.active_scaffold_config.stubs(model: ModelStub)
@@ -84,7 +84,7 @@ class FinderTest < Minitest::Test
     condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Building.where(['name LIKE ?', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"addresses"."addressable_id" IN (?) AND "addresses"."addressable_type" = ?', condition[0]
-    assert_equal ['Building'], condition[2..-1]
+    assert_equal ['Building'], condition[2..]
   end
 
   def test_condition_for_polymorphic_column_with_relation
@@ -93,7 +93,7 @@ class FinderTest < Minitest::Test
     condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Person.joins(:buildings).where(['first_name LIKE ? OR last_name LIKE ?', '%test search%', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"contacts"."contactable_id" IN (?) AND "contacts"."contactable_type" = ?', condition[0]
-    assert_equal ['Person'], condition[2..-1]
+    assert_equal ['Person'], condition[2..]
   end
 
   def test_subquery_condition_for_association_with_condition
@@ -103,7 +103,7 @@ class FinderTest < Minitest::Test
     condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Person.where(['first_name LIKE ? OR last_name LIKE ?', '%test search%', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"buildings"."owner_id" IN (?) AND floor_count > 0', condition[0]
-    assert_equal [], condition[2..-1]
+    assert_equal [], condition[2..]
   end
 
   def test_subquery_condition_for_association_with_conditions
@@ -113,7 +113,7 @@ class FinderTest < Minitest::Test
     condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Person.where(['first_name LIKE ? OR last_name LIKE ?', '%test search%', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"buildings"."owner_id" IN (?) AND floor_count > 0 AND name != ?', condition[0]
-    assert_equal [''], condition[2..-1]
+    assert_equal [''], condition[2..]
   end
 
   private

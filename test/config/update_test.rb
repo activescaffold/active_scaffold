@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class UpdateTest < Minitest::Test
+  class UpdateTest < ActiveSupport::TestCase
     include ActiveScaffold::Helpers::ControllerHelpers
 
     def setup
@@ -22,8 +22,8 @@ module Config
     end
 
     def test_default_options
-      refute @config.update.persistent
-      refute @config.update.nested_links
+      assert_not @config.update.persistent
+      assert_not @config.update.nested_links
       assert_equal 'Model stub', @config.update.label
     end
 

@@ -1,11 +1,12 @@
 class ModelStub < ActiveRecord::Base
   validates :b, :presence => true
-  has_one :other_model, :class_name => 'ModelStub'
-  has_many :other_models, :class_name => 'ModelStub'
+  has_one :other_model, :class_name => 'ModelStub' # rubocop:disable Rails/DuplicateAssociation
+  has_many :other_models, :class_name => 'ModelStub' # rubocop:disable Rails/DuplicateAssociation
 
   cattr_accessor :stubbed_columns
   self.stubbed_columns = %i[a b c d id created_at]
   attr_accessor(*stubbed_columns)
+
   self.primary_key = :id
 
   @@nested_scope_calls = []
@@ -21,12 +22,12 @@ class ModelStub < ActiveRecord::Base
     self
   end
 
-  attr_writer :other_model
+  attr_writer :other_model, :other_models
+
   def other_model
     @other_model || nil
   end
 
-  attr_writer :other_models
   def other_models
     @other_models || []
   end
@@ -40,7 +41,7 @@ class ModelStub < ActiveRecord::Base
   end
 
   def self.columns_hash
-    @columns_hash ||= columns.each_with_object({}) { |column, hash| hash[column.name.to_s] = column }
+    @columns_hash ||= columns.index_by { |column| column.name.to_s }
   end
 
   if respond_to? :type_for_attribute

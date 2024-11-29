@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class CreateTest < Minitest::Test
+  class CreateTest < ActiveSupport::TestCase
     include ActiveScaffold::Helpers::ControllerHelpers
 
     def setup
@@ -18,7 +18,7 @@ module Config
     end
 
     def test_default_options
-      refute @config.create.persistent
+      assert_not @config.create.persistent
       assert @config.create.action_after_create.nil?
       assert_equal 'Create Model stub', @config.create.label
       assert @config.columns[:b].required?
@@ -26,14 +26,14 @@ module Config
 
     def test_override_required
       @config.configure { |conf| conf.columns[:b].required = false }
-      refute @config.columns[:b].required?
+      assert_not @config.columns[:b].required?
     end
 
     def test_link_defaults
       link = @config.create.link
-      refute link.page?
-      refute link.popup?
-      refute link.confirm?
+      assert_not link.page?
+      assert_not link.popup?
+      assert_not link.confirm?
       assert_equal 'new', link.action
       assert_equal 'Create New', link.label
       assert link.inline?
@@ -47,7 +47,7 @@ module Config
 
     def test_setting_link
       @config.create.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
-      refute_equal @default_link, @config.create.link
+      assert_not_equal @default_link, @config.create.link
     end
 
     def test_label

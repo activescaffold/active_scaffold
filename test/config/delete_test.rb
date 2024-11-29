@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class DeleteTest < Minitest::Test
+  class DeleteTest < ActiveSupport::TestCase
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.delete.link
@@ -13,8 +13,8 @@ module Config
 
     def test_link_defaults
       link = @config.delete.link
-      refute link.page?
-      refute link.popup?
+      assert_not link.page?
+      assert_not link.popup?
       assert link.confirm?
       assert_equal 'destroy', link.action
       assert_equal 'Delete', link.label
@@ -29,7 +29,7 @@ module Config
 
     def test_setting_link
       @config.delete.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
-      refute_equal @default_link, @config.delete.link
+      assert_not_equal @default_link, @config.delete.link
     end
   end
 end

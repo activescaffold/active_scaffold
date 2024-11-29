@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ActiveRecordTest < Minitest::Test
+class ActiveRecordTest < ActiveSupport::TestCase
   def setup
     @record = ModelStub.new
   end

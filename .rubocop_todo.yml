@@ -10,20 +10,6 @@
 Metrics/AbcSize:
   Max: 122
 
-# Offense count: 99
-Metrics/CyclomaticComplexity:
-  Exclude:
-    - lib/active_scaffold/helpers/*
-    - lib/active_scaffold/extensions/*
-    - lib/active_scaffold/bridges/**/*
-    - lib/active_scaffold/config/*
-    - lib/active_scaffold/data_structures/*
-    - lib/active_scaffold/actions/core.rb
-    - lib/active_scaffold/finder.rb
-    - lib/active_scaffold/constraints.rb
-    - lib/active_scaffold/active_record_permissions.rb
-    - lib/active_scaffold/core.rb
-
 Style/OptionalBooleanParameter:
   Exclude:
     - lib/active_scaffold/attribute_params.rb
@@ -42,11 +28,6 @@ Metrics/MethodLength:
 # Offense count: 93
 Metrics/PerceivedComplexity:
   Max: 29
-
-# Offense count: 1
-Naming/AccessorMethodName:
-  Exclude:
-    - 'lib/active_scaffold/data_structures/set.rb'
 
 # Offense count: 84
 # Configuration parameters: EnforcedStyle, SupportedStyles.

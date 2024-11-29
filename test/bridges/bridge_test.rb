@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class BridgeTest < Minitest::Test
+class BridgeTest < ActiveSupport::TestCase
   def setup
     @const_store = {}
   end
@@ -14,7 +14,7 @@ class BridgeTest < Minitest::Test
   def test__file_column_bridge
     ConstMocker.mock('FileColumn') do |cm|
       cm.remove
-      assert(!bridge_will_be_installed('FileColumn'))
+      assert_not(bridge_will_be_installed('FileColumn'))
       cm.declare
       assert(bridge_will_be_installed('FileColumn'))
     end
@@ -23,7 +23,7 @@ class BridgeTest < Minitest::Test
   def test__paperclip_bridge
     ConstMocker.mock('Paperclip') do |cm|
       cm.remove
-      assert(!bridge_will_be_installed('Paperclip'))
+      assert_not(bridge_will_be_installed('Paperclip'))
       cm.declare
       assert(bridge_will_be_installed('Paperclip'))
     end
@@ -36,7 +36,7 @@ class BridgeTest < Minitest::Test
         rails.declare
         ConstMocker.mock('Ui', jquery.const) do |cm|
           cm.remove
-          assert(!bridge_will_be_installed('DatePicker'))
+          assert_not(bridge_will_be_installed('DatePicker'))
           cm.declare
           assert(bridge_will_be_installed('DatePicker'))
         end
@@ -47,7 +47,7 @@ class BridgeTest < Minitest::Test
   def test__semantic_attributes_bridge
     ConstMocker.mock('SemanticAttributes') do |cm|
       cm.remove
-      assert(!bridge_will_be_installed('SemanticAttributes'))
+      assert_not(bridge_will_be_installed('SemanticAttributes'))
       cm.declare
       assert(bridge_will_be_installed('SemanticAttributes'))
     end
@@ -56,7 +56,7 @@ class BridgeTest < Minitest::Test
   def test__paper_trail_bridge
     ConstMocker.mock('PaperTrail') do |cm|
       cm.remove
-      assert(!bridge_will_be_installed('PaperTrail'))
+      assert_not(bridge_will_be_installed('PaperTrail'))
       cm.declare
       assert(bridge_will_be_installed('PaperTrail'))
     end

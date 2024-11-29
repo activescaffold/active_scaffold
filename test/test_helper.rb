@@ -20,7 +20,7 @@ Minitest::Reporters.use! unless ENV['RM_INFO']
 def load_schema
   stdout = $stdout
   $stdout = StringIO.new # suppress output while building the schema
-  load Rails.root.join('db', 'schema.rb')
+  load Rails.root.join('db/schema.rb')
   $stdout = stdout
 end
 load_schema
@@ -36,13 +36,7 @@ end
 
 I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../config/locales/en.yml', __dir__))['en']
 
-# rails 4.0
-unless defined? Minitest::Test
-  class Minitest::Test < Minitest::Unit::TestCase
-  end
-end
-
-class Minitest::Test
+Minitest::Test.class_eval do
   protected
 
   def config_for(klass, namespace = nil)

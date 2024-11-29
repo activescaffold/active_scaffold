@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class AttributeParamsTest < Minitest::Test
+class AttributeParamsTest < ActiveSupport::TestCase
   def setup
     @controller = Controller.new
   end
@@ -187,20 +187,20 @@ class AttributeParamsTest < Minitest::Test
     model = update_record_from_params(Building.new, :create, :name, :tenants, :name => 'Tower', :tenants => ['', *people.map { |b| b.id.to_s }]) # checkbox_list always add a hidden tag with empty value
     assert_equal 'Tower', model.name
     assert model.tenants.present?
-    assert_equal [nil] * 2, people.map { |p| p.respond_to?(:reload_floor) ? p.reload_floor : p.floor(true) }, 'floor should not be saved yet'
+    assert_equal [nil] * 2, people.map(&:reload_floor), 'floor should not be saved yet'
     assert model.save
     assert_equal [model.id] * 2, model.floors.map(&:building_id)
-    assert_equal [model.id] * 2, people.map { |p| (p.respond_to?(:reload_floor) ? p.reload_floor : p.floor(true)).building_id }, 'floor should be saved'
+    assert_equal [model.id] * 2, people.map { |p| p.reload_floor.building_id }, 'floor should be saved'
 
     model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => ['']) { raise ActiveRecord::Rollback }
     assert_equal 'Skyscrapper', model.name
-    assert_equal [model.id] * 2, people.map { |p| (p.respond_to?(:reload_floor) ? p.reload_floor : p.floor(true)).building_id }, 'previous floor should not be deleted'
+    assert_equal [model.id] * 2, people.map { |p| p.reload_floor.building_id }, 'previous floor should not be deleted'
     assert model.tenants.empty?, 'tenants should be cleared'
 
     model.reload
     model = update_record_from_params(model, :update, :name, :tenants, :name => 'Skyscrapper', :tenants => [''])
     assert_equal 'Skyscrapper', model.name
-    assert_equal [nil] * 2, people.map { |p| p.respond_to?(:reload_floor) ? p.reload_floor : p.floor(true) }, 'previous floor should be deleted'
+    assert_equal [nil] * 2, people.map(&:reload_floor), 'previous floor should be deleted'
     assert model.tenants.empty?, 'tenants should be cleared'
     assert model.save
   end
@@ -213,14 +213,20 @@ class AttributeParamsTest < Minitest::Test
     assert_equal 'First', model.name
     assert_equal 1, model.floors.size
     assert model.floors.first.errors.present?
-    refute model.floors.first.persisted?
+    assert_not model.floors.first.persisted?
   end
 
   def test_saving_has_many_crud_and_belongs_to_select
     floor = Floor.create
     people = Array.new(2) { Person.create }
     key = Time.now.to_i.to_s
-    floors = {'0' => '', floor.id.to_s => {:number => '1', :tenant => '', :id => floor.id.to_s}, key => {:number => '2', 'tenant' => people.first.id.to_s}, key.succ => {:number => '4', 'tenant' => people.last.id.to_s}, key.succ.succ => {:number => '', 'tenant' => ''}}
+    floors = {
+      '0' => '',
+      floor.id.to_s => {:number => '1', :tenant => '', :id => floor.id.to_s},
+      key => {:number => '2', 'tenant' => people.first.id.to_s},
+      key.succ => {:number => '4', 'tenant' => people.last.id.to_s},
+      key.succ.succ => {:number => '', 'tenant' => ''}
+    }
     model = update_record_from_params(Building.new, :create, :name, :floors, :name => 'First', :floors => floors)
     assert_equal 'First', model.name
     assert_equal 3, model.floors.size
@@ -228,7 +234,7 @@ class AttributeParamsTest < Minitest::Test
     assert_equal [nil, *people.map(&:id)], model.floors.map(&:tenant_id)
     assert_equal model, model.floors[0].building
     assert model.save
-    assert_equal [1, 1], people.map(&:reload).map(&:floors_count)
+    assert_equal([1, 1], people.map { |p| p.reload.floors_count })
     assert_equal 3, model.reload.floors_count
 
     last_floor = model.floors.last
@@ -328,7 +334,7 @@ class AttributeParamsTest < Minitest::Test
     assert_equal 'First', model.first_name
     assert_nil Car.where(:id => car.id).first, 'previous car should be deleted'
     assert model.car.present?
-    refute_equal car.id, model.car.id
+    assert_not_equal car.id, model.car.id
     assert model.save
 
     car = model.car.reload
@@ -443,7 +449,7 @@ class Controller
   public :update_record_from_params
 
   def logger
-    @logger ||= Logger.new(STDOUT)
+    @logger ||= Logger.new($stdout)
   end
 
   def flash

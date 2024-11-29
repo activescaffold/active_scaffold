@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class ShowTest < Minitest::Test
+  class ShowTest < ActiveSupport::TestCase
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.show.link
@@ -13,9 +13,9 @@ module Config
 
     def test_link_defaults
       link = @config.show.link
-      refute link.page?
-      refute link.popup?
-      refute link.confirm?
+      assert_not link.page?
+      assert_not link.popup?
+      assert_not link.confirm?
       assert_equal 'show', link.action
       assert_equal 'Show', link.label
       assert link.inline?
@@ -29,7 +29,7 @@ module Config
 
     def test_setting_link
       @config.show.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
-      refute_equal @default_link, @config.show.link
+      assert_not_equal @default_link, @config.show.link
     end
 
     def test_label

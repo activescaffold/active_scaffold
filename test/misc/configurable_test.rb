@@ -15,7 +15,7 @@ class ExtendedClass < ConfigurableClass
   extend ActiveScaffold::Configurable
 end
 
-class ConfigurableTest < Minitest::Test
+class ConfigurableTest < ActiveSupport::TestCase
   ##
   ## constants and methods for tests to check against
   ##

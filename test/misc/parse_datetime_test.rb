@@ -8,7 +8,7 @@ class DateTimeModel < ActiveRecord::Base
   end
 
   def self.columns_hash
-    @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
+    @columns_hash ||= columns.index_by(&:name)
   end
 
   def self.load_schema!
@@ -22,7 +22,7 @@ class DateTimeModel < ActiveRecord::Base
   end
 end
 
-class ParseDatetimeTest < Minitest::Test
+class ParseDatetimeTest < ActiveSupport::TestCase
   include ActiveScaffoldConfigMock
   include ActiveScaffold::AttributeParams
   include ActiveScaffold::Finder
@@ -47,38 +47,38 @@ class ParseDatetimeTest < Minitest::Test
     @config = config_for('date_time_model')
   end
 
-  def teardown
-    I18n.locale = :en
-  end
-
   def test_translate_to_english
-    I18n.locale = :es
-    assert_equal 'Mon, 03 Apr 2017 16:30:26', translate_datetime('Lun, 03 Abr 2017 16:30:26')
-    assert_equal 'Fri, 24 Mar 2017 16:30:26', translate_datetime('Vie, 24 Mar 2017 16:30:26')
-    assert_equal 'Tue, 28 Mar 2017 16:30:26', translate_datetime('Mar, 28 Mar 2017 16:30:26')
+    I18n.with_locale :es do
+      assert_equal 'Mon, 03 Apr 2017 16:30:26', translate_datetime('Lun, 03 Abr 2017 16:30:26')
+      assert_equal 'Fri, 24 Mar 2017 16:30:26', translate_datetime('Vie, 24 Mar 2017 16:30:26')
+      assert_equal 'Tue, 28 Mar 2017 16:30:26', translate_datetime('Mar, 28 Mar 2017 16:30:26')
+    end
   end
 
   def test_translate_to_english_with_different_order
-    I18n.locale = :es
-    format = '%d %b %Y, %a, %H:%M:%S'
-    assert_equal '03 Apr 2017, Mon, 16:30:26', translate_datetime('03 Abr 2017, Lun, 16:30:26', format)
-    assert_equal '24 Mar 2017, Fri, 16:30:26', translate_datetime('24 Mar 2017, Vie, 16:30:26', format)
-    assert_equal '28 Mar 2017, Tue, 16:30:26', translate_datetime('28 Mar 2017, Mar, 16:30:26', format)
+    I18n.with_locale :es do
+      format = '%d %b %Y, %a, %H:%M:%S'
+      assert_equal '03 Apr 2017, Mon, 16:30:26', translate_datetime('03 Abr 2017, Lun, 16:30:26', format)
+      assert_equal '24 Mar 2017, Fri, 16:30:26', translate_datetime('24 Mar 2017, Vie, 16:30:26', format)
+      assert_equal '28 Mar 2017, Tue, 16:30:26', translate_datetime('28 Mar 2017, Mar, 16:30:26', format)
+    end
   end
 
   def test_translate_to_english_with_words
-    I18n.locale = :es
-    format = '%A, %d de %B %Y, %H:%M:%S'
-    assert_equal 'Monday, 03 de April de 2017, 16:30:26', translate_datetime('Lunes, 03 de Abril de 2017, 16:30:26', format)
-    assert_equal 'Friday, 24 de March de 2017, 16:30:26', translate_datetime('Viernes, 24 de Marzo de 2017, 16:30:26', format)
-    assert_equal 'Tuesday, 28 de March de 2017, 16:30:26', translate_datetime('Martes, 28 de Marzo de 2017, 16:30:26', format)
+    I18n.with_locale :es do
+      format = '%A, %d de %B %Y, %H:%M:%S'
+      assert_equal 'Monday, 03 de April de 2017, 16:30:26', translate_datetime('Lunes, 03 de Abril de 2017, 16:30:26', format)
+      assert_equal 'Friday, 24 de March de 2017, 16:30:26', translate_datetime('Viernes, 24 de Marzo de 2017, 16:30:26', format)
+      assert_equal 'Tuesday, 28 de March de 2017, 16:30:26', translate_datetime('Martes, 28 de Marzo de 2017, 16:30:26', format)
+    end
   end
 
   def test_condition_for_spanish_datetime
-    I18n.locale = :es
-    assert_equal Time.zone.local(2017, 4, 3, 16, 30, 26), condition_value('Lun, 03 Abr 2017 16:30:26', :datetime_picker)
-    assert_equal Time.zone.local(2017, 3, 24, 16, 30, 26), condition_value('Vie, 24 Mar 2017 16:30:26', :datetime_picker)
-    assert_equal Time.zone.local(2017, 3, 28, 16, 30, 26), condition_value('Mar, 28 Mar 2017 16:30:26', :datetime_picker)
+    I18n.with_locale :es do
+      assert_equal Time.zone.local(2017, 4, 3, 16, 30, 26), condition_value('Lun, 03 Abr 2017 16:30:26', :datetime_picker)
+      assert_equal Time.zone.local(2017, 3, 24, 16, 30, 26), condition_value('Vie, 24 Mar 2017 16:30:26', :datetime_picker)
+      assert_equal Time.zone.local(2017, 3, 28, 16, 30, 26), condition_value('Mar, 28 Mar 2017 16:30:26', :datetime_picker)
+    end
   end
 
   def test_condition_for_english_datetime
@@ -122,10 +122,11 @@ class ParseDatetimeTest < Minitest::Test
 
   def test_condition_for_spanish_date
     @config.columns[:run_at].options[:format] = :long
-    I18n.locale = :es
-    assert_equal Date.new(2017, 4, 3), condition_value('03 de Abril de 2017', :date_picker, :to_date)
-    assert_equal Date.new(2017, 3, 24), condition_value('24 de Marzo de 2017', :date_picker, :to_date)
-    assert_equal Date.new(2017, 3, 28), condition_value('28 de Marzo de 2017', :date_picker, :to_date)
+    I18n.with_locale :es do
+      assert_equal Date.new(2017, 4, 3), condition_value('03 de Abril de 2017', :date_picker, :to_date)
+      assert_equal Date.new(2017, 3, 24), condition_value('24 de Marzo de 2017', :date_picker, :to_date)
+      assert_equal Date.new(2017, 3, 28), condition_value('28 de Marzo de 2017', :date_picker, :to_date)
+    end
   end
 
   def test_condition_for_english_date
@@ -142,9 +143,9 @@ class ParseDatetimeTest < Minitest::Test
     self.class.translate_days_and_months(value, format)
   end
 
-  def condition_value(value, ui = nil, conversion = nil)
+  def condition_value(value, ui_name = nil, conversion = nil)
     old_ui = @config.columns[:run_at].search_ui
-    @config.columns[:run_at].search_ui = ui if ui
+    @config.columns[:run_at].search_ui = ui_name if ui_name
     self.class.condition_value_for_datetime(@config.columns[:run_at], value, conversion || :to_time).tap do
       @config.columns[:run_at].search_ui = old_ui
     end

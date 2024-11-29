@@ -8,7 +8,7 @@ class PermissionModel < ActiveRecord::Base
   end
 
   def self.columns_hash
-    @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
+    @columns_hash ||= columns.index_by(&:name)
   end
 
   def self.schema_loaded?
@@ -81,7 +81,7 @@ class PermissionModel < ActiveRecord::Base
   # def c1_authorized_for_update?; end
 end
 
-class ActiveRecordPermissionsTest < Minitest::Test
+class ActiveRecordPermissionsTest < ActiveSupport::TestCase
   def setup
     @model = PermissionModel.new
   end
@@ -188,6 +188,6 @@ class ActiveRecordPermissionsTest < Minitest::Test
   end
 
   def miss(value, message = nil)
-    refute value, "#{message} should fail"
+    assert_not value, "#{message} should fail"
   end
 end

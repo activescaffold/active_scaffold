@@ -35,7 +35,7 @@ class TinyMceTest < ActionView::TestCase
     record = Company.new
     opts = {name: 'record[name]', id: 'record_name', class: 'name-input', object: record}
 
-    assert_dom_equal %(<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\" data-tinymce=\"{&quot;theme&quot;:&quot;modern&quot;}\">\n</textarea>), active_scaffold_input_text_editor(config.columns[:name], opts)
+    assert_dom_equal %(<textarea name="record[name]" class="name-input mceEditor" id="record_name" data-tinymce="{&quot;theme&quot;:&quot;modern&quot;}">\n</textarea>), active_scaffold_input_text_editor(config.columns[:name], opts)
   end
 
   def test_form_ui_alternate
@@ -44,7 +44,7 @@ class TinyMceTest < ActionView::TestCase
     config.columns[:name].options[:tinymce_config] = :alternate
     opts = {name: 'record[name]', id: 'record_name', class: 'name-input', object: record}
 
-    assert_dom_equal %(<textarea name=\"record[name]\" class=\"name-input mceEditor\" id=\"record_name\" data-tinymce=\"{&quot;theme&quot;:&quot;alternate&quot;,&quot;toolbar&quot;:&quot;undo redo | format&quot;}\">\n</textarea>), active_scaffold_input_tinymce(config.columns[:name], opts)
+    assert_dom_equal %(<textarea name="record[name]" class="name-input mceEditor" id="record_name" data-tinymce="{&quot;theme&quot;:&quot;alternate&quot;,&quot;toolbar&quot;:&quot;undo redo | format&quot;}">\n</textarea>), active_scaffold_input_tinymce(config.columns[:name], opts)
   end
 
   protected

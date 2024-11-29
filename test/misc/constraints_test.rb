@@ -5,7 +5,7 @@ module ModelStubs
     self.abstract_class = true
     def self.columns; @columns ||= [ColumnMock.new('foo', '', 'string')] end
 
-    def self.columns_hash; @hash ||= Hash[@columns.map { |c| [c.name, c] }] end
+    def self.columns_hash; @columns_hash ||= @columns.index_by(&:name) end
 
     if respond_to? :type_for_attribute
       def self.type_for_attribute(column_name)
@@ -95,11 +95,8 @@ class ConstraintsTestObject
   def self.before_action(*); end
 
   def self.helper_method(*); end
-  attr_accessor :active_scaffold_preload
-  attr_accessor :active_scaffold_references
-  attr_accessor :active_scaffold_habtm_joins
-  attr_accessor :active_scaffold_config
-  attr_accessor :params
+  attr_accessor :active_scaffold_preload, :active_scaffold_references, :active_scaffold_habtm_joins, :active_scaffold_config, :params
+
   def merge_conditions(old, new)
     [old, new].compact.flatten
   end
@@ -122,7 +119,7 @@ class ConstraintsTestObject
   end
 end
 
-class ConstraintsTest < Minitest::Test
+class ConstraintsTest < ActiveSupport::TestCase
   def setup
     @test_object = ConstraintsTestObject.new
   end

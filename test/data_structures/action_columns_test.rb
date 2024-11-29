@@ -2,14 +2,14 @@ require 'test_helper'
 # require 'test/model_stub'
 # require File.join(File.dirname(__FILE__), '../../lib/active_scaffold/data_structures/set.rb')
 
-class ActionColumnsTest < Minitest::Test
+class ActionColumnsTest < ActiveSupport::TestCase
   def setup
     @columns = ActiveScaffold::DataStructures::ActionColumns.new(%i[a b])
-    @columns.action = stub(core: stub(model_id: 'model_stub'), user_settings_key: :"model_stub_active_scaffold/config/test")
+    @columns.action = stub(core: stub(model_id: 'model_stub'), user_settings_key: :'model_stub_active_scaffold/config/test')
   end
 
   def test_label
-    refute_equal 'foo', @columns.label
+    assert_not_equal 'foo', @columns.label
     @columns.label = 'foo'
     assert_equal 'foo', @columns.label
   end
@@ -17,47 +17,47 @@ class ActionColumnsTest < Minitest::Test
   def test_initialization
     assert @columns.include?(:a)
     assert @columns.include?(:b)
-    refute @columns.include?(:c)
+    assert_not @columns.include?(:c)
   end
 
   def test_exclude
     # exclude with a symbol
     assert @columns.include?(:b)
     @columns.exclude :b
-    refute @columns.include?(:b)
+    assert_not @columns.include?(:b)
 
     # exclude with a string
     assert @columns.include?(:a)
     @columns.exclude 'a'
-    refute @columns.include?(:a)
+    assert_not @columns.include?(:a)
   end
 
   def test_exclude_array
     # exclude with a symbol
     assert @columns.include?(:b)
     @columns.exclude %i[a b]
-    refute @columns.include?(:b)
-    refute @columns.include?(:a)
+    assert_not @columns.include?(:b)
+    assert_not @columns.include?(:a)
   end
 
   def test_add
     # try adding a simple column using a string
-    refute @columns.include?(:c)
+    assert_not @columns.include?(:c)
     @columns.add 'c'
     assert @columns.include?(:c)
 
     # try adding a simple column using a symbol
-    refute @columns.include?(:d)
+    assert_not @columns.include?(:d)
     @columns.add :d
     assert @columns.include?(:d)
 
     # test that << also adds
-    refute @columns.include?(:e)
+    assert_not @columns.include?(:e)
     @columns << :e
     assert @columns.include?(:e)
 
     # try adding an array of columns
-    refute @columns.include?(:f)
+    assert_not @columns.include?(:f)
     @columns.add %i[f g]
     assert @columns.include?(:f)
     assert @columns.include?(:g)
@@ -71,10 +71,11 @@ class ActionColumnsTest < Minitest::Test
     # first, use @columns.add directly
     @c2 = ActiveScaffold::DataStructures::ActionColumns.new
     @columns.add @c2
-    assert(@columns.any? { |c| c == @c2 })
+    assert(@columns.any?(@c2))
 
     # then use the shortcut
     @columns.add_subgroup 'foo' do
+      # add a subgroup
     end
     assert(@columns.any? { |c| c.respond_to?(:label) && c.label == 'foo' })
   end
@@ -91,9 +92,10 @@ class ActionColumnsTest < Minitest::Test
     end
 
     assert @columns.include?(:c)
-    refute @columns.include?(:b)
+    assert_not @columns.include?(:b)
     @columns.each do |c|
       next unless c.is_a? ActiveScaffold::DataStructures::Columns
+
       assert c.include?(:e)
       assert_equal 'my subgroup', c.name
     end
@@ -107,6 +109,6 @@ class ActionColumnsTest < Minitest::Test
     assert @columns.include?(:a)
     assert @columns.include?(:b)
     assert @columns.include?(:c)
-    refute @columns.include?(:d)
+    assert_not @columns.include?(:d)
   end
 end

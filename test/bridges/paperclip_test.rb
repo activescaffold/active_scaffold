@@ -14,9 +14,9 @@ class PaperclipTest < ActionView::TestCase
   def test_initialization_without_paperclip
     Company.expects(:attachment_definitions)
     config = PaperclipCore.new(:company)
-    refute config.create.multipart?
-    refute config.update.multipart?
-    refute(config.columns.any? { |column| column.form_ui == :paperclip })
+    assert_not config.create.multipart?
+    assert_not config.update.multipart?
+    assert_not(config.columns.any? { |column| column.form_ui == :paperclip })
   end
 
   def test_initialization
@@ -26,7 +26,7 @@ class PaperclipTest < ActionView::TestCase
     assert_equal :paperclip, config.columns[:logo].form_ui
     assert_equal [:delete_logo], config.columns[:logo].params.to_a
     %w[logo_file_name logo_file_size logo_updated_at logo_content_type].each do |attr|
-      refute config.columns._inheritable.include?(attr.to_sym)
+      assert_not config.columns._inheritable.include?(attr.to_sym)
     end
     assert Company.method_defined?(:delete_logo)
     assert Company.method_defined?(:'delete_logo=')
@@ -48,10 +48,10 @@ class PaperclipTest < ActionView::TestCase
     company = Company.new
 
     company.stubs(:logo).returns(stub(:file? => true, :original_filename => 'file', :url => '/system/file', :styles => Company.attachment_definitions[:logo]))
-    assert_dom_equal '<a href="/system/file" target="_blank">file</a>', active_scaffold_column_paperclip(company, config.columns[:logo])
+    assert_dom_equal '<a href="/system/file" rel="noopener" target="_blank">file</a>', active_scaffold_column_paperclip(company, config.columns[:logo])
 
     company.stubs(:logo).returns(stub(:file? => true, :original_filename => 'file', :url => '/system/file', :styles => {:thumbnail => '40x40'}))
-    assert_dom_equal '<a href="/system/file" target="_blank"><img src="/system/file" border="0"/></a>', active_scaffold_column_paperclip(company, config.columns[:logo])
+    assert_dom_equal '<a href="/system/file" rel="noopener" target="_blank"><img src="/system/file" border="0"/></a>', active_scaffold_column_paperclip(company, config.columns[:logo])
   end
 
   def test_form_ui
