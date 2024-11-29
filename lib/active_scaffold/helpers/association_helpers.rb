@@ -1,4 +1,3 @@
-
 module ActiveScaffold
   module Helpers
     module AssociationHelpers

@@ -13,6 +13,7 @@ Metrics/AbcSize:
 Style/OptionalBooleanParameter:
   Exclude:
     - lib/active_scaffold/attribute_params.rb
+    - lib/active_scaffold/helpers/*
 
 # Offense count: 1857
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
@@ -27,7 +28,7 @@ Metrics/MethodLength:
 
 # Offense count: 93
 Metrics/PerceivedComplexity:
-  Max: 29
+  Max: 39
 
 # Offense count: 84
 # Configuration parameters: EnforcedStyle, SupportedStyles.

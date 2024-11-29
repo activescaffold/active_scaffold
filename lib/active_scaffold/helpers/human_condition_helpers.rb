@@ -60,7 +60,7 @@ module ActiveScaffold
           "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value['opt'].downcase).downcase}"
         else
           from, to = controller.class.datetime_from_to(column, value)
-          "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value['opt'].downcase).downcase} #{I18n.l(from)} #{value['opt'] == 'BETWEEN' ? '- ' + I18n.l(to) : ''}"
+          "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value['opt'].downcase).downcase} #{I18n.l(from)} #{"- #{I18n.l(to)}" if value['opt'] == 'BETWEEN'}"
         end
       end
       alias active_scaffold_human_condition_time active_scaffold_human_condition_datetime
@@ -70,7 +70,7 @@ module ActiveScaffold
       def active_scaffold_human_condition_datetime_range_format(range_type, range)
         case range
         when 'week'
-          first_day_of_week = I18n.translate 'active_scaffold.date_picker_options.firstDay'
+          first_day_of_week = I18n.t 'active_scaffold.date_picker_options.firstDay'
           if first_day_of_week == 1
             '%W %Y'
           else
@@ -81,7 +81,7 @@ module ActiveScaffold
         when 'year'
           '%Y'
         else
-          I18n.translate 'date.formats.default'
+          I18n.t 'date.formats.default'
         end
       end
       # def active_scaffold_human_condition_date(column, value)

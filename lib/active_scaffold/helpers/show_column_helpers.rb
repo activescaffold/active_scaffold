@@ -15,10 +15,10 @@ module ActiveScaffold
         # second, check if the dev has specified a valid list_ui for this column
         elsif column.show_ui && (method = override_show_column_ui(column.show_ui))
           send(method, value_record, column, ui_options: column.show_ui_options || column.options)
-        elsif column.column && (method = override_show_column_ui(column.column_type))
+        elsif column.column && (method = override_show_column_ui(column.column_type)) # rubocop:disable Lint/DuplicateBranch
           send(method, value_record, column)
         else
-          get_column_value(record, column)
+          get_column_value(value_record, column)
         end
       end
 

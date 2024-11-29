@@ -15,7 +15,7 @@ module ActiveScaffold
         else
           value = nil
         end
-        value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6 # rubocop:disable Rails/OutputSafety
+        value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
         value
       rescue StandardError => e
         logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
@@ -33,7 +33,7 @@ module ActiveScaffold
           # second, check if the dev has specified a valid list_ui for this column
           elsif column.list_ui && (method = override_column_ui(column.list_ui))
             [method, true]
-          elsif column.column && (method = override_column_ui(column.column_type))
+          elsif column.column && (method = override_column_ui(column.column_type)) # rubocop:disable Lint/DuplicateBranch
             method
           else
             :format_column_value
@@ -75,8 +75,8 @@ module ActiveScaffold
       #
       # Why is it not a configuration option? Because it seems like a somewhat rare request. But it
       # could eventually be an option in config.list (and config.show, I guess).
-      def clean_column_value(v)
-        h(v)
+      def clean_column_value(value)
+        h(value)
       end
 
       ##
@@ -317,7 +317,7 @@ module ActiveScaffold
       # ==========
 
       def inplace_edit?(record, column)
-        return unless column.inplace_edit
+        return false unless column.inplace_edit
         if controller.respond_to?(:update_authorized?, true)
           return Array(controller.send(:update_authorized?, record, column.name))[0]
         end
@@ -353,7 +353,7 @@ module ActiveScaffold
         column.form_ui = :select if column.association && column.form_ui.nil?
         options = active_scaffold_input_options(column).merge(object: column.active_record_class.new)
         options[:class] = "#{options[:class]} inplace_field"
-        options[:"data-id"] = options[:id]
+        options[:'data-id'] = options[:id]
         options[:id] = nil
         content_tag(:div, active_scaffold_input_for(column, nil, options), style: 'display:none;', class: inplace_edit_control_css_class)
       end
@@ -393,7 +393,7 @@ module ActiveScaffold
 
       def all_marked?
         if active_scaffold_config.mark.mark_all_mode == :page
-          @page.items.detect { |record| !marked_records.include?(record.id) }.nil?
+          @page.items.all? { |record| marked_records.key?(record.id) }
         else
           marked_records.length >= @page.pager.count.to_i
         end
@@ -437,8 +437,8 @@ module ActiveScaffold
           # :id needed because rails reuse it even if it was deleted from params (like do_refresh_list does)
           url_options[:id] = nil if @remove_id_from_list_links
           url_options = params_for(url_options)
-          unless active_scaffold_config.store_user_settings
-            url_options[:search] = search_params if respond_to?(:search_params) && search_params.present?
+          if !active_scaffold_config.store_user_settings && respond_to?(:search_params) && search_params.present?
+            url_options[:search] = search_params
           end
           link_to column_heading_label(column), url_options, options
         else

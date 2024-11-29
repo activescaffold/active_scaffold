@@ -19,26 +19,19 @@ module ActiveScaffold
           send(method, record, options)
 
         # second, check if the dev has specified a valid search_ui for this column, using specific ui for searches
-        elsif column.search_ui && (method = override_search(column.search_ui))
+        # or generic ui for forms
+        elsif column.search_ui && (method = override_search(column.search_ui) || override_input(column.search_ui))
           send(method, column, options, ui_options: column.search_ui_options || column.options)
 
-        # third, check if the dev has specified a valid search_ui for this column, using generic ui for forms
-        elsif column.search_ui && (method = override_input(column.search_ui))
-          send(method, column, options, ui_options: column.search_ui_options || column.options)
-
-        # fourth, check if the dev has created an override for this specific field
-        elsif (method = override_form_field(column))
+        # third, check if the dev has created an override for this specific field
+        elsif (method = override_form_field(column)) # rubocop:disable Lint/DuplicateBranch
           send(method, record, options)
 
         # fallback: we get to make the decision
         elsif column.association || column.virtual?
           active_scaffold_search_text(column, options)
 
-        elsif (method = override_search(column.column_type))
-          # if we (or someone else) have created a custom render option for the column type, use that
-          send(method, column, options)
-
-        elsif (method = override_input(column.column_type))
+        elsif (method = override_search(column.column_type) || override_input(column.column_type))
           # if we (or someone else) have created a custom render option for the column type, use that
           send(method, column, options)
 
@@ -290,7 +283,7 @@ module ActiveScaffold
           active_scaffold_search_datetime_numeric_tag(column, options, current_search, ui_options: ui_options, field_ui: field_ui),
           active_scaffold_search_datetime_range_tag(column, options, current_search)
         ]
-        safe_join tags, '&nbsp;'.html_safe # rubocop:disable Rails/OutputSafety
+        safe_join tags, '&nbsp;'.html_safe
       end
 
       def active_scaffold_search_timestamp(column, options, ui_options: column.options)

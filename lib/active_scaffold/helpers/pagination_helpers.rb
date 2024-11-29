@@ -27,7 +27,7 @@ module ActiveScaffold
 
         html = []
         if current_page.number == 1
-          last_page = 0
+          last_page = 0 # rubocop:disable Lint/UselessAssignment
         else
           last_page = 1
           last_page.upto([last_page + outer_window, current_page.number - 1].min) do |num|
@@ -36,7 +36,7 @@ module ActiveScaffold
           end
         end
         if current_page.pager.infinite?
-          offsets.reverse.each do |offset|
+          offsets.reverse_each do |offset|
             page = current_page.number - offset
             next unless page < start_number && page > last_page
 

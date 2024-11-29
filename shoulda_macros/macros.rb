@@ -18,7 +18,7 @@ class ActiveSupport::TestCase
     should "not include #{columns.to_sentence} columns in #{action}" do
       action_columns = column_names(action)
       columns.each do |column|
-        assert !action_columns.include?(column.to_sym), "#{column} is included in #{action}"
+        assert action_columns.exclude?(column.to_sym), "#{column} is included in #{action}"
       end
     end
   end
@@ -125,11 +125,11 @@ class ActiveSupport::TestCase
       script = block ? instance_eval(&block) : /.*/
       script = script.is_a?(Regexp) ? script.source : Regexp.quote(script)
       script = script.gsub('\n', '\\\\\\n')
-                     .gsub(/['"]/, '\\\\\\\\\&')
-                     .gsub('</script>', '</scr"+"ipt>')
+                 .gsub(/['"]/, '\\\\\\\\\&')
+                 .gsub('</script>', '</scr"+"ipt>')
       pre_regex = Regexp.quote("with(window.parent) { setTimeout(function() { window.eval('")
       post_regex = Regexp.quote("'); if (typeof(loc) !== 'undefined') loc.replace('about:blank'); }, 1) };")
-      assert_select 'script[type=text/javascript]', Regexp.new('.*' + pre_regex + script + post_regex + '.*')
+      assert_select 'script[type=text/javascript]', Regexp.new(".*#{pre_regex}#{script}#{post_regex}.*")
     end
   end
 

@@ -56,6 +56,7 @@ Metrics/CyclomaticComplexity:
     - lib/active_scaffold/constraints.rb
     - lib/active_scaffold/active_record_permissions.rb
     - lib/active_scaffold/core.rb
+    - lib/active_scaffold/tableless.rb
 
 Metrics/ModuleLength:
   Max: 700

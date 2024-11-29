@@ -64,7 +64,7 @@ module ActiveScaffold
           params.except(*BLACKLIST_PARAMS).each do |key, value|
             @params_for[key.to_sym] = copy_param(value)
           end
-          @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
+          @params_for[:controller] = "/#{@params_for[:controller]}" unless @params_for[:controller]&.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end
 
@@ -108,7 +108,7 @@ module ActiveScaffold
           parameters = {}
           if params[:parent_scaffold] && nested_singular_association?
             parameters[:controller] = params[:parent_scaffold]
-            exclude_parameters.concat [nested.param_name, :association, :parent_scaffold]
+            exclude_parameters.push nested.param_name, :association, :parent_scaffold
             # parameters[:eid] = params[:parent_scaffold] # not neeeded anymore?
           end
           parameters.merge! nested.to_params if nested?

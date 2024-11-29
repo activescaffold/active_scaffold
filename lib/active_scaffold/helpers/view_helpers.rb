@@ -62,7 +62,7 @@ module ActiveScaffold
         # it's call many times and we can cache same result
         @_loading_indicator_path ||= image_path('active_scaffold/indicator.gif')
         # it's call many times in long lists, image_tag is a bit slower
-        tag :img, src: @_loading_indicator_path, style: 'visibility:hidden;', id: loading_indicator_id(options), alt: 'loading indicator', class: 'loading-indicator'
+        tag.img(src: @_loading_indicator_path, style: 'visibility:hidden;', id: loading_indicator_id(options), alt: 'loading indicator', class: 'loading-indicator')
       end
 
       # Creates a javascript-based link that toggles the visibility of some element on the page.
@@ -79,7 +79,7 @@ module ActiveScaffold
 
       def list_row_class(record)
         class_override_helper = override_helper_per_model(:list_row_class, record.class)
-        class_override_helper != :list_row_class ? send(class_override_helper, record) : ''
+        class_override_helper == :list_row_class ? '' : send(class_override_helper, record)
       end
 
       def list_row_attributes(tr_class, tr_id, data_refresh)
@@ -191,7 +191,7 @@ module ActiveScaffold
       end
 
       def display_message(message)
-        message = safe_join message, tag(:br) if message.is_a?(Array)
+        message = safe_join message, tag.br if message.is_a?(Array)
         if (highlights = active_scaffold_config.user.highlight_messages)
           message = highlights.inject(message) do |msg, (phrases, highlighter)|
             highlight(msg, phrases, highlighter || {})
@@ -247,12 +247,12 @@ module ActiveScaffold
 
           error_messages = objects.sum([]) do |object|
             object.errors.full_messages.map do |msg|
-              options[:list_type] != :br ? content_tag(:li, msg) : msg
+              options[:list_type] == :br ? msg : content_tag(:li, msg)
             end
           end
           error_messages =
             if options[:list_type] == :br
-              safe_join error_messages, tag(:br)
+              safe_join error_messages, tag.br
             else
               content_tag options[:list_type], safe_join(error_messages)
             end

@@ -60,7 +60,7 @@ module ActiveScaffold
           col_class << 'checkbox' if column.form_ui == :checkbox
           col_class = col_class.join(' ')
         end
-        if readonly && !record.new_record? || !record.authorized_for?(crud_type: crud_type, column: column.name)
+        if (readonly && !record.new_record?) || !record.authorized_for?(crud_type: crud_type, column: column.name)
           form_attribute(column, record, scope, true, col_class)
         else
           renders_as = column_renders_as(column)
@@ -195,9 +195,9 @@ module ActiveScaffold
       end
 
       def form_column_is_hidden?(column, record, scope = nil)
-        if column.hide_form_column_if&.respond_to?(:call)
+        if column.hide_form_column_if.respond_to?(:call)
           column.hide_form_column_if.call(record, column, scope)
-        elsif column.hide_form_column_if&.is_a?(Symbol)
+        elsif column.hide_form_column_if.is_a?(Symbol)
           record.send(column.hide_form_column_if)
         else
           column.hide_form_column_if
@@ -393,7 +393,7 @@ module ActiveScaffold
         link_to(label, '#', data: data, class: 'show-new-subform')
       end
 
-      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, ui_options: column.options, &block) # rubocop:disable Metrics/ParameterLists
+      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, ui_options: column.options, &block)
         options = active_scaffold_input_text_options(options.merge(ui_options))
         if content
           active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class, &block)
@@ -548,8 +548,8 @@ module ActiveScaffold
           text, value = active_scaffold_translated_option(column, *option)
         end
 
-        id_key = radio_options[:"data-id"] ? :"data-id" : :id
-        radio_options = radio_options.merge(id_key => radio_options[id_key] + '-' + value.to_s.parameterize)
+        id_key = radio_options[:'data-id'] ? :'data-id' : :id
+        radio_options = radio_options.merge(id_key => "#{radio_options[id_key]}-#{value.to_s.parameterize}")
         radio_options.merge!(checked) if checked
         content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
       end
@@ -571,7 +571,7 @@ module ActiveScaffold
           if ui_options[:add_new]
             html_options[:data] ||= {}
             html_options[:data][:subform_id] = active_scaffold_subform_attributes(column)[:id]
-            radio_html_options = html_options.merge(class: html_options[:class] + ' hide-new-subform')
+            radio_html_options = html_options.merge(class: "#{html_options[:class]} hide-new-subform")
           else
             radio_html_options = html_options
           end
@@ -584,7 +584,7 @@ module ActiveScaffold
             radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: nil)) + label)
           end
           if ui_options[:add_new]
-            create_new_button = radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(id: nil, class: html_options[:class] + ' show-new-subform').except(:object))
+            create_new_button = radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(id: nil, class: "#{html_options[:class]} show-new-subform").except(:object))
             radios << content_tag(:label, create_new_button << as_(:create_new)) <<
               active_scaffold_new_record_subform(column, record, html_options, ui_options: ui_options, skip_link: true)
           end
@@ -757,7 +757,7 @@ module ActiveScaffold
           :subsection
         elsif column.active_record_class.locking_column.to_s == column.name.to_s || column.form_ui == :hidden
           :hidden
-        elsif column.association.nil? || column.form_ui || !active_scaffold_config_for(column.association.klass).actions.include?(:subform) || override_form_field?(column)
+        elsif column.association.nil? || column.form_ui || active_scaffold_config_for(column.association.klass).actions.exclude?(:subform) || override_form_field?(column)
           :field
         else
           :subform
@@ -820,15 +820,15 @@ module ActiveScaffold
 
         # Minimum
         unless options[:min]
-          min = validators.map { |v| v.options[:greater_than_or_equal_to] }.compact.max
-          greater_than = validators.map { |v| v.options[:greater_than] }.compact.max
+          min = validators.filter_map { |v| v.options[:greater_than_or_equal_to] }.max
+          greater_than = validators.filter_map { |v| v.options[:greater_than] }.max
           numerical_constraints[:min] = [min, (greater_than + margin if greater_than)].compact.max
         end
 
         # Maximum
         unless options[:max]
-          max = validators.map { |v| v.options[:less_than_or_equal_to] }.compact.min
-          less_than = validators.map { |v| v.options[:less_than] }.compact.min
+          max = validators.filter_map { |v| v.options[:less_than_or_equal_to] }.min
+          less_than = validators.filter_map { |v| v.options[:less_than] }.min
           numerical_constraints[:max] = [max, (less_than - margin if less_than)].compact.min
         end
 
@@ -838,7 +838,7 @@ module ActiveScaffold
           only_even_valid = validators.any? { |v| v.options[:even] } unless only_odd_valid
           if !only_integer
             numerical_constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column&.scale.to_i.positive?
-          elsif options[:min] && options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
+          elsif options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
             numerical_constraints[:step] = 2
             numerical_constraints[:min] += 1 if only_odd_valid  && options[:min].even?
             numerical_constraints[:min] += 1 if only_even_valid && options[:min].odd?
