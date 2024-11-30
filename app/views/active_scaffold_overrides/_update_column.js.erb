@@ -1,9 +1,10 @@
 <%
-  column = if update_column.is_a? ActiveScaffold::DataStructures::Column
-    update_column
-  else
-    active_scaffold_config.columns[update_column]
-  end
+  column =
+    if update_column.is_a? ActiveScaffold::DataStructures::Column
+      update_column
+    else
+      active_scaffold_config.columns[update_column]
+    end
   @rendered ||= Set.new
   return if @rendered.include? column.name
   @rendered << column.name

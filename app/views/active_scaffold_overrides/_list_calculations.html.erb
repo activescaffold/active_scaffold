@@ -1,5 +1,4 @@
-<% display_class = ( @records.kind_of?(Array) ? @records.first : @records ) 
-   columns ||= list_columns -%>
+<% columns ||= list_columns -%>
 <tr id="<%= active_scaffold_calculations_id %>" class="active-scaffold-calculations">
   <% columns.each do |column| -%>
     <% if column.calculation? %>

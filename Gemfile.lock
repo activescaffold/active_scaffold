@@ -254,6 +254,9 @@ GEM
       unicode-display_width (>= 2.4.0, < 4.0)
     rubocop-ast (1.36.2)
       parser (>= 3.3.1.0)
+    rubocop-erb (0.5.4)
+      better_html
+      rubocop (~> 1.45)
     rubocop-performance (1.23.0)
       rubocop (>= 1.48.1, < 2.0)
       rubocop-ast (>= 1.31.1, < 2.0)
@@ -313,6 +316,7 @@ DEPENDENCIES
   rake
   rdoc
   rubocop
+  rubocop-erb
   rubocop-performance
   rubocop-rails
   ruby-prof

@@ -29,10 +29,10 @@
       <%= render :partial => 'list_record', :collection => @page.items, :locals => {:hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.member} %>
     <% end -%>
   </tbody>
-  <% if columns.any? {|c| c.calculation?} -%>
+  <% if columns.any?(&:calculation?) -%>
   <tfoot>  
-    <%= render :partial => 'list_calculations', :locals => {:columns => columns} %>
+    <%= render 'list_calculations', columns: columns %>
   </tfoot>
   <% end -%>
 </table>
-<%= render :partial => 'list_pagination' %>
+<%= render 'list_pagination' %>

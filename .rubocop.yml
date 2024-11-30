@@ -1,6 +1,7 @@
 require:
   - rubocop-performance
   - rubocop-rails
+  - rubocop-erb
 inherit_from: .rubocop_todo.yml
 
 AllCops:

@@ -1,4 +1,5 @@
-<div id="<%= sub_form_list_id(:association => column.name, :id => parent_record.id || generated_id(parent_record) || 99999999999, tab_id: local_assigns[:tab_id]) %>">
-  <%= render partial: 'form_association_record', collection: associated, locals: {scope: scope, parent_record: parent_record, column: column, columns: local_assigns[:columns], layout: :vertical} %>
-  <%= render partial: 'form_association_record', object: show_blank_record, locals: {scope: scope, parent_record: parent_record, column: column, columns: local_assigns[:columns], layout: :vertical, locked: true, index: associated.size} if show_blank_record %>
+<div id="<%= sub_form_list_id(:association => column.name, :id => parent_record.id || generated_id(parent_record) || 99_999_999_999, tab_id: local_assigns[:tab_id]) %>">
+  <% record_partial_locals = {scope: scope, parent_record: parent_record, column: column, columns: local_assigns[:columns], layout: :vertical} %>
+  <%= render partial: 'form_association_record', collection: associated, locals: record_partial_locals %>
+  <%= render partial: 'form_association_record', object: show_blank_record, locals: record_partial_locals.merge(locked: true, index: associated.size) if show_blank_record %>
 </div>

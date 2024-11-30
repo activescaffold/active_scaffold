@@ -6,19 +6,19 @@
   associated = associated.select { |record| record.send(tabbed_by) == tab_value } if tabbed_by && tab_value
   if column.show_blank_record?(associated)
     show_blank_record = build_associated(column.association, parent_record) do |blank_record|
-      blank_record.send("#{tabbed_by}=", tab_value) if tabbed_by && tab_value
+      blank_record.send(:"#{tabbed_by}=", tab_value) if tabbed_by && tab_value
     end
   end
-  if column == :labor_line_items
-    @financial_months = (associated.first || show_blank_record)&.monthly_task_costs.map(&:financial_month)
-  end
   disable_required_for_new = @disable_required_for_new
-  @disable_required_for_new = !!show_blank_record unless (column.association.singular? && column.required?(action_for_validation?(parent_record)))
-  subform_div_id = "#{sub_form_id(association: column.name, tab_id: tab_id, id: parent_record.id || generated_id(parent_record) || 99999999999)}-div"
+  @disable_required_for_new = !!show_blank_record unless column.association.singular? && column.required?(action_for_validation?(parent_record))
+  subform_div_id = "#{sub_form_id(association: column.name, tab_id: tab_id, id: parent_record.id || generated_id(parent_record) || 99_999_999_999)}-div"
 
   # render footer before rendering associated records, fixes create new on self-associations
   # so generated_id for blank associated record is not used in create new button
-  footer = render('form_association_footer', parent_record: parent_record, column: column, associated: associated, scope: scope, subform_div_id: subform_div_id, tabbed_by: tabbed_by, tab_value: tab_value)
+  footer = render('form_association_footer', {
+    parent_record: parent_record, column: column, associated: associated, scope: scope, subform_div_id: subform_div_id,
+    tabbed_by: tabbed_by, tab_value: tab_value
+  })
 -%>
 <h5>
   <%= column.label -%>

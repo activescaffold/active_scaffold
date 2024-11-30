@@ -1,7 +1,7 @@
 try {
 var action_link;
 <%
-  form_selector ||= "#{element_form_id(:action => :create)}"
+  form_selector ||= element_form_id(:action => :create)
   insert_at ||= :top 
   always_show_create ||= active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.always_show_create
 -%>
@@ -37,7 +37,7 @@ if (action_link) action_link.update_flash_messages('<%= escape_javascript(render
     <% else %>
       if (action_link) action_link.close();
     <% end %>
-    <% if (active_scaffold_config.create.action_after_create) %>
+    <% if active_scaffold_config.create.action_after_create %>
       var link = ActiveScaffold.find_action_link('<%= action_link_id active_scaffold_config.create.action_after_create, @record.id || @saved_record.id %>');
       if (link) link.open();
     <% end %>

@@ -1,6 +1,6 @@
 <div class="active-scaffold">
   <div class="delete-view view">
-    <%= form_tag params_for(:action => :destroy, :id => params[:id]), { :method => :delete } %>
+    <%= form_tag params_for(:action => :destroy, :id => params[:id]), {:method => :delete} %>
       <h4><%= as_(:are_you_sure_to_delete, :label => h(@record&.to_label)) -%></h4>
 
       <p class="form-footer">

@@ -4,7 +4,7 @@
   xhr ||= request.xhr?
   options = {
     id: element_form_id(action: 'search'),
-    class: "as_form search",
+    class: 'as_form search',
     remote: xhr,
     data: {loading: true},
     method: :get
@@ -50,7 +50,7 @@
         reset_attrs.merge! remote: true, data: {refresh: true}
       end
     %>
-    <%= submit_tag as_(submit_text), :class => "submit" %>
+    <%= submit_tag as_(submit_text), :class => 'submit' %>
     <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), reset_attrs unless local_assigns[:skip_reset] %>
     <%= loading_indicator_tag(:action => :search) %>
   </p>

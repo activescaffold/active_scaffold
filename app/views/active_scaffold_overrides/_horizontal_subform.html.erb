@@ -1,11 +1,12 @@
-<table id="<%= sub_form_list_id(association: column.name, id: parent_record&.id || generated_id(parent_record) || 99999999999, tab_id: local_assigns[:tab_id]) %>">
+<table id="<%= sub_form_list_id(association: column.name, id: parent_record&.id || generated_id(parent_record) || 99_999_999_999, tab_id: local_assigns[:tab_id]) %>">
 <%
-  header_record_class = (show_blank_record && show_blank_record.class) || column.association.klass
+  header_record_class = show_blank_record&.class || column.association.klass
+  record_partial_locals = {scope: scope, parent_record: parent_record, column: column, columns: local_assigns[:columns], layout: :horizontal}
 -%>
   <%= render partial: 'horizontal_subform_header', :locals => {parent_record: parent_record, record_class: header_record_class, parent_column: column, columns: local_assigns[:columns]} %>
 
-  <%= render partial: 'form_association_record', collection: associated, locals: {scope: scope, parent_record: parent_record, column: column, columns: local_assigns[:columns], layout: :horizontal} %>
-  <%= render partial: 'form_association_record', object: show_blank_record, locals: {scope: scope, parent_record: parent_record, column: column, columns: local_assigns[:columns], layout: :horizontal, locked: true, index: associated.size} if show_blank_record %>
+  <%= render partial: 'form_association_record', collection: associated, locals: record_partial_locals %>
+  <%= render partial: 'form_association_record', object: show_blank_record, locals: record_partial_locals.merge(locked: true, index: associated.size) if show_blank_record %>
   <tfoot>
     <%= render :partial => 'horizontal_subform_footer', :locals => {:scope => scope, :parent_record => parent_record, :column => column} %>
   </tfoot>

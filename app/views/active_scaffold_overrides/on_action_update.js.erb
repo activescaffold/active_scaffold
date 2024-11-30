@@ -20,7 +20,12 @@ if (link) link.close();
     <%= render 'refresh_list', no_history: true %>
   <% end %>
 <% else %>
-  <% flash[:error] = active_scaffold_error_messages_for(@record, :object_name => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :header_message => '', :message => "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}", :container_tag => nil, :list_type => :br) if @record&.errors.present? %>
+  <%
+    if @record&.errors.present?
+      object_name = "#{@record.class.model_name.human.downcase}#{@record.new_record? ? '' : ": #{@record.to_label}"}"
+      flash[:error] = active_scaffold_error_messages_for(@record, object_name: object_name, header_message: '', message: object_name, container_tag: nil, list_type: :br)
+    end
+  %>
   <% messages = escape_javascript(render(:partial => 'messages')) %>
   <% if @action_link&.position %>
 if (link) {

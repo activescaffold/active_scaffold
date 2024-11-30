@@ -1,6 +1,6 @@
 <%
   live_search = active_scaffold_config.search.live?
-  url_options =  params_for(action: :index, id: nil, search: nil)
+  url_options = params_for(action: :index, id: nil, search: nil)
   submit_text ||= :search
   xhr ||= request.xhr?
   options = {
@@ -19,8 +19,9 @@
     <% key, value = pair.split('=', 2).map { |str| Rack::Utils.unescape(str) } -%>
     <%= hidden_field_tag(key, value) %>
   <% end -%>
-  <%= search_field_tag :search, (search_params if search_params.is_a? String), :class => 'text-input', :id => search_input_id, :size => 50, :autocomplete => :off, :placeholder => as_(live_search ? :live_search : :search_terms) %>
-  <%= submit_tag as_(submit_text), :class => "submit", :style => ('display:none;' if live_search) %>
+  <% field_placeholder = as_(live_search ? :live_search : :search_terms) %>
+  <%= search_field_tag :search, (search_params if search_params.is_a? String), class: 'text-input', id: search_input_id, size: 50, autocomplete: :off, placeholder: field_placeholder %>
+  <%= submit_tag as_(submit_text), :class => 'submit', :style => ('display:none;' if live_search) %>
   <%
     reset_attrs = {class: 'as_cancel reset'}
     if active_scaffold_config.search.reset_form
