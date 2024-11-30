@@ -39,7 +39,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_tab_options(column, record)
-        subform_column = column.each_column { |col| break col }
+        subform_column = column.first
         if subform_column
           tabbed_by = subform_column.options[:tabbed_by] || column.tabbed_by
           if tabbed_by_association(subform_column, tabbed_by)
