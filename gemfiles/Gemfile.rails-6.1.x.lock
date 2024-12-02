@@ -2,7 +2,6 @@ PATH
   remote: ..
   specs:
     active_scaffold (3.7.9)
-      cow_proxy (~> 0.3)
       ice_nine (~> 0.11)
       rails (>= 5.2.0)
       request_store (~> 1.3)
@@ -82,7 +81,6 @@ GEM
       bundler (>= 1.2.0, < 3)
       thor (~> 1.0)
     concurrent-ruby (1.3.4)
-    cow_proxy (0.3.3)
     crass (1.0.6)
     date (3.3.4)
     date (3.3.4-java)

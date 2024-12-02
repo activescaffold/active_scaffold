@@ -12,7 +12,6 @@ require 'mock_app/config/environment'
 require 'rails/test_help'
 require 'minitest/autorun'
 require 'mocha/minitest'
-require 'cow_proxy'
 
 require 'minitest/reporters'
 Minitest::Reporters.use! unless ENV['RM_INFO']
