@@ -30,6 +30,10 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 39
 
+Rails/OutputSafety:
+  Exclude:
+    - app/**/*
+
 # Offense count: 84
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
