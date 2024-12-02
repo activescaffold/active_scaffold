@@ -70,13 +70,13 @@ module ActiveScaffold
           # Assume this is a multi-level association constraint.
           # example:
           #   data model: Park -> Den -> Bear
-          #   constraint: :den => {:park => 5}
+          #   constraint: den: {park: 5}
           if params_hash? v
             far_association = column.association.klass.reflect_on_association(v.keys.first)
             field = far_association.klass.primary_key
             table = far_association.table_name
 
-            active_scaffold_references.push({k => far_association.name}) # e.g. {:den => :park}
+            active_scaffold_references.push({k => far_association.name}) # e.g. {den: :park}
             hash_conditions.deep_merge!(table => {field => v.values.first})
 
           # association column constraint

@@ -28,7 +28,7 @@ module Config
     end
 
     def test_setting_link
-      @config.delete.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
+      @config.delete.link = ActiveScaffold::DataStructures::ActionLink.new('update', label: 'Monkeys')
       assert_not_equal @default_link, @config.delete.link
     end
   end

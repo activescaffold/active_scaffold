@@ -1,5 +1,5 @@
 <%
-  subsection_id = sub_section_id(:sub_section => @column.label)
+  subsection_id = sub_section_id(sub_section: @column.label)
   tab_options = send(override_helper_per_model(:active_scaffold_tab_options, @record.class), @column, @record)
   tab_label, tab_value, tab_record = tab_options.find { |_, value, _| params[:value] == value.to_s }
   if tab_label

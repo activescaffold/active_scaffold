@@ -4,8 +4,8 @@ require 'class_with_finder'
 class CalculationTest < ActiveSupport::TestCase
   def setup
     @buildings = []
-    @buildings << Building.create { |b| b.build_owner(:first_name => 'foo') }
-    @buildings << Building.create(:name => 'foo bar')
+    @buildings << Building.create { |b| b.build_owner(first_name: 'foo') }
+    @buildings << Building.create(name: 'foo bar')
     @buildings << Building.create
 
     @klass = ClassWithFinder.new

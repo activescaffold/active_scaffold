@@ -38,7 +38,7 @@ class PaperclipTest < ActionView::TestCase
     company.expects(:logo=).never
     company.delete_logo = 'false'
 
-    company.expects(:logo).returns(stub(:dirty? => false))
+    company.expects(:logo).returns(stub(dirty?: false))
     company.expects(:logo=)
     company.delete_logo = 'true' # rubocop:disable Lint/UselessSetterCall
   end
@@ -47,10 +47,10 @@ class PaperclipTest < ActionView::TestCase
     config = PaperclipCore.new(:company)
     company = Company.new
 
-    company.stubs(:logo).returns(stub(:file? => true, :original_filename => 'file', :url => '/system/file', :styles => Company.attachment_definitions[:logo]))
+    company.stubs(:logo).returns(stub(file?: true, original_filename: 'file', url: '/system/file', styles: Company.attachment_definitions[:logo]))
     assert_dom_equal '<a href="/system/file" rel="noopener" target="_blank">file</a>', active_scaffold_column_paperclip(company, config.columns[:logo])
 
-    company.stubs(:logo).returns(stub(:file? => true, :original_filename => 'file', :url => '/system/file', :styles => {:thumbnail => '40x40'}))
+    company.stubs(:logo).returns(stub(file?: true, original_filename: 'file', url: '/system/file', styles: {thumbnail: '40x40'}))
     assert_dom_equal '<a href="/system/file" rel="noopener" target="_blank"><img src="/system/file" border="0"/></a>', active_scaffold_column_paperclip(company, config.columns[:logo])
   end
 
@@ -59,7 +59,7 @@ class PaperclipTest < ActionView::TestCase
     @record = Company.new
     opts = {name: 'record[logo]', id: 'record_logo', object: @record}
 
-    @record.stubs(:logo).returns(stub(:file? => true, :original_filename => 'file', :url => '/system/file', :styles => Company.attachment_definitions[:logo]))
+    @record.stubs(:logo).returns(stub(file?: true, original_filename: 'file', url: '/system/file', styles: Company.attachment_definitions[:logo]))
     click_js = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show(); return false;"
     change_js = "jQuery(this).parents('div.paperclip_controls').find('input.remove_file').val('false'); return false;"
     @document = Nokogiri::HTML::Document.parse(active_scaffold_input_paperclip(config.columns[:logo], opts))
@@ -71,7 +71,7 @@ class PaperclipTest < ActionView::TestCase
     end
     assert_select 'div.paperclip_controls input.remove_file[type=hidden][value=false]'
 
-    @record.stubs(:logo).returns(stub(:file? => false))
+    @record.stubs(:logo).returns(stub(file?: false))
     assert_dom_equal '<input name="record[logo]" class="text-input" autocomplete="off" type="file" id="record_logo" />', active_scaffold_input_paperclip(config.columns[:logo], opts)
   end
 

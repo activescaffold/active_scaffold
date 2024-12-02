@@ -21,7 +21,7 @@
   <% end -%>
   <% field_placeholder = as_(live_search ? :live_search : :search_terms) %>
   <%= search_field_tag :search, (search_params if search_params.is_a? String), class: 'text-input', id: search_input_id, size: 50, autocomplete: :off, placeholder: field_placeholder %>
-  <%= submit_tag as_(submit_text), :class => 'submit', :style => ('display:none;' if live_search) %>
+  <%= submit_tag as_(submit_text), class: 'submit', style: ('display:none;' if live_search) %>
   <%
     reset_attrs = {class: 'as_cancel reset'}
     if active_scaffold_config.search.reset_form
@@ -30,6 +30,6 @@
       reset_attrs.merge! remote: true, data: {refresh: true}
     end
   %>
-  <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), reset_attrs unless local_assigns[:skip_reset] %>
-  <%= loading_indicator_tag(:action => :search) %>
+  <%= link_to as_(:reset), url_for(url_options.merge(search: '')), reset_attrs unless local_assigns[:skip_reset] %>
+  <%= loading_indicator_tag(action: :search) %>
 <% end %>

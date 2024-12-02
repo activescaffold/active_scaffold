@@ -7,7 +7,7 @@ module Config
     end
 
     def test_label
-      I18n.backend.store_translations :en, :active_scaffold => {:resource => {:one => 'Resource', :other => 'Resources'}}
+      I18n.backend.store_translations :en, active_scaffold: {resource: {one: 'Resource', other: 'Resources'}}
       @config.list.label = :resource
       assert_equal 'Resources', @config.list.label
       label = 'monkeys'
@@ -60,12 +60,12 @@ module Config
     end
 
     def test_sorting
-      @config.list.sorting = {:a => :desc}
+      @config.list.sorting = {a: :desc}
       assert @config.list.sorting.sorts_on?(:a)
       assert_equal 'DESC', @config.list.sorting.direction_of(:a)
       assert_not @config.list.sorting.sorts_on?(:id)
 
-      @config.list.sorting = {:c => :asc, :d => :desc}
+      @config.list.sorting = {c: :asc, d: :desc}
       assert @config.list.sorting.sorts_on?(:c)
       assert_equal 'ASC', @config.list.sorting.direction_of(:c)
       assert @config.list.sorting.sorts_on?(:d)
@@ -73,7 +73,7 @@ module Config
       assert_not @config.list.sorting.sorts_on?(:a)
       assert_not @config.list.sorting.sorts_on?(:id)
 
-      @config.list.sorting = [{:a => :asc}, {:b => :desc}]
+      @config.list.sorting = [{a: :asc}, {b: :desc}]
       assert @config.list.sorting.sorts_on?(:a)
       assert_equal 'ASC', @config.list.sorting.direction_of(:a)
       assert @config.list.sorting.sorts_on?(:b)

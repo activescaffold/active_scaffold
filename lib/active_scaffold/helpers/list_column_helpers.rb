@@ -430,9 +430,9 @@ module ActiveScaffold
         if column.name == :as_marked
           mark_column_heading
         elsif column.sortable?
-          options = {:id => nil, :class => 'as_sort',
+          options = {id: nil, class: 'as_sort',
                      'data-page-history' => controller_id,
-                     :remote => true, :method => :get}
+                     remote: true, method: :get}
           url_options = {action: :index, page: 1, sort: column.name, sort_direction: sort_direction}
           # :id needed because rails reuse it even if it was deleted from params (like do_refresh_list does)
           url_options[:id] = nil if @remove_id_from_list_links

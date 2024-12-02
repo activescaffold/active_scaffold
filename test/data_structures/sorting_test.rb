@@ -57,7 +57,7 @@ class SortingTest < ActiveSupport::TestCase
     assert @sorting.sorts_on?(:b)
     assert_equal 'DESC', @sorting.direction_of(:b)
 
-    @sorting.set :a => 'DESC', :b => 'ASC'
+    @sorting.set a: 'DESC', b: 'ASC'
     assert @sorting.instance_variable_get(:@clauses).size == 2
     assert @sorting.sorts_on?(:a)
     assert_equal 'DESC', @sorting.direction_of(:a)
@@ -97,7 +97,7 @@ class SortingTest < ActiveSupport::TestCase
   end
 
   def test_sorts_by_method
-    @columns[:a].sort_by :method => proc { 0 }
+    @columns[:a].sort_by method: proc { 0 }
 
     # test pure method sorting: true
     @sorting.add :a

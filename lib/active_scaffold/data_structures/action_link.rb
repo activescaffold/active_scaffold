@@ -91,7 +91,7 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    # image to use {:name => 'arrow.png', :size => '16x16'}
+    # image to use {name: 'arrow.png', size: '16x16'}
     attr_accessor :image
 
     # if the action requires confirmation
@@ -143,7 +143,7 @@ module ActiveScaffold::DataStructures
     attr_accessor :ignore_method
 
     # the crud type of the (eventual?) action. different than :method, because this crud action may not be imminent.
-    # this is used to determine record-level authorization (e.g. record.authorized_for?(:crud_type => link.crud_type).
+    # this is used to determine record-level authorization (e.g. record.authorized_for?(crud_type: link.crud_type).
     # options are :create, :read, :update, and :delete
     attr_accessor :crud_type
 
@@ -187,11 +187,11 @@ module ActiveScaffold::DataStructures
     end
 
     # where the result of this action should insert in the display.
-    # for :type => :collection, supported values are:
+    # for type: :collection, supported values are:
     #   :top
     #   :replace (for updating the entire table)
     #   false (no attempt at positioning)
-    # for :type => :member, supported values are:
+    # for type: :member, supported values are:
     #   :before
     #   :replace
     #   :after

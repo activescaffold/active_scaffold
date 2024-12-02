@@ -30,18 +30,18 @@ class ConvertNumbersFormatTest < ActiveSupport::TestCase
 
   def setup
     NumberModel.load_schema!
-    I18n.backend.store_translations :en, :number => {:format => {
-      :delimiter => ',',
-      :separator => '.'
+    I18n.backend.store_translations :en, number: {format: {
+      delimiter: ',',
+      separator: '.'
     }}
-    I18n.backend.store_translations :es, :number => {:format => {
-      :delimiter => '.',
-      :separator => ','
+    I18n.backend.store_translations :es, number: {format: {
+      delimiter: '.',
+      separator: ','
     }}
-    I18n.backend.store_translations :ru, :number => {:currency => {
-      :format => {
-        :separator => ',',
-        :delimiter => ''
+    I18n.backend.store_translations :ru, number: {currency: {
+      format: {
+        separator: ',',
+        delimiter: ''
       }
     }}
 
@@ -163,7 +163,7 @@ class ConvertNumbersFormatTest < ActiveSupport::TestCase
   def convert_number(value, format = nil)
     record = NumberModel.new
     @config.columns[:number].options[:format] = format unless format.nil?
-    update_record_from_params(record, @config.create.columns, ActiveSupport::HashWithIndifferentAccess.new(:number => value))
+    update_record_from_params(record, @config.create.columns, ActiveSupport::HashWithIndifferentAccess.new(number: value))
     record.number
   end
 

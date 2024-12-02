@@ -33,7 +33,7 @@ class Company < ActiveRecord::Base
   end
 
   def self.attachment_definitions
-    {:logo => {}}
+    {logo: {}}
   end
 
   # not the real signature of the method, but forgive me
@@ -66,7 +66,7 @@ class Company < ActiveRecord::Base
   end
   has_many :companies
   has_one :company
-  belongs_to :main_company, :class_name => 'Company'
+  belongs_to :main_company, class_name: 'Company'
 
   def companies
     if @companies

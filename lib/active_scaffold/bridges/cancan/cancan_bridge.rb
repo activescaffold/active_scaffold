@@ -101,8 +101,8 @@ module ActiveScaffold::Bridges
         class InvalidArgument < StandardError; end
 
         # is usually called with :crud_type and :column, or :action
-        #     {:crud_type=>:update, :column=>"some_colum_name"}
-        #     {:action=>"edit"}
+        #     {crud_type: :update, column: 'some_colum_name'}
+        #     {action: 'edit'}
         # to allow access cancan must allow both :crud_type and :action
         # if cancan says "no", it delegates to default AS behavior
         def authorized_for?(options = {})

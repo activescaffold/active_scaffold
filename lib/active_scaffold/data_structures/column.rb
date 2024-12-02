@@ -150,8 +150,8 @@ module ActiveScaffold::DataStructures
       # sorting on a column can be configured four ways:
       #   sort = true               default, uses intelligent sorting sql default
       #   sort = false              sometimes sorting doesn't make sense
-      #   sort = {:sql => ""}       define your own sql for sorting. this should be result in a sortable value in SQL. ActiveScaffold will handle the ascending/descending.
-      #   sort = {:method => ""}    define ruby-side code for sorting. this is SLOW with large recordsets!
+      #   sort = {sql: ""}       define your own sql for sorting. this should be result in a sortable value in SQL. ActiveScaffold will handle the ascending/descending.
+      #   sort = {method: ""}    define ruby-side code for sorting. this is SLOW with large recordsets!
       def sort=(value)
         if value.is_a? Hash
           value.assert_valid_keys(:sql, :method)

@@ -1,7 +1,7 @@
 class ModelStub < ActiveRecord::Base
-  validates :b, :presence => true
-  has_one :other_model, :class_name => 'ModelStub' # rubocop:disable Rails/DuplicateAssociation
-  has_many :other_models, :class_name => 'ModelStub' # rubocop:disable Rails/DuplicateAssociation
+  validates :b, presence: true
+  has_one :other_model, class_name: 'ModelStub' # rubocop:disable Rails/DuplicateAssociation
+  has_many :other_models, class_name: 'ModelStub' # rubocop:disable Rails/DuplicateAssociation
 
   cattr_accessor :stubbed_columns
   self.stubbed_columns = %i[a b c d id created_at]

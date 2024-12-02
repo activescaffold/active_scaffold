@@ -3,11 +3,11 @@
   header_record_class = show_blank_record&.class || column.association.klass
   record_partial_locals = {scope: scope, parent_record: parent_record, column: column, columns: local_assigns[:columns], layout: :horizontal}
 -%>
-  <%= render partial: 'horizontal_subform_header', :locals => {parent_record: parent_record, record_class: header_record_class, parent_column: column, columns: local_assigns[:columns]} %>
+  <%= render 'horizontal_subform_header', parent_record: parent_record, record_class: header_record_class, parent_column: column, columns: local_assigns[:columns] %>
 
   <%= render partial: 'form_association_record', collection: associated, locals: record_partial_locals %>
   <%= render partial: 'form_association_record', object: show_blank_record, locals: record_partial_locals.merge(locked: true, index: associated.size) if show_blank_record %>
   <tfoot>
-    <%= render :partial => 'horizontal_subform_footer', :locals => {:scope => scope, :parent_record => parent_record, :column => column} %>
+    <%= render 'horizontal_subform_footer', scope: scope, parent_record: parent_record, column: column %>
   </tfoot>
 </table>

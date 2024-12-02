@@ -1,6 +1,6 @@
 <% scope ||= nil
    footer_extension ||= nil
-   url_options ||= params_for(:action => form_action)
+   url_options ||= params_for(action: form_action)
    xhr = request.xhr? if xhr.nil?
    if active_scaffold_config.actions.include? form_action
      action_config = active_scaffold_config.send(form_action)
@@ -27,16 +27,16 @@
    form_id = element_form_id(action: form_action, id: @record&.id)
 %>
 <%=
-options = {:id => form_id,
-           :multipart => multipart,
-           :class => "as_form #{form_action}",
-           :method => method,
+options = {id: form_id,
+           multipart: multipart,
+           class: "as_form #{form_action}",
+           method: method,
            'data-loading' => defined?(loading) ? loading : true}
-cancel_options = {:class => 'as_cancel'}
+cancel_options = {class: 'as_cancel'}
 options[:class] << ' floating-footer' if floating_footer
 cancel_options[:remote] = true if xhr # cancel link does nt have to care about multipart forms
 if xhr && multipart # file_uploads
-  form_remote_upload_tag url_options.merge({:iframe => true}), options
+  form_remote_upload_tag url_options.merge(iframe: true), options
 else
   options[:remote] = true if xhr && !multipart
   form_tag url_options, options
@@ -45,24 +45,24 @@ end
   <%= hidden_field :record, @record.class.locking_column if add_locking_column && @record.persisted? && @record.locking_enabled? %>
   <h4><%= headline -%></h4>
 
-  <div id="<%= element_messages_id(:action => form_action) %>" class="messages-container">
+  <div id="<%= element_messages_id(action: form_action) %>" class="messages-container">
     <% unless xhr %>
       <p class="error-message message server-error" style="display:none;">
         <%= as_(:internal_error).html_safe %>
         <a href="#" class="close" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
       </p>
     <% end %>
-    <%= render :partial => 'form_messages' %>
+    <%= render 'form_messages' %>
   </div>
 
-  <%= render :partial => body_partial, :locals => {:columns => columns, :form_action => form_action, :scope => scope} %>
+  <%= render body_partial, columns: columns, form_action: form_action, scope: scope %>
 
   <p class="form-footer">
-    <%= submit_tag as_(submit_text), :class => 'submit' if !persistent || persistent == :optional %>
-    <%= submit_tag as_(apply_text), :class => 'submit', :name => 'dont_close' if persistent %>
+    <%= submit_tag as_(submit_text), class: 'submit' if !persistent || persistent == :optional %>
+    <%= submit_tag as_(apply_text), class: 'submit', name: 'dont_close' if persistent %>
     <%= link_to(as_(:cancel), main_path_to_return, cancel_options) if cancel_link %>
     <%= loading_indicator_tag(action: form_action, id: @record&.id) %>
-    <%= render :partial => footer_extension, :locals => {:form_action => form_action} if footer_extension %>
+    <%= render footer_extension, form_action: form_action if footer_extension %>
   </p>
 
 </form>

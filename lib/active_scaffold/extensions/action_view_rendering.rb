@@ -19,7 +19,7 @@ module ActiveScaffold # :nodoc:
     # This syntax skips all template overrides and goes directly to the provided ActiveScaffold templates.
     # Useful if you want to wrap an existing template. Just call super!
     #
-    # ==render :active_scaffold => #{controller.to_s}, options = {}+
+    # ==render active_scaffold: #{controller.to_s}, options+
     #
     # Lets you embed an ActiveScaffold by referencing the controller where it's configured.
     #

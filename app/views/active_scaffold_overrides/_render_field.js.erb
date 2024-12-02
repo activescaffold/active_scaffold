@@ -27,7 +27,7 @@
     end
   html =
     if scope
-      readonly = @record.readonly? || !@record.authorized_for?(:crud_type => :update)
+      readonly = @record.readonly? || !@record.authorized_for?(crud_type: :update)
       crud_type = @record.new_record? ? :create : (readonly ? :read : :update)
       # subform.columns.to_a.include? so it doesn't check inside subgroups
       active_scaffold_render_subform_column(column, scope, crud_type, readonly, !active_scaffold_config.subform.columns.to_a.include?(column.name), @record)

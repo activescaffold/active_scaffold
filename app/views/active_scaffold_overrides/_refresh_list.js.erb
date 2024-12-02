@@ -1,6 +1,6 @@
 <% if @auto_pagination -%>
   <% if @page.items.present? -%>
-    ActiveScaffold.append('<%= active_scaffold_tbody_id %>', '<%= escape_javascript(render(:partial => 'list_record', :collection => @page.items, :locals => {:hidden => false, :columns => list_columns, :action_links => active_scaffold_config.action_links.member})) %>');
+    ActiveScaffold.append('<%= active_scaffold_tbody_id %>', '<%= escape_javascript(render(partial: 'list_record', collection: @page.items, locals: {hidden: false, columns: list_columns, action_links: active_scaffold_config.action_links.member})) %>');
 
     <% if @page.pager.infinite? || @page.number < @page.pager.number_of_pages -%>
       ActiveScaffold.auto_load_page('<%= url_for main_path_to_return %>', {auto_pagination: true, page: <%= @page.number + 1 %>});

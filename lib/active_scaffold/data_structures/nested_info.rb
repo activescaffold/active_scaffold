@@ -153,7 +153,7 @@ module ActiveScaffold::DataStructures
     end
 
     def to_params
-      super.merge(:association => @association.name, @param_name => parent_id)
+      super.merge(association: @association.name, @param_name => parent_id)
     end
 
     protected

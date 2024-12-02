@@ -106,9 +106,6 @@ Style/FormatString:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Style/HashSyntax:
-  Enabled: false # FIXME
-
 Style/HashEachMethods:
   Enabled: true
 

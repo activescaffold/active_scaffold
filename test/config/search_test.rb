@@ -55,7 +55,7 @@ module Config
     end
 
     def test_setting_link
-      @config.search.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
+      @config.search.link = ActiveScaffold::DataStructures::ActionLink.new('update', label: 'Monkeys')
       assert_not_equal @default_link, @config.search.link
     end
   end

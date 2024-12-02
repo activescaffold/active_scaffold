@@ -8,10 +8,10 @@ class ListColumnHelpersTest < ActionView::TestCase
   def setup
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
     @column.form_ui = :select
-    @record = stub(:a => 'value_2')
-    @config = stub(:list => stub(:empty_field_text => '-', :association_join_text => ', '), :actions => [:list])
+    @record = stub(a: 'value_2')
+    @config = stub(list: stub(empty_field_text: '-', association_join_text: ', '), actions: [:list])
     @association_column = ActiveScaffold::DataStructures::Column.new(:b, ModelStub)
-    @association_column.stubs(:association).returns(stub(:collection? => true))
+    @association_column.stubs(:association).returns(stub(collection?: true))
   end
 
   def test_options_for_select_list_ui_for_simple_column
@@ -33,10 +33,10 @@ class ListColumnHelpersTest < ActionView::TestCase
     value.stubs(loaded?: true)
     value.each { |v| v.stubs(:to_label).returns(v) }
     assert_equal '1, 2, 3, … (4)', format_association_value(value, @association_column, value.size)
-    @config.list.stubs(:association_join_text => ',<br/>')
+    @config.list.stubs(association_join_text: ',<br/>')
     remove_instance_variable :@_association_join_text
     assert_equal '1,&lt;br/&gt;2,&lt;br/&gt;3,&lt;br/&gt;… (4)', format_association_value(value, @association_column, value.size)
-    @config.list.stubs(:association_join_text => ',<br/>'.html_safe)
+    @config.list.stubs(association_join_text: ',<br/>'.html_safe)
     remove_instance_variable :@_association_join_text
     assert_equal '1,<br/>2,<br/>3,<br/>… (4)', format_association_value(value, @association_column, value.size)
   end

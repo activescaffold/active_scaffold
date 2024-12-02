@@ -73,7 +73,7 @@ module ActiveScaffold::Config
     attr_accessor :grouped_columns
 
     # default search params
-    # default_params = {:title => {"from"=>"test", "to"=>"", "opt"=>"%?%"}}
+    # default_params = {title: {"from"=>"test", "to"=>"", "opt"=>"%?%"}}
     attr_accessor :default_params
 
     # human conditions

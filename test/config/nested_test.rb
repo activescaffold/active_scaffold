@@ -20,7 +20,7 @@ module Config
       label = 'nested monkeys'
       @config.nested.label = label
       assert_equal label, @config.nested.label
-      I18n.backend.store_translations :en, :active_scaffold => {:test_create_model => 'Add new %<model>s'}
+      I18n.backend.store_translations :en, active_scaffold: {test_create_model: 'Add new %<model>s'}
       @config.nested.label = :test_create_model
       assert_equal 'Add new Model stub', @config.nested.label
     end

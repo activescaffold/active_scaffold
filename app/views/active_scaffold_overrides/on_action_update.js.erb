@@ -1,18 +1,18 @@
 var link;
 <% if @action_link&.position %>
-link = ActiveScaffold.find_action_link('<%= element_form_id(:action => action_name) %>');
+link = ActiveScaffold.find_action_link('<%= element_form_id(action: action_name) %>');
 <% end %>
 <% if successful? %>
   <% if @record %>
-    <%= render :partial => 'update_messages' %>
-    <% row = escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) -%>
+    <%= render 'update_messages' %>
+    <% row = escape_javascript(render('list_record', record: @record)) -%>
     <% if @action_link&.position %>
 if (link) link.close('<%= row %>');
     <% else %>
-      ActiveScaffold.update_row('<%= element_row_id(:action => :list, :id => @record.id) %>', '<%= row %>');
-      ActiveScaffold.scroll_to('<%= element_row_id(:action => :list, :id => @record.id) %>', true);
+      ActiveScaffold.update_row('<%= element_row_id(action: :list, id: @record.id) %>', '<%= row %>');
+      ActiveScaffold.scroll_to('<%= element_row_id(action: :list, id: @record.id) %>', true);
     <% end %>
-    <%= render :partial => 'update_calculations', :formats => [:js] %>
+    <%= render 'update_calculations' %>
   <% else %>
     <% if @action_link&.position %>
 if (link) link.close();
@@ -26,7 +26,7 @@ if (link) link.close();
       flash[:error] = active_scaffold_error_messages_for(@record, object_name: object_name, header_message: '', message: object_name, container_tag: nil, list_type: :br)
     end
   %>
-  <% messages = escape_javascript(render(:partial => 'messages')) %>
+  <% messages = escape_javascript(render('messages')) %>
   <% if @action_link&.position %>
 if (link) {
   link.update_flash_messages('<%= messages %>');

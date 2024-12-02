@@ -16,7 +16,7 @@ module Config
       assert_not @config.sti_children
       assert_equal %i[create list search update delete show nested subform], @config.actions.to_a
       assert_equal :default, @config.theme
-      assert_equal 'Model stub', @config.label(:count => 1)
+      assert_equal 'Model stub', @config.label(count: 1)
       assert_equal 'ModelStubs', @config.label
     end
 

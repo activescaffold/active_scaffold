@@ -31,7 +31,7 @@ class FinderTest < ActiveSupport::TestCase
 
   def test_method_sorting
     column = ActiveScaffold::DataStructures::Column.new('a', ModelStub)
-    column.sort_by :method => proc { self }
+    column.sort_by method: proc { self }
 
     collection = [16_000, 2853, 98_765, 6188, 4]
     assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
@@ -41,17 +41,17 @@ class FinderTest < ActiveSupport::TestCase
     result = @klass.send(:sort_collection_by_column, collection, column, 'asc')
     assert_equal [nil, 'a', 'b'], result
 
-    column.sort_by :method => 'self'
+    column.sort_by method: 'self'
     collection = [3, 1, 2]
     assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
   end
 
   def test_count_with_group
-    @klass.expects(:custom_finder_options).returns(:group => :a)
+    @klass.expects(:custom_finder_options).returns(group: :a)
     relation_class.any_instance.expects(:count).returns('foo' => 5, 'bar' => 4)
     relation_class.any_instance.expects(:limit).with(20).returns(ModelStub.where(nil))
     relation_class.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
-    page = @klass.send :find_page, :per_page => 20, :pagination => true
+    page = @klass.send :find_page, per_page: 20, pagination: true
     page.items
 
     assert_kind_of Integer, page.pager.count
@@ -64,13 +64,13 @@ class FinderTest < ActiveSupport::TestCase
     relation_class.any_instance.expects(:limit).never
     relation_class.any_instance.expects(:offset).never
     ModelStub.expects(:count).never
-    page = @klass.send :find_page, :per_page => 20, :pagination => false
+    page = @klass.send :find_page, per_page: 20, pagination: false
     page.items
   end
 
   def test_infinite_pagination
     ModelStub.expects(:count).never
-    @klass.send :find_page, :pagination => :infinite
+    @klass.send :find_page, pagination: :infinite
   end
 
   def test_condition_for_column

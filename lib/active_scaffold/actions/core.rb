@@ -242,10 +242,10 @@ module ActiveScaffold::Actions
       render(
         options.reverse_merge(
           format => response_object,
-          :only => columns_names + [active_scaffold_config.model.primary_key],
-          :include => association_columns(columns_names),
-          :methods => virtual_columns(columns_names),
-          :status => response_status
+          only: columns_names + [active_scaffold_config.model.primary_key],
+          include: association_columns(columns_names),
+          methods: virtual_columns(columns_names),
+          status: response_status
         )
       )
     end
@@ -408,7 +408,7 @@ module ActiveScaffold::Actions
     # call this method in your action_link action to simplify processing of actions
     # eg for member action_link :fire
     # process_action_link_action do |record|
-    #   record.update(:fired => true)
+    #   record.update(fired: true)
     #   self.successful = true
     #   flash[:info] = 'Player fired'
     # end

@@ -11,7 +11,7 @@ class StandardColumnTest < ActiveSupport::TestCase
   end
 
   def test_sorting
-    hash = {:sql => '"model_stubs"."a"'}
+    hash = {sql: '"model_stubs"."a"'}
     assert @standard_column.sortable?
     assert_equal hash, @standard_column.sort # check default
   end

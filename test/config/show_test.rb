@@ -28,7 +28,7 @@ module Config
     end
 
     def test_setting_link
-      @config.show.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
+      @config.show.link = ActiveScaffold::DataStructures::ActionLink.new('update', label: 'Monkeys')
       assert_not_equal @default_link, @config.show.link
     end
 
@@ -36,7 +36,7 @@ module Config
       label = 'show monkeys'
       @config.show.label = label
       assert_equal label, @config.show.label
-      I18n.backend.store_translations :en, :active_scaffold => {:view_model => 'View %<model>s'}
+      I18n.backend.store_translations :en, active_scaffold: {view_model: 'View %<model>s'}
       @config.show.label = :view_model
       assert_equal 'View Model stub', @config.show.label
       assert_equal 'View record', @config.show.label('record')

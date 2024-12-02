@@ -126,24 +126,24 @@ class ColumnTest < ActiveSupport::TestCase
 
   def test_custom_sort
     @column.sort = true
-    hash = {:sql => '"model_stubs"."a"'}
+    hash = {sql: '"model_stubs"."a"'}
     assert_equal hash, @column.sort
-    @column.sort_by :sql => 'foobar'
-    hash = {:sql => 'foobar'}
+    @column.sort_by sql: 'foobar'
+    hash = {sql: 'foobar'}
     assert_equal hash, @column.sort
 
     some_proc = proc { 'foobar' }
-    @column.sort_by :method => some_proc
-    hash = {:method => some_proc}
+    @column.sort_by method: some_proc
+    hash = {method: some_proc}
     assert_equal hash, @column.sort
     assert @column.sortable?
   end
 
   def test_custom_sort__should_assert_keys
-    assert_raises(ArgumentError) { @column.sort_by :proc => 'invalid config'  }
-    assert_raises(ArgumentError) { @column.sort = {:proc => 'invalid config'} }
-    assert_equal({:method => 'method'}, @column.sort_by(:method => 'method'))
-    assert_equal({:sql => 'method'}, @column.sort_by(:sql => 'method'))
+    assert_raises(ArgumentError) { @column.sort_by proc: 'invalid config'  }
+    assert_raises(ArgumentError) { @column.sort = {proc: 'invalid config'} }
+    assert_equal({method: 'method'}, @column.sort_by(method: 'method'))
+    assert_equal({sql: 'method'}, @column.sort_by(sql: 'method'))
   end
 
   def test_config_block

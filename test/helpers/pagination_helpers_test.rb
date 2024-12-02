@@ -54,8 +54,8 @@ class PaginationHelpersTest < ActiveSupport::TestCase
   private
 
   def links(current, last_page, window_size = 2, infinite = false) # rubocop:disable Style/OptionalBooleanParameter
-    paginator = stub(:last => stub(:number => last_page), :infinite? => infinite)
-    current_page = stub(:number => current, :pager => paginator)
+    paginator = stub(last: stub(number: last_page), infinite?: infinite)
+    current_page = stub(number: current, pager: paginator)
     pagination_ajax_links(current_page, {}, {}, window_size, 0)
   end
 

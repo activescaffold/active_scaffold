@@ -50,8 +50,8 @@ class ActionLinksTest < ActiveSupport::TestCase
   end
 
   def test_each
-    @links.add 'foo', :type => :collection
-    @links.add 'bar', :type => :member
+    @links.add 'foo', type: :collection
+    @links.add 'bar', type: :member
 
     @links.collection.each do |link|
       assert_equal 'foo', link.action

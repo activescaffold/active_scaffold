@@ -10,7 +10,7 @@ class ActionLinkTest < ActiveSupport::TestCase
     @link.action = 'bar'
     assert_equal 'bar', @link.action
 
-    hash = {:a => :b}
+    hash = {a: :b}
     @link.parameters = hash
     assert_equal hash, @link.parameters
 
