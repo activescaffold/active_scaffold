@@ -13,7 +13,7 @@ options = {id: element_form_id(action: :add_existing),
   <% if xhr -%>
     <div id="<%= element_messages_id(action: :add_existing) %>" class="messages-container"></div>
   <% else -%>
-    <%= render partial: 'form_messages' %>
+    <%= render 'form_messages' %>
   <% end -%>
 
   <label for="<%= "record_#{active_scaffold_config.model}" %>"><%= active_scaffold_add_existing_label %></label>

@@ -1,6 +1,5 @@
 <%
   record_column = column
-  record = form_association_record
   readonly = record.readonly? || !record.authorized_for?(crud_type: :update)
   crud_type = record.new_record? ? :create : (readonly ? :read : :update)
   show_actions = false

@@ -5,8 +5,8 @@
 -%>
   <%= render 'horizontal_subform_header', parent_record: parent_record, record_class: header_record_class, parent_column: column, columns: local_assigns[:columns] %>
 
-  <%= render partial: 'form_association_record', collection: associated, locals: record_partial_locals %>
-  <%= render partial: 'form_association_record', object: show_blank_record, locals: record_partial_locals.merge(locked: true, index: associated.size) if show_blank_record %>
+  <%= render partial: 'form_association_record', collection: associated, as: :record, locals: record_partial_locals %>
+  <%= render 'form_association_record', record_partial_locals.merge(locked: true, index: associated.size, record: show_blank_record) if show_blank_record %>
   <tfoot>
     <%= render 'horizontal_subform_footer', scope: scope, parent_record: parent_record, column: column %>
   </tfoot>
