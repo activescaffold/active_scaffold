@@ -98,6 +98,9 @@ jobs:
           - ruby: '3.3'
             rails: '7.1'
             coverage: true
+#        exclude:
+#          - ruby: '3.0'
+#            rails: '7.2'
     timeout-minutes: 60
     env:
       JRUBY_OPTS: "--debug"
