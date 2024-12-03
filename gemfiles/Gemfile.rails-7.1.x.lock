@@ -169,7 +169,7 @@ GEM
     mocha (2.5.0)
       ruby2_keywords (>= 0.0.5)
     mutex_m (0.2.0)
-    net-imap (0.4.18)
+    net-imap (0.5.1)
       date
       net-protocol
     net-pop (0.1.2)
@@ -264,7 +264,7 @@ GEM
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
     smart_properties (1.17.0)
-    sqlite3 (2.0.4-x86_64-linux-gnu)
+    sqlite3 (2.3.0-x86_64-linux-gnu)
     stringio (3.1.2)
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
