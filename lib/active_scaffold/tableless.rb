@@ -58,6 +58,14 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     def get_records # rubocop:disable Naming/AccessorMethodName
       klass < ActiveScaffold::Tableless ? scope.to_a : super
     end
+
+    def reader
+      super.tap do |proxy|
+        if klass < ActiveScaffold::Tableless
+          def proxy.exists?(...) = scope.exists?(...)
+        end
+      end
+    end
   end
 
   module CollectionAssociation
