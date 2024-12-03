@@ -93,8 +93,6 @@ jobs:
         include:
           - ruby: jruby-9.4
             rails: '6.1'
-          - ruby: jruby-9.4
-            rails: '7.0'
           - ruby: '3.3'
             rails: '7.1'
             coverage: true
