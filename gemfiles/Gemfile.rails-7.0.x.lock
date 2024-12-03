@@ -158,7 +158,7 @@ GEM
       ruby-progressbar
     mocha (2.5.0)
       ruby2_keywords (>= 0.0.5)
-    net-imap (0.5.1)
+    net-imap (0.4.18)
       date
       net-protocol
     net-pop (0.1.2)

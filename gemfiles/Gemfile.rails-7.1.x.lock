@@ -169,7 +169,7 @@ GEM
     mocha (2.5.0)
       ruby2_keywords (>= 0.0.5)
     mutex_m (0.2.0)
-    net-imap (0.5.1)
+    net-imap (0.4.18)
       date
       net-protocol
     net-pop (0.1.2)
