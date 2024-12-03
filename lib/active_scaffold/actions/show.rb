@@ -59,7 +59,7 @@ module ActiveScaffold::Actions
 
     def show_authorized_filter
       link = active_scaffold_config.show.link || self.class.active_scaffold_config.show.class.link
-      raise ActiveScaffold::ActionNotAllowed unless Array(send(link.security_method))[0]
+      raise ActiveScaffold::ActionNotAllowed unless action_link_authorized?(link)
     end
 
     def show_formats

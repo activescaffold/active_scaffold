@@ -142,9 +142,7 @@ module ActiveScaffold
 
     def column_value_for_datetime_type(parent_record, column, value)
       new_value = self.class.condition_value_for_datetime(column, value, datetime_conversion_for_value(column), ui_method: :form_ui)
-      if new_value.nil? && value.present?
-        parent_record.errors.add column.name, :invalid
-      end
+      parent_record.errors.add column.name, :invalid if new_value.nil? && value.present?
       new_value
     end
 

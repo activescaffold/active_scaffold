@@ -34,11 +34,9 @@ class ActiveScaffold::Bridges::RecordSelect
 
         remote_controller = active_scaffold_controller_for(klass).controller_path
 
-        # if the opposite association is a :belongs_to (in that case association in this class must be has_one or has_many)
-        # then only show records that have not been associated yet
-        if column.association.has_one? || column.association.has_many?
-          params[column.association.foreign_key] = ''
-        end
+        # if the opposite association is a :belongs_to (in that case association in this class must be has_one or
+        # has_many) then only show records that have not been associated yet
+        params[column.association.foreign_key] = '' if column.association.has_one? || column.association.has_many?
 
         record_select_options = active_scaffold_input_text_options(options).merge(
           controller: remote_controller

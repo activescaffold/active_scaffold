@@ -110,9 +110,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
 
     def except(*skips)
       super.tap do |new_relation|
-        unless new_relation.is_a?(RelationExtension)
-          class << new_relation; include RelationExtension; end
-        end
+        class << new_relation; include RelationExtension; end unless new_relation.is_a?(RelationExtension)
         new_relation.conditions.concat conditions unless skips.include? :where
       end
     end

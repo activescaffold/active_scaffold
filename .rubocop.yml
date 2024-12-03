@@ -68,9 +68,10 @@ Metrics/ParameterLists:
 
 Naming/FileName:
   Exclude:
-    - 'Gemfile'
-    - 'Rakefile'
-    - 'test/mock_app/Rakefile'
+    - Gemfile
+    - Rakefile
+    - test/mock_app/Rakefile
+    - vendor/assets/stylesheets/jquery-ui-theme.css.erb
 
 Naming/MemoizedInstanceVariableName:
   EnforcedStyleForLeadingUnderscores: optional

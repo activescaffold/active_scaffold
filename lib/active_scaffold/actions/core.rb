@@ -429,14 +429,16 @@ module ActiveScaffold::Actions
             yield @record
           end
         else
-          if @action_link && respond_to?(@action_link.security_method, true) && !send(@action_link.security_method)
-            raise ActiveScaffold::ActionNotAllowed
-          end
+          raise ActiveScaffold::ActionNotAllowed unless action_link_authorized? @action_link
 
           yield
         end
         respond_to_action(render_action)
       end
+    end
+
+    def action_link_authorized?(link)
+      link&.security_method.nil? || !respond_to?(link.security_method, true) || Array(send(link.security_method))[0]
     end
 
     def action_confirmation_respond_to_html(confirm_action = action_name.to_sym)

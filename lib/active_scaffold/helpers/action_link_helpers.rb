@@ -272,9 +272,7 @@ module ActiveScaffold
         @action_links_url_options ||= {}
         @action_links_url_options[link.name_to_cache.to_s] || begin
           options = action_link_url_options(link, record)
-          if cache_action_link_url_options?(link, record)
-            @action_links_url_options[link.name_to_cache.to_s] = options
-          end
+          @action_links_url_options[link.name_to_cache.to_s] = options if cache_action_link_url_options?(link, record)
           options
         end
       end
@@ -302,7 +300,10 @@ module ActiveScaffold
       end
 
       def action_link_text(link, record, options)
-        text = image_tag(link.image[:name], size: link.image[:size], alt: options[:link] || link.label(record), title: options[:link] || link.label(record)) if link.image
+        if link.image
+          title = options[:link] || link.label(record)
+          text = image_tag(link.image[:name], size: link.image[:size], alt: title, title: title)
+        end
         text || options[:link]
       end
 
@@ -383,8 +384,10 @@ module ActiveScaffold
         end
         id ||= record&.id&.to_s || (nested? ? nested_parent_id.to_s : '')
         action_link_id = ActiveScaffold::Registry.cache :action_link_id, link.name_to_cache.to_s do
-          action_id = "#{id_from_controller("#{link.controller}-") if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)}#{link.action}"
-          action_link_id(action_id, '--ID--')
+          if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)
+            controller_id = id_from_controller("#{link.controller}-")
+          end
+          action_link_id("#{controller_id}#{link.action}", '--ID--')
         end
         action_link_id.sub('--ID--', id)
       end
@@ -403,9 +406,7 @@ module ActiveScaffold
         if column&.association
           url_options[:parent_scaffold] = controller_path
           url_options[column.model.name.foreign_key.to_sym] = url_options.delete(:id)
-          url_options[:id] = if column.association.singular? && url_options[:action].to_sym != :index
-                               '--CHILD_ID--'
-                             end
+          url_options[:id] = ('--CHILD_ID--' if column.association.singular? && url_options[:action].to_sym != :index)
         elsif link.parameters&.dig(:named_scope)
           url_options[:parent_scaffold] = controller_path
           url_options[active_scaffold_config.model.name.foreign_key.to_sym] = url_options.delete(:id)

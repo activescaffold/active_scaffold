@@ -224,7 +224,7 @@ module ActiveScaffold::Actions
 
     def update_authorized_filter
       link = active_scaffold_config.update.link || self.class.active_scaffold_config.update.class.link
-      raise ActiveScaffold::ActionNotAllowed unless Array(send(link.security_method))[0]
+      raise ActiveScaffold::ActionNotAllowed unless action_link_authorized?(link)
     end
 
     def edit_formats

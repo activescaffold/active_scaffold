@@ -64,7 +64,7 @@ module ActiveScaffold::Actions
 
     def delete_authorized_filter
       link = active_scaffold_config.delete.link || self.class.active_scaffold_config.delete.class.link
-      raise ActiveScaffold::ActionNotAllowed unless Array(send(link.security_method))[0]
+      raise ActiveScaffold::ActionNotAllowed unless action_link_authorized?(link)
     end
 
     def destroy_formats

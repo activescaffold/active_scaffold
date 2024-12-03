@@ -299,9 +299,7 @@ module ActiveScaffold::Config
           else
             @_sorting = default_sorting
             @_sorting.set(*@sorting) if @sorting
-            if @conf.columns.constraint_columns.present?
-              @_sorting.constraint_columns = @conf.columns.constraint_columns
-            end
+            @_sorting.constraint_columns = @conf.columns.constraint_columns if @conf.columns.constraint_columns.present?
           end
         end
         @_sorting

@@ -31,7 +31,7 @@ class ActiveSupport::TestCase
         true
       end
     end
-    should "render column #{column_name} as #{form_ui} form_ui", :before => before_block do
+    should "render column #{column_name} as #{form_ui} form_ui", before: before_block do
       assert_equal form_ui, @controller.active_scaffold_config.columns[column_name].form_ui
       assert @rendered_columns.include?(column_name)
     end
@@ -48,13 +48,13 @@ class ActiveSupport::TestCase
     should "render column #{column_name} as form override" do
       column = @controller.active_scaffold_config.columns[column_name]
       assert @response.template.override_form_field?(column)
-      assert_template :partial => "_#{column_name}_form_column", :count => 0
+      assert_template partial: "_#{column_name}_form_column", count: 0
     end
   end
 
   def self.should_render_as_form_partial_override(column_name)
     should "render column #{column_name} as form partial override" do
-      assert_template :partial => "_#{column_name}_form_column"
+      assert_template partial: "_#{column_name}_form_column"
     end
   end
 
@@ -66,8 +66,8 @@ class ActiveSupport::TestCase
         true
       end
     end
-    should "render column #{column_name} as form hidden", :before => before_block do
-      assert_template :partial => '_form_hidden_attribute'
+    should "render column #{column_name} as form hidden", before: before_block do
+      assert_template partial: '_form_hidden_attribute'
       assert @rendered_columns.include?(column_name)
     end
   end
@@ -80,7 +80,7 @@ class ActiveSupport::TestCase
         true
       end
     end
-    should "render column #{column_name} as #{list_ui} list_ui", :before => before_block do
+    should "render column #{column_name} as #{list_ui} list_ui", before: before_block do
       assert_equal list_ui, @controller.active_scaffold_config.columns[column_name].list_ui
       assert @rendered_columns.include?(column_name)
     end
@@ -90,13 +90,13 @@ class ActiveSupport::TestCase
     should "render column #{column_name} as field override" do
       column = @controller.active_scaffold_config.columns[column_name]
       assert @response.template.override_form_field?(column)
-      assert_template :partial => "_#{column_name}_column", :count => 0
+      assert_template partial: "_#{column_name}_column", count: 0
     end
   end
 
   def self.should_render_as_field_partial_override(column_name)
     should "render column #{column_name} as field partial override" do
-      assert_template :partial => "_#{column_name}_column"
+      assert_template partial: "_#{column_name}_column"
     end
   end
 
@@ -110,7 +110,7 @@ class ActiveSupport::TestCase
         true
       end
     end
-    should "render column #{column_name} as inplace edit", :before => before_block do
+    should "render column #{column_name} as inplace edit", before: before_block do
       assert @column.inplace_edit
       assert @rendered_columns.include?(column_name)
     end
@@ -137,7 +137,7 @@ class ActiveSupport::TestCase
 
   def column_names(action)
     columns = []
-    @controller.active_scaffold_config.send(action).columns.each(:flatten => true) { |col| columns << col.name }
+    @controller.active_scaffold_config.send(action).columns.each(flatten: true) { |col| columns << col.name }
     columns
   end
 end

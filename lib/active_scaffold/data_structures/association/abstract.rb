@@ -101,9 +101,7 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def reverse(klass = nil)
-      unless polymorphic?
-        @reverse ||= inverse || get_reverse&.name
-      end
+      @reverse ||= inverse || get_reverse&.name unless polymorphic?
       @reverse || get_reverse(klass)&.name
     end
 

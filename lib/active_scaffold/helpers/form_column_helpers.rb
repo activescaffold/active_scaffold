@@ -106,9 +106,7 @@ module ActiveScaffold
         classes = "#{column.name}-input"
         classes += ' numeric-input' if column.number?
 
-        if (column.form_ui_options || column.options)[:collapsible]
-          collapsible_id = "container_#{id_control}"
-        end
+        collapsible_id = "container_#{id_control}" if (column.form_ui_options || column.options)[:collapsible]
 
         {name: name, class: classes, id: id_control, collapsible_id: collapsible_id}.merge(options)
       end

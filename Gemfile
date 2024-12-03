@@ -23,9 +23,9 @@ group :development, :lint do
   gem 'bundler-audit', require: false
   # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
   gem 'rubocop', require: false
+  gem 'rubocop-erb', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
-  gem 'rubocop-erb', require: false
 end
 
 group :development, :lint, :test do

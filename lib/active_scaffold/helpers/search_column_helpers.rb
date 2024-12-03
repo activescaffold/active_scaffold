@@ -358,10 +358,6 @@ module ActiveScaffold
         !column.column.nil? && %i[datetime time].include?(column.column_type)
       end
 
-      def field_search_datetime_value(value)
-        Time.zone.local(value[:year].to_i, value[:month].to_i, value[:day].to_i, value[:hour].to_i, value[:minute].to_i, value[:second].to_i) unless value.nil? || value[:year].blank?
-      end
-
       def active_scaffold_search_datetime_field(column, options, current_search, name, ui_options: column.options)
         options = ui_options.merge(options)
         type = "#{'date' unless options[:discard_date]}#{'time' unless options[:discard_time]}"
