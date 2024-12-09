@@ -305,6 +305,11 @@ module ActiveScaffold::Config
       include ActiveScaffold::Configurable
       user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
                 :timestamped_messages, :highlight_messages
+      attr_writer :label
+
+      def label(options = {})
+        @label ? as_(@label, options) : @conf.label(options)
+      end
 
       def method_missing(name, *args)
         value = @conf.actions.include?(name) ? @conf.send(name) : super
