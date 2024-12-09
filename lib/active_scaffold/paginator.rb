@@ -22,6 +22,7 @@ class Paginator
     @count = count
     @per_page = per_page
     raise MissingSelectError, 'Must provide block to select data for each page' unless select
+
     @select = select
   end
 
@@ -78,7 +79,7 @@ class Paginator
 
     attr_reader :number, :pager
 
-    def initialize(pager, number, &select) #:nodoc:
+    def initialize(pager, number, &select) # :nodoc:
       @pager = pager
       @number = number
       @offset = (number - 1) * pager.per_page
@@ -125,7 +126,7 @@ class Paginator
       end
     end
 
-    def ==(other) #:nodoc:
+    def ==(other) # :nodoc:
       @pager == other.pager && number == other.number
     end
   end

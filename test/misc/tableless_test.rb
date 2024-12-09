@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class TablelessTest < Minitest::Test
+class TablelessTest < ActiveSupport::TestCase
   def test_find_all
     assert FileModel.all.to_a.empty?
   end
@@ -27,8 +27,8 @@ class TablelessTest < Minitest::Test
     assert Person.new.files.empty?
     @person = Person.new
     @person.save(validate: false)
-    assert !@person.files.empty?
-    assert @person.files.all.exists?
+    assert_not @person.files.empty?
+    assert @person.files.exists?
     assert_equal @person.id, @person.files.first.person_id
   end
 

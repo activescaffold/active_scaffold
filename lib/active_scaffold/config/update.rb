@@ -17,7 +17,7 @@ module ActiveScaffold::Config
     def self.link=(val)
       @@link = val
     end
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', :label => :edit, :type => :member, :security_method => :update_authorized?, :ignore_method => :update_ignore?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', label: :edit, type: :member, security_method: :update_authorized?, ignore_method: :update_ignore?)
 
     cattr_accessor :nested_links, instance_accessor: false
     @@nested_links = false
@@ -25,16 +25,15 @@ module ActiveScaffold::Config
     cattr_accessor :add_locking_column, instance_accessor: false
     @@add_locking_column = true
 
-    columns_accessor :columns, :copy => :create
+    columns_accessor :columns, copy: :create
 
     # instance-level configuration
     # ----------------------------
 
-    attr_accessor :nested_links
-
-    attr_accessor :add_locking_column
+    attr_accessor :nested_links, :add_locking_column
 
     attr_writer :hide_nested_column
+
     def hide_nested_column
       @hide_nested_column.nil? ? true : @hide_nested_column
     end

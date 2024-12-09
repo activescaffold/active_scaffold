@@ -2,6 +2,7 @@
 class ActiveRecord::Base
   def associated_valid?(path = [])
     return true if path.include?(self) # prevent recursion (if associated and parent are new records)
+
     path << self
     # using [].all? syntax to avoid a short-circuit
     # errors to associated record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
@@ -47,14 +48,14 @@ class ActiveRecord::Base
   # yields every associated object that has been instantiated and is flagged as unsaved.
   # returns false if any yield returns false.
   # returns true otherwise, even when none of the associations have been instantiated. build wrapper methods accordingly.
-  def with_unsaved_associated
+  def with_unsaved_associated(&block)
     associations_for_update.map do |assoc|
       association_proxy = association(assoc.name)
       if association_proxy.target.present?
         records = association_proxy.target
         records = [records] unless records.is_a? Array # convert singular associations into collections for ease of use
         # must use select instead of find_all, which Rails overrides on association proxies for db access
-        records.select { |r| r.unsaved? && !r.readonly? }.map { |r| yield r }.all?
+        records.select { |r| r.unsaved? && !r.readonly? }.map(&block).all?
       else
         true
       end

@@ -1,11 +1,11 @@
 require 'test_helper'
 require 'class_with_finder'
 
-class CalculationTest < Minitest::Test
+class CalculationTest < ActiveSupport::TestCase
   def setup
     @buildings = []
-    @buildings << Building.create { |b| b.build_owner(:first_name => 'foo') }
-    @buildings << Building.create(:name => 'foo bar')
+    @buildings << Building.create { |b| b.build_owner(first_name: 'foo') }
+    @buildings << Building.create(name: 'foo bar')
     @buildings << Building.create
 
     @klass = ClassWithFinder.new
@@ -13,7 +13,7 @@ class CalculationTest < Minitest::Test
   end
 
   def teardown
-    @buildings.each(&:destroy).map(&:owner).compact.each(&:destroy)
+    @buildings.each(&:destroy).filter_map(&:owner).each(&:destroy)
   end
 
   def test_calculation_with_conditions
@@ -22,7 +22,7 @@ class CalculationTest < Minitest::Test
     @klass.active_scaffold_config.expects(:list).returns(mock.tap { |m| m.stubs(:count_includes).returns(nil) })
 
     column = mock.tap { |m| m.stubs(:field).returns('"buildings"."id"') }
-    @klass.active_scaffold_config.expects(:columns).returns(mock.tap { |m| m.stubs(:"[]").returns(column) })
+    @klass.active_scaffold_config.expects(:columns).returns(mock.tap { |m| m.stubs(:[]).returns(column) })
     query = @klass.send :calculate_query
     assert_equal 2, query.count
   end
@@ -32,7 +32,7 @@ class CalculationTest < Minitest::Test
     @klass.active_scaffold_config.expects(:list).returns(mock.tap { |m| m.stubs(:count_includes).returns(nil) })
 
     column = mock.tap { |m| m.stubs(:field).returns('"buildings"."id"') }
-    @klass.active_scaffold_config.expects(:columns).returns(mock.tap { |m| m.stubs(:"[]").returns(column) })
+    @klass.active_scaffold_config.expects(:columns).returns(mock.tap { |m| m.stubs(:[]).returns(column) })
     query = @klass.send :calculate_query
     assert_equal Building.count, query.count
   end

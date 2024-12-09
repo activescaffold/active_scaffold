@@ -8,7 +8,7 @@ module ActiveScaffold::Bridges
           action_links = filter_action_links_for_deleted(action_links, record, options)
           return unless action_links
         end
-        super(action_links, record, options, &block)
+        super
       end
     end
   end

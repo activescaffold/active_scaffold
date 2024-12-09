@@ -2,7 +2,7 @@ module ActiveScaffold::Bridges
   class Ancestry
     module AncestryBridge
       def initialize(model_id)
-        super(model_id)
+        super
 
         return unless model.respond_to? :ancestry_column
 
@@ -18,7 +18,7 @@ module ActiveScaffold::Bridges
       def active_scaffold_input_ancestry(column, options, ui_options: column.options)
         record = options[:object]
         select_options = []
-        select_control_options = {:selected => record.parent_id}
+        select_control_options = {selected: record.parent_id}
         select_control_options[:include_blank] = as_(:_select_) if record.parent_id.nil?
         method = ui_options[:label_method] || :to_label
         traverse_ancestry = proc do |key, value|
@@ -37,4 +37,4 @@ end
 ActionView::Base.class_eval do
   include ActiveScaffold::Bridges::Ancestry::FormColumnHelpers
 end
-ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::Ancestry::AncestryBridge
+ActiveScaffold::Config::Core.prepend ActiveScaffold::Bridges::Ancestry::AncestryBridge

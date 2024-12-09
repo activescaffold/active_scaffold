@@ -1,7 +1,12 @@
+require:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-erb
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.0
+  NewCops: enable
   Exclude:
     - 'gemfiles/Gemfile*.lock'
     - 'bin/*'
@@ -13,8 +18,19 @@ AllCops:
 Style/IfUnlessModifier:
   Enabled: false
 
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
+
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
+
+Layout/HashAlignment:
+  EnforcedHashRocketStyle:
+    - key
+    - table
+  EnforcedColonStyle:
+    - key
+    - table
 
 Lint/UnusedMethodArgument:
   Enabled: false
@@ -23,9 +39,25 @@ Metrics/ClassLength:
   Max: 500
   CountComments: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Exclude:
     - 'test/**/*'
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - test/**/*
+    # TODO: cleanup the next files
+    - lib/active_scaffold/helpers/*
+    - lib/active_scaffold/extensions/*
+    - lib/active_scaffold/bridges/**/*
+    - lib/active_scaffold/config/*
+    - lib/active_scaffold/data_structures/*
+    - lib/active_scaffold/actions/core.rb
+    - lib/active_scaffold/finder.rb
+    - lib/active_scaffold/constraints.rb
+    - lib/active_scaffold/active_record_permissions.rb
+    - lib/active_scaffold/core.rb
+    - lib/active_scaffold/tableless.rb
 
 Metrics/ModuleLength:
   Max: 700
@@ -36,9 +68,16 @@ Metrics/ParameterLists:
 
 Naming/FileName:
   Exclude:
-    - 'Gemfile'
-    - 'Rakefile'
-    - 'test/mock_app/Rakefile'
+    - Gemfile
+    - Rakefile
+    - test/mock_app/Rakefile
+    - vendor/assets/stylesheets/jquery-ui-theme.css.erb
+
+Naming/MemoizedInstanceVariableName:
+  EnforcedStyleForLeadingUnderscores: optional
+
+Naming/VariableNumber:
+  CheckSymbols: false
 
 Performance/RedundantMerge:
   MaxKeyValuePairs: 1
@@ -55,8 +94,12 @@ Rails/DynamicFindBy:
     - find_by_name
     - find_by_names
 
-Style/BracesAroundHashParameters:
-  EnforcedStyle: context_dependent
+Rails/RakeEnvironment:
+  Exclude:
+    - lib/tasks/brakeman.rake
+
+Rails/ActionControllerTestCase:
+  Enabled: false
 
 Style/FormatString:
   EnforcedStyle: percent
@@ -64,8 +107,14 @@ Style/FormatString:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Style/HashSyntax:
-  Enabled: false # FIXME
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
 
 Style/SingleLineBlockParams:
   Enabled: false

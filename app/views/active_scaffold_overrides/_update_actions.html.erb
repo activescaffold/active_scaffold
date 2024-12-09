@@ -7,7 +7,7 @@
         auth, reason = action_link_authorized?(link, record)
         next unless auth
       -%>
-      <%= render_action_link(link, record, :authorized => true) -%>
+      <%= render_action_link(link, record, authorized: true) -%>
     <% end -%>
   </div>
 </div>

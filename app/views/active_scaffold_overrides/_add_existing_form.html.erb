@@ -1,9 +1,9 @@
-<% url_options = params_for(:action => :add_existing) -%>
+<% url_options = params_for(action: :add_existing) -%>
 <% xhr = request.xhr? -%>
 <%=
-options = {:id => element_form_id(:action => :add_existing),
-           :class => "as_form create",
-           :method => :post,
+options = {id: element_form_id(action: :add_existing),
+           class: 'as_form create',
+           method: :post,
            'data-loading' => true}
   options[:remote] = true if xhr
   form_tag url_options, options -%>
@@ -11,18 +11,18 @@ options = {:id => element_form_id(:action => :add_existing),
   <h4><%= active_scaffold_config.nested.label -%></h4>
 
   <% if xhr -%>
-    <div id="<%= element_messages_id(:action => :add_existing) %>" class="messages-container"></div>
+    <div id="<%= element_messages_id(action: :add_existing) %>" class="messages-container"></div>
   <% else -%>
-    <%= render :partial => 'form_messages' %>
+    <%= render 'form_messages' %>
   <% end -%>
 
   <label for="<%= "record_#{active_scaffold_config.model}" %>"><%= active_scaffold_add_existing_label %></label>
-  <%= active_scaffold_add_existing_input(:name => 'associated_id', :url_options => url_options, :object => nested_parent_record) %>
+  <%= active_scaffold_add_existing_input(name: 'associated_id', url_options: url_options, object: nested_parent_record) %>
 
   <p class="form-footer">
-    <%= submit_tag as_(:add), :class => "submit" %>
-    <%= link_to as_(:cancel), main_path_to_return, :class => 'as_cancel', :remote => true %>
-    <%= loading_indicator_tag(:action => :add_existing, :id => params[:id]) %>
+    <%= submit_tag as_(:add), class: 'submit' %>
+    <%= link_to as_(:cancel), main_path_to_return, class: 'as_cancel', remote: true %>
+    <%= loading_indicator_tag(action: :add_existing, id: params[:id]) %>
   </p>
 
 </form>

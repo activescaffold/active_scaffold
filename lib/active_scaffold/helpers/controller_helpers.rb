@@ -3,6 +3,7 @@ module ActiveScaffold
     module ControllerHelpers
       def self.included(controller)
         return unless controller.respond_to? :helper_method
+
         controller.class_eval do
           helper_method :params_for, :conditions_from_params, :render_parent?,
                         :main_path_to_return, :render_parent_options,
@@ -17,11 +18,7 @@ module ActiveScaffold
 
       def active_scaffold_config_for(klass)
         config = self.class.active_scaffold_config_for(klass)
-        if ActiveScaffold.threadsafe
-          config.user || config.new_user_settings({}, {})
-        else
-          config
-        end
+        config.user || config.new_user_settings({}, {})
       end
 
       def generate_temporary_id(record = nil, generated_id = nil)
@@ -67,7 +64,7 @@ module ActiveScaffold
           params.except(*BLACKLIST_PARAMS).each do |key, value|
             @params_for[key.to_sym] = copy_param(value)
           end
-          @params_for[:controller] = '/' + @params_for[:controller].to_s unless @params_for[:controller].to_s.first(1) == '/' # for namespaced controllers
+          @params_for[:controller] = "/#{@params_for[:controller]}" unless @params_for[:controller]&.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end
 
@@ -86,7 +83,7 @@ module ActiveScaffold
 
       def controller_requested(controller)
         if controller.to_s.first(1) == '/'
-          controller[1..-1]
+          controller[1..]
         else
           path = controller_path.split('/')[0..-2]
           path << controller
@@ -111,7 +108,7 @@ module ActiveScaffold
           parameters = {}
           if params[:parent_scaffold] && nested_singular_association?
             parameters[:controller] = params[:parent_scaffold]
-            exclude_parameters.concat [nested.param_name, :association, :parent_scaffold]
+            exclude_parameters.push nested.param_name, :association, :parent_scaffold
             # parameters[:eid] = params[:parent_scaffold] # not neeeded anymore?
           end
           parameters.merge! nested.to_params if nested?
@@ -139,10 +136,10 @@ module ActiveScaffold
 
       def render_parent_options
         if nested_singular_association?
-          {:controller => nested.parent_scaffold.controller_path, :action => :index, :id => nested.parent_id}
+          {controller: nested.parent_scaffold.controller_path, action: :index, id: nested.parent_id}
         elsif parent_sti_controller
-          options = params_for(:controller => parent_sti_controller.controller_path, :action => render_parent_action, :parent_sti => nil)
-          options.merge!(:action => :index, :id => @record.to_param) if render_parent_action == :row
+          options = params_for(controller: parent_sti_controller.controller_path, action: render_parent_action, parent_sti: nil)
+          options.merge!(action: :index, id: @record.to_param) if render_parent_action == :row
           options
         end
       end
@@ -182,7 +179,7 @@ module ActiveScaffold
         elsif association.belongs_to? || parent_record.new_record? || parent_record.send(association.name).nil?
           # avoid use build_association in has_one when record is saved and had associated record
           # because associated record would be changed in DB
-          parent_record.send("build_#{association.name}")
+          parent_record.send(:"build_#{association.name}")
         else
           association.klass.new.tap do |record|
             assign_default_attributes record
@@ -193,12 +190,13 @@ module ActiveScaffold
 
       def save_record_to_association(record, association, value, reverse = nil)
         return unless association
+
         if association.collection?
           record.association(association.name).target << value
         elsif reverse&.belongs_to?
-          value.send("#{reverse.name}=", record)
+          value.send(:"#{reverse.name}=", record)
         else
-          record.send("#{association.name}=", value)
+          record.send(:"#{association.name}=", value)
         end
       end
     end

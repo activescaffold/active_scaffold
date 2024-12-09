@@ -30,29 +30,29 @@ module ActiveScaffold
         require 'active_scaffold/extensions/unsaved_associated'
         require 'active_scaffold/extensions/unsaved_record'
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
-        module ActiveRecord::Associations
-          Association.send :include, ActiveScaffold::Tableless::Association
-          CollectionAssociation.send :include, ActiveScaffold::Tableless::CollectionAssociation
-          SingularAssociation.send :include, ActiveScaffold::Tableless::SingularAssociation
+        ActiveRecord::Associations.module_eval do
+          self::Association.include ActiveScaffold::Tableless::Association
+          self::CollectionAssociation.include ActiveScaffold::Tableless::CollectionAssociation
+          self::SingularAssociation.include ActiveScaffold::Tableless::SingularAssociation
         end
-        module ActiveRecord::ConnectionAdapters
-          AbstractAdapter.send :include, ActiveScaffold::ConnectionAdapters::AbstractAdapter
-          if defined?(PostgreSQLAdapter)
-            PostgreSQLAdapter.send :include, ActiveScaffold::ConnectionAdapters::PostgreSQLAdapter
+
+        ActiveRecord::ConnectionAdapters.module_eval do
+          self::AbstractAdapter.include ActiveScaffold::ConnectionAdapters::AbstractAdapter
+          if const_defined?(:PostgreSQLAdapter)
+            self::PostgreSQLAdapter.include ActiveScaffold::ConnectionAdapters::PostgreSQLAdapter
           end
-          if defined?(SQLServerAdapter)
-            SQLServerAdapter.send :include, ActiveScaffold::ConnectionAdapters::SQLServerAdapter
+          if const_defined?(:SQLServerAdapter)
+            self::SQLServerAdapter.include ActiveScaffold::ConnectionAdapters::SQLServerAdapter
           end
         end
       end
     end
 
     initializer 'active_scaffold.assets' do
-      config.assets.precompile << 'active_scaffold/indicator.gif'
+      config.assets.precompile << 'active_scaffold_manifest.js' if Rails::VERSION::MAJOR < 7
     end
 
     initializer 'active_scaffold.extensions' do
-      require 'active_scaffold/extensions/cow_proxy'
       require 'active_scaffold/extensions/ice_nine'
       require 'active_scaffold/extensions/localize'
       require 'active_scaffold/extensions/paginator_extensions'

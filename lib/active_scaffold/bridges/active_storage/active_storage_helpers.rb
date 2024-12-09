@@ -5,12 +5,16 @@ module ActiveScaffold
         class << self
           # has_one :"#{name}_attachment", -> { where(name: name) }, class_name: "ActiveStorage::Attachment", as: :record, inverse_of: :record, dependent: false
           def active_storage_has_one_fields(klass)
-            klass.reflect_on_all_associations(:has_one)&.select { |reflection| reflection.class_name == 'ActiveStorage::Attachment' } &.collect { |association| association.name[0..-12] } || []
+            klass.reflect_on_all_associations(:has_one)
+              &.select { |reflection| reflection.class_name == 'ActiveStorage::Attachment' }
+              &.collect { |association| association.name[0..-12] } || []
           end
 
           # has_many :"#{name}_attachments", -> { where(name: name) }, as: :record, class_name: "ActiveStorage::Attachment", inverse_of: :record, dependent: false do
           def active_storage_has_many_fields(klass)
-            klass.reflect_on_all_associations(:has_many)&.select { |reflection| reflection.class_name == 'ActiveStorage::Attachment' } &.collect { |association| association.name[0..-13] } || []
+            klass.reflect_on_all_associations(:has_many)
+              &.select { |reflection| reflection.class_name == 'ActiveStorage::Attachment' }
+              &.collect { |association| association.name[0..-13] } || []
           end
 
           def klass_has_active_storage_fields?(klass)

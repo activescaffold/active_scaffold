@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ColumnsTest < Minitest::Test
+class ColumnsTest < ActiveSupport::TestCase
   def setup
     @columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b)
   end
@@ -10,21 +10,21 @@ class ColumnsTest < Minitest::Test
 
     assert @columns.include?('a'), 'checking via string'
     assert @columns.include?(:b), 'checking via symbol'
-    refute @columns.include?(:c)
+    assert_not @columns.include?(:c)
   end
 
   def test_add
-    refute @columns.include?(:c)
+    assert_not @columns.include?(:c)
     @columns.add 'c'
     assert @columns.include?('c')
 
     # test the alias
-    refute @columns.include?(:d)
+    assert_not @columns.include?(:d)
     @columns << :d
     assert @columns.include?(:d)
 
     # try adding an array of columns
-    refute @columns.include?(:f)
+    assert_not @columns.include?(:f)
     @columns.add %i[f g]
     assert @columns.include?(:f)
     assert @columns.include?(:g)
@@ -46,14 +46,15 @@ class ColumnsTest < Minitest::Test
   end
 
   def test_each
+    names = %i[a b]
     @columns.each do |column|
-      assert %i[a b].include?(column.name)
+      assert names.include?(column.name)
     end
   end
 
   def test_block_config
-    refute @columns.include?(:d)
-    refute @columns.include?(:c)
+    assert_not @columns.include?(:d)
+    assert_not @columns.include?(:c)
 
     @columns.configure do |config|
       # test that we can use the config object

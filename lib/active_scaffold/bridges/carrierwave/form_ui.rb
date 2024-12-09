@@ -8,7 +8,7 @@ module ActiveScaffold
         active_scaffold_file_with_remove_link(column, options, content, 'remove_', 'carrierwave_controls', ui_options: ui_options) do
           cache_field_options = {
             name: options[:name].gsub(/\[#{column.name}\]$/, "[#{column.name}_cache]"),
-            id: options[:id] + '_cache'
+            id: "#{options[:id]}_cache"
           }
           hidden_field(:record, "#{column.name}_cache", cache_field_options)
         end

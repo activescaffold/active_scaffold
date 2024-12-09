@@ -29,6 +29,7 @@ module ActiveScaffold::Actions
 
       def init_field_search_params(default_params)
         return unless (params[:search].is_a?(String) || search_params.nil?) && params[:search].blank?
+
         params[:search] = default_params.is_a?(Proc) ? instance_eval(&default_params) : default_params
       end
 
@@ -63,10 +64,18 @@ module ActiveScaffold::Actions
       end
 
       def grouped_search_finder_options
-        group_sql = calculation_for_group_by(search_group_column&.field || search_group_name, search_group_function) if search_group_function
-        group_by = group_sql&.to_sql || quoted_select_columns(search_group_column&.select_columns || [search_group_name])
-        select_query = grouped_search_select + (group_sql ? [group_sql.as(search_group_column.name.to_s)] : group_by)
-        {group: group_by, select: select_query, reorder: grouped_sorting(group_by)}
+        select_query = grouped_search_select
+        if search_group_function
+          group_sql = calculation_for_group_by(search_group_column&.field || search_group_name, search_group_function)
+          group_by = group_sql.to_sql
+          select_query += [group_sql.as(search_group_column.name.to_s)]
+          order = grouped_sorting(group_by)
+        else
+          group_by = quoted_select_columns(search_group_column&.select_columns || [search_group_name])
+          select_query += group_by
+          order = grouped_sorting
+        end
+        {group: group_by, select: select_query, reorder: order}
       end
 
       def grouped_search_select
@@ -75,16 +84,20 @@ module ActiveScaffold::Actions
         end
       end
 
-      def grouped_sorting(group_sql)
+      def grouped_sorting(group_sql = nil)
         return unless search_group_column && active_scaffold_config.list.user.sorting
-        group_sort = search_group_function ? group_sql : search_group_column.sort[:sql] if search_group_column.sortable?
-        grouped_columns = grouped_columns_calculations.merge(search_group_column.name => group_sort)
-        sorting = active_scaffold_config.list.user.sorting.clause(grouped_columns)
+
+        sorting = active_scaffold_config.list.user.sorting.clause(grouped_columns_sorting(group_sql))
         active_scaffold_config.active_record? ? sorting&.map(&Arel.method(:sql)) : sorting
       end
 
+      def grouped_columns_sorting(group_sql)
+        group_sql ||= search_group_column.sort[:sql] if search_group_column.sortable?
+        grouped_columns_calculations.merge(search_group_column.name => group_sql)
+      end
+
       def grouped_columns_calculations
-        @grouped_columns_calculations ||= list_columns[1..-1].each_with_object({}) do |c, h|
+        @grouped_columns_calculations ||= list_columns[1..].each_with_object({}) do |c, h|
           h[c.name] = calculation_for_group_search(c)
         end
       end
@@ -136,9 +149,10 @@ module ActiveScaffold::Actions
 
       def grouped_columns
         return if active_scaffold_config.field_search.grouped_columns.blank?
-        active_scaffold_config.field_search.grouped_columns.map do |col|
+
+        active_scaffold_config.field_search.grouped_columns.filter_map do |col|
           active_scaffold_config.columns[col]
-        end.compact
+        end
       end
 
       def field_search_params
@@ -146,11 +160,11 @@ module ActiveScaffold::Actions
       end
 
       def field_search_respond_to_html
-        render(:action => 'field_search')
+        render(action: 'field_search')
       end
 
       def field_search_respond_to_js
-        render(:partial => 'field_search')
+        render(partial: 'field_search')
       end
 
       def do_search
@@ -167,6 +181,7 @@ module ActiveScaffold::Actions
         columns = active_scaffold_config.field_search.columns
         search_params.each do |key, value|
           next unless columns.include? key
+
           column = active_scaffold_config.columns[key]
           search_condition = self.class.condition_for_column(column, value, text_search, session)
           next if search_condition.blank?

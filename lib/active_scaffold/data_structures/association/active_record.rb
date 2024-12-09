@@ -59,14 +59,11 @@ module ActiveScaffold::DataStructures::Association
       true
     end
 
-    def counter_cache_hack?
-      belongs_to? && counter_cache && Rails.version < '6.0'
-    end
-
     protected
 
     def scope_values
       return {} unless @association.scope
+
       @scope_values ||= @association.klass.instance_exec(&@association.scope).values
     rescue StandardError => e
       message = "Error evaluating scope for #{@association.name} in #{@association.klass.name}:"

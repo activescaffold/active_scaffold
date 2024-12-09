@@ -14,8 +14,7 @@ module ActiveScaffold
     end
 
     def as_marked=(value)
-      value = [true, 'true', 1, '1', 'T', 't'].include?(value.class == String ? value.downcase : value)
-      if value == true
+      if [true, 'true', 1, '1', 'T', 't'].include?(value.respond_to?(:downcase) ? value.downcase : value)
         marked_records[id.to_s] = true unless as_marked
       else
         marked_records.delete(id.to_s)

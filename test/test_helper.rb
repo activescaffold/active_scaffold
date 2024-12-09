@@ -12,7 +12,6 @@ require 'mock_app/config/environment'
 require 'rails/test_help'
 require 'minitest/autorun'
 require 'mocha/minitest'
-require 'cow_proxy'
 
 require 'minitest/reporters'
 Minitest::Reporters.use! unless ENV['RM_INFO']
@@ -20,12 +19,11 @@ Minitest::Reporters.use! unless ENV['RM_INFO']
 def load_schema
   stdout = $stdout
   $stdout = StringIO.new # suppress output while building the schema
-  load Rails.root.join('db', 'schema.rb')
+  load Rails.root.join('db/schema.rb')
   $stdout = stdout
 end
 load_schema
 
-ActiveScaffold.threadsafe!
 # avoid freezing defaults so we can stubs in tests for testing with different defaults
 class << ActiveScaffold::Config::Core
   def freeze; end
@@ -37,28 +35,8 @@ end
 
 I18n.backend.store_translations :en, YAML.load_file(File.expand_path('../config/locales/en.yml', __dir__))['en']
 
-# rails 4.0
-unless defined? Minitest::Test
-  class Minitest::Test < Minitest::Unit::TestCase
-  end
-
-  class Minitest::Unit::TestCase
-    def with_js_framework(framework)
-      framework, ActiveScaffold.js_framework = ActiveScaffold.js_framework, framework
-      yield
-      ActiveScaffold.js_framework = framework
-    end
-  end
-end
-
-class Minitest::Test
+Minitest::Test.class_eval do
   protected
-
-  def with_js_framework(framework)
-    framework, ActiveScaffold.js_framework = ActiveScaffold.js_framework, framework
-    yield
-    ActiveScaffold.js_framework = framework
-  end
 
   def config_for(klass, namespace = nil)
     ActiveScaffold::Config::Core.new("#{namespace}#{klass.to_s.underscore.downcase}")

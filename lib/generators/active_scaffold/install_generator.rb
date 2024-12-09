@@ -14,13 +14,8 @@ module ActiveScaffold
       def add_to_javascript_manifest
         file = 'app/assets/javascripts/application.js'
         unless File.exist?(file)
-          if Rails.version >= '6.0'
-            create_javascript_manifest file
-            return
-          end
-          say_status :missing, file, :red
-          return if options[:pretend]
-          raise Thor::Error, "JS file #{file} is required for ActiveScaffold"
+          create_javascript_manifest file
+          return
         end
         original_js = File.binread(file)
         if original_js.include?('require active_scaffold')
@@ -36,6 +31,7 @@ module ActiveScaffold
       def add_to_stylesheet_manifest
         file = 'app/assets/stylesheets/application.css'
         return unless File.exist?(file)
+
         original_css = File.binread(file)
         if original_css.match?(/require active_scaffold$/)
           say_status('skipped', 'insert into app/assets/stylesheets/application.css', :yellow)
@@ -78,7 +74,7 @@ module ActiveScaffold
 
       def setup_jquery(file, original_js = nil, where: 'ujs')
         original_js ||= File.binread(file)
-        if ActiveScaffold.js_framework == :jquery
+        if defined? Jquery
           unless original_js.include?('require jquery')
             insert_into_file file, before: %r{//= require +.*#{where}['"]?\n} do
               "//= require jquery\n"

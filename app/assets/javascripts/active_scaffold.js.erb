@@ -1,41 +1,31 @@
 <%
-  case ActiveScaffold.js_framework
-  when :jquery
-    require_asset "getprototypeof"
-    require_asset "jquery.ba-throttle-debounce"
-    if Object.const_defined?('Jquery')
-      if Jquery.const_defined?('Rails') && Jquery::Rails.const_defined?('JQUERY_UI_VERSION')
-        require_asset "jquery-ui"
-      elsif Jquery.const_defined? 'Ui'
-        jquery_ui_prefix = Jquery::Ui::Rails::VERSION < '5.0.0' ? 'jquery.ui.' : 'jquery-ui/'
-        jquery_ui_widgets_prefix = Jquery::Ui::Rails::VERSION >= '6.0.0' ? 'widgets/' : ''
-        require_asset "#{jquery_ui_prefix}core"
-        require_asset "#{jquery_ui_prefix}effect"
-        require_asset "#{jquery_ui_prefix}effects/effect-highlight" if Jquery::Ui::Rails::VERSION >= '6.0.0'
-        require_asset "#{jquery_ui_prefix}#{jquery_ui_widgets_prefix}sortable"
-        require_asset "#{jquery_ui_prefix}#{jquery_ui_widgets_prefix}draggable"
-        require_asset "#{jquery_ui_prefix}#{jquery_ui_widgets_prefix}droppable"
-        require_asset "#{jquery_ui_prefix}#{jquery_ui_widgets_prefix}datepicker"
-      end
+  require_asset 'jquery.ba-throttle-debounce'
+  if Object.const_defined?(:Jquery)
+    if Jquery.const_defined?(:Rails) && Jquery::Rails.const_defined?(:JQUERY_UI_VERSION)
+      require_asset 'jquery-ui'
+    elsif Jquery.const_defined? :Ui
+      jquery_ui_prefix = Jquery::Ui::Rails::VERSION < '5.0.0' ? 'jquery.ui.' : 'jquery-ui/'
+      jquery_ui_widgets_prefix = Jquery::Ui::Rails::VERSION >= '6.0.0' ? 'widgets/' : ''
+      require_asset "#{jquery_ui_prefix}core"
+      require_asset "#{jquery_ui_prefix}effect"
+      require_asset "#{jquery_ui_prefix}effects/effect-highlight" if Jquery::Ui::Rails::VERSION >= '6.0.0'
+      require_asset "#{jquery_ui_prefix}#{jquery_ui_widgets_prefix}sortable"
+      require_asset "#{jquery_ui_prefix}#{jquery_ui_widgets_prefix}draggable"
+      require_asset "#{jquery_ui_prefix}#{jquery_ui_widgets_prefix}droppable"
+      require_asset "#{jquery_ui_prefix}#{jquery_ui_widgets_prefix}datepicker"
     end
-    if ActiveScaffold.jquery_ui_included?
-      require_asset "jquery-ui-timepicker-addon"
-      require_asset "jquery/date_picker_bridge"
-      require_asset "jquery/draggable_lists"
-    end
-    require_asset "jquery.visible.min"
-    require_asset "jquery/active_scaffold"
-    require_asset "jquery/jquery.editinplace"
-  when :prototype
-    require_asset "effects"
-    require_asset "controls"
-    require_asset "prototype/active_scaffold"
-    require_asset "prototype/dhtml_history"
-    require_asset "prototype/form_enhancements"
   end
+  if ActiveScaffold.jquery_ui_included?
+    require_asset 'jquery-ui-timepicker-addon'
+    require_asset 'jquery/date_picker_bridge'
+    require_asset 'jquery/draggable_lists'
+  end
+  require_asset 'jquery.visible.min'
+  require_asset 'jquery/active_scaffold'
+  require_asset 'jquery/jquery.editinplace'
 %>
 ActiveScaffold.config = <%= ActiveScaffold.js_config.to_json %>;
 <%
-  ActiveScaffold.javascripts.each {|js| require_asset js}
-  ActiveScaffold::Bridges.all_javascripts.each {|js| require_asset js}
+  ActiveScaffold.javascripts.each { |js| require_asset js }
+  ActiveScaffold::Bridges.all_javascripts.each { |js| require_asset js }
 %>

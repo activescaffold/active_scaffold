@@ -1,7 +1,7 @@
 module ActiveScaffold::Actions
   module List
     def self.included(base)
-      base.before_action :list_authorized_filter, :only => :index
+      base.before_action :list_authorized_filter, only: :index
       base.helper_method :list_columns, :count_on_association_class?
     end
 
@@ -32,19 +32,19 @@ module ActiveScaffold::Actions
 
     def list_respond_to_html
       if loading_embedded?
-        render :action => 'list', :layout => false
+        render action: 'list', layout: false
       else
-        render :action => 'list'
+        render action: 'list'
       end
     end
 
     def list_respond_to_js
       if params[:adapter] || loading_embedded?
-        render(:partial => 'list_with_header')
+        render partial: 'list_with_header'
       else
         @auto_pagination = params[:auto_pagination]
         @popstate = params.delete(:_popstate)
-        render :partial => 'refresh_list', :formats => [:js]
+        render partial: 'refresh_list', formats: [:js]
       end
     end
 
@@ -57,22 +57,17 @@ module ActiveScaffold::Actions
     end
 
     def row_respond_to_html
-      render(:partial => 'row', :locals => {:record => @record})
+      render partial: 'row', locals: {record: @record}
     end
 
     def row_respond_to_js
-      render :action => 'row'
+      render action: 'row'
     end
 
     # The actual algorithm to prepare for the list view
     def set_includes_for_columns(action = :list, sorting = active_scaffold_config.list.user.sorting)
       @cache_associations = true
-      columns =
-        if respond_to?(:"#{action}_columns", true)
-          send(:"#{action}_columns")
-        else
-          active_scaffold_config.send(action).columns.visible_columns(flatten: true)
-        end
+      columns = columns_for_action(action)
       joins_cols, preload_cols = columns.select { |c| c.includes.present? }.partition do |col|
         includes_need_join?(col, sorting) && !grouped_search?
       end
@@ -81,10 +76,19 @@ module ActiveScaffold::Actions
       set_includes_for_sorting(columns, sorting) if sorting.sorts_by_sql?
     end
 
+    def columns_for_action(action)
+      if respond_to?(:"#{action}_columns", true)
+        send(:"#{action}_columns")
+      else
+        active_scaffold_config.send(action).columns.visible_columns(flatten: true)
+      end
+    end
+
     def set_includes_for_sorting(columns, sorting)
       sorting.each_column do |col|
         next if sorting.constraint_columns.include? col.name
-        next unless col.includes.present? && !columns.include?(col)
+        next unless col.includes.present? && columns.exclude?(col)
+
         if active_scaffold_config.model.connection.needs_order_expressions_in_select?
           active_scaffold_references << col.includes
         else
@@ -130,11 +134,7 @@ module ActiveScaffold::Actions
     end
 
     def columns_to_cache_counts
-      list_columns.select do |col|
-        col.association&.collection? && col.includes.blank? && col.associated_number? &&
-          !ActiveScaffold::OrmChecks.tableless?(col.association.klass) &&
-          !col.association.reverse_association&.counter_cache
-      end
+      list_columns.select(&:cache_count?)
     end
 
     def cache_column_counts(records)
@@ -166,18 +166,18 @@ module ActiveScaffold::Actions
       if column.association.as
         query.where!(column.association.reverse_association.foreign_type => active_scaffold_config.model.name)
       end
-      if column.association.scope
-        query = query.instance_exec(&column.association.scope)
-      end
+      query = query.instance_exec(&column.association.scope) if column.association.scope
       query.group(column.association.foreign_key)
     end
 
     def count_query_with_join(column, records)
       klass = column.association.klass
       query = active_scaffold_config.model.where(active_scaffold_config.primary_key => records.map(&:id))
-                                    .joins(column.name).group(active_scaffold_config.primary_key)
-                                    .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
-      query = query.distinct if column.association.scope && klass.instance_exec(&column.association.scope).values[:distinct]
+                .joins(column.name).group(active_scaffold_config.primary_key)
+                .select("#{klass.quoted_table_name}.#{klass.quoted_primary_key}")
+      if column.association.scope && klass.instance_exec(&column.association.scope).values[:distinct]
+        query = query.distinct
+      end
       query
     end
 
@@ -195,8 +195,8 @@ module ActiveScaffold::Actions
 
     def find_page_options
       options = {
-        :sorting => active_scaffold_config.list.user.sorting,
-        :count_includes => active_scaffold_config.list.user.count_includes
+        sorting: active_scaffold_config.list.user.sorting,
+        count_includes: active_scaffold_config.list.user.count_includes
       }
 
       paginate = params[:format].nil? ? accepts?(:html, :js) : %w[html js].include?(params[:format])
@@ -208,7 +208,7 @@ module ActiveScaffold::Actions
 
       if active_scaffold_config.list.auto_select_columns
         auto_select_columns = list_columns + [active_scaffold_config.columns[active_scaffold_config.model.primary_key]]
-        options[:select] = auto_select_columns.map { |c| quoted_select_columns(c.select_columns) }.compact.flatten
+        options[:select] = auto_select_columns.filter_map { |c| quoted_select_columns(c.select_columns) }.flatten
       end
 
       options
@@ -227,12 +227,12 @@ module ActiveScaffold::Actions
       do_list
     end
 
-    def each_record_in_page
-      page_items.each { |record| yield record }
+    def each_record_in_page(&block)
+      page_items.each(&block)
     end
 
-    def each_record_in_scope
-      scoped_query.each { |record| yield record }
+    def each_record_in_scope(&block)
+      scoped_query.each(&block)
     end
 
     def page_items
@@ -257,7 +257,7 @@ module ActiveScaffold::Actions
     # The default security delegates to ActiveRecordPermissions.
     # You may override the method to customize.
     def list_authorized?
-      authorized_for?(:crud_type => :read)
+      authorized_for?(crud_type: :read)
     end
 
     def action_update_respond_to_js
@@ -271,7 +271,7 @@ module ActiveScaffold::Actions
           if active_scaffold_config.list.calculate_etag
             @records.to_a
           elsif active_scaffold_config.list.user.sorting
-            {:etag => active_scaffold_config.list.user.sorting.clause}
+            {etag: active_scaffold_config.list.user.sorting.clause}
           end
         end
       objects.presence || super

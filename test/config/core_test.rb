@@ -1,28 +1,28 @@
 require 'test_helper'
 
 module Config
-  class CoreTest < Minitest::Test
-    class ModelStubsController < ActionController::Base
+  class CoreTest < ActiveSupport::TestCase
+    class ModelStubsController < ApplicationController
       include ActiveScaffold::Core
     end
+
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       ModelStubsController.instance_variable_set :@active_scaffold_config, @config
     end
 
     def test_default_options
-      refute @config.add_sti_create_links?
-      refute @config.sti_children
+      assert_not @config.add_sti_create_links?
+      assert_not @config.sti_children
       assert_equal %i[create list search update delete show nested subform], @config.actions.to_a
-      assert_equal :default, @config.frontend
       assert_equal :default, @config.theme
-      assert_equal 'Model stub', @config.label(:count => 1)
+      assert_equal 'Model stub', @config.label(count: 1)
       assert_equal 'ModelStubs', @config.label
     end
 
     def test_add_sti_children
       @config.sti_create_links = true
-      refute @config.add_sti_create_links?
+      assert_not @config.add_sti_create_links?
       @config.sti_children = [:a]
       assert @config.add_sti_create_links?
     end
@@ -35,7 +35,7 @@ module Config
     def test_actions
       assert @config.actions.include?(:create)
       @config.actions = [:list]
-      refute @config.actions.include?(:create)
+      assert_not @config.actions.include?(:create)
       assert_equal [:list], @config.actions.to_a
     end
 

@@ -2,12 +2,14 @@ module ActiveScaffold
   module OrmChecks
     class << self
       def active_record?(klass)
-        return unless defined? ActiveRecord
+        return false unless defined? ActiveRecord
+
         klass < ActiveRecord::Base
       end
 
       def mongoid?(klass)
-        return unless defined? Mongoid
+        return false unless defined? Mongoid
+
         klass < Mongoid::Document
       end
 
@@ -61,7 +63,7 @@ module ActiveScaffold
         if active_record? klass
           klass.content_columns
         elsif mongoid? klass
-          klass.fields.reject { |field, _| field == '_id' }.values
+          klass.fields.except('_id').values
         else
           []
         end
@@ -108,7 +110,7 @@ module ActiveScaffold
 
     %i[_table_name _quoted_table_name _columns _columns_hash _reflect_on_all_associations _content_columns].each do |method|
       define_method method do
-        ActiveScaffold::OrmChecks.send method.to_s[1..-1], active_record_class
+        ActiveScaffold::OrmChecks.send method.to_s[1..], active_record_class
       end
     end
 

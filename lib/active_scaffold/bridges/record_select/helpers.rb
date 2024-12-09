@@ -26,22 +26,20 @@ class ActiveScaffold::Bridges::RecordSelect
 
       def active_scaffold_record_select(record, column, options, value, multiple, ui_options: column.options)
         unless column.association
-          raise ArgumentError, "record_select can only work against associations (and #{column.name} is not). "\
-            'A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user).'
+          raise ArgumentError, "record_select can only work against associations (and #{column.name} is not). " \
+                               'A common mistake is to specify the foreign key field (like :user_id), instead of the association (:user).'
         end
         klass = column.association.klass(record)
-        return content_tag :span, '', :class => options[:class] unless klass
+        return content_tag :span, '', class: options[:class] unless klass
 
         remote_controller = active_scaffold_controller_for(klass).controller_path
 
-        # if the opposite association is a :belongs_to (in that case association in this class must be has_one or has_many)
-        # then only show records that have not been associated yet
-        if column.association.has_one? || column.association.has_many?
-          params[column.association.foreign_key] = ''
-        end
+        # if the opposite association is a :belongs_to (in that case association in this class must be has_one or
+        # has_many) then only show records that have not been associated yet
+        params[column.association.foreign_key] = '' if column.association.has_one? || column.association.has_many?
 
         record_select_options = active_scaffold_input_text_options(options).merge(
-          :controller => remote_controller
+          controller: remote_controller
         )
         record_select_options.merge!(ui_options)
 
@@ -57,7 +55,7 @@ class ActiveScaffold::Bridges::RecordSelect
 
       def active_scaffold_record_select_autocomplete(record, column, options, ui_options: column.options)
         record_select_options = active_scaffold_input_text_options(options).reverse_merge(
-          :controller => active_scaffold_controller_for(record.class).controller_path
+          controller: active_scaffold_controller_for(record.class).controller_path
         ).merge(ui_options)
         html = record_select_autocomplete(options[:name], record, record_select_options)
         html = instance_exec(html, self, &self.class.field_error_proc) if record.errors[column.name].any?
@@ -73,8 +71,9 @@ class ActiveScaffold::Bridges::RecordSelect
 
       def field_search_record_select_value(column, value, ui_options: column.options)
         return if value.blank?
+
         if ui_options[:multiple]
-          column.association.klass.find value.select(&:present?).collect!(&:to_i)
+          column.association.klass.find value.compact_blank.collect!(&:to_i)
         else
           column.association.klass.find(value.to_i)
         end

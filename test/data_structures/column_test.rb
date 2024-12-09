@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ColumnTest < Minitest::Test
+class ColumnTest < ActiveSupport::TestCase
   def setup
     @column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
     @association_col = ActiveScaffold::DataStructures::Column.new(:b, ModelStub)
@@ -30,12 +30,12 @@ class ColumnTest < Minitest::Test
     assert_equal 'style_me', @column.css_class
 
     # required
-    refute @column.required?, 'default is false'
+    assert_not @column.required?, 'default is false'
     @column.required = true
     assert @column.required?, 'can be changed'
 
     # calculation
-    refute @column.calculation?, 'default is nil'
+    assert_not @column.calculation?, 'default is nil'
     @column.calculate = :sum
     assert @column.calculation?, 'can be changed'
   end
@@ -51,33 +51,33 @@ class ColumnTest < Minitest::Test
   def test_equality
     # create a separate columns object, and make sure it's not ==
     columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b)
-    refute_equal columns, @column
+    assert_not_equal columns, @column
 
     # create a separate action_columns object, and make sure it's not ==
     columns = ActiveScaffold::DataStructures::ActionColumns.new(:a, :b)
-    refute_equal columns, @column
+    assert_not_equal columns, @column
 
     # identity
     assert_equal @column, @column
 
     # string comparison
     assert_equal @column, 'a'
-    refute_equal @column, 'fake'
+    assert_not_equal @column, 'fake'
 
     # symbol comparison
     assert_equal @column, :a
-    refute_equal @column, :fake
+    assert_not_equal @column, :fake
 
     # comparison with different object of same type
     column2 = ActiveScaffold::DataStructures::Column.new(:fake, ModelStub)
-    refute_equal @column, column2
+    assert_not_equal @column, column2
     column2 = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
     assert_equal @column, column2
 
     # special comparisons
-    refute @column.nil?
-    refute_equal @column, ''
-    refute_equal @column, 0
+    assert_not @column.nil?
+    assert_not_equal @column, ''
+    assert_not_equal @column, 0
   end
 
   def test_ui
@@ -104,14 +104,14 @@ class ColumnTest < Minitest::Test
 
   def test_searchable
     @column.search_sql = nil
-    refute @column.searchable?
+    assert_not @column.searchable?
     @column.search_sql = true
     assert @column.searchable?
   end
 
   def test_sortable
     @column.sort = nil
-    refute @column.sortable?
+    assert_not @column.sortable?
     @column.sort = true
     assert @column.sortable?
   end
@@ -126,24 +126,24 @@ class ColumnTest < Minitest::Test
 
   def test_custom_sort
     @column.sort = true
-    hash = {:sql => '"model_stubs"."a"'}
+    hash = {sql: '"model_stubs"."a"'}
     assert_equal hash, @column.sort
-    @column.sort_by :sql => 'foobar'
-    hash = {:sql => 'foobar'}
+    @column.sort_by sql: 'foobar'
+    hash = {sql: 'foobar'}
     assert_equal hash, @column.sort
 
     some_proc = proc { 'foobar' }
-    @column.sort_by :method => some_proc
-    hash = {:method => some_proc}
+    @column.sort_by method: some_proc
+    hash = {method: some_proc}
     assert_equal hash, @column.sort
     assert @column.sortable?
   end
 
   def test_custom_sort__should_assert_keys
-    assert_raises(ArgumentError) { @column.sort_by :proc => 'invalid config'  }
-    assert_raises(ArgumentError) { @column.sort = {:proc => 'invalid config'} }
-    assert_equal({:method => 'method'}, @column.sort_by(:method => 'method'))
-    assert_equal({:sql => 'method'}, @column.sort_by(:sql => 'method'))
+    assert_raises(ArgumentError) { @column.sort_by proc: 'invalid config'  }
+    assert_raises(ArgumentError) { @column.sort = {proc: 'invalid config'} }
+    assert_equal({method: 'method'}, @column.sort_by(method: 'method'))
+    assert_equal({sql: 'method'}, @column.sort_by(sql: 'method'))
   end
 
   def test_config_block

@@ -5,6 +5,7 @@ module ActiveScaffold
       def show_column_value(record, column)
         value_record = column.delegated_association ? record.send(column.delegated_association.name) : record
         return get_column_value(record, column) unless value_record
+
         # check for an override helper
         if (method = show_column_override(column))
           # we only pass the record as the argument. we previously also passed the formatted_value,
@@ -14,10 +15,10 @@ module ActiveScaffold
         # second, check if the dev has specified a valid list_ui for this column
         elsif column.show_ui && (method = override_show_column_ui(column.show_ui))
           send(method, value_record, column, ui_options: column.show_ui_options || column.options)
-        elsif column.column && (method = override_show_column_ui(column.column_type))
+        elsif column.column && (method = override_show_column_ui(column.column_type)) # rubocop:disable Lint/DuplicateBranch
           send(method, value_record, column)
         else
-          get_column_value(record, column)
+          get_column_value(value_record, column)
         end
       end
 
@@ -27,12 +28,14 @@ module ActiveScaffold
 
       def active_scaffold_show_horizontal(record, column, ui_options: column.options)
         raise ':horizontal show_ui must be used on association column' unless column.association
-        render :partial => 'show_association', :locals => {:column => column, :parent_record => record, :show_partial => :horizontal}
+
+        render partial: 'show_association', locals: {column: column, parent_record: record, show_partial: :horizontal}
       end
 
       def active_scaffold_show_vertical(record, column, ui_options: column.options)
         raise ':vertical show_ui must be used on association column' unless column.association
-        render :partial => 'show_association', :locals => {:column => column, :parent_record => record, :show_partial => :vertical}
+
+        render partial: 'show_association', locals: {column: column, parent_record: record, show_partial: :vertical}
       end
 
       def show_columns_for(record, parent_column = nil, hash = {})

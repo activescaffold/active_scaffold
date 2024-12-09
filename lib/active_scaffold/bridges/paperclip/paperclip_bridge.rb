@@ -24,7 +24,7 @@ module ActiveScaffold
           columns[field].params.add "delete_#{field}"
 
           %i[file_name content_type file_size updated_at].each do |f|
-            columns.exclude("#{field}_#{f}".to_sym)
+            columns.exclude(:"#{field}_#{f}")
           end
         end
       end

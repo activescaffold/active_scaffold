@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift File.expand_path('lib', __dir__)
 require 'active_scaffold/version'
 
 Gem::Specification.new do |s|
@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors = ['Many, see README']
   s.homepage = 'https://github.com/activescaffold/active_scaffold'
   s.summary = 'Rails 4.x and 5.x versions of ActiveScaffold supporting prototype and jquery'
-  s.description = 'Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. '\
-                  'ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, '\
+  s.description = 'Save time and headaches, and create a more easily maintainable set of pages, with ActiveScaffold. ' \
+                  'ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, ' \
                   'leaving you more time to focus on more challenging (and interesting!) problems.'
   s.require_paths = ['lib']
   s.files = `git ls-files {app,config/locales,lib,public,shoulda_macros,vendor}`.split("\n") + %w[LICENSE.md CHANGELOG.rdoc README.md]
@@ -18,15 +18,14 @@ Gem::Specification.new do |s|
     'README.md'
   ]
   s.license = 'MIT'
-  s.test_files = `git ls-files test`.split("\n")
 
-  s.required_ruby_version = '>= 2.5'
+  s.required_ruby_version = '>= 3.0'
 
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
-  s.add_runtime_dependency('rails', '>= 5.2.0')
+  s.add_dependency('rails', '>= 5.2.0')
   # Deep Freeze Ruby Objects
-  s.add_runtime_dependency('cow_proxy', '~> 0.3')
-  s.add_runtime_dependency('ice_nine', '~> 0.11')
-  s.add_runtime_dependency('request_store', '~> 1.3')
+  s.add_dependency('ice_nine', '~> 0.11')
+  s.add_dependency('request_store', '~> 1.3')
+  s.metadata['rubygems_mfa_required'] = 'true'
 end

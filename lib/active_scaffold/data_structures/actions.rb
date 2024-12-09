@@ -16,8 +16,8 @@ class ActiveScaffold::DataStructures::Actions
   end
   alias << add
 
-  def each
-    @set.each { |item| yield item }
+  def each(&block)
+    @set.each(&block)
   end
 
   def include?(val)
@@ -40,6 +40,6 @@ class ActiveScaffold::DataStructures::Actions
 
   # called during clone or dup. makes the clone/dup deeper.
   def initialize_copy(from)
-    @set = from.instance_variable_get('@set').clone
+    @set = from.instance_variable_get(:@set).clone
   end
 end

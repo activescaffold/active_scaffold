@@ -10,24 +10,15 @@
 Metrics/AbcSize:
   Max: 122
 
-# Offense count: 99
-Metrics/CyclomaticComplexity:
+Style/OptionalBooleanParameter:
   Exclude:
+    - lib/active_scaffold/attribute_params.rb
     - lib/active_scaffold/helpers/*
-    - lib/active_scaffold/extensions/*
-    - lib/active_scaffold/bridges/**/*
-    - lib/active_scaffold/config/*
-    - lib/active_scaffold/data_structures/*
-    - lib/active_scaffold/actions/core.rb
-    - lib/active_scaffold/finder.rb
-    - lib/active_scaffold/constraints.rb
-    - lib/active_scaffold/active_record_permissions.rb
-    - lib/active_scaffold/core.rb
 
 # Offense count: 1857
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
-Metrics/LineLength:
+Layout/LineLength:
   Max: 200
 
 # Offense count: 195
@@ -37,12 +28,11 @@ Metrics/MethodLength:
 
 # Offense count: 93
 Metrics/PerceivedComplexity:
-  Max: 29
+  Max: 39
 
-# Offense count: 1
-Naming/AccessorMethodName:
+Rails/OutputSafety:
   Exclude:
-    - 'lib/active_scaffold/data_structures/set.rb'
+    - app/**/*
 
 # Offense count: 84
 # Configuration parameters: EnforcedStyle, SupportedStyles.

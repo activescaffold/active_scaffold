@@ -16,10 +16,6 @@ module ActiveScaffold::Config
     cattr_accessor :plugin_directory
     @@plugin_directory = File.expand_path(__FILE__).match(%{(^.*)/lib/active_scaffold/config/core.rb})[1]
 
-    # lets you specify a global ActiveScaffold frontend.
-    cattr_accessor :frontend, instance_accessor: false
-    @@frontend = :default
-
     # lets you specify a global ActiveScaffold theme for your frontend.
     cattr_accessor :theme, instance_accessor: false
     @@theme = :default
@@ -103,20 +99,19 @@ module ActiveScaffold::Config
 
     # provides read/write access to the local Actions DataStructure
     attr_reader :actions
+
     def actions=(args)
       @actions = ActiveScaffold::DataStructures::Actions.new(*args)
     end
 
     # provides read/write access to the local Columns DataStructure
     attr_reader :columns
+
     def columns=(val)
       @columns._inheritable = val.collect(&:to_sym)
       # Add virtual columns
       @columns.add(*val)
     end
-
-    # lets you override the global ActiveScaffold frontend for a specific controller
-    attr_accessor :frontend
 
     # lets you override the global ActiveScaffold theme for a specific controller
     attr_accessor :theme
@@ -135,6 +130,7 @@ module ActiveScaffold::Config
 
     # lets you specify whether add a create link for each sti child for a specific controller
     attr_accessor :sti_create_links
+
     def add_sti_create_links?
       sti_create_links && !sti_children.nil?
     end
@@ -144,8 +140,9 @@ module ActiveScaffold::Config
 
     # a generally-applicable name for this ActiveScaffold ... will be used for generating page/section headers
     attr_writer :label
+
     def label(options = {})
-      as_(@label, options) || model.model_name.human(options.merge(options[:count].to_i == 1 ? {} : {:default => model.name.pluralize}))
+      as_(@label, options) || model.model_name.human(options.merge(options[:count].to_i == 1 ? {} : {default: model.name.pluralize}))
     end
 
     # STI children models, use an array of model names
@@ -161,7 +158,7 @@ module ActiveScaffold::Config
     ## internal usage only below this point
     ## ------------------------------------
 
-    def initialize(model_id)
+    def initialize(model_id) # rubocop:disable Lint/MissingSuper
       # model_id is the only absolutely required configuration value. it is also not publicly accessible.
       @model_id = model_id
       setup_user_setting_key
@@ -181,10 +178,8 @@ module ActiveScaffold::Config
       content_columns = Set.new(_content_columns.map(&:name))
       @columns.exclude(*self.class.ignore_columns)
       @columns.exclude(*@columns.find_all { |c| c.column && content_columns.exclude?(c.column.name) }.collect(&:name))
-      @columns.exclude(*model.reflect_on_all_associations.collect { |a| a.foreign_type.to_sym if a.options[:polymorphic] }.compact)
+      @columns.exclude(*model.reflect_on_all_associations.filter_map { |a| a.foreign_type.to_sym if a.options[:polymorphic] })
 
-      # inherit the global frontend
-      @frontend = self.class.frontend
       @theme = self.class.theme
       @cache_action_link_urls = self.class.cache_action_link_urls
       @cache_association_options = self.class.cache_association_options
@@ -212,6 +207,7 @@ module ActiveScaffold::Config
     # To be called after your finished configuration
     def _configure_sti
       return if sti_children.nil?
+
       column = model.inheritance_column
       if sti_create_links
         columns[column].form_ui ||= :hidden
@@ -238,7 +234,7 @@ module ActiveScaffold::Config
     end
 
     def respond_to_missing?(name, include_all = false)
-      self.class.config_class?(name) && @actions.include?(name.to_sym) || super
+      (self.class.config_class?(name) && @actions.include?(name.to_sym)) || super
     end
 
     def [](action_name)
@@ -249,6 +245,7 @@ module ActiveScaffold::Config
       unless @actions.include? underscored_name
         raise "#{action_name.to_s.camelcase} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
       end
+
       @action_configs ||= {}
       @action_configs[underscored_name] ||= klass.new(self)
     end
@@ -272,7 +269,7 @@ module ActiveScaffold::Config
     end
 
     def self.respond_to_missing?(name, include_all = false)
-      config_class?(name) && @@actions.include?(name.to_s.underscore) || super
+      (config_class?(name) && @@actions.include?(name.to_s.underscore)) || super
     end
     # some utility methods
     # --------------------
@@ -304,28 +301,15 @@ module ActiveScaffold::Config
       action_columns
     end
 
-    # must be a class method so the layout doesn't depend on a controller that uses active_scaffold
-    # note that this is unaffected by per-controller frontend configuration.
-    def self.asset_path(filename, frontend = self.frontend)
-      "active_scaffold/#{frontend}/#{filename}"
-    end
-
-    # must be a class method so the layout doesn't depend on a controller that uses active_scaffold
-    # note that this is unaffected by per-controller frontend configuration.
-    def self.javascripts(frontend = self.frontend)
-      javascript_dir = File.join(Rails.public_path, 'javascripts', asset_path('', frontend))
-      Dir.entries(javascript_dir).reject { |e| !e.match(/\.js$/) || (!dhtml_history? && e.match('dhtml_history')) }
-    end
-
-    def self.available_frontends
-      frontends_dir = Rails.root.join('vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
-      Dir.entries(frontends_dir).reject { |e| e.match(/^\./) } # Get rid of files that start with .
-    end
-
     class UserSettings < Base::UserSettings
       include ActiveScaffold::Configurable
       user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
                 :timestamped_messages, :highlight_messages
+      attr_writer :label
+
+      def label(options = {})
+        @label ? as_(@label, options) : @conf.label(options)
+      end
 
       def method_missing(name, *args)
         value = @conf.actions.include?(name) ? @conf.send(name) : super
@@ -369,27 +353,36 @@ module ActiveScaffold::Config
       end
 
       def [](name)
-        return nil unless @global_columns[name]
-        @columns[name.to_sym] ||= CowProxy.wrap @global_columns[name]
+        @columns[name.to_sym] || @global_columns[name]
+      end
+
+      def override(name)
+        raise ArgumentError, "column '#{name}' doesn't exist" unless @global_columns[name]
+
+        (@columns[name.to_sym] ||= ActiveScaffold::DataStructures::ProxyColumn.new(@global_columns[name])).tap do |col|
+          yield col if block_given?
+        end
       end
 
       def each
         return enum_for(:each) unless block_given?
+
         @global_columns.each do |col|
           yield self[col.name]
         end
       end
 
-      def method_missing(name, *args, &block)
-        if @global_columns.respond_to?(name, true)
-          @global_columns.send(name, *args, &block)
+      def method_missing(name, ...)
+        if respond_to_missing?(name, true)
+          @global_columns.send(name, ...)
         else
           super
         end
       end
 
+      DONT_DELEGATE = %i[add exclude add_association_columns _inheritable=].freeze
       def respond_to_missing?(name, include_all = false)
-        @global_columns.respond_to?(name, include_all) || super
+        (DONT_DELEGATE.exclude?(name) && @global_columns.respond_to?(name, include_all)) || super
       end
     end
   end

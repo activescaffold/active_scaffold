@@ -2,6 +2,7 @@ module ActiveScaffold::DataStructures::Association
   class ActiveMongoid < Mongoid
     def self.reflect_on_all_associations(klass)
       return [] unless klass.respond_to? :am_relations
+
       klass.am_relations.values
     end
 

@@ -4,7 +4,7 @@
   xhr ||= request.xhr?
   options = {
     id: element_form_id(action: 'search'),
-    class: "as_form search",
+    class: 'as_form search',
     remote: xhr,
     data: {loading: true},
     method: :get
@@ -27,10 +27,10 @@
     <% end -%>
     <% unless hiddens.empty?  -%>
       <li class="sub-section">
-      <% further_options_id = sub_section_id(:sub_section => 'further_options') %>
+      <% further_options_id = sub_section_id(sub_section: 'further_options') %>
       <h5>
         <%= as_(:optional_attributes) %>
-        <%= link_to_visibility_toggle(further_options_id, {:default_visible => false}) %>
+        <%= link_to_visibility_toggle(further_options_id, default_visible: false) %>
       </h5>
       <ol id ="<%= further_options_id %>" class="form" style="display:none;">
       <% hiddens.each do |column| -%>
@@ -50,8 +50,8 @@
         reset_attrs.merge! remote: true, data: {refresh: true}
       end
     %>
-    <%= submit_tag as_(submit_text), :class => "submit" %>
-    <%= link_to as_(:reset), url_for(url_options.merge(:search => '')), reset_attrs unless local_assigns[:skip_reset] %>
-    <%= loading_indicator_tag(:action => :search) %>
+    <%= submit_tag as_(submit_text), class: 'submit' %>
+    <%= link_to as_(:reset), url_for(url_options.merge(search: '')), reset_attrs unless local_assigns[:skip_reset] %>
+    <%= loading_indicator_tag(action: :search) %>
   </p>
 </form>

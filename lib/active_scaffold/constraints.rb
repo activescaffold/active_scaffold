@@ -13,6 +13,7 @@ module ActiveScaffold
 
     def columns_from_constraint(column_name, value)
       return if params_hash?(value)
+
       if value.is_a?(Array)
         column = active_scaffold_config.columns[column_name]
         if column&.association&.polymorphic?
@@ -37,16 +38,18 @@ module ActiveScaffold
       constrained_fields |= active_scaffold_constraints.flat_map { |k, v| columns_from_constraint(k, v) }.compact
       exclude_actions = []
       %i[list update].each do |action_name|
-        if active_scaffold_config.actions.include? action_name
-          exclude_actions << action_name unless active_scaffold_config.send(action_name).hide_nested_column
+        if active_scaffold_config.actions.include?(action_name) && !active_scaffold_config.send(action_name).hide_nested_column
+          exclude_actions << action_name
         end
       end
 
       # we actually want to do this whether constrained_fields exist or not, so that we can reset the array when they don't
       active_scaffold_config.actions.each do |action_name|
         next if exclude_actions.include?(action_name)
+
         action = active_scaffold_config.send(action_name)
         next unless action.respond_to? :columns
+
         action.columns.constraint_columns = constrained_fields
       end
     end
@@ -67,13 +70,13 @@ module ActiveScaffold
           # Assume this is a multi-level association constraint.
           # example:
           #   data model: Park -> Den -> Bear
-          #   constraint: :den => {:park => 5}
+          #   constraint: den: {park: 5}
           if params_hash? v
             far_association = column.association.klass.reflect_on_association(v.keys.first)
             field = far_association.klass.primary_key
             table = far_association.table_name
 
-            active_scaffold_references.concat([{k => far_association.name}]) # e.g. {:den => :park}
+            active_scaffold_references.push({k => far_association.name}) # e.g. {den: :park}
             hash_conditions.deep_merge!(table => {field => v.values.first})
 
           # association column constraint
@@ -93,7 +96,7 @@ module ActiveScaffold
           raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
         end
       end
-      conditions.reject(&:blank?)
+      conditions.compact_blank
     end
 
     def join_from_association_constraint(column)
@@ -131,7 +134,8 @@ module ActiveScaffold
         unless value.is_a?(Array) && value.size >= 2
           raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller
         end
-        condition = {table => {association.foreign_type => value[0], field => value.size == 2 ? value[1] : value[1..-1]}}
+
+        condition = {table => {association.foreign_type => value[0], field => value.size == 2 ? value[1] : value[1..]}}
       else
         condition = {table => {field.to_s => value}}
       end
@@ -169,14 +173,15 @@ module ActiveScaffold
             unless v.is_a?(Array) && v.size >= 2
               raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller
             end
+
             if v.size == 2
-              record.send("#{k}=", v[0].constantize.find(v[1]))
+              record.send(:"#{k}=", v[0].constantize.find(v[1]))
             else
-              record.send("#{column.association.foreign_type}=", v[0])
+              record.send(:"#{column.association.foreign_type}=", v[0])
             end
           elsif !column.association.source_reflection&.options&.include?(:through) && # regular singular association, or one-level through association
                 !v.is_a?(Array)
-            record.send("#{k}=", column.association.klass.find(v))
+            record.send(:"#{k}=", column.association.klass.find(v))
 
             # setting the belongs_to side of a has_one isn't safe. if the has_one was already
             # specified, rails won't automatically clear out the previous associated record.
@@ -185,11 +190,11 @@ module ActiveScaffold
             # run operations where activerecord auto-saves the object.
             reverse = column.association.reverse_association
             if reverse&.singular? && !reverse.belongs_to? && options[:allow_autosave]
-              record.send(k).send("#{reverse.name}=", record)
+              record.send(k).send(:"#{reverse.name}=", record)
             end
           end
         else
-          record.send("#{k}=", v)
+          record.send(:"#{k}=", v)
         end
       end
     end

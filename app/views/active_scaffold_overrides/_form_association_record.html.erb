@@ -1,14 +1,13 @@
 <%
   record_column = column
-  record = form_association_record
-  readonly = (record.readonly? or not record.authorized_for?(:crud_type => :update))
+  readonly = record.readonly? || !record.authorized_for?(crud_type: :update)
   crud_type = record.new_record? ? :create : (readonly ? :read : :update)
   show_actions = false
   locked ||= false
   config = active_scaffold_config_for(record.class)
   columns ||= config.subform.columns
   scope = column_scope(record_column, scope, record)
-  options = active_scaffold_input_options(config.columns[record.class.primary_key], scope, :object => record)
+  options = active_scaffold_input_options(config.columns[record.class.primary_key], scope, object: record)
   tr_id = "association-#{options[:id]}"
   layout ||= config.subform.layout
 
@@ -34,14 +33,14 @@
   columns_length = 0
   columns_groups = []
 -%>
-<%= content_tag record_tag, :class => "sub-form-record" do %>
+<%= content_tag record_tag, class: 'sub-form-record' do %>
   <% unless record.errors.empty? -%>
-  <%= content_tag error_tag, :class => "association-record-errors", :id => element_messages_id(:action => record.class.name.underscore, :id => "#{parent_record.id}-#{index}") do %>
-    <% errors = active_scaffold_error_messages_for(:record, :object => record) %>
-    <%= error_inner_tag ? content_tag(error_inner_tag, errors, :colspan => (active_scaffold_config_for(record.class).subform.columns.length + 1 if error_inner_tag == :td)) : errors %>
+  <%= content_tag error_tag, class: 'association-record-errors', id: element_messages_id(action: record.class.name.underscore, id: "#{parent_record.id}-#{index}") do %>
+    <% errors = active_scaffold_error_messages_for(:record, object: record) %>
+    <%= error_inner_tag ? content_tag(error_inner_tag, errors, colspan: (active_scaffold_config_for(record.class).subform.columns.length + 1 if error_inner_tag == :td)) : errors %>
   <% end %>
   <% end %>
-  <%= content_tag row_tag, :id => tr_id, :class => "association-record#{' association-record-new' if record.new_record?}#{' locked' if locked}" do %>
+  <%= content_tag row_tag, id: tr_id, class: "association-record#{' association-record-new' if record.new_record?}#{' locked' if locked}" do %>
   <% columns.each_column(for: record.class, crud_type: :read, flatten: flatten) do |column| %>
   <%
     if column.respond_to? :each_column
@@ -58,18 +57,18 @@
     col_class << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
     col_class << 'hidden' if column_renders_as(column) == :hidden
   -%>
-    <%= content_tag column_tag, :class => col_class.join(' ') do %>
+    <%= content_tag column_tag, class: col_class.join(' ') do %>
       <%= active_scaffold_render_subform_column(column, scope, crud_type, readonly, false, record) %>
     <% end %>
   <% end -%>
   <% if show_actions -%>
-    <%= content_tag column_tag, :class => "actions" do %>
+    <%= content_tag column_tag, class: 'actions' do %>
       <% if record_column.association.collection? && !locked %>
         <%
-          auth = [:destroy, :delete_all, :delete].exclude?(record_column.association.dependent)
-          auth, reason = record.authorized_for?(:crud_type => :delete, :reason => true) unless auth
+          auth = %i[destroy delete_all delete].exclude?(record_column.association.dependent)
+          auth, reason = record.authorized_for?(crud_type: :delete, reason: true) unless auth
         %>
-        <%= auth ? link_to(as_(:remove), '#', :class => 'destroy', :id => "#{options[:id]}-destroy" , :data => {:delete_id => tr_id}) : reason %>
+        <%= auth ? link_to(as_(:remove), '#', class: 'destroy', id: "#{options[:id]}-destroy", data: {delete_id: tr_id}) : reason %>
       <% end %>
       <% unless record.new_record? %>
         <input type="hidden" name="<%= options[:name] -%>" id="<%= options[:id] -%>" value="<%= record.id -%>" />
@@ -79,7 +78,7 @@
   <% end %>
 
   <% columns_groups.each do |columns_group| %>
-  <%= content_tag row_tag, :class => 'associated-record' do %>
+  <%= content_tag row_tag, class: 'associated-record' do %>
     <% if layout == :vertical %>
       <% columns_group.each_column(for: record.class, crud_type: :read, flatten: true) do |col| %>
         <%
@@ -88,12 +87,12 @@
           col_class << col.css_class unless col.css_class.nil? || col.css_class.is_a?(Proc)
           col_class << 'hidden' if column_renders_as(col) == :hidden
         %>
-        <%= content_tag column_tag, :class => col_class, :colspan => (columns_length if column_tag == :td) do %>
+        <%= content_tag column_tag, class: col_class, colspan: (columns_length if column_tag == :td) do %>
           <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, false, record) %>
         <% end %>
       <% end %>
     <% else %>
-      <%= content_tag column_tag, :colspan => (columns_length if column_tag == :td) do %>
+      <%= content_tag column_tag, colspan: (columns_length if column_tag == :td) do %>
       <% columns_group.each_column(for: record.class, crud_type: :read, flatten: true) do |col| %>
         <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, true, record) %>
       <% end %>

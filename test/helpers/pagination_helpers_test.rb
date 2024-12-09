@@ -1,11 +1,11 @@
 require 'test_helper'
 
-class PaginationHelpersTest < Minitest::Test
+class PaginationHelpersTest < ActiveSupport::TestCase
   include ActiveScaffold::Helpers::PaginationHelpers
   include ActionView::Helpers::OutputSafetyHelper
 
   def active_scaffold_config
-    @config ||= config_for('model_stub')
+    @active_scaffold_config ||= config_for('model_stub')
   end
 
   def test_links
@@ -53,9 +53,9 @@ class PaginationHelpersTest < Minitest::Test
 
   private
 
-  def links(current, last_page, window_size = 2, infinite = false)
-    paginator = stub(:last => stub(:number => last_page), :infinite? => infinite)
-    current_page = stub(:number => current, :pager => paginator)
+  def links(current, last_page, window_size = 2, infinite = false) # rubocop:disable Style/OptionalBooleanParameter
+    paginator = stub(last: stub(number: last_page), infinite?: infinite)
+    current_page = stub(number: current, pager: paginator)
     pagination_ajax_links(current_page, {}, {}, window_size, 0)
   end
 

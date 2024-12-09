@@ -1,13 +1,13 @@
 try {
-<% form_selector ||= "#{element_form_id(:action => :update, :id => @record&.id || params[:id])}" %>
+<% form_selector ||= element_form_id(action: :update, id: @record&.id || params[:id]) %>
 var action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
-if (action_link) action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
+if (action_link) action_link.update_flash_messages('<%= escape_javascript(render('messages')) %>');
 <% if successful? %>
   <% if params[:dont_close] %>
-    <% row_selector = element_row_id(:action => :list, :id => @record.id) %>
-    ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
+    <% row_selector = element_row_id(action: :list, id: @record.id) %>
+    ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render('list_record', record: @record)) %>');
     if (action_link) action_link.target = $('#<%= row_selector %>');
-    <%= render :partial => 'update_calculations', :formats => [:js] %>
+    <%= render 'update_calculations' %>
     <% if params[:iframe] == 'true' %>
       ActiveScaffold.enable_form('<%= form_selector %>');
     <% end %>
@@ -22,16 +22,16 @@ if (action_link) action_link.update_flash_messages('<%= escape_javascript(render
       <%= render 'refresh_list', no_history: true %>
     <% else %>
       <% if @record %>
-      if (action_link) action_link.close('<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
+      if (action_link) action_link.close('<%= escape_javascript(render('list_record', record: @record)) %>');
       <% else %>
       if (action_link) action_link.close();
-      ActiveScaffold.delete_record_row('<%= element_row_id(:action => :list, :id => params[:id]) %>');
+      ActiveScaffold.delete_record_row('<%= element_row_id(action: :list, id: params[:id]) %>');
       <% end %>
-      <%= render :partial => 'update_calculations', :formats => [:js] %>
+      <%= render 'update_calculations' %>
     <% end %>
   <% end %>
 <% else %>
-  ActiveScaffold.replace('<%= form_selector %>', '<%= escape_javascript(render(:partial => 'update_form', :locals => {:xhr => true})) %>');
+  ActiveScaffold.replace('<%= form_selector %>', '<%= escape_javascript(render('update_form', xhr: true)) %>');
   ActiveScaffold.scroll_to('<%= form_selector %>', true);
 <% end %>
 } catch (e) { alert('RJS error:\n\n' + e.toString());}
