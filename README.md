@@ -32,25 +32,15 @@ Added to Gemfile
 gem 'active_scaffold'
 ```
 
-For rails >= 5.1, add jquery-rails to Gemfile, and install generator will jquery to application.js before rails-ujs. Also it's possible to load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
+Add jquery-rails to Gemfile, and install generator will add jquery to application.js before rails-ujs. Also it's possible to load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
 
 ```ruby
 gem 'jquery-rails'
 ```
 
-For rails >= 6.0, installer generator will create app/assets/javascripts/application.js, add it to assets.precompile array and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack yet. Jquery may be loaded by packs or assets pipeline.
+For rails 6.1, install generator will create app/assets/javascripts/application.js, add it to assets.precompile array and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack. Jquery may be loaded by packs or assets pipeline.
 
-Run the following commands, for rails 4.2
-
-```console
-bundle install
-rails g active_scaffold:install
-bundle exec rake db:create
-rails g active_scaffold:resource Model [attrs]
-bundle exec rake db:migrate
-```
-
-Or run the following commands, for rails >= 5
+Run the following commands
 
 ```console
 bundle install
@@ -67,9 +57,7 @@ It's recommended to call `clear_helpers` in ApplicationController, as some helpe
 Threadsafe
 ----------
 
-Threadsafe can be enabled calling ActiveScaffold.threadsafe! in an initializer.
- It should be enabled on app start and it can't be disabled. Threadsafety is a
- new feature and not well tested yet.  
+Threadsafe is enabled always since 4.0, and it can't be disabled.  
 
 Configuration
 -------------
