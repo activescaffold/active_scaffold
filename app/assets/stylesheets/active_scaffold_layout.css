@@ -110,6 +110,12 @@ top: 14px;
 top: -3px;
 }
 
+.active-scaffold div.actions a.separator {
+  border-right: 1px solid;
+  padding-right: 0;
+  padding-left: 0;
+}
+
 .active-scaffold div.actions a.disabled {
 opacity: 0.5;
 }
@@ -251,6 +257,11 @@ text-align: right;
 padding: 0 2px;
 }
 
+.active-scaffold tr.record td.actions table td.separator {
+  border-right: solid 1px;
+  padding: 0;
+}
+
 .active-scaffold tr.record td.actions a,
 .active-scaffold tr.record td.actions div {
 font-weight: bold;
@@ -302,6 +313,16 @@ display: block;
 position: relative;
 width: auto;
 text-align: left;
+}
+
+.active-scaffold .actions .action_group ul li.separator {
+  border-top-width: 1px;
+  border-top-style: solid;
+  height: 0;
+}
+
+.active-scaffold .actions .action_group ul li.separator + li {
+  border-top: none;
 }
 
 .active-scaffold .actions .action_group ul li div {

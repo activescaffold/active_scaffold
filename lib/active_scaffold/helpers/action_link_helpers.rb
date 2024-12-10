@@ -35,32 +35,50 @@ module ActiveScaffold
         options[:level] ||= 0
         options[:first_action] = true
         output = ActiveSupport::SafeBuffer.new
+        prev_link = separator = nil
 
-        action_links.each(:reverse => options.delete(:reverse), :groups => true) do |link|
+        action_links.each(reverse: options.delete(:reverse), groups: true) do |link|
+          if link == :separator
+            separator = true if prev_link
+            next
+          end
+          content = nil
           if link.is_a? ActiveScaffold::DataStructures::ActionLinks
             unless link.empty?
               options[:level] += 1
               content = display_action_links(link, record, options, &block)
               options[:level] -= 1
               if content.present?
-                output << display_action_link(link, content, record, options)
+                content = display_action_link(link, content, record, options)
                 options[:first_action] = false
               end
             end
           elsif !skip_action_link?(link, *Array(options[:for]))
             authorized, reason = action_link_authorized?(link, *Array(options[:for]))
             next if !authorized && options[:skip_unauthorized]
-            output << display_action_link(link, nil, record, options.merge(:authorized => authorized, :not_authorized_reason => reason))
+
+            content = display_action_link(link, nil, record, options.merge(authorized: authorized, not_authorized_reason: reason))
             options[:first_action] = false
+          end
+          if content.present?
+            prev_link = true
+            output << display_action_link_separator(options) if separator
+            output << content
+            separator = false
           end
         end
         output
       end
 
+      def display_action_link_separator(options)
+        tag = options[:level_0_tag] || :a if options[:level].zero?
+        content_tag(tag || :li, '&nbsp;'.html_safe, class: 'separator')
+      end
+
       def display_action_link(link, content, record, options)
         if content
           html_classes = hover_via_click? ? 'hover_click ' : ''
-          if (options[:level]).zero?
+          if options[:level].zero?
             html_classes << 'action_group'
             group_tag = :div
           else
@@ -72,9 +90,9 @@ module ActiveScaffold
           end
         else
           content = render_action_link(link, record, options)
-          content = content_tag(:li, content, :class => ('top' if options[:first_action])) unless (options[:level]).zero?
+          content = content_tag(:li, content, class: ('top' if options[:first_action])) unless options[:level].zero?
         end
-        content = content_tag(options[:level_0_tag], content, options[:options_level_0_tag]) if (options[:level]).zero? && options[:level_0_tag]
+        content = content_tag(options[:level_0_tag], content, options[:options_level_0_tag]) if options[:level].zero? && options[:level_0_tag]
         content
       end
 
