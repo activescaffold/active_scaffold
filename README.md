@@ -1,22 +1,22 @@
 
 Overview
 ========
-[![Build status](https://api.travis-ci.com/activescaffold/active_scaffold.svg?branch=master)](https://app.travis-ci.com/activescaffold/active_scaffold)
+[![Build status](https://github.com/activescaffold/active_scaffold/actions/workflows/ci.yml/badge.svg)](https://github.com/activescaffold/active_scaffold/actions/workflows/ci.yml)
 [![Code Climate](https://codeclimate.com/github/activescaffold/active_scaffold/badges/gpa.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
 [![Test Coverage](https://codeclimate.com/github/activescaffold/active_scaffold/badges/coverage.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
-[![Dependency Status](https://gemnasium.com/activescaffold/active_scaffold.svg)](https://gemnasium.com/activescaffold/active_scaffold)
 [![Gem Version](https://badge.fury.io/rb/active_scaffold.svg)](https://badge.fury.io/rb/active_scaffold)
 [![Inline docs](https://inch-ci.org/github/activescaffold/active_scaffold.svg?branch=master)](https://inch-ci.org/github/activescaffold/active_scaffold)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 5.2.0 is supported, ruby >= 2.5 required.
+ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 6.1.0 is supported, ruby >= 3.0 required.
 
 Branch Details
 --------------
+master supports rails >= 6.1.x and <= 7.2.x, and ruby >= 3.0.0  
 3-7-stable supports rails >= 5.2.x and <= 7.1.x, and ruby >= 2.5.0
 
 These versions are not supported anymore:  
-3-6-stable supports rails >= 4.2.x and <= 6.1.x, and ruby >= 2.3.0
+3-6-stable supports rails >= 4.2.x and <= 6.1.x, and ruby >= 2.3.0  
 3-5-stable supports rails >= 4.0.x and <= 5.1.x, and ruby >= 2.0.0  
 3-4-stable supports rails >= 3.2.x and <= 4.2.x, and ruby >= 1.9.3  
 3-3-stable supports rails 3.2.x and ruby >= 1.8  
@@ -32,25 +32,17 @@ Added to Gemfile
 gem 'active_scaffold'
 ```
 
-For rails >= 5.1, add jquery-rails to Gemfile, and install generator will jquery to application.js before rails-ujs. Also it's possible to load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
+Add jquery-rails to Gemfile, or handle jquery with other tools like webpack or importmap. Also it's possible to load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace @rails/ujs with jquery_ujs, although @rails/ujs should work (never load both).
 
 ```ruby
 gem 'jquery-rails'
 ```
 
-For rails >= 6.0, installer generator will create app/assets/javascripts/application.js, add it to assets.precompile array and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack yet. Jquery may be loaded by packs or assets pipeline.
+For rails 7.x, install generator will add active_scaffold to config/importmap.rb, app/javascript/application.js, and active_scaffold/manifest.js to app/assets/config/manifest.js. It will add jquery and jquery_ujs to all the 3 files if jquery-rails gem is available.
 
-Run the following commands, for rails 4.2
+For rails 6.1, install generator will create app/assets/javascripts/application.js, add it, and active_scaffold/manifest.js, to app/assets/config/manifest.js and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack. It will add jquery to app/assets/javascripts/application.js too if query-rails gem is available, although Jquery may be loaded by packs too and it will work, it won't add jquery_ujs or @rails/ujs as it's added to app/javascript/packs/application.js by default.
 
-```console
-bundle install
-rails g active_scaffold:install
-bundle exec rake db:create
-rails g active_scaffold:resource Model [attrs]
-bundle exec rake db:migrate
-```
-
-Or run the following commands, for rails >= 5
+Run the following commands
 
 ```console
 bundle install
@@ -67,9 +59,7 @@ It's recommended to call `clear_helpers` in ApplicationController, as some helpe
 Threadsafe
 ----------
 
-Threadsafe can be enabled calling ActiveScaffold.threadsafe! in an initializer.
- It should be enabled on app start and it can't be disabled. Threadsafety is a
- new feature and not well tested yet.  
+Threadsafe is enabled always since 4.0, and it can't be disabled.  
 
 Configuration
 -------------

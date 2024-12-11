@@ -19,6 +19,7 @@ hu:
     cancel: Mégse
     cant_destroy_record: 'nem törölhető: %{record}'
     changes:
+    check_all:
     click_to_edit: Kattints a szerkesztéshez
     click_to_reset: Kattints az alapállapothoz
     close: Bezárás
@@ -41,7 +42,7 @@ hu:
       closeText:
       currentText:
       timeText:
-      timezoneText:
+      timezoneText: Timezone
     days: Days
     delete: Törlés
     deleted_model: "%{model} törölve"
@@ -112,7 +113,7 @@ hu:
     refresh: Frissítés
     remove: Törlés
     remove_file: Fájl törlése, vagy cseréje
-    remove_files:
+    remove_files: Fájlok törlése, vagy hozzáadása
     replace_existing: Replace existing
     replace_with_new: Csere újjal
     reset: Alapállapot
@@ -131,6 +132,7 @@ hu:
     today: Today
     tomorrow: Tomorrow
     'true': 'True'
+    uncheck_all:
     update: Modosítás
     update_apply:
     update_model: "%{model} modosítása"

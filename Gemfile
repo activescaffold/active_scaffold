@@ -22,7 +22,10 @@ group :development, :lint do
   # Patch-level verification for Bundler
   gem 'bundler-audit', require: false
   # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
-  gem 'rubocop', '0.52.1', require: false
+  gem 'rubocop', require: false
+  gem 'rubocop-erb', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
 end
 
 group :development, :lint, :test do
@@ -43,7 +46,7 @@ group :test do
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
-  gem 'rails', '~> 6.1.0'
+  gem 'rails', '~> 7.2.0'
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
   # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
@@ -58,6 +61,6 @@ group :test do
 
   platforms :ruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'sqlite3', '~> 1.4.0'
+    gem 'sqlite3'
   end
 end

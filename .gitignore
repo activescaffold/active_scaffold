@@ -52,3 +52,5 @@
 
 .localeapp
 /tmp/
+/brakeman/
+/node_modules/

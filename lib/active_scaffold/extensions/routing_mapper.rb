@@ -1,12 +1,12 @@
 module ActiveScaffold
   module Routing
     ACTIVE_SCAFFOLD_CORE_ROUTING = {
-      :collection => {:show_search => :get, :render_field => :post, :mark => :post},
-      :member => {:update_column => :post, :render_field => %i[get post], :mark => :post}
+      collection: {show_search: :get, render_field: :post, mark: :post},
+      member: {update_column: :post, render_field: %i[get post], mark: :post}
     }.freeze
     ACTIVE_SCAFFOLD_ASSOCIATION_ROUTING = {
-      :collection => {:edit_associated => :get, :new_existing => :get, :add_existing => :post},
-      :member => {:edit_associated => :get, :destroy_existing => :delete}
+      collection: {edit_associated: :get, new_existing: :get, add_existing: :post},
+      member: {edit_associated: :get, destroy_existing: :delete}
     }.freeze
 
     class Association
@@ -44,6 +44,7 @@ module ActiveScaffold
 
     class Basic < Association
       def initialize(defaults = {})
+        super()
         @defaults = defaults
       end
 

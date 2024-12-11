@@ -1,4 +1,4 @@
-<% for name in [:info, :warning, :error] %>
+<% for name in %i[info warning error] %>
   <% if flash[name].present? %>
     <div class="<%= "#{name}-message message" %>">
       <%= display_message flash[name] %>

@@ -248,14 +248,15 @@
         jQuery(event.target).closest('.action_group.dyn > ul').remove();
       });
 
-      jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form, .checkbox-list.update_form input:checkbox', function(event) {
+      jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form, .checkbox-list.update_form input:checkbox', function(event, additional_params) {
         var element = jQuery(this);
         var form_element;
-        var value, additional_params;
+        var value;
         if (element.is(".checkbox-list input:checkbox")) {
-          form_element = element.closest('.checkbox-list')
+          form_element = element.closest('.checkbox-list');
+          if (form_element.is('.draggable-list')) form_element = form_element.closest('.draggable-lists-container').find('.checkbox-list') // draggable lists will have 2 lists
           value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
-          additional_params = (element.is(':checked') ? '_added=' : '_removed=') + element.val();
+          if (!additional_params) additional_params = (element.is(':checked') ? '_added=' : '_removed=') + element.val();
         } else {
           value = element.is("input:checkbox:not(:checked)") ? null : element.val();
           form_element = element;
@@ -389,6 +390,16 @@
         form.find('select.as_search_date_time_option').val('BETWEEN');
       });
 
+      jQuery(document).on('click', '.active-scaffold .tabbed .nav-tabs a', function(e) {
+        if (typeof $().tab == 'function') return; // bootstrap tab plugin is loaded and will handle tabs
+        e.preventDefault();
+        var tab_ctrl = jQuery(this), tabbed = tab_ctrl.closest('.tabbed')
+        tabbed.find('.nav-tabs .active').removeClass('active');
+        tabbed.find('.tab-content .active').removeClass('in active');
+        tab_ctrl.closest('li').addClass('active');
+        jQuery(tab_ctrl.attr('href')).addClass('in active');
+      });
+
       jQuery(document).on('turbolinks:before-visit turbo:before-visit', function() {
         if (history.state.active_scaffold) {
           history.replaceState({turbolinks: true, url: document.location.href}, '', document.location.href);
@@ -426,6 +437,14 @@
         if (e.target != this) return;
         var search = $(this).find('form.search');
         if (search.length) ActiveScaffold.focus_first_element_of_form(search);
+      });
+      jQuery(document).on('click', '.active-scaffold form .check-all', function(e) {
+        e.preventDefault();
+        ActiveScaffold.update_all_checkboxes($(this), true);
+      });
+      jQuery(document).on('click', '.active-scaffold form .uncheck-all', function(e) {
+        e.preventDefault();
+        ActiveScaffold.update_all_checkboxes($(this), false);
       });
     });
 
@@ -1157,6 +1176,18 @@
             element.trigger('ajax:error', [xhr, status, error]);
           }
         });
+      },
+
+      update_all_checkboxes: function(button, state) {
+        var lists = button.closest('.check-buttons').parent().find('.checkbox-list'),
+          checkboxes = lists.find(':checkbox'), key = state ? '_added' : '_removed', params;
+        params = checkboxes.filter(state ? ':not(:checked)' : ':checked').map(function() { return key + '[]=' + $(this).val(); }).toArray().join('&');
+        checkboxes.prop('checked', state);
+        if (lists.filter('.draggable-list').length) {
+          var parent = state ? lists.filter('.selected') : lists.filter(':not(.selected)');
+          checkboxes.parent().appendTo(parent);
+        }
+        checkboxes.first().trigger('change', params);
       },
 
       draggable_lists: function(selector_or_elements, parent) {

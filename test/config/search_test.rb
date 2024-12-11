@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class SearchTest < Minitest::Test
+  class SearchTest < ActiveSupport::TestCase
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
       @default_link = @config.search.link
@@ -13,7 +13,7 @@ module Config
 
     def test_default_options
       assert_equal :full, @config.search.text_search
-      refute @config.search.live?
+      assert_not @config.search.live?
       assert_equal ' ', @config.search.split_terms
     end
 
@@ -23,7 +23,7 @@ module Config
       @config.search.text_search = :end
       assert_equal :end, @config.search.text_search
       @config.search.text_search = false
-      refute @config.search.text_search
+      assert_not @config.search.text_search
     end
 
     def test_live
@@ -40,9 +40,9 @@ module Config
 
     def test_link_defaults
       link = @config.search.link
-      refute link.page?
-      refute link.popup?
-      refute link.confirm?
+      assert_not link.page?
+      assert_not link.popup?
+      assert_not link.confirm?
       assert_equal 'show_search', link.action
       assert_equal 'Search', link.label
       assert link.inline?
@@ -55,8 +55,8 @@ module Config
     end
 
     def test_setting_link
-      @config.search.link = ActiveScaffold::DataStructures::ActionLink.new('update', :label => 'Monkeys')
-      refute_equal @default_link, @config.search.link
+      @config.search.link = ActiveScaffold::DataStructures::ActionLink.new('update', label: 'Monkeys')
+      assert_not_equal @default_link, @config.search.link
     end
   end
 end

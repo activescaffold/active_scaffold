@@ -110,6 +110,12 @@ top: 14px;
 top: -3px;
 }
 
+.active-scaffold div.actions a.separator {
+  border-right: 1px solid;
+  padding-right: 0;
+  padding-left: 0;
+}
+
 .active-scaffold div.actions a.disabled {
 opacity: 0.5;
 }
@@ -251,6 +257,11 @@ text-align: right;
 padding: 0 2px;
 }
 
+.active-scaffold tr.record td.actions table td.separator {
+  border-right: solid 1px;
+  padding: 0;
+}
+
 .active-scaffold tr.record td.actions a,
 .active-scaffold tr.record td.actions div {
 font-weight: bold;
@@ -302,6 +313,16 @@ display: block;
 position: relative;
 width: auto;
 text-align: left;
+}
+
+.active-scaffold .actions .action_group ul li.separator {
+  border-top-width: 1px;
+  border-top-style: solid;
+  height: 0;
+}
+
+.active-scaffold .actions .action_group ul li.separator + li {
+  border-top: none;
 }
 
 .active-scaffold .actions .action_group ul li div {
@@ -800,8 +821,9 @@ padding: 0 0 0 2px;
 .active-scaffold .checkbox-list + .refresh-link {
 float: left;
 }
-
-.active-scaffold .draggable-lists + .loading-indicator { float: left; }
+.active-scaffold .check-buttons .check-all {
+  margin-right: 10px;
+}
 
 .active-scaffold .draggable-list {
 float: left;
@@ -811,9 +833,25 @@ min-height: 30px;
 max-height: 100px;
 overflow: auto;
 }
-
 .active-scaffold .draggable-list.hover {
-opacity: 0.5;
+  opacity: 0.5;
+}
+.active-scaffold .draggable-lists-container {
+  display: flex;
+  align-items: start;
+}
+.active-scaffold .draggable-lists-container .loading-indicator { align-self: end; }
+
+.active-scaffold .draggable-lists-container .check-buttons {
+  margin-right: 15px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.active-scaffold .draggable-lists-container .check-buttons a {
+  display: block;
+  margin: 0;
 }
 
 
@@ -955,6 +993,64 @@ font-size: 100%;
 
 .active-scaffold-found {
   float:left;
+}
+
+.active-scaffold .search .search_range .as_search_range_option {
+  vertical-align: top;
+  margin-right: 5px;
+}
+
+.active-scaffold .tabbed .nav-tabs {
+  border-bottom: 1px solid #ddd;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.active-scaffold .tabbed .nav-tabs:before,
+.active-scaffold .tabbed .nav-tabs:after {
+  display: table;
+  content: ' ';
+}
+.active-scaffold .tabbed .nav-tabs:after {
+  clear: both;
+}
+
+.active-scaffold .tabbed .nav-tabs > li {
+  float: left;
+  margin-bottom: -1px;
+  position: relative;
+  display: block;
+}
+
+.active-scaffold .tabbed .nav-tabs > li > a {
+  margin-right: 2px;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+.active-scaffold .tabbed .nav-tabs > li > a:focus,
+.active-scaffold .tabbed .nav-tabs > li > a:hover {
+  border-color: #eee #eee #ddd;
+  text-decoration: none;
+  background-color: #eee;
+}
+.active-scaffold .tabbed .nav-tabs > li.active > a,
+.active-scaffold .tabbed .nav-tabs > li.active > a:focus,
+.active-scaffold .tabbed .nav-tabs > li.active > a:hover {
+  border-color: #ddd;
+  border-bottom-color: transparent;
+  cursor: default;
+  background-color: #fff;
+}
+
+.active-scaffold .tabbed .tab-content > .tab-pane {
+  display: none;
+}
+.active-scaffold .tabbed .tab-content > .active {
+  display: block;
 }
 
 .as_touch a.inline-adapter-close {

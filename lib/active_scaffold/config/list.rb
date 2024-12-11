@@ -79,7 +79,7 @@ module ActiveScaffold::Config
 
     # the ActionLink to reset search
     cattr_reader :reset_link, instance_reader: false
-    @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', :label => :click_to_reset, :type => :collection, :position => false, :parameters => {:search => ''})
+    @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, parameters: {search: ''})
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling
@@ -147,9 +147,9 @@ module ActiveScaffold::Config
     attr_reader :reset_link
 
     # the default sorting.
-    # should be a hash of {column_name => direction}, e.g. {:a => 'desc', :b => 'asc'}.
-    # for backwards compatibility, it may be an array of hashes of {column_name => direction}, e.g. [{:a => 'desc'}, {:b => 'asc'}].
-    # to just sort on one column, you can simply provide a hash, e.g. {:a => 'desc'}.
+    # should be a hash of {column_name => direction}, e.g. {a: 'desc', b: 'asc'}.
+    # for backwards compatibility, it may be an array of hashes of {column_name => direction}, e.g. [{a: 'desc'}, {b: 'asc'}].
+    # to just sort on one column, you can simply provide a hash, e.g. {a: 'desc'}.
     def sorting=(val)
       val = [val] if val.is_a? Hash
       sorting.set(*val)
@@ -164,21 +164,21 @@ module ActiveScaffold::Config
 
     # the label for this List action. used for the header.
     attr_writer :label
+
     def label
-      @label ? as_(@label, :count => 2) : @core.label(:count => 2)
+      @label ? as_(@label, count: 2) : @core.label(count: 2)
     end
 
-    attr_writer :no_entries_message
+    attr_writer :no_entries_message, :filtered_message, :always_show_search
+
     def no_entries_message
-      @no_entries_message ? @no_entries_message : :no_entries
+      @no_entries_message || :no_entries
     end
 
-    attr_writer :filtered_message
     def filtered_message
-      @filtered_message ? @filtered_message : :filtered
+      @filtered_message || :filtered
     end
 
-    attr_writer :always_show_search
     def always_show_search
       @always_show_search && search_partial.present?
     end
@@ -192,18 +192,23 @@ module ActiveScaffold::Config
     end
 
     def auto_search_partial
-      return 'search' if @core.actions.include?(:search)
-      return 'field_search' if @core.actions.include?(:field_search)
+      if @core.actions.include?(:search)
+        'search'
+      elsif @core.actions.include?(:field_search)
+        'field_search'
+      end
     end
 
     # always show create
     attr_writer :always_show_create
+
     def always_show_create
       @always_show_create && @core.actions.include?(:create)
     end
 
     # if list view is nested hide nested_column
     attr_writer :hide_nested_column
+
     def hide_nested_column
       @hide_nested_column.nil? ? true : @hide_nested_column
     end
@@ -232,6 +237,7 @@ module ActiveScaffold::Config
       end
 
       attr_writer :label
+
       # This label has already been localized.
       def label
         self['label'] || embedded_label || @label || @conf.label
@@ -293,9 +299,7 @@ module ActiveScaffold::Config
           else
             @_sorting = default_sorting
             @_sorting.set(*@sorting) if @sorting
-            if @conf.columns.constraint_columns.present?
-              @_sorting.constraint_columns = @conf.columns.constraint_columns
-            end
+            @_sorting.constraint_columns = @conf.columns.constraint_columns if @conf.columns.constraint_columns.present?
           end
         end
         @_sorting

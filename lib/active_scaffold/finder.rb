@@ -7,6 +7,7 @@ module ActiveScaffold
     module ClassMethods
       def self.extended(klass)
         return unless klass.active_scaffold_config
+
         if klass.active_scaffold_config.active_record?
           klass.extend ActiveRecord
         elsif klass.active_scaffold_config.mongoid?
@@ -103,14 +104,15 @@ module ActiveScaffold
         if respond_to?(column_method)
           args = [column, value, like_pattern]
           args << session if method(column_method).arity == 4
-          return send("condition_for_#{column.name}_column", *args)
+          return send(:"condition_for_#{column.name}_column", *args)
         end
-        return unless column&.search_sql && value.present?
+        return unless column.search_sql && value.present?
+
         search_ui = column.search_ui || column.column_type
         begin
           sql, *values =
-            if search_ui && respond_to?("condition_for_#{search_ui}_type")
-              send("condition_for_#{search_ui}_type", column, value, like_pattern)
+            if search_ui && respond_to?(:"condition_for_#{search_ui}_type")
+              send(:"condition_for_#{search_ui}_type", column, value, like_pattern)
             elsif column.search_sql.instance_of? Proc
               column.search_sql.call(value)
             else
@@ -126,7 +128,7 @@ module ActiveScaffold
               sql_conditions << subquery_sql
               where_values.concat subquery_values
             else
-              sql_conditions << sql % {:search_sql => search_sql}
+              sql_conditions << (sql % {search_sql: search_sql})
               where_values.concat values
             end
           end
@@ -139,14 +141,14 @@ module ActiveScaffold
 
       def subquery_condition(column, sql, options, values)
         relation, *columns = options[:subquery]
-        conditions = [columns.map { |search_sql| sql % {:search_sql => search_sql} }.join(' OR ')]
+        conditions = [columns.map { |search_sql| sql % {search_sql: search_sql} }.join(' OR ')]
         conditions += values * columns.size if values.present?
         subquery = relation.where(conditions)
         subquery = subquery.select(relation.primary_key) if subquery.select_values.blank?
 
         conditions = [["#{options[:field] || column.field} IN (?)", options[:conditions]&.first].compact.join(' AND ')]
         conditions << subquery
-        conditions.concat options[:conditions][1..-1] if options[:conditions]
+        conditions.concat options[:conditions][1..] if options[:conditions]
         if column.association&.polymorphic?
           conditions[0] << " AND #{column.quoted_foreign_type} = ?"
           conditions << relation.base_class.sti_name
@@ -165,19 +167,22 @@ module ActiveScaffold
         when :integer, :decimal, :float
           condition_for_numeric(column, value)
         when :string, :range
-          condition_for_range(column, value, like_pattern)
+          if value.is_a?(Hash)
+            condition_for_range(column, value, like_pattern)
+          else
+            condition_for_single_value(column, value, like_pattern)
+          end
         when :date, :time, :datetime, :timestamp
           condition_for_datetime(column, value)
         when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state, :chosen, :multi_chosen
-          values = Array(value).select(&:present?)
-          ['%<search_sql>s in (?)', values] if values.present?
-        else
-          if column.text?
-            value = column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value
-            ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
+          if value.is_a?(Hash)
+            condition_for_range(column, value, like_pattern)
           else
-            ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
+            values = Array(value).compact_blank
+            ['%<search_sql>s in (?)', values] if values.present?
           end
+        else
+          condition_for_single_value(column, value, like_pattern)
         end
       end
 
@@ -186,7 +191,7 @@ module ActiveScaffold
           ['%<search_sql>s = ?', condition_value_for_numeric(column, value)]
         elsif ActiveScaffold::Finder::NULL_COMPARATORS.include?(value[:opt])
           condition_for_null_type(column, value[:opt])
-        elsif value[:from].blank? || !ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt])
+        elsif value[:from].blank? || ActiveScaffold::Finder::NUMERIC_COMPARATORS.exclude?(value[:opt])
           nil
         elsif value[:opt] == 'BETWEEN'
           ['(%<search_sql>s BETWEEN ? AND ?)', condition_value_for_numeric(column, value[:from]), condition_value_for_numeric(column, value[:to])]
@@ -195,19 +200,24 @@ module ActiveScaffold
         end
       end
 
+      def condition_for_single_value(column, value, like_pattern = nil)
+        if column.text?
+          value = column.active_record_class.sanitize_sql_like(value) if column.active_record?
+          ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
+        else
+          ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
+        end
+      end
+
       def condition_for_range(column, value, like_pattern = nil)
-        if !value.is_a?(Hash)
-          if column.text?
-            value = column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value
-            ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
-          else
-            ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
-          end
-        elsif ActiveScaffold::Finder::NULL_COMPARATORS.include?(value[:opt])
+        if ActiveScaffold::Finder::NULL_COMPARATORS.include?(value[:opt])
           condition_for_null_type(column, value[:opt], like_pattern)
+        elsif value[:from].is_a?(Array) # opt can be only =
+          from = Array(value[:from]).compact_blank
+          ['%<search_sql>s in (?)', from] if from.present?
         elsif value[:from].blank?
           nil
-        elsif ActiveScaffold::Finder::STRING_COMPARATORS.values.include?(value[:opt])
+        elsif ActiveScaffold::Finder::STRING_COMPARATORS.value?(value[:opt])
           text = column.active_record? ? column.active_record_class.sanitize_sql_like(value[:from]) : value[:from]
           [
             "%<search_sql>s #{'NOT ' if value[:opt].start_with?('not_')}#{ActiveScaffold::Finder.like_operator} ?",
@@ -221,18 +231,16 @@ module ActiveScaffold
       end
 
       def tables_for_translating_days_and_months(format)
-        # rubocop:disable Style/FormatStringToken
         keys = {
           '%A' => 'date.day_names',
           '%a' => 'date.abbr_day_names',
           '%B' => 'date.month_names',
           '%b' => 'date.abbr_month_names'
         }
-        # rubocop:enable Style/FormatStringToken
-        key_index = keys.keys.map { |key| [key, format.index(key)] }.to_h
+        key_index = keys.keys.index_with { |key| format.index(key) }
         keys.select! { |k, _| key_index[k] }
         keys.sort_by { |k, _| key_index[k] }.map do |_, k|
-          I18n.t(k).compact.zip(I18n.t(k, :locale => :en).compact).to_h
+          I18n.t(k).compact.zip(I18n.t(k, locale: :en).compact).to_h
         end
       end
 
@@ -242,6 +250,7 @@ module ActiveScaffold
           regexp = Regexp.union(table.keys)
           index = value.index(regexp)
           next unless index
+
           translated << value.slice!(0...index)
           value.sub!(regexp) do |str|
             translated << table[str]
@@ -251,23 +260,12 @@ module ActiveScaffold
         translated << value
       end
 
-      def format_for_datetime(column, value)
+      def format_for_datetime(column, value, ui_name, ui_options)
         parts = Date._parse(value)
-        if ActiveScaffold.js_framework == :jquery
-          format = I18n.translate "time.formats.#{column.options[:format] || :picker}", :default => ''
+        time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].filter_map do |part, format_part|
+          format_part if parts[part].present?
         end
-
-        if format.blank?
-          time_parts = [[:hour, '%H'], [:min, '%M'], [:sec, '%S']].map do |part, format_part|
-            format_part if parts[part].present?
-          end.compact
-          format = "#{I18n.t('date.formats.default')} #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
-        else
-          [[:hour, '%H'], [:min, ':%M'], [:sec, ':%S']].each do |part, f|
-            format.gsub!(f, '') if parts[part].blank?
-          end
-          format += ' %z' if parts[:offset].present? && format !~ /%z/i
-        end
+        format = "%Y-%m-%d #{time_parts.join(':')} #{'%z' if parts[:offset].present?}"
 
         format.gsub!(/.*(?=%H)/, '') if !parts[:year] && !parts[:month] && !parts[:mday]
         [format, parts[:offset]]
@@ -282,9 +280,9 @@ module ActiveScaffold
         nil
       end
 
-      def format_for_date(column, value, format_name = column.options[:format])
-        if format_name
-          format = I18n.t("date.formats.#{format_name}")
+      def format_for_date(column, value, ui_name, ui_options)
+        if ui_options[:format]
+          format = I18n.t("date.formats.#{ui_options[:format]}")
           format.gsub!(/%-d|%-m|%_m/) { |s| s.gsub(/[-_]/, '') } # strptime fails with %-d, %-m, %_m
           en_value = I18n.locale == :en ? value : translate_days_and_months(value, format)
         end
@@ -313,8 +311,10 @@ module ActiveScaffold
         nil
       end
 
-      def condition_value_for_datetime(column, value, conversion = :to_time)
+      def condition_value_for_datetime(column, value, conversion = :to_time, ui_method: :search_ui, ui_options: nil)
         return if value.nil? || value.blank?
+
+        ui_options ||= column.send(:"#{ui_method}_options") || column.options
         if value.is_a? Hash
           local_time_from_hash(value, conversion)
         elsif value.respond_to?(:strftime)
@@ -326,20 +326,21 @@ module ActiveScaffold
             value.send(conversion)
           end
         elsif conversion == :to_date
-          parse_date_with_format(*format_for_date(column, value))
+          parse_date_with_format(*format_for_date(column, value, column.send(ui_method), ui_options))
         elsif value.include?('T')
           Time.zone.parse(value)
         else # datetime
-          time = parse_time_with_format(value, *format_for_datetime(column, value))
+          time = parse_time_with_format(value, *format_for_datetime(column, value, column.send(ui_method), ui_options))
           conversion == :to_time ? time : time.send(conversion)
         end
       end
 
       def condition_value_for_numeric(column, value)
         return value if value.nil?
+
         value = column.number_to_native(value) if column.options[:format] && column.search_ui != :number
-        case (column.search_ui || column.column_type)
-        when :integer   then
+        case column.search_ui || column.column_type
+        when :integer
           if value.is_a?(TrueClass) || value.is_a?(FalseClass)
             value ? 1 : 0
           else
@@ -435,15 +436,16 @@ module ActiveScaffold
         else
           range_type, range = value['range'].downcase.split('_')
           raise ArgumentError unless %w[week month year].include?(range)
+
           case range_type
           when 'this'
-            return datetime_now.send("beginning_of_#{range}".to_sym), datetime_now.send("end_of_#{range}")
+            [datetime_now.send(:"beginning_of_#{range}"), datetime_now.send(:"end_of_#{range}")]
           when 'prev'
-            return datetime_now.ago(1.send(range.to_sym)).send("beginning_of_#{range}".to_sym), datetime_now.ago(1.send(range.to_sym)).send("end_of_#{range}".to_sym)
+            [datetime_now.ago(1.send(range.to_sym)).send(:"beginning_of_#{range}"), datetime_now.ago(1.send(range.to_sym)).send(:"end_of_#{range}")]
           when 'next'
-            return datetime_now.in(1.send(range.to_sym)).send("beginning_of_#{range}".to_sym), datetime_now.in(1.send(range.to_sym)).send("end_of_#{range}".to_sym)
+            [datetime_now.in(1.send(range.to_sym)).send(:"beginning_of_#{range}"), datetime_now.in(1.send(range.to_sym)).send(:"end_of_#{range}")]
           else
-            return nil, nil
+            [nil, nil]
           end
         end
       end
@@ -454,7 +456,7 @@ module ActiveScaffold
 
       def condition_for_record_select_type(column, value, like_pattern = nil)
         if value.is_a?(Array)
-          value = value.select(&:present?)
+          value = value.compact_blank
           ['%<search_sql>s IN (?)', value] if value.present?
         else
           ['%<search_sql>s = ?', value]
@@ -481,12 +483,12 @@ module ActiveScaffold
       'BETWEEN'
     ].freeze
     STRING_COMPARATORS = {
-      :contains    => '%?%',
-      :begins_with => '?%',
-      :ends_with   => '%?',
-      :doesnt_contain    => 'not_%?%',
-      :doesnt_begin_with => 'not_?%',
-      :doesnt_end_with   => 'not_%?'
+      contains:          '%?%',
+      begins_with:       '?%',
+      ends_with:         '%?',
+      doesnt_contain:    'not_%?%',
+      doesnt_begin_with: 'not_?%',
+      doesnt_end_with:   'not_%?'
     }.freeze
     NULL_COMPARATORS = %w[null not_null].freeze
     DATE_COMPARATORS = %w[PAST FUTURE RANGE].freeze
@@ -500,27 +502,24 @@ module ActiveScaffold
 
     protected
 
-    attr_writer :active_scaffold_conditions
+    attr_writer :active_scaffold_conditions, :active_scaffold_preload, :active_scaffold_habtm_joins, :active_scaffold_outer_joins, :active_scaffold_references
+
     def active_scaffold_conditions
       @active_scaffold_conditions ||= []
     end
 
-    attr_writer :active_scaffold_preload
     def active_scaffold_preload
       @active_scaffold_preload ||= []
     end
 
-    attr_writer :active_scaffold_habtm_joins
     def active_scaffold_habtm_joins
       @active_scaffold_habtm_joins ||= []
     end
 
-    attr_writer :active_scaffold_outer_joins
     def active_scaffold_outer_joins
       @active_scaffold_outer_joins ||= []
     end
 
-    attr_writer :active_scaffold_references
     def active_scaffold_references
       @active_scaffold_references ||= []
     end
@@ -542,15 +541,15 @@ module ActiveScaffold
       params_hash active_scaffold_embedded_params[:conditions]
     end
 
-    def all_conditions(include_id_condition = true)
+    def all_conditions(id_condition: true)
       [
-        (id_condition if include_id_condition),       # for list with id (e.g. /users/:id/index)
+        (self.id_condition if id_condition),          # for list with id (e.g. /users/:id/index)
         active_scaffold_conditions,                   # from the search modules
         conditions_for_collection,                    # from the dev
         conditions_from_params,                       # from the parameters (e.g. /users/list?first_name=Fred)
         conditions_from_constraints,                  # from any constraints (embedded scaffolds)
         active_scaffold_embedded_conditions           # embedding conditions (weaker constraints)
-      ].reject(&:blank?)
+      ].compact_blank
     end
 
     def id_condition
@@ -562,14 +561,15 @@ module ActiveScaffold
     # accomplishes this by checking model.#{action}_authorized?
     def find_if_allowed(id, security_options, klass = beginning_of_chain)
       record = klass.find(id)
-      security_options = {:crud_type => security_options.to_sym} unless security_options.is_a? Hash
+      security_options = {crud_type: security_options.to_sym} unless security_options.is_a? Hash
       raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for? security_options
+
       record
     end
 
     # valid options may include:
     # * :sorting - a Sorting DataStructure (basically an array of hashes of field => direction,
-    #     e.g. [{:field1 => 'asc'}, {:field2 => 'desc'}]).
+    #     e.g. [{field1: 'asc'}, {field2: 'desc'}]).
     #     please note that multi-column sorting has some limitations: if any column in a multi-field
     #     sort uses method-based sorting, it will be ignored. method sorting only works for single-column sorting.
     # * :per_page
@@ -578,22 +578,22 @@ module ActiveScaffold
       search_conditions = all_conditions
 
       sorting = options[:sorting]&.clause
-      sorting = sorting.map(&Arel.method(:sql)) if sorting && active_scaffold_config.active_record?
+      sorting = sorting.map { |part| Arel.sql(part) } if sorting && active_scaffold_config.active_record?
       # create a general-use options array that's compatible with Rails finders
       finder_options = {
-        :reorder => sorting,
-        :conditions => search_conditions
+        reorder: sorting,
+        conditions: search_conditions
       }
       if active_scaffold_config.mongoid?
         finder_options[:includes] = [active_scaffold_references, active_scaffold_preload].compact.flatten.uniq.presence
       else
         finder_options.merge!(
-          :joins => joins_for_finder,
-          :left_joins => active_scaffold_outer_joins,
-          :preload => active_scaffold_preload,
-          :includes => active_scaffold_references.presence,
-          :references => active_scaffold_references.presence,
-          :select => options[:select]
+          joins:      joins_for_finder,
+          left_joins: active_scaffold_outer_joins,
+          preload:    active_scaffold_preload,
+          includes:   active_scaffold_references.presence,
+          references: active_scaffold_references.presence,
+          select:     options[:select]
         )
       end
 
@@ -603,7 +603,7 @@ module ActiveScaffold
 
     def count_items(query, find_options = {}, count_includes = nil)
       count_includes ||= find_options[:includes] if find_options[:conditions].present?
-      options = find_options.reject { |k, _| %i[select reorder order].include? k }
+      options = find_options.except(:select, :reorder, :order)
       # NOTE: we must use includes in the count query, because some conditions may reference other tables
       options[:includes] = count_includes
 
@@ -642,7 +642,7 @@ module ActiveScaffold
                 end
               else
                 ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-                  query = append_to_query(query, :offset => offset, :limit => per_page) if options[:pagination]
+                  query = append_to_query(query, offset: offset, limit: per_page) if options[:pagination]
                   calculate_last_modified(query)
                   query
                 end
@@ -652,29 +652,30 @@ module ActiveScaffold
 
     def calculate_last_modified(query)
       return unless conditional_get_support? && ActiveScaffold::OrmChecks.columns_hash(query.klass)['updated_at']
+
       @last_modified = query.maximum(:updated_at)
     end
 
-    def calculate_subquery(id_condition = true)
-      conditions = all_conditions(id_condition)
+    def calculate_subquery(id_condition: true)
+      conditions = all_conditions(id_condition: id_condition)
       includes = active_scaffold_config.list.count_includes
       includes ||= active_scaffold_references if conditions.present?
       left_joins = active_scaffold_outer_joins
       left_joins += includes if includes
       primary_key = active_scaffold_config.primary_key
-      subquery = append_to_query(beginning_of_chain, :conditions => conditions, :joins => joins_for_finder, :left_joins => left_joins, :select => active_scaffold_config.columns[primary_key].field)
+      subquery = append_to_query(beginning_of_chain, conditions: conditions, joins: joins_for_finder, left_joins: left_joins, select: active_scaffold_config.columns[primary_key].field)
       subquery.unscope(:order)
     end
 
-    def calculate_query(id_condition = true)
-      active_scaffold_config.model.where(active_scaffold_config.primary_key => calculate_subquery(id_condition))
+    def calculate_query(id_condition: true)
+      active_scaffold_config.model.where(active_scaffold_config.primary_key => calculate_subquery(id_condition: id_condition))
     end
 
     def append_to_query(relation, options)
       options.assert_valid_keys :where, :select, :having, :group, :reorder, :order, :limit, :offset,
                                 :joins, :left_joins, :left_outer_joins, :includes, :lock, :readonly,
                                 :from, :conditions, :preload, :references
-      relation = options.reject { |_, v| v.blank? }.inject(relation) do |rel, (k, v)|
+      relation = options.compact_blank.inject(relation) do |rel, (k, v)|
         k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
       end
       relation.distinct_value = true if options[:left_outer_joins].present? || options[:left_joins].present?
@@ -693,7 +694,7 @@ module ActiveScaffold
     end
 
     def apply_conditions(relation, *conditions)
-      conditions.reject(&:blank?).inject(relation) do |rel, condition|
+      conditions.compact_blank.inject(relation) do |rel, condition|
         if condition.is_a?(Array) && !condition.first.is_a?(String) # multiple conditions
           apply_conditions(rel, *condition)
         else

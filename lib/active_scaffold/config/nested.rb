@@ -32,9 +32,9 @@ module ActiveScaffold::Config
         if column.association.polymorphic?
           column.label
         else
-          column.association.klass.model_name.human(:count => column.association.singular? ? 1 : 2, :default => column.association.klass.name.pluralize)
+          column.association.klass.model_name.human(count: column.association.singular? ? 1 : 2, default: column.association.klass.name.pluralize)
         end
-      options.reverse_merge! :security_method => :nested_authorized?, :label => label
+      options.reverse_merge! security_method: :nested_authorized?, label: label
       action_group = options.delete(:action_group) || self.action_group
       action_link = @core.link_for_association(column, options)
       @core.action_links.add_to_group(action_link, action_group) unless action_link.nil?

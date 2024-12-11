@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SortingTest < Minitest::Test
+class SortingTest < ActiveSupport::TestCase
   def setup
     @columns = ActiveScaffold::DataStructures::Columns.new(ModelStub, :a, :b, :c, :d, :id)
     @sorting = ActiveScaffold::DataStructures::Sorting.new(@columns, ModelStub)
@@ -52,27 +52,27 @@ class SortingTest < Minitest::Test
     assert @sorting.sorts_on?(:a)
 
     @sorting.set :b, 'DESC'
-    assert @sorting.instance_variable_get('@clauses').size == 1
-    refute @sorting.sorts_on?(:a)
+    assert @sorting.instance_variable_get(:@clauses).size == 1
+    assert_not @sorting.sorts_on?(:a)
     assert @sorting.sorts_on?(:b)
     assert_equal 'DESC', @sorting.direction_of(:b)
 
-    @sorting.set :a => 'DESC', :b => 'ASC'
-    assert @sorting.instance_variable_get('@clauses').size == 2
+    @sorting.set a: 'DESC', b: 'ASC'
+    assert @sorting.instance_variable_get(:@clauses).size == 2
     assert @sorting.sorts_on?(:a)
     assert_equal 'DESC', @sorting.direction_of(:a)
     assert @sorting.sorts_on?(:b)
     assert_equal 'ASC', @sorting.direction_of(:b)
 
     @sorting.set({a: 'DESC'}, {b: 'ASC'})
-    assert @sorting.instance_variable_get('@clauses').size == 2
+    assert @sorting.instance_variable_get(:@clauses).size == 2
     assert @sorting.sorts_on?(:a)
     assert_equal 'DESC', @sorting.direction_of(:a)
     assert @sorting.sorts_on?(:b)
     assert_equal 'ASC', @sorting.direction_of(:b)
 
     @sorting.set [:a, 'DESC'], [:b, 'ASC']
-    assert @sorting.instance_variable_get('@clauses').size == 2
+    assert @sorting.instance_variable_get(:@clauses).size == 2
     assert @sorting.sorts_on?(:a)
     assert_equal 'DESC', @sorting.direction_of(:a)
     assert @sorting.sorts_on?(:b)
@@ -85,7 +85,7 @@ class SortingTest < Minitest::Test
 
     assert @sorting.sorts_on?(:a)
     assert @sorting.sorts_on?(:b)
-    refute @sorting.sorts_on?(:c)
+    assert_not @sorting.sorts_on?(:c)
   end
 
   def test_direction_of
@@ -97,7 +97,7 @@ class SortingTest < Minitest::Test
   end
 
   def test_sorts_by_method
-    @columns[:a].sort_by :method => proc { 0 }
+    @columns[:a].sort_by method: proc { 0 }
 
     # test pure method sorting: true
     @sorting.add :a
@@ -111,7 +111,7 @@ class SortingTest < Minitest::Test
     # test pure sql sorting: false
     @sorting.clear
     @sorting.add :b
-    refute @sorting.sorts_by_method?
+    assert_not @sorting.sorts_by_method?
   end
 
   def test_build_order_clause

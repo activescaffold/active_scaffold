@@ -57,6 +57,7 @@ module ActiveScaffold::DataStructures
       klass = column.association.klass
       columns.each do |col|
         next if find_by_name col
+
         @set[col.to_sym] = ActiveScaffold::DataStructures::Column.new(col, klass, column.association)
       end
     end
@@ -77,8 +78,8 @@ module ActiveScaffold::DataStructures
     end
     alias [] find_by_name
 
-    def each
-      @set.each_value { |name| yield name }
+    def each(&block)
+      @set.each_value(&block)
     end
 
     def _inheritable

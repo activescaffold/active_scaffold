@@ -15,7 +15,7 @@ module ActiveScaffold::Config
     # --------------------------
     # the ActionLink for this action
     cattr_reader :link, instance_accessor: false
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => :search, :type => :collection, :security_method => :search_authorized?, :ignore_method => :field_search_ignore?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', label: :search, type: :collection, security_method: :search_authorized?, ignore_method: :field_search_ignore?)
 
     # A flag for how the search should do full-text searching in the database:
     # * :full: LIKE %?%
@@ -62,6 +62,7 @@ module ActiveScaffold::Config
 
     def optional_columns
       return @optional_columns || NO_COLUMNS if frozen?
+
       @optional_columns ||= NO_COLUMNS.dup
     end
 
@@ -72,7 +73,7 @@ module ActiveScaffold::Config
     attr_accessor :grouped_columns
 
     # default search params
-    # default_params = {:title => {"from"=>"test", "to"=>"", "opt"=>"%?%"}}
+    # default_params = {title: {"from"=>"test", "to"=>"", "opt"=>"%?%"}}
     attr_accessor :default_params
 
     # human conditions

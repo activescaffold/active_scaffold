@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module PaginationHelpers
       def pagination_ajax_link(page_number, url_options, options)
-        link_to page_number, url_options.merge(:page => page_number), options.merge(:class => 'as_paginate')
+        link_to page_number, url_options.merge(page: page_number), options.merge(class: 'as_paginate')
       end
 
       def pagination_url_options(url_options = nil)
@@ -27,7 +27,7 @@ module ActiveScaffold
 
         html = []
         if current_page.number == 1
-          last_page = 0
+          last_page = 0 # rubocop:disable Lint/UselessAssignment
         else
           last_page = 1
           last_page.upto([last_page + outer_window, current_page.number - 1].min) do |num|
@@ -36,7 +36,7 @@ module ActiveScaffold
           end
         end
         if current_page.pager.infinite?
-          offsets.reverse.each do |offset|
+          offsets.reverse_each do |offset|
             page = current_page.number - offset
             next unless page < start_number && page > last_page
 
@@ -49,7 +49,7 @@ module ActiveScaffold
 
         [start_number, last_page + 1].max.upto(end_number) do |num|
           html << if current_page.number == num
-                    content_tag(:span, num.to_s, :class => 'as_paginate current')
+                    content_tag(:span, num.to_s, class: 'as_paginate current')
                   else
                     pagination_ajax_link(num, url_options, options)
                   end

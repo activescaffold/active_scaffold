@@ -14,6 +14,10 @@ module ActiveScaffold
       RequestStore.store[:attr_Registry_unauthorized_columns] ||= Hash.new { |h, k| h[k] = [] }
     end
 
+    def self.column_links
+      RequestStore.store[:column_links] ||= {}
+    end
+
     def self.cache(kind, key = nil, &block)
       unless key
         key = kind
@@ -22,6 +26,7 @@ module ActiveScaffold
       RequestStore.store[:attr_Registry_cache] ||= {}
       cache = RequestStore.store[:attr_Registry_cache][kind] ||= {}
       return cache[key] if cache.include? key
+
       cache[key] ||= yield
     end
   end

@@ -10,7 +10,7 @@ class PaperTrailTest < ActionController::TestCase
         concern :active_scaffold, ActiveScaffold::Routing::Basic.new
         resources :addresses, concerns: :active_scaffold
       end
-      assert_routing '/addresses/deleted', :controller => 'addresses', :action => 'deleted'
+      assert_routing '/addresses/deleted', controller: 'addresses', action: 'deleted'
     end
   end
 end

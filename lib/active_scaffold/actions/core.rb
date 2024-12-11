@@ -4,11 +4,11 @@ module ActiveScaffold::Actions
       base.class_eval do
         before_action :set_vary_accept_header
         before_action :check_input_device
-        before_action :register_constraints_with_action_columns, :unless => :nested?
+        before_action :register_constraints_with_action_columns, unless: :nested?
         after_action :clear_flashes
         after_action :dl_cookie
         around_action :clear_storage
-        rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, :with => :deny_access
+        rescue_from ActiveScaffold::RecordNotAllowed, ActiveScaffold::ActionNotAllowed, with: :deny_access
       end
       base.helper_method :active_scaffold_config
       base.helper_method :successful?
@@ -27,7 +27,12 @@ module ActiveScaffold::Actions
       if request.get? || request.head?
         render_field_for_inplace_editing
         respond_to do |format|
-          format.js { render :action => 'render_field_inplace', :layout => false }
+          format.js { render action: 'render_field_inplace', layout: false }
+        end
+      elsif params[:tabbed_by]
+        add_tab
+        respond_to do |format|
+          format.js { render action: 'add_tab', layout: false }
         end
       else
         render_field_for_update_columns
@@ -55,13 +60,17 @@ module ActiveScaffold::Actions
 
     def render_field_for_inplace_editing
       @column = active_scaffold_config.columns[params[:update_column]]
-      @record = find_if_allowed(params[:id], :crud_type => :update, :column => params[:update_column])
+      @record = find_if_allowed(params[:id], crud_type: :update, column: params[:update_column])
     end
 
-    def render_field_for_update_columns
-      return if (@column = active_scaffold_config.columns[params.delete(:column)]).nil?
+    def add_tab
+      process_render_field_params
+      @column = @main_columns.find_by_name(params[:column])
+      @record = updated_record_with_form(@main_columns, {}, @scope)
+    end
+
+    def process_render_field_params
       @source_id = params.delete(:source_id)
-      @columns = @column.update_columns || []
       @scope = params.delete(:scope)
       if @scope
         @form_action = :subform
@@ -70,7 +79,14 @@ module ActiveScaffold::Actions
       end
       @form_action ||= params[:id] ? :update : :create
       @main_columns = active_scaffold_config.send(@form_action).columns
+    end
+
+    def render_field_for_update_columns
+      return if (@column = active_scaffold_config.columns[params.delete(:column)]).nil?
+
+      @columns = @column.update_columns || []
       @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
+      process_render_field_params
 
       @record =
         if @column.send_form_on_update_column
@@ -98,14 +114,14 @@ module ActiveScaffold::Actions
       record = new_model
       copy_attributes(saved_record, record) if saved_record
       apply_constraints_to_record(record) unless scope
-      create_association_with_parent record, true if nested?
+      create_association_with_parent record, check_match: true if nested?
       update_record_from_params(record, columns, attributes || {}, true)
     end
 
     def updated_record_with_column(column, value, scope)
       record = params[:id] ? copy_attributes(find_if_allowed(params[:id], :read)) : new_model
       apply_constraints_to_record(record) unless scope || params[:id]
-      create_association_with_parent record, true if nested?
+      create_association_with_parent record, check_match: true if nested?
       if @form_action == :field_search && value.is_a?(Array) && column.association&.singular?
         # don't assign value if it's an array and column is singular association,
         # e.g. value came from multi-select on search form
@@ -119,7 +135,7 @@ module ActiveScaffold::Actions
     end
 
     def subform_child_association
-      params[:child_association].presence || @scope&.split(']')&.first&.sub(/^\[/, '').presence
+      params[:child_association].presence || (@scope.split(']').first.sub(/^\[/, '').presence if @scope)
     end
 
     def parent_controller_name
@@ -140,7 +156,7 @@ module ActiveScaffold::Actions
       if association.collection?
         record.send(association.name) << parent
       else
-        record.send("#{association.name}=", parent)
+        record.send(:"#{association.name}=", parent)
       end
 
       if params[:nested] # form in nested scaffold, set nested parent_record to parent
@@ -160,6 +176,7 @@ module ActiveScaffold::Actions
 
     def parent_sti_controller
       return unless params[:parent_sti]
+
       unless defined? @parent_sti_controller
         controller = look_for_parent_sti_controller
         @parent_sti_controller = controller.controller_path == params[:parent_sti] ? controller : false
@@ -225,10 +242,10 @@ module ActiveScaffold::Actions
       render(
         options.reverse_merge(
           format => response_object,
-          :only => columns_names + [active_scaffold_config.model.primary_key],
-          :include => association_columns(columns_names),
-          :methods => virtual_columns(columns_names),
-          :status => response_status
+          only: columns_names + [active_scaffold_config.model.primary_key],
+          include: association_columns(columns_names),
+          methods: virtual_columns(columns_names),
+          status: response_status
         )
       )
     end
@@ -264,16 +281,18 @@ module ActiveScaffold::Actions
     def conditions_from_params
       @conditions_from_params ||= begin
         conditions = [{}]
+        supporting_range = %i[date datetime integer decimal float bigint]
         params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
           distinct = true if key.match?(/!$/)
           column = active_scaffold_config._columns_hash[key.to_s[0..(distinct ? -2 : -1)]]
           next unless column
+
           key = column.name.to_sym
           not_string = %i[string text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 
-          range = %i[date datetime integer decimal float bigint].include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
+          range = supporting_range.include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
           value = value.split('..') if range
           value =
             if value.is_a?(Array)
@@ -317,6 +336,7 @@ module ActiveScaffold::Actions
     def sti_nested_build_options(klass)
       config = active_scaffold_config_for(klass)
       return unless config
+
       column = klass.inheritance_column
       return unless column && config._columns_hash[column]
 
@@ -351,6 +371,7 @@ module ActiveScaffold::Actions
     def check_input_device
       return unless session[:input_device_type].nil?
       return if request.env['HTTP_USER_AGENT'].nil?
+
       if request.env['HTTP_USER_AGENT'].match?(/(iPhone|iPod|iPad)/i)
         session[:input_device_type] = 'TOUCH'
         session[:hover_supported] = false
@@ -387,7 +408,7 @@ module ActiveScaffold::Actions
     # call this method in your action_link action to simplify processing of actions
     # eg for member action_link :fire
     # process_action_link_action do |record|
-    #   record.update(:fired => true)
+    #   record.update(fired: true)
     #   self.successful = true
     #   flash[:info] = 'Player fired'
     # end
@@ -399,27 +420,30 @@ module ActiveScaffold::Actions
       else
         @action_link = active_scaffold_config.action_links[action_name]
         if params[:id]
-          crud_type_or_security_options ||= {:crud_type => request.delete? ? :delete : :update, :action => action_name}
+          crud_type_or_security_options ||= {crud_type: request.delete? ? :delete : :update, action: action_name}
           get_row(crud_type_or_security_options)
           if @record.nil?
             self.successful = false
-            flash[:error] = as_(:no_authorization_for_action, :action => @action_link&.label(nil) || action_name)
+            flash[:error] = as_(:no_authorization_for_action, action: @action_link&.label(nil) || action_name)
           else
             yield @record
           end
         else
-          if @action_link && respond_to?(@action_link.security_method, true) && !send(@action_link.security_method)
-            raise ActiveScaffold::ActionNotAllowed
-          end
+          raise ActiveScaffold::ActionNotAllowed unless action_link_authorized? @action_link
+
           yield
         end
         respond_to_action(render_action)
       end
     end
 
+    def action_link_authorized?(link)
+      link&.security_method.nil? || !respond_to?(link.security_method, true) || Array(send(link.security_method))[0]
+    end
+
     def action_confirmation_respond_to_html(confirm_action = action_name.to_sym)
       link = active_scaffold_config.action_links[confirm_action]
-      render :action => 'action_confirmation', :locals => {:record => @record, :link => link}
+      render action: 'action_confirmation', locals: {record: @record, link: link}
     end
 
     def action_update_respond_on_iframe
@@ -427,11 +451,11 @@ module ActiveScaffold::Actions
     end
 
     def action_update_respond_to_html
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
     end
 
     def action_update_respond_to_js
-      render :action => 'on_action_update', :formats => [:js], :layout => false
+      render action: 'on_action_update', formats: [:js], layout: false
     end
 
     def action_update_respond_to_xml
@@ -450,10 +474,10 @@ module ActiveScaffold::Actions
     def view_stale?
       objects = objects_for_etag
       if objects.is_a?(Array)
-        args = {:etag => objects.to_a}
+        args = {etag: objects.to_a}
         args[:last_modified] = @last_modified if @last_modified
       elsif objects.is_a?(Hash)
-        args = {:last_modified => @last_modified}.merge(objects)
+        args = {last_modified: @last_modified}.merge(objects)
       else
         args = objects
       end
@@ -478,6 +502,7 @@ module ActiveScaffold::Actions
 
     def respond_to_action(action)
       return unless !conditional_get_support? || view_stale?
+
       respond_to do |type|
         action_formats.each do |format|
           type.send(format) do
@@ -499,8 +524,8 @@ module ActiveScaffold::Actions
 
     def action_formats
       @action_formats ||=
-        if respond_to? "#{action_name}_formats", true
-          send("#{action_name}_formats")
+        if respond_to? :"#{action_name}_formats", true
+          send(:"#{action_name}_formats")
         else
           (default_formats + active_scaffold_config.formats).uniq
         end
@@ -515,8 +540,8 @@ module ActiveScaffold::Actions
         next unless cfg&.add_sti_create_links?
         return controller if cfg.sti_children.map(&:to_s).include? self.class.active_scaffold_config.model.name.underscore
       end
-    rescue ActiveScaffold::ControllerNotFound => ex
-      logger.warn "#{ex.message} looking for parent_sti of #{self.class.active_scaffold_config.model.name}"
+    rescue ActiveScaffold::ControllerNotFound => e
+      logger.warn "#{e.message} looking for parent_sti of #{self.class.active_scaffold_config.model.name}"
       nil
     end
   end

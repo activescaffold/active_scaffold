@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Config
-  class UpdateTest < Minitest::Test
+  class UpdateTest < ActiveSupport::TestCase
     include ActiveScaffold::Helpers::ControllerHelpers
 
     def setup
@@ -22,8 +22,8 @@ module Config
     end
 
     def test_default_options
-      refute @config.update.persistent
-      refute @config.update.nested_links
+      assert_not @config.update.persistent
+      assert_not @config.update.nested_links
       assert_equal 'Model stub', @config.update.label
     end
 
@@ -43,7 +43,7 @@ module Config
       label = 'update new monkeys'
       @config.update.label = label
       assert_equal label, @config.update.label
-      I18n.backend.store_translations :en, :active_scaffold => {:change_model => 'Change %<model>s'}
+      I18n.backend.store_translations :en, active_scaffold: {change_model: 'Change %<model>s'}
       @config.update.label = :change_model
       assert_equal 'Change Model stub', @config.update.label
       assert_equal 'Change record', @config.update.label('record')

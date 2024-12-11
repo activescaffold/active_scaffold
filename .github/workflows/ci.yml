@@ -1,0 +1,134 @@
+name: activescaffold/active_scaffold
+on:
+  push:
+  pull_request:
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: true
+jobs:
+  lint-brakeman:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BUNDLE_CLEAN: true
+      BUNDLE_DEPLOYMENT: true
+      BUNDLE_WITHOUT: 'default deployment development production test performance'
+    steps:
+      - uses: actions/checkout@v4.1.0
+        with:
+          lfs: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - run: bundle exec brakeman --exit-on-warn --output brakeman/index.html
+      - uses: actions/upload-artifact@v4.1.0
+        if: always()
+        with:
+          name: "${{ github.job }}"
+          retention-days: 1
+          path: brakeman
+  lint-bundler-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BUNDLE_CLEAN: true
+      BUNDLE_DEPLOYMENT: true
+      BUNDLE_WITHOUT: 'default deployment development production test performance'
+    steps:
+      - uses: actions/checkout@v4.1.0
+        with:
+          lfs: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - run: bundle exec bundle-audit check --update --verbose
+  lint-i18n:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    continue-on-error: true
+    env:
+      BUNDLE_CLEAN: true
+      BUNDLE_DEPLOYMENT: true
+      BUNDLE_WITHOUT: 'default deployment development production test performance'
+    steps:
+      - uses: actions/checkout@v4.1.0
+        with:
+          lfs: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - run: bundle exec i18n-tasks health
+  lint-rubocop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BUNDLE_CLEAN: true
+      BUNDLE_DEPLOYMENT: true
+      BUNDLE_WITHOUT: 'default deployment development production test performance'
+    steps:
+      - uses: actions/checkout@v4.1.0
+        with:
+          lfs: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - run: bundle exec rubocop
+  test:
+    name: Ruby ${{ matrix.ruby }} / Rails ${{ matrix.rails }}
+    needs:
+      - lint-brakeman
+      - lint-bundler-audit
+      - lint-i18n
+      - lint-rubocop
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [ "3.3", "3.2", "3.1" ]
+        rails: [ "7.1", "7.0", "6.1" ] # TODO test 7.2
+        include:
+          - ruby: jruby-9.4
+            rails: '6.1'
+          - ruby: '3.0'
+            rails: '6.1'
+          - ruby: '3.0'
+            rails: '7.0'
+          - ruby: '3.3'
+            rails: '7.1'
+            coverage: true
+    timeout-minutes: 60
+    env:
+      JRUBY_OPTS: "--debug"
+      LC_ALL: C.UTF-8
+      RAILS_ENV: test
+      BUNDLE_GEMFILE: gemfiles/Gemfile.rails-${{ matrix.rails }}.x
+      BUNDLE_CLEAN: true
+      BUNDLE_DEPLOYMENT: true
+      BUNDLE_WITHOUT: 'deployment development lint production performance'
+    steps:
+      - uses: actions/checkout@v4.1.0
+        with:
+          lfs: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Setup Code Climate test-reporter
+        if: ${{ matrix.coverage }}
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+      - run: COVERAGE=${{ matrix.coverage}} bundle exec rake
+      - run: "./cc-test-reporter after-build -t simplecov -r ${{secrets.CC_TEST_REPORTER_ID}}"
+        if: ${{ matrix.coverage }}
+      - uses: actions/upload-artifact@v4.1.0
+        if: success()
+        with:
+          name: "${{ github.job }}-coverage"
+          retention-days: 1
+          path: coverage

@@ -1,4 +1,3 @@
-
 module ActiveScaffold
   module Helpers
     module AssociationHelpers
@@ -23,6 +22,7 @@ module ActiveScaffold
         if klass.nil? && association.polymorphic?
           class_name = record.send(association.foreign_type) if association.belongs_to?
           return [] if class_name.blank?
+
           klass = class_name.constantize
           cache = !block_given?
         else
@@ -96,12 +96,13 @@ module ActiveScaffold
       def options_for_association_conditions(association, record = nil)
         return nil if association.through?
         return nil unless association.has_one? || association.has_many?
+
         # Find only orphaned objects
         {association.foreign_key => nil}
       end
 
       def record_select_params_for_add_existing(association, edit_associated_url_options, record)
-        {:onselect => "ActiveScaffold.record_select_onselect(#{url_for(edit_associated_url_options).to_json}, #{active_scaffold_id.to_json}, id);"}
+        {onselect: "ActiveScaffold.record_select_onselect(#{url_for(edit_associated_url_options).to_json}, #{active_scaffold_id.to_json}, id);"}
       end
     end
   end

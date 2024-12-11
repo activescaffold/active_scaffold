@@ -110,6 +110,9 @@ color: $column_color;
 color: $header_color;
 }
 
+.active-scaffold div.actions a.separator {
+border-color: $action_group_border_color;
+}
 .active-scaffold-header div.actions a.disabled {
 color: $actions_disabled_color;
 }
@@ -188,6 +191,10 @@ color: $column_empty_color;
 /* Table :: Actions (Edit, Delete)
    ============================= */
 .active-scaffold tr.record td.actions {
+border-color: $column_actions_border_color;
+}
+
+.active-scaffold tr.record td.actions table td.separator {
 border-color: $column_actions_border_color;
 }
 

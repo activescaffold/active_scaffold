@@ -8,7 +8,7 @@ class PermissionModel < ActiveRecord::Base
   end
 
   def self.columns_hash
-    @columns_hash ||= Hash[columns.map { |c| [c.name, c] }]
+    @columns_hash ||= columns.index_by(&:name)
   end
 
   def self.schema_loaded?
@@ -81,7 +81,7 @@ class PermissionModel < ActiveRecord::Base
   # def c1_authorized_for_update?; end
 end
 
-class ActiveRecordPermissionsTest < Minitest::Test
+class ActiveRecordPermissionsTest < ActiveSupport::TestCase
   def setup
     @model = PermissionModel.new
   end
@@ -96,43 +96,43 @@ class ActiveRecordPermissionsTest < Minitest::Test
       config.security.default_permission = true
     end
 
-    pass(@model.authorized_for?(:column => :a3), '_a_')
-    miss(@model.authorized_for?(:column => :a2), '_f_')
-    pass(@model.authorized_for?(:column => :a1), '_t_')
+    pass(@model.authorized_for?(column: :a3), '_a_')
+    miss(@model.authorized_for?(column: :a2), '_f_')
+    pass(@model.authorized_for?(column: :a1), '_t_')
 
-    pass(@model.authorized_for?(:crud_type => :create), 'a__')
-    miss(@model.authorized_for?(:crud_type => :update), 'f__')
-    pass(@model.authorized_for?(:crud_type => :read), 't__')
+    pass(@model.authorized_for?(crud_type: :create), 'a__')
+    miss(@model.authorized_for?(crud_type: :update), 'f__')
+    pass(@model.authorized_for?(crud_type: :read), 't__')
 
-    pass(@model.authorized_for?(:crud_type => :create, :column => :c3), 'aaa')
-    miss(@model.authorized_for?(:crud_type => :create, :column => :b3), 'aaf')
-    pass(@model.authorized_for?(:crud_type => :create, :column => :a3), 'aat')
-    miss(@model.authorized_for?(:crud_type => :create, :column => :c2), 'afa')
-    miss(@model.authorized_for?(:crud_type => :create, :column => :b2), 'aff')
-    pass(@model.authorized_for?(:crud_type => :create, :column => :a2), 'aft')
-    pass(@model.authorized_for?(:crud_type => :create, :column => :c1), 'ata')
-    miss(@model.authorized_for?(:crud_type => :create, :column => :b1), 'atf')
-    pass(@model.authorized_for?(:crud_type => :create, :column => :a1), 'att')
+    pass(@model.authorized_for?(crud_type: :create, column: :c3), 'aaa')
+    miss(@model.authorized_for?(crud_type: :create, column: :b3), 'aaf')
+    pass(@model.authorized_for?(crud_type: :create, column: :a3), 'aat')
+    miss(@model.authorized_for?(crud_type: :create, column: :c2), 'afa')
+    miss(@model.authorized_for?(crud_type: :create, column: :b2), 'aff')
+    pass(@model.authorized_for?(crud_type: :create, column: :a2), 'aft')
+    pass(@model.authorized_for?(crud_type: :create, column: :c1), 'ata')
+    miss(@model.authorized_for?(crud_type: :create, column: :b1), 'atf')
+    pass(@model.authorized_for?(crud_type: :create, column: :a1), 'att')
 
-    miss(@model.authorized_for?(:crud_type => :update, :column => :c3), 'faa')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :b3), 'faf')
-    pass(@model.authorized_for?(:crud_type => :update, :column => :a3), 'fat')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :c2), 'ffa')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :b2), 'fff')
-    pass(@model.authorized_for?(:crud_type => :update, :column => :a2), 'fft')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :c1), 'fta')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :b1), 'ftf')
-    pass(@model.authorized_for?(:crud_type => :update, :column => :a1), 'ftt')
+    miss(@model.authorized_for?(crud_type: :update, column: :c3), 'faa')
+    miss(@model.authorized_for?(crud_type: :update, column: :b3), 'faf')
+    pass(@model.authorized_for?(crud_type: :update, column: :a3), 'fat')
+    miss(@model.authorized_for?(crud_type: :update, column: :c2), 'ffa')
+    miss(@model.authorized_for?(crud_type: :update, column: :b2), 'fff')
+    pass(@model.authorized_for?(crud_type: :update, column: :a2), 'fft')
+    miss(@model.authorized_for?(crud_type: :update, column: :c1), 'fta')
+    miss(@model.authorized_for?(crud_type: :update, column: :b1), 'ftf')
+    pass(@model.authorized_for?(crud_type: :update, column: :a1), 'ftt')
 
-    pass(@model.authorized_for?(:crud_type => :read, :column => :c3), 'taa')
-    miss(@model.authorized_for?(:crud_type => :read, :column => :b3), 'taf')
-    pass(@model.authorized_for?(:crud_type => :read, :column => :a3), 'tat')
-    miss(@model.authorized_for?(:crud_type => :read, :column => :c2), 'tfa')
-    miss(@model.authorized_for?(:crud_type => :read, :column => :b2), 'tff')
-    pass(@model.authorized_for?(:crud_type => :read, :column => :a2), 'tft')
-    pass(@model.authorized_for?(:crud_type => :read, :column => :c1), 'tta')
-    miss(@model.authorized_for?(:crud_type => :read, :column => :b1), 'ttf')
-    pass(@model.authorized_for?(:crud_type => :read, :column => :a1), 'ttt')
+    pass(@model.authorized_for?(crud_type: :read, column: :c3), 'taa')
+    miss(@model.authorized_for?(crud_type: :read, column: :b3), 'taf')
+    pass(@model.authorized_for?(crud_type: :read, column: :a3), 'tat')
+    miss(@model.authorized_for?(crud_type: :read, column: :c2), 'tfa')
+    miss(@model.authorized_for?(crud_type: :read, column: :b2), 'tff')
+    pass(@model.authorized_for?(crud_type: :read, column: :a2), 'tft')
+    pass(@model.authorized_for?(crud_type: :read, column: :c1), 'tta')
+    miss(@model.authorized_for?(crud_type: :read, column: :b1), 'ttf')
+    pass(@model.authorized_for?(crud_type: :read, column: :a1), 'ttt')
 
     ActiveScaffold.defaults do |config|
       config.security.default_permission = old_permission
@@ -142,43 +142,43 @@ class ActiveRecordPermissionsTest < Minitest::Test
   def test_method_combinations_with_default_false
     ActiveScaffold::Config::Core.security.stubs(default_permission: false)
 
-    miss(@model.authorized_for?(:column => :a3), '_a_')
-    miss(@model.authorized_for?(:column => :a2), '_f_')
-    pass(@model.authorized_for?(:column => :a1), '_t_')
+    miss(@model.authorized_for?(column: :a3), '_a_')
+    miss(@model.authorized_for?(column: :a2), '_f_')
+    pass(@model.authorized_for?(column: :a1), '_t_')
 
-    miss(@model.authorized_for?(:crud_type => :create), 'a__')
-    miss(@model.authorized_for?(:crud_type => :update), 'f__')
-    pass(@model.authorized_for?(:crud_type => :read), 't__')
+    miss(@model.authorized_for?(crud_type: :create), 'a__')
+    miss(@model.authorized_for?(crud_type: :update), 'f__')
+    pass(@model.authorized_for?(crud_type: :read), 't__')
 
-    miss(@model.authorized_for?(:crud_type => :create, :column => :c3), 'aaa')
-    miss(@model.authorized_for?(:crud_type => :create, :column => :b3), 'aaf')
-    pass(@model.authorized_for?(:crud_type => :create, :column => :a3), 'aat')
-    miss(@model.authorized_for?(:crud_type => :create, :column => :c2), 'afa')
-    miss(@model.authorized_for?(:crud_type => :create, :column => :b2), 'aff')
-    pass(@model.authorized_for?(:crud_type => :create, :column => :a2), 'aft')
-    pass(@model.authorized_for?(:crud_type => :create, :column => :c1), 'ata')
-    miss(@model.authorized_for?(:crud_type => :create, :column => :b1), 'atf')
-    pass(@model.authorized_for?(:crud_type => :create, :column => :a1), 'att')
+    miss(@model.authorized_for?(crud_type: :create, column: :c3), 'aaa')
+    miss(@model.authorized_for?(crud_type: :create, column: :b3), 'aaf')
+    pass(@model.authorized_for?(crud_type: :create, column: :a3), 'aat')
+    miss(@model.authorized_for?(crud_type: :create, column: :c2), 'afa')
+    miss(@model.authorized_for?(crud_type: :create, column: :b2), 'aff')
+    pass(@model.authorized_for?(crud_type: :create, column: :a2), 'aft')
+    pass(@model.authorized_for?(crud_type: :create, column: :c1), 'ata')
+    miss(@model.authorized_for?(crud_type: :create, column: :b1), 'atf')
+    pass(@model.authorized_for?(crud_type: :create, column: :a1), 'att')
 
-    miss(@model.authorized_for?(:crud_type => :update, :column => :c3), 'faa')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :b3), 'faf')
-    pass(@model.authorized_for?(:crud_type => :update, :column => :a3), 'fat')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :c2), 'ffa')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :b2), 'fff')
-    pass(@model.authorized_for?(:crud_type => :update, :column => :a2), 'fft')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :c1), 'fta')
-    miss(@model.authorized_for?(:crud_type => :update, :column => :b1), 'ftf')
-    pass(@model.authorized_for?(:crud_type => :update, :column => :a1), 'ftt')
+    miss(@model.authorized_for?(crud_type: :update, column: :c3), 'faa')
+    miss(@model.authorized_for?(crud_type: :update, column: :b3), 'faf')
+    pass(@model.authorized_for?(crud_type: :update, column: :a3), 'fat')
+    miss(@model.authorized_for?(crud_type: :update, column: :c2), 'ffa')
+    miss(@model.authorized_for?(crud_type: :update, column: :b2), 'fff')
+    pass(@model.authorized_for?(crud_type: :update, column: :a2), 'fft')
+    miss(@model.authorized_for?(crud_type: :update, column: :c1), 'fta')
+    miss(@model.authorized_for?(crud_type: :update, column: :b1), 'ftf')
+    pass(@model.authorized_for?(crud_type: :update, column: :a1), 'ftt')
 
-    pass(@model.authorized_for?(:crud_type => :read, :column => :c3), 'taa')
-    miss(@model.authorized_for?(:crud_type => :read, :column => :b3), 'taf')
-    pass(@model.authorized_for?(:crud_type => :read, :column => :a3), 'tat')
-    miss(@model.authorized_for?(:crud_type => :read, :column => :c2), 'tfa')
-    miss(@model.authorized_for?(:crud_type => :read, :column => :b2), 'tff')
-    pass(@model.authorized_for?(:crud_type => :read, :column => :a2), 'tft')
-    pass(@model.authorized_for?(:crud_type => :read, :column => :c1), 'tta')
-    miss(@model.authorized_for?(:crud_type => :read, :column => :b1), 'ttf')
-    pass(@model.authorized_for?(:crud_type => :read, :column => :a1), 'ttt')
+    pass(@model.authorized_for?(crud_type: :read, column: :c3), 'taa')
+    miss(@model.authorized_for?(crud_type: :read, column: :b3), 'taf')
+    pass(@model.authorized_for?(crud_type: :read, column: :a3), 'tat')
+    miss(@model.authorized_for?(crud_type: :read, column: :c2), 'tfa')
+    miss(@model.authorized_for?(crud_type: :read, column: :b2), 'tff')
+    pass(@model.authorized_for?(crud_type: :read, column: :a2), 'tft')
+    pass(@model.authorized_for?(crud_type: :read, column: :c1), 'tta')
+    miss(@model.authorized_for?(crud_type: :read, column: :b1), 'ttf')
+    pass(@model.authorized_for?(crud_type: :read, column: :a1), 'ttt')
   end
 
   private
@@ -188,6 +188,6 @@ class ActiveRecordPermissionsTest < Minitest::Test
   end
 
   def miss(value, message = nil)
-    refute value, "#{message} should fail"
+    assert_not value, "#{message} should fail"
   end
 end

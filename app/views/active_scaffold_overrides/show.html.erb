@@ -1,11 +1,11 @@
 <div class="active-scaffold">
   <div class="show-view <%= "#{id_from_controller params[:controller]}-view" %> view">
     <% if active_scaffold_config.show.inline_links and !active_scaffold_config.action_links.member.empty? -%>
-      <%= render :partial => 'show_actions', :locals => {:record => @record, :position => :header} %>
+      <%= render 'show_actions', record: @record, position: :header %>
     <% end -%>
-    <%= render :partial => 'show' -%>
+    <%= render 'show' -%>
     <% if active_scaffold_config.show.inline_links and !active_scaffold_config.action_links.member.empty? -%>
-      <%= render :partial => 'show_actions', :locals => {:record => @record, :position => :footer} %>
+      <%= render 'show_actions', record: @record, position: :footer %>
     <% end -%>
   </div>
 </div>

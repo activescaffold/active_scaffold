@@ -10,7 +10,7 @@ module ActiveScaffold::Config
 
     # the ActionLink for this action
     cattr_accessor :link
-    @@link = ActiveScaffold::DataStructures::ActionLink.new(:deleted, :label => :deleted_records, :type => :collection)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new(:deleted, label: :deleted_records, type: :collection)
 
     # label for versions nested link
     cattr_accessor :nested_link_label

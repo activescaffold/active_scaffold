@@ -13,36 +13,45 @@ return unless show_add_new or show_add_existing
 temporary_id = generated_id(parent_record) if parent_record.new_record?
 controller_path = active_scaffold_controller_for(parent_record.class).controller_path
 parent_controller = (main_form_controller || controller).controller_path
-url_options = {:controller => controller_path, :action => 'edit_associated', :child_association => column.name, :scope => scope, :id => parent_record.to_param, :generated_id => temporary_id, :parent_controller => parent_controller}
-edit_associated_url = params_for(url_options.merge(:associated_id => '--ID--')) if show_add_existing
-add_new_url = params_for(url_options) if show_add_new
+url_options = {controller: controller_path, action: 'edit_associated', child_association: column.name, scope: scope, id: parent_record.to_param, generated_id: temporary_id, parent_controller: parent_controller}
+edit_associated_url = params_for(url_options.merge(associated_id: '--ID--')) if show_add_existing
+if show_add_new
+  if local_assigns[:tabbed_by]
+    url_options.merge! tabbed_by: tabbed_by, value: tab_value
+    if (tabbed_association = tabbed_by_association(column, tabbed_by))
+      url_options[:value] = tab_value.id
+      url_options[:value_type] = tab_value.class.base_class.sti_name if tabbed_association.polymorphic?
+    end
+  end
+  add_new_url = params_for(url_options)
+end
 
 -%>
 <div class="footer-wrapper">
   <div class="footer">
     <% if show_add_new -%>
     <% if column.association.collection?
-         add_label = as_(:create_another, :model => column.association.klass.model_name.human)
+         add_label = as_(:create_another, model: column.association.klass.model_name.human)
          add_class = 'as_create_another'
        else
          add_label = as_(:replace_with_new)
          add_class = 'as_replace_with_new'
        end
-       create_another_id = "#{sub_form_id(:association => column.name, :id => parent_record.id || temporary_id || 99999999999)}-create-another" %>
-    <%= link_to add_label, add_new_url, :id => create_another_id, :remote => true, :class => "as-js-button #{add_class}", :style=> "display: none;" %>
+       create_another_id = "#{subform_div_id}-create-another" %>
+    <%= link_to add_label, add_new_url, id: create_another_id, remote: true, class: "as-js-button #{add_class}", style: 'display: none;' %>
     <% end -%>
 
-    <%= '|' if show_add_new and show_add_existing %>
+    <%= '|' if show_add_new && show_add_existing %>
 
     <% if show_add_existing -%>
-      <% if remote_controller and remote_controller.respond_to? :uses_record_select? and remote_controller.uses_record_select? -%>
+      <% if remote_controller.respond_to?(:uses_record_select?) && remote_controller.uses_record_select? -%>
         <%= link_to_record_select as_(:add_existing), remote_controller.controller_path, record_select_params_for_add_existing(column.association, edit_associated_url, parent_record) -%>
       <% else -%>
         <% select_options = options_from_collection_for_select(sorted_association_options_find(column.association, nil, parent_record), :to_param, :to_label)
-           add_existing_id = "#{sub_form_id(:association => column.name, :id => parent_record.id || temporary_id || 99999999999)}-add-existing"
+           add_existing_id = "#{subform_div_id}-add-existing"
            add_existing_label = column.association.collection? ? :add_existing : :replace_existing %>
         <%= select_tag 'associated_id', content_tag(:option, as_(:_select_), value: '') + select_options %>
-        <%= link_to as_(add_existing_label), edit_associated_url, :id => add_existing_id, :remote => true, :class=> "as-js-button as_#{add_existing_label}", :style => "display: none;" %>
+        <%= link_to as_(add_existing_label), edit_associated_url, id: add_existing_id, remote: true, class: "as-js-button as_#{add_existing_label}", style: 'display: none;' %>
       <% end -%>
     <% end -%>
   </div>

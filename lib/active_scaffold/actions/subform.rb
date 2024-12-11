@@ -3,7 +3,7 @@ module ActiveScaffold::Actions
     def edit_associated
       do_edit_associated
       respond_to do |format|
-        format.js { render :action => 'edit_associated', :formats => [:js], :readonly => @column.association.readonly? }
+        format.js { render action: 'edit_associated', formats: [:js], readonly: @column.association.readonly? }
       end
     end
 
@@ -13,7 +13,7 @@ module ActiveScaffold::Actions
       parent_record = new_model
       # don't apply if scope, subform inside subform, because constraints won't apply to parent_record
       apply_constraints_to_record parent_record unless @scope
-      create_association_with_parent parent_record, true if nested?
+      create_association_with_parent parent_record, check_match: true if nested?
       parent_record
     end
 
@@ -24,8 +24,19 @@ module ActiveScaffold::Actions
       cache_generated_id(@parent_record, params[:generated_id]) if @parent_record.new_record?
       @column = active_scaffold_config.columns[params[:child_association]]
 
-      @record = find_associated_record if params[:associated_id]
-      @record ||= build_associated(@column.association, @parent_record)
+      @record = (find_associated_record if params[:associated_id]) ||
+                build_associated(@column.association, @parent_record) do |blank_record|
+                  if params[:tabbed_by] && params[:value]
+                    assign_tabbed_by(blank_record, @column, params[:tabbed_by], params[:value], params[:value_type])
+                  end
+                end
+    end
+
+    def assign_tabbed_by(record, parent_column, tabbed_by, value, value_type)
+      if (association = tabbed_by_association(parent_column, tabbed_by))
+        klass = value_type&.constantize || association.klass
+      end
+      record.send :"#{tabbed_by}=", klass&.find(value) || value
     end
 
     def find_associated_record

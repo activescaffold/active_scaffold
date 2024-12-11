@@ -6,8 +6,8 @@ module ActiveScaffold
         ERB::Util.h controller.to_s.gsub('/', '__')
       end
 
-      def controller_id(controller = (params[:eid] || nested_id || params[:parent_controller] || params[:controller]))
-        'as_' + id_from_controller(controller)
+      def controller_id(controller = params[:eid] || nested_id || params[:parent_controller] || params[:controller])
+        "as_#{id_from_controller(controller)}"
       end
 
       def nested?
@@ -39,7 +39,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_calculations_id(options = {})
-        "#{options[:controller_id] || controller_id}-calculations#{'-' + options[:column].name.to_s if options[:column]}"
+        "#{options[:controller_id] || controller_id}-calculations#{"-#{options[:column].name}" if options[:column]}"
       end
 
       def empty_message_id
@@ -106,13 +106,13 @@ module ActiveScaffold
       def sub_form_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= nested_parent_id if nested?
-        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform"
+        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}#{'-' if options[:tab_id]}#{options[:tab_id]}-subform"
       end
 
       def sub_form_list_id(options = {})
         options[:id] ||= params[:id]
         options[:id] ||= nested_parent_id if nested?
-        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}-subform-list"
+        clean_id "#{controller_id}-#{options[:id]}-#{options[:association]}#{'-' if options[:tab_id]}#{options[:tab_id]}-subform-list"
       end
 
       def element_messages_id(options = {})

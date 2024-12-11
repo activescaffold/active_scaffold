@@ -19,6 +19,7 @@ fr:
     cancel: Annuler
     cant_destroy_record: "%{record} ne peut être supprimé"
     changes: Changement
+    check_all:
     click_to_edit: Cliquer pour éditer
     click_to_reset: Cliquer pour ré-initialiser
     close: Fermer
@@ -131,6 +132,7 @@ fr:
     today: Aujourd'hui
     tomorrow: Demain
     'true': Vrai
+    uncheck_all:
     update: Mettre à jour
     update_apply: Appliquer
     update_model: Mettre à jour le(/la) %{model}

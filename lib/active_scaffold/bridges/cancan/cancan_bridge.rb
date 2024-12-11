@@ -10,9 +10,9 @@
 module CanCan
   module Ability
     def as_action_aliases
-      alias_action :list, :show_search, :render_field, :to => :read
-      alias_action :update_column, :edit_associated, :new_existing, :add_existing, :to => :update
-      alias_action :delete, :destroy_existing, :to => :destroy
+      alias_action :list, :show_search, :render_field, to: :read
+      alias_action :update_column, :edit_associated, :new_existing, :add_existing, to: :update
+      alias_action :delete, :destroy_existing, to: :destroy
     end
   end
 end
@@ -26,8 +26,8 @@ module ActiveScaffold::Bridges
       def active_scaffold(model_id = nil, &block)
         super
         authorize_resource(
-          :class => active_scaffold_config.model,
-          :instance => :record
+          class: active_scaffold_config.model,
+          instance: :record
         )
       end
     end
@@ -101,19 +101,20 @@ module ActiveScaffold::Bridges
         class InvalidArgument < StandardError; end
 
         # is usually called with :crud_type and :column, or :action
-        #     {:crud_type=>:update, :column=>"some_colum_name"}
-        #     {:action=>"edit"}
+        #     {crud_type: :update, column: 'some_colum_name'}
+        #     {action: 'edit'}
         # to allow access cancan must allow both :crud_type and :action
         # if cancan says "no", it delegates to default AS behavior
         def authorized_for?(options = {})
           raise InvalidArgument if options[:crud_type].blank? && options[:action].blank?
+
           if current_ability.present?
             crud_type_result = options[:crud_type].nil? ? true : current_ability.can?(options[:crud_type], self)
             action_result = options[:action].nil? ? true : current_ability.can?(options[:action].to_sym, self)
           else
             crud_type_result = action_result = false
           end
-          result = (crud_type_result && action_result) || super(options.merge(:reason => nil))
+          result = (crud_type_result && action_result) || super(options.merge(reason: nil))
           # return array with nil reason if requested with options[:reason], we don't have reason but caller expects array
           options[:reason] ? [result, nil] : result
         end

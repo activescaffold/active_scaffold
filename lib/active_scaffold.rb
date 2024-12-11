@@ -51,30 +51,20 @@ module ActiveScaffold
   mattr_accessor :javascripts, instance_writer: false
   self.javascripts = []
 
-  mattr_reader :threadsafe
   def self.threadsafe!
-    @@threadsafe = true
-  end
-
-  mattr_writer :js_framework, instance_writer: false
-  def self.js_framework
-    @@js_framework ||=
-      if defined? Jquery
-        :jquery
-      elsif defined? PrototypeRails
-        :prototype
-      end
+    ActiveSupport::Deprecation.warn 'Threadsafe is enabled always, no need to require it anymore'
   end
 
   mattr_writer :jquery_ui_loaded, instance_writer: false
   def self.jquery_ui_included?
     return true if @@jquery_ui_loaded
-    Jquery::Rails.const_defined?('JQUERY_UI_VERSION') || Jquery.const_defined?('Ui') if Object.const_defined?('Jquery')
+
+    Jquery::Rails.const_defined?(:JQUERY_UI_VERSION) || Jquery.const_defined?(:Ui) if Object.const_defined?(:Jquery)
   end
 
   mattr_writer :js_config, instance_writer: false
   def self.js_config
-    @@js_config ||= {:scroll_on_close => :checkInViewport}
+    @@js_config ||= {scroll_on_close: :checkInViewport}
   end
 
   # exclude bridges you do not need, add to an initializer
@@ -87,9 +77,12 @@ module ActiveScaffold
   end
 
   mattr_accessor :nested_subforms, instance_writer: false
+  def nested_subforms=(*)
+    ActiveSupport::Deprecation.warn 'Nested subforms are enabled by default already'
+  end
 
   def self.root
-    File.dirname(__FILE__) + '/..'
+    "#{File.dirname(__FILE__)}/.."
   end
 
   def self.defaults(&block)

@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'class_with_finder'
 
-class FinderTest < Minitest::Test
+class FinderTest < ActiveSupport::TestCase
   def setup
     @klass = ClassWithFinder.new
     @klass.active_scaffold_config.stubs(model: ModelStub)
@@ -31,7 +31,7 @@ class FinderTest < Minitest::Test
 
   def test_method_sorting
     column = ActiveScaffold::DataStructures::Column.new('a', ModelStub)
-    column.sort_by :method => proc { self }
+    column.sort_by method: proc { self }
 
     collection = [16_000, 2853, 98_765, 6188, 4]
     assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
@@ -41,17 +41,17 @@ class FinderTest < Minitest::Test
     result = @klass.send(:sort_collection_by_column, collection, column, 'asc')
     assert_equal [nil, 'a', 'b'], result
 
-    column.sort_by :method => 'self'
+    column.sort_by method: 'self'
     collection = [3, 1, 2]
     assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
   end
 
   def test_count_with_group
-    @klass.expects(:custom_finder_options).returns(:group => :a)
+    @klass.expects(:custom_finder_options).returns(group: :a)
     relation_class.any_instance.expects(:count).returns('foo' => 5, 'bar' => 4)
     relation_class.any_instance.expects(:limit).with(20).returns(ModelStub.where(nil))
     relation_class.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
-    page = @klass.send :find_page, :per_page => 20, :pagination => true
+    page = @klass.send :find_page, per_page: 20, pagination: true
     page.items
 
     assert_kind_of Integer, page.pager.count
@@ -64,13 +64,13 @@ class FinderTest < Minitest::Test
     relation_class.any_instance.expects(:limit).never
     relation_class.any_instance.expects(:offset).never
     ModelStub.expects(:count).never
-    page = @klass.send :find_page, :per_page => 20, :pagination => false
+    page = @klass.send :find_page, per_page: 20, pagination: false
     page.items
   end
 
   def test_infinite_pagination
     ModelStub.expects(:count).never
-    @klass.send :find_page, :pagination => :infinite
+    @klass.send :find_page, pagination: :infinite
   end
 
   def test_condition_for_column
@@ -84,7 +84,7 @@ class FinderTest < Minitest::Test
     condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Building.where(['name LIKE ?', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"addresses"."addressable_id" IN (?) AND "addresses"."addressable_type" = ?', condition[0]
-    assert_equal ['Building'], condition[2..-1]
+    assert_equal ['Building'], condition[2..]
   end
 
   def test_condition_for_polymorphic_column_with_relation
@@ -93,7 +93,7 @@ class FinderTest < Minitest::Test
     condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Person.joins(:buildings).where(['first_name LIKE ? OR last_name LIKE ?', '%test search%', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"contacts"."contactable_id" IN (?) AND "contacts"."contactable_type" = ?', condition[0]
-    assert_equal ['Person'], condition[2..-1]
+    assert_equal ['Person'], condition[2..]
   end
 
   def test_subquery_condition_for_association_with_condition
@@ -103,7 +103,7 @@ class FinderTest < Minitest::Test
     condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Person.where(['first_name LIKE ? OR last_name LIKE ?', '%test search%', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"buildings"."owner_id" IN (?) AND floor_count > 0', condition[0]
-    assert_equal [], condition[2..-1]
+    assert_equal [], condition[2..]
   end
 
   def test_subquery_condition_for_association_with_conditions
@@ -113,7 +113,7 @@ class FinderTest < Minitest::Test
     condition = ClassWithFinder.condition_for_column(column, 'test search', :full, {})
     assert_equal Person.where(['first_name LIKE ? OR last_name LIKE ?', '%test search%', '%test search%']).select(:id).to_sql, condition[1].to_sql
     assert_equal '"buildings"."owner_id" IN (?) AND floor_count > 0 AND name != ?', condition[0]
-    assert_equal [''], condition[2..-1]
+    assert_equal [''], condition[2..]
   end
 
   private
