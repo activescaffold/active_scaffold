@@ -27,5 +27,6 @@ Gem::Specification.new do |s|
   # Deep Freeze Ruby Objects
   s.add_dependency('ice_nine', '~> 0.11')
   s.add_dependency('request_store', '~> 1.3')
+  s.add_dependency('sassc-rails', '~> 2.0')
   s.metadata['rubygems_mfa_required'] = 'true'
 end

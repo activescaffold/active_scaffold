@@ -11,21 +11,29 @@ module ActiveScaffold
         route 'concern :active_scaffold_association, ActiveScaffold::Routing::Association.new'
       end
 
-      def add_to_javascript_manifest
-        file = 'app/assets/javascripts/application.js'
-        unless File.exist?(file)
-          create_javascript_manifest file
-          return
-        end
-        original_js = File.binread(file)
-        if original_js.include?('require active_scaffold')
-          say_status('skipped', "insert into #{file}", :yellow)
-        else
-          insert_into_file file, after: %r{//= require +.*ujs['"]?\n} do
-            "//= require active_scaffold\n"
+      IMPORTMAP = 'config/importmap.rb'.freeze
+      JS_ASSET = 'app/assets/javascripts/application.js'.freeze
+      JS_APP = 'app/javascript/application.js'.freeze
+      MANIFEST = 'app/assets/config/manifest.js'.freeze
+
+      def add_javascript
+        if File.exist?(IMPORTMAP)
+          add_to_importmap
+          add_to_js_app
+        elsif File.exist?(JS_ASSET) # rails 6.1
+          original_js = File.binread(JS_ASSET)
+          if original_js.include?('require active_scaffold')
+            say_status('skipped', "insert into #{JS_ASSET}", :yellow)
+          else
+            insert_into_file JS_ASSET, after: %r{//= require +.*ujs['"]?\n} do
+              "//= require active_scaffold\n"
+            end
+            add_to_manifest 'active_scaffold/manifest.js'
           end
+          setup_jquery JS_ASSET, original_js
+        else
+          create_javascript_manifest JS_ASSET
         end
-        setup_jquery file, original_js
       end
 
       def add_to_stylesheet_manifest
@@ -44,10 +52,70 @@ module ActiveScaffold
 
       protected
 
+      def add_to_importmap
+        original_js = File.binread(IMPORTMAP)
+        if original_js.match? /^pin +['"]active_scaffold['"](?=,|$)/
+          say_status('skipped', "append active_scaffold to #{IMPORTMAP}", :yellow)
+        else
+          append_to_file IMPORTMAP do
+            "pin 'active_scaffold'\n"
+          end
+        end
+        if Object.const_defined?(:Jquery)
+          if original_js.match? /^pin +['"]jquery['"](?=,|$)/
+            say_status('skipped', "append jquery to #{IMPORTMAP}", :yellow)
+          else
+            append_to_file IMPORTMAP do
+              "pin 'jquery'\n"
+            end
+          end
+          if original_js.match? /^pin +['"](jquery_ujs|@rails\/ujs)['"](?=,|$)/
+            say_status('skipped', "append jquery_ujs to #{IMPORTMAP}", :yellow)
+          else
+            append_to_file IMPORTMAP do
+              "pin 'jquery_ujs'\n"
+            end
+          end
+        else
+          say_status('missing', "no jquery-rails gem, load jquery, and jquery_ujs or @rails/ujs, in your layout, or add jquery-rails " \
+                     "to Gemfile and add pin \"jquery\" and pin \"jquery_ujs\" or pin \"@rails/ujs\", to #{IMPORTMAP}", :red)
+        end
+      end
+
+      def add_to_js_app
+        original_js = File.binread(JS_APP)
+        if original_js.match? /^import +['"]active_scaffold['"]/
+          say_status('skipped', "append active_scaffold to #{JS_APP}", :yellow)
+        else
+          append_to_file JS_APP do
+            "import 'active_scaffold'\n"
+          end
+        end
+        manifest = ['active_scaffold/manifest.js']
+        if Object.const_defined?(:Jquery)
+          if original_js.match? /^import +['"]jquery['"]/
+            say_status('skipped', "append jquery to #{JS_APP}", :yellow)
+          else
+            manifest << 'jquery.js'
+            insert_into_file JS_APP, before: %r{import +['"]active_scaffold['"]\n} do
+              "import 'jquery'\n"
+            end
+          end
+          if original_js.match? /^import +(['"]jquery_ujs['"]|Rails from ['"]@rails\/ujs['"])/
+            say_status('skipped', "append jquery_ujs to #{JS_APP}", :yellow)
+          else
+            manifest << 'jquery_ujs.js'
+            insert_into_file JS_APP, before: %r{import +['"]active_scaffold['"]\n} do
+              "import 'jquery_ujs'\n"
+            end
+          end
+        end
+        add_to_manifest *manifest
+      end
+
       def create_javascript_manifest(file)
         FileUtils.mkdir_p File.dirname(file)
-        File.open(file, 'w') do |f|
-          f << "// This is a manifest file that'll be compiled into application.js, which will include all the files
+        js_content = "// This is a manifest file that'll be compiled into application.js, which will include all the files
 // listed below.
 //
 // Any JavaScript/Coffee file within this directory, lib/assets/javascripts, or any plugin's
@@ -61,20 +129,24 @@ module ActiveScaffold
 //
 //= require active_scaffold
 "
-          say_status('create', file)
-        end
+        File.open(file, 'w') { |f| f << js_content } unless options[:pretend]
+        say_status('create', file)
         insert_into_file 'app/views/layouts/application.html.erb', after: /javascript_pack_tag 'application'.*\n/ do
           "    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload', 'data-turbo-track': 'reload' %>\n"
         end
-        append_to_file 'config/initializers/assets.rb' do
-          "Rails.application.config.assets.precompile += %w( application.js )\n"
+        add_to_manifest 'application.js', 'active_scaffold/manifest.js'
+        setup_jquery file, js_content, where: 'active_scaffold'
+      end
+
+      def add_to_manifest(*files)
+        append_to_file MANIFEST do
+          files.map { |file| "//= link #{file}\n" }.join
         end
-        setup_jquery file, where: 'active_scaffold'
       end
 
       def setup_jquery(file, original_js = nil, where: 'ujs')
         original_js ||= File.binread(file)
-        if defined? Jquery
+        if Object.const_defined?(:Jquery)
           unless original_js.include?('require jquery')
             insert_into_file file, before: %r{//= require +.*#{where}['"]?\n} do
               "//= require jquery\n"
