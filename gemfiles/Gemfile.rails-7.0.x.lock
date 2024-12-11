@@ -103,7 +103,6 @@ GEM
     domain_name (0.6.20240107)
     erubi (1.13.0)
     ffi (1.17.0)
-    ffi (1.17.0-x86_64-linux-gnu)
     gli (2.22.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
