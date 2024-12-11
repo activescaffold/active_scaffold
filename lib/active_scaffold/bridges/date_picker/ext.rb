@@ -4,7 +4,7 @@ class ActiveScaffold::Bridges::DatePicker
       super
       return unless ActiveScaffold::Bridges::DatePicker.default_ui
 
-      types = %i[date datetime]
+      types = %i[date datetime timestamp timestamptz]
       date_picker_fields = _columns.filter_map { |c| {name: c.name.to_sym, type: c.type} if types.include?(c.type) }
       # check to see if file column was used on the model
       return if date_picker_fields.empty?
