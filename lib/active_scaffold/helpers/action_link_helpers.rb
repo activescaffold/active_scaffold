@@ -44,15 +44,7 @@ module ActiveScaffold
           end
           content = nil
           if link.is_a? ActiveScaffold::DataStructures::ActionLinks
-            unless link.empty?
-              options[:level] += 1
-              content = display_action_links(link, record, options, &block)
-              options[:level] -= 1
-              if content.present?
-                content = display_action_link(link, content, record, options)
-                options[:first_action] = false
-              end
-            end
+            content = display_action_link_group(link, record, options, &block) unless link.empty?
           elsif !skip_action_link?(link, *Array(options[:for]))
             authorized, reason = action_link_authorized?(link, *Array(options[:for]))
             next if !authorized && options[:skip_unauthorized]
@@ -60,14 +52,21 @@ module ActiveScaffold
             content = display_action_link(link, nil, record, options.merge(authorized: authorized, not_authorized_reason: reason))
             options[:first_action] = false
           end
-          if content.present?
-            prev_link = true
-            output << display_action_link_separator(options) if separator
-            output << content
-            separator = false
-          end
+          next if content.blank?
+
+          prev_link = true
+          output << display_action_link_separator(options) if separator
+          output << content
+          separator = false
         end
         output
+      end
+
+      def display_action_link_group(link, record, options, &block)
+        options[:level] += 1
+        content = display_action_links(link, record, options, &block)
+        options[:level] -= 1
+        display_action_link(link, content, record, options).tap { options[:first_action] = false } if content.present?
       end
 
       def display_action_link_separator(options)

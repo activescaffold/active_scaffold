@@ -35,7 +35,8 @@ module ActiveScaffold::DataStructures
     alias << add
 
     def add_separator(weight = 0)
-      raise "Call add_separator on a group" if name == :root
+      raise 'Call add_separator on a group' if name == :root
+
       add_to_set ActionLinkSeparator.new(weight)
     end
 
@@ -57,6 +58,7 @@ module ActiveScaffold::DataStructures
       links = []
       @set.each do |item|
         next if item == :separator
+
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
           collected = item[val]
           links << collected unless collected.nil?
@@ -71,6 +73,7 @@ module ActiveScaffold::DataStructures
       links = []
       @set.each do |item|
         next if item == :separator
+
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
           collected = item.find_duplicate(link)
           links << collected unless collected.nil?
@@ -84,6 +87,7 @@ module ActiveScaffold::DataStructures
     def delete(val)
       each(include_set: true) do |link, set|
         next if link == :separator
+
         if link.action.to_s == val.to_s
           set.delete link
           break
