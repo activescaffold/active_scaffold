@@ -32,13 +32,15 @@ Added to Gemfile
 gem 'active_scaffold'
 ```
 
-Add jquery-rails to Gemfile, and install generator will add jquery to application.js before rails-ujs. Also it's possible to load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace rails-ujs with jquery_ujs, although rails-ujs should work (never load both).
+Add jquery-rails to Gemfile, or handle jquery with other tools like webpack or importmap. Also it's possible to load jquery in your layout before application.js using CDN (e.g. jquery-rails-cdn). You can replace @rails/ujs with jquery_ujs, although @rails/ujs should work (never load both).
 
 ```ruby
 gem 'jquery-rails'
 ```
 
-For rails 6.1, install generator will create app/assets/javascripts/application.js, add it to assets.precompile array and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack. Jquery may be loaded by packs or assets pipeline.
+For rails 7.x, install generator will add active_scaffold to config/importmap.rb, app/javascript/application.js, and active_scaffold/manifest.js to app/assets/config/manifest.js. It will add jquery and jquery_ujs to all the 3 files if jquery-rails gem is available.
+
+For rails 6.1, install generator will create app/assets/javascripts/application.js, add it, and active_scaffold/manifest.js, to app/assets/config/manifest.js and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack. It will add jquery to app/assets/javascripts/application.js too if query-rails gem is available, although Jquery may be loaded by packs too and it will work, it won't add jquery_ujs or @rails/ujs as it's added to app/javascript/packs/application.js by default.
 
 Run the following commands
 
