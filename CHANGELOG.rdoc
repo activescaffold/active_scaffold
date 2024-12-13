@@ -1,3 +1,8 @@
+= 3.7.10
+- Move code from on_create.js.erb to partials, so it's easier to change parts, e.g. how new record is rendered
+- Don't reload after deleting last record if pagination is disabled
+
+= 3.7.9
 - Add css_class to action links, to avoid changing name, it may result confusing, deprecate name setter.
 - Add buttons to check all and uncheck all on :select form ui for collection associations, and draggable lists (active_scaffold_checkbox_list).
 - Add hidden field with locking column in base_form partial for persisted records automatically, if model uses optimistic locking.
