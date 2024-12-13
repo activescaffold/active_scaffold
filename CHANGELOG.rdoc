@@ -7,6 +7,10 @@
 - Thread safety enabled by default, can't be disabled, deprecate ActiveScaffold.threadsafe!
 - Support separators in action links
 
+= 3.7.11 (not released yet)
+- Add partial list_messages_content to reduce code duplication, and better support replacing list view with other way to render records
+- Support selector for records body in create_record_row JS method, better support replacing list view with other way to render records
+
 = 3.7.10
 - Move code from on_create.js.erb to partials, so it's easier to change parts, e.g. how new record is rendered
 - Don't reload after deleting last record if pagination is disabled

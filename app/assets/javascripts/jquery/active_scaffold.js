@@ -800,7 +800,7 @@
 
       create_record_row: function(active_scaffold_id, html, options) {
         if (typeof(active_scaffold_id) == 'string') active_scaffold_id = '#' + active_scaffold_id;
-        var tbody = jQuery(active_scaffold_id).find('tbody.records').first(), new_row;
+        var tbody = jQuery(active_scaffold_id).find(options.body_selector || 'tbody.records').first(), new_row;
 
         if (options.insert_at == 'top') {
           tbody.prepend(html);
@@ -840,10 +840,10 @@
         });
       },
 
-      delete_record_row: function(row, page_reload_url) {
+      delete_record_row: function(row, page_reload_url, body_selector) {
         if (typeof(row) == 'string') row = '#' + row;
         row = jQuery(row);
-        var tbody = row.closest('tbody.records');
+        var tbody = row.closest(body_selector || 'tbody.records');
 
         row.find('a.disabled').each(function() {;
           var action_link = ActiveScaffold.ActionLink.get(this);
