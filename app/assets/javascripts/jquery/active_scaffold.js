@@ -637,6 +637,11 @@
           jQuery(tbody).parent().find('tbody.messages p.empty-message').hide();
         }
       },
+      show_empty_message: function(tbody) {
+        if (this.records_for(tbody).length != 0) {
+          jQuery(tbody).parent().find('tbody.messages p.empty-message').hide();
+        }
+      },
       reload_if_empty: function(tbody, url) {
         if (this.records_for(tbody).length == 0) {
           this.reload(url);
@@ -839,6 +844,7 @@
           ActiveScaffold.stripe(tbody);
           ActiveScaffold.decrement_record_count(tbody.closest('div.active-scaffold'));
           if (page_reload_url) ActiveScaffold.reload_if_empty(tbody, page_reload_url);
+          else ActiveScaffold.show_empty_message(tbody);
         });
       },
 
