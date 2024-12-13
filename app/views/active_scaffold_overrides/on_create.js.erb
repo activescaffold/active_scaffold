@@ -12,36 +12,8 @@ action_link = ActiveScaffold.find_action_link('<%= form_selector %>');
 if (action_link) action_link.update_flash_messages('<%= escape_javascript(render(:partial => 'messages')) %>');
 <% end -%>
 <% if successful? -%>
-  <% if render_parent? %>
-    <% if nested_singular_association? %>
-    if (action_link) action_link.close(true);
-    <% elsif params[:parent_sti] && render_parent_action == :row %>
-      ActiveScaffold.create_record_row_from_url(action_link,'<%= url_for(render_parent_options) %>', <%= {:insert_at => insert_at}.to_json.html_safe %>);
-    <% else %>
-      ActiveScaffold.reload('<%= url_for render_parent_options %>');
-    <% end %>
-  <% elsif active_scaffold_config.create.refresh_list %>
-    <%= render 'refresh_list', no_history: true %>
-  <% elsif params[:parent_controller].nil? %>
-    <% new_row = render :partial => 'list_record', :locals => {:record => @saved_record || @record} %>
-    ActiveScaffold.create_record_row(action_link ? action_link.scaffold() : '<%= active_scaffold_id %>', '<%= escape_javascript(new_row) %>', <%= {:insert_at => insert_at}.to_json.html_safe %>);
-    <%= render :partial => 'update_calculations', :formats => [:js] %>
-  <% end %>
-
-  <% unless render_parent? %>
-    <% if always_show_create %>
-      ActiveScaffold.reset_form('<%= form_selector %>');
-    <% elsif params[:dont_close] %>
-      ActiveScaffold.replace('<%= form_selector %>','<%= escape_javascript(render(:partial => 'create_form', :locals => {:xhr => true})) %>');
-      ActiveScaffold.focus_first_element_of_form('<%= form_selector %>');
-    <% else %>
-      if (action_link) action_link.close();
-    <% end %>
-    <% if (active_scaffold_config.create.action_after_create) %>
-      var link = ActiveScaffold.find_action_link('<%= action_link_id active_scaffold_config.create.action_after_create, @record.id || @saved_record.id %>');
-      if (link) (function() { link.open() })<%= '.defer' if ActiveScaffold.js_framework == :prototype %>();
-    <% end %>
-  <% end %>
+  <%= render 'new_record', insert_at: insert_at %>
+  <%= render 'refresh_create_form', always_show_create: always_show_create, form_selector: form_selector unless render_parent? %>
 <% else %>
   ActiveScaffold.replace('<%= form_selector %>','<%= escape_javascript(render(:partial => 'create_form', :locals => {:xhr => true})) %>');
   ActiveScaffold.scroll_to('<%= form_selector %>', true);
