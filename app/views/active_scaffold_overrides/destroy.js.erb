@@ -17,10 +17,13 @@
     <%= render 'refresh_list', no_history: true %>
   <% else %>
     <%
-      url = main_path_to_return
-      url[:page] = [active_scaffold_config.list.user.page.to_i - 1, 1].max if url.is_a?(Hash) && active_scaffold_config.actions.include?(:list)
+      if active_scaffold_config.actions.exclude?(:list) || active_scaffold_config.list.pagination
+        url = main_path_to_return
+        url[:page] = [active_scaffold_config.list.user.page.to_i - 1, 1].max if url.is_a?(Hash) && active_scaffold_config.actions.include?(:list)
+        url = url_for(url)
+      end
     %>
-    ActiveScaffold.delete_record_row('<%= element_row_id(action: 'list', id: params[:id]) %>', '<%= url_for(url) %>');
+    ActiveScaffold.delete_record_row('<%= element_row_id(action: 'list', id: params[:id]) %>', '<%= url %>');
     <%= render 'update_calculations' %>
   <% end %>
 <% else %>

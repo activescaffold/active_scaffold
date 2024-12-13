@@ -5,14 +5,18 @@
   - Action links can't be changed, added or removed, add all links and use ignore_method to control when they are displayed
   - Require using active_scaffold_config.override_columns to exclude or add columns
 - Thread safety enabled by default, can't be disabled, deprecate ActiveScaffold.threadsafe!
+- Support separators in action links
 
-= 3.7.9 (not released yet)
+= 3.7.10
+- Move code from on_create.js.erb to partials, so it's easier to change parts, e.g. how new record is rendered
+- Don't reload after deleting last record if pagination is disabled
+
+= 3.7.9
 - Add css_class to action links, to avoid changing name, it may result confusing, deprecate name setter.
 - Add buttons to check all and uncheck all on :select form ui for collection associations, and draggable lists (active_scaffold_checkbox_list).
 - Add hidden field with locking column in base_form partial for persisted records automatically, if model uses optimistic locking.
 - Add on_stale_object_error when StaleObjectError is rescued, to allow customization.
 - Fix search_ui :select_multiple, which was broken when operator select was added.
-- Support separators in action links
 - Deprecate ActiveScaffold.js_framework as will be removed in 4.0
 
 = 3.7.8

@@ -1,0 +1,15 @@
+<% if render_parent? %>
+  <% if nested_singular_association? %>
+  if (action_link) action_link.close(true);
+  <% elsif params[:parent_sti] && render_parent_action == :row %>
+    ActiveScaffold.create_record_row_from_url(action_link, '<%= url_for(render_parent_options) %>', <%= {insert_at: insert_at}.to_json.html_safe %>);
+  <% else %>
+    ActiveScaffold.reload('<%= url_for render_parent_options %>');
+  <% end %>
+<% elsif active_scaffold_config.create.refresh_list %>
+  <%= render 'refresh_list', no_history: true %>
+<% elsif params[:parent_controller].nil? %>
+  <% new_row = render 'list_record', record: @saved_record || @record %>
+  ActiveScaffold.create_record_row(action_link ? action_link.scaffold() : '<%= active_scaffold_id %>', '<%= escape_javascript(new_row) %>', <%= {insert_at: insert_at}.to_json.html_safe %>);
+  <%= render 'update_calculations' %>
+<% end %>
