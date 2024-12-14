@@ -1275,18 +1275,15 @@
         if (element.length > 0) {
           element.data(); // $ 1.4.2 workaround
           if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
-            var parent = element.closest('.actions');
-            if (parent.length === 0 || parent.is('td')) {
-              // maybe an column action_link
-              parent = element.closest('tr.record');
-            }
-            if (parent.is('tr')) {
+            var parent = element.closest('.record');
+            if (parent.length === 0) parent = element.closest('.actions');
+            if (parent.is('.record')) {
               // record action
               var target = parent.find('a.as_action');
-              var loading_indicator = parent.find('td.actions .loading-indicator');
+              var loading_indicator = parent.find('.actions .loading-indicator');
               if (!loading_indicator.length) loading_indicator = element.parent().find('.loading-indicator');
               new ActiveScaffold.Actions.Record(target, parent, loading_indicator);
-            } else if (parent && parent.is('div')) {
+            } else if (parent.is('.active-scaffold-header .actions')) {
               //table action
               new ActiveScaffold.Actions.Table(parent.find('a.as_action'), parent.closest('div.active-scaffold').find('tbody.before-header').first(), parent.find('.loading-indicator').first());
             }
@@ -1329,7 +1326,9 @@
             link.enable();
             if (link.hide_target) link.target.show();
             if (link.hide_content) link.content.show();
-            if (ActiveScaffold.config.scroll_on_close) ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close == 'checkInViewport');
+            if (ActiveScaffold.config.scroll_on_close) {
+              ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close === 'checkInViewport');
+            }
           });
         }
       },
