@@ -1411,9 +1411,11 @@
       insert: function(content) {
         this.close_previous_adapter();
 
-        if (this.position == 'replace') {
+        if (this.position === 'replace') {
           this.position = 'after';
           this.hide_target = true;
+        } else if (this.position === 'table') {
+          this.hide_content = true;
         }
 
         var colspan = this.target.children().length;
@@ -1421,15 +1423,18 @@
           content = jQuery(content);
           content.find('.inline-adapter-cell:first').attr('colspan', colspan);
         }
-        if (this.position == 'after') {
+        if (this.position === 'after') {
           this.target.after(content);
           this.set_adapter(this.target.next());
         }
-        else if (this.position == 'before') {
+        else if (this.position === 'before') {
           this.target.before(content);
           this.set_adapter(this.target.prev());
-        }
-        else {
+        } else if (this.position === 'table') {
+          var content_parent = this.target.closest('div.active-scaffold').find('tbody.before-header').first()
+          content_parent.prepend(content);
+          this.set_adapter(content_parent.children().first())
+        } else {
           return false;
         }
         ActiveScaffold.highlight(this.adapter.find('td'));
@@ -1467,10 +1472,10 @@
       },
 
       set_opened: function() {
-        if (this.position == 'after') {
+        if (this.position === 'after') {
           this.set_adapter(this.target.next());
         }
-        else if (this.position == 'before') {
+        else if (this.position === 'before') {
           this.set_adapter(this.target.prev());
         }
         this.disable();
