@@ -19,7 +19,7 @@
   <%= render :partial => 'list_messages', :locals => {:columns => columns} %>
   <tbody class="records" id="<%= active_scaffold_tbody_id %>" data-refresh-record="<%= url_for(params_for(:action => :index, :id => '--ID--')) %>">
     <% if !@page.empty? -%>
-      <%= render :partial => 'list_record', :collection => @page.items, :locals => {:hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.member} %>
+      <%= render :partial => list_record_view, :collection => @page.items, :locals => {:hidden => false, :columns => columns, :action_links => active_scaffold_config.action_links.member} %>
     <% end -%>
   </tbody>
   <% if columns.any? {|c| c.calculation?} -%>

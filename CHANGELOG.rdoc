@@ -3,6 +3,7 @@
 - Support selector for records body in create_record_row JS method, better support replacing list view with other way to render records
 - Improve detection of member action links when list view is replaced with other structure, based on 'record' html class, instead of tags
 - Support :table position for member action links, replacing the whole table
+- Support changing the view partial used to render a record, default to 'list_record', better support refreshing a record when list view is replaced with other way to render records
 
 = 3.7.10
 - Move code from on_create.js.erb to partials, so it's easier to change parts, e.g. how new record is rendered

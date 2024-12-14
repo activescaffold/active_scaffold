@@ -5,7 +5,7 @@ if (action_link) action_link.update_flash_messages('<%= escape_javascript(render
 <% if successful? %>
   <% if params[:dont_close] %>
     <% row_selector = element_row_id(:action => :list, :id => @record.id) %>
-    ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
+    ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(:partial => list_record_view, :locals => {:record => @record})) %>');
     if (action_link) action_link.target = $('#<%= row_selector %>');
     <%= render :partial => 'update_calculations', :formats => [:js] %>
     <% if params[:iframe] == 'true' %>
@@ -22,7 +22,7 @@ if (action_link) action_link.update_flash_messages('<%= escape_javascript(render
       <%= render 'refresh_list', no_history: true %>
     <% else %>
       <% if @record %>
-      if (action_link) action_link.close('<%= escape_javascript(render(:partial => 'list_record', :locals => {:record => @record})) %>');
+      if (action_link) action_link.close('<%= escape_javascript(render(:partial => list_record_view, :locals => {:record => @record})) %>');
       <% else %>
       if (action_link) action_link.close();
       ActiveScaffold.delete_record_row('<%= element_row_id(:action => :list, :id => params[:id]) %>');
