@@ -2,6 +2,10 @@ module ActiveScaffold
   module Helpers
     # Helpers that assist with the rendering of a List Column
     module ListColumnHelpers
+      def list_record_view
+        'list_record'
+      end
+
       def get_column_value(record, column)
         record = record.send(column.delegated_association.name) if column.delegated_association
         if record

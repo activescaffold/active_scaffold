@@ -195,6 +195,7 @@ module ActiveScaffold::DataStructures
     #   :before
     #   :replace
     #   :after
+    #   :table
     #   false (no attempt at positioning)
     attr_writer :position
 

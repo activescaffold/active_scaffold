@@ -5,7 +5,7 @@ link = ActiveScaffold.find_action_link('<%= element_form_id(action: action_name)
 <% if successful? %>
   <% if @record %>
     <%= render 'update_messages' %>
-    <% row = escape_javascript(render('list_record', record: @record)) -%>
+    <% row = escape_javascript(render(list_record_view, record: @record)) -%>
     <% if @action_link&.position %>
 if (link) link.close('<%= row %>');
     <% else %>

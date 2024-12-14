@@ -1,4 +1,4 @@
-<% new_row = render 'list_record', record: @record %>
+<% new_row = render list_record_view, record: @record %>
 ActiveScaffold.create_record_row('<%= active_scaffold_id %>', '<%= escape_javascript(new_row) %>', <%= {insert_at: :top}.to_json.html_safe %>);
 
 <%= render 'update_calculations' %>
