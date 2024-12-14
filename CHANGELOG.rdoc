@@ -5,7 +5,6 @@
   - Action links can't be changed, added or removed, add all links and use ignore_method to control when they are displayed
   - Require using active_scaffold_config.override_columns to exclude or add columns
 - Thread safety enabled by default, can't be disabled, deprecate ActiveScaffold.threadsafe!
-- Support separators in action links
 
 = 3.7.11 (not released yet)
 - Add partial list_messages_content to reduce code duplication, and better support replacing list view with other way to render records
