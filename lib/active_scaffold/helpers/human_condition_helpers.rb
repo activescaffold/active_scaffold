@@ -24,7 +24,7 @@ module ActiveScaffold
       end
 
       def format_human_condition(column, opt, from = nil, to = nil)
-        attribute = column.active_record_class.human_attribute_name(column.name)
+        attribute = column.label
         opt ||= :between if from && to
         opt ||= from ? '>=' : '<='
         from = to = nil if opt&.in? %w[null not_null]
@@ -52,15 +52,15 @@ module ActiveScaffold
           range_type, range = value['range'].downcase.split('_')
           format = active_scaffold_human_condition_datetime_range_format(range_type, range)
           from, = controller.class.datetime_from_to(column, value)
-          "#{column.active_record_class.human_attribute_name(column.name)} = #{as_(value['range'].downcase).downcase} (#{I18n.l(from, format: format)})"
-        when 'PAST', 'FUTURE'
+          "#{column.label} = #{as_(value['range'].downcase).downcase} (#{I18n.l(from, format: format)})"
+        when 'PAST', 'FUTURE', 'BETWEEN'
           from, to = controller.class.datetime_from_to(column, value)
-          "#{column.active_record_class.human_attribute_name(column.name)} #{as_('BETWEEN'.downcase).downcase} #{I18n.l(from)} - #{I18n.l(to)}"
+          "#{column.label} #{as_('between').downcase} #{I18n.l(from)} - #{I18n.l(to)}"
         when 'null', 'not_null'
-          "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value['opt'].downcase).downcase}"
+          "#{column.label} #{as_(value['opt'].downcase).downcase}"
         else
-          from, to = controller.class.datetime_from_to(column, value)
-          "#{column.active_record_class.human_attribute_name(column.name)} #{as_(value['opt'].downcase).downcase} #{I18n.l(from)} #{"- #{I18n.l(to)}" if value['opt'] == 'BETWEEN'}"
+          from, = controller.class.datetime_from_to(column, value)
+          "#{column.label} #{as_(value['opt'].downcase).downcase} #{I18n.l(from)}"
         end
       end
       alias active_scaffold_human_condition_time active_scaffold_human_condition_datetime
@@ -94,7 +94,7 @@ module ActiveScaffold
       # end
 
       def active_scaffold_human_condition_boolean(column, value)
-        attribute = column.active_record_class.human_attribute_name(column.name)
+        attribute = column.label
         as_(:boolean, scope: :human_conditions, column: attribute, value: as_(value))
       end
       alias active_scaffold_human_condition_checkbox active_scaffold_human_condition_boolean
@@ -104,7 +104,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_human_condition_select(column, associated)
-        attribute = column.active_record_class.human_attribute_name(column.name)
+        attribute = column.label
         if associated.is_a?(Hash)
           return active_scaffold_human_condition_range(column, associated) unless associated['opt'] == '='
 

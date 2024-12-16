@@ -497,6 +497,12 @@ padding: 4px;
 text-align: center;
 position: relative;
 }
+.active-scaffold .filtered-message {
+  display: flex;
+}
+.active-scaffold .filtered-message > * {
+  flex-grow: 1;
+}
 
 .active-scaffold .message, .active-scaffold-component .message {
 font-size: 11px;
@@ -512,10 +518,9 @@ display: inline;
 }
 
 .active-scaffold .filtered-message .reset {
-position: absolute;
-display: inline;
-right: 10px;
-top: 4px;
+margin-right: 5px;
+white-space: nowrap;
+flex-grow: 0;
 padding: 0;
 }
 
