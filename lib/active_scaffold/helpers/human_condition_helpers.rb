@@ -54,7 +54,7 @@ module ActiveScaffold
           "#{column.label} = #{as_(value['range'].downcase).downcase} (#{I18n.l(from, :format => format)})"
         when 'PAST', 'FUTURE', 'BETWEEN'
           from, to = controller.class.datetime_from_to(column, value)
-          "#{column.label} #{as_('betweem').downcase} #{I18n.l(from)} - #{I18n.l(to)}"
+          "#{column.label} #{as_('between').downcase} #{I18n.l(from)} - #{I18n.l(to)}"
         when 'null', 'not_null'
           "#{column.label} #{as_(value['opt'].downcase).downcase}"
         else
