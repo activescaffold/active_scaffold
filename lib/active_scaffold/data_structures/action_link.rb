@@ -182,13 +182,15 @@ module ActiveScaffold::DataStructures
     # where the result of this action should insert in the display.
     # for :type => :collection, supported values are:
     #   :top
-    #   :replace (for updating the entire table)
+    #   :replace (to hide the entire table)
+    #   :popup (popup with JS library)
     #   false (no attempt at positioning)
     # for :type => :member, supported values are:
     #   :before
-    #   :replace
+    #   :replace (to hide the record row)
     #   :after
-    #   :table
+    #   :table (to hide the entire table)
+    #   :popup (popup with JS library)
     #   false (no attempt at positioning)
     attr_writer :position
     def position

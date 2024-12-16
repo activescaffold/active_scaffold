@@ -1219,8 +1219,21 @@
           $footer.removeClass('floating');
           if ($form.visible(true) && !$footer.visible(true)) $footer.addClass('floating');
         });
-      }
+      },
 
+      open_popup: function(content, link) {
+        var element = jQuery(content).dialog({
+          modal: true,
+          close: function() { link.close(); },
+          width: ActiveScaffold.config.popup_width || '80%'
+        });
+        link.set_adapter(element);
+      },
+
+      close_popup: function(link, callback) {
+        link.adapter.dialog('close');
+        if (callback) callback();
+      }
     }
 
 
@@ -1320,16 +1333,18 @@
       },
 
       close: function() {
-        if (this.adapter) {
-          var link = this;
-          ActiveScaffold.remove(this.adapter, function() {
-            link.enable();
-            if (link.hide_target) link.target.show();
-            if (link.hide_content) link.content.show();
-            if (ActiveScaffold.config.scroll_on_close) {
-              ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close === 'checkInViewport');
-            }
-          });
+        var link = this, callback = function() {
+          link.enable();
+          if (link.hide_target) link.target.show();
+          if (link.hide_content) link.content.show();
+          if (ActiveScaffold.config.scroll_on_close) {
+            ActiveScaffold.scroll_to(link.target.attr('id'), ActiveScaffold.config.scroll_on_close === 'checkInViewport');
+          }
+        };
+        if (this.position === 'popup') {
+          ActiveScaffold.close_popup(this, callback);
+        } else if (this.adapter) {
+          ActiveScaffold.remove(this.adapter, callback);
         }
       },
 
@@ -1390,7 +1405,7 @@
         if (refresh) l.refresh_url = this.target.closest('.records').data('refresh-record').replace('--ID--', refresh);
 
         if (l.position) {
-          l.url = l.url.append_params({adapter: '_list_inline_adapter'});
+          l.url = l.url.append_params({adapter: l.position == 'popup' ? '_popup_adapter' : '_list_inline_adapter'});
           l.tag.attr('href', l.url);
         }
         l.set = this;
@@ -1416,6 +1431,8 @@
           this.hide_target = true;
         } else if (this.position === 'table') {
           this.hide_content = true;
+        } else if (this.position === 'popup') {
+          return ActiveScaffold.open_popup(content, this);
         }
 
         var colspan = this.target.children().length;
@@ -1426,8 +1443,7 @@
         if (this.position === 'after') {
           this.target.after(content);
           this.set_adapter(this.target.next());
-        }
-        else if (this.position === 'before') {
+        } else if (this.position === 'before') {
           this.target.before(content);
           this.set_adapter(this.target.prev());
         } else if (this.position === 'table') {
@@ -1501,13 +1517,14 @@
         if (this.position == 'replace') {
           this.position = 'top';
           this.hide_content = true;
+        } else if (this.position == 'popup') {
+          return ActiveScaffold.open_popup(content, this);
         }
 
         if (this.position == 'top') {
           this.target.prepend(content);
           this.set_adapter(this.target.children().first());
-        }
-        else {
+        } else {
           throw 'Unknown position "' + this.position + '"'
         }
         ActiveScaffold.highlight(this.adapter.find('td').first().children().not('script'));
