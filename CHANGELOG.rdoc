@@ -6,6 +6,7 @@
 - Support changing the view partial used to render a record, default to 'list_record', better support refreshing a record when list view is replaced with other way to render records
 - Support separators in action links
 - Support :popup position, using jquery-ui dialog, but can be replaced with other library overriding ActiveScaffold.open_popup and ActiveScaffold.close_popup JS functions
+- Use column.label in human conditions, same as form
 
 = 3.7.10
 - Move code from on_create.js.erb to partials, so it's easier to change parts, e.g. how new record is rendered
