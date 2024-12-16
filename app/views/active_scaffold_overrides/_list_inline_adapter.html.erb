@@ -1,5 +1,5 @@
 <%# nested_id, allows us to remove a nested scaffold programmatically %>
-<tr class="inline-adapter" id="<%= element_row_id action: :nested %>">
+<tr class="inline-adapter" id="<%= nested_id = element_row_id action: :nested %>">
   <td class="inline-adapter-cell">
 <% if successful? %>
     <div class="<%= "#{params[:action]}-view" if params[:action] %> <%= "#{nested? ? nested.name : id_from_controller(params[:controller])}-view" %> view">
@@ -9,7 +9,7 @@
 <% end %>
     <%= javascript_tag do %>
       setTimeout(function() {
-        var action_link = ActiveScaffold.ActionLink.get('<%= element_row_id(action: :nested) %>');
+        var action_link = ActiveScaffold.ActionLink.get('<%= nested_id %>');
         if (action_link) {
           action_link.update_flash_messages('<%= escape_javascript(render('messages').strip) %>');
       <% unless successful? %>
