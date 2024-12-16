@@ -71,7 +71,7 @@ module ActiveScaffold
 
       def display_action_link_separator(options)
         tag = options[:level_0_tag] || :a if options[:level].zero?
-        content_tag(tag || :li, '&nbsp;'.html_safe, class: 'separator')
+        content_tag(tag || :li, '&nbsp;'.html_safe, class: 'separator') # rubocop:disable Rails/OutputSafety
       end
 
       def display_action_link(link, content, record, options)
