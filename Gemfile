@@ -10,7 +10,7 @@ group :development do
 end
 
 group :performance do
-  gem 'rails-perftest', github: 'letsevents/rails-perftest'
+  gem 'rails-perftest', github: 'rails/rails-perftest'
   platforms :ruby do
     gem 'ruby-prof'
   end

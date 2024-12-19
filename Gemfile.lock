@@ -1,6 +1,6 @@
 GIT
-  remote: https://github.com/letsevents/rails-perftest.git
-  revision: bf7cd437e2c325a86350c407f86aabee662bedb2
+  remote: https://github.com/rails/rails-perftest.git
+  revision: 00adba5ca81d069c31bf2cbe813c54cfe77c8a62
   specs:
     rails-perftest (0.0.7)
 
