@@ -51,9 +51,7 @@ module ActiveScaffold
   mattr_accessor :javascripts, instance_writer: false
   self.javascripts = []
 
-  def self.threadsafe!
-    ActiveSupport::Deprecation.warn 'Threadsafe is enabled always, no need to require it anymore'
-  end
+  def self.threadsafe!; end
 
   mattr_writer :jquery_ui_loaded, instance_writer: false
   def self.jquery_ui_included?
@@ -77,9 +75,6 @@ module ActiveScaffold
   end
 
   mattr_accessor :nested_subforms, instance_writer: false
-  def nested_subforms=(*)
-    ActiveSupport::Deprecation.warn 'Nested subforms are enabled by default already'
-  end
 
   def self.root
     "#{File.dirname(__FILE__)}/.."
@@ -87,6 +82,14 @@ module ActiveScaffold
 
   def self.defaults(&block)
     ActiveScaffold::Config::Core.configure(&block)
+  end
+
+  def self.deprecator
+    @deprecator ||= ActiveSupport::Deprecation.new('4.1', 'ActiveScaffold')
+  end
+
+  class << self
+    ActiveScaffold.deprecator.deprecate_methods self, :nested_subforms= => 'is enabled always', threadsafe!: 'is enabled always'
   end
 end
 require 'active_scaffold/engine'
