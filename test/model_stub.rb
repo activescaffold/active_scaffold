@@ -12,6 +12,8 @@ class ModelStub < ActiveRecord::Base
   @@nested_scope_calls = []
   cattr_accessor :nested_scope_calls
 
+  def self.schema_loaded? = true
+
   def self.a_is_defined
     @@nested_scope_calls << :a_is_defined
     self

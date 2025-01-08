@@ -1,11 +1,4 @@
 class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/ApplicationRecord
-  class AssociationScope < ActiveRecord::Associations::AssociationScope
-    INSTANCE = create
-    def self.scope(association, connection)
-      INSTANCE.scope association, connection
-    end
-  end
-
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
     attr_reader :klass
 
@@ -150,8 +143,11 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
 
   class Relation < ::ActiveRecord::Relation
     include RelationExtension
+
+    delegate :connection_pool, to: :model
   end
   class << self
+    delegate :schema_cache, to: :connection
     def find(*ids)
       ids.length == 1 ? all.find(*ids[0]) : super # rubocop:disable Rails/RedundantActiveRecordAllMethod
     end
