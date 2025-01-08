@@ -9,7 +9,7 @@
     setTimeout(function() {
       var action_link = ActiveScaffold.ActionLink.get('<%= nested_id %>');
       if (action_link) {
-        action_link.update_flash_messages('<%= escape_javascript(render('messages').strip) %>');
+        action_link.update_flash_messages('<%= escape_javascript(render('messages')) %>');
     <% unless successful? %>
         action_link.close();
         ActiveScaffold.scroll_to(action_link.scaffold(), ActiveScaffold.config.scroll_on_close == "checkInViewport");
