@@ -177,9 +177,9 @@ module ActiveScaffold::DataStructures
     attr_accessor :css_class
 
     def name=(value)
-      ActiveSupport::Deprecation.warn 'Changing name is deprecated, use css_class to change the class html attribute'
       self.css_class = value
     end
+    ActiveScaffold.deprecator.deprecate_methods(self, :name= => :css_class=)
 
     protected
 

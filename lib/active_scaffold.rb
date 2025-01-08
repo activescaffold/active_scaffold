@@ -68,7 +68,7 @@ module ActiveScaffold
         end
     when :prototype then warning += ', convert your app to jQuery, and remove this call'
     end
-    ActiveSupport::Deprecation.warn warning
+    deprecator.warn warning
     @@js_framework = framework
   end
 
@@ -109,6 +109,10 @@ module ActiveScaffold
 
   def self.defaults(&block)
     ActiveScaffold::Config::Core.configure(&block)
+  end
+
+  def self.deprecator
+    @deprecator ||= ActiveSupport::Deprecation.new('4.0', 'ActiveScaffold')
   end
 end
 require 'active_scaffold/engine'
