@@ -61,6 +61,17 @@ Threadsafe
 
 Threadsafe is enabled always since 4.0, and it can't be disabled.  
 
+Breaking Changes
+----------------
+
+Changing column settings on a request has changed, it must use `active_scaffold_config.columns.override(:name)` at least the first time. After calling `columns.override(:name)`, calling it again or calling `columns[:name]` will return the overrided column. It also supports a block. See [Per Request Configuration](https://github.com/activescaffold/active_scaffold/wiki/Per-Request-Configuration) for examples and more comprehensive explanation.
+
+Changing columns for an action (e.g. add or exclude) on a request must use active_scaffold_config.actions.override_columns, the first time, or use assignment.
+
+If you have a `_form_association_record` partial view overrided, use `record` local variable instead of `form_association_record`.
+
+If you have code rendering `form_association_record` partial, the pass `record` local variable, or use `as: :record` if using render with collection key.
+
 Configuration
 -------------
 See Wiki for instructions on customising ActiveScaffold and to find the full API details.
