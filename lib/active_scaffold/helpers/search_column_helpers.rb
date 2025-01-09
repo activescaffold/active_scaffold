@@ -396,11 +396,11 @@ module ActiveScaffold
         method if respond_to? method
       end
 
-      def visibles_and_hiddens(search_config)
+      def visibles_and_hiddens(search_config, columns = search_config.columns)
         visibles = []
         hiddens = []
-        search_config.columns.each_column(flatten: true) do |column|
-          next unless column.search_sql
+        columns.each_column do |column|
+          next unless column.respond_to?(:each_column) || column.search_sql
 
           if search_config.optional_columns.include?(column.name) && !searched_by?(column)
             hiddens << column
@@ -409,8 +409,8 @@ module ActiveScaffold
           end
         end
         if active_scaffold_group_column
-          columns = grouped_search? || search_config.optional_columns.empty? ? visibles : hiddens
-          columns << active_scaffold_group_column
+          group = grouped_search? || search_config.optional_columns.empty? ? visibles : hiddens
+          group << active_scaffold_group_column
         end
         [visibles, hiddens]
       end

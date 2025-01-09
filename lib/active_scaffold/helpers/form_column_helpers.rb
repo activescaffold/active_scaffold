@@ -154,7 +154,7 @@ module ActiveScaffold
         {}
       end
 
-      def render_subsection(column, record, scope, form_action)
+      def render_subsection(column, record, scope, form_action, partial: 'form')
         subsection_id = sub_section_id(sub_section: column.label)
         locals = {columns: column, form_action: form_action, scope: scope}
         header = content_tag(:h5) do
@@ -165,11 +165,11 @@ module ActiveScaffold
           locals[:tabbed_by] = column.tabbed_by
           header << content_tag(:div, id: subsection_id) do
             active_scaffold_tabbed_by(column, record, scope, subsection_id) do |tab_value, tab_id|
-              render 'form', locals.merge(subsection_id: "#{subsection_id}-#{tab_id}", tab_id: tab_id, tab_value: tab_value)
+              render partial, locals.merge(subsection_id: "#{subsection_id}-#{tab_id}", tab_id: tab_id, tab_value: tab_value)
             end
           end
         else
-          header << render('form', locals.merge(subsection_id: subsection_id))
+          header << render(partial, locals.merge(subsection_id: subsection_id))
         end
       end
 
