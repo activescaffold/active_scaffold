@@ -330,7 +330,7 @@ module ActiveScaffold
 
       def active_scaffold_input_singular_association(column, html_options, options = {}, ui_options: column.options)
         record = html_options.delete(:object)
-        associated = record.send(column.association.name)
+        associated = html_options.include?(:associated) ? html_options.delete(:associated) : record.send(column.association.name)
 
         select_options = sorted_association_options_find(column.association, nil, record)
         select_options.unshift(associated) unless associated.nil? || select_options.include?(associated)
