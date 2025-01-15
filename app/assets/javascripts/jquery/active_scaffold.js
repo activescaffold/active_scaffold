@@ -535,6 +535,9 @@
         ActiveScaffold.sliders(container);
         ActiveScaffold.disable_optional_subforms(container);
         ActiveScaffold.update_floating_form_footer(); // check other forms too, state may change
+        if (container != document) {
+          jQuery('[data-rs-type]', container).each(function() { RecordSelect.from_attributes(jQuery(this)); });
+        }
       },
       setup_history_state: function() {
         if (!jQuery('.active-scaffold').length) return;
