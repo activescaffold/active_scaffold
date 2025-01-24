@@ -1,3 +1,6 @@
+- Add :text_editor show_ui, to avoid escaping html code
+
+= 4.0.0
 - Add tabbed_by to group of columns in forms. The columns in the group must be collection associations, with a common column or association, used to partition them in different tabs.
 - Fix tableless in rails >= 7.1
 - Stop using cow_proxy for thread safety:

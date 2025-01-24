@@ -36,5 +36,14 @@ class ActiveScaffold::Bridges::TinyMce
         base.class_eval { alias_method :active_scaffold_search_text_editor, :active_scaffold_search_text }
       end
     end
+
+    module ShowColumnHelpers
+      def active_scaffold_show_text_editor(record, column, ui_options: column.options)
+        record.send(column.name).html_safe
+      end
+
+      # Alias, in case the column uses :tinymce form_ui
+      alias active_scaffold_show_tinymce active_scaffold_show_text_editor
+    end
   end
 end
