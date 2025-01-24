@@ -39,7 +39,7 @@ class ActiveScaffold::Bridges::TinyMce
 
     module ShowColumnHelpers
       def active_scaffold_show_text_editor(record, column, ui_options: column.options)
-        record.send(column.name).html_safe
+        record.send(column.name).html_safe # rubocop:disable Rails/OutputSafety
       end
 
       # Alias, in case the column uses :tinymce form_ui
