@@ -14,14 +14,13 @@ module ActiveScaffold::Actions
       # don't apply if scope, subform inside subform, because constraints won't apply to parent_record
       apply_constraints_to_record parent_record unless @scope
       create_association_with_parent parent_record, check_match: true if nested?
+      cache_generated_id(parent_record, params[:generated_id])
       parent_record
     end
 
     def do_edit_associated
       @scope = params[:scope]
       @parent_record = params[:id].nil? ? new_parent_record : find_if_allowed(params[:id], :update)
-
-      cache_generated_id(@parent_record, params[:generated_id]) if @parent_record.new_record?
       @column = active_scaffold_config.columns[params[:child_association]]
 
       @record = (find_associated_record if params[:associated_id]) ||
