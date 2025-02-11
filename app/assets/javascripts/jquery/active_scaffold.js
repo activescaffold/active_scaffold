@@ -1301,8 +1301,8 @@
         if (element.length > 0) {
           element.data(); // $ 1.4.2 workaround
           if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
-            var parent = element.closest('.record');
-            if (parent.length === 0) parent = element.closest('.actions');
+            var parent = element.parent().closest('.record');
+            if (parent.length === 0) parent = element.parent().closest('.actions');
             if (parent.is('.record')) {
               // record action
               var target = parent.find('a.as_action');

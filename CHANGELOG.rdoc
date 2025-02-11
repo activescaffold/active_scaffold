@@ -1,4 +1,5 @@
 - Add :text_editor show_ui, to avoid escaping html code
+- Fix action link on association column named record
 
 = 4.0.0
 - Add tabbed_by to group of columns in forms. The columns in the group must be collection associations, with a common column or association, used to partition them in different tabs.
@@ -9,6 +10,9 @@
   - Require using active_scaffold_config.override_columns to exclude or add columns
 - Thread safety enabled by default, can't be disabled, deprecate ActiveScaffold.threadsafe!
 - Support subgroups on field search
+
+= 3.7.11.1
+- Fix action link on association column named record
 
 = 3.7.11
 - Add partial list_messages_content to reduce code duplication, and better support replacing list view with other way to render records
