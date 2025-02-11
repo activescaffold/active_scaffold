@@ -7,7 +7,7 @@ GIT
 PATH
   remote: .
   specs:
-    active_scaffold (4.0.0)
+    active_scaffold (4.0.1)
       ice_nine (~> 0.11)
       rails (>= 5.2.0)
       request_store (~> 1.3)
