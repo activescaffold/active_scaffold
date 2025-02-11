@@ -1,3 +1,6 @@
+= 3.7.11.1
+- Fix action link on association column named record
+
 = 3.7.11
 - Add partial list_messages_content to reduce code duplication, and better support replacing list view with other way to render records
 - Support selector for records body in create_record_row JS method, better support replacing list view with other way to render records
