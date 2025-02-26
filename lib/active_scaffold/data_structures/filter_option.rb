@@ -1,8 +1,8 @@
 module ActiveScaffold::DataStructures
   class FilterOption
     attr_reader :name
-    attr_writer :label
-    attr_accessor :description, :security_method, :conditions, :parameters
+    attr_writer :label, :description
+    attr_accessor :security_method, :conditions, :parameters
 
     def initialize(name, options = {})
       @label = @name = name.to_sym

@@ -16,7 +16,7 @@ module ActiveScaffold::DataStructures
 
       filter ||= ActiveScaffold::DataStructures::Filter.new(name, default_type)
       @set << filter
-      block.call filter
+      block&.call filter
       self
     end
     alias << add

@@ -5,7 +5,8 @@ module ActiveScaffold::DataStructures
     attr_accessor :type, :weight, :css_class, :security_method
 
     def initialize(name, type)
-      raise ArgumentError, "Filter name must use only word characters (a-zA-Z0-9_)" unless name.match? /\A\w+\z/
+      raise ArgumentError, 'Filter name must use only word characters (a-zA-Z0-9_)' unless name.match?(/\A\w+\z/)
+
       @label = @name = name.to_sym
       @type = type
       @options = []
@@ -30,6 +31,7 @@ module ActiveScaffold::DataStructures
     def default_option=(name)
       option = self[name]
       raise ArgumentError, "'#{name}' option not found" unless option
+
       @default_option = option.name
     end
 
