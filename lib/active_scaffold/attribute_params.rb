@@ -59,9 +59,13 @@ module ActiveScaffold
       crud_type = parent_record.new_record? ? :create : :update
       return parent_record unless parent_record.authorized_for?(crud_type: crud_type)
 
-      multi_parameter_attrs = multi_parameter_attributes(attributes)
       assign_locking_column(parent_record, attributes)
+      update_columns_from_params(parent_record, columns, attributes, avoid_changes, search_attributes: search_attributes)
+      parent_record
+    end
 
+    def update_columns_from_params(parent_record, columns, attributes, avoid_changes = false, search_attributes: false)
+      multi_parameter_attrs = multi_parameter_attributes(attributes)
       columns.each_column(for: parent_record, crud_type: crud_type, flatten: true) do |column|
         # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
         assign_column_params(parent_record, column, attributes)
@@ -70,16 +74,15 @@ module ActiveScaffold
           parent_record.send(:assign_multiparameter_attributes, multi_parameter_attrs[column.name.to_s])
         elsif attributes.key? column.name
           next if search_attributes && params_hash?(attributes[column.name])
+
           update_column_from_params(parent_record, column, attributes[column.name], avoid_changes)
         end
       rescue StandardError => e
         message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} " \
                   "(value from params #{attributes[column.name].inspect})"
         Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
-        raise
+        raise e.class, "#{e.message} -- #{message}"
       end
-
-      parent_record
     end
 
     def assign_column_params(parent_record, column, attributes)
