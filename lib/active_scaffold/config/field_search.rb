@@ -37,6 +37,9 @@ module ActiveScaffold::Config
 
     cattr_accessor :reset_form, instance_accessor: false
 
+    # whether refresh columns defined in update_columns when a column is changed, as create and update forms do
+    cattr_accessor :update_columns
+
     # instance-level configuration
     # ----------------------------
 
@@ -84,8 +87,11 @@ module ActiveScaffold::Config
 
     attr_accessor :reset_form
 
+    # whether refresh columns defined in update_columns when a column is changed, as create and update forms do
+    attr_accessor :update_columns
+
     UserSettings.class_eval do
-      user_attr :optional_columns, :group_options, :grouped_columns, :human_conditions, :floating_footer
+      user_attr :optional_columns, :group_options, :grouped_columns, :human_conditions, :floating_footer, :update_columns
     end
   end
 end
