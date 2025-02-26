@@ -1,11 +1,13 @@
 module ActiveScaffold::DataStructures
   class Filter
-    attr_reader :param
+    attr_reader :name, :default_option
     attr_writer :label, :description
-    attr_accessor :weight, :css_class
+    attr_accessor :type, :weight, :css_class, :security_method
 
-    def initialize(param)
-      @label = @param = param.to_sym
+    def initialize(name, type)
+      raise ArgumentError, "Filter name must use only word characters (a-zA-Z0-9_)" unless name.match? /\A\w+\z/
+      @label = @name = name.to_sym
+      @type = type
       @options = []
     end
 
@@ -19,18 +21,25 @@ module ActiveScaffold::DataStructures
       return existing if existing
 
       option ||= ActiveScaffold::DataStructures::FilterOption.new(name, options)
-      @set << option
-      option
+      @default_option ||= option.name
+      @options << option
+      self
     end
     alias << add
 
-    # finds a FilterOption by matching the name
-    def [](val)
-      @options.find { |option| option.name.to_s == val.to_s }
+    def default_option=(name)
+      option = self[name]
+      raise ArgumentError, "'#{name}' option not found" unless option
+      @default_option = option.name
     end
 
-    def delete(val)
-      @set.delete self[val]
+    # finds a FilterOption by matching the name
+    def [](option_name)
+      @options.find { |option| option.name.to_s == option_name.to_s }
+    end
+
+    def delete(option_name)
+      @options.delete self[option_name]
     end
 
     # iterates over the links, possibly by type

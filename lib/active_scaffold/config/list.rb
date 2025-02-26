@@ -7,6 +7,7 @@ module ActiveScaffold::Config
       # inherit from global scope
       # full configuration path is: defaults => global table => local table
       @per_page = self.class.per_page
+      @filters = ActiveScaffold::DataStructures::Filters.new
       @page_links_inner_window = self.class.page_links_inner_window
       @page_links_outer_window = self.class.page_links_outer_window
 
@@ -103,6 +104,10 @@ module ActiveScaffold::Config
     cattr_accessor :calculate_etag, instance_accessor: false
     @@calculate_etag = false
 
+    def self.filters
+      ActiveScaffold::DataStructures::Filters
+    end
+
     # instance-level configuration
     # ----------------------------
 
@@ -145,6 +150,9 @@ module ActiveScaffold::Config
 
     # the ActionLink to reset search
     attr_reader :reset_link
+
+    # the filters for this controller
+    attr_reader :filters
 
     # the default sorting.
     # should be a hash of {column_name => direction}, e.g. {a: 'desc', b: 'asc'}.
