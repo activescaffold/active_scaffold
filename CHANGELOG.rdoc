@@ -1,3 +1,8 @@
+= 4.0.2
+- Fix using update_columns in field search with search UI submitting a hash, such as date fields
+- Support disabling update_columsns on field_search
+
+= 4.0.1
 - Add :text_editor show_ui, to avoid escaping html code
 - Fix action link on association column named record
 
@@ -10,6 +15,10 @@
   - Require using active_scaffold_config.override_columns to exclude or add columns
 - Thread safety enabled by default, can't be disabled, deprecate ActiveScaffold.threadsafe!
 - Support subgroups on field search
+
+= 3.7.12
+- Fix using update_columns in field search with search UI submitting a hash, such as date fields
+- Support disabling update_columsns on field_search
 
 = 3.7.11.1
 - Fix action link on association column named record
