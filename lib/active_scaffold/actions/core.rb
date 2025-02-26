@@ -115,7 +115,11 @@ module ActiveScaffold::Actions
       copy_attributes(saved_record, record) if saved_record
       apply_constraints_to_record(record) unless scope
       create_association_with_parent record, check_match: true if nested?
-      update_record_from_params(record, columns, attributes || {}, true)
+      if @form_action == :field_search
+        update_columns_from_params(record, columns, attributes || {}, :read, avoid_changes: true, search_attributes: true)
+      else
+        update_record_from_params(record, columns, attributes || {}, true)
+      end
     end
 
     def updated_record_with_column(column, value, scope)
