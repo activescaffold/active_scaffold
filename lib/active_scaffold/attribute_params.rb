@@ -60,11 +60,11 @@ module ActiveScaffold
       return parent_record unless parent_record.authorized_for?(crud_type: crud_type)
 
       assign_locking_column(parent_record, attributes)
-      update_columns_from_params(parent_record, columns, attributes, avoid_changes, search_attributes: search_attributes)
+      update_columns_from_params(parent_record, columns, attributes, crud_type, avoid_changes: avoid_changes, search_attributes: search_attributes)
       parent_record
     end
 
-    def update_columns_from_params(parent_record, columns, attributes, avoid_changes = false, search_attributes: false)
+    def update_columns_from_params(parent_record, columns, attributes, crud_type, avoid_changes: false, search_attributes: false)
       multi_parameter_attrs = multi_parameter_attributes(attributes)
       columns.each_column(for: parent_record, crud_type: crud_type, flatten: true) do |column|
         # Set any passthrough parameters that may be associated with this column (ie, file column "keep" and "temp" attributes)
