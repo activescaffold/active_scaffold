@@ -70,7 +70,7 @@ Changing columns for an action (e.g. add or exclude) on a request must use activ
 
 If you have a `_form_association_record` partial view overrided, use `record` local variable instead of `form_association_record`.
 
-If you have code rendering `form_association_record` partial, the pass `record` local variable, or use `as: :record` if using render with collection key.
+If you have code rendering `form_association_record` partial, then pass `record` local variable, or use `as: :record` if using render with collection key.
 
 Configuration
 -------------
