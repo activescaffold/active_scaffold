@@ -51,6 +51,6 @@ group :test do
 
   platforms :ruby do
     # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'sqlite3'
+    gem 'sqlite3', '~> 1.4'
   end
 end
