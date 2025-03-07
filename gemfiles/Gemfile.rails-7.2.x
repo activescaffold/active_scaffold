@@ -16,11 +16,11 @@ group :development, :lint do
   gem 'bundler-audit', require: false
   # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
   gem 'rubocop', '0.52.1', require: false
+  # Manage translation and localization with static analysis, for Ruby i18n
+  gem 'i18n-tasks', require: false
 end
 
 group :development, :lint, :test do
-  # Manage translation and localization with static analysis, for Ruby i18n
-  gem 'i18n-tasks', require: false
   gem 'rake', require: false
 end
 
