@@ -5,7 +5,7 @@ require:
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 3.2
   NewCops: enable
   Exclude:
     - 'gemfiles/Gemfile*.lock'

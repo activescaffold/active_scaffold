@@ -40,11 +40,11 @@ module ActiveScaffold::DataStructures
     attr_accessor :collapsed
 
     # nests a subgroup in the column set
-    def add_subgroup(label, &proc)
+    def add_subgroup(label, &)
       columns = ActiveScaffold::DataStructures::ActionColumns.new
       columns.label = label
       columns.action = action
-      columns.configure(&proc)
+      columns.configure(&)
       exclude columns.collect_columns
       add columns
     end

@@ -4,7 +4,7 @@ module ActiveScaffold
     # Executes the response body as JavaScript in the context of the parent window.
     # Use this method of you are posting a form to a hidden IFRAME or if you would like
     # to use IFRAME base RPC.
-    def responds_to_parent(&block)
+    def responds_to_parent(&)
       yield
       return unless performed?
 

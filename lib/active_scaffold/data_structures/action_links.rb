@@ -160,9 +160,9 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    def method_missing(name, *args, &block)
+    def method_missing(name, *args, &)
       return super if name.match?(/[=!?]$/)
-      return subgroup(name.to_sym, args.first, &block) if frozen?
+      return subgroup(name.to_sym, args.first, &) if frozen?
 
       class_eval <<-METHOD, __FILE__, __LINE__ + 1
         def #{name}(label = nil)                     # def group_name(label = nil)
@@ -171,7 +171,7 @@ module ActiveScaffold::DataStructures
           @#{name}                                   #   @group_name
         end                                          # end
       METHOD
-      send(name, args.first, &block)
+      send(name, args.first, &)
     end
 
     def respond_to_missing?(name, *)

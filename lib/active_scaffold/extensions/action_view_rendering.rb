@@ -35,7 +35,7 @@ module ActiveScaffold # :nodoc:
     #
     # options[:xhr] force to load embedded scaffold with AJAX even when render_component gem is installed.
     #
-    def render(*args, &block)
+    def render(*args, &)
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
         render_embedded args.first
       elsif args.first == :super

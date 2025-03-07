@@ -1,9 +1,9 @@
 class ActiveScaffold::DataStructures::Actions
   include Enumerable
 
-  def initialize(*args)
+  def initialize(*)
     @set = []
-    add(*args)
+    add(*)
   end
 
   def exclude(*args)
@@ -16,8 +16,8 @@ class ActiveScaffold::DataStructures::Actions
   end
   alias << add
 
-  def each(&block)
-    @set.each(&block)
+  def each(&)
+    @set.each(&)
   end
 
   def include?(val)

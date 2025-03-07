@@ -23,7 +23,7 @@ module ActiveScaffold::Bridges
     # As already has callbacks to ensure authorization at controller method via "authorization_method"
     # but let's include this too, just in case, no sure how performance is affected tough :TODO benchmark
     module ClassMethods
-      def active_scaffold(model_id = nil, &block)
+      def active_scaffold(model_id = nil, &)
         super
         authorize_resource(
           class: active_scaffold_config.model,

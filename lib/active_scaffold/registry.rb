@@ -18,7 +18,7 @@ module ActiveScaffold
       RequestStore.store[:column_links] ||= {}
     end
 
-    def self.cache(kind, key = nil, &block)
+    def self.cache(kind, key = nil, &)
       unless key
         key = kind
         kind = :cache

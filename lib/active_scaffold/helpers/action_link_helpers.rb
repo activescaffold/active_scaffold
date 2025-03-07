@@ -6,8 +6,8 @@ module ActiveScaffold
       # params which mustn't be copying to nested links
       NESTED_PARAMS = %i[eid embedded association parent_scaffold].freeze
 
-      def skip_action_link?(link, *args)
-        !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *args)
+      def skip_action_link?(link, *)
+        !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *)
       end
 
       def action_link_authorized?(link, *args)
@@ -62,9 +62,9 @@ module ActiveScaffold
         output
       end
 
-      def display_action_link_group(link, record, options, &block)
+      def display_action_link_group(link, record, options, &)
         options[:level] += 1
-        content = display_action_links(link, record, options, &block)
+        content = display_action_links(link, record, options, &)
         options[:level] -= 1
         display_action_link(link, content, record, options).tap { options[:first_action] = false } if content.present?
       end

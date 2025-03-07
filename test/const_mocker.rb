@@ -23,7 +23,7 @@ class ConstMocker
     @parent.const_get @const_name if @parent.const_defined?(@const_name)
   end
 
-  def self.mock(const_name, parent = Object, &block)
+  def self.mock(const_name, parent = Object, &)
     cm = new(const_name, parent)
     yield(cm)
     cm.restore

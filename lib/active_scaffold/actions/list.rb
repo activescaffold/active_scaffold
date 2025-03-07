@@ -227,12 +227,12 @@ module ActiveScaffold::Actions
       do_list
     end
 
-    def each_record_in_page(&block)
-      page_items.each(&block)
+    def each_record_in_page(&)
+      page_items.each(&)
     end
 
-    def each_record_in_scope(&block)
-      scoped_query.each(&block)
+    def each_record_in_scope(&)
+      scoped_query.each(&)
     end
 
     def page_items

@@ -2,8 +2,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
     attr_reader :klass
 
-    def initialize(klass, *args)
-      super(nil, *args)
+    def initialize(klass, *)
+      super(nil, *)
       @klass = klass
     end
 
@@ -158,8 +158,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       ActiveScaffold::Tableless::Relation.new(self)
     end
 
-    def cached_find_by_statement(key, &block)
-      StatementCache.new(key, self, &block)
+    def cached_find_by_statement(key, &)
+      StatementCache.new(key, self, &)
     end
   end
 
