@@ -1,4 +1,5 @@
 - Replace sassc-rails with dartsass-sprockets, as it's a compatible replacement, to ease migration to dartsass
+- Use lowercase response headers as required by rack 3
 
 = 4.0.2
 - Fix using update_columns in field search with search UI submitting a hash, such as date fields

@@ -10,8 +10,8 @@ module ActiveScaffold
 
       # Either pull out a redirect or the request body
       script =
-        if response.headers['Location']
-          "document.location.href = '#{self.class.helpers.escape_javascript response.headers.delete('Location').to_s}'"
+        if response.has_header? 'location'
+          "document.location.href = '#{self.class.helpers.escape_javascript response.delete_header('location').to_s}'"
         else
           response.body || ''
         end

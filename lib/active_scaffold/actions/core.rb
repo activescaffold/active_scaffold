@@ -369,7 +369,7 @@ module ActiveScaffold::Actions
     end
 
     def set_vary_accept_header
-      response.headers['Vary'] = 'Accept'
+      response.set_header 'vary', 'Accept'
     end
 
     def check_input_device
