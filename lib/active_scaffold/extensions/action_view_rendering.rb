@@ -103,9 +103,9 @@ module ActiveScaffold # :nodoc:
     def update_view_paths
       last_view_path =
         if @lookup_context # rails 6
-          File.expand_path(File.dirname(File.dirname(@lookup_context.last_template.short_identifier.to_s)), Rails.root)
+          File.expand_path(File.dirname(@lookup_context.last_template.short_identifier.to_s, 2), Rails.root)
         else
-          File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
+          File.expand_path(File.dirname(lookup_context.last_template.inspect, 2), Rails.root)
         end
       new_view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
       if @lookup_context # rails 6
