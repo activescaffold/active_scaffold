@@ -3,17 +3,17 @@ module ActiveScaffold::DataStructures
     include Enumerable
     include ActiveScaffold::Configurable
 
-    def initialize(*)
-      set_values(*)
+    def initialize(*args)
+      set_values(*args)
     end
 
     def initialize_dup(other)
       @set = other.set.dup
     end
 
-    def set_values(*)
+    def set_values(*args)
       @set = []
-      add(*)
+      add(*args)
     end
 
     # the way to add items to the set.

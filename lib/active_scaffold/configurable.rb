@@ -16,9 +16,9 @@ module ActiveScaffold
       ret
     end
 
-    def method_missing(name, *)
+    def method_missing(name, *args)
       if @configuration_binding&.respond_to?(name, true) # rubocop:disable Lint/RedundantSafeNavigation
-        @configuration_binding.send(name, *)
+        @configuration_binding.send(name, *args)
       else
         super
       end

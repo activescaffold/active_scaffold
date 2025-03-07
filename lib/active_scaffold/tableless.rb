@@ -2,8 +2,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
     attr_reader :klass
 
-    def initialize(klass, *)
-      super(nil, *)
+    def initialize(klass, *args)
+      super(nil, *args)
       @klass = klass
     end
 

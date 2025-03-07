@@ -391,10 +391,10 @@ module ActiveScaffold
         link_to(label, '#', data: data, class: 'show-new-subform')
       end
 
-      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, ui_options: column.options, &)
+      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, ui_options: column.options, &block)
         options = active_scaffold_input_text_options(options.merge(ui_options))
         if content
-          active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class, &)
+          active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class, &block)
         else
           file_field(:record, column.name, options)
         end
