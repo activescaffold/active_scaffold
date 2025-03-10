@@ -1,5 +1,7 @@
 <% action_links = active_scaffold_config.action_links.collection -%>
+<% filters = active_scaffold_config.list.filters %>
 <div class="actions">
+  <%= display_filters(filters) %>
   <%= display_action_links(action_links, nil, skip_unauthorized: true) unless action_links.empty? %>
   <%= loading_indicator_tag(action: :table) %>
 </div>

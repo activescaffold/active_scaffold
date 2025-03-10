@@ -86,7 +86,7 @@ margin-left: 0px;
 padding: 1px 5px;
 }
 
-.active-scaffold div.actions div.action_group {
+.active-scaffold div.actions div.action_group, .active-scaffold div.actions div.filters {
 display: inline;
 float: right;
 }

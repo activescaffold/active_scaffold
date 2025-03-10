@@ -1,7 +1,6 @@
 module ActiveScaffold
   module Helpers
-    # All extra helpers that should be included in the View.
-    # Also a dumping ground for uncategorized helpers.
+    # Helpers rendering action links
     module ActionLinkHelpers
       # params which mustn't be copying to nested links
       NESTED_PARAMS = %i[eid embedded association parent_scaffold].freeze
@@ -348,7 +347,8 @@ module ActiveScaffold
 
       def action_link_html_options(link, record, options)
         link_id = get_action_link_id(link, record)
-        html_options = link.html_options.merge(class: [link.html_options[:class], link.action.to_s].compact.join(' '))
+        html_options = options[:html_options] || link.html_options
+        html_options = html_options.merge(class: [html_options[:class], link.action.to_s].compact.join(' '))
         html_options[:link] = action_link_text(link, record, options)
 
         # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails

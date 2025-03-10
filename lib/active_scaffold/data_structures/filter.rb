@@ -1,5 +1,7 @@
 module ActiveScaffold::DataStructures
   class Filter
+    include Enumerable
+
     attr_reader :name, :default_option
     attr_writer :label, :description
     attr_accessor :type, :weight, :css_class, :security_method
@@ -10,6 +12,7 @@ module ActiveScaffold::DataStructures
       @label = @name = name.to_sym
       @type = type
       @options = []
+      @weight = 0
     end
 
     # adds a FilterOption, creating one from the arguments if need be
@@ -19,9 +22,9 @@ module ActiveScaffold::DataStructures
         name = option.name
       end
       existing = self[name]
-      return existing if existing
+      raise ArgumentError, "there is a filter option with '#{name}' name" if existing
 
-      option ||= ActiveScaffold::DataStructures::FilterOption.new(name, options)
+      option ||= ActiveScaffold::DataStructures::FilterOption.new(@name, name, options)
       @default_option ||= option.name
       @options << option
       self

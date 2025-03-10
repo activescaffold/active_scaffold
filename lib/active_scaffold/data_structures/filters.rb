@@ -1,5 +1,7 @@
 module ActiveScaffold::DataStructures
   class Filters
+    include Enumerable
+
     def initialize
       @set = []
       @default_type = self.class.default_type
@@ -12,7 +14,7 @@ module ActiveScaffold::DataStructures
         name = filter.name
       end
       existing = self[name]
-      return existing if existing
+      raise ArgumentError, "there is a filter with '#{name}' name" if existing
 
       filter ||= ActiveScaffold::DataStructures::Filter.new(name, default_type)
       @set << filter
@@ -41,6 +43,7 @@ module ActiveScaffold::DataStructures
 
     # default filter type for all app filters, can be :links or :select
     cattr_accessor :default_type
+    @@default_type = :links
 
     # default filter type for all filters in this set, can be :links or :select
     attr_accessor :default_type

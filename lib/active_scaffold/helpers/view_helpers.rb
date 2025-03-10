@@ -13,6 +13,7 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::TabsHelpers
       include ActiveScaffold::Helpers::SearchColumnHelpers
       include ActiveScaffold::Helpers::HumanConditionHelpers
+      include ActiveScaffold::Helpers::FilterHelpers
 
       ##
       ## Delegates

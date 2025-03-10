@@ -197,7 +197,10 @@ module ActiveScaffold::Config
     def _cache_lazy_values
       action_links.collection # ensure the collection group exist although it's empty
       action_links.member # ensure the collection group exist although it's empty
-      action_links.each(&:name_to_cache) if cache_action_link_urls
+      if cache_action_link_urls
+        action_links.each(&:name_to_cache)
+        list.filters.each { |filter| filter.each(&:name_to_cache) } if actions.include?(:list)
+      end
       columns.select(&:sortable?).each(&:sort)
       columns.select(&:searchable?).each(&:search_sql)
       actions.each do |action_name|
