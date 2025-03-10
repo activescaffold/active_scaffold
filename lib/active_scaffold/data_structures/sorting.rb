@@ -106,8 +106,8 @@ module ActiveScaffold::DataStructures
     end
 
     # iterate over the clauses
-    def each(&block)
-      @clauses.each(&block)
+    def each(&)
+      @clauses.each(&)
     end
 
     def each_column

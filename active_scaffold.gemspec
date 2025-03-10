@@ -19,14 +19,11 @@ Gem::Specification.new do |s|
   ]
   s.license = 'MIT'
 
-  s.required_ruby_version = '>= 3.0'
+  s.required_ruby_version = '>= 3.1'
 
-  # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
-  # It encourages beautiful code by favoring convention over configuration.
+  s.add_dependency('dartsass-sprockets', '~> 3.2.0')
+  s.add_dependency('ice_nine', '~> 0.11') # Deep Freeze Ruby Objects
   s.add_dependency('rails', '>= 5.2.0')
-  # Deep Freeze Ruby Objects
-  s.add_dependency('ice_nine', '~> 0.11')
   s.add_dependency('request_store', '~> 1.3')
-  s.add_dependency('sassc-rails', '~> 2.0')
   s.metadata['rubygems_mfa_required'] = 'true'
 end

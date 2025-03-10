@@ -12,10 +12,11 @@ ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, r
 
 Branch Details
 --------------
-master supports rails >= 6.1.x and <= 7.2.x, and ruby >= 3.0.0  
-3-7-stable supports rails >= 5.2.x and <= 7.1.x, and ruby >= 2.5.0
+master supports rails >= 7.0.x and <= 7.2.x, and ruby >= 3.1.0  
+4-0-stable supports rails >= 6.1.x and <= 7.2.x, and ruby >= 3.0.0
 
 These versions are not supported anymore:  
+3-7-stable supports rails >= 5.2.x and <= 7.1.x, and ruby >= 2.5.0
 3-6-stable supports rails >= 4.2.x and <= 6.1.x, and ruby >= 2.3.0  
 3-5-stable supports rails >= 4.0.x and <= 5.1.x, and ruby >= 2.0.0  
 3-4-stable supports rails >= 3.2.x and <= 4.2.x, and ruby >= 1.9.3  
@@ -70,7 +71,7 @@ Changing columns for an action (e.g. add or exclude) on a request must use activ
 
 If you have a `_form_association_record` partial view overrided, use `record` local variable instead of `form_association_record`.
 
-If you have code rendering `form_association_record` partial, the pass `record` local variable, or use `as: :record` if using render with collection key.
+If you have code rendering `form_association_record` partial, then pass `record` local variable, or use `as: :record` if using render with collection key.
 
 Configuration
 -------------

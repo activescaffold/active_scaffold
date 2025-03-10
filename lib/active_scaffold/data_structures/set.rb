@@ -47,8 +47,8 @@ module ActiveScaffold::DataStructures
     end
     alias [] find_by_name
 
-    def each(&block)
-      @set.each(&block)
+    def each(&)
+      @set.each(&)
     end
 
     # returns the number of items in the set

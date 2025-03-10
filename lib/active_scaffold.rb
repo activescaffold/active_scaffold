@@ -80,8 +80,8 @@ module ActiveScaffold
     "#{File.dirname(__FILE__)}/.."
   end
 
-  def self.defaults(&block)
-    ActiveScaffold::Config::Core.configure(&block)
+  def self.defaults(&)
+    ActiveScaffold::Config::Core.configure(&)
   end
 
   def self.deprecator

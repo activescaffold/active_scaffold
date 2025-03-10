@@ -420,7 +420,7 @@ class AttributeParamsTest < ActiveSupport::TestCase
 
   protected
 
-  def update_record_from_params(record, action, *columns, &block)
+  def update_record_from_params(record, action, *columns, &)
     params = columns.extract_options!.with_indifferent_access
     new_record = nil
     record.class.transaction do

@@ -203,8 +203,8 @@ module ActiveScaffold::Actions
       cookies[params[:_dl_cookie]] = {value: Time.now.to_i, expires: 1.day.since} if params[:_dl_cookie]
     end
 
-    def each_marked_record(&block)
-      active_scaffold_config.model.as_marked.each(&block)
+    def each_marked_record(&)
+      active_scaffold_config.model.as_marked.each(&)
     end
 
     def marked_records
@@ -369,7 +369,7 @@ module ActiveScaffold::Actions
     end
 
     def set_vary_accept_header
-      response.headers['Vary'] = 'Accept'
+      response.set_header 'vary', 'Accept'
     end
 
     def check_input_device

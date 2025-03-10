@@ -78,8 +78,8 @@ module ActiveScaffold::DataStructures
     end
     alias [] find_by_name
 
-    def each(&block)
-      @set.each_value(&block)
+    def each(&)
+      @set.each_value(&)
     end
 
     def _inheritable

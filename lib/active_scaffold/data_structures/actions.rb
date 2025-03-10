@@ -16,8 +16,8 @@ class ActiveScaffold::DataStructures::Actions
   end
   alias << add
 
-  def each(&block)
-    @set.each(&block)
+  def each(&)
+    @set.each(&)
   end
 
   def include?(val)

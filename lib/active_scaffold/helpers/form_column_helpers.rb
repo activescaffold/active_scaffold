@@ -129,7 +129,7 @@ module ActiveScaffold
           form_columns ||= @main_columns.visible_columns_names
         end
         form_columns ||= current_form_columns(record, scope, subform_controller)
-        if force || (form_columns && column.update_columns && (column.update_columns & form_columns).present?)
+        if force || (form_columns && column.update_columns&.intersect?(form_columns))
           url_params.reverse_merge! params_for(action: 'render_field', column: column.name, id: record.to_param)
           if nested? && scope
             url_params[:nested] = url_params.slice(:parent_scaffold, :association, nested.param_name)

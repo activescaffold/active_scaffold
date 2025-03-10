@@ -62,9 +62,9 @@ module ActiveScaffold
         output
       end
 
-      def display_action_link_group(link, record, options, &block)
+      def display_action_link_group(link, record, options, &)
         options[:level] += 1
-        content = display_action_links(link, record, options, &block)
+        content = display_action_links(link, record, options, &)
         options[:level] -= 1
         display_action_link(link, content, record, options).tap { options[:first_action] = false } if content.present?
       end
