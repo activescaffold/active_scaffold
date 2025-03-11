@@ -276,9 +276,13 @@ module ActiveScaffold::Actions
       redirect_to options.is_a?(Hash) ? url_for(options) : options
     end
 
+    def filtered_query
+      active_scaffold_config.model
+    end
+
     # Overide this method on your controller to provide model with named scopes
     def beginning_of_chain
-      active_scaffold_config.model
+      filtered_query
     end
 
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".

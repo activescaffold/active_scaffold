@@ -245,6 +245,38 @@ module ActiveScaffold::Actions
       end
     end
 
+    def beginning_of_chain
+      apply_filters filtered_query
+    end
+
+    def filters_enabled?
+      active_scaffold_config.list.filters.present? && params[:id].nil?
+    end
+
+    def apply_filters(query)
+      return query unless filters_enabled?
+      active_scaffold_config.list.refresh_with_header = true if active_scaffold_config.list.filters.many?
+
+      active_scaffold_config.list.filters.inject(query) do |q, filter|
+        next q unless filter.security_method.nil? || send(filter.security_method)
+
+        if params[filter.name]
+          apply_filter q, filter[params[filter.name]]
+        else
+          apply_filter q, filter[filter.default_option]
+        end
+      end
+    end
+
+    def apply_filter(query, filter_option)
+      return query if filter_option.nil? || (filter_option.security_method_set? && !send(filter_option.security_method))
+
+      case filter_option.conditions
+      when Proc then instance_exec query, &filter_option.conditions
+      else query.where(filter_option.conditions)
+      end
+    end
+
     def scoped_query
       @scoped_query ||= begin
         do_search if respond_to? :do_search, true

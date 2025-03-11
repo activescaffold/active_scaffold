@@ -61,7 +61,7 @@ module ActiveScaffold::Actions
       true
     end
 
-    def beginning_of_chain
+    def filtered_query
       # only if nested is related to current controller, e.g. not when adding record in subform inside subform
       if nested? && nested.match_model?(active_scaffold_config.model)
         nested_chain_with_association
