@@ -33,8 +33,8 @@ module ActiveScaffold::DataStructures
     end
 
     # iterates over the links, possibly by type
-    def each(&block)
-      @set.each(&block)
+    def each(&)
+      @set.each(&)
     end
 
     def empty?

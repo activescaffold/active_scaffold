@@ -37,7 +37,7 @@ module ActiveScaffold::DataStructures
     def column = nil
     def type = :collection
     def dynamic_parameters = nil
-    def nested_link? = nil
+    def nested_link? = false
     def confirm? = false
     def inline? = true
     def popup? = false

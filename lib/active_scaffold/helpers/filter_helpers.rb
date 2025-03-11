@@ -3,17 +3,15 @@ module ActiveScaffold
     # Helpers rendering filters
     module FilterHelpers
       def display_filters(filters)
-        content = []
-        filters.each do |filter|
-          content << display_filter(filter)
-        end
+        content = filters.map { |filter| display_filter(filter) }
         content_tag :div, safe_join(content), class: 'filters' if content.present?
       end
 
       def display_filter(filter)
         return if filter.security_method && !controller.send(filter.security_method)
+
         options = filter.reject { |option| option.security_method && !controller.send(option.security_method) }
-        send "display_filter_as_#{filter.type}", filter, options if options.present?
+        send :"display_filter_as_#{filter.type}", filter, options if options.present?
       end
 
       def display_filter_as_links(filter, options)
