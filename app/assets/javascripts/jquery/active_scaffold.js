@@ -142,6 +142,22 @@
         }
         return true;
       });
+      jQuery(document).on({
+        'ajax:before': function () {
+          var $this = $(this), indicator_id = $this.data('loading-indicator-id'),
+            $indicator = indicator_id ? $('#' + indicator_id) : $();
+          if (!$indicator.length) $indicator = $this.parent().find('.loading-indicator');
+          if (!$indicator.length) $indicator = $this.closest('.active-scaffold-header').find('.loading-indicator:first');
+          $indicator.css('visibility', 'visible');
+          $this.data('url', $('option:selected', this).data('url'));
+        }, 'ajax:complete': function () {
+          var $this = $(this), indicator_id = $this.data('loading-indicator-id'),
+            $indicator = indicator_id ? $('#' + indicator_id) : $();
+          if (!$indicator.length) $indicator = $this.parent().find('.loading-indicator');
+          if (!$indicator.length) $indicator = $this.closest('.active-scaffold-header').find('.loading-indicator');
+          $indicator.css('visibility', 'hidden');
+        }
+      }, ':input[data-remote="url"]:not(data-url)');
       jQuery(document).on('ajax:before', 'a.as_cancel', function(event) {
         var as_cancel = jQuery(this);
         var action_link = ActiveScaffold.find_action_link(as_cancel);

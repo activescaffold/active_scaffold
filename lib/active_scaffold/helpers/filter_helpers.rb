@@ -10,22 +10,20 @@ module ActiveScaffold
       def display_filter(filter)
         return if filter.security_method && !controller.send(filter.security_method)
 
-        options = filter.reject { |option| option.security_method && !controller.send(option.security_method) }
+        options = filter.reject { |option| option.security_method_set? && !controller.send(option.security_method) }
         send :"display_filter_as_#{filter.type}", filter, options if options.present?
       end
 
       def display_filter_as_links(filter, options)
-        content_tag(:div, class: 'action_group') do
-          content_tag(:div, filter.label, class: filter.css_class, title: filter.description) <<
-            content_tag(:ul, safe_join(display_filter_options_as_links(options)))
-        end
+        content = options.map { |option| display_action_link(option, nil, nil, authorized: true, level: 1) }
+        display_action_link(filter, safe_join(content), nil, level: 0, title: filter.description) if content.present?
       end
 
-      def display_filter_options_as_links(options)
-        options.map do |option|
-          html_options = {class: "toggle #{'active' if params[option.filter_name] == option.name.to_s}"}
-          content_tag :li, render_action_link(option, nil, authorized: true, link: option.label, html_options: html_options)
+      def display_filter_as_select(filter, options)
+        content = options.map do |option|
+          content_tag :option, option.label(nil), data: {url: action_link_url(option, nil)}, selected: action_link_selected?(option, nil), title: option.description
         end
+        select_tag nil, safe_join(content), class: 'action_group', title: filter.description || filter.label, data: {remote: :url} if content.present?
       end
     end
   end

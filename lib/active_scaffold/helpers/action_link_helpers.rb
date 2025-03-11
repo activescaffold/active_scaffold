@@ -84,7 +84,7 @@ module ActiveScaffold
             group_tag = :li
           end
           content = content_tag(group_tag, class: html_classes.presence, onclick: ('' if hover_via_click?)) do
-            content_tag(:div, link.label(record), class: link.css_class) << content_tag(:ul, content)
+            content_tag(:div, link.label(record), class: link.css_class, title: options[:title]) << content_tag(:ul, content)
           end
         else
           content = render_action_link(link, record, options)
@@ -340,9 +340,13 @@ module ActiveScaffold
       end
 
       def action_link_selected?(link, record)
-        missing_options, url_options = replaced_action_link_url_options(link, record)
-        safe_params = params.to_unsafe_h
-        (url_options - safe_params.to_a).blank? && missing_options.all? { |k, _| params[k].nil? }
+        if link.respond_to?(:filter_name)
+          params[link.filter_name] == link.name.to_s
+        else
+          missing_options, url_options = replaced_action_link_url_options(link, record)
+          safe_params = params.to_unsafe_h
+          (url_options - safe_params.to_a).blank? && missing_options.all? { |k, _| params[k].nil? }
+        end
       end
 
       def action_link_html_options(link, record, options)

@@ -56,7 +56,7 @@ module ActiveScaffold::DataStructures
       @options.empty?
     end
 
-    def label
+    def label(*)
       case @label
       when Symbol
         ActiveScaffold::Registry.cache(:translations, @label) { as_(@label) }
