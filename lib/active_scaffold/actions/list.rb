@@ -255,6 +255,7 @@ module ActiveScaffold::Actions
 
     def apply_filters(query)
       return query unless filters_enabled?
+
       active_scaffold_config.list.refresh_with_header = true if active_scaffold_config.list.filters.many?
 
       active_scaffold_config.list.filters.inject(query) do |q, filter|
