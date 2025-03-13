@@ -17,7 +17,7 @@ module ActiveScaffold::DataStructures
           toggle: true
         )
       )
-      self.parameters.merge!(filter_name => name)
+      parameters.merge!(filter_name => name)
     end
 
     def description
