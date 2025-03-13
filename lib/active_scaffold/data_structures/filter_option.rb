@@ -13,10 +13,11 @@ module ActiveScaffold::DataStructures
           action: :index,
           type: :collection,
           method: :get,
-          position: false
+          position: false,
+          toggle: true
         )
       )
-      @parameters.merge!(filter_name => name)
+      self.parameters.merge!(filter_name => name)
     end
 
     def description

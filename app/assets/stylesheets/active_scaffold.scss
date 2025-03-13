@@ -47,6 +47,7 @@ $action_group_border_color: #005CB8 !default;
 $action_group_items_bg: #EEE !default;
 $action_group_items_border_color: #222 !default;
 $action_group_link_color: $column_color !default;
+$active_filter: $link_color !default;
 
 $nested_bg: #DAFFCD !default;
 $nested_border_color: #7FCF00 !default;
@@ -119,6 +120,9 @@ noscript.active-scaffold {
 }
 .active-scaffold-header div.actions a.disabled {
   color: $actions_disabled_color;
+}
+.active-scaffold .actions .filters .active {
+  color: $active_filter;
 }
 
 /* Table :: Column Headers
