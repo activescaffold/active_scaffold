@@ -342,7 +342,7 @@ module ActiveScaffold
       def action_link_selected?(link, record)
         if link.respond_to?(:filter_name)
           if params[link.filter_name]
-            params[link.filter_name] == link.name.to_s
+            params[link.filter_name].to_s == link.name.to_s
           else
             active_scaffold_config.list.filters[link.filter_name].default_option == link.name
           end
