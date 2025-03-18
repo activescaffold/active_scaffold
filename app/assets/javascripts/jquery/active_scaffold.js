@@ -447,7 +447,7 @@
         setTimeout(ActiveScaffold.update_floating_form_footer); // delay so form is already removed
       });
       jQuery(document).on('as:action_success', 'a.as_action', function(e, action_link) {
-        ActiveScaffold.setup(action_link.adapter);
+        if (action_link.adapter) ActiveScaffold.setup(action_link.adapter);
       });
       jQuery(document).on('as:element_updated', '.active-scaffold', function(e) {
         if (e.target != this) return;
