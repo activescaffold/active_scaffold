@@ -39,9 +39,9 @@ Add jquery-rails to Gemfile, or handle jquery with other tools like webpack or i
 gem 'jquery-rails'
 ```
 
-For rails 7.x, install generator will add active_scaffold to config/importmap.rb, app/javascript/application.js, and active_scaffold/manifest.js to app/assets/config/manifest.js. It will add jquery and jquery_ujs to all the 3 files if jquery-rails gem is available.
+For rails 7.x, install generator will add `active_scaffold` to `config/importmap.rb`, `app/javascript/application.js`, and `active_scaffold/manifest.js` to `app/assets/config/manifest.js`. It will add `jquery` and `jquery_ujs` to all the 3 files if jquery-rails gem is available.
 
-For rails 6.1, install generator will create app/assets/javascripts/application.js, add it, and active_scaffold/manifest.js, to app/assets/config/manifest.js and add javascript_include_tag in layout, as ActiveScaffold doesn't work with webpack. It will add jquery to app/assets/javascripts/application.js too if query-rails gem is available, although Jquery may be loaded by packs too and it will work, it won't add jquery_ujs or @rails/ujs as it's added to app/javascript/packs/application.js by default.
+For rails 6.1, install generator will create `app/assets/javascripts/application.js`, add it, and `active_scaffold/manifest.js`, to `app/assets/config/manifest.js` and add `javascript_include_tag` in the layout, as ActiveScaffold doesn't work with webpack. It will add `jquery` to `app/assets/javascripts/application.js` too if query-rails gem is available, although Jquery may be loaded by packs too and it will work, it won't add `jquery_ujs` or `@rails/ujs` as it's added to `app/javascript/packs/application.js` by default.
 
 Run the following commands
 
@@ -64,6 +64,8 @@ Threadsafe is enabled always since 4.0, and it can't be disabled.
 
 Breaking Changes
 ----------------
+
+When upgrading from 3.x, add `active_scaffold/manifest.js` to `app/assets/config/manifest.js` to prevent issues with assets.
 
 Changing column settings on a request has changed, it must use `active_scaffold_config.columns.override(:name)` at least the first time. After calling `columns.override(:name)`, calling it again or calling `columns[:name]` will return the overrided column. It also supports a block. See [Per Request Configuration](https://github.com/activescaffold/active_scaffold/wiki/Per-Request-Configuration) for examples and more comprehensive explanation.
 
