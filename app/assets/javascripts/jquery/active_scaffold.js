@@ -1251,7 +1251,7 @@
       },
 
       open_popup: function(content, link) {
-        var element = jQuery(content).dialog({
+        var element = jQuery(content).filter(function(){ return this.tagName; }).dialog({
           modal: true,
           close: function() { link.close(); },
           width: ActiveScaffold.config.popup_width || '80%'
