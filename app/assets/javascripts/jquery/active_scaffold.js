@@ -1245,7 +1245,7 @@
 
       close_popup: function(link, callback) {
         link.adapter.dialog('close');
-        if (callback) callback();
+        ActiveScaffold.remove(link.adapter, callback);
       }
     }
 
