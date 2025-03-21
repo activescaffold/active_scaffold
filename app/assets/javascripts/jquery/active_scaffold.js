@@ -1534,7 +1534,7 @@
       instantiate_link: function(link) {
         var l = new ActiveScaffold.ActionLink.Table(link, this.target, this.loading_indicator);
         if (l.position) {
-          l.url = l.url.append_params({adapter: '_list_inline_adapter'});
+          l.url = l.url.append_params({adapter: l.position == 'popup' ? '_popup_adapter' : '_list_inline_adapter'});
           l.tag.attr('href', l.url);
         }
         return l;
