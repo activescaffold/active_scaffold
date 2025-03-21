@@ -372,7 +372,7 @@
         }
         if ($this.data('select-id')) {
           select = line.find('#' + $this.data('select-id'));
-          if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').andSelf();
+          if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').addBack();
         }
         if (hide) {
           subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
@@ -605,7 +605,7 @@
             if (toggle.is('[type=radio]')) toggle.prop('disabled', true);
             else if (toggle.data('select-id')) {
               var select = line.find('#' + toggle.data('select-id'));
-              if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').andSelf();
+              if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').addBack();
               select.hide().prop('disabled', true);
             }
           } else $this.find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
