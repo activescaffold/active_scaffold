@@ -217,7 +217,7 @@ $.extend(InlineEditor.prototype, {
 		if ( ! this.settings.cancel)
 			return false;
 		
-		var eventTargetAndParents = $(eventTarget).parents().andSelf();
+		var eventTargetAndParents = $(eventTarget).parents().addBack();
 		var elementsMatchingCancelSelector = eventTargetAndParents.filter(this.settings.cancel);
 		return 0 !== elementsMatchingCancelSelector.length;
 	},
