@@ -22,7 +22,7 @@ module ActiveScaffold
         value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
         value
       rescue StandardError => e
-        logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
         raise e
       end
 
@@ -62,7 +62,7 @@ module ActiveScaffold
           text
         end
       rescue StandardError => e
-        logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
         raise e
       end
 

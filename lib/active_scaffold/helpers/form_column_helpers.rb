@@ -47,7 +47,7 @@ module ActiveScaffold
           text_field(:record, column.name, options.merge(column.options).except(:format))
         end
       rescue StandardError => e
-        logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
         raise e
       end
 
