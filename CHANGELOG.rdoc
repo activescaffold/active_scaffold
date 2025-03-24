@@ -1,6 +1,7 @@
 - Fix for jQuery 3
 - Fix position popup for collection action links
 - Fix recordselect in form open with position popup
+- Fix class of subform on optional subform using add_new option with layout option
 
 = 4.0.2
 - Fix using update_columns in field search with search UI submitting a hash, such as date fields

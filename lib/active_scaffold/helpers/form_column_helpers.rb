@@ -70,9 +70,9 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_subform_attributes(column, column_css_class = nil, klass = nil, tab_id: nil)
+      def active_scaffold_subform_attributes(column, column_css_class = nil, klass = nil, tab_id: nil, ui_options: column.options)
         {
-          class: "sub-form #{active_scaffold_config_for(klass || column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
+          class: "sub-form #{ui_options[:layout] || active_scaffold_config_for(klass || column.association.klass).subform.layout}-sub-form #{column_css_class} #{column.name}-sub-form",
           id: sub_form_id(association: column.name, tab_id: tab_id)
         }
       end
@@ -364,7 +364,7 @@ module ActiveScaffold
           end
         return content_tag(:div, '') unless klass
 
-        subform_attrs = active_scaffold_subform_attributes(column, nil, klass)
+        subform_attrs = active_scaffold_subform_attributes(column, nil, klass, ui_options: ui_options)
         if record.send(column.name)&.new_record?
           new_record = record.send(column.name)
         else
@@ -568,7 +568,7 @@ module ActiveScaffold
         if options.present?
           if ui_options[:add_new]
             html_options[:data] ||= {}
-            html_options[:data][:subform_id] = active_scaffold_subform_attributes(column)[:id]
+            html_options[:data][:subform_id] = active_scaffold_subform_attributes(column, ui_options: ui_options)[:id]
             radio_html_options = html_options.merge(class: "#{html_options[:class]} hide-new-subform")
           else
             radio_html_options = html_options
