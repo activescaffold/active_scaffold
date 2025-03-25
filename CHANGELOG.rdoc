@@ -5,6 +5,7 @@
 - Fix recordselect in form open with position popup
 - Fix class of subform on optional subform using add_new option with layout option
 - Fix constraints with mulitple ids for belongs_to associations with primary_key setting
+- Fix render_field when a column changes, and a column to refresh exists in a subform with the same name too
 
 = 4.0.2
 - Fix using update_columns in field search with search UI submitting a hash, such as date fields

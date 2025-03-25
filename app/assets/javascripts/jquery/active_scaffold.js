@@ -994,14 +994,17 @@
         if (typeof(source) == 'string') source = '#' + source;
         var source = jQuery(source);
         var element, container = source.closest('.sub-form-record'), selector = '';
-        if (container.length == 0) {
+        if (container.length === 0) {
           container = source.closest('form > ol.form');
           selector = 'li';
         }
         // find without entering new subforms
-        element = container.find(selector + ':not(.sub-form) .' + options.field_class).first();
+        element = container.find(selector + ':not(.sub-form) .' + options.field_class);
+        if (container.is('.sub-form-record'))
+          element = element.filter(function() { return $(this).closest('.sub-form-record').get(0) === container.get(0); });
+        else element = element.filter(function() { return $(this).closest('.sub-form-record').length === 0; });
         if (element.length)
-          element = element.closest('dl');
+          element = element.first().closest('dl');
         else if (options.subform_class)
           element = container.find(selector + '.' + options.subform_class).first();
 
