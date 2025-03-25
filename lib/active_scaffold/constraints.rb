@@ -128,7 +128,7 @@ module ActiveScaffold
         end
 
       table = association.belongs_to? ? active_scaffold_config.model.table_name : association.table_name
-      value = Array(association.klass.find(value)).map(&association.primary_key) if association.primary_key
+      value = Array(association.klass.find(value)).map(&association.primary_key.to_sym) if association.primary_key
 
       if association.polymorphic?
         unless value.is_a?(Array) && value.size >= 2
