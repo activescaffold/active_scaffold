@@ -1,5 +1,5 @@
 <%
-subform_id = sub_form_list_id(association: @column.name, tab_id: (params[:value] if params[:tabbed_by]), id: @parent_record.id || generated_id(@parent_record) || 99_999_999_999)
+subform_id = sub_form_list_id(association: @column.name, tab_id: @tab_id, id: @parent_record.id || generated_id(@parent_record) || 99_999_999_999)
 associated_form = render 'form_association_record', scope: @scope, parent_record: @parent_record, column: @column, record: @record, locked: @record.new_record? && @column.association.singular?
 options = {singular: false}
 if @column.association.singular?
