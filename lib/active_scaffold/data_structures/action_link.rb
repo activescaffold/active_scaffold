@@ -96,7 +96,6 @@ module ActiveScaffold::DataStructures
 
     # if the action requires confirmation
     def confirm=(value)
-      @dhtml_confirm = nil if value
       @confirm = value
     end
 
