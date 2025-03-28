@@ -149,7 +149,7 @@ module ActiveScaffold::Actions
     def setup_parent(record)
       cfg = main_form_controller.active_scaffold_config
       association = cfg.columns[subform_child_association]&.association&.reverse_association
-      return if association.nil?
+      return if association.nil? || !record.respond_to?(association.name)
 
       parent_model = cfg.model
       parent = parent_model.new
