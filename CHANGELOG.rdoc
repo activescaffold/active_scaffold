@@ -2,6 +2,8 @@
 - Use lowercase response headers as required by rack 3
 - Add filters to list action
 - Add prompt option to action link
+
+= 4.0.3
 - Fix for jQuery 3
 - Fix position popup for collection action links
 - Fix recordselect in form open with position popup
