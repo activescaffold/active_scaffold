@@ -97,6 +97,18 @@
         }
         return true;
       });
+      jQuery(document).on('ajax:before', 'a.as_action[data-prompt]', function(e, xhr, settings){
+        var link = jQuery(this), value = prompt(link.data('prompt'));
+        if (value) {
+          link.data('params', jQuery.param({value: value}));
+        } else if (jQuery(this).data('prompt-required')) {
+          e.stopImmediatePropagation();
+          return false;
+        } else {
+          link.removeData('params');
+        }
+        return true;
+      });
       jQuery(document).on('ajax:before', 'a.as_action', function(event) {
         var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
         if (action_link) {

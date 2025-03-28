@@ -371,6 +371,10 @@ module ActiveScaffold
           html_options[:data][:action] = link.action
           html_options[:data][:cancel_refresh] = true if link.refresh_on_close
           html_options[:data][:keep_open] = true if link.keep_open?
+          if link.prompt?
+            html_options[:data][:prompt] = link.prompt(h(record&.to_label))
+            html_options[:data][:prompt_required] = true if link.prompt_required?
+          end
           html_options[:remote] = true
         end
 

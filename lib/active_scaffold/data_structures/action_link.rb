@@ -95,9 +95,7 @@ module ActiveScaffold::DataStructures
     attr_accessor :image
 
     # if the action requires confirmation
-    def confirm=(value)
-      @confirm = value
-    end
+    attr_writer :confirm
 
     def confirm(label = '')
       return @confirm if !confirm? || @confirm.is_a?(String)
@@ -107,6 +105,26 @@ module ActiveScaffold::DataStructures
 
     def confirm?
       @confirm.present?
+    end
+
+    # if the action requires prompting a value, only for inline links
+    attr_writer :prompt
+
+    def prompt(label = '')
+      return @prompt if !prompt? || @prompt.is_a?(String)
+
+      ActiveScaffold::Registry.cache(:translations, @prompt) { as_(@prompt) } % {label: label}
+    end
+
+    def prompt?
+      @prompt.present?
+    end
+
+    # if the prompt is required, empty value or cancel will prevent running the action
+    attr_writer :prompt_required
+
+    def prompt_required?
+      @prompt_required
     end
 
     # what method to call on the controller to see if this action_link should be visible
