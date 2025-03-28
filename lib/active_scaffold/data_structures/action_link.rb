@@ -110,18 +110,6 @@ module ActiveScaffold::DataStructures
       @confirm.present?
     end
 
-    # if the action uses a DHTML based (i.e. 2-phase) confirmation
-    attr_reader :dhtml_confirm
-
-    def dhtml_confirm=(value)
-      @confirm = nil if value
-      @dhtml_confirm = value
-    end
-
-    def dhtml_confirm?
-      @dhtml_confirm.present?
-    end
-
     # what method to call on the controller to see if this action_link should be visible
     # if method return false, link will be disabled
     # note that this is only the UI part of the security. to prevent URL hax0rz, you also need security on requests (e.g. don't execute update method unless authorized).

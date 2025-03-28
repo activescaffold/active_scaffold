@@ -384,14 +384,6 @@ module ActiveScaffold
           html_options[:rel] = [html_options[:rel], 'noopener noreferrer'].compact.join(' ')
         end
         html_options[:id] = link_id
-        if link.dhtml_confirm?
-          unless link.inline?
-            html_options[:class] << ' as_action'
-            html_options[:page_link] = 'true'
-          end
-          html_options[:dhtml_confirm] = link.dhtml_confirm.value
-          html_options[:onclick] = link.dhtml_confirm.onclick_function(controller, link_id)
-        end
         html_options
       end
 
