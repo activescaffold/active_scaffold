@@ -333,7 +333,7 @@ module ActiveScaffold
         associated = html_options.include?(:associated) ? html_options.delete(:associated) : record.send(column.association.name)
 
         select_options = sorted_association_options_find(column.association, nil, record)
-        select_options.unshift(associated) unless associated.nil? || select_options.include?(associated)
+        select_options.unshift(associated) if associated&.persistd? && select_options.exclude?(associated)
 
         method = column.name
         options.merge! selected: associated&.id, include_blank: as_(:_select_), object: record
