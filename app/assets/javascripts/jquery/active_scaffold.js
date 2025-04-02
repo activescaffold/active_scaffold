@@ -304,12 +304,6 @@
         return true;
       });
 
-      jQuery(document).on('change', 'select.as_update_date_operator', function(event) {
-        ActiveScaffold[jQuery(this).val() == 'REPLACE' ? 'show' : 'hide'](jQuery(this).next());
-        ActiveScaffold[jQuery(this).val() == 'REPLACE' ? 'hide' : 'show'](jQuery(this).next().next());
-        return true;
-      });
-
       jQuery(document).on('click', '.active-scaffold .sub-form a.destroy', function(event) {
         event.preventDefault();
         ActiveScaffold.delete_subform_record($(this).data('delete-id'));
