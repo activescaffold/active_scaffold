@@ -1,4 +1,4 @@
-= 4.0.4
+= 4.0.4.2
 - Support show key in helpers for search date/datetime, to change default condition to render it hidden
 
 = 4.0.3
