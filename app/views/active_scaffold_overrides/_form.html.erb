@@ -11,7 +11,7 @@
   <% column_css_class = column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %>
   <% renders_as = column_renders_as(column) %>
   <% authorized = show_unauthorized_columns || renders_as == :subsection ? @record.authorized_for?(crud_type: form_action, column: column.name) : true %>
-  <% if renders_as == :subsection || renders_as == :tabbed -%>
+  <% if renders_as == :subsection -%>
     <% next unless authorized %>
   <li class="sub-section <%= column_css_class %>">
     <%= render_subsection(column, @record, scope, form_action) %>

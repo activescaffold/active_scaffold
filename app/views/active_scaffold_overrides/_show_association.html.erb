@@ -1,2 +1,3 @@
 <% associated = column.association.singular? ? [parent_record.send(column.name)].compact : parent_record.send(column.name).to_a -%>
+<% associated = associated.select { |record| record.send(tabbed_by) == tab_value } if local_assigns[:tabbed_by] %>
 <%= render "show_association_#{show_partial}", column: column, parent_record: parent_record, associated: associated if associated.present? %>

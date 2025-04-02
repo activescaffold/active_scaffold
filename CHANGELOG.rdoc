@@ -2,6 +2,7 @@
 - Use lowercase response headers as required by rack 3
 - Add filters to list action
 - Add prompt option to action link
+- Support tabbed_by in show action too
 
 = 4.0.4.2
 - Support show key in helpers for search date/datetime, to change default condition to render it hidden
