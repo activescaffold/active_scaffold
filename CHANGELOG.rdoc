@@ -3,6 +3,7 @@
 - Add filters to list action
 - Add prompt option to action link
 
+= 4.0.4
 - Support show key in helpers for search date/datetime, to change default condition to render it hidden
 
 = 4.0.3
