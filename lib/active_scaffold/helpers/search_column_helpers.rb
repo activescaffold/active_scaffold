@@ -323,9 +323,10 @@ module ActiveScaffold
             safe_join([' - ', send(helper, column, options, current_search, 'to', ui_options: ui_options)])
           end
         ]
+        show = current_search.key?(:show) ? current_search[:show] : ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(current_search['opt'])
         content_tag('span', safe_join(numeric_controls),
                     id: "#{options[:id]}_numeric", class: 'search-date-numeric',
-                    style: ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(current_search['opt']) ? nil : 'display: none')
+                    style: ('display: none' unless show))
       end
 
       def active_scaffold_search_datetime_trend_tag(column, options, current_search)
@@ -335,9 +336,10 @@ module ActiveScaffold
                      options_for_select(active_scaffold_search_datetime_trend_units(column), current_search['unit']),
                      class: 'text-input')
         ]
+        show = current_search.key?(:show) ? current_search[:show] : current_search['opt'] == 'PAST' || current_search['opt'] == 'FUTURE'
         content_tag('span', safe_join(trend_controls, ' '),
                     id: "#{options[:id]}_trend", class: 'search-date-trend',
-                    style: ('display: none' unless current_search['opt'] == 'PAST' || current_search['opt'] == 'FUTURE'))
+                    style: ('display: none' unless show))
       end
 
       def active_scaffold_search_datetime_trend_units(column)
@@ -351,9 +353,10 @@ module ActiveScaffold
         range_controls = select_tag("#{options[:name]}[range]",
                                     options_for_select(values, current_search['range']),
                                     class: 'text-input', id: nil)
+        show = current_search.key?(:show) ? current_search[:show] : current_search['opt'] == 'RANGE'
         content_tag('span', range_controls,
                     id: "#{options[:id]}_range", class: 'search-date-range',
-                    style: ('display: none' unless current_search['opt'] == 'RANGE'))
+                    style: ('display: none' unless show))
       end
 
       def column_datetime?(column)
