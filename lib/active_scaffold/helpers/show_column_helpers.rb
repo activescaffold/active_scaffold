@@ -29,7 +29,7 @@ module ActiveScaffold
       def active_scaffold_show_horizontal(record, column, ui_options: column.options)
         raise ':horizontal show_ui must be used on association column' unless column.association
 
-        vars = {column: column, parent_record: record, show_partial: :horizontal}.
+        vars = {column: column, parent_record: record, show_partial: :horizontal}
         render partial: 'show_association', locals: vars.merge(ui_options.slice(:tabbed_by, :tab_value, :tab_id))
       end
 
