@@ -407,7 +407,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_new_record_subform(column, record, html_options, options: {}, new_record_attributes: nil, locals: {}, skip_link: false)
-        klass = send(override_helper_per_model(:active_scaffold_new_record_klass, record.class), column, record, **ui_options[:add_new])
+        klass = send(override_helper_per_model(:active_scaffold_new_record_klass, record.class), column, record, **options)
         return content_tag(:div, '') unless klass
 
         subform_attrs = active_scaffold_subform_attributes(column, nil, klass, ui_options: options)
