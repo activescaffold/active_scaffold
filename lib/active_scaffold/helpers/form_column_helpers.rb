@@ -350,21 +350,67 @@ module ActiveScaffold
             collection_select(:record, method, select_options, :id, ui_options[:label_method] || :to_label, options, html_options)
           end
         html << active_scaffold_refresh_link(column, html_options, record, ui_options) if ui_options[:refresh_link]
-        html << active_scaffold_new_record_subform(column, record, html_options, ui_options: ui_options) if ui_options[:add_new]
+        html << active_scaffold_add_new(column, record, html_options, ui_options: ui_options) if ui_options[:add_new]
         html
       end
 
-      def active_scaffold_new_record_subform(column, record, html_options, ui_options: column.options, new_record_attributes: nil, locals: {}, skip_link: false)
-        klass =
-          if column.association.polymorphic? && column.association.belongs_to?
-            type = record.send(column.association.foreign_type)
-            column.association.klass(record) if type.present? && (ui_options[:add_new] == true || type.in?(ui_options[:add_new]))
-          else
-            column.association.klass
-          end
+      def active_scaffold_new_record_klass(column, record, **options)
+        if column.association.polymorphic? && column.association.belongs_to?
+          type = record.send(column.association.foreign_type)
+          type_options = options[:types]
+          column.association.klass(record) if type.present? && (type_options.nil? || type_options.include?(type))
+        else
+          column.association.klass
+        end
+      end
+
+      def active_scaffold_add_new(column, record, html_options, ui_options: column.options, skip_link: false)
+        options = ui_options[:add_new] == true ? {} : ui_options[:add_new]
+        if options.is_a?(Array)
+          ActiveScaffold.deprecator.warn "use add_new: {types: #{options.inspect}} instead of add_new: #{options.inspect}"
+          options = {types: options}
+        end
+        if ui_options[:hide_subgroups] && !options.key?(:hide_subgroups)
+          ActiveScaffold.deprecator.warn "use add_new: {hide_subgroups: #{ui_options[:hide_subgroups]}} instead of hide_subgroups: #{ui_options[:hide_subgroups]}"
+          options[:hide_subgroups] = ui_options[:hide_subgroups]
+        end
+        if ui_options[:layout] && !options.key?(:layout)
+          ActiveScaffold.deprecator.warn "use add_new: {layout: #{ui_options[:layout]}} instead of layout: #{ui_options[:layout]}"
+          options[:layout] = ui_options[:layout]
+        end
+
+        case options[:mode]
+        when nil, :subform
+          active_scaffold_new_record_subform(column, record, html_options, options: options, skip_link: skip_link)
+        when :popup
+          active_scaffold_new_record_popup(column, record, html_options, options: options) unless skip_link
+        else
+          raise ArgumentError, "unsupported mode for add_new: #{options[:mode].inspect}"
+        end
+      end
+
+      def active_scaffold_new_record_url_options(column, record)
+        {embedded: {constraints: {record.class.name.underscore => record.id}}}
+      end
+
+      def active_scaffold_new_record_popup(column, record, html_options, options: {})
+        klass = send(override_helper_per_model(:active_scaffold_new_record_klass, record.class), column, record, **options)
+        return h('') unless klass
+
+        link_text = active_scaffold_add_new_text(options, :add_new_text, :add)
+        url_options_helper = override_helper_per_model(:active_scaffold_new_record_url_options, record.class)
+        url_options = send(url_options_helper, column, record)
+        url_options[:controller] ||= active_scaffold_controller_for(klass).controller_path
+        url_options[:action] ||= :new
+        url_options[:from_field] ||= html_options[:id]
+        link_to(link_text, url_options, remote: true, data: {position: :popup}, class: 'as_action')
+      end
+
+      def active_scaffold_new_record_subform(column, record, html_options, options: {}, new_record_attributes: nil, locals: {}, skip_link: false)
+        klass = send(override_helper_per_model(:active_scaffold_new_record_klass, record.class), column, record, **ui_options[:add_new])
         return content_tag(:div, '') unless klass
 
-        subform_attrs = active_scaffold_subform_attributes(column, nil, klass, ui_options: ui_options)
+        subform_attrs = active_scaffold_subform_attributes(column, nil, klass, ui_options: options)
         if record.send(column.name)&.new_record?
           new_record = record.send(column.name)
         else
@@ -374,19 +420,28 @@ module ActiveScaffold
         scope = html_options[:name].scan(/record(.*)\[#{column.name}\]/).dig(0, 0)
         new_record ||= klass.new(new_record_attributes)
         locals = locals.reverse_merge(column: column, parent_record: record, associated: [], show_blank_record: new_record, scope: scope)
-        subform = render(partial: subform_partial_for_column(column, klass, ui_options: ui_options), locals: locals)
-        if ui_options[:hide_subgroups]
+        subform = render(partial: subform_partial_for_column(column, klass, ui_options: options), locals: locals)
+        if options[:hide_subgroups]
           toggable_id = "#{sub_form_id(association: column.name, id: record.id || generated_id(record) || 99_999_999_999)}-div"
           subform << link_to_visibility_toggle(toggable_id, default_visible: false)
         end
         html = content_tag(:div, subform, subform_attrs)
         return html if skip_link
 
-        html << active_scaffold_show_new_subform_link(column, record, html_options[:id], subform_attrs[:id])
+        html << active_scaffold_show_new_subform_link(column, record, html_options[:id], subform_attrs[:id], options: options)
       end
 
-      def active_scaffold_show_new_subform_link(column, record, select_id, subform_id)
-        data = {select_id: select_id, subform_id: subform_id, subform_text: as_(:add_existing), select_text: as_(:create_new)}
+      def active_scaffold_add_new_text(options, key, default)
+        text = options[key] unless options == true
+        return text if text.is_a? String
+
+        as_(text || default)
+      end
+
+      def active_scaffold_show_new_subform_link(column, record, select_id, subform_id, options: {})
+        add_existing = active_scaffold_add_new_text(options, :add_existing_text, :add_existing)
+        create_new = active_scaffold_add_new_text(options, :add_new_text, :create_new)
+        data = {select_id: select_id, subform_id: subform_id, subform_text: add_existing, select_text: create_new}
         label = data[record.send(column.name)&.new_record? ? :subform_text : :select_text]
         link_to(label, '#', data: data, class: 'show-new-subform')
       end
@@ -583,14 +638,15 @@ module ActiveScaffold
           end
           if ui_options[:add_new]
             create_new_button = radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(id: nil, class: "#{html_options[:class]} show-new-subform").except(:object))
-            radios << content_tag(:label, create_new_button << as_(:create_new)) <<
-              active_scaffold_new_record_subform(column, record, html_options, ui_options: ui_options, skip_link: true)
+            radios <<
+              content_tag(:label, create_new_button << active_scaffold_add_new_text(ui_options[:add_new], :add_new_text, :create_new)) <<
+              active_scaffold_add_new(column, record, html_options, ui_options: ui_options, skip_link: true)
           end
           safe_join radios
         else
           html = content_tag(:span, as_(:no_options), class: "#{html_options[:class]} no-options", id: html_options[:id])
           html << hidden_field_tag(html_options[:name], '', id: nil)
-          html << active_scaffold_new_record_subform(column, record, html_options, ui_options: ui_options) if ui_options[:add_new]
+          html << active_scaffold_add_new(column, record, html_options, ui_options: ui_options) if ui_options[:add_new]
           html
         end
       end

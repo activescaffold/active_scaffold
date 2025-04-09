@@ -1328,6 +1328,7 @@
           if (typeof(element.data('action_link')) === 'undefined' && !element.hasClass('as_adapter')) {
             var parent = element.parent().closest('.record');
             if (parent.length === 0) parent = element.parent().closest('.actions');
+            if (parent.length === 0) parent = element.parent().closest('form.as_form');
             if (parent.is('.record')) {
               // record action
               var target = parent.find('a.as_action');
@@ -1337,6 +1338,9 @@
             } else if (parent.is('.active-scaffold-header .actions')) {
               //table action
               new ActiveScaffold.Actions.Table(parent.find('a.as_action'), parent.closest('div.active-scaffold').find('tbody.before-header').first(), parent.find('.loading-indicator').first());
+            } else if (parent.is('form.as_form')) {
+              //table action
+              new ActiveScaffold.Actions.Table(parent.find('a.as_action').filter(function() { return !$(this).data('action_link'); }), parent.closest('div.active-scaffold').find('tbody.before-header').first(), parent.find('.form-footer .loading-indicator').first());
             }
             element = jQuery(element);
           }
