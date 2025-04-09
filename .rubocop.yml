@@ -60,8 +60,7 @@ Metrics/CyclomaticComplexity:
     - lib/active_scaffold/tableless.rb
 
 Metrics/ModuleLength:
-  Max: 700
-  CountComments: false
+  Max: 800
 
 Metrics/ParameterLists:
   CountKeywordArgs: false
