@@ -1,0 +1,15 @@
+var field = $('#<%= params[:from_field] %>');
+<%
+  label = @record.send(params[:label_method] || :to_label)
+  id = @record.send(params[:id_method] || :id)
+%>
+if (field.is('select')) {
+  field.append('<%= j content_tag(:option, label, value: id) %>');
+  field.val(<%= id %>);
+} else if (field.is('input.recordselect')) {
+  field.val('<%= j label %>');
+  field.next().val(<%= id %>);
+}
+field.trigger('change');
+var action_link = ActiveScaffold.ActionLink.get(field.parent().find('a.as_action'));
+if (action_link) action_link.close();
