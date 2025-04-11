@@ -367,7 +367,7 @@
       });
 
       jQuery(document).on('click', '.hide-new-subform, .show-new-subform', function(e) {
-        var $this = jQuery(this), line = $this.closest('.form-element'),
+        var $this = jQuery(this), line = $this.closest('.form-element, td'),
           subform = line.find('#' + $this.data('subform-id')), radio = false, hide, select;
         if ($this.is('[type=radio]')) {
           radio = true;
