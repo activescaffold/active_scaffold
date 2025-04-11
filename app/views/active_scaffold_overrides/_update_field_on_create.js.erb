@@ -1,7 +1,6 @@
 var field = $('#<%= params[:from_field] %>');
 <%
-  label = @record.send(params[:label_method] || :to_label)
-  id = @record.send(params[:id_method] || :id)
+  label, id = new_option_from_record(@record)
 %>
 if (field.is('select')) {
   field.append('<%= j content_tag(:option, label, value: id) %>');

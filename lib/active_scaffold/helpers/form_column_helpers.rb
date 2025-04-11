@@ -403,6 +403,8 @@ module ActiveScaffold
         url_options[:controller] ||= active_scaffold_controller_for(klass).controller_path
         url_options[:action] ||= :new
         url_options[:from_field] ||= html_options[:id]
+        url_options[:parent_model] ||= record.class.name
+        url_options[:parent_column] ||= column.name
         link_to(link_text, url_options, remote: true, data: {position: :popup}, class: 'as_action')
       end
 

@@ -265,6 +265,10 @@ module ActiveScaffold
           options[:container_tag] ? content_tag(options[:container_tag], contents, html) : contents
         end
       end
+
+      def new_option_from_record(record)
+        [record.to_label, record.id]
+      end
     end
   end
 end
