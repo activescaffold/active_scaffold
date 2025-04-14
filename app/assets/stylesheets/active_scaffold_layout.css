@@ -930,7 +930,11 @@ margin-right: 5px;
 
 .active-scaffold .vertical-sub-form .sub-form-record + .sub-form-record {
   border-top: 1px solid;
-  padding: 10px 0;
+  padding-top: 10px;
+}
+
+.active-scaffold .vertical-sub-form .sub-form-record .association-record-new:not(.locked) {
+  padding-bottom: 10px;
 }
 
 .active-scaffold .sub-form .checkbox-list {
