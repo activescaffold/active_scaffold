@@ -928,6 +928,11 @@ float: left;
 margin-right: 5px;
 }
 
+.active-scaffold .vertical-sub-form .sub-form-record + .sub-form-record {
+  border-top: 1px solid;
+  padding: 10px 0;
+}
+
 .active-scaffold .sub-form .checkbox-list {
 padding: 0 2px 2px 2px;
 border: solid 1px;

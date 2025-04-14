@@ -32,6 +32,7 @@ $column_empty_color: #999 !default;
 $column_border_color: #C5DBF7 !default;
 $column_even_border_color: #ddd !default;
 $column_actions_border_color: #ccc !default;
+$vertical_sub_form_border_color: $column_actions_border_color !default;
 
 $column_sorted_bg: #B9DCFF !default;
 $column_sorted_border_color: #AFD0F5 !default;
@@ -405,8 +406,8 @@ noscript.active-scaffold {
   border-color: $input_border_color;
 }
 
-.active-scaffold .sub-form .checkbox-list label {
-  display: block;
+.active-scaffold .vertical-sub-form .sub-form-record + .sub-form-record {
+  border-color: $vertical_sub_form_border_color;
 }
 
 .active-scaffold .sub-form table td {
