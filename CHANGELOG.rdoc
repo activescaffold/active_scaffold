@@ -4,6 +4,7 @@
 - Add prompt option to action link
 - Support tabbed_by in show action too
 - Support options hash for :add_new option, with mode: :popup to open create new form in a JS popup, and other options to change link texts
+- Support setup option in tinymce config with function
 
 = 4.0.4.2
 - Support show key in helpers for search date/datetime, to change default condition to render it hidden

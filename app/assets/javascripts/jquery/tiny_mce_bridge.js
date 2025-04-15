@@ -20,6 +20,7 @@
     var id = jQuery(this).attr('id');
     if (tinymce && tinymce.majorVersion >= 6) {
       settings.selector = '#' + id;
+      if (settings.setup) settings.setup = eval(settings.setup);
       tinymce.init(settings);
     } else { // tinyMCE.majorVersion < 6
       tinyMCE.settings = settings;
