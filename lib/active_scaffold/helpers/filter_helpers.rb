@@ -2,6 +2,12 @@ module ActiveScaffold
   module Helpers
     # Helpers rendering filters
     module FilterHelpers
+      def clear_filters_params
+        active_scaffold_config.list.filters.each_with_object({}) do |filter, url_options|
+          url_options[filter.name] = nil
+        end
+      end
+
       def display_filters(filters)
         content = filters.map { |filter| display_filter(filter) }
         content_tag :div, safe_join(content), class: 'filters' if content.present?

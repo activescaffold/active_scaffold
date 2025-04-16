@@ -21,7 +21,10 @@ module ActiveScaffold::Config
       @pagination = self.class.pagination
       @auto_pagination = self.class.auto_pagination
       @show_search_reset = self.class.show_search_reset
+      @show_filter_reset = self.class.show_filter_reset
+      @filter_human_message = self.class.filter_human_message
       @reset_link = self.class.reset_link.clone
+      @reset_filter_link = self.class.reset_filter_link.clone
       @wrap_tag = self.class.wrap_tag
       @always_show_search = self.class.always_show_search
       @always_show_create = self.class.always_show_create
@@ -78,9 +81,22 @@ module ActiveScaffold::Config
     cattr_accessor :show_search_reset, instance_accessor: false
     @@show_search_reset = true
 
+    # show a link to reset the filter next to filter human message
+    cattr_accessor :show_filter_reset, instance_accessor: false
+    @@show_filter_reset = true
+
+    # filter human message
+    # you may show the user a humanized applied filters, not the default ones
+    cattr_accessor :filter_human_message, instance_accessor: false
+    @@filter_human_message = false
+
     # the ActionLink to reset search
     cattr_reader :reset_link, instance_reader: false
     @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, parameters: {search: ''})
+
+    # the ActionLink to reset the filters
+    cattr_reader :reset_filter_link, instance_reader: false
+    @@reset_filter_link = ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, dynamic_parameters: lambda { clear_filters_params })
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling
@@ -148,8 +164,18 @@ module ActiveScaffold::Config
     # show a link to reset the search next to filtered message
     attr_accessor :show_search_reset
 
+    # show a link to reset the filter next to filter human message
+    attr_accessor :show_filter_reset
+
+    # filter human message
+    # you may show the user a humanized applied filters, not the default ones
+    attr_accessor :filter_human_message
+
     # the ActionLink to reset search
     attr_reader :reset_link
+
+    # the ActionLink to reset the filters
+    attr_reader :reset_filter_link
 
     # the filters for this controller
     attr_reader :filters
@@ -237,7 +263,7 @@ module ActiveScaffold::Config
       user_attr :page_links_inner_window, :page_links_outer_window, :refresh_with_header, :empty_field_text,
                 :association_join_text, :messages_above_header, :wrap_tag, :auto_select_columns, :calculate_etag,
                 :no_entries_message, :filtered_message, :show_search_reset, :always_show_create, :always_show_search,
-                :hide_nested_column, :pagination, :auto_pagination
+                :hide_nested_column, :pagination, :auto_pagination, :filter_human_message, :show_filter_reset
 
       def initialize(conf, storage, params)
         super(conf, storage, params, :list)

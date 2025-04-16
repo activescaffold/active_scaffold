@@ -261,17 +261,16 @@ module ActiveScaffold::Actions
       active_scaffold_config.list.filters.inject(query) do |q, filter|
         next q unless filter.security_method.nil? || send(filter.security_method)
 
-        if params[filter.name]
-          apply_filter q, filter[params[filter.name]]
-        else
-          apply_filter q, filter[filter.default_option]
-        end
+        default_option = filter[filter.default_option]
+        apply_filter q, params[filter.name] ? filter[params[filter.name]] : default_option, default_option
       end
     end
 
-    def apply_filter(query, filter_option)
+    def apply_filter(query, filter_option, default_option)
       return query if filter_option.nil? || (filter_option.security_method_set? && !send(filter_option.security_method))
 
+      @applied_filters ||= []
+      @applied_filters << filter_option unless filter_option == default_option
       case filter_option.conditions
       when Proc then instance_exec query, &filter_option.conditions
       else query.where(filter_option.conditions)

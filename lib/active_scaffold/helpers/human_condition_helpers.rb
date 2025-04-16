@@ -16,6 +16,10 @@ module ActiveScaffold
         end
       end
 
+      def active_scaffold_human_filter_for(filter_option)
+        filter_option.label
+      end
+
       def active_scaffold_grouped_by_label
         text, = active_scaffold_config.field_search.group_options.find do |text, value|
           (value || text).to_s == field_search_params['active_scaffold_group']

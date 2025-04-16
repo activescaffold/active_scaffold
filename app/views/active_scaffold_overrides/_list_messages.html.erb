@@ -14,6 +14,17 @@
         </div>
         <% end -%>
       <% end %>
+      <%= content_tag :div, class: 'filtered-message applied-filters',
+                      style: ('display:none;' unless active_scaffold_config.list.filter_human_message && @applied_filters.present?),
+                      data: ({search: search_params || ''} if active_scaffold_config.store_user_settings && respond_to?(:search_params)) do %>
+        <div><%= render('human_filters', filters: @applied_filters) if active_scaffold_config.list.filter_human_message && @applied_filters.present? %></div>
+        <% if active_scaffold_config.list.show_filter_reset && @applied_filters.present? -%>
+          <div class="reset">
+            <%= loading_indicator_tag(action: :record, id: nil) %>
+            <%= render_action_link(active_scaffold_config.list.reset_filter_link) %>
+          </div>
+        <% end -%>
+      <% end %>
       <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" '.html_safe unless @page.empty? %>>
         <%= as_(active_scaffold_config.list.no_entries_message) %>
       </p>
