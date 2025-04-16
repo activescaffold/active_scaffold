@@ -96,7 +96,7 @@ module ActiveScaffold::Config
 
     # the ActionLink to reset the filters
     cattr_reader :reset_filter_link, instance_reader: false
-    @@reset_filter_link = ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, dynamic_parameters: lambda { clear_filters_params })
+    @@reset_filter_link = ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, dynamic_parameters: -> { clear_filters_params })
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling
