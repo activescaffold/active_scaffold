@@ -395,6 +395,8 @@ module ActiveScaffold
 
       def active_scaffold_new_record_popup(column, record, html_options, options: {})
         klass = send(override_helper_per_model(:active_scaffold_new_record_klass, record.class), column, record, **options)
+        klass = nil if options[:security_method] && !controller.send(options[:security_method])
+        klass = nil if klass && options[:security_method].nil? && !klass.authorized_for?(crud_type: :create)
         return h('') unless klass
 
         link_text = active_scaffold_add_new_text(options, :add_new_text, :add)
