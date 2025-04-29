@@ -32,6 +32,10 @@ class ClassWithFinder
     active_scaffold_config.model
   end
 
+  def filtered_query
+    beginning_of_chain
+  end
+
   def conditional_get_support?; end
 
   def params; {}; end
