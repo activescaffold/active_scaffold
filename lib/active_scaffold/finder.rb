@@ -559,7 +559,7 @@ module ActiveScaffold
     # returns a single record (the given id) but only if it's allowed for the specified security options.
     # security options can be a hash for authorized_for? method or a value to check as a :crud_type
     # accomplishes this by checking model.#{action}_authorized?
-    def find_if_allowed(id, security_options, klass = beginning_of_chain)
+    def find_if_allowed(id, security_options, klass = filtered_query)
       record = klass.find(id)
       security_options = {crud_type: security_options.to_sym} unless security_options.is_a? Hash
       raise ActiveScaffold::RecordNotAllowed, "#{klass} with id = #{id}" unless record.authorized_for? security_options
@@ -623,7 +623,7 @@ module ActiveScaffold
       options[:page] ||= 1
 
       find_options = finder_options(options)
-      query = beginning_of_chain
+      query = filtered_query
       query = query.where(nil) if active_scaffold_config.active_record? # where(nil) is needed because we need a relation
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
@@ -663,7 +663,7 @@ module ActiveScaffold
       left_joins = active_scaffold_outer_joins
       left_joins += includes if includes
       primary_key = active_scaffold_config.primary_key
-      subquery = append_to_query(beginning_of_chain, conditions: conditions, joins: joins_for_finder, left_joins: left_joins, select: active_scaffold_config.columns[primary_key].field)
+      subquery = append_to_query(filtered_query, conditions: conditions, joins: joins_for_finder, left_joins: left_joins, select: active_scaffold_config.columns[primary_key].field)
       subquery.unscope(:order)
     end
 

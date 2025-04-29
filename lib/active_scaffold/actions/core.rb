@@ -277,12 +277,12 @@ module ActiveScaffold::Actions
     end
 
     def filtered_query
-      active_scaffold_config.model
+      beginning_of_chain
     end
 
     # Overide this method on your controller to provide model with named scopes
     def beginning_of_chain
-      filtered_query
+      active_scaffold_config.model
     end
 
     # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
@@ -356,7 +356,7 @@ module ActiveScaffold::Actions
     end
 
     def get_row(crud_type_or_security_options = :read)
-      klass = beginning_of_chain
+      klass = filtered_query
       klass = klass.preload(active_scaffold_preload) unless active_scaffold_config.mongoid?
       @record = find_if_allowed(params[:id], crud_type_or_security_options, klass)
     end

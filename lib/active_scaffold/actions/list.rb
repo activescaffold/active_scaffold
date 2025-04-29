@@ -245,8 +245,8 @@ module ActiveScaffold::Actions
       end
     end
 
-    def beginning_of_chain
-      apply_filters filtered_query
+    def filtered_query
+      apply_filters beginning_of_chain
     end
 
     def filters_enabled?
