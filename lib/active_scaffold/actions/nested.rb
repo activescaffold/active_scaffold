@@ -129,7 +129,7 @@ module ActiveScaffold::Actions::Nested
   module ChildMethods
     def self.included(base)
       super
-      include_habtm_actions base.active_scaffold_config
+      include_habtm_actions base.active_scaffold_config unless base.active_scaffold_config.frozen?
     end
 
     def self.include_habtm_actions(config)

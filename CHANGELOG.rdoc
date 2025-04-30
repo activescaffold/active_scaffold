@@ -1,3 +1,6 @@
+= 4.0.5
+- Fix if ActiveScaffold::Actions::Nested::ChildMethods is included manually after AS config block
+
 = 4.0.4.2
 - Support show key in helpers for search date/datetime, to change default condition to render it hidden
 
