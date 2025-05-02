@@ -66,12 +66,12 @@ module ActiveScaffold::Actions
       def grouped_search_finder_options
         select_query = grouped_search_select
         if search_group_function
-          group_sql = calculation_for_group_by(search_group_column&.field || search_group_name, search_group_function)
+          group_sql = calculation_for_group_by(search_group_column&.group_by || search_group_name, search_group_function)
           group_by = group_sql.to_sql
           select_query += [group_sql.as(search_group_column.name.to_s)]
           order = grouped_sorting(group_by)
         else
-          group_by = quoted_select_columns(search_group_column&.select_columns || [search_group_name])
+          group_by = quoted_select_columns(search_group_column&.group_by || [search_group_name])
           select_query += group_by
           order = grouped_sorting
         end

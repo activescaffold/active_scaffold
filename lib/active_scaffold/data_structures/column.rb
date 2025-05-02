@@ -551,6 +551,12 @@ module ActiveScaffold::DataStructures
       @field ||= quoted_field(field_name)
     end
 
+    attr_writer :group_by
+
+    def group_by
+      @group_by || select_columns&.join(', ') || field
+    end
+
     def quoted_foreign_type
       quoted_field(quoted_field_name(association.foreign_type))
     end

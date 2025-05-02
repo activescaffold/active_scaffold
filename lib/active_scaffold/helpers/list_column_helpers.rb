@@ -167,15 +167,15 @@ module ActiveScaffold
       FORM_UI_WITH_OPTIONS = %i[select radio].freeze
       def format_column_value(record, column, value = nil)
         value ||= record.send(column.name) unless record.nil?
-        if column.association.nil?
+        if grouped_search? && column == search_group_column && search_group_function
+          format_grouped_search_column(record[column.name], column.options)
+        elsif column.association.nil?
           form_ui_options = column.form_ui_options || column.options if FORM_UI_WITH_OPTIONS.include?(column.form_ui)
           if form_ui_options&.dig(:options)
             text, val = form_ui_options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
             value = active_scaffold_translated_option(column, text, val).first if text
           end
-          if grouped_search? && column == search_group_column && search_group_function
-            format_grouped_search_column(value, column.options)
-          elsif value.is_a? Numeric
+          if value.is_a? Numeric
             format_number_value(value, column.options)
           else
             format_value(value, column.options)

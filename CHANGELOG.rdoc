@@ -6,6 +6,7 @@
 - Support options hash for :add_new option, with mode: :popup to open create new form in a JS popup, and other options to change link texts
 - Support setup option in tinymce config with function
 - Support multiple values in constraints for columns
+- Improve grouped search supporting to change the columns used with group clause
 
 = 4.0.5
 - Fix if ActiveScaffold::Actions::Nested::ChildMethods is included manually after AS config block

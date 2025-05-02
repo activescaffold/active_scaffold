@@ -203,6 +203,7 @@ module ActiveScaffold::Config
       end
       columns.select(&:sortable?).each(&:sort)
       columns.select(&:searchable?).each(&:search_sql)
+      columns.each(&:field)
       actions.each do |action_name|
         action = send(action_name)
         Array(action.class.columns_collections).each { |method| action.send(method) }
