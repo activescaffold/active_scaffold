@@ -517,12 +517,12 @@ module ActiveScaffold
     end
 
     def active_scaffold_habtm_joins
-      ActiveScaffold.deprecator.warn "use active_scaffold_joins"
+      ActiveScaffold.deprecator.warn 'use active_scaffold_joins'
       active_scaffold_joins
     end
 
     def active_scaffold_habtm_joins=(value)
-      ActiveScaffold.deprecator.warn "use active_scaffold_joins="
+      ActiveScaffold.deprecator.warn 'use active_scaffold_joins='
       self.active_scaffold_joins = value
     end
 

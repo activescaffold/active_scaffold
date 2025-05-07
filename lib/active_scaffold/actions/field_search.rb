@@ -206,12 +206,14 @@ module ActiveScaffold::Actions
       def setup_joins_for_filtered_columns(filtered_columns)
         if grouped_search? || active_scaffold_config.list.user.count_includes.present?
           active_scaffold_outer_joins.concat filtered_columns.map(&:search_joins).flatten.uniq.compact
-          if grouped_search? && search_group_column&.search_joins.present? && filtered_columns.exclude?(search_group_column)
-            active_scaffold_joins << search_group_column.search_joins
-          end
+          active_scaffold_joins << search_group_column.search_joins if grouped_column_needs_joins?(filtered_columns)
         else
           set_outer_joins_for_search filtered_columns
         end
+      end
+
+      def grouped_column_needs_joins?(filtered_columns)
+        grouped_search? && search_group_column&.search_joins.present? && filtered_columns.exclude?(search_group_column)
       end
 
       def field_search_formats
