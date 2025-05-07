@@ -502,7 +502,7 @@ module ActiveScaffold
 
     protected
 
-    attr_writer :active_scaffold_conditions, :active_scaffold_preload, :active_scaffold_habtm_joins, :active_scaffold_outer_joins, :active_scaffold_references
+    attr_writer :active_scaffold_conditions, :active_scaffold_preload, :active_scaffold_joins, :active_scaffold_outer_joins, :active_scaffold_references
 
     def active_scaffold_conditions
       @active_scaffold_conditions ||= []
@@ -512,8 +512,18 @@ module ActiveScaffold
       @active_scaffold_preload ||= []
     end
 
+    def active_scaffold_joins
+      @active_scaffold_joins ||= []
+    end
+
     def active_scaffold_habtm_joins
-      @active_scaffold_habtm_joins ||= []
+      ActiveScaffold.deprecator.warn "use active_scaffold_joins"
+      active_scaffold_joins
+    end
+
+    def active_scaffold_habtm_joins=(value)
+      ActiveScaffold.deprecator.warn "use active_scaffold_joins="
+      self.active_scaffold_joins = value
     end
 
     def active_scaffold_outer_joins
@@ -690,7 +700,7 @@ module ActiveScaffold
         joins_for_collection
       else
         []
-      end + active_scaffold_habtm_joins
+      end + active_scaffold_joins
     end
 
     def apply_conditions(relation, *conditions)

@@ -95,7 +95,7 @@ class ConstraintsTestObject
   def self.before_action(*); end
 
   def self.helper_method(*); end
-  attr_accessor :active_scaffold_preload, :active_scaffold_references, :active_scaffold_habtm_joins, :active_scaffold_config, :params
+  attr_accessor :active_scaffold_preload, :active_scaffold_references, :active_scaffold_joins, :active_scaffold_config, :params
 
   def merge_conditions(old, new)
     [old, new].compact.flatten
@@ -110,7 +110,7 @@ class ConstraintsTestObject
   def initialize
     @active_scaffold_preload = []
     @active_scaffold_references = []
-    @active_scaffold_habtm_joins = []
+    @active_scaffold_joins = []
     @params = {}
   end
 

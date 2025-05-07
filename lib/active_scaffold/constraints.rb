@@ -103,7 +103,7 @@ module ActiveScaffold
 
     def join_from_association_constraint(column)
       if column.association.habtm?
-        active_scaffold_habtm_joins.concat column.includes
+        active_scaffold_joins.concat column.includes
       elsif !column.association.polymorphic?
         if column.association.belongs_to?
           active_scaffold_preload.concat column.includes
