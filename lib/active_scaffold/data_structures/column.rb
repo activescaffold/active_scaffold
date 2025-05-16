@@ -551,10 +551,12 @@ module ActiveScaffold::DataStructures
       @field ||= quoted_field(field_name)
     end
 
-    attr_writer :group_by
+    def group_by=(value)
+      @group_by = value ? Array(value) : nil
+    end
 
     def group_by
-      @group_by || select_columns&.join(', ') || field
+      @group_by || select_columns || [field]
     end
 
     def quoted_foreign_type
