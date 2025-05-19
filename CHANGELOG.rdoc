@@ -1,3 +1,6 @@
+= 4.0.6
+- Fix :select form_ui on column using SQL in sort_by, such as 'table.user_id IS NULL'
+
 = 4.0.5
 - Fix if ActiveScaffold::Actions::Nested::ChildMethods is included manually after AS config block
 
