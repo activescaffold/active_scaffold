@@ -215,7 +215,10 @@ module ActiveScaffold::Actions
     end
 
     def quoted_select_columns(columns)
-      columns&.map { |c| active_scaffold_config.columns[c]&.field || c }
+      columns&.map do |col, name|
+        sql_column = active_scaffold_config.columns[col]&.field || col
+        name ? Arel.sql(sql_column).as(name) : sql_column
+      end
     end
 
     def do_refresh_list
