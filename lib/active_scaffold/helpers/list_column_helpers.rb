@@ -459,7 +459,7 @@ module ActiveScaffold
       def column_calculation(column, id_condition: true)
         if column.calculate.instance_of? Proc
           column.calculate.call(@records)
-        else
+        elsif column.calculate.in? %i[count sum average minimum maximum]
           calculate_query(id_condition: id_condition).calculate(column.calculate, column.grouped_select)
         end
       end
