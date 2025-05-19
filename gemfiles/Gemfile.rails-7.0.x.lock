@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    active_scaffold (4.0.5)
+    active_scaffold (4.0.6)
       dartsass-sprockets (~> 3.2.0)
       ice_nine (~> 0.11)
       rails (>= 5.2.0)
