@@ -559,6 +559,12 @@ module ActiveScaffold::DataStructures
       @group_by || select_columns || [field]
     end
 
+    attr_writer :grouped_select
+
+    def grouped_select
+      Arel.sql(@grouped_select&.to_s || field)
+    end
+
     def quoted_foreign_type
       quoted_field(quoted_field_name(association.foreign_type))
     end

@@ -460,7 +460,7 @@ module ActiveScaffold
         if column.calculate.instance_of? Proc
           column.calculate.call(@records)
         else
-          calculate_query(id_condition: id_condition).calculate(column.calculate, column.name)
+          calculate_query(id_condition: id_condition).calculate(column.calculate, column.grouped_select)
         end
       end
 

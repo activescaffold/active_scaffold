@@ -7,6 +7,7 @@
 - Support setup option in tinymce config with function
 - Support multiple values in constraints for columns
 - Improve grouped search supporting to change the columns used with group clause
+- Improve grouped search to support using virtual columns for calculations, defining which DB column use to calculate
 - Rename active_scaffold_habtm_joins to active_scaffold_joins, active_scaffold_habtm_joins is now deprecated
 
 = 4.0.6

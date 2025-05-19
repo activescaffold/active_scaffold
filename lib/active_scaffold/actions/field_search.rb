@@ -103,7 +103,7 @@ module ActiveScaffold::Actions
       end
 
       def calculation_for_group_search(column)
-        sql_function column.calculate.to_s, column.active_record_class.arel_table[column.name]
+        sql_function column.calculate.to_s, column.grouped_select
       end
 
       def calculation_for_group_by(group_sql, group_function)
