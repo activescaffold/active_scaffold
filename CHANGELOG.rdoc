@@ -1,3 +1,6 @@
+= 3.7.13
+- Fix :select form_ui on column using SQL in sort_by, such as 'table.user_id IS NULL'
+
 = 3.7.12
 - Fix using update_columns in field search with search UI submitting a hash, such as date fields
 - Support disabling update_columsns on field_search

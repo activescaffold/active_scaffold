@@ -42,7 +42,7 @@ module ActiveScaffold
           if column&.sort && column.sort&.dig(:sql)
             # with threasafe enabled, column.sort[:sql] returns proxied strings and
             # regexp capture won't work, which rails uses internally, so to_s is needed
-            relation = relation.order(Array(column.sort[:sql]).map(&:to_s))
+            relation = relation.order(Array(column.sort[:sql]).map { |sql| Arel.sql(sql.to_s) })
           end
           relation = yield(relation) if block_given?
           relation.to_a
