@@ -1415,23 +1415,38 @@
       },
 
       scaffold_id: function() {
-        return '#' + this.tag.closest('div.active-scaffold').attr('id');
+        const div_id = this.scaffold().attr('id');
+        if (div_id) return '#' + div_id;
       },
 
       scaffold: function() {
         return this.tag.closest('div.active-scaffold');
       },
 
-      update_flash_messages: function(messages) {
-        var message_node = jQuery(this.scaffold_id().replace(/-active-scaffold/, '-messages'));
-        if (message_node) message_node.html(messages);
+      messages: function() {
+        const re = /-active-scaffold$/, div_id = this.scaffold_id();
+
+        if (re.test(div_id)) {
+          return jQuery(div_id.replace(re, '-messages'));
+        } else {
+          var messages_container = this.scaffold().find('.messages-container'),
+            messages = messages_container.find('.action-messages');
+          if (!messages.length) messages = $('<div class="action-messages"></div>').appendTo(messages_container);
+          return messages;
+        }
       },
+
+      update_flash_messages: function(messages) {
+        this.messages().html(messages);
+      },
+
       set_adapter: function(element) {
         this.adapter = element;
         this.adapter.addClass('as_adapter');
         this.adapter.data('action_link', this);
         if (this.refresh_url) jQuery('.as_cancel', this.adapter).attr('href', this.refresh_url);
       },
+
       keep_open: function() {
         return this.tag.data('keep-open');
       }
