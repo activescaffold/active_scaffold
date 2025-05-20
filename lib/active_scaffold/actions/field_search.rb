@@ -65,14 +65,14 @@ module ActiveScaffold::Actions
 
       def grouped_search_finder_options
         select_query = grouped_search_select
+        group_by = calculation_for_group_by(search_group_column&.group_by || [search_group_name], search_group_function)
+
         if search_group_function
-          group_sql = calculation_for_group_by(search_group_column&.group_by&.join(', ') || search_group_name, search_group_function)
-          group_by = group_sql.to_sql
-          select_query += [group_sql.as(search_group_column.name.to_s)]
+          select_query += [group_by.as(search_group_name)]
+          group_by = group_by.to_sql
           order = grouped_sorting(group_by)
         else
-          group_by = quoted_select_columns(search_group_column&.group_by || [search_group_name])
-          if search_group_column&.group_by&.many?
+          if search_group_column&.group_by
             sql_with_names = search_group_column.group_by.map.with_index { |part, i| [part, "#{search_group_name}_#{i}"] }
             select_query += quoted_select_columns(sql_with_names)
           else
@@ -80,6 +80,7 @@ module ActiveScaffold::Actions
           end
           order = grouped_sorting
         end
+
         {group: group_by, select: select_query, reorder: order}
       end
 
@@ -112,7 +113,9 @@ module ActiveScaffold::Actions
       end
 
       def calculation_for_group_by(group_sql, group_function)
-        group_sql = Arel.sql(group_sql)
+        return quoted_select_columns(group_sql) unless group_function
+
+        group_sql = Arel.sql(group_sql.join(', '))
         case group_function
         when 'year', 'month', 'quarter'
           extract_sql_fn(group_function, group_sql)

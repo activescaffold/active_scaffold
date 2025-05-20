@@ -168,10 +168,10 @@ module ActiveScaffold
       def read_value_from_record(record, column, join_text = ' - ')
         if grouped_search? && column == search_group_column
           value =
-            if search_group_column.group_by.many?
-              safe_join column.group_by.map.with_index { |_, index| record["#{column.name}_#{index}"] }, join_text
-            elsif search_group_function
+            if search_group_function
               record[column.name]
+            elsif search_group_column.group_by
+              safe_join column.group_by.map.with_index { |_, index| record["#{column.name}_#{index}"] }, join_text
             end
         end
         value || record.send(column.name)
@@ -180,7 +180,7 @@ module ActiveScaffold
       FORM_UI_WITH_OPTIONS = %i[select radio].freeze
       def format_column_value(record, column, value = nil)
         value ||= read_value_from_record(record, column) unless record.nil?
-        if grouped_search? && column == search_group_column && (search_group_function || search_group_column.group_by.many?)
+        if grouped_search? && column == search_group_column && (search_group_function || search_group_column.group_by)
           format_grouped_search_column(value, column.options)
         elsif column.association.nil?
           form_ui_options = column.form_ui_options || column.options if FORM_UI_WITH_OPTIONS.include?(column.form_ui)
