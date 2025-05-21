@@ -88,14 +88,13 @@ module ActiveScaffold::Actions
       @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
       process_render_field_params
 
-      @record =
+      @record = find_from_scope(setup_parent, @scope) if main_form_controller && @scope
+      @record ||=
         if @column.send_form_on_update_column
           updated_record_with_form(@main_columns, params[:record] || params[:search], @scope)
         else
           updated_record_with_column(@column, params.delete(:value), @scope)
         end
-      # if @scope has more than 2 ] then it's subform inside subform, and assign parent would fail (found associotion may be through association)
-      setup_parent(@record) if main_form_controller && @scope && @scope.scan(']').size == 2
       after_render_field(@record, @column)
     end
 
@@ -146,21 +145,15 @@ module ActiveScaffold::Actions
       "#{params[:parent_controller].camelize}Controller"
     end
 
-    def setup_parent(record)
+    def setup_parent
       cfg = main_form_controller.active_scaffold_config
-      association = cfg.columns[subform_child_association]&.association&.reverse_association
-      return if association.nil? || !record.respond_to?(association.name)
-
       parent_model = cfg.model
       parent = parent_model.new
       copy_attributes(find_if_allowed(params[:parent_id], :read, parent_model), parent) if params[:parent_id]
       parent.id = params[:parent_id]
       apply_constraints_to_record(parent) unless params[:parent_id]
-      parent = update_record_from_params(parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], true) if @column.send_form_on_update_column
-      if association.collection?
-        record.send(association.name) << parent
-      else
-        record.send(:"#{association.name}=", parent)
+      if @column.send_form_on_update_column
+        parent = update_record_from_params(parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], true)
       end
 
       if params[:nested] # form in nested scaffold, set nested parent_record to parent
@@ -170,6 +163,27 @@ module ActiveScaffold::Actions
         end
       end
       parent
+    end
+
+    def find_from_scope(parent, scope)
+      parts = scope[1..-2].split('][')
+      record = parent
+
+      while parts.present?
+        part = parts.shift
+        return unless record.respond_to?(part)
+
+        association = record.class.reflect_on_association(part)
+        id = parts.shift.to_i if association&.collection?
+        record = record.send(part)
+        if id
+          record = record.find { |child| child.id == id }
+          record ||= @new_records&.dig(association.klass, id.to_s)
+        end
+        return if record.nil?
+      end
+
+      record
     end
 
     def copy_attributes(orig, dst = nil)
