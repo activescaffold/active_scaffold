@@ -196,9 +196,9 @@ module ActiveScaffold
       elsif column.association&.collection?
         # HACK: to be able to delete all associated records, hash will include "0" => ""
         value.compact_blank.filter_map do |id, attributes|
-          record = manage_nested_record_from_params(parent_record, column, attributes, avoid_changes)
-          track_new_record(record, id) if record&.new_record?
-          record
+          manage_nested_record_from_params(parent_record, column, attributes, avoid_changes).tap do |record|
+            track_new_record(record, id)
+          end
         end
       else
         value
@@ -206,6 +206,8 @@ module ActiveScaffold
     end
 
     def track_new_record(record, id)
+      return unless record&.new_record?
+
       @new_records ||= Hash.new { |h, k| h[k] = {} }
       @new_records[record.class][id] = record
     end
