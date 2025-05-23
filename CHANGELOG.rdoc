@@ -12,6 +12,9 @@
 - Improve grouped search supporting using group_by with multiple columns or sql code
 - Rename active_scaffold_habtm_joins to active_scaffold_joins, active_scaffold_habtm_joins is now deprecated
 
+= 4.0.7
+- Fix tableless in rails 7.2
+
 = 4.0.6
 - Fix :select form_ui on column using SQL in sort_by, such as 'table.user_id IS NULL'
 
