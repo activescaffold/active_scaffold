@@ -44,6 +44,9 @@ module ActiveScaffold::DataStructures
         # send all the form instead of only new value when this column changes
         attr_accessor :send_form_on_update_column
 
+        # disable the form while the request to refresh other columns is sent
+        attr_accessor :disable_on_update_column
+
         # add a custom attr_accessor that can contain a Proc (or boolean or symbol)
         # that will be called when the column renders, such that we can dynamically
         # hide or show the column with an element that can be replaced by
@@ -480,6 +483,7 @@ module ActiveScaffold::DataStructures
       if @column.nil? && active_record? && active_record_class._default_attributes.key?(name.to_s)
         @column = active_record_class._default_attributes[name.to_s]
       end
+      @disable_on_update_column = true
       @db_default_value = ActiveScaffold::OrmChecks.default_value active_record_class, name if @column
       @delegated_association = delegated_association
       @cache_key = [@active_record_class.name, name].compact.map(&:to_s).join('#')

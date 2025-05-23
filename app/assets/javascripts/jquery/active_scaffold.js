@@ -45,7 +45,7 @@
       jQuery(document).on('ajax:beforeSend', 'form.as_form', function(event) {
         var as_form = jQuery(this).closest("form");
         if (as_form.data('loading') == true) {
-          ActiveScaffold.disable_form(as_form);
+          if (!jQuery(event.target).data('skip-disable-form')) ActiveScaffold.disable_form(as_form);
         }
         return true;
       });

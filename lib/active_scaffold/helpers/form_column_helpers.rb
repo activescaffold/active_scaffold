@@ -146,6 +146,7 @@ module ActiveScaffold
           options['data-update_url'] = url_for(url_params)
           options['data-update_send_form'] = column.send_form_on_update_column
           options['data-update_send_form_selector'] = column.options[:send_form_selector] if column.options[:send_form_selector]
+          options['data-skip-disable-form'] = !column.disable_on_update_column
         end
         options
       end
