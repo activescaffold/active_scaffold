@@ -1,3 +1,6 @@
+= 4.0.7
+- Fix tableless in rails 7.2
+
 = 4.0.6
 - Fix :select form_ui on column using SQL in sort_by, such as 'table.user_id IS NULL'
 

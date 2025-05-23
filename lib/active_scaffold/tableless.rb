@@ -14,6 +14,10 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     def data_sources
       klass ? [klass.table_name] : []
     end
+
+    def quote_column_name(column_name)
+      column_name.to_s
+    end
   end
 
   class Column < ActiveRecord::ConnectionAdapters::Column
