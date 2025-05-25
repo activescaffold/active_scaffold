@@ -1,13 +1,19 @@
-var field = $('#<%= params[:from_field] %>');
+var field = jQuery('#<%= params[:from_field] %>');
 <%
   label, id = new_option_from_record(@record)
+  config = active_scaffold_config_for(params[:parent_model].constantize)
+  column = config.columns[params[:parent_column]] if config
+  field_options = active_scaffold_input_options(column, params[:parent_scope], {object: @record}.merge(params[:radio_data]&.to_unsafe_h || {})) if column
+  field_options[:class] = "#{field_options[:class]} update_form" if field_options&.dig('data-update_url')
 %>
 if (field.is('select')) {
   field.append('<%= j content_tag(:option, label, value: id) %>');
   field.val(<%= id %>);
 } else if (field.is('input.recordselect')) {
-  field.val('<%= j label %>');
+  field.val('<%= j label %>').addClass('selected');
   field.next().val(<%= id %>);
+} else if (field.is('.new-radio-container')) {
+  field.append('<%= j active_scaffold_radio_option(@record, id, column, field_options, ui_options: column.form_ui_options || column.options) if column %>');
 }
 field.trigger('change');
 var action_link = ActiveScaffold.ActionLink.get(field.parent().find('a.as_action'));

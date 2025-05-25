@@ -408,6 +408,7 @@ module ActiveScaffold
         url_options[:from_field] ||= html_options[:id]
         url_options[:parent_model] ||= record.class.name
         url_options[:parent_column] ||= column.name
+        url_options.reverse_merge! options[:url_options] if options[:url_options]
         link_to(link_text, url_options, remote: true, data: {position: :popup}, class: 'as_action')
       end
 
@@ -639,13 +640,29 @@ module ActiveScaffold
           if ui_options[:include_blank]
             label = ui_options[:include_blank]
             label = as_(ui_options[:include_blank]) if ui_options[:include_blank].is_a?(Symbol)
-            radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: nil)) + label)
+            radio_id = "#{html_options[:id]}-"
+            radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: radio_id)) + label)
           end
           if ui_options[:add_new]
-            create_new_button = radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(id: nil, class: "#{html_options[:class]} show-new-subform").except(:object))
-            radios <<
-              content_tag(:label, create_new_button << active_scaffold_add_new_text(ui_options[:add_new], :add_new_text, :create_new)) <<
-              active_scaffold_add_new(column, record, html_options, ui_options: ui_options, skip_link: true)
+            if ui_options[:add_new] == true || ui_options[:add_new][:mode].in?([nil, :subform])
+              create_new = content_tag(:label) do
+                radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(
+                  id: "#{html_options[:id]}-create_new", class: "#{html_options[:class]} show-new-subform"
+                ).except(:object)) <<
+                  active_scaffold_add_new_text(ui_options[:add_new], :add_new_text, :create_new)
+              end
+              radios << create_new
+              skip_link = true
+            else
+              ui_options = ui_options.merge(add_new: ui_options[:add_new].merge(
+                url_options: {
+                  parent_scope: html_options[:name].gsub(/^record|\[[^\]]*\]$/, '').presence,
+                  radio_data: html_options.slice(*html_options.keys.grep(/^data-update_/))
+                }
+              ))
+              radios << content_tag(:span, '', class: 'new-radio-container', id: html_options[:id])
+            end
+            radios << active_scaffold_add_new(column, record, html_options, ui_options: ui_options, skip_link: skip_link)
           end
           safe_join radios
         else
