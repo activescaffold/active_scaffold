@@ -79,7 +79,7 @@
           setTimeout(function() { ActiveScaffold.disable_form(form_id); }, 10);
           if (as_form.attr('target')) {
             cookie = 'as_dl_' + new Date().getTime();
-            as_form.append($('<input>', {type: 'hidden', name: '_dl_cookie', value: cookie}));
+            as_form.append(jQuery('<input>', {type: 'hidden', name: '_dl_cookie', value: cookie}));
             iframe = jQuery('iframe[name="' + jQuery(this).attr('target') + '"]')[0];
             interval = setInterval(function() {
               doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
@@ -156,15 +156,15 @@
       });
       jQuery(document).on({
         'ajax:before': function () {
-          var $this = $(this), indicator_id = $this.data('loading-indicator-id'),
-            $indicator = indicator_id ? $('#' + indicator_id) : $();
+          var $this = jQuery(this), indicator_id = $this.data('loading-indicator-id'),
+            $indicator = indicator_id ? jQuery('#' + indicator_id) : jQuery();
           if (!$indicator.length) $indicator = $this.parent().find('.loading-indicator');
           if (!$indicator.length) $indicator = $this.closest('.active-scaffold-header').find('.loading-indicator:first');
           $indicator.css('visibility', 'visible');
-          $this.data('url', $('option:selected', this).data('url'));
+          $this.data('url', jQuery('option:selected', this).data('url'));
         }, 'ajax:complete': function () {
-          var $this = $(this), indicator_id = $this.data('loading-indicator-id'),
-            $indicator = indicator_id ? $('#' + indicator_id) : $();
+          var $this = jQuery(this), indicator_id = $this.data('loading-indicator-id'),
+            $indicator = indicator_id ? jQuery('#' + indicator_id) : jQuery();
           if (!$indicator.length) $indicator = $this.parent().find('.loading-indicator');
           if (!$indicator.length) $indicator = $this.closest('.active-scaffold-header').find('.loading-indicator');
           $indicator.css('visibility', 'hidden');
@@ -283,7 +283,7 @@
         if (element.is(".checkbox-list input:checkbox")) {
           form_element = element.closest('.checkbox-list');
           if (form_element.is('.draggable-list')) form_element = form_element.closest('.draggable-lists-container').find('.checkbox-list') // draggable lists will have 2 lists
-          value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
+          value = form_element.find(':checked').map(function(item) { return jQuery(this).val(); }).toArray();
           if (!additional_params) additional_params = (element.is(':checked') ? '_added=' : '_removed=') + element.val();
         } else {
           value = element.is("input:checkbox:not(:checked)") ? null : element.val();
@@ -299,7 +299,7 @@
         var value;
         if (form_element.is(".field_with_errors")) form_element = form_element.children().last();
         if (form_element.is(".checkbox-list")) {
-          value = form_element.find(':checked').map(function(item){return $(this).val();}).toArray();
+          value = form_element.find(':checked').map(function(item) { return jQuery(this).val(); }).toArray();
           form_element = form_element.parent().find("input:checkbox"); // parent is needed for draggable-list, checked list may be empty
         } else value = form_element.is("input:checkbox:not(:checked)") ? null : form_element.val();
         ActiveScaffold.update_column(form_element, element.attr('href'), element.data('update_send_form'), form_element.attr('id'), value);
@@ -334,7 +334,7 @@
 
       jQuery(document).on('click', '.active-scaffold .sub-form a.destroy', function(event) {
         event.preventDefault();
-        ActiveScaffold.delete_subform_record($(this).data('delete-id'));
+        ActiveScaffold.delete_subform_record(jQuery(this).data('delete-id'));
       });
 
       jQuery(document).on("click", '.hover_click', function(event) {
@@ -408,12 +408,12 @@
           'input:not([type=button]):not([type=submit]):not([type=reset]):not([type=hidden]),' +
           'textarea, select:has(option[value=""])'
         ).val('');
-        form.find('select.as_search_range_option').each(function() { $(this).val($(this).find('option:first').val()) });
+        form.find('select.as_search_range_option').each(function() { jQuery(this).val(jQuery(this).find('option:first').val()) });
         form.find('select.as_search_date_time_option').val('BETWEEN');
       });
 
       jQuery(document).on('click', '.active-scaffold .tabbed .nav-tabs a', function(e) {
-        if (typeof $().tab == 'function') return; // bootstrap tab plugin is loaded and will handle tabs
+        if (typeof jQuery().tab == 'function') return; // bootstrap tab plugin is loaded and will handle tabs
         e.preventDefault();
         var tab_ctrl = jQuery(this), tabbed = tab_ctrl.closest('.tabbed')
         tabbed.find('.nav-tabs .active').removeClass('active');
@@ -457,16 +457,16 @@
       });
       jQuery(document).on('as:element_updated', '.active-scaffold', function(e) {
         if (e.target != this) return;
-        var search = $(this).find('form.search');
+        var search = jQuery(this).find('form.search');
         if (search.length) ActiveScaffold.focus_first_element_of_form(search);
       });
       jQuery(document).on('click', '.active-scaffold form .check-all', function(e) {
         e.preventDefault();
-        ActiveScaffold.update_all_checkboxes($(this), true);
+        ActiveScaffold.update_all_checkboxes(jQuery(this), true);
       });
       jQuery(document).on('click', '.active-scaffold form .uncheck-all', function(e) {
         e.preventDefault();
-        ActiveScaffold.update_all_checkboxes($(this), false);
+        ActiveScaffold.update_all_checkboxes(jQuery(this), false);
       });
     });
 
@@ -619,7 +619,7 @@
       },
       sliders: function(element) {
         jQuery('.as-slider', element).each(function() {
-          var opts = $(this).data('slider');
+          var opts = jQuery(this).data('slider');
           jQuery(this).slider(opts);
           if (opts.disabled) jQuery(this).find('.ui-slider-handle').hide();
         });
@@ -632,7 +632,7 @@
           item.closest('.active-scaffold-component').load(item.attr('href'), function(response, status, xhr) {
             if (status == 'error') {
               indicator.css({visibility: 'hidden'});
-              indicator.after($('<p>').html(item.data('error-msg')).addClass("error-message message server-error"));
+              indicator.after(jQuery('<p>').html(item.data('error-msg')).addClass("error-message message server-error"));
             } else jQuery(this).trigger('as:element_updated');
           });
         });
@@ -1007,8 +1007,8 @@
         // find without entering new subforms
         element = container.find(selector + ':not(.sub-form) .' + options.field_class);
         if (container.is('.sub-form-record'))
-          element = element.filter(function() { return $(this).closest('.sub-form-record').get(0) === container.get(0); });
-        else element = element.filter(function() { return $(this).closest('.sub-form-record').length === 0; });
+          element = element.filter(function() { return jQuery(this).closest('.sub-form-record').get(0) === container.get(0); });
+        else element = element.filter(function() { return jQuery(this).closest('.sub-form-record').length === 0; });
         if (element.length)
           element = element.first().closest('dl');
         else if (options.subform_class)
@@ -1215,7 +1215,7 @@
       update_all_checkboxes: function(button, state) {
         var lists = button.closest('.check-buttons').parent().find('.checkbox-list'),
           checkboxes = lists.find(':checkbox'), key = state ? '_added' : '_removed', params;
-        params = checkboxes.filter(state ? ':not(:checked)' : ':checked').map(function() { return key + '[]=' + $(this).val(); }).toArray().join('&');
+        params = checkboxes.filter(state ? ':not(:checked)' : ':checked').map(function() { return key + '[]=' + jQuery(this).val(); }).toArray().join('&');
         checkboxes.prop('checked', state);
         if (lists.filter('.draggable-list').length) {
           var parent = state ? lists.filter('.selected') : lists.filter(':not(.selected)');
@@ -1340,7 +1340,7 @@
               new ActiveScaffold.Actions.Table(parent.find('a.as_action'), parent.closest('div.active-scaffold').find('tbody.before-header').first(), parent.find('.loading-indicator').first());
             } else if (parent.is('form.as_form')) {
               //table action
-              new ActiveScaffold.Actions.Table(parent.find('a.as_action').filter(function() { return !$(this).data('action_link'); }), parent.closest('div.active-scaffold').find('tbody.before-header').first(), parent.find('.form-footer .loading-indicator').first());
+              new ActiveScaffold.Actions.Table(parent.find('a.as_action').filter(function() { return !jQuery(this).data('action_link'); }), parent.closest('div.active-scaffold').find('tbody.before-header').first(), parent.find('.form-footer .loading-indicator').first());
             }
             element = jQuery(element);
           }
@@ -1431,7 +1431,7 @@
         } else {
           var messages_container = this.scaffold().find('.messages-container'),
             messages = messages_container.find('.action-messages');
-          if (!messages.length) messages = $('<div class="action-messages"></div>').appendTo(messages_container);
+          if (!messages.length) messages = jQuery('<div class="action-messages"></div>').appendTo(messages_container);
           return messages;
         }
       },

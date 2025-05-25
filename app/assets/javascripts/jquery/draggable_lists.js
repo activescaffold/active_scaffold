@@ -11,7 +11,7 @@
       li.children('label').removeAttr('for');
       if (jQuery(item).is(':checked')) li.appendTo(list_selected);
     });
-    check_buttons.find('.check-all, .uncheck-all').attr('title', function() { return $(this).text() });
+    check_buttons.find('.check-all, .uncheck-all').attr('title', function() { return jQuery(this).text() });
     element.after(check_buttons);
     var options = {
       hoverClass: 'hover',

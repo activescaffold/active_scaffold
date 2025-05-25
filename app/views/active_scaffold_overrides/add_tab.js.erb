@@ -8,8 +8,8 @@
     tab_content = render('form', columns: @column, subsection_id: "#{subsection_id}-#{tab_id_suffix}", form_action: @form_action, scope: @scope, tab_value: tab_record || tab_value, tab_id: tab_id_suffix, tabbed_by: @column.tabbed_by)
     tab = active_scaffold_tab_content(tab_id, true, tab_content)
 %>
-$('#<%= subsection_id %> .tab-content > .tab-pane.active').removeClass('in active');
+jQuery('#<%= subsection_id %> .tab-content > .tab-pane.active').removeClass('in active');
 ActiveScaffold.create_associated_record_form('<%= subsection_id %> .tab-content', '<%= j tab %>', {singular: false});
-$('#<%= subsection_id %> .nav-tabs').find('.nav-item.active').removeClass('active').end().append('<%= j active_scaffold_tab(tab_label, tab_id, true) %>');
-$('#<%= @source_id %> option[value=<%= tab_value %>]').hide().parent().val('');
+jQuery('#<%= subsection_id %> .nav-tabs').find('.nav-item.active').removeClass('active').end().append('<%= j active_scaffold_tab(tab_label, tab_id, true) %>');
+jQuery('#<%= @source_id %> option[value=<%= tab_value %>]').hide().parent().val('');
 <% end %>

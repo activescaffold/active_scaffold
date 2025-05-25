@@ -43,7 +43,7 @@ jQuery(document).on("focus", "input.datetime_picker", function(){
 });
 
 jQuery(document).on('change', 'input.datetime_picker', function(e) {
-  var $this = $(this);
+  var $this = jQuery(this);
   if ($this.data('first-event')) $this.removeData('first-event');
   else {
     $this.data('first-event', true);

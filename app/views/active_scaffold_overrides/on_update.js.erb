@@ -6,7 +6,7 @@ if (action_link) action_link.update_flash_messages('<%= escape_javascript(render
   <% if params[:dont_close] %>
     <% row_selector = element_row_id(action: :list, id: @record.id) %>
     ActiveScaffold.update_row('<%= row_selector %>', '<%= escape_javascript(render(list_record_view, record: @record)) %>');
-    if (action_link) action_link.target = $('#<%= row_selector %>');
+    if (action_link) action_link.target = jQuery('#<%= row_selector %>');
     <%= render 'update_calculations' %>
     <% if params[:iframe] == 'true' %>
       ActiveScaffold.enable_form('<%= form_selector %>');
