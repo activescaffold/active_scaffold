@@ -398,7 +398,7 @@ module ActiveScaffold
         else
           raise "can't add constraint to create new record with :popup, no reverse association for " \
                 "\"#{column.name}\" in #{column.association.klass}, add the reverse association " \
-                "or override active_scaffold_new_record_url_options helper."
+                'or override active_scaffold_new_record_url_options helper.'
         end
       end
 
