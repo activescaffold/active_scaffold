@@ -391,7 +391,15 @@ module ActiveScaffold
       end
 
       def active_scaffold_new_record_url_options(column, record)
-        {embedded: {constraints: {record.class.name.underscore => record.id}}}
+        if column.association.reverse
+          constraint = [record.id]
+          constraint.unshift record.class.name if column.association.reverse_association.polymorphic?
+          {embedded: {constraints: {column.association.reverse => constraint}}}
+        else
+          raise "can't add constraint to create new record with :popup, no reverse association for " \
+                "\"#{column.name}\" in #{column.association.klass}, add the reverse association " \
+                "or override active_scaffold_new_record_url_options helper."
+        end
       end
 
       def active_scaffold_new_record_popup(column, record, html_options, options: {})
