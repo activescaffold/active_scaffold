@@ -1,3 +1,5 @@
+- Fix date_picker with format option
+
 = 4.0.7
 - Fix tableless in rails 7.2
 
