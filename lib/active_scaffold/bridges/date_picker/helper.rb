@@ -176,7 +176,7 @@ module ActiveScaffold::Bridges
           options = active_scaffold_input_text_options(options.merge(ui_options))
           options[:class] << " #{column.form_ui}"
 
-          format = datepicker_format(ui_options, column.form_ui)
+          format = datepicker_format(options, column.form_ui)
           conversion = column.form_ui == :date_picker ? :to_date : :to_time
           value = controller.class.condition_value_for_datetime(column, record.send(column.name), conversion, ui_method: :form_ui, ui_options: ui_options)
           options[:data] = datepicker_format_options(column, format).reverse_merge!(options[:data] || {})
