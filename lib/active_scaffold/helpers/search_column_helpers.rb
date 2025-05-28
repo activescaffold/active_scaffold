@@ -76,7 +76,8 @@ module ActiveScaffold
         if column.association
           associated.collect!(&:to_i)
           method = ui_options[:label_method] || :to_label
-          select_options = sorted_association_options_find(column.association, nil, record).collect do |r|
+          helper_method = association_helper_method(column.association, :sorted_association_options_find)
+          select_options = send(helper_method, column.association, nil, record).collect do |r|
             [r.send(method), r.id]
           end
         else
@@ -103,7 +104,8 @@ module ActiveScaffold
         if column.association
           associated = associated.is_a?(Array) ? associated.map(&:to_i) : associated.to_i unless associated.nil?
           method = column.association.belongs_to? ? column.association.foreign_key : column.name
-          select_options = sorted_association_options_find(column.association, false, record)
+          helper_method = association_helper_method(column.association, :sorted_association_options_find)
+          select_options = send(helper_method, column.association, false, record)
         else
           method = column.name
           enum_options_method = override_helper_per_model(:active_scaffold_enum_options, record.class)

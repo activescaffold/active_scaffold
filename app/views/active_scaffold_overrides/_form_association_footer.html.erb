@@ -47,7 +47,8 @@ end
       <% if remote_controller.respond_to?(:uses_record_select?) && remote_controller.uses_record_select? -%>
         <%= link_to_record_select as_(:add_existing), remote_controller.controller_path, record_select_params_for_add_existing(column.association, edit_associated_url, parent_record) -%>
       <% else -%>
-        <% select_options = options_from_collection_for_select(sorted_association_options_find(column.association, nil, parent_record), :to_param, :to_label)
+        <% helper_method = association_helper_method(column.association, :sorted_association_options_find)
+           select_options = options_from_collection_for_select(send(helper_method, column.association, nil, parent_record), :to_param, :to_label)
            add_existing_id = "#{subform_div_id}-add-existing"
            add_existing_label = column.association.collection? ? :add_existing : :replace_existing %>
         <%= select_tag 'associated_id', content_tag(:option, as_(:_select_), value: '') + select_options %>

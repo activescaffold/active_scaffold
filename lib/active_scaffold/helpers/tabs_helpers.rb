@@ -49,7 +49,8 @@ module ActiveScaffold
         end
         if tab_column
           label_method = (tab_column.form_ui_options || tab_column.options)[:label_method] || :to_label
-          sorted_association_options_find(tab_column.association, nil, subform_record).map do |opt_record|
+          helper_method = association_helper_method(column.association, :sorted_association_options_find)
+          send(helper_method, tab_column.association, nil, subform_record).map do |opt_record|
             [opt_record.send(label_method), opt_record.id, opt_record]
           end
         else

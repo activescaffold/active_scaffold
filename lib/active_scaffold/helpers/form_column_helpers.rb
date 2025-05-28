@@ -333,7 +333,8 @@ module ActiveScaffold
         record = html_options.delete(:object)
         associated = html_options.include?(:associated) ? html_options.delete(:associated) : record.send(column.association.name)
 
-        select_options = sorted_association_options_find(column.association, nil, record)
+        helper_method = association_helper_method(column.association, :sorted_association_options_find)
+        select_options = send(helper_method, column.association, nil, record)
         select_options.unshift(associated) if associated&.persisted? && select_options.exclude?(associated)
 
         method = column.name
@@ -508,7 +509,8 @@ module ActiveScaffold
 
       def active_scaffold_plural_association_options(column, record = nil)
         associated_options = record.send(column.association.name)
-        [associated_options, associated_options | sorted_association_options_find(column.association, nil, record)]
+        helper_method = association_helper_method(column.association, :sorted_association_options_find)
+        [associated_options, associated_options | send(helper_method, column.association, nil, record)]
       end
 
       def active_scaffold_input_plural_association(column, options, ui_options: column.options)
@@ -626,7 +628,8 @@ module ActiveScaffold
         html_options.merge!(ui_options[:html_options] || {})
         options =
           if column.association
-            sorted_association_options_find(column.association, nil, record)
+            helper_method = association_helper_method(column.association, :sorted_association_options_find)
+            send(helper_method, column.association, nil, record)
           else
             enum_options_method = override_helper_per_model(:active_scaffold_enum_options, record.class)
             send(enum_options_method, column, record, ui_options: ui_options)
@@ -864,7 +867,8 @@ module ActiveScaffold
           options.merge!(active_scaffold_input_text_options)
           record_select_field(options[:name], nil, options)
         else
-          select_options = sorted_association_options_find(nested.association, nil, record)
+          helper_method = association_helper_method(column.association, :sorted_association_options_find)
+          select_options = send(helper_method, nested.association, nil, record)
           select_options ||= active_scaffold_config.model.all
           select_options = options_from_collection_for_select(select_options, :id, :to_label)
           select_tag 'associated_id', (content_tag(:option, as_(:_select_), value: '') + select_options) unless select_options.empty?

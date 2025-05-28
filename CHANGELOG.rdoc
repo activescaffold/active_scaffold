@@ -12,6 +12,7 @@
 - Improve grouped search supporting using group_by with multiple columns or sql code
 - Add disable_on_update_column setting to column to allow skipping disabling the form when a column changes and a request is sent to refresh other fields
 - Rename active_scaffold_habtm_joins to active_scaffold_joins, active_scaffold_habtm_joins is now deprecated
+- Support sorted_association_options_find with model name prefix
 
 = 4.0.8
 - Fix date_picker with format option
