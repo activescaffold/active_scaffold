@@ -1,3 +1,6 @@
+= 4.0.9
+- Fix comparing column with ProxyColumn, fixing sorts_on? when the column is overrided
+
 = 4.0.8
 - Fix date_picker with format option
 
