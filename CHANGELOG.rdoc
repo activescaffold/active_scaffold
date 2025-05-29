@@ -14,6 +14,9 @@
 - Rename active_scaffold_habtm_joins to active_scaffold_joins, active_scaffold_habtm_joins is now deprecated
 - Support sorted_association_options_find with model name prefix
 
+= 4.0.9
+- Fix comparing column with ProxyColumn, fixing sorts_on? when the column is overrided
+
 = 4.0.8
 - Fix date_picker with format option
 
