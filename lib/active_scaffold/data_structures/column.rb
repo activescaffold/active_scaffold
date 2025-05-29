@@ -458,7 +458,7 @@ module ActiveScaffold::DataStructures
     # this is so that array.delete and array.include?, etc., will work by column name
     def ==(other) # :nodoc:
       # another column
-      if other.respond_to?(:name) && other.class == self.class
+      if other.respond_to?(:name) && (other.class == self.class || other.class == ProxyColumn)
         name == other.name.to_sym
       elsif other.is_a? Symbol
         name == other
