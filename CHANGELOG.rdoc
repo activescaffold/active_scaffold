@@ -1,3 +1,6 @@
+= 4.0.10
+- Fix override_columns without block
+
 = 4.0.9
 - Fix comparing column with ProxyColumn, fixing sorts_on? when the column is overrided
 
