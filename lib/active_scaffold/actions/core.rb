@@ -85,7 +85,7 @@ module ActiveScaffold::Actions
       return if (@column = active_scaffold_config.columns[params.delete(:column)]).nil?
 
       @columns = @column.update_columns || []
-      @columns << @column.name if @column.options[:refresh_link] && @columns.exclude?(@column.name)
+      @columns += [@column.name] if @column.options[:refresh_link] && @columns.exclude?(@column.name)
       process_render_field_params
 
       @record =
