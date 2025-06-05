@@ -202,7 +202,7 @@ module ActiveScaffold::Config
             instance_variable_get(var) || @conf.send(name)
           end
           define_method :"override_#{name}" do |&blck|
-            send(:"#{name}=", send(name)).tap(&blck)
+            send(:"#{name}=", send(name)).tap { |cols| blck&.call cols }
           end
         end
       end
