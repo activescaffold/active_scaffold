@@ -36,7 +36,7 @@ module ActiveScaffold
           relation = klass.where(conditions)
           column = column_for_association(association, record)
           if column&.includes
-            include_assoc = column.includes.find { |assoc| assoc.is_a?(Hash) && assoc.include?(association.name) }
+            include_assoc = includes_for_association(column, klass)
             relation = relation.includes(include_assoc[association.name]) if include_assoc
           end
           if column&.sort && column.sort&.dig(:sql)
@@ -47,6 +47,24 @@ module ActiveScaffold
           relation = yield(relation) if block_given?
           relation.to_a
         end
+      end
+
+      def includes_for_association(column, klass)
+        includes = column.includes.find { |assoc| assoc.is_a?(Hash) && assoc.include?(column.association.name) }
+        return unless includes
+
+        includes = includes[association.name]
+        if column.association.polymorphic?
+          includes = Array.wrap(includes).filter_map do |assoc|
+            if assoc.is_a?(Hash)
+              assoc.select { |key, _| klass.reflect_on_association(key) }.presence
+            elsif klass.reflect_on_association(assoc)
+              assoc
+            end
+          end
+        end
+
+        includes.presence
       end
 
       def column_for_association(association, record)
