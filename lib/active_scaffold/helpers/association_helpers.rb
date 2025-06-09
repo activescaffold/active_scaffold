@@ -37,7 +37,7 @@ module ActiveScaffold
           column = column_for_association(association, record)
           if column&.includes
             include_assoc = includes_for_association(column, klass)
-            relation = relation.includes(include_assoc[association.name]) if include_assoc
+            relation = relation.includes(include_assoc) if include_assoc
           end
           if column&.sort && column.sort&.dig(:sql)
             # with threasafe enabled, column.sort[:sql] returns proxied strings and
