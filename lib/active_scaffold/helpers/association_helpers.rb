@@ -53,7 +53,7 @@ module ActiveScaffold
         includes = column.includes.find { |assoc| assoc.is_a?(Hash) && assoc.include?(column.association.name) }
         return unless includes
 
-        includes = includes[association.name]
+        includes = includes[column.association.name]
         if column.association.polymorphic?
           includes = Array.wrap(includes).filter_map do |assoc|
             if assoc.is_a?(Hash)
