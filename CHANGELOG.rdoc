@@ -1,4 +1,4 @@
-= 4.0.12.1
+= 4.0.12.2
 - Filter includes for the selected model in select form_ui when column is a polymorphic association, as includes for polymorphic association may be a hash with the polymorphic association as key and associations of different models in the value
 
 = 4.0.11
