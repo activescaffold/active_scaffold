@@ -23,7 +23,7 @@ module ActiveScaffold::DataStructures
     end
     alias << add
 
-    # finds a FilterOption by matching the name
+    # finds a Filter by matching the name
     def [](name)
       @set.find { |filter| filter.name.to_s == name.to_s }
     end
