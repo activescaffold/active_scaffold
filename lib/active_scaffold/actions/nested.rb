@@ -144,8 +144,8 @@ module ActiveScaffold::Actions::Nested
       unless config.action_links['destroy_existing']
         config.action_links.add('destroy_existing', label: :remove, type: :member, confirm: :are_you_sure_to_delete,
                                                     method: :delete, position: false,
-                                                    security_method: :add_existing_authorized?,
-                                                    ignore_method: :add_existing_ignore?)
+                                                    security_method: :delete_existing_authorized?,
+                                                    ignore_method: :delete_existing_ignore?)
       end
       config.action_links['destroy'].ignore_method = :habtm_delete_ignore? if config.actions.include?(:delete)
     end
