@@ -14,6 +14,9 @@
 - Rename active_scaffold_habtm_joins to active_scaffold_joins, active_scaffold_habtm_joins is now deprecated
 - Support sorted_association_options_find with model name prefix
 
+= 4.0.13
+- Fix security_methods on destroy_existing
+
 = 4.0.12.2
 - Filter includes for the selected model in select form_ui when column is a polymorphic association, as includes for polymorphic association may be a hash with the polymorphic association as key and associations of different models in the value
 
