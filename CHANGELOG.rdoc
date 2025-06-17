@@ -1,3 +1,4 @@
+= 4.0.13
 - Fix security_methods on destroy_existing
 
 = 4.0.12.2
