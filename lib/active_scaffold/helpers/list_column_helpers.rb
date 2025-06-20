@@ -191,7 +191,7 @@ module ActiveScaffold
           if value.is_a? Numeric
             format_number_value(value, column.options)
           else
-            format_value(value, column.options)
+            format_value(value, column.options, column)
           end
         else
           if column.association.collection?
@@ -293,15 +293,16 @@ module ActiveScaffold
           elsif value
             format_singular_association_value(value, column, method)
           end
-        format_value value
+        format_value value, nil, column
       end
 
-      def format_value(column_value, options = {})
+      def format_value(column_value, options = {}, column = nil)
+        options ||= column&.options
         value =
           if column_empty?(column_value)
-            empty_field_text
+            empty_field_text(column)
           elsif column_value.is_a?(Time) || column_value.is_a?(Date)
-            l(column_value, format: options[:format] || :default)
+            l(column_value, format: options&.dig(:format) || :default)
           elsif !!column_value == column_value # rubocop:disable Style/DoubleNegation fast check for boolean
             as_(column_value.to_s.to_sym)
           else

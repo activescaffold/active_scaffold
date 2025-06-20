@@ -13,6 +13,7 @@
 - Add disable_on_update_column setting to column to allow skipping disabling the form when a column changes and a request is sent to refresh other fields
 - Rename active_scaffold_habtm_joins to active_scaffold_joins, active_scaffold_habtm_joins is now deprecated
 - Support sorted_association_options_find with model name prefix
+- Support empty_field_text per column
 
 = 4.0.13
 - Fix security_methods on destroy_existing

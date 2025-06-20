@@ -138,7 +138,8 @@ module ActiveScaffold
         empty
       end
 
-      def empty_field_text
+      def empty_field_text(column = nil)
+        return column.empty_field_text if column&.empty_field_text
         return @_empty_field_text if defined? @_empty_field_text
 
         @_empty_field_text = (active_scaffold_config.list.empty_field_text if active_scaffold_config.actions.include?(:list))

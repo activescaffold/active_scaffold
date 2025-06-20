@@ -60,6 +60,9 @@ module ActiveScaffold::DataStructures
         # config.columns[:my_column].hide_form_column_if = :hide_tractor_fields?
         attr_accessor :hide_form_column_if
 
+        # text to display when the column is empty, defaults nil, so list.empty_field_text is used
+        attr_accessor :empty_field_text
+
         # a collection of columns to load from the association when eager loading is disabled, if it's nil all columns will be loaded
         attr_accessor :select_associated_columns
 
