@@ -85,11 +85,7 @@ module ActiveScaffold
   end
 
   def self.deprecator
-    @deprecator ||= ActiveSupport::Deprecation.new('4.1', 'ActiveScaffold')
-  end
-
-  class << self
-    ActiveScaffold.deprecator.deprecate_methods self, :nested_subforms= => 'is enabled always', threadsafe!: 'is enabled always'
+    @deprecator ||= ActiveSupport::Deprecation.new('4.2', 'ActiveScaffold')
   end
 end
 require 'active_scaffold/engine'
