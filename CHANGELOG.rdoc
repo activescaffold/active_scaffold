@@ -14,6 +14,7 @@
 - Rename active_scaffold_habtm_joins to active_scaffold_joins, active_scaffold_habtm_joins is now deprecated
 - Support sorted_association_options_find with model name prefix
 - Support empty_field_text per column
+- Fix using nested with habtm association, shallow_delete enabled, delete action added but delete link removed
 
 = 4.0.13
 - Fix security_methods on destroy_existing

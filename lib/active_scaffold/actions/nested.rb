@@ -147,7 +147,7 @@ module ActiveScaffold::Actions::Nested
                                                     security_method: :delete_existing_authorized?,
                                                     ignore_method: :delete_existing_ignore?)
       end
-      config.action_links['destroy'].ignore_method = :habtm_delete_ignore? if config.actions.include?(:delete)
+      config.action_links['destroy']&.ignore_method = :habtm_delete_ignore? if config.actions.include?(:delete)
     end
 
     def new_existing
