@@ -11,6 +11,8 @@ hu:
     add: Hozzáadás
     add_existing: Meglevő hozzáadása
     add_existing_model: Meglevő %{model} hozzáadása
+    all_tokens:
+    any_token:
     apply: Apply
     are_you_sure_to_delete: Are you sure you want to delete %{label}?
     average: Average

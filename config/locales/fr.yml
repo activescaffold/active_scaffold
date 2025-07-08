@@ -11,6 +11,8 @@ fr:
     add: Ajouter
     add_existing: Ajouter un(e) existant(e)
     add_existing_model: Ajouter un(e) %{model} existant(e)
+    all_tokens:
+    any_token:
     apply: Appliquer
     are_you_sure_to_delete: Êtes vous sûr de vouloir supprimer %{label} ?
     average: Moyenne

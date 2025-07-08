@@ -11,6 +11,8 @@ es:
     add: Añadir
     add_existing: Añadir Existente
     add_existing_model: Añadir %{model} Existente
+    all_tokens:
+    any_token:
     apply: Aplicar
     are_you_sure_to_delete: "¿Estás seguro de que quieres borrar %{label}?"
     average: Media

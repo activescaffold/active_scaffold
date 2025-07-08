@@ -11,6 +11,8 @@ de:
     add: Hinzufügen
     add_existing: Existierenden Eintrag hinzufügen
     add_existing_model: Existierende %{model} hinzufügen
+    all_tokens:
+    any_token:
     apply: Akzeptieren
     are_you_sure_to_delete: Sind Sie sicher?
     average: Durchschnitt
