@@ -205,13 +205,20 @@ module ActiveScaffold
       end
 
       def active_scaffold_search_range_comparator_options(column, ui_options: column.options)
-        select_options = ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] }
+        select_options = []
         if active_scaffold_search_range_string?(column)
-          comparators = ActiveScaffold::Finder::STRING_COMPARATORS.collect { |title, comp| [as_(title), comp] }
-          select_options.unshift(*comparators)
+          if ActiveScaffold::Finder::LOGICAL_COMPARATORS.present? && column.logical_search.present?
+            select_options.concat(ActiveScaffold::Finder::LOGICAL_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] })
+          end
+          if column.search_sql.present?
+            select_options.concat(ActiveScaffold::Finder::STRING_COMPARATORS.collect { |title, comp| [as_(title), comp] })
+          end
         end
-        if include_null_comparators? column, ui_options: ui_options
-          select_options.concat(ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] })
+        if column.search_sql.present?
+          select_options.concat(ActiveScaffold::Finder::NUMERIC_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] })
+          if include_null_comparators? column, ui_options: ui_options
+            select_options.concat(ActiveScaffold::Finder::NULL_COMPARATORS.collect { |comp| [as_(comp), comp] })
+          end
         end
         select_options
       end
@@ -407,7 +414,7 @@ module ActiveScaffold
         visibles = []
         hiddens = []
         columns.each_column do |column|
-          next unless column.respond_to?(:each_column) || column.search_sql
+          next unless column.respond_to?(:each_column) || column.searchable?
 
           if search_config.optional_columns.include?(column.name) && !searched_by?(column)
             hiddens << column

@@ -184,25 +184,43 @@ module ActiveScaffold::Actions
       end
 
       def do_field_search
-        filtered_columns = []
         text_search = active_scaffold_config.field_search.text_search
         columns = active_scaffold_config.field_search.columns
-        search_params.each do |key, value|
+
+        search_conditions = search_params.filter_map do |key, value|
           next unless columns.include? key
 
           column = active_scaffold_config.columns[key]
           search_condition = self.class.condition_for_column(column, value, text_search, session)
-          next if search_condition.blank?
-
-          active_scaffold_conditions << search_condition
-          filtered_columns << column
-        end
-        setup_joins_for_filtered_columns(filtered_columns)
-        if filtered_columns.present? || grouped_search?
-          @filtered = active_scaffold_config.field_search.human_conditions ? filtered_columns : true
+          [column, search_condition] unless search_condition.nil?
         end
 
+        process_search_conditions(search_conditions)
         active_scaffold_config.list.user.page = nil
+      end
+
+      def process_search_conditions(search_conditions)
+        filtered_columns = []
+        filtered_columns_for_joins = []
+        search_conditions.each do |column, search_condition|
+          if search_condition.is_a? ActiveRecord::Relation
+            active_scaffold_relations << search_condition
+            filtered_columns << column
+          else
+            active_scaffold_conditions << search_condition
+            filtered_columns << column
+            filtered_columns_for_joins << column
+          end
+        end
+
+        setup_joins_for_filtered_columns(filtered_columns_for_joins)
+        setup_human_conditions(filtered_columns)
+      end
+
+      def setup_human_conditions(filtered_columns)
+        return unless filtered_columns.present? || grouped_search?
+
+        @filtered = active_scaffold_config.field_search.human_conditions ? filtered_columns : true
       end
 
       def field_search_ignore?

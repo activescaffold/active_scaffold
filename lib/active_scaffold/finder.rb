@@ -106,7 +106,7 @@ module ActiveScaffold
           args << session if method(column_method).arity == 4
           return send(:"condition_for_#{column.name}_column", *args)
         end
-        return unless column.search_sql && value.present?
+        return unless column.searchable? && value.present?
 
         search_ui = column.search_ui || column.column_type
         begin
@@ -119,6 +119,7 @@ module ActiveScaffold
               condition_for_search_ui(column, value, like_pattern, search_ui)
             end
           return nil unless sql
+          return sql if sql.is_a? ::ActiveRecord::Relation
 
           where_values = []
           sql_conditions = []
@@ -227,6 +228,15 @@ module ActiveScaffold
           ['(%<search_sql>s BETWEEN ? AND ?)', value[:from], value[:to]]
         elsif ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt])
           ["%<search_sql>s #{value[:opt]} ?", value[:from]]
+        elsif ActiveScaffold::Finder::LOGICAL_COMPARATORS.include?(value[:opt])
+          operator =
+            case value[:opt]
+            when 'all_tokens' then 'AND'
+            when 'any_token'  then 'OR'
+            end
+          parser = ActiveScaffold::Bridges::LogicalQueryParser::TokensGrammar::Parser.new(operator)
+          query = LogicalQueryParser.search(value[:from], column.active_record_class, *column.logical_search, parser: parser)
+          [column.active_record_class.where(query.from("#{query.table_name} _#{query.table_name}_exists").select(1).arel.exists)]
         end
       end
 
@@ -490,6 +500,7 @@ module ActiveScaffold
       doesnt_begin_with: 'not_?%',
       doesnt_end_with:   'not_%?'
     }.freeze
+    LOGICAL_COMPARATORS = [].freeze
     NULL_COMPARATORS = %w[null not_null].freeze
     DATE_COMPARATORS = %w[PAST FUTURE RANGE].freeze
     DATE_UNITS = %w[DAYS WEEKS MONTHS YEARS].freeze
@@ -502,10 +513,15 @@ module ActiveScaffold
 
     protected
 
-    attr_writer :active_scaffold_conditions, :active_scaffold_preload, :active_scaffold_joins, :active_scaffold_outer_joins, :active_scaffold_references
+    attr_writer :active_scaffold_conditions, :active_scaffold_preload, :active_scaffold_joins,
+                :active_scaffold_outer_joins, :active_scaffold_references, :active_scaffold_relations
 
     def active_scaffold_conditions
       @active_scaffold_conditions ||= []
+    end
+
+    def active_scaffold_relations
+      @active_scaffold_relations ||= []
     end
 
     def active_scaffold_preload
@@ -603,6 +619,7 @@ module ActiveScaffold
           preload:    active_scaffold_preload,
           includes:   active_scaffold_references.presence,
           references: active_scaffold_references.presence,
+          relations:  active_scaffold_relations.presence,
           select:     options[:select]
         )
       end
@@ -684,9 +701,15 @@ module ActiveScaffold
     def append_to_query(relation, options)
       options.assert_valid_keys :where, :select, :having, :group, :reorder, :order, :limit, :offset,
                                 :joins, :left_joins, :left_outer_joins, :includes, :lock, :readonly,
-                                :from, :conditions, :preload, :references
+                                :from, :conditions, :preload, :references, :relations
       relation = options.compact_blank.inject(relation) do |rel, (k, v)|
-        k == :conditions ? apply_conditions(rel, *v) : rel.send(k, v)
+        if k == :conditions
+          apply_conditions(rel, *v)
+        elsif k == :relations
+          v.reduce(rel, :merge)
+        else
+          rel.send(k, v)
+        end
       end
       relation.distinct_value = true if options[:left_outer_joins].present? || options[:left_joins].present?
       relation

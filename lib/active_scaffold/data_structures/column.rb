@@ -94,6 +94,9 @@ module ActiveScaffold::DataStructures
 
         # a place to store dev's column specific options
         attr_writer :options
+
+        # define the fields to use with logical search
+        attr_accessor :logical_search
       end
 
       def inplace_edit=(value)
@@ -315,7 +318,7 @@ module ActiveScaffold::DataStructures
       end
 
       def searchable?
-        search_sql.present?
+        search_sql.present? || (logical_search.present? && ActiveScaffold::Finder::LOGICAL_COMPARATORS.present?)
       end
 
       def link
@@ -522,6 +525,7 @@ module ActiveScaffold::DataStructures
                       validators_force_require_on.reject { |opt| opt == true }.flatten.presence
       self.sort = true
       self.search_sql = true
+      self.logical_search = [name] unless virtual? || association || tableless?
 
       @weight = estimate_weight
     end
