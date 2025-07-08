@@ -15,6 +15,7 @@
 - Support sorted_association_options_find with model name prefix
 - Support empty_field_text per column
 - Fix using nested with habtm association, shallow_delete enabled, delete action added but delete link removed
+- Fix for jquery-ui-rails 8.0 (jQuery UI 14)
 
 = 4.0.13
 - Fix security_methods on destroy_existing
