@@ -69,7 +69,7 @@ When upgrading from 3.x, add `active_scaffold/manifest.js` to `app/assets/config
 
 Changing column settings on a request has changed, it must use `active_scaffold_config.columns.override(:name)` at least the first time. After calling `columns.override(:name)`, calling it again or calling `columns[:name]` will return the overrided column. It also supports a block. See [Per Request Configuration](https://github.com/activescaffold/active_scaffold/wiki/Per-Request-Configuration) for examples and more comprehensive explanation.
 
-Changing columns for an action (e.g. add or exclude) on a request must use active_scaffold_config.actions.override_columns, the first time, or use assignment.
+Changing columns for an action (e.g. add or exclude) on a request must use active_scaffold_config.action.override_columns, e.g. active_scaffold_config.list.override_columns, the first time, or use assignment.
 
 If you have a `_form_association_record` partial view overrided, use `record` local variable instead of `form_association_record`.
 
