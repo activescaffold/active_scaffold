@@ -1,6 +1,6 @@
 - Integrate LogicalQueryParser
 
-= 4.1.0 (not released yet)
+= 4.1.0
 - Replace sassc-rails with dartsass-sprockets, as it's a compatible replacement, to ease migration to dartsass
 - Use lowercase response headers as required by rack 3
 - Add filters to list action
