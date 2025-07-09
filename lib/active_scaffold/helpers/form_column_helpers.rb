@@ -368,19 +368,6 @@ module ActiveScaffold
 
       def active_scaffold_add_new(column, record, html_options, ui_options: column.options, skip_link: false)
         options = ui_options[:add_new] == true ? {} : ui_options[:add_new]
-        if options.is_a?(Array)
-          ActiveScaffold.deprecator.warn "use add_new: {types: #{options.inspect}} instead of add_new: #{options.inspect}"
-          options = {types: options}
-        end
-        if ui_options[:hide_subgroups] && !options.key?(:hide_subgroups)
-          ActiveScaffold.deprecator.warn "use add_new: {hide_subgroups: #{ui_options[:hide_subgroups]}} instead of hide_subgroups: #{ui_options[:hide_subgroups]}"
-          options[:hide_subgroups] = ui_options[:hide_subgroups]
-        end
-        if ui_options[:layout] && !options.key?(:layout)
-          ActiveScaffold.deprecator.warn "use add_new: {layout: #{ui_options[:layout]}} instead of layout: #{ui_options[:layout]}"
-          options[:layout] = ui_options[:layout]
-        end
-
         case options[:mode]
         when nil, :subform
           active_scaffold_new_record_subform(column, record, html_options, options: options, skip_link: skip_link)

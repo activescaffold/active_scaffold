@@ -85,7 +85,7 @@ module ActiveScaffold
   end
 
   def self.deprecator
-    @deprecator ||= ActiveSupport::Deprecation.new('4.2', 'ActiveScaffold')
+    @deprecator ||= ActiveSupport::Deprecation.new('4.3', 'ActiveScaffold')
   end
 end
 require 'active_scaffold/engine'

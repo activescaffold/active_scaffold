@@ -48,10 +48,6 @@ module ActiveScaffold
       end
     end
 
-    initializer 'active_scaffold.assets' do
-      config.assets.precompile << 'active_scaffold_manifest.js' if Rails::VERSION::MAJOR < 7
-    end
-
     initializer 'active_scaffold.extensions' do
       require 'active_scaffold/extensions/ice_nine'
       require 'active_scaffold/extensions/localize'
