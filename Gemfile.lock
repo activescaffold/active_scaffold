@@ -7,7 +7,7 @@ GIT
 PATH
   remote: .
   specs:
-    active_scaffold (4.0.13)
+    active_scaffold (4.1.0)
       dartsass-sprockets (~> 3.2.0)
       ice_nine (~> 0.11)
       rails (>= 5.2.0)
