@@ -235,7 +235,7 @@ module ActiveScaffold
             when 'any_token'  then 'OR'
             end
           parser = ActiveScaffold::Bridges::LogicalQueryParser::TokensGrammar::Parser.new(operator)
-          query = LogicalQueryParser.search(value[:from], column.active_record_class, *column.logical_search, parser: parser)
+          query = LogicalQueryParser.search(value[:from], column.active_record_class, columns: column.logical_search, parser: parser)
           [column.active_record_class.where(query.from("#{query.table_name} _#{query.table_name}_exists").select(1).arel.exists)]
         end
       end
