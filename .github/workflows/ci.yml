@@ -85,7 +85,7 @@ jobs:
       - lint-i18n
       - lint-rubocop
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.allow_failure }}
+    continue-on-error: matrix.allow_failure
     strategy:
       fail-fast: false
       matrix:
