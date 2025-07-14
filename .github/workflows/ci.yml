@@ -89,7 +89,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby: [ "3.4", "3.3", "3.2" ] # "jruby-9.4" ]
-        rails: [ "7.2" ]
+        rails: [ "8.0", "7.2" ]
 #        exclude:
 #          - ruby: 'jruby-9.4'
 #            rails: '7.2'
@@ -97,6 +97,8 @@ jobs:
           - ruby: '3.4'
             rails: '7.2'
             coverage: true
+          - ruby: '8.0'
+            allow_failure: true
     timeout-minutes: 60
     env:
       JRUBY_OPTS: "--debug"
@@ -121,6 +123,9 @@ jobs:
           chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
       - run: COVERAGE=${{ matrix.coverage}} bundle exec rake
+        if: ${{ ! matrix.allow_failure }}
+      - run: bundle exec rake || true
+        if: ${{ matrix.allow_failure }}
       - run: "./cc-test-reporter after-build -t simplecov -r ${{secrets.CC_TEST_REPORTER_ID}}"
         if: ${{ matrix.coverage }}
       - uses: actions/upload-artifact@v4.1.0
