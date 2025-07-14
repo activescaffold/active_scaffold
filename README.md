@@ -12,10 +12,11 @@ ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, r
 
 Branch Details
 --------------
-master supports rails >= 7.0.x and <= 7.2.x, and ruby >= 3.1.0  
-4-0-stable supports rails >= 6.1.x and <= 7.2.x, and ruby >= 3.0.0
+master supports rails >= 7.2.x and ruby >= 3.2.0  
+4-1-stable supports rails >= 7.0.x and <= 7.2.x, and ruby >= 3.1.0
 
 These versions are not supported anymore:  
+4-0-stable supports rails >= 6.1.x and <= 7.2.x, and ruby >= 2.5.0
 3-7-stable supports rails >= 5.2.x and <= 7.1.x, and ruby >= 2.5.0
 3-6-stable supports rails >= 4.2.x and <= 6.1.x, and ruby >= 2.3.0  
 3-5-stable supports rails >= 4.0.x and <= 5.1.x, and ruby >= 2.0.0  

@@ -88,15 +88,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ "3.4", "3.3", "3.2", "jruby-9.4" ]
-        rails: [ "7.2", "7.1", "7.0" ]
-        exclude:
-          - ruby: '3.4'
-            rails: '7.0'
-          - ruby: 'jruby-9.4'
-            rails: '7.2'
+        ruby: [ "3.4", "3.3", "3.2" ] # "jruby-9.4" ]
+        rails: [ "7.2" ]
+#        exclude:
+#          - ruby: 'jruby-9.4'
+#            rails: '7.2'
         include:
-          - ruby: '3.3'
+          - ruby: '3.4'
             rails: '7.2'
             coverage: true
     timeout-minutes: 60
