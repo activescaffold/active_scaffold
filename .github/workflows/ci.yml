@@ -85,9 +85,9 @@ jobs:
       - lint-i18n
       - lint-rubocop
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.allow_failure }}
     strategy:
       fail-fast: false
-      continue-on-error: ${{ matrix.allow_failure }}
       matrix:
         ruby: [ "3.4", "3.3", "3.2" ] # "jruby-9.4" ]
         rails: [ "8.0", "7.2" ]
