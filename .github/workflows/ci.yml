@@ -97,7 +97,7 @@ jobs:
           - ruby: '3.4'
             rails: '7.2'
             coverage: true
-          - ruby: '8.0'
+          - rails: '8.0'
             allow_failure: true
     timeout-minutes: 60
     env:
@@ -122,7 +122,7 @@ jobs:
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
-      - run: COVERAGE=${{ matrix.coverage}} bundle exec rake || [ "${{matrix.allow_failure}}" = true ]
+      - run: COVERAGE=${{ matrix.coverage}} bundle exec rake || [ "${{ matrix.allow_failure }}" = true ]
       - run: "./cc-test-reporter after-build -t simplecov -r ${{secrets.CC_TEST_REPORTER_ID}}"
         if: ${{ matrix.coverage }}
       - uses: actions/upload-artifact@v4.1.0
