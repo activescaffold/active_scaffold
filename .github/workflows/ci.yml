@@ -123,7 +123,7 @@ jobs:
           chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
       - run: COVERAGE=${{ matrix.coverage}} bundle exec rake
-        if: ${{ ! matrix.allow_failure }}
+        if: ${{ matrix.allow_failure != true }}
       - run: bundle exec rake || true
         if: ${{ matrix.allow_failure }}
       - run: "./cc-test-reporter after-build -t simplecov -r ${{secrets.CC_TEST_REPORTER_ID}}"
