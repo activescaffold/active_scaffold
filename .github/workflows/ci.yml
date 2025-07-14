@@ -122,10 +122,7 @@ jobs:
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
-      - run: COVERAGE=${{ matrix.coverage}} bundle exec rake
-        if: ${{ matrix.allow_failure != 'true' }}
-      - run: bundle exec rake || true
-        if: ${{ matrix.allow_failure }}
+      - run: COVERAGE=${{ matrix.coverage}} bundle exec rake || [ "${{matrix.allow_failure}}" = true ]
       - run: "./cc-test-reporter after-build -t simplecov -r ${{secrets.CC_TEST_REPORTER_ID}}"
         if: ${{ matrix.coverage }}
       - uses: actions/upload-artifact@v4.1.0
