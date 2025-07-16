@@ -16,9 +16,19 @@
   <li class="sub-section <%= column_css_class %>">
     <%= render_subsection(column, @record, scope, form_action) %>
   </li>
-  <% elsif renders_as == :subform and authorized -%>
-  <%= content_tag :li, active_scaffold_subform_attributes(column, column_css_class, tab_id: tab_id) do %>
-    <%= render_column(column, @record, renders_as, scope, tabbed_by: (column.options[:tabbed_by] || tabbed_by if tabbed_by), tab_value: tab_value, tab_id: tab_id) %>
+  <% elsif renders_as == :subform && (authorized || column.show_ui) -%>
+    <%
+      subform_attrs = active_scaffold_subform_attributes(column, column_css_class, tab_id: tab_id)
+      subform_attrs[:class] = "#{subform_attrs[:class]} read-only".strip unless authorized
+      tab_options = local_assigns.slice(:tabbed_by, :tab_id, :tab_value)
+      tab_options[:tabbed_by] = column.options[:tabbed_by] if tabbed_by && column.options[:tabbed_by]
+    %>
+  <%= content_tag :li, subform_attrs do %>
+    <% if authorized %>
+    <%= render_column(column, @record, renders_as, scope, **tab_options) %>
+    <% else %>
+    <%= show_column_value(@record, column, **tab_options) %>
+    <% end %>
   <% end %>
   <% else -%>
   <li class="form-element <%= 'required' if column.required?(action_for_validation?(@record)) %> <%= column.form_ui %> <%= column_css_class %>">
