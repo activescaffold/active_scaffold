@@ -1,4 +1,5 @@
 - Integrate LogicalQueryParser
+- Display unauthorized column in form as show action, so show_ui or show override is used if exists
 
 = 4.1.1 (not released yet)
 - Load dartsass-sprockets, so it isn't required in the Gemfile

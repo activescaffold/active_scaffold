@@ -209,7 +209,7 @@ module ActiveScaffold
         attributes = field_attributes(column, record)
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
         if only_value
-          field = content_tag(:span, get_column_value(record, column), column_options.except(:name, :object))
+          field = content_tag(:span, show_column_value(record, column), column_options.except(:name, :object))
           if column.association.nil? || column.association.belongs_to?
             # hidden field probably not needed, but leaving it just in case
             # but it isn't working for assocations which are not belongs_to
