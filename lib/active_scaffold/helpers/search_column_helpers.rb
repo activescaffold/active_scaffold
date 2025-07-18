@@ -207,11 +207,11 @@ module ActiveScaffold
       def active_scaffold_search_range_comparator_options(column, ui_options: column.options)
         select_options = []
         if active_scaffold_search_range_string?(column)
-          if ActiveScaffold::Finder::LOGICAL_COMPARATORS.present? && column.logical_search.present?
-            select_options.concat(ActiveScaffold::Finder::LOGICAL_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] })
-          end
           if column.search_sql.present?
             select_options.concat(ActiveScaffold::Finder::STRING_COMPARATORS.collect { |title, comp| [as_(title), comp] })
+          end
+          if ActiveScaffold::Finder::LOGICAL_COMPARATORS.present? && column.logical_search.present?
+            select_options.concat(ActiveScaffold::Finder::LOGICAL_COMPARATORS.collect { |comp| [as_(comp.downcase.to_sym), comp] })
           end
         end
         if column.search_sql.present?
