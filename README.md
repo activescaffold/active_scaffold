@@ -2,8 +2,8 @@
 Overview
 ========
 [![Build status](https://github.com/activescaffold/active_scaffold/actions/workflows/ci.yml/badge.svg)](https://github.com/activescaffold/active_scaffold/actions/workflows/ci.yml)
-[![Code Climate](https://codeclimate.com/github/activescaffold/active_scaffold/badges/gpa.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
-[![Test Coverage](https://codeclimate.com/github/activescaffold/active_scaffold/badges/coverage.svg)](https://codeclimate.com/github/activescaffold/active_scaffold)
+[![Maintainability](https://qlty.sh/gh/activescaffold/projects/active_scaffold/maintainability.svg)](https://qlty.sh/gh/activescaffold/projects/active_scaffold)
+[![Code Coverage](https://qlty.sh/gh/activescaffold/projects/active_scaffold/coverage.svg)](https://qlty.sh/gh/activescaffold/projects/active_scaffold)
 [![Gem Version](https://badge.fury.io/rb/active_scaffold.svg)](https://badge.fury.io/rb/active_scaffold)
 [![Inline docs](https://inch-ci.org/github/activescaffold/active_scaffold.svg?branch=master)](https://inch-ci.org/github/activescaffold/active_scaffold)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
