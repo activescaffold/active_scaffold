@@ -242,13 +242,15 @@ module ActiveScaffold
       def logical_search_condition(column, search, parser = nil)
         model = column.active_record_class
         if column.logical_search.any?(Hash)
-          subquery_model = column.active_record_class.dup.tap { |m| m.table_name = "_#{m.table_name}_exists" }
+          subquery_model = model.all.tap do |relation|
+            relation.instance_variable_set(:@table, relation.table.dup)
+            relation.table.instance_variable_set(:@table_alias, "_#{model.table_name}_exists")
+          end
         end
         query = ::LogicalQueryParser.search(search, subquery_model || model, columns: column.logical_search, parser: parser)
         if subquery_model
-          subquery = query.from("#{model.table_name} #{subquery_model.table_name}")
-                       .where(model.arel_table[model.primary_key].eq(subquery_model.arel_table[model.primary_key]))
-          column.active_record_class.where(subquery.select(1).arel.exists)
+          subquery = query.where(model.arel_table[model.primary_key].eq(subquery_model.table[model.primary_key]))
+          model.where(subquery.select(1).arel.exists)
         else
           query
         end
