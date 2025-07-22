@@ -79,6 +79,7 @@ ja:
     internal_error: リクエストが失敗しました
     live_search: その場で検索
     loading: 読み込み中…
+    logical_search:
     mark_all_records: すべて選択
     maximum: 最大値
     minimum: 最小値

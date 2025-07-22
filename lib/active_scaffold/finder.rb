@@ -234,7 +234,7 @@ module ActiveScaffold
             when 'all_tokens' then 'AND'
             when 'any_token'  then 'OR'
             end
-          parser = ActiveScaffold::Bridges::LogicalQueryParser::TokensGrammar::Parser.new(operator)
+          parser = ActiveScaffold::Bridges::LogicalQueryParser::TokensGrammar::Parser.new(operator) if operator
           [logical_search_condition(column, value[:from], parser)]
         end
       end

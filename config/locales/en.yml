@@ -79,6 +79,7 @@ en:
     internal_error: Request Failed
     live_search: Live Search
     loading: Loading…
+    logical_search: Logical Search
     mark_all_records: Mark all
     maximum: Maximum
     minimum: Minimum

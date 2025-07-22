@@ -79,6 +79,7 @@ fr:
     internal_error: Erreur de la requête
     live_search: Recherche en temps réel
     loading: Chargement…
+    logical_search:
     mark_all_records: Marquer tous
     maximum: Maximum
     minimum: Minimum
