@@ -2,6 +2,9 @@ name: activescaffold/active_scaffold
 on:
   push:
   pull_request:
+permissions:
+  contents: read
+  id-token: write
 concurrency:
   group: "${{ github.ref }}"
   cancel-in-progress: true
@@ -117,14 +120,11 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Setup Code Climate test-reporter
-        if: matrix.coverage
-        run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-          ./cc-test-reporter before-build
       - run: COVERAGE=${{ matrix.coverage}} bundle exec rake
-      - run: "./cc-test-reporter after-build -t simplecov -r ${{secrets.CC_TEST_REPORTER_ID}}"
+      - uses: qltysh/qlty-action/coverage@v1
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: COVERAGE_FILE_PATH
         if: matrix.coverage
       - uses: actions/upload-artifact@v4.1.0
         if: success() && matrix.coverage
