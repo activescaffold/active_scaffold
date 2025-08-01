@@ -533,8 +533,8 @@ module ActiveScaffold::DataStructures
       # default all the configurable variables
       self.css_class = ''
       validators_force_require_on = active_record_class.validators_on(name)
-                                                       .map { |val| validator_force_required?(val) }
-                                                       .compact_blank
+                                      .map { |val| validator_force_required?(val) }
+                                      .compact_blank
       self.required = validators_force_require_on.any?(true) ||
                       validators_force_require_on.reject { |opt| opt == true }.flatten.presence
       self.sort = true
