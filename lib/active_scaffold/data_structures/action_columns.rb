@@ -86,7 +86,7 @@ module ActiveScaffold::DataStructures
             yield item
           end
         else
-          next if skip_column?(item, options)
+          next if !options[:skip_authorization] && skip_column?(item, options)
 
           yield columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, columns.active_record_class)
         end

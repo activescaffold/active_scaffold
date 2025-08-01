@@ -92,6 +92,11 @@ module ActiveScaffold::DataStructures
         # a collection of associations to pre-load when finding the records on a page
         attr_reader :includes
 
+        # a collection of associations to pre-load when the column is used as a subform,
+        # defaults to true, which means get associations from subform columns in the associated controller
+        # set to any other value to avoid checking the associated controller, false or nil to prevent preloading
+        attr_reader :subform_includes
+
         # a place to store dev's column specific options
         attr_writer :options
 
@@ -282,6 +287,14 @@ module ActiveScaffold::DataStructures
         @includes =
           case value
           when Array then value
+          else value ? [value] : value # not convert nil to [nil]
+          end
+      end
+
+      def subform_includes=(value)
+        @subform_includes =
+          case value
+          when Array, TrueClass then value
           else value ? [value] : value # not convert nil to [nil]
           end
       end
@@ -515,12 +528,13 @@ module ActiveScaffold::DataStructures
       if delegated_association
         self.includes = includes ? [delegated_association.name => includes] : [delegated_association.name]
       end
+      self.subform_includes = true if association
 
       # default all the configurable variables
       self.css_class = ''
       validators_force_require_on = active_record_class.validators_on(name)
-                                      .map { |val| validator_force_required?(val) }
-                                      .compact_blank
+                                                       .map { |val| validator_force_required?(val) }
+                                                       .compact_blank
       self.required = validators_force_require_on.any?(true) ||
                       validators_force_require_on.reject { |opt| opt == true }.flatten.presence
       self.sort = true

@@ -148,10 +148,8 @@ module ActiveScaffold::Actions
 
     def setup_parent
       cfg = main_form_controller.active_scaffold_config
-      parent_model = cfg.model
-      parent = parent_model.new
-      copy_attributes(find_if_allowed(params[:parent_id], :read, parent_model), parent) if params[:parent_id]
-      parent.id = params[:parent_id]
+      parent = cfg.model.new
+      copy_data_from_saved_record(params[:parent_id], cfg, parent) if params[:parent_id]
       apply_constraints_to_record(parent) unless params[:parent_id]
       if @column.send_form_on_update_column
         parent = update_record_from_params(parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], true)
@@ -164,6 +162,12 @@ module ActiveScaffold::Actions
         end
       end
       parent
+    end
+
+    def copy_data_from_saved_record(id, config = active_scaffold_config, record = nil)
+      preload_values = preload_for_form(config.update.columns) if config.actions.include?(:update)
+      saved_record = find_if_allowed(id, :read, config.model.preload(preload_values))
+      copy_attributes(saved_record, record).tap { |new_record| new_record.id = id }
     end
 
     def find_from_scope(parent, scope)
@@ -190,6 +194,9 @@ module ActiveScaffold::Actions
     def copy_attributes(orig, dst = nil)
       dst ||= orig.class.new
       orig.attributes.each { |attr, value| dst.send :write_attribute, attr, value }
+      orig.class.reflect_on_all_associations.each do |assoc|
+        dst.association(assoc.name).target = orig.association(assoc.name).target if orig.send(:association_cached?, assoc.name)
+      end
       dst
     end
 
@@ -201,6 +208,27 @@ module ActiveScaffold::Actions
         @parent_sti_controller = controller.controller_path == params[:parent_sti] ? controller : false
       end
       @parent_sti_controller
+    end
+
+    def preload_for_form(columns, preloaded_models = [])
+      association_columns = []
+      columns.each_column(flatten: true, skip_authorization: true) do |column|
+        association_columns << column if column.association && column.subform_includes
+      end
+
+      association_columns.filter_map do |column|
+        if column.form_ui.nil? && column.subform_includes == true && preloaded_models.exclude?(column.association.klass)
+          config = active_scaffold_config_for(column.association.klass)
+          if config.actions.include?(:subform)
+            preload_values = preload_for_form(config.subform.columns, preloaded_models + [column.association.klass])
+          end
+          preload_values ? {column.name => preload_values} : column.name
+        elsif column.subform_includes != true
+          {column.name => column.subform_includes}
+        else
+          column.name
+        end
+      end
     end
 
     # override this method if you want to do something after render_field

@@ -97,7 +97,8 @@ module ActiveScaffold::Actions
     # A simple method to find and prepare a record for editing
     # May be overridden to customize the record (set default values, etc.)
     def do_edit
-      @record = find_if_allowed(params[:id], :update)
+      preload_values = preload_for_form(active_scaffold_config.update.columns)
+      @record = find_if_allowed(params[:id], :update, filtered_query.preload(preload_values))
     end
 
     # A complex method to update a record. The complexity comes from the support for subforms,
