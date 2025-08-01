@@ -3,8 +3,9 @@
 - Display unauthorized subform with show_ui as show action, to display readonly subform tables
 - Add subform_includes to column, and preload_for_form method to preload associations on edit action, speed up on big forms with long subforms or many nested subforms
 
-= 4.1.1 (not released yet)
+= 4.1.1
 - Load dartsass-sprockets, so it isn't required in the Gemfile
+- Fix refreshing a column in a subform without sending the whole form
 
 = 4.1.0
 - Replace sassc-rails with dartsass-sprockets, as it's a compatible replacement, to ease migration to dartsass
