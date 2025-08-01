@@ -89,12 +89,13 @@ module ActiveScaffold::Actions
       process_render_field_params
 
       @record = find_from_scope(setup_parent, @scope) if main_form_controller && @scope
-      @record ||=
-        if @column.send_form_on_update_column
-          updated_record_with_form(@main_columns, params[:record] || params[:search], @scope)
-        else
-          updated_record_with_column(@column, params.delete(:value), @scope)
-        end
+      if @column.send_form_on_update_column
+        @record ||= updated_record_with_form(@main_columns, params[:record] || params[:search], @scope)
+      elsif @record
+        update_column_from_params(@record, @column, params.delete(:value), true)
+      else
+        @record = updated_record_with_column(@column, params.delete(:value), @scope)
+      end
       after_render_field(@record, @column)
     end
 
