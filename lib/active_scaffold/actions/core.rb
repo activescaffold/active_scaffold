@@ -107,12 +107,10 @@ module ActiveScaffold::Actions
         id = params[:id]
       end
 
-      # check permissions and support overriding to_param
-      saved_record = find_if_allowed(id, :read) if id
-      # call update_record_from_params with new_model
-      # in other case some associations can be saved
+      # call update_record_from_params with new_model, in other case some associations can be saved
       record = new_model
-      copy_attributes(saved_record, record) if saved_record
+      # check permissions and support overriding to_param, preload associations
+      copy_data_from_saved_record(id, active_scaffold_config, record) if id
       apply_constraints_to_record(record) unless scope
       create_association_with_parent record, check_match: true if nested?
       if @form_action == :field_search
@@ -123,7 +121,7 @@ module ActiveScaffold::Actions
     end
 
     def updated_record_with_column(column, value, scope)
-      record = params[:id] ? copy_attributes(find_if_allowed(params[:id], :read)) : new_model
+      record = params[:id] ? copy_data_from_saved_record(params[:id]) : new_model
       apply_constraints_to_record(record) unless scope || params[:id]
       create_association_with_parent record, check_match: true if nested?
       if @form_action == :field_search && value.is_a?(Array) && column.association&.singular?
