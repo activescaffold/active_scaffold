@@ -4,7 +4,9 @@ require 'rails/generators/base'
 module ActiveScaffold
   module Generators
     class InstallGenerator < Rails::Generators::Base
-      desc 'Add concerns to routes and require lines to assets manifest files'
+      def self.base_root
+        File.expand_path '../..', __dir__
+      end
 
       def add_concern_routes
         route 'concern :active_scaffold, ActiveScaffold::Routing::Basic.new(association: true)'
