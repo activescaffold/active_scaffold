@@ -159,7 +159,7 @@ module ActiveScaffold
         # value may be Array if using update_columns in field_search with multi-select
         return if value.blank? || value.is_a?(Array)
 
-        if parent_record.association_cached?(column.name) && parent_record.send(column.name).id.to_s == value
+        if parent_record.association_cached?(column.name) && parent_record.send(column.name)&.id&.to_s == value
           parent_record.send(column.name)
         else
           klass = column.association.klass(parent_record)
