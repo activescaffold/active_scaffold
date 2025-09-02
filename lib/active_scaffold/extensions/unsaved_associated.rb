@@ -1,6 +1,6 @@
 # save and validation support for associations.
 class ActiveRecord::Base
-  def associated_valid?(path = [])
+  def associated_valid?(path = ::Set.new)
     return true if path.include?(self) # prevent recursion (if associated and parent are new records)
 
     path << self
