@@ -69,7 +69,9 @@ module ActiveScaffold::Bridges
           ampm: false,
           hourText: I18n.translate!('datetime.prompts.hour', locale: locale),
           minuteText: I18n.translate!('datetime.prompts.minute', locale: locale),
-          secondText: I18n.translate!('datetime.prompts.second', locale: locale)
+          secondText: I18n.translate!('datetime.prompts.second', locale: locale),
+          millisecText: I18n.translate!('datetime.prompts.millisec', locale: locale),
+          microsecText: I18n.translate!('datetime.prompts.microsec', locale: locale)
         }
 
         as_datetime_picker_options = I18n.translate! :datetime_picker_options, scope: :active_scaffold, locale: locale, default: ''
