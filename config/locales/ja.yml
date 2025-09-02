@@ -154,3 +154,7 @@ ja:
   time:
     formats:
       picker: "%Y年%m月%d日（%a） %H:%M:%S"
+  datetime:
+    prompts:
+      millisec:
+      microsec:

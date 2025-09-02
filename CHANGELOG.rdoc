@@ -4,6 +4,7 @@
 - Add subform_includes to column, and preload_for_form method to preload associations on edit action, speed up on big forms with long subforms or many nested subforms
 - Speedup on refreshing columns and saving big forms
 - Support add_new with chosen bridge
+- Added translations for millisec and microsec prompts in jquery UI datetime picker
 
 = 4.1.1
 - Load dartsass-sprockets, so it isn't required in the Gemfile

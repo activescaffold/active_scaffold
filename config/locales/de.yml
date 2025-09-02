@@ -154,3 +154,8 @@ de:
   time:
     formats:
       picker: "%d.%m.%Y %H:%M"
+  datetime:
+    prompts:
+      millisec:
+      microsec:
+
