@@ -57,7 +57,7 @@ module ActiveScaffold
 
         [start_number, last_page + 1].max.upto(end_number) do |num|
           html << if current_page.number == num
-                    content_tag(:span, num.to_s, class: 'as_paginate current')
+                    pagination_active_page(num, url_options, options)
                   else
                     pagination_ajax_link(num, url_options, options)
                   end
