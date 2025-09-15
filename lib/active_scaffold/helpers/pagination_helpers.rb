@@ -2,7 +2,7 @@ module ActiveScaffold
   module Helpers
     module PaginationHelpers
       def pagination_ajax_link(page_number, url_options, options)
-        link_to page_number, url_options.merge(page: page_number), options.merge(class: 'as_paginate')
+        link_to page_number, url_options.merge(page: page_number), ui_attributes_for_pagination_link(options.merge(class: 'as_paginate'), page_number)
       end
 
       def pagination_url_options(url_options = nil)
@@ -13,6 +13,14 @@ module ActiveScaffold
           url_options = params_for(url_options)
         end
         url_options
+      end
+
+      def pagination_active_page(page_number, url_options, options)
+        content_tag :span, page_number, ui_attributes_for_pagination_link({class: 'as_paginate current'}, :current)
+      end
+
+      def pagination_gap(options)
+        '..'
       end
 
       def pagination_ajax_links(current_page, url_options, options, inner_window, outer_window)
@@ -40,12 +48,12 @@ module ActiveScaffold
             page = current_page.number - offset
             next unless page < start_number && page > last_page
 
-            html << '..' if page > last_page + 1
+            html << pagination_gap(options) if page > last_page + 1
             html << pagination_ajax_link(page, url_options, options)
             last_page = page
           end
         end
-        html << '..' if start_number > last_page + 1
+        html << pagination_gap(options) if start_number > last_page + 1
 
         [start_number, last_page + 1].max.upto(end_number) do |num|
           html << if current_page.number == num
@@ -57,10 +65,10 @@ module ActiveScaffold
 
         if current_page.pager.infinite?
           offsets.each do |offset|
-            html << '..' << pagination_ajax_link(current_page.number + offset, url_options, options)
+            html << pagination_gap(options) << pagination_ajax_link(current_page.number + offset, url_options, options)
           end
         else
-          html << '..' unless end_number >= current_page.pager.last.number - outer_window - 1
+          html << pagination_gap(options) unless end_number >= current_page.pager.last.number - outer_window - 1
           [end_number + 1, current_page.pager.last.number - outer_window].max.upto(current_page.pager.last.number) do |num|
             html << pagination_ajax_link(num, url_options, options)
           end
