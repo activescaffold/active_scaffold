@@ -266,14 +266,14 @@ module ActiveScaffold
     # Attempts to find an instance of klass (which must be an ActiveRecord object) with id primary key
     # Returns record from current if it's included or find from DB
     def record_from_current_or_find(klass, id, current, avoid_changes = false)
-      record = record_from_current(klass, id, current)
+      record = record_from_current(current, id)
       record ||= klass.new(klass.primary_key => id) if avoid_changes
       record ||= klass.find(id)
       record = copy_attributes(record) if avoid_changes && record.persisted?
       record
     end
 
-    def record_from_current(klass, id, current)
+    def record_from_current(current, id)
       if current.is_a?(ActiveRecord::Base) && current.id.to_s == id
         # modifying the current object of a singular association
         current
