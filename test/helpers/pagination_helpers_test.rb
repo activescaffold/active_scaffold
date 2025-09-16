@@ -2,6 +2,7 @@ require 'test_helper'
 
 class PaginationHelpersTest < ActiveSupport::TestCase
   include ActiveScaffold::Helpers::PaginationHelpers
+  include ActiveScaffold::Helpers::FrameworkUiHelpers
   include ActionView::Helpers::OutputSafetyHelper
 
   def active_scaffold_config
