@@ -115,6 +115,7 @@
           if (action_link.is_disabled()) {
             return false;
           } else {
+            if (action_link.position == 'popup') ActiveScaffold.open_popup('<div class="loading"></div>', action_link);
             if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','visible');
             action_link.disable();
           }
@@ -150,6 +151,8 @@
         var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
         if (action_link) {
           ActiveScaffold.report_500_response(action_link.scaffold_id(), xhr);
+          if (action_link.position == 'popup') action_link.close();
+          if (action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');
           action_link.enable();
         }
         return true;
@@ -1260,9 +1263,13 @@
       },
 
       open_popup: function(content, link) {
-        var element = jQuery(content).filter(function(){ return this.tagName; }).dialog({
+        var element = jQuery(content).filter(function(){ return this.tagName; })
+        if (link.adapter) link.adapter.dialog('close');
+        element.dialog({
           modal: true,
-          close: function() { link.close(); },
+          close: function () {
+            if (!link.adapter.is('.loading')) link.close();
+          },
           width: ActiveScaffold.config.popup_width || '80%'
         });
         link.set_adapter(element);
@@ -1271,6 +1278,7 @@
       close_popup: function(link, callback) {
         link.adapter.dialog('close');
         ActiveScaffold.remove(link.adapter, callback);
+        link.set_adapter(null);
       }
     }
 
@@ -1442,9 +1450,11 @@
 
       set_adapter: function(element) {
         this.adapter = element;
-        this.adapter.addClass('as_adapter');
-        this.adapter.data('action_link', this);
-        if (this.refresh_url) jQuery('.as_cancel', this.adapter).attr('href', this.refresh_url);
+        if (element) {
+          this.adapter.addClass('as_adapter');
+          this.adapter.data('action_link', this);
+          if (this.refresh_url) jQuery('.as_cancel', this.adapter).attr('href', this.refresh_url);
+        }
       },
 
       keep_open: function() {

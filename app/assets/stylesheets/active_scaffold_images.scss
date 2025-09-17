@@ -57,3 +57,9 @@ background-image: image-url('active_scaffold/close_touch.png');
 .active-scaffold .refresh-link {
 background-image: image-url('active_scaffold/refresh.png');
 }
+
+.ui-dialog .loading::after {
+  background: image-url('active_scaffold/indicator.gif') no-repeat;
+  content: 'Loading...';
+  padding-left: 20px;
+}
