@@ -3,6 +3,8 @@ module ActiveScaffold
     module FrameworkUiHelpers
       def ui_attributes_for_list_table = nil
 
+      def ui_attributes_for_list_actions(attrs) = attrs
+
       def ui_attributes_for_pagination_links(attrs) = attrs
 
       # page may be a number, :previous, :next or :current

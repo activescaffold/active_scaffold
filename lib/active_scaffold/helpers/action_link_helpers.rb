@@ -94,7 +94,6 @@ module ActiveScaffold
           group_tag = :li
         end
         attrs = ui_attributes_for_action_link_group({class: html_classes.presence}, options[:level], options[:first_action])
-        ui_attributes_for_action_link_group({class: html_classes.presence}, options[:level], options[:first_action])
         content_tag(group_tag, attrs) do
           content_tag(:div, link.label(record), class: link.css_class, title: options[:title]) <<
             content_tag(:ul, content, ui_attributes_for_action_link_group_content)
