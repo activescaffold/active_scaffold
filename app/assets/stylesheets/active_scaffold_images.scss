@@ -1,3 +1,40 @@
+.active-scaffold-header div.actions a.new,
+.active-scaffold-header div.actions a.new_existing,
+.active-scaffold-header div.actions a.show_search,
+.active-scaffold-header div.actions a.show_config_list,
+.active-scaffold div.actions div.action_group div {
+  margin:0;
+  padding: 5px 5px 5px 25px;
+  background-position: 5px 50%;
+  background-repeat: no-repeat;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.new,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.new_existing,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.show_search,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.show_config_list,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions div.action_group > div {
+  margin:0;
+  padding: 1px 5px 1px 20px;
+  background-position: 1px 50%;
+  background-repeat: no-repeat;
+}
+
+.active-scaffold .actions .action_group ul li div {
+  margin: 0;
+  padding: 5px 5px 5px 25px;
+  background-position: 5px 50%;
+  background-repeat: no-repeat;
+}
+
+.active-scaffold .actions .action_group ul li a {
+  display: block;
+  margin: 0;
+  padding: 5px 5px 5px 25px;
+  background-position: 5px 50%;
+  background-repeat: no-repeat;
+}
+
 .active-scaffold-header div.actions div.action_group div {
   background-image: image-url('active_scaffold/gears.png'); /* default icon for actions or override with css */
 }
