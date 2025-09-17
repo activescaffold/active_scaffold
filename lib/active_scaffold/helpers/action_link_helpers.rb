@@ -75,23 +75,30 @@ module ActiveScaffold
 
       def display_action_link(link, content, record, options)
         if content
-          html_classes = hover_via_click? ? 'hover_click ' : ''
-          if options[:level].zero?
-            html_classes << 'action_group'
-            group_tag = :div
-          else
-            html_classes << 'top' if options[:first_action]
-            group_tag = :li
-          end
-          content = content_tag(group_tag, class: html_classes.presence, onclick: ('' if hover_via_click?)) do
-            content_tag(:div, link.label(record), class: link.css_class, title: options[:title]) << content_tag(:ul, content)
-          end
+          content = render_action_link_group(link, content, record, options)
         else
           content = render_action_link(link, record, options)
           content = content_tag(:li, content, class: ('top' if options[:first_action])) unless options[:level].zero?
         end
         content = content_tag(options[:level_0_tag], content, options[:options_level_0_tag]) if options[:level].zero? && options[:level_0_tag]
         content
+      end
+
+      def render_action_link_group(link, content, record, options)
+        html_classes = hover_via_click? ? +'hover_click ' : +''
+        if options[:level].zero?
+          html_classes << 'action_group'
+          group_tag = :div
+        else
+          html_classes << 'top' if options[:first_action]
+          group_tag = :li
+        end
+        attrs = ui_attributes_for_action_link_group({class: html_classes.presence}, options[:level], options[:first_action])
+        ui_attributes_for_action_link_group({class: html_classes.presence}, options[:level], options[:first_action])
+        content_tag(group_tag, attrs) do
+          content_tag(:div, link.label(record), class: link.css_class, title: options[:title]) <<
+            content_tag(:ul, content, ui_attributes_for_action_link_group_content)
+        end
       end
 
       def render_action_link(link, record = nil, options = {})

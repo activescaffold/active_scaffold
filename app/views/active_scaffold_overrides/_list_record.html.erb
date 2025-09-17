@@ -16,13 +16,15 @@ data_refresh ||= record.to_param
   <% end -%>
 
   <% unless grouped_search? -%>
-  <td class="actions"><table>
-    <tr>
-      <td class="indicator-container">
-        <%= loading_indicator_tag(action: :record, id: record.id) %>
-      </td>
-      <%= display_action_links(action_links, record, level_0_tag: :td, for: record.persisted? ? record : record.class) %>
-    </tr>
-  </table></td>
+  <td class="actions">
+    <%= content_tag :table, ui_attributes_for_record_action_links do %>
+      <tr>
+        <td class="indicator-container">
+          <%= loading_indicator_tag(action: :record, id: record.id) %>
+        </td>
+        <%= display_action_links(action_links, record, level_0_tag: :td, for: record.persisted? ? record : record.class) %>
+      </tr>
+    <% end %>>
+  </td>
   <% end -%>
 <% end %>
