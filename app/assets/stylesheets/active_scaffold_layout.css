@@ -72,8 +72,6 @@ text-decoration: none;
 padding: 1px 2px;
 white-space: nowrap;
 margin-left: 5px;
-background-position: 1px 50%;
-background-repeat: no-repeat;
 }
 
 .active-scaffold div.actions a {
@@ -324,8 +322,6 @@ text-align: left;
 .active-scaffold .actions .action_group ul li div {
     margin: 0;
     padding: 5px 5px 5px 25px;
-    background-position: 5px 50%;
-    background-repeat: no-repeat;
 }
 
 .active-scaffold .actions .action_group ul li a {
@@ -373,10 +369,6 @@ border-bottom: none;
 
 .active-scaffold a.inline-adapter-close {
 float: right;
-text-indent: -4000px;
-width: 16px;
-height: 17px;
-background: 0 0 no-repeat;
 }
 
 /* Nested
@@ -804,8 +796,6 @@ display: inline-block;
 width: 25px;
 text-indent: 26px;
 overflow: hidden;
-background-position: 5px 50%;
-background-repeat: no-repeat;
 }
 
 .active-scaffold .checkbox-list {
@@ -1107,7 +1097,6 @@ padding: 7px 5px 7px 25px;
 .as_touch .active-scaffold div.actions > a.show_config_list,
 .as_touch .active-scaffold div.actions div.action_group > div {
 padding: 7px 5px 7px 25px;
-background-position: 5px 50%;
 }
 
 .as_touch .actions .action_group ul li div {

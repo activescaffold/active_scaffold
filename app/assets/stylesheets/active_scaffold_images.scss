@@ -63,6 +63,11 @@ background-image: image-url('active_scaffold/indicator-small.gif');
 
 .active-scaffold a.inline-adapter-close {
 background-image: image-url('active_scaffold/close.png');
+text-indent: 16px;
+width: 16px;
+height: 17px;
+background: 0 0 no-repeat;
+overflow: hidden;
 }
 
 .active-scaffold .sub-form .association-record a.destroy {
@@ -74,4 +79,6 @@ background-image: image-url('active_scaffold/close_touch.png');
 }
 .active-scaffold .refresh-link {
 background-image: image-url('active_scaffold/refresh.png');
+background-position: 5px 50%;
+background-repeat: no-repeat;
 }
