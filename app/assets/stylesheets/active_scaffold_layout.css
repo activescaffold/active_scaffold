@@ -120,6 +120,23 @@ top: -3px;
 opacity: 0.5;
 }
 
+.active-scaffold-header div.actions a.new,
+.active-scaffold-header div.actions a.new_existing,
+.active-scaffold-header div.actions a.show_search,
+.active-scaffold-header div.actions a.show_config_list,
+.active-scaffold div.actions div.action_group div {
+    margin: 0;
+    padding: 5px 5px 5px 25px;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.new,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.new_existing,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.show_search,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.show_config_list,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions div.action_group > div {
+    margin: 0;
+    padding: 1px 5px 1px 20px;
+}
 
 .active-scaffold div.actions a.disabled:hover,
 .active-scaffold div.actions a.disabled:hover {
