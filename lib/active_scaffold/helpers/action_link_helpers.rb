@@ -70,7 +70,7 @@ module ActiveScaffold
 
       def display_action_link_separator(options)
         tag = options[:level_0_tag] || :a if options[:level].zero?
-        content_tag(tag || :li, '&nbsp;'.html_safe, class: 'separator')
+        content_tag(tag || :li, '&nbsp;'.html_safe, ui_attributes_for_action_link_separator(class: 'separator'))
       end
 
       def display_action_link(link, content, record, options)
