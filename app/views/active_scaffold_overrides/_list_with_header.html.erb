@@ -1,5 +1,5 @@
 <%= content_tag(:div, id: active_scaffold_id, class: as_main_div_class, data: as_main_div_data) do %>
-  <%= content_tag :div, class: "active-scaffold-header" do %>
+  <%= content_tag :div, ui_attributes_for_list_header(class: 'active-scaffold-header') do %>
     <%= render 'list_header' %>
   <% end %>
   <table>
