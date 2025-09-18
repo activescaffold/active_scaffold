@@ -1,4 +1,4 @@
-<div class="active-scaffold-footer">
+<%= content_tag :div, ui_attributes_for_list_footer(class: 'active-scaffold-footer') do %>
 <% if active_scaffold_config.list.pagination != :infinite -%>
   <div class="active-scaffold-found"><span class="active-scaffold-records"><%= @page.pager.count -%></span> <%= as_(:found, count: @page.pager.count) %></div>
 <% end -%>
@@ -8,4 +8,4 @@
   <% end -%>
 <% end -%>
   <br /><!-- to clear this block -->
-</div>
+<% end -%>

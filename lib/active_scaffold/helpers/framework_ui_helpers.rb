@@ -5,6 +5,8 @@ module ActiveScaffold
 
       def ui_attributes_for_list_table = nil
 
+      def ui_attributes_for_list_footer(attrs) = attrs
+
       def ui_attributes_for_list_actions(attrs) = attrs
 
       def ui_attributes_for_filters(attrs) = attrs
