@@ -304,6 +304,21 @@ text-align: left;
   border-top: none;
 }
 
+.active-scaffold .actions .action_group ul li div {
+    margin: 0;
+    padding: 5px 5px 5px 25px;
+    background-position: 5px 50%;
+    background-repeat: no-repeat;
+}
+
+.active-scaffold .actions .action_group ul li a {
+    display: block;
+    margin: 0;
+    padding: 5px 5px 5px 25px;
+    background-position: 5px 50%;
+    background-repeat: no-repeat;
+}
+
 .active-scaffold .actions .action_group.dyn > ul li a {
   padding-left: 5px;
 }
