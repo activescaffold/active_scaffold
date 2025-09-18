@@ -1,7 +1,7 @@
 <%= content_tag(:div, id: active_scaffold_id, class: as_main_div_class, data: as_main_div_data) do %>
-  <div class="active-scaffold-header">
+  <%= content_tag :div, class: "active-scaffold-header" do %>
     <%= render 'list_header' %>
-  </div>
+  <% end %>
   <table>
     <tbody class="before-header" id="<%= before_header_id -%>">
       <% if active_scaffold_config.list.always_show_search %>

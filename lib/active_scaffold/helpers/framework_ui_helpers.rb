@@ -1,9 +1,13 @@
 module ActiveScaffold
   module Helpers
     module FrameworkUiHelpers
+      def ui_attributes_for_list_header(attrs) = attrs
+
       def ui_attributes_for_list_table = nil
 
       def ui_attributes_for_list_actions(attrs) = attrs
+
+      def ui_attributes_for_filters(attrs) = attrs
 
       def ui_attributes_for_pagination_links(attrs) = attrs
 
