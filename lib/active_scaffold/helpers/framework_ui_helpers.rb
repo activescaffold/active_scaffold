@@ -23,6 +23,8 @@ module ActiveScaffold
       def ui_attributes_for_action_link_separator(attrs) = attrs
 
       def ui_attributes_for_record_action_links = nil
+
+      def ui_attributes_for_fields_container(attrs) = attrs
     end
   end
 end

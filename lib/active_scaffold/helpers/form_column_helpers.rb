@@ -193,6 +193,8 @@ module ActiveScaffold
         end
       end
 
+      def form_ui_class(form_ui) = form_ui
+
       def form_column_is_hidden?(column, record, scope = nil)
         if column.hide_form_column_if.respond_to?(:call)
           column.hide_form_column_if.call(record, column, scope)
