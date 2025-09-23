@@ -55,7 +55,7 @@ background-image: image-url('active_scaffold/arrow_down.png');
     background-repeat: no-repeat;
     background-size: contain;
     width: 16px;
-    text-indent: 20px;
+    text-indent: 1000px;
     overflow: hidden;
     white-space: nowrap;
   }
@@ -70,7 +70,7 @@ background-image: image-url('active_scaffold/indicator-small.gif');
 
 .active-scaffold a.inline-adapter-close {
 background-image: image-url('active_scaffold/close.png');
-text-indent: 16px;
+text-indent: 1000px;
 width: 16px;
 height: 17px;
 background: 0 0 no-repeat;
