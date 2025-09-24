@@ -943,12 +943,7 @@ clear: left;
 .active-scaffold .sub-form .association-record a.destroy {
 font-weight: bold;
 display: block;
-height: 16px;
 padding: 0;
-width: 16px;
-text-indent: -4000px;
-background: 0 0 no-repeat;
-overflow: hidden;
 }
 
 .active-scaffold .sub-form .locked a.destroy {

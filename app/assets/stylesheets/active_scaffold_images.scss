@@ -79,6 +79,11 @@ overflow: hidden;
 
 .active-scaffold .sub-form .association-record a.destroy {
 background-image: image-url('active_scaffold/cross.png');
+height: 16px;
+width: 16px;
+text-indent: -4000px;
+background: 0 0 no-repeat;
+overflow: hidden;
 }
 
 .as_touch a.inline-adapter-close {
