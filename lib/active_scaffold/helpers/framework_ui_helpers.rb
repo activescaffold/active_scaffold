@@ -3,6 +3,10 @@ module ActiveScaffold
     module FrameworkUiHelpers
       def ui_attributes_for_list_header(attrs) = attrs
 
+      def ui_attributes_for_list_content(attrs) = attrs
+
+      def ui_attributes_for_before_header_table = nil
+
       def ui_attributes_for_list_table = nil
 
       def ui_attributes_for_list_footer(attrs) = attrs
@@ -23,6 +27,8 @@ module ActiveScaffold
       def ui_attributes_for_action_link_separator(attrs) = attrs
 
       def ui_attributes_for_record_action_links = nil
+
+      def ui_attributes_for_form(attrs) = attrs
 
       def ui_attributes_for_fields_container(attrs) = attrs
     end

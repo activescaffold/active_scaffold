@@ -2,7 +2,7 @@
   <%= content_tag :div, ui_attributes_for_list_header(class: 'active-scaffold-header') do %>
     <%= render 'list_header' %>
   <% end %>
-  <table>
+  <%= content_tag :table, ui_attributes_for_before_header_table do %>
     <tbody class="before-header" id="<%= before_header_id -%>">
       <% if active_scaffold_config.list.always_show_search %>
       <% old_record, @record = @record, active_scaffold_config.model.new %>
@@ -29,8 +29,8 @@
       <% @record = old_record %>
       <% end %>
     </tbody>
-  </table>
-  <div id="<%= active_scaffold_content_id-%>" class="as_content">
+  <% end %>
+  <%= content_tag :div, ui_attributes_for_list_content(id: active_scaffold_content_id, class: 'as_content') do %>
     <%= render 'list' %>
-  </div>
+  <% end %>
 <% end %>
