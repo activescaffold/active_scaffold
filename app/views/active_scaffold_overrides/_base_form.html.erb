@@ -7,6 +7,7 @@
      multipart ||= action_config.multipart? unless local_assigns.key? :multipart
      columns ||= action_config.columns unless local_assigns.key? :columns
      persistent ||= action_config.persistent unless local_assigns.key? :persistent
+     field_descriptions ||= action_config.field_descriptions
      if !local_assigns.key?(:floating_footer) && action_config.respond_to?(:floating_footer)
        floating_footer = action_config.floating_footer
      end
@@ -17,6 +18,7 @@
      multipart ||= false
      columns ||= nil
      persistent ||= false
+     field_descriptions ||= :show
    end
    floating_footer ||= false
    method ||= :post
@@ -29,7 +31,7 @@
 <%=
 options = {id: form_id,
            multipart: multipart,
-           class: "as_form #{form_action}",
+           class: "as_form #{form_action} #{"descriptions-#{field_descriptions}" if field_descriptions != :show}",
            method: method,
            'data-loading' => defined?(loading) ? loading : true}
 cancel_options = {class: 'as_cancel'}

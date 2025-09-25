@@ -761,6 +761,95 @@ display: inline-block;
 font-size: 10px;
 margin-left: 5px;
 }
+.active-scaffold .description .close {
+  display: none;
+}
+
+.active-scaffold .descriptions-hover, .active-scaffold .descriptions-click {
+  .horizontal-sub-form td .description {
+    display: none;
+  }
+  dd > .description {
+    position: absolute;
+  }
+  .horizontal-sub-form th, dd {
+    position: relative;
+    .description {
+      display: inline-block;
+      width: 1.5em;
+      height: 1.5em;
+      overflow: hidden;
+      white-space: nowrap;
+      color: blue;
+      top: 2px;
+      font-weight: normal;
+
+      &::before {
+        display: flex;
+        content: '?';
+        border-radius: 0.75em;
+        background: lightgray;
+        height: 1.5em;
+        width: 1.5em;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+  .horizontal-sub-form th .description {
+    left: 0;
+  }
+  dd > .description {
+    right: -1em;
+  }
+}
+
+.active-scaffold .descriptions-hover .horizontal-sub-form th .description:hover,
+.active-scaffold .descriptions-hover dd .description:hover,
+.active-scaffold .descriptions-click .horizontal-sub-form th .description.visible,
+.active-scaffold .descriptions-click dd .description.visible {
+  position: absolute;
+  width: auto;
+  height: auto;
+  white-space: normal;
+  background: white;
+  padding: 2px 5px;
+  z-index: 100; /* Ensure it's above other content */
+  display: block;
+  &::before {
+    display: none;
+  }
+}
+
+.active-scaffold .descriptions-click {
+  .horizontal-sub-form th .description, dd .description {
+    cursor: pointer;
+    &.visible {
+      overflow: visible;
+      cursor: auto;
+      padding-right: 10px;
+    }
+    &.visible .close {
+      &::before {
+        content: 'x';
+      }
+      position: absolute;
+      top: -10px;
+      right: -5px;
+      background: lightgray;
+      border-radius: 10px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.active-scaffold .sub-form.optional[style=""] ~ .description {
+  display: none;
+}
 
 .active-scaffold .required label {
 font-weight: bold;

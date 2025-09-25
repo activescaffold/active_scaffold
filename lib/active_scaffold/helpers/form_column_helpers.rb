@@ -203,6 +203,11 @@ module ActiveScaffold
         end
       end
 
+      def column_description(column, record, scope = nil)
+        desc = column.description(record, scope)
+        content_tag(:span, h(desc) + content_tag(:span, nil, class: 'close'), class: 'description') if desc.present?
+      end
+
       def form_attribute(column, record, scope = nil, only_value = false, col_class = nil)
         column_options = active_scaffold_input_options(column, scope, object: record)
         collapsible_id = column_options.delete :collapsible_id
@@ -221,8 +226,8 @@ module ActiveScaffold
         end
         if field
           field << loading_indicator_tag(action: :render_field, id: params[:id]) if column.update_columns
-          desc = column.description(record, scope)
-          field << content_tag(:span, desc, class: 'description') if desc.present?
+          desc = column_description(column, record, scope)
+          field << desc if desc.present?
         end
 
         label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))

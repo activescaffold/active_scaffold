@@ -471,6 +471,14 @@
         e.preventDefault();
         ActiveScaffold.update_all_checkboxes(jQuery(this), false);
       });
+      jQuery(document).on('click', '.descriptions-click .description:not(.visible)', function(e) {
+        e.preventDefault();
+        $(this).addClass('visible');
+      });
+      jQuery(document).on('click', '.descriptions-click .description.visible .close', function(e) {
+        e.preventDefault();
+        $(this).closest('.description').removeClass('visible');
+      });
     });
 
     jQuery(document).on('turbolinks:load turbo:load', function($) {
