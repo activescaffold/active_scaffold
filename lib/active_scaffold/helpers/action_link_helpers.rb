@@ -77,10 +77,10 @@ module ActiveScaffold
         if content
           html_classes = hover_via_click? ? 'hover_click ' : ''
           if options[:level].zero?
-            html_classes << 'action_group'
+            html_classes += 'action_group'
             group_tag = :div
           else
-            html_classes << 'top' if options[:first_action]
+            html_classes += 'top' if options[:first_action]
             group_tag = :li
           end
           content = content_tag(group_tag, class: html_classes.presence, onclick: ('' if hover_via_click?)) do
@@ -196,7 +196,7 @@ module ActiveScaffold
       end
 
       def replace_id_params_in_action_link_url(link, record, url)
-        url = record ? url.sub('--ID--', record.to_param.to_s) : url.clone
+        url = record ? url.sub('--ID--', record.to_param.to_s) : url.dup
         if link.column&.association&.singular?
           child_id = record.send(link.column.association.name)&.to_param
           if child_id.present?
