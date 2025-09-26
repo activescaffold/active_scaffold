@@ -34,7 +34,7 @@ options = {id: form_id,
            class: "as_form #{form_action} #{'floating-footer' if floating_footer} #{"descriptions-#{field_descriptions}" if field_descriptions != :show}",
            method: method,
            'data-loading' => defined?(loading) ? loading : true}
-cancel_options = {class: 'as_cancel'
+cancel_options = {class: 'as_cancel'}
 cancel_options[:remote] = true if xhr # cancel link does nt have to care about multipart forms
 if xhr && multipart # file_uploads
   form_remote_upload_tag url_options.merge(iframe: true), options
