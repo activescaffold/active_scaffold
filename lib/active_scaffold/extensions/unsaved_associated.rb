@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # save and validation support for associations.
 class ActiveRecord::Base
   def associated_valid?(path = ::Set.new)

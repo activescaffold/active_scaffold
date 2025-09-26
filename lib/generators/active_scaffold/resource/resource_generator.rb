@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails/generators/rails/resource/resource_generator'
 # require 'generators/active_scaffold_controller/active_scaffold_controller_generator'
 

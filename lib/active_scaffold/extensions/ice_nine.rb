@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module IceNine
   class Freezer
     def self.find(name)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   # Exposes a +configure+ method that accepts a block and runs all contents of the block in two contexts,
   # as opposed to the normal one. First, everything gets evaluated as part of the object including Configurable.

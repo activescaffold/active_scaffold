@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ConstMocker
   def initialize(const_name, parent = Object)
     @parent = parent

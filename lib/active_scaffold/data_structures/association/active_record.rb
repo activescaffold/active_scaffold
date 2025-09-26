@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures::Association
   class ActiveRecord < Abstract
     def self.reflect_on_all_associations(klass)

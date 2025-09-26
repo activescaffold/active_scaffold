@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class ConfigurableClass
-  FOO = 'bar'.freeze
+  FOO = 'bar'
   def foo; FOO end
 
   def self.foo; FOO end
@@ -20,7 +22,7 @@ class ConfigurableTest < ActiveSupport::TestCase
   ## constants and methods for tests to check against
   ##
   def hello; 'world' end
-  HELLO = 'world'.freeze
+  HELLO = 'world'
 
   def test_instance_configuration
     configurable_class = IncludedClass.new

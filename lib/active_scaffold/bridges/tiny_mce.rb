@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::TinyMce < ActiveScaffold::DataStructures::Bridge
   autoload :Helpers, 'active_scaffold/bridges/tiny_mce/helpers.rb'
   def self.install

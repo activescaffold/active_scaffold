@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures::Association
   class Mongoid < Abstract
     delegate :inverse_klass, :as, :dependent, :inverse, to: :@association

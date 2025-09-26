@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::Bitfields < ActiveScaffold::DataStructures::Bridge
   def self.install
     Dir[File.join(__dir__, 'bitfields', '*.rb')].each { |file| require file }

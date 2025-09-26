@@ -103,9 +103,6 @@ Rails/ActionControllerTestCase:
 Style/FormatString:
   EnforcedStyle: percent
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 Style/HashEachMethods:
   Enabled: true
 

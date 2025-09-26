@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Bridges
   class CountrySelect
     module FormColumnHelpers

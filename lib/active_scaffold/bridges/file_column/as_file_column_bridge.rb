@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveScaffold::DataStructures::Column.class_eval do
   attr_accessor :file_column_display
 end

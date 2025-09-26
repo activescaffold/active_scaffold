@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_scaffold_config_mock'
 
 class ClassWithFinder

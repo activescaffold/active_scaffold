@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::LogicalQueryParser < ActiveScaffold::DataStructures::Bridge
   def self.install
     require File.join(File.dirname(__FILE__), 'logical_query_parser/tokens_grammar')

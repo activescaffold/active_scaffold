@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::SemanticAttributes
   module Column
     def initialize(name, active_record_class)

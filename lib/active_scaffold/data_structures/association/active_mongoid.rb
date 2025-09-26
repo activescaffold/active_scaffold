@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures::Association
   class ActiveMongoid < Mongoid
     def self.reflect_on_all_associations(klass)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   class ActionLink
     NO_OPTIONS = {}.freeze

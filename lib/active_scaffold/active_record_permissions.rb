@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This module attempts to create permissions conventions for your ActiveRecord models. It supports english-based
 # methods that let you restrict access per-model, per-record, per-column, per-action, and per-user. All at once.
 #

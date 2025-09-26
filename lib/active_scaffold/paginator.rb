@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 
 class Paginator
-  VERSION = '1.0.9'.freeze
+  VERSION = '1.0.9'
 
   class ArgumentError < ::ArgumentError; end
   class MissingCountError < ArgumentError; end

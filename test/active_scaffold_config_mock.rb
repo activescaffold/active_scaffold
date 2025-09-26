@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffoldConfigMock
   module ClassMethods
     class Config

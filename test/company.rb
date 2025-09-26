@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Company < ActiveRecord::Base
   def initialize(with_or_without = nil) # rubocop:disable Lint/MissingSuper
     @companies = with_or_without == :with_companies

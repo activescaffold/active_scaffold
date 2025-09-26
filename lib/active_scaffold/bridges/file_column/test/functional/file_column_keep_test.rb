@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require File.expand_path('../mock_model.rb', __dir__)
 require File.expand_path('../../file_column_helpers.rb', __dir__)

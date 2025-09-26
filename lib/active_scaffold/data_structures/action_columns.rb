@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   # A set of columns. These structures can be nested for organization.
   class ActionColumns < ActiveScaffold::DataStructures::Set

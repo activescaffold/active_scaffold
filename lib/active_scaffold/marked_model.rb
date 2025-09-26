@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module MarkedModel
     # This is a module aimed at making the make session_stored marked_records available to ActiveRecord models

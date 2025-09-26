@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   # Provides support for param hashes assumed to be model attributes.
   # Support is primarily needed for creating/editing associated records using a nested hash structure.

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::DatePicker
   module DatePickerBridge
     def initialize(model_id)

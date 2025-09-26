@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   class Engine < ::Rails::Engine
     initializer 'active_scaffold.action_controller' do

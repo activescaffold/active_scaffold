@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Finder
     def self.like_operator
@@ -277,7 +279,7 @@ module ActiveScaffold
       end
 
       def translate_days_and_months(value, format)
-        translated = String.new
+        translated = +''
         tables_for_translating_days_and_months(format).each do |table|
           regexp = Regexp.union(table.keys)
           index = value.index(regexp)
