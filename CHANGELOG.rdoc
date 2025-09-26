@@ -7,6 +7,7 @@
 - Added translations for millisec and microsec prompts in jquery UI datetime picker
 - Speed up validating big forms (e.g. nested subforms with many records on each subform)
 - Support hidding field descriptions by default and show them with hover or click
+- Fix for usage with frozen literal strings enabled
 
 = 4.1.1
 - Load dartsass-sprockets, so it isn't required in the Gemfile

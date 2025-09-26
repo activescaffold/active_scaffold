@@ -325,7 +325,7 @@ module ActiveScaffold
         Date.strptime(value, *format)
       rescue StandardError => e
         message = "Error parsing date from #{value}"
-        message << ", with format #{format}" if format
+        message += ", with format #{format}" if format
         Rails.logger.warn "#{message}:\n#{e.message}\n#{e.backtrace.join("\n")}"
         nil
       end

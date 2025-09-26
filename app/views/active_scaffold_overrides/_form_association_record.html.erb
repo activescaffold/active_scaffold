@@ -52,7 +52,7 @@
     columns_length += 1
     show_actions = true
 
-    col_class = default_col_class.clone
+    col_class = default_col_class.dup
     col_class << 'required' if column.required?(action_for_validation?(record))
     col_class << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
     col_class << 'hidden' if column_renders_as(column) == :hidden

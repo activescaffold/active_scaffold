@@ -9,7 +9,7 @@
     data: {loading: true},
     method: :get
   }
-  options[:class] << ' floating-footer' if active_scaffold_config.field_search.floating_footer
+  options[:class] += ' floating-footer' if active_scaffold_config.field_search.floating_footer
   
   hidden_params = url_options.except(:controller, :action, :id, :search).to_query.split(Rack::Utils::DEFAULT_SEP)
 -%>
@@ -28,7 +28,7 @@
       if active_scaffold_config.field_search.reset_form
         reset_attrs[:data] = {reset: true}
       else
-        reset_attrs[:class] << ' as_cancel'
+        reset_attrs[:class] += ' as_cancel'
         reset_attrs.merge! remote: true, data: {refresh: true}
       end
     %>

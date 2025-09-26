@@ -366,7 +366,7 @@ module ActiveScaffold
         html_options[:data] = html_options[:data].deep_dup if html_options[:data].frozen?
         html_options[:data][:confirm] = link.confirm(h(record&.to_label)) if link.confirm?
         if !options[:page] && !options[:popup] && (options[:inline] || link.inline?)
-          html_options[:class] << ' as_action'
+          html_options[:class] += ' as_action'
           html_options[:data][:position] = link.position if link.position
           html_options[:data][:action] = link.action
           html_options[:data][:cancel_refresh] = true if link.refresh_on_close
@@ -379,7 +379,7 @@ module ActiveScaffold
         end
 
         if link.toggle
-          html_options[:class] << ' toggle'
+          html_options[:class] += ' toggle'
           html_options[:class] << ' active' if action_link_selected?(link, record)
         end
 
