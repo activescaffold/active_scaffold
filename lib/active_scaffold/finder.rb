@@ -280,6 +280,7 @@ module ActiveScaffold
 
       def translate_days_and_months(value, format)
         translated = +''
+        value = value.dup # ensure the string can be changed
         tables_for_translating_days_and_months(format).each do |table|
           regexp = Regexp.union(table.keys)
           index = value.index(regexp)
