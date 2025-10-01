@@ -1141,9 +1141,9 @@ font-size: 100%;
   text-decoration: none;
   background-color: #eee;
 }
-.active-scaffold .tabbed .nav-tabs > li.active > a,
-.active-scaffold .tabbed .nav-tabs > li.active > a:focus,
-.active-scaffold .tabbed .nav-tabs > li.active > a:hover {
+.active-scaffold .tabbed .nav-tabs > li > a.active,
+.active-scaffold .tabbed .nav-tabs > li > a.active:focus,
+.active-scaffold .tabbed .nav-tabs > li > a.active:hover {
   border-color: #ddd;
   border-bottom-color: transparent;
   cursor: default;
