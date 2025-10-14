@@ -24,8 +24,9 @@ module ActiveScaffold
         value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
         value
       rescue StandardError => e
-        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
-        raise e
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
       def get_column_method(record, column)
@@ -64,8 +65,9 @@ module ActiveScaffold
           text
         end
       rescue StandardError => e
-        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        raise e
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
       def column_wrap_tag

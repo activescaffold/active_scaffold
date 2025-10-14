@@ -83,7 +83,7 @@ module ActiveScaffold
         message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} " \
                   "(value from params #{attributes[column.name].inspect})"
         Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
-        raise e.class, "#{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
     end
 

@@ -137,8 +137,9 @@ module ActiveScaffold
           end
           [sql_conditions.join(' OR '), *where_values]
         rescue StandardError => e
-          Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
-          raise e
+          message = "on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
+          Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+          raise e.class, "#{e.message} -- #{message}", e.backtrace
         end
       end
 

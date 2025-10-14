@@ -139,7 +139,7 @@ module ActiveScaffold::DataStructures
       end
 
       if group.nil?
-        raise "Can't add new subgroup '#{name}', links are frozen" if frozen?
+        raise FrozenError, "Can't add new subgroup '#{name}', links are frozen" if frozen?
 
         group = ActiveScaffold::DataStructures::ActionLinks.new(name)
         group.label = label || name

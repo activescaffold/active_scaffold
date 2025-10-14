@@ -25,7 +25,7 @@ module ActiveScaffold
 
         elsif column.association
           # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
-          raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'" if column.form_ui
+          raise ArgumentError, "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'" if column.form_ui
 
           # its an association and nothing is specified, we will assume form_ui :select
           active_scaffold_input_select(column, options)
@@ -49,8 +49,9 @@ module ActiveScaffold
           text_field(:record, column.name, options.merge(column.options).except(:format))
         end
       rescue StandardError => e
-        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        raise e
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
       def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil) # rubocop:disable Metrics/ParameterLists
