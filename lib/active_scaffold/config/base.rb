@@ -102,7 +102,7 @@ module ActiveScaffold::Config
       end
 
       def label(model = nil)
-        @conf.label(core: core)
+        @conf.label(model, core: core)
       end
 
       def [](key)
