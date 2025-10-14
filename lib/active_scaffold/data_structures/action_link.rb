@@ -41,6 +41,14 @@ module ActiveScaffold::DataStructures
       self.html_options = html_options.clone if action_link.instance_variable_get(:@html_options)
     end
 
+    def deep_dup
+      link = dup
+      instance_variables.each do |var|
+        link.instance_variable_set(var, link.instance_variable_get(var).deep_dup)
+      end
+      link
+    end
+
     # the weight for this link in the action links collection, it will be used to sort the collection
     attr_accessor :weight
 

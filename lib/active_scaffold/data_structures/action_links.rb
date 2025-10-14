@@ -165,13 +165,15 @@ module ActiveScaffold::DataStructures
       return super if name.match?(/[=!?]$/)
       return subgroup(name.to_sym, args.first, &) if frozen?
 
-      class_eval <<-METHOD, __FILE__, __LINE__ + 1
-        def #{name}(label = nil)                     # def group_name(label = nil)
-          @#{name} ||= subgroup(:'#{name}', label)   #   @group_name ||= subgroup(:'group_name', label)
-          yield @#{name} if block_given?             #   yield @group_name if block_given?
-          @#{name}                                   #   @group_name
-        end                                          # end
-      METHOD
+      define_singleton_method name do |label = nil|
+        value = instance_variable_get("@#{name}")
+        unless value
+          value = subgroup(name.to_sym, label)
+          instance_variable_set("@#{name}", value)
+        end
+        yield value if block_given?
+        value
+      end
       send(name, args.first, &)
     end
 

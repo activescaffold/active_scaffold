@@ -114,7 +114,7 @@ module ActiveScaffold
 
         active_scaffold_config.action_links.collection.delete('new')
         active_scaffold_config.sti_children.each do |child|
-          new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
+          new_sti_link = new_action_link.deep_dup
           new_sti_link.label = as_(:create_model, model: child.to_s.camelize.constantize.model_name.human)
           new_sti_link.parameters = {parent_sti: controller_path}
           new_sti_link.controller = proc { active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path }
