@@ -201,8 +201,8 @@ module ActiveScaffold::Config
     # the label for this List action. used for the header.
     attr_writer :label
 
-    def label
-      @label ? as_(@label, count: 2) : @core.label(count: 2)
+    def label(core: @core)
+      @label ? as_(@label, count: 2) : core.label(count: 2)
     end
 
     attr_writer :no_entries_message, :filtered_message, :always_show_search
@@ -276,7 +276,7 @@ module ActiveScaffold::Config
 
       # This label has already been localized.
       def label
-        self['label'] || embedded_label || @label || @conf.label
+        self['label'] || embedded_label || @label || @conf.label(core: core)
       end
 
       def embedded_label

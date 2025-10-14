@@ -26,8 +26,8 @@ module ActiveScaffold::Config
       self.class.crud_type
     end
 
-    def label(model = nil)
-      model ||= @core.label(count: 1)
+    def label(model = nil, core: @core)
+      model ||= core.label(count: 1)
       @label.nil? ? model : as_(@label, model: model)
     end
 
@@ -99,6 +99,10 @@ module ActiveScaffold::Config
 
       def core
         @conf.core.user
+      end
+
+      def label(model = nil)
+        @conf.label(core: core)
       end
 
       def [](key)
