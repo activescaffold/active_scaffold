@@ -6,9 +6,7 @@ class ClassWithFinder
   include ActiveScaffoldConfigMock
   include ActiveScaffold::Finder
 
-  def active_scaffold_config
-    self.class.active_scaffold_config
-  end
+  delegate :active_scaffold_config, to: :class
 
   def conditions_for_collection; end
 

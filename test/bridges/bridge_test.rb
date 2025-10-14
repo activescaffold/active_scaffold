@@ -16,18 +16,18 @@ class BridgeTest < ActiveSupport::TestCase
   def test__file_column_bridge
     ConstMocker.mock('FileColumn') do |cm|
       cm.remove
-      assert_not(bridge_will_be_installed('FileColumn'))
+      assert_not(bridge_will_be_installed?('FileColumn'))
       cm.declare
-      assert(bridge_will_be_installed('FileColumn'))
+      assert(bridge_will_be_installed?('FileColumn'))
     end
   end
 
   def test__paperclip_bridge
     ConstMocker.mock('Paperclip') do |cm|
       cm.remove
-      assert_not(bridge_will_be_installed('Paperclip'))
+      assert_not(bridge_will_be_installed?('Paperclip'))
       cm.declare
-      assert(bridge_will_be_installed('Paperclip'))
+      assert(bridge_will_be_installed?('Paperclip'))
     end
   end
 
@@ -38,9 +38,9 @@ class BridgeTest < ActiveSupport::TestCase
         rails.declare
         ConstMocker.mock('Ui', jquery.const) do |cm|
           cm.remove
-          assert_not(bridge_will_be_installed('DatePicker'))
+          assert_not(bridge_will_be_installed?('DatePicker'))
           cm.declare
-          assert(bridge_will_be_installed('DatePicker'))
+          assert(bridge_will_be_installed?('DatePicker'))
         end
       end
     end
@@ -49,18 +49,18 @@ class BridgeTest < ActiveSupport::TestCase
   def test__semantic_attributes_bridge
     ConstMocker.mock('SemanticAttributes') do |cm|
       cm.remove
-      assert_not(bridge_will_be_installed('SemanticAttributes'))
+      assert_not(bridge_will_be_installed?('SemanticAttributes'))
       cm.declare
-      assert(bridge_will_be_installed('SemanticAttributes'))
+      assert(bridge_will_be_installed?('SemanticAttributes'))
     end
   end
 
   def test__paper_trail_bridge
     ConstMocker.mock('PaperTrail') do |cm|
       cm.remove
-      assert_not(bridge_will_be_installed('PaperTrail'))
+      assert_not(bridge_will_be_installed?('PaperTrail'))
       cm.declare
-      assert(bridge_will_be_installed('PaperTrail'))
+      assert(bridge_will_be_installed?('PaperTrail'))
     end
   end
 
@@ -70,7 +70,7 @@ class BridgeTest < ActiveSupport::TestCase
     ActiveScaffold::Bridges[name.to_s.underscore.to_sym]
   end
 
-  def bridge_will_be_installed(name)
+  def bridge_will_be_installed?(name)
     assert bridge = find_bridge(name), "No bridge found matching #{name}"
 
     bridge.install?
