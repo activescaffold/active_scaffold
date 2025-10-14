@@ -4,6 +4,7 @@ module ActiveScaffold::Config
   class Base
     include ActiveScaffold::Configurable
     extend ActiveScaffold::Configurable
+
     NO_FORMATS = [].freeze
 
     def initialize(core_config)
@@ -22,9 +23,7 @@ module ActiveScaffold::Config
     attr_reader :core, :user_settings_key
 
     # delegate
-    def crud_type
-      self.class.crud_type
-    end
+    delegate :crud_type, to: :class
 
     def label(model = nil, core: @core)
       model ||= core.label(count: 1)

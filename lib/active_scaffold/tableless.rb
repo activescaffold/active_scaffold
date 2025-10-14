@@ -130,9 +130,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
       @klass.execute_simple_calculation(self, operation, column_name, distinct)
     end
 
-    def implicit_order_column
-      @klass.implicit_order_column
-    end
+    delegate :implicit_order_column, to: :@klass
 
     def exists?
       size.positive?

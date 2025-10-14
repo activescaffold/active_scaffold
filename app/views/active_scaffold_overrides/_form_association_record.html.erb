@@ -53,7 +53,7 @@
     show_actions = true
 
     col_class = default_col_class.dup
-    col_class << 'required' if column.required?(action_for_validation?(record))
+    col_class << 'required' if column.required?(action_for_validation(record))
     col_class << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
     col_class << 'hidden' if column_renders_as(column) == :hidden
   -%>
@@ -83,7 +83,7 @@
       <% columns_group.each_column(for: record.class, crud_type: :read, flatten: true) do |col| %>
         <%
           col_class = default_col_class.clone
-          col_class << 'required' if col.required?(action_for_validation?(record))
+          col_class << 'required' if col.required?(action_for_validation(record))
           col_class << col.css_class unless col.css_class.nil? || col.css_class.is_a?(Proc)
           col_class << 'hidden' if column_renders_as(col) == :hidden
         %>

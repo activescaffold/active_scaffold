@@ -39,6 +39,7 @@ module ActiveScaffold
     module ClassMethods
       def active_scaffold(model_id = nil, &block)
         extend Prefixes
+
         # initialize bridges here
         ActiveScaffold::Bridges.run_all
 
@@ -74,6 +75,7 @@ module ActiveScaffold
           end
           active_scaffold_config.actions.each do |mod|
             include "ActiveScaffold::Actions::#{mod.to_s.camelize}".constantize
+
             mod_conf = active_scaffold_config.send(mod)
             active_scaffold_config._setup_action(mod)
             next unless mod_conf.respond_to?(:link) && (link = mod_conf.link)
@@ -180,7 +182,7 @@ module ActiveScaffold
         as_path = File.realpath File.join(ActiveScaffold::Config::Core.plugin_directory, 'app', 'views')
         index = view_paths.find_index { |p| p.to_s == as_path }
         if index
-          self.view_paths = view_paths[0..index - 1] + Array(path) + view_paths[index..]
+          self.view_paths = view_paths[0..(index - 1)] + Array(path) + view_paths[index..]
         else
           append_view_path path
         end

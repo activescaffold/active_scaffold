@@ -74,6 +74,7 @@ class Paginator
   # of the page in the paginator
   class Page
     extend Forwardable
+
     def_delegator :@pager, :first, :first
     def_delegator :@pager, :last, :last
     def_delegator :items, :each

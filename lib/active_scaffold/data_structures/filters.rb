@@ -39,9 +39,7 @@ module ActiveScaffold::DataStructures
       @set.each(&)
     end
 
-    def empty?
-      @set.empty?
-    end
+    delegate :empty?, to: :@set
 
     # default filter type for all app filters, can be :links or :select
     cattr_accessor :default_type

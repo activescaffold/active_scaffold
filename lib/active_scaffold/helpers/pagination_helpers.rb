@@ -29,7 +29,7 @@ module ActiveScaffold
 
         html = []
         if current_page.number == 1
-          last_page = 0 # rubocop:disable Lint/UselessAssignment
+          last_page = 0
         else
           last_page = 1
           last_page.upto([last_page + outer_window, current_page.number - 1].min) do |num|

@@ -32,6 +32,7 @@ module ActiveScaffold
         require 'active_scaffold/extensions/unsaved_associated'
         require 'active_scaffold/extensions/unsaved_record'
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
+
         ActiveRecord::Associations.module_eval do
           self::Association.include ActiveScaffold::Tableless::Association
           self::CollectionAssociation.include ActiveScaffold::Tableless::CollectionAssociation

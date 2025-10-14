@@ -57,7 +57,7 @@ module ActiveScaffold
       def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil) # rubocop:disable Metrics/ParameterLists
         if add_class
           col_class = []
-          col_class << 'required' if column.required?(action_for_validation?(record))
+          col_class << 'required' if column.required?(action_for_validation(record))
           col_class << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
           col_class << 'hidden' if column_renders_as(column) == :hidden
           col_class << 'checkbox' if column.form_ui == :checkbox
@@ -87,7 +87,7 @@ module ActiveScaffold
         options
       end
 
-      def action_for_validation?(record)
+      def action_for_validation(record)
         record&.persisted? ? :update : :create
       end
 
@@ -97,7 +97,7 @@ module ActiveScaffold
         record = options[:object]
 
         # Add some HTML5 attributes for in-browser validation and better user experience
-        if column.required?(action_for_validation?(record)) && (!@disable_required_for_new || scope.nil? || record&.persisted?)
+        if column.required?(action_for_validation(record)) && (!@disable_required_for_new || scope.nil? || record&.persisted?)
           options[:required] = true
         end
         options[:placeholder] = column.placeholder if column.placeholder.present?

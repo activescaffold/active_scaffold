@@ -11,12 +11,12 @@ module ActiveScaffold
         !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *args)
       end
 
-      def action_link_authorized?(link, *args)
+      def action_link_authorized?(link, *args) # rubocop:disable Naming/PredicateMethod
         auth, reason =
           if link.security_method_set? || controller.respond_to?(link.security_method, true)
             controller.send(link.security_method, *args)
           else
-            args.empty? ? true : args.first.authorized_for?(crud_type: link.crud_type, action: link.action, reason: true)
+            args.empty? || args.first.authorized_for?(crud_type: link.crud_type, action: link.action, reason: true)
           end
         [auth, reason]
       end

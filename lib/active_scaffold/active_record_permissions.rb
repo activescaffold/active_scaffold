@@ -57,9 +57,7 @@ module ActiveScaffold
         end
 
         # Instance-level access to the current user
-        def current_user
-          self.class.current_user
-        end
+        delegate :current_user, to: :class
       end
     end
 

@@ -7,11 +7,12 @@ module ActiveScaffold
     def self.included(base)
       base.class_eval do
         extend ClassMethods
+
         scope :as_marked, -> { where(primary_key => marked_record_ids) }
       end
     end
 
-    def as_marked
+    def as_marked # rubocop:disable Naming/PredicateMethod
       marked_records.include?(id.to_s)
     end
 
@@ -28,7 +29,7 @@ module ActiveScaffold
         ActiveScaffold::Registry.marked_records ||= {}
       end
 
-      def marked_records=(marked)
+      def marked_records=(marked) # rubocop:disable Rails/Delegate
         ActiveScaffold::Registry.marked_records = marked
       end
 
@@ -38,8 +39,6 @@ module ActiveScaffold
     end
 
     # Instance-level access to the marked_records
-    def marked_records
-      self.class.marked_records
-    end
+    delegate :marked_records, to: :class
   end
 end

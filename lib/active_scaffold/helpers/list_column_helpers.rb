@@ -307,7 +307,7 @@ module ActiveScaffold
             empty_field_text(column)
           elsif column_value.is_a?(Time) || column_value.is_a?(Date)
             l(column_value, format: options&.dig(:format) || :default)
-          elsif !!column_value == column_value # rubocop:disable Style/DoubleNegation fast check for boolean
+          elsif !!column_value == column_value # rubocop:disable Style/DoubleNegation -- fast check for boolean
             as_(column_value.to_s.to_sym)
           else
             column_value.to_s

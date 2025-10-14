@@ -54,9 +54,7 @@ module ActiveScaffold::DataStructures
       @options.each(&)
     end
 
-    def empty?
-      @options.empty?
-    end
+    delegate :empty?, to: :@options
 
     def label(*)
       case @label

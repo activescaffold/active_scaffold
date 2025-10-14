@@ -246,7 +246,7 @@ module ActiveScaffold::Config
     attr_writer :hide_nested_column
 
     def hide_nested_column
-      @hide_nested_column.nil? ? true : @hide_nested_column
+      @hide_nested_column.nil? || @hide_nested_column
     end
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
@@ -341,9 +341,7 @@ module ActiveScaffold::Config
         @_sorting
       end
 
-      def count_includes
-        @conf.count_includes
-      end
+      delegate :count_includes, to: :@conf
 
       protected
 

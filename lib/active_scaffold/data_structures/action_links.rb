@@ -3,7 +3,8 @@
 module ActiveScaffold::DataStructures
   class ActionLinks
     include Enumerable
-    attr_accessor :default_type
+
+    attr_accessor :default_type, :weight, :css_class
 
     def initialize(name = :root)
       @set = []
@@ -128,9 +129,7 @@ module ActiveScaffold::DataStructures
       @set
     end
 
-    def empty?
-      @set.empty?
-    end
+    delegate :empty?, to: :@set
 
     def subgroup(name, label = nil)
       group = self if name == self.name
@@ -181,7 +180,6 @@ module ActiveScaffold::DataStructures
     end
 
     attr_reader :name
-    attr_accessor :weight, :css_class
 
     protected
 

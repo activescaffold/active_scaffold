@@ -98,7 +98,7 @@ module ActiveScaffold::Bridges
           )
         end
         js_format = rails_format.dup
-        js_format.gsub!(/([ ]|^)([^% ]\S*)/, " '\\2'")
+        js_format.gsub!(/( |^)([^% ]\S*)/, " '\\2'")
         DATE_FORMAT_CONVERSION.each do |key, value|
           js_format.gsub!(key, value)
         end
@@ -132,7 +132,7 @@ module ActiveScaffold::Bridges
       end
 
       module DatepickerColumnHelpers
-        def to_datepicker_format(rails_format)
+        def to_datepicker_format(rails_format) # rubocop:disable Rails/Delegate
           ActiveScaffold::Bridges::DatePicker::Helper.to_datepicker_format(rails_format)
         end
 

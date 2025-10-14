@@ -117,13 +117,9 @@ module ActiveScaffold::DataStructures
     end
 
     # provides quick access to the first (and sometimes only) clause
-    def first
-      @clauses.first
-    end
+    delegate :first, to: :@clauses
 
-    def size
-      @clauses.size
-    end
+    delegate :size, to: :@clauses
 
     # builds an order-by clause
     def clause(grouped_columns = nil)

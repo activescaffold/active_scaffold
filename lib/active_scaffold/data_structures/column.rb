@@ -179,7 +179,7 @@ module ActiveScaffold::DataStructures
 
       def sort
         initialize_sort if @sort == true
-        @sort
+        @sort if @sort
       end
 
       def sortable?
@@ -392,6 +392,7 @@ module ActiveScaffold::DataStructures
 
     include ActiveScaffold::Configurable
     include ActiveScaffold::OrmChecks
+
     NO_PARAMS = Set.new.freeze
     NO_OPTIONS = {}.freeze
 

@@ -348,7 +348,7 @@ module ActiveScaffold
                      options_for_select(active_scaffold_search_datetime_trend_units(column), current_search['unit']),
                      class: 'text-input')
         ]
-        show = current_search.key?(:show) ? current_search[:show] : current_search['opt'] == 'PAST' || current_search['opt'] == 'FUTURE'
+        show = current_search.key?(:show) ? current_search[:show] : %w[PAST FUTURE].include?(current_search['opt'])
         content_tag('span', safe_join(trend_controls, ' '),
                     id: "#{options[:id]}_trend", class: 'search-date-trend',
                     style: ('display: none' unless show))

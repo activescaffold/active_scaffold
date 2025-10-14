@@ -5,6 +5,7 @@ require 'active_support/concern'
 class ActiveScaffold::Bridges::RecordSelect
   module Helpers
     extend ActiveSupport::Concern
+
     included do
       include FormColumnHelpers
       include SearchColumnHelpers

@@ -20,7 +20,7 @@ module ActiveScaffold
         routing_code << (' end' * class_path.size)
         log :route, routing_code
         in_root do
-          inject_into_file 'config/routes.rb', "  #{routing_code}\n", after: /^[ ]*concern :active_scaffold,.*\n/, verbose: false, force: true
+          inject_into_file 'config/routes.rb', "  #{routing_code}\n", after: /^ *concern :active_scaffold,.*\n/, verbose: false, force: true
         end
       end
 

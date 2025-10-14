@@ -4,6 +4,7 @@ module ActiveScaffold::Config
   # to fix the ckeditor bridge problem inherit from full class name
   class Core < ActiveScaffold::Config::Base
     include ActiveScaffold::OrmChecks
+
     # global level configuration
     # --------------------------
 
@@ -311,6 +312,7 @@ module ActiveScaffold::Config
 
     class UserSettings < Base::UserSettings
       include ActiveScaffold::Configurable
+
       user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
                 :timestamped_messages, :highlight_messages
       attr_writer :label
@@ -339,17 +341,7 @@ module ActiveScaffold::Config
         @columns ||= UserColumns.new(@conf.columns)
       end
 
-      def action_links
-        @conf.action_links
-      end
-
-      def model
-        @conf.model # for performance, called many times, so we avoid method_missing
-      end
-
-      def actions
-        @conf.actions # for performance, called many times, so we avoid method_missing
-      end
+      delegate :action_links, :model, :actions, to: :@conf
     end
 
     class UserColumns

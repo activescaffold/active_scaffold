@@ -8,11 +8,11 @@ class ActiveRecord::Base
     path << self
     # using [].all? syntax to avoid a short-circuit
     # errors to associated record can be added by update_record_from_params when association fails to set and ActiveRecord::RecordNotSaved is raised
-    with_unsaved_associated { |a| [a.keeping_errors { a.valid? }, a.associated_valid?(path)].all? }
+    with_unsaved_associated { |a| [a.keeping_errors { a.valid? }, a.associated_valid?(path)].all? }.all?
   end
 
-  def save_associated
-    with_unsaved_associated { |a| a.save && a.save_associated }
+  def save_associated # rubocop:disable Naming/PredicateMethod
+    with_unsaved_associated { |a| a.save && a.save_associated }.all?
   end
 
   def save_associated!
@@ -20,7 +20,7 @@ class ActiveRecord::Base
   end
 
   def no_errors_in_associated?
-    with_unsaved_associated { |a| a.errors.count.zero? && a.no_errors_in_associated? }
+    with_unsaved_associated { |a| a.errors.none? && a.no_errors_in_associated? }.all?
   end
 
   protected
@@ -51,16 +51,16 @@ class ActiveRecord::Base
   # returns false if any yield returns false.
   # returns true otherwise, even when none of the associations have been instantiated. build wrapper methods accordingly.
   def with_unsaved_associated(&block)
-    associations_for_update.map do |assoc|
+    associations_for_update.flat_map do |assoc|
       association_proxy = association(assoc.name)
       if association_proxy.target.present?
         records = association_proxy.target
         records = [records] unless records.is_a? Array # convert singular associations into collections for ease of use
         # must use select instead of find_all, which Rails overrides on association proxies for db access
-        records.select { |r| r.unsaved? && !r.readonly? }.map(&block).all?
+        records.select { |r| r.unsaved? && !r.readonly? }.map(&block)
       else
         true
       end
-    end.all?
+    end
   end
 end

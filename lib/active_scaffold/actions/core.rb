@@ -300,11 +300,7 @@ module ActiveScaffold::Actions
     # Success is the existence of one or more model objects. Most actions
     # circumvent this method by setting @success directly.
     def successful?
-      if @successful.nil?
-        true
-      else
-        @successful
-      end
+      @successful.nil? || @successful
     end
 
     def successful=(val)
