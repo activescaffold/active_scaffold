@@ -24,7 +24,7 @@ module ActiveScaffold::DataStructures
       # fallback to setting primary key ordering
       setup_primary_key_order_clause
       model_scope = model.send(:build_default_scope)
-      order_clause = model_scope.order_values.join(',') if model_scope
+      order_clause = model_scope.order_values.map { |ordering| ordering.respond_to?(:to_sql) ? ordering.to_sql : ordering }.join(',') if model_scope
       return unless order_clause
 
       # If an ORDER BY clause is found set default sorting according to it
