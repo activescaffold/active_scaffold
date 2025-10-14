@@ -448,6 +448,7 @@ class Controller
   include ActiveScaffold::Core
   include ActiveScaffold::Helpers::ControllerHelpers
   include ActiveScaffold::AttributeParams
+
   public :update_record_from_params
 
   def logger

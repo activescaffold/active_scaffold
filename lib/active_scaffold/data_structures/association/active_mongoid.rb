@@ -28,11 +28,11 @@ module ActiveScaffold::DataStructures::Association
       %i[belongs_to_record belongs_to_document].include?(@association.macro)
     end
 
-    def has_one? # rubocop:disable Naming/PredicateName
+    def has_one? # rubocop:disable Naming/PredicatePrefix
       %i[has_one_record has_one_document].include?(@association.macro)
     end
 
-    def has_many? # rubocop:disable Naming/PredicateName
+    def has_many? # rubocop:disable Naming/PredicatePrefix
       %i[has_many_records has_many_documents].include?(@association.macro)
     end
 

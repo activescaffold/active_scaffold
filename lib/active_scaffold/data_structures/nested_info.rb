@@ -33,7 +33,7 @@ module ActiveScaffold::DataStructures
       false
     end
 
-    def has_many? # rubocop:disable Naming/PredicateName
+    def has_many? # rubocop:disable Naming/PredicatePrefix
       false
     end
 
@@ -41,7 +41,7 @@ module ActiveScaffold::DataStructures
       false
     end
 
-    def has_one? # rubocop:disable Naming/PredicateName
+    def has_one? # rubocop:disable Naming/PredicatePrefix
       false
     end
 

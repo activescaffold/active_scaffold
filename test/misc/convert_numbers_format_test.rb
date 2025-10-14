@@ -5,6 +5,7 @@ require 'active_scaffold_config_mock'
 
 class NumberModel < ActiveRecord::Base
   include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
+
   def self.columns
     @columns ||= [ColumnMock.new('id', '', 'int(11)'), ColumnMock.new('number', '', 'double(10,2)')]
   end

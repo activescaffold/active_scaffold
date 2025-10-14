@@ -6,6 +6,7 @@ module Config
   class NestedTest < ActiveSupport::TestCase
     class ModelStubsController < ApplicationController
       include ActiveScaffold::Core
+
       active_scaffold
     end
 
