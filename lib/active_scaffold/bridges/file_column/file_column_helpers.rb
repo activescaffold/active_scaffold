@@ -12,13 +12,14 @@ module ActiveScaffold
           def generate_delete_helpers(klass)
             file_column_fields(klass).each do |field|
               next if klass.method_defined?(:"#{field}_with_delete=")
+
               klass.attr_reader :"delete_#{field}"
               klass.define_method "delete_#{field}=" do |value|
-                value = (value == "true") if String === value
+                value = (value == 'true') if value.is_a?(String)
                 return unless value
 
                 # passing nil to the file column causes the file to be deleted.  Don't delete if we just uploaded a file!
-                self.send("#{field}=", nil) unless self.send("#{field}_just_uploaded?")
+                send("#{field}=", nil) unless send("#{field}_just_uploaded?")
               end
             end
           end

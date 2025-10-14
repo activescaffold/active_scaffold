@@ -12,11 +12,11 @@ module ActiveScaffold
 
           klass.attr_reader :"delete_#{field}"
           klass.define_method "delete_#{field}=" do |value|
-            value = (value == "true") if String === value
+            value = (value == 'true') if value.is_a?(String)
             return unless value
 
             # passing nil to the file column causes the file to be deleted.  Don't delete if we just uploaded a file!
-            self.send("#{field}=", nil) unless self.send(field).dirty?
+            send("#{field}=", nil) unless send(field).dirty?
           end
         end
       end

@@ -26,13 +26,14 @@ module ActiveScaffold
           def generate_delete_helpers(klass)
             (active_storage_has_one_fields(klass) | active_storage_has_many_fields(klass)).each do |field|
               next if klass.method_defined?(:"#{field}_with_delete=")
+
               klass.attr_reader :"delete_#{field}"
               klass.define_method "delete_#{field}=" do |value|
-                value = (value == "true") if String === value
+                value = (value == 'true') if value.is_a?(String)
                 return unless value
 
                 # passing nil to the file column causes the file to be deleted.
-                self.send(field).purge
+                send(field).purge
               end
             end
           end
