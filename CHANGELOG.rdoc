@@ -1,3 +1,6 @@
+= 4.1.2
+- Call cache_column_counts in get_row, so custom code changing queries to calculate counts is used when a row is refreshed too
+
 = 4.1.1
 - Load dartsass-sprockets, so it isn't required in the Gemfile
 - Fix refreshing a column in a subform without sending the whole form
