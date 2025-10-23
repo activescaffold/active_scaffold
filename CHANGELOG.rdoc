@@ -9,6 +9,8 @@
 - Support hidding field descriptions by default and show them with hover or click
 - Fix for usage with frozen literal strings enabled, add magic comments to enable frozen string literals in ActiveScaffold
 - Update code for tabs to work with bootstrap 5
+- Fix loading tinymce when the form is loaded on page load
+- Add ActiveScaffold.setup_callbacks array, so functions can be added to be called when ActiveScaffold.setup is called (form open, page load)
 
 = 4.1.2
 - Call cache_column_counts in get_row, so custom code changing queries to calculate counts is used when a row is refreshed too
