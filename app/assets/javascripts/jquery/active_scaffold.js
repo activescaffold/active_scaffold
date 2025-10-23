@@ -548,6 +548,7 @@
 
     window.ActiveScaffold = {
       last_focus: null,
+      setup_callbacks: [],
       setup: function(container) {
         /* setup some elements on page/form load */
         ActiveScaffold.load_embedded(container);
@@ -560,6 +561,7 @@
         if (container != document) {
           jQuery('[data-rs-type]', container).each(function() { RecordSelect.from_attributes(jQuery(this)); });
         }
+        ActiveScaffold.setup_callbacks.forEach(function(callback) { callback(container); });
       },
       setup_history_state: function() {
         if (!jQuery('.active-scaffold').length) return;

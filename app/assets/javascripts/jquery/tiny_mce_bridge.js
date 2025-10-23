@@ -36,11 +36,8 @@
   jQuery(document).on('ajax:complete', 'form.as_form', function() {
     jQuery('textarea.mceEditor', this).each(loadTinyMCE);
   });
-  /* enable tinymce textarea after form open */
-  jQuery(document).on('as:action_success', 'a.as_action', function(event) {
-    var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
-    if (action_link && action_link.adapter) {
-      jQuery(action_link.adapter).find('textarea.mceEditor').each(loadTinyMCE);
-    }
+  /* enable tinymce textarea after form open or page load */
+  ActiveScaffold.setup_callbacks.push(function(container) {
+    jQuery('textarea.mceEditor', container).each(loadTinyMCE);
   });
 })();
