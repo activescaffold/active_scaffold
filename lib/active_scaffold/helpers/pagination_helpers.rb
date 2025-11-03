@@ -1,8 +1,8 @@
 module ActiveScaffold
   module Helpers
     module PaginationHelpers
-      def pagination_ajax_link(page_number, url_options, options)
-        link_to page_number, url_options.merge(page: page_number), ui_attributes_for_pagination_link(options.merge(class: 'as_paginate'), page_number)
+      def pagination_ajax_link(page_number, url_options, options, text: nil)
+        link_to text ? as_(text) : page_number, url_options.merge(page: page_number), options.smart_merge(class: 'as_paginate')
       end
 
       def pagination_url_options(url_options = nil)
@@ -16,7 +16,7 @@ module ActiveScaffold
       end
 
       def pagination_active_page(page_number, url_options, options)
-        content_tag :span, page_number, ui_attributes_for_pagination_link({class: 'as_paginate current'}, :current)
+        content_tag :span, page_number, options.slice(:id, :class).smart_merge(class: 'as_paginate current')
       end
 
       def pagination_gap(options)

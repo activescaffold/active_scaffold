@@ -27,7 +27,7 @@
    form_id = element_form_id(action: form_action, id: @record&.id)
 %>
 <%=
-options = ui_attributes_for_form(
+options = as_ui_attributes(:form,
   id: form_id,
   multipart: multipart,
   class: "as_form #{form_action} #{'floating-footer' if floating_footer}",

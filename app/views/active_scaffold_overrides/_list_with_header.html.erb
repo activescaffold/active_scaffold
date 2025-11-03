@@ -1,8 +1,8 @@
-<%= content_tag(:div, id: active_scaffold_id, class: as_main_div_class, data: as_main_div_data) do %>
-  <%= content_tag :div, ui_attributes_for_list_header(class: 'active-scaffold-header') do %>
+<%= as_ui_tag(:list, id: active_scaffold_id, class: as_main_div_class, data: as_main_div_data) do %>
+  <%= as_ui_tag :list_header, class: 'active-scaffold-header' do %>
     <%= render 'list_header' %>
   <% end %>
-  <%= content_tag :table, ui_attributes_for_before_header_table do %>
+  <%= as_ui_tag :before_header_table do %>
     <tbody class="before-header" id="<%= before_header_id -%>">
       <% if active_scaffold_config.list.always_show_search %>
       <% old_record, @record = @record, active_scaffold_config.model.new %>
@@ -21,7 +21,7 @@
       <% old_record, @record = @record, new_model %>
         <tr>
           <td>
-            <div  class="active-scaffold create-view <%= "#{id_from_controller params[:controller]}-view" %> view">
+            <div class="active-scaffold create-view <%= "#{id_from_controller params[:controller]}-view" %> view">
               <%= render 'create_form_on_list' %>
             </div>
           </td>
@@ -30,7 +30,7 @@
       <% end %>
     </tbody>
   <% end %>
-  <%= content_tag :div, ui_attributes_for_list_content(id: active_scaffold_content_id, class: 'as_content') do %>
+  <%= as_ui_tag :list_content, id: active_scaffold_content_id, class: 'as_content' do %>
     <%= render 'list' %>
   <% end %>
 <% end %>

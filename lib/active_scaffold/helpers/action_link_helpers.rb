@@ -69,8 +69,7 @@ module ActiveScaffold
       end
 
       def display_action_link_separator(options)
-        tag = options[:level_0_tag] || :a if options[:level].zero?
-        content_tag(tag || :li, '&nbsp;'.html_safe, ui_attributes_for_action_link_separator(class: 'separator'))
+        as_ui_tag(:action_link_separator, '&nbsp;'.html_safe, options)
       end
 
       def display_action_link(link, content, record, options)
@@ -85,18 +84,9 @@ module ActiveScaffold
       end
 
       def render_action_link_group(link, content, record, options, group_label: nil)
-        html_classes = hover_via_click? ? +'hover_click ' : +''
-        if options[:level].zero?
-          html_classes << 'action_group'
-          group_tag = :div
-        else
-          html_classes << 'top' if options[:first_action]
-          group_tag = :li
-        end
-        attrs = ui_attributes_for_action_link_group({class: html_classes.presence}, options[:level], options[:first_action])
-        content_tag(group_tag, attrs) do
-          content_tag(:div, group_label || link.label(record), class: link.css_class, title: options[:title]) <<
-            content_tag(:ul, content, ui_attributes_for_action_link_group_content)
+        as_ui_tag(:action_link_group, options) do
+          as_ui_tag(:action_link_group_title, group_label || link.label(record), class: link.css_class, title: options[:title]) <<
+            as_ui_tag(:action_link_group_content, content)
         end
       end
 

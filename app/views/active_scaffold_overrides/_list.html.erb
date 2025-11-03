@@ -9,7 +9,7 @@
   </tbody>
 </table>
 <% end %>
-<%= content_tag :table, ui_attributes_for_list_table do %>
+<table <%= as_ui_attributes :list_table %>>
   <thead>
     <tr>
       <% columns = list_columns %>
@@ -27,5 +27,5 @@
     <%= render 'list_calculations', columns: columns %>
   </tfoot>
   <% end -%>
-<% end %>
+</table>
 <%= render 'list_pagination' %>

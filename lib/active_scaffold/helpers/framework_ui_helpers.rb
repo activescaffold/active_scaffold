@@ -1,36 +1,20 @@
 module ActiveScaffold
   module Helpers
     module FrameworkUiHelpers
-      def ui_attributes_for_list_header(attrs) = attrs
+      def as_ui_tag(key, content, options = {}, &block)
+        tag, attributes = as_ui_for(key, options)
+        content_tag tag, content, attributes, &block
+      end
 
-      def ui_attributes_for_list_content(attrs) = attrs
+      def as_ui_attributes(key, options = {})
+        as_ui_for(key, options).last
+      end
 
-      def ui_attributes_for_before_header_table = nil
-
-      def ui_attributes_for_list_table = nil
-
-      def ui_attributes_for_list_footer(attrs) = attrs
-
-      def ui_attributes_for_list_actions(attrs) = attrs
-
-      def ui_attributes_for_filters(attrs) = attrs
-
-      def ui_attributes_for_pagination_links(attrs) = attrs
-
-      # page may be a number, :previous, :next or :current
-      def ui_attributes_for_pagination_link(attrs, page) = attrs
-
-      def ui_attributes_for_action_link_group(attrs, level, first_action) = attrs
-
-      def ui_attributes_for_action_link_group_content = nil
-
-      def ui_attributes_for_action_link_separator(attrs) = attrs
-
-      def ui_attributes_for_record_action_links = nil
-
-      def ui_attributes_for_form(attrs) = attrs
-
-      def ui_attributes_for_fields_container(attrs) = attrs
+      def as_ui_for(key, options)
+        tag, attributes, proc = ActiveScaffold.ui_tags[key]&.values_at(:tag, :attributes, :proc)
+        tag, attributes = instance_exec(options, &proc) if proc
+        [tag, attributes&.smart_merge(options) || options&.as_html_attrs]
+      end
     end
   end
 end

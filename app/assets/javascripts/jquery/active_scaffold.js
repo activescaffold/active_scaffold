@@ -1001,7 +1001,7 @@
         var source = jQuery(source);
         var element, container = source.closest('.sub-form-record'), selector = '';
         if (container.length === 0) {
-          container = source.closest('form > ol.form');
+          container = source.closest('form > .form');
           selector = 'li';
         }
         // find without entering new subforms

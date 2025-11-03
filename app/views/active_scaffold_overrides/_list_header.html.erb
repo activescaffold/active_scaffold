@@ -1,8 +1,8 @@
 <% action_links = active_scaffold_config.action_links.collection -%>
 <% filters = active_scaffold_config.list.filters %>
-<%= content_tag :div, ui_attributes_for_list_actions(class: 'actions') do %>
+<%= as_ui_tag :list_actions, class: 'actions' do %>
   <%= display_filters(filters) %>
   <%= display_action_links(action_links, nil, skip_unauthorized: true) unless action_links.empty? %>
   <%= loading_indicator_tag(action: :table) %>
 <% end %>
-<h2><%= active_scaffold_config.list.user.label %></h2>
+<%= as_ui_tag :list_title, active_scaffold_config.list.user.label %>
