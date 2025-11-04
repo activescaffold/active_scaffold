@@ -23,7 +23,7 @@
     if renders_as == :subform
       active_scaffold_subform_attributes(column, column_css_class)
     else
-      {class: "form-element #{:required if column.required?(@form_action)} #{form_ui_class column.form_ui} #{column_css_class}", id: ''}
+      as_ui_attributes(:form_element, {class: "form-element #{:required if column.required?(@form_action)} #{form_ui_class column.form_ui} #{column_css_class}", id: ''})
     end
   html =
     if scope
