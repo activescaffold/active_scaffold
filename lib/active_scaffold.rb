@@ -67,6 +67,9 @@ module ActiveScaffold
   #     +display_action_links+
   #   * For :action_link_separator the hash will have keys such as :level, :level_0_tag, and other options supported by
   #     +display_action_links+
+  # Some keys don't have a :tag key, because only attributes are used, the tag is hardcoded, usually elements that are
+  # rendered as a form or table, or a table's element (thead, tbody, tr, td, th, tfoot, etc.). For those elements,
+  # the :tag key will be ignored if it's set, so the tag can't be changed.
   def self.ui_tags
     @ui_tags ||= {
       list: {tag: :div},
