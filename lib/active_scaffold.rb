@@ -91,7 +91,7 @@ module ActiveScaffold
             tag = :div
             attributes = {class: 'action_group'}
           else
-            tag = :li,
+            tag = :li
             attributes = {class: "#{:top if options[:first_action]}"}
           end
           attributes[:class] += ' hover_click' if hover_via_click?
