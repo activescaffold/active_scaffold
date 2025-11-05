@@ -1,8 +1,9 @@
 PATH
   remote: ..
   specs:
-    active_scaffold (4.1.0)
+    active_scaffold (4.1.1)
       dartsass-sprockets (~> 3.2.0)
+      html_attrs (~> 1.1)
       ice_nine (~> 0.11)
       rails (>= 7.2.0)
       request_store (~> 1.3)
@@ -141,6 +142,9 @@ GEM
       rake (>= 13)
     highline (3.1.2)
       reline
+    html_attrs (1.1.2)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
     http-accept (1.7.0)
     http-cookie (1.0.8)
       domain_name (~> 0.5)
