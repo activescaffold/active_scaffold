@@ -52,12 +52,11 @@ module ActiveScaffold
   self.javascripts = []
 
   # A way to define the tags and html attributes used in different places.
+  # Changing the class or replacing the attributes may break the default AS stylesheets, but not JS or functionality.
+  #
   # The keys in the hash are the names used by ActiveScaffold to identify the
   # elements.
-  # The values are a hash of attributes used to create the markup, supporting different keys:
-  # If a value is a string or symbol, it will be used as the tag name.
-  # If a value is a hash, it should contain a :tag key, and the value of that
-  # key will be used as the tag name.
+  # The values are a hash of attributes used to create the markup, supporting the following keys:
   # * The :tag key can be used to specify a different tag name for the element.
   # * The :attributes key can be used to specify additional html attributes.
   # * The :proc key can be used to specify a method to dinamically return the tag and attributes hash, as an array.
