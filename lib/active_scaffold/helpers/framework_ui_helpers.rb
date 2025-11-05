@@ -6,8 +6,8 @@ module ActiveScaffold
           options = content_or_options_with_block
           content_or_options_with_block = nil
         end
-        tag, attributes = h.as_tag_and_attributes(key, options)
-        h.content_tag(tag, content_or_options_with_block, attributes, &)
+        tag, attributes = as_tag_and_attributes(key, options)
+        content_tag(tag, content_or_options_with_block, attributes, &)
       end
 
       def as_element_attributes(key, options = {})
