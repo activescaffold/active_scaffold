@@ -9,7 +9,7 @@
   ol_attrs[:id] = subsection_id unless subsection_id.nil?
   ol_attrs[:style] = 'display: none;' if columns.collapsed
 %>
-<%= as_element :fields_container, ol_attrs do %>
+<%= as_element :fields_container, **ol_attrs do %>
   <% columns.each_column(for: @record, crud_type: (:read if show_unauthorized_columns)) do |column| %>
     <% column_css_class = column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %>
     <% renders_as = column_renders_as(column) %>
@@ -26,7 +26,7 @@
         tab_options = local_assigns.slice(:tabbed_by, :tab_id, :tab_value)
         tab_options[:tabbed_by] = column.options[:tabbed_by] if tabbed_by && column.options[:tabbed_by]
       %>
-      <%= as_element :subform, subform_attrs do %>
+      <%= as_element :subform, **subform_attrs do %>
         <% if authorized %>
         <%= render_column(column, @record, renders_as, scope, **tab_options) %>
         <% else %>
