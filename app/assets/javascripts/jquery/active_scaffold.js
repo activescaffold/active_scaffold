@@ -669,12 +669,12 @@
       },
       hide_empty_message: function(tbody) {
         if (this.records_for(tbody).length != 0) {
-          jQuery(tbody).find('.messages-container .empty-message').hide();
+          jQuery(tbody).parent().find('.messages-container .empty-message').hide();
         }
       },
       show_empty_message: function(tbody) {
         if (this.records_for(tbody).length != 0) {
-          jQuery(tbody).find('.messages-container .empty-message').hide();
+          jQuery(tbody).parent().find('.messages-container .empty-message').hide();
         }
       },
       reload_if_empty: function(tbody, url) {
