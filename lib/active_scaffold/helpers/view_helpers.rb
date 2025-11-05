@@ -129,7 +129,7 @@ module ActiveScaffold
         params[:eid] ? {eid: id_from_controller(params[:eid])} : {}
       end
 
-      def server_error_msg(content, **attributes, &)
+      def server_error_msg(content = nil, **attributes, &)
         as_element :server_error, content, **attributes, &
       end
 
