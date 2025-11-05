@@ -1,16 +1,12 @@
 module ActiveScaffold
   module Helpers
     module FrameworkUiHelpers
-      def as_element(key, content_or_options_with_block = nil, options = {}, proc_options: {}, &)
-        if block_given? && content_or_options_with_block.is_a?(Hash)
-          options = content_or_options_with_block
-          content_or_options_with_block = nil
-        end
+      def as_element(key, content = nil, proc_options: {}, **options, &)
         tag, attributes = as_tag_and_attributes(key, options, proc_options)
-        content_tag(tag, content_or_options_with_block, attributes, &)
+        content_tag(tag, content, attributes, &)
       end
 
-      def as_element_attributes(key, options = {}, proc_options: {})
+      def as_element_attributes(key, proc_options: {}, **options)
         as_tag_and_attributes(key, options, proc_options).last
       end
 
