@@ -69,7 +69,7 @@ module ActiveScaffold
       end
 
       def display_action_link_separator(options)
-        as_ui_tag(:action_link_separator, '&nbsp;'.html_safe, options)
+        as_element(:action_link_separator, '&nbsp;'.html_safe, options)
       end
 
       def display_action_link(link, content, record, options)
@@ -84,9 +84,9 @@ module ActiveScaffold
       end
 
       def render_action_link_group(link, content, record, options, group_label: nil)
-        as_ui_tag(:action_link_group, options) do
-          as_ui_tag(:action_link_group_title, group_label || link.label(record), class: link.css_class, title: options[:title]) <<
-            as_ui_tag(:action_link_group_content, content)
+        as_element(:action_link_group, options) do
+          as_element(:action_link_group_title, group_label || link.label(record), class: link.css_class, title: options[:title]) <<
+            as_element(:action_link_group_content, content)
         end
       end
 

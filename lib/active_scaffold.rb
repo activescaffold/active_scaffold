@@ -70,61 +70,60 @@ module ActiveScaffold
   # Some keys don't have a :tag key, because only attributes are used, the tag is hardcoded, usually elements that are
   # rendered as a form or table, or a table's element (thead, tbody, tr, td, th, tfoot, etc.). For those elements,
   # the :tag key will be ignored if it's set, so the tag can't be changed.
-  def self.ui_tags
-    @ui_tags ||= {
-      list: {tag: :div},
-      list_header: {tag: :div},
-      list_title: {tag: :h2},
-      list_actions: {tag: :div},
-      filters: {tag: :div, attributes: {class: 'filters'}},
-      before_header_table: {tag: :table},
-      list_content: {tag: :div},
-      list_table: {},
-      list_footer: {tag: :div, attributes: {class: 'active-scaffold-footer'}},
-      list_calculations: {},
-      pagination_links: {tag: :div},
-      record_actions_cell: {},
-      record_action_links: {},
-      action_link_group: {
-        proc: ->(options) do
-          if options[:level] == 0
-            tag = :div
-            attributes = {class: 'action_group'}
-          else
-            tag = :li
-            attributes = {class: "#{:top if options[:first_action]}"}
-          end
-          attributes[:class] += ' hover_click' if hover_via_click?
-          [tag, attributes]
+  mattr_reader :ui_elements
+  @@ui_elements ||= {
+    list: {tag: :div},
+    list_header: {tag: :div},
+    list_title: {tag: :h2},
+    list_actions: {tag: :div},
+    filters: {tag: :div, attributes: {class: 'filters'}},
+    before_header_table: {tag: :table},
+    list_content: {tag: :div},
+    list_table: {},
+    list_footer: {tag: :div, attributes: {class: 'active-scaffold-footer'}},
+    list_calculations: {},
+    pagination_links: {tag: :div},
+    record_actions_cell: {},
+    record_action_links: {},
+    action_link_group: {
+      proc: lambda do |options|
+        if options[:level]&.zero?
+          tag = :div
+          attributes = {class: 'action_group'}
+        else
+          tag = :li
+          attributes = {class: ('top' if options[:first_action]).to_s}
         end
-      },
-      action_link_separator: {
-        proc: ->(options) do
-          tag = options[:level_0_tag] || :a if options[:level].zero?
-          [tag || :li, {class: 'separator'}]
-        end
-      },
-      action_link_group_title: {tag: :div},
-      action_link_group_content: {tag: :ul},
-      form: {},
-      fields_container: {tag: :ol},
-      form_subsection: {tag: :li, attributes: {class: 'sub-section'}},
-      subform: {tag: :li},
-      form_element: {tag: :li},
-    }
+        attributes[:class] += ' hover_click' if hover_via_click?
+        [tag, attributes]
+      end
+    },
+    action_link_separator: {
+      proc: lambda do |options|
+        tag = options[:level_0_tag] || :a if options[:level]&.zero?
+        [tag || :li, {class: 'separator'}]
+      end
+    },
+    action_link_group_title: {tag: :div},
+    action_link_group_content: {tag: :ul},
+    form: {},
+    fields_container: {tag: :ol},
+    form_subsection: {tag: :li, attributes: {class: 'sub-section'}},
+    subform: {tag: :li},
+    form_element: {tag: :li}
+  }
+
+  def self.set_element_tag(name, tag)
+    (ui_elements[name] ||= {})[:tag] = tag
   end
 
-  def self.set_ui_tag(name, tag)
-    (ui_tags[name] ||= {})[:tag] = tag
+  def self.set_element_proc(name, &block)
+    (ui_elements[name] ||= {})[:proc] = block
   end
 
-  def self.set_ui_proc(name, &block)
-    (ui_tags[name] ||= {})[:proc] = block
-  end
-
-  def self.add_ui_attributes(name, attributes)
-    attrs = (ui_tags[name] ||= {})[:attributes] || {}
-    ui_tags[name][:attributes] = attrs.smart_merge(attributes)
+  def self.add_element_attributes(name, attributes)
+    attrs = (ui_elements[name] ||= {})[:attributes] || {}
+    ui_elements[name][:attributes] = attrs.smart_merge(attributes)
   end
 
   def self.threadsafe!; end

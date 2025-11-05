@@ -16,8 +16,8 @@ data_refresh ||= record.to_param
   <% end -%>
 
   <% unless grouped_search? -%>
-  <td <%= as_ui_attributes :record_actions_cell, class: 'actions' %>>
-    <table <%= as_ui_attributes :record_action_links %>>
+  <td <%= as_element_attributes :record_actions_cell, class: 'actions' %>>
+    <table <%= as_element_attributes :record_action_links %>>
       <tr>
         <td class="indicator-container">
           <%= loading_indicator_tag(action: :record, id: record.id) %>

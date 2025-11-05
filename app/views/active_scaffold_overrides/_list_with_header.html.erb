@@ -1,8 +1,8 @@
-<%= as_ui_tag(:list, id: active_scaffold_id, class: as_main_div_class, data: as_main_div_data) do %>
-  <%= as_ui_tag :list_header, class: 'active-scaffold-header' do %>
+<%= as_element(:list, id: active_scaffold_id, class: as_main_div_class, data: as_main_div_data) do %>
+  <%= as_element :list_header, class: 'active-scaffold-header' do %>
     <%= render 'list_header' %>
   <% end %>
-  <%= as_ui_tag :before_header_table do %>
+  <%= as_element :before_header_table do %>
     <tbody class="before-header" id="<%= before_header_id -%>">
       <% if active_scaffold_config.list.always_show_search %>
       <% old_record, @record = @record, active_scaffold_config.model.new %>
@@ -30,7 +30,7 @@
       <% end %>
     </tbody>
   <% end %>
-  <%= as_ui_tag :list_content, id: active_scaffold_content_id, class: 'as_content' do %>
+  <%= as_element :list_content, id: active_scaffold_content_id, class: 'as_content' do %>
     <%= render 'list' %>
   <% end %>
 <% end %>

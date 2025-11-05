@@ -10,7 +10,7 @@ module ActiveScaffold
 
       def display_filters(filters)
         content = filters.sort_by(&:weight).map { |filter| display_filter(filter) }
-        as_ui_tag :filters, safe_join(content) if content.present?
+        as_element :filters, safe_join(content) if content.present?
       end
 
       def display_filter(filter)
