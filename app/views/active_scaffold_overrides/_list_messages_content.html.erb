@@ -3,6 +3,6 @@
   <span class="error-500"><%= as_(:error_500).html_safe %></span>
   <%= as_element :message_close, as_(:close), class: 'msg-close', title: as_(:close) %>
 <% end %>
-<%= as_element :action_messages, id: active_scaffold_messages_id, class: 'action-messages' do %>
+<%= as_element :list_action_messages, id: active_scaffold_messages_id, class: 'action-messages' do %>
   <%= render 'messages' %>
 <% end %>
