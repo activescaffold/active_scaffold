@@ -1,5 +1,5 @@
 <% column_count ||= columns.length + (grouped_search? ? 0 : 1) -%>
-<tbody <%= as_element_attributes :list_messages, 'messages' %>>
+<tbody <%= as_element_attributes :list_messages %>>
   <tr class="record even-record">
     <td <%= as_element_attributes :list_messages_container, colspan: column_count, class: 'messages-container' %>>
       <%= render 'list_messages_content' unless active_scaffold_config.list.messages_above_header %>
