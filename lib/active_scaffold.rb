@@ -86,7 +86,7 @@ module ActiveScaffold
     applied_filters_message: {tag: :div, attributes: {class: 'filtered-message applied-filters'}},
     empty_message: {tag: :p},
     message_reset: {tag: :div, attributes: {class: 'reset'}},
-    message_close: {tag: a, attributes: {href: '#', class: 'close'}},
+    message_close: {tag: :a, attributes: {href: '#', class: 'close'}},
     server_error: {tag: :p, attributes: {class: 'error-message message server-error'}},
     info_message: {tag: :div, attributes: {class: 'info-message message'}},
     warning_message: {tag: :div, attributes: {class: 'warning-message message'}},
