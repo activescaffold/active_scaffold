@@ -1,11 +1,11 @@
 <% for name in %i[info warning error] %>
   <% if flash[name].present? %>
-    <div class="<%= "#{name}-message message" %>">
+    <%= as_element :"#{name}_message", class: 'as-msg' do %>
       <%= display_message flash[name] %>
       <% flash.delete name %>
       <% if request.xhr? %>
-        <a href="#" class="close" title="<%= as_(:close) %>"><%= as_(:close) %></a>
+        <%= as_element :message_close, as_(:close), class: 'msg-close', title: as_(:close) %>
       <% end %>
-    </div>
+    <% end %>
   <% end %>
 <% end %>

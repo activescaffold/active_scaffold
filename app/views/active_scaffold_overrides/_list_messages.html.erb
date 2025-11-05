@@ -1,33 +1,32 @@
 <% column_count ||= columns.length + (grouped_search? ? 0 : 1) -%>
-<tbody class="messages">
+<tbody <%= as_element_attributes :list_messages, 'messages' %>>
   <tr class="record even-record">
-    <td colspan="<%= column_count -%>" class="messages-container">
+    <td <%= as_element_attributes :list_messages_container, colspan: column_count, class: 'messages-container' %>>
       <%= render 'list_messages_content' unless active_scaffold_config.list.messages_above_header %>
-      <%= content_tag :div, class: 'filtered-message',
-                      style: ('display:none;' unless @filtered),
-                      data: ({search: search_params || ''} if active_scaffold_config.store_user_settings && respond_to?(:search_params)) do %>
+      <%= as_element :filtered_message,
+                     style: ('display:none;' unless @filtered),
+                     data: ({search: search_params || ''} if active_scaffold_config.store_user_settings && respond_to?(:search_params)) do %>
         <div><%= @filtered.is_a?(Array) ? render('human_conditions', columns: @filtered) : as_(active_scaffold_config.list.filtered_message) %></div>
         <% if active_scaffold_config.list.show_search_reset && @filtered -%>
-        <div class="reset">
-          <%= loading_indicator_tag(action: :record, id: nil) %>
-          <%= render_action_link(active_scaffold_config.list.reset_link) %>
-        </div>
-        <% end -%>
+          <%= as_element :message_reset do %>
+            <%= loading_indicator_tag(action: :record, id: nil) %>
+            <%= render_action_link(active_scaffold_config.list.reset_link) %>
+          <% end -%>
+        <% end %>
       <% end %>
-      <%= content_tag :div, class: 'filtered-message applied-filters',
-                      style: ('display:none;' unless active_scaffold_config.list.filter_human_message && @applied_filters.present?),
-                      data: ({search: search_params || ''} if active_scaffold_config.store_user_settings && respond_to?(:search_params)) do %>
+      <%= as_element :applied_filters_message,
+                      style: ('display:none;' unless active_scaffold_config.list.filter_human_message && @applied_filters.present?) do %>
         <div><%= render('human_filters', filters: @applied_filters) if active_scaffold_config.list.filter_human_message && @applied_filters.present? %></div>
         <% if active_scaffold_config.list.show_filter_reset && @applied_filters.present? -%>
-          <div class="reset">
+          <%= as_element :message_reset do %>
             <%= loading_indicator_tag(action: :record, id: nil) %>
             <%= render_action_link(active_scaffold_config.list.reset_filter_link) %>
-          </div>
+          <% end -%>
         <% end -%>
       <% end %>
-      <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" '.html_safe unless @page.empty? %>>
+      <%= as_element :empty_message, id: empty_message_id, class: 'empty-message', style: ('display:none;' unless @page.empty?) do %>
         <%= as_(active_scaffold_config.list.no_entries_message) %>
-      </p>
+      <% end %>
     </td>
   </tr>
 </tbody>    

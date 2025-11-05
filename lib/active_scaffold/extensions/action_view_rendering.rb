@@ -158,7 +158,7 @@ module ActiveScaffold # :nodoc:
           content_tag(:div, class: 'active-scaffold-header') do
             content_tag(:h2) do
               label = options[:label] || remote_controller_config(remote_controller).list.label
-              link_to(label, url, remote: true, class: 'load-embedded', data: {error_msg: as_(:error_500)}) <<
+              link_to(label, url, remote: true, class: 'load-embedded', data: {error_msg: server_error_msg(as_(:error_500))}) <<
                 loading_indicator_tag(url_options)
             end
           end

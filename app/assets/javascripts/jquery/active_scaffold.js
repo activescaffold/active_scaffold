@@ -355,8 +355,8 @@
         return true;
       });
 
-      jQuery(document).on('click', '.message a.close', function(e) {
-        ActiveScaffold.hide(jQuery(this).closest('.message'));
+      jQuery(document).on('click', '.as-msg .msg-close', function(e) {
+        ActiveScaffold.hide(jQuery(this).closest('.as-msg'));
         e.preventDefault();
       });
 
@@ -563,7 +563,7 @@
       },
       setup_history_state: function() {
         if (!jQuery('.active-scaffold').length) return;
-        var data = {}, current_search_item = jQuery('.active-scaffold .filtered-message[data-search]');
+        var data = {}, current_search_item = jQuery('.active-scaffold .messages-container [data-search]');
         if (current_search_item.length) {
           // store user settings enabled, update state with current page, search and sorting
           var sorted_columns = jQuery('th.sorted');
@@ -632,7 +632,7 @@
           item.closest('.active-scaffold-component').load(item.attr('href'), function(response, status, xhr) {
             if (status == 'error') {
               indicator.css({visibility: 'hidden'});
-              indicator.after(jQuery('<p>').html(item.data('error-msg')).addClass("error-message message server-error"));
+              indicator.after(item.data('error-msg'));
             } else jQuery(this).trigger('as:element_updated');
           });
         });
@@ -669,12 +669,12 @@
       },
       hide_empty_message: function(tbody) {
         if (this.records_for(tbody).length != 0) {
-          jQuery(tbody).parent().find('tbody.messages p.empty-message').hide();
+          jQuery(tbody).find('.messages-container .empty-message').hide();
         }
       },
       show_empty_message: function(tbody) {
         if (this.records_for(tbody).length != 0) {
-          jQuery(tbody).parent().find('tbody.messages p.empty-message').hide();
+          jQuery(tbody).find('.messages-container .empty-message').hide();
         }
       },
       reload_if_empty: function(tbody, url) {
