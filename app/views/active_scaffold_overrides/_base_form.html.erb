@@ -36,7 +36,7 @@ options = as_element_attributes(
   data: {loading: defined?(loading) ? loading : true}
 )
 cancel_options = {class: 'as_cancel'}
-cancel_options[:remote] = true if xhr # cancel link does nt have to care about multipart forms
+cancel_options[:remote] = true if xhr # cancel link doesn't have to care about multipart forms
 if xhr && multipart # file_uploads
   form_remote_upload_tag url_options.merge(iframe: true), options
 else
@@ -45,25 +45,25 @@ else
 end
 -%>
   <%= hidden_field :record, @record.class.locking_column if add_locking_column && @record.persisted? && @record.locking_enabled? %>
-  <h4><%= headline -%></h4>
+  <%= as_element :form_title, headline -%>
 
-  <div id="<%= element_messages_id(action: form_action) %>" class="messages-container">
+  <%= as_element :form_messages_container, id: element_messages_id(action: form_action), class: 'messages-container' do %>
     <% unless xhr %>
-      <p class="error-message message server-error" style="display:none;">
+      <%= server_error_msg class: 'as-msg', style: 'display:none;' do %>
         <%= as_(:internal_error).html_safe %>
-        <a href="#" class="close" title="<%= as_(:close).html_safe %>"><%= as_(:close).html_safe %></a>
-      </p>
+        <%= as_element :message_close, as_(:close), class: 'msg-close', title: as_(:close) %>
+      <% end %>
     <% end %>
     <%= render 'form_messages' %>
-  </div>
+  <% end %>
 
   <%= render body_partial, columns: columns, form_action: form_action, scope: scope %>
 
   <p class="form-footer">
-    <%= submit_tag as_(submit_text), class: 'submit' if !persistent || persistent == :optional %>
-    <%= submit_tag as_(apply_text), class: 'submit', name: 'dont_close' if persistent %>
-    <%= link_to(as_(:cancel), main_path_to_return, cancel_options) if cancel_link %>
-    <%= loading_indicator_tag(action: form_action, id: @record&.id) %>
+    <%= submit_tag as_(submit_text), as_element_attributes(:form_submit) if !persistent || persistent == :optional %>
+    <%= submit_tag as_(apply_text), as_element_attributes(:form_apply), name: 'dont_close' if persistent %>
+    <%= link_to as_(:cancel), main_path_to_return, as_element_attributes(:form_cancel, **cancel_options) if cancel_link %>
+    <%= loading_indicator_tag action: form_action, id: @record&.id %>
     <%= render footer_extension, form_action: form_action if footer_extension %>
   </p>
 

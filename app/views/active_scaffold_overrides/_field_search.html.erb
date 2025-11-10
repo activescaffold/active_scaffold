@@ -2,14 +2,14 @@
   url_options ||= params_for(action: :index, id: nil, search: nil)
   submit_text ||= :search
   xhr ||= request.xhr?
-  options = {
+  options = as_element_attributes(
+    :field_search_form,
     id: element_form_id(action: 'search'),
-    class: 'as_form search',
+    class: "as_form search#{' floating-footer' if active_scaffold_config.field_search.floating_footer}",
     remote: xhr,
     data: {loading: true},
     method: :get
-  }
-  options[:class] << ' floating-footer' if active_scaffold_config.field_search.floating_footer
+  )
   
   hidden_params = url_options.except(:controller, :action, :id, :search).to_query.split(Rack::Utils::DEFAULT_SEP)
 -%>
@@ -24,16 +24,16 @@
 
   <p class="form-footer">
     <%
-      reset_attrs = {class: 'reset'}
+      reset_attrs = {class: ''}
       if active_scaffold_config.field_search.reset_form
         reset_attrs[:data] = {reset: true}
       else
-        reset_attrs[:class] << ' as_cancel'
+        reset_attrs[:class] += ' as_cancel'
         reset_attrs.merge! remote: true, data: {refresh: true}
       end
     %>
-    <%= submit_tag as_(submit_text), class: 'submit' %>
-    <%= link_to as_(:reset), url_for(url_options.merge(search: '')), reset_attrs unless local_assigns[:skip_reset] %>
+    <%= submit_tag as_(submit_text), as_element_attributes(:field_search_submit) %>
+    <%= link_to as_(:reset), url_for(url_options.merge(search: '')), as_element_attributes(:field_search_reset, **reset_attrs) unless local_assigns[:skip_reset] %>
     <%= loading_indicator_tag(action: :search) %>
   </p>
 </form>

@@ -3,13 +3,14 @@
   url_options = params_for(action: :index, id: nil, search: nil)
   submit_text ||= :search
   xhr ||= request.xhr?
-  options = {
+  options = as_element_attributes(
+    :search_form,
     id: element_form_id(action: 'search'),
     class: "as_form search#{' live' if live_search}",
     remote: xhr,
     data: {loading: true},
     method: :get
-  }
+  )
   
   hidden_params = url_options.except(:controller, :action, :id, :search).to_query.split(Rack::Utils::DEFAULT_SEP)
 -%>
@@ -20,16 +21,16 @@
     <%= hidden_field_tag(key, value) %>
   <% end -%>
   <% field_placeholder = as_(live_search ? :live_search : :search_terms) %>
-  <%= search_field_tag :search, (search_params if search_params.is_a? String), class: 'text-input', id: search_input_id, size: 50, autocomplete: :off, placeholder: field_placeholder %>
-  <%= submit_tag as_(submit_text), class: 'submit', style: ('display:none;' if live_search) %>
+  <%= search_field_tag :search, (search_params if search_params.is_a? String), as_element_attributes(:search_field, id: search_input_id, placeholder: field_placeholder) %>
+  <%= submit_tag as_(submit_text), as_element_attributes(:field_search_submit, style: ('display:none;' if live_search)) %>
   <%
-    reset_attrs = {class: 'as_cancel reset'}
+    reset_attrs = {class: 'as_cancel'}
     if active_scaffold_config.search.reset_form
       reset_attrs[:data] = {reset: true}
     else
       reset_attrs.merge! remote: true, data: {refresh: true}
     end
   %>
-  <%= link_to as_(:reset), url_for(url_options.merge(search: '')), reset_attrs unless local_assigns[:skip_reset] %>
+  <%= link_to as_(:reset), url_for(url_options.merge(search: '')), as_element_attributes(:search_reset, **reset_attrs) unless local_assigns[:skip_reset] %>
   <%= loading_indicator_tag(action: :search) %>
 <% end %>

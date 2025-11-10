@@ -78,9 +78,9 @@ module ActiveScaffold
     filters: {tag: :div, attributes: {class: 'filters'}},
     before_header_table: {tag: :table},
     list_content: {tag: :div},
-    list_table: {},
-    list_messages: {attributes: {class: 'messages'}},
-    list_messages_container: {},
+    list_table: {}, # table
+    list_messages: {attributes: {class: 'messages'}}, # tbody
+    list_messages_container: {}, # td
     list_action_messages: {tag: :div},
     filtered_message: {tag: :div, attributes: {class: 'filtered-message'}},
     applied_filters_message: {tag: :div, attributes: {class: 'filtered-message applied-filters'}},
@@ -92,10 +92,10 @@ module ActiveScaffold
     warning_message: {tag: :div, attributes: {class: 'warning-message message'}},
     error_message: {tag: :div, attributes: {class: 'error-message message'}},
     list_footer: {tag: :div, attributes: {class: 'active-scaffold-footer'}},
-    list_calculations: {},
+    list_calculations: {}, # tr
     pagination_links: {tag: :div},
-    record_actions_cell: {},
-    record_action_links: {},
+    record_actions_cell: {}, # td
+    record_action_links: {}, # table
     action_link_group: {
       proc: lambda do |options|
         if options[:level]&.zero?
@@ -117,11 +117,23 @@ module ActiveScaffold
     },
     action_link_group_title: {tag: :div},
     action_link_group_content: {tag: :ul},
-    form: {},
+    search_form: {}, # form
+    search_field: {attributes: {class: 'text-input', size: 50, autocomplete: :off}}, # search field
+    search_submit: {attributes: {class: 'submit'}}, # input type=submit
+    search_reset: {attributes: {class: 'reset'}}, # a
+    field_search_form: {}, # form
+    field_search_submit: {attributes: {class: 'submit'}}, # input type=submit
+    field_search_reset: {attributes: {class: 'reset'}}, # a
+    form: {}, # form
+    form_title: {tag: :h4},
+    form_messages_container: {tag: :div},
     fields_container: {tag: :ol},
     form_subsection: {tag: :li, attributes: {class: 'sub-section'}},
     subform: {tag: :li},
-    form_element: {tag: :li}
+    form_element: {tag: :li},
+    form_submit: {attributes: {class: 'submit'}}, # input type=submit
+    form_apply: {attributes: {class: 'submit'}}, # input type=submit
+    form_cancel: {}, # a
   }
 
   def self.set_element_tag(name, tag)
