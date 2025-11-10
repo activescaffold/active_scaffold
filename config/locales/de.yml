@@ -11,6 +11,7 @@ de:
     add: Hinzufügen
     add_existing: Existierenden Eintrag hinzufügen
     add_existing_model: Existierende %{model} hinzufügen
+    add_model: %{model} hinzufügen
     all_tokens:
     any_token:
     apply: Akzeptieren

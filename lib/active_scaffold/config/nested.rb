@@ -43,8 +43,34 @@ module ActiveScaffold::Config
       action_link
     end
 
+    # Add a nested ActionLink to new action
+    def add_new_link(attribute, options = {})
+      column = @core.columns[attribute.to_sym]
+      raise ArgumentError, "unknown column #{attribute}" if column.nil?
+      raise ArgumentError, "column #{attribute} is not an association" if column.association.nil?
+
+      model =
+        if column.association.polymorphic?
+          column.label
+        else
+          column.association.klass.model_name.human(count: 1)
+        end
+      options.reverse_merge!(
+        security_method: :nested_authorized?,
+        label: as_(:add_model, model: model),
+        action: 'new',
+        refresh_on_close: false,
+        parameters: {parent_controller: @core.controller_path}
+      )
+      action_group = options.delete(:action_group) || self.action_group
+      action_link = @core.link_for_association(column, options)
+      @core.action_links.add_to_group(action_link, action_group) unless action_link.nil?
+      action_link
+    end
+
     def add_scoped_link(named_scope, options = {})
       action_link = @core.link_for_association_as_scope(named_scope.to_sym, options)
+      action_group = options.delete(:action_group) || self.action_group
       @core.action_links.add_to_group(action_link, action_group) unless action_link.nil?
     end
 

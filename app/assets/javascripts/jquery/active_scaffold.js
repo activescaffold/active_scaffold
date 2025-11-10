@@ -404,7 +404,7 @@
         jQuery(this).parent().find('[type=submit]').click();
       }));
 
-      jQuery(document).on('click', 'form.search .reset[data-reset]', function(e){
+      jQuery(document).on('click', 'form.search [data-reset]', function(e){
         e.preventDefault();
         var form = jQuery(this).closest('form.search');
         form.find(
@@ -1537,14 +1537,19 @@
       close: function(refreshed_content_or_reload) {
         this._super();
         if (refreshed_content_or_reload) {
-          if (typeof refreshed_content_or_reload == 'string') {
-            ActiveScaffold.update_row(this.target, refreshed_content_or_reload);
-          } else if (this.refresh_url) {
-            var target = this.target;
-            jQuery.get(this.refresh_url, function(e, status, xhr) {
-              ActiveScaffold.update_row(target, xhr.responseText);
-            });
-          }
+          if (typeof refreshed_content_or_reload == 'string') this.refresh(refreshed_content_or_reload);
+          else this.refresh();
+        }
+      },
+
+      refresh: function(content) {
+        if (content) {
+          ActiveScaffold.update_row(this.target, content);
+        } else if (this.refresh_url) {
+          var target = this.target;
+          jQuery.get(this.refresh_url, function(e, status, xhr) {
+            ActiveScaffold.update_row(target, xhr.responseText);
+          });
         }
       },
 

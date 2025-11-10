@@ -157,7 +157,7 @@ module ActiveScaffold
         options[:parameters] ||= {}
         options[:parameters].reverse_merge! association: column.association.name
         if column.association.collection?
-          ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(refresh_on_close: true))
+          ActiveScaffold::DataStructures::ActionLink.new('index', options.reverse_merge(refresh_on_close: true))
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
           actions ||= %i[create update show]

@@ -11,6 +11,7 @@ en:
     add: Add
     add_existing: Add Existing
     add_existing_model: Add Existing %{model}
+    add_model: Add %{model}
     all_tokens: All keywords
     any_token: Any keyword
     apply: Apply

@@ -8,7 +8,9 @@
   <% end %>
 <% elsif active_scaffold_config.create.refresh_list %>
   <%= render 'refresh_list', no_history: true %>
-<% elsif params[:parent_controller].nil? %>
+<% elsif params[:parent_controller].present? %>
+  if (action_link) action_link.refresh();
+<% else %>
   <% new_row = render list_record_view, record: @saved_record || @record %>
   ActiveScaffold.create_record_row(action_link ? action_link.scaffold() : '<%= active_scaffold_id %>', '<%= escape_javascript(new_row) %>', <%= {insert_at: insert_at}.to_json.html_safe %>);
   <%= render 'update_calculations' %>

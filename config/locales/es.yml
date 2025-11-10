@@ -11,6 +11,7 @@ es:
     add: Añadir
     add_existing: Añadir Existente
     add_existing_model: Añadir %{model} Existente
+    add_model: Añadir %{model}
     all_tokens:
     any_token:
     apply: Aplicar

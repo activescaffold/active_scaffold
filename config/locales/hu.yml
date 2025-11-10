@@ -11,6 +11,7 @@ hu:
     add: Hozzáadás
     add_existing: Meglevő hozzáadása
     add_existing_model: Meglevő %{model} hozzáadása
+    add_model: %{model} hozzáadása
     all_tokens:
     any_token:
     apply: Apply
