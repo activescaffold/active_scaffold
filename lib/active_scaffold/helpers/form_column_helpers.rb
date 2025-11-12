@@ -170,7 +170,7 @@ module ActiveScaffold
             end
           end
         elsif block_given?
-          header << yield(subsection_id)
+          header << capture(subsection_id, &)
         else
           header << render(partial, locals.merge(subsection_id: subsection_id))
         end
