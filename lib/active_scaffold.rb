@@ -137,7 +137,7 @@ module ActiveScaffold
     form_element: {tag: :li},
     form_submit: {attributes: {class: 'submit'}}, # input type=submit
     form_apply: {attributes: {class: 'submit'}}, # input type=submit
-    form_cancel: {}, # a
+    form_cancel: {} # a
   }
 
   def self.set_element_tag(name, tag)
