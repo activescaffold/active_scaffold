@@ -11,12 +11,12 @@
 %>
 <%= as_element :fields_container, **ol_attrs do %>
   <% columns.each_column(for: @record, crud_type: (:read if show_unauthorized_columns)) do |column| %>
-    <% column_css_class = column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc) %>
+    <% column_css_class = column.css_class unless column.css_class.is_a?(Proc) %>
     <% renders_as = column_renders_as(column) %>
     <% authorized = show_unauthorized_columns || renders_as == :subsection ? @record.authorized_for?(crud_type: form_action, column: column.name) : true %>
     <% if renders_as == :subsection -%>
       <% next unless authorized %>
-      <%= as_element :form_subsection, class: "sub-section #{column_css_class}" do %>
+      <%= as_element :form_subsection, class: column_css_class do %>
         <%= render_subsection(column, @record, scope, form_action) %>
       <% end %>
     <% elsif renders_as == :subform && (authorized || column.show_ui) -%>

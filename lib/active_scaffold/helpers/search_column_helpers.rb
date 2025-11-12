@@ -429,6 +429,17 @@ module ActiveScaffold
         [visibles, hiddens]
       end
 
+      def render_field_search_column(column, record)
+        column_css_class = column.css_class unless column.css_class.is_a?(Proc)
+        if column.respond_to? :each_column
+          as_element :field_search_subsection, class: column_css_class do
+            render_subsection column, record, nil, :field_search, partial: 'field_search_columns'
+          end
+        else
+          as_element :field_search_element, search_attribute(column, record), class: "form-element #{column_css_class}"
+        end
+      end
+
       def searched_by?(column)
         value = field_search_params[column.name.to_s]
         case value

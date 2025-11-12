@@ -155,10 +155,10 @@ module ActiveScaffold
         {}
       end
 
-      def render_subsection(column, record, scope, form_action, partial: 'form')
-        subsection_id = sub_section_id(sub_section: column.label)
+      def render_subsection(column, record, scope, form_action, partial: 'form', subsection_id: nil, &)
+        subsection_id ||= sub_section_id(sub_section: column.label)
         locals = {columns: column, form_action: form_action, scope: scope}
-        header = content_tag(:h5) do
+        header = as_element(:form_subsection_header) do
           h(column.label) <<
             link_to_visibility_toggle(subsection_id, default_visible: !column.collapsed)
         end
@@ -169,6 +169,8 @@ module ActiveScaffold
               render partial, locals.merge(subsection_id: "#{subsection_id}-#{tab_id}", tab_id: tab_id, tab_value: tab_value)
             end
           end
+        elsif block_given?
+          header << yield(subsection_id)
         else
           header << render(partial, locals.merge(subsection_id: subsection_id))
         end

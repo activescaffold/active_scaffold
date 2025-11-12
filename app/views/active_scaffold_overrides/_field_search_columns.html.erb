@@ -1,32 +1,28 @@
-<ol class="form" <%= "id=#{subsection_id}" unless local_assigns[:subsection_id].nil? %> <%= 'style="display: none;"'.html_safe if columns.collapsed %>>
+<%
+  ol_attrs = {class: 'form'}
+  ol_attrs[:id] = subsection_id unless local_assigns[:subsection_id].nil?
+  ol_attrs[:style] = 'display: none;' if columns.collapsed
+%>
+<%= as_element :field_search_fields_container, **ol_attrs do %>
   <% visibles, hiddens = visibles_and_hiddens(active_scaffold_config.field_search, columns) %>
   <% visibles.each do |column| -%>
-    <% if column.respond_to? :each_column %>
-      <li class="sub-section <%= column.css_class unless column.css_class.is_a?(Proc) %>">
-        <%= render_subsection column, @record, nil, :field_search, partial: 'field_search_columns' %>
-      </li>
-    <% else %>
-      <li class="form-element <%= column.css_class unless column.css_class.is_a?(Proc) %>"><%= search_attribute(column, @record) %></li>
-    <% end %>
+    <%= render_field_search_column(column, @record) %>
   <% end -%>
   <% unless hiddens.empty?  -%>
-    <li class="sub-section">
-    <% further_options_id = sub_section_id(sub_section: 'further_options') %>
-    <h5>
-      <%= as_(:optional_attributes) %>
-      <%= link_to_visibility_toggle(further_options_id, default_visible: false) %>
-    </h5>
-    <ol id="<%= further_options_id %>" class="form" style="display:none;">
-    <% hiddens.each do |column| -%>
-      <% if column.respond_to? :each_column %>
-        <li class="sub-section <%= column.css_class unless column.css_class.is_a?(Proc) %>">
-          <%= render_subsection column, @record, nil, :field_search, partial: 'field_search_columns' %>
-        </li>
-      <% else %>
-        <li class="form-element <%= column.css_class unless column.css_class.is_a?(Proc) %>"><%= search_attribute(column, @record) %></li>
+    <%
+      @hidden_section ||= ActiveScaffold::DataStructures::ActionColumns.new.tap do |group|
+        group.label = :optional_attributes
+        group.collapsed = true
+      end
+    %>
+    <%= as_element :field_search_subsection do %>
+      <%= render_subsection(@hidden_section, @record, nil, :field_search, subsection_id: sub_section_id(sub_section: 'further_options')) do |further_options_id| %>
+        <%= as_element :field_search_fields_container, id: further_options_id, class: 'form', style: 'display:none;' do %>
+          <% hiddens.each do |column| -%>
+            <%= render_field_search_column(column, @record) %>
+          <% end -%>
+        <% end %>
       <% end %>
-    <% end -%>
-    </ol>
-    </li>
+    <% end %>
   <% end -%>
-</ol>
+<% end -%>
