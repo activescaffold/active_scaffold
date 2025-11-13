@@ -32,13 +32,13 @@ end
     <% if show_add_new -%>
     <% if column.association.collection?
          add_label = as_(:create_another, model: column.association.klass.model_name.human)
-         add_class = 'as_create_another'
+         add_class = 'create_another'
        else
          add_label = as_(:replace_with_new)
-         add_class = 'as_replace_with_new'
+         add_class = 'replace_with_new'
        end
        create_another_id = "#{subform_div_id}-create-another" %>
-    <%= link_to add_label, add_new_url, id: create_another_id, remote: true, class: "as-js-button #{add_class}", style: 'display: none;' %>
+    <%= link_to add_label, add_new_url, as_element_attributes(:"subform_#{add_class}", id: create_another_id, remote: true, class: "as-js-button as_#{add_class}", style: 'display: none;') %>
     <% end -%>
 
     <%= '|' if show_add_new && show_add_existing %>
@@ -52,7 +52,7 @@ end
            add_existing_id = "#{subform_div_id}-add-existing"
            add_existing_label = column.association.collection? ? :add_existing : :replace_existing %>
         <%= select_tag 'associated_id', content_tag(:option, as_(:_select_), value: '') + select_options %>
-        <%= link_to as_(add_existing_label), edit_associated_url, id: add_existing_id, remote: true, class: "as-js-button as_#{add_existing_label}", style: 'display: none;' %>
+        <%= link_to as_(add_existing_label), edit_associated_url, as_element_attributes(:subform_add_existing, id: add_existing_id, remote: true, class: "as-js-button as_#{add_existing_label}", style: 'display: none;') %>
       <% end -%>
     <% end -%>
   </div>
