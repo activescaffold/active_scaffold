@@ -118,7 +118,7 @@ module ActiveScaffold
     action_link_group_title: {tag: :div},
     action_link_group_content: {tag: :ul},
     search_form: {}, # form
-    search_field: {attributes: {class: 'text-input', size: 50, autocomplete: :off}}, # search field
+    search_field: {attributes: {class: 'text-input', size: 50, autocomplete: :off}}, # input type=search
     search_submit: {attributes: {class: 'submit'}}, # input type=submit
     search_reset: {attributes: {class: 'reset'}}, # a
     field_search_form: {}, # form
@@ -135,6 +135,7 @@ module ActiveScaffold
     form_subsection_header: {tag: :h5},
     subform: {tag: :li},
     form_element: {tag: :li},
+    form_field_description: {tag: :span, attributes: {class: 'description'}},
     form_submit: {attributes: {class: 'submit'}}, # input type=submit
     form_apply: {attributes: {class: 'submit'}}, # input type=submit
     form_cancel: {} # a

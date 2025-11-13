@@ -225,12 +225,17 @@ module ActiveScaffold
         end
         if field
           field << loading_indicator_tag(action: :render_field, id: params[:id]) if column.update_columns
-          desc = column.description(record, scope)
-          field << content_tag(:span, desc, class: 'description') if desc.present?
+          description = column.description(record, scope)
+          description = as_element(:form_field_description, description) if description.present?
         end
 
         label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))
         label << h(' ') << link_to_visibility_toggle(collapsible_id) if collapsible_id
+        form_attribute_html(label, field, description, attributes, collapsible_id)
+      end
+
+      def form_attribute_html(label, field, description, attributes, collapsible_id)
+        field << description if description.present?
         content_tag :dl, attributes do
           content_tag(:dt, label) << content_tag(:dd, field, id: collapsible_id)
         end
