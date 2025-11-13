@@ -56,7 +56,7 @@ module ActiveScaffold
         column_options = active_scaffold_search_options(column).merge(object: record)
         search_attribute_html(
           label_tag(search_label_for(column, column_options), search_column_label(column, record)),
-          content_tag(:dd, active_scaffold_search_for(column, column_options))
+          active_scaffold_search_for(column, column_options)
         )
       end
 
