@@ -134,12 +134,14 @@ module ActiveScaffold
     form_subsection: {tag: :li, attributes: {class: 'sub-section'}},
     form_subsection_header: {tag: :h5},
     subform: {tag: :li},
+    subform_footer: {tag: :div, attributes: {class: 'footer'}},
     subform_record_remove: {}, # a
     subform_create_another: {}, # a
     subform_replace_with_new: {}, # a
     subform_add_existing: {}, # a
     form_element: {tag: :li},
     form_field_description: {tag: :span, attributes: {class: 'description'}},
+    form_footer: {tag: :p},
     form_submit: {attributes: {class: 'submit'}}, # input type=submit
     form_apply: {attributes: {class: 'submit'}}, # input type=submit
     form_cancel: {} # a

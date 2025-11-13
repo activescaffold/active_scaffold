@@ -59,12 +59,12 @@ end
 
   <%= render body_partial, columns: columns, form_action: form_action, scope: scope %>
 
-  <p class="form-footer">
+  <% as_element :form_footer, class: 'form-footer' do %>
     <%= submit_tag as_(submit_text), as_element_attributes(:form_submit) if !persistent || persistent == :optional %>
     <%= submit_tag as_(apply_text), as_element_attributes(:form_apply, name: 'dont_close') if persistent %>
     <%= link_to as_(:cancel), main_path_to_return, as_element_attributes(:form_cancel, **cancel_options) if cancel_link %>
     <%= loading_indicator_tag action: form_action, id: @record&.id %>
     <%= render footer_extension, form_action: form_action if footer_extension %>
-  </p>
+  <% end %>
 
 </form>

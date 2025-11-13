@@ -28,7 +28,7 @@ end
 
 -%>
 <div class="footer-wrapper">
-  <div class="footer">
+  <%= as_element :subform_footer do %>
     <% if show_add_new -%>
     <% if column.association.collection?
          add_label = as_(:create_another, model: column.association.klass.model_name.human)
@@ -55,5 +55,5 @@ end
         <%= link_to as_(add_existing_label), edit_associated_url, as_element_attributes(:subform_add_existing, id: add_existing_id, remote: true, class: "as-js-button as_#{add_existing_label}", style: 'display: none;') %>
       <% end -%>
     <% end -%>
-  </div>
+  <% end %>
 </div>
