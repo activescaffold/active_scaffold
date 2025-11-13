@@ -1,5 +1,5 @@
 <div class="active-scaffold-<%= position %>">
-  <div class="actions">
+  <%= as_element :show_actions, class: 'actions' do %>
     <% active_scaffold_config.action_links.member.each do |link| -%>
       <%
         next unless display_link_in_show?(link, position)
@@ -10,5 +10,5 @@
       -%>
       <%= render_action_link(link, record, authorized: true, page: true) -%>
     <% end -%>
-  </div>
+  <% end %>
 </div>

@@ -1,8 +1,8 @@
-<h4><%= active_scaffold_config.show.label(@record.to_label.nil? ? nil : h(@record.to_label)) %></h4>
+<%= as_element :show_title, active_scaffold_config.show.label(@record.to_label.nil? ? nil : h(@record.to_label)) %>
 
 <%= render 'show_columns', columns: active_scaffold_config.show.columns, record: @record -%>
 
-<p class="form-footer">
+<%= as_element :show_footer do %>
   <%= link_to as_(:close), main_path_to_return, class: 'as_cancel', remote: request.xhr? %>
   <%= loading_indicator_tag(action: :create, id: params[:id]) %>
-</p>
+<% end %>

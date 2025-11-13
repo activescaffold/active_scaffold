@@ -1,30 +1,28 @@
-<dl>
-<% columns.each_column(for: record) do |column| %>
-  <dt><%= show_label(column) -%></dt>
-<% if column.respond_to? :each_column -%>
-  <dd>
-    <% locals = {columns: column, record: record} %>
-    <% if column.tabbed_by %>
-      <div>
-        <%=
-          locals[:tabbed_by] = column.tabbed_by
-          subsection_id = sub_section_id(sub_section: column.label)
-          tab_options = send(override_helper_per_model(:active_scaffold_tab_options, record.class), column, record)
-          used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record, tab_options)
-          active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs) do |tab_value, tab_id|
-            render 'show_columns', locals.merge(tab_id: tab_id, tab_value: tab_value)
-          end
-        %>
-      </div>
-    <% else %>
-     <%= render 'show_columns', locals %>
-    <% end %>
-<% else -%>
-    <% css_class = "#{column.name}-view"
-     css_class.concat(" #{column.css_class}") unless column.css_class.nil? %>
-    <dd class="<%= css_class.strip %>">
-    <%= show_column_value(record, column, **local_assigns.slice(:tabbed_by, :tab_id, :tab_value)) -%>
-<% end -%>
-  </dd>
-<% end -%>
-</dl>
+<%= as_element :show_element do %>
+  <% columns.each_column(for: record) do |column| %>
+    <%= as_element :show_label_block, show_label(column) -%>
+    <% if column.respond_to? :each_column -%>
+      <%= as_element :show_columns_group do %>
+        <% locals = {columns: column, record: record} %>
+        <% if column.tabbed_by %>
+          <div>
+            <%=
+              locals[:tabbed_by] = column.tabbed_by
+              subsection_id = sub_section_id(sub_section: column.label)
+              tab_options = send(override_helper_per_model(:active_scaffold_tab_options, record.class), column, record)
+              used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record, tab_options)
+              active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs) do |tab_value, tab_id|
+                render 'show_columns', locals.merge(tab_id: tab_id, tab_value: tab_value)
+              end
+            %>
+          </div>
+        <% else %>
+         <%= render 'show_columns', locals %>
+        <% end %>
+      <% end %>
+    <% else -%>
+        <% css_class = "#{column.name}-view #{column.css_class unless column.css_class.is_a?(Proc)}" %>
+        <%= as_element :show_value_block, show_column_value(record, column, **local_assigns.slice(:tabbed_by, :tab_id, :tab_value)), class: css_class.strip -%>
+    <% end -%>
+  <% end -%>
+<% end %>
