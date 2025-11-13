@@ -40,7 +40,7 @@ end
       end
       add_button_attrs = {id: "#{subform_div_id}-create-another", remote: true, class: "as-js-button as_#{add_class}", style: 'display: none;'}
     %>
-    <%= link_to add_label, add_new_url, as_element_attributes(:"subform_#{add_class}", add_button_attrs) %>
+    <%= link_to add_label, add_new_url, as_element_attributes(:"subform_#{add_class}", **add_button_attrs) %>
     <% end -%>
 
     <%= '|' if show_add_new && show_add_existing %>
@@ -56,7 +56,7 @@ end
           add_existing_attrs = {id: "#{subform_div_id}-add-existing", remote: true, class: "as-js-button as_#{add_existing_label}", style: 'display: none;'}
         %>
         <%= select_tag 'associated_id', content_tag(:option, as_(:_select_), value: '') + select_options %>
-        <%= link_to as_(add_existing_label), edit_associated_url, as_element_attributes(:subform_add_existing, add_existing_attrs) %>
+        <%= link_to as_(add_existing_label), edit_associated_url, as_element_attributes(:subform_add_existing, **add_existing_attrs) %>
       <% end -%>
     <% end -%>
   <% end %>
