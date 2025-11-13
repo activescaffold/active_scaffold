@@ -147,11 +147,12 @@ module ActiveScaffold
     form_cancel: {}, # a
     show_title: {tag: :h4},
     show_actions: {tag: :div},
-    show_element: {tag: :dl},
+    show_columns_block: {tag: :dl},
     show_label_block: {tag: :dt},
     show_columns_group: {tag: :dd},
     show_value_block: {tag: :dd},
     show_footer: {tag: :p, attributes: {class: 'form-footer'}},
+    show_cancel: {} # a
   }
 
   def self.set_element_tag(name, tag)

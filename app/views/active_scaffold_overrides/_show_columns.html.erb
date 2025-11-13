@@ -1,4 +1,4 @@
-<%= as_element :show_element do %>
+<%= as_element :show_columns_block do %>
   <% columns.each_column(for: record) do |column| %>
     <%= as_element :show_label_block, show_label(column) -%>
     <% if column.respond_to? :each_column -%>

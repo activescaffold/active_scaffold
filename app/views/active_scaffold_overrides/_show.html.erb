@@ -3,6 +3,6 @@
 <%= render 'show_columns', columns: active_scaffold_config.show.columns, record: @record -%>
 
 <%= as_element :show_footer do %>
-  <%= link_to as_(:close), main_path_to_return, class: 'as_cancel', remote: request.xhr? %>
+  <%= link_to as_(:close), main_path_to_return, as_element_attributes(:show_cancel, class: 'as_cancel', remote: request.xhr?) %>
   <%= loading_indicator_tag(action: :create, id: params[:id]) %>
 <% end %>
