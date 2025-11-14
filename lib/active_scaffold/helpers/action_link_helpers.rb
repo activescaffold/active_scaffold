@@ -317,7 +317,8 @@ module ActiveScaffold
       def action_link_text(link, record, options)
         if link.image
           title = options[:link] || link.label(record)
-          text = image_tag(link.image[:name], size: link.image[:size], alt: title, title: title)
+          asset = (@_link_images ||= {})[link.image[:name]] ||= image_path(link.image[:name])
+          text = image_tag(asset, size: link.image[:size], alt: title, title: title, skip_pipeline: true)
         end
         text || options[:link]
       end

@@ -1,5 +1,6 @@
 - Columns using bitfields are not treated as number columns (e.g. don't get numeric class in list)
 - Fix loading tinymce when the form is loaded on page load
+- Speed up rendering action link with images, when list is long, image_path can be reused
 
 = 4.1.2
 - Call cache_column_counts in get_row, so custom code changing queries to calculate counts is used when a row is refreshed too
