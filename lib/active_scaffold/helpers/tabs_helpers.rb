@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Helpers
     # Helpers that assist with rendering of tabs in forms
@@ -59,13 +61,13 @@ module ActiveScaffold
       end
 
       def active_scaffold_tab(label, tab_id, active)
-        content_tag :li, class: "nav-item #{:active if active}" do
-          link_to(label, "##{tab_id}", class: 'nav-link', data: {toggle: :tab})
+        content_tag :li, class: 'nav-item' do
+          link_to(label, "##{tab_id}", class: "nav-link #{:active if active}", data: {bs_toggle: :tab})
         end
       end
 
       def active_scaffold_tab_content(tab_id, active, content)
-        content_tag(:div, content, class: "tab-pane fade#{' in active' if active}", id: tab_id)
+        content_tag(:div, content, class: "tab-pane fade#{' active show' if active}", id: tab_id)
       end
 
       def active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require File.expand_path('../../lib/active_scaffold/bridges/paperclip/paperclip_bridge', __dir__)
 require File.expand_path('../../lib/active_scaffold/bridges/paperclip/paperclip_bridge_helpers', __dir__)

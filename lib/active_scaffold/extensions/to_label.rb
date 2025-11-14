@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # the ever-useful to_label method
 class ActiveRecord::Base
   def to_label

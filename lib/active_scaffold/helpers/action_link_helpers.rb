@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Helpers
     # Helpers rendering action links
@@ -9,12 +11,12 @@ module ActiveScaffold
         !link.ignore_method.nil? && controller.respond_to?(link.ignore_method, true) && controller.send(link.ignore_method, *args)
       end
 
-      def action_link_authorized?(link, *args)
+      def action_link_authorized?(link, *args) # rubocop:disable Naming/PredicateMethod
         auth, reason =
           if link.security_method_set? || controller.respond_to?(link.security_method, true)
             controller.send(link.security_method, *args)
           else
-            args.empty? ? true : args.first.authorized_for?(crud_type: link.crud_type, action: link.action, reason: true)
+            args.empty? || args.first.authorized_for?(crud_type: link.crud_type, action: link.action, reason: true)
           end
         [auth, reason]
       end
@@ -192,7 +194,7 @@ module ActiveScaffold
       end
 
       def replace_id_params_in_action_link_url(link, record, url)
-        url = record ? url.sub('--ID--', record.to_param.to_s) : url.clone
+        url = record ? url.sub('--ID--', record.to_param.to_s) : url.dup
         if link.column&.association&.singular?
           child_id = record.send(link.column.association.name)&.to_param
           if child_id.present?
@@ -313,7 +315,8 @@ module ActiveScaffold
       def action_link_text(link, record, options)
         if link.image
           title = options[:link] || link.label(record)
-          text = image_tag(link.image[:name], size: link.image[:size], alt: title, title: title)
+          asset = (@_link_images ||= {})[link.image[:name]] ||= image_path(link.image[:name])
+          text = image_tag(asset, size: link.image[:size], alt: title, title: title, skip_pipeline: true)
         end
         text || options[:link]
       end
@@ -362,7 +365,7 @@ module ActiveScaffold
         html_options[:data] = html_options[:data].deep_dup if html_options[:data].frozen?
         html_options[:data][:confirm] = link.confirm(h(record&.to_label)) if link.confirm?
         if !options[:page] && !options[:popup] && (options[:inline] || link.inline?)
-          html_options[:class] << ' as_action'
+          html_options[:class] += ' as_action'
           html_options[:data][:position] = link.position if link.position
           html_options[:data][:action] = link.action
           html_options[:data][:cancel_refresh] = true if link.refresh_on_close
@@ -375,7 +378,7 @@ module ActiveScaffold
         end
 
         if link.toggle
-          html_options[:class] << ' toggle'
+          html_options[:class] += ' toggle'
           html_options[:class] << ' active' if action_link_selected?(link, record)
         end
 

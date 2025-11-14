@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Actions
   module Search
     def self.included(base)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # wrap the action rendering for ActiveScaffold controllers
 module ActiveScaffold
   module ActionController # :nodoc:

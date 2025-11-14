@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Config
   class Form < Base
     def initialize(core_config)
@@ -6,6 +8,7 @@ module ActiveScaffold::Config
       @refresh_list = self.class.refresh_list
       @persistent = self.class.persistent
       @floating_footer = self.class.floating_footer
+      @field_descriptions = self.class.field_descriptions
 
       # no global setting here because multipart should only be set for specific forms
       @multipart = false
@@ -28,6 +31,10 @@ module ActiveScaffold::Config
     class_attribute :floating_footer, instance_accessor: false
     @@floating_footer = false
 
+    # whether field descriptions are visible always, on hover or click (:show, :hover, :click, default to :show)
+    class_attribute :field_descriptions, instance_accessor: false
+    @@field_descriptions = :show
+
     # instance-level configuration
     # ----------------------------
 
@@ -49,6 +56,9 @@ module ActiveScaffold::Config
     # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
     attr_accessor :floating_footer
 
+    # whether field descriptions are visible always, on hover or click (:show, :hover, :click, default to :show)
+    attr_accessor :field_descriptions
+
     columns_accessor :columns do
       columns.exclude :created_on, :created_at, :updated_on, :updated_at, :as_marked
       columns.exclude(*@core.columns.filter_map { |c| c.name if c.association&.polymorphic? })
@@ -62,7 +72,7 @@ module ActiveScaffold::Config
     end
 
     UserSettings.class_eval do
-      user_attr :persistent, :refresh_list, :show_unauthorized_columns, :floating_footer
+      user_attr :persistent, :refresh_list, :show_unauthorized_columns, :floating_footer, :field_descriptions
 
       attr_writer :multipart
 

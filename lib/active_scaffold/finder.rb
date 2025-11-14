@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Finder
     def self.like_operator
@@ -135,8 +137,9 @@ module ActiveScaffold
           end
           [sql_conditions.join(' OR '), *where_values]
         rescue StandardError => e
-          Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
-          raise e
+          message = "on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
+          Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+          raise e.class, "#{e.message} -- #{message}", e.backtrace
         end
       end
 
@@ -277,7 +280,8 @@ module ActiveScaffold
       end
 
       def translate_days_and_months(value, format)
-        translated = ''
+        translated = +''
+        value = value.dup # ensure the string can be changed
         tables_for_translating_days_and_months(format).each do |table|
           regexp = Regexp.union(table.keys)
           index = value.index(regexp)

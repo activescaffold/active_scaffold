@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class AttributeParamsTest < ActiveSupport::TestCase
@@ -446,6 +448,7 @@ class Controller
   include ActiveScaffold::Core
   include ActiveScaffold::Helpers::ControllerHelpers
   include ActiveScaffold::AttributeParams
+
   public :update_record_from_params
 
   def logger

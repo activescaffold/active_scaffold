@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Bridges
     class ActiveStorage
@@ -23,17 +25,16 @@ module ActiveScaffold
 
           def generate_delete_helpers(klass)
             (active_storage_has_one_fields(klass) | active_storage_has_many_fields(klass)).each do |field|
-              klass.send :class_eval, <<-CODE, __FILE__, __LINE__ + 1 unless klass.method_defined?(:"#{field}_with_delete=")
-                attr_reader :delete_#{field}
+              next if klass.method_defined?(:"#{field}_with_delete=")
 
-                def delete_#{field}=(value)
-                  value = (value=="true") if String===value
-                  return unless value
+              klass.attr_reader :"delete_#{field}"
+              klass.define_method "delete_#{field}=" do |value|
+                value = (value == 'true') if value.is_a?(String)
+                return unless value
 
-                  # passing nil to the file column causes the file to be deleted.
-                  self.#{field}.purge
-                end
-              CODE
+                # passing nil to the file column causes the file to be deleted.
+                send(field).purge
+              end
             end
           end
         end

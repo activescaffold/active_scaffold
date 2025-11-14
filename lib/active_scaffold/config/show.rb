@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Config
   class Show < Base
     self.crud_type = :read

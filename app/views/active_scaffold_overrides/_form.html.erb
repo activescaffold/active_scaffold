@@ -36,7 +36,7 @@
     <% else -%>
       <%
         classes = ['form-element']
-        classes << 'required' if column.required?(action_for_validation?(@record))
+        classes << 'required' if column.required?(action_for_validation(@record))
         classes << form_ui_class(column.form_ui)
         classes << column.css_class
       %>

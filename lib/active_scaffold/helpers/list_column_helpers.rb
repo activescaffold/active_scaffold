@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Helpers
     # Helpers that assist with the rendering of a List Column
@@ -22,8 +24,9 @@ module ActiveScaffold
         value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
         value
       rescue StandardError => e
-        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
-        raise e
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
       def get_column_method(record, column)
@@ -62,8 +65,9 @@ module ActiveScaffold
           text
         end
       rescue StandardError => e
-        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        raise e
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
       def column_wrap_tag
@@ -303,7 +307,7 @@ module ActiveScaffold
             empty_field_text(column)
           elsif column_value.is_a?(Time) || column_value.is_a?(Date)
             l(column_value, format: options&.dig(:format) || :default)
-          elsif !!column_value == column_value # rubocop:disable Style/DoubleNegation fast check for boolean
+          elsif !!column_value == column_value # rubocop:disable Style/DoubleNegation -- fast check for boolean
             as_(column_value.to_s.to_sym)
           else
             column_value.to_s

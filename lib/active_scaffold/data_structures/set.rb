@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   class Set
     include Enumerable
@@ -52,13 +54,9 @@ module ActiveScaffold::DataStructures
     end
 
     # returns the number of items in the set
-    def length
-      @set.length
-    end
+    delegate :length, to: :@set
 
-    def empty?
-      @set.empty?
-    end
+    delegate :empty?, to: :@set
 
     def +(other)
       self.class.new(@set, *other)

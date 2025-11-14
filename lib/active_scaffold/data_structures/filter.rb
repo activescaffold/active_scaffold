@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   class Filter
     include Enumerable
@@ -52,9 +54,7 @@ module ActiveScaffold::DataStructures
       @options.each(&)
     end
 
-    def empty?
-      @options.empty?
-    end
+    delegate :empty?, to: :@options
 
     def label(*)
       case @label

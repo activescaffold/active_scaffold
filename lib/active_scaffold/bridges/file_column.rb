@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::FileColumn < ActiveScaffold::DataStructures::Bridge
   def self.install
     if ActiveScaffold::Config::Core.method_defined?(:initialize_with_file_column)

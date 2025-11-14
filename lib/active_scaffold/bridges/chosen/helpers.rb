@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'active_support/concern'
 
 class ActiveScaffold::Bridges::Chosen
   module Helpers
     extend ActiveSupport::Concern
+
     included do
       include FormColumnHelpers
       include SearchColumnHelpers

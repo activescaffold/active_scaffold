@@ -1,17 +1,15 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures::Association
   class ActiveRecord < Abstract
     def self.reflect_on_all_associations(klass)
       klass.reflect_on_all_associations
     end
 
-    delegate :collection?, :polymorphic?, :association_primary_key, :foreign_type, :table_name, to: :@association
+    delegate :collection?, :polymorphic?, :association_primary_key, :foreign_type, :table_name, :nested?, :scope, to: :@association
 
     def through?
       @association.options[:through].present?
-    end
-
-    def nested?
-      @association.nested?
     end
 
     def readonly?
@@ -24,10 +22,6 @@ module ActiveScaffold::DataStructures::Association
 
     def source_reflection
       @association.source_reflection if through?
-    end
-
-    def scope
-      @association.scope
     end
 
     def inverse_klass

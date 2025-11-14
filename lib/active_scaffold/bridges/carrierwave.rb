@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::Carrierwave < ActiveScaffold::DataStructures::Bridge
   def self.install
     require File.join(File.dirname(__FILE__), 'carrierwave/form_ui')

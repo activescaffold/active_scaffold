@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Config
   class Update < ActiveScaffold::Config::Form
     self.crud_type = :update
@@ -35,7 +37,7 @@ module ActiveScaffold::Config
     attr_writer :hide_nested_column
 
     def hide_nested_column
-      @hide_nested_column.nil? ? true : @hide_nested_column
+      @hide_nested_column.nil? || @hide_nested_column
     end
 
     UserSettings.class_eval do

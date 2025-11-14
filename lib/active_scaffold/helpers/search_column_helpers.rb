@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Helpers
     # Helpers that assist with the rendering of a Form Column
@@ -43,8 +45,9 @@ module ActiveScaffold
           text_field(:record, column.name, options.merge(column.options))
         end
       rescue StandardError => e
-        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        raise e
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
       # the standard active scaffold options used for class, name and scope
@@ -350,7 +353,7 @@ module ActiveScaffold
                      options_for_select(active_scaffold_search_datetime_trend_units(column), current_search['unit']),
                      class: 'text-input')
         ]
-        show = current_search.key?(:show) ? current_search[:show] : current_search['opt'] == 'PAST' || current_search['opt'] == 'FUTURE'
+        show = current_search.key?(:show) ? current_search[:show] : %w[PAST FUTURE].include?(current_search['opt'])
         content_tag('span', safe_join(trend_controls, ' '),
                     id: "#{options[:id]}_trend", class: 'search-date-trend',
                     style: ('display: none' unless show))

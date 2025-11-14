@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveSupport::TestCase
   def self.should_have_columns_in(action, *columns)
     should "have #{columns.to_sentence} columns in #{action}" do

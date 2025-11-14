@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Config
   class Create < ActiveScaffold::Config::Form
     self.crud_type = :create

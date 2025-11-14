@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'model_stub'
 
@@ -13,7 +15,7 @@ class AssociationColumnTest < ActiveSupport::TestCase
 
   def test_sorting
     # sorting on association columns is not defined
-    assert_equal false, @association_column.sort
+    assert_equal nil, @association_column.sort
   end
 
   def test_searching

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::ActiveStorage < ActiveScaffold::DataStructures::Bridge
   cattr_accessor :thumbnail_variant
   self.thumbnail_variant = {resize_to_limit: [nil, 30]}

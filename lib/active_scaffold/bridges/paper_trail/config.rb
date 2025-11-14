@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Config
   class DeletedRecords < Base
     self.crud_type = :read

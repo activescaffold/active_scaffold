@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'active_scaffold_config_mock'
 
 class DateTimeModel < ActiveRecord::Base
   include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
+
   def self.columns
     @columns ||= [ColumnMock.new('id', '', 'int(11)'), ColumnMock.new('run_at', '', 'datetime')]
   end

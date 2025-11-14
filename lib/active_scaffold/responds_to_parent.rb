@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   # Module containing the methods useful for child IFRAME to parent window communication
   module RespondsToParent

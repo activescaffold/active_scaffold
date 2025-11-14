@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   # Provides support for param hashes assumed to be model attributes.
   # Support is primarily needed for creating/editing associated records using a nested hash structure.
@@ -81,7 +83,7 @@ module ActiveScaffold
         message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} " \
                   "(value from params #{attributes[column.name].inspect})"
         Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
-        raise e.class, "#{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
     end
 
@@ -225,7 +227,7 @@ module ActiveScaffold
     def manage_nested_record_from_params(parent_record, column, attributes, avoid_changes = false)
       return nil unless build_record_from_params?(attributes, column, parent_record)
 
-      record = find_or_create_for_params(attributes, column, parent_record)
+      record = find_or_create_for_params(attributes, column, parent_record, avoid_changes)
       if record
         record_columns = active_scaffold_config_for(record.class).subform.columns
         prev_constraints = record_columns.constraint_columns
@@ -248,11 +250,11 @@ module ActiveScaffold
     # Attempts to create or find an instance of the klass of the association in parent_column from the
     # request parameters given. If params[primary_key] exists it will attempt to find an existing object
     # otherwise it will build a new one.
-    def find_or_create_for_params(params, parent_column, parent_record)
+    def find_or_create_for_params(params, parent_column, parent_record, avoid_changes = false)
       current = parent_record.send(parent_column.name)
       klass = parent_column.association.klass(parent_record)
       if params.key? klass.primary_key
-        record_from_current_or_find(klass, params[klass.primary_key], current)
+        record_from_current_or_find(klass, params[klass.primary_key], current, avoid_changes)
       elsif klass.authorized_for?(crud_type: :create)
         association = parent_column.association
         record = klass.new
@@ -265,15 +267,21 @@ module ActiveScaffold
 
     # Attempts to find an instance of klass (which must be an ActiveRecord object) with id primary key
     # Returns record from current if it's included or find from DB
-    def record_from_current_or_find(klass, id, current)
+    def record_from_current_or_find(klass, id, current, avoid_changes = false)
+      record = record_from_current(current, id)
+      record ||= klass.new(klass.primary_key => id) if avoid_changes
+      record ||= klass.find(id)
+      record = copy_attributes(record) if avoid_changes && record.persisted?
+      record
+    end
+
+    def record_from_current(current, id)
       if current.is_a?(ActiveRecord::Base) && current.id.to_s == id
         # modifying the current object of a singular association
         current
-      elsif current.respond_to?(:any?) && current.any? { |o| o.id.to_s == id }
+      elsif current.respond_to?(:any?)
         # modifying one of the current objects in a plural association
         current.detect { |o| o.id.to_s == id }
-      else # attaching an existing but not-current object
-        klass.find(id)
       end
     end
 

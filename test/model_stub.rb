@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ModelStub < ActiveRecord::Base
   validates :b, presence: true
   has_one :other_model, class_name: 'ModelStub' # rubocop:disable Rails/DuplicateAssociation

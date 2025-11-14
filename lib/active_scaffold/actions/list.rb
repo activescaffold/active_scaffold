@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Actions
   module List
     def self.included(base)
@@ -109,6 +111,7 @@ module ActiveScaffold::Actions
     def get_row(crud_type_or_security_options = :read)
       set_includes_for_columns
       super
+      cache_column_counts [@record]
     end
 
     def current_page

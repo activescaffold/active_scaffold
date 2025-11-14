@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Helpers
     module AssociationHelpers
@@ -39,7 +41,7 @@ module ActiveScaffold
             include_assoc = includes_for_association(column, klass)
             relation = relation.includes(include_assoc) if include_assoc
           end
-          if column&.sort && column.sort&.dig(:sql)
+          if column&.sort&.dig(:sql)
             # with threasafe enabled, column.sort[:sql] returns proxied strings and
             # regexp capture won't work, which rails uses internally, so to_s is needed
             relation = relation.order(Array(column.sort[:sql]).map { |sql| Arel.sql(sql.to_s) })
@@ -92,7 +94,7 @@ module ActiveScaffold
       def sorted_association_options_find(association, conditions = nil, record = nil)
         options = association_options_find(association, conditions, nil, record)
         column = column_for_association(association, record)
-        unless column&.sort && column.sort&.dig(:sql)
+        unless column&.sort&.dig(:sql)
           method = column.options[:label_method] if column
           options = options.sort_by(&(method || :to_label).to_sym)
         end

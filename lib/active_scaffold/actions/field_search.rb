@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Actions
   module FieldSearch
     def self.included(base)
@@ -124,7 +126,7 @@ module ActiveScaffold::Actions
         when 'year_quarter'
           sql_operator(sql_operator(extract_sql_fn('year', group_sql), '*', 10), '+', extract_sql_fn('quarter', group_sql))
         else
-          raise "#{group_function} unsupported, override calculation_for_group_by in #{self.class.name}"
+          raise ArgumentError, "#{group_function} unsupported, override calculation_for_group_by in #{self.class.name}"
         end
       end
 

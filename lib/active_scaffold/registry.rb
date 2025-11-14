@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   class Registry
     thread_mattr_accessor :current_user_proc, :current_ability_proc, :marked_records

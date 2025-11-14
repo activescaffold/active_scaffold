@@ -10,7 +10,7 @@
     end
   end
   disable_required_for_new = @disable_required_for_new
-  @disable_required_for_new = !show_blank_record.nil? unless column.association.singular? && column.required?(action_for_validation?(parent_record))
+  @disable_required_for_new = !show_blank_record.nil? unless column.association.singular? && column.required?(action_for_validation(parent_record))
   subform_div_id = "#{sub_form_id(association: column.name, tab_id: tab_id, id: parent_record.id || generated_id(parent_record) || 99_999_999_999)}-div"
 
   # render footer before rendering associated records, fixes create new on self-associations

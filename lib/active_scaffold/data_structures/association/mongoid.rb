@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures::Association
   class Mongoid < Abstract
     delegate :inverse_klass, :as, :dependent, :inverse, to: :@association
@@ -7,11 +9,11 @@ module ActiveScaffold::DataStructures::Association
       defined?(::Mongoid::Association) ? macro_mapping?(:belongs_to) : super
     end
 
-    def has_one? # rubocop:disable Naming/PredicateName
+    def has_one? # rubocop:disable Naming/PredicatePrefix
       defined?(::Mongoid::Association) ? macro_mapping?(:has_one) : super
     end
 
-    def has_many? # rubocop:disable Naming/PredicateName
+    def has_many? # rubocop:disable Naming/PredicatePrefix
       defined?(::Mongoid::Association) ? macro_mapping?(:has_many) : super
     end
 

@@ -11,6 +11,7 @@ fr:
     add: Ajouter
     add_existing: Ajouter un(e) existant(e)
     add_existing_model: Ajouter un(e) %{model} existant(e)
+    add_model: Ajouter un(e) %{model}
     all_tokens:
     any_token:
     apply: Appliquer

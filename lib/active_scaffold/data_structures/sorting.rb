@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   # encapsulates the column sorting configuration for the List view
   class Sorting
@@ -22,7 +24,7 @@ module ActiveScaffold::DataStructures
       # fallback to setting primary key ordering
       setup_primary_key_order_clause
       model_scope = model.send(:build_default_scope)
-      order_clause = model_scope.order_values.join(',') if model_scope
+      order_clause = model_scope.order_values.map { |ordering| ordering.respond_to?(:to_sql) ? ordering.to_sql : ordering }.join(',') if model_scope
       return unless order_clause
 
       # If an ORDER BY clause is found set default sorting according to it
@@ -115,13 +117,9 @@ module ActiveScaffold::DataStructures
     end
 
     # provides quick access to the first (and sometimes only) clause
-    def first
-      @clauses.first
-    end
+    delegate :first, to: :@clauses
 
-    def size
-      @clauses.size
-    end
+    delegate :size, to: :@clauses
 
     # builds an order-by clause
     def clause(grouped_columns = nil)

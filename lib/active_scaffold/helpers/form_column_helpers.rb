@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Helpers
     # Helpers that assist with the rendering of a Form Column
@@ -23,7 +25,7 @@ module ActiveScaffold
 
         elsif column.association
           # if we get here, it's because the column has a form_ui but not one ActiveScaffold knows about.
-          raise "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'" if column.form_ui
+          raise ArgumentError, "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'" if column.form_ui
 
           # its an association and nothing is specified, we will assume form_ui :select
           active_scaffold_input_select(column, options)
@@ -47,14 +49,15 @@ module ActiveScaffold
           text_field(:record, column.name, options.merge(column.options).except(:format))
         end
       rescue StandardError => e
-        Rails.logger.error "#{e.class.name}: #{e.message} -- on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        raise e
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
       def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil) # rubocop:disable Metrics/ParameterLists
         if add_class
           col_class = []
-          col_class << 'required' if column.required?(action_for_validation?(record))
+          col_class << 'required' if column.required?(action_for_validation(record))
           col_class << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
           col_class << 'hidden' if column_renders_as(column) == :hidden
           col_class << 'checkbox' if column.form_ui == :checkbox
@@ -84,7 +87,7 @@ module ActiveScaffold
         options
       end
 
-      def action_for_validation?(record)
+      def action_for_validation(record)
         record&.persisted? ? :update : :create
       end
 
@@ -94,7 +97,7 @@ module ActiveScaffold
         record = options[:object]
 
         # Add some HTML5 attributes for in-browser validation and better user experience
-        if column.required?(action_for_validation?(record)) && (!@disable_required_for_new || scope.nil? || record&.persisted?)
+        if column.required?(action_for_validation(record)) && (!@disable_required_for_new || scope.nil? || record&.persisted?)
           options[:required] = true
         end
         options[:placeholder] = column.placeholder if column.placeholder.present?
@@ -207,6 +210,11 @@ module ActiveScaffold
         end
       end
 
+      def column_description(column, record, scope = nil)
+        desc = column.description(record, scope)
+        as_element(:form_field_description, h(desc) + content_tag(:span, nil, class: 'close')) if desc.present?
+      end
+
       def form_attribute(column, record, scope = nil, only_value = false, col_class = nil)
         column_options = active_scaffold_input_options(column, scope, object: record)
         collapsible_id = column_options.delete :collapsible_id
@@ -225,8 +233,7 @@ module ActiveScaffold
         end
         if field
           field << loading_indicator_tag(action: :render_field, id: params[:id]) if column.update_columns
-          description = column.description(record, scope)
-          description = as_element(:form_field_description, description) if description.present?
+          description = column_description(column, record, scope)
         end
 
         label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Actions
   # The Nested module basically handles automatically linking controllers together.
   # It does this by creating column links with the right parameters, and by providing

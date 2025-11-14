@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Actions
   module Update
     def self.included(base)

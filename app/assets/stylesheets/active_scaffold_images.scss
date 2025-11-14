@@ -94,3 +94,9 @@ background-image: image-url('active_scaffold/refresh.png');
 background-position: 5px 50%;
 background-repeat: no-repeat;
 }
+
+.ui-dialog .loading::after {
+  background: image-url('active_scaffold/indicator.gif') no-repeat;
+  content: 'Loading...';
+  padding-left: 20px;
+}

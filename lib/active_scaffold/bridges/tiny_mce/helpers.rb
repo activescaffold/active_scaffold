@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::TinyMce
   module Helpers
     def self.included(base)

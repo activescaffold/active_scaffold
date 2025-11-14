@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures::Association
   class Abstract
     def initialize(association)
@@ -24,11 +26,11 @@ module ActiveScaffold::DataStructures::Association
       @association.macro == :belongs_to
     end
 
-    def has_one? # rubocop:disable Naming/PredicateName
+    def has_one? # rubocop:disable Naming/PredicatePrefix
       @association.macro == :has_one
     end
 
-    def has_many? # rubocop:disable Naming/PredicateName
+    def has_many? # rubocop:disable Naming/PredicatePrefix
       @association.macro == :has_many
     end
 

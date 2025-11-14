@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class SortingTest < ActiveSupport::TestCase
@@ -125,7 +127,7 @@ class SortingTest < ActiveSupport::TestCase
 
   def test_set_default_sorting_with_simple_default_scope
     model_stub_with_default_scope = ModelStub.clone
-    model_stub_with_default_scope.class_eval { default_scope -> { order('a') } }
+    model_stub_with_default_scope.class_eval { default_scope -> { order(:a) } }
     @sorting = ActiveScaffold::DataStructures::Sorting.new(@columns, model_stub_with_default_scope)
     @sorting.set_default_sorting
 

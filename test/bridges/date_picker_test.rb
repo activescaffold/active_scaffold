@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'active_scaffold_config_mock'
 require File.expand_path('../../lib/active_scaffold/bridges/date_picker/ext', __dir__)

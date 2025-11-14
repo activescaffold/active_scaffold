@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'active_support/concern'
 
 class ActiveScaffold::Bridges::RecordSelect
   module Helpers
     extend ActiveSupport::Concern
+
     included do
       include FormColumnHelpers
       include SearchColumnHelpers
@@ -78,8 +81,9 @@ class ActiveScaffold::Bridges::RecordSelect
           column.association.klass.find(value.to_i)
         end
       rescue StandardError => e
-        Rails.logger.error "#{e.class.name}: #{e.message} -- Sorry, we are not that smart yet. Attempted to restore search values to search fields :#{column.name} in #{controller.class}"
-        raise e
+        message = "Sorry, we are not that smart yet. Attempted to restore search values to search fields :#{column.name} in #{controller.class}"
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
     end
   end

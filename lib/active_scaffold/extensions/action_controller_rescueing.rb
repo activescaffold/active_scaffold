@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActionController # :nodoc:
   class Base
     # adding to ActionController::Base so it can overrided in ApplicationController

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   class FilterOption < ActionLink
     attr_reader :name, :filter_name

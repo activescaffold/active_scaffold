@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Config
   class List < Base
     self.crud_type = :read
@@ -199,8 +201,8 @@ module ActiveScaffold::Config
     # the label for this List action. used for the header.
     attr_writer :label
 
-    def label
-      @label ? as_(@label, count: 2) : @core.label(count: 2)
+    def label(core: @core)
+      @label ? as_(@label, count: 2) : core.label(count: 2)
     end
 
     attr_writer :no_entries_message, :filtered_message, :always_show_search
@@ -244,7 +246,7 @@ module ActiveScaffold::Config
     attr_writer :hide_nested_column
 
     def hide_nested_column
-      @hide_nested_column.nil? ? true : @hide_nested_column
+      @hide_nested_column.nil? || @hide_nested_column
     end
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
@@ -274,7 +276,7 @@ module ActiveScaffold::Config
 
       # This label has already been localized.
       def label
-        self['label'] || embedded_label || @label || @conf.label
+        self['label'] || embedded_label || @label || @conf.label(core: core)
       end
 
       def embedded_label
@@ -339,9 +341,7 @@ module ActiveScaffold::Config
         @_sorting
       end
 
-      def count_includes
-        @conf.count_includes
-      end
+      delegate :count_includes, to: :@conf
 
       protected
 

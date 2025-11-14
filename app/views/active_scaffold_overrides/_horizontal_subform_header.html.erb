@@ -9,9 +9,7 @@
       -%>
       <th class="<%= "#{column.name}-column #{'required' if column.required?} #{'hidden' if hidden}" %>">
         <label><%= subform_label(column, hidden) %></label>
-        <% if column.description.present? -%>
-          <span class="description"><%= column.description %></span>
-        <% end -%>
+        <%= column_description(column, nil, scope) %>
       </th>
     <% end -%>
     <th></th>

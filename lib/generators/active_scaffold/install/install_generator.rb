@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails/generators/base'
 # require 'generators/active_scaffold_controller/active_scaffold_controller_generator'
 
@@ -13,10 +15,10 @@ module ActiveScaffold
         route 'concern :active_scaffold_association, ActiveScaffold::Routing::Association.new'
       end
 
-      IMPORTMAP = 'config/importmap.rb'.freeze
-      JS_ASSET = 'app/assets/javascripts/application.js'.freeze
-      JS_APP = 'app/javascript/application.js'.freeze
-      MANIFEST = 'app/assets/config/manifest.js'.freeze
+      IMPORTMAP = 'config/importmap.rb'
+      JS_ASSET = 'app/assets/javascripts/application.js'
+      JS_APP = 'app/javascript/application.js'
+      MANIFEST = 'app/assets/config/manifest.js'
 
       def add_javascript
         if File.exist?(IMPORTMAP)
@@ -46,7 +48,7 @@ module ActiveScaffold
         if original_css.match?(/require active_scaffold$/)
           say_status('skipped', 'insert into app/assets/stylesheets/application.css', :yellow)
         else
-          insert_into_file 'app/assets/stylesheets/application.css', before: %r{[ ]*\*/} do
+          insert_into_file 'app/assets/stylesheets/application.css', before: %r{ *\*/} do
             " *= require active_scaffold\n"
           end
         end

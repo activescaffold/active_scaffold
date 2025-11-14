@@ -6,6 +6,17 @@
 - Support add_new with chosen bridge
 - Added translations for millisec and microsec prompts in jquery UI datetime picker
 - Speed up validating big forms (e.g. nested subforms with many records on each subform)
+- Support hiding field descriptions by default and show them with hover or click
+- Fix for usage with frozen literal strings enabled, add magic comments to enable frozen string literals in ActiveScaffold
+- Update code for tabs to work with bootstrap 5
+- Fix loading tinymce when the form is loaded on page load
+- Add ActiveScaffold.setup_callbacks array, so functions can be added to be called when ActiveScaffold.setup is called (form open, page load)
+- Columns using bitfields are not treated as number columns (e.g. don't get numeric class in list)
+- Add add_new_link to config.nested, adding a link to create form on an association, refreshing this record instead of adding new row in the list
+- Speed up rendering action link with images, when list is long, image_path can be reused
+
+= 4.1.2
+- Call cache_column_counts in get_row, so custom code changing queries to calculate counts is used when a row is refreshed too
 
 = 4.1.1
 - Load dartsass-sprockets, so it isn't required in the Gemfile

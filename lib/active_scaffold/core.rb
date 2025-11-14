@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Core
     def self.included(base)
@@ -37,6 +39,7 @@ module ActiveScaffold
     module ClassMethods
       def active_scaffold(model_id = nil, &block)
         extend Prefixes
+
         # initialize bridges here
         ActiveScaffold::Bridges.run_all
 
@@ -72,6 +75,7 @@ module ActiveScaffold
           end
           active_scaffold_config.actions.each do |mod|
             include "ActiveScaffold::Actions::#{mod.to_s.camelize}".constantize
+
             mod_conf = active_scaffold_config.send(mod)
             active_scaffold_config._setup_action(mod)
             next unless mod_conf.respond_to?(:link) && (link = mod_conf.link)
@@ -110,7 +114,7 @@ module ActiveScaffold
 
         active_scaffold_config.action_links.collection.delete('new')
         active_scaffold_config.sti_children.each do |child|
-          new_sti_link = Marshal.load(Marshal.dump(new_action_link)) # deep clone
+          new_sti_link = new_action_link.deep_dup
           new_sti_link.label = as_(:create_model, model: child.to_s.camelize.constantize.model_name.human)
           new_sti_link.parameters = {parent_sti: controller_path}
           new_sti_link.controller = proc { active_scaffold_controller_for(child.to_s.camelize.constantize).controller_path }
@@ -153,7 +157,7 @@ module ActiveScaffold
         options[:parameters] ||= {}
         options[:parameters].reverse_merge! association: column.association.name
         if column.association.collection?
-          ActiveScaffold::DataStructures::ActionLink.new('index', options.merge(refresh_on_close: true))
+          ActiveScaffold::DataStructures::ActionLink.new('index', options.reverse_merge(refresh_on_close: true))
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
           actions ||= %i[create update show]
@@ -178,7 +182,7 @@ module ActiveScaffold
         as_path = File.realpath File.join(ActiveScaffold::Config::Core.plugin_directory, 'app', 'views')
         index = view_paths.find_index { |p| p.to_s == as_path }
         if index
-          self.view_paths = view_paths[0..index - 1] + Array(path) + view_paths[index..]
+          self.view_paths = view_paths[0..(index - 1)] + Array(path) + view_paths[index..]
         else
           append_view_path path
         end

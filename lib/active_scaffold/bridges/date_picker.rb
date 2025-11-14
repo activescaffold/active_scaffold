@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Bridges
   class DatePicker < ActiveScaffold::DataStructures::Bridge
     autoload :Helper, 'active_scaffold/bridges/date_picker/helper'

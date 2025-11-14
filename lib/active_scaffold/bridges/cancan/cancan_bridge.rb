@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Allow users to easily define aliases for AS actions.
 # Ability#as_action_aliases should be called by the user in his ability class
 #
@@ -58,6 +60,7 @@ module ActiveScaffold::Bridges
     module ModelUserAccess
       module Controller
         extend ActiveSupport::Concern
+
         included do
           prepend_before_action :assign_current_ability_to_models
         end
@@ -81,17 +84,17 @@ module ActiveScaffold::Bridges
         end
 
         # Instance-level access to the current ability
-        def current_ability
-          self.class.current_ability
-        end
+        delegate :current_ability, to: :class
       end
     end
 
     # plug into AS#authorized_for calls
     module ActiveRecord
       extend ActiveSupport::Concern
+
       included do
         prepend SecurityMethods
+
         class << self
           prepend SecurityMethods
         end
@@ -105,12 +108,12 @@ module ActiveScaffold::Bridges
         #     {action: 'edit'}
         # to allow access cancan must allow both :crud_type and :action
         # if cancan says "no", it delegates to default AS behavior
-        def authorized_for?(options = {})
+        def authorized_for?(options = {}) # rubocop:disable Naming/PredicateMethod
           raise InvalidArgument if options[:crud_type].blank? && options[:action].blank?
 
           if current_ability.present?
-            crud_type_result = options[:crud_type].nil? ? true : current_ability.can?(options[:crud_type], self)
-            action_result = options[:action].nil? ? true : current_ability.can?(options[:action].to_sym, self)
+            crud_type_result = options[:crud_type].nil? || current_ability.can?(options[:crud_type], self)
+            action_result = options[:action].nil? || current_ability.can?(options[:action].to_sym, self)
           else
             crud_type_result = action_result = false
           end

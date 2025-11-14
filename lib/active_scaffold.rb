@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   autoload :ActiveRecordPermissions, 'active_scaffold/active_record_permissions'
   autoload :AttributeParams, 'active_scaffold/attribute_params'

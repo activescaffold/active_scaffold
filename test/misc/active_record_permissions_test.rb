@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class PermissionModel < ActiveRecord::Base
   include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
+
   def self.columns
     @columns ||= [ColumnMock.new('id', '', 'int(11)')] +
                  %w[a1 a2 a3 b1 b2 b3 c1 c2 c3].map { |c| ColumnMock.new(c, '', 'varchar(255)') }

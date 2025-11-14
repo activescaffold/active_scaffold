@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 
 class Paginator
-  VERSION = '1.0.9'.freeze
+  VERSION = '1.0.9'
 
   class ArgumentError < ::ArgumentError; end
   class MissingCountError < ArgumentError; end
@@ -72,6 +74,7 @@ class Paginator
   # of the page in the paginator
   class Page
     extend Forwardable
+
     def_delegator :@pager, :first, :first
     def_delegator :@pager, :last, :last
     def_delegator :items, :each
