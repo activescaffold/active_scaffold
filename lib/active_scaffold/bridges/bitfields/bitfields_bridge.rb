@@ -9,9 +9,9 @@ module ActiveScaffold
           model.bitfields.each do |column, options|
             columns[column].number = false
             columns << options.keys
-            options.each_key.with_index(1) do |column, i|
-              columns[column].form_ui = :checkbox
-              columns[column].weight = 1000 + i
+            options.each_key.with_index(1) do |bit_column, i|
+              columns[bit_column].form_ui = :checkbox
+              columns[bit_column].weight = 1000 + i
             end
           end
         end
