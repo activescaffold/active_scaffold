@@ -197,6 +197,7 @@ module ActiveScaffold::Actions
       orig.class.reflect_on_all_associations.each do |assoc|
         dst.association(assoc.name).target = orig.association(assoc.name).target if orig.send(:association_cached?, assoc.name)
       end
+      dst.changes_applied
       dst
     end
 
