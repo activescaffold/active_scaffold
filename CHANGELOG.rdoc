@@ -1,3 +1,5 @@
+- Fix dirty attributes on refresh_field action, record is built on unsaved instance copying attributes, but it reports only changed attributes from the form now
+
 = 4.1.3
 - Columns using bitfields are not treated as number columns (e.g. don't get numeric class in list)
 - Fix loading tinymce when the form is loaded on page load

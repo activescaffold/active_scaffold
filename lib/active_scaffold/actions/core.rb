@@ -190,6 +190,7 @@ module ActiveScaffold::Actions
     def copy_attributes(orig, dst = nil)
       dst ||= orig.class.new
       orig.attributes.each { |attr, value| dst.send :write_attribute, attr, value }
+      dst.changes_applied
       dst
     end
 
