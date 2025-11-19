@@ -1,44 +1,74 @@
 <%
-  column =
-    if render_field.is_a? ActiveScaffold::DataStructures::Column
-      render_field
-    else
-      active_scaffold_config.columns[render_field]
-    end
-  return unless @main_columns.include? column.name
-  @rendered ||= Set.new
-  return if @rendered.include? column.name
-  @rendered << column.name
-  if @form_action == :field_search
-    form_ui = column.search_ui
-  else
-    renders_as = column_renders_as(column)
-    form_ui = column.form_ui
-  end
+  record ||= @record
+  active_scaffold_config ||= self.active_scaffold_config
+  if render_field.is_a?(Hash)
+    traverse ||= []
+    render_field.each do |assoc_name, columns|
+      if assoc_name == :__root__
+        config = params[:parent_controller] ? active_scaffold_config_for(params[:parent_controller].singularize.camelize) : controller.active_scaffold_config
+        value = @form_record
+      else
+        next if traverse.blank? && @main_columns.exclude?(assoc_name)
+        assoc_column = active_scaffold_config.columns[assoc_name]
+        raise "#{assoc_name} is not an association column" unless assoc_column&.association
+        config =  active_scaffold_config_for(assoc_column.association.klass)
+        value = record.send(assoc_name)
+        traverse_by_record = assoc_column.association.collection?
+      end
+      next if value.nil?
 
-  column_css_class = column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
-  options = {field_class: "#{column.name}-input", hidden: form_ui == :hidden}
-  options[:subform_class] = "#{column.name}-sub-form" if column.association
-  options[:attrs] =
-    if renders_as == :subform
-      active_scaffold_subform_attributes(column, column_css_class)
-    else
-      {class: "form-element #{:required if column.required?(@form_action)} #{column.form_ui} #{column_css_class}", id: ''}
+      columns = [columns] unless columns.is_a?(Array)
+      sub_form = assoc_name == :__root__ ? assoc_name : ".#{assoc_name}-sub-form .sub-form-record"
+      Array(value).each do |r|
+        temp_id = @new_records&.dig(config.model)&.key(r) if traverse_by_record && r.id.nil?
+        step = traverse_by_record ? "#{sub_form}:has([id$=\"#{assoc_name}_#{r.id || temp_id}\"])" : sub_form
+        next_scope = column_scope(assoc_column, scope, r, temp_id) unless assoc_name == :__root__
+%>
+<%= render(partial: 'render_field', collection: columns, locals: {source_id: source_id, scope: next_scope, record: r, active_scaffold_config: config, traverse: traverse + [step]}) %>
+<%
+      end
     end
-  html =
-    if scope
-      readonly = @record.readonly? || !@record.authorized_for?(crud_type: :update)
-      crud_type = @record.id.nil? ? :create : (readonly ? :read : :update) # don't use new_record?, it's always true in render_field action
-      # subform.columns.to_a.include? so it doesn't check inside subgroups
-      active_scaffold_render_subform_column(column, scope, crud_type, readonly, active_scaffold_config.subform.columns.to_a.exclude?(column.name), @record)
-    elsif @form_action == :field_search
-      search_attribute(column, @record)
+  else
+    column =
+      if render_field.is_a? ActiveScaffold::DataStructures::Column
+        render_field
+      else
+        active_scaffold_config.columns[render_field]
+      end
+    return if local_assigns[:traverse].nil? && @main_columns.exclude?(column.name)
+    rendered = (@rendered ||= {})[record] ||= Set.new
+    return if rendered.include? column.name
+    rendered << column.name
+    if @form_action == :field_search
+      form_ui = column.search_ui
     else
-      render_column(column, @record, renders_as, scope)
+      renders_as = column_renders_as(column)
+      form_ui = column.form_ui
     end
+
+    column_css_class = column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
+    options = {field_class: "#{column.name}-input", hidden: form_ui == :hidden}
+    options[:subform_class] = "#{column.name}-sub-form" if column.association
+    options[:attrs] =
+      if renders_as == :subform
+        active_scaffold_subform_attributes(column, column_css_class)
+      else
+        {class: "form-element #{:required if column.required?(@form_action)} #{column.form_ui} #{column_css_class}", id: ''}
+      end
+    options[:traverse] = traverse if local_assigns[:traverse]
+    html =
+      if scope
+        readonly = record.readonly? || !record.authorized_for?(crud_type: :update)
+        crud_type = record.id.nil? ? :create : (readonly ? :read : :update) # don't use new_record?, it's always true in render_field action
+        # subform.columns.to_a.include? so it doesn't check inside subgroups
+        active_scaffold_render_subform_column(column, scope, crud_type, readonly, active_scaffold_config.subform.columns.to_a.exclude?(column.name), record)
+      elsif @form_action == :field_search
+        search_attribute(column, record)
+      else
+        render_column(column, record, renders_as, scope)
+      end
 -%>
 
 ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(html) %>', <%= options.to_json.html_safe %>);
-<%if column.update_columns.present?%>
-<%= render(partial: 'render_field', collection: column.update_columns, locals: {source_id: source_id, scope: scope}) %>
-<%end%>
+<%= render(partial: 'render_field', collection: column.update_columns, locals: local_assigns) if column.update_columns.present? %>
+<% end %>

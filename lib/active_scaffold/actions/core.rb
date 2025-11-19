@@ -110,15 +110,15 @@ module ActiveScaffold::Actions
       end
 
       # call update_record_from_params with new_model, in other case some associations can be saved
-      record = new_model
+      @form_record = new_model
       # check permissions and support overriding to_param, preload associations
-      copy_data_from_saved_record(id, active_scaffold_config, record) if id
-      apply_constraints_to_record(record) unless scope
-      create_association_with_parent record, check_match: true if nested?
+      copy_data_from_saved_record(id, active_scaffold_config, @form_record) if id
+      apply_constraints_to_record(@form_record) unless scope
+      create_association_with_parent @form_record, check_match: true if nested?
       if @form_action == :field_search
-        update_columns_from_params(record, columns, attributes || {}, :read, avoid_changes: true, search_attributes: true)
+        update_columns_from_params(@form_record, columns, attributes || {}, :read, avoid_changes: true, search_attributes: true)
       else
-        update_record_from_params(record, columns, attributes || {}, true)
+        update_record_from_params(@form_record, columns, attributes || {}, true)
       end
     end
 
@@ -161,7 +161,7 @@ module ActiveScaffold::Actions
           apply_constraints_to_record(parent, constraints: {nested.child_association.name => nested.parent_id})
         end
       end
-      parent
+      @form_record = parent
     end
 
     def copy_data_from_saved_record(id, config = active_scaffold_config, record = nil)

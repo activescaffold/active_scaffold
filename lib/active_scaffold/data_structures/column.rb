@@ -160,7 +160,7 @@ module ActiveScaffold::DataStructures
       #  update_columns = :name
       #  update_columns = [:name, :age]
       def update_columns=(column_names)
-        @update_columns = Array(column_names)
+        @update_columns = column_names.is_a?(Array) ? column_names : [column_names]
       end
 
       # sorting on a column can be configured four ways:

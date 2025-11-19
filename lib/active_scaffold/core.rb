@@ -218,7 +218,9 @@ module ActiveScaffold
         return self if uses_active_scaffold? && klass == active_scaffold_config.model
 
         # noinspection RubyArgCount
-        ActiveScaffold::Core.active_scaffold_controller_for(klass, "#{to_s.deconstantize}::")
+        ActiveScaffold::Registry.cache :as_controller, klass do
+          ActiveScaffold::Core.active_scaffold_controller_for(klass, "#{to_s.deconstantize}::")
+        end
       end
 
       def uses_active_scaffold?

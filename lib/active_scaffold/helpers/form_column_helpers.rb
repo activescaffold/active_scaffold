@@ -115,7 +115,9 @@ module ActiveScaffold
       end
 
       def current_form_columns(record, scope, subform_controller = nil)
-        if scope
+        if @main_columns && (scope.nil? || subform_controller == controller.class)
+          @main_columns.visible_columns_names
+        elsif scope
           subform_controller.active_scaffold_config.subform.columns.visible_columns_names
         elsif %i[new create edit update render_field].include? action_name.to_sym
           # disable update_columns for inplace_edit (GET render_field)
@@ -128,11 +130,11 @@ module ActiveScaffold
       def update_columns_options(column, scope, options, force = false, form_columns: nil, url_params: {})
         record = options[:object]
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
-        if @main_columns && (scope.nil? || subform_controller == controller.class)
-          form_columns ||= @main_columns.visible_columns_names
-        end
         form_columns ||= current_form_columns(record, scope, subform_controller)
-        if force || (form_columns && column.update_columns&.intersect?(form_columns))
+        update_columns = column.update_columns&.flat_map { |col| col.is_a?(Hash) ? col.keys : col }
+        force = true if update_columns&.include?(:__root__)
+
+        if force || (form_columns && update_columns&.intersect?(form_columns))
           url_params.reverse_merge! params_for(action: 'render_field', column: column.name, id: record.to_param)
           if nested? && scope
             url_params[:nested] = url_params.slice(:parent_scaffold, :association, nested.param_name)
@@ -147,7 +149,7 @@ module ActiveScaffold
 
           options[:class] = "#{options[:class]} update_form".strip
           options['data-update_url'] = url_for(url_params)
-          options['data-update_send_form'] = column.send_form_on_update_column
+          options['data-update_send_form'] = column.update_columns&.any?(Hash) || column.send_form_on_update_column
           options['data-update_send_form_selector'] = column.options[:send_form_selector] if column.options[:send_form_selector]
           options['data-skip-disable-form'] = !column.disable_on_update_column
         end
@@ -846,9 +848,9 @@ module ActiveScaffold
         end
       end
 
-      def column_scope(column, scope = nil, record = nil)
+      def column_scope(column, scope = nil, record = nil, generated_id = nil)
         if column.association&.collection?
-          "#{scope}[#{column.name}][#{record.id || generate_temporary_id(record)}]"
+          "#{scope}[#{column.name}][#{record.id || generate_temporary_id(record, generated_id)}]"
         else
           "#{scope}[#{column.name}]"
         end
