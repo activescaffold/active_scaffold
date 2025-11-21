@@ -46,7 +46,9 @@ module ActiveScaffold
         end
       rescue StandardError => e
         message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        line = e.backtrace.find { |l| l.start_with? Rails.root.to_s }
+        line ||= e.backtrace.find { |l| l.start_with? ActiveScaffold.root }
+        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}\n#{Rails.backtrace_cleaner.clean_frame(line) || line}"
         raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 

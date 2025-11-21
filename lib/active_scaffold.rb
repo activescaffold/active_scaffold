@@ -79,7 +79,7 @@ module ActiveScaffold
   mattr_accessor :nested_subforms, instance_writer: false
 
   def self.root
-    "#{File.dirname(__FILE__)}/.."
+    File.expand_path '..', __dir__
   end
 
   def self.defaults(&)
