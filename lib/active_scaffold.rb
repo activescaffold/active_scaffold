@@ -119,6 +119,8 @@ module ActiveScaffold
     },
     action_link_group_title: {tag: :div},
     action_link_group_content: {tag: :ul},
+    dynamic_action_group: {tag: :ul, attributes: {class: 'dynamic-menu'}},
+    dynamic_action_group_element: {tag: :li},
     search_form: {}, # form
     search_field: {attributes: {class: 'text-input', size: 50, autocomplete: :off}}, # input type=search
     search_submit: {attributes: {class: 'submit'}}, # input type=submit

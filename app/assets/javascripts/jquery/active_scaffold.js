@@ -922,13 +922,12 @@
       display_dynamic_action_group: function(link, html) {
         var container;
         if (typeof(link) == 'string') link = jQuery('#' + link);
-        if (link.closest('td.actions').length) {
-          container = link.closest('td').addClass('action_group dyn');
-        } else {
-          if (link.parent('div.actions').length) link.wrap(jQuery('<div>'));
-          container = link.parent().addClass('action_group dyn');
+        if (link.parent('.actions').length) link.wrap(jQuery('<div>'));
+        container = link.parent().addClass('action_group dyn');
+        if (ActiveScaffold.config.dynamic_group_parent_class) {
+          container.addClass(ActiveScaffold.config.dynamic_group_parent_class);
         }
-        container.find('> ul').remove();
+        container.find('> ul.dynamic-menu').remove();
         container.append(html);
       },
 
