@@ -20,7 +20,7 @@ class ActiveScaffold::Bridges::TinyMce
         options[:class] = "#{options[:class]} mceEditor #{ui_options[:class]}".strip
 
         settings = tinymce_configuration(ui_options[:tinymce_config] || :default)
-                     .options.except('selector').merge(ui_options[:tinymce] || {})
+                     .options.except('selector').merge(ui_options[:tinymce]&.stringify_keys || {})
         options['data-tinymce'] = settings.to_json
 
         html = []
