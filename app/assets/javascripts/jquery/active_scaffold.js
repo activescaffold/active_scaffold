@@ -370,7 +370,7 @@
       });
 
       jQuery(document).on('click', '.hide-new-subform, .show-new-subform', function(e) {
-        var $this = jQuery(this), line = $this.closest('.form-element, td'),
+        var $this = jQuery(this), line = $this.closest('.form-element'),
           subform = line.find('#' + $this.data('subform-id')), radio = false, hide, select;
         if ($this.is('[type=radio]')) {
           radio = true;
@@ -1014,7 +1014,14 @@
         var element, container = source.closest('.sub-form-record'), selector = '';
         if (container.length === 0) {
           container = source.closest('form > .form');
-          selector = 'li';
+          selector = '>';
+        }
+        if (options.traverse) {
+          selector = '';
+          options.traverse.forEach(function(step) {
+            if (step === '__root__') container = container.closest('form');
+            else container = container.find(step);
+          });
         }
         // find without entering new subforms
         element = container.find(selector + ':not(.sub-form) .' + options.field_class);
@@ -1022,17 +1029,17 @@
           element = element.filter(function() { return jQuery(this).closest('.sub-form-record').get(0) === container.get(0); });
         else element = element.filter(function() { return jQuery(this).closest('.sub-form-record').length === 0; });
         if (element.length)
-          element = element.first().closest('dl');
+          element = element.first().closest('.form-element');
         else if (options.subform_class)
           element = container.find(selector + '.' + options.subform_class).first();
 
         if (element.length) {
-          var parent = element.is('li, td') ? element : element.parent('li, td');
-          if (element.is('li'))
+          var parent = element.is('.sub-form, .form-element') ? element : element.parent('.form-element, .sub-form');
+          if (element.is('.sub-form, .form-element'))
             this.replace_html(element, content);
           else
             this.replace(element, content);
-          if (parent.is('li')) {
+          if (parent.is('.form-element, .sub-form')) {
             for (var attr in options.attrs)
               parent.attr(attr, options.attrs[attr]);
           }

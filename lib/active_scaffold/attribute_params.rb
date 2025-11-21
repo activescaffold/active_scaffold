@@ -225,7 +225,7 @@ module ActiveScaffold
     end
 
     def manage_nested_record_from_params(parent_record, column, attributes, avoid_changes = false)
-      return nil unless build_record_from_params?(attributes, column, parent_record)
+      return nil unless avoid_changes || build_record_from_params?(attributes, column, parent_record)
 
       record = find_or_create_for_params(attributes, column, parent_record, avoid_changes)
       if record
