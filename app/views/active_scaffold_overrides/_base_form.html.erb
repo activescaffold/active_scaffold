@@ -25,8 +25,16 @@
    cancel_link = true if cancel_link.nil?
    submit_text ||= form_action
    apply_text ||= :"#{form_action}_apply"
+   cancel_text ||= :cancel
+   cancel_url ||= main_path_to_return
    body_partial ||= 'form'
    form_id = element_form_id(action: form_action, id: @record&.id)
+
+   if cancel_link
+     cancel_options = {class: 'as_cancel'}
+     cancel_options[:remote] = true if xhr # cancel link doesn't have to care about multipart forms
+     cancel_options = cancel_options.smart_merge cancel_attrs if local_assigns[:cancel_attrs]
+   end
 %>
 <%=
 options = as_element_attributes(
@@ -37,8 +45,7 @@ options = as_element_attributes(
   method: method,
   data: {loading: defined?(loading) ? loading : true}
 )
-cancel_options = {class: 'as_cancel'}
-cancel_options[:remote] = true if xhr # cancel link doesn't have to care about multipart forms
+
 if xhr && multipart # file_uploads
   form_remote_upload_tag url_options.merge(iframe: true), options
 else
@@ -64,7 +71,7 @@ end
   <%= as_element :form_footer, class: 'form-footer' do %>
     <%= submit_tag as_(submit_text), as_element_attributes(:form_submit) if !persistent || persistent == :optional %>
     <%= submit_tag as_(apply_text), as_element_attributes(:form_apply, name: 'dont_close') if persistent %>
-    <%= link_to as_(:cancel), main_path_to_return, as_element_attributes(:form_cancel, **cancel_options) if cancel_link %>
+    <%= link_to as_(cancel_text), cancel_url, as_element_attributes(:form_cancel, **cancel_options) if cancel_link %>
     <%= loading_indicator_tag action: form_action, id: @record&.id %>
     <%= render footer_extension, form_action: form_action if footer_extension %>
   <% end %>
