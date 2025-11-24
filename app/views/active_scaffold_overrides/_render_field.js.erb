@@ -35,6 +35,7 @@
       else
         active_scaffold_config.columns[render_field]
       end
+    return if column.nil? # using hash may include __root__ to update parent columns when used as subform, and fail if it can be in different model's form, or when edited without subform
     return if local_assigns[:traverse].nil? && @main_columns.exclude?(column.name)
     rendered = (@rendered ||= {})[record] ||= Set.new
     return if rendered.include? column.name
