@@ -539,8 +539,8 @@ module ActiveScaffold
         active_scaffold_input_plural_association(column, options.merge(draggable_lists: true), ui_options: ui_options)
       end
 
-      def active_scaffold_checkbox_option(option, label_method, associated_ids, checkbox_options, li_options = {})
-        content_tag(:li, li_options) do
+      def active_scaffold_checkbox_option(option, label_method, associated_ids, checkbox_options, item_options = {})
+        content_tag(:li, item_options) do
           option_id = option.is_a?(Array) ? option[1] : option.id
           label = option.is_a?(Array) ? option[0] : option.send(label_method)
           check_box_tag(checkbox_options[:name], option_id, associated_ids.include?(option_id), checkbox_options) <<
@@ -563,7 +563,7 @@ module ActiveScaffold
         html << content_tag(:ul, options.merge(class: "#{options[:class]} checkbox-list#{' draggable-lists' if draggable}")) do
           content = []
           select_options.each_with_index do |option, i|
-            content << active_scaffold_checkbox_option(option, label_method, associated_ids, name: "#{options[:name]}[]", id: "#{options[:id]}_#{i}_id")
+            content << active_scaffold_checkbox_option(option, label_method, associated_ids, {name: "#{options[:name]}[]", id: "#{options[:id]}_#{i}_id"}, ui_options[:item_options] || {})
           end
           safe_join content
         end
