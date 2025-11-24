@@ -51,6 +51,10 @@ module ActiveScaffold::Config
     cattr_reader :action_links, instance_reader: false
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
 
+    # modules to include after all ActiveScaffold modules are included, to include generic customizations in all controllers
+    cattr_reader :custom_modules, instance_reader: false
+    @@custom_modules = []
+
     # access to the permissions configuration.
     # configuration options include:
     #  * current_user_method - what method on the controller returns the current user. default: :current_user
@@ -119,6 +123,10 @@ module ActiveScaffold::Config
     # lets you override the global ActiveScaffold theme for a specific controller
     attr_accessor :theme
 
+    # modules to include after all ActiveScaffold modules are included, to include generic customizations in some controllers
+    # These modules are included after the modules in global custom_modules setting.
+    attr_reader :custom_modules
+
     # enable caching of action link urls
     attr_accessor :cache_action_link_urls
 
@@ -164,6 +172,7 @@ module ActiveScaffold::Config
     def initialize(model_id) # rubocop:disable Lint/MissingSuper
       # model_id is the only absolutely required configuration value. it is also not publicly accessible.
       @model_id = model_id
+      @custom_modules = []
       setup_user_setting_key
 
       # inherit the actions list directly from the global level
