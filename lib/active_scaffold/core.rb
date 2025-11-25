@@ -59,6 +59,8 @@ module ActiveScaffold
             instance_eval(&callback)
           elsif active_scaffold_config.respond_to?(callback)
             active_scaffold_config.send(callback)
+          elsif respond_to?(callback)
+            send(callback)
           end
         end
 
