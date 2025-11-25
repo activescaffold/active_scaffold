@@ -39,14 +39,6 @@ module ActiveScaffold::Config
     cattr_accessor :store_user_settings, instance_accessor: false
     @@store_user_settings = true
 
-    # lets you disable the DHTML history
-    cattr_writer :dhtml_history, instance_accessor: false
-
-    def self.dhtml_history?
-      @@dhtml_history ? true : false
-    end
-    @@dhtml_history = true
-
     # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
     cattr_reader :action_links, instance_reader: false
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
