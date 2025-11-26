@@ -27,6 +27,10 @@ module ActiveScaffold::Config
     cattr_accessor :cache_action_link_urls, instance_accessor: false
     @@cache_action_link_urls = true
 
+    # enable caching of action links
+    cattr_accessor :cache_action_links, instance_accessor: false
+    @@cache_action_links = true
+
     # enable caching of association options
     cattr_accessor :cache_association_options, instance_accessor: false
     @@cache_association_options = true
@@ -122,6 +126,9 @@ module ActiveScaffold::Config
     # enable caching of action link urls
     attr_accessor :cache_action_link_urls
 
+    # enable caching of action links
+    attr_accessor :cache_action_links
+
     # enable caching of association options
     attr_accessor :cache_association_options
 
@@ -186,6 +193,7 @@ module ActiveScaffold::Config
 
       @theme = self.class.theme
       @cache_action_link_urls = self.class.cache_action_link_urls
+      @cache_action_links = self.class.cache_action_links
       @cache_association_options = self.class.cache_association_options
       @conditional_get_support = self.class.conditional_get_support
       @store_user_settings = self.class.store_user_settings
@@ -201,7 +209,7 @@ module ActiveScaffold::Config
     def _cache_lazy_values
       action_links.collection # ensure the collection group exist although it's empty
       action_links.member # ensure the collection group exist although it's empty
-      if cache_action_link_urls
+      if cache_action_link_urls || cache_action_links
         action_links.each(&:name_to_cache)
         list.filters.each { |filter| filter.each(&:name_to_cache) } if actions.include?(:list)
       end
@@ -314,8 +322,8 @@ module ActiveScaffold::Config
     class UserSettings < Base::UserSettings
       include ActiveScaffold::Configurable
 
-      user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
-                :timestamped_messages, :highlight_messages
+      user_attr :cache_action_link_urls, :cache_action_links, :cache_association_options,
+                :conditional_get_support, :timestamped_messages, :highlight_messages
       attr_writer :label
 
       def label(options = {})
