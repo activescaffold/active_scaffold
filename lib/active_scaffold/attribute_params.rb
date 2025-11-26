@@ -82,7 +82,7 @@ module ActiveScaffold
       rescue StandardError => e
         message = "on the ActiveScaffold column = :#{column.name} for #{parent_record.inspect} " \
                   "(value from params #{attributes[column.name].inspect})"
-        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        ActiveScaffold.log_exception(e, message)
         raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
     end

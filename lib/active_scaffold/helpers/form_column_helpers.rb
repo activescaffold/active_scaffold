@@ -50,7 +50,7 @@ module ActiveScaffold
         end
       rescue StandardError => e
         message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        ActiveScaffold.log_exception(e, message)
         raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
@@ -127,6 +127,21 @@ module ActiveScaffold
         end
       end
 
+      def url_options_for_render_field(column, record, scope, subform_controller, url_params)
+        url_params.reverse_merge! params_for(action: 'render_field', column: column.name, id: record.to_param)
+        if nested? && scope
+          url_params[:nested] = url_params.slice(:parent_scaffold, :association, nested.param_name)
+          url_params = url_params.except(:parent_scaffold, :association, nested.param_name)
+        end
+        if scope
+          url_params[:parent_controller] ||= url_params[:controller].gsub(%r{^/}, '')
+          url_params[:controller] = subform_controller.controller_path
+          url_params[:scope] = scope
+          url_params[:parent_id] = params[:parent_id] || params[:id]
+        end
+        url_params
+      end
+
       def update_columns_options(column, scope, options, force = false, form_columns: nil, url_params: {})
         record = options[:object]
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
@@ -135,18 +150,7 @@ module ActiveScaffold
         force = true if update_columns&.include?(:__root__)
 
         if force || (form_columns && update_columns&.intersect?(form_columns))
-          url_params.reverse_merge! params_for(action: 'render_field', column: column.name, id: record.to_param)
-          if nested? && scope
-            url_params[:nested] = url_params.slice(:parent_scaffold, :association, nested.param_name)
-            url_params = url_params.except(:parent_scaffold, :association, nested.param_name)
-          end
-          if scope
-            url_params[:parent_controller] ||= url_params[:controller].gsub(%r{^/}, '')
-            url_params[:controller] = subform_controller.controller_path
-            url_params[:scope] = scope
-            url_params[:parent_id] = params[:parent_id] || params[:id]
-          end
-
+          url_params = url_options_for_render_field(column, record, scope, subform_controller, url_params)
           options[:class] = "#{options[:class]} update_form".strip
           options['data-update_url'] = url_for(url_params)
           options['data-update_send_form'] = column.update_columns&.any?(Hash) || column.send_form_on_update_column

@@ -98,15 +98,59 @@ module ActiveScaffold
           options[:authorized] = false if link.action.nil? || link.controller.nil?
           options.delete :link if link.crud_type == :create
         end
-        if link.action.nil? || (link.type == :member && options.key?(:authorized) && !options[:authorized])
-          html_class = "disabled #{link.action}#{" #{link.html_options[:class]}" if link.html_options[:class].present?}"
-          html_options = {link: action_link_text(link, record, options), class: html_class, title: options[:not_authorized_reason]}
-          action_link_html(link, nil, html_options, record)
+        method =
+          if link.action.nil? || (link.type == :member && options.key?(:authorized) && !options[:authorized])
+            :render_unauthorized_action_link
+          else
+            :render_authorized_action_link
+          end
+
+        cache_link = cache_action_link?(link)
+        label = options[:link]
+        result = optional_cache_helper(method, link.name_to_cache.to_s, cache_link, link, record, options, cache: cache_link)
+        cache_link ? replace_tags_for_action_link(result, method, link, label, record, options) : result
+      end
+
+      def optional_cache_helper(method, key, cache, *args, **kwargs, &)
+        if cache
+          ActiveScaffold::Registry.cache(method, key) { send(method, *args, **kwargs, &) }
         else
-          url = action_link_url(link, record)
-          html_options = action_link_html_options(link, record, options)
-          action_link_html(link, url, html_options, record)
+          send(method, *args, **kwargs, &)
         end
+      end
+
+      def replace_tags_for_action_link(html, method, link, label, record, options)
+        case method
+        when :render_unauthorized_action_link
+          html = html.gsub('--REASON--', ERB::Util.unwrapped_html_escape(options[:not_authorized_reason]))
+        when :render_authorized_action_link
+          html = html.gsub('--URL--', ERB::Util.unwrapped_html_escape(action_link_url(link, record)))
+                   .gsub('--LINK_ID--', ERB::Util.unwrapped_html_escape(get_action_link_id(link, record)))
+                   .gsub('--CONFIRM--') { ERB::Util.unwrapped_html_escape(link.confirm(h(record&.to_label))) }
+                   .gsub('--PROMPT--') { ERB::Util.unwrapped_html_escape(link.prompt(h(record&.to_label))) }
+                   .gsub('--ACTIVE--') { action_link_selected?(link, record) ? 'active' : '' }
+        end
+        html&.gsub('--LABEL--', h(label || link.label(record)))&.html_safe
+      end
+
+      def render_unauthorized_action_link(link, record = nil, options = {}, cache: false)
+        html_class = "disabled #{link.action}#{" #{link.html_options[:class]}" if link.html_options[:class].present?}"
+        options[:link] = '--LABEL--' if cache
+        html_options = {
+          link: action_link_text(link, record, options),
+          class: html_class,
+          title: cache ? '--REASON--' : options[:not_authorized_reason]
+        }
+        html = action_link_html(link, nil, html_options, record)
+        cache ? html.to_str : html
+      end
+
+      def render_authorized_action_link(link, record = nil, options = {}, cache: false)
+        url = cache ? '--URL--' : action_link_url(link, record)
+        options[:link] = '--LABEL--' if cache
+        html_options = action_link_html_options(link, record, options, cache: cache)
+        html = action_link_html(link, url, html_options, record)
+        cache ? html.to_str : html
       end
 
       # setup the action link to inline form
@@ -178,6 +222,10 @@ module ActiveScaffold
 
       def cache_action_link_url?(link, record)
         active_scaffold_config.user.cache_action_link_urls && link.type == :member && !link.dynamic_parameters.is_a?(Proc) && !sti_record?(record)
+      end
+
+      def cache_action_link?(link)
+        active_scaffold_config.user.cache_action_links && link.type == :member
       end
 
       def cached_action_link_url(link, record)
@@ -282,12 +330,7 @@ module ActiveScaffold
       end
 
       def cached_action_link_url_options(link, record)
-        @action_links_url_options ||= {}
-        @action_links_url_options[link.name_to_cache.to_s] || begin
-          options = action_link_url_options(link, record)
-          @action_links_url_options[link.name_to_cache.to_s] = options if cache_action_link_url_options?(link, record)
-          options
-        end
+        optional_cache_helper(:action_link_url_options, link.name_to_cache.to_s, cache_action_link_url_options?(link, record), link, record)
       end
 
       def action_link_url_options(link, record)
@@ -315,7 +358,7 @@ module ActiveScaffold
       def action_link_text(link, record, options)
         if link.image
           title = options[:link] || link.label(record)
-          asset = (@_link_images ||= {})[link.image[:name]] ||= image_path(link.image[:name])
+          asset = ActiveScaffold::Registry.cache(:link_images, link.image[:name]) { image_path(link.image[:name]) }
           text = image_tag(asset, size: link.image[:size], alt: title, title: title, skip_pipeline: true)
         end
         text || options[:link]
@@ -352,8 +395,8 @@ module ActiveScaffold
         end
       end
 
-      def action_link_html_options(link, record, options)
-        link_id = get_action_link_id(link, record)
+      def action_link_html_options(link, record, options, cache: false)
+        link_id = cache ? '--LINK_ID--' : get_action_link_id(link, record)
         html_options = options[:html_options] || link.html_options
         html_options = html_options.merge(class: [html_options[:class], link.action.to_s].compact.join(' '))
         html_options[:link] = action_link_text(link, record, options)
@@ -363,7 +406,7 @@ module ActiveScaffold
 
         html_options[:data] ||= {}
         html_options[:data] = html_options[:data].deep_dup if html_options[:data].frozen?
-        html_options[:data][:confirm] = link.confirm(h(record&.to_label)) if link.confirm?
+        html_options[:data][:confirm] = cache ? '--CONFIRM--' : link.confirm(h(record&.to_label)) if link.confirm?
         if !options[:page] && !options[:popup] && (options[:inline] || link.inline?)
           html_options[:class] += ' as_action'
           html_options[:data][:position] = link.position if link.position
@@ -371,7 +414,7 @@ module ActiveScaffold
           html_options[:data][:cancel_refresh] = true if link.refresh_on_close
           html_options[:data][:keep_open] = true if link.keep_open?
           if link.prompt?
-            html_options[:data][:prompt] = link.prompt(h(record&.to_label))
+            html_options[:data][:prompt] = cache ? '--PROMPT--' : link.prompt(h(record&.to_label))
             html_options[:data][:prompt_required] = true if link.prompt_required?
           end
           html_options[:remote] = true
@@ -379,7 +422,11 @@ module ActiveScaffold
 
         if link.toggle
           html_options[:class] += ' toggle'
-          html_options[:class] << ' active' if action_link_selected?(link, record)
+          if cache
+            html_options[:class] << ' --ACTIVE--'
+          elsif action_link_selected?(link, record)
+            html_options[:class] << ' active'
+          end
         end
 
         if !options[:page] && !options[:inline] && (options[:popup] || link.popup?)

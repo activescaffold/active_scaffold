@@ -27,6 +27,10 @@ module ActiveScaffold::Config
     cattr_accessor :cache_action_link_urls, instance_accessor: false
     @@cache_action_link_urls = true
 
+    # enable caching of action links
+    cattr_accessor :cache_action_links, instance_accessor: false
+    @@cache_action_links = true
+
     # enable caching of association options
     cattr_accessor :cache_association_options, instance_accessor: false
     @@cache_association_options = true
@@ -39,17 +43,13 @@ module ActiveScaffold::Config
     cattr_accessor :store_user_settings, instance_accessor: false
     @@store_user_settings = true
 
-    # lets you disable the DHTML history
-    cattr_writer :dhtml_history, instance_accessor: false
-
-    def self.dhtml_history?
-      @@dhtml_history ? true : false
-    end
-    @@dhtml_history = true
-
     # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
     cattr_reader :action_links, instance_reader: false
     @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
+
+    # modules to include after all ActiveScaffold modules are included, to include generic customizations in all controllers
+    cattr_reader :custom_modules, instance_reader: false
+    @@custom_modules = []
 
     # access to the permissions configuration.
     # configuration options include:
@@ -119,8 +119,15 @@ module ActiveScaffold::Config
     # lets you override the global ActiveScaffold theme for a specific controller
     attr_accessor :theme
 
+    # modules to include after all ActiveScaffold modules are included, to include generic customizations in some controllers
+    # These modules are included after the modules in global custom_modules setting.
+    attr_reader :custom_modules
+
     # enable caching of action link urls
     attr_accessor :cache_action_link_urls
+
+    # enable caching of action links
+    attr_accessor :cache_action_links
 
     # enable caching of association options
     attr_accessor :cache_association_options
@@ -164,6 +171,7 @@ module ActiveScaffold::Config
     def initialize(model_id) # rubocop:disable Lint/MissingSuper
       # model_id is the only absolutely required configuration value. it is also not publicly accessible.
       @model_id = model_id
+      @custom_modules = []
       setup_user_setting_key
 
       # inherit the actions list directly from the global level
@@ -185,6 +193,7 @@ module ActiveScaffold::Config
 
       @theme = self.class.theme
       @cache_action_link_urls = self.class.cache_action_link_urls
+      @cache_action_links = self.class.cache_action_links
       @cache_association_options = self.class.cache_association_options
       @conditional_get_support = self.class.conditional_get_support
       @store_user_settings = self.class.store_user_settings
@@ -200,7 +209,7 @@ module ActiveScaffold::Config
     def _cache_lazy_values
       action_links.collection # ensure the collection group exist although it's empty
       action_links.member # ensure the collection group exist although it's empty
-      if cache_action_link_urls
+      if cache_action_link_urls || cache_action_links
         action_links.each(&:name_to_cache)
         list.filters.each { |filter| filter.each(&:name_to_cache) } if actions.include?(:list)
       end
@@ -313,8 +322,8 @@ module ActiveScaffold::Config
     class UserSettings < Base::UserSettings
       include ActiveScaffold::Configurable
 
-      user_attr :cache_action_link_urls, :cache_association_options, :conditional_get_support,
-                :timestamped_messages, :highlight_messages
+      user_attr :cache_action_link_urls, :cache_action_links, :cache_association_options,
+                :conditional_get_support, :timestamped_messages, :highlight_messages
       attr_writer :label
 
       def label(options = {})

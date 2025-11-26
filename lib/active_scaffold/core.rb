@@ -59,6 +59,8 @@ module ActiveScaffold
             instance_eval(&callback)
           elsif active_scaffold_config.respond_to?(callback)
             active_scaffold_config.send(callback)
+          elsif respond_to?(callback)
+            send(callback)
           end
         end
 
@@ -91,6 +93,8 @@ module ActiveScaffold
           end
         end
         _add_sti_create_links if active_scaffold_config.add_sti_create_links?
+        ActiveScaffold::Config::Core.custom_modules.each { |mod| include mod }
+        active_scaffold_config.custom_modules.each { |mod| include mod }
         active_scaffold_config._cache_lazy_values
         active_scaffold_config.deep_freeze!
       end

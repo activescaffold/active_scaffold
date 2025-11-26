@@ -25,7 +25,7 @@ module ActiveScaffold
         value
       rescue StandardError => e
         message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
-        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        ActiveScaffold.log_exception(e, message)
         raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
@@ -66,7 +66,7 @@ module ActiveScaffold
         end
       rescue StandardError => e
         message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
+        ActiveScaffold.log_exception(e, message)
         raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 

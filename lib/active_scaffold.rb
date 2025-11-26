@@ -198,7 +198,7 @@ module ActiveScaffold
   mattr_accessor :nested_subforms, instance_writer: false
 
   def self.root
-    "#{File.dirname(__FILE__)}/.."
+    File.expand_path '..', __dir__
   end
 
   def self.defaults(&)
@@ -207,6 +207,12 @@ module ActiveScaffold
 
   def self.deprecator
     @deprecator ||= ActiveSupport::Deprecation.new('4.3', 'ActiveScaffold')
+  end
+
+  def self.log_exception(exception, message)
+    line = exception.backtrace.find { |l| l.start_with? Rails.root.to_s }
+    line ||= exception.backtrace.find { |l| l.start_with? ActiveScaffold.root }
+    Rails.logger.error "#{exception.class.name}: #{exception.message} -- #{message}\n#{Rails.backtrace_cleaner.clean_frame(line) || line}"
   end
 end
 require 'active_scaffold/engine'
