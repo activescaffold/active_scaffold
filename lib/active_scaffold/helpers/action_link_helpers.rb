@@ -115,15 +115,15 @@ module ActiveScaffold
         cache_link ? replace_tags_for_action_link(result, method, link, label, record, options) : result
       end
 
-      def optional_cache_helper(method, key, cache, *args, **kwargs, &)
+      def optional_cache_helper(method, key, cache, ...)
         if cache
-          ActiveScaffold::Registry.cache(method, key) { send(method, *args, **kwargs, &) }
+          ActiveScaffold::Registry.cache(method, key) { send(method, ...) }
         else
-          send(method, *args, **kwargs, &)
+          send(method, ...)
         end
       end
 
-      def replace_tags_for_action_link(html, method, link, label, record, options)
+      def replace_tags_for_action_link(html, method, link, label, record, options) # rubocop:disable Metrics/ParameterLists
         case method
         when :render_unauthorized_action_link
           html = html.gsub('--REASON--', ERB::Util.unwrapped_html_escape(options[:not_authorized_reason]))
@@ -134,7 +134,7 @@ module ActiveScaffold
                    .gsub('--PROMPT--') { ERB::Util.unwrapped_html_escape(link.prompt(h(record&.to_label))) }
                    .gsub('--ACTIVE--') { action_link_selected?(link, record) ? 'active' : '' }
         end
-        html&.gsub('--LABEL--', h(label || link.label(record)))&.html_safe
+        html&.gsub('--LABEL--', h(label || link.label(record)))&.html_safe # rubocop:disable Rails/OutputSafety
       end
 
       def render_unauthorized_action_link(link, record = nil, options = {}, cache: false)
