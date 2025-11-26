@@ -63,13 +63,7 @@
   <% end -%>
   <% if show_actions -%>
     <%= content_tag column_tag, class: 'actions' do %>
-      <% if record_column.association.collection? && !locked %>
-        <%
-          auth = %i[destroy delete_all delete].exclude?(record_column.association.dependent)
-          auth, reason = record.authorized_for?(crud_type: :delete, reason: true) unless auth
-        %>
-        <%= auth ? link_to(as_(:remove), '#', class: 'destroy', id: "#{options[:id]}-destroy", data: {delete_id: tr_id}) : reason %>
-      <% end %>
+      <%= active_scaffold_subform_record_actions(record_column, record, locked, tr_id) %>
       <% unless record.new_record? %>
         <input type="hidden" name="<%= options[:name] -%>" id="<%= options[:id] -%>" value="<%= record.id -%>" />
       <% end -%>

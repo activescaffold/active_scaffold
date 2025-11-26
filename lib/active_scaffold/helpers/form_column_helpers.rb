@@ -80,6 +80,18 @@ module ActiveScaffold
         }
       end
 
+      def active_scaffold_subform_record_actions(association_column, record, locked, row_id)
+        return unless association_column.association.collection? && !locked
+
+        auth = %i[destroy delete_all delete].exclude?(association_column.association.dependent)
+        auth, reason = record.authorized_for?(crud_type: :delete, reason: true) unless auth
+        if auth
+          link_to(as_(:remove), '#', class: 'destroy', data: {delete_id: row_id})
+        else
+          content_tag :span, reason, class: 'destroy reason'
+        end
+      end
+
       # the standard active scaffold options used for textual inputs
       def active_scaffold_input_text_options(options = {})
         options[:autocomplete] ||= 'off'
