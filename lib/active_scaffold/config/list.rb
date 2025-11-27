@@ -33,6 +33,7 @@ module ActiveScaffold::Config
       @messages_above_header = self.class.messages_above_header
       @auto_select_columns = self.class.auto_select_columns
       @refresh_with_header = self.class.refresh_with_header
+      @local_sorting = self.class.local_sorting
       @calculate_etag = self.class.calculate_etag
     end
 
@@ -41,6 +42,10 @@ module ActiveScaffold::Config
     # include list header on refresh
     cattr_accessor :refresh_with_header, instance_accessor: false
     @@refresh_with_header = false
+
+    # enable sorting locally in the browser, when there is only one page
+    cattr_accessor :local_sorting, instance_accessor: false
+    @@local_sorting = false
 
     # how many records to show per page
     cattr_accessor :per_page, instance_accessor: false
@@ -133,6 +138,9 @@ module ActiveScaffold::Config
 
     # include list header on refresh
     attr_accessor :refresh_with_header
+
+    # enable sorting locally in the browser, when there is only one page
+    attr_accessor :local_sorting
 
     # how many rows to show at once
     attr_accessor :per_page
@@ -265,7 +273,8 @@ module ActiveScaffold::Config
       user_attr :page_links_inner_window, :page_links_outer_window, :refresh_with_header, :empty_field_text,
                 :association_join_text, :messages_above_header, :wrap_tag, :auto_select_columns, :calculate_etag,
                 :no_entries_message, :filtered_message, :show_search_reset, :always_show_create, :always_show_search,
-                :hide_nested_column, :pagination, :auto_pagination, :filter_human_message, :show_filter_reset
+                :hide_nested_column, :pagination, :auto_pagination, :filter_human_message, :show_filter_reset,
+                :local_sorting
 
       def initialize(conf, storage, params)
         super(conf, storage, params, :list)

@@ -11,6 +11,9 @@ data_refresh ||= record.to_param
     <% authorized = record.authorized_for?(crud_type: :read, column: column.name) -%>
     <% column_value = authorized ? get_column_value(record, column) : empty_field_text -%>
     <% attrs = column_attributes(column, record).merge(class: column_class(column, column_value, record)) %>
+    <% if local_sorting? && column.sortable? && attrs&.dig(:data, :sort_value).nil? && !column.text? && column.column %>
+      <% attrs[:data][:sort_value] = column_sort_value(record, column) %>
+    <% end %>
 
     <%= content_tag :td, authorized ? render_list_column(column_value, column, record) : column_value, attrs %>
   <% end -%>

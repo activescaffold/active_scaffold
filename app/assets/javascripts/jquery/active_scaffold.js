@@ -212,9 +212,21 @@
         return true;
       });
       jQuery(document).on('ajax:before', 'a.as_sort', function(event) {
-        var as_sort = jQuery(this);
-        as_sort.closest('th').addClass('loading');
-        return true;
+        var as_sort = jQuery(this), table = as_sort.closest('.list-table'),
+          header_cell = as_sort.closest('[class$="-column_heading"]'),
+          ascending = header_cell.is('.sorted.asc');
+        if (table.is('.local-sorting')) {
+          var match = header_cell.attr('class') .match(/\b([^\s]+)-column_heading\b/);
+          if (match) {
+            ActiveScaffold.sort_table(table, match[1], ascending);
+            header_cell.removeClass('asc desc').addClass('sorted ' + (ascending ? 'desc' : 'asc'));
+            event.preventDefault();
+            return false;
+          }
+        } else {
+          as_sort.closest('th').addClass('loading');
+          return true;
+        }
       });
       jQuery(document).on('ajax:error', 'a.as_sort', function(event, xhr, status, error) {
         if (event.detail && !xhr) {
@@ -602,6 +614,65 @@
       },
       auto_load_page: function(href, params) {
         jQuery.get(href, params, null, 'script');
+      },
+      sort_table: function(table, column, descending) {
+        // Group rows: each group starts with a sortable row + its adapter rows
+        var groups = [], currentGroup = [], $tbody = table.find('.records');
+
+        $tbody.children('tr').each(function() {
+          var $row = $(this);
+          if (!$row.hasClass('as_adapter')) {
+            // Start a new group for sortable rows
+            if (currentGroup.length > 0) {
+              groups.push(currentGroup);
+            }
+            currentGroup = [$row];
+          } else {
+            // Add adapter row to current group (or create orphan group if none exists)
+            if (currentGroup.length > 0) {
+              currentGroup.push($row);
+            } else {
+              //groups.push([$row]); // Orphaned adapter
+            }
+          }
+        });
+        if (currentGroup.length > 0) {
+          groups.push(currentGroup);
+        }
+
+        // Sort groups by the first row's cell value
+        groups.sort(function(groupA, groupB) {
+          // Get sort key for group A (empty string if adapter-only group)
+          var keyA = ActiveScaffold.sort_value(groupA[0]),
+            keyB = ActiveScaffold.sort_value(groupB[0]),
+            comparison;
+
+          // Compare keys (numeric or text)
+          var numA = parseFloat(keyA), numB = parseFloat(keyB),
+            isNumA = !isNaN(numA) && numA.toString() === keyA.toString().trim(),
+            isNumB = !isNaN(numB) && numB.toString() === keyB.toString().trim();
+
+          if (isNumA && isNumB) {
+            comparison = numA - numB;
+          } else {
+            comparison = keyA.toString().toLowerCase().localeCompare(keyB.toString().toLowerCase());
+          }
+
+          return descending ? -comparison : comparison;
+        });
+
+        // Rebuild tbody with sorted groups
+        $tbody.empty();
+        groups.forEach(function(group) {
+          group.forEach(function($row) {
+            $tbody.append($row);
+          });
+        });
+      },
+      sort_value: function(row, column) {
+        var $cell = $row.find(`> .${column}-column`), value = $cell.attr('data-sort-value');
+        if (value === undefined) value = $cell.text(); // Automatically strips HTML
+        return value;
       },
       enable_js_form_buttons: function(element) {
         jQuery('.as-js-button', element).show();

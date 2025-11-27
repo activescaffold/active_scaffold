@@ -9,7 +9,7 @@
   </tbody>
 </table>
 <% end %>
-<table <%= as_element_attributes :list_table %>>
+<table <%= as_element_attributes :list_table, class: "list-table #{'local-sorting' if local_sorting?}" %>>
   <thead>
     <tr>
       <% columns = list_columns %>
