@@ -140,6 +140,7 @@ module ActiveScaffold
     subform: {tag: :li},
     subform_footer: {tag: :div, attributes: {class: 'footer'}},
     subform_record_remove: {}, # a
+    subform_record_remove_reason: {tag: :span, attributes: {class: 'destroy reason'}},
     subform_create_another: {}, # a
     subform_replace_with_new: {}, # a
     subform_add_existing: {}, # a

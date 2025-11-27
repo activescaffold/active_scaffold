@@ -13,6 +13,7 @@
 - Add add_new_link to config.nested, adding a link to create form on an association, refreshing this record instead of adding new row in the list
 - Support hashes in update_columns, keys are association names or :__root__ to refresh fields on subforms or at top of the form, values are list of columns or nested hashes.
 - Add custom_modules, in active_scaffold_config and global, to add modules which will be included after ActiveScaffold action modules, to customize the controllers.
+- Add active_scaffold_subform_record_actions helper to render the destroy action on the rows of a subform, so it can be used to add more actions
 
 = 4-1-stable
 - Fix dirty attributes on refresh_field action, record is built on unsaved instance copying attributes, but it reports only changed attributes from the form now
