@@ -644,8 +644,8 @@
         // Sort groups by the first row's cell value
         groups.sort(function(groupA, groupB) {
           // Get sort key for group A (empty string if adapter-only group)
-          var keyA = ActiveScaffold.sort_value(groupA[0]),
-            keyB = ActiveScaffold.sort_value(groupB[0]),
+          var keyA = ActiveScaffold.sort_value(groupA[0], column),
+            keyB = ActiveScaffold.sort_value(groupB[0], column),
             comparison;
 
           // Compare keys (numeric or text)
