@@ -1,9 +1,11 @@
 <%
   record ||= @record
   active_scaffold_config ||= self.active_scaffold_config
-  if render_field.is_a?(Hash)
+  ActiveScaffold.deprecator.warn "use `as: :column` when rendering render_field partial" if local_assigns[:render_field]
+  column ||= render_field
+  if column.is_a?(Hash)
     traverse ||= []
-    render_field.each do |assoc_name, columns|
+    column.each do |assoc_name, columns|
       if assoc_name == :__root__
         config = params[:parent_controller] ? active_scaffold_config_for(params[:parent_controller].singularize.camelize) : controller.active_scaffold_config
         value = @form_record
@@ -24,17 +26,12 @@
         step = traverse_by_record ? "#{sub_form}:has([id$=\"#{assoc_name}_#{r.id || temp_id}\"])" : sub_form
         next_scope = column_scope(assoc_column, scope, r, temp_id) unless assoc_name == :__root__
 %>
-<%= render(partial: 'render_field', collection: columns, locals: {source_id: source_id, scope: next_scope, record: r, active_scaffold_config: config, traverse: traverse + [step]}) %>
+<%= render(partial: 'render_field', collection: columns, as: :column, locals: {source_id: source_id, scope: next_scope, record: r, active_scaffold_config: config, traverse: traverse + [step]}) %>
 <%
       end
     end
   else
-    column =
-      if render_field.is_a? ActiveScaffold::DataStructures::Column
-        render_field
-      else
-        active_scaffold_config.columns[render_field]
-      end
+    column = active_scaffold_config.columns[column] unless column.is_a? ActiveScaffold::DataStructures::Column
     return if column.nil? # using hash may include __root__ to update parent columns when used as subform, and fail if it can be in different model's form, or when edited without subform
     return if local_assigns[:traverse].nil? && @main_columns.exclude?(column.name)
     rendered = (@rendered ||= {})[record] ||= Set.new
@@ -71,5 +68,5 @@
 -%>
 
 ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(html) %>', <%= options.to_json.html_safe %>);
-<%= render(partial: 'render_field', collection: column.update_columns, locals: local_assigns) if column.update_columns.present? %>
+<%= render(partial: 'render_field', collection: column.update_columns, as: :column, locals: local_assigns) if column.update_columns.present? %>
 <% end %>
