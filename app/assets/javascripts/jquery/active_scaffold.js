@@ -349,7 +349,7 @@
 
       jQuery(document).on('click', '.active-scaffold .sub-form a.destroy', function(event) {
         event.preventDefault();
-        ActiveScaffold.delete_subform_record(jQuery(this).data('delete-id'));
+        ActiveScaffold.remove(jQuery(this).closest('.sub-form-record'));
       });
 
       jQuery(document).on("click", '.hover_click', function(event) {
@@ -965,12 +965,6 @@
           if (page_reload_url) ActiveScaffold.reload_if_empty(tbody, page_reload_url);
           else ActiveScaffold.show_empty_message(tbody);
         });
-      },
-
-      delete_subform_record: function(record) {
-        if (typeof(record) == 'string') record = '#' + record;
-        record = jQuery(record).closest('.sub-form-record');
-        this.remove(record);
       },
 
       report_500_response: function(active_scaffold_id, xhr) {

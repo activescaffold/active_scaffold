@@ -79,6 +79,7 @@ overflow: hidden;
 
 .active-scaffold .sub-form .association-record a.destroy {
 background-image: image-url('active_scaffold/cross.png');
+display: inline-block;
 height: 16px;
 width: 16px;
 text-indent: -4000px;

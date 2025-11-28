@@ -1030,9 +1030,11 @@ clear: left;
 }
 
 .active-scaffold .sub-form .association-record a.destroy {
-font-weight: bold;
-display: block;
+font-weight: bold
 padding: 0;
+}
+.active-scaffold .sub-form .association-record * + a.destroy {
+  margin-left: 5px;
 }
 
 .active-scaffold .sub-form .locked a.destroy {
