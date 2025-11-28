@@ -648,13 +648,10 @@
             keyB = ActiveScaffold.sort_value(groupB[0], column),
             comparison;
 
-          // Compare keys (numeric or text)
-          var numA = parseFloat(keyA), numB = parseFloat(keyB),
-            isNumA = !isNaN(numA) && numA.toString() === keyA.toString().trim(),
-            isNumB = !isNaN(numB) && numB.toString() === keyB.toString().trim();
-
-          if (isNumA && isNumB) {
-            comparison = numA - numB;
+          if (Array.isArray(keyA) && Array.isArray(keyB)) {
+            comparison = ActiveScaffold.compare_arrays(keyA, keyB);
+          } else if (typeof keyA === 'number' && typeof keyB === 'number') {
+            comparison = keyA - keyB;
           } else {
             comparison = keyA.toString().toLowerCase().localeCompare(keyB.toString().toLowerCase());
           }
@@ -671,9 +668,25 @@
         });
       },
       sort_value: function(row, column) {
-        var $cell = row.find(`> .${column}-column`), value = $cell.attr('data-sort-value');
+        var $cell = row.find(`> .${column}-column`), value = $cell.data('sort-value');
         if (value === undefined) value = $cell.text(); // Automatically strips HTML
         return value;
+      },
+      compare_arrays: function(arrA, arrB) {
+        var len = Math.min(arrA.length, arrB.length);
+        for (var i = 0; i < len; i++) {
+          var a = arrA[i], b = arrB[i];
+
+          var isNumA = typeof a === 'number', isNumB = typeof b === 'number';
+          if (typeof a === 'number' && typeof b === 'number') {
+            if (a !== b) return a - b;
+          } else {
+            var cmp = a.toString().toLowerCase().localeCompare(b.toString().toLowerCase());
+            if (cmp !== 0) return cmp;
+          }
+        }
+        // If all elements so far are equal, shorter array comes first
+        return arrA.length - arrB.length;
       },
       enable_js_form_buttons: function(element) {
         jQuery('.as-js-button', element).show();
