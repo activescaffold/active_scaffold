@@ -671,7 +671,7 @@
         });
       },
       sort_value: function(row, column) {
-        var $cell = $row.find(`> .${column}-column`), value = $cell.attr('data-sort-value');
+        var $cell = row.find(`> .${column}-column`), value = $cell.attr('data-sort-value');
         if (value === undefined) value = $cell.text(); // Automatically strips HTML
         return value;
       },
