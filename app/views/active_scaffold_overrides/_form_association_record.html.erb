@@ -63,7 +63,7 @@
   <% end -%>
   <% if show_actions -%>
     <%= content_tag column_tag, class: 'actions' do %>
-      <%= active_scaffold_subform_record_actions(record_column, record, locked, tr_id) %>
+      <%= active_scaffold_subform_record_actions(record_column, record, locked, scope) %>
       <% unless record.new_record? %>
         <input type="hidden" name="<%= options[:name] -%>" id="<%= options[:id] -%>" value="<%= record.id -%>" />
       <% end -%>
