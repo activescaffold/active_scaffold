@@ -618,7 +618,7 @@
       },
       sort_table: function(table, column, descending) {
         // Group rows: each group starts with a sortable row + its adapter rows
-        var groups = [], currentGroup = [], $tbody = table.find('.records');
+        var groups = [], currentGroup = [], $tbody = table.find('.records:first');
 
         $tbody.children('tr').each(function() {
           var $row = $(this);
