@@ -213,13 +213,14 @@
       });
       jQuery(document).on('ajax:before', 'a.as_sort', function(event) {
         var as_sort = jQuery(this), table = as_sort.closest('.list-table'),
-          header_cell = as_sort.closest('[class$="-column_heading"]'),
+          header_cell = as_sort.closest('[class$="-column_heading"],[class*="-column_heading "]'),
           ascending = header_cell.is('.sorted.asc');
         if (table.is('.local-sorting')) {
-          var match = header_cell.attr('class') .match(/\b([^\s]+)-column_heading\b/);
+          var match = header_cell.attr('class').match(/\b([^\s]+)-column_heading\b/);
           if (match) {
             ActiveScaffold.sort_table(table, match[1], ascending);
-            header_cell.removeClass('asc desc').addClass('sorted ' + (ascending ? 'desc' : 'asc'));
+            header_cell.siblings().addBack().removeClass('sorted asc desc');
+            header_cell.addClass('sorted ' + (ascending ? 'desc' : 'asc'));
             event.preventDefault();
             return false;
           }
