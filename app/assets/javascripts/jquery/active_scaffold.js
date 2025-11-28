@@ -660,12 +660,14 @@
         });
 
         // Rebuild tbody with sorted groups
-        $tbody.empty();
+        $tbody.children().detach();
+        var fragment = document.createDocumentFragment(); // Create a DocumentFragment to minimize reflows
         groups.forEach(function(group) {
           group.forEach(function($row) {
-            $tbody.append($row);
+            fragment.appendChild($row[0]); // $row[0] is the DOM element
           });
         });
+        $tbody[0].appendChild(fragment);
       },
       sort_value: function(row, column) {
         var $cell = row.find(`> .${column}-column`), value = $cell.data('sort-value');
