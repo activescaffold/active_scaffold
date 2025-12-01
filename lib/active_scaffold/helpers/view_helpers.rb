@@ -115,7 +115,7 @@ module ActiveScaffold
       def column_heading_class(column, sorting)
         classes = "#{column.name}-column_heading "
         classes << "sorted #{sorting.direction_of(column).downcase} " if sorting.sorts_on? column
-        classes << "skip-local-sorting" if column.skip_local_sorting?
+        classes << 'skip-local-sorting' if column.skip_local_sorting?
         classes << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
         classes
       end

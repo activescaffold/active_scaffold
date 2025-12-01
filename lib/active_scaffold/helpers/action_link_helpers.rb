@@ -309,7 +309,7 @@ module ActiveScaffold
           end
         end
         if nested_singular_association? && action_name == 'index'
-          # pass current path as return_to, for nested listing on singular association, so forms doesn't return to parent listing
+          # pass the current path as return_to, for nested listing on singular association, so forms don't return to parent listing
           @query_string_params << :return_to
           non_nested_query_string_options[:return_to] = request.fullpath
         end
