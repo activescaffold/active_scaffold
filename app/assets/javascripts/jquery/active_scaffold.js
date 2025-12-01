@@ -215,7 +215,7 @@
         var as_sort = jQuery(this), table = as_sort.closest('.list-table'),
           header_cell = as_sort.closest('[class$="-column_heading"],[class*="-column_heading "]'),
           ascending = header_cell.is('.sorted.asc');
-        if (table.is('.local-sorting')) {
+        if (!header_cell.is('.skip-local-sorting') && table.is('.local-sorting')) {
           var match = header_cell.attr('class').match(/\b([^\s]+)-column_heading\b/);
           if (match) {
             ActiveScaffold.sort_table(table, match[1], ascending);

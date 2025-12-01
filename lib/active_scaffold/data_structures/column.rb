@@ -41,6 +41,9 @@ module ActiveScaffold::DataStructures
         # a textual description of the column and its contents. this will be displayed with any associated form input widget, so you may want to consider adding a content example.
         attr_writer :description
 
+        # enable it if local sorting shouldn't be used for this column at all
+        attr_writer :skip_local_sorting
+
         attr_reader :update_columns
 
         # send all the form instead of only new value when this column changes
@@ -120,6 +123,11 @@ module ActiveScaffold::DataStructures
       # get whether to run a calculation on this column
       def calculation?
         !(calculate == false || calculate.nil?)
+      end
+
+      # if local sorting shouldn't be used for this column at all
+      def skip_local_sorting?
+        @skip_local_sorting == true
       end
 
       def required?(action = nil)
