@@ -652,8 +652,11 @@ module ActiveScaffold
         selected_id = selected&.id
         if options.present?
           if ui_options[:add_new]
-            html_options[:data] ||= {}
-            html_options[:data][:subform_id] = active_scaffold_subform_attributes(column, ui_options: ui_options)[:id]
+            add_new_subform = ui_options[:add_new] == true || ui_options[:add_new][:mode].in?([nil, :subform])
+            if add_new_subform
+              html_options[:data] ||= {}
+              html_options[:data][:subform_id] = active_scaffold_subform_attributes(column, ui_options: ui_options)[:id]
+            end
             radio_html_options = html_options.merge(class: "#{html_options[:class]} hide-new-subform")
           else
             radio_html_options = html_options
@@ -668,7 +671,7 @@ module ActiveScaffold
             radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: radio_id)) + label)
           end
           if ui_options[:add_new]
-            if ui_options[:add_new] == true || ui_options[:add_new][:mode].in?([nil, :subform])
+            if add_new_subform
               create_new = content_tag(:label) do
                 radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(
                   id: "#{html_options[:id]}-create_new", class: "#{html_options[:class]} show-new-subform"
