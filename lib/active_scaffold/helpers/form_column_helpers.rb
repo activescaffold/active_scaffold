@@ -491,9 +491,9 @@ module ActiveScaffold
         end
       end
 
-      def active_scaffold_file_with_remove_link(content, options, controls_class)
+      def active_scaffold_file_with_remove_link(content, options, controls_class, link_key = nil)
         required = options.delete(:required)
-        link_key = options[:multiple] ? :remove_files : :remove_file
+        link_key ||= options[:multiple] ? :remove_files : :remove_file
         content_tag(:div, class: "#{controls_class} file-input-controls", data: {required: required}) do
           content_line = content_tag(:div) do
             safe_join [content, content_tag(:a, as_(link_key), href: '#', class: 'remove-file-btn')]
