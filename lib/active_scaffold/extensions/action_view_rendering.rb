@@ -37,7 +37,7 @@ module ActiveScaffold # :nodoc:
     #
     def render(*args, &)
       return args.first.render_in(self) if args.one? && args.first.respond_to?(:render_in)
-      
+
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
         render_embedded args.first
       elsif args.first == :super
