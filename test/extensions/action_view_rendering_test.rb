@@ -83,7 +83,7 @@ class RenderInTest < ActionView::TestCase
 
   test 'render with hash options still works' do
     # Ensure backwards compatibility - rendering with hash options should still work
-    result = render(inline: '<div class="inline-test">Inline content</div>')
+    result = render(inline: '<div class="inline-test">Inline content</div>') # rubocop:disable Rails/RenderInline
     assert_match(/Inline content/, result)
     assert_match(/inline-test/, result)
   end
@@ -139,7 +139,7 @@ class RenderInTest < ActionView::TestCase
       File.write(partial_path, content)
       yield
     ensure
-      File.delete(partial_path) if File.exist?(partial_path)
+      FileUtils.rm_f(partial_path)
     end
   end
 end
