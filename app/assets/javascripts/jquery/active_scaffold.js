@@ -244,6 +244,22 @@
         if (span.data('editInPlace')) span.trigger('click.editInPlace');
         else ActiveScaffold.in_place_editor_field_clicked(span);
       });
+      jQuery(document).on('click', '.file-input-controls .remove-file-btn', function(event) {
+        event.preventDefault();
+        var btn = jQuery(this), file_line = btn.closest('.file-input-controls');
+        if (file_line.find('.remove_file').val('true').length) {
+          btn.parent().hide();
+          file_line.find('input').show();
+          if (file_line.attr('required')) file_line.find('input').attr('required', 'required');
+        } else {
+          file_line.remove();
+        }
+        return false;
+      });
+      jQuery(document).on('change', '.file-input-controls input[type=file]', function(event) {
+        var file_line = jQuery(this).closest('.file-input-controls');
+        file_line.find('.remove_file').val('false');
+      });
       jQuery(document).on('ajax:before', 'a.as_paginate',function(event) {
         var as_paginate = jQuery(this);
         as_paginate.prevAll('img.loading-indicator').css('visibility','visible');

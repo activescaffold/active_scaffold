@@ -7,7 +7,7 @@ module ActiveScaffold
         record = options[:object]
         dragonfly = record.send(column.name.to_s)
         content = active_scaffold_column_dragonfly(record, column, ui_options: ui_options) if dragonfly.present?
-        active_scaffold_file_with_remove_link(column, options, content, 'remove_', 'dragonfly_controls', ui_options: ui_options)
+        active_scaffold_file_with_content(column, options, content, 'remove_', 'dragonfly_controls', ui_options: ui_options)
       end
     end
   end
