@@ -1,3 +1,4 @@
+= 4.1.4
 - Fix dirty attributes on refresh_field action, record is built on unsaved instance copying attributes, but it reports only changed attributes from the form now
 - Fix incompatibility with Rails renderable objects (ViewComponent, Turbo Streams)
 
