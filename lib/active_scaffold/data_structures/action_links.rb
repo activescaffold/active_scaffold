@@ -4,14 +4,26 @@ module ActiveScaffold::DataStructures
   class ActionLinks
     include Enumerable
 
-    attr_accessor :default_type, :weight, :css_class
+    COLLECTION_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, parameters: {action_links: '--ACTION-LINKS--', id: nil}) # member so it's cached
+    MEMBER_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, parameters: {action_links: '--ACTION-LINKS--'})
 
-    def initialize(name = :root)
+    attr_accessor :default_type, :weight, :css_class
+    attr_writer :click_menu, :label
+    attr_reader :name, :path
+
+    def initialize(name = :root, parent_path = nil)
       @set = []
       @name = name
       @css_class = name.to_s.downcase
       @weight = 0
+      @path = [parent_path, name].compact.join('.') unless name == :root
     end
+
+    def click_menu?
+      @click_menu
+    end
+
+    alias name_to_cache path
 
     # adds an ActionLink, creating one from the arguments if need be
     def add(action, options = {})
@@ -132,6 +144,7 @@ module ActiveScaffold::DataStructures
     delegate :empty?, to: :@set
 
     def subgroup(name, label = nil)
+      name = name.to_sym
       group = self if name == self.name
       group ||= @set.find do |item|
         name == item.name if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
@@ -140,15 +153,13 @@ module ActiveScaffold::DataStructures
       if group.nil?
         raise FrozenError, "Can't add new subgroup '#{name}', links are frozen" if frozen?
 
-        group = ActiveScaffold::DataStructures::ActionLinks.new(name)
+        group = ActiveScaffold::DataStructures::ActionLinks.new(name, path)
         group.label = label || name
-        group.default_type = self.name == :root ? (name.to_sym if %w[member collection].include?(name.to_s)) : default_type
+        group.default_type = self.name == :root ? (name if %i[member collection].include?(name)) : default_type
         add_to_set group
       end
       group
     end
-
-    attr_writer :label
 
     def label(record)
       case @label
@@ -178,10 +189,8 @@ module ActiveScaffold::DataStructures
     end
 
     def respond_to_missing?(name, *)
-      name !~ /[!?]$/
+      name !~ /[=!?]$/
     end
-
-    attr_reader :name
 
     protected
 

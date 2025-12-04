@@ -16,8 +16,10 @@
 - Add active_scaffold_subform_record_actions helper to render the destroy action on the rows of a subform, so it can be used to add more actions
 - Improve ActiveStorage bridge to keep existing files in has_many_attachments
 - Helpers used by file upload bridges have been renamed and moved the JS code to active_scaffold.js
+- Support action link groups to open with click, like actions showing dynamic action link group
+- Open dynamic action link group nested in the menu tree, under the action opening it
 
-= 4-1-stable
+= 4.1.4
 - Fix dirty attributes on refresh_field action, record is built on unsaved instance copying attributes, but it reports only changed attributes from the form now
 - Fix incompatibility with Rails renderable objects (ViewComponent, Turbo Streams)
 

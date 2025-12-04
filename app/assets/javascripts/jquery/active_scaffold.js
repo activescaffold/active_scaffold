@@ -40,7 +40,9 @@
       jQuery(document).on('focus', ':input', function() { ActiveScaffold.last_focus = this; });
       jQuery(document).on('blur', ':input', function(e) { ActiveScaffold.last_focus = e.relatedTarget; });
       jQuery(document).click(function(event) {
-        jQuery('.action_group.dyn > ul').hide(); // only hide so action links loading still work
+        if (!jQuery(event.target).closest('.action_group.dyn').length) {
+          jQuery('.action_group.dyn > ul').remove();
+        }
       });
       jQuery(document).on('ajax:beforeSend', 'form.as_form', function(event) {
         var as_form = jQuery(this).closest("form");
@@ -290,9 +292,13 @@
         } else return false;
       });
       jQuery(document).on('ajax:complete', '.action_group.dyn > ul a', function(event) {
-        var action_link = ActiveScaffold.find_action_link(event.target);
-        if (action_link && action_link.loading_indicator) action_link.loading_indicator.css('visibility','hidden');
-        jQuery(event.target).closest('.action_group.dyn > ul').remove();
+        var action_link = ActiveScaffold.find_action_link(event.target), link = jQuery(event.target);
+        if (action_link && action_link.loading_indicator) action_link.loading_indicator.css('visibility', 'hidden');
+        setTimeout(function() {
+          if (!link.parent().is('.action_group.dyn')) {
+            link.closest('.action_group.dyn > ul').remove();
+          }
+        }, 100);
       });
 
       jQuery(document).on('change', 'input.update_form:not(.recordselect), textarea.update_form, select.update_form, .checkbox-list.update_form input:checkbox', function(event, additional_params) {
@@ -932,13 +938,12 @@
       display_dynamic_action_group: function(link, html) {
         var container;
         if (typeof(link) == 'string') link = jQuery('#' + link);
-        if (link.closest('td.actions').length) {
-          container = link.closest('td').addClass('action_group dyn');
-        } else {
-          if (link.parent('div.actions').length) link.wrap(jQuery('<div>'));
-          container = link.parent().addClass('action_group dyn');
+        if (link.parent('.actions').length) link.wrap(jQuery('<div>'));
+        container = link.parent().addClass('action_group dyn');
+        if (ActiveScaffold.config.dynamic_group_parent_class) {
+          container.addClass(ActiveScaffold.config.dynamic_group_parent_class);
         }
-        container.find('> ul').remove();
+        container.find('> ul.dynamic-menu').remove();
         container.append(html);
       },
 
