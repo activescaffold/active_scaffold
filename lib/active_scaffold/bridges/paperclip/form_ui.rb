@@ -7,7 +7,7 @@ module ActiveScaffold
         record = options[:object]
         paperclip = record.send(column.name.to_s)
         content = active_scaffold_column_paperclip(record, column, ui_options: ui_options) if paperclip.file?
-        active_scaffold_file_with_remove_link(column, options, content, 'delete_', 'paperclip_controls', ui_options: ui_options)
+        active_scaffold_file_with_content(column, options, content, 'delete_', 'paperclip_controls', ui_options: ui_options)
       end
     end
   end

@@ -8,7 +8,9 @@ module ActiveScaffold::Actions
     end
 
     def index
-      if params[:id] && !params[:id].is_a?(Array) && request.xhr?
+      if params[:action_links] && request.xhr?
+        action_links_menu
+      elsif params[:id] && !params[:id].is_a?(Array) && request.xhr?
         row
       else
         list
@@ -16,6 +18,18 @@ module ActiveScaffold::Actions
     end
 
     protected
+
+    def action_links_menu
+      @record = find_if_allowed(params[:id], :read) if params[:id]
+      @action_links = params[:action_links].split('.').reduce(active_scaffold_config.action_links) do |links, submenu|
+        links.subgroup(submenu)
+      end
+      respond_to_action(:action_links_menu, action_links_menu_formats)
+    end
+
+    def action_links_menu_formats
+      %i[js]
+    end
 
     # get just a single row
     def row
@@ -64,6 +78,10 @@ module ActiveScaffold::Actions
 
     def row_respond_to_js
       render action: 'row'
+    end
+
+    def action_links_menu_respond_to_js
+      render action: 'action_links_menu'
     end
 
     # The actual algorithm to prepare for the list view

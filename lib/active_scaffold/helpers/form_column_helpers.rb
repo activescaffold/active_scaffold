@@ -481,31 +481,32 @@ module ActiveScaffold
         link_to(label, '#', data: data, class: 'show-new-subform')
       end
 
-      def active_scaffold_file_with_remove_link(column, options, content, remove_file_prefix, controls_class, ui_options: column.options, &block)
+      def active_scaffold_file_with_content(column, options, content, remove_file_prefix, controls_class, ui_options: column.options)
         options = active_scaffold_input_text_options(options.merge(ui_options))
+        options[:style] = 'display: none' if content
+        field = file_field(:record, column.name, options)
+
         if content
-          active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class, &block)
+          content = [content, ' | ']
+          content << yield if block_given?
+          object_name, method = options[:name].split(/\[(#{column.name})\]/)
+          method.sub!(/#{column.name}/, "#{remove_file_prefix}\\0")
+          content << hidden_field(object_name, method, value: 'false', class: 'remove_file')
+          active_scaffold_file_with_remove_link(safe_join(content), options, controls_class) { field }
         else
-          file_field(:record, column.name, options)
+          field
         end
       end
 
-      def active_scaffold_file_with_content(column, content, options, remove_file_prefix, controls_class)
+      def active_scaffold_file_with_remove_link(content, options, controls_class, link_key = nil)
         required = options.delete(:required)
-        js_remove_file_code = "jQuery(this).prev().val('true'); jQuery(this).parent().hide().next().show()#{".find('input').attr('required', 'required')" if required}; return false;"
-        js_dont_remove_file_code = "jQuery(this).parents('div.#{controls_class}').find('input.remove_file').val('false'); return false;"
-
-        object_name, method = options[:name].split(/\[(#{column.name})\]/)
-        method.sub!(/#{column.name}/, "#{remove_file_prefix}\\0")
-        fields = block_given? ? yield : ''
-        link_key = options[:multiple] ? :remove_files : :remove_file
-        input = file_field(:record, column.name, options.merge(onchange: js_dont_remove_file_code))
-        content_tag(:div, class: controls_class) do
-          content_tag(:div) do
-            safe_join [content, ' | ', fields,
-                       hidden_field(object_name, method, value: 'false', class: 'remove_file'),
-                       content_tag(:a, as_(link_key), href: '#', onclick: js_remove_file_code)]
-          end << content_tag(:div, input, style: 'display: none')
+        link_key ||= options[:multiple] ? :remove_files : :remove_file
+        content_tag(:div, class: "#{controls_class} file-input-controls", data: {required: required}) do
+          content_line = content_tag(:div) do
+            safe_join [content, content_tag(:a, as_(link_key), href: '#', class: 'remove-file-btn')]
+          end
+          content_line << yield if block_given?
+          content_line
         end
       end
 
@@ -659,8 +660,11 @@ module ActiveScaffold
         selected_id = selected&.id
         if options.present?
           if ui_options[:add_new]
-            html_options[:data] ||= {}
-            html_options[:data][:subform_id] = active_scaffold_subform_attributes(column, ui_options: ui_options)[:id]
+            add_new_subform = ui_options[:add_new] == true || ui_options[:add_new][:mode].in?([nil, :subform])
+            if add_new_subform
+              html_options[:data] ||= {}
+              html_options[:data][:subform_id] = active_scaffold_subform_attributes(column, ui_options: ui_options)[:id]
+            end
             radio_html_options = html_options.merge(class: "#{html_options[:class]} hide-new-subform")
           else
             radio_html_options = html_options
@@ -675,7 +679,7 @@ module ActiveScaffold
             radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: radio_id)) + label)
           end
           if ui_options[:add_new]
-            if ui_options[:add_new] == true || ui_options[:add_new][:mode].in?([nil, :subform])
+            if add_new_subform
               create_new = content_tag(:label) do
                 radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(
                   id: "#{html_options[:id]}-create_new", class: "#{html_options[:class]} show-new-subform"

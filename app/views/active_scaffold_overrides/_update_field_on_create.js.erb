@@ -7,13 +7,15 @@ var field = jQuery('#<%= params[:from_field] %>');
   field_options[:class] = "#{field_options[:class]} update_form" if field_options&.dig('data-update_url')
 %>
 if (field.is('select')) {
-  field.append('<%= j content_tag(:option, label, value: id) %>');
+  if (!field.find('option[value="<%= id %>"]').length) field.append('<%= j content_tag(:option, label, value: id) %>');
   field.val(<%= id %>);
 } else if (field.is('input.recordselect')) {
   field.val('<%= j label %>').addClass('selected');
   field.next().val(<%= id %>);
 } else if (field.is('.new-radio-container')) {
-  field.append('<%= j active_scaffold_radio_option(@record, id, column, field_options, ui_options: column.form_ui_options || column.options) if column %>');
+  if (!field.parent().find('input[type=radio][value="<%= id %>"]').length) {
+    field.append('<%= j active_scaffold_radio_option(@record, id, column, field_options, ui_options: column.form_ui_options || column.options) if column %>');
+  } else field = field.parent().find('input[type=radio][value="<%= id %>"]').prop('checked', true);
 }
 field.trigger('change');
 var action_link = ActiveScaffold.ActionLink.get(field.parent().find('a.as_action'));

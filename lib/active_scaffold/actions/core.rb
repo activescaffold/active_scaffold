@@ -548,11 +548,11 @@ module ActiveScaffold::Actions
 
     private
 
-    def respond_to_action(action)
+    def respond_to_action(action, formats = action_formats)
       return unless !conditional_get_support? || view_stale?
 
       respond_to do |type|
-        action_formats.each do |format|
+        formats.each do |format|
           type.send(format) do
             method_name = respond_method_for(action, format)
             send(method_name) if method_name

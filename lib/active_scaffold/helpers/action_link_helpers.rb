@@ -35,7 +35,7 @@ module ActiveScaffold
         options[:options_level_0_tag] ||= nil
         options[:level] ||= 0
         options[:first_action] = true
-        output = ActiveSupport::SafeBuffer.new
+        output = options[:output] || ActiveSupport::SafeBuffer.new
         prev_link = separator = nil
 
         action_links.each(reverse: options.delete(:reverse), groups: true) do |link|
@@ -64,14 +64,34 @@ module ActiveScaffold
       end
 
       def display_action_link_group(link, record, options, &)
-        options[:level] += 1
-        content = display_action_links(link, record, options, &)
-        options[:level] -= 1
-        display_action_link(link, content, record, options).tap { options[:first_action] = false } if content.present?
+        if link.click_menu?
+          display_click_menu_link(link, record, options)
+        else
+          options[:level] += 1
+          content = display_action_links(link, record, options, &)
+          options[:level] -= 1
+          display_action_link(link, content, record, options).tap { options[:first_action] = false } if content.present?
+        end
       end
 
       def display_action_link_separator(options)
         as_element(:action_link_separator, '&nbsp;'.html_safe, proc_options: options)
+      end
+
+      def display_click_menu_link(link, record, options)
+        action_link =
+          if link.path.start_with?('collection.')
+            ActiveScaffold::DataStructures::ActionLinks::COLLECTION_CLICK_MENU_LINK
+          else
+            ActiveScaffold::DataStructures::ActionLinks::MEMBER_CLICK_MENU_LINK
+          end
+        html = display_action_link(
+          action_link,
+          nil,
+          record,
+          options.merge(authorized: true, link: link.label(record), link_id: get_action_link_id(link, record))
+        )
+        html.gsub('--ACTION-LINKS--', ERB::Util.unwrapped_html_escape(link.path)).html_safe # rubocop:disable Rails/OutputSafety
       end
 
       def display_action_link(link, content, record, options)
@@ -125,7 +145,7 @@ module ActiveScaffold
           html = html.gsub('--REASON--', ERB::Util.unwrapped_html_escape(options[:not_authorized_reason]))
         when :render_authorized_action_link
           html = html.gsub('--URL--', ERB::Util.unwrapped_html_escape(action_link_url(link, record)))
-                   .gsub('--LINK_ID--', ERB::Util.unwrapped_html_escape(get_action_link_id(link, record)))
+                   .gsub('--LINK_ID--', ERB::Util.unwrapped_html_escape(options[:link_id] || get_action_link_id(link, record)))
                    .gsub('--CONFIRM--') { ERB::Util.unwrapped_html_escape(link.confirm(h(record&.to_label))) }
                    .gsub('--PROMPT--') { ERB::Util.unwrapped_html_escape(link.prompt(h(record&.to_label))) }
                    .gsub('--ACTIVE--') { action_link_selected?(link, record) ? 'active' : '' }
@@ -396,7 +416,7 @@ module ActiveScaffold
       end
 
       def action_link_html_options(link, record, options, cache: false)
-        link_id = cache ? '--LINK_ID--' : get_action_link_id(link, record)
+        link_id = cache ? '--LINK_ID--' : options[:link_id] || get_action_link_id(link, record)
         html_options = options[:html_options] || link.html_options
         html_options = html_options.merge(class: [html_options[:class], link.action.to_s].compact.join(' '))
         html_options[:link] = action_link_text(link, record, options)
@@ -438,7 +458,7 @@ module ActiveScaffold
       end
 
       def get_action_link_id(link, record = nil)
-        column = link.column
+        column = link.column unless link.is_a?(ActiveScaffold::DataStructures::ActionLinks)
         if column&.association && record
           associated = record.send(column.association.name) unless column.association.collection?
           id =
@@ -450,10 +470,14 @@ module ActiveScaffold
         end
         id ||= record&.id&.to_s || (nested? ? nested_parent_id.to_s : '')
         action_link_id = ActiveScaffold::Registry.cache :action_link_id, link.name_to_cache.to_s do
-          if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)
-            controller_id = id_from_controller("#{link.controller}-")
+          if link.is_a?(ActiveScaffold::DataStructures::ActionLinks)
+            action_link_id(link.path.tr('.', '_'), '--ID--')
+          else
+            if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)
+              controller_id = id_from_controller("#{link.controller}-")
+            end
+            action_link_id("#{controller_id}#{link.action}", '--ID--')
           end
-          action_link_id("#{controller_id}#{link.action}", '--ID--')
         end
         action_link_id.sub('--ID--', id)
       end
