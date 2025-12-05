@@ -4,8 +4,8 @@ module ActiveScaffold::DataStructures
   class ActionLinks
     include Enumerable
 
-    COLLECTION_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, parameters: {action_links: '--ACTION-LINKS--', id: nil}) # member so it's cached
-    MEMBER_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, parameters: {action_links: '--ACTION-LINKS--'})
+    COLLECTION_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, toggle: false, parameters: {action_links: '--ACTION-LINKS--', id: nil}) # member so it's cached
+    MEMBER_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, toggle: false, parameters: {action_links: '--ACTION-LINKS--'})
 
     attr_accessor :default_type, :weight, :css_class
     attr_writer :click_menu, :label
