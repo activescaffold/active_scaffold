@@ -35,7 +35,7 @@ module ActiveScaffold
         options[:options_level_0_tag] ||= nil
         options[:level] ||= 0
         options[:first_action] = true
-        output = options[:output] || ActiveSupport::SafeBuffer.new
+        output = options.delete(:output) || ActiveSupport::SafeBuffer.new
         prev_link = separator = nil
 
         action_links.each(reverse: options.delete(:reverse), groups: true) do |link|
