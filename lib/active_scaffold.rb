@@ -138,6 +138,7 @@ module ActiveScaffold
     form_subsection: {tag: :li, attributes: {class: 'sub-section'}},
     form_subsection_header: {tag: :h5},
     subform: {tag: :li},
+    subform_header: {tag: :h5},
     subform_footer: {tag: :div, attributes: {class: 'footer'}},
     subform_record_remove: {}, # a
     subform_record_remove_reason: {tag: :span, attributes: {class: 'destroy reason'}},
