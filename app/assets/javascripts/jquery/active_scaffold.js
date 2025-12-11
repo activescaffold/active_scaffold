@@ -41,7 +41,9 @@
       jQuery(document).on('blur', ':input', function(e) { ActiveScaffold.last_focus = e.relatedTarget; });
       jQuery(document).click(function(event) {
         if (!jQuery(event.target).closest('.action_group.dyn').length) {
-          jQuery('.action_group.dyn > ul').remove();
+          jQuery('.action_group.dyn > .dynamic-menu').each(function() {
+            ActiveScaffold.remove_dynamic_action_group(this);
+          });
         }
       });
       jQuery(document).on('ajax:beforeSend', 'form.as_form', function(event) {
@@ -304,12 +306,12 @@
           return true;
         } else return false;
       });
-      jQuery(document).on('ajax:complete', '.action_group.dyn > ul a', function(event) {
+      jQuery(document).on('ajax:complete', '.action_group.dyn > .dynamic-menu a', function(event) {
         var action_link = ActiveScaffold.find_action_link(event.target), link = jQuery(event.target);
         if (action_link && action_link.loading_indicator) action_link.loading_indicator.css('visibility', 'hidden');
         setTimeout(function() {
           if (!link.parent().is('.action_group.dyn')) {
-            link.closest('.action_group.dyn > ul').remove();
+            ActiveScaffold.remove_dynamic_action_group(link.closest('.action_group.dyn > .dynamic-menu'));
           }
         }, 100);
       });
@@ -1030,8 +1032,14 @@
         if (ActiveScaffold.config.dynamic_group_parent_class) {
           container.addClass(ActiveScaffold.config.dynamic_group_parent_class);
         }
-        container.find('> ul.dynamic-menu').remove();
+        container.find('> .dynamic-menu').remove();
         container.append(html);
+      },
+
+      remove_dynamic_action_group: function(group) {
+        group = jQuery(group);
+        group.closest('.action_group.dyn').removeClass(ActiveScaffold.config.dynamic_group_parent_class);
+        group.remove();
       },
 
       scroll_to: function(element, checkInViewport) {

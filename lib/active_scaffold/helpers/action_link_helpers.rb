@@ -24,7 +24,9 @@ module ActiveScaffold
       def display_dynamic_action_group(action_link, links, record_or_ul_options = nil, ul_options = nil)
         ul_options = record_or_ul_options if ul_options.nil? && record_or_ul_options.is_a?(Hash)
         record = record_or_ul_options unless record_or_ul_options.is_a?(Hash)
-        html = as_element :dynamic_action_group, ul_options do
+        ul_options ||= {}
+        ul_options[:class] = [ul_options[:class], 'dynamic-menu'].compact.join(' ')
+        html = as_element :dynamic_action_group, **ul_options do
           safe_join(links.map { |link| as_element :dynamic_action_group_element, link })
         end
         raw "ActiveScaffold.display_dynamic_action_group('#{get_action_link_id action_link, record}', '#{escape_javascript html}');" # rubocop:disable Rails/OutputSafety
