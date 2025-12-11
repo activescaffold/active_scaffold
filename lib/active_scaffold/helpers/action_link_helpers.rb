@@ -24,6 +24,8 @@ module ActiveScaffold
       def display_dynamic_action_group(action_link, links, record_or_ul_options = nil, ul_options = nil)
         ul_options = record_or_ul_options if ul_options.nil? && record_or_ul_options.is_a?(Hash)
         record = record_or_ul_options unless record_or_ul_options.is_a?(Hash)
+        ul_options ||= {}
+        ul_options[:class] = [ul_options[:class], 'dynamic-menu'].compact.join(' ')
         html = content_tag :ul, ul_options do
           safe_join(links.map { |link| content_tag :li, link })
         end
