@@ -39,7 +39,7 @@ class FinderTest < ActiveSupport::TestCase
     assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
     assert_equal collection.sort.reverse, @klass.send(:sort_collection_by_column, collection, column, 'desc')
 
-    collection = ['a', nil, 'b']
+    collection = [+'a', nil, +'b']
     result = @klass.send(:sort_collection_by_column, collection, column, 'asc')
     assert_equal [nil, 'a', 'b'], result
 
