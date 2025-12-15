@@ -123,14 +123,14 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     end
 
     def find_one(id)
-      @klass.find_one(id, self) || raise(ActiveRecord::RecordNotFound)
+      model.find_one(id, self) || raise(ActiveRecord::RecordNotFound)
     end
 
     def execute_simple_calculation(operation, column_name, distinct)
-      @klass.execute_simple_calculation(self, operation, column_name, distinct)
+      model.execute_simple_calculation(self, operation, column_name, distinct)
     end
 
-    delegate :implicit_order_column, to: :@klass
+    delegate :implicit_order_column, to: :model
 
     def exists?
       size.positive?
@@ -139,7 +139,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     private
 
     def exec_queries
-      @records = @klass.find_all(self)
+      @records = model.find_all(self)
       @loaded = true
       @records
     end
