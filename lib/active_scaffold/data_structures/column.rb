@@ -191,6 +191,19 @@ module ActiveScaffold::DataStructures
         self.sort = options
       end
 
+      # a collection of associations to do left join when the list is sorted by this column
+      def sort_joins
+        @sort_joins || includes
+      end
+
+      def sort_joins=(value)
+        @sort_joins =
+          case value
+          when Array then value
+          else [value] # automatically convert to an array
+          end
+      end
+
       def associated_number?
         @associated_number
       end
