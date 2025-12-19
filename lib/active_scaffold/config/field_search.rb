@@ -9,6 +9,7 @@ module ActiveScaffold::Config
       @human_conditions = self.class.human_conditions
       @floating_footer = self.class.floating_footer
       @reset_form = self.class.reset_form
+      @update_columns = self.class.update_columns
     end
 
     # global level configuration
