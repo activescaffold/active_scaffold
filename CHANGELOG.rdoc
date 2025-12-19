@@ -20,6 +20,9 @@
 - Open dynamic action link group nested in the menu tree, under the action opening it.
 - Add sort_joins to column, defaults to includes value, so it's possible to set sort by SQL without joining the includes, or join with some associations, and preload others.
 
+= 4.1.5
+- Fix update_columns global config for field search ac
+
 = 4.1.4
 - Fix dirty attributes on refresh_field action, record is built on unsaved instance copying attributes, but it reports only changed attributes from the form now
 - Fix incompatibility with Rails renderable objects (ViewComponent, Turbo Streams)
