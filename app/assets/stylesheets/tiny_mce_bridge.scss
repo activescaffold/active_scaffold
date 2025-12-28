@@ -1,0 +1,11 @@
+.active-scaffold textarea.mceEditor {
+  opacity: 0;
+  pointer-events: none;
+  display: inline !important;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  width: 0 !important;
+  float: left;
+  margin-left: -5px;
+}

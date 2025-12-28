@@ -19,6 +19,7 @@
 - Support action link groups to open with click, like actions showing dynamic action link group.
 - Open dynamic action link group nested in the menu tree, under the action opening it.
 - Add sort_joins to column, defaults to includes value, so it's possible to set sort by SQL without joining the includes, or join with some associations, and preload others.
+- Fix when textarea is required and uses tinymce, show the validation error if it's empty and sync the content before submitting.
 
 = 4.1.5
 - Fix update_columns global config for field search ac
