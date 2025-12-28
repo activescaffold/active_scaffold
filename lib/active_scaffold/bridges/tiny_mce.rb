@@ -13,4 +13,8 @@ class ActiveScaffold::Bridges::TinyMce < ActiveScaffold::DataStructures::Bridge
   def self.javascripts
     ['tinymce', 'jquery/tiny_mce_bridge']
   end
+
+  def self.stylesheets
+    ['tiny_mce_bridge']
+  end
 end
