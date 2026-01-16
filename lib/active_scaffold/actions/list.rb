@@ -4,7 +4,7 @@ module ActiveScaffold::Actions
   module List
     def self.included(base)
       base.before_action :list_authorized_filter, only: :index
-      base.helper_method :list_columns, :count_on_association_class?
+      base.helper_method :list_columns, :count_on_association_class?, :filters_enabled?
     end
 
     def index
