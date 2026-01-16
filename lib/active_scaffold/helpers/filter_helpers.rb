@@ -11,8 +11,12 @@ module ActiveScaffold
       end
 
       def display_filters(filters)
-        content = filters.sort_by(&:weight).map { |filter| display_filter(filter) }
-        content_tag :div, safe_join(content), class: 'filters' if content.present?
+        content = render_filters filters
+        content_tag :div, content, class: 'filters' if content.present?
+      end
+
+      def render_filters(filters)
+        safe_join(filters.sort_by(&:weight).filter_map { |filter| display_filter(filter) })
       end
 
       def display_filter(filter)
