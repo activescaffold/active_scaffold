@@ -11,6 +11,7 @@ module ActiveScaffold
       end
 
       def display_filters(filters)
+        return unless filters_enabled?
         content = render_filters filters
         content_tag :div, content, class: 'filters' if content.present?
       end
