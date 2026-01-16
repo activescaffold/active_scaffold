@@ -31,7 +31,7 @@ module ActiveScaffold
         content = options.map do |option|
           content_tag :option, option.label(nil), data: {url: action_link_url(option, nil)}, selected: action_link_selected?(option, nil), title: option.description
         end
-        select_tag nil, safe_join(content), class: "action_group #{link.css_class}", title: filter.description || filter.label, data: {remote: :url} if content.present?
+        select_tag nil, safe_join(content), class: "action_group #{filter.css_class}", title: filter.description || filter.label, data: {remote: :url} if content.present?
       end
     end
   end
