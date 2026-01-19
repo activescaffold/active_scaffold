@@ -19,6 +19,6 @@
 
 <% if !@auto_pagination && !@popstate && !embedded? && !local_assigns[:no_history] -%>
   if (!jQuery('#<%= active_scaffold_id %>').is('.active-scaffold .active-scaffold')) {
-    ActiveScaffold.add_to_history(<%=raw request.original_url.to_json %>, <%=raw history_state.to_json %>);
+    ActiveScaffold.add_to_history(<%=raw (local_assigns[:history_url] || request.original_url).to_json %>, <%=raw history_state.to_json %>);
   }
 <% end -%>
