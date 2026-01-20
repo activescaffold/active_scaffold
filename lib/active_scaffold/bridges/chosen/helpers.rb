@@ -30,9 +30,7 @@ class ActiveScaffold::Bridges::Chosen
             collection_select(:record, column.name, select_options, :id, ui_options[:label_method] || :to_label, options, html_options)
           end
         else
-          html = active_scaffold_input_select(column, html_options, ui_options: ui_options)
-          html << active_scaffold_add_new(column, record, options, ui_options: ui_options) if ui_options[:add_new]
-          html
+          active_scaffold_input_select(column, html_options, ui_options: ui_options)
         end
       end
     end
