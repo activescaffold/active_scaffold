@@ -378,7 +378,10 @@ module ActiveScaffold
             collection_select(:record, method, select_options, :id, ui_options[:label_method] || :to_label, options, html_options)
           end
         html << active_scaffold_refresh_link(column, html_options, record, ui_options) if ui_options[:refresh_link]
-        html << active_scaffold_add_new(column, record, html_options, ui_options: ui_options) if ui_options[:add_new]
+        if ui_options[:add_new]
+          html = content_tag(:div, html, class: 'select-field') <<
+                 active_scaffold_add_new(column, record, html_options, ui_options: ui_options)
+        end
         html
       end
 
@@ -696,7 +699,10 @@ module ActiveScaffold
         else
           html = content_tag(:span, as_(:no_options), class: "#{html_options[:class]} no-options", id: html_options[:id])
           html << hidden_field_tag(html_options[:name], '', id: nil)
-          html << active_scaffold_add_new(column, record, html_options, ui_options: ui_options) if ui_options[:add_new]
+          if ui_options[:add_new]
+            html = content_tag(:div, html, class: 'select-field') <<
+                   active_scaffold_add_new(column, record, html_options, ui_options: ui_options)
+          end
           html
         end
       end

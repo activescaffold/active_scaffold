@@ -395,7 +395,7 @@
 
       jQuery(document).on('click', '.hide-new-subform, .show-new-subform', function(e) {
         var $this = jQuery(this), line = $this.closest('.form-element'),
-          subform = line.find('#' + $this.data('subform-id')), radio = false, hide, select;
+          subform = line.find('#' + $this.data('subform-id')), radio = false, hide, field;
         if ($this.is('[type=radio]')) {
           radio = true;
           hide = $this.is('.hide-new-subform');
@@ -404,17 +404,16 @@
           hide = subform.is(':visible');
         }
         if ($this.data('select-id')) {
-          select = line.find('#' + $this.data('select-id'));
-          if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').addBack();
+          field = line.find('#' + $this.data('select-id')).closest('.select-field');
         }
         if (hide) {
           subform.hide().find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
-          if (select) select.show().prop('disabled', false);
+          if (field) field.show().find('input:disabled,select:disabled,textarea:disabled').prop('disabled', false);
           if (radio) {
             $this.closest('.form-element').find('[name="' + $this.attr('name') + '"].show-new-subform').prop('disabled', false);
           } else $this.html($this.data('select-text'));
         } else {
-          if (select) select.hide().prop('disabled', true);
+          if (field) field.hide().find('input:enabled,select:enabled,textarea:enabled').prop('disabled', true);
           subform.show().find("input:disabled,select:disabled,textarea:disabled").prop('disabled', false);
           if (radio) $this.prop('disabled', true);
           else {
@@ -591,7 +590,7 @@
         ActiveScaffold.auto_paginate(container);
         ActiveScaffold.draggable_lists('.draggable-lists', container);
         ActiveScaffold.sliders(container);
-        ActiveScaffold.disable_optional_subforms(container);
+        setTimeout(function() { ActiveScaffold.disable_optional_subforms(container) }); // delay hiding fields, in case some field need to be visible, e.g. chosen
         ActiveScaffold.update_floating_form_footer(); // check other forms too, state may change
         if (container != document) {
           jQuery('[data-rs-type]', container).each(function() { RecordSelect.from_attributes(jQuery(this)); });
@@ -647,9 +646,8 @@
             var line = $this.closest('.form-element'), toggle = line.find('.show-new-subform[data-subform-id="' + $this.attr('id') + '"]').first();
             if (toggle.is('[type=radio]')) toggle.prop('disabled', true);
             else if (toggle.data('select-id')) {
-              var select = line.find('#' + toggle.data('select-id'));
-              if (select.hasClass('recordselect') || select.is('.no-options')) select = select.next(':hidden').addBack();
-              select.hide().prop('disabled', true);
+              var field = line.find('#' + toggle.data('select-id')).closest('.select-field');
+              field.hide().find('input:enabled,select:enabled,textarea:enabled').prop('disabled', true);
             }
           } else $this.find("input:enabled,select:enabled,textarea:enabled").prop('disabled', true);
         });

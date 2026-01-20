@@ -18,7 +18,10 @@ class ActiveScaffold::Bridges::RecordSelect
         if column.association&.singular?
           multiple = ui_options.dig(:html_options, :multiple)
           html = active_scaffold_record_select(record, column, options, record.send(column.name), multiple, ui_options: ui_options)
-          html << active_scaffold_add_new(column, record, options, ui_options: ui_options) if ui_options[:add_new]
+          if ui_options[:add_new]
+            html = content_tag(:div, html, class: 'select-field') <<
+                   active_scaffold_add_new(column, record, options, ui_options: ui_options)
+          end
           html
         elsif column.association&.collection?
           active_scaffold_record_select(record, column, options, record.send(column.name), true, ui_options: ui_options)
