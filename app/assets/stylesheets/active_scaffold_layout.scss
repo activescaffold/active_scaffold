@@ -734,6 +734,14 @@ float: left;
 margin-top: 6px;
 }
 
+.active-scaffold li.form-element dd .select-field:not(.draggable-lists-container) {
+  display: inline-block;
+}
+.active-scaffold li.form-element dd .select-field ~ .as_action {
+  vertical-align: top;
+  margin-left: 5px;
+}
+
 .active-scaffold .form dd {
 margin: 0;
 }

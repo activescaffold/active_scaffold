@@ -385,10 +385,6 @@ module ActiveScaffold
             collection_select(:record, method, select_options, :id, ui_options[:label_method] || :to_label, options, html_options)
           end
         html << active_scaffold_refresh_link(column, html_options, record, ui_options) if ui_options[:refresh_link]
-        if ui_options[:add_new]
-          html = content_tag(:div, html, class: 'select-field') <<
-                 active_scaffold_add_new(column, record, html_options, ui_options: ui_options)
-        end
         html
       end
 
@@ -404,6 +400,7 @@ module ActiveScaffold
 
       def active_scaffold_add_new(column, record, html_options, ui_options: column.options, skip_link: false)
         options = ui_options[:add_new] == true ? {} : ui_options[:add_new]
+        options[:mode] = :popup if column.association&.collection?
         case options[:mode]
         when nil, :subform
           active_scaffold_new_record_subform(column, record, html_options, options: options, skip_link: skip_link)
@@ -557,7 +554,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_draggable(column, options, ui_options: column.options)
-        active_scaffold_input_plural_association(column, options.merge(draggable_lists: true), ui_options: ui_options)
+        active_scaffold_input_select(column, options.merge(draggable_lists: true), ui_options: ui_options)
       end
 
       def active_scaffold_checkbox_option(option, label_method, associated_ids, checkbox_options, item_options = {})
@@ -618,13 +615,20 @@ module ActiveScaffold
       end
 
       def active_scaffold_input_select(column, html_options, ui_options: column.options)
-        if column.association&.singular?
-          active_scaffold_input_singular_association(column, html_options, ui_options: ui_options)
-        elsif column.association&.collection?
-          active_scaffold_input_plural_association(column, html_options, ui_options: ui_options)
-        else
-          active_scaffold_input_enum(column, html_options, ui_options: ui_options)
+        record = html_options[:object]
+        html =
+          if column.association&.singular?
+            active_scaffold_input_singular_association(column, html_options, ui_options: ui_options)
+          elsif column.association&.collection?
+            active_scaffold_input_plural_association(column, html_options, ui_options: ui_options)
+          else
+            active_scaffold_input_enum(column, html_options, ui_options: ui_options)
+          end
+        if ui_options[:add_new]
+          html = content_tag(:div, html, class: 'select-field') <<
+                 active_scaffold_add_new(column, record, html_options, ui_options: ui_options)
         end
+        html
       end
 
       def active_scaffold_input_select_multiple(column, options, ui_options: column.options)

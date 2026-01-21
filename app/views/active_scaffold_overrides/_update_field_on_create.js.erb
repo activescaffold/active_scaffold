@@ -8,14 +8,47 @@ var field = jQuery('#<%= params[:from_field] %>');
 %>
 if (field.is('select')) {
   if (!field.find('option[value="<%= id %>"]').length) field.append('<%= j content_tag(:option, label, value: id) %>');
-  field.val(<%= id %>);
+  if (field.prop("multiple")) {
+    var current = field.val() || [];  // val() returns null if nothing selected
+    current.push(<%= id %>);
+    field.val(current);
+  } else {
+    field.val(<%= id %>);
+  }
+  if (field.is('.chosen')) field.trigger('chosen:updated');
 } else if (field.is('input.recordselect')) {
-  field.val('<%= j label %>').addClass('selected');
-  field.next().val(<%= id %>);
+  var rs = field.siblings('.record-select-list').data('recordselect');
+  if (rs) { // RS multiple
+    rs.add(<%= id %>, '<%= j label %>');
+  } else {
+    field.val('<%= j label %>').addClass('selected');
+    field.next().val(<%= id %>);
+  }
 } else if (field.is('.new-radio-container')) {
   if (!field.parent().find('input[type=radio][value="<%= id %>"]').length) {
     field.append('<%= j active_scaffold_radio_option(@record, id, column, field_options, ui_options: column.form_ui_options || column.options) if column %>');
   } else field = field.parent().find('input[type=radio][value="<%= id %>"]').prop('checked', true);
+} else if (field.is('.checkbox-list')) {
+  var list = field;
+  if (list.is('.draggable-list')) {
+    field = field.closest('.draggable-lists-container');
+    list = field.find('.draggable-list.selected');
+  }
+  if (!field.find('input[type=checkbox][value="<%= id %>"]').length) {
+    <%
+      ui_options = column&.form_ui_options || column&.options
+      label_method = ui_options&.dig(:label_method) || :to_label
+      cb_id = "#{field_options[:id]}_INDEX_id"
+      html = active_scaffold_checkbox_option(@record, label_method, [id], {name: "#{field_options[:name]}[]", id: cb_id}, ui_options&.dig(:item_options) || {})
+    %>
+    var cb_id = '<%= cb_id %>'.replace('INDEX', field.find('input[type=checkbox]').length);
+    list.append('<%= j html %>')
+    list.find('#<%= cb_id %>').attr('id', cb_id);
+    list.find('[for="<%= cb_id %>"]').attr('for', cb_id);
+  } else {
+    field = field.find('input[type=checkbox][value="<%= id %>"]').prop('checked', true);
+    if (list.is('.draggable-list')) list.append(field.parent());
+  }
 }
 field.trigger('change');
 var action_link = ActiveScaffold.ActionLink.get(field.closest('.select-field').parent().find('a.as_action'));
