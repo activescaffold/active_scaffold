@@ -15,19 +15,20 @@ class ActiveScaffold::Bridges::RecordSelect
       # requires RecordSelect plugin to be installed and configured.
       def active_scaffold_input_record_select(column, options, ui_options: column.options)
         record = options.delete(:object)
-        if column.association&.singular?
-          multiple = ui_options.dig(:html_options, :multiple)
-          html = active_scaffold_record_select(record, column, options, record.send(column.name), multiple, ui_options: ui_options)
-          if ui_options[:add_new]
-            html = content_tag(:div, html, class: 'select-field') <<
-                   active_scaffold_add_new(column, record, options, ui_options: ui_options)
+        html =
+          if column.association&.singular?
+            multiple = ui_options.dig(:html_options, :multiple)
+            active_scaffold_record_select(record, column, options, record.send(column.name), multiple, ui_options: ui_options.except(:add_new))
+          elsif column.association&.collection?
+            active_scaffold_record_select(record, column, options, record.send(column.name), true, ui_options: ui_options.except(:add_new))
+          else
+            active_scaffold_record_select_autocomplete(record, column, options, ui_options: ui_options)
           end
-          html
-        elsif column.association&.collection?
-          active_scaffold_record_select(record, column, options, record.send(column.name), true, ui_options: ui_options)
-        else
-          active_scaffold_record_select_autocomplete(record, column, options, ui_options: ui_options)
+        if column.association && ui_options[:add_new]
+          html = content_tag(:div, html, class: 'select-field') <<
+                 active_scaffold_add_new(column, record, options, ui_options: ui_options)
         end
+        html
       end
 
       def active_scaffold_record_select(record, column, options, value, multiple, ui_options: column.options)

@@ -24,11 +24,17 @@ class ActiveScaffold::Bridges::Chosen
           options.update(ui_options)
           active_scaffold_select_name_with_multiple html_options
 
-          if (optgroup = options.delete(:optgroup))
-            select(:record, column.name, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
-          else
-            collection_select(:record, column.name, select_options, :id, ui_options[:label_method] || :to_label, options, html_options)
+          html =
+            if (optgroup = options.delete(:optgroup))
+              select(:record, column.name, active_scaffold_grouped_options(column, select_options, optgroup), options, html_options)
+            else
+              collection_select(:record, column.name, select_options, :id, ui_options[:label_method] || :to_label, options, html_options)
+            end
+          if ui_options[:add_new]
+            html = content_tag(:div, html, class: 'select-field') <<
+                   active_scaffold_add_new(column, record, html_options, ui_options: ui_options)
           end
+          html
         else
           active_scaffold_input_select(column, html_options, ui_options: ui_options)
         end
