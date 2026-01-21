@@ -18,5 +18,5 @@ if (field.is('select')) {
   } else field = field.parent().find('input[type=radio][value="<%= id %>"]').prop('checked', true);
 }
 field.trigger('change');
-var action_link = ActiveScaffold.ActionLink.get(field.parent().find('a.as_action'));
+var action_link = ActiveScaffold.ActionLink.get(field.closest('.select-field').parent().find('a.as_action'));
 if (action_link) action_link.close();
