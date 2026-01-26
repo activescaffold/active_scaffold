@@ -3,6 +3,11 @@
 module ActiveScaffold::Actions
   module FieldSearch
     def self.included(base)
+      conf = base.active_scaffold_config
+      if conf.model.primary_key.nil? && conf.field_search.columns.any? { |col| conf.columns[col]&.association }
+        raise "#{base.active_scaffold_config.model.name} has no primary key, field_search with association columns won't work"
+      end
+
       base.class_eval do
         helper_method :field_search_params, :grouped_search?, :search_group_column, :search_group_function
         include ActiveScaffold::Actions::CommonSearch
