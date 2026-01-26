@@ -3,6 +3,10 @@
 module ActiveScaffold::Actions
   module Show
     def self.included(base)
+      if base.active_scaffold_config.model.primary_key.nil?
+        raise "#{base.active_scaffold_config.model.name} has no primary key, show won't work"
+      end
+
       base.before_action :show_authorized_filter, only: :show
     end
 
