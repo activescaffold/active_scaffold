@@ -3,6 +3,10 @@
 module ActiveScaffold::Actions
   module Delete
     def self.included(base)
+      if base.active_scaffold_config.model.primary_key.nil?
+        raise "#{base.active_scaffold_config.model.name} has no primary key, delete won't work"
+      end
+
       base.before_action :delete_authorized_filter, only: [:destroy]
     end
 

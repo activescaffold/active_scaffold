@@ -3,6 +3,10 @@
 module ActiveScaffold::Actions
   module Mark
     def self.included(base)
+      if base.active_scaffold_config.model.primary_key.nil?
+        raise "#{base.active_scaffold_config.model.name} has no primary key, mark won't work"
+      end
+
       base.before_action :mark_authorized_filter, only: :mark
       base.before_action :assign_marked_records_to_model
       base.helper_method :marked_records

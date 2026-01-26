@@ -3,6 +3,10 @@
 module ActiveScaffold::Actions
   module Update
     def self.included(base)
+      if base.active_scaffold_config.model.primary_key.nil?
+        raise "#{base.active_scaffold_config.model.name} has no primary key, update won't work"
+      end
+
       base.before_action :update_authorized_filter, only: %i[edit update]
       base.helper_method :update_refresh_list?
     end
