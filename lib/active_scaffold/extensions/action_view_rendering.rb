@@ -36,6 +36,10 @@ module ActiveScaffold #:nodoc:
     # options[:xhr] force to load embedded scaffold with AJAX even when render_component gem is installed.
     #
     def render(*args, &block)
+      # TDH 2025-01: Handle rendering of objects that respond to render_in (e.g., ViewComponent)
+      # copied from this pull request https://github.com/activescaffold/active_scaffold/pull/743/changes
+      # which was released in 4.1
+      return args.first.render_in(self) if args.one? && args.first.respond_to?(:render_in)
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
         render_embedded args.first
       elsif args.first == :super
@@ -183,6 +187,11 @@ module ActionView
         # override the render method to use our @lookup_context instead of the
         # memoized @_lookup_context
         def render(options = {}, locals = {}, &block)
+          # TDH 2025-01: Handle rendering of objects that respond to render_in (e.g., ViewComponent)
+          # copied from this pull request https://github.com/activescaffold/active_scaffold/pull/743/changes
+          # which was released in 4.1
+          return options.render_in(self) if options.respond_to?(:render_in)
+
           case options
           when Hash
             in_rendering_context(options) do |_|
