@@ -304,7 +304,7 @@ module ActiveScaffold::Actions
         do_search if respond_to? :do_search, true
         set_includes_for_columns
         # where(nil) is needed because we need a relation
-        append_to_query(beginning_of_chain.where(nil), finder_options)
+        append_to_query(filtered_query.where(nil), finder_options)
       end
     end
 
