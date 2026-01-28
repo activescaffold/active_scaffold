@@ -422,6 +422,7 @@ module ActiveScaffold
         case column.column.type
         when :time, :datetime, Time then value.to_i
         when :boolean then value ? 1 : 0
+        when :binary then nil
         else value.to_s
         end
       end
