@@ -41,7 +41,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_tab_options(column, record)
-        subform_column = column.first
+        subform_column = column.visible_columns.first
         if subform_column
           tabbed_by = subform_column.options[:tabbed_by] || column.tabbed_by
           if tabbed_by_association(subform_column, tabbed_by)
@@ -51,7 +51,7 @@ module ActiveScaffold
         end
         if tab_column
           label_method = (tab_column.form_ui_options || tab_column.options)[:label_method] || :to_label
-          helper_method = association_helper_method(column.association, :sorted_association_options_find)
+          helper_method = association_helper_method(tab_column.association, :sorted_association_options_find)
           send(helper_method, tab_column.association, nil, subform_record).map do |opt_record|
             [opt_record.send(label_method), opt_record.id, opt_record]
           end
