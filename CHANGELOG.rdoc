@@ -22,6 +22,9 @@
 - Fix when textarea is required and uses tinymce, show the validation error if it's empty and sync the content before submitting.
 - Support add_new in collection associations too, only with popup mode (add_new: true will default to popup in such associations)
 
+= 4.1.6
+- Fix add_existing
+
 = 4.1.5
 - Fix update_columns global config for field search ac
 
