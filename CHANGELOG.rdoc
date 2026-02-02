@@ -21,6 +21,8 @@
 - Add sort_joins to column, defaults to includes value, so it's possible to set sort by SQL without joining the includes, or join with some associations, and preload others.
 - Fix when textarea is required and uses tinymce, show the validation error if it's empty and sync the content before submitting.
 - Support add_new in collection associations too, only with popup mode (add_new: true will default to popup in such associations)
+- Support for rails 8
+_ Cache action link generation to speed up list rendering
 
 = 4.1.6
 - Fix add_existing
