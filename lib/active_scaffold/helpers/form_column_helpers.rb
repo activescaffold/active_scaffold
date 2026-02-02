@@ -901,7 +901,7 @@ module ActiveScaffold
           options.merge!(active_scaffold_input_text_options)
           record_select_field(options[:name], nil, options)
         else
-          helper_method = association_helper_method(column.association, :sorted_association_options_find)
+          helper_method = association_helper_method(nested.association, :sorted_association_options_find)
           select_options = send(helper_method, nested.association, nil, record)
           select_options ||= active_scaffold_config.model.all
           select_options = options_from_collection_for_select(select_options, :id, :to_label)
