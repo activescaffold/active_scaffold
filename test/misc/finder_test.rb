@@ -33,7 +33,7 @@ class FinderTest < ActiveSupport::TestCase
 
   def test_method_sorting
     column = ActiveScaffold::DataStructures::Column.new('a', ModelStub)
-    column.sort_by method: proc { self }
+    column.sort_by method: proc { |r| r }
 
     collection = [16_000, 2853, 98_765, 6188, 4]
     assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
