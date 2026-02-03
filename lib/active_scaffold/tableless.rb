@@ -4,8 +4,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
     attr_reader :klass
 
-    def initialize(klass, *args)
-      super(nil, *args)
+    def initialize(klass, *)
+      super(nil, *)
       @klass = klass
     end
 
@@ -23,7 +23,7 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   end
 
   class Column < ActiveRecord::ConnectionAdapters::Column
-    def initialize(name, default, type, null = true, *, **) # rubocop:disable Style/OptionalBooleanParameter
+    def initialize(name, default, type, null = true, *, **) # rubocop:disable Style/OptionalBooleanParameter,Metrics/ParameterLists
       if Rails.version >= '8.1'
         if type.is_a?(Symbol)
           cast_type = ActiveRecord::Type.lookup(type)
