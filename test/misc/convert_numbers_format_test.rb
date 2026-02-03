@@ -18,7 +18,7 @@ class NumberModel < ActiveRecord::Base
     columns_hash.each do |name, column|
       define_attribute(
         name,
-        connection.lookup_cast_type_from_column(column),
+        Rails.version >= '8.1' ? column.send(:cast_type) : connection.lookup_cast_type_from_column(column),
         default: column.default
       )
     end

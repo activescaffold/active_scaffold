@@ -5,7 +5,7 @@ require 'test_helper'
 module ModelStubs
   class ModelStub < ActiveRecord::Base
     self.abstract_class = true
-    def self.columns; @columns ||= [ColumnMock.new('foo', '', 'string')] end
+    def self.columns; @columns ||= [ColumnMock.new('foo', '', :string)] end
 
     def self.columns_hash; @columns_hash ||= @columns.index_by(&:name) end
 
