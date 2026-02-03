@@ -33,19 +33,19 @@ class FinderTest < ActiveSupport::TestCase
 
   def test_method_sorting
     column = ActiveScaffold::DataStructures::Column.new('a', ModelStub)
-    column.sort_by method: proc { |r| r }
+    column.sort_by method: proc { a }
 
-    collection = [16_000, 2853, 98_765, 6188, 4]
-    assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
-    assert_equal collection.sort.reverse, @klass.send(:sort_collection_by_column, collection, column, 'desc')
+    collection = [ModelStub.new(a: 'x'), ModelStub.new(a: 'b'), ModelStub.new(a: 'z'), ModelStub.new(a: 'a')]
+    assert_equal collection.map(&:a).sort, @klass.send(:sort_collection_by_column, collection, column, 'asc').map(&:a)
+    assert_equal collection.map(&:a).sort.reverse, @klass.send(:sort_collection_by_column, collection, column, 'desc').map(&:a)
 
-    collection = ['a', nil, 'b']
-    result = @klass.send(:sort_collection_by_column, collection, column, 'asc')
+    collection = [ModelStub.new(a: 'a'), ModelStub.new(a: nil), ModelStub.new(a: 'b')]
+    result = @klass.send(:sort_collection_by_column, collection, column, 'asc').map(&:a)
     assert_equal [nil, 'a', 'b'], result
 
-    column.sort_by method: 'self'
-    collection = [3, 1, 2]
-    assert_equal collection.sort, @klass.send(:sort_collection_by_column, collection, column, 'asc')
+    column.sort_by method: 'a'
+    collection = [ModelStub.new(a: 'c'), ModelStub.new(a: 'a'), ModelStub.new(a: 'b')]
+    assert_equal collection.map(&:a).sort, @klass.send(:sort_collection_by_column, collection, column, 'asc').map(&:a)
   end
 
   def test_count_with_group
