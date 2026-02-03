@@ -4,8 +4,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
     attr_reader :klass
 
-    def initialize(klass, *args)
-      super(nil, *args)
+    def initialize(klass, *)
+      super(nil, *)
       @klass = klass
     end
 
@@ -23,9 +23,19 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
   end
 
   class Column < ActiveRecord::ConnectionAdapters::Column
-    def initialize(name, default, sql_type = nil, null = true, **) # rubocop:disable Style/OptionalBooleanParameter
-      metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, sql_type
-      super(name, default, metadata, null)
+    def initialize(name, default, type, null = true, *, **) # rubocop:disable Style/OptionalBooleanParameter,Metrics/ParameterLists
+      if Rails.version >= '8.1'
+        if type.is_a?(Symbol)
+          cast_type = ActiveRecord::Type.lookup(type)
+        else
+          metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, type
+          cast_type = ActiveRecord::Type.lookup(metadata.type)
+        end
+        super(name, cast_type, default, metadata, null, *, **)
+      else
+        metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, type.to_s
+        super(name, default, metadata, null, *, **)
+      end
     end
   end
 
@@ -195,8 +205,8 @@ class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/App
     @connection ||= Connection.new(self)
   end
 
-  def self.column(name, sql_type = nil, options = {})
-    column = Column.new(name.to_s, options[:default], sql_type.to_s, options.key?(:null) ? options[:null] : true)
+  def self.column(name, sql_type, options = {})
+    column = Column.new(name.to_s, options[:default], sql_type, options.key?(:null) ? options[:null] : true)
     column.tap { columns << column }
   end
 

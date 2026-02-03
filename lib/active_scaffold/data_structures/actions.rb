@@ -3,9 +3,9 @@
 class ActiveScaffold::DataStructures::Actions
   include Enumerable
 
-  def initialize(*args)
+  def initialize(*)
     @set = []
-    add(*args)
+    add(*)
   end
 
   def exclude(*args)

@@ -21,13 +21,13 @@ module ActiveScaffold::DataStructures
     # This accessor is used by ActionColumns to create new Column objects without adding them to this set
     attr_reader :active_record_class
 
-    def initialize(active_record_class, *args)
+    def initialize(active_record_class, *)
       @active_record_class = active_record_class
       @_inheritable = ::Set.new
       @set = {}
       @sorted = nil
 
-      add(*args)
+      add(*)
     end
 
     # the way to add columns to the set. this is primarily useful for virtual columns.

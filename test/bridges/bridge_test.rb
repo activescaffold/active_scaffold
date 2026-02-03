@@ -10,7 +10,7 @@ class BridgeTest < ActiveSupport::TestCase
   def teardown; end
 
   def test__shouldnt_throw_errors
-    ActiveScaffold::Bridges.run_all
+    assert_nothing_raised { ActiveScaffold::Bridges.run_all }
   end
 
   def test__file_column_bridge

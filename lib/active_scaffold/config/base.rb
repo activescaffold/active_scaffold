@@ -122,8 +122,8 @@ module ActiveScaffold::Config
         @storage[@action].key? key.to_s if @action && @storage[@action]
       end
 
-      def method_missing(name, *args)
-        proxy_to_conf?(name, true) ? @conf.send(name, *args) : super
+      def method_missing(name, *)
+        proxy_to_conf?(name, true) ? @conf.send(name, *) : super
       end
 
       def respond_to_missing?(name, include_all = false)

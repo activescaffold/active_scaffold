@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   ]
   s.license = 'MIT'
 
-  s.required_ruby_version = '>= 3.1'
+  s.required_ruby_version = '>= 3.2'
 
   s.add_dependency('dartsass-sprockets', '~> 3.2.0')
   s.add_dependency('html_attrs', '~> 1.1')
