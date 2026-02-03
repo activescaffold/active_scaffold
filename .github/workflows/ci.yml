@@ -100,8 +100,6 @@ jobs:
           - ruby: '3.4'
             rails: '7.2'
             coverage: true
-          - ruby: 'jruby-10.0'
-            allow_failure: true
     timeout-minutes: 60
     env:
       JRUBY_OPTS: "--debug"
