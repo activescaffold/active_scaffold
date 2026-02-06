@@ -511,7 +511,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_refresh_link(column, html_options, record, ui_options = {})
-        link_options = {object: record}
+        link_options = {object: record, data: {field_selector: ui_options[:field_selector] || "##{html_options[:id]}"}}
         if html_options['data-update_url']
           link_options['data-update_send_form'] = html_options['data-update_send_form']
           link_options['data-update_send_form_selector'] = html_options['data-update_send_form_selector']
@@ -651,6 +651,54 @@ module ActiveScaffold
         content_tag(:label, radio_button(:record, column.name, value, radio_options) + text)
       end
 
+      def active_scaffold_input_radio_content(column, record, options, html_options, ui_options)
+        if ui_options[:add_new]
+          add_new_subform = ui_options[:add_new] == true || ui_options[:add_new][:mode].in?([nil, :subform])
+          if add_new_subform
+            html_options[:data] ||= {}
+            html_options[:data][:subform_id] = active_scaffold_subform_attributes(column, ui_options: ui_options)[:id]
+          end
+          radio_html_options = html_options.merge(class: "#{html_options[:class]} hide-new-subform")
+        else
+          radio_html_options = html_options
+        end
+
+        selected = record.send(column.association.name) if column.association
+        radios = options.map do |option|
+          active_scaffold_radio_option(option, selected&.id, column, radio_html_options, ui_options: ui_options)
+        end
+
+        if ui_options[:include_blank]
+          label = ui_options[:include_blank]
+          label = as_(ui_options[:include_blank]) if ui_options[:include_blank].is_a?(Symbol)
+          radio_id = "#{html_options[:id]}-"
+          radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: radio_id)) + label)
+        end
+        if ui_options[:add_new]
+          if add_new_subform
+            create_new = content_tag(:label) do
+              radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(
+                id: "#{html_options[:id]}-create_new", class: "#{html_options[:class]} show-new-subform"
+              ).except(:object)) <<
+                active_scaffold_add_new_text(ui_options[:add_new], :add_new_text, :create_new)
+            end
+            radios << create_new
+            skip_link = true
+          else
+            ui_options = ui_options.merge(add_new: ui_options[:add_new].merge(
+              url_options: {
+                parent_scope: html_options[:name].gsub(/^record|\[[^\]]*\]$/, '').presence,
+                radio_data: html_options.slice(*html_options.keys.grep(/^data-update_/))
+              }
+            ))
+            radios << content_tag(:span, '', class: 'new-radio-container', id: html_options[:id])
+          end
+          radios << active_scaffold_add_new(column, record, html_options, ui_options: ui_options, skip_link: skip_link)
+        end
+
+        safe_join radios
+      end
+
       def active_scaffold_input_radio(column, html_options, ui_options: column.options)
         record = html_options[:object]
         html_options.merge!(ui_options[:html_options] || {})
@@ -663,59 +711,19 @@ module ActiveScaffold
             send(enum_options_method, column, record, ui_options: ui_options)
           end
 
-        selected = record.send(column.association.name) if column.association
-        selected_id = selected&.id
         if options.present?
-          if ui_options[:add_new]
-            add_new_subform = ui_options[:add_new] == true || ui_options[:add_new][:mode].in?([nil, :subform])
-            if add_new_subform
-              html_options[:data] ||= {}
-              html_options[:data][:subform_id] = active_scaffold_subform_attributes(column, ui_options: ui_options)[:id]
-            end
-            radio_html_options = html_options.merge(class: "#{html_options[:class]} hide-new-subform")
-          else
-            radio_html_options = html_options
-          end
-          radios = options.map do |option|
-            active_scaffold_radio_option(option, selected_id, column, radio_html_options, ui_options: ui_options)
-          end
-          if ui_options[:include_blank]
-            label = ui_options[:include_blank]
-            label = as_(ui_options[:include_blank]) if ui_options[:include_blank].is_a?(Symbol)
-            radio_id = "#{html_options[:id]}-"
-            radios.prepend content_tag(:label, radio_button(:record, column.name, '', html_options.merge(id: radio_id)) + label)
-          end
-          if ui_options[:add_new]
-            if add_new_subform
-              create_new = content_tag(:label) do
-                radio_button_tag(html_options[:name], '', selected&.new_record?, html_options.merge(
-                  id: "#{html_options[:id]}-create_new", class: "#{html_options[:class]} show-new-subform"
-                ).except(:object)) <<
-                  active_scaffold_add_new_text(ui_options[:add_new], :add_new_text, :create_new)
-              end
-              radios << create_new
-              skip_link = true
-            else
-              ui_options = ui_options.merge(add_new: ui_options[:add_new].merge(
-                url_options: {
-                  parent_scope: html_options[:name].gsub(/^record|\[[^\]]*\]$/, '').presence,
-                  radio_data: html_options.slice(*html_options.keys.grep(/^data-update_/))
-                }
-              ))
-              radios << content_tag(:span, '', class: 'new-radio-container', id: html_options[:id])
-            end
-            radios << active_scaffold_add_new(column, record, html_options, ui_options: ui_options, skip_link: skip_link)
-          end
-          safe_join radios
+          html = active_scaffold_input_radio_content(column, record, options, html_options, ui_options)
         else
-          html = content_tag(:span, as_(:no_options), class: "#{html_options[:class]} no-options", id: html_options[:id])
-          html << hidden_field_tag(html_options[:name], '', id: nil)
+          html = content_tag(:span, as_(:no_options), class: "#{html_options[:class]} no-options")
+          html << hidden_field_tag(html_options[:name], '', id: html_options[:id])
           if ui_options[:add_new]
             html = content_tag(:div, html, class: 'select-field') <<
                    active_scaffold_add_new(column, record, html_options, ui_options: ui_options)
           end
           html
         end
+        html << active_scaffold_refresh_link(column, html_options, record, ui_options.merge(field_selector: "[name=\"#{html_options[:name]}\"]")) if ui_options[:refresh_link]
+        html
       end
 
       def active_scaffold_input_checkbox(column, options, ui_options: column.options)

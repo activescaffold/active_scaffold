@@ -334,14 +334,15 @@
       });
       jQuery(document).on('click', 'a.refresh-link', function(event) {
         event.preventDefault();
-        var element = jQuery(this);
-        var form_element = element.prev();
-        var value;
+        var element = jQuery(this), selector = element.data('field-selector'), value, form_element;
+        form_element = selector.startsWith('#') ? jQuery(selector) : element.closest('.form-element').find(selector);
+        if (form_element.is('.draggable-list')) form_element = form_element.closest('.draggable-lists-container');
         if (form_element.is(".field_with_errors")) form_element = form_element.children().last();
         if (form_element.is(".checkbox-list")) {
           value = form_element.find(':checked').map(function(item) { return jQuery(this).val(); }).toArray();
           form_element = form_element.parent().find("input:checkbox"); // parent is needed for draggable-list, checked list may be empty
-        } else value = form_element.is("input:checkbox:not(:checked)") ? null : form_element.val();
+        } else if (form_element.is(':radio, :checkbox')) value = form_element.filter(':checked').val() || null;
+        else value = form_element.val();
         ActiveScaffold.update_column(form_element, element.attr('href'), element.data('update_send_form'), form_element.attr('id'), value);
       });
       jQuery(document).on('click', 'a.visibility-toggle', function(e) {
