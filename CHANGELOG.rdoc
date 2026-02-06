@@ -1,3 +1,5 @@
+- Fix replacing tinymce fields with update_columns
+
 = 4.2.0
 - Integrate LogicalQueryParser, supporting full logical search, or simplified searches with 'all keywords' and 'any keyword' operators.
 - Display unauthorized column in form as show action, so show_ui or show override is used if exists.

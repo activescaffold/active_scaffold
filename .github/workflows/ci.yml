@@ -91,7 +91,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ "3.4", "3.3", "3.2", "jruby-10.0" ]
+        ruby: [ "4.0", "3.4", "3.3", "3.2", "jruby-10.0" ]
         rails: [ "8.1", "8.0", "7.2" ]
         exclude:
           - ruby: 'jruby-10.0'
@@ -100,8 +100,8 @@ jobs:
           - ruby: '3.4'
             rails: '7.2'
             coverage: true
-#          - rails: '8.1'
-#            allow_failure: true
+          - ruby: '4.0'
+            allow_failure: true
     timeout-minutes: 60
     env:
       JRUBY_OPTS: "--debug"
