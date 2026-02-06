@@ -1,4 +1,6 @@
 - Fix replacing tinymce fields with update_columns
+- Support refresh_link in radio form UI
+- Rewrite refresh_link JS event handler to find the field without relying in the html structure
 
 = 4.2.0
 - Integrate LogicalQueryParser, supporting full logical search, or simplified searches with 'all keywords' and 'any keyword' operators.
