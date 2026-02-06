@@ -63,11 +63,6 @@ GEM
       activemodel (= 7.2.2)
       activesupport (= 7.2.2)
       timeout (>= 0.4.0)
-    activerecord-jdbc-adapter (72.1-java)
-      activerecord (~> 7.2.2)
-    activerecord-jdbcsqlite3-adapter (72.1-java)
-      activerecord-jdbc-adapter (= 72.1)
-      jdbc-sqlite3 (~> 3.8, < 4)
     activestorage (7.2.2)
       actionpack (= 7.2.2)
       activejob (= 7.2.2)
@@ -97,8 +92,7 @@ GEM
       erubi (~> 1.4)
       parser (>= 2.4)
       smart_properties
-    bigdecimal (3.1.8)
-    bigdecimal (3.1.8-java)
+    bigdecimal (4.0.1)
     brakeman (6.2.2)
       racc
     builder (3.3.0)
@@ -115,24 +109,14 @@ GEM
       sprockets-rails
       tilt
     date (3.4.0)
-    date (3.4.0-java)
     docile (1.4.1)
     domain_name (0.6.20240107)
     drb (2.2.1)
     erubi (1.13.0)
-    ffi (1.17.1-java)
-    ffi-compiler (1.3.2)
-      ffi (>= 1.15.5)
-      rake
     gli (2.22.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (4.30.0-java)
-      bigdecimal
-      ffi (~> 1)
-      ffi-compiler (~> 1)
-      rake (>= 13)
-    google-protobuf (4.30.0-x86_64-linux)
+    google-protobuf (4.33.5-x86_64-linux-gnu)
       bigdecimal
       rake (>= 13)
     highline (3.1.1)
@@ -155,14 +139,11 @@ GEM
       terminal-table (>= 1.5.1)
     ice_nine (0.11.2)
     io-console (0.7.2)
-    io-console (0.7.2-java)
     irb (1.14.1)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    jar-dependencies (0.5.5)
     jdbc-sqlite3 (3.46.1.1)
     json (2.8.1)
-    json (2.8.1-java)
     localeapp (3.3.0)
       gli
       i18n (>= 0.7, < 2)
@@ -183,7 +164,8 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2024.1105)
     mini_mime (1.1.5)
-    minitest (5.25.1)
+    minitest (6.0.1)
+      prism (~> 1.5)
     minitest-reporters (1.7.1)
       ansi
       builder
@@ -202,21 +184,16 @@ GEM
       net-protocol
     netrc (0.11.0)
     nio4r (2.7.4)
-    nio4r (2.7.4-java)
-    nokogiri (1.18.3-java)
-      racc (~> 1.4)
     nokogiri (1.18.3-x86_64-linux-gnu)
       racc (~> 1.4)
     parallel (1.26.3)
     parser (2.7.2.0)
       ast (~> 2.4.1)
     powerpack (0.1.3)
+    prism (1.9.0)
     psych (5.2.0)
       stringio
-    psych (5.2.0-java)
-      jar-dependencies (>= 0.1.7)
     racc (1.8.1)
-    racc (1.8.1-java)
     rack (3.1.8)
     rack-session (2.0.0)
       rack (>= 3.0.0)
@@ -257,7 +234,7 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
-    rake (13.2.1)
+    rake (13.3.1)
     rdoc (6.7.0)
       psych (>= 4.0.0)
     reline (0.5.11)
@@ -278,9 +255,6 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    sass-embedded (1.85.1)
-      google-protobuf (~> 4.29)
-      rake (>= 13)
     sass-embedded (1.85.1-x86_64-linux-gnu)
       google-protobuf (~> 4.29)
     sassc-embedded (1.80.4)
@@ -319,13 +293,10 @@ GEM
     useragent (0.16.10)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
-    websocket-driver (0.7.6-java)
-      websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     zeitwerk (2.6.18)
 
 PLATFORMS
-  java
   x86_64-linux
 
 DEPENDENCIES
