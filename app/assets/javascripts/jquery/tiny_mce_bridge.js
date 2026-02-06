@@ -7,6 +7,26 @@
     action_link_close.apply(this);
   };
 
+  ActiveScaffold.remove_tinymce = function(element) {
+    if (typeof(element) == 'string') element = '#' + element;
+    element = jQuery(element);
+    element.find('textarea.mceEditor').each(function(index, elem) {
+      tinymce.remove('#' + elem.id);
+    });
+  };
+
+  var as_replace = ActiveScaffold.replace,
+    as_replace_html = ActiveScaffold.replace_html;
+
+  ActiveScaffold.replace = function(element) {
+    this.remove_tinymce(element);
+    return as_replace.apply(this, arguments);
+  };
+  ActiveScaffold.replace_html = function(element) {
+    this.remove_tinymce(element);
+    return as_replace_html.apply(this, arguments);
+  };
+
   function loadTinyMCE() {
     var global_settings = ActiveScaffold.config.tiny_mce_settings || {};
     var local_settings = jQuery(this).data('tinymce');
