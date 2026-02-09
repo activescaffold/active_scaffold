@@ -245,7 +245,7 @@ module ActiveScaffold
       def logical_search_condition(column, search, parser = nil)
         model = column.active_record_class
         subquery = alias_query_for_same_table_exists(model.all) if column.logical_search.any?(Hash)
-        query = ::LogicalQueryParser.search(search, subquery || model, columns: column.logical_search, parser: parser)
+        query = ::LogicalQueryParser.search(search, subquery || model, column.logical_search, parser: parser)
         if subquery
           model.where(same_table_exists_subquery(query))
         else
