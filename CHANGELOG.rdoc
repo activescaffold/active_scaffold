@@ -1,3 +1,6 @@
+- Add support for local sorting using JS when the list has no pagination
+- Add support to change tags and HTML attributes of some rendered elements, to use CSS frameworks such as tailwindcss or bootstrap
+
 = 4.2.1
 - Fix replacing tinymce fields with update_columns
 - Support refresh_link in radio form UI
