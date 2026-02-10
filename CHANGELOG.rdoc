@@ -1,3 +1,5 @@
+- Support setting form_ui_options with nil, for subforms
+
 = 4.2.1
 - Fix replacing tinymce fields with update_columns
 - Support refresh_link in radio form UI

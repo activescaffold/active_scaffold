@@ -746,10 +746,14 @@ module ActiveScaffold::DataStructures
 
     def valid_action_ui_params?(value)
       if value.is_a?(Array)
-        value.size <= 2 && value[0].is_a?(Symbol) && (value[1].nil? || value[1].is_a?(Hash))
+        value.size <= 2 && valid_form_ui?(value[0]) && (value[1].nil? || value[1].is_a?(Hash))
       else
-        value.nil? || value.is_a?(Symbol)
+        valid_form_ui?(value)
       end
+    end
+
+    def valid_form_ui?(value)
+      value.nil? || value.is_a?(Symbol)
     end
   end
 end
