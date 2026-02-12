@@ -583,7 +583,12 @@ module ActiveScaffold
 
       def active_scaffold_translated_option(column, text, value = nil)
         value = text if value.nil?
-        [(text.is_a?(Symbol) ? column.active_record_class.human_attribute_name(text) : text), value]
+        if text.is_a?(Symbol)
+          klass = column.active_record_class
+          text = I18n.t "#{klass.i18n_scope}.attributes.#{klass.model_name.i18n_key}.#{column.name}.#{text}",
+                        default: klass.human_attribute_name(text)
+        end
+        [text, value]
       end
 
       def active_scaffold_enum_options(column, record = nil, ui_options: column.options)
