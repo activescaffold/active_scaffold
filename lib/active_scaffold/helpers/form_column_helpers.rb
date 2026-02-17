@@ -6,9 +6,9 @@ module ActiveScaffold
     module FormColumnHelpers
       # This method decides which input to use for the given column.
       # It does not do any rendering. It only decides which method is responsible for rendering.
-      def active_scaffold_input_for(column, scope = nil, options = nil)
+      def active_scaffold_input_for(column, scope = nil, options = nil, form_columns: nil)
         options ||= active_scaffold_input_options(column, scope)
-        options = update_columns_options(column, scope, options)
+        options = update_columns_options(column, scope, options, form_columns: form_columns)
         active_scaffold_render_input(column, options)
       end
 
@@ -54,7 +54,7 @@ module ActiveScaffold
         raise e.class, "#{e.message} -- #{message}", e.backtrace
       end
 
-      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil) # rubocop:disable Metrics/ParameterLists
+      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil, form_columns: nil) # rubocop:disable Metrics/ParameterLists
         if add_class
           col_class = []
           col_class << 'required' if column.required?(action_for_validation(record))
@@ -67,7 +67,7 @@ module ActiveScaffold
           form_attribute(column, record, scope, true, col_class)
         else
           renders_as = column_renders_as(column)
-          html = render_column(column, record, renders_as, scope, only_value: false, col_class: col_class)
+          html = render_column(column, record, renders_as, scope, only_value: false, col_class: col_class, form_columns: form_columns)
           html = content_tag(:div, html, active_scaffold_subform_attributes(column)) if renders_as == :subform
           html
         end
@@ -195,7 +195,7 @@ module ActiveScaffold
         end
       end
 
-      def render_column(column, record, renders_as, scope = nil, only_value: false, col_class: nil, **subform_locals)
+      def render_column(column, record, renders_as, scope = nil, only_value: false, col_class: nil, form_columns: nil, **subform_locals)
         if form_column_is_hidden?(column, record, scope)
           # creates an element that can be replaced by the update_columns routine,
           # but will not affect the value of the submitted form in this state:
@@ -204,9 +204,9 @@ module ActiveScaffold
             hidden_field_tag(nil, nil, class: "#{column.name}-input")
           end
         elsif (partial = override_form_field_partial(column))
-          render partial, column: column, only_value: only_value, scope: scope, col_class: col_class, record: record
+          render partial, column: column, only_value: only_value, scope: scope, col_class: col_class, record: record, form_columns: form_columns
         elsif renders_as == :field || override_form_field?(column)
-          form_attribute(column, record, scope, only_value, col_class)
+          form_attribute(column, record, scope, only_value, col_class, form_columns: form_columns)
         elsif renders_as == :subform
           render 'form_association', subform_locals.slice(:tabbed_by, :tab_value, :tab_id).merge(column: column, scope: scope, parent_record: record)
         else
@@ -229,7 +229,7 @@ module ActiveScaffold
         content_tag(:span, h(desc) + content_tag(:span, nil, class: 'close'), class: 'description') if desc.present?
       end
 
-      def form_attribute(column, record, scope = nil, only_value = false, col_class = nil)
+      def form_attribute(column, record, scope = nil, only_value = false, col_class = nil, form_columns: nil)
         column_options = active_scaffold_input_options(column, scope, object: record)
         collapsible_id = column_options.delete :collapsible_id
         attributes = field_attributes(column, record)
@@ -243,7 +243,7 @@ module ActiveScaffold
             field << hidden_field(:record, method, column_options)
           end
         else
-          field = active_scaffold_input_for column, scope, column_options
+          field = active_scaffold_input_for column, scope, column_options, form_columns: form_columns
         end
         if field
           field << loading_indicator_tag(action: :render_field, id: params[:id]) if column.update_columns

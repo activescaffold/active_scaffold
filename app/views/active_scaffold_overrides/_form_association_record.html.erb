@@ -1,15 +1,17 @@
 <%
   record_column = column
+  ui_options = record_column.form_ui_options || record_column.options
   readonly = record.readonly? || !record.authorized_for?(crud_type: :update)
   crud_type = record.new_record? ? :create : (readonly ? :read : :update)
   show_actions = false
   locked ||= false
   config = active_scaffold_config_for(record.class)
   columns ||= config.subform.columns
+  column_names = columns.visible_columns_names
   scope = column_scope(record_column, scope, record)
   options = active_scaffold_input_options(config.columns[record.class.primary_key], scope, object: record)
   tr_id = "association-#{options[:id]}"
-  layout ||= column.options[:layout] || config.subform.layout
+  layout ||= ui_options[:layout] || config.subform.layout
 
   if layout == :vertical
     record_tag ||= :div
@@ -58,7 +60,7 @@
     col_class << 'hidden' if column_renders_as(column) == :hidden
   -%>
     <%= content_tag column_tag, class: col_class.join(' ') do %>
-      <%= active_scaffold_render_subform_column(column, scope, crud_type, readonly, false, record) %>
+      <%= active_scaffold_render_subform_column(column, scope, crud_type, readonly, false, record, form_columns: column_names) %>
     <% end %>
   <% end -%>
   <% if show_actions -%>
