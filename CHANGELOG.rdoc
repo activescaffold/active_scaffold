@@ -1,5 +1,8 @@
 - Support translating enums (or options for :select form_ui on any column) nested in the pluralized name of the column, activerecord.attributes.model_name.pluralized_column.enum_value, defaults to old way activerecord.attributes.model_name.enum_value
 
+= 4.2.2 (not released)
+- Support setting form_ui_options with nil, for subforms
+
 = 4.2.1
 - Fix replacing tinymce fields with update_columns
 - Support refresh_link in radio form UI
