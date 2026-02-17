@@ -1,6 +1,6 @@
 <%
   columns_hash = {}
-  heading_columns = show_columns_for(associated.first, column, columns_hash)
+  heading_columns = columns || show_columns_for(associated.first, column, columns_hash)
 %>
 <table>
   <thead>
@@ -12,7 +12,7 @@
   </thead>
   <tbody>
 <% associated.each do |record| -%>
-    <%= render 'show_horizontal_record', record: record, parent_record: parent_record, columns: show_columns_for(associated.first, column, columns_hash) %>
+    <%= render 'show_horizontal_record', record: record, parent_record: parent_record, columns: columns || show_columns_for(associated.first, column, columns_hash) %>
 <% end -%>
   </tbody>
 </table>

@@ -1,4 +1,4 @@
 <% columns_hash = {} -%>
 <% associated.each do |record| -%>
-  <%= render 'show_columns', columns: show_columns_for(record, column, columns_hash), record: record %>
+  <%= render 'show_columns', columns: columns || show_columns_for(record, column, columns_hash), record: record %>
 <% end -%>
