@@ -224,12 +224,18 @@ module ActiveScaffold
       @new_records[record.class][id] = record
     end
 
+    def subform_columns(column, klass)
+      subform_cfg = active_scaffold_config_for(klass).subform
+      columns = (column.form_ui_options || column.options)[:subform_columns]
+      columns ? subform_cfg.build_action_columns(columns) : subform_cfg.columns
+    end
+
     def manage_nested_record_from_params(parent_record, column, attributes, avoid_changes = false)
       return nil unless avoid_changes || build_record_from_params?(attributes, column, parent_record)
 
       record = find_or_create_for_params(attributes, column, parent_record, avoid_changes)
       if record
-        record_columns = active_scaffold_config_for(record.class).subform.columns
+        record_columns = subform_columns(column, record.class)
         prev_constraints = record_columns.constraint_columns
         record_columns.constraint_columns = [column.association.reverse].compact
         update_record_from_params(record, record_columns, attributes, avoid_changes)
