@@ -129,7 +129,7 @@ module ActiveScaffold
       end
 
       def main_form_controller
-        parent_controller_name.constantize if params[:parent_controller]
+        @main_form_controller ||= parent_controller_name.constantize if params[:parent_controller]
       end
 
       def render_parent?

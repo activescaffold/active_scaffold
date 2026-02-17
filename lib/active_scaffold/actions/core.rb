@@ -80,7 +80,10 @@ module ActiveScaffold::Actions
         @form_action = params.delete(:form_action).to_sym
       end
       @form_action ||= params[:id] ? :update : :create
-      @main_columns = active_scaffold_config.send(@form_action).columns
+      parent_column = parent_column(main_form_controller, @scope) if @scope && main_form_controller
+      subform_columns = (parent_column.form_ui_options || parent_column.options)&.dig(:subform_columns) if parent_column
+      action_cfg = active_scaffold_config.send(@form_action)
+      @main_columns = subform_columns ? action_cfg.build_action_columns(subform_columns) : action_cfg.columns
     end
 
     def render_field_for_update_columns
@@ -90,7 +93,7 @@ module ActiveScaffold::Actions
       @columns += [@column.name] if @column.options[:refresh_link] && @columns.exclude?(@column.name)
       process_render_field_params
 
-      @record = find_from_scope(setup_parent, @scope) if main_form_controller && @scope
+      @record = find_from_scope(setup_parent, @scope) if @scope && main_form_controller
       if @column.send_form_on_update_column
         @record ||= updated_record_with_form(@main_columns, params[:record] || params[:search], @scope)
       elsif @record
@@ -168,6 +171,22 @@ module ActiveScaffold::Actions
       preload_values = preload_for_form(config.update.columns) if config.actions.include?(:update)
       saved_record = find_if_allowed(id, :read, config.model.preload(preload_values))
       copy_attributes(saved_record, record).tap { |new_record| new_record.id = id }
+    end
+
+    def parent_column(parent_controller, scope)
+      parts = scope[1..-2].split('][')
+      columns = parent_controller.active_scaffold_config.columns
+      column = nil
+
+      while parts.present?
+        column = columns[parts.shift]
+        return unless column&.association
+
+        columns = active_scaffold_config_for(column.association.klass).columns
+        parts.shift if column.association.collection?
+      end
+
+      column
     end
 
     def find_from_scope(parent, scope)

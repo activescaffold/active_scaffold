@@ -19,6 +19,8 @@
     parent_record: parent_record, column: column, associated: associated, scope: scope, subform_div_id: subform_div_id,
     tabbed_by: tabbed_by, tab_value: tab_value
   })
+  columns = (column.form_ui_options || column.options)[:subform_columns]
+  columns = active_scaffold_config_for(column.association.klass).subform.build_action_columns(columns) if columns
 -%>
 <%= as_element :subform_header do %>
   <%= column.label -%>
@@ -28,7 +30,7 @@
 <div id="<%= subform_div_id %>" <%= 'style="display: none;"'.html_safe if column.collapsed -%>>
 <%# HACK: to be able to delete all associated records %>
   <%= hidden_field_tag "#{(opts = active_scaffold_input_options(column, scope, object: parent_record))[:name]}[0]", '', id: "#{opts[:id]}_0" if column.association.collection? %>
-  <%= render subform_partial_for_column(column), column: column, parent_record: parent_record, associated: associated, show_blank_record: show_blank_record, scope: scope, tab_id: tab_id %>
+  <%= render subform_partial_for_column(column), column: column, parent_record: parent_record, columns: columns, associated: associated, show_blank_record: show_blank_record, scope: scope, tab_id: tab_id %>
   <%= footer -%>
 </div>
 <%
