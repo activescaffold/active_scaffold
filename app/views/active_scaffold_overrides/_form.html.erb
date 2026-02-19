@@ -1,3 +1,10 @@
+<% if columns.layout == :multiple %>
+  <div class="form-columns">
+    <% columns.each do |group| %>
+      <%= render 'form', local_assigns.merge(columns: group) %>
+    <% end %>
+  </div>
+<% else %>
 <%
   scope ||= nil
   subsection_id ||= nil
@@ -37,3 +44,4 @@
   <% end -%>
   <% end -%>
 </ol>
+<% end %>

@@ -1,3 +1,10 @@
+<% if columns.layout == :multiple -%>
+<div class="form-columns">
+  <% columns.each do |group| %>
+    <%= render 'field_search_columns', local_assigns.merge(columns: group) %>
+  <% end %>
+</div>
+<% else -%>
 <ol class="form" <%= "id=#{subsection_id}" unless local_assigns[:subsection_id].nil? %> <%= 'style="display: none;"'.html_safe if columns.collapsed %>>
   <% visibles, hiddens = visibles_and_hiddens(active_scaffold_config.field_search, columns) %>
   <% visibles.each do |column| -%>
@@ -30,3 +37,4 @@
     </li>
   <% end -%>
 </ol>
+<% end -%>
