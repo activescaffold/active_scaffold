@@ -1,7 +1,7 @@
 <% if columns.layout == :multiple %>
-  <div class="form-columns">
+  <div class="form-columns"<%= " id=#{subsection_id}" if local_assigns.key? :subsection_id %>>
     <% columns.each do |group| %>
-      <%= render 'form', local_assigns.merge(columns: group) %>
+      <%= render 'form', local_assigns.merge(columns: group, subsection_id: nil) %>
     <% end %>
   </div>
 <% else %>
