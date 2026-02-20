@@ -155,7 +155,7 @@ module ActiveScaffold
       "Malformed constraint `#{klass}##{column_name}'. If it's a legitimate column, and you are using a nested scaffold, please specify or double-check the reverse association name."
     end
 
-    def apply_constraint_on_association(record, association, value)
+    def apply_constraint_on_association(record, association, value, allow_autosave: false)
       if association.through_singular? && association.source_reflection.reverse
         create_on_through_singular(record, association, association.klass.find(value))
       elsif association.collection?
@@ -172,7 +172,7 @@ module ActiveScaffold
         # note that we can't take the extra step to correct this unless we're permitted to
         # run operations where activerecord auto-saves the object.
         reverse = association.reverse_association
-        if reverse&.singular? && !reverse.belongs_to? && options[:allow_autosave]
+        if reverse&.singular? && !reverse.belongs_to? && allow_autosave
           record.send(k).send(:"#{reverse.name}=", record)
         end
       end
@@ -198,15 +198,12 @@ module ActiveScaffold
     #
     # For some operations ActiveRecord will automatically update the database. That's not always ok.
     # If it *is* ok (e.g. you're in a transaction), then set :allow_autosave to true.
-    def apply_constraints_to_record(record, options = {})
-      options[:allow_autosave] = false if options[:allow_autosave].nil?
-      constraints = options[:constraints] || active_scaffold_constraints
-
+    def apply_constraints_to_record(record, allow_autosave: false, constraints: active_scaffold_constraints)
       config = record.is_a?(active_scaffold_config.model) ? active_scaffold_config : active_scaffold_config_for(record.class)
       constraints.each do |k, v|
         column = config.columns[k]
         if column&.association
-          apply_constraint_on_association(record, column.association, v)
+          apply_constraint_on_association(record, column.association, v, allow_autosave: allow_autosave)
         else
           record.send(:"#{k}=", v)
         end
