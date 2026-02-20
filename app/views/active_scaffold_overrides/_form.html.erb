@@ -1,4 +1,16 @@
 <%
+  ol_attrs = {}
+  ol_attrs[:id] = subsection_id unless local_assigns[:subsection_id].nil?
+  ol_attrs[:style] = 'display: none;' if columns.collapsed
+%>
+<% if columns.layout == :multiple -%>
+  <%= as_element :form_fields_columns, **ol_attrs.merge(class: 'form-columns') do %>
+    <% columns.each do |group| %>
+      <%= render 'form', local_assigns.merge(columns: group, subsection_id: nil) %>
+    <% end %>
+  <% end %>
+<% else %>
+<%
   scope ||= nil
   subsection_id ||= nil
   tab_value ||= nil
@@ -45,4 +57,5 @@
       <% end -%>
     <% end -%>
   <% end -%>
+<% end -%>
 <% end %>

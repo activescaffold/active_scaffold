@@ -149,6 +149,16 @@ module ActiveScaffold::Actions
       "#{params[:parent_controller].camelize}Controller"
     end
 
+    def create_on_through_singular(record, association, parent_record)
+      through = parent_record.send(association.through_reflection.name) ||
+                parent_record.send(:"build_#{association.through_reflection.name}")
+      if association.source_reflection.reverse_association.collection?
+        record.send(association.source_reflection.reverse) << through
+      else
+        record.send(:"#{association.source_reflection.reverse}=", through)
+      end
+    end
+
     def setup_parent
       cfg = main_form_controller.active_scaffold_config
       parent = cfg.model.new

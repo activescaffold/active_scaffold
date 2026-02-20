@@ -3,10 +3,13 @@
 
 = master branch
 - Support translating enums (or options for :select form_ui on any column) nested in the pluralized name of the column, activerecord.attributes.model_name.pluralized_column.enum_value, defaults to old way activerecord.attributes.model_name.enum_value
-- Support subform_columns option in column form_ui_options, or column's options, when the column is rendered as subform
+- Support :subform_columns option in column form_ui_options, or column's options, when the column is rendered as subform
+- Use :subform_columns option in :horizontal and :vertical show_ui too
+- Add layout multiple support to ActionColumns, so forms can have columns
 
-= 4.2.2 (not released)
+= 4.2.2
 - Support setting form_ui_options with nil, for subforms
+- Support saving when embedded on through singular association, as it's supported for nested too
 
 = 4.2.1
 - Fix replacing tinymce fields with update_columns

@@ -171,7 +171,9 @@ module ActiveScaffold
       constraints.each do |k, v|
         column = config.columns[k]
         if column&.association
-          if column.association.collection?
+          if column.association.through_singular? && column.association.source_reflection.reverse
+            create_on_through_singular(record, column.association, column.association.klass.find(v))
+          elsif column.association.collection?
             record.send(k.to_s).send(:<<, column.association.klass.find(v)) unless column.association.nested?
           elsif column.association.polymorphic?
             unless v.is_a?(Array) && v.size >= 2
@@ -183,7 +185,7 @@ module ActiveScaffold
             else
               record.send(:"#{column.association.foreign_type}=", v[0])
             end
-          elsif !column.association.source_reflection&.options&.include?(:through) && # regular singular association, or one-level through association
+          elsif !column.association.source_reflection&.through? && # regular singular association, or one-level through association
                 !v.is_a?(Array)
             record.send(:"#{k}=", column.association.klass.find(v))
 

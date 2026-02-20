@@ -964,6 +964,19 @@ clear: left;
 padding: 5px 0;
 }
 
+/* Form :: Multiple Columns Layout
+   ============================== */
+
+.active-scaffold .form-columns {
+  display: flex;
+  gap: 10px;
+
+  > ol.form {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
 /* Form :: Association Sub-Forms
    ============================== */
 
