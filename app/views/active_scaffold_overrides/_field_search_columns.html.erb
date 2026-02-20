@@ -4,7 +4,7 @@
   ol_attrs[:style] = 'display: none;' if columns.collapsed
 %>
 <% if columns.layout == :multiple -%>
-  <%= as_element :field_search_fields_columns, **ol_attrs.merge(class: 'form-columns') do %>
+  <%= as_element :field_search_fields_columns, **ol_attrs do %>
     <% columns.each do |group| %>
       <%= render 'field_search_columns', local_assigns.merge(columns: group) %>
     <% end %>

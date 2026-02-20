@@ -4,7 +4,7 @@
   ol_attrs[:style] = 'display: none;' if columns.collapsed
 %>
 <% if columns.layout == :multiple -%>
-  <%= as_element :form_fields_columns, **ol_attrs.merge(class: 'form-columns') do %>
+  <%= as_element :form_fields_columns, **ol_attrs do %>
     <% columns.each do |group| %>
       <%= render 'form', local_assigns.merge(columns: group, subsection_id: nil) %>
     <% end %>

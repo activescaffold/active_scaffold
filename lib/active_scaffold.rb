@@ -126,7 +126,7 @@ module ActiveScaffold
     search_submit: {attributes: {class: 'submit'}}, # input type=submit
     search_reset: {attributes: {class: 'reset'}}, # a
     field_search_form: {}, # form
-    field_search_fields_columns: {tag: :div},
+    field_search_fields_columns: {tag: :div, class: 'form-columns'},
     field_search_fields_container: {tag: :ol},
     field_search_subsection: {tag: :li, attributes: {class: 'sub-section'}},
     field_search_element: {tag: :li},
@@ -135,7 +135,7 @@ module ActiveScaffold
     form: {}, # form
     form_title: {tag: :h4},
     form_messages_container: {tag: :div},
-    form_fields_columns: {tag: :div},
+    form_fields_columns: {tag: :div, class: 'form-columns'},
     fields_container: {tag: :ol},
     form_subsection: {tag: :li, attributes: {class: 'sub-section'}},
     form_subsection_header: {tag: :h5},
