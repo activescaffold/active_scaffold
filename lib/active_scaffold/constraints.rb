@@ -155,6 +155,41 @@ module ActiveScaffold
       "Malformed constraint `#{klass}##{column_name}'. If it's a legitimate column, and you are using a nested scaffold, please specify or double-check the reverse association name."
     end
 
+    def apply_constraint_on_association(record, association, value)
+      if association.through_singular? && association.source_reflection.reverse
+        create_on_through_singular(record, association, association.klass.find(value))
+      elsif association.collection?
+        record.send(k.to_s).send(:<<, association.klass.find(value)) unless association.nested?
+      elsif association.polymorphic?
+        apply_constraint_on_polymorphic_association(record, association, value)
+      elsif !association.source_reflection&.through? && # regular singular association, or one-level through association
+            !value.is_a?(Array)
+        record.send(:"#{k}=", association.klass.find(value))
+
+        # setting the belongs_to side of a has_one isn't safe. if the has_one was already
+        # specified, rails won't automatically clear out the previous associated record.
+        #
+        # note that we can't take the extra step to correct this unless we're permitted to
+        # run operations where activerecord auto-saves the object.
+        reverse = association.reverse_association
+        if reverse&.singular? && !reverse.belongs_to? && options[:allow_autosave]
+          record.send(k).send(:"#{reverse.name}=", record)
+        end
+      end
+    end
+
+    def apply_constraint_on_polymorphic_association(record, association, value)
+      unless value.is_a?(Array) && value.size >= 2
+        raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(association), caller
+      end
+
+      if value.size == 2
+        record.send(:"#{association.name}=", value[0].constantize.find(value[1]))
+      else
+        record.send(:"#{association.foreign_type}=", value[0])
+      end
+    end
+
     # Applies constraints to the given record.
     #
     # Searches through the known columns for association columns. If the given constraint is an association,
@@ -171,34 +206,7 @@ module ActiveScaffold
       constraints.each do |k, v|
         column = config.columns[k]
         if column&.association
-          if column.association.through_singular? && column.association.source_reflection.reverse
-            create_on_through_singular(record, column.association, column.association.klass.find(v))
-          elsif column.association.collection?
-            record.send(k.to_s).send(:<<, column.association.klass.find(v)) unless column.association.nested?
-          elsif column.association.polymorphic?
-            unless v.is_a?(Array) && v.size >= 2
-              raise ActiveScaffold::MalformedConstraint, polymorphic_constraint_error(column.association), caller
-            end
-
-            if v.size == 2
-              record.send(:"#{k}=", v[0].constantize.find(v[1]))
-            else
-              record.send(:"#{column.association.foreign_type}=", v[0])
-            end
-          elsif !column.association.source_reflection&.through? && # regular singular association, or one-level through association
-                !v.is_a?(Array)
-            record.send(:"#{k}=", column.association.klass.find(v))
-
-            # setting the belongs_to side of a has_one isn't safe. if the has_one was already
-            # specified, rails won't automatically clear out the previous associated record.
-            #
-            # note that we can't take the extra step to correct this unless we're permitted to
-            # run operations where activerecord auto-saves the object.
-            reverse = column.association.reverse_association
-            if reverse&.singular? && !reverse.belongs_to? && options[:allow_autosave]
-              record.send(k).send(:"#{reverse.name}=", record)
-            end
-          end
+          apply_constraint_on_association(record, column.association, v)
         else
           record.send(:"#{k}=", v)
         end
