@@ -104,8 +104,8 @@ module ActiveScaffold::DataStructures
     #    RatesController has employee in create action columns (reverse is vendor, and through association employee is in create form).
     def readonly_through_association?(columns)
       return false unless through_association?
-      return true if association.through_reflection.options[:through] # create not possible, too many levels
-      return true if association.source_reflection.options[:through] # create not possible, too many levels
+      return true if association.through_reflection.through? # create not possible, too many levels
+      return true if association.source_reflection.through? # create not possible, too many levels
       return false if create_through_singular? # create allowed, AS has code for this
       return false unless association.source_reflection.collection? # create allowed if source is singular, rails creates joint model
 
@@ -114,7 +114,7 @@ module ActiveScaffold::DataStructures
     end
 
     def create_through_singular?
-      association.through_singular? && source_reflection.reverse
+      association.through_singular? && association.source_reflection.reverse
     end
 
     def create_with_parent?
@@ -123,10 +123,6 @@ module ActiveScaffold::DataStructures
       elsif child_association || create_through_singular?
         true
       end
-    end
-
-    def source_reflection
-      @source_reflection ||= ActiveScaffold::DataStructures::Association::ActiveRecord.new(association.source_reflection)
     end
 
     def through_association?
