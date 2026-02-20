@@ -1,7 +1,7 @@
 <% if columns.layout == :multiple -%>
-<div class="form-columns">
+<div class="form-columns"<%= " id=#{subsection_id}" if local_assigns.key? :subsection_id %><%= ' style="display: none;"'.html_safe if columns.collapsed %>>
   <% columns.each do |group| %>
-    <%= render 'field_search_columns', local_assigns.merge(columns: group) %>
+    <%= render 'field_search_columns', local_assigns.merge(columns: group, subsection_id: nil) %>
   <% end %>
 </div>
 <% else -%>
