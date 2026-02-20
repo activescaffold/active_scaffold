@@ -1,4 +1,5 @@
 - Support setting form_ui_options with nil, for subforms
+- Support saving when embedded on through singular association, as it's supported for nested too
 
 = 4.2.1
 - Fix replacing tinymce fields with update_columns
