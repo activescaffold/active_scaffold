@@ -244,16 +244,13 @@ module ActiveScaffold
           if column.association.nil? || column.association.belongs_to?
             # hidden field probably not needed, but leaving it just in case
             # but it isn't working for assocations which are not belongs_to
-            method = column.association ? column.association.foreign_key : column.name
-            field << hidden_field(:record, method, column_options)
+            field << hidden_field(:record, column.association&.foreign_key || column.name, column_options)
           end
         else
           field = active_scaffold_input_for column, scope, column_options, form_columns: form_columns
         end
-        if field
-          field << loading_indicator_tag(action: :render_field, id: params[:id]) if column.update_columns
-          description = column_description(column, record, scope)
-        end
+        field << loading_indicator_tag(action: :render_field, id: params[:id]) if field && column.update_columns
+        description = column_description(column, record, scope)
 
         label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))
         label << h(' ') << link_to_visibility_toggle(collapsible_id) if collapsible_id
