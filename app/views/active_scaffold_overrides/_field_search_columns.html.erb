@@ -10,7 +10,7 @@
     <% end %>
   <% end %>
 <% else -%>
-  <%= as_element :field_search_fields_container, **ol_attrs.merge(class: 'form') do %>
+  <%= as_element :field_search_fields_container, class: 'form', **ol_attrs do %>
     <% visibles, hiddens = visibles_and_hiddens(active_scaffold_config.field_search, columns) %>
     <% visibles.each do |column| -%>
       <%= render_field_search_column(column, @record) %>
