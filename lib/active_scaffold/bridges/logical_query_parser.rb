@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class ActiveScaffold::Bridges::LogicalQueryParser < ActiveScaffold::DataStructures::Bridge
+  autoload :TokensGrammar, 'active_scaffold/bridges/logical_query_parser/tokens_grammar'
+  autoload :KeywordQueryParser, 'active_scaffold/bridges/logical_query_parser/keyword_query_parser'
+
   def self.install
-    require File.join(File.dirname(__FILE__), 'logical_query_parser/tokens_grammar')
-    ActiveScaffold::Finder.send(:remove_const, :LOGICAL_COMPARATORS)
     ActiveScaffold::Finder.const_set :LOGICAL_COMPARATORS, %w[all_tokens any_token logical].freeze
   end
 end
