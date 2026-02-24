@@ -2,8 +2,8 @@
 columns = (@column.form_ui_options || @column.options)[:subform_columns]
 columns = active_scaffold_config_for(@column.association.klass).subform.build_action_columns(columns) if columns
 subform_id = sub_form_list_id(association: @column.name, tab_id: @tab_id, id: @parent_record.id || generated_id(@parent_record) || 99_999_999_999)
-render 'form_association_record', columns: columns, scope: @scope, parent_record: @parent_record,
-       column: @column, record: @record, locked: @record.new_record? && @column.association.singular?
+associated_form = render 'form_association_record', columns: columns, scope: @scope, parent_record: @parent_record,
+                  column: @column, record: @record, locked: @record.new_record? && @column.association.singular?
 options = {singular: false}
 if @column.association.singular?
   options[:singular] = true
@@ -12,4 +12,4 @@ elsif @record.persisted?
   options[:id] = active_scaffold_input_options(column, column_scope(@column, @scope, @record))[:id]
 end
 %>
-ActiveScaffold.create_associated_record_form('<%= subform_id %>', '<%=escape_javascript(associated_form)%>', <%= options.to_json.html_safe %>);
+ActiveScaffold.create_associated_record_form('<%= subform_id %>', '<%= escape_javascript(associated_form) %>', <%= options.to_json.html_safe %>);
