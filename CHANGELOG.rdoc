@@ -1,3 +1,5 @@
+- Make simplified searches on LogicalQueryParser bridge working with upstream gem, no need for my fork
+
 = 4.2.2
 - Support setting form_ui_options with nil, for subforms
 - Support saving when embedded on through singular association, as it's supported for nested too

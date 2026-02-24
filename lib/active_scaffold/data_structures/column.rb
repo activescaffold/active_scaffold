@@ -346,7 +346,7 @@ module ActiveScaffold::DataStructures
       end
 
       def searchable?
-        search_sql.present? || (logical_search.present? && ActiveScaffold::Finder::LOGICAL_COMPARATORS.present?)
+        search_sql.present? || (logical_search.present? && ActiveScaffold::Finder.logical_comparators.present?)
       end
 
       def link

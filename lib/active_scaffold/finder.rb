@@ -6,6 +6,10 @@ module ActiveScaffold
       @@like_operator ||= ::ActiveRecord::Base.connection.adapter_name.in?(%w[PostgreSQL PostGIS]) ? 'ILIKE' : 'LIKE'
     end
 
+    def self.logical_comparators
+      ActiveScaffold::Finder::LOGICAL_COMPARATORS if ActiveScaffold::Finder.const_defined? :LOGICAL_COMPARATORS
+    end
+
     module ClassMethods
       def self.extended(klass)
         return unless klass.active_scaffold_config
@@ -231,21 +235,21 @@ module ActiveScaffold
           ['(%<search_sql>s BETWEEN ? AND ?)', value[:from], value[:to]]
         elsif ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt])
           ["%<search_sql>s #{value[:opt]} ?", value[:from]]
-        elsif ActiveScaffold::Finder::LOGICAL_COMPARATORS.include?(value[:opt])
+        elsif ActiveScaffold::Finder.logical_comparators&.include?(value[:opt])
           operator =
             case value[:opt]
             when 'all_tokens' then 'AND'
             when 'any_token'  then 'OR'
             end
-          parser = ActiveScaffold::Bridges::LogicalQueryParser::TokensGrammar::Parser.new(operator) if operator
-          [logical_search_condition(column, value[:from], parser)]
+          parser = ActiveScaffold::Bridges::LogicalQueryParser::KeywordQueryParser.new(operator) if operator
+          [logical_search_condition(column, value[:from], parser || ::LogicalQueryParser)]
         end
       end
 
-      def logical_search_condition(column, search, parser = nil)
+      def logical_search_condition(column, search, parser)
         model = column.active_record_class
         subquery = alias_query_for_same_table_exists(model.all) if column.logical_search.any?(Hash)
-        query = ::LogicalQueryParser.search(search, subquery || model, column.logical_search, parser: parser)
+        query = parser.search(search, subquery || model, column.logical_search)
         if subquery
           model.where(same_table_exists_subquery(query))
         else
@@ -526,7 +530,6 @@ module ActiveScaffold
       doesnt_begin_with: 'not_?%',
       doesnt_end_with:   'not_%?'
     }.freeze
-    LOGICAL_COMPARATORS = [].freeze
     NULL_COMPARATORS = %w[null not_null].freeze
     DATE_COMPARATORS = %w[PAST FUTURE RANGE].freeze
     DATE_UNITS = %w[DAYS WEEKS MONTHS YEARS].freeze
