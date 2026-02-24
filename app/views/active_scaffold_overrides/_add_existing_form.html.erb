@@ -8,21 +8,29 @@ options = {id: element_form_id(action: :add_existing),
   options[:remote] = true if xhr
   form_tag url_options, options -%>
 
-  <h4><%= active_scaffold_config.nested.label -%></h4>
+  <%= as_element :form_title, active_scaffold_config.nested.label -%>
 
-  <% if xhr -%>
-    <div id="<%= element_messages_id(action: :add_existing) %>" class="messages-container"></div>
-  <% else -%>
-    <%= render 'form_messages' %>
+  <%= as_element :form_messages_container, id: element_messages_id(action: :add_existing), class: 'messages-container' do %>
+    <%= render 'form_messages' unless xhr %>
   <% end -%>
 
+
+  <%= as_element :fields_container, class: 'form' do %>
+  <%= form_attribute_html(
+        nil,
+        label_tag("record_#{active_scaffold_config.model}", active_scaffold_add_existing_label),
+        active_scaffold_add_existing_input(name: 'associated_id', url_options: url_options, object: nested_parent_record),
+        nil,
+        {}
+      ) %>
   <label for="<%= "record_#{active_scaffold_config.model}" %>"><%= active_scaffold_add_existing_label %></label>
   <%= active_scaffold_add_existing_input(name: 'associated_id', url_options: url_options, object: nested_parent_record) %>
+  <% end %>
 
-  <p class="form-footer">
-    <%= submit_tag as_(:add), class: 'submit' %>
-    <%= link_to as_(:cancel), main_path_to_return, class: 'as_cancel', remote: true %>
+  <%= as_element :form_footer, class: 'form-footer' do %>
+    <%= submit_tag as_(:add), as_element_attributes(:form_submit) %>
+    <%= link_to as_(:cancel), main_path_to_return, as_element_attributes(:form_cancel, class: 'as_cancel', remote: true) %>
     <%= loading_indicator_tag(action: :add_existing, id: params[:id]) %>
-  </p>
+  <% end %>
 
 </form>
