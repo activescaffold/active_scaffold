@@ -258,7 +258,7 @@ module ActiveScaffold
       end
 
       def form_attribute_html(column, label, field, description, attributes, collapsible_id: nil)
-        field << description if description.present?
+        (field ||= h('')) << description if description.present?
         content_tag :dl, content_tag(:dt, label) << content_tag(:dd, field, id: collapsible_id), attributes
       end
 
