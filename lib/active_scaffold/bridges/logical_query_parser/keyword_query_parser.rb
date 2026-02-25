@@ -10,11 +10,7 @@ class ActiveScaffold::Bridges::LogicalQueryParser
     end
 
     # Copy search method from LogicalQueryParser
-    # rubocop:disable Style/DocumentDynamicEvalDefinition
-    class_eval <<-RUBY, __FILE__, __LINE__ + 1
-      #{LogicalQueryParser.method(:search).source}
-    RUBY
-    # rubocop:enable Style/DocumentDynamicEvalDefinition
+    class_eval(LogicalQueryParser.method(:search).source, __FILE__, __LINE__)
 
     def initialize(operator)
       @operator = operator
