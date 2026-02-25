@@ -164,7 +164,7 @@ module ActiveScaffold
         apply_constraint_on_polymorphic_association(record, association, value)
       elsif !association.source_reflection&.through? && # regular singular association, or one-level through association
             !value.is_a?(Array)
-        record.send(:"#{k}=", association.klass.find(value))
+        record.send(:"#{association.name}=", association.klass.find(value))
 
         # setting the belongs_to side of a has_one isn't safe. if the has_one was already
         # specified, rails won't automatically clear out the previous associated record.
@@ -173,7 +173,7 @@ module ActiveScaffold
         # run operations where activerecord auto-saves the object.
         reverse = association.reverse_association
         if reverse&.singular? && !reverse.belongs_to? && allow_autosave
-          record.send(k).send(:"#{reverse.name}=", record)
+          record.send(association.name).send(:"#{reverse.name}=", record)
         end
       end
     end
