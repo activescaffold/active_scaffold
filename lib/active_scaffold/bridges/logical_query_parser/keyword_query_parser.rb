@@ -11,10 +11,11 @@ class ActiveScaffold::Bridges::LogicalQueryParser
 
     # Copy search method from LogicalQueryParser
     # rubocop:disable Style/DocumentDynamicEvalDefinition
-    class_eval <<-RUBY, __FILE__, __LINE__ + 1
+    #class_eval <<-RUBY, __FILE__, __LINE__ + 1
       #{LogicalQueryParser.method(:search).source}
-    RUBY
+    #RUBY
     # rubocop:enable Style/DocumentDynamicEvalDefinition
+    define_method :search, LogicalQueryParser.singleton_class.instance_method(:search)
 
     def initialize(operator)
       @operator = operator
