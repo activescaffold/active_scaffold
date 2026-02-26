@@ -10,6 +10,7 @@
 - Fix constraints (broken on 4.2.2 on some cases)
 - Add clear_form_column_if, works like hide_form_column_if but sends the column empty, to clear it
 - Add checkboxes form UI, like select form UI in collection associations but supporting DB columns (e.g. serialized)
+- Add list UI for select_multiple, checkboxes, select and radio. Select and radio were handled by format_column_value, but the list UI works better
 
 = 4.2.2
 - Support setting form_ui_options with nil, for subforms

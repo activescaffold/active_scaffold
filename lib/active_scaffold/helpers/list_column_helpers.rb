@@ -118,6 +118,18 @@ module ActiveScaffold
 
         content_tag :ul, safe_join(values.map { |v| content_tag(:li, convert_value_to_label(column, v)) })
       end
+      alias active_scaffold_column_select_multiple active_scaffold_column_checkboxes
+
+      def active_scaffold_column_select(record, column, ui_options: column.options)
+        unless column.association
+          return active_scaffold_column_select_multiple(record, column, ui_options: ui_options) if ui_options[:multiple]
+
+          value = convert_value_to_label(column, record.send(column.name))
+        end
+        format_column_value(record, column, value)
+      end
+      alias active_scaffold_column_radio active_scaffold_column_select
+
       def active_scaffold_column_boolean(record, column, ui_options: column.options)
         value = record.send(column.name)
         if value.nil? && ui_options[:include_blank]
@@ -191,7 +203,7 @@ module ActiveScaffold
 
       def convert_value_to_label(column, value, options = nil)
         options ||= (column.form_ui_options || column.options)&.dig(:options)
-        return value unless options.present?
+        return value if options.blank?
 
         text, val = options.find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
         text ? active_scaffold_translated_option(column, text, val).first : value
@@ -203,11 +215,6 @@ module ActiveScaffold
         if grouped_search? && column == search_group_column && (search_group_function || search_group_column.group_by)
           format_grouped_search_column(value, column.options)
         elsif column.association.nil?
-          form_ui_options = column.form_ui_options || column.options if FORM_UI_WITH_OPTIONS.include?(column.form_ui)
-          if form_ui_options&.dig(:options)
-            text, val = form_ui_options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
-            value = active_scaffold_translated_option(column, text, val).first if text
-          end
           if value.is_a? Numeric
             format_number_value(value, column.options)
           else
