@@ -3,8 +3,11 @@
 - Use :subform_columns option in :horizontal and :vertical show_ui too
 - Add layout multiple support to ActionColumns, so forms can have columns
 
-= 4.2.3 (unreleased)
+= 4.2.3
 - Make simplified searches on LogicalQueryParser bridge working with upstream gem, no need for my fork
+- Styles for radio form_ui
+- Fix style for checkbox list in subform
+- Fix constraints (broken on 4.2.2 on some cases)
 
 = 4.2.2
 - Support setting form_ui_options with nil, for subforms
