@@ -110,6 +110,14 @@ module ActiveScaffold
         check_box(:record, column.name, options)
       end
 
+      def active_scaffold_column_checkboxes(record, column, ui_options: column.options)
+        return format_column_value(record, column) if column.association
+
+        values = record.send(column.name)
+        return if values.empty?
+
+        content_tag :ul, safe_join(values.map { |v| content_tag(:li, convert_value_to_label(column, v)) })
+      end
       def active_scaffold_column_boolean(record, column, ui_options: column.options)
         value = record.send(column.name)
         if value.nil? && ui_options[:include_blank]
@@ -179,6 +187,14 @@ module ActiveScaffold
             end
         end
         value || record.send(column.name)
+      end
+
+      def convert_value_to_label(column, value, options = nil)
+        options ||= (column.form_ui_options || column.options)&.dig(:options)
+        return value unless options.present?
+
+        text, val = options.find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
+        text ? active_scaffold_translated_option(column, text, val).first : value
       end
 
       FORM_UI_WITH_OPTIONS = %i[select radio].freeze

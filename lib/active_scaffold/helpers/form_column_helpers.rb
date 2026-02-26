@@ -575,6 +575,22 @@ module ActiveScaffold
         active_scaffold_input_select(column, options.merge(draggable_lists: true), ui_options: ui_options)
       end
 
+      def active_scaffold_input_checkboxes(column, options, ui_options: column.options)
+        if column.association&.singular?
+          raise ArgumentError, "association #{column.association.name} is singular, but checkboxes form_ui expects a collection"
+        end
+
+        if column.association # collection
+          active_scaffold_input_plural_association(column, options, ui_options: ui_options)
+        else
+          associated_options = options[:object].send(column.name) || []
+          raise ArgumentError, 'checkboxes form_ui expect getter to return an Array' unless associated_options.is_a?(Array)
+
+          select_options = active_scaffold_enum_options(column, options[:object], ui_options: column.options)
+          active_scaffold_checkbox_list(column, select_options, associated_options, options, ui_options: ui_options)
+        end
+      end
+
       def active_scaffold_checkbox_option(option, label_method, associated_ids, checkbox_options, li_options = {})
         content_tag(:li, li_options) do
           option_id = option.is_a?(Array) ? option[1] : option.id

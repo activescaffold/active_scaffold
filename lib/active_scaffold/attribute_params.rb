@@ -173,6 +173,9 @@ module ActiveScaffold
         # convert empty strings into nil. this works better with 'null => true' columns (and validations),
         # for 'null => false' columns is just converted to default value from column
         column.default_for_empty_value
+      elsif value.is_a?(Array)
+        # for select_multiple or checkboxes in DB columns, needs to remove blank string used to clear the column
+        value.compact_blank!
       else
         value
       end
