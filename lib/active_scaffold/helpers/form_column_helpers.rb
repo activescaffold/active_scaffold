@@ -196,12 +196,17 @@ module ActiveScaffold
       end
 
       def render_column(column, record, renders_as, scope = nil, only_value: false, col_class: nil, form_columns: nil, **subform_locals)
-        if form_column_is_hidden?(column, record, scope)
-          # creates an element that can be replaced by the update_columns routine,
-          # but will not affect the value of the submitted form in this state:
-          # <dl><input type="hidden" class="<%= column.name %>-input"></dl>
-          content_tag :dl, style: 'display: none' do
-            hidden_field_tag(nil, nil, class: "#{column.name}-input")
+        hide_column, clear = form_column_is_hidden?(column, record, scope)
+        if hide_column
+          if clear
+            form_hidden_attribute(column, record, scope, true)
+          else
+            # creates an element that can be replaced by the update_columns routine,
+            # but will not affect the value of the submitted form in this state:
+            # <dl><input type="hidden" class="<%= column.name %>-input"></dl>
+            content_tag :dl, style: 'display: none' do
+              hidden_field_tag(nil, nil, class: "#{column.name}-input")
+            end
           end
         elsif (partial = override_form_field_partial(column))
           render partial, column: column, only_value: only_value, scope: scope, col_class: col_class, record: record, form_columns: form_columns
@@ -214,14 +219,23 @@ module ActiveScaffold
         end
       end
 
-      def form_column_is_hidden?(column, record, scope = nil)
-        if column.hide_form_column_if.respond_to?(:call)
-          column.hide_form_column_if.call(record, column, scope)
-        elsif column.hide_form_column_if.is_a?(Symbol)
-          record.send(column.hide_form_column_if)
+      def form_column_is_hidden?(column, record, scope = nil) # rubocop:disable Naming/PredicateMethod
+        if column.clear_form_column_if.nil?
+          condition_to_hide = column.hide_form_column_if
+          clear = false
         else
-          column.hide_form_column_if
+          condition_to_hide = column.clear_form_column_if
+          clear = true
         end
+        hide =
+          if condition_to_hide.respond_to?(:call)
+            condition_to_hide.call(record, column, scope)
+          elsif condition_to_hide.is_a?(Symbol)
+            record.send(condition_to_hide)
+          else
+            condition_to_hide
+          end
+        [hide, clear]
       end
 
       def column_description(column, record, scope = nil)
@@ -270,30 +284,41 @@ module ActiveScaffold
         column.label unless hidden
       end
 
-      def form_hidden_attribute(column, record, scope = nil)
+      def form_hidden_attribute(column, record, scope = nil, clear = false)
         content_tag :dl, style: 'display: none' do
           content_tag(:dt, '') <<
-            content_tag(:dd, form_hidden_field(column, record, scope))
+            content_tag(:dd, form_hidden_field(column, record, scope, clear))
         end
       end
 
-      def form_hidden_field(column, record, scope)
+      def form_hidden_field(column, record, scope, clear = false)
         options = active_scaffold_input_options(column, scope)
+        value = record.send(column.name) unless clear
         if column.association&.collection?
-          associated = record.send(column.name)
-          if associated.blank?
+          options[:name] += '[]'
+          if value.blank?
             hidden_field_tag options[:name], '', options
           else
-            options[:name] += '[]'
-            fields = associated.map do |r|
+            fields = value.map do |r|
               hidden_field_tag options[:name], r.id, options.merge(id: options[:id] + "_#{r.id}")
             end
             safe_join fields, ''
           end
         elsif column.association
-          hidden_field_tag options[:name], record.send(column.name)&.id, options
+          hidden_field_tag options[:name], value&.id, options
         else
-          hidden_field :record, column.name, options.merge(object: record)
+          options[:name] += '[]' if active_scaffold_column_expect_array?(column)
+          hidden_field_tag options[:name], value, options
+        end
+      end
+
+      def active_scaffold_column_expect_array?(column)
+        ui_options = column.form_ui_options || column.options
+        case column.form_ui
+        when :select, :draggable
+          column.association&.collection? || ui_options[:multiple]
+        when :select_multiple, :checkboxes
+          true
         end
       end
 

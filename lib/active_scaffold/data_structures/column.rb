@@ -62,6 +62,9 @@ module ActiveScaffold::DataStructures
         # config.columns[:my_column].hide_form_column_if = :hide_tractor_fields?
         attr_accessor :hide_form_column_if
 
+        # works like hide_form_column_if, but the form will send an empty value to clear the column when is hidden
+        attr_accessor :clear_form_column_if
+
         # text to display when the column is empty, defaults nil, so list.empty_field_text is used
         attr_accessor :empty_field_text
 

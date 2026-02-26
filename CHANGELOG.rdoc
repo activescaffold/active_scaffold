@@ -8,6 +8,7 @@
 - Styles for radio form_ui
 - Fix style for checkbox list in subform
 - Fix constraints (broken on 4.2.2 on some cases)
+- Add clear_form_column_if, works like hide_form_column_if but sends the column empty, to clear it
 
 = 4.2.2
 - Support setting form_ui_options with nil, for subforms
