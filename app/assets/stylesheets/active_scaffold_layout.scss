@@ -750,6 +750,12 @@ float: left;
 .active-scaffold li.form-element dd input[type="checkbox"] {
 margin-top: 6px;
 }
+.active-scaffold form input[type=radio] {
+  margin-right: 5px;
+}
+.active-scaffold form label:has(input[type=radio]) {
+  margin-right: 10px;
+}
 
 .active-scaffold li.form-element dd .select-field:not(.draggable-lists-container) {
   display: inline-block;
@@ -1039,7 +1045,7 @@ padding: 0 2px 2px 2px;
 border: solid 1px;
 }
 
-.active-scaffold .sub-form .checkbox-list label {
+.active-scaffold .sub-form .checkbox-list li {
 display: block;
 }
 
