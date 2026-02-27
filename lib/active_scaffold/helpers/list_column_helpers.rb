@@ -119,6 +119,7 @@ module ActiveScaffold
         content_tag :ul, safe_join(values.map { |v| content_tag(:li, convert_value_to_label(column, v)) })
       end
       alias active_scaffold_column_select_multiple active_scaffold_column_checkboxes
+      alias active_scaffold_column_draggable active_scaffold_column_checkboxes
 
       def active_scaffold_column_select(record, column, ui_options: column.options)
         unless column.association
