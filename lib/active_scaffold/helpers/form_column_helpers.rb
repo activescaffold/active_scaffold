@@ -583,10 +583,11 @@ module ActiveScaffold
         if column.association # collection
           active_scaffold_input_plural_association(column, options, ui_options: ui_options)
         else
-          associated_options = options[:object].send(column.name) || []
+          record = options.delete(:object)
+          associated_options = record.send(column.name) || []
           raise ArgumentError, 'checkboxes form_ui expect getter to return an Array' unless associated_options.is_a?(Array)
 
-          select_options = active_scaffold_enum_options(column, options[:object], ui_options: column.options)
+          select_options = active_scaffold_translated_enum_options(column, options[:object], ui_options: ui_options)
           active_scaffold_checkbox_list(column, select_options, associated_options, options, ui_options: ui_options)
         end
       end
@@ -636,14 +637,21 @@ module ActiveScaffold
         ui_options[:options]
       end
 
+      def active_scaffold_translated_enum_options(column, record, ui_options: column.options)
+        enum_options_method = override_helper_per_model(:active_scaffold_enum_options, record.class)
+        # e.g. setting form_ui = :select, set the options in column.options, and set search_ui = :select, {null_comparators: false}
+        ui_options = column.options if ui_options[:options].nil?
+        options = send(enum_options_method, column, record, ui_options: ui_options)&.collect do |text, value|
+          active_scaffold_translated_option(column, text, value)
+        end
+        options || []
+      end
+
       def active_scaffold_input_enum(column, html_options, options = {}, ui_options: column.options)
         record = html_options.delete(:object)
         options[:selected] = record.send(column.name)
         options[:object] = record
-        enum_options_method = override_helper_per_model(:active_scaffold_enum_options, record.class)
-        options_for_select = send(enum_options_method, column, record, ui_options: ui_options).collect do |text, value|
-          active_scaffold_translated_option(column, text, value)
-        end
+        options_for_select = active_scaffold_translated_enum_options(column, record, ui_options: ui_options)
         html_options.merge!(ui_options[:html_options] || {})
         options.merge!(ui_options)
         active_scaffold_select_name_with_multiple html_options
@@ -681,7 +689,7 @@ module ActiveScaffold
           value = option.id
           checked = {checked: selected == value}
         else
-          text, value = active_scaffold_translated_option(column, *option)
+          text, value = option
         end
 
         id_key = radio_options[:'data-id'] ? :'data-id' : :id
@@ -746,8 +754,7 @@ module ActiveScaffold
             helper_method = association_helper_method(column.association, :sorted_association_options_find)
             send(helper_method, column.association, nil, record)
           else
-            enum_options_method = override_helper_per_model(:active_scaffold_enum_options, record.class)
-            send(enum_options_method, column, record, ui_options: ui_options)
+            active_scaffold_translated_enum_options(column, record, ui_options: ui_options)
           end
 
         if options.present?
