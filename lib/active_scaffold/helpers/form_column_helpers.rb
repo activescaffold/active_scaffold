@@ -49,9 +49,7 @@ module ActiveScaffold
           text_field(:record, column.name, options.merge(column.options).except(:format))
         end
       rescue StandardError => e
-        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        ActiveScaffold.log_exception(e, message)
-        raise e.class, "#{e.message} -- #{message}", e.backtrace
+        handle_exception_on_column(e, column, record)
       end
 
       def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class = false, record = nil, form_columns: nil) # rubocop:disable Metrics/ParameterLists

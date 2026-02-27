@@ -45,9 +45,7 @@ module ActiveScaffold
           text_field(:record, column.name, options.merge(column.options))
         end
       rescue StandardError => e
-        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        ActiveScaffold.log_exception(e, message)
-        raise e.class, "#{e.message} -- #{message}", e.backtrace
+        handle_exception_on_column(e, column)
       end
 
       # the standard active scaffold options used for class, name and scope

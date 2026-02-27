@@ -22,6 +22,8 @@ module ActiveScaffold
         else
           get_column_value(value_record, column)
         end
+      rescue StandardError => e
+        handle_exception_on_column(e, column, record)
       end
 
       def active_scaffold_show_text(record, column, ui_options: column.options)

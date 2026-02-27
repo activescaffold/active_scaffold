@@ -24,9 +24,7 @@ module ActiveScaffold
         value = '&nbsp;'.html_safe if value.nil? || value.blank? # fix for IE 6
         value
       rescue StandardError => e
-        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}, record: #{record.inspect}"
-        ActiveScaffold.log_exception(e, message)
-        raise e.class, "#{e.message} -- #{message}", e.backtrace
+        handle_exception_on_column(e, column, record)
       end
 
       def get_column_method(record, column)
@@ -65,9 +63,7 @@ module ActiveScaffold
           text
         end
       rescue StandardError => e
-        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
-        ActiveScaffold.log_exception(e, message)
-        raise e.class, "#{e.message} -- #{message}", e.backtrace
+        handle_exception_on_column(e, column, record)
       end
 
       def column_wrap_tag

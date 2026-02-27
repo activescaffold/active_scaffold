@@ -30,6 +30,16 @@ module ActiveScaffold
       ## Uncategorized
       ##
 
+      def handle_exception_on_column(e, column, record = nil)
+        raise e if e.instance_variable_get(:@_active_scaffold_wrapped)
+
+        e.instance_variable_set(:@_active_scaffold_wrapped, true)
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        message << ", record: #{record.inspect}" if record
+        ActiveScaffold.log_exception(e, message)
+        raise e, "#{e.message} -- #{message}", e.backtrace
+      end
+
       def controller_path_for_activerecord(klass)
         controller = active_scaffold_controller_for(klass)
         controller.controller_path
