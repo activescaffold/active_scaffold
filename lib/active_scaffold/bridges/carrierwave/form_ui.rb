@@ -2,7 +2,7 @@
 
 module ActiveScaffold
   module Helpers
-    module FormColumnHelpers
+    module FormUiHelpers
       def active_scaffold_input_carrierwave(column, options, ui_options: column.options)
         record = options[:object]
         carrierwave = record.send(column.name.to_s)

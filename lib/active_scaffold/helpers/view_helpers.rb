@@ -12,6 +12,7 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::ListColumnHelpers
       include ActiveScaffold::Helpers::ShowColumnHelpers
       include ActiveScaffold::Helpers::FormColumnHelpers
+      include ActiveScaffold::Helpers::FormUiHelpers
       include ActiveScaffold::Helpers::TabsHelpers
       include ActiveScaffold::Helpers::SearchColumnHelpers
       include ActiveScaffold::Helpers::HumanConditionHelpers

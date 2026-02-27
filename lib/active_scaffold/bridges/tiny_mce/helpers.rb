@@ -6,6 +6,7 @@ class ActiveScaffold::Bridges::TinyMce
       base.class_eval do
         include FormColumnHelpers
         include SearchColumnHelpers
+        include ShowColumnHelpers
       end
     end
 
