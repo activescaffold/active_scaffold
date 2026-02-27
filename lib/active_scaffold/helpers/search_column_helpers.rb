@@ -90,6 +90,7 @@ module ActiveScaffold
 
         active_scaffold_checkbox_list(column, select_options, associated, options, ui_options: ui_options)
       end
+      alias active_scaffold_search_checkboxes active_scaffold_search_multi_select
 
       def active_scaffold_search_select(column, html_options, options = {}, ui_options: column.options)
         record = html_options.delete(:object)
@@ -137,7 +138,7 @@ module ActiveScaffold
       end
 
       def active_scaffold_search_draggable(column, options, ui_options: column.options)
-        active_scaffold_search_multi_select(column, options.merge(draggable_lists: true), ui_options: ui_options)
+        active_scaffold_search_checkboxes(column, options.merge(draggable_lists: true), ui_options: ui_options)
       end
 
       def active_scaffold_search_text(column, options, ui_options: column.options)
