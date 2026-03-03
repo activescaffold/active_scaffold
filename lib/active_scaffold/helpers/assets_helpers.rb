@@ -70,10 +70,15 @@ module ActiveScaffold
 
           sheets = []
           if Object.const_defined?(:Jquery) && Jquery.const_defined?(:Ui)
+            sheets << 'active_scaffold/jquery-ui/theme' if defined?(Propshaft)
             sheets << 'jquery-ui/datepicker'
           end
           sheets << 'jquery-ui-theme' if ActiveScaffold.jquery_ui_included?
           sheets
+        end
+
+        def bridge_stylesheets
+          ActiveScaffold::Bridges.all_stylesheets
         end
 
         def jquery_ui_javascripts
@@ -90,10 +95,6 @@ module ActiveScaffold
 
         def active_scaffold_js_config
           "ActiveScaffold.config = #{ActiveScaffold.js_config.to_json};"
-        end
-
-        def bridge_stylesheets
-          ActiveScaffold::Bridges.all_stylesheets
         end
 
         def bridge_javascripts
