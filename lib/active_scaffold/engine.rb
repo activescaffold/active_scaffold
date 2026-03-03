@@ -56,5 +56,18 @@ module ActiveScaffold
       require 'active_scaffold/extensions/localize'
       require 'active_scaffold/extensions/paginator_extensions'
     end
+
+    initializer 'active_scaffold.assets' do |app|
+      if defined?(::Sprockets)
+        # Tell sprockets where your assets are located
+        app.config.assets.precompile += %w[active_scaffold/manifest.js]
+      end
+      # Add vendor/assets to the asset paths
+      if defined?(Propshaft)
+        # For Propshaft
+        app.config.assets.paths << root.join('vendor/assets/javascripts')
+        app.config.assets.paths << root.join('vendor/assets/stylesheets')
+      end
+    end
   end
 end

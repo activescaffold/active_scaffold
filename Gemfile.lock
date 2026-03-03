@@ -8,7 +8,6 @@ PATH
   remote: .
   specs:
     active_scaffold (4.2.3)
-      dartsass-sprockets (~> 3.2.0)
       ice_nine (~> 0.11)
       method_source (~> 1.1)
       rails (>= 7.2.0)
@@ -105,12 +104,6 @@ GEM
     concurrent-ruby (1.3.5)
     connection_pool (2.5.4)
     crass (1.0.6)
-    dartsass-sprockets (3.2.1)
-      railties (>= 4.0.0)
-      sassc-embedded (~> 1.80.1)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     date (3.5.0)
     docile (1.4.1)
     domain_name (0.6.20240107)
@@ -121,10 +114,6 @@ GEM
       ostruct
     globalid (1.3.0)
       activesupport (>= 6.1)
-    google-protobuf (4.32.1-x86_64-linux-gnu)
-      bigdecimal
-      rake (>= 13)
-    herb (0.7.5)
     herb (0.7.5-x86_64-linux-gnu)
     highline (3.1.2)
       reline
@@ -299,13 +288,6 @@ GEM
       base64
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    sass-embedded (1.93.2)
-      google-protobuf (~> 4.31)
-      rake (>= 13)
-    sass-embedded (1.93.2-x86_64-linux-gnu)
-      google-protobuf (~> 4.31)
-    sassc-embedded (1.80.5)
-      sass-embedded (~> 1.80)
     securerandom (0.4.1)
     shoulda (4.0.0)
       shoulda-context (~> 2.0)
@@ -319,20 +301,11 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
-    sprockets (4.2.2)
-      concurrent-ruby (~> 1.0)
-      logger
-      rack (>= 2.2.4, < 4)
-    sprockets-rails (3.5.2)
-      actionpack (>= 6.1)
-      activesupport (>= 6.1)
-      sprockets (>= 3.0.0)
     sqlite3 (2.7.4-x86_64-linux-gnu)
     stringio (3.1.7)
     terminal-table (4.0.0)
       unicode-display_width (>= 1.1.1, < 4)
     thor (1.4.0)
-    tilt (2.6.1)
     timeout (0.4.4)
     tsort (0.2.0)
     tzinfo (2.0.6)

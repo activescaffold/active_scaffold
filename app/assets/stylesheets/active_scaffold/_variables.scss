@@ -1,0 +1,194 @@
+// ==============================================================
+// ACTIVE SCAFFOLD VARIABLES
+// ==============================================================
+// These are Sass variables for legacy support.
+// CSS variables are defined below and are the recommended way
+// to customize ActiveScaffold going forward.
+// ==============================================================
+
+// Base Colors
+$disabled_color: #999 !default;
+$actions_disabled_color: #666 !default;
+$link_color: #06c !default;
+$hover_bg: #ff8 !default;
+$header_color: #555 !default;
+
+// Column Headers
+$column_header_bg: $header_color !default;
+$column_header_link_color: #fff !default;
+$column_header_link_hover_bg: #000 !default;
+$column_header_link_hover_color: #ff8 !default;
+$column_header_color: #eee !default;
+$column_header_sorted_bg: #333 !default;
+
+// Columns
+$column_bg: #E6F2FF !default;
+$column_even_bg: #fff !default;
+$column_color: #333 !default;
+$column_empty_color: #999 !default;
+$column_border_color: #C5DBF7 !default;
+$column_even_border_color: #ddd !default;
+$column_actions_border_color: #ccc !default;
+$vertical_sub_form_border_color: $column_actions_border_color !default;
+
+// Sorted Columns
+$column_sorted_bg: #B9DCFF !default;
+$column_sorted_border_color: #AFD0F5 !default;
+$column_even_sorted_bg: #E6F2FF !default;
+$column_even_sorted_border_color: #AFD0F5 !default;
+
+// Calculations
+$calculations_bg: #eee !default;
+$calculations_border_color: #005CB8 !default;
+
+// Action Groups
+$action_group_color: #0066CC !default;
+$action_group_hover_bg: #ff8 !default;
+$action_group_border_color: #005CB8 !default;
+$action_group_items_bg: #EEE !default;
+$action_group_items_border_color: #222 !default;
+$action_group_link_color: $column_color !default;
+$active_filter: $link_color !default;
+
+// Nested Levels
+$nested_bg: #DAFFCD !default;
+$nested_border_color: #7FCF00 !default;
+$nested_footer_color: #444 !default;
+$nested_column_bg: #ECFFE7 !default;
+$nested_column_even_bg: #fff !default;
+$nested_column_border_color: $column_border_color !default;
+
+$second_nested_bg: #FFFFBB !default;
+$second_nested_border_color: #DDDF37 !default;
+
+$third_nested_bg: $nested_bg !default;
+$third_nested_border_color: $nested_border_color !default;
+
+// Pagination
+$pagination_border_color: #ccc !default;
+
+// Messages
+$msg_color: #333 !default;
+$msg_error_bg: #fbb !default;
+$msg_error_border_color: #f66 !default;
+$msg_warning_bg: #ffb !default;
+$msg_warning_border_color: #ff6 !default;
+$msg_info_bg: #bbf !default;
+$msg_info_border_color: #66f !default;
+$msg_filtered_bg: #e8e8e8 !default;
+$msg_filtered_color: #666 !default;
+
+// Forms
+$form_title_color: #1F7F00 !default;
+$label_color: $header_color !default;
+$description_color: #999 !default;
+$placeholder_color: #aaa !default;
+$input_border_color: $form_title_color !default;
+$input_error_border_color: #f00 !default;
+$input_focus_bg: #ffc !default;
+
+// Draggable Lists
+$draggable_list_bg: #FFFF88 !default;
+$draggable_list_selected_bg: #7FCF00 !default;
+$draggable_list_disabled_bg: $disabled_color !default;
+$checkbox_list_bg: #fff !default;
+
+// Subforms
+$subform_color: #999 !default;
+$subform_header_color: $header_color !default;
+$subform_footer_color: $subform_color !default;
+
+// ==============================================================
+// CSS VARIABLES (Recommended for customization)
+// ==============================================================
+:root {
+  // Base Colors
+  --as-disabled-color: #{$disabled_color};
+  --as-actions-disabled-color: #{$actions_disabled_color};
+  --as-link-color: #{$link_color};
+  --as-hover-bg: #{$hover_bg};
+  --as-header-color: #{$header_color};
+
+  // Column Headers
+  --as-column-header-bg: #{$column_header_bg};
+  --as-column-header-link-color: #{$column_header_link_color};
+  --as-column-header-link-hover-bg: #{$column_header_link_hover_bg};
+  --as-column-header-link-hover-color: #{$column_header_link_hover_color};
+  --as-column-header-color: #{$column_header_color};
+  --as-column-header-sorted-bg: #{$column_header_sorted_bg};
+
+  // Columns
+  --as-column-bg: #{$column_bg};
+  --as-column-even-bg: #{$column_even_bg};
+  --as-column-color: #{$column_color};
+  --as-column-empty-color: #{$column_empty_color};
+  --as-column-border-color: #{$column_border_color};
+  --as-column-even-border-color: #{$column_even_border_color};
+  --as-column-actions-border-color: #{$column_actions_border_color};
+
+  // Sorted Columns
+  --as-column-sorted-bg: #{$column_sorted_bg};
+  --as-column-sorted-border-color: #{$column_sorted_border_color};
+  --as-column-even-sorted-bg: #{$column_even_sorted_bg};
+  --as-column-even-sorted-border-color: #{$column_even_sorted_border_color};
+
+  // Calculations
+  --as-calculations-bg: #{$calculations_bg};
+  --as-calculations-border-color: #{$calculations_border_color};
+
+  // Action Groups
+  --as-action-group-color: #{$action_group_color};
+  --as-action-group-hover-bg: #{$action_group_hover_bg};
+  --as-action-group-border-color: #{$action_group_border_color};
+  --as-action-group-items-bg: #{$action_group_items_bg};
+  --as-action-group-items-border-color: #{$action_group_items_border_color};
+  --as-action-group-link-color: #{$action_group_link_color};
+  --as-active-filter: #{$active_filter};
+
+  // Nested Levels
+  --as-nested-bg: #{$nested_bg};
+  --as-nested-border-color: #{$nested_border_color};
+  --as-nested-footer-color: #{$nested_footer_color};
+  --as-nested-column-bg: #{$nested_column_bg};
+  --as-nested-column-even-bg: #{$nested_column_even_bg};
+  --as-nested-column-border-color: #{$nested_column_border_color};
+  --as-second-nested-bg: #{$second_nested_bg};
+  --as-second-nested-border-color: #{$second_nested_border_color};
+  --as-third-nested-bg: #{$third_nested_bg};
+  --as-third-nested-border-color: #{$third_nested_border_color};
+
+  // Pagination
+  --as-pagination-border-color: #{$pagination_border_color};
+
+  // Messages
+  --as-msg-color: #{$msg_color};
+  --as-msg-error-bg: #{$msg_error_bg};
+  --as-msg-error-border-color: #{$msg_error_border_color};
+  --as-msg-warning-bg: #{$msg_warning_bg};
+  --as-msg-warning-border-color: #{$msg_warning_border_color};
+  --as-msg-info-bg: #{$msg_info_bg};
+  --as-msg-info-border-color: #{$msg_info_border_color};
+  --as-msg-filtered-bg: #{$msg_filtered_bg};
+  --as-msg-filtered-color: #{$msg_filtered_color};
+
+  // Forms
+  --as-form-title-color: #{$form_title_color};
+  --as-label-color: #{$label_color};
+  --as-description-color: #{$description_color};
+  --as-placeholder-color: #{$placeholder_color};
+  --as-input-border-color: #{$input_border_color};
+  --as-input-error-border-color: #{$input_error_border_color};
+  --as-input-focus-bg: #{$input_focus_bg};
+
+  // Draggable Lists
+  --as-draggable-list-bg: #{$draggable_list_bg};
+  --as-draggable-list-selected-bg: #{$draggable_list_selected_bg};
+  --as-draggable-list-disabled-bg: #{$draggable_list_disabled_bg};
+  --as-checkbox-list-bg: #{$checkbox_list_bg};
+
+  // Subforms
+  --as-subform-color: #{$subform_color};
+  --as-subform-header-color: #{$subform_header_color};
+  --as-subform-footer-color: #{$subform_footer_color};
+  --as-vertical-sub-form-border-color: #{$vertical_sub_form_border_color};
+}

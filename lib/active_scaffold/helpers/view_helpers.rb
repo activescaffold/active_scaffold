@@ -5,6 +5,7 @@ module ActiveScaffold
     # All extra helpers that should be included in the View.
     # Also a dumping ground for uncategorized helpers.
     module ViewHelpers
+      include ActiveScaffold::Helpers::AssetsHelpers
       include ActiveScaffold::Helpers::IdHelpers
       include ActiveScaffold::Helpers::ActionLinkHelpers
       include ActiveScaffold::Helpers::AssociationHelpers

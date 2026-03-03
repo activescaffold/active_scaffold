@@ -1,0 +1,69 @@
+// This file is auto-generated for Propshaft compatibility
+// Original: active_scaffold_images.scss
+// Do not edit directly
+
+.active-scaffold-header div.actions div.action_group div {
+  background-image: url("active_scaffold/gears.png"); /* default icon for actions or override with css */
+}
+
+.active-scaffold-header div.actions a.show_config_list {
+  background-image: url("active_scaffold/config.png");
+}
+
+.active-scaffold-header div.actions a.new,
+.active-scaffold-header div.actions a.new_existing {
+  background-image: url("active_scaffold/add.png");
+}
+
+.active-scaffold-header div.actions a.show_search {
+  background-image: url("active_scaffold/magnifier.png");
+}
+
+.active-scaffold th.asc a {
+  background-image: url("active_scaffold/arrow_up.png");
+}
+
+.active-scaffold th.desc a {
+  background-image: url("active_scaffold/arrow_down.png");
+}
+
+
+.active-scaffold .draggable-lists-container .check-buttons {
+  .check-all, .uncheck-all {
+    background-image: url("active_scaffold/fast-arrow-right.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 16px;
+    text-indent: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .uncheck-all {
+    background-image: url("active_scaffold/fast-arrow-left.svg");
+  }
+}
+
+.active-scaffold th.loading a {
+  background-image: url("active_scaffold/indicator-small.gif");
+}
+
+.active-scaffold a.inline-adapter-close {
+  background-image: url("active_scaffold/close.png");
+}
+
+.active-scaffold .sub-form .association-record a.destroy {
+  background-image: url("active_scaffold/cross.png");
+}
+
+.as_touch a.inline-adapter-close {
+  background-image: url("active_scaffold/close_touch.png");
+}
+.active-scaffold .refresh-link {
+  background-image: url("active_scaffold/refresh.png");
+}
+
+.ui-dialog .loading::after {
+  background: url("active_scaffold/indicator.gif") no-repeat;
+  content: 'Loading...';
+  padding-left: 20px;
+}

@@ -581,7 +581,7 @@
      * Simple utility methods
      */
 
-    window.ActiveScaffold = {
+    window.ActiveScaffold = Object.assign(window.ActiveScaffold || {}, {
       last_focus: null,
       setup_callbacks: [],
       setup: function(container) {
@@ -1319,7 +1319,7 @@
         ActiveScaffold.remove(link.adapter, callback);
         link.set_adapter(null);
       }
-    }
+    });
 
 
     jQuery(window).on('scroll resize', ActiveScaffold.update_floating_form_footer);
