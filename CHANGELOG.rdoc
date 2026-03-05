@@ -7,6 +7,7 @@
 - Use :subform_columns option in :horizontal and :vertical show_ui too
 - Add layout multiple support to ActionColumns, so forms can have columns
 - Better exception handling when error is raised rendering a column, no more empty backtraces
+- Fix render field on subform for polymorphic association, or nested subforms in some cases
 
 = 4.2.3
 - Make simplified searches on LogicalQueryParser bridge working with upstream gem, no need for my fork
