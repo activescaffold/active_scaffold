@@ -220,7 +220,7 @@ module ActiveScaffold::Actions
         return unless record.respond_to?(part)
 
         association = record.class.reflect_on_association(part)
-        id = parts.shift.to_i if association&.collection?
+        id = association&.collection? ? parts.shift.to_i : nil
         record = record.send(part)
         if id
           record = record.find { |child| child.id == id }
