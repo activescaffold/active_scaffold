@@ -3,7 +3,7 @@
 module ActiveScaffold
   module Helpers
     # Helpers that assist with the rendering of a Form Column
-    module FormColumnHelpers
+    module FormUiHelpers
       def active_scaffold_input_active_storage_has_one(column, options, ui_options: column.options)
         record = options[:object]
         active_storage = record.send(column.name.to_s)

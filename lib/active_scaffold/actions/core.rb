@@ -184,6 +184,7 @@ module ActiveScaffold::Actions
     end
 
     def parent_column(parent_controller, scope)
+      attrs = params[:record]
       parts = scope[1..-2].split('][')
       columns = parent_controller.active_scaffold_config.columns
       column = nil
@@ -191,9 +192,14 @@ module ActiveScaffold::Actions
       while parts.present?
         column = columns[parts.shift]
         return unless column&.association
+        break if parts.blank?
 
-        columns = active_scaffold_config_for(column.association.klass).columns
-        parts.shift if column.association.collection?
+        klass = column.association.polymorphic? ? attrs&.dig(column.association.foreign_type)&.safe_constantize : column.association.klass
+        attrs = attrs&.dig(column.name)
+        return unless klass
+
+        columns = active_scaffold_config_for(klass).columns
+        attrs = attrs&.dig(parts.shift) if column.association.collection?
       end
 
       column

@@ -6,9 +6,17 @@
 - Support :subform_columns option in column form_ui_options, or column's options, when the column is rendered as subform
 - Use :subform_columns option in :horizontal and :vertical show_ui too
 - Add layout multiple support to ActionColumns, so forms can have columns
+- Better exception handling when error is raised rendering a column, no more empty backtraces
 
-= 4.2.3 (unreleased)
+= 4.2.3
 - Make simplified searches on LogicalQueryParser bridge working with upstream gem, no need for my fork
+- Styles for radio form_ui
+- Fix style for checkbox list in subform
+- Fix constraints (broken on 4.2.2 on some cases)
+- Add clear_form_column_if, works like hide_form_column_if but sends the column empty, to clear it
+- Add checkboxes form UI, like select form UI in collection associations but supporting DB columns (e.g. columns using serialize)
+- Support draggable form UI in non-association columns, like checkboxes (e.g. columns using serialize)
+- Add list UI for select_multiple, dragg, checkboxes, select and radio. Select and radio were handled by format_column_value, but the list UI works better
 
 = 4.2.2
 - Support setting form_ui_options with nil, for subforms

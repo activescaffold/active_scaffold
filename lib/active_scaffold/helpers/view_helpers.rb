@@ -12,6 +12,7 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::ListColumnHelpers
       include ActiveScaffold::Helpers::ShowColumnHelpers
       include ActiveScaffold::Helpers::FormColumnHelpers
+      include ActiveScaffold::Helpers::FormUiHelpers
       include ActiveScaffold::Helpers::TabsHelpers
       include ActiveScaffold::Helpers::SearchColumnHelpers
       include ActiveScaffold::Helpers::HumanConditionHelpers
@@ -29,6 +30,16 @@ module ActiveScaffold
       ##
       ## Uncategorized
       ##
+
+      def handle_exception_on_column(exception, column, record = nil)
+        raise exception if exception.instance_variable_get(:@_active_scaffold_wrapped)
+
+        exception.instance_variable_set(:@_active_scaffold_wrapped, true)
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        message << ", record: #{record.inspect}" if record
+        ActiveScaffold.log_exception(exception, message)
+        raise exception, "#{exception.message} -- #{message}", exception.backtrace
+      end
 
       def controller_path_for_activerecord(klass)
         controller = active_scaffold_controller_for(klass)

@@ -216,7 +216,8 @@ module ActiveScaffold
   def self.log_exception(exception, message)
     line = exception.backtrace.find { |l| l.start_with? Rails.root.to_s }
     line ||= exception.backtrace.find { |l| l.start_with? ActiveScaffold.root }
-    Rails.logger.error "#{exception.class.name}: #{exception.message} -- #{message}\n#{Rails.backtrace_cleaner.clean_frame(line) || line}"
+    line = Rails.backtrace_cleaner.clean_frame(line) || line
+    Rails.logger.error "#{exception.class.name}: #{exception.message} -- #{message}\n#{line}"
   end
 end
 require 'active_scaffold/engine'

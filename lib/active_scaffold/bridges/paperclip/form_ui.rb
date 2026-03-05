@@ -2,7 +2,7 @@
 
 module ActiveScaffold
   module Helpers
-    module FormColumnHelpers
+    module FormUiHelpers
       def active_scaffold_input_paperclip(column, options, ui_options: column.options)
         record = options[:object]
         paperclip = record.send(column.name.to_s)

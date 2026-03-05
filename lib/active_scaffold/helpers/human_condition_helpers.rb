@@ -130,6 +130,7 @@ module ActiveScaffold
         end
         as_(:association, scope: :human_conditions, column: attribute, value: associated.join(', '))
       end
+      alias active_scaffold_human_condition_checkboxes active_scaffold_human_condition_select
       alias active_scaffold_human_condition_multi_select active_scaffold_human_condition_select
       alias active_scaffold_human_condition_select_multiple active_scaffold_human_condition_select
       alias active_scaffold_human_condition_record_select active_scaffold_human_condition_select
