@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module JqueryUiManifest
     # Full list of jQuery UI dependencies based on jquery-ui-rails structure
@@ -35,7 +37,7 @@ module ActiveScaffold
       ],
       datepicker: [
         'jquery-ui/widgets/datepicker'
-      ],
+      ]
       # dialog: [
       #   'jquery-ui/position',
       #   'jquery-ui/form-reset-mixin',

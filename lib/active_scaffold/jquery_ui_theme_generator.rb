@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   class JqueryUiThemeGenerator
     class << self
@@ -8,11 +10,11 @@ module ActiveScaffold
         generator.generate_if_needed
       end
 
-      def generate!(force = false)
+      def generate!(force: false)
         return unless jquery_ui_installed?
 
         generator = new
-        generator.generate!(force)
+        generator.generate!(force: force)
       end
 
       def needs_generation?
@@ -37,14 +39,15 @@ module ActiveScaffold
 
     def generate_if_needed
       return unless source_exists?
+
       generate! if needs_generation?
     end
 
-    def generate!(force = false)
+    def generate!(force: false)
       return unless source_exists?
 
       if force || needs_generation?
-        Rails.logger.info "ActiveScaffold: Generating jQuery UI theme..."
+        Rails.logger.info 'ActiveScaffold: Generating jQuery UI theme...'
         perform_generation
         true
       else
@@ -55,6 +58,7 @@ module ActiveScaffold
     def needs_generation?
       return true unless File.exist?(@theme_path)
       return true if source_newer_than_generated?
+
       false
     end
 
@@ -76,7 +80,7 @@ module ActiveScaffold
 
       # Process asset_path calls
       processed = theme_content.gsub(/<%= image_path\(['"]([^'"]+)['"]\) %>/) do
-        "'/assets/#{$1}'"
+        "'/assets/#{::Regexp.last_match(1)}'"
       end
 
       # Remove any other ERB tags
@@ -87,11 +91,9 @@ module ActiveScaffold
 
       # Write the processed file
       File.write(@theme_path, processed)
-      puts "Success: Generated '#{(@theme_path)}' from ActiveScafer theme"
-      puts caller
 
       Rails.logger.info "✅ ActiveScaffold: jQuery UI theme generated at #{@theme_path}"
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error "ActiveScaffold: Failed to generate jQuery UI theme: #{e.message}"
     end
   end
