@@ -2,6 +2,7 @@
 
 module ActiveScaffold
   autoload :ActiveRecordPermissions, 'active_scaffold/active_record_permissions'
+  autoload :Assets, 'active_scaffold/assets'
   autoload :AttributeParams, 'active_scaffold/attribute_params'
   autoload :Bridges, 'active_scaffold/bridges'
   autoload :Configurable, 'active_scaffold/configurable'
@@ -10,7 +11,6 @@ module ActiveScaffold
   autoload :Core, 'active_scaffold/core'
   autoload :Finder, 'active_scaffold/finder'
   autoload :JqueryUiManifest, 'active_scaffold/jquery_ui_manifest'
-  autoload :JqueryUiThemeGenerator, 'active_scaffold/jquery_ui_theme_generator'
   autoload :MarkedModel, 'active_scaffold/marked_model'
   autoload :OrmChecks, 'active_scaffold/orm_checks'
   autoload :Registry, 'active_scaffold/registry'

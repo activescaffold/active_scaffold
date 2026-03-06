@@ -1,5 +1,5 @@
 <%
-  ActiveScaffold::Helpers::AssetsHelpers.active_scaffold_javascripts.each { |asset| require_asset asset }
+  ActiveScaffold::Assets.active_scaffold_javascripts.each { |asset| require_asset asset }
   if ActiveScaffold.jquery_ui_included?
     I18n.available_locales.each { |locale| Rails.root.glob("config/locales/#{locale}.*").each { |path| depend_on path.to_s } }
   end

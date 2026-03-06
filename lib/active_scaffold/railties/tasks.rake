@@ -4,6 +4,7 @@
 if defined?(Rails) && defined?(Propshaft) && Rails.application.config.assets.server
   # Hook into assets:precompile to generate theme before compilation
   Rake::Task['assets:precompile'].enhance do
-    ActiveScaffold::JqueryUiThemeGenerator.generate!(force: true)
+    ActiveScaffold::Assets::JqueryUiThemeGenerator.generate!(force: true)
+    ActiveScaffold::Assets::CssDepsGenerator.generate!
   end
 end

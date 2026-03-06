@@ -12,5 +12,5 @@
 @use 'active_scaffold/images';
 
 <%= File.read(File.join(ActiveScaffold.root, 'app/assets/stylesheets/active_scaffold/_variables.scss')) %>
-<% ActiveScaffold::Helpers::AssetsHelpers.active_scaffold_stylesheets(:deps).each { |asset| require_asset asset } %>
+<% ActiveScaffold::Assets.active_scaffold_stylesheets(:deps).each { |asset| require_asset asset } %>
 .ui-front { z-index: 98; }

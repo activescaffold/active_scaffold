@@ -64,6 +64,13 @@ module ActiveScaffold
         bridge.javascripts if bridge&.install?
       end.flatten
     end
+
+    def self.all_javascript_tags
+      bridges.keys.filter_map do |bridge_name|
+        bridge = self[bridge_name]
+        bridge.javascript_tags if bridge&.install?
+      end.flatten
+    end
   end
 end
 

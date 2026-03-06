@@ -59,24 +59,16 @@ Run the app and visit localhost:3000/<plural_model>
 
 It's recommended to call `clear_helpers` in ApplicationController, as some helpers defined by ActiveScaffold, such as active_scaffold_enum_options, options_for_association_conditions, association_klass_scoped, are usually overrided for different controllers, and it may cause issues when all helper modules are available to every controller, specially when models have associations or columns with the same name but need different code for those overrided helper methods.
 
-## Stylesheet and Javascript Loading
+## Stylesheet Loading
 
 ActiveScaffold provides flexible stylesheet loading to work with both Sprockets and Propshaft.
 ActiveScaffold has SASS variables to define the colours, but, from version 4.3, the values are moved to CSS variables. It's still possible to change the colours with the old SASS variables, but they may be removed in the future.
 
 ### With Propshaft + dartsass-rails
 
-Traditionally, ActiveScaffold loaded all CSS needed, from itself and other ActiveScaffold plugins, and every other library integrated with bridges, such as RecordSelect, Chosen or TinyMCE. It was done using css.erb files, but with propshaft it must be done in the layout if wanted to add them automatically, so helpers are provided. It's possible to add the CSS to the application.scss manually and don't use the helper.
+Traditionally, ActiveScaffold loaded all CSS needed, from itself and other ActiveScaffold plugins, and every other library integrated with bridges, such as RecordSelect, Chosen or TinyMCE. It was done using css.erb files, but with propshaft erb is not supported, so a SCSS file is generated when app boots in development and running `rake assets:precompile` on the deployment. There is a task to generate them, `active_scaffold:assets:generate`.
 
-When using `:deps` or `:all` (default value) with the helpers, will detect if jquery-ui-rails gem is available and load the CSS and JS for jQuery UI and the theme included in ActiveScaffold, and will load the CSS and JS for other ActiveScaffold plugins and bridges.
-
-It's still possible to load CSS for ActiveScaffold in the application.scss with `@use`, especially if the default values for the SASS variables will be changed. 
-
-#### Option 1: Compile core styles (recommended)
-```erb
-<%# In your layout - loads CSS for jQuery UI, other ActiveScaffold plugins and bridges %>
-<%= active_scaffold_stylesheets(:deps) %>
-```
+Also, when using jquery-ui-rails gem, the CSS is generated from the erb in the gem in the same way.
 
 ```scss
 // In application.scss
@@ -85,64 +77,7 @@ It's still possible to load CSS for ActiveScaffold in the application.scss with 
 );
 ```
 
-#### Option 2: Load everything in the layout
 
-```erb
-<%# In your layout %>
-<%= active_scaffold_stylesheets %>
-```
-
-#### Option 3: Manual control
-
-```erb
-<%# Load only what you need, e.g. you are loading your own jQuery UI theme %>
-<%= active_scaffold_stylesheets(:core) %>
-<%= active_scaffold_stylesheets(:plugins) %>
-<%= active_scaffold_stylesheets(:bridges) %>
-```
-
-Or load all of them in application.scss with `@use`, or only some of them, such as core and plugins, and the rest in the layout. 
-
-This gives users the flexibility to choose between:
-- **Single compiled CSS** (better performance, one request)
-- **Multiple link tags** (easier debugging, selective loading)
-- **Hybrid approach** (dependencies separate, core compiled)
-
-#### Loading JS with importmaps
-
-For the JS there are 2 options with propshaft, using importmaps or loading the files individually.
-
-If using importmaps, add active_scaffold to importmap, it should have jquery and jquery_ujs or rails_ujs too:
-
-```ruby
-pin 'active_scaffold', to: 'active_scaffold/load.js'
-pin 'jquery'
-pin 'jquery_ujs'
-```
-
-In the app/javascript/application.js, import jquery, jquery_ujs or rails_ujs and active_scaffold:
-
-```js
-import 'jquery'
-import 'jquery_ujs'
-import 'active_scaffold'
-```
-
-In the layout, load the importmap modules and call active_scaffold_javascript_tag, that includes some code which was in js.erb when using sprocket:
-
-```erb
-    <%= javascript_importmap_tags %>
-    <%= active_scaffold_javascript_tag %>
-```
-
-#### Loading JS without importmaps
-
-If you're not using importmaps, then you can load the JS files individually, but you only need to load jquery and jquery_ujs or rails_ujs, and then call active_scaffold_javascript_tag:
-
-```erb
-    <%= javascript_importmap_tags %>
-    <%= active_scaffold_javascript_tag %>
-```
 
 ### With Sprockets + dartsass-sprockets
 
@@ -166,7 +101,49 @@ In this case, if you want more flexibility, you have to use `@use` with each ind
 // load CSS for other ActiveScaffold plugins and bridges
 ```
 
-For the JS, you can keep using *= require active_scaffold in your application.js, but it's possible to use importmaps too. To use importmaps, add active_scaffold to importmap, it should have jquery and jquery_ujs or rails_ujs too:
+## Javascript Loading
+
+There are 2 options to load JS with propshaft, using importmaps or loading the files individually.
+
+### Propshaft + importmaps
+
+When using importmaps, add active_scaffold to importmap, it should have jquery and jquery_ujs or rails_ujs too:
+
+```ruby
+pin 'active_scaffold', to: 'active_scaffold/load.js'
+pin 'jquery'
+pin 'jquery_ujs'
+```
+
+In the app/javascript/application.js, import jquery, jquery_ujs or rails_ujs and active_scaffold:
+
+```js
+import 'jquery'
+import 'jquery_ujs'
+import 'active_scaffold'
+```
+
+In the layout, load the importmap modules and call active_scaffold_javascript_tag, that includes some script tags which was in js.erb when using sprockets, so JS ActiveScaffold dependencies are loaded (jquery UI if using jquery-ui-rails, and JS for other ActiveScaffold plugins and bridges): 
+
+```erb
+    <%= javascript_importmap_tags %>
+    <%= active_scaffold_javascript_tag %>
+```
+
+### Propshaft
+
+If you're not using importmaps, then you can load the JS files individually, but you only need to load jquery and jquery_ujs or rails_ujs, and then call active_scaffold_javascript_tag:
+
+```erb
+    <%= javascript_include_tag 'jquery', 'jquery_ujs' %>
+    <%= active_scaffold_javascript_tag %>
+```
+
+### With Sprockets
+
+For the JS, you can keep using *= require active_scaffold in your application.js
+
+It's possible to use importmaps too, add active_scaffold to importmap, that should have jquery and jquery_ujs or rails_ujs too:
 
 ```ruby
 pin 'active_scaffold'
@@ -182,7 +159,7 @@ import 'jquery_ujs'
 import 'active_scaffold'
 ```
 
-In the layout, load the importmap modules, in this case we are not using `to` in the importmap, so the js.erb file will be used, that include some generated code, and call active_scaffold_javascript_tag is not needed.
+In the layout, load the importmap modules, in this case we are not using `to` in the importmap, so the js.erb file will be used, that include some generated code, and calling active_scaffold_javascript_tag is not needed.
 
 Threadsafe
 ----------

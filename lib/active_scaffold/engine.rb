@@ -65,8 +65,9 @@ module ActiveScaffold
     end
 
     config.after_initialize do
-      if defined?(Propshaft) && ActiveScaffold.jquery_ui_included?
-        ActiveScaffold::JqueryUiThemeGenerator.generate_if_needed
+      if defined?(Propshaft)
+        ActiveScaffold::Assets::JqueryUiThemeGenerator.generate_if_needed if ActiveScaffold.jquery_ui_included?
+        ActiveScaffold::Assets::CssDepsGenerator.generate!
       end
     end
 

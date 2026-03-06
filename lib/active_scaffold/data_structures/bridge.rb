@@ -20,5 +20,7 @@ module ActiveScaffold::DataStructures
     def self.stylesheets; end
 
     def self.javascripts; end
+
+    def self.javascript_tags; end
   end
 end
