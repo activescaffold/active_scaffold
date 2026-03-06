@@ -61,7 +61,7 @@ It's recommended to call `clear_helpers` in ApplicationController, as some helpe
 
 ## Stylesheet Loading
 
-ActiveScaffold provides flexible stylesheet loading to work with both Sprockets and Propshaft.
+ActiveScaffold provides flexible stylesheet loading to work with both Sprockets and Propshaft, choose which want you want adding `dartsass-sprockets` or `dartsass-rails` to your Gemfile.
 ActiveScaffold has SASS variables to define the colours, but, from version 4.3, the values are moved to CSS variables. It's still possible to change the colours with the old SASS variables, but they may be removed in the future.
 
 ### With Propshaft + dartsass-rails
@@ -76,7 +76,6 @@ Also, when using jquery-ui-rails gem, the CSS is generated from the erb in the g
 // set values to variables
 );
 ```
-
 
 
 ### With Sprockets + dartsass-sprockets
