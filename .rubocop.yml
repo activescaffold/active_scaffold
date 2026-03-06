@@ -100,7 +100,7 @@ Rails/DynamicFindBy:
 
 Rails/RakeEnvironment:
   Exclude:
-    - lib/tasks/brakeman.rake
+    - lib/tasks/*.rake
 
 Rails/ActionControllerTestCase:
   Enabled: false

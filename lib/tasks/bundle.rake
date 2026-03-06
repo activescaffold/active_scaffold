@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :bundle do
-  desc "Run bundle lock for all Gemfiles in the gemfiles directory"
+  desc 'Run bundle lock for all Gemfiles in the gemfiles directory'
   task :lock_all do
     gemfiles_dir = File.join(Dir.pwd, 'gemfiles')
 
@@ -18,6 +18,6 @@ namespace :bundle do
       system("bundle lock --gemfile='#{gemfile}'")
     end
 
-    puts "Done!"
+    puts 'Done!'
   end
 end
