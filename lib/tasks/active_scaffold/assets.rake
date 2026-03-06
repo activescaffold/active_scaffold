@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-namespace :active_scaffold do # rubocop:disable Metrics/BlockLength
+namespace :active_scaffold do
   namespace :assets do
     desc 'Generate jQuery UI theme css from jquery-ui-rails (if using the gem), and deps.css for Propshaft compatibility'
     task generate: :environment do

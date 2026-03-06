@@ -20,6 +20,7 @@ module ActiveScaffold
       end
 
       private
+
       def perform_generation
         content = ActiveScaffold::Assets.active_scaffold_stylesheets(:deps).map do |sheet|
           "@use '#{sheet}';\n"
