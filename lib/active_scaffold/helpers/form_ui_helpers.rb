@@ -27,18 +27,23 @@ module ActiveScaffold
 
       def active_scaffold_input_singular_association(column, html_options, options = {}, ui_options: column.options)
         record = html_options.delete(:object)
-        associated = html_options.include?(:associated) ? html_options.delete(:associated) : record.send(column.association.name)
-
         helper_method = association_helper_method(column.association, :sorted_association_options_find)
         select_options = send(helper_method, column.association, nil, record)
-        select_options.unshift(associated) if associated&.persisted? && select_options.exclude?(associated)
+
+        if html_options.include?(:associated)
+          options[:selected] ||= html_options.delete(:associated)
+        else
+          associated = record.send(column.association.name)
+          select_options.unshift(associated) if associated&.persisted? && select_options.exclude?(associated)
+          options[:selected] ||= associated&.id
+        end
 
         method = column.name
-        options.merge! selected: associated&.id, include_blank: as_(:_select_), object: record
+        options.reverse_merge! include_blank: as_(:_select_), object: record
 
         html_options.merge!(ui_options[:html_options] || {})
         options.merge!(ui_options)
-        html_options.delete(:multiple) # no point using multiple in a form for singular assoc, but may be set for field search
+        active_scaffold_select_name_with_multiple html_options # doesn't make sense most of time, but AS_batch use it
         active_scaffold_translate_select_options(options)
 
         html =
