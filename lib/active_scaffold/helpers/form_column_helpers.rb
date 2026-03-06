@@ -246,20 +246,20 @@ module ActiveScaffold
         as_element(:form_field_description, h(desc) + content_tag(:span, nil, class: 'close')) if desc.present?
       end
 
-      def form_attribute(column, record, scope = nil, only_value = false, col_class = nil, form_columns: nil)
+      def form_attribute(column, record, scope = nil, only_value = false, col_class = nil, form_columns: nil, field: nil)
         column_options = active_scaffold_input_options(column, scope, object: record)
         collapsible_id = column_options.delete :collapsible_id
         attributes = field_attributes(column, record)
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
         if only_value
-          field = content_tag(:span, show_column_value(record, column), column_options.except(:name, :object))
+          field ||= content_tag(:span, show_column_value(record, column), column_options.except(:name, :object))
           if column.association.nil? || column.association.belongs_to?
             # hidden field probably not needed, but leaving it just in case
             # but it isn't working for assocations which are not belongs_to
             field << hidden_field(:record, column.association&.foreign_key || column.name, column_options)
           end
         else
-          field = active_scaffold_input_for column, scope, column_options, form_columns: form_columns
+          field ||= active_scaffold_input_for column, scope, column_options, form_columns: form_columns
         end
         field << loading_indicator_tag(action: :render_field, id: params[:id]) if field && column.update_columns
         description = column_description(column, record, scope)
