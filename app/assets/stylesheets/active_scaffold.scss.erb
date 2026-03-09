@@ -7,9 +7,9 @@
  For details, see the ActiveScaffold web site: https://github.com/activescaffold/active_scaffold
 */
 
-@use 'active_scaffold/colours';
 @use 'active_scaffold/layout';
 @use 'active_scaffold/images';
+@use 'active_scaffold/colours';
 
 <%= File.read(File.join(ActiveScaffold.root, 'app/assets/stylesheets/active_scaffold/_variables.scss')) %>
 <% ActiveScaffold::Assets.active_scaffold_stylesheets(:deps).each { |asset| require_asset asset } %>
