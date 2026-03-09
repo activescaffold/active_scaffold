@@ -12,8 +12,6 @@
 <% else %>
 <%
   scope ||= nil
-  subsection_id ||= nil
-  tab_value ||= nil
   tabbed_by ||= nil
   tab_id ||= nil
   show_unauthorized_columns = active_scaffold_config.send(form_action).show_unauthorized_columns if active_scaffold_config.actions.include? form_action

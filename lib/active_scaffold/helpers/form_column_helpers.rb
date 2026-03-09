@@ -79,9 +79,10 @@ module ActiveScaffold
       end
 
       def active_scaffold_subform_record_actions(association_column, record, locked, scope)
-        return unless association_column.association.collection? && !locked
+        # association_column nil when called for batch_create for example
+        return if locked || association_column&.association&.singular?
 
-        auth = %i[destroy delete_all delete].exclude?(association_column.association.dependent)
+        auth = %i[destroy delete_all delete].exclude?(association_column&.association&.dependent)
         auth, reason = record.authorized_for?(crud_type: :delete, reason: true) unless auth
         if auth
           attributes = as_element_attributes(:subform_record_remove, class: 'destroy')
@@ -326,7 +327,8 @@ module ActiveScaffold
 
       # Should this column be displayed in the subform?
       def in_subform?(column, parent_record, parent_column)
-        return true unless column.association
+        # parent_column nil when called for batch_create for example
+        return true if parent_column.nil? || column.association.nil?
 
         if column.association.reverse.nil?
           # Polymorphic associations can't appear because they *might* be the reverse association

@@ -2,7 +2,8 @@
   <tr>
     <%
     columns ||= active_scaffold_config_for(record_class).subform.columns
-    columns.each_column(for: record_class, crud_type: :read) do |column|
+    crud_type ||= :read
+    columns.each_column(for: record_class, crud_type: crud_type) do |column|
       next unless column.is_a? ActiveScaffold::DataStructures::Column
       next unless in_subform?(column, parent_record, parent_column)
       hidden = column_renders_as(column) == :hidden
