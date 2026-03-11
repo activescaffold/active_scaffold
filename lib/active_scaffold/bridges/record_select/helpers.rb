@@ -87,7 +87,7 @@ class ActiveScaffold::Bridges::RecordSelect
       rescue StandardError => e
         message = "Sorry, we are not that smart yet. Attempted to restore search values to search fields :#{column.name} in #{controller.class}"
         Rails.logger.error "#{e.class.name}: #{e.message} -- #{message}"
-        raise e.class, "#{e.message} -- #{message}", e.backtrace
+        raise e, "#{e.message} -- #{message}", e.backtrace
       end
     end
   end
