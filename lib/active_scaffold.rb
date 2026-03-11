@@ -2,6 +2,7 @@
 
 module ActiveScaffold
   autoload :ActiveRecordPermissions, 'active_scaffold/active_record_permissions'
+  autoload :Assets, 'active_scaffold/assets'
   autoload :AttributeParams, 'active_scaffold/attribute_params'
   autoload :Bridges, 'active_scaffold/bridges'
   autoload :Configurable, 'active_scaffold/configurable'
@@ -9,6 +10,7 @@ module ActiveScaffold
   autoload :Constraints, 'active_scaffold/constraints'
   autoload :Core, 'active_scaffold/core'
   autoload :Finder, 'active_scaffold/finder'
+  autoload :JqueryUiManifest, 'active_scaffold/jquery_ui_manifest'
   autoload :MarkedModel, 'active_scaffold/marked_model'
   autoload :OrmChecks, 'active_scaffold/orm_checks'
   autoload :Registry, 'active_scaffold/registry'
@@ -101,4 +103,3 @@ require 'active_scaffold/engine'
 require 'ice_nine'
 require 'ice_nine/core_ext/object'
 require 'request_store'
-require 'dartsass-sprockets'

@@ -4,6 +4,7 @@
 - Add layout multiple support to ActionColumns, so forms can have columns
 - Better exception handling when error is raised rendering a column, no more empty backtraces
 - Fix render field on subform for polymorphic association, or nested subforms in some cases
+- Support propshaft with dartsass-rails, so it doesn't depend on dartsass-sprockets and one dartsass gem must be added to the Gemfile
 
 = 4.2.3
 - Make simplified searches on LogicalQueryParser bridge working with upstream gem, no need for my fork

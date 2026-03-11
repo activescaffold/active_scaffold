@@ -1,6 +1,3 @@
-<%# encoding: utf-8 %>
-<% I18n.available_locales.each { |locale| Rails.root.glob("config/locales/#{locale}.*").each { |path| depend_on path.to_s } } %>
-<%= ActiveScaffold::Bridges[:date_picker].localization %>
 Object.getPrototypeOf(jQuery.datepicker)._attachDatepicker_without_inlineSettings = Object.getPrototypeOf(jQuery.datepicker)._attachDatepicker;
 jQuery.extend(Object.getPrototypeOf(jQuery.datepicker), {
   _attachDatepicker: function(target, settings) {

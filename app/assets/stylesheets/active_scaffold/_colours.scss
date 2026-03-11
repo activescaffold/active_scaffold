@@ -1,0 +1,330 @@
+.active-scaffold a, .active-scaffold a:visited {
+  color: var(--as-link-color);
+}
+
+.active-scaffold a.disabled {
+  color: var(--as-disabled-color);
+}
+
+.active-scaffold a:hover, .active-scaffold div.hover, .active-scaffold td span.hover {
+  background-color: var(--as-hover-bg);
+}
+
+noscript.active-scaffold {
+  border-color: var(--as-msg-error-border-color);
+  background-color: var(--as-msg-error-bg);
+  color: var(--as-column-color);
+}
+
+/* Header
+   ======================== */
+
+.active-scaffold-header h2 {
+  color: var(--as-header-color);
+}
+
+.active-scaffold div.actions a.separator {
+  border-color: var(--as-action-group-border-color);
+}
+.active-scaffold-header div.actions a.disabled {
+  color: var(--as-actions-disabled-color);
+}
+.active-scaffold .actions .filters .active {
+  color: var(--as-active-filter);
+}
+
+/* Table :: Column Headers
+   ============================= */
+
+.active-scaffold th {
+  background-color: var(--as-column-header-bg);
+}
+
+.active-scaffold th a,
+.active-scaffold th p {
+  background-color: var(--as-column-header-bg);
+}
+
+.active-scaffold th a, .active-scaffold th a:visited {
+  color: var(--as-column-header-link-color);
+}
+
+.active-scaffold th p,
+.active-scaffold .show-view th {
+  color: var(--as-column-header-color);
+}
+
+.active-scaffold th a:hover {
+  background-color: var(--as-column-header-link-hover-bg);
+  color: var(--as-column-header-link-hover-color);
+}
+
+.active-scaffold th.sorted {
+  background-color: var(--as-column-header-sorted-bg);
+}
+
+.active-scaffold th.asc a,
+.active-scaffold th.asc a:hover,
+.active-scaffold th.desc a,
+.active-scaffold th.desc a:hover,
+.active-scaffold th.loading a,
+.active-scaffold th.loading a:hover {
+  background-color: var(--as-column-header-sorted-bg);
+}
+
+/* Table :: Record Rows
+   ============================= */
+
+.active-scaffold tr.record {
+  background-color: var(--as-column-bg);
+}
+.active-scaffold tr.record td {
+  color: var(--as-column-color);
+  border-color: var(--as-column-border-color);
+}
+
+.active-scaffold tr.even-record {
+  background-color: var(--as-column-even-bg);
+}
+.active-scaffold tr.even-record td {
+  border-left-color: var(--as-column-even-border-color);
+}
+
+.active-scaffold tr.record td.sorted {
+  background-color: var(--as-column-sorted-bg);
+  border-bottom-color: var(--as-column-sorted-border-color);
+}
+
+.active-scaffold tr.even-record td.sorted {
+  background-color: var(--as-column-even-sorted-bg);
+  border-bottom-color: var(--as-column-even-sorted-border-color);
+}
+
+.active-scaffold tbody.records td.empty {
+  color: var(--as-column-empty-color);
+}
+
+/* Table :: Actions (Edit, Delete)
+   ============================= */
+.active-scaffold tr.record td.actions {
+  border-color: var(--as-column-actions-border-color);
+}
+
+.active-scaffold tr.record td.actions table td.separator {
+  border-color: var(--as-column-actions-border-color);
+}
+
+.active-scaffold tr.record td.actions a.disabled {
+  color: var(--as-actions-disabled-color);
+}
+
+.active-scaffold .actions .action_group div:hover {
+  background-color: var(--as-action-group-hover-bg);
+}
+
+.active-scaffold .actions .action_group {
+  color: var(--as-action-group-color);
+}
+
+.active-scaffold .actions .action_group ul {
+  border-color: var(--as-action-group-border-color);
+}
+
+.active-scaffold .actions .action_group ul li {
+  background-color: var(--as-action-group-items-bg);
+  border-color: var(--as-action-group-items-border-color);
+}
+
+.active-scaffold .actions .action_group ul li a {
+  color: var(--as-action-group-link-color);
+}
+
+/* Table :: Inline Adapter
+   ============================= */
+
+.active-scaffold .view {
+  background-color: var(--as-nested-bg);
+  border-color: var(--as-nested-border-color);
+}
+
+/* Nested
+   ======================== */
+
+.active-scaffold .active-scaffold .active-scaffold-footer {
+  color: var(--as-nested-footer-color);
+}
+
+.active-scaffold .active-scaffold tr.record {
+  background-color: var(--as-nested-column-bg);
+  border-color: var(--as-nested-column-border-color);
+}
+.active-scaffold .active-scaffold tr.even-record {
+  background-color: var(--as-nested-column-even-bg);
+}
+
+.active-scaffold .active-scaffold td.inline-adapter-cell {
+  background-color: var(--as-second-nested-bg);
+  border-color: var(--as-second-nested-border-color);
+}
+
+.active-scaffold .active-scaffold .active-scaffold td.inline-adapter-cell {
+  background-color: var(--as-third-nested-bg);
+  border-color: var(--as-third-nested-border-color);
+}
+
+/* Footer
+   ========================== */
+
+.active-scaffold-calculations td {
+  background-color: var(--as-calculations-bg);
+  border-color: var(--as-calculations-border-color);
+}
+
+.active-scaffold-footer .next {
+  border-color: var(--as-pagination-border-color);
+}
+
+.active-scaffold-footer .previous {
+  border-color: var(--as-pagination-border-color);
+}
+
+/* Messages
+   ========================= */
+
+
+.active-scaffold .empty-message, .active-scaffold .filtered-message {
+  background-color: var(--as-msg-filtered-bg);
+  color: var(--as-msg-filtered-color);
+}
+
+.active-scaffold .message {
+  color: var(--as-msg-color);
+}
+
+.active-scaffold .error-message, .active-scaffold-component .error-message {
+  border-color: var(--as-msg-error-border-color);
+  background-color: var(--as-msg-error-bg);
+}
+
+.active-scaffold .warning-message {
+  border-color: var(--as-msg-warning-border-color);
+  background-color: var(--as-msg-warning-bg);
+}
+
+.active-scaffold .info-message {
+  border-color: var(--as-msg-info-border-color);
+  background-color: var(--as-msg-info-bg);
+}
+
+/* Error Styling
+   ========================== */
+
+.active-scaffold .errorExplanation {
+  background-color: var(--as-msg-error-bg);
+  border-color: var(--as-msg-error-border-color);
+}
+
+.active-scaffold .errorExplanation h2 {
+  color: var(--as-msg-color);
+  background-color: var(--as-msg-error-border-color);
+}
+
+/* Show
+   ============================= */
+
+.active-scaffold .show-view dt {
+  color: var(--as-label-color);
+}
+
+/* Form
+   ============================== */
+
+.active-scaffold h4,
+.active-scaffold h5 {
+  color: var(--as-form-title-color);
+}
+
+/* Form :: Fields
+   ============================== */
+
+.active-scaffold label {
+  color: var(--as-label-color);
+}
+
+.active-scaffold .description {
+  color: var(--as-description-color);
+}
+
+.active-scaffold label.example {
+  color: var(--as-placeholder-color);
+}
+
+.active-scaffold input.text-input,
+.active-scaffold select {
+  border-color: var(--as-input-border-color);
+}
+
+.active-scaffold input:invalid,
+.active-scaffold textarea:invalid,
+.active-scaffold select:invalid,
+.active-scaffold .fieldWithErrors input,
+.active-scaffold .field_with_errors input,
+.active-scaffold .fieldWithErrors textarea,
+.active-scaffold .field_with_errors textarea,
+.active-scaffold .fieldWithErrors select,
+.active-scaffold .field_with_errors select {
+  border-color: var(--as-input-error-border-color);
+}
+
+.active-scaffold input.example {
+  color: var(--as-placeholder-color);
+}
+
+.active-scaffold select:focus,
+.active-scaffold input.text-input:focus {
+  background-color: var(--as-input-focus-bg);
+}
+
+.active-scaffold textarea {
+  border-color: var(--as-input-border-color);
+}
+
+.active-scaffold form .checkbox-list.draggable-list {
+  background-color: var(--as-draggable-list-bg);
+}
+
+.active-scaffold form .checkbox-list.draggable-list.selected {
+  background-color: var(--as-draggable-list-selected-bg);
+}
+.active-scaffold .ui-droppable-disabled, .active-scaffold .ui-droppable-disabled.selected {
+  background-color: var(--as-draggable-list-disabled-bg);
+}
+
+
+/* Form :: Association Sub-Forms
+   ============================== */
+
+.active-scaffold .sub-form table th {
+  color: var(--as-subform-header-color);
+}
+
+.active-scaffold .sub-form .checkbox-list {
+  background-color: var(--as-checkbox-list-bg);
+  border-color: var(--as-input-border-color);
+}
+
+.active-scaffold .vertical-sub-form .sub-form-record + .sub-form-record {
+  border-color: var(--as-vertical-sub-form-border-color);
+}
+
+.active-scaffold .sub-form table td {
+  color: var(--as-subform-color);
+}
+
+.active-scaffold .sub-form .footer {
+  color: var(--as-subform-footer-color);
+}
+
+.as_touch th a, .as_touch th a:visited {
+  color: var(--as-column-header-link-color);
+}
