@@ -153,6 +153,8 @@ module ActiveScaffold
     form_submit: {attributes: {class: 'submit'}}, # input type=submit
     form_apply: {attributes: {class: 'submit'}}, # input type=submit
     form_cancel: {}, # a
+    field_add_new_subform: {},
+    field_add_new_popup: {},
     show_title: {tag: :h4},
     show_actions: {tag: :div},
     show_columns_block: {tag: :dl},

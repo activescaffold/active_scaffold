@@ -106,7 +106,7 @@ module ActiveScaffold
         url_options[:parent_model] ||= record.class.name
         url_options[:parent_column] ||= column.name
         url_options.reverse_merge! options[:url_options] if options[:url_options]
-        link_to(link_text, url_options, remote: true, data: {position: :popup}, class: 'as_action')
+        link_to(link_text, url_options, as_element_attributes(:field_add_new_popup, remote: true, data: {position: :popup}, class: 'as_action'))
       end
 
       def active_scaffold_new_record_subform(column, record, html_options, options: {}, new_record_attributes: nil, locals: {}, skip_link: false)
@@ -146,7 +146,7 @@ module ActiveScaffold
         create_new = active_scaffold_add_new_text(options, :add_new_text, :create_new)
         data = {select_id: select_id, subform_id: subform_id, subform_text: add_existing, select_text: create_new}
         label = data[record.send(column.name)&.new_record? ? :subform_text : :select_text]
-        link_to(label, '#', data: data, class: 'show-new-subform')
+        link_to(label, '#', as_element_attributes(:field_add_new_subform, data: data, class: 'show-new-subform'))
       end
 
       def active_scaffold_file_with_content(column, options, content, remove_file_prefix, controls_class, ui_options: column.options)
