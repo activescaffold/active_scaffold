@@ -56,5 +56,28 @@ module ActiveScaffold
       require 'active_scaffold/extensions/localize'
       require 'active_scaffold/extensions/paginator_extensions'
     end
+
+    initializer 'active_scaffold.assets' do |app|
+      if defined?(::Sprockets)
+        # Tell sprockets where your assets are located
+        app.config.assets.precompile += %w[active_scaffold/manifest.js]
+      end
+    end
+
+    config.after_initialize do
+      if defined?(Propshaft)
+        ActiveScaffold::Assets::JqueryUiThemeGenerator.generate_if_needed if ActiveScaffold.jquery_ui_included?
+        ActiveScaffold::Assets::CssDepsGenerator.generate!
+      end
+    end
+
+    # Make rake tasks available to the host app
+    rake_tasks do
+      # Load all rake tasks
+      Dir[File.expand_path('../tasks/active_scaffold/**/*.rake', __dir__)].each { |f| load f }
+
+      # Load the precompile hook
+      load File.expand_path('railties/tasks.rake', __dir__)
+    end
   end
 end

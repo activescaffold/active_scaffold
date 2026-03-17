@@ -39,6 +39,11 @@ Metrics/ClassLength:
   Max: 500
   CountComments: false
 
+Metrics/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+
 Layout/LineLength:
   Exclude:
     - 'test/**/*'
@@ -95,7 +100,7 @@ Rails/DynamicFindBy:
 
 Rails/RakeEnvironment:
   Exclude:
-    - lib/tasks/brakeman.rake
+    - lib/tasks/*.rake
 
 Rails/ActionControllerTestCase:
   Enabled: false

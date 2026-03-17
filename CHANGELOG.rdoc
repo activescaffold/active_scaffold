@@ -8,16 +8,20 @@
 - Add layout multiple support to ActionColumns, so forms can have columns
 - Better exception handling when error is raised rendering a column, no more empty backtraces
 - Fix render field on subform for polymorphic association, or nested subforms in some cases
+- Add clear_form_column_if, works like hide_form_column_if but sends the column empty, to clear it
+- Add checkboxes form UI, like select form UI in collection associations but supporting DB columns (e.g. columns using serialize)
+- Support draggable form UI in non-association columns, like checkboxes (e.g. columns using serialize)
+- Add list UI for select_multiple, draggable, checkboxes, select and radio. Select and radio were handled by format_column_value, but the list UI works better
+- Support propshaft with dartsass-rails, so it doesn't depend on dartsass-sprockets and one dartsass gem must be added to the Gemfile
+
+= 4.2.4
+- Fix creating records with constraints on collection associations (broken on 4.2.2 on some cases)
 
 = 4.2.3
 - Make simplified searches on LogicalQueryParser bridge working with upstream gem, no need for my fork
 - Styles for radio form_ui
 - Fix style for checkbox list in subform
-- Fix constraints (broken on 4.2.2 on some cases)
-- Add clear_form_column_if, works like hide_form_column_if but sends the column empty, to clear it
-- Add checkboxes form UI, like select form UI in collection associations but supporting DB columns (e.g. columns using serialize)
-- Support draggable form UI in non-association columns, like checkboxes (e.g. columns using serialize)
-- Add list UI for select_multiple, dragg, checkboxes, select and radio. Select and radio were handled by format_column_value, but the list UI works better
+- Fix creating records with constraints on through associations (broken on 4.2.2 on some cases)
 
 = 4.2.2
 - Support setting form_ui_options with nil, for subforms

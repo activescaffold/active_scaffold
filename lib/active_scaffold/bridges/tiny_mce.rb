@@ -11,7 +11,12 @@ class ActiveScaffold::Bridges::TinyMce < ActiveScaffold::DataStructures::Bridge
   end
 
   def self.javascripts
-    ['tinymce', 'jquery/tiny_mce_bridge']
+    lib = defined?(Sprockets) ? ['tinymce'] : ['tinymce/tinymce', 'tinymce/rails']
+    lib << 'active_scaffold/tiny_mce_bridge'
+  end
+
+  def self.javascript_tags
+    :tinymce_preinit unless defined?(Sprockets)
   end
 
   def self.stylesheets

@@ -143,7 +143,7 @@ module ActiveScaffold
         rescue StandardError => e
           message = "on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
           ActiveScaffold.log_exception(e, message)
-          raise e.class, "#{e.message} -- #{message}", e.backtrace
+          raise e, "#{e.message} -- #{message}", e.backtrace
         end
       end
 
