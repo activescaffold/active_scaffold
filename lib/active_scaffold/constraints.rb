@@ -159,7 +159,7 @@ module ActiveScaffold
       if association.through_singular? && association.source_reflection.reverse
         create_on_through_singular(record, association, association.klass.find(value))
       elsif association.collection?
-        record.send(k.to_s).send(:<<, association.klass.find(value)) unless association.nested?
+        record.send(association.name).send(:<<, association.klass.find(value)) unless association.nested?
       elsif association.polymorphic?
         apply_constraint_on_polymorphic_association(record, association, value)
       elsif !association.source_reflection&.through? && # regular singular association, or one-level through association
