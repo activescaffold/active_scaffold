@@ -140,7 +140,7 @@ If you're not using importmaps, then you can load the JS files individually, but
 
 ### With Sprockets
 
-For the JS, you can keep using *= require active_scaffold in your application.js
+For the JS, you can keep using `//= require active_scaffold` in your application.js
 
 It's possible to use importmaps too, add active_scaffold to importmap, that should have jquery and jquery_ujs or rails_ujs too:
 
