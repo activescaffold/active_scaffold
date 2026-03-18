@@ -10,7 +10,6 @@ module ActiveScaffold
   autoload :Constraints, 'active_scaffold/constraints'
   autoload :Core, 'active_scaffold/core'
   autoload :Finder, 'active_scaffold/finder'
-  autoload :JqueryUiManifest, 'active_scaffold/jquery_ui_manifest'
   autoload :MarkedModel, 'active_scaffold/marked_model'
   autoload :OrmChecks, 'active_scaffold/orm_checks'
   autoload :Registry, 'active_scaffold/registry'
