@@ -2,8 +2,9 @@
 
 module ActiveScaffold
   module Assets
-    autoload :JqueryUiThemeGenerator, 'active_scaffold/assets/jquery_ui_theme_generator'
     autoload :CssDepsGenerator, 'active_scaffold/assets/css_deps_generator'
+    autoload :JqueryUiManifest, 'active_scaffold/assets/jquery_ui_manifest'
+    autoload :JqueryUiThemeGenerator, 'active_scaffold/assets/jquery_ui_theme_generator'
 
     CORE_STYLESHEETS = ['active_scaffold/core'].freeze
     CORE_JAVASCRIPTS = ['jquery.ba-throttle-debounce', 'jquery.visible.min', 'active_scaffold/jquery.editinplace', 'active_scaffold/active_scaffold'].freeze
@@ -88,7 +89,7 @@ module ActiveScaffold
         return [] unless ActiveScaffold.jquery_ui_included?
 
         # For Propshaft, we need all jQuery UI dependencies
-        ActiveScaffold::JqueryUiManifest.all_dependencies +
+        ActiveScaffold::Assets::JqueryUiManifest.all_dependencies +
           ['jquery-ui-timepicker-addon', 'active_scaffold/date_picker_bridge', 'active_scaffold/draggable_lists']
       end
 

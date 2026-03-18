@@ -26,7 +26,7 @@ module ActiveScaffold
         end
 
         if Object.const_defined?(:Jquery) && Jquery.const_defined?(:Ui)
-          config[:jqueryUi] = ActiveScaffold::JqueryUiManifest.all_dependencies.map { |asset| asset_path(asset, extname: '.js') }
+          config[:jqueryUi] = ActiveScaffold::Assets::JqueryUiManifest.all_dependencies.map { |asset| asset_path(asset, extname: '.js') }
         end
 
         javascript_tag <<~JS
