@@ -94,7 +94,7 @@ module ActiveScaffold
       end
 
       def jquery_ui_js_code
-        ActiveScaffold::Bridges[:date_picker].localization
+        ActiveScaffold::Bridges[:date_picker].localization if ActiveScaffold.jquery_ui_included?
       end
 
       def active_scaffold_js_config

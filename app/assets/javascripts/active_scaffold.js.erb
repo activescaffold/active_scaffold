@@ -4,4 +4,4 @@
     I18n.available_locales.each { |locale| Rails.root.glob("config/locales/#{locale}.*").each { |path| depend_on path.to_s } }
   end
 %>
-ActiveScaffold.config = <%= ActiveScaffold.js_config.to_json %>;
+<%= ActiveScaffold::Assets.active_scaffold_js_code %>
