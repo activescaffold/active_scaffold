@@ -261,7 +261,8 @@ module ActiveScaffold::Config
 
       underscored_name = action_name.to_s.underscore.to_sym
       unless @actions.include? underscored_name
-        raise ArgumentError, "#{action_name.to_s.camelcase} is not enabled. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
+        raise ArgumentError,
+              "#{action_name.to_s.camelcase} is not enabled for #{model.name}. Please enable it or remove any references in your configuration (e.g. config.#{underscored_name}.columns = [...])."
       end
 
       @action_configs ||= {}
@@ -283,7 +284,9 @@ module ActiveScaffold::Config
     end
 
     def self.config_class?(name)
-      ActiveScaffold::Config.const_defined? name.to_s.camelcase
+      ActiveScaffold::Config.const_defined? name.to_s.camelcase, false
+    rescue NameError
+      false
     end
 
     def self.respond_to_missing?(name, include_all = false)
@@ -331,7 +334,8 @@ module ActiveScaffold::Config
       end
 
       def method_missing(name, *args)
-        value = @conf.actions.include?(name) ? @conf.send(name) : super
+        # check if it's an action instead of checking if action is enabled, so we get a better error message when the action is not setup in the controller
+        value = args.empty? && @conf.class.config_class?(name) ? @conf.send(name) : super
         value.is_a?(Base) ? action_user_settings(value) : value
       end
 

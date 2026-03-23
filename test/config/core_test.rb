@@ -39,6 +39,7 @@ module Config
       @config.actions = [:list]
       assert_not @config.actions.include?(:create)
       assert_equal [:list], @config.actions.to_a
+      assert_raises(ArgumentError) { @config.new_user_settings({}, {}).create }
     end
 
     def test_form_ui_in_sti
