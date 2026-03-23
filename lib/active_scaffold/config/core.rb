@@ -284,7 +284,9 @@ module ActiveScaffold::Config
     end
 
     def self.config_class?(name)
-      ActiveScaffold::Config.const_defined? name.to_s.camelcase
+      ActiveScaffold::Config.const_defined? name.to_s.camelcase, false
+    rescue NameError
+      false
     end
 
     def self.respond_to_missing?(name, include_all = false)
@@ -332,7 +334,8 @@ module ActiveScaffold::Config
       end
 
       def method_missing(name, *args)
-        value = @conf.send(name) # don't check if action is enabled, calling super would raise exception and @conf will raise with a better error message
+        # check if it's an action instead of checking if action is enabled, so we get a better error message when the action is not setup in the controller
+        value = args.empty? && @conf.class.config_class?(name) ? @conf.send(name) : super
         value.is_a?(Base) ? action_user_settings(value) : value
       end
 
