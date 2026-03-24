@@ -64,7 +64,7 @@ module ActiveScaffold
       end
     end
 
-    initializer "active_scaffold.testing" do
+    initializer 'active_scaffold.testing' do
       ActiveSupport.on_load(:action_dispatch_integration_test) do
         include ActiveScaffold::Testing::AssertEmbeddedLoad
       end

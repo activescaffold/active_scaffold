@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Testing
     module AssertEmbeddedLoad
@@ -23,7 +25,7 @@ module ActiveScaffold
         elsif defined?(RSpec)
           expect(response).to have_http_status(:ok)
         else
-          raise "No known assertion method for response"
+          raise 'No known assertion method for response'
         end
       end
     end
