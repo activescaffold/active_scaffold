@@ -43,6 +43,10 @@ module ActiveScaffold
     ActiveScaffold.autoload_subdir('helpers', self)
   end
 
+  module Testing
+    ActiveScaffold.autoload_subdir('testing', self)
+  end
+
   class ControllerNotFound < RuntimeError; end
   class MalformedConstraint < RuntimeError; end
   class RecordNotAllowed < RuntimeError; end

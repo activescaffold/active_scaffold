@@ -64,6 +64,23 @@ module ActiveScaffold
       end
     end
 
+    initializer "active_scaffold.testing" do
+      ActiveSupport.on_load(:action_dispatch_integration_test) do
+        include ActiveScaffold::Testing::AssertEmbeddedLoad
+      end
+
+      ActiveSupport.on_load(:action_controller_test_case) do
+        include ActiveScaffold::Testing::AssertEmbeddedLoad
+      end
+
+      if defined?(RSpec)
+        RSpec.configure do |config|
+          config.include ActiveScaffold::Testing::AssertEmbeddedLoad, type: :request
+          config.include ActiveScaffold::Testing::AssertEmbeddedLoad, type: :controller
+        end
+      end
+    end
+
     config.after_initialize do
       if defined?(Propshaft)
         ActiveScaffold::Assets::JqueryUiThemeGenerator.generate_if_needed if ActiveScaffold.jquery_ui_included?
