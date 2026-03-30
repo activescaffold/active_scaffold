@@ -15,7 +15,9 @@ namespace :bundle do
 
     gemfiles.each do |gemfile|
       puts "Locking #{File.basename(gemfile)}..."
-      system("bundle lock --gemfile='#{gemfile}'")
+      Bundler.with_unbundled_env do
+        system("bundle lock --gemfile='#{gemfile}'")
+      end
     end
 
     puts 'Done!'

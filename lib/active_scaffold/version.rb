@@ -3,8 +3,8 @@
 module ActiveScaffold
   module Version
     MAJOR = 4
-    MINOR = 2
-    PATCH = 4
+    MINOR = 3
+    PATCH = 0
     FIX = nil
 
     STRING = [MAJOR, MINOR, PATCH, FIX].compact.join('.')
