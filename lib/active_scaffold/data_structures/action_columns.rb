@@ -64,6 +64,8 @@ module ActiveScaffold::DataStructures
           end
           @set = merged
         end
+      else
+        raise ArgumentError, "invalid layout mode: #{value.inspect}"
       end
       @layout = value
     end
