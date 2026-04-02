@@ -1,0 +1,31 @@
+class ActiveScaffold::Bridges::LogicalQueryParser
+  grammar TokensGrammar
+    rule exp
+      sp* exp:(literal_exp / word) sp* <ExpNode>
+    end
+
+    rule literal_exp
+      word sp+ exp <LiteralExpNode>
+    end
+
+    rule word
+      word:(quoted_word / unquoted_word) <WordNode>
+    end
+
+    rule quoted_word
+      '"' ('\"' / !'"' .)* '"'
+    end
+
+    rule unquoted_word
+      atom+
+    end
+
+    rule sp
+      ' ' / '　'
+    end
+
+    rule atom
+      !sp .
+    end
+  end
+end

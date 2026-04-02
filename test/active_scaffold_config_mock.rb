@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffoldConfigMock
   module ClassMethods
     class Config
@@ -27,7 +29,5 @@ module ActiveScaffoldConfigMock
     klass.extend ClassMethods
   end
 
-  def active_scaffold_config
-    self.class.active_scaffold_config
-  end
+  delegate :active_scaffold_config, to: :class
 end

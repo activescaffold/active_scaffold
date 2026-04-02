@@ -1,0 +1,1268 @@
+.active-scaffold form,
+.active-scaffold table,
+.active-scaffold p,
+.active-scaffold div,
+.active-scaffold fieldset {
+margin: 0;
+padding: 0;
+}
+
+.active-scaffold {
+margin: 5px 0;
+}
+
+.active-scaffold table {
+width: 100%;
+border-collapse: collapse;
+}
+.active-scaffold td, .active-scaffold th { padding: 0; }
+
+.active-scaffold a,
+.active-scaffold a:visited {
+text-decoration: none;
+}
+
+.active-scaffold div.actions a img,
+.active-scaffold td.actions a img {
+border: none;
+vertical-align: middle;
+}
+
+.active-scaffold div.actions a.disabled img,
+.active-scaffold td.actions a.disabled img {
+opacity: 0.5;
+}
+
+.active-scaffold .clear-fix {
+clear: both;
+}
+
+noscript.active-scaffold {
+border-left: solid 5px;
+font-size: 11px;
+font-weight: bold;
+padding: 5px 20px 5px 5px;
+}
+
+.active-scaffold .mark_record_column {
+  width: 1px;
+}
+
+/* Header
+   ======================== */
+
+.active-scaffold-header, .form-footer + .active-scaffold-footer {
+position: relative;
+}
+
+.active-scaffold-header h2 {
+padding: 2px 0px;
+margin: 0;
+font-weight: bold;
+font-size: 160%;
+}
+
+.active-scaffold div.actions a,
+.active-scaffold div.actions {
+float: right;
+font-weight: bold;
+font-size: 14px;
+letter-spacing: -1px;
+text-decoration: none;
+padding: 1px 2px;
+white-space: nowrap;
+margin-left: 5px;
+background-position: 1px 50%;
+background-repeat: no-repeat;
+}
+
+.active-scaffold div.actions a {
+padding: 5px 5px;
+margin-left: 0px;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > .action_group > a,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a {
+padding: 1px 5px;
+}
+
+.active-scaffold div.actions div.action_group, .active-scaffold div.actions div.filters {
+display: inline;
+float: right;
+}
+
+.active-scaffold div.actions div.action_group li a,
+.active-scaffold div.actions div.action_group li div {
+float: none;
+margin: 0;
+}
+
+.active-scaffold div.actions .action_group ul {
+line-height: 130%;
+top: 19px;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions .action_group ul {
+top: 14px;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions .action_group ul ul {
+top: -3px;
+}
+
+.active-scaffold div.actions a.separator {
+  border-right: 1px solid;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.active-scaffold div.actions a.disabled {
+opacity: 0.5;
+}
+
+.active-scaffold-header div.actions a.new,
+.active-scaffold-header div.actions a.new_existing,
+.active-scaffold-header div.actions a.show_search,
+.active-scaffold-header div.actions a.show_config_list,
+.active-scaffold div.actions div.action_group div {
+margin:0;
+padding: 5px 5px 5px 25px;
+background-position: 5px 50%;
+background-repeat: no-repeat;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.new,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.new_existing,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.show_search,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions > a.show_config_list,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions div.action_group > div {
+margin:0;
+padding: 1px 5px 1px 20px;
+background-position: 1px 50%;
+background-repeat: no-repeat;
+}
+
+.active-scaffold div.actions a.disabled:hover,
+.active-scaffold div.actions a.disabled:hover {
+background-color: transparent;
+cursor: default;
+}
+
+/* Table :: Column Headers
+   ============================= */
+
+.active-scaffold th {
+text-align: left;
+}
+
+.active-scaffold th a,
+.active-scaffold th p,
+.active-scaffold .show-view th {
+font-weight: bold;
+font-size: 11px;
+}
+.active-scaffold th a,
+.active-scaffold th p {
+display: block;
+}
+
+.active-scaffold th a, .active-scaffold th a:visited {
+padding: 2px 2px 2px 5px;
+}
+
+.active-scaffold th p,
+.active-scaffold .show-view th {
+padding: 2px 5px;
+}
+
+.active-scaffold th.sorted a {
+padding-right: 18px;
+}
+
+.active-scaffold th.asc a,
+.active-scaffold th.desc a,
+.active-scaffold th.loading a {
+  background: right 50% no-repeat;
+}
+
+.active-scaffold th .mark_heading {
+margin-left: 5px;
+}
+
+.active-scaffold th.hidden, .active-scaffold td.hidden {
+display: none;
+}
+
+/* Table :: Record Rows
+   ============================= */
+
+.active-scaffold tr.record td,
+.active-scaffold .show-view td {
+padding: 5px 4px;
+}
+.active-scaffold tr.record td {
+font-size: 11px;
+border: solid 1px;
+border-width: 0 0 1px 1px;
+}
+
+.active-scaffold tr.record td.messages-container {
+padding: 0px;
+}
+
+.active-scaffold tbody.records td.empty {
+text-align: center;
+}
+.active-scaffold tbody.records td.in_place_editor_field .handle {
+display:none;
+}
+.active-scaffold tbody.records td.in_place_editor_field.empty .handle {
+display:inline;
+}
+
+.active-scaffold td.numeric,
+.active-scaffold-calculations td {
+text-align: right;
+}
+
+.as-slider { display: block; }
+.as-slider .ui-slider-range {
+  border: 0;
+  height: 100%;
+  border-radius: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.as-slider.ui-state-disabled {
+  opacity: 1;
+}
+
+/* Table :: Actions (Edit, Delete)
+   ============================= */
+.active-scaffold tr.record td.actions {
+border-right: solid 1px;
+padding: 0;
+min-width: 1%;
+}
+
+.active-scaffold tr.record td.actions table {
+float: right;
+width: auto;
+margin-right: 5px;
+}
+
+.active-scaffold tr.record td.actions table td {
+border: none;
+text-align: right;
+padding: 0 2px;
+}
+
+.active-scaffold tr.record td.actions table td.separator {
+  border-right: solid 1px;
+  padding: 0;
+}
+
+.active-scaffold tr.record td.actions a,
+.active-scaffold tr.record td.actions div {
+font-weight: bold;
+font-size: 11px;
+letter-spacing: -1px;
+padding: 2px;
+margin: 0 2px;
+line-height: 16px;
+white-space: nowrap;
+}
+
+.active-scaffold tr.record td.actions a.disabled {
+opacity: 0.5;
+}
+
+.active-scaffold .actions .action_group {
+position: relative;
+text-align: left;
+}
+
+.active-scaffold .actions .action_group ul {
+border: 2px solid;
+list-style-type: none;
+margin: 0;
+padding: 0;
+position: absolute;
+line-height: 200%;
+display: none;
+min-width: 150px;
+right: 0px;
+z-index: 2;
+}
+.active-scaffold .actions .action_group.dyn > ul {
+width: auto;
+display: block;
+}
+
+.active-scaffold .actions .action_group ul ul {
+display: none;
+position: absolute;
+top: 0;
+right: 150px;
+}
+
+.active-scaffold .actions .action_group ul li {
+background: none repeat scroll 0 0;
+border-top: 1px dashed;
+display: block;
+position: relative;
+width: auto;
+text-align: left;
+}
+
+.active-scaffold .actions .action_group ul li.separator {
+  border-top-width: 1px;
+  border-top-style: solid;
+  height: 0;
+}
+
+.active-scaffold .actions .action_group ul li.separator + li {
+  border-top: none;
+}
+
+.active-scaffold .actions .action_group ul li div {
+  margin: 0;
+  padding: 5px 5px 5px 25px;
+  background-position: 5px 50%;
+  background-repeat: no-repeat;
+}
+
+.active-scaffold .actions .action_group ul li a {
+  display: block;
+  margin: 0;
+  padding: 5px 5px 5px 25px;
+  background-position: 5px 50%;
+  background-repeat: no-repeat;
+}
+.active-scaffold .actions .action_group.dyn > ul li a {
+  padding-left: 5px;
+}
+
+.active-scaffold .actions .action_group ul li.top {
+border-top-width: 0px;
+}
+
+.active-scaffold .actions .action_group:hover ul ul,
+.active-scaffold .actions .action_group:hover ul ul ul {
+display: none;
+}
+
+.active-scaffold .actions .action_group:hover > ul,
+.active-scaffold .actions .action_group ul li:hover > ul,
+.active-scaffold .actions .action_group ul ul li:hover ul {
+display: block;
+}
+
+/* Table :: Inline Adapter
+   ============================= */
+
+.active-scaffold .view {
+padding: 4px;
+border: solid 1px;
+}
+
+.active-scaffold tbody.records td.inline-adapter-cell .view {
+border-top: none;
+}
+
+.active-scaffold .before-header td.inline-adapter-cell .view {
+border-bottom: none;
+}
+
+.active-scaffold a.inline-adapter-close {
+float: right;
+text-indent: -4000px;
+width: 16px;
+height: 17px;
+background: 0 0 no-repeat;
+overflow: hidden;
+}
+
+/* Nested
+   ======================== */
+
+.active-scaffold .active-scaffold .active-scaffold-header {
+margin-right: 25px;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header h2 {
+font-size: 12px;
+font-weight: bold;
+}
+
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions {
+top: 0px;
+right: 0px;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-header div.actions a,
+.active-scaffold .active-scaffold .active-scaffold-header div.actions div {
+font-weight: bold;
+font-size: 11px;
+}
+
+.active-scaffold .active-scaffold .view {
+background-color: transparent;
+padding: 0px;
+border: none;
+}
+
+.active-scaffold .active-scaffold  td {
+border-bottom: solid 1px;
+border-left: solid 1px;
+}
+
+.active-scaffold .active-scaffold td.inline-adapter-cell {
+padding: 4px;
+border: solid 1px;
+border-top: none;
+}
+
+.active-scaffold .active-scaffold .active-scaffold td.inline-adapter-cell {
+padding: 4px;
+border: solid 1px;
+border-top: none;
+}
+
+.active-scaffold .active-scaffold .active-scaffold-footer {
+font-size: 11px;
+}
+
+/* Footer
+   ========================== */
+
+.active-scaffold-calculations td {
+border-top: 2px solid;
+font-weight: bold;
+font-size: 12px;
+}
+
+.active-scaffold .active-scaffold-footer {
+padding: 3px 0px 2px 0px;
+border-bottom: none;
+font-weight: bold;
+font-size: 12px;
+}
+.active-scaffold .active-scaffold-footer > br {
+clear: both;
+}
+
+.active-scaffold-footer .active-scaffold-pagination {
+float: right;
+white-space: nowrap;
+margin-right: 5px;
+}
+.active-scaffold-footer .active-scaffold-pagination.auto-paginate {
+float: left;
+}
+
+.active-scaffold-footer a {
+text-decoration: none;
+letter-spacing: 0;
+padding: 0 2px;
+margin: 0 -2px;
+font-weight: bold;
+font-size: 12px;
+}
+
+.active-scaffold-footer .next {
+margin-left: 0;
+padding-left: 5px;
+border-left: solid 1px;
+}
+
+.active-scaffold-footer .previous {
+margin-right: 0;
+padding-right: 5px;
+border-right: solid 1px;
+}
+
+/* Messages
+   ========================= */
+
+.active-scaffold .messages-container,
+.active-scaffold .active-scaffold .messages-container{
+padding: 0;
+margin: 0 7px;
+border: none;
+}
+
+.active-scaffold .empty-message, .active-scaffold .filtered-message {
+padding: 4px;
+text-align: center;
+position: relative;
+}
+.active-scaffold .filtered-message {
+  display: flex;
+}
+.active-scaffold .filtered-message > * {
+  flex-grow: 1;
+}
+
+.active-scaffold .message, .active-scaffold-component .message {
+font-size: 11px;
+font-weight: bold;
+padding: 5px 20px 5px 5px;
+position: relative;
+margin: 2px 7px;
+line-height: 12px;
+}
+.active-scaffold .message .timestamp,
+.active-scaffold .message .message-content {
+display: inline;
+}
+
+.active-scaffold .filtered-message .reset {
+margin-right: 5px;
+white-space: nowrap;
+flex-grow: 0;
+padding: 0;
+}
+
+.active-scaffold .message a.close {
+position: absolute;
+right: 10px;
+top: 4px;
+padding: 0;
+font-weight: bold;
+font-size: 11px;
+letter-spacing: -1px;
+}
+
+.active-scaffold .messages-container .message, .active-scaffold-component .message {
+margin: 0;
+}
+
+.active-scaffold .error-message, .active-scaffold-component .error-message {
+border-left: solid 5px;
+}
+
+.active-scaffold .warning-message {
+border-left: solid 5px;
+}
+
+.active-scaffold .info-message {
+border-left: solid 5px;
+}
+
+/* Error Styling
+   ========================== */
+
+.active-scaffold .errorExplanation {
+border: solid 1px;
+}
+
+.active-scaffold fieldset {
+clear: both;
+}
+
+.active-scaffold .errorExplanation h2 {
+padding: 2px 5px;
+font-size: 11px;
+margin: 0;
+letter-spacing: 0;
+}
+
+.active-scaffold .errorExplanation ul {
+margin: 0;
+padding: 0 2px 4px 25px;
+list-style: disc;
+}
+
+.active-scaffold .errorExplanation p {
+font-size: 11px;
+padding: 2px 5px;
+margin: 0;
+}
+
+.active-scaffold .errorExplanation ul li {
+font-weight: bold;
+font-size: 11px;
+letter-spacing: -1px;
+margin: 0;
+padding: 0;
+background-color: transparent;
+}
+
+/* Loading Indicators
+   ============================== */
+
+.active-scaffold .loading-indicator {
+vertical-align: text-bottom;
+width: 16px;
+margin: 0;
+}
+
+.active-scaffold .active-scaffold-header .loading-indicator {
+margin-top: 3px;
+}
+
+/* Show
+   ============================= */
+
+.active-scaffold .show-view dl {
+margin-left: 5px;
+}
+.active-scaffold .show-view dl dl {
+margin-left: 0px;
+margin-top: 5px;
+}
+.active-scaffold .show-view dl dl:first-child {
+margin-top: 0;
+}
+.active-scaffold .show-view dl dl:after {
+display: block;
+content: "";
+height: 1px;
+clear: both;
+}
+
+.active-scaffold .show-view dt {
+width: 12em;
+float: left;
+clear: left;
+font-weight: normal;
+font-size: 11px;
+line-height: 16px;
+}
+
+.active-scaffold .show-view dd {
+float: left;
+font-weight: bold;
+font-size: 14px;
+padding-left: 5px;
+margin-bottom: 5px;
+}
+
+/* Form
+   ============================== */
+
+.active-scaffold dl {
+margin: 0;
+}
+
+.active-scaffold .submit {
+font-weight: bold;
+font-size: 14px;
+letter-spacing: 0;
+margin: 0;
+margin-top: 5px;
+}
+
+.active-scaffold form p {
+clear: both;
+}
+
+.active-scaffold fieldset {
+border: none;
+}
+
+.active-scaffold h4,
+.active-scaffold h5 {
+padding: 2px;
+margin: 0;
+text-transform: none;
+letter-spacing: -1px;
+font-weight: bold;
+font-size: 16px;
+}
+
+.active-scaffold h5 {
+padding: 0;
+margin: 5px 0 2px 0;
+font-size: 14px;
+letter-spacing: 0;
+}
+
+.active-scaffold ol {
+clear: both;
+float: none;
+padding: 2px;
+margin-left: 5px;
+list-style: none;
+}
+.active-scaffold ol:after {
+content: '.';
+visibility: hidden;
+line-height: 0;
+height: 0;
+display: block;
+clear: both;
+}
+
+.active-scaffold p.form-footer {
+clear: both;
+}
+.active-scaffold .form-footer.floating {
+position: fixed;
+bottom: 10px;
+z-index: 10;
+top: auto;
+left: auto;
+border: none;
+padding: 10px;
+background: white;
+}
+
+
+.active-scaffold a.as_cancel,
+.active-scaffold p.form-footer a {
+font-weight: bold;
+font-size: 14px;
+letter-spacing: 0;
+}
+
+.active-scaffold .active-scaffold-footer div.actions {
+  margin-top: -20px;
+}
+.active-scaffold .active-scaffold-footer div.actions a {
+  margin: 0;
+}
+
+/* Form :: Fields
+   ============================== */
+
+.active-scaffold li.form-element {
+clear: both;
+}
+
+.active-scaffold label, .active-scaffold label + a.visibility-toggle {
+font-weight: normal;
+font-size: 11px;
+}
+
+.active-scaffold li.form-element dt {
+float: left;
+width: 12em;
+padding: 6px 0;
+}
+
+.active-scaffold li.form-element dd {
+float: left;
+}
+
+.active-scaffold li.form-element dd p,
+.active-scaffold li.form-element dd input[type="checkbox"] {
+margin-top: 6px;
+}
+.active-scaffold form input[type=radio] {
+  margin-right: 5px;
+}
+.active-scaffold form label:has(input[type=radio]) {
+  margin-right: 10px;
+}
+
+.active-scaffold li.form-element dd .select-field:not(.draggable-lists-container) {
+  display: inline-block;
+}
+.active-scaffold li.form-element dd .select-field ~ .as_action {
+  vertical-align: top;
+  margin-left: 5px;
+}
+
+.active-scaffold .form dd {
+margin: 0;
+}
+
+
+.active-scaffold .description {
+display: inline-block;
+font-size: 10px;
+margin-left: 5px;
+}
+.active-scaffold .description .close {
+  display: none;
+}
+
+.active-scaffold .descriptions-hover, .active-scaffold .descriptions-click {
+  .horizontal-sub-form td .description {
+    display: none;
+  }
+  dd > .description {
+    position: absolute;
+  }
+  .horizontal-sub-form th, dd {
+    position: relative;
+    .description {
+      display: inline-block;
+      width: 1.5em;
+      height: 1.5em;
+      overflow: hidden;
+      white-space: nowrap;
+      color: blue;
+      top: 2px;
+      font-weight: normal;
+
+      &::before {
+        display: flex;
+        content: '?';
+        border-radius: 0.75em;
+        background: lightgray;
+        height: 1.5em;
+        width: 1.5em;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+  .horizontal-sub-form th .description {
+    left: 0;
+  }
+  dd > .description {
+    right: -1em;
+  }
+}
+
+.active-scaffold .descriptions-hover .horizontal-sub-form th .description:hover,
+.active-scaffold .descriptions-hover dd .description:hover,
+.active-scaffold .descriptions-click .horizontal-sub-form th .description.visible,
+.active-scaffold .descriptions-click dd .description.visible {
+  position: absolute;
+  width: auto;
+  height: auto;
+  white-space: normal;
+  background: white;
+  padding: 2px 5px;
+  z-index: 100; /* Ensure it's above other content */
+  display: block;
+  &::before {
+    display: none;
+  }
+}
+
+.active-scaffold .descriptions-click {
+  .horizontal-sub-form th .description, dd .description {
+    cursor: pointer;
+    &.visible {
+      overflow: visible;
+      cursor: auto;
+      padding-right: 10px;
+    }
+    &.visible .close {
+      &::before {
+        content: 'x';
+      }
+      position: absolute;
+      top: -10px;
+      right: -5px;
+      background: lightgray;
+      border-radius: 10px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.active-scaffold .sub-form.optional[style=""] ~ .description {
+  display: none;
+}
+
+.active-scaffold .required label {
+font-weight: bold;
+}
+
+.active-scaffold label.example {
+font-size: 11px;
+}
+
+.active-scaffold input.text-input,
+.active-scaffold select {
+font-weight: bold;
+font-size: 16px;
+letter-spacing: -1px;
+border: solid 1px;
+}
+
+.active-scaffold input.text-input {
+padding: 2px;
+}
+
+.active-scaffold .fieldWithErrors input,
+.active-scaffold .field_with_errors input,
+.active-scaffold .fieldWithErrors textarea,
+.active-scaffold .field_with_errors textarea,
+.active-scaffold .fieldWithErrors select,
+.active-scaffold .field_with_errors select {
+border: solid 1px;
+}
+
+.active-scaffold select {
+padding: 1px;
+}
+
+
+.active-scaffold textarea {
+font-size: 12px;
+padding: 1px;
+border: solid 1px;
+}
+
+.active-scaffold .refresh-link {
+display: inline-block;
+width: 25px;
+text-indent: 26px;
+overflow: hidden;
+background-position: 5px 50%;
+background-repeat: no-repeat;
+}
+
+.active-scaffold .checkbox-list {
+padding-left: 0px;
+}
+
+.active-scaffold .checkbox-list li {
+padding-right: 5px;
+display: inline;
+}
+
+.active-scaffold .checkbox-list li label {
+padding: 0 0 0 2px;
+}
+.active-scaffold .checkbox-list + .refresh-link {
+float: left;
+}
+.active-scaffold .check-buttons .check-all {
+  margin-right: 10px;
+}
+
+.active-scaffold .draggable-list {
+float: left;
+width: 300px;
+margin-right: 15px;
+min-height: 30px;
+max-height: 100px;
+overflow: auto;
+}
+.active-scaffold .draggable-list.hover {
+  opacity: 0.5;
+}
+.active-scaffold .draggable-lists-container {
+  display: flex;
+  align-items: start;
+}
+.active-scaffold .draggable-lists-container .loading-indicator { align-self: end; }
+
+.active-scaffold .draggable-lists-container .check-buttons {
+  margin-right: 15px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.active-scaffold .draggable-lists-container .check-buttons a {
+  display: block;
+  margin: 0;
+}
+
+
+.active-scaffold .draggable-list li {
+display: block;
+}
+
+li.draggable-item {
+  list-style: none;
+}
+li.draggable-item, li.draggable-item label {
+  cursor: move;
+}
+li.ui-draggable-disabled, li.ui-draggable-disabled label {
+  cursor: default;
+}
+li.draggable-item input,
+.active-scaffold .draggable-list input {
+display: none;
+}
+
+/* Form :: Sub-Sections
+   ============================== */
+
+.active-scaffold li.sub-section {
+clear: left;
+padding: 5px 0;
+}
+
+/* Form :: Multiple Columns Layout
+   ============================== */
+
+.active-scaffold .form-columns {
+  display: flex;
+  gap: 10px;
+
+  > ol.form {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* Form :: Association Sub-Forms
+   ============================== */
+
+.active-scaffold .sub-form {
+float: left;
+clear: left;
+padding: 5px 0;
+padding-left: 5px;
+}
+.active-scaffold .form-element .sub-form.optional {
+float: none;
+}
+.active-scaffold .form-element a.show-new-subform {
+margin-left: 5px;
+}
+
+.active-scaffold .sub-form h5 {
+margin-left: -5px;
+}
+
+.active-scaffold .sub-form table,
+.active-scaffold .sub-form table td {
+width: auto;
+background: none;
+}
+
+.active-scaffold .sub-form table th {
+font-weight: normal;
+font-size: 10px;
+padding: 0 5px 0 1px;
+background: none;
+}
+
+.active-scaffold .horizontal-sub-form td > dl > dt label {
+display: none;
+}
+
+.active-scaffold .horizontal-sub-form .associated-record dl {
+float: left;
+margin-right: 5px;
+}
+
+.active-scaffold .vertical-sub-form .sub-form-record + .sub-form-record {
+  border-top: 1px solid;
+  padding-top: 10px;
+}
+
+.active-scaffold .vertical-sub-form .sub-form-record .association-record-new:not(.locked) {
+  padding-bottom: 10px;
+}
+
+.active-scaffold .sub-form .checkbox-list {
+padding: 0 2px 2px 2px;
+border: solid 1px;
+}
+
+.active-scaffold .sub-form .checkbox-list li {
+display: block;
+}
+
+.active-scaffold .sub-form table td {
+border: none;
+background-color: transparent;
+padding: 1px;
+vertical-align: top;
+}
+
+.active-scaffold .sub-form .actions {
+vertical-align: middle;
+background-color: transparent;
+clear: left;
+}
+
+.active-scaffold .sub-form .association-record a.destroy {
+font-weight: bold;
+display: inline-block;
+height: 16px;
+padding: 0;
+width: 16px;
+text-indent: -4000px;
+background: 0 0 no-repeat;
+overflow: hidden;
+}
+.active-scaffold .sub-form .association-record * + a.destroy {
+  margin-left: 5px;
+}
+
+.active-scaffold .sub-form .locked a.destroy {
+display: none;
+}
+
+.active-scaffold .sub-form .association-record a {
+font-weight: bold;
+font-size: 12px;
+}
+
+.active-scaffold .sub-form input.text-input,
+.active-scaffold .sub-form select {
+letter-spacing: 0;
+font-weight: bold;
+font-size: 12px;
+}
+
+.active-scaffold .sub-form .footer-wrapper {
+margin-top: 3px;
+margin-right: 10px;
+}
+
+.active-scaffold .sub-form .footer {
+padding: 3px 5px;
+}
+
+.active-scaffold .sub-form .footer select,
+.active-scaffold .sub-form .footer input {
+font-weight: bold;
+font-size: 12px;
+padding: 0;
+}
+
+.active-scaffold a.visibility-toggle {
+font-size: 100%;
+}
+
+.active-scaffold-found {
+  float:left;
+}
+
+.active-scaffold .search .search_range .as_search_range_option {
+  vertical-align: top;
+  margin-right: 5px;
+}
+
+.active-scaffold .tabbed .nav-tabs {
+  border-bottom: 1px solid #ddd;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.active-scaffold .tabbed .nav-tabs:before,
+.active-scaffold .tabbed .nav-tabs:after {
+  display: table;
+  content: ' ';
+}
+.active-scaffold .tabbed .nav-tabs:after {
+  clear: both;
+}
+
+.active-scaffold .tabbed .nav-tabs > li {
+  float: left;
+  margin-bottom: -1px;
+  position: relative;
+  display: block;
+}
+
+.active-scaffold .tabbed .nav-tabs > li > a {
+  margin-right: 2px;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+.active-scaffold .tabbed .nav-tabs > li > a:focus,
+.active-scaffold .tabbed .nav-tabs > li > a:hover {
+  border-color: #eee #eee #ddd;
+  text-decoration: none;
+  background-color: #eee;
+}
+.active-scaffold .tabbed .nav-tabs > li > a.active,
+.active-scaffold .tabbed .nav-tabs > li > a.active:focus,
+.active-scaffold .tabbed .nav-tabs > li > a.active:hover {
+  border-color: #ddd;
+  border-bottom-color: transparent;
+  cursor: default;
+  background-color: #fff;
+}
+
+.active-scaffold .tabbed .tab-content > .tab-pane {
+  display: none;
+}
+.active-scaffold .tabbed .tab-content > .active {
+  display: block;
+}
+
+.as_touch a.inline-adapter-close {
+width: 25px;
+height: 27px;
+background: 0 0 no-repeat;
+}
+
+.as_touch .as_paginate {
+font-size: 20px;
+padding: 3px 10px;
+}
+
+.as_touch div.actions a {
+padding: 7px 5px;
+}
+
+.as_touch .active-scaffold div.actions a {
+padding: 7px 5px;
+}
+
+.as_touch div.actions .action_group ul {
+line-height: 130%;
+top: 23px;
+}
+
+.as_touch .active-scaffold div.actions .action_group ul {
+top: 23px;
+}
+
+.as_touch div.actions a.new,
+.as_touch div.actions a.new_existing,
+.as_touch div.actions a.show_search,
+.as_touch div.actions a.show_config_list,
+.as_touch div.actions div.action_group div {
+padding: 7px 5px 7px 25px;
+}
+
+.as_touch .active-scaffold div.actions > a.new,
+.as_touch .active-scaffold div.actions > a.new_existing,
+.as_touch .active-scaffold div.actions > a.show_search,
+.as_touch .active-scaffold div.actions > a.show_config_list,
+.as_touch .active-scaffold div.actions div.action_group > div {
+padding: 7px 5px 7px 25px;
+background-position: 5px 50%;
+}
+
+.as_touch .actions .action_group ul li div {
+padding: 7px 5px 7px 25px;
+}
+
+.as_touch .actions .action_group ul li a {
+padding: 7px 5px 7px 25px;
+}
+
+.as_touch .active-scaffold-header h2 {
+padding: 4px 0px;
+}
+
+.as_touch .active-scaffold div.actions a,
+.as_touch .active-scaffold div.actions div {
+font-weight: bold;
+font-size: 14px;
+}
+
+.as_touch .active-scaffold div.actions {
+  right: 15px;
+}
+
+.as_touch tr.record {
+line-height: 130%;
+}
+
+.as_touch th a, .as_touch th a:visited {
+padding: 5px 2px 5px 5px;
+}
+
+.as_touch tr.record td {
+padding: 5px 10px;
+}

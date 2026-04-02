@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   # A set of columns. These structures can be nested for organization.
   class ActionColumns < ActiveScaffold::DataStructures::Set
@@ -27,7 +29,7 @@ module ActiveScaffold::DataStructures
     end
 
     # this is so that array.delete and array.include?, etc., will work by column name
-    def ==(other) #:nodoc:
+    def ==(other) # :nodoc:
       # another ActionColumns
       if other.class == self.class
         label == other.label
@@ -39,12 +41,78 @@ module ActiveScaffold::DataStructures
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
 
+    # Layout mode: nil/:single for flat columns, :multiple for column groups
+    attr_reader :layout
+
+    def layout=(value)
+      case value
+      when :multiple
+        if @layout != :multiple && !@set.empty?
+          group = ActiveScaffold::DataStructures::ActionColumns.new(*@set)
+          group.action = action
+          @set = [group]
+        end
+      when :single, nil
+        if @layout == :multiple
+          merged = []
+          @set.each do |item|
+            if item.is_a?(ActiveScaffold::DataStructures::ActionColumns)
+              item.each { |col| merged << col }
+            else
+              merged << item
+            end
+          end
+          @set = merged
+        end
+      end
+      @layout = value
+    end
+
+    def set_values(*)
+      @layout = nil
+      super
+    end
+
+    def add(*)
+      if @layout == :multiple
+        group = ActiveScaffold::DataStructures::ActionColumns.new(*)
+        group.action = action
+        @set << group
+      else
+        super
+      end
+    end
+    alias << add
+
+    def [](arg)
+      if @layout == :multiple && arg.is_a?(Integer)
+        @set[arg]
+      else
+        find_by_name(arg)
+      end
+    end
+
+    def []=(index, val)
+      raise '[]= is only supported when layout is :multiple' unless @layout == :multiple
+      raise ArgumentError, "index #{index} is out of range, max is #{@set.length}" if index > @set.length
+
+      if index == @set.length
+        group = ActiveScaffold::DataStructures::ActionColumns.new(*val)
+        group.action = action
+        @set << group
+      else
+        @set[index].set_values(*val)
+      end
+    end
+
     # nests a subgroup in the column set
-    def add_subgroup(label, &proc)
+    def add_subgroup(label, &)
+      raise 'add_subgroup is not supported when layout is :multiple' if @layout == :multiple
+
       columns = ActiveScaffold::DataStructures::ActionColumns.new
       columns.label = label
       columns.action = action
-      columns.configure(&proc)
+      columns.configure(&)
       exclude columns.collect_columns
       add columns
     end
@@ -64,6 +132,7 @@ module ActiveScaffold::DataStructures
     def skip_column?(column_name, options)
       # skip if this matches a constrained column
       return true if constraint_columns.include?(column_name.to_sym)
+
       # skip this field if it's not authorized
       unless options[:for].authorized_for?(action: options[:action], crud_type: options[:crud_type] || action&.crud_type || :read, column: column_name)
         unauthorized_columns << column_name.to_sym
@@ -73,7 +142,7 @@ module ActiveScaffold::DataStructures
     end
 
     def each_column(options = {}, &proc)
-      columns = options[:core_columns] || action.core.columns
+      columns = options[:core_columns] || (action.core.user || action.core).columns
       self.unauthorized_columns = []
       options[:for] ||= columns.active_record_class
 
@@ -85,7 +154,8 @@ module ActiveScaffold::DataStructures
             yield item
           end
         else
-          next if skip_column?(item, options)
+          next if !options[:skip_authorization] && skip_column?(item, options)
+
           yield columns[item] || ActiveScaffold::DataStructures::Column.new(item.to_sym, columns.active_record_class)
         end
       end
@@ -139,7 +209,7 @@ module ActiveScaffold::DataStructures
 
     # called during clone or dup. makes the clone/dup deeper.
     def initialize_copy(from)
-      @set = from.instance_variable_get('@set').clone
+      @set = from.instance_variable_get(:@set).clone
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'performance_test_help'
 
@@ -16,7 +18,8 @@ class ListPeoplePerformanceTest < ActionDispatch::PerformanceTest
     PeopleController.class_eval do
       before_action :setup
       def list_columns
-        active_scaffold_config.columns.select { |col| %i[first_name last_name buildings].include?(col.name) }
+        cols = %i[first_name last_name buildings]
+        active_scaffold_config.columns.select { |col| cols.include?(col.name) }
       end
 
       def setup

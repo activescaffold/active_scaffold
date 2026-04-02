@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Bridges
     class ActiveStorage
@@ -22,10 +24,10 @@ module ActiveScaffold
 
         def configure_active_storage_field(field, field_type)
           columns << field
-          columns.exclude "#{field}_attachment#{'s' if field_type == :has_many}".to_sym
-          columns.exclude "#{field}_blob#{'s' if field_type == :has_many}".to_sym
-          columns[field].includes ||= ["#{field}_attachment#{'s' if field_type == :has_many}".to_sym, "#{field}_blob#{'s' if field_type == :has_many}".to_sym]
-          columns[field].form_ui ||= "active_storage_#{field_type}".to_sym
+          columns.exclude :"#{field}_attachment#{'s' if field_type == :has_many}"
+          columns.exclude :"#{field}_blob#{'s' if field_type == :has_many}"
+          columns[field].includes ||= [:"#{field}_attachment#{'s' if field_type == :has_many}", :"#{field}_blob#{'s' if field_type == :has_many}"]
+          columns[field].form_ui ||= :"active_storage_#{field_type}"
           columns[field].params.add "delete_#{field}"
         end
       end

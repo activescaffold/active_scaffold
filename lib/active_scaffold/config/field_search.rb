@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Config
   class FieldSearch < Base
     self.crud_type = :read
@@ -9,13 +11,14 @@ module ActiveScaffold::Config
       @human_conditions = self.class.human_conditions
       @floating_footer = self.class.floating_footer
       @reset_form = self.class.reset_form
+      @update_columns = self.class.update_columns
     end
 
     # global level configuration
     # --------------------------
     # the ActionLink for this action
     cattr_reader :link, instance_accessor: false
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', :label => :search, :type => :collection, :security_method => :search_authorized?, :ignore_method => :field_search_ignore?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', label: :search, type: :collection, security_method: :search_authorized?, ignore_method: :field_search_ignore?)
 
     # A flag for how the search should do full-text searching in the database:
     # * :full: LIKE %?%
@@ -36,6 +39,9 @@ module ActiveScaffold::Config
     @@floating_footer = false
 
     cattr_accessor :reset_form, instance_accessor: false
+
+    # whether refresh columns defined in update_columns when a column is changed, as create and update forms do
+    cattr_accessor :update_columns
 
     # instance-level configuration
     # ----------------------------
@@ -62,6 +68,7 @@ module ActiveScaffold::Config
 
     def optional_columns
       return @optional_columns || NO_COLUMNS if frozen?
+
       @optional_columns ||= NO_COLUMNS.dup
     end
 
@@ -72,7 +79,7 @@ module ActiveScaffold::Config
     attr_accessor :grouped_columns
 
     # default search params
-    # default_params = {:title => {"from"=>"test", "to"=>"", "opt"=>"%?%"}}
+    # default_params = {title: {"from"=>"test", "to"=>"", "opt"=>"%?%"}}
     attr_accessor :default_params
 
     # human conditions
@@ -84,8 +91,11 @@ module ActiveScaffold::Config
 
     attr_accessor :reset_form
 
+    # whether refresh columns defined in update_columns when a column is changed, as create and update forms do
+    attr_accessor :update_columns
+
     UserSettings.class_eval do
-      user_attr :optional_columns, :group_options, :grouped_columns, :human_conditions, :floating_footer
+      user_attr :optional_columns, :group_options, :grouped_columns, :human_conditions, :floating_footer, :update_columns
     end
   end
 end

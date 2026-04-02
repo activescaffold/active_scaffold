@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Config
   class Create < ActiveScaffold::Config::Form
     self.crud_type = :create
@@ -17,7 +19,7 @@ module ActiveScaffold::Config
     def self.link=(val)
       @@link = val
     end
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('new', :label => :create_new, :type => :collection, :security_method => :create_authorized?, :ignore_method => :create_ignore?)
+    @@link = ActiveScaffold::DataStructures::ActionLink.new('new', label: :create_new, type: :collection, security_method: :create_authorized?, ignore_method: :create_ignore?)
 
     # whether update form is opened after a create or not
     cattr_accessor :action_after_create, instance_accessor: false

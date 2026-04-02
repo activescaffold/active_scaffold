@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   class Set
     include Enumerable
     include ActiveScaffold::Configurable
 
-    def initialize(*args)
-      set_values(*args)
+    def initialize(*)
+      set_values(*)
     end
 
     def initialize_dup(other)
       @set = other.set.dup
     end
 
-    def set_values(*args)
+    def set_values(*)
       @set = []
-      add(*args)
+      add(*)
     end
 
     # the way to add items to the set.
@@ -43,22 +45,21 @@ module ActiveScaffold::DataStructures
     # returns the item of the given name.
     def find_by_name(name)
       # this works because of `def item.=='
-      item = @set.find { |c| c == name }
-      item
+      @set.find { |c| c == name }
     end
     alias [] find_by_name
 
-    def each
-      @set.each { |i| yield i }
+    def each(&)
+      @set.each(&)
     end
 
     # returns the number of items in the set
-    def length
-      @set.length
-    end
+    delegate :length, to: :@set
 
-    def empty?
-      @set.empty?
+    delegate :empty?, to: :@set
+
+    def +(other)
+      self.class.new(@set, *other)
     end
 
     protected

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Bridges
     class PaperTrail
@@ -5,10 +7,11 @@ module ActiveScaffold
         def initialize(model_id)
           super
           return unless model < ::PaperTrail::Model::InstanceMethods
+
           actions << :deleted_records
         end
       end
     end
   end
 end
-ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::PaperTrail::PaperTrailBridge
+ActiveScaffold::Config::Core.prepend ActiveScaffold::Bridges::PaperTrail::PaperTrailBridge

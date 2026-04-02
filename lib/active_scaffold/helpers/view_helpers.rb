@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Helpers
     # All extra helpers that should be included in the View.
     # Also a dumping ground for uncategorized helpers.
     module ViewHelpers
+      include ActiveScaffold::Helpers::AssetsHelpers
       include ActiveScaffold::Helpers::IdHelpers
       include ActiveScaffold::Helpers::ActionLinkHelpers
       include ActiveScaffold::Helpers::AssociationHelpers
@@ -10,23 +13,33 @@ module ActiveScaffold
       include ActiveScaffold::Helpers::ListColumnHelpers
       include ActiveScaffold::Helpers::ShowColumnHelpers
       include ActiveScaffold::Helpers::FormColumnHelpers
+      include ActiveScaffold::Helpers::FormUiHelpers
       include ActiveScaffold::Helpers::TabsHelpers
       include ActiveScaffold::Helpers::SearchColumnHelpers
       include ActiveScaffold::Helpers::HumanConditionHelpers
+      include ActiveScaffold::Helpers::FilterHelpers
 
       ##
       ## Delegates
       ##
 
       def active_scaffold_controller_for(klass)
-        ActiveScaffold::Registry.cache :as_controller, klass do
-          controller.class.active_scaffold_controller_for(klass)
-        end
+        controller.class.active_scaffold_controller_for(klass)
       end
 
       ##
       ## Uncategorized
       ##
+
+      def handle_exception_on_column(exception, column, record = nil)
+        raise exception if exception.instance_variable_get(:@_active_scaffold_wrapped)
+
+        exception.instance_variable_set(:@_active_scaffold_wrapped, true)
+        message = "on the ActiveScaffold column = :#{column.name} in #{controller.class}"
+        message << ", record: #{record.inspect}" if record
+        ActiveScaffold.log_exception(exception, message)
+        raise exception, "#{exception.message} -- #{message}", exception.backtrace
+      end
 
       def controller_path_for_activerecord(klass)
         controller = active_scaffold_controller_for(klass)
@@ -62,24 +75,23 @@ module ActiveScaffold
         # it's call many times and we can cache same result
         @_loading_indicator_path ||= image_path('active_scaffold/indicator.gif')
         # it's call many times in long lists, image_tag is a bit slower
-        tag :img, src: @_loading_indicator_path, style: 'visibility:hidden;', id: loading_indicator_id(options), alt: 'loading indicator', class: 'loading-indicator'
+        tag.img(src: @_loading_indicator_path, style: 'visibility:hidden;', id: loading_indicator_id(options), alt: 'loading indicator', class: 'loading-indicator')
       end
 
       # Creates a javascript-based link that toggles the visibility of some element on the page.
       # By default, it toggles the visibility of the sibling after the one it's nested in.
-      # You may pass custom javascript logic in options[:of] to change that, though. For example, you could say :of => '$("my_div_id")'.
       # You may also flag whether the other element is visible by default or not, and the initial text will adjust accordingly.
       def link_to_visibility_toggle(id, options = {})
         options[:hide_label] ||= as_(:hide)
         options[:show_label] ||= as_(:show_block)
         label = options[:default_visible].nil? || options[:default_visible] ? options[:hide_label] : options[:show_label]
-        data = {:show => options[:show_label], :hide => options[:hide_label], :toggable => id}
-        link_to label, '#', :data => data, :style => 'display: none;', :class => 'as-js-button visibility-toggle'
+        data = {show: options[:show_label], hide: options[:hide_label], toggable: id}
+        link_to label, '#', data: data, style: 'display: none;', class: 'as-js-button visibility-toggle'
       end
 
       def list_row_class(record)
         class_override_helper = override_helper_per_model(:list_row_class, record.class)
-        class_override_helper != :list_row_class ? send(class_override_helper, record) : ''
+        class_override_helper == :list_row_class ? '' : send(class_override_helper, record)
       end
 
       def list_row_attributes(tr_class, tr_id, data_refresh)
@@ -89,6 +101,7 @@ module ActiveScaffold
       def column_attributes(column, record)
         method = override_helper column, 'column_attributes'
         return send(method, record) if method
+
         {}
       end
 
@@ -137,8 +150,10 @@ module ActiveScaffold
         empty
       end
 
-      def empty_field_text
+      def empty_field_text(column = nil)
+        return column.empty_field_text if column&.empty_field_text
         return @_empty_field_text if defined? @_empty_field_text
+
         @_empty_field_text = (active_scaffold_config.list.empty_field_text if active_scaffold_config.actions.include?(:list))
       end
 
@@ -189,7 +204,7 @@ module ActiveScaffold
       end
 
       def display_message(message)
-        message = safe_join message, tag(:br) if message.is_a?(Array)
+        message = safe_join message, tag.br if message.is_a?(Array)
         if (highlights = active_scaffold_config.user.highlight_messages)
           message = highlights.inject(message) do |msg, (phrases, highlighter)|
             highlight(msg, phrases, highlighter || {})
@@ -197,8 +212,8 @@ module ActiveScaffold
         end
         if (format = active_scaffold_config.user.timestamped_messages)
           format = :short if format == true
-          messages = [content_tag(:div, l(Time.current, :format => format), :class => 'timestamp')]
-          messages << content_tag(:div, message, :class => 'message-content')
+          messages = [content_tag(:div, l(Time.current, format: format), class: 'timestamp')]
+          messages << content_tag(:div, message, class: 'message-content')
           message = safe_join messages, ' '
         end
         message
@@ -206,10 +221,10 @@ module ActiveScaffold
 
       def active_scaffold_error_messages_for(*params)
         options = params.extract_options!.symbolize_keys
-        options.reverse_merge!(:container_tag => :div, :list_type => :ul)
+        options.reverse_merge!(container_tag: :div, list_type: :ul)
 
         objects = Array.wrap(options.delete(:object) || params).map do |object|
-          object = instance_variable_get("@#{object}") unless object.respond_to?(:to_model)
+          object = instance_variable_get(:"@#{object}") unless object.respond_to?(:to_model)
           object = convert_to_model(object)
 
           options[:object_name] ||= object.class.model_name.human.downcase if object.class.respond_to?(:model_name)
@@ -238,19 +253,19 @@ module ActiveScaffold
             if options.include?(:header_message)
               options[:header_message]
             else
-              as_('errors.template.header', :count => count, :model => options[:object_name].to_s.tr('_', ' '))
+              as_('errors.template.header', count: count, model: options[:object_name].to_s.tr('_', ' '))
             end
 
           message = options.include?(:message) ? options[:message] : as_('errors.template.body')
 
           error_messages = objects.sum([]) do |object|
             object.errors.full_messages.map do |msg|
-              options[:list_type] != :br ? content_tag(:li, msg) : msg
+              options[:list_type] == :br ? msg : content_tag(:li, msg)
             end
           end
           error_messages =
             if options[:list_type] == :br
-              safe_join error_messages, tag(:br)
+              safe_join error_messages, tag.br
             else
               content_tag options[:list_type], safe_join(error_messages)
             end
@@ -262,6 +277,10 @@ module ActiveScaffold
           contents = safe_join(contents)
           options[:container_tag] ? content_tag(options[:container_tag], contents, html) : contents
         end
+      end
+
+      def new_option_from_record(record)
+        [record.to_label, record.id]
       end
     end
   end

@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::Dragonfly < ActiveScaffold::DataStructures::Bridge
   def self.install
     require File.join(File.dirname(__FILE__), 'dragonfly/form_ui')
     require File.join(File.dirname(__FILE__), 'dragonfly/list_ui')
     require File.join(File.dirname(__FILE__), 'dragonfly/dragonfly_bridge_helpers')
     require File.join(File.dirname(__FILE__), 'dragonfly/dragonfly_bridge')
-    ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::Dragonfly::DragonflyBridge
+    ActiveScaffold::Config::Core.prepend ActiveScaffold::Bridges::Dragonfly::DragonflyBridge
   end
 end

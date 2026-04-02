@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 test_folders = %w[bridges config data_structures extensions misc]
 
 all_tests = test_folders.inject([]) do |folder, output|

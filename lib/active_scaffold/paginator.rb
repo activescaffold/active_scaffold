@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 
 class Paginator
-  VERSION = '1.0.9'.freeze
+  VERSION = '1.0.9'
 
   class ArgumentError < ::ArgumentError; end
   class MissingCountError < ArgumentError; end
@@ -22,6 +24,7 @@ class Paginator
     @count = count
     @per_page = per_page
     raise MissingSelectError, 'Must provide block to select data for each page' unless select
+
     @select = select
   end
 
@@ -71,6 +74,7 @@ class Paginator
   # of the page in the paginator
   class Page
     extend Forwardable
+
     def_delegator :@pager, :first, :first
     def_delegator :@pager, :last, :last
     def_delegator :items, :each
@@ -78,7 +82,7 @@ class Paginator
 
     attr_reader :number, :pager
 
-    def initialize(pager, number, &select) #:nodoc:
+    def initialize(pager, number, &select) # :nodoc:
       @pager = pager
       @number = number
       @offset = (number - 1) * pager.per_page
@@ -125,7 +129,7 @@ class Paginator
       end
     end
 
-    def ==(other) #:nodoc:
+    def ==(other) # :nodoc:
       @pager == other.pager && number == other.number
     end
   end

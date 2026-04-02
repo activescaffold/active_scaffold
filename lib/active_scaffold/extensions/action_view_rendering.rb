@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module LookupContext
     attr_accessor :last_template
 
-    def find_template(name, prefixes = [], partial = false, keys = [], options = {})
-      self.last_template = super(name, prefixes, partial, keys, options)
+    def find_template(name, prefixes = [], partial = false, keys = [], options = {}) # rubocop:disable Metrics, Style
+      self.last_template = super
     end
   end
 end
 
 # wrap the action rendering for ActiveScaffold views
-module ActiveScaffold #:nodoc:
+module ActiveScaffold # :nodoc:
   module RenderingHelper
     #
     # Adds two rendering options.
@@ -19,7 +21,7 @@ module ActiveScaffold #:nodoc:
     # This syntax skips all template overrides and goes directly to the provided ActiveScaffold templates.
     # Useful if you want to wrap an existing template. Just call super!
     #
-    # ==render :active_scaffold => #{controller.to_s}, options = {}+
+    # ==render active_scaffold: #{controller.to_s}, options+
     #
     # Lets you embed an ActiveScaffold by referencing the controller where it's configured.
     #
@@ -35,11 +37,9 @@ module ActiveScaffold #:nodoc:
     #
     # options[:xhr] force to load embedded scaffold with AJAX even when render_component gem is installed.
     #
-    def render(*args, &block)
-      # TDH 2025-01: Handle rendering of objects that respond to render_in (e.g., ViewComponent)
-      # copied from this pull request https://github.com/activescaffold/active_scaffold/pull/743/changes
-      # which was released in 4.1
+    def render(*args, &)
       return args.first.render_in(self) if args.one? && args.first.respond_to?(:render_in)
+
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
         render_embedded args.first
       elsif args.first == :super
@@ -49,7 +49,7 @@ module ActiveScaffold #:nodoc:
           @_view_paths ||= lookup_context.view_paths.clone
           @_last_template ||= lookup_context.last_template
         end
-        result = super options_for_render_super(args[1])
+        result = super(options_for_render_super(args[1]))
         @lookup_context = @_lookup_context if @_lookup_context # rails 6
         lookup_context.view_paths = @_view_paths if @_view_paths # rails < 6
         lookup_context.last_template = @_last_template if @_last_template # rails < 6
@@ -78,7 +78,7 @@ module ActiveScaffold #:nodoc:
     end
 
     def view_stack
-      @_view_stack ||= []
+      @view_stack ||= []
     end
 
     private
@@ -95,11 +95,11 @@ module ActiveScaffold #:nodoc:
       options[:template] = parts.pop
       prefix = parts.join('/')
       # if prefix is active_scaffold_overrides we must try to render with this prefix in following paths
-      if prefix != 'active_scaffold_overrides'
-        options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
-      else
+      if prefix == 'active_scaffold_overrides'
         options[:prefixes] = ['active_scaffold_overrides']
         update_view_paths
+      else
+        options[:prefixes] = lookup_context.prefixes.drop((lookup_context.prefixes.find_index(prefix) || -1) + 1)
       end
       options
     end
@@ -107,9 +107,9 @@ module ActiveScaffold #:nodoc:
     def update_view_paths
       last_view_path =
         if @lookup_context # rails 6
-          File.expand_path(File.dirname(File.dirname(@lookup_context.last_template.short_identifier.to_s)), Rails.root)
+          File.expand_path(File.dirname(@lookup_context.last_template.short_identifier.to_s, 2), Rails.root)
         else
-          File.expand_path(File.dirname(File.dirname(lookup_context.last_template.inspect)), Rails.root)
+          File.expand_path(File.dirname(lookup_context.last_template.inspect, 2), Rails.root)
         end
       new_view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
       if @lookup_context # rails 6
@@ -149,7 +149,7 @@ module ActiveScaffold #:nodoc:
       eid_info[:conditions] = options[:conditions] if options[:conditions]
       eid_info[:label] = options[:label] if options[:label]
       options[:params] ||= {}
-      options[:params].merge! :eid => eid, :embedded => eid_info
+      options[:params].merge! eid: eid, embedded: eid_info
 
       id = "as_#{eid}-embedded"
       url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
@@ -158,8 +158,8 @@ module ActiveScaffold #:nodoc:
         controller.send(:render_component_into_view, url_options)
       else
         url = url_for(url_options)
-        content_tag(:div, :id => id, :class => 'active-scaffold-component', :data => {:refresh => url}) do
-          content_tag(:div, :class => 'active-scaffold-header') do
+        content_tag(:div, id: id, class: 'active-scaffold-component', data: {refresh: url}) do
+          content_tag(:div, class: 'active-scaffold-header') do
             content_tag(:h2) do
               label = options[:label] || remote_controller_config(remote_controller).list.label
               link_to(label, url, remote: true, class: 'load-embedded', data: {error_msg: as_(:error_500)}) <<
@@ -182,6 +182,7 @@ module ActionView
       include ActiveScaffold::RenderingHelper
     end
 
+<<<<<<< version4-3
     if Gem.loaded_specs['rails'].version.segments.first >= 6
       RenderingHelper.class_eval do
         # override the render method to use our @lookup_context instead of the
@@ -204,10 +205,29 @@ module ActionView
               else
                 temp_renderer.render(self, options)
               end
+=======
+    RenderingHelper.class_eval do
+      # override the render method to use our @lookup_context instead of the
+      # memoized @_lookup_context
+      def render(options = {}, locals = {}, &block)
+        return options.render_in(self) if options.respond_to?(:render_in)
+
+        case options
+        when Hash
+          in_rendering_context(options) do |_|
+            # previously set view paths and lookup context are lost here
+            # if you use view_renderer, so instead create a new renderer
+            # with our context
+            temp_renderer = ActionView::Renderer.new(@lookup_context)
+            if block_given?
+              temp_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
+            else
+              temp_renderer.render(self, options)
+>>>>>>> master
             end
-          else
-            view_renderer.render_partial(self, partial: options, locals: locals, &block)
           end
+        else
+          view_renderer.render_partial(self, partial: options, locals: locals, &block)
         end
       end
     end

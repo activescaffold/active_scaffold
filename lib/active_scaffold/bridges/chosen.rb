@@ -1,10 +1,8 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::Bridges::Chosen < ActiveScaffold::DataStructures::Bridge
   def self.install
     require File.join(File.dirname(__FILE__), 'chosen/helpers.rb')
-  end
-
-  def self.install?
-    super && %i[jquery prototype].include?(ActiveScaffold.js_framework)
   end
 
   def self.stylesheets
@@ -12,6 +10,6 @@ class ActiveScaffold::Bridges::Chosen < ActiveScaffold::DataStructures::Bridge
   end
 
   def self.javascripts
-    ["chosen-#{ActiveScaffold.js_framework}", "#{ActiveScaffold.js_framework}/active_scaffold_chosen"]
+    ['chosen-jquery', 'active_scaffold/active_scaffold_chosen']
   end
 end

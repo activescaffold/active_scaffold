@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Actions
   module CommonSearch
     def self.included(base)
       return if base < InstanceMethods
+
       base.send :include, InstanceMethods
       base.before_action :search_authorized_filter, only: :show_search
-      base.before_action :store_search_params_into_session, :only => %i[index show_search]
+      base.before_action :store_search_params_into_session, only: %i[index show_search]
       base.before_action :do_search, only: [:index]
       base.helper_method :search_params
     end
@@ -36,6 +39,7 @@ module ActiveScaffold::Actions
         outer_joins = []
         columns.each do |column|
           next if column.search_joins.blank?
+
           if column.includes.present? && list_columns.include?(column)
             references << (column.search_joins & column.includes)
             outer_joins << (column.search_joins - column.includes)
@@ -67,13 +71,13 @@ module ActiveScaffold::Actions
       # The default security delegates to ActiveRecordPermissions.
       # You may override the method to customize.
       def search_authorized?
-        authorized_for?(:crud_type => :read)
+        authorized_for?(crud_type: :read)
       end
 
       def search_authorized_filter
         action = active_scaffold_config.send(search_partial)
         link = action.link || action.class.link
-        raise ActiveScaffold::ActionNotAllowed unless send(link.security_method)
+        raise ActiveScaffold::ActionNotAllowed unless action_link_authorized?(link)
       end
     end
   end

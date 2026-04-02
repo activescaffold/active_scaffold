@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Bridges
     class FileColumn
@@ -9,17 +11,16 @@ module ActiveScaffold
 
           def generate_delete_helpers(klass)
             file_column_fields(klass).each do |field|
-              klass.send :class_eval, <<-CODE, __FILE__, __LINE__ + 1 unless klass.method_defined?(:"#{field}_with_delete=")
-                attr_reader :delete_#{field}
+              next if klass.method_defined?(:"#{field}_with_delete=")
 
-                def delete_#{field}=(value)
-                  value = (value=="true") if String===value
-                  return unless value
+              klass.attr_reader :"delete_#{field}"
+              klass.define_method "delete_#{field}=" do |value|
+                value = (value == 'true') if value.is_a?(String)
+                return unless value
 
-                  # passing nil to the file column causes the file to be deleted.  Don't delete if we just uploaded a file!
-                  self.#{field} = nil unless self.#{field}_just_uploaded?
-                end
-              CODE
+                # passing nil to the file column causes the file to be deleted.  Don't delete if we just uploaded a file!
+                send("#{field}=", nil) unless send("#{field}_just_uploaded?")
+              end
             end
           end
 
@@ -33,13 +34,14 @@ module ActiveScaffold
         end
 
         def options_for_file_column_field(field)
-          allocate.send("#{field}_options")
+          allocate.send(:"#{field}_options")
         end
 
         def field_has_image_version?(field, version = 'thumb')
           options = options_for_file_column_field(field)
           versions = options[:magick][:versions]
           raise unless versions.stringify_keys[version]
+
           true
         rescue StandardError
           false

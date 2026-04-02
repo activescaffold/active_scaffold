@@ -1,10 +1,4 @@
-class File #:nodoc:
-  unless File.respond_to?(:binread)
-    def self.binread(file)
-      File.open(file, 'rb', &:read)
-    end
-  end
-end
+# frozen_string_literal: true
 
 class ActiveScaffold::Bridges::DatePicker
   module DatePickerBridge
@@ -12,7 +6,8 @@ class ActiveScaffold::Bridges::DatePicker
       super
       return unless ActiveScaffold::Bridges::DatePicker.default_ui
 
-      date_picker_fields = _columns.collect { |c| {:name => c.name.to_sym, :type => c.type} if %i[date datetime].include?(c.type) }.compact
+      types = %i[date datetime timestamp timestamptz]
+      date_picker_fields = _columns.filter_map { |c| {name: c.name.to_sym, type: c.type} if types.include?(c.type) }
       # check to see if file column was used on the model
       return if date_picker_fields.empty?
 
@@ -41,8 +36,23 @@ class ActiveScaffold::Bridges::DatePicker
       end
     end
 
-    def format_for_date(column, value, format_name = column.options[:format])
-      super column, value, format_name || (:default if column.search_ui == :date_picker)
+    def format_for_date(column, value, ui_name, ui_options)
+      ui_options = ui_options.reverse_merge(format: :default) if ui_name == :date_picker
+      super
+    end
+
+    def format_for_datetime(column, value, ui_name, ui_options)
+      format = I18n.t "time.formats.#{ui_options[:format] || :picker}", default: '' if ui_name == :datetime_picker
+      return super if format.blank?
+
+      parts = Date._parse(value)
+      [[:hour, '%H'], [:min, ':%M'], [:sec, ':%S']].each do |part, f|
+        format.gsub!(f, '') if parts[part].blank?
+      end
+      format += ' %z' if parts[:offset].present? && format !~ /%z/i
+
+      format.gsub!(/.*(?=%H)/, '') if !parts[:year] && !parts[:month] && !parts[:mday]
+      [format, parts[:offset]]
     end
   end
 
@@ -57,25 +67,29 @@ class ActiveScaffold::Bridges::DatePicker
   end
 end
 
-ActiveScaffold::Config::Core.send :prepend, ActiveScaffold::Bridges::DatePicker::DatePickerBridge
+ActiveScaffold::Config::Core.prepend ActiveScaffold::Bridges::DatePicker::DatePickerBridge
 ActionView::Base.class_eval do
   alias_method :active_scaffold_search_date_picker, :active_scaffold_search_datetime
   alias_method :active_scaffold_search_datetime_picker, :active_scaffold_search_datetime
   alias_method :active_scaffold_human_condition_date_picker, :active_scaffold_human_condition_datetime
   alias_method :active_scaffold_human_condition_datetime_picker, :active_scaffold_human_condition_datetime
   include ActiveScaffold::Bridges::DatePicker::Helper::SearchColumnHelpers
+
   alias_method :active_scaffold_search_datetime_picker_field, :active_scaffold_search_date_picker_field
   include ActiveScaffold::Bridges::DatePicker::Helper::FormColumnHelpers
+
   alias_method :active_scaffold_input_datetime_picker, :active_scaffold_input_date_picker
   include ActiveScaffold::Bridges::DatePicker::Helper::DatepickerColumnHelpers
 end
 ActiveScaffold::Finder::ClassMethods.module_eval do
   prepend ActiveScaffold::Bridges::DatePicker::Finder
+
   alias_method :condition_for_date_picker_type, :condition_for_datetime
   alias_method :condition_for_datetime_picker_type, :condition_for_datetime
 end
 ActiveScaffold::AttributeParams.module_eval do
   prepend ActiveScaffold::Bridges::DatePicker::AttributeParams
+
   alias_method :column_value_for_date_picker_type, :column_value_for_datetime_type
   alias_method :column_value_for_datetime_picker_type, :column_value_for_datetime_type
 end

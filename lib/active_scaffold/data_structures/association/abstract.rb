@@ -1,9 +1,13 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures::Association
   class Abstract
     def initialize(association)
       @association = association
     end
+
     attr_writer :reverse
+
     delegate :name, :foreign_key, :==, to: :@association
 
     def allow_join?
@@ -22,11 +26,11 @@ module ActiveScaffold::DataStructures::Association
       @association.macro == :belongs_to
     end
 
-    def has_one? # rubocop:disable Naming/PredicateName
+    def has_one? # rubocop:disable Naming/PredicatePrefix
       @association.macro == :has_one
     end
 
-    def has_many? # rubocop:disable Naming/PredicateName
+    def has_many? # rubocop:disable Naming/PredicatePrefix
       @association.macro == :has_many
     end
 
@@ -99,10 +103,8 @@ module ActiveScaffold::DataStructures::Association
     end
 
     def reverse(klass = nil)
-      unless polymorphic? || defined?(@reverse)
-        @reverse ||= inverse || get_reverse&.name
-      end
-      @reverse || (get_reverse(klass)&.name unless klass.nil?)
+      @reverse ||= inverse || get_reverse&.name unless polymorphic?
+      @reverse || get_reverse(klass)&.name
     end
 
     def inverse_for?(klass)
@@ -119,6 +121,10 @@ module ActiveScaffold::DataStructures::Association
           reflect_on_association(reverse_name) if reverse_name
         end
       self.class.new(assoc) if assoc
+    end
+
+    def cache_count?
+      collection? && !ActiveScaffold::OrmChecks.tableless?(klass) && !reverse_association&.counter_cache
     end
 
     protected

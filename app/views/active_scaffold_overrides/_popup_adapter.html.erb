@@ -1,0 +1,20 @@
+<%# nested_id, allows us to remove a nested scaffold programmatically %>
+<div class="active-scaffold" id="<%= nested_id = element_row_id action: :nested %>">
+<% if successful? %>
+    <div class="<%= "#{params[:action]}-view" if params[:action] %> <%= "#{nested? ? nested.name : id_from_controller(params[:controller])}-view" %> view">
+      <%= payload -%>
+    </div>
+<% end %>
+    <%= javascript_tag do %>
+    setTimeout(function() {
+      var action_link = ActiveScaffold.ActionLink.get('<%= nested_id %>');
+      if (action_link) {
+        action_link.update_flash_messages('<%= escape_javascript(render('messages')) %>');
+    <% unless successful? %>
+        action_link.close();
+        ActiveScaffold.scroll_to(action_link.scaffold(), ActiveScaffold.config.scroll_on_close == "checkInViewport");
+    <% end %>
+      }
+    }, 10);
+    <% end %>
+</div>

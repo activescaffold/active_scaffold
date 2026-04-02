@@ -1,6 +1,13 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Actions
   module Search
     def self.included(base)
+      conf = base.active_scaffold_config
+      if conf.model.primary_key.nil? && conf.search.columns.any? { |col| conf.columns[col]&.association }
+        raise "#{base.active_scaffold_config.model.name} has no primary key, search with association columns won't work"
+      end
+
       base.send :include, ActiveScaffold::Actions::CommonSearch
       base.send :include, InstanceMethods
     end
@@ -9,11 +16,11 @@ module ActiveScaffold::Actions
       protected
 
       def search_respond_to_html
-        render(:action => 'search')
+        render action: 'search'
       end
 
       def search_respond_to_js
-        render(:partial => 'search')
+        render partial: 'search'
       end
 
       def do_search

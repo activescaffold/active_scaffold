@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   # Exposes a +configure+ method that accepts a block and runs all contents of the block in two contexts,
   # as opposed to the normal one. First, everything gets evaluated as part of the object including Configurable.
@@ -9,15 +11,16 @@ module ActiveScaffold
   module Configurable
     def configure(&configuration_block)
       return unless configuration_block
+
       @configuration_binding = configuration_block.binding.eval('self')
       ret = instance_exec(self, &configuration_block)
       @configuration_binding = nil
       ret
     end
 
-    def method_missing(name, *args)
-      if @configuration_binding&.respond_to?(name, true)
-        @configuration_binding.send(name, *args)
+    def method_missing(name, *)
+      if @configuration_binding&.respond_to?(name, true) # rubocop:disable Lint/RedundantSafeNavigation
+        @configuration_binding.send(name, *)
       else
         super
       end

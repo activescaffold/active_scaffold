@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   module Association
     autoload :Abstract, 'active_scaffold/data_structures/association/abstract.rb'

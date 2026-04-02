@@ -11,6 +11,9 @@ de:
     add: Hinzufügen
     add_existing: Existierenden Eintrag hinzufügen
     add_existing_model: Existierende %{model} hinzufügen
+    add_model: "%{model} hinzufügen"
+    all_tokens:
+    any_token:
     apply: Akzeptieren
     are_you_sure_to_delete: Sind Sie sicher?
     average: Durchschnitt
@@ -77,6 +80,7 @@ de:
     internal_error: Fehler bei der Verarbeitung
     live_search: Live-Suche
     loading: Lade…
+    logical_search:
     mark_all_records: Alle auswählen
     maximum: Maximum
     minimum: Minimum
@@ -151,3 +155,8 @@ de:
   time:
     formats:
       picker: "%d.%m.%Y %H:%M"
+  datetime:
+    prompts:
+      millisec:
+      microsec:
+

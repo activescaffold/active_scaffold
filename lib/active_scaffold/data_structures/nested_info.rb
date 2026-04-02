@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   class NestedInfo
     def self.get(model, params)
@@ -18,7 +20,7 @@ module ActiveScaffold::DataStructures
     end
 
     def to_params
-      {:parent_scaffold => parent_scaffold.controller_path}
+      {parent_scaffold: parent_scaffold.controller_path}
     end
 
     def new_instance?
@@ -31,7 +33,7 @@ module ActiveScaffold::DataStructures
       false
     end
 
-    def has_many? # rubocop:disable Naming/PredicateName
+    def has_many? # rubocop:disable Naming/PredicatePrefix
       false
     end
 
@@ -39,7 +41,7 @@ module ActiveScaffold::DataStructures
       false
     end
 
-    def has_one? # rubocop:disable Naming/PredicateName
+    def has_one? # rubocop:disable Naming/PredicatePrefix
       false
     end
 
@@ -87,7 +89,7 @@ module ActiveScaffold::DataStructures
       setup_constrained_fields
     end
 
-    delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :readonly?, :to => :association
+    delegate :name, :belongs_to?, :has_one?, :has_many?, :habtm?, :readonly?, to: :association
 
     # A through association with has_one or has_many as source association
     # create cannot be called in nested through associations, and not-nested through associations, unless:
@@ -102,17 +104,17 @@ module ActiveScaffold::DataStructures
     #    RatesController has employee in create action columns (reverse is vendor, and through association employee is in create form).
     def readonly_through_association?(columns)
       return false unless through_association?
-      return true if association.through_reflection.options[:through] # create not possible, too many levels
-      return true if association.source_reflection.options[:through] # create not possible, too many levels
+      return true if association.through_reflection.through? # create not possible, too many levels
+      return true if association.source_reflection.through? # create not possible, too many levels
       return false if create_through_singular? # create allowed, AS has code for this
       return false unless association.source_reflection.collection? # create allowed if source is singular, rails creates joint model
 
       # create allowed only if through reflection in record to be created is included in create columns
-      !child_association || !columns.include?(child_association.through_reflection.name)
+      !child_association || columns.exclude?(child_association.through_reflection.name)
     end
 
     def create_through_singular?
-      association.through_singular? && source_reflection.reverse
+      association.through_singular? && association.source_reflection.reverse
     end
 
     def create_with_parent?
@@ -121,10 +123,6 @@ module ActiveScaffold::DataStructures
       elsif child_association || create_through_singular?
         true
       end
-    end
-
-    def source_reflection
-      @source_reflection ||= ActiveScaffold::DataStructures::Association::ActiveRecord.new(association.source_reflection)
     end
 
     def through_association?
@@ -146,13 +144,14 @@ module ActiveScaffold::DataStructures
     def default_sorting(chain)
       return @default_sorting if defined? @default_sorting
       return unless association.scope.is_a?(Proc) && chain.respond_to?(:values) && chain.values[:order]
+
       @default_sorting = chain.values[:order]
       @default_sorting = @default_sorting.map(&:to_sql) if @default_sorting[0].is_a? Arel::Nodes::Node
       @default_sorting = @default_sorting.join(', ')
     end
 
     def to_params
-      super.merge(:association => @association.name, @param_name => parent_id)
+      super.merge(association: @association.name, @param_name => parent_id)
     end
 
     protected
@@ -177,7 +176,7 @@ module ActiveScaffold::DataStructures
     end
 
     def to_params
-      super.merge(:named_scope => @scope)
+      super.merge(named_scope: @scope)
     end
 
     def name

@@ -1,6 +1,6 @@
 <%= content_tag(:div, id: active_scaffold_id, class: as_main_div_class, data: as_main_div_data) do %>
   <div class="active-scaffold-header">
-    <%= render :partial => 'list_header' %>
+    <%= render 'list_header' %>
   </div>
   <table>
     <tbody class="before-header" id="<%= before_header_id -%>">
@@ -9,7 +9,7 @@
         <tr>
           <td>
             <div class="active-scaffold show_search-view <%= "#{id_from_controller params[:controller]}-view" %> view">
-              <%= render :partial => active_scaffold_config.list.search_partial, :locals => {:xhr => true} %>
+              <%= render active_scaffold_config.list.search_partial, xhr: true %>
             </div>
           </td>
         </tr>
@@ -22,7 +22,7 @@
         <tr>
           <td>
             <div  class="active-scaffold create-view <%= "#{id_from_controller params[:controller]}-view" %> view">
-              <%= render :partial => 'create_form_on_list' %>
+              <%= render 'create_form_on_list' %>
             </div>
           </td>
         </tr>
@@ -31,6 +31,6 @@
     </tbody>
   </table>
   <div id="<%= active_scaffold_content_id-%>" class="as_content">
-    <%= render :partial => 'list' %>
+    <%= render 'list' %>
   </div>
 <% end %>

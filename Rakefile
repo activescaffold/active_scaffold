@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rake'
 require 'bundler'
 begin
@@ -33,4 +35,6 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-task :default => :test
+Dir.glob('lib/tasks/*.rake').each { |r| import r }
+
+task default: :test

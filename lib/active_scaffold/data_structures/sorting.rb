@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   # encapsulates the column sorting configuration for the List view
   class Sorting
     include Enumerable
     include ActiveScaffold::OrmChecks
 
-    attr_accessor :constraint_columns
-    attr_accessor :sorting_by_primary_key # enabled by default for postgres
+    attr_accessor :constraint_columns, :sorting_by_primary_key # sorting_by_primary_key enabled by default for postgres
     attr_reader :model
     alias active_record_class model
 
@@ -19,11 +20,13 @@ module ActiveScaffold::DataStructures
 
     def set_default_sorting
       return unless active_record?
+
       # fallback to setting primary key ordering
       setup_primary_key_order_clause
       model_scope = model.send(:build_default_scope)
-      order_clause = model_scope.order_values.join(',') if model_scope
+      order_clause = model_scope.order_values.map { |ordering| ordering.respond_to?(:to_sql) ? ordering.to_sql : ordering }.join(',') if model_scope
       return unless order_clause
+
       # If an ORDER BY clause is found set default sorting according to it
       set_sorting_from_order_clause(order_clause, model.table_name)
       @default_sorting = true
@@ -41,6 +44,7 @@ module ActiveScaffold::DataStructures
       column = get_column(column_name)
       raise ArgumentError, "Could not find column #{column_name}" if column.nil?
       raise ArgumentError, 'Sorting direction unknown' unless %i[ASC DESC].include? direction.to_sym
+
       @clauses << [column, direction] if column.sortable?
       raise ArgumentError, "Can't mix :method- and :sql-based sorting" if mixed_sorting?
     end
@@ -83,11 +87,12 @@ module ActiveScaffold::DataStructures
     def direction_of(column)
       clause = get_clause(column)
       return if clause.nil?
+
       clause[1]
     end
 
-    SORTING_STAGES = Hash[%w[reset ASC DESC reset].each_cons(2).to_a].freeze
-    DEFAULT_SORTING_STAGES = Hash[%w[ASC DESC ASC].each_cons(2).to_a].freeze
+    SORTING_STAGES = %w[reset ASC DESC reset].each_cons(2).to_h.freeze
+    DEFAULT_SORTING_STAGES = %w[ASC DESC ASC].each_cons(2).to_h.freeze
     def next_sorting_of(column, sorted_by_default)
       stages = sorted_by_default ? DEFAULT_SORTING_STAGES : SORTING_STAGES
       stages[direction_of(column)] || 'ASC'
@@ -103,8 +108,8 @@ module ActiveScaffold::DataStructures
     end
 
     # iterate over the clauses
-    def each
-      @clauses.each { |clause| yield clause }
+    def each(&)
+      @clauses.each(&)
     end
 
     def each_column
@@ -112,13 +117,9 @@ module ActiveScaffold::DataStructures
     end
 
     # provides quick access to the first (and sometimes only) clause
-    def first
-      @clauses.first
-    end
+    delegate :first, to: :@clauses
 
-    def size
-      @clauses.size
-    end
+    delegate :size, to: :@clauses
 
     # builds an order-by clause
     def clause(grouped_columns = nil)
@@ -128,8 +129,10 @@ module ActiveScaffold::DataStructures
       order = []
       each do |sort_column, sort_direction|
         next if constraint_columns.include? sort_column.name
+
         sql = grouped_columns ? grouped_columns[sort_column.name] : sort_column.sort[:sql]
         next if sql.blank?
+
         sql = sql.to_sql if sql.respond_to?(:to_sql)
 
         parts = Array(sql).map do |column|
@@ -155,6 +158,7 @@ module ActiveScaffold::DataStructures
     def get_column(name_or_column)
       # it's a column
       return name_or_column if name_or_column.is_a? ActiveScaffold::DataStructures::Column
+
       # it's a name
       name_or_column = name_or_column.to_s.split('.').last if name_or_column.to_s.include? '.'
       @columns[name_or_column]
@@ -171,18 +175,20 @@ module ActiveScaffold::DataStructures
     def set_sorting_from_order_clause(order_clause, model_table_name = nil)
       clear
       order_clause.to_s.split(',').each do |criterion|
-        if criterion.present?
-          order_parts = extract_order_parts(criterion)
-          add(order_parts[:column_name], order_parts[:direction]) unless different_table?(model_table_name, order_parts[:table_name]) || get_column(order_parts[:column_name]).nil?
+        next if criterion.blank?
+
+        parts = extract_order_parts(criterion)
+        unless different_table?(model_table_name, parts[:table_name]) || get_column(parts[:column_name]).nil?
+          add(parts[:column_name], parts[:direction])
         end
       end
     end
 
     def extract_order_parts(criterion_parts)
-      column_name_part, direction_part = criterion_parts.strip.split(' ')
+      column_name_part, direction_part = criterion_parts.strip.split(' ') # rubocop:disable Style/RedundantArgument
       column_name_parts = column_name_part.split('.')
-      order = {:direction => extract_direction(direction_part),
-               :column_name => remove_quotes(column_name_parts.last)}
+      order = {direction: extract_direction(direction_part),
+               column_name: remove_quotes(column_name_parts.last)}
       order[:table_name] = remove_quotes(column_name_parts[-2]) if column_name_parts.length >= 2
       order
     end
@@ -213,6 +219,7 @@ module ActiveScaffold::DataStructures
 
     def setup_primary_key_order_clause
       return unless model.column_names.include?(model.primary_key)
+
       set([model.primary_key, 'ASC'])
       @primary_key_order_clause = clause
       @sorting_by_primary_key = postgres? # mandatory for postgres, so enabled by default

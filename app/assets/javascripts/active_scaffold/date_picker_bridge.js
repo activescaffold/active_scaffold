@@ -1,0 +1,49 @@
+Object.getPrototypeOf(jQuery.datepicker)._attachDatepicker_without_inlineSettings = Object.getPrototypeOf(jQuery.datepicker)._attachDatepicker;
+jQuery.extend(Object.getPrototypeOf(jQuery.datepicker), {
+  _attachDatepicker: function(target, settings) {
+    var inlineSettings = {}, $target = jQuery(target);
+    for (var attrName in this._defaults) {
+      if(this._defaults.hasOwnProperty(attrName)){
+        var attrValue = $target.data(attrName.toLowerCase());
+        if (attrValue !== undefined) {
+          try {
+            inlineSettings[attrName] = eval(attrValue);
+          } catch (err) {
+            inlineSettings[attrName] = attrValue;
+          }
+        }
+      }
+    }
+    this._attachDatepicker_without_inlineSettings(target, jQuery.extend({}, settings || {}, inlineSettings));
+  }
+});
+jQuery(document).on("focus", "input.date_picker", function(){
+  var date_picker = jQuery(this);
+  if (typeof(date_picker.datepicker) == 'function') {
+    if (!date_picker.hasClass('hasDatepicker')) {
+      date_picker.datepicker();
+      date_picker.trigger('focus');
+    }
+  }
+  return true;
+});
+
+jQuery(document).on("focus", "input.datetime_picker", function(){
+  var date_picker = jQuery(this);
+  if (typeof(date_picker.datetimepicker) == 'function') {
+    if (!date_picker.hasClass('hasDatepicker')) {
+      date_picker.datetimepicker();
+      date_picker.trigger('focus');
+    }
+  }
+  return true;
+});
+
+jQuery(document).on('change', 'input.datetime_picker', function(e) {
+  var $this = jQuery(this);
+  if ($this.data('first-event')) $this.removeData('first-event');
+  else {
+    $this.data('first-event', true);
+    e.stopImmediatePropagation();
+  }
+});

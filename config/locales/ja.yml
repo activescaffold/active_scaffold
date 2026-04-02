@@ -11,6 +11,9 @@ ja:
     add: 追加
     add_existing: 既存のものを追加
     add_existing_model: 既存の%{model}を追加
+    add_model: "%{model}を追加"
+    all_tokens:
+    any_token:
     apply: 適用
     are_you_sure_to_delete: "%{label}を消去してもよろしいですか？"
     average: 平均
@@ -77,6 +80,7 @@ ja:
     internal_error: リクエストが失敗しました
     live_search: その場で検索
     loading: 読み込み中…
+    logical_search:
     mark_all_records: すべて選択
     maximum: 最大値
     minimum: 最小値
@@ -151,3 +155,7 @@ ja:
   time:
     formats:
       picker: "%Y年%m月%d日（%a） %H:%M:%S"
+  datetime:
+    prompts:
+      millisec:
+      microsec:

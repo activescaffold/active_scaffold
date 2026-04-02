@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   autoload :ActiveRecordPermissions, 'active_scaffold/active_record_permissions'
+  autoload :Assets, 'active_scaffold/assets'
   autoload :AttributeParams, 'active_scaffold/attribute_params'
   autoload :Bridges, 'active_scaffold/bridges'
   autoload :Configurable, 'active_scaffold/configurable'
@@ -40,6 +43,10 @@ module ActiveScaffold
     ActiveScaffold.autoload_subdir('helpers', self)
   end
 
+  module Testing
+    ActiveScaffold.autoload_subdir('testing', self)
+  end
+
   class ControllerNotFound < RuntimeError; end
   class MalformedConstraint < RuntimeError; end
   class RecordNotAllowed < RuntimeError; end
@@ -51,30 +58,18 @@ module ActiveScaffold
   mattr_accessor :javascripts, instance_writer: false
   self.javascripts = []
 
-  mattr_reader :threadsafe
-  def self.threadsafe!
-    @@threadsafe = true
-  end
-
-  mattr_writer :js_framework, instance_writer: false
-  def self.js_framework
-    @@js_framework ||=
-      if defined? Jquery
-        :jquery
-      elsif defined? PrototypeRails
-        :prototype
-      end
-  end
+  def self.threadsafe!; end
 
   mattr_writer :jquery_ui_loaded, instance_writer: false
   def self.jquery_ui_included?
     return true if @@jquery_ui_loaded
-    Jquery::Rails.const_defined?('JQUERY_UI_VERSION') || Jquery.const_defined?('Ui') if Object.const_defined?('Jquery')
+
+    Jquery::Rails.const_defined?(:JQUERY_UI_VERSION) || Jquery.const_defined?(:Ui) if Object.const_defined?(:Jquery)
   end
 
   mattr_writer :js_config, instance_writer: false
   def self.js_config
-    @@js_config ||= {:scroll_on_close => :checkInViewport}
+    @@js_config ||= {scroll_on_close: :checkInViewport}
   end
 
   # exclude bridges you do not need, add to an initializer
@@ -87,16 +82,24 @@ module ActiveScaffold
   end
 
   mattr_accessor :nested_subforms, instance_writer: false
-  def nested_subforms=(*)
-    ActiveSupport::Deprecation.warn 'Nested subforms are enabled by default already'
-  end
 
   def self.root
-    File.dirname(__FILE__) + '/..'
+    File.expand_path '..', __dir__
   end
 
-  def self.defaults(&block)
-    ActiveScaffold::Config::Core.configure(&block)
+  def self.defaults(&)
+    ActiveScaffold::Config::Core.configure(&)
+  end
+
+  def self.deprecator
+    @deprecator ||= ActiveSupport::Deprecation.new('4.3', 'ActiveScaffold')
+  end
+
+  def self.log_exception(exception, message)
+    line = exception.backtrace.find { |l| l.start_with? Rails.root.to_s }
+    line ||= exception.backtrace.find { |l| l.start_with? ActiveScaffold.root }
+    line = Rails.backtrace_cleaner.clean_frame(line) || line
+    Rails.logger.error "#{exception.class.name}: #{exception.message} -- #{message}\n#{line}"
   end
 end
 require 'active_scaffold/engine'

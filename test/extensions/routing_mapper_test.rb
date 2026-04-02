@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
-class RoutingMapperTest < ActionController::TestCase
+class RoutingMapperTest < ActionDispatch::IntegrationTest
   test 'rails routes' do
     assert_routing 'addresses', controller: 'addresses', action: 'index'
     assert_routing 'addresses/1', controller: 'addresses', action: 'show', id: '1'

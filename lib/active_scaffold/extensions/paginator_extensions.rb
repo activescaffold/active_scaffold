@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_scaffold/paginator'
 
 module ActiveScaffold
@@ -27,7 +29,7 @@ module ActiveScaffold
       if @pager.infinite?
         items.to_a.empty?
       else
-        @pager.count.zero?
+        @pager.count.zero? # rubocop:disable Style/CollectionQuerying -- @pager doesn't have none? method
       end
     end
   end

@@ -11,6 +11,9 @@ es:
     add: Añadir
     add_existing: Añadir Existente
     add_existing_model: Añadir %{model} Existente
+    add_model: Añadir %{model}
+    all_tokens:
+    any_token:
     apply: Aplicar
     are_you_sure_to_delete: "¿Estás seguro de que quieres borrar %{label}?"
     average: Media
@@ -79,6 +82,7 @@ es:
     internal_error: Petición fallida
     live_search: Buscar en Vivo
     loading: Cargando…
+    logical_search: Búsqueda Logica
     mark_all_records: Seleccionar todos
     maximum: Máximo
     minimum: Mínimo
@@ -153,3 +157,7 @@ es:
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"
+  datetime:
+    prompts:
+      millisec: Milisegundo
+      microsec: Microsegundo

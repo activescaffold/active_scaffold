@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Config
   class Subform < Base
     def initialize(core_config)
@@ -16,6 +18,6 @@ module ActiveScaffold::Config
 
     attr_accessor :layout
 
-    columns_accessor :columns, :copy => :update
+    columns_accessor :columns, copy: :update
   end
 end

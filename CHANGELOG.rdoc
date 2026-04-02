@@ -1,10 +1,190 @@
-- Add tabbed_by to group of columns in forms. The columns in the group must be collection associations, with a common column or association, used to partition them in different tabs.
+- Support translating enums (or options for :select form_ui on any column) nested in the pluralized name of the column, activerecord.attributes.model_name.pluralized_column.enum_value, defaults to old way activerecord.attributes.model_name.enum_value
+- Support :subform_columns option in column form_ui_options, or column's options, when the column is rendered as subform
+- Use :subform_columns option in :horizontal and :vertical show_ui too
+- Add layout multiple support to ActionColumns, so forms can have columns
+- Better exception handling when error is raised rendering a column, no more empty backtraces
+- Fix render field on subform for polymorphic association, or nested subforms in some cases
+- Add clear_form_column_if, works like hide_form_column_if but sends the column empty, to clear it
+- Add checkboxes form UI, like select form UI in collection associations but supporting DB columns (e.g. columns using serialize)
+- Support draggable form UI in non-association columns, like checkboxes (e.g. columns using serialize)
+- Add list UI for select_multiple, draggable, checkboxes, select and radio. Select and radio were handled by format_column_value, but the list UI works better
+- Support propshaft with dartsass-rails, so it doesn't depend on dartsass-sprockets and one dartsass gem must be added to the Gemfile
 
-= 3.7.9 (not released yet)
+= 4.2.4
+- Fix creating records with constraints on collection associations (broken on 4.2.2 on some cases)
+
+= 4.2.3
+- Make simplified searches on LogicalQueryParser bridge working with upstream gem, no need for my fork
+- Styles for radio form_ui
+- Fix style for checkbox list in subform
+- Fix creating records with constraints on through associations (broken on 4.2.2 on some cases)
+
+= 4.2.2
+- Support setting form_ui_options with nil, for subforms
+- Support saving when embedded on through singular association, as it's supported for nested too
+
+= 4.2.1
+- Fix replacing tinymce fields with update_columns
+- Support refresh_link in radio form UI
+- Rewrite refresh_link JS event handler to find the field without relying in the html structure
+
+= 4.2.0
+- Integrate LogicalQueryParser, supporting full logical search, or simplified searches with 'all keywords' and 'any keyword' operators.
+- Display unauthorized column in form as show action, so show_ui or show override is used if exists.
+- Display unauthorized subform with show_ui as show action, to display readonly subform tables.
+- Add subform_includes to column, and preload_for_form method to preload associations on edit action, speed up on big forms with long subforms or many nested subforms.
+- Speedup on refreshing columns and saving big forms.
+- Support add_new with chosen bridge.
+- Added translations for millisec and microsec prompts in jquery UI datetime picker.
+- Speed up validating big forms (e.g. nested subforms with many records on each subform).
+- Support hiding field descriptions by default and show them with hover or click.
+- Fix for usage with frozen literal strings enabled, add magic comments to enable frozen string literals in ActiveScaffold.
+- Update code for tabs to work with bootstrap 5.
+- Add ActiveScaffold.setup_callbacks array, so functions can be added to be called when ActiveScaffold.setup is called (form open, page load).
+- Add add_new_link to config.nested, adding a link to create form on an association, refreshing this record instead of adding new row in the list.
+- Support hashes in update_columns, keys are association names or :__root__ to refresh fields on subforms or at top of the form, values are list of columns or nested hashes.
+- Add custom_modules, in active_scaffold_config and global, to add modules which will be included after ActiveScaffold action modules, to customize the controllers.
+- Add active_scaffold_subform_record_actions helper to render the destroy action on the rows of a subform, so it can be used to add more actions.
+- Improve ActiveStorage bridge to keep existing files in has_many_attachments.
+- Helpers used by file upload bridges have been renamed and moved the JS code to active_scaffold.js.
+- Support action link groups to open with click, like actions showing dynamic action link group.
+- Open dynamic action link group nested in the menu tree, under the action opening it.
+- Add sort_joins to column, defaults to includes value, so it's possible to set sort by SQL without joining the includes, or join with some associations, and preload others.
+- Fix when textarea is required and uses tinymce, show the validation error if it's empty and sync the content before submitting.
+- Support add_new in collection associations too, only with popup mode (add_new: true will default to popup in such associations)
+- Support for rails 8.0 and 8.1
+_ Cache action link generation to speed up list rendering
+
+= 4.1.6
+- Fix add_existing
+
+= 4.1.5
+- Fix update_columns global config for field search ac
+
+= 4.1.4
+- Fix dirty attributes on refresh_field action, record is built on unsaved instance copying attributes, but it reports only changed attributes from the form now
+- Fix incompatibility with Rails renderable objects (ViewComponent, Turbo Streams)
+
+= 4.1.3
+- Columns using bitfields are not treated as number columns (e.g. don't get numeric class in list)
+- Fix loading tinymce when the form is loaded on page load
+- Speed up rendering action link with images, when list is long, image_path can be reused
+
+= 4.1.2
+- Call cache_column_counts in get_row, so custom code changing queries to calculate counts is used when a row is refreshed too
+
+= 4.1.1
+- Load dartsass-sprockets, so it isn't required in the Gemfile
+- Fix refreshing a column in a subform without sending the whole form
+
+= 4.1.0
+- Replace sassc-rails with dartsass-sprockets, as it's a compatible replacement, to ease migration to dartsass
+- Use lowercase response headers as required by rack 3
+- Add filters to list action
+- Add prompt option to action link
+- Support tabbed_by in show action too
+- Support options hash for :add_new option, with mode: :popup to open create new form in a JS popup, and other options to change link texts
+- Support setup option in tinymce config with function
+- Support multiple values in constraints for columns
+- Improve grouped search supporting to change the columns used with group clause
+- Improve grouped search to support using virtual columns for calculations, defining which DB column use to calculate
+- Improve grouped search supporting other SQL functions for calculate in grouped search, ignoring it in bottom search if rails don't support them in calculate (only sum, count, minimum, maximum average)
+- Improve grouped search supporting using group_by with multiple columns or sql code
+- Add disable_on_update_column setting to column to allow skipping disabling the form when a column changes and a request is sent to refresh other fields
+- Rename active_scaffold_habtm_joins to active_scaffold_joins, active_scaffold_habtm_joins is now deprecated
+- Support sorted_association_options_find with model name prefix
+- Support empty_field_text per column
+- Fix using nested with habtm association, shallow_delete enabled, delete action added but delete link removed
+- Fix for jquery-ui-rails 8.0 (jQuery UI 14)
+
+= 4.0.13
+- Fix security_methods on destroy_existing
+
+= 4.0.12.2
+- Filter includes for the selected model in select form_ui when column is a polymorphic association, as includes for polymorphic association may be a hash with the polymorphic association as key and associations of different models in the value
+
+= 4.0.11
+- Fix refresh_link with update_columns
+
+= 4.0.10
+- Fix override_columns without block
+
+= 4.0.9
+- Fix comparing column with ProxyColumn, fixing sorts_on? when the column is overrided
+
+= 4.0.8
+- Fix date_picker with format option
+
+= 4.0.7
+- Fix tableless in rails 7.2
+
+= 4.0.6
+- Fix :select form_ui on column using SQL in sort_by, such as 'table.user_id IS NULL'
+
+= 4.0.5
+- Fix if ActiveScaffold::Actions::Nested::ChildMethods is included manually after AS config block
+
+= 4.0.4.2
+- Support show key in helpers for search date/datetime, to change default condition to render it hidden
+
+= 4.0.3
+- Fix for jQuery 3
+- Fix position popup for collection action links
+- Fix recordselect in form open with position popup
+- Fix class of subform on optional subform using add_new option with layout option
+- Fix constraints with mulitple ids for belongs_to associations with primary_key setting
+- Fix render_field when a column changes, and a column to refresh exists in a subform with the same name too
+
+= 4.0.2
+- Fix using update_columns in field search with search UI submitting a hash, such as date fields
+- Support disabling update_columsns on field_search
+
+= 4.0.1
+- Add :text_editor show_ui, to avoid escaping html code
+- Fix action link on association column named record
+
+= 4.0.0
+- Add tabbed_by to group of columns in forms. The columns in the group must be collection associations, with a common column or association, used to partition them in different tabs.
+- Fix tableless in rails >= 7.1
+- Stop using cow_proxy for thread safety:
+  - Added ProxyColumn and require using active_scaffold_config.columns.override(:column_name) to change a column per request
+  - Action links can't be changed, added or removed, add all links and use ignore_method to control when they are displayed
+  - Require using active_scaffold_config.override_columns to exclude or add columns
+- Thread safety enabled by default, can't be disabled, deprecate ActiveScaffold.threadsafe!
+- Support subgroups on field search
+
+= 3.7.13
+- Fix :select form_ui on column using SQL in sort_by, such as 'table.user_id IS NULL'
+
+= 3.7.12
+- Fix using update_columns in field search with search UI submitting a hash, such as date fields
+- Support disabling update_columsns on field_search
+
+= 3.7.11.1
+- Fix action link on association column named record
+
+= 3.7.11
+- Add partial list_messages_content to reduce code duplication, and better support replacing list view with other way to render records
+- Support selector for records body in create_record_row JS method, better support replacing list view with other way to render records
+- Improve detection of member action links when list view is replaced with other structure, based on 'record' html class, instead of tags
+- Support :table position for member action links, replacing the whole table
+- Support changing the view partial used to render a record, default to 'list_record', better support refreshing a record when list view is replaced with other way to render records
+- Support separators in action links
+- Support :popup position, using jquery-ui dialog, but can be replaced with other library overriding ActiveScaffold.open_popup and ActiveScaffold.close_popup JS functions
+- Use column.label in human conditions, same as form
+- Don't overlap 'click to reset' with long human conditions message
+
+= 3.7.10
+- Move code from on_create.js.erb to partials, so it's easier to change parts, e.g. how new record is rendered
+- Don't reload after deleting last record if pagination is disabled
+
+= 3.7.9
 - Add css_class to action links, to avoid changing name, it may result confusing, deprecate name setter.
 - Add buttons to check all and uncheck all on :select form ui for collection associations, and draggable lists (active_scaffold_checkbox_list).
 - Add hidden field with locking column in base_form partial for persisted records automatically, if model uses optimistic locking.
 - Add on_stale_object_error when StaleObjectError is rescued, to allow customization.
+- Fix search_ui :select_multiple, which was broken when operator select was added.
+- Deprecate ActiveScaffold.js_framework as will be removed in 4.0
 
 = 3.7.8
 - Rollback previous behaviour when submitting empty values, broken when default_value was added. Default value set in column is not used when trying to save empty value, DB default is used in that case, and save NULL when string is empty, as before.

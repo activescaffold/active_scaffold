@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # a simple (manual) unsaved? flag and method. at least it automatically reverts after a save!
 module ActiveScaffold::UnsavedRecord
   # acts like a dirty? flag, manually thrown during update_record_from_params.

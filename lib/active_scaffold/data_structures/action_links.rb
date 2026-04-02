@@ -1,14 +1,29 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   class ActionLinks
     include Enumerable
-    attr_accessor :default_type
 
-    def initialize(name = :root)
+    COLLECTION_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, toggle: false, parameters: {action_links: '--ACTION-LINKS--', id: nil}) # member so it's cached
+    MEMBER_CLICK_MENU_LINK = ActionLink.new(:index, position: false, type: :member, toggle: false, parameters: {action_links: '--ACTION-LINKS--'})
+
+    attr_accessor :default_type, :weight, :css_class
+    attr_writer :click_menu, :label
+    attr_reader :name, :path
+
+    def initialize(name = :root, parent_path = nil)
       @set = []
       @name = name
       @css_class = name.to_s.downcase
       @weight = 0
+      @path = [parent_path, name].compact.join('.') unless name == :root
     end
+
+    def click_menu?
+      @click_menu
+    end
+
+    alias name_to_cache path
 
     # adds an ActionLink, creating one from the arguments if need be
     def add(action, options = {})
@@ -34,6 +49,12 @@ module ActiveScaffold::DataStructures
     end
     alias << add
 
+    def add_separator(weight = 0)
+      raise 'Call add_separator on a group' if name == :root
+
+      add_to_set ActionLinkSeparator.new(weight)
+    end
+
     def add_to_set(link)
       @set << link
     end
@@ -51,6 +72,8 @@ module ActiveScaffold::DataStructures
     def [](val)
       links = []
       @set.each do |item|
+        next if item == :separator
+
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
           collected = item[val]
           links << collected unless collected.nil?
@@ -64,6 +87,8 @@ module ActiveScaffold::DataStructures
     def find_duplicate(link)
       links = []
       @set.each do |item|
+        next if item == :separator
+
         if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
           collected = item.find_duplicate(link)
           links << collected unless collected.nil?
@@ -75,7 +100,9 @@ module ActiveScaffold::DataStructures
     end
 
     def delete(val)
-      each(:include_set => true) do |link, set|
+      each(include_set: true) do |link, set|
+        next if link == :separator
+
         if link.action.to_s == val.to_s
           set.delete link
           break
@@ -86,6 +113,7 @@ module ActiveScaffold::DataStructures
     def delete_group(name)
       @set.each do |group|
         next unless group.is_a?(ActiveScaffold::DataStructures::ActionLinks)
+
         if group.name == name
           @set.delete group
           break
@@ -109,37 +137,30 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    def collect_by_type(type = nil)
-      links = []
-      subgroup(type).each(type) { |link| links << link }
-      links
-    end
-
     def collect
       @set
     end
 
-    def empty?
-      @set.empty?
-    end
+    delegate :empty?, to: :@set
 
     def subgroup(name, label = nil)
+      name = name.to_sym
       group = self if name == self.name
       group ||= @set.find do |item|
         name == item.name if item.is_a?(ActiveScaffold::DataStructures::ActionLinks)
       end
 
       if group.nil?
-        raise "Can't add new subgroup '#{name}', links are frozen" if frozen?
-        group = ActiveScaffold::DataStructures::ActionLinks.new(name)
+        raise FrozenError, "Can't add new subgroup '#{name}', links are frozen" if frozen?
+
+        group = ActiveScaffold::DataStructures::ActionLinks.new(name, path)
         group.label = label || name
-        group.default_type = self.name == :root ? (name.to_sym if %w[member collection].include?(name.to_s)) : default_type
+        group.default_type = self.name == :root ? (name if %i[member collection].include?(name)) : default_type
         add_to_set group
       end
       group
     end
 
-    attr_writer :label
     def label(record)
       case @label
       when Symbol
@@ -151,33 +172,32 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    def method_missing(name, *args, &block)
+    def method_missing(name, *args, &)
       return super if name.match?(/[=!?]$/)
-      return subgroup(name.to_sym, args.first, &block) if frozen?
-      class_eval <<-METHOD, __FILE__, __LINE__ + 1
-        def #{name}(label = nil) # rubocop:disable Style/CommentedKeyword
-          @#{name} ||= subgroup('#{name}'.to_sym, label)
-          yield @#{name} if block_given?
-          @#{name}
+      return subgroup(name.to_sym, args.first, &) if frozen?
+
+      define_singleton_method name do |label = nil|
+        value = instance_variable_get("@#{name}")
+        unless value
+          value = subgroup(name.to_sym, label)
+          instance_variable_set("@#{name}", value)
         end
-      METHOD
-      send(name, args.first, &block)
+        yield value if block_given?
+        value
+      end
+      send(name, args.first, &)
     end
 
     def respond_to_missing?(name, *)
-      name !~ /[!?]$/
+      name !~ /[=!?]$/
     end
-
-    attr_reader :name
-    attr_accessor :weight
-    attr_accessor :css_class
 
     protected
 
     # called during clone or dup. makes the clone/dup deeper.
     def initialize_copy(from)
       @set = []
-      from.instance_variable_get('@set').each { |link| @set << link.clone }
+      from.instance_variable_get(:@set).each { |link| @set << link.clone }
     end
   end
 end

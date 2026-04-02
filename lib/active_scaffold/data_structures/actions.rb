@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class ActiveScaffold::DataStructures::Actions
   include Enumerable
 
-  def initialize(*args)
+  def initialize(*)
     @set = []
-    add(*args)
+    add(*)
   end
 
   def exclude(*args)
@@ -16,8 +18,8 @@ class ActiveScaffold::DataStructures::Actions
   end
   alias << add
 
-  def each
-    @set.each { |item| yield item }
+  def each(&)
+    @set.each(&)
   end
 
   def include?(val)
@@ -40,6 +42,6 @@ class ActiveScaffold::DataStructures::Actions
 
   # called during clone or dup. makes the clone/dup deeper.
   def initialize_copy(from)
-    @set = from.instance_variable_get('@set').clone
+    @set = from.instance_variable_get(:@set).clone
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   class ActionLink
     NO_OPTIONS = {}.freeze
@@ -39,6 +41,14 @@ module ActiveScaffold::DataStructures
       self.html_options = html_options.clone if action_link.instance_variable_get(:@html_options)
     end
 
+    def deep_dup
+      link = dup
+      instance_variables.each do |var|
+        link.instance_variable_set(var, link.instance_variable_get(var).deep_dup)
+      end
+      link
+    end
+
     # the weight for this link in the action links collection, it will be used to sort the collection
     attr_accessor :weight
 
@@ -59,8 +69,10 @@ module ActiveScaffold::DataStructures
 
     # a hash of request parameters
     attr_writer :parameters
+
     def parameters
       return @parameters || NO_OPTIONS if frozen?
+
       @parameters ||= NO_OPTIONS.dup
     end
 
@@ -77,6 +89,7 @@ module ActiveScaffold::DataStructures
 
     # what string to use to represent this action
     attr_writer :label
+
     def label(record = nil)
       case @label
       when Symbol
@@ -88,17 +101,15 @@ module ActiveScaffold::DataStructures
       end
     end
 
-    # image to use {:name => 'arrow.png', :size => '16x16'}
+    # image to use {name: 'arrow.png', size: '16x16'}
     attr_accessor :image
 
     # if the action requires confirmation
-    def confirm=(value)
-      @dhtml_confirm = nil if value
-      @confirm = value
-    end
+    attr_writer :confirm
 
     def confirm(label = '')
       return @confirm if !confirm? || @confirm.is_a?(String)
+
       ActiveScaffold::Registry.cache(:translations, @confirm) { as_(@confirm) } % {label: label}
     end
 
@@ -106,21 +117,31 @@ module ActiveScaffold::DataStructures
       @confirm.present?
     end
 
-    # if the action uses a DHTML based (i.e. 2-phase) confirmation
-    attr_reader :dhtml_confirm
-    def dhtml_confirm=(value)
-      @confirm = nil if value
-      @dhtml_confirm = value
+    # if the action requires prompting a value, only for inline links
+    attr_writer :prompt
+
+    def prompt(label = '')
+      return @prompt if !prompt? || @prompt.is_a?(String)
+
+      ActiveScaffold::Registry.cache(:translations, @prompt) { as_(@prompt) } % {label: label}
     end
 
-    def dhtml_confirm?
-      @dhtml_confirm.present?
+    def prompt?
+      @prompt.present?
+    end
+
+    # if the prompt is required, empty value or cancel will prevent running the action
+    attr_writer :prompt_required
+
+    def prompt_required?
+      @prompt_required
     end
 
     # what method to call on the controller to see if this action_link should be visible
     # if method return false, link will be disabled
     # note that this is only the UI part of the security. to prevent URL hax0rz, you also need security on requests (e.g. don't execute update method unless authorized).
     attr_writer :security_method
+
     def security_method
       @security_method || "#{action}_authorized?"
     end
@@ -137,7 +158,7 @@ module ActiveScaffold::DataStructures
     attr_accessor :ignore_method
 
     # the crud type of the (eventual?) action. different than :method, because this crud action may not be imminent.
-    # this is used to determine record-level authorization (e.g. record.authorized_for?(:crud_type => link.crud_type).
+    # this is used to determine record-level authorization (e.g. record.authorized_for?(crud_type: link.crud_type).
     # options are :create, :read, :update, and :delete
     attr_accessor :crud_type
 
@@ -157,6 +178,7 @@ module ActiveScaffold::DataStructures
     def popup=(val)
       @popup = (val == true)
       return unless @popup
+
       self.inline = self.page = false
 
       # the :method parameter doesn't mix with the :popup parameter
@@ -180,20 +202,25 @@ module ActiveScaffold::DataStructures
     end
 
     # where the result of this action should insert in the display.
-    # for :type => :collection, supported values are:
+    # for type: :collection, supported values are:
     #   :top
-    #   :replace (for updating the entire table)
+    #   :replace (to hide the entire table)
+    #   :popup (popup with JS library)
     #   false (no attempt at positioning)
-    # for :type => :member, supported values are:
+    # for type: :member, supported values are:
     #   :before
-    #   :replace
+    #   :replace (to hide the record row)
     #   :after
+    #   :table (to hide the entire table)
+    #   :popup (popup with JS library)
     #   false (no attempt at positioning)
     attr_writer :position
+
     def position
       return @position unless @position.nil? || @position == true
       return :replace if type == :member
       return :top if type == :collection
+
       raise "what should the default position be for #{type}?"
     end
 
@@ -202,8 +229,10 @@ module ActiveScaffold::DataStructures
 
     # html options for the link
     attr_writer :html_options
+
     def html_options
       return @html_options || NO_OPTIONS if frozen?
+
       @html_options ||= NO_OPTIONS.dup
     end
 
@@ -212,6 +241,7 @@ module ActiveScaffold::DataStructures
 
     # don't close the panel when another action link is open
     attr_writer :keep_open
+
     def keep_open?
       @keep_open
     end
@@ -228,6 +258,7 @@ module ActiveScaffold::DataStructures
 
     def name_to_cache
       return @name_to_cache if defined? @name_to_cache
+
       [
         controller || 'self',
         type,

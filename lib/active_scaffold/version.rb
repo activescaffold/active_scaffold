@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Version
-    MAJOR = 3
-    MINOR = 7
-    PATCH = 8
+    MAJOR = 4
+    MINOR = 3
+    PATCH = 0
     FIX = nil
 
     STRING = [MAJOR, MINOR, PATCH, FIX].compact.join('.')

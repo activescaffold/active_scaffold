@@ -11,6 +11,9 @@ en:
     add: Add
     add_existing: Add Existing
     add_existing_model: Add Existing %{model}
+    add_model: Add %{model}
+    all_tokens: All keywords
+    any_token: Any keyword
     apply: Apply
     are_you_sure_to_delete: Are you sure you want to delete %{label}?
     average: Average
@@ -77,6 +80,7 @@ en:
     internal_error: Request Failed
     live_search: Live Search
     loading: Loading…
+    logical_search: Logical Search
     mark_all_records: Mark all
     maximum: Maximum
     minimum: Minimum
@@ -151,3 +155,10 @@ en:
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"
+  datetime:
+    prompts:
+      hour: Hour
+      minute: Minute
+      second: Second
+      millisec: Millisecond
+      microsec: Microsecond

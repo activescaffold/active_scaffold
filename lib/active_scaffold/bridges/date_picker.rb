@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::Bridges
   class DatePicker < ActiveScaffold::DataStructures::Bridge
     autoload :Helper, 'active_scaffold/bridges/date_picker/helper'
@@ -6,12 +8,9 @@ module ActiveScaffold::Bridges
     end
 
     def self.install?
-      ActiveScaffold.js_framework == :jquery && jquery_ui_included?
-    end
-
-    def self.jquery_ui_included?
       ActiveScaffold.jquery_ui_included?
     end
+
     mattr_accessor :default_ui
     @@default_ui = true
 

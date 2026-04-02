@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   module Bridges
     class Dragonfly
@@ -22,7 +24,7 @@ module ActiveScaffold
           columns[field].params.add "remove_#{field}"
 
           %i[name uid].each do |f|
-            columns.exclude("#{field}_#{f}".to_sym)
+            columns.exclude(:"#{field}_#{f}")
           end
         end
       end

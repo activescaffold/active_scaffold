@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold::DataStructures
   class Columns
     include Enumerable
@@ -19,13 +21,13 @@ module ActiveScaffold::DataStructures
     # This accessor is used by ActionColumns to create new Column objects without adding them to this set
     attr_reader :active_record_class
 
-    def initialize(active_record_class, *args)
+    def initialize(active_record_class, *)
       @active_record_class = active_record_class
       @_inheritable = ::Set.new
       @set = {}
       @sorted = nil
 
-      add(*args)
+      add(*)
     end
 
     # the way to add columns to the set. this is primarily useful for virtual columns.
@@ -57,6 +59,7 @@ module ActiveScaffold::DataStructures
       klass = column.association.klass
       columns.each do |col|
         next if find_by_name col
+
         @set[col.to_sym] = ActiveScaffold::DataStructures::Column.new(col, klass, column.association)
       end
     end
@@ -77,8 +80,8 @@ module ActiveScaffold::DataStructures
     end
     alias [] find_by_name
 
-    def each
-      @set.each_value { |name| yield name }
+    def each(&)
+      @set.each_value(&)
     end
 
     def _inheritable

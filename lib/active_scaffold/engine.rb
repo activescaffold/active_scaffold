@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveScaffold
   class Engine < ::Rails::Engine
     initializer 'active_scaffold.action_controller' do
@@ -30,32 +32,69 @@ module ActiveScaffold
         require 'active_scaffold/extensions/unsaved_associated'
         require 'active_scaffold/extensions/unsaved_record'
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
-        module ActiveRecord::Associations
-          Association.send :include, ActiveScaffold::Tableless::Association
-          CollectionAssociation.send :include, ActiveScaffold::Tableless::CollectionAssociation
-          SingularAssociation.send :include, ActiveScaffold::Tableless::SingularAssociation
+
+        ActiveRecord::Associations.module_eval do
+          self::Association.include ActiveScaffold::Tableless::Association
+          self::CollectionAssociation.include ActiveScaffold::Tableless::CollectionAssociation
+          self::SingularAssociation.include ActiveScaffold::Tableless::SingularAssociation
         end
-        module ActiveRecord::ConnectionAdapters
-          AbstractAdapter.send :include, ActiveScaffold::ConnectionAdapters::AbstractAdapter
-          if defined?(PostgreSQLAdapter)
-            PostgreSQLAdapter.send :include, ActiveScaffold::ConnectionAdapters::PostgreSQLAdapter
+
+        ActiveRecord::ConnectionAdapters.module_eval do
+          self::AbstractAdapter.include ActiveScaffold::ConnectionAdapters::AbstractAdapter
+          if const_defined?(:PostgreSQLAdapter)
+            self::PostgreSQLAdapter.include ActiveScaffold::ConnectionAdapters::PostgreSQLAdapter
           end
-          if defined?(SQLServerAdapter)
-            SQLServerAdapter.send :include, ActiveScaffold::ConnectionAdapters::SQLServerAdapter
+          if const_defined?(:SQLServerAdapter)
+            self::SQLServerAdapter.include ActiveScaffold::ConnectionAdapters::SQLServerAdapter
           end
         end
       end
     end
 
-    initializer 'active_scaffold.assets' do
-      config.assets.precompile << 'active_scaffold/indicator.gif'
-    end
-
     initializer 'active_scaffold.extensions' do
-      require 'active_scaffold/extensions/cow_proxy'
       require 'active_scaffold/extensions/ice_nine'
       require 'active_scaffold/extensions/localize'
       require 'active_scaffold/extensions/paginator_extensions'
+    end
+
+    initializer 'active_scaffold.assets' do |app|
+      if defined?(::Sprockets)
+        # Tell sprockets where your assets are located
+        app.config.assets.precompile += %w[active_scaffold/manifest.js]
+      end
+    end
+
+    initializer 'active_scaffold.testing' do
+      ActiveSupport.on_load(:action_dispatch_integration_test) do
+        include ActiveScaffold::Testing::AssertEmbeddedLoad
+      end
+
+      ActiveSupport.on_load(:action_controller_test_case) do
+        include ActiveScaffold::Testing::AssertEmbeddedLoad
+      end
+
+      if defined?(RSpec)
+        RSpec.configure do |config|
+          config.include ActiveScaffold::Testing::AssertEmbeddedLoad, type: :request
+          config.include ActiveScaffold::Testing::AssertEmbeddedLoad, type: :controller
+        end
+      end
+    end
+
+    config.after_initialize do
+      if defined?(Propshaft)
+        ActiveScaffold::Assets::JqueryUiThemeGenerator.generate_if_needed if ActiveScaffold.jquery_ui_included?
+        ActiveScaffold::Assets::CssDepsGenerator.generate!
+      end
+    end
+
+    # Make rake tasks available to the host app
+    rake_tasks do
+      # Load all rake tasks
+      Dir[File.expand_path('../tasks/active_scaffold/**/*.rake', __dir__)].each { |f| load f }
+
+      # Load the precompile hook
+      load File.expand_path('railties/tasks.rake', __dir__)
     end
   end
 end

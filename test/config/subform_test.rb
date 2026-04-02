@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 module Config
-  class SubformTest < Minitest::Test
+  class SubformTest < ActiveSupport::TestCase
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
     end
