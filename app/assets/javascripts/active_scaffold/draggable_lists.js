@@ -13,15 +13,16 @@
     });
     check_buttons.find('.check-all, .uncheck-all').attr('title', function() { return jQuery(this).text() });
     element.after(check_buttons);
-    var options = {
-      hoverClass: 'hover',
+    var options = jQuery.extend({
+      over: function(event, ui) { jQuery(this).addClass("hover"); },
+      out: function(event, ui) { jQuery(this).removeClass("hover"); },
       containment: '',
       receive: function(event, ui) {
         var input = jQuery('input:checkbox', ui.item), selected = input.prop('checked');
         input.prop('checked', jQuery(this).hasClass('selected'));
         if (selected != input.prop('checked')) input.trigger('change');
       }
-    };
+    }, ActiveScaffold.config.draggable_lists_options || {});
     jQuery(element).sortable(jQuery.extend(options, {connectWith: '#'+list_selected.attr('id')}));
     jQuery(list_selected).sortable(jQuery.extend(options, {connectWith: '#'+element.attr('id')}));
     return element;
