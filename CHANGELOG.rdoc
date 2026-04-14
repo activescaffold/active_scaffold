@@ -2,6 +2,7 @@
 - Add support to change tags and HTML attributes of some rendered elements, to use CSS frameworks such as tailwindcss or bootstrap
 - Fix draggable lists to set hover class on the list while dragging
 - Support defining more options for jQuery.sortable with ActiveScaffold.js_config[:draggable_lists_options]
+- Support changing highlight duration with ActiveScaffold.js_config[:highlight]
 
 = 4.3.0
 - Support translating enums (or options for :select form_ui on any column) nested in the pluralized name of the column, activerecord.attributes.model_name.pluralized_column.enum_value, defaults to old way activerecord.attributes.model_name.enum_value
