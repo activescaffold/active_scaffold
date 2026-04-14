@@ -1,0 +1,41 @@
+---
+layout: echo_kb_faq
+title: "‘has_many :through’ form elements aren’t appearing. Why?"
+date: 2025-02-17 14:38:55.000000000 +01:00
+type: echo_kb_faq
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta: {}
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Active_scaffold only shows form elements for write-able attributes. By default in Rails, records of ‘has_many :through’ associations are read-only. To get around this, simply add ‘:readonly =&gt; false’ to the association (not the join model association), as shown:</p>
+<div class="highlight highlight-source-ruby notranslate position-relative overflow-auto">
+<pre><span class="pl-k">class</span> <span class="pl-v">Book</span> &lt; <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:authorships</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:authors</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:authorships</span><span class="pl-kos">,</span> <span class="pl-pds">:readonly</span> <span class="pl-c1">=&gt;</span> <span class="pl-c1">false</span>
+<span class="pl-k">end</span>
+
+<span class="pl-k">class</span> <span class="pl-v">Authorships</span> &lt; <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span>
+  <span class="pl-en">belongs_to</span> <span class="pl-pds">:book</span>
+  <span class="pl-en">belongs_to</span> <span class="pl-pds">:author</span>
+<span class="pl-k">end</span>
+
+<span class="pl-k">class</span> <span class="pl-v">Author</span> &lt; <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:authorships</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:books</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:authorships</span><span class="pl-kos">,</span> <span class="pl-pds">:readonly</span> <span class="pl-c1">=&gt;</span> <span class="pl-c1">false</span>
+<span class="pl-k">end</span></pre>
+<div class="zeroclipboard-container position-absolute right-0 top-0"></div>
+</div>
+<p>The ‘has_many :through’ association should now behave just like an HABTM association.</p>
+<p></body></html></p>

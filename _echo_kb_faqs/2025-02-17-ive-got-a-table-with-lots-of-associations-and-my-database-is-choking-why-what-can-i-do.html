@@ -1,0 +1,30 @@
+---
+layout: echo_kb_faq
+title: I’ve got a table with lots of associations, and my database is choking. Why?
+  What can I do?
+date: 2025-02-17 14:36:09.000000000 +01:00
+type: echo_kb_faq
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta: {}
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>ActiveScaffold attempts to utilize eager loading when displaying the list, under the assumption that every association column will need to display something about the associated records. If this is too much, you have two options:</p>
+<ol>
+<li>Remove some association columns from the list (e.g. <code>config.list.columns.exclude :association_column</code>)</li>
+<li>Disable the eager loading for some association columns by setting <code>config.columns[:association_column].includes = nil</code>
+</li>
+</ol>
+<div class="markdown-heading"></div>
+<p></body></html></p>

@@ -1,0 +1,146 @@
+---
+layout: epkb_post_type_1
+title: Create Action Flow Action 'new'
+date: 2025-02-17 15:23:33.000000000 +01:00
+type: epkb_post_type_1
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '3'
+  _yoast_wpseo_primary_epkb_post_type_1_category: ''
+  _yoast_wpseo_estimated-reading-time-minutes: '3'
+  _elementor_edit_mode: builder
+  _elementor_template_type: wp-post
+  _elementor_version: 3.26.4
+  jx_editor_first_load: '1'
+  _wp_page_template: elementor_header_footer
+  _elementor_data: '[{"id":"89091f6","elType":"container","settings":{"flex_direction":"column","raven_animated_gradient_color_list":[{"raven_animated_gradient_color":"#F6AD1F","_id":"6d0ad30"},{"raven_animated_gradient_color":"#F7496A","_id":"ff74b43"},{"raven_animated_gradient_color":"#565AD8","_id":"d53b388"}]},"elements":[{"id":"2c1f435","elType":"widget","settings":{"editor":"<p>These
+    methods are called in the following order:<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"3eaea12","elType":"widget","settings":{"image":{"url":"https:\/\/github.com\/activescaffold\/active_scaffold\/raw\/master\/diagrams\/new.drawio.svg","id":"","size":"","source":"url","alt":""}},"elements":[],"widgetType":"image"},{"id":"ef998ad","elType":"widget","settings":{"editor":"<ol><li><code>create_authorized_filter<\/code>\u00a0called
+    as before_action<ol><li><code>create_authorized?<\/code>\u00a0(or the method defined
+    in conf.create.link.security_method if it''s changed) is called to check the permission.
+    If this method returns false,\u00a0<code>create_authorized_filter<\/code>\u00a0will
+    raise ActiveScaffold::ActionNotAllowed.<\/li><\/ol><\/li><li><code>new<\/code><ol><li><code>do_new<\/code>\u00a0which
+    uses\u00a0<code>new_model<\/code>\u00a0to setup the record used to render the
+    create form. It will set the values from constraints if controller is embedded,
+    and set the parent association if it''s nested.<\/li><li><code>respond_to_action<\/code>,
+    which will call the corresponding response method for new action and the requested
+    format<\/li><\/ol><\/li><\/ol><p><code>do_new<\/code>\u00a0or\u00a0<code>new_model<\/code>\u00a0can
+    be overrided, for example to set some default attributes in the form,\u00a0<code>do_new<\/code>\u00a0is
+    only used in new action, while\u00a0<code>new_model<\/code>\u00a0is called from
+    other actions too, such as create when form is submitted, field_search to render
+    the form, to render create form when\u00a0<code>always_show_create<\/code>\u00a0is
+    enabled, when changing a field in create form refreshes other field.<\/p><p>Then
+    it will render these views:<\/p><ul><li>create.html.erb (only for HTML request)<ul><li>_create_form.html.erb<ul><li>_base_form.html.erb<ul><li>_form_messages.html.erb<ul><li>_messages.html.erb
+    (only for HTML request)<\/li><\/ul><\/li><li>_form.html.erb<\/li><li>footer_extension
+    partial if _base_form was called with this variable<\/li><\/ul><\/li><\/ul><\/li><\/ul><\/li><\/ul><p>The\u00a0<code>_form<\/code>\u00a0partial
+    will render other partials depending on the columns, such as partials to render
+    subforms, or partials for columns which have a partial form override.<\/p><p>The\u00a0<code>_create_form<\/code>\u00a0partial
+    can be overrided and call render :super with local variables, to change some of
+    default behaviour of _base_form:<\/p><ul><li>xhr: to force rendering as XHR request
+    or HTML request instead of relying on the value of request.xhr?<\/li><li>form_action:
+    to use other action in the controller instead of\u00a0<code>create<\/code>.<\/li><li>method:
+    to use other HTTP method instead of POST.<\/li><li>cancel_link: use false to avoid
+    adding a cancel link to the form.<\/li><li>headline: to change the header of the
+    form.<\/li><\/ul><p>The\u00a0<code>_base_form<\/code>\u00a0partial can be overrided
+    to render :super setting some variables to change the default behaviour, although
+    it''s used by many actions. Also,\u00a0<code>_create_form<\/code>\u00a0partial
+    can be overrided copying the code, and passing more variables to\u00a0<code>_base_form<\/code>.
+    The following variables can be used, besides the ones explained above:<\/p><ul><li>multipart:
+    to enable or disable rendering the form as multipart instead of relying in\u00a0<code>active_scaffold_config.create.multipart<\/code>.<\/li><li>persistent:
+    can be\u00a0<code>:optional<\/code>,\u00a0<code>true<\/code>\u00a0or\u00a0<code>false<\/code>,
+    instead of relying in\u00a0<code>active_scaffold_config.create.persistent<\/code>.<\/li><li>columns:
+    an ActionColumns instance to use instead of\u00a0<code>active_scaffold_config.create.columns<\/code>,
+    build it with\u00a0<code>active_scaffold_config.build_action_columns :create,
+    [&lt;list of columns&gt;]<\/code>.<\/li><li>footer_extension: to render a partial
+    after footer buttons, inside the p tag with class form-footer.<\/li><li>url_options:
+    to change URL to submit the form, instead of default\u00a0<code>params_for(action:
+    :create)<\/code>.<\/li><li>scope: to render the fields with an initial scope.<\/li><li>floating_footer:
+    to enable or disable the floating footer when form is too big to fit in the window,
+    instead of relying on\u00a0<code>active_scaffold_config.create.floating_footer<\/code>.<\/li><li>submit_text:
+    the text of submit button, which defaults to the value of\u00a0<code>form_action<\/code>\u00a0(create
+    with default form_action).<\/li><li>apply_text: the text of submit button which
+    doesn''t close the form, when persistent is enabled. The default value is\u00a0<code>#{form_action}_apply<\/code>\u00a0(create_apply
+    with default form_action).<\/li><li>body_partial: to use a different partial to
+    render the fields in the form, instead of default\u00a0<code>_form<\/code>\u00a0partial.<\/li><\/ul>"},"elements":[],"widgetType":"text-editor"}],"isInner":false}]'
+  _yoast_wpseo_content_score: '30'
+  jupiterx_reading_time: " 2 minutes"
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+permalink: "/wiki-2/create-action-flow-action-new/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>These methods are called in the following order:</p>
+<p>															<img src="{{site.baseurl}}/assets/2025/02/new.drawio.svg" title="" alt="" loading="lazy">															</p>
+<ol>
+<li>
+<code>create_authorized_filter</code> called as before_action
+<ol>
+<li>
+<code>create_authorized?</code> (or the method defined in conf.create.link.security_method if it's changed) is called to check the permission. If this method returns false, <code>create_authorized_filter</code> will raise ActiveScaffold::ActionNotAllowed.</li>
+</ol>
+</li>
+<li>
+<code>new</code>
+<ol>
+<li>
+<code>do_new</code> which uses <code>new_model</code> to setup the record used to render the create form. It will set the values from constraints if controller is embedded, and set the parent association if it's nested.</li>
+<li>
+<code>respond_to_action</code>, which will call the corresponding response method for new action and the requested format</li>
+</ol>
+</li>
+</ol>
+<p><code>do_new</code> or <code>new_model</code> can be overrided, for example to set some default attributes in the form, <code>do_new</code> is only used in new action, while <code>new_model</code> is called from other actions too, such as create when form is submitted, field_search to render the form, to render create form when <code>always_show_create</code> is enabled, when changing a field in create form refreshes other field.</p>
+<p>Then it will render these views:</p>
+<ul>
+<li>create.html.erb (only for HTML request)
+<ul>
+<li>_create_form.html.erb
+<ul>
+<li>_base_form.html.erb
+<ul>
+<li>_form_messages.html.erb
+<ul>
+<li>_messages.html.erb (only for HTML request)</li>
+</ul>
+</li>
+<li>_form.html.erb</li>
+<li>footer_extension partial if _base_form was called with this variable</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>The <code>_form</code> partial will render other partials depending on the columns, such as partials to render subforms, or partials for columns which have a partial form override.</p>
+<p>The <code>_create_form</code> partial can be overrided and call render :super with local variables, to change some of default behaviour of _base_form:</p>
+<ul>
+<li>xhr: to force rendering as XHR request or HTML request instead of relying on the value of request.xhr?</li>
+<li>form_action: to use other action in the controller instead of <code>create</code>.</li>
+<li>method: to use other HTTP method instead of POST.</li>
+<li>cancel_link: use false to avoid adding a cancel link to the form.</li>
+<li>headline: to change the header of the form.</li>
+</ul>
+<p>The <code>_base_form</code> partial can be overrided to render :super setting some variables to change the default behaviour, although it's used by many actions. Also, <code>_create_form</code> partial can be overrided copying the code, and passing more variables to <code>_base_form</code>. The following variables can be used, besides the ones explained above:</p>
+<ul>
+<li>multipart: to enable or disable rendering the form as multipart instead of relying in <code>active_scaffold_config.create.multipart</code>.</li>
+<li>persistent: can be <code>:optional</code>, <code>true</code> or <code>false</code>, instead of relying in <code>active_scaffold_config.create.persistent</code>.</li>
+<li>columns: an ActionColumns instance to use instead of <code>active_scaffold_config.create.columns</code>, build it with <code>active_scaffold_config.build_action_columns :create, [&lt;list of columns&gt;]</code>.</li>
+<li>footer_extension: to render a partial after footer buttons, inside the p tag with class form-footer.</li>
+<li>url_options: to change URL to submit the form, instead of default <code>params_for(action: :create)</code>.</li>
+<li>scope: to render the fields with an initial scope.</li>
+<li>floating_footer: to enable or disable the floating footer when form is too big to fit in the window, instead of relying on <code>active_scaffold_config.create.floating_footer</code>.</li>
+<li>submit_text: the text of submit button, which defaults to the value of <code>form_action</code> (create with default form_action).</li>
+<li>apply_text: the text of submit button which doesn't close the form, when persistent is enabled. The default value is <code>#{form_action}_apply</code> (create_apply with default form_action).</li>
+<li>body_partial: to use a different partial to render the fields in the form, instead of default <code>_form</code> partial.</li>
+</ul>
+<p></body></html></p>

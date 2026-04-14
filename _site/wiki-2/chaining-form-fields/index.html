@@ -1,0 +1,78 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Sometimes you want update a form field after setting a value in another field. For example, you might have a form with a dropdown to select an author and another dropdown to select a book, and you want the book dropdown to only display books from the chosen author. To do this, you need to render the books dropdown each time an author is chosen.</p>
+<p>This documentation is for v3.0. In v2.4+ the api is at singular like so:		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>config.columns[:author].update_column = [:col1, :col2]</xmp></code>
+				</pre>
+<pre data-line="" data-indent="8">
+					<code><xmp>class UsersController &lt; ApplicationController
+  active_scaffold do |config|
+    config.columns[:author].form_ui = :select
+    config.columns[:author].update_columns = :book # enables the "magic"
+    config.columns[:book].form_ui = :select
+  end
+end
+module UsersHelper
+  def options_for_association_conditions(association, record)
+    if association.name == :book
+      {'books.author_id' =&gt; record.author_id}
+    else
+      super
+    end
+  end
+end</xmp></code>
+				</pre>
+<p>In v2.3 you could use @options[:update_column] although it was deprecated and removed in v2.4</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>config.columns[:author].options[:update_column] = :book</xmp></code>
+				</pre>
+<p>The helper code is to show only books belonging to chosen author, as explained in <a href="https://github.com/activescaffold/active_scaffold/wiki/Custom-Association-Options">Custom Association Options</a>.<br>Chaining form fields works with simple columns and form overrides too, not only with association columns.</p>
+<p>You can set an array of columns to update multiple columns when a column changes, and chain column updates:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class UsersController &lt; ApplicationController
+  active_scaffold do |config|
+    config.columns[:author].form_ui = :select
+    config.columns[:author].update_columns = [:book, :editorial]
+    config.columns[:book].form_ui = :select
+    config.columns[:book].update_column = :format
+  end
+end</xmp></code>
+				</pre>
+<p>In this example, fields for book, editorial and format are updated when author changes, and when book changes only format is updated. A form override which use the new author or book must be defined for editorial and format columns, in other case those fields won’t change when they will be rendered again.</p>
+<p>Usually only the value of the changed column is sent, if you need another values to render the updated columns, enable <code>send_form_on_update_column</code> and all the form will be sent.</p>
+<p>You can define a controller method named <code>after_render_field</code> to change some attributes of current record, so they will be used when rendering the fields. <code>after_render_field</code> method gets the record and the changed column:</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class UsersController &lt; ApplicationController
+  active_scaffold do |config|
+    config.columns[:author].form_ui = :select
+    config.columns[:author].update_columns = :book
+    config.columns[:book].form_ui = :select
+    config.columns[:book].update_columns = :format
+    config.columns[:format].form_ui = :select
+    config.columns[:format].options[:options] = [:a4, :a3]
+  end
+  protected
+  def after_render_field(record, column)
+    if column.name == :book
+      record.format = record.book.format
+    end
+  end
+end</xmp></code>
+				</pre>
+<p>In this example, when book is changed format is updated, using book format as current value.</p>
+<p>If you need to send all the form, because you need do some calculations with other fields for example, set <code>send_form_on_update_column</code> (added in v2.4). Since v3.2 you can set a selector to send only some fields using <code>options[:send_form_selector]</code></p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class UsersController &lt; ApplicationController
+  active_scaffold do |config|
+    config.columns[:author].form_ui = :select
+    config.columns[:author].update_columns = [:book, :editorial]
+    config.columns[:book].form_ui = :select
+    config.columns[:book].update_column = :format
+    config.columns[:book].send_form_on_update_column = true
+    config.columns[:book].options[:send_form_selector] = '[name*=author],[name*=book]'
+  end
+end</xmp></code>
+				</pre>
+<p></body></html></p>

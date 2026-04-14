@@ -1,0 +1,38 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Cells in records table already has a class attribute, and you can add more classes with <a href="https://github.com/activescaffold/active_scaffold/wiki/API%3A-Column">column</a>#css_class. If you want to add other html attributes, such as title attribute, you have to define a method in your helper named <code>#{class_name}_#{column_name}_column_attributes</code> or <code>#{column_name}_column_attributes</code>. This method accepts one argument: the entire record object, and must return a hash with html attributes, as used in rails helpers.</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>module UsersHelper
+  def user_roles_column_attributes(record)
+    {:title =&gt; "Click to edit roles"}
+  end
+end</xmp></code>
+				</pre>
+<p>Also you can override column_attributes method, which gets two arguments: column object and record object.</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>module UsersHelper
+  def column_attributes(column, record)
+    if column == :roles
+      {:title =&gt; "Click to edit roles"}
+    else
+      {:title =&gt; column.label}
+    end
+  end
+end</xmp></code>
+				</pre>
+<p>And you can override column_attributes method in your <code>ApplicationHelper</code> file to provide some defaults, or to disable the feature, avoiding some respond_to? calls</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>module ApplicationHelper
+  # set some default attributes and merge them with specific attributes for the column
+  def column_attributes(column, record)
+    {:title =&gt; "#{record.to_label} - #{column.label}"}.merge(super)
+  end
+  # disable column attributes, avoiding respond_to? methods
+  def column_attributes(column, record)
+    {}
+  end
+end</xmp></code>
+				</pre>
+<p></body></html></p>

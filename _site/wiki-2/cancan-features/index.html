@@ -1,0 +1,27 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:paragraph --><html><body></p>
+<p>If you use <a href="https://github.com/ryanb/cancan">CanCan</a> for authorization, the ActiveScaffold CanCan bridge auto-loads and plugs into ActiveScaffold by chaining your Ability rules in the default ActiveScaffold behavior. (Versions AS &gt;= 3.0.13 &amp; CanCan ~&gt; 1.6.7)</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Disclaimer: Test your security setup! If your data is critical and you want complete peace of mind, you must test it yourself. Make sure you have been as specific as possible, and that you have tested to make sure your security methods are being used.</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Features</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p><a href="https://github.com/activescaffold/active_scaffold/wiki/CanCan#features"></a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol class="wp-block-list">
+<!-- wp:list-item --></p>
+<li>activates only when CanCan is installed via default bridges <code>@install_if = lambda { Object.const_defined?(name) }</code> functionality</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>delegates to <a href="https://github.com/activescaffold/active_scaffold/wiki/Security">default AS security</a> in case CanCan says "no"</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>integrates with <code>beginning_of_chain</code> both in "list" and "nested" via <code>CanCan#accessible_by</code>, feature more known as <code>load_and_authorize_resources</code>. This means that the index action will select from the database only allowed records for the current user, and the creation of a record is done on the allowed scope (ie.: <code>Model.where(restrictions_from_cancan).new</code>). Note that you must test this, because on some cases, when using MetaWhere or Squeel or scope-based conditions in CanCan rules, not all conditions can be used for creation.</li>
+<p><!-- /wp:list-item -->
+</ol>
+<p><!-- /wp:list --><br />
+</body></html></p>

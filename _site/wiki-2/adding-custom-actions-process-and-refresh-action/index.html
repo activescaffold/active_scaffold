@@ -1,0 +1,43 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>It could be an action which acts over some marked records, or a record action. It's like delete action, which doesn't display a form and then do some processing. For a collection action it will refresh the list, for a member action it will refresh row and messages, and calculations if are used.</p>
+<p>You must remember to set :position to false too, because your action won't return html code. You should set method to :put, because you will change some records, and :crud_type if you want to do security checks with that.</p>
+<p>On the other hand, you should use <code>process_action_link_action</code> method in your action. This method has two optional arguments:</p>
+<ol>
+<li>A name to override default responses (<code>action_update</code>). If you set this argument, you will have to define <code>&lt;name&gt;_respond_to_&lt;format&gt;</code> method for each format you want to respond.</li>
+<li>The crud_type to check security when loading the record. By default it will try to guess it.</li>
+</ol>
+<p>Don't forget to set sucessful to true if all goes right.</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>  class InvoicesController &lt; ApplicationController
+    active_scaffold do |config|
+      config.action_links.add :paid, :type =&gt; :member, :crud_type =&gt; :update, :method =&gt; :put, :position =&gt; false
+      [more configuration]
+    end
+    def paid
+      process_action_link_action do |record|
+        if (self.successful = record.paid!)
+          flash[:info] = as_(:invoce_paid)
+        else
+          flash[:error] = as_(:invoce_cannot_be_paid)
+        end
+      end
+    end
+  end</xmp></code>
+				</pre>
+<p>If you want to process each record in last visited page you can use <code>each_record_in_page</code> iterator. If you want to process all records, obeying search and custom conditions (conditions from params, conditions_from_collection, constraints and so on) you can use <code>each_record_in_scope</code> iterator. We will use a collection action in these cases.</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>  class InvoicesController &lt; ApplicationController
+    active_scaffold do |config|
+      config.action_links.add :paid, :type =&gt; :collection, :method =&gt; :put, :position =&gt; false
+      [more configuration]
+    end
+    def paid
+      process_action_link_action do
+        self.successful = true
+        each_record_in_page { |record| record.paid! }
+      end
+    end
+  end</xmp></code>
+				</pre>
+<p></body></html></p>

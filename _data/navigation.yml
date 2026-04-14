@@ -1,0 +1,8 @@
+- name: Home
+  link: /
+- name: Pages
+  link: /pages/
+- name: Knowledge Base
+  link: /kb/
+- name: FAQ
+  link: /faq/

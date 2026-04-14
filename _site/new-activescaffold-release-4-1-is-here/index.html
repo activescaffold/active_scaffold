@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>New ActiveScaffold Release, 4.1 is Here! | Active Scaffold</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="New ActiveScaffold Release, 4.1 is Here!" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; We are excited to announce the release of ActiveScaffold 4.1, a major update packed with new features, consolidating the features added on 4.0 and improving the integration with modern Rails applications. This version adds filters to the list action, popup mode for add_new with a JS popup, consolidates tabbed feature added in 4.0, improved compatibility with Rails 7, improves grouped search, add few more small features and optimizes refreshing columns in a form, when disabling the form while the fields are refreshed is not needed (for example to refresh read only fields). &lt;/p&gt; What’s New in ActiveScaffold 4.0? &lt;/p&gt; Better Support for Rails 7: ActiveScaffold 4.1 is fully compatible with Rails 7, dropping support for older version 6.1, and migrating to dart sass. Improved tabbed interface: Tabbed_by is supported in columns group of show action too, so it can look like the form, but read only. Improved add_new: The text for the links can be changed in the form UI options, using a hash for add_new, and a new mode :popup is added, using a JS dialog, as :popup position does for action links. Filters: Filters are now a first-class setting in ActiveScaffold, so they don&#39;t need to be added as action links to :index action, and the conditions are handled next to the filter definition. No more overriding of conditions_for_collection or beginning_of_chain to define the filter condition. Improved grouped search: Field search supported a limited group by feature, it&#39;s more powerful now, so grouping by more than one column is supported, virtual columns can be displayed in the grouped search defining the DB columns to be used for the calculation, and support more SQL functions than the supported by Rails in the calculate method. Faster typing while refreshing a field: If the refreshed fields can&#39;t be edited, or you don&#39;t worry about user editing a field which will be replaced (for example, because the refreshed fields are far from the changed field), disabling the form while refreshing fields can be disabled. Enhanced Components: Add support for prompt on action links, as an easy and fast way to request and submit an string (comment, reason, ...), support embedding with multiple values in a constraint, defining empty_field_text per column, and support overriding with class prefix in another helper (sorted_association_options_find), which is useful when clear_helpers is not used. Improved Bridge Support: Better integration with TinyMCE, supporting setup option in tinymce config with a function. Bug Fixes &amp; Stability Improvements: Addressed multiple issues reported by the community to enhance reliability and ease of use. &lt;/ul&gt; How to Upgrade? If you’re using an older version of ActiveScaffold, upgrading is simple. Add or update the gem in your Gemfile: gem &#39;active_scaffold&#39;, &#39;~&gt; 4.1&#39; Then, run: bundle update active_scaffold &lt;/p&gt; Breaking Changes Support for rails 6.1 and ruby 3.0 has been removed. The active_scaffold_habtm_joins method has been renamed to active_scaffold_joins, and it&#39;s deprecated now. &lt;/p&gt; What’s Next? We are starting to work on the support for rails 8.0, and new features, such as logical search. Future updates may continue improving performance, and will add new features, and enhance integration with modern Rails workflows. If you have feedback or feature requests, we welcome contributions on GitHub. &lt;/p&gt; Try It Now! Download ActiveScaffold 4.1 today and experience the improvements firsthand. Stay tuned for more updates and upcoming tutorials on how to make the most of the new features. &lt;/p&gt; 🚀 Happy coding with ActiveScaffold! &lt;/body&gt;&lt;/html&gt;" />
+<meta property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; We are excited to announce the release of ActiveScaffold 4.1, a major update packed with new features, consolidating the features added on 4.0 and improving the integration with modern Rails applications. This version adds filters to the list action, popup mode for add_new with a JS popup, consolidates tabbed feature added in 4.0, improved compatibility with Rails 7, improves grouped search, add few more small features and optimizes refreshing columns in a form, when disabling the form while the fields are refreshed is not needed (for example to refresh read only fields). &lt;/p&gt; What’s New in ActiveScaffold 4.0? &lt;/p&gt; Better Support for Rails 7: ActiveScaffold 4.1 is fully compatible with Rails 7, dropping support for older version 6.1, and migrating to dart sass. Improved tabbed interface: Tabbed_by is supported in columns group of show action too, so it can look like the form, but read only. Improved add_new: The text for the links can be changed in the form UI options, using a hash for add_new, and a new mode :popup is added, using a JS dialog, as :popup position does for action links. Filters: Filters are now a first-class setting in ActiveScaffold, so they don&#39;t need to be added as action links to :index action, and the conditions are handled next to the filter definition. No more overriding of conditions_for_collection or beginning_of_chain to define the filter condition. Improved grouped search: Field search supported a limited group by feature, it&#39;s more powerful now, so grouping by more than one column is supported, virtual columns can be displayed in the grouped search defining the DB columns to be used for the calculation, and support more SQL functions than the supported by Rails in the calculate method. Faster typing while refreshing a field: If the refreshed fields can&#39;t be edited, or you don&#39;t worry about user editing a field which will be replaced (for example, because the refreshed fields are far from the changed field), disabling the form while refreshing fields can be disabled. Enhanced Components: Add support for prompt on action links, as an easy and fast way to request and submit an string (comment, reason, ...), support embedding with multiple values in a constraint, defining empty_field_text per column, and support overriding with class prefix in another helper (sorted_association_options_find), which is useful when clear_helpers is not used. Improved Bridge Support: Better integration with TinyMCE, supporting setup option in tinymce config with a function. Bug Fixes &amp; Stability Improvements: Addressed multiple issues reported by the community to enhance reliability and ease of use. &lt;/ul&gt; How to Upgrade? If you’re using an older version of ActiveScaffold, upgrading is simple. Add or update the gem in your Gemfile: gem &#39;active_scaffold&#39;, &#39;~&gt; 4.1&#39; Then, run: bundle update active_scaffold &lt;/p&gt; Breaking Changes Support for rails 6.1 and ruby 3.0 has been removed. The active_scaffold_habtm_joins method has been renamed to active_scaffold_joins, and it&#39;s deprecated now. &lt;/p&gt; What’s Next? We are starting to work on the support for rails 8.0, and new features, such as logical search. Future updates may continue improving performance, and will add new features, and enhance integration with modern Rails workflows. If you have feedback or feature requests, we welcome contributions on GitHub. &lt;/p&gt; Try It Now! Download ActiveScaffold 4.1 today and experience the improvements firsthand. Stay tuned for more updates and upcoming tutorials on how to make the most of the new features. &lt;/p&gt; 🚀 Happy coding with ActiveScaffold! &lt;/body&gt;&lt;/html&gt;" />
+<link rel="canonical" href="http://localhost:4000/new-activescaffold-release-4-1-is-here/" />
+<meta property="og:url" content="http://localhost:4000/new-activescaffold-release-4-1-is-here/" />
+<meta property="og:site_name" content="Active Scaffold" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-07-09T17:42:24+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="New ActiveScaffold Release, 4.1 is Here!" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-07-09T17:42:24+02:00","datePublished":"2025-07-09T17:42:24+02:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; We are excited to announce the release of ActiveScaffold 4.1, a major update packed with new features, consolidating the features added on 4.0 and improving the integration with modern Rails applications. This version adds filters to the list action, popup mode for add_new with a JS popup, consolidates tabbed feature added in 4.0, improved compatibility with Rails 7, improves grouped search, add few more small features and optimizes refreshing columns in a form, when disabling the form while the fields are refreshed is not needed (for example to refresh read only fields). &lt;/p&gt; What’s New in ActiveScaffold 4.0? &lt;/p&gt; Better Support for Rails 7: ActiveScaffold 4.1 is fully compatible with Rails 7, dropping support for older version 6.1, and migrating to dart sass. Improved tabbed interface: Tabbed_by is supported in columns group of show action too, so it can look like the form, but read only. Improved add_new: The text for the links can be changed in the form UI options, using a hash for add_new, and a new mode :popup is added, using a JS dialog, as :popup position does for action links. Filters: Filters are now a first-class setting in ActiveScaffold, so they don&#39;t need to be added as action links to :index action, and the conditions are handled next to the filter definition. No more overriding of conditions_for_collection or beginning_of_chain to define the filter condition. Improved grouped search: Field search supported a limited group by feature, it&#39;s more powerful now, so grouping by more than one column is supported, virtual columns can be displayed in the grouped search defining the DB columns to be used for the calculation, and support more SQL functions than the supported by Rails in the calculate method. Faster typing while refreshing a field: If the refreshed fields can&#39;t be edited, or you don&#39;t worry about user editing a field which will be replaced (for example, because the refreshed fields are far from the changed field), disabling the form while refreshing fields can be disabled. Enhanced Components: Add support for prompt on action links, as an easy and fast way to request and submit an string (comment, reason, ...), support embedding with multiple values in a constraint, defining empty_field_text per column, and support overriding with class prefix in another helper (sorted_association_options_find), which is useful when clear_helpers is not used. Improved Bridge Support: Better integration with TinyMCE, supporting setup option in tinymce config with a function. Bug Fixes &amp; Stability Improvements: Addressed multiple issues reported by the community to enhance reliability and ease of use. &lt;/ul&gt; How to Upgrade? If you’re using an older version of ActiveScaffold, upgrading is simple. Add or update the gem in your Gemfile: gem &#39;active_scaffold&#39;, &#39;~&gt; 4.1&#39; Then, run: bundle update active_scaffold &lt;/p&gt; Breaking Changes Support for rails 6.1 and ruby 3.0 has been removed. The active_scaffold_habtm_joins method has been renamed to active_scaffold_joins, and it&#39;s deprecated now. &lt;/p&gt; What’s Next? We are starting to work on the support for rails 8.0, and new features, such as logical search. Future updates may continue improving performance, and will add new features, and enhance integration with modern Rails workflows. If you have feedback or feature requests, we welcome contributions on GitHub. &lt;/p&gt; Try It Now! Download ActiveScaffold 4.1 today and experience the improvements firsthand. Stay tuned for more updates and upcoming tutorials on how to make the most of the new features. &lt;/p&gt; 🚀 Happy coding with ActiveScaffold! &lt;/body&gt;&lt;/html&gt;","headline":"New ActiveScaffold Release, 4.1 is Here!","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/new-activescaffold-release-4-1-is-here/"},"url":"http://localhost:4000/new-activescaffold-release-4-1-is-here/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Active Scaffold" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Active Scaffold</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          <ul class="nav-menu">
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/blog/" class="nav-link">
+          Blog
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/bridges/" class="nav-link">
+          Bridges
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/plugins/" class="nav-link">
+          Plugins
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/doc/" class="nav-link">
+          Doc
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+
+        </div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">New ActiveScaffold Release, 4.1 is Here!</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2025-07-09T17:42:24+02:00" itemprop="datePublished">Jul 9, 2025
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "scambra", "email" => "sergio@enpijama.es", "display_name" => "Sergio", "first_name" => "Sergio", "last_name" => "Cambra"}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:paragraph --><html><body></p>
+<p>We are excited to announce the release of <strong>ActiveScaffold 4.1</strong>, a major update packed with new features, consolidating the features added on 4.0 and improving the integration with modern Rails applications. This version adds filters to the list action, popup mode for add_new with a JS popup, consolidates tabbed feature added in 4.0, improved compatibility with Rails 7, improves grouped search, add few more small features and optimizes refreshing columns in a form, when disabling the form while the fields are refreshed is not needed (for example to refresh read only fields).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:separator --></p>
+<hr class="wp-block-separator has-alpha-channel-opacity">
+<!-- /wp:separator --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading"><strong>What’s New in ActiveScaffold 4.0?</strong></h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:list --></p>
+<ul class="wp-block-list">
+<!-- wp:list-item --></p>
+<li>
+<strong>Better Support for Rails 7:</strong> ActiveScaffold 4.1 is fully compatible with Rails 7, dropping support for older version 6.1, and migrating to dart sass.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>
+<strong>Improved tabbed interface:</strong> Tabbed_by is supported in columns group of show action too, so it can look like the form, but read only.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>
+<strong>Improved add_new:</strong> The text for the links can be changed in the form UI options, using a hash for add_new, and a new mode :popup is added, using a JS dialog, as :popup position does for action links.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>
+<strong>Filters:</strong> Filters are now a first-class setting in ActiveScaffold, so they don't need to be added as action links to :index action, and the conditions are handled next to the filter definition. No more overriding of conditions_for_collection or beginning_of_chain to define the filter condition.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>
+<strong>Improved grouped search: </strong>Field search supported a limited group by feature, it's more powerful now, so grouping by more than one column is supported, virtual columns can be displayed in the grouped search defining the DB columns to be used for the calculation, and support more SQL functions than the supported by Rails in the calculate method.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>
+<strong>Faster typing while refreshing a field:</strong> If the refreshed fields can't be edited, or you don't worry about user editing a field which will be replaced (for example, because the refreshed fields are far from the changed field), disabling the form while refreshing fields can be disabled.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>
+<strong>Enhanced Components:</strong> Add support for prompt on action links, as an easy and fast way to request and submit an string (comment, reason, ...), support embedding with multiple values in a constraint, defining empty_field_text per column, and support overriding with class prefix in another helper (sorted_association_options_find), which is useful when clear_helpers is not used.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>
+<strong>Improved Bridge Support:</strong> Better integration with TinyMCE, supporting setup option in tinymce config with a function.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>
+<strong>Bug Fixes &amp; Stability Improvements:</strong> Addressed multiple issues reported by the community to enhance reliability and ease of use.</li>
+<p><!-- /wp:list-item -->
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:separator --></p>
+<hr class="wp-block-separator has-alpha-channel-opacity">
+<!-- /wp:separator --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading"><strong>How to Upgrade?</strong></h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>If you’re using an older version of ActiveScaffold, upgrading is simple. Add or update the gem in your <code>Gemfile</code>:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>gem 'active_scaffold', '~&gt; 4.1'</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Then, run:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>bundle update active_scaffold</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:separator --></p>
+<hr class="wp-block-separator has-alpha-channel-opacity">
+<!-- /wp:separator --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading"><strong>Breaking Changes</strong></h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Support for rails 6.1 and ruby 3.0 has been removed.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The active_scaffold_habtm_joins method has been renamed to active_scaffold_joins, and it's deprecated now.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:separator --></p>
+<hr class="wp-block-separator has-alpha-channel-opacity">
+<!-- /wp:separator --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading"><strong>What’s Next?</strong></h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>We are starting to work on the support for rails 8.0, and new features, such as logical search. Future updates may continue improving performance, and will add new features, and enhance integration with modern Rails workflows. If you have feedback or feature requests, we welcome contributions on <a href="https://github.com/activescaffold/active_scaffold">GitHub</a>.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:separator --></p>
+<hr class="wp-block-separator has-alpha-channel-opacity">
+<!-- /wp:separator --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading"><strong>Try It Now!</strong></h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Download <strong>ActiveScaffold 4.1</strong> today and experience the improvements firsthand. Stay tuned for more updates and upcoming tutorials on how to make the most of the new features.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:separator --></p>
+<hr class="wp-block-separator has-alpha-channel-opacity">
+<!-- /wp:separator --></p>
+<p><!-- wp:paragraph --></p>
+<p>🚀 <strong>Happy coding with ActiveScaffold!</strong></p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>
+
+  </div><a class="u-url" href="/new-activescaffold-release-4-1-is-here/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Active Scaffold</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Active Scaffold</li><li><a class="u-email" href="mailto:sergio@activescaffold.eu">sergio@activescaffold.eu</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/activescaffold"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">activescaffold</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>ActiveScaffold helps developers rapidly build and manage web applications with flexible scaffolding, automation, and developer-friendly tools. </p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

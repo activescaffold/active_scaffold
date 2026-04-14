@@ -1,0 +1,139 @@
+---
+layout: epkb_post_type_1
+title: Action links groups
+date: 2025-02-17 12:58:27.000000000 +01:00
+type: epkb_post_type_1
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '3'
+  _yoast_wpseo_primary_epkb_post_type_1_category: ''
+  _yoast_wpseo_estimated-reading-time-minutes: '1'
+  _elementor_edit_mode: builder
+  _elementor_template_type: wp-post
+  _elementor_version: 3.26.4
+  jx_editor_first_load: '1'
+  _wp_page_template: elementor_header_footer
+  _elementor_data: '[{"id":"78b424a","elType":"container","settings":{"flex_direction":"column","raven_animated_gradient_color_list":[{"raven_animated_gradient_color":"#F6AD1F","_id":"f575553"},{"raven_animated_gradient_color":"#F7496A","_id":"b0886c7"},{"raven_animated_gradient_color":"#565AD8","_id":"43fc700"}]},"elements":[{"id":"c4f8448","elType":"widget","settings":{"editor":"<p>If
+    you want to add an action_link to your controller you do something like \u2018conf.action_links
+    &lt;&lt; \u2026.''. Internally, these are stored in an array. If list header is
+    rendered all action_links of type ''collection'' are selected and the same happens
+    for type ''member'' for each list row.<\/p><p>The grouping is achieved by changing
+    the array to a tree structure. Leafs are representing action_links and nodes represent
+    our groups. Two groups are automatically created: ''member'' and ''collection''.<\/p><p>Let
+    s start with the first example. We would like to add all collection actions (create,
+    search) to a group ''menu'' for our teams controller.<\/p><div class=\"highlight
+    highlight-source-ruby notranslate position-relative overflow-auto\">\u00a0<\/div>"},"elements":[],"widgetType":"text-editor"},{"id":"617da50","elType":"widget","settings":{"code":"class
+    TeamsController < ApplicationController\n  active_scaffold :team do |conf|\n    ....\n    conf.search.action_group
+    = ''collection.menu'' \n    conf.create.action_group = ''collection.menu'' \n    ....\n  end\nend"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"d1675cd","elType":"widget","settings":{"editor":"<p>Now
+    you should see a menu link at the top of your teams list view, which opens a \"submenu\"
+    when hovering over it.<\/p><p>Another example. We would like to group all member
+    actions for all controllers (application_controller.rb).<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"d9de4b5","elType":"widget","settings":{"code":"ActiveScaffold.set_defaults
+    do |conf| \n  conf.show.action_group = ''member.actions.crud'' \n  conf.delete.action_group
+    = ''member.actions.crud'' \n  conf.update.action_group = ''member.actions.crud''
+    \n  conf.nested.action_group = ''member.actions.nested''\nend"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"11001c3","elType":"widget","settings":{"editor":"<p>To
+    add some custom actions to a new collection group you can do something like this:<\/p><div
+    class=\"highlight highlight-source-ruby notranslate position-relative overflow-auto\">\u00a0<\/div>"},"elements":[],"widgetType":"text-editor"},{"id":"7cf915b","elType":"widget","settings":{"code":"class
+    TeamsController < ApplicationController\n  active_scaffold :team do |conf|\n    ....\n    conf.action_links.collection.custom
+    do |group| \n      group.name = I18n.t( ''<...>.custom'' ) # set the group''s
+    name    \n      group.add ''dummy1'', :confirm => ''are_you_sure'', :type => :collection,
+    :method => :put, :position => false\n      group.level_2 do |group| \n        group.add
+    ''dummy2'', :confirm => ''are_you_sure'', :type => :collection, :method => :put,
+    :position => false \n      end \n      group.add ''dummy3'', :confirm => ''are_you_sure'',
+    :type => :collection, :method => :put, :position => false \n    end \n    ....\n  end\nend"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"f825ddf","elType":"widget","settings":{"editor":"<p>Adding
+    member actions to a new group is the same as collection actions:<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"629d6fd","elType":"widget","settings":{"code":"class
+    TeamsController < ApplicationController\n  active_scaffold :team do |conf|\n    ....\n    conf.action_links.member.custom
+    do |group| \n      group.add ''dummy1'', :confirm => ''are_you_sure'', :type =>
+    :member, :method => :put, :position => false\n      group.level_2 do |group| \n        group.add
+    ''dummy2'', :confirm => ''are_you_sure'', :type => :member, :method => :put, :position
+    => false \n      end \n      group.add ''dummy3'', :confirm => ''are_you_sure'',
+    :type => :member, :method => :put, :position => false \n    end \n    ....\n  end\nend"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"76ea50d","elType":"widget","settings":{"editor":"<p>As
+    of September, 25th 2012, the master branch contains a commit by Sergio allowing
+    to define different groups for nested links as well. Here an example of how to
+    use it:<\/p><div class=\"highlight highlight-source-ruby notranslate position-relative
+    overflow-auto\">\u00a0<\/div>"},"elements":[],"widgetType":"text-editor"},{"id":"ae8716d","elType":"widget","settings":{"code":"    conf.nested.add_link(:nested_as,
+    :action_group => ''member.ownlinksA'')\n    conf.nested.add_link(:nested_bs, :action_group
+    => ''member.ownlinksA'')\n    conf.nested.add_scoped_link(:nested_cs, :action_group
+    => ''member.ownlinksB'')"},"elements":[],"widgetType":"raven-code-highlight"}],"isInner":false}]'
+  _yoast_wpseo_content_score: '90'
+  jupiterx_reading_time: " 2 minutes"
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+permalink: "/wiki-2/action-links-groups/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>If you want to add an action_link to your controller you do something like ‘conf.action_links &lt;&lt; ….'. Internally, these are stored in an array. If list header is rendered all action_links of type 'collection' are selected and the same happens for type 'member' for each list row.</p>
+<p>The grouping is achieved by changing the array to a tree structure. Leafs are representing action_links and nodes represent our groups. Two groups are automatically created: 'member' and 'collection'.</p>
+<p>Let s start with the first example. We would like to add all collection actions (create, search) to a group 'menu' for our teams controller.</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class TeamsController &lt; ApplicationController
+  active_scaffold :team do |conf|
+    ....
+    conf.search.action_group = 'collection.menu' 
+    conf.create.action_group = 'collection.menu' 
+    ....
+  end
+end</xmp></code>
+				</pre>
+<p>Now you should see a menu link at the top of your teams list view, which opens a "submenu" when hovering over it.</p>
+<p>Another example. We would like to group all member actions for all controllers (application_controller.rb).</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>ActiveScaffold.set_defaults do |conf| 
+  conf.show.action_group = 'member.actions.crud' 
+  conf.delete.action_group = 'member.actions.crud' 
+  conf.update.action_group = 'member.actions.crud' 
+  conf.nested.action_group = 'member.actions.nested'
+end</xmp></code>
+				</pre>
+<p>To add some custom actions to a new collection group you can do something like this:</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class TeamsController &lt; ApplicationController
+  active_scaffold :team do |conf|
+    ....
+    conf.action_links.collection.custom do |group| 
+      group.name = I18n.t( '&lt;...&gt;.custom' ) # set the group's name    
+      group.add 'dummy1', :confirm =&gt; 'are_you_sure', :type =&gt; :collection, :method =&gt; :put, :position =&gt; false
+      group.level_2 do |group| 
+        group.add 'dummy2', :confirm =&gt; 'are_you_sure', :type =&gt; :collection, :method =&gt; :put, :position =&gt; false 
+      end 
+      group.add 'dummy3', :confirm =&gt; 'are_you_sure', :type =&gt; :collection, :method =&gt; :put, :position =&gt; false 
+    end 
+    ....
+  end
+end</xmp></code>
+				</pre>
+<p>Adding member actions to a new group is the same as collection actions:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class TeamsController &lt; ApplicationController
+  active_scaffold :team do |conf|
+    ....
+    conf.action_links.member.custom do |group| 
+      group.add 'dummy1', :confirm =&gt; 'are_you_sure', :type =&gt; :member, :method =&gt; :put, :position =&gt; false
+      group.level_2 do |group| 
+        group.add 'dummy2', :confirm =&gt; 'are_you_sure', :type =&gt; :member, :method =&gt; :put, :position =&gt; false 
+      end 
+      group.add 'dummy3', :confirm =&gt; 'are_you_sure', :type =&gt; :member, :method =&gt; :put, :position =&gt; false 
+    end 
+    ....
+  end
+end</xmp></code>
+				</pre>
+<p>As of September, 25th 2012, the master branch contains a commit by Sergio allowing to define different groups for nested links as well. Here an example of how to use it:</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>    conf.nested.add_link(:nested_as, :action_group =&gt; 'member.ownlinksA')
+    conf.nested.add_link(:nested_bs, :action_group =&gt; 'member.ownlinksA')
+    conf.nested.add_scoped_link(:nested_cs, :action_group =&gt; 'member.ownlinksB')</xmp></code>
+				</pre>
+<p></body></html></p>

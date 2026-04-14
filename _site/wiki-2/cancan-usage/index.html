@@ -1,0 +1,50 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Setup your favourite current_user strategy (devise, or whatever), and add this to map AS calls (row, show_search, etc.) to basic ones (create, read, update, delete). Ability#as_action_aliases should be called by the user in his ability class. Note: you can omit this if you want fine control of each action.</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class Ability &lt; CanCan::Ability
+  def initialize(current_user)
+    as_action_aliases
+  end
+end</xmp></code>
+				</pre>
+<p>For maximum security, this feature is best used with <code>default_permission = false</code>, although <code>default_permission = true</code> should also work.</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>    # config/initializers/active_scaffold.rb
+    ActiveScaffold.set_defaults do |config|
+      config.security.default_permission = false
+    end</xmp></code>
+				</pre>
+<p>Then, add rules based on role, user, or any other user related method:</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>def initialize(current_user)
+    as_action_aliases
+    current_user ? user_rules(current_user) : guest_user_rules
+    base_rules
+  end
+def user_rules(user)
+   user.roles.each do |role|
+      exec_role_rules(role)
+   end
+   default_user_rules
+end
+def exec_role_rules( role)
+    meth = :"#{role.name}_rules"
+    send(meth) if respond_to? meth
+  end
+def admin_rules
+  can :manage, [Article, Post, User, Role]
+end</xmp></code>
+				</pre>
+<p>Just define your abilities and this bridge will use them automagically, making sure the user sees and does only what he is allowed to do. ActiveScaffold asks CanCan access to the following abilities, grouped in two categories:</p>
+<ol>
+<li>CRUD Types <code>:create, :update, :read</code>
+</li>
+<li>Actions <code>:list, :show</code> etc (other rails actions (controller method names)). Note that NOT ALL the actions in the AS-enabled controller are authorized, but only the actions that are injected by AS as per <a href="https://github.com/activescaffold/active_scaffold/wiki/Security">AS security documentation</a>. The method <code>as_action_aliases</code> injected in the Ability class can be called to alias most AS actions to their CRUD corespondent for example list and row to read etc.<br>:TODO document column granularity <a href="https://github.com/vhochstein/active_scaffold/issues#issue/122">https://github.com/vhochstein/active_scaffold/issues#issue/122</a>
+</li>
+</ol>
+<p>For access to be allowed, CanCan must reply true both to <code>:crud_type</code> and <code>:action</code> simultaneously. If access is not granted it defaults to <a href="https://github.com/activescaffold/active_scaffold/wiki/Security">old ActiveScaffold security behavior</a> and you can write access rules inside your models like you used to.</p>
+<p>The CanCan bridge also makes available to the model the <code>current_ability</code> if the model is used within a controller (so this does not work, say, in the console).</p>
+<p></body></html></p>

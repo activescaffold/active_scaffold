@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>ActiveScaffoldCamera | Active Scaffold</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="ActiveScaffoldCamera" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Plugins ActiveScaffoldCamera Adds a camera interface to forms ActiveScaffoldCamera Adds a camera interface to forms, letting users take snapshots directly from their devices and upload them. Description ActiveScaffoldCamera adds a camera interface to ActiveScaffold forms, allowing users to capture and upload photos directly from their devices. It is ideal for applications requiring photo verification, profile pictures, or document scanning.   Installation Add the following line to your Gemfile: gem &#39;active_scaffold_camera&#39; Then run: bundle install Usage &amp; Options Enable the camera functionality in your controller: class ProfilesController &lt; ApplicationController active_scaffold :profile do |config| config.actions &lt;&lt; :camera end end Example Code config.camera.capture_mode = &#39;photo&#39; config.camera.quality = 80 Screenshots Explore more For a complete list of plugins and bridges Visit the ActiveScaffold Wiki &lt;/body&gt;&lt;/html&gt;" />
+<meta property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Plugins ActiveScaffoldCamera Adds a camera interface to forms ActiveScaffoldCamera Adds a camera interface to forms, letting users take snapshots directly from their devices and upload them. Description ActiveScaffoldCamera adds a camera interface to ActiveScaffold forms, allowing users to capture and upload photos directly from their devices. It is ideal for applications requiring photo verification, profile pictures, or document scanning.   Installation Add the following line to your Gemfile: gem &#39;active_scaffold_camera&#39; Then run: bundle install Usage &amp; Options Enable the camera functionality in your controller: class ProfilesController &lt; ApplicationController active_scaffold :profile do |config| config.actions &lt;&lt; :camera end end Example Code config.camera.capture_mode = &#39;photo&#39; config.camera.quality = 80 Screenshots Explore more For a complete list of plugins and bridges Visit the ActiveScaffold Wiki &lt;/body&gt;&lt;/html&gt;" />
+<link rel="canonical" href="http://localhost:4000/plugins/activescaffoldcamera/" />
+<meta property="og:url" content="http://localhost:4000/plugins/activescaffoldcamera/" />
+<meta property="og:site_name" content="Active Scaffold" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-02-18T11:57:07+01:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="ActiveScaffoldCamera" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-02-18T11:57:07+01:00","datePublished":"2025-02-18T11:57:07+01:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Plugins ActiveScaffoldCamera Adds a camera interface to forms ActiveScaffoldCamera Adds a camera interface to forms, letting users take snapshots directly from their devices and upload them. Description ActiveScaffoldCamera adds a camera interface to ActiveScaffold forms, allowing users to capture and upload photos directly from their devices. It is ideal for applications requiring photo verification, profile pictures, or document scanning.   Installation Add the following line to your Gemfile: gem &#39;active_scaffold_camera&#39; Then run: bundle install Usage &amp; Options Enable the camera functionality in your controller: class ProfilesController &lt; ApplicationController active_scaffold :profile do |config| config.actions &lt;&lt; :camera end end Example Code config.camera.capture_mode = &#39;photo&#39; config.camera.quality = 80 Screenshots Explore more For a complete list of plugins and bridges Visit the ActiveScaffold Wiki &lt;/body&gt;&lt;/html&gt;","headline":"ActiveScaffoldCamera","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/plugins/activescaffoldcamera/"},"url":"http://localhost:4000/plugins/activescaffoldcamera/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Active Scaffold" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Active Scaffold</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          <ul class="nav-menu">
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/blog/" class="nav-link">
+          Blog
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/bridges/" class="nav-link">
+          Bridges
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/plugins/" class="nav-link">
+          Plugins
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/doc/" class="nav-link">
+          Doc
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+
+        </div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">ActiveScaffoldCamera</h1>
+  </header>
+
+  <div class="post-content">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p><a href="https://activescaffold.eu/">Plugins</a></p>
+<h1>ActiveScaffoldCamera</h1>
+<p>Adds a camera interface to forms</p>
+<h2>ActiveScaffoldCamera</h2>
+<p>Adds a camera interface to forms, letting users take snapshots directly from their devices and upload them.</p>
+<p>			<svg aria-hidden="true" viewbox="0 0 576 512" xmlns="http://www.w3.org/2000/svg">
+<path d="M542.22 32.05c-54.8 3.11-163.72 14.43-230.96 55.59-4.64 2.84-7.27 7.89-7.27 13.17v363.87c0 11.55 12.63 18.85 23.28 13.49 69.18-34.82 169.23-44.32 218.7-46.92 16.89-.89 30.02-14.43 30.02-30.66V62.75c.01-17.71-15.35-31.74-33.77-30.7zM264.73 87.64C197.5 46.48 88.58 35.17 33.78 32.05 15.36 31.01 0 45.04 0 62.75V400.6c0 16.24 13.13 29.78 30.02 30.66 49.49 2.6 149.59 12.11 218.77 46.95 10.62 5.35 23.21-1.94 23.21-13.46V100.63c0-5.29-2.62-10.14-7.27-12.99z"></path></svg>			</p>
+<h3>Description</h3>
+<p data-pm-slice="1 1 []">ActiveScaffoldCamera adds a camera interface to ActiveScaffold forms, allowing users to capture and upload photos directly from their devices. It is ideal for applications requiring photo verification, profile pictures, or document scanning.</p>
+<h3> </h3>
+<p>			<svg aria-hidden="true" viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"></path></svg>			</p>
+<h3>Installation</h3>
+<p data-pm-slice="1 1 []">Add the following line to your <code>Gemfile</code>:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>gem 'active_scaffold_camera'</xmp></code>
+				</pre>
+<p data-pm-slice="1 1 []">Then run:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>bundle install</xmp></code>
+				</pre>
+<p>			<svg aria-hidden="true" viewbox="0 0 640 512" xmlns="http://www.w3.org/2000/svg">
+<path d="M255.03 261.65c6.25 6.25 16.38 6.25 22.63 0l11.31-11.31c6.25-6.25 6.25-16.38 0-22.63L253.25 192l35.71-35.72c6.25-6.25 6.25-16.38 0-22.63l-11.31-11.31c-6.25-6.25-16.38-6.25-22.63 0l-58.34 58.34c-6.25 6.25-6.25 16.38 0 22.63l58.35 58.34zm96.01-11.3l11.31 11.31c6.25 6.25 16.38 6.25 22.63 0l58.34-58.34c6.25-6.25 6.25-16.38 0-22.63l-58.34-58.34c-6.25-6.25-16.38-6.25-22.63 0l-11.31 11.31c-6.25 6.25-6.25 16.38 0 22.63L386.75 192l-35.71 35.72c-6.25 6.25-6.25 16.38 0 22.63zM624 416H381.54c-.74 19.81-14.71 32-32.74 32H288c-18.69 0-33.02-17.47-32.77-32H16c-8.8 0-16 7.2-16 16v16c0 35.2 28.8 64 64 64h512c35.2 0 64-28.8 64-64v-16c0-8.8-7.2-16-16-16zM576 48c0-26.4-21.6-48-48-48H112C85.6 0 64 21.6 64 48v336h512V48zm-64 272H128V64h384v256z"></path></svg>			</p>
+<h3>Usage &amp; Options</h3>
+<p data-pm-slice="1 1 []">Enable the camera functionality in your controller:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class ProfilesController &lt; ApplicationController
+  active_scaffold :profile do |config|
+    config.actions &lt;&lt; :camera
+  end
+end</xmp></code>
+				</pre>
+<p>			<svg aria-hidden="true" viewbox="0 0 640 512" xmlns="http://www.w3.org/2000/svg">
+<path d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z"></path></svg>			</p>
+<h3>Example Code</h3>
+<pre data-line="" data-indent="8">
+					<code><xmp>config.camera.capture_mode = 'photo'
+config.camera.quality = 80</xmp></code>
+				</pre>
+<p>			<svg aria-hidden="true" viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path d="M512 144v288c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V144c0-26.5 21.5-48 48-48h88l12.3-32.9c7-18.7 24.9-31.1 44.9-31.1h125.5c20 0 37.9 12.4 44.9 31.1L376 96h88c26.5 0 48 21.5 48 48zM376 288c0-66.2-53.8-120-120-120s-120 53.8-120 120 53.8 120 120 120 120-53.8 120-120zm-32 0c0 48.5-39.5 88-88 88s-88-39.5-88-88 39.5-88 88-88 88 39.5 88 88z"></path></svg>			</p>
+<h3>Screenshots</h3>
+<h3>Explore more</h3>
+<p>						For a complete list of plugins and bridges<br />
+					<a><br />
+						Visit the ActiveScaffold Wiki					</a><br />
+</body></html></p>
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Active Scaffold</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Active Scaffold</li><li><a class="u-email" href="mailto:sergio@activescaffold.eu">sergio@activescaffold.eu</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/activescaffold"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">activescaffold</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>ActiveScaffold helps developers rapidly build and manage web applications with flexible scaffolding, automation, and developer-friendly tools. </p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

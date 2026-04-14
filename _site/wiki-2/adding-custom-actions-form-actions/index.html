@@ -1,0 +1,65 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>These are actions which displays a form and later process the form, like create or update. You must add two actions: one to display the form and another to process the form (like new and create actions). For displaying form action you can use the <code>_base_form</code> partial, and for processing form action you can use process_action_link_action again:</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>  class InvoicesController &lt; ApplicationController
+    active_scaffold do |config|
+      config.action_links.add :email, :type =&gt; :member, :position =&gt; :after
+      [more configuration]
+    end
+    def email
+      @record = find_if_allowed(params[:id], :read)
+      @column = active_scaffold_config.columns[:email] 
+      respond_to_action(:email)
+    end
+    def send_email
+      process_action_link_action do |record|
+        self.successful = CustomerMailer.invoice(record).deliver
+      end
+    end
+    protected
+    def email_respond_to_js
+      render :partial =&gt; 'email'
+    end
+  end</xmp></code>
+				</pre>
+<pre data-line="" data-indent="8">
+					<code><xmp>  # email.html.erb
+     view"&gt;
+      &lt;%= render :partial =&gt; 'email' -%&gt;
+  # _email.html.erb
+  &lt;%= render :partial =&gt; "base_form", :locals =&gt; {:form_action =&gt; :send_email,
+                                                :body_partial =&gt; 'email_form',
+                                                :headline =&gt; ""} %&gt;</xmp></code>
+				</pre>
+<p><code>form_action</code> is the action to send the form and is used to generate the id attributes, <code>headline</code> is the title to display, and <code>body_partial</code> is the partial with your form content. It will pass :form_action and :columns to <code>body_partial</code>, and by default it will use <code>form</code> partial if you don't set, although it only works for actions which have active_scaffold configuration.</p>
+<p><code>base_form</code> partial accepts some more options, but they are optional:</p>
+<ul>
+<li>
+<code>xhr</code> defaults to <code>request.xhr?</code> in order to use a form or remote form.</li>
+<li>
+<code>submit_text</code> defaults to <code>form_action</code>.</li>
+<li>
+<code>cancel_link</code> is true by default, you can remove cancel link setting it to false.</li>
+<li>
+<code>method</code> defaults to :post, you can set it to CRUD method if you want.</li>
+<li>
+<code>multipart</code> defaults to nil.</li>
+<li>
+<code>columns</code> defaults to nil.</li>
+<li>
+<code>url_options</code> defaults to <code>url_for(:action =&gt; form_action)</code>.</li>
+</ul>
+<p>The <code>_email_form</code> partial can be build of html form elements or you can reuse your controller AS config:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>  # _email_form.html.erb
+<ol>
+  <li>
+    &lt;%= form_attribute(@column, @record, scope) %&gt;
+    &lt;%# for ActiveScaffold 3.2.x %&gt;
+    &lt;%#= render :partial =&gt; 'form_attribute', :locals =&gt; { :column =&gt; @column, :scope =&gt; scope} %&gt;
+  </li>
+</ol></xmp></code>
+				</pre>
+<p></body></html></p>

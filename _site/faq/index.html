@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Frequently Asked Questions | Active Scaffold</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="Frequently Asked Questions" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="ActiveScaffold helps developers rapidly build and manage web applications with flexible scaffolding, automation, and developer-friendly tools." />
+<meta property="og:description" content="ActiveScaffold helps developers rapidly build and manage web applications with flexible scaffolding, automation, and developer-friendly tools." />
+<link rel="canonical" href="http://localhost:4000/faq/" />
+<meta property="og:url" content="http://localhost:4000/faq/" />
+<meta property="og:site_name" content="Active Scaffold" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Frequently Asked Questions" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"ActiveScaffold helps developers rapidly build and manage web applications with flexible scaffolding, automation, and developer-friendly tools.","headline":"Frequently Asked Questions","url":"http://localhost:4000/faq/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Active Scaffold" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Active Scaffold</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          <ul class="nav-menu">
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/blog/" class="nav-link">
+          Blog
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/bridges/" class="nav-link">
+          Bridges
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/plugins/" class="nav-link">
+          Plugins
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+      
+      
+
+      <li class="nav-item has-submenu">
+        <a href="/doc/" class="nav-link">
+          Doc
+        </a>
+
+        
+          <ul class="submenu">
+            
+          </ul>
+        
+      </li>
+    
+  </ul>
+
+        </div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Frequently Asked Questions</h1>
+  </header>
+
+  <div class="post-content">
+    
+<h2 id="im-using-activescaffold-but-it-looks-like-a-regular-scaffold-ugly-why"><a href="/faq/what-are-the-steps-to-submit-a-purchase-order/">I’m using ActiveScaffold, but it looks like a regular scaffold (ugly). Why?</a></h2>
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>First thing to check is that you’re including the stylesheet in your layout. Refer back to the steps in <a class="internal present" href="https://github.com/activescaffold/active_scaffold/wiki/Getting-Started">Getting Started</a> to see how to include the stylesheet. And you should check the page source, too, to make sure the <code>&lt;style&gt;</code> tag is in there.</p>
+<p>If you’ve got that, then check the views directory for your controller. If you’re using a PostsController, then check app/views/posts. Delete (or move) all views out if this directory. There’s a chance you may have run Rails’ built-in scaffold generator, and those views and partials are overriding ActiveScaffold’s own.</p>
+<p>Still not working? Come ask in the forums, and mention that you’ve already checked this FAQ.</p>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [500 Internal Error? That’s not helpful!](/faq/where-can-i-find-templates-for-customer-presentations/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>Yeah, you’re right, it’s not really. This error message is designed to walk a fine line between being useful for developers and for end-users, kind of like Gmail’s error messages. The trick here is to know, as a developer, that a 500 response means that an exception happened in your code. Check out the last bit of logs/development.log right after you see a 500 response, and you’ll get to see the actual error.</p>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [My associated models look like #. How can I change that?](/faq/what-is-the-process-for-requesting-time-off/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<ol>
+<li>You want to define a <a class="internal present" href="https://github.com/activescaffold/active_scaffold/wiki/Describing-Records%3A-to_label">to_label</a> method for your model.
+<div class="highlight highlight-source-ruby notranslate position-relative overflow-auto">
+<pre><span class="pl-k">class</span> <span class="pl-v">User</span> &lt; <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span>
+  <span class="pl-k">def</span> <span class="pl-en">to_label</span>
+    <span class="pl-s">"User: <span class="pl-s1"><span class="pl-kos">#{</span><span class="pl-en">username</span><span class="pl-kos">}</span></span>"</span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre>
+<div class="zeroclipboard-container position-absolute right-0 top-0"></div>
+</div>
+<div class="markdown-heading"></div>
+</li>
+</ol>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [Those subforms are slick, but I want to turn them off. How can I simplify associations on the form?](/faq/those-subforms-are-slick-but-i-want-to-turn-them-off-how-can-i-simplify-associations-on-the-form/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>The <code>form_ui = :select</code> option lets you switch the form interface from the standard subform setup to a simple select setup. This configuration can be set per-column.</p>
+<div class="highlight highlight-source-ruby notranslate position-relative overflow-auto">
+<pre><span class="pl-k">class</span> <span class="pl-v">UsersController</span> &lt; <span class="pl-v">ApplicationController</span>
+  <span class="pl-en">active_scaffold</span> <span class="pl-pds">:users</span> <span class="pl-k">do</span> |<span class="pl-s1">config</span>|
+    <span class="pl-c"># users will no longer be able to create/edit Roles from the Users forms</span>
+    <span class="pl-s1">config</span><span class="pl-kos">.</span><span class="pl-en">columns</span><span class="pl-kos">[</span><span class="pl-pds">:roles</span><span class="pl-kos">]</span><span class="pl-kos">.</span><span class="pl-en">form_ui</span> <span class="pl-c1">=</span> <span class="pl-pds">:select</span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre>
+<div class="zeroclipboard-container position-absolute right-0 top-0"></div>
+</div>
+<div class="markdown-heading"></div>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [How can I add autocompletion to the form?](/faq/how-can-i-add-autocompletion-to-the-form/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>You can use <a class="internal present" href="https://github.com/activescaffold/active_scaffold/wiki/Integration">RecordSelect integration</a>.<br /><br />
+Also, you can use a <a class="internal present" href="https://github.com/activescaffold/active_scaffold/wiki/Form-Overrides">form override</a> to insert all the javascript necessary. Here’s an example from a user in the Google Group, using a partial:</p>
+<div class="highlight highlight-text-html-erb notranslate position-relative overflow-auto">
+<pre><span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">style</span>="<span class="pl-s">height: 100px;</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">label</span> <span class="pl-c1">for</span>="<span class="pl-s">record_identity_type</span>"<span class="pl-kos">&gt;</span>Identity Type<span class="pl-kos">&lt;/</span><span class="pl-ent">label</span><span class="pl-kos">&gt;</span>
+  <span class="pl-k">&lt;%=</span> <span class="pl-en">text_field_tag</span> <span class="pl-s">'record[identity_type]'</span><span class="pl-kos">,</span> <span class="pl-c1">@record</span><span class="pl-kos">[</span><span class="pl-pds">:identity_type</span><span class="pl-kos">]</span><span class="pl-kos">,</span> <span class="pl-pds">:id</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">'record_identity_type'</span> <span class="pl-k">%&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">class</span>="<span class="pl-s">auto_complete</span>" <span class="pl-c1">id</span>="<span class="pl-s">identity_type_autocomplete_</span><span class="pl-k">&lt;%=</span><span class="pl-c1">@record</span><span class="pl-kos">[</span><span class="pl-pds">:id</span><span class="pl-kos">]</span><span class="pl-k">%&gt;</span>" <span class="pl-c1">style</span>="<span class="pl-s">{height: 80px;}</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+  <span class="pl-k">&lt;%=</span> <span class="pl-en">javascript_tag</span><span class="pl-kos">(</span><span class="pl-s">"new Autocompleter.Local('record_identity_type',</span>
+<span class="pl-s">    'identity_type_autocomplete_<span class="pl-s1"><span class="pl-kos">#{</span><span class="pl-c1">@record</span><span class="pl-kos">[</span><span class="pl-pds">:id</span><span class="pl-kos">]</span><span class="pl-kos">}</span></span>',</span>
+<span class="pl-s">    ['User', 'Group', 'AdminUser'],</span>
+<span class="pl-s">    {fullSearch: true, frequency: 0, minChars: 1});"</span><span class="pl-kos">)</span> <span class="pl-k">-%&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span></pre>
+<div class="zeroclipboard-container position-absolute right-0 top-0"></div>
+</div>
+<div class="markdown-heading"></div>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [ActiveScaffold is complaining about a Malformed Constraint. What should I check?](/faq/activescaffold-is-complaining-about-a-malformed-constraint-what-should-i-check/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>If you are noticing this when trying to open a nested scaffold, the first thing to check is that you have your associations set up in both directions. For instance, if a UserGroup has_many Users, then make sure that a User belongs_to a UserGroup. If that doesn’t fix your problem then take another look at your associations – is there a clear “reverse” association? For example, consider the following setup:</p>
+<div class="highlight highlight-source-ruby notranslate position-relative overflow-auto">
+<pre><span class="pl-k">class</span> <span class="pl-v">Project</span> &lt; <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:projects_users</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:administrators</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:projects_users</span><span class="pl-kos">,</span> <span class="pl-pds">:source</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:user</span><span class="pl-kos">,</span> <span class="pl-pds">:conditions</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">"projects_users.role_type = 3"</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:managers</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:projects_users</span><span class="pl-kos">,</span> <span class="pl-pds">:source</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:user</span><span class="pl-kos">,</span> <span class="pl-pds">:conditions</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">"projects_users.role_type = 2"</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:workers</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:projects_users</span><span class="pl-kos">,</span> <span class="pl-pds">:source</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:user</span><span class="pl-kos">,</span> <span class="pl-pds">:conditions</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">"projects_users.role_type = 1"</span>
+<span class="pl-k">end</span>
+
+
+
+## [I’ve got a table with lots of associations, and my database is choking. Why? What can I do?](/faq/ive-got-a-table-with-lots-of-associations-and-my-database-is-choking-why-what-can-i-do/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>ActiveScaffold attempts to utilize eager loading when displaying the list, under the assumption that every association column will need to display something about the associated records. If this is too much, you have two options:</p>
+<ol>
+<li>Remove some association columns from the list (e.g. <code>config.list.columns.exclude :association_column</code>)</li>
+<li>Disable the eager loading for some association columns by setting <code>config.columns[:association_column].includes = nil</code>
+</li>
+</ol>
+<div class="markdown-heading"></div>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [I’m adding stuff to params[:record] but ActiveScaffold doesn’t use it. Why?](/faq/im-adding-stuff-to-paramsrecord-but-activescaffold-doesnt-use-it-why/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>ActiveScaffold doesn’t just apply the whole <code>params[:record]</code> hash. Instead, <strong>it whitelists fields it expects from the form</strong>. Which is to say, if ActiveScaffold didn’t know that role_id was supposed to be on the form, it will ignore the params[:record][:role_id] entry. If it didn’t work this way, then URL hackers could submit extra data and do all kinds of fun things including privilege escalation.</p>
+<p>If you need to apply your own data to the record before its gets saved, what you should do instead is define <code>before_create_save(record)</code> or <code>before_update_save(record)</code> on your controller. ActiveScaffold will check for these methods and pass them the record object so you can do common things like attach the current user as the record’s owner.</p>
+<div class="markdown-heading"></div>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [I need to customize the CSS (or JavaScript). What’s the best way?](/faq/i-need-to-customize-the-css-or-javascript-whats-the-best-way/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>Don’t edit the ActiveScaffold files in public/! These files are automatically copied from vendor/plugins/active_scaffold every time the server starts, to make sure you’re using the latest code. Instead, treat them the same way you’d treat the rest of the ActiveScaffold code – override them somewhere else, or use <a href="http://piston.rubyforge.org/" rel="nofollow">Piston</a> and edit the original file in vendor/plugins/active_scaffold.</p>
+<p>For example, if you want to customize the CSS, create public/stylesheets/active_scaffold_overrides.css and include that file in your layout by placing <code>&lt;%= stylesheet_link_tag 'active_scaffold_overrides' %&gt;</code> <strong>after</strong> the <code>&lt;%= active_scaffold_includes %&gt;</code>.</p>
+<div class="markdown-heading"></div>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [How do I set configuration options globally so that they affect all controllers?](/faq/how-do-i-set-configuration-options-globally-so-that-they-affect-all-controllers/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>Configuration options that you wish to set globally for all controllers (as long as that option is marked as <em>global</em> in the ActiveScaffold API documentation) must be placed in your <code>application.rb</code> file. The format for setting global configuration options is:</p>
+<div class="highlight highlight-source-ruby notranslate position-relative overflow-auto">
+<pre><span class="pl-k">class</span> <span class="pl-v">ApplicationController</span> &lt; <span class="pl-v">ActionController</span>::<span class="pl-v">Base</span>
+
+
+
+## [Rows from some subforms never are saved. Why?](/faq/rows-from-some-subforms-never-are-saved-why/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>When blank rows are shown automatically in subforms (without clicking in add new), ActiveScaffold check if some field in row has a non-default value, and date and boolean fields are ignored in this check. So neither rows with all fields with default value are saved, neither rows which all fields are dates or booleans are saved.</p>
+<p>When you turn off blank rows, this check is skipped, so all rows added are saved, even blank rows.</p>
+<div class="markdown-heading"></div>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [active_scaffold parent model was looking for child’s/associated model’s overridden field or vice-versa. Why?](/faq/active_scaffold-parent-model-was-looking-for-childs-associated-models-overridden-field-or-vice-versa-why/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>comment out “helper :all” in your application_controller.rb [application.rb].</p>
+<div class="markdown-heading"></div>
+<p>&lt;/body&gt;&lt;/html&gt;</p>
+
+
+## [‘has_many :through’ form elements aren’t appearing. Why?](/faq/has_many-through-form-elements-arent-appearing-why/)
+<p>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;<br />
+<html><body>&lt;/p&gt;
+<p>Active_scaffold only shows form elements for write-able attributes. By default in Rails, records of ‘has_many :through’ associations are read-only. To get around this, simply add ‘:readonly =&gt; false’ to the association (not the join model association), as shown:</p>
+<div class="highlight highlight-source-ruby notranslate position-relative overflow-auto">
+<pre><span class="pl-k">class</span> <span class="pl-v">Book</span> &lt; <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:authorships</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:authors</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:authorships</span><span class="pl-kos">,</span> <span class="pl-pds">:readonly</span> <span class="pl-c1">=&gt;</span> <span class="pl-c1">false</span>
+<span class="pl-k">end</span>
+
+
+
+</pre></div></body></html></p></body></html></p></body></html></p></pre></div></body></html></p></body></html></p></body></html></p></body></html></p></pre></div></body></html></p></body></html></p></body></html></p></body></html></p></body></html></p></body></html></p>
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Active Scaffold</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Active Scaffold</li><li><a class="u-email" href="mailto:sergio@activescaffold.eu">sergio@activescaffold.eu</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/activescaffold"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">activescaffold</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>ActiveScaffold helps developers rapidly build and manage web applications with flexible scaffolding, automation, and developer-friendly tools. </p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

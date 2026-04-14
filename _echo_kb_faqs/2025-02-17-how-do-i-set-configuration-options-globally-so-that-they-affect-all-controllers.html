@@ -1,0 +1,33 @@
+---
+layout: echo_kb_faq
+title: How do I set configuration options globally so that they affect all controllers?
+date: 2025-02-17 14:38:17.000000000 +01:00
+type: echo_kb_faq
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta: {}
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Configuration options that you wish to set globally for all controllers (as long as that option is marked as <em>global</em> in the ActiveScaffold API documentation) must be placed in your <code>application.rb</code> file. The format for setting global configuration options is:</p>
+<div class="highlight highlight-source-ruby notranslate position-relative overflow-auto">
+<pre><span class="pl-k">class</span> <span class="pl-v">ApplicationController</span> &lt; <span class="pl-v">ActionController</span>::<span class="pl-v">Base</span>
+
+  <span class="pl-v">ActiveScaffold</span><span class="pl-kos">.</span><span class="pl-en">set_defaults</span> <span class="pl-k">do</span> |<span class="pl-s1">config</span>|
+    <span class="pl-s1">config</span><span class="pl-kos">.</span>   <span class="pl-c">#fill in configuration option here</span>
+  <span class="pl-en">end</span> 
+<span class="pl-k">end</span></pre>
+<div class="zeroclipboard-container position-absolute right-0 top-0"></div>
+</div>
+<div class="markdown-heading"></div>
+<p></body></html></p>

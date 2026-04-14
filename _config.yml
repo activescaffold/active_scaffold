@@ -1,0 +1,58 @@
+# Site settings
+title: Active Scaffold
+email: sergio@activescaffold.eu
+description: >- # this means to ignore newlines until next key
+  ActiveScaffold helps developers rapidly build and manage web applications
+  with flexible scaffolding, automation, and developer-friendly tools. 
+baseurl: "" # the subpath of your site, e.g., /blog (leave empty for username.github.io)
+url: "https://activescaffold.github.io" # the base hostname & protocol for your site
+github_username: activescaffold
+
+collections:
+  posts:
+    output: true
+  pages:
+    output: true
+    permalink: /:path/
+  echo_kb_faqs:
+    output: true
+    permalink: /faq/:title/
+  epkb_post_type_1s:
+    output: true
+    permalink: /kb/:title/
+
+# Default settings for collections
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: page
+  - scope:
+      path: ""
+      type: "echo_kb_faqs"
+    values:
+      layout: post
+  - scope:
+      path: ""
+      type: "epkb_post_type_1s"
+    values:
+      layout: post
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+
+# Build settings
+theme: minima # or another GitHub Pages supported theme
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# WordPress import specific
+permalink: /:year/:month/:day/:title/
+
+exclude:
+  - Gemfile
+  - Gemfile.lock

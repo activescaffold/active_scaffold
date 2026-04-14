@@ -1,0 +1,53 @@
+---
+layout: epkb_post_type_1
+title: Adding custom actions
+date: 2025-02-17 14:47:22.000000000 +01:00
+type: epkb_post_type_1
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '3'
+  _yoast_wpseo_primary_epkb_post_type_1_category: ''
+  _yoast_wpseo_estimated-reading-time-minutes: '1'
+  jupiterx_reading_time: 1 minute
+  _elementor_edit_mode: builder
+  _elementor_template_type: wp-post
+  _elementor_data: '[{"id":"78b625d","elType":"container","settings":{"raven_animated_gradient_color_list":[{"raven_animated_gradient_color":"#F6AD1F","_id":"8f28983"},{"raven_animated_gradient_color":"#F7496A","_id":"1ca838d"},{"raven_animated_gradient_color":"#565AD8","_id":"43e0f7a"}]},"elements":[{"id":"54075f1","elType":"widget","settings":{"editor":"<p>When
+    you add custom actions to a controller which uses ActiveScaffold, probably you
+    will want to keep look and feel. Also, you have to follow some conventions so
+    your action behaves as default actions, and ActiveScaffold provides some methods
+    to DRY your code. Remember defining routes for your custom actions in config\/routes.rb,
+    e.g.:<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"75ef484","elType":"widget","settings":{"code":"  resources
+    :users do\n    # AS default routes  \n    as_routes\n    # custom action routes\n    put
+    :deactivate, :on => :member\n    put :archive, :on => :member\n    put :reset_password,
+    :on => :member\n  end"},"elements":[],"widgetType":"raven-code-highlight"}],"isInner":false}]'
+  _wp_page_template: elementor_header_footer
+  jx_editor_first_load: '1'
+  _yoast_wpseo_content_score: '90'
+  _elementor_version: 3.26.4
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+permalink: "/wiki-2/adding-custom-actions/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>When you add custom actions to a controller which uses ActiveScaffold, probably you will want to keep look and feel. Also, you have to follow some conventions so your action behaves as default actions, and ActiveScaffold provides some methods to DRY your code. Remember defining routes for your custom actions in config/routes.rb, e.g.:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>  resources :users do
+    # AS default routes  
+    as_routes
+    # custom action routes
+    put :deactivate, :on =&gt; :member
+    put :archive, :on =&gt; :member
+    put :reset_password, :on =&gt; :member
+  end</xmp></code>
+				</pre>
+<p></body></html></p>

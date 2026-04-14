@@ -1,0 +1,101 @@
+---
+layout: epkb_post_type_1
+title: Adding custom actions Process and refresh action
+date: 2025-02-17 14:55:37.000000000 +01:00
+type: epkb_post_type_1
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '3'
+  _yoast_wpseo_primary_epkb_post_type_1_category: '31'
+  _yoast_wpseo_estimated-reading-time-minutes: '1'
+  _elementor_edit_mode: builder
+  _elementor_template_type: wp-post
+  _elementor_version: 3.26.4
+  jx_editor_first_load: '1'
+  _wp_page_template: elementor_header_footer
+  _elementor_data: '[{"id":"4637777","elType":"container","settings":{"flex_direction":"column","raven_animated_gradient_color_list":[{"raven_animated_gradient_color":"#F6AD1F","_id":"610858a"},{"raven_animated_gradient_color":"#F7496A","_id":"d4e76fe"},{"raven_animated_gradient_color":"#565AD8","_id":"d86c2ad"}]},"elements":[{"id":"267b7cd","elType":"widget","settings":{"editor":"<p>It
+    could be an action which acts over some marked records, or a record action. It''s
+    like delete action, which doesn''t display a form and then do some processing.
+    For a collection action it will refresh the list, for a member action it will
+    refresh row and messages, and calculations if are used.<\/p><p>You must remember
+    to set :position to false too, because your action won''t return html code. You
+    should set method to :put, because you will change some records, and :crud_type
+    if you want to do security checks with that.<\/p><p>On the other hand, you should
+    use\u00a0<code>process_action_link_action<\/code>\u00a0method in your action.
+    This method has two optional arguments:<\/p><ol><li>A name to override default
+    responses (<code>action_update<\/code>). If you set this argument, you will have
+    to define\u00a0<code>&lt;name&gt;_respond_to_&lt;format&gt;<\/code>\u00a0method
+    for each format you want to respond.<\/li><li>The crud_type to check security
+    when loading the record. By default it will try to guess it.<\/li><\/ol><p>Don''t
+    forget to set sucessful to true if all goes right.<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"d91ed49","elType":"widget","settings":{"code":"  class
+    InvoicesController < ApplicationController\n    active_scaffold do |config|\n      config.action_links.add
+    :paid, :type => :member, :crud_type => :update, :method => :put, :position =>
+    false\n      [more configuration]\n    end\n\n    def paid\n      process_action_link_action
+    do |record|\n        if (self.successful = record.paid!)\n          flash[:info]
+    = as_(:invoce_paid)\n        else\n          flash[:error] = as_(:invoce_cannot_be_paid)\n        end\n      end\n    end\n  end"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"fcfc9c1","elType":"widget","settings":{"editor":"<p>If
+    you want to process each record in last visited page you can use\u00a0<code>each_record_in_page<\/code>\u00a0iterator.
+    If you want to process all records, obeying search and custom conditions (conditions
+    from params, conditions_from_collection, constraints and so on) you can use\u00a0<code>each_record_in_scope<\/code>\u00a0iterator.
+    We will use a collection action in these cases.<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"4b73a7a","elType":"widget","settings":{"code":"  class
+    InvoicesController < ApplicationController\n    active_scaffold do |config|\n      config.action_links.add
+    :paid, :type => :collection, :method => :put, :position => false\n      [more
+    configuration]\n    end\n\n    def paid\n      process_action_link_action do\n        self.successful
+    = true\n        each_record_in_page { |record| record.paid! }\n      end\n    end\n  end"},"elements":[],"widgetType":"raven-code-highlight"}],"isInner":false}]'
+  _yoast_wpseo_content_score: '90'
+  jupiterx_reading_time: " 1 minute"
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+permalink: "/wiki-2/adding-custom-actions-process-and-refresh-action/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>It could be an action which acts over some marked records, or a record action. It's like delete action, which doesn't display a form and then do some processing. For a collection action it will refresh the list, for a member action it will refresh row and messages, and calculations if are used.</p>
+<p>You must remember to set :position to false too, because your action won't return html code. You should set method to :put, because you will change some records, and :crud_type if you want to do security checks with that.</p>
+<p>On the other hand, you should use <code>process_action_link_action</code> method in your action. This method has two optional arguments:</p>
+<ol>
+<li>A name to override default responses (<code>action_update</code>). If you set this argument, you will have to define <code>&lt;name&gt;_respond_to_&lt;format&gt;</code> method for each format you want to respond.</li>
+<li>The crud_type to check security when loading the record. By default it will try to guess it.</li>
+</ol>
+<p>Don't forget to set sucessful to true if all goes right.</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>  class InvoicesController &lt; ApplicationController
+    active_scaffold do |config|
+      config.action_links.add :paid, :type =&gt; :member, :crud_type =&gt; :update, :method =&gt; :put, :position =&gt; false
+      [more configuration]
+    end
+    def paid
+      process_action_link_action do |record|
+        if (self.successful = record.paid!)
+          flash[:info] = as_(:invoce_paid)
+        else
+          flash[:error] = as_(:invoce_cannot_be_paid)
+        end
+      end
+    end
+  end</xmp></code>
+				</pre>
+<p>If you want to process each record in last visited page you can use <code>each_record_in_page</code> iterator. If you want to process all records, obeying search and custom conditions (conditions from params, conditions_from_collection, constraints and so on) you can use <code>each_record_in_scope</code> iterator. We will use a collection action in these cases.</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>  class InvoicesController &lt; ApplicationController
+    active_scaffold do |config|
+      config.action_links.add :paid, :type =&gt; :collection, :method =&gt; :put, :position =&gt; false
+      [more configuration]
+    end
+    def paid
+      process_action_link_action do
+        self.successful = true
+        each_record_in_page { |record| record.paid! }
+      end
+    end
+  end</xmp></code>
+				</pre>
+<p></body></html></p>

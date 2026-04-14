@@ -1,0 +1,130 @@
+---
+layout: epkb_post_type_1
+title: Adding custom actions Form actions
+date: 2025-02-17 15:00:28.000000000 +01:00
+type: epkb_post_type_1
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '3'
+  _yoast_wpseo_primary_epkb_post_type_1_category: ''
+  _yoast_wpseo_estimated-reading-time-minutes: '1'
+  _elementor_edit_mode: builder
+  _elementor_template_type: wp-post
+  _elementor_version: 3.26.4
+  jx_editor_first_load: '1'
+  _wp_page_template: elementor_header_footer
+  _elementor_data: '[{"id":"9c470b9","elType":"container","settings":{"raven_animated_gradient_color_list":[{"raven_animated_gradient_color":"#F6AD1F","_id":"cd222db"},{"raven_animated_gradient_color":"#F7496A","_id":"4f71a23"},{"raven_animated_gradient_color":"#565AD8","_id":"127d092"}]},"elements":[{"id":"536b681","elType":"widget","settings":{"editor":"<p>These
+    are actions which displays a form and later process the form, like create or update.
+    You must add two actions: one to display the form and another to process the form
+    (like new and create actions). For displaying form action you can use the\u00a0<code>_base_form<\/code>\u00a0partial,
+    and for processing form action you can use process_action_link_action again:<\/p><div
+    class=\"highlight highlight-source-ruby notranslate position-relative overflow-auto\">\u00a0<\/div>"},"elements":[],"widgetType":"text-editor"},{"id":"b03d4d2","elType":"widget","settings":{"code":"  class
+    InvoicesController < ApplicationController\n    active_scaffold do |config|\n      config.action_links.add
+    :email, :type => :member, :position => :after\n      [more configuration]\n    end\n\n    def
+    email\n      @record = find_if_allowed(params[:id], :read)\n      @column = active_scaffold_config.columns[:email]
+    \n      respond_to_action(:email)\n    end\n\n    def send_email\n      process_action_link_action
+    do |record|\n        self.successful = CustomerMailer.invoice(record).deliver\n      end\n    end\n    protected\n    def
+    email_respond_to_js\n      render :partial => ''email''\n    end\n  end"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"0659fbb","elType":"widget","settings":{"code":"  #
+    email.html.erb\n  <div class=\"active-scaffold\">\n    <div class=\"email-view
+    <%= \"#{id_from_controller params[:controller]}-view\" %> view\">\n      <%= render
+    :partial => ''email'' -%>\n    <\/div>\n  <\/div>\n\n  # _email.html.erb\n  <%=
+    render :partial => \"base_form\", :locals => {:form_action => :send_email,\n                                                :body_partial
+    => ''email_form'',\n                                                :headline
+    => \"\"} %>"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"0a06695","elType":"widget","settings":{"editor":"<p><code>form_action<\/code>\u00a0is
+    the action to send the form and is used to generate the id attributes,\u00a0<code>headline<\/code>\u00a0is
+    the title to display, and\u00a0<code>body_partial<\/code>\u00a0is the partial
+    with your form content. It will pass :form_action and :columns to\u00a0<code>body_partial<\/code>,
+    and by default it will use\u00a0<code>form<\/code>\u00a0partial if you don''t
+    set, although it only works for actions which have active_scaffold configuration.<\/p><p><code>base_form<\/code>\u00a0partial
+    accepts some more options, but they are optional:<\/p><ul><li><code>xhr<\/code>\u00a0defaults
+    to\u00a0<code>request.xhr?<\/code>\u00a0in order to use a form or remote form.<\/li><li><code>submit_text<\/code>\u00a0defaults
+    to\u00a0<code>form_action<\/code>.<\/li><li><code>cancel_link<\/code>\u00a0is
+    true by default, you can remove cancel link setting it to false.<\/li><li><code>method<\/code>\u00a0defaults
+    to :post, you can set it to CRUD method if you want.<\/li><li><code>multipart<\/code>\u00a0defaults
+    to nil.<\/li><li><code>columns<\/code>\u00a0defaults to nil.<\/li><li><code>url_options<\/code>\u00a0defaults
+    to\u00a0<code>url_for(:action =&gt; form_action)<\/code>.<\/li><\/ul><p>The\u00a0<code>_email_form<\/code>\u00a0partial
+    can be build of html form elements or you can reuse your controller AS config:<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"8259c8a","elType":"widget","settings":{"code":"  #
+    _email_form.html.erb\n<ol class=\"form\">\n  <li class=\"form-element\">\n    <%=
+    form_attribute(@column, @record, scope) %>\n    <%# for ActiveScaffold 3.2.x %>\n    <%#=
+    render :partial => ''form_attribute'', :locals => { :column => @column, :scope
+    => scope} %>\n  <\/li>\n<\/ol>"},"elements":[],"widgetType":"raven-code-highlight"}],"isInner":false}]'
+  _yoast_wpseo_content_score: '90'
+  jupiterx_reading_time: " 1 minute"
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+permalink: "/wiki-2/adding-custom-actions-form-actions/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>These are actions which displays a form and later process the form, like create or update. You must add two actions: one to display the form and another to process the form (like new and create actions). For displaying form action you can use the <code>_base_form</code> partial, and for processing form action you can use process_action_link_action again:</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>  class InvoicesController &lt; ApplicationController
+    active_scaffold do |config|
+      config.action_links.add :email, :type =&gt; :member, :position =&gt; :after
+      [more configuration]
+    end
+    def email
+      @record = find_if_allowed(params[:id], :read)
+      @column = active_scaffold_config.columns[:email] 
+      respond_to_action(:email)
+    end
+    def send_email
+      process_action_link_action do |record|
+        self.successful = CustomerMailer.invoice(record).deliver
+      end
+    end
+    protected
+    def email_respond_to_js
+      render :partial =&gt; 'email'
+    end
+  end</xmp></code>
+				</pre>
+<pre data-line="" data-indent="8">
+					<code><xmp>  # email.html.erb
+     view"&gt;
+      &lt;%= render :partial =&gt; 'email' -%&gt;
+  # _email.html.erb
+  &lt;%= render :partial =&gt; "base_form", :locals =&gt; {:form_action =&gt; :send_email,
+                                                :body_partial =&gt; 'email_form',
+                                                :headline =&gt; ""} %&gt;</xmp></code>
+				</pre>
+<p><code>form_action</code> is the action to send the form and is used to generate the id attributes, <code>headline</code> is the title to display, and <code>body_partial</code> is the partial with your form content. It will pass :form_action and :columns to <code>body_partial</code>, and by default it will use <code>form</code> partial if you don't set, although it only works for actions which have active_scaffold configuration.</p>
+<p><code>base_form</code> partial accepts some more options, but they are optional:</p>
+<ul>
+<li>
+<code>xhr</code> defaults to <code>request.xhr?</code> in order to use a form or remote form.</li>
+<li>
+<code>submit_text</code> defaults to <code>form_action</code>.</li>
+<li>
+<code>cancel_link</code> is true by default, you can remove cancel link setting it to false.</li>
+<li>
+<code>method</code> defaults to :post, you can set it to CRUD method if you want.</li>
+<li>
+<code>multipart</code> defaults to nil.</li>
+<li>
+<code>columns</code> defaults to nil.</li>
+<li>
+<code>url_options</code> defaults to <code>url_for(:action =&gt; form_action)</code>.</li>
+</ul>
+<p>The <code>_email_form</code> partial can be build of html form elements or you can reuse your controller AS config:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>  # _email_form.html.erb
+<ol>
+  <li>
+    &lt;%= form_attribute(@column, @record, scope) %&gt;
+    &lt;%# for ActiveScaffold 3.2.x %&gt;
+    &lt;%#= render :partial =&gt; 'form_attribute', :locals =&gt; { :column =&gt; @column, :scope =&gt; scope} %&gt;
+  </li>
+</ol></xmp></code>
+				</pre>
+<p></body></html></p>

@@ -1,0 +1,54 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>When form is submitted, these methods are called in the following order:</p>
+<p><img src="/assets/2025/02/create.drawio.svg" alt="Create action flow"></p>
+<ol>
+<li>
+<code>create_authorized_filter</code> called as before_action
+<ol>
+<li>
+<code>create_authorized?</code> (or the method defined in conf.create.link.security_method if it's changed) is called to check the permission. If this method returns false, <code>create_authorized_filter</code> will raise ActiveScaffold::ActionNotAllowed.</li>
+</ol>
+</li>
+<li>
+<code>create</code>
+<ol>
+<li>
+<code>do_create</code> which accepts options hash, so it can be overrided and call super with the hash. <code>:attributes</code> key can be set in the options hash to use other attributes than params[:record].
+<ol>
+<li>
+<code>new_model</code> will be called to create the record which will be saved. It must return an instance of the model, where the submitted values for active_scaffold_config.create.columns will be set.</li>
+<li>It will set the values from constraints if controller is embedded. It's called before the next method, because embedded in polymorphic association with multiple ids will set only the foreign type, and the form attributes will have the foreign id, so the foreign type must be set before.</li>
+<li>
+<code>update_record_from_params</code> to set the submitted values, from the <code>:attributes</code> key in the hash.</li>
+<li>Sets the parent association if it's nested.</li>
+<li>
+<code>before_create_save</code> will be called, an empty method which can be overrided to set other values before creating the record.</li>
+<li>It will run validations in the model and its associations which have been set from the submitted params.</li>
+<li>
+<code>create_save</code> will be called, unless <code>:skip_save</code> is set in the options hash.
+<ol>
+<li>It will do nothing if validation failed.</li>
+<li>It will save the record and its associations which have been set.</li>
+<li>
+<code>after_create_save</code> will be called, an empty method which can be overrided to do something after creating a record.</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<code>respond_to_action</code>, which will call the corresponding response method for create action and the requested format
+<ul>
+<li>For HTML request:
+<ul>
+<li>If record is created successfully, it will call <code>return_to_main</code> which redirects to <code>main_path_to_return</code>, which defaults to list, or redirect to an action for the current record if <code>active_scaffold_config.create.action_after_create</code> is defined, or render the create form as new action does if persistent is used.</li>
+<li>If record fails to be created, it will render the create form with <code>create</code> view, as new action does.</li>
+</ul>
+</li>
+<li>For XHR request will render <code>on_create</code> view.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<p> </body></html></p>

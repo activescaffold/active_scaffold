@@ -1,0 +1,6 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>ActiveScaffold doesn’t just apply the whole <code>params[:record]</code> hash. Instead, <strong>it whitelists fields it expects from the form</strong>. Which is to say, if ActiveScaffold didn’t know that role_id was supposed to be on the form, it will ignore the params[:record][:role_id] entry. If it didn’t work this way, then URL hackers could submit extra data and do all kinds of fun things including privilege escalation.</p>
+<p>If you need to apply your own data to the record before its gets saved, what you should do instead is define <code>before_create_save(record)</code> or <code>before_update_save(record)</code> on your controller. ActiveScaffold will check for these methods and pass them the record object so you can do common things like attach the current user as the record’s owner.</p>
+<div class="markdown-heading"></div>
+<p></body></html></p>

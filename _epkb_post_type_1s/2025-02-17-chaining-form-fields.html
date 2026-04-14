@@ -1,0 +1,157 @@
+---
+layout: epkb_post_type_1
+title: Chaining Form Fields
+date: 2025-02-17 14:40:49.000000000 +01:00
+type: epkb_post_type_1
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '3'
+  _yoast_wpseo_primary_epkb_post_type_1_category: ''
+  _yoast_wpseo_estimated-reading-time-minutes: '2'
+  _elementor_edit_mode: builder
+  _elementor_template_type: wp-post
+  _elementor_version: 3.26.4
+  jx_editor_first_load: '1'
+  _yoast_wpseo_content_score: '60'
+  _wp_page_template: elementor_header_footer
+  _elementor_data: '[{"id":"2645504","elType":"container","settings":{"flex_direction":"column","raven_animated_gradient_color_list":[{"raven_animated_gradient_color":"#F6AD1F","_id":"5ae8659"},{"raven_animated_gradient_color":"#F7496A","_id":"ad456fa"},{"raven_animated_gradient_color":"#565AD8","_id":"060e17e"}]},"elements":[{"id":"0073a37","elType":"widget","settings":{"editor":"<p>Sometimes
+    you want update a form field after setting a value in another field. For example,
+    you might have a form with a dropdown to select an author and another dropdown
+    to select a book, and you want the book dropdown to only display books from the
+    chosen author. To do this, you need to render the books dropdown each time an
+    author is chosen.<\/p><div>This documentation is for v3.0. In v2.4+ the api is
+    at singular like so:<\/div>"},"elements":[],"widgetType":"text-editor"},{"id":"7c0d99c","elType":"widget","settings":{"code":"config.columns[:author].update_column
+    = [:col1, :col2]"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"a4f9251","elType":"widget","settings":{"code":"class
+    UsersController < ApplicationController\n  active_scaffold do |config|\n    config.columns[:author].form_ui
+    = :select\n    config.columns[:author].update_columns = :book # enables the \"magic\"\n    config.columns[:book].form_ui
+    = :select\n  end\nend\n\nmodule UsersHelper\n  def options_for_association_conditions(association,
+    record)\n    if association.name == :book\n      {''books.author_id'' => record.author_id}\n    else\n      super\n    end\n  end\nend"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"88ee4b7","elType":"widget","settings":{"editor":"<p>In
+    v2.3 you could use @options[:update_column] although it was deprecated and removed
+    in v2.4<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"5f841cf","elType":"widget","settings":{"code":"config.columns[:author].options[:update_column]
+    = :book"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"d3fb7a6","elType":"widget","settings":{"editor":"<p>The
+    helper code is to show only books belonging to chosen author, as explained in\u00a0<a
+    class=\"internal present\" href=\"https:\/\/github.com\/activescaffold\/active_scaffold\/wiki\/Custom-Association-Options\">Custom
+    Association Options<\/a>.<br \/>Chaining form fields works with simple columns
+    and form overrides too, not only with association columns.<\/p><p>You can set
+    an array of columns to update multiple columns when a column changes, and chain
+    column updates:<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"0afdf9c","elType":"widget","settings":{"code":"class
+    UsersController < ApplicationController\n  active_scaffold do |config|\n    config.columns[:author].form_ui
+    = :select\n    config.columns[:author].update_columns = [:book, :editorial]\n    config.columns[:book].form_ui
+    = :select\n    config.columns[:book].update_column = :format\n  end\nend"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"82e8aad","elType":"widget","settings":{"editor":"<p>In
+    this example, fields for book, editorial and format are updated when author changes,
+    and when book changes only format is updated. A form override which use the new
+    author or book must be defined for editorial and format columns, in other case
+    those fields won\u2019t change when they will be rendered again.<\/p><p>Usually
+    only the value of the changed column is sent, if you need another values to render
+    the updated columns, enable\u00a0<code>send_form_on_update_column<\/code>\u00a0and
+    all the form will be sent.<\/p><p>You can define a controller method named\u00a0<code>after_render_field<\/code>\u00a0to
+    change some attributes of current record, so they will be used when rendering
+    the fields.\u00a0<code>after_render_field<\/code>\u00a0method gets the record
+    and the changed column:<\/p><div class=\"highlight highlight-source-ruby notranslate
+    position-relative overflow-auto\">\u00a0<\/div>"},"elements":[],"widgetType":"text-editor"},{"id":"7017b73","elType":"widget","settings":{"code":"class
+    UsersController < ApplicationController\n  active_scaffold do |config|\n    config.columns[:author].form_ui
+    = :select\n    config.columns[:author].update_columns = :book\n    config.columns[:book].form_ui
+    = :select\n    config.columns[:book].update_columns = :format\n    config.columns[:format].form_ui
+    = :select\n    config.columns[:format].options[:options] = [:a4, :a3]\n  end\n\n  protected\n  def
+    after_render_field(record, column)\n    if column.name == :book\n      record.format
+    = record.book.format\n    end\n  end\nend"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"846f15c","elType":"widget","settings":{"editor":"<p>In
+    this example, when book is changed format is updated, using book format as current
+    value.<\/p><p>If you need to send all the form, because you need do some calculations
+    with other fields for example, set\u00a0<code>send_form_on_update_column<\/code>\u00a0(added
+    in v2.4). Since v3.2 you can set a selector to send only some fields using\u00a0<code>options[:send_form_selector]<\/code><\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"d34bb23","elType":"widget","settings":{"code":"class
+    UsersController < ApplicationController\n  active_scaffold do |config|\n    config.columns[:author].form_ui
+    = :select\n    config.columns[:author].update_columns = [:book, :editorial]\n    config.columns[:book].form_ui
+    = :select\n    config.columns[:book].update_column = :format\n    config.columns[:book].send_form_on_update_column
+    = true\n    config.columns[:book].options[:send_form_selector] = ''[name*=author],[name*=book]''\n  end\nend"},"elements":[],"widgetType":"raven-code-highlight"}],"isInner":false}]'
+  jupiterx_reading_time: " 2 minutes"
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+permalink: "/wiki-2/chaining-form-fields/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Sometimes you want update a form field after setting a value in another field. For example, you might have a form with a dropdown to select an author and another dropdown to select a book, and you want the book dropdown to only display books from the chosen author. To do this, you need to render the books dropdown each time an author is chosen.</p>
+<p>This documentation is for v3.0. In v2.4+ the api is at singular like so:		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>config.columns[:author].update_column = [:col1, :col2]</xmp></code>
+				</pre>
+<pre data-line="" data-indent="8">
+					<code><xmp>class UsersController &lt; ApplicationController
+  active_scaffold do |config|
+    config.columns[:author].form_ui = :select
+    config.columns[:author].update_columns = :book # enables the "magic"
+    config.columns[:book].form_ui = :select
+  end
+end
+module UsersHelper
+  def options_for_association_conditions(association, record)
+    if association.name == :book
+      {'books.author_id' =&gt; record.author_id}
+    else
+      super
+    end
+  end
+end</xmp></code>
+				</pre>
+<p>In v2.3 you could use @options[:update_column] although it was deprecated and removed in v2.4</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>config.columns[:author].options[:update_column] = :book</xmp></code>
+				</pre>
+<p>The helper code is to show only books belonging to chosen author, as explained in <a href="https://github.com/activescaffold/active_scaffold/wiki/Custom-Association-Options">Custom Association Options</a>.<br>Chaining form fields works with simple columns and form overrides too, not only with association columns.</p>
+<p>You can set an array of columns to update multiple columns when a column changes, and chain column updates:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class UsersController &lt; ApplicationController
+  active_scaffold do |config|
+    config.columns[:author].form_ui = :select
+    config.columns[:author].update_columns = [:book, :editorial]
+    config.columns[:book].form_ui = :select
+    config.columns[:book].update_column = :format
+  end
+end</xmp></code>
+				</pre>
+<p>In this example, fields for book, editorial and format are updated when author changes, and when book changes only format is updated. A form override which use the new author or book must be defined for editorial and format columns, in other case those fields won’t change when they will be rendered again.</p>
+<p>Usually only the value of the changed column is sent, if you need another values to render the updated columns, enable <code>send_form_on_update_column</code> and all the form will be sent.</p>
+<p>You can define a controller method named <code>after_render_field</code> to change some attributes of current record, so they will be used when rendering the fields. <code>after_render_field</code> method gets the record and the changed column:</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class UsersController &lt; ApplicationController
+  active_scaffold do |config|
+    config.columns[:author].form_ui = :select
+    config.columns[:author].update_columns = :book
+    config.columns[:book].form_ui = :select
+    config.columns[:book].update_columns = :format
+    config.columns[:format].form_ui = :select
+    config.columns[:format].options[:options] = [:a4, :a3]
+  end
+  protected
+  def after_render_field(record, column)
+    if column.name == :book
+      record.format = record.book.format
+    end
+  end
+end</xmp></code>
+				</pre>
+<p>In this example, when book is changed format is updated, using book format as current value.</p>
+<p>If you need to send all the form, because you need do some calculations with other fields for example, set <code>send_form_on_update_column</code> (added in v2.4). Since v3.2 you can set a selector to send only some fields using <code>options[:send_form_selector]</code></p>
+<pre data-line="" data-indent="8">
+					<code><xmp>class UsersController &lt; ApplicationController
+  active_scaffold do |config|
+    config.columns[:author].form_ui = :select
+    config.columns[:author].update_columns = [:book, :editorial]
+    config.columns[:book].form_ui = :select
+    config.columns[:book].update_column = :format
+    config.columns[:book].send_form_on_update_column = true
+    config.columns[:book].options[:send_form_selector] = '[name*=author],[name*=book]'
+  end
+end</xmp></code>
+				</pre>
+<p></body></html></p>

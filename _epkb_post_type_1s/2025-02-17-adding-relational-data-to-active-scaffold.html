@@ -1,0 +1,172 @@
+---
+layout: epkb_post_type_1
+title: Adding relational data to Active Scaffold
+date: 2025-02-17 15:03:43.000000000 +01:00
+type: epkb_post_type_1
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '3'
+  _yoast_wpseo_primary_epkb_post_type_1_category: ''
+  _yoast_wpseo_estimated-reading-time-minutes: '3'
+  _elementor_edit_mode: builder
+  _elementor_template_type: wp-post
+  _elementor_version: 3.26.4
+  jx_editor_first_load: '1'
+  _wp_page_template: elementor_header_footer
+  _elementor_data: '[{"id":"6203d33","elType":"container","settings":{"flex_direction":"column","raven_animated_gradient_color_list":[{"raven_animated_gradient_color":"#F6AD1F","_id":"92be7d1"},{"raven_animated_gradient_color":"#F7496A","_id":"19c29bd"},{"raven_animated_gradient_color":"#565AD8","_id":"69c833c"}]},"elements":[{"id":"11b1277","elType":"widget","settings":{"editor":"<p>While
+    there is a lot of documentation in the wiki on ActiveScaffold API functions having
+    to do with associations, I couldn''t find anything about the basics of showing
+    relational data and enabling creation\/editing. After my question on this sat
+    unnoticed for two days on StackOverflow while I was puzzling it out, I thought
+    I''d post this in case it''s helpful to others.<\/p><p>In case it makes a difference,
+    this is specifically for ActiveScaffold version 3.3.0.<\/p><p>I''ll be using a
+    Customer and Order example below (i.e. a Customer can have multiple Orders, and
+    we want the Customer''s name to show in the Order''s ActiveScaffold view). The
+    data structure is deliberately kept very simple. Also, I took the \"tell them
+    everything\" approach with this documentation, so feel free to skip ahead to what
+    you actually need.<\/p><p>First a couple of basic definitions for the below:<\/p><ul><li>The\u00a0<strong>child<\/strong>\u00a0table
+    is the table that has the foreign key in it. In the example, Orders will have
+    the foreign key from the Person table.<\/li><li>The\u00a0<strong>parent<\/strong>\u00a0table
+    is the table being related to by the child. The Customer table is the parent in
+    the example below.<\/li><\/ul><p>There are four basic steps to this process.<\/p><ol><li>Set
+    up the relationship in the database.<\/li><li>Set up the relationship in Rails.<\/li><li>Configure
+    ActiveScaffold so it knows what you want to do.<\/li><li>Add a property to the
+    child model that returns the data you want to display in list view.<\/li><\/ol><p>Here''s
+    a walkthrough:<\/p><ol><li><p>Verify you\u2019ve got a straightforward ActiveScaffold
+    view working for the child. That process is outside the scope of this answer,
+    but see\u00a0<a href=\"https:\/\/github.com\/activescaffold\/active_scaffold\/wiki\/Getting-Started\">the
+    Getting Started page<\/a>\u00a0for some straightforward instructions.<\/p><\/li><li><p>Add
+    a foreign key in the\u00a0<strong>child<\/strong>\u00a0table. This requires the
+    creation of the parent and child tables. For editing and creating to work, the
+    foreign key field in the child table\u00a0<strong>must<\/strong>\u00a0be named
+    as the singular form of the parent table with _id tacked on the end. To complete
+    this, your migration also needs \u201cadd_foreign_key [<em>child table symbol<\/em>],
+    [<em>parent table symbol<\/em>]\u201d In the example''s case, here\u2019s the
+    full migration:<\/p><\/li><\/ol>"},"elements":[],"widgetType":"text-editor"},{"id":"c4efdca","elType":"widget","settings":{"code":"    class
+    CustomerOrderAdd < ActiveRecord::Migration\n      def change\n        create_table(:customers,
+    primary: :target_group_id) do |t|\n          t.column :full_name, :string, null:
+    false\n        end\n\n        create_table(:orders, primary: :order_id) do |t|\n          t.column
+    :customer_id, :int, null: false\n          t.column :order_desc, :string, null:
+    false\n        end\n\n        add_foreign_key :orders, :customers\n      end\n    end"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"7085a88","elType":"widget","settings":{"editor":"<p>3.
+    In the parent class, add <code>has_many *child object symbol plural form*<\/code>\u00a0In
+    our example, this would be:<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"15edecd","elType":"widget","settings":{"code":"    class
+    Customer < ActiveRecord::Base\n      has_many :orders\n    end"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"55e180f","elType":"widget","settings":{"editor":"<p>4.
+    In the child class, add <code>belongs_to *parent object symbol singular form*<\/code>\u00a0Again
+    in our example, this leads to:<\/p><div class=\"highlight highlight-source-ruby
+    notranslate position-relative overflow-auto\">\u00a0<\/div>"},"elements":[],"widgetType":"text-editor"},{"id":"03deb28","elType":"widget","settings":{"code":"    class
+    Order < ActiveRecord::Base\n      belongs_to :target_group\n      . . .\n    end"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"c1f8c14","elType":"widget","settings":{"editor":"<p>5.
+    In the child controller\u2019s ActiveScaffold config block, add a column to your
+    ActiveScaffold columns array that will display the related data from the parent
+    class\/table. The name of this column <strong>must<\/strong>\u00a0be the name
+    of the foreign key column in the child table, minus the _id at the end (which
+    ends up being the name of the related table). (<em>edit: I have no idea how you
+    can add multiple columns from the related table with these naming requirements<\/em>)
+    In our example, this leads to the addition of\u00a0<code>:customer<\/code>\u00a0in
+    the columns array:<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"b4a1dda","elType":"widget","settings":{"code":"    class
+    OrdersController < ApplicationController\n      active_scaffold :order do |config|\n        config.label
+    = ''Customer Orders''\n        config.list.sorting = [{customer_id: :asc}]\n        config.list.per_page
+    = 30\n\n        config.columns = [:id, :order_desc, :customer]\n\n      end\n    end"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"33f29e2","elType":"widget","settings":{"editor":"<p>6.
+    To speed things up a bit, tell ActiveScaffold to load parent table data as soon
+    as possible. In our example, this leads to the following addition to the child
+    controller''s ActiveScaffold config area:<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"680da35","elType":"widget","settings":{"code":"    config.columns[:customer_name].includes
+    = :customer]"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"162bd1d","elType":"widget","settings":{"editor":"<p>7.
+    Add a function in your child model named exactly the same as the new column name
+    you added to the ActiveScaffold columns array. In this function, type out the
+    related class\/table name with a dot at the end, then the property\/column name
+    you want to actually show. In the example, this looks like:<\/p>"},"elements":[],"widgetType":"text-editor"},{"id":"d5b003c","elType":"widget","settings":{"code":"    def
+    customer_name\n      customer.full_name\n    end"},"elements":[],"widgetType":"raven-code-highlight"},{"id":"7f08305","elType":"widget","settings":{"editor":"<div
+    class=\"markdown-body\"><p>8. Hit your ActiveScaffold index view for the child
+    class\/table. Your value should now be in place.<\/p><\/div><div id=\"wiki-footer\"
+    class=\"mt-5 Link--muted wiki-footer\">\u00a0<\/div>"},"elements":[],"widgetType":"text-editor"}],"isInner":false}]'
+  _yoast_wpseo_content_score: '60'
+  jupiterx_reading_time: " 3 minutes"
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+permalink: "/wiki-2/adding-relational-data-to-active-scaffold/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>While there is a lot of documentation in the wiki on ActiveScaffold API functions having to do with associations, I couldn't find anything about the basics of showing relational data and enabling creation/editing. After my question on this sat unnoticed for two days on StackOverflow while I was puzzling it out, I thought I'd post this in case it's helpful to others.</p>
+<p>In case it makes a difference, this is specifically for ActiveScaffold version 3.3.0.</p>
+<p>I'll be using a Customer and Order example below (i.e. a Customer can have multiple Orders, and we want the Customer's name to show in the Order's ActiveScaffold view). The data structure is deliberately kept very simple. Also, I took the "tell them everything" approach with this documentation, so feel free to skip ahead to what you actually need.</p>
+<p>First a couple of basic definitions for the below:</p>
+<ul>
+<li>The <strong>child</strong> table is the table that has the foreign key in it. In the example, Orders will have the foreign key from the Person table.</li>
+<li>The <strong>parent</strong> table is the table being related to by the child. The Customer table is the parent in the example below.</li>
+</ul>
+<p>There are four basic steps to this process.</p>
+<ol>
+<li>Set up the relationship in the database.</li>
+<li>Set up the relationship in Rails.</li>
+<li>Configure ActiveScaffold so it knows what you want to do.</li>
+<li>Add a property to the child model that returns the data you want to display in list view.</li>
+</ol>
+<p>Here's a walkthrough:</p>
+<ol>
+<li>
+<p>Verify you’ve got a straightforward ActiveScaffold view working for the child. That process is outside the scope of this answer, but see <a href="https://github.com/activescaffold/active_scaffold/wiki/Getting-Started">the Getting Started page</a> for some straightforward instructions.</p>
+</li>
+<li>
+<p>Add a foreign key in the <strong>child</strong> table. This requires the creation of the parent and child tables. For editing and creating to work, the foreign key field in the child table <strong>must</strong> be named as the singular form of the parent table with _id tacked on the end. To complete this, your migration also needs “add_foreign_key [<em>child table symbol</em>], [<em>parent table symbol</em>]” In the example's case, here’s the full migration:</p>
+</li>
+</ol>
+<pre data-line="" data-indent="8">
+					<code><xmp>    class CustomerOrderAdd &lt; ActiveRecord::Migration
+      def change
+        create_table(:customers, primary: :target_group_id) do |t|
+          t.column :full_name, :string, null: false
+        end
+        create_table(:orders, primary: :order_id) do |t|
+          t.column :customer_id, :int, null: false
+          t.column :order_desc, :string, null: false
+        end
+        add_foreign_key :orders, :customers
+      end
+    end</xmp></code>
+				</pre>
+<p>3. In the parent class, add <code>has_many *child object symbol plural form*</code> In our example, this would be:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>    class Customer &lt; ActiveRecord::Base
+      has_many :orders
+    end</xmp></code>
+				</pre>
+<p>4. In the child class, add <code>belongs_to *parent object symbol singular form*</code> Again in our example, this leads to:</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>    class Order &lt; ActiveRecord::Base
+      belongs_to :target_group
+      . . .
+    end</xmp></code>
+				</pre>
+<p>5. In the child controller’s ActiveScaffold config block, add a column to your ActiveScaffold columns array that will display the related data from the parent class/table. The name of this column <strong>must</strong> be the name of the foreign key column in the child table, minus the _id at the end (which ends up being the name of the related table). (<em>edit: I have no idea how you can add multiple columns from the related table with these naming requirements</em>) In our example, this leads to the addition of <code>:customer</code> in the columns array:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>    class OrdersController &lt; ApplicationController
+      active_scaffold :order do |config|
+        config.label = 'Customer Orders'
+        config.list.sorting = [{customer_id: :asc}]
+        config.list.per_page = 30
+        config.columns = [:id, :order_desc, :customer]
+      end
+    end</xmp></code>
+				</pre>
+<p>6. To speed things up a bit, tell ActiveScaffold to load parent table data as soon as possible. In our example, this leads to the following addition to the child controller's ActiveScaffold config area:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>    config.columns[:customer_name].includes = :customer]</xmp></code>
+				</pre>
+<p>7. Add a function in your child model named exactly the same as the new column name you added to the ActiveScaffold columns array. In this function, type out the related class/table name with a dot at the end, then the property/column name you want to actually show. In the example, this looks like:</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>    def customer_name
+      customer.full_name
+    end</xmp></code>
+				</pre>
+<p>8. Hit your ActiveScaffold index view for the child class/table. Your value should now be in place.</p>
+<p> </body></html></p>

@@ -1,0 +1,25 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>If you are noticing this when trying to open a nested scaffold, the first thing to check is that you have your associations set up in both directions. For instance, if a UserGroup has_many Users, then make sure that a User belongs_to a UserGroup. If that doesn’t fix your problem then take another look at your associations – is there a clear “reverse” association? For example, consider the following setup:</p>
+<div class="highlight highlight-source-ruby notranslate position-relative overflow-auto">
+<pre><span class="pl-k">class</span> <span class="pl-v">Project</span> &lt; <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:projects_users</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:administrators</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:projects_users</span><span class="pl-kos">,</span> <span class="pl-pds">:source</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:user</span><span class="pl-kos">,</span> <span class="pl-pds">:conditions</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">"projects_users.role_type = 3"</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:managers</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:projects_users</span><span class="pl-kos">,</span> <span class="pl-pds">:source</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:user</span><span class="pl-kos">,</span> <span class="pl-pds">:conditions</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">"projects_users.role_type = 2"</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:workers</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:projects_users</span><span class="pl-kos">,</span> <span class="pl-pds">:source</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:user</span><span class="pl-kos">,</span> <span class="pl-pds">:conditions</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">"projects_users.role_type = 1"</span>
+<span class="pl-k">end</span>
+
+<span class="pl-k">class</span> <span class="pl-v">User</span> &lt; <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span>
+  <span class="pl-en">belongs_to</span> <span class="pl-pds">:organization</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:projects_users</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:projects</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:projects_users</span><span class="pl-kos">,</span> <span class="pl-pds">:source</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:project</span>
+<span class="pl-k">end</span></pre>
+<p>This setup may not work as well when ActiveScaffold is trying to nest Projects for a given User. In order to nest successfully, ActiveScaffold needs to know what the reverse association is. In this case the Project doesn’t have a clear single link to the User model – it has three specialized associations. To remedy the situation, you should add:</p>
+<div class="highlight highlight-source-ruby notranslate position-relative overflow-auto">
+<pre><span class="pl-k">class</span> <span class="pl-v">Project</span> &lt; <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span>
+  <span class="pl-en">has_many</span> <span class="pl-pds">:users</span><span class="pl-kos">,</span> <span class="pl-pds">:through</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:projects_users</span><span class="pl-kos">,</span> <span class="pl-pds">:source</span> <span class="pl-c1">=&gt;</span> <span class="pl-pds">:user</span>
+  ...
+<span class="pl-en">end</span></pre>
+</div>
+</div>
+<p></body></html></p>

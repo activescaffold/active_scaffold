@@ -1,0 +1,25 @@
+---
+layout: echo_kb_faq
+title: I’m using ActiveScaffold, but it looks like a regular scaffold (ugly). Why?
+date: 2025-02-17 14:33:42.000000000 +01:00
+type: echo_kb_faq
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta: {}
+author:
+  login: programaticaweb
+  email: programaticaweb@gmail.com
+  display_name: víctor programatica
+  first_name: víctor
+  last_name: programatica
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>First thing to check is that you’re including the stylesheet in your layout. Refer back to the steps in <a class="internal present" href="https://github.com/activescaffold/active_scaffold/wiki/Getting-Started">Getting Started</a> to see how to include the stylesheet. And you should check the page source, too, to make sure the <code>&lt;style&gt;</code> tag is in there.</p>
+<p>If you’ve got that, then check the views directory for your controller. If you’re using a PostsController, then check app/views/posts. Delete (or move) all views out if this directory. There’s a chance you may have run Rails’ built-in scaffold generator, and those views and partials are overriding ActiveScaffold’s own.</p>
+<p>Still not working? Come ask in the forums, and mention that you’ve already checked this FAQ.</p>
+<p></body></html></p>

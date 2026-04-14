@@ -1,0 +1,31 @@
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<h2>Q. I get a undefined method 'something_id' for nil:NilClass<br />
+</h2>
+<p><strong>A</strong>. CanCan tries to authorize a model instance not sufficiently wired to it's scope.<br>For example while authorizing a document it might look for <code>document.project.owner_id</code> and if the document does not have a project assigned the error will be rendered.<br>To fix this override the piece of code (in your controller/view) that deals with the model and make sure to wire it up.<br>Sample <a href="https://gist.github.com/850091">here</a></p>
+<h2>Q. I get a undefined method 'can?' for nil:NilClass</h2>
+<p><strong>A</strong>. The <code>current_ability</code> (just like <code>current_user</code>) is available inside models only <strong>during request/response cycle</strong>, because is inserted there by means of a controller before_filter.<br>If one queries the CanCan ACL <strong>at configure time</strong> ( when the controller class body executes ) the authorization will find no current ability to query upon.<br><strong>At configure time</strong> we have nothing: no <code>current_user</code>, no <code>current_ability</code>.<br>You can only query the authorization during request/response when a user is logged in.<br>One way to deal with this is: since at configure time we know nothing of who we're authorizing, we can return whatever <code>authorized_for_without_cancan?</code> returns (default old behavior).<br>In this case because of the default "paranoic" false security reply (if you use it like this):</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>ActiveScaffold.set_defaults do |config|
+  config.security.default_permission = false
+end</xmp></code>
+				</pre>
+<p>you'll have to override the security methods as per <a href="https://github.com/activescaffold/active_scaffold/wiki/Security">AS#security wiki</a></p>
+<h2>Q. My form only shows the submit button, all the fields are missing</h2>
+<p><strong>A</strong>. AS also authorizes at column level, and your CanCan rule probably replies "no". Make sure the model (<code>@record</code>) that is used for <code>form_for</code> is sufficiently wired to it's related objects. For example the rule <code>can :create, Project, :account_id =&gt; user.account_id</code> will render an empty form for a record unless you wire it (override <code>do_new</code> in controller) like <code>@record.account_id = current_user.account_id</code>. As a side-note, a better rule in the given example is <code>can :create, Project</code> and enforce <code>@record.account_id = current_user.account_id</code> in the update action.</p>
+<h2>Q. I have a n+1 query problem because of this bridge</h2>
+<p><strong>A</strong>. Make sure you eager load either via <a href="https://github.com/activescaffold/active_scaffold/wiki/API:-Column">Column#includes</a> or via <code>active_scaffold_includes</code> instance method override for corner cases.</p>
+<h2>Q. I just installed CanCan and all my data vanished</h2>
+<p><strong>A</strong>. Because CanCan plugs into your select conditions, you can only see the records that have "can" rules that allow them. So unless you write <code>can :read, User</code> no user shall be showed. Or when you write <code>can :read, User, :active =&gt; true</code> only active users will be showed.</p>
+<h2>Q. I get a The accessible_by call cannot be used with a block 'can' definition error<br />
+</h2>
+<p><strong>A</strong>. One of your CanCan rules that operate on this model is defined only with block rules. Either modify it to use Hash+block or SQL-Where-fragment+block or (CanCan 1.6) Scope+block, either manually define in your controller the beginning of chain method to skip cancan behavior like so:</p>
+<p> 		</p>
+<pre data-line="" data-indent="8">
+					<code><xmp>def beginning_of_chain
+  beginning_of_chain_without_cancan.where(your_access_conditions)
+end</xmp></code>
+				</pre>
+<h2>A note of caution</h2>
+<p>Note that this bridge, along with all AS security layer, and probably many parts of ActiveScaffold, is not thread-safe. That means that these features will work bug-free only in a classic Rails shared-nothing deployment architecture. Trying to deploy this in thread-based mode will most probably lead to race conditions and unexpected behavior!</p>
+<p></body></html></p>
