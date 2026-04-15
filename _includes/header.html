@@ -2,7 +2,15 @@
 
   <div class="wrapper">
     {%- assign nav_pages = site.pages | where: "nav_group", "main" | sort: "nav_order" -%}
-    <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
+    <a class="site-title" rel="author" href="{{ "/" | relative_url }}"><img
+        fetchpriority="high"
+        width="574"
+        height="107"
+        src="{{ '/assets/img/logo-horizontal.png' | relative_url }}"
+        alt="{{ site.title | escape }}"
+        srcset="{{ '/assets/img/logo-horizontal.png' | relative_url }} 574w,
+                {{ '/assets/img/logo-horizontal-300.png' | relative_url }} 300w"
+        sizes="(max-width: 574px) 100vw, 574px"></a>
 
     {%- if nav_pages -%}
       <nav class="site-nav">

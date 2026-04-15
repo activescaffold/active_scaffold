@@ -1,0 +1,213 @@
+.site-header {
+        background-image: linear-gradient(235deg, #FF3131 0%, #FF5757 100%);
+        a, a:visited, & {
+            color: #fff;
+        }
+        a:hover {
+            color: #8B50FF;
+        }
+}
+.site-header .wrapper {
+    display: flex;
+    justify-content: space-between; // Separa el logo a la izquierda y el menú a la derecha
+    align-items: center;           // Los centra verticalmente
+    flex-wrap: nowrap;             // Evita que el menú salte de línea bruscamente
+}
+
+.site-title {
+    flex-shrink: 1;                // Permite que el logo se encoja si falta espacio
+    min-width: 0;                  // Truco de Flexbox para permitir encogimiento de imágenes
+
+    img {
+        max-width: 100%;             // El logo nunca será más ancho que su contenedor
+        height: auto;                // Mantiene la proporción
+        display: block;
+    }
+}
+
+.site-nav {
+    flex-shrink: 0;                // El menú no se encoge, se queda con su tamaño
+    margin-left: 20px;
+
+    .trigger {
+        //display: flex !important;    // Fuerza a los enlaces a estar en línea (Minima suele ocultarlos en móvil)
+        gap: 15px;                   // Espacio entre los enlaces del menú
+    }
+}
+
+/* Submenu checkbox + toggle — hidden by default, shown only on mobile */
+.submenu-cb {
+    display: none;
+}
+.submenu-toggle {
+    display: none;
+}
+
+/* 1. Reset y Layout Horizontal */
+.nav-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;       /* Alinea los li horizontalmente */
+    flex-wrap: wrap;
+    gap: 20px;           /* Espacio entre botones principales */
+}
+
+.nav-item {
+    position: relative;  /* Necesario para posicionar el submenú */
+    display: inline-block;
+
+    &:hover > .submenu {
+        display: block;    /* Muestra el submenú al hacer hover */
+    }
+}
+
+/* 2. Estilo de los Enlaces */
+.nav-link {
+    display: block;
+    padding: 10px 0;
+    text-decoration: none;
+}
+
+/* 3. Submenús (Desplegables) */
+.submenu {
+    display: none;       /* Oculto por defecto */
+    position: absolute;
+    top: 100%;           /* Aparece justo debajo del padre */
+    left: 0;
+    background-color: #fff;
+    min-width: 180px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    list-style: none;
+    padding: 10px 0;
+    z-index: 100;
+    border-radius: 4px;
+    margin-left: 0;
+    margin-top: -10px;
+}
+
+.submenu-item {
+    width: 100%;
+
+    .submenu-link {
+        display: block;
+        padding: 8px 20px;
+        text-decoration: none;
+        color: #333;
+        white-space: nowrap;
+
+        &:hover {
+            background-color: #f5f5f5;
+        }
+    }
+}
+
+/* Mobile: full-width vertical menu, click-based submenus */
+@media screen and (max-width: 600px) {
+    .site-header .wrapper {
+        padding: 10px;
+        position: relative;
+    }
+    .site-header .site-title {
+        width: 70%;
+    }
+
+    /* Keep .site-nav in normal flow; let minima's checkbox open .trigger */
+    .site-nav {
+        position: static !important;
+
+        /* When hamburger is open, the trigger panel spans full width below header */
+        input[id="nav-trigger"]:checked ~ .trigger {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            z-index: 200;
+            padding: 0;
+        }
+    }
+
+    /* Vertical full-width nav list */
+    .nav-menu {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        width: 100%;
+    }
+
+    /* Each nav item is a flex row: link expands, toggle arrow sits at right */
+    .nav-item {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        width: 100%;
+        border-bottom: 1px solid #eee;
+        position: static;          /* override desktop relative positioning */
+    }
+
+    /* Disable hover-based submenu on mobile */
+    .nav-item:hover > .submenu {
+        display: none;
+    }
+
+    /* Nav link takes all available horizontal space */
+    .nav-link, .submenu-link {
+        &, &:visited {
+            flex: 1;
+            color: #FF3131 !important;
+            padding: 12px 16px;
+            text-align: left;
+        }
+    }
+
+    /* Show the ▾ toggle arrow */
+    .submenu-toggle {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        cursor: pointer;
+        color: #FF3131;
+        user-select: none;
+        transition: transform 0.2s;
+    }
+
+    /* Rotate arrow when submenu is open */
+    .submenu-cb:checked ~ .submenu-toggle {
+        transform: rotate(180deg);
+    }
+
+    /* Click to expand submenu */
+    .submenu-cb:checked ~ .submenu {
+        display: block;
+    }
+
+    /* Submenu flows in the flex layout (full width, second row) */
+    .submenu {
+        position: static;
+        flex-basis: 100%;
+        box-shadow: none;
+        border-top: 1px solid #eee;
+        background-color: #fafafa;
+        min-width: 0;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .submenu-item {
+        border-bottom: 1px solid #eee;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .submenu-link {
+            padding: 10px 28px;
+            color: #333;
+            white-space: normal;
+        }
+    }
+}

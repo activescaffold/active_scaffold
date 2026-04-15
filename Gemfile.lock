@@ -140,6 +140,8 @@ GEM
       rouge (>= 2.0, < 5.0)
     jekyll-default-layout (0.1.5)
       jekyll (>= 3.0, < 5.0)
+    jekyll-extract (0.1.0)
+      jekyll (~> 3.3)
     jekyll-feed (0.17.0)
       jekyll (>= 3.7, < 5.0)
     jekyll-gist (1.5.0)
@@ -307,6 +309,7 @@ DEPENDENCIES
   csv
   github-pages
   jekyll (~> 3.9.3)
+  jekyll-extract
   jekyll-feed (~> 0.12)
   jekyll-seo-tag (~> 2.8)
   minima (~> 2.5)

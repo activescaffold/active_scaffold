@@ -1,7 +1,11 @@
   <ul class="nav-menu">
     {% for page_item in include.pages %}
       {% assign child_pages = site.pages | where: "parent", page_item.title | sort: "nav_order" %}
-      {% assign has_children = child_pages.size | is_positive %}
+      {% if child_pages.size > 0 %}
+        {% assign has_children = true %}
+      {% else %}
+        {% assign has_children = false %}
+      {% endif %}
 
       <li class="nav-item {% if has_children %}has-submenu{% endif %}">
         <a href="{{ page_item.url | relative_url }}" class="nav-link">
@@ -9,6 +13,8 @@
         </a>
 
         {% if has_children %}
+          <input type="checkbox" id="submenu-{{ forloop.index }}" class="submenu-cb" />
+          <label for="submenu-{{ forloop.index }}" class="submenu-toggle" aria-label="Toggle {{ page_item.title }} submenu">&#9660;</label>
           <ul class="submenu">
             {% for child in child_pages %}
               <li class="submenu-item">

@@ -7,6 +7,8 @@ description: >- # this means to ignore newlines until next key
 baseurl: "" # the subpath of your site, e.g., /blog (leave empty for username.github.io)
 url: "https://activescaffold.github.io" # the base hostname & protocol for your site
 github_username: activescaffold
+sass:
+  sass_dir: _sass
 
 collections:
   posts:
@@ -56,3 +58,4 @@ permalink: /:year/:month/:day/:title/
 exclude:
   - Gemfile
   - Gemfile.lock
+  - CLAUDE.md
