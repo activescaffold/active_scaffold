@@ -6,6 +6,7 @@ hero_lead: "Save time and headaches, and create a more easily maintainable set o
 hero_body: "ActiveScaffold handles all your CRUD (create, read, update, delete) user interface needs, leaving you more time to focus on more challenging (and interesting!) problems."
 hero_cta_text: "View on GitHub"
 hero_cta_url: "https://github.com/activescaffold"
+badges: true
 ---
 
 <div class="home-section">
