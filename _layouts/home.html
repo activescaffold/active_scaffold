@@ -1,6 +1,32 @@
----
-layout: default
----
-<div class="home">
-  {{ content }}
-</div>
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+  {%- include head.html -%}
+  <body>
+
+    {%- include header.html -%}
+
+    <main class="home-page" aria-label="Content">
+
+      <section class="home-hero">
+        <div class="wrapper">
+          <h1>{{ page.hero_heading }}</h1>
+          <p class="home-hero__lead">{{ page.hero_lead }}</p>
+          <p>{{ page.hero_body }}</p>
+          <a href="{{ page.hero_cta_url }}" class="home-btn" target="_blank" rel="noopener">{{ page.hero_cta_text }}</a>
+          <div class="home-badges">
+            <a href="https://github.com/activescaffold/active_scaffold/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/activescaffold/active_scaffold/ci.yml?label=Tests" alt="Tests Badge" width="90" height="20"></a>
+            <a href="https://qlty.sh/gh/activescaffold/projects/active_scaffold"><img src="https://qlty.sh/gh/activescaffold/projects/active_scaffold/maintainability.svg" alt="Maintainability" width="144" height="20"></a>
+            <a href="https://qlty.sh/gh/activescaffold/projects/active_scaffold"><img src="https://qlty.sh/gh/activescaffold/projects/active_scaffold/coverage.svg" alt="Code Coverage" width="157" height="20"></a>
+            <a href="https://rubygems.org/gems/active_scaffold"><img src="https://badge.fury.io/rb/active_scaffold.svg" alt="Gem version" width="138" height="20"></a>
+          </div>
+        </div>
+      </section>
+
+      {{ content }}
+
+    </main>
+
+    {%- include footer.html -%}
+
+  </body>
+</html>

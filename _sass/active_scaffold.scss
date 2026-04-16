@@ -1,41 +1,58 @@
-.site-header {
-        background-image: linear-gradient(235deg, #FF3131 0%, #FF5757 100%);
-        a, a:visited, & {
-            color: #fff;
-        }
-        a:hover {
-            color: #8B50FF;
-        }
+/* ── CSS custom properties ────────────────────────────────────────── */
+:root {
+    --color-primary:       #FF3131;
+    --color-primary-light: #FF5757;
+    --color-primary-content: #FFF;
+    --color-accent:        #8B50FF;
+    --color-home-bg:       #EFCBCB;
 }
+
+/* ── Base ─────────────────────────────────────────────────────────── */
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── Site header ──────────────────────────────────────────────────── */
+.site-header, .home-hero {
+    background-image: linear-gradient(235deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+
+    a, a:visited, & {
+        color: var(--color-primary-content);
+    }
+    a:hover {
+        color: var(--color-accent);
+    }
+}
+
 .site-header .wrapper {
     display: flex;
-    justify-content: space-between; // Separa el logo a la izquierda y el menú a la derecha
-    align-items: center;           // Los centra verticalmente
-    flex-wrap: nowrap;             // Evita que el menú salte de línea bruscamente
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
 }
 
 .site-title {
-    flex-shrink: 1;                // Permite que el logo se encoja si falta espacio
-    min-width: 0;                  // Truco de Flexbox para permitir encogimiento de imágenes
+    flex-shrink: 1;
+    min-width: 0;
 
     img {
-        max-width: 100%;             // El logo nunca será más ancho que su contenedor
-        height: auto;                // Mantiene la proporción
+        max-width: 100%;
+        height: auto;
         display: block;
     }
 }
 
 .site-nav {
-    flex-shrink: 0;                // El menú no se encoge, se queda con su tamaño
+    flex-shrink: 0;
     margin-left: 20px;
 
     .trigger {
-        //display: flex !important;    // Fuerza a los enlaces a estar en línea (Minima suele ocultarlos en móvil)
-        gap: 15px;                   // Espacio entre los enlaces del menú
+        gap: 15px;
     }
 }
 
-/* Submenu checkbox + toggle — hidden by default, shown only on mobile */
+/* ── Submenu checkbox + toggle ────────────────────────────────────── */
+/* Hidden by default; label shown only on mobile */
 .submenu-cb {
     display: none;
 }
@@ -43,37 +60,36 @@
     display: none;
 }
 
-/* 1. Reset y Layout Horizontal */
+/* ── Navigation menu ──────────────────────────────────────────────── */
 .nav-menu {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;       /* Alinea los li horizontalmente */
+    display: flex;
     flex-wrap: wrap;
-    gap: 20px;           /* Espacio entre botones principales */
+    gap: 20px;
 }
 
 .nav-item {
-    position: relative;  /* Necesario para posicionar el submenú */
+    position: relative;
     display: inline-block;
 
     &:hover > .submenu {
-        display: block;    /* Muestra el submenú al hacer hover */
+        display: block;
     }
 }
 
-/* 2. Estilo de los Enlaces */
 .nav-link {
     display: block;
     padding: 10px 0;
     text-decoration: none;
 }
 
-/* 3. Submenús (Desplegables) */
+/* ── Dropdown submenus ────────────────────────────────────────────── */
 .submenu {
-    display: none;       /* Oculto por defecto */
+    display: none;
     position: absolute;
-    top: 100%;           /* Aparece justo debajo del padre */
+    top: 100%;
     left: 0;
     background-color: #fff;
     min-width: 180px;
@@ -102,7 +118,7 @@
     }
 }
 
-/* Mobile: full-width vertical menu, click-based submenus */
+/* ── Mobile menu ──────────────────────────────────────────────────── */
 @media screen and (max-width: 600px) {
     .site-header .wrapper {
         padding: 10px;
@@ -112,24 +128,30 @@
         width: 70%;
     }
 
-    /* Keep .site-nav in normal flow; let minima's checkbox open .trigger */
     .site-nav {
-        position: static !important;
-
-        /* When hamburger is open, the trigger panel spans full width below header */
-        input[id="nav-trigger"]:checked ~ .trigger {
+        position: static;
+        
+        input ~ .trigger {
+            display: block; 
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+            
             position: absolute;
             top: 100%;
             left: 0;
             width: 100%;
             background: #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             z-index: 200;
+        }
+
+        input[id="nav-trigger"]:checked ~ .trigger {
+            max-height: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
             padding: 0;
         }
     }
 
-    /* Vertical full-width nav list */
     .nav-menu {
         flex-direction: column;
         align-items: flex-start;
@@ -137,53 +159,50 @@
         width: 100%;
     }
 
-    /* Each nav item is a flex row: link expands, toggle arrow sits at right */
     .nav-item {
         display: flex;
         flex-wrap: wrap;
         align-items: stretch;
         width: 100%;
         border-bottom: 1px solid #eee;
-        position: static;          /* override desktop relative positioning */
+        position: static;
     }
 
-    /* Disable hover-based submenu on mobile */
-    .nav-item:hover > .submenu {
-        display: none;
-    }
-
-    /* Nav link takes all available horizontal space */
-    .nav-link, .submenu-link {
+    .site-nav a {
         &, &:visited {
             flex: 1;
-            color: #FF3131 !important;
+            color: var(--color-primary);
             padding: 12px 16px;
             text-align: left;
         }
     }
 
-    /* Show the ▾ toggle arrow */
     .submenu-toggle {
         display: flex;
         align-items: center;
         padding: 12px 16px;
         cursor: pointer;
-        color: #FF3131;
+        color: var(--color-primary);
         user-select: none;
         transition: transform 0.2s;
     }
 
-    /* Rotate arrow when submenu is open */
     .submenu-cb:checked ~ .submenu-toggle {
         transform: rotate(180deg);
     }
-
-    /* Click to expand submenu */
-    .submenu-cb:checked ~ .submenu {
+    
+    .submenu {
         display: block;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-in-out;
     }
 
-    /* Submenu flows in the flex layout (full width, second row) */
+    .submenu-cb:checked ~ .submenu {
+        display: block;
+        max-height: 500px;
+    }
+
     .submenu {
         position: static;
         flex-basis: 100%;
@@ -210,4 +229,225 @@
             white-space: normal;
         }
     }
+}
+
+/* ── Home page ────────────────────────────────────────────────────── */
+
+.home-section {
+    padding: 50px 0;
+
+    h2 {
+        color: var(--color-primary);
+        margin-top: 0;
+        text-align: center;
+    }
+    h3 {
+        color: var(--color-primary);
+        margin-top: 0;
+    }
+    .icon {
+        font-size: 50px;
+        display: inline-block;
+        line-height: 0;
+        margin-bottom: 10px;
+    }
+}
+
+.home-section--accent {
+    background-color: var(--color-home-bg);
+    color: #333;
+    
+    .icon {
+        --icon-color: var(--color-accent);
+    }
+}
+
+.e-font-icon-svg {
+    height: 1em;
+    width: 1em;
+    fill: var(--icon-color);
+    color: var(--icon-color);
+    border-color: var(--icon-color);
+}
+/* Hero */
+.home-hero {
+    padding: 60px 0;
+
+    h1 {
+        font-size: 2.5rem;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    p {
+        margin-bottom: 12px;
+    }
+
+    .home-hero__lead {
+        font-size: 1.15rem;
+    }
+}
+
+.home-btn {
+    display: inline-block;
+    background: var(--color-primary-content);
+    color: var(--color-primary) !important;
+    padding: 12px 28px;
+    border-radius: 4px;
+    text-decoration: none !important;
+    font-weight: bold;
+    margin-top: 16px;
+    margin-bottom: 20px;
+
+    &:hover {
+        background: #f0f0f0;
+    }
+}
+
+.home-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+
+    img {
+        display: block;
+    }
+}
+
+/* Latest News */
+.home-post {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+
+    &:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    h3 {
+        margin: 0 0 4px;
+
+        a {
+            text-decoration: none;
+            color: var(--color-primary);
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    time {
+        font-size: 0.9rem;
+        color: #666;
+    }
+}
+
+/* Key Features — 4 columns */
+.home-columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    text-align: center;
+
+    p {
+        margin: 0;
+    }
+}
+
+/* Why use ActiveScaffold — 3 columns */
+.home-why {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    text-align: center;
+
+    .icon {
+        padding: 15px;
+        border-radius: 50%;
+        --icon-color: #333;
+        border: 2px solid var(--icon-color);
+        font-size: 40px;
+    }
+}
+
+/* Cards — Explore + Additional Resources */
+.home-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.home-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+
+    h3 {
+        margin-top: 0;
+        color: var(--color-primary);
+
+        a {
+            color: var(--color-primary);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    p {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+    .home-card__link {
+        color: var(--color-primary);
+        text-decoration: none;
+        margin-top: 16px;
+        display: inline-block;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+/* Mobile: single-column grids */
+@media screen and (max-width: 600px) {
+    .home-hero {
+        padding: 40px 0;
+
+        h1 {
+            font-size: 1.8rem;
+        }
+    }
+
+    .home-columns,
+    .home-cards,
+    .home-why {
+        grid-template-columns: 1fr;
+    }
+}
+
+figure.highlight {
+  position: relative;
+  margin-top: 0.6em;
+}
+
+figure.highlight pre code[data-lang]::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: -0.6em;
+  right: 1em;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #888;
+  font-family: sans-serif;
 }
