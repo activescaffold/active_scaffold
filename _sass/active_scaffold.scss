@@ -105,7 +105,7 @@ body {
 .submenu-item {
     width: 100%;
 
-    .submenu-link {
+    .submenu-link, .submenu-link:visited {
         display: block;
         padding: 8px 20px;
         text-decoration: none;
@@ -113,6 +113,7 @@ body {
         white-space: nowrap;
 
         &:hover {
+            color: var(--color-accent);
             background-color: #f5f5f5;
         }
     }
