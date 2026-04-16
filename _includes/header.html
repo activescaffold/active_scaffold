@@ -1,7 +1,8 @@
 <header class="site-header" role="banner">
 
   <div class="wrapper">
-    {%- assign nav_pages = site.pages | where: "nav_group", "main" | sort: "nav_order" -%}
+    {%- assign pages = site.pages | concat: site.html_pages | uniq -%}
+    {%- assign nav_pages = pages | where: "nav_group", "main" | where_exp: "item", "item.autogen == nil" | sort: "nav_order" -%}
     <a class="site-title" rel="author" href="{{ "/" | relative_url }}"><img
         fetchpriority="high"
         width="574"
@@ -29,13 +30,21 @@
       </nav>
     {%- endif -%}
   </div>
-  {% if page.hero_heading %}
+  {% assign _hero_heading = page.hero_heading %}
+  {% unless _hero_heading %}
+    {% for cat in site.categories %}
+      {% if cat[0] | slugify == page.title %}
+        {% assign _hero_heading = cat[0] %}
+      {% endif %}
+    {% endfor %}
+  {% endunless %}
+  {% if _hero_heading %}
     <section class="home-hero">
       <div class="wrapper">
-        <h1>{{ page.hero_heading }}</h1>
+        <h1>{{ _hero_heading }}</h1>
         <p class="home-hero__lead">{{ page.hero_lead }}</p>
         <p>{{ page.hero_body }}</p>
-        {% if page.hero_cta_url %}
+        {% if page.hero_cta_url and page.hero_cta_text %}
         <a href="{{ page.hero_cta_url }}" class="home-btn" target="_blank" rel="noopener">{{ page.hero_cta_text }}</a>
         {% endif %}
         {% if page.badges %}

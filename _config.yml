@@ -51,9 +51,33 @@ theme: minima # or another GitHub Pages supported theme
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-paginate-v2
 
 # WordPress import specific
 permalink: /:year/:month/:day/:title/
+
+############################################################
+# jekyll-paginate-v2
+############################################################
+pagination:
+  enabled: true
+  per_page: 3
+  permalink: "/page:num/"
+  sort_field: "date"
+  sort_reverse: true
+
+autopages:
+  enabled: true
+  categories:
+    enabled: true
+    layouts:
+      - "category_index.html"
+    title: ":cat"
+    permalink: "/category/:cat"
+  tags:
+    enabled: false
+  collections:
+    enabled: false
 
 exclude:
   - Gemfile

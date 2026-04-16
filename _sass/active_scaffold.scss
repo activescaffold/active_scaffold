@@ -531,6 +531,43 @@ main {
     }
 }
 
+.blog-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid #eee;
+}
+
+.blog-page-link {
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+    border-radius: 20px;
+    padding: 6px 18px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+        background: var(--color-primary);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    &--disabled {
+        border-color: #ccc;
+        color: #ccc;
+        cursor: default;
+    }
+}
+
+.blog-page-info {
+    font-size: 0.9rem;
+    color: #666;
+}
+
 figure.highlight {
   position: relative;
   margin-top: 0.6em;
