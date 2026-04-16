@@ -9,6 +9,9 @@ url: "https://activescaffold.github.io" # the base hostname & protocol for your 
 github_username: activescaffold
 sass:
   sass_dir: _sass
+kramdown:
+  input: GFM
+  extensions: [attr_list]
 
 collections:
   posts:
