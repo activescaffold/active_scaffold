@@ -32,11 +32,9 @@
   </div>
   {% assign _hero_heading = page.hero_heading %}
   {% unless _hero_heading %}
-    {% for cat in site.categories %}
-      {% if cat[0] | slugify == page.title %}
-        {% assign _hero_heading = cat[0] %}
-      {% endif %}
-    {% endfor %}
+    {% if page.autopages %}
+      {% assign _hero_heading = page.autopages.display_name %}
+    {% endif %}
   {% endunless %}
   {% if _hero_heading %}
     <section class="home-hero">
