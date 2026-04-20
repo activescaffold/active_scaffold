@@ -298,21 +298,6 @@ main {
     }
 }
 
-.home-btn {
-    display: inline-block;
-    background: var(--color-primary-content);
-    color: var(--color-primary) !important;
-    padding: 12px 28px;
-    border-radius: 4px;
-    text-decoration: none !important;
-    font-weight: bold;
-    margin-top: 16px;
-    margin-bottom: 20px;
-
-    &:hover {
-        background: #f0f0f0;
-    }
-}
 
 .home-badges {
     display: flex;
@@ -734,6 +719,38 @@ figure.highlight pre code[data-lang]::before {
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
+
+    &:hover {
+        opacity: 0.85;
+    }
+}
+
+.text-center { text-align: center; }
+
+/* ── Generic button ───────────────────────────────────────────────── */
+.btn {
+    display: inline-block;
+    padding: 10px 24px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none !important;
+    cursor: pointer;
+    border: 2px solid #fff;
+    color: var(--color-primary) !important;
+    background: #fff;
+    fill: var(--color-primary);
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+.btn.btn-primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff !important;
+    fill: #fff;
 
     &:hover {
         opacity: 0.85;
