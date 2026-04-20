@@ -28,21 +28,23 @@ We are excited to announce the release of **ActiveScaffold 4.1**, a major update
 
 If you’re using an older version of ActiveScaffold, upgrading is simple. Add or update the gem in your `Gemfile`:
 
-```
+{% highlight ruby -%}
 gem 'active_scaffold', '~> 4.1'
-```
+{%- endhighlight -%}
+
 Then, run:
 
-```
+{% highlight shell -%}
 bundle update active_scaffold
-```
+{%- endhighlight -%}
+
 ------------------------------------------------------------------------
 
 ### **Breaking Changes**
 
 Support for rails 6.1 and ruby 3.0 has been removed.
 
-The active\_scaffold\_habtm\_joins method has been renamed to active\_scaffold\_joins, and it's deprecated now.
+The `active_scaffold_habtm_joins` method has been renamed to active\_scaffold\_joins, and it's deprecated now.
 
 ------------------------------------------------------------------------
 

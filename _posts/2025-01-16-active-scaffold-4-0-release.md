@@ -26,14 +26,16 @@ We are excited to announce the release of **ActiveScaffold 4.0**, a major update
 
 If you’re using an older version of ActiveScaffold, upgrading is simple. Add or update the gem in your `Gemfile`:
 
-```
+{% highlight ruby -%}
 gem 'active_scaffold', '~> 4.0'
-```
+{%- endhighlight -%}
+
 Then, run:
 
-```
+{% highlight shell -%}
 bundle update active_scaffold
-```
+{%- endhighlight -%}
+
 Add `active_scaffold/manifest.js` to `app/assets/config/manifest.js` to prevent issues with assets.
 
 ------------------------------------------------------------------------
