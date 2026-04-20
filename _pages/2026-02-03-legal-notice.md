@@ -5,10 +5,10 @@ date: 2026-02-03 10:41:03.000000000 +01:00
 permalink: "/legal-notice/"
 ---
 
-This website (the “Site”) is owned and operated by:
-**ActiveScaffold**
-Address: Spain
-Email: <span>sergio@enpijama.es</span>
+This website (the “Site”) is owned and operated by:  
+**ActiveScaffold**  
+Address: Spain  
+Email: <span>sergio@enpijama.es</span>  
 Website: [https://activescaffold.eu](/)
 
 ### 1. Acceptance of Terms

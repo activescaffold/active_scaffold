@@ -31,10 +31,9 @@ We use cookies and similar technologies to:
 
 -   Enable basic site functionality
 
--   Improve user experience
-```
+-   Improve user experience  
 You can manage cookie preferences through your browser settings.
-```
+
 ### 4. Third‑Party Services
 
 We may use third‑party services (e.g., analytics tools). These services collect information according to their own privacy policies.
