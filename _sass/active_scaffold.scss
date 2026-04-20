@@ -611,3 +611,70 @@ figure.highlight pre code[data-lang]::before {
   color: #888;
   font-family: sans-serif;
 }
+
+.site-footer {
+    background-image: linear-gradient(235deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    color: var(--color-primary-content);
+
+    a, a:visited, .footer-tagline {
+        color: var(--color-primary-content);
+    }
+    a:hover {
+        color: var(--color-accent);
+        text-decoration: none;
+    }
+    .footer-col-heading {
+        color: rgba(255, 255, 255, 0.6);
+    }
+}
+
+.footer-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.footer-brand {
+    flex: 1 1 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.footer-logo img {
+    max-width: 200px;
+    height: auto;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.footer-tagline {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.footer-links-col {
+    flex: 1 1 150px;
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+    }
+}
+
+.footer-col-heading {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+    border-bottom: none;
+}
