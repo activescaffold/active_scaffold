@@ -7,6 +7,8 @@ categories:
 
 **ActiveScaffold 4.2** has been released, featuring major performance optimizations for large forms, integrated logical search, enhanced subform handling, and extended framework compatibility, including Rails 8.
 
+------------------------------------------------------------------------
+
 🚀 **Key Features & Improvements**
 ---------------------------------
 
@@ -36,11 +38,15 @@ categories:
 -   **Improved Chosen Integration**: `add_new` supported as in select form UI.
 -   **Support Click on Action Link Groups**: action link submenus can open with click instead of hover, and the lists with many action links may be rendered faster, as not all links needs to be rendered initially.
 
+------------------------------------------------------------------------
+
 🐛 **Important Fixes**
 ---------------------
 
 -   **Frozen String Literals**: Added compatibility and magic comments for Ruby's frozen string literal mode
 -   **TinyMCE with requierd**: Fixed validation errors for required textareas using TinyMCE
+
+------------------------------------------------------------------------
 
 🔧 **Extended Compatibility**
 ----------------------------
@@ -48,6 +54,8 @@ categories:
 -   **Rails 8 Support**: Full compatibility with Rails 8.0 framework
 -   **Bootstrap 5 Compatibility**: Updated tab components for seamless Bootstrap 5 integration
 -   **Improved Localization**: Added translations for millisecond and microsecond prompts in jQuery UI datetime picker
+
+------------------------------------------------------------------------
 
 🛠 **For Developers**
 --------------------
@@ -58,3 +66,7 @@ categories:
 -   **Modern JavaScript**: Consolidated JS helpers for file upload bridges into `active_scaffold.js`, removing the JS mixed in the HTML tags.
 -   **Subform Actions Helper**: New `active_scaffold_subform_record_actions` helper for adding custom actions to subform rows, supporting custom buttons on the subform.
 -   **Flexible Configuration**: Enhanced customization options throughout the framework
+
+------------------------------------------------------------------------
+
+🚀 **Happy coding with ActiveScaffold!**
