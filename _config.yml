@@ -86,3 +86,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - CLAUDE.md
+  - vendor
+  - .bundle
+  - .sass-cache
+  - .github
