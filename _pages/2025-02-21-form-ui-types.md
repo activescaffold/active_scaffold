@@ -6,6 +6,8 @@ permalink: "/doc/form-ui-types/"
 parent: Doc
 ---
 
+Form UI allow customization of how data is displayed within ActiveScaffold forms.
+
 There are different form\_ui types in ActiveScaffold, some may be useful for some column types only. The form ui types may use options from column’s options hash (`conf.columns[:xxx].options = {...}`), or an options hash set next to the type (`conf.columns[:xxx].form_ui = :yyy, {...}`).
 
 ### Description

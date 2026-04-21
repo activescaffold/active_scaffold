@@ -6,13 +6,7 @@ permalink: "/doc/list_ui-types/"
 parent: Doc
 ---
 
-List\_ui types
-==============
-
-List UI bridges allow customization of how data is displayed within ActiveScaffold tables.
-
-List\_ui types
---------------
+List UI allow customization of how data is displayed within ActiveScaffold tables.
 
 There are different list\_ui types in ActiveScaffold, some may be useful for some column types only. The list ui types may use options from column’s options hash (conf.columns\[:xxx\].options = {...}), or an options hash set next to the type (conf.columns\[:xxx\].list\_ui = :yyy, {...}).
 
