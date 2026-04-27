@@ -63,8 +63,8 @@ es:
         body: 'Hubo problemas con los siguientes campos:'
         header:
           one: No se pudo guardar %{model} debido a un error.
-          many: No se pudo guardar %{model} debido a %{count} errores.
-          other: No se pudo guardar %{model} debido a %{count} errores.
+          many: 1 error prohibió este %{model} al ser guardado.
+          other: '%{count} errores prohibidos este %{model} al ser guardado.'
     export: Exportar
     'false': 'No'
     filtered: "(Filtrado)"
