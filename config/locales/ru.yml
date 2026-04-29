@@ -12,7 +12,7 @@ ru:
     add_existing: Добавить существующую запись
     add_existing_model: "%{model}: добавить существующую запись"
     add_model: "%{model}: добавить запись"
-    all_tokens: Todas las palabras
+    all_tokens: ''
     any_token: Cualquier palabra
     apply: Применить
     are_you_sure_to_delete: Удалить %{label}?
