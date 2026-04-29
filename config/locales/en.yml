@@ -37,12 +37,9 @@ en:
     created_model: Created %{model}
     customize: Customize
     date_picker_options:
-      # weblate: numeric
-      firstDay: 0
-      # weblate: bool 
-      isRTL: false
-      # weblate: bool 
-      showMonthAfterYear: false
+      firstDay: !!int 0
+      isRTL: !!bool false
+      showMonthAfterYear: !!bool false
       weekHeader: Wk
     datetime_picker_options:
       closeText: Close
