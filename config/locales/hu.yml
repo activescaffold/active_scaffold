@@ -37,9 +37,9 @@ hu:
     created_model: "%{model} létrehozva"
     customize: Testreszabás
     date_picker_options:
-      firstDay: 0
-      isRTL: false
-      showMonthAfterYear: false
+      firstDay: '0'
+      isRTL: 'false'
+      showMonthAfterYear: 'false'
       weekHeader: Wk
     datetime_picker_options:
       closeText:
@@ -65,7 +65,7 @@ hu:
           one: 1 error prohibited this %{model} from being saved.
           other: "%{count} errors prohibited this %{model} from being saved"
     export: Exportálás
-    'false': 'False'
+    'false': 'false'
     filtered: "(Szűrt)"
     found: Találat
     future: Future
@@ -141,7 +141,8 @@ hu:
     update_apply:
     update_model: "%{model} modosítása"
     updated_model: "%{model} módosítva"
-    version_inconsistency: Verzió ütközés - ezt a rekordot módosították mióta elkezdted szerkeszteni.
+    version_inconsistency: Verzió ütközés - ezt a rekordot módosították mióta 
+      elkezdted szerkeszteni.
     weeks: Weeks
     years: Years
     yesterday: Yesterday
