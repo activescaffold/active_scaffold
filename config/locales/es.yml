@@ -37,9 +37,9 @@ es:
     created_model: "%{model} creado"
     customize: Personalizar
     date_picker_options:
-      firstDay: 1
-      isRTL: false
-      showMonthAfterYear: false
+      firstDay: !!int 1
+      isRTL: !!bool false
+      showMonthAfterYear: !!bool false
       weekHeader: Sm
     datetime_picker_options:
       closeText: Cerrar
