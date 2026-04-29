@@ -37,9 +37,9 @@ en:
     created_model: Created %{model}
     customize: Customize
     date_picker_options:
-      firstDay: 0
-      isRTL: false
-      showMonthAfterYear: false
+      firstDay: '0'
+      isRTL: 'false'
+      showMonthAfterYear: 'false'
       weekHeader: Wk
     datetime_picker_options:
       closeText: Close
@@ -141,7 +141,8 @@ en:
     update_apply: Apply
     update_model: Update %{model}
     updated_model: Updated %{model}
-    version_inconsistency: Version inconsistency - this record has been modified since you started editing it.
+    version_inconsistency: Version inconsistency - this record has been modified
+      since you started editing it.
     weeks: Weeks
     years: Years
     yesterday: Yesterday

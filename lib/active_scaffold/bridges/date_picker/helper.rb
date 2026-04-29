@@ -48,7 +48,7 @@ module ActiveScaffold::Bridges
         }
 
         as_date_picker_options = I18n.translate! :date_picker_options, scope: :active_scaffold, locale: locale, default: ''
-        date_picker_options.merge!(as_date_picker_options) if as_date_picker_options.is_a? Hash
+        date_picker_options.merge!(normalize_translated_values(as_date_picker_options)) if as_date_picker_options.is_a? Hash
         Rails.logger.warn "ActiveScaffold: Missing date picker localization for your locale: #{locale}" if as_date_picker_options.blank?
 
         js_format = to_datepicker_format(I18n.translate!('date.formats.default', locale: locale, default: ''))
@@ -56,6 +56,17 @@ module ActiveScaffold::Bridges
         date_picker_options
       rescue StandardError
         raise if locale == I18n.locale
+      end
+
+      def self.normalize_translated_values(options)
+        options.transform_values do |v|
+          case v
+          when 'true' then true
+          when 'false' then false
+          when /^\d+$/ then v.to_i
+          else v
+          end
+        end
       end
 
       def self.datetime_options_for_locales
