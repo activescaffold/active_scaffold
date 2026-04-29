@@ -65,7 +65,7 @@ en:
           one: 1 error prohibited this %{model} from being saved.
           other: "%{count} errors prohibited this %{model} from being saved"
     export: Export
-    'false': 'false'
+    'false': 'False'
     filtered: "(Filtered)"
     found: Found
     future: Future
