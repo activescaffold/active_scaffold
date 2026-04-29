@@ -37,9 +37,9 @@ fr:
     created_model: "%{model} créé"
     customize: Personnaliser
     date_picker_options:
-      firstDay: 1
-      isRTL: false
-      showMonthAfterYear: false
+      firstDay: '1'
+      isRTL: 'false'
+      showMonthAfterYear: 'false'
       weekHeader: Sm
     datetime_picker_options:
       closeText: Fermer
@@ -63,7 +63,8 @@ fr:
         body: 'Il y avait des problèmes avec les champs suivants :'
         header:
           one: 1 erreur interdit ce(tte) %{model} d'être sauvegardé.
-          other: "%{count} erreurs interdisent ce(tte) %{model} d'être sauvegardé"
+          many: "%{count} erreurs interdisent ce(tte) %{model} d'être sauvegardé"
+          other:
     export: Exporter
     'false': Faux
     filtered: "(Filtré)"
@@ -110,10 +111,12 @@ fr:
     previous: Précédent
     print: Imprimer
     range: Intervale
-    record_not_saved: Impossible d'enregistrer l'enregistrement à cause d'une erreur inconnue
+    record_not_saved: Impossible d'enregistrer l'enregistrement à cause d'une 
+      erreur inconnue
     records_marked:
       one: 1 %{model} marqué
-      other: "%{count} %{model} marqués"
+      many: '%{count} %{model} marqués'
+      other:
     refresh: Rafraîchir
     remove: Supprimer
     remove_file: Supprimer ou remplacer le fichier
@@ -141,7 +144,8 @@ fr:
     update_apply: Appliquer
     update_model: Mettre à jour le(/la) %{model}
     updated_model: Mis à jour de %{model}
-    version_inconsistency: Version incomplète - Cet enregistrement a été modifié depuis que vous avez commencé à l'éditer.
+    version_inconsistency: Version incomplète - Cet enregistrement a été modifié
+      depuis que vous avez commencé à l'éditer.
     weeks: Semaines
     years: Années
     yesterday: Hier
