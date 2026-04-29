@@ -64,7 +64,7 @@ fr:
         header:
           one: 1 erreur interdit ce(tte) %{model} d'être sauvegardé.
           many: "%{count} erreurs interdisent ce(tte) %{model} d'être sauvegardé"
-          other:
+          other: "%{count} erreurs interdisent ce(tte) %{model} d'être sauvegardé"
     export: Exporter
     'false': Faux
     filtered: "(Filtré)"
@@ -116,7 +116,7 @@ fr:
     records_marked:
       one: 1 %{model} marqué
       many: '%{count} %{model} marqués'
-      other:
+      other: '%{count} %{model} marqués'
     refresh: Rafraîchir
     remove: Supprimer
     remove_file: Supprimer ou remplacer le fichier
