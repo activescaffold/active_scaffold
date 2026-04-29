@@ -108,7 +108,7 @@ GEM
     docile (1.4.1)
     domain_name (0.6.20240107)
     drb (2.2.3)
-    erb (6.0.0)
+    erb (6.0.4)
     erubi (1.13.1)
     gli (2.22.2)
       ostruct
