@@ -37,9 +37,9 @@ ja:
     created_model: "%{model}を作成しました"
     customize: カスタマイズ
     date_picker_options:
-      firstDay: 0
-      isRTL: false
-      showMonthAfterYear: false
+      firstDay: '0'
+      isRTL: 'false'
+      showMonthAfterYear: 'false'
       weekHeader: 週
     datetime_picker_options:
       closeText: 閉じる
@@ -62,8 +62,7 @@ ja:
       template:
         body: 次のフィールドに問題がありました：
         header:
-          one: 1件のエラーにより、この%{model}が保存できませんでした
-          other: "%{count}件のエラーにより、この%{model}が保存できませんでした"
+          other: '%{count}件のエラーにより、この%{model}が保存できませんでした'
     export: エクスポート
     'false':
     filtered: "（フィルタ中）"
@@ -112,8 +111,7 @@ ja:
     range: 範囲検索
     record_not_saved: 不明なエラーによって保存できませんでした
     records_marked:
-      one: "%{model}を1件選択"
-      other: "%{model}を%{count}件選択"
+      other: '%{model}を%{count}件選択'
     refresh: 更新
     remove: 削除
     remove_file: ファイルを削除または置換
