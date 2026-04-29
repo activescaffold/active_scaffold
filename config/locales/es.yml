@@ -12,8 +12,8 @@ es:
     add_existing: Añadir Existente
     add_existing_model: Añadir %{model} Existente
     add_model: Añadir %{model}
-    all_tokens:
-    any_token:
+    all_tokens: Todas las palabras
+    any_token: Cualquier palabra
     apply: Aplicar
     are_you_sure_to_delete: "¿Estás seguro de que quieres borrar %{label}?"
     average: Media
@@ -64,14 +64,14 @@ es:
         header:
           one: No se pudo guardar %{model} debido a un error.
           many: No se pudo guardar %{model} debido a %{count} errores.
-          other:
+          other: No se pudo guardar %{model} debido a %{count} errores.
     export: Exportar
     'false': 'No'
     filtered: "(Filtrado)"
     found:
       one: encontrado
       many: encontrados
-      other:
+      other: encontrados
     future: Futuro
     group_by: Agrupar por
     grouped_by: Agrupado por %{column}
@@ -119,7 +119,7 @@ es:
     records_marked:
       one: 1 %{model} seleccionado
       many: '%{count} %{model} seleccionados'
-      other:
+      other: '%{count} %{model} seleccionados'
     refresh: Recargar
     remove: Eliminar
     remove_file: Eliminar o Reemplazar archivo
@@ -166,3 +166,6 @@ es:
     prompts:
       millisec: Milisegundo
       microsec: Microsegundo
+      hour: Hora
+      minute: Minuto
+      second: Segundo
