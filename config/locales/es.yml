@@ -119,7 +119,7 @@ es:
     records_marked:
       one: 1 %{model} seleccionado
       many: '%{count} %{model} seleccionados'
-      other:
+      other: '%{count} %{model} seleccionados'
     refresh: Recargar
     remove: Eliminar
     remove_file: Eliminar o Reemplazar archivo
