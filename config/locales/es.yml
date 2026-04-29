@@ -38,8 +38,8 @@ es:
     customize: Personalizar
     date_picker_options:
       firstDay: '1'
-      isRTL: 'False'
-      showMonthAfterYear: 'False'
+      isRTL: 'false'
+      showMonthAfterYear: 'false'
       weekHeader: Sm
     datetime_picker_options:
       closeText: Cerrar
