@@ -13,7 +13,7 @@ ru:
     add_existing_model: "%{model}: добавить существующую запись"
     add_model: "%{model}: добавить запись"
     all_tokens: ''
-    any_token: Cualquier palabra
+    any_token: ''
     apply: Применить
     are_you_sure_to_delete: Удалить %{label}?
     average: Среднее
