@@ -208,13 +208,13 @@ Released under the MIT license (included)
 
 ---
 
-A ruby translation project managed on [Locale](http://www.localeapp.com/) that's open to all!
+A ruby translation project managed on [Weblate](http://weblate.org/) that's open to all!
 
 ## Contributing to ActiveScaffold
 
-- Edit the translations directly on the [active_scaffold](http://www.localeapp.com/projects/public?search=active_scaffold) project on Locale.
+- Edit the translations directly on the [active_scaffold](https://hosted.weblate.org/engage/activescaffold/) project on Weblate.
 - **That's it!**
-- The maintainer will then pull translations from the Locale project and push to Github.
+- Weblate will send a PR to Github.
 
 Happy translating!
 
