@@ -37,9 +37,9 @@ es:
     created_model: "%{model} creado"
     customize: Personalizar
     date_picker_options:
-      firstDay: !!int 1
-      isRTL: !!bool false
-      showMonthAfterYear: !!bool false
+      firstDay: '1'
+      isRTL: 'false'
+      showMonthAfterYear: 'false'
       weekHeader: Sm
     datetime_picker_options:
       closeText: Cerrar
@@ -63,13 +63,15 @@ es:
         body: 'Hubo problemas con los siguientes campos:'
         header:
           one: No se pudo guardar %{model} debido a un error.
-          other: No se pudo guardar %{model} debido a %{count} errores.
+          many: No se pudo guardar %{model} debido a %{count} errores.
+          other:
     export: Exportar
     'false': 'No'
     filtered: "(Filtrado)"
     found:
       one: encontrado
-      other: encontrados
+      many: encontrados
+      other:
     future: Futuro
     group_by: Agrupar por
     grouped_by: Agrupado por %{column}
@@ -94,7 +96,8 @@ es:
     next_month: Próximo mes
     next_week: Próxima semana
     next_year: Próximo año
-    no_authorization_for_action: No dispone de autorización para la acción %{action}
+    no_authorization_for_action: No dispone de autorización para la acción 
+      %{action}
     no_color: Sin color
     no_entries: Sin entradas
     no_group: No agrupar
@@ -115,7 +118,8 @@ es:
     record_not_saved: Fallo guardando el registro debido a un error desconocido
     records_marked:
       one: 1 %{model} seleccionado
-      other: "%{count} %{model} seleccionados"
+      many: '%{count} %{model} seleccionados'
+      other:
     refresh: Recargar
     remove: Eliminar
     remove_file: Eliminar o Reemplazar archivo
@@ -143,7 +147,8 @@ es:
     update_apply: Aplicar
     update_model: Actualizar %{model}
     updated_model: "%{model} actualizado"
-    version_inconsistency: Inconsistencia de versiones - este registro se ha modificado después de que empezó a editarlo.
+    version_inconsistency: Inconsistencia de versiones - este registro se ha 
+      modificado después de que empezó a editarlo.
     weeks: Semanas
     years: Años
     yesterday: Ayer
