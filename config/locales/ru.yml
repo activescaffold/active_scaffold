@@ -37,9 +37,9 @@ ru:
     created_model: "%{model}: запись создана"
     customize: Настроить
     date_picker_options:
-      firstDay: 1
-      isRTL: false
-      showMonthAfterYear: false
+      firstDay: '1'
+      isRTL: 'false'
+      showMonthAfterYear: 'false'
       weekHeader: Нед.
     datetime_picker_options:
       closeText: Закрыть
@@ -62,18 +62,16 @@ ru:
       template:
         body: 'Проблемы возникли со следующими полями:'
         header:
-          few: "%{model}: сохранение не удалось из-за %{count} ошибок"
-          many: "%{model}: сохранение не удалось из-за %{count} ошибок"
-          one: "%{model}: сохранение не удалось из-за %{count} ошибки"
-          other: "%{model}: сохранение не удалось из-за %{count} ошибки"
+          one: '%{model}: сохранение не удалось из-за %{count} ошибки'
+          few: '%{model}: сохранение не удалось из-за %{count} ошибок'
+          many: '%{model}: сохранение не удалось из-за %{count} ошибок'
     export: Экспорт
     'false': Нет
     filtered: "(Найденное)"
     found:
+      one: запись
       few: записи
       many: записей
-      one: запись
-      other: записи
     future: Будущие
     group_by:
     grouped_by:
@@ -118,10 +116,9 @@ ru:
     range: Интервал
     record_not_saved: Запись  не может быть сохранена из-за неизвестной ошибки
     records_marked:
+      one: Отмечена 1 запись
       few: Отмечено %{count} записи
       many: Отмечено %{count} записей
-      one: Отмечена 1 запись
-      other: Отмечено %{count} записи
     refresh: Обновить
     remove: Удалить
     remove_file: Удалить или заменить файл
@@ -149,7 +146,8 @@ ru:
     update_apply:
     update_model: "%{model}: обновить запись"
     updated_model: "%{model}: запись обновлена"
-    version_inconsistency: Эта запись была обновлена с того момента, как вы начали ее редактировать
+    version_inconsistency: Эта запись была обновлена с того момента, как вы 
+      начали ее редактировать
     weeks: недель
     years: лет
     yesterday: Вчера
