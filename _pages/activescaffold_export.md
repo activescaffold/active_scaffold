@@ -4,15 +4,9 @@ title: ActiveScaffoldExport
 date: 2025-02-18 11:34:51.000000000 +01:00
 permalink: "/plugins/activescaffoldexport/"
 parent: Plugins
+hero_heading: Export for ActiveScaffold
+hero_lead: An essential tool for generating reports or sharing data with external systems
 ---
-
-ActiveScaffoldExport
-====================
-
-It's an essential tool for generating reports or sharing data with external systems.
-
-ActiveScaffoldExport
---------------------
 
 Add export functionality to your ActiveScaffold interfaces, supporting formats like CSV and Excel.
 It's an essential tool for generating reports or sharing data with external systems.

@@ -4,15 +4,9 @@ title: ActiveScaffoldSortable
 date: 2025-02-18 10:44:02.000000000 +01:00
 permalink: "/plugins/activescaffoldsortable/"
 parent: Plugins
+hero_heading: Sortable action for ActiveScaffold
+hero_lead: Ideal for applications requiring customizable ordering, such as task prioritization
 ---
-
-ActiveScaffoldSortable
-======================
-
-Ideal for applications requiring customizable ordering, such as task prioritization.
-
-ActiveScaffoldSortable
-----------------------
 
 Allows users to drag and drop records within a list to reorder them easily.
 Ideal for applications requiring customizable ordering, such as task prioritization.
@@ -53,10 +47,4 @@ class TasksController < ApplicationController
     config.sortable.column = :position
   end
 end
-```
-### Example Code
-
-```
-config.sortable.drag_icon = 'drag-handle.png'
-config.sortable.helper = 'clone'
 ```

@@ -4,15 +4,9 @@ title: ActiveScaffoldBatch
 date: 2025-02-18 10:10:11.000000000 +01:00
 permalink: "/plugins/activescaffoldbatch/"
 parent: Plugins
+hero_heading: Batch actions for ActiveScaffold
+hero_lead: Perfect for administrative tasks requiring bulk updates or deletions
 ---
-
-ActiveScaffoldBatch
-===================
-
-Perfect for administrative tasks requiring bulk updates or deletions.
-
-ActiveScaffoldBatch
--------------------
 
 This plugin enables batch actions, allowing users to perform operations on multiple records simultaneously.
 Perfect for administrative tasks requiring bulk updates or deletions.

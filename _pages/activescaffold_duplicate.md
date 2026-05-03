@@ -4,15 +4,9 @@ title: ActiveScaffoldDuplicate
 date: 2025-02-18 12:00:25.000000000 +01:00
 permalink: "/plugins/activescaffoldduplicate/"
 parent: Plugins
+hero_heading: Duplicate action for ActiveScaffold
+hero_lead: An action to clone records
 ---
-
-Active Scaffold Duplicate
-=========================
-
-Enhances search capabilities by allowing users
-
-Active Scaffold Duplicate
--------------------------
 
 Adds an action to clone records, and support to clone rows in subforms. 
 
@@ -24,15 +18,17 @@ Duplicate rows in a subform, requires to set the \`:duplicate\` setting in the c
 
 ### Installation
 
-```
+Add the following line to your `Gemfile`:
+
+{% highlight ruby -%}
 gem 'active_scaffold_duplicate'
-```
+{%- endhighlight %}
 
 Then run:
 
-```
+{% highlight shell -%}
 bundle install
-```
+{%- endhighlight %}
 
 ### Usage & Options
 
