@@ -3,6 +3,7 @@ layout: page
 title: ActiveScaffoldDuplicate
 date: 2025-02-18 12:00:25.000000000 +01:00
 permalink: "/plugins/activescaffoldduplicate/"
+parent: Plugins
 ---
 
 Active Scaffold Duplicate

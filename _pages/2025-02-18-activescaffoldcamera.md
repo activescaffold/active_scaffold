@@ -3,6 +3,7 @@ layout: page
 title: ActiveScaffoldCamera
 date: 2025-02-18 11:57:07.000000000 +01:00
 permalink: "/plugins/activescaffoldcamera/"
+parent: Plugins
 ---
 
 ActiveScaffoldCamera

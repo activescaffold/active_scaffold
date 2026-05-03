@@ -3,6 +3,7 @@ layout: page
 title: ActiveScaffoldSortable
 date: 2025-02-18 10:44:02.000000000 +01:00
 permalink: "/plugins/activescaffoldsortable/"
+parent: Plugins
 ---
 
 ActiveScaffoldSortable

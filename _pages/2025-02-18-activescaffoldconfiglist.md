@@ -3,6 +3,7 @@ layout: page
 title: ActiveScaffoldConfigList
 date: 2025-02-18 12:04:34.000000000 +01:00
 permalink: "/plugins/activescaffoldconfiglist/"
+parent: Plugins
 ---
 
 ActiveScaffoldConfigList

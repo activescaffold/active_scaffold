@@ -3,6 +3,7 @@ layout: page
 title: ActiveScaffoldExport
 date: 2025-02-18 11:34:51.000000000 +01:00
 permalink: "/plugins/activescaffoldexport/"
+parent: Plugins
 ---
 
 ActiveScaffoldExport

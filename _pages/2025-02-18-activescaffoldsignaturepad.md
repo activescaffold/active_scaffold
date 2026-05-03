@@ -3,6 +3,7 @@ layout: page
 title: ActiveScaffoldSignaturePad
 date: 2025-02-18 11:51:33.000000000 +01:00
 permalink: "/plugins/activescaffoldsignaturepad/"
+parent: Plugins
 ---
 
 ActiveScaffoldSignaturePad

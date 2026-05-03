@@ -3,6 +3,7 @@ layout: page
 title: ActiveScaffoldBatch
 date: 2025-02-18 10:10:11.000000000 +01:00
 permalink: "/plugins/activescaffoldbatch/"
+parent: Plugins
 ---
 
 ActiveScaffoldBatch
