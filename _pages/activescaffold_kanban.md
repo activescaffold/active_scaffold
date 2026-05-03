@@ -1,7 +1,7 @@
 ---
 layout: page
 title: ActiveScaffoldKanban
-date: 2025-02-18 11:57:07.000000000 +01:00
+date: 2026-05-03 16:13:07 +02:00
 permalink: "/plugins/activescaffoldkanban/"
 parent: Plugins
 hero_heading: Kanban for ActiveScaffold
@@ -16,15 +16,15 @@ It depends on ActiveScaffoldSortable and ActiveScaffoldConfigList plugins.
 
 Add the following line to your `Gemfile`:
 
-```
+{% highlight ruby -%}
 gem 'active_scaffold_kanban'
-```
+{%- endhighlight %}
 
 Then run:
 
-```
+{% highlight shell -%}
 bundle install
-```
+{%- endhighlight %}
 
 ### Usage & Options
 
