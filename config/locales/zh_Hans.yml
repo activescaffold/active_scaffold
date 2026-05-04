@@ -1,1 +1,63 @@
-{}
+active_scaffold:
+  "!=": '!='
+  "<": <
+  "<=": <=
+  "=": '='
+  ">": '>'
+  ">=": '>='
+  _select_: '- 选择 -'
+  add: 添加
+  add_existing: 添加现有项目
+  add_model: 添加 %{model}
+  all_tokens: 所有关键词
+  apply: 应用
+  are_you_sure_to_delete: 你确定想要删除 %{label}吗？
+  cancel: 取消
+  add_existing_model: 添加现有%{model}
+  any_token: 任何关键词
+  average: 平均值
+  begins_with: 以……开始
+  between: 介于……之间
+  cant_destroy_record: '%{record}不能被删除'
+  changes: 变更记录
+  check_all: 全选
+  click_to_edit: 点击以编辑
+  click_to_reset: 点击以重置
+  close: 关闭
+  config_list: 配置
+  config_list_model: 为%{model}配置列
+  contains: 包含
+  create: 创建
+  create_another: 新建 %{model}
+  create_apply: 创建并继续
+  create_model: 创建 %{model}
+  create_new: 新建
+  created_model: 已创建 %{model}
+  customize: 自定义
+  date_picker_options:
+    firstDay: '0'
+    weekHeader: 周
+  datetime_picker_options:
+    closeText: 关闭
+    currentText: 现在
+    timeText: 小时
+    timezoneText: 时区
+  days: 天
+  delete: 删除
+  deleted_model: 已删除 %{model}
+  deleted_records: 已删除记录列表
+  delimiter: 分隔符
+  download: 下载
+  doesnt_begin_with: 不能以……开头
+  doesnt_contain: 不能包含
+  doesnt_end_with: 不能以……结尾
+  edit: 编辑
+  ends_with: 以……结尾
+  error_500: (代码 500, 互联网错误)
+  errors:
+    template:
+      body: 以下字段存在问题：
+      header:
+        other: '%{count} 个错误阻止了这个 %{model} 被保存'
+  found: 发现了
+  months: 月
