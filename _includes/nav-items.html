@@ -16,7 +16,7 @@
           <input type="checkbox" id="submenu-{{ forloop.index }}" class="submenu-cb" />
           <label for="submenu-{{ forloop.index }}" class="submenu-toggle" aria-label="Toggle {{ page_item.title }} submenu">&#9660;</label>
           <ul class="submenu">
-            {% for child in child_pages %}
+            {% for child in child_pages | sort: "nav_order" %}
               <li class="submenu-item">
                 <a href="{{ child.url | relative_url }}" class="submenu-link">
                   {{ child.title }}
