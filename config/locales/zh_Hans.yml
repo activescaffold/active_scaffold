@@ -67,7 +67,7 @@ active_scaffold:
       isRTL: 'false'
       showMonthAfterYear: 'false'
       firstDay: '0'
-      weekHeader: Wk
+      weekHeader: 周
     next_year: Next Year
     record_not_saved: Failed to save record cause of an unknown error
     this_month: This Month
@@ -150,65 +150,65 @@ active_scaffold:
     live_search: Live Search
     prev_year: Last Year
     ">=": '>='
-    click_to_edit: Click to edit
-    delimiter: Delimiter
+    click_to_edit: 点击以编辑
+    delimiter: 分隔符
     "!=": '!='
-    doesnt_end_with: Doesn't end with
+    doesnt_end_with: 不能以……结尾
     datetime_picker_options:
-      timezoneText: Timezone
-      closeText: Close
-      currentText: Now
-      timeText: Hour
-    days: Days
+      timezoneText: 时区
+      closeText: 关闭
+      currentText: 现在
+      timeText: 小时
+    days: 天
     "<": <
-    contains: Contains
-    create_apply: Create and continue
-    download: Download
-    created_model: Created %{model}
-    error_500: (code 500, Internal Error)
-    changes: Changes
-    found: Found
-    click_to_reset: Click to reset
-    all_tokens: All keywords
-    are_you_sure_to_delete: Are you sure you want to delete %{label}?
+    contains: 包含
+    create_apply: 创建并继续
+    download: 下载
+    created_model: 已创建 %{model}
+    error_500: (代码 500, 互联网错误)
+    changes: 变更记录
+    found: 发现了
+    click_to_reset: 点击以重置
+    all_tokens: 所有关键词
+    are_you_sure_to_delete: 你确定想要删除 %{label}吗？
     ">": '>'
-    create: Create
-    delete: Delete
-    config_list: Configure
-    cant_destroy_record: "%{record} can't be destroyed"
-    deleted_model: Deleted %{model}
+    create: 创建
+    delete: 删除
+    config_list: 配置
+    cant_destroy_record: "%{record}不能被删除"
+    deleted_model: 已删除 %{model}
     _select_: '- 选择 -'
-    doesnt_begin_with: Doesn't begin with
-    add_existing_model: Add Existing %{model}
+    doesnt_begin_with: 不能以……开头
+    add_existing_model: 添加现有%{model}
     errors:
       template:
         header:
           one: 1 error prohibited this %{model} from being saved.
           other:
-        body: 'There were problems with the following fields:'
-    months: Months
-    any_token: Any keyword
-    between: Between
-    edit: Edit
-    add_model: Add %{model}
-    customize: Customize
-    doesnt_contain: Doesn't contain
-    check_all: Check all
-    cancel: Cancel
-    create_new: Create New
-    close: Close
+        body: '以下字段存在问题：'
+    months: 月
+    any_token: 任何关键词
+    between: 介于……之间
+    edit: 编辑
+    add_model: 添加 %{model}
+    customize: 自定义
+    doesnt_contain: 不能包含
+    check_all: 全选
+    cancel: 取消
+    create_new: 新建
+    close: 关闭
     "<=": <=
-    begins_with: Begins with
-    apply: Apply
-    ends_with: Ends with
-    config_list_model: Configure Columns for %{model}
+    begins_with: 以……开始
+    apply: 应用
+    ends_with: 以……结尾
+    config_list_model: 为%{model}配置列
     "=": '='
-    create_another: Create Another %{model}
-    add_existing: Add Existing
+    create_another: 新建 %{model}
+    add_existing: 添加现有项目
     add: 添加
-    deleted_records: List Deleted Records
-    create_model: Create %{model}
-    average: Average
+    deleted_records: 已删除记录列表
+    create_model: 创建 %{model}
+    average: 平均值
   datetime:
     prompts:
       millisec: Millisecond
