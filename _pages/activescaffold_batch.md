@@ -32,21 +32,21 @@ bundle install
 
 ### Usage & Options
 
-After installation, you can enable batch processing in your ActiveScaffold configuration:
+It provides 3 actions: `batch_create`, `batch_update` and `batch_delete`.
+After installation, you can enable batch processing in your ActiveScaffold configuration adding any of those actions to default actions:
 
 {% highlight ruby -%}
 ActiveScaffold.set_defaults do |config|
-  config.actions << :batch
+  config.actions << :batch_update
 end
 {%- endhighlight %}
 
-In your controller, define the available batch actions:
+Or adding them in your controller:
 
 {% highlight ruby -%}
 class UsersController < ApplicationController
   active_scaffold :user do |config|
-    config.actions << :batch
-    config.batch.actions = [:update, :destroy]
+    config.actions << :batch_create
   end
 end
 {%- endhighlight %}
@@ -57,20 +57,30 @@ If you want to allow bulk activation of users, you can define a custom action:
 
 {% highlight ruby -%}
 class UsersController < ApplicationController
+  include ActiveScaffold::Actions::BatchBase
+
   active_scaffold :user do |config|
-    config.actions << :batch
-    config.batch.actions = [:activate]
-    config.batch.configure :activate do |batch|
-      batch.label = 'Activate Users'
-      batch.confirm = 'Are you sure you want to activate the selected users?'
-    end
+    config.action_links.collection.add :batch_activate, label: 'Activate Users',
+      confirm: 'Are you sure you want to activate the selected users?',
+      parameters: {batch_scope: 'marked'}
   end
+
   def batch_activate
-    @records.each do |record|
-      record.update(active: true)
+    batch_action
+  end
+
+  protected
+
+  def batch_activate_marked
+    activated = 0
+    each_marked_record do |record|
+      if record.update(active: true)
+        record.as_marked = false
+        activated += 1
+      else
+        error_records << record
+      end
     end
-    flash[:notice] = "#{@records.size} users activated successfully."
-    redirect_to users_path
   end
 end
 {%- endhighlight %}
