@@ -12,8 +12,8 @@ ja:
     add_existing: 既存のものを追加
     add_existing_model: 既存の%{model}を追加
     add_model: "%{model}を追加"
-    all_tokens:
-    any_token:
+    all_tokens: All keywords
+    any_token: Any keyword
     apply: 適用
     are_you_sure_to_delete: "%{label}を消去してもよろしいですか？"
     average: 平均
@@ -22,16 +22,16 @@ ja:
     cancel: キャンセル
     cant_destroy_record: "%{record}を削除できません"
     changes: 差分
-    check_all:
+    check_all: Check all
     click_to_edit: クリックして編集
     click_to_reset: クリックしてリセット
     close: 閉じる
-    config_list:
-    config_list_model:
+    config_list: Configure
+    config_list_model: Configure Columns for %{model}
     contains: 部分一致検索
     create: 作成
-    create_another:
-    create_apply:
+    create_another: Create Another %{model}
+    create_apply: Create and continue
     create_model: "%{model}を作成"
     create_new: 新規作成
     created_model: "%{model}を作成しました"
@@ -49,11 +49,11 @@ ja:
     days: 日分
     delete: 削除
     deleted_model: "%{model}を削除しました"
-    deleted_records:
+    deleted_records: List Deleted Records
     delimiter: 区切り文字
-    doesnt_begin_with:
-    doesnt_contain:
-    doesnt_end_with:
+    doesnt_begin_with: Doesn't begin with
+    doesnt_contain: Doesn't contain
+    doesnt_end_with: Doesn't end with
     download: ダウンロード
     edit: 編集
     ends_with: 終了時間
@@ -64,12 +64,12 @@ ja:
         header:
           other: '%{count}件のエラーにより、この%{model}が保存できませんでした'
     export: エクスポート
-    'false':
+    'false': 'False'
     filtered: "（フィルタ中）"
     found: 個ありました
     future: 未来
-    group_by:
-    grouped_by:
+    group_by: Group by
+    grouped_by: Grouped by %{column}
     hide: "（隠す）"
     hours: 時間分
     human_conditions:
@@ -79,30 +79,30 @@ ja:
     internal_error: リクエストが失敗しました
     live_search: その場で検索
     loading: 読み込み中…
-    logical_search:
+    logical_search: Logical Search
     mark_all_records: すべて選択
     maximum: 最大値
     minimum: 最小値
     minutes: 分間
     months: か月分
     nested_for_model: "%{parent_model}の%{nested_model}"
-    nested_of_model:
+    nested_of_model: '%{nested_model} of %{parent_model}'
     next: 次
     next_month: 来月
     next_week: 来週
     next_year: 来年
-    no_authorization_for_action:
-    no_color:
+    no_authorization_for_action: No Authorization for action %{action}
+    no_color: No color
     no_entries: 見つかりませんでした
-    no_group:
+    no_group: No group
     no_options: オプション無し
-    not_null:
-    'null':
-    omit_header:
-    optional_attributes:
+    not_null: Not Null
+    'null': 'Null'
+    omit_header: Omit Header
+    optional_attributes: Further Options
     options: オプション
     past: 過去
-    pdf:
+    pdf: PDF
     prev_month: 先月
     prev_week: 先週
     prev_year: 去年
@@ -116,10 +116,10 @@ ja:
     remove: 削除
     remove_file: ファイルを削除または置換
     remove_files: ファイルを削除または追加する
-    replace_existing:
+    replace_existing: Replace Existing
     replace_with_new: 新しいもので置換
     reset: リセット
-    revisions_for_model:
+    revisions_for_model: Revisions for %{model}
     saving: 保存中…
     search: 検索
     search_terms: 検索単語
@@ -133,10 +133,10 @@ ja:
     this_year: 今年
     today: 今日
     tomorrow: 明日
-    'true':
-    uncheck_all:
+    'true': 'True'
+    uncheck_all: Uncheck all
     update: 更新
-    update_apply:
+    update_apply: Apply
     update_model: "%{model}を更新"
     updated_model: "%{model}を更新しました"
     version_inconsistency: バージョンが一致しません - あなたが編集している間にこのレコードが変更されました。
@@ -155,5 +155,8 @@ ja:
       picker: "%Y年%m月%d日（%a） %H:%M:%S"
   datetime:
     prompts:
-      millisec:
-      microsec:
+      millisec: Millisecond
+      microsec: Microsecond
+      second: Second
+      minute: Minute
+      hour: Hour
