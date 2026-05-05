@@ -38,6 +38,8 @@ zh_Hans:
     date_picker_options:
       firstDay: '0'
       weekHeader: 周
+      isRTL: 'false'
+      showMonthAfterYear: 'false'
     datetime_picker_options:
       closeText: 关闭
       currentText: 现在
@@ -59,8 +61,7 @@ zh_Hans:
       template:
         body: 以下字段存在问题：
         header:
-          one: '%{count} 个错误阻止了这个 %{model} 被保存'
-          other:
+          other: 1 error prohibited this %{model} from being saved.
     found: 发现了
     months: 月
     active_scaffold:
@@ -79,8 +80,8 @@ zh_Hans:
       nested_for_model: '%{nested_model} for %{parent_model}'
       range: Range
       search_terms: Search Terms
-      version_inconsistency: Version inconsistency - this record has been modified
-        since you started editing it.
+      version_inconsistency: Version inconsistency - this record has been 
+        modified since you started editing it.
       tomorrow: Tomorrow
       hide: (Hide)
       grouped_by: Grouped by %{column}
@@ -227,3 +228,100 @@ zh_Hans:
     time:
       formats:
         picker: '%a, %d %b %Y %H:%M:%S'
+    next_year: Next Year
+    record_not_saved: Failed to save record cause of an unknown error
+    this_month: This Month
+    update_apply: Apply
+    'true': 'True'
+    this_year: This Year
+    past: Past
+    nested_for_model: '%{nested_model} for %{parent_model}'
+    range: Range
+    search_terms: Search Terms
+    version_inconsistency: Version inconsistency - this record has been modified
+      since you started editing it.
+    tomorrow: Tomorrow
+    hide: (Hide)
+    grouped_by: Grouped by %{column}
+    today: Today
+    replace_existing: Replace Existing
+    uncheck_all: Uncheck all
+    seconds: Seconds
+    refresh: Refresh
+    group_by: Group by
+    export: Export
+    remove_files: Remove or Add files
+    no_color: No color
+    revisions_for_model: Revisions for %{model}
+    no_group: No group
+    pdf: PDF
+    omit_header: Omit Header
+    'false': 'False'
+    _to_: ' to '
+    show: Show
+    logical_search: Logical Search
+    reset: Reset
+    options: Options
+    next_week: Next Week
+    years: Years
+    maximum: Maximum
+    yesterday: Yesterday
+    human_conditions:
+      association: '%{column} = %{value}'
+      boolean: '%{column} = %{value}'
+    previous: Previous
+    nested_of_model: '%{nested_model} of %{parent_model}'
+    search: Search
+    no_options: no options
+    internal_error: Request Failed
+    updated_model: Updated %{model}
+    weeks: Weeks
+    next_month: Next Month
+    saving: Saving…
+    filtered: (Filtered)
+    minimum: Minimum
+    no_entries: No Entries
+    'null': 'Null'
+    optional_attributes: Further Options
+    replace_with_new: Replace With New
+    show_model: Show %{model}
+    remove: Remove
+    hours: Hours
+    update: Update
+    no_authorization_for_action: No Authorization for action %{action}
+    update_model: Update %{model}
+    not_null: Not Null
+    mark_all_records: Mark all
+    show_block: (Show)
+    prev_week: Last Week
+    future: Future
+    print: Print
+    next: Next
+    loading: Loading…
+    minutes: Minutes
+    prev_month: Last Month
+    sum: Sum
+    records_marked:
+      other: 1 marked %{model}
+    inplace_edit_handle: --
+    remove_file: Remove or Replace file
+    this_week: This Week
+    live_search: Live Search
+    prev_year: Last Year
+  datetime:
+    prompts:
+      millisec: Millisecond
+      microsec: Microsecond
+      second: Second
+      minute: Minute
+      hour: Hour
+  date:
+    formats:
+      month: '%B'
+      quarter: Quarter %{num}
+      week: Week %W, %Y
+      year_quarter: Quarter %{quarter} %{year}
+      year_month: '%b %Y'
+  time:
+    formats:
+      picker: '%a, %d %b %Y %H:%M:%S'
