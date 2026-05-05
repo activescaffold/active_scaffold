@@ -61,7 +61,7 @@ zh_Hans:
       template:
         body: 以下字段存在问题：
         header:
-          other: 1 error prohibited this %{model} from being saved.
+          other: '%{count} 个错误阻止了这个 %{model} 被保存'
     found: 发现了
     months: 月
     active_scaffold:
