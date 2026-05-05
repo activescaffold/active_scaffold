@@ -1,228 +1,229 @@
-active_scaffold:
-  "!=": '!='
-  "<": <
-  "<=": <=
-  "=": '='
-  ">": '>'
-  ">=": '>='
-  _select_: '- 选择 -'
-  add: 添加
-  add_existing: 添加现有项目
-  add_model: 添加 %{model}
-  all_tokens: 所有关键词
-  apply: 应用
-  are_you_sure_to_delete: 你确定想要删除 %{label}吗？
-  cancel: 取消
-  add_existing_model: 添加现有%{model}
-  any_token: 任何关键词
-  average: 平均值
-  begins_with: 以……开始
-  between: 介于……之间
-  cant_destroy_record: '%{record}不能被删除'
-  changes: 变更记录
-  check_all: 全选
-  click_to_edit: 点击以编辑
-  click_to_reset: 点击以重置
-  close: 关闭
-  config_list: 配置
-  config_list_model: 为%{model}配置列
-  contains: 包含
-  create: 创建
-  create_another: 新建 %{model}
-  create_apply: 创建并继续
-  create_model: 创建 %{model}
-  create_new: 新建
-  created_model: 已创建 %{model}
-  customize: 自定义
-  date_picker_options:
-    firstDay: '0'
-    weekHeader: 周
-  datetime_picker_options:
-    closeText: 关闭
-    currentText: 现在
-    timeText: 小时
-    timezoneText: 时区
-  days: 天
-  delete: 删除
-  deleted_model: 已删除 %{model}
-  deleted_records: 已删除记录列表
-  delimiter: 分隔符
-  download: 下载
-  doesnt_begin_with: 不能以……开头
-  doesnt_contain: 不能包含
-  doesnt_end_with: 不能以……结尾
-  edit: 编辑
-  ends_with: 以……结尾
-  error_500: (代码 500, 互联网错误)
-  errors:
-    template:
-      body: 以下字段存在问题：
-      header:
-        one: '%{count} 个错误阻止了这个 %{model} 被保存'
-        other:
-  found: 发现了
-  months: 月
+zh_Hans:
   active_scaffold:
+    "!=": '!='
+    "<": <
+    "<=": <=
+    "=": '='
+    ">": '>'
+    ">=": '>='
+    _select_: '- 选择 -'
+    add: 添加
+    add_existing: 添加现有项目
+    add_model: 添加 %{model}
+    all_tokens: 所有关键词
+    apply: 应用
+    are_you_sure_to_delete: 你确定想要删除 %{label}吗？
+    cancel: 取消
+    add_existing_model: 添加现有%{model}
+    any_token: 任何关键词
+    average: 平均值
+    begins_with: 以……开始
+    between: 介于……之间
+    cant_destroy_record: '%{record}不能被删除'
+    changes: 变更记录
+    check_all: 全选
+    click_to_edit: 点击以编辑
+    click_to_reset: 点击以重置
+    close: 关闭
+    config_list: 配置
+    config_list_model: 为%{model}配置列
+    contains: 包含
+    create: 创建
+    create_another: 新建 %{model}
+    create_apply: 创建并继续
+    create_model: 创建 %{model}
+    create_new: 新建
+    created_model: 已创建 %{model}
+    customize: 自定义
     date_picker_options:
-      isRTL: 'false'
-      showMonthAfterYear: 'false'
       firstDay: '0'
       weekHeader: 周
-    next_year: Next Year
-    record_not_saved: Failed to save record cause of an unknown error
-    this_month: This Month
-    update_apply: Apply
-    'true': 'True'
-    this_year: This Year
-    past: Past
-    nested_for_model: '%{nested_model} for %{parent_model}'
-    range: Range
-    search_terms: Search Terms
-    version_inconsistency: Version inconsistency - this record has been modified
-      since you started editing it.
-    tomorrow: Tomorrow
-    hide: (Hide)
-    grouped_by: Grouped by %{column}
-    today: Today
-    replace_existing: Replace Existing
-    uncheck_all: Uncheck all
-    seconds: Seconds
-    refresh: Refresh
-    group_by: Group by
-    export: Export
-    remove_files: Remove or Add files
-    no_color: No color
-    revisions_for_model: Revisions for %{model}
-    no_group: No group
-    pdf: PDF
-    omit_header: Omit Header
-    'false': 'False'
-    _to_: ' to '
-    show: Show
-    logical_search: Logical Search
-    reset: Reset
-    options: Options
-    next_week: Next Week
-    years: Years
-    maximum: Maximum
-    yesterday: Yesterday
-    human_conditions:
-      association: '%{column} = %{value}'
-      boolean: '%{column} = %{value}'
-    previous: Previous
-    nested_of_model: '%{nested_model} of %{parent_model}'
-    search: Search
-    no_options: no options
-    internal_error: Request Failed
-    updated_model: Updated %{model}
-    weeks: Weeks
-    next_month: Next Month
-    saving: Saving…
-    filtered: (Filtered)
-    minimum: Minimum
-    no_entries: No Entries
-    'null': 'Null'
-    optional_attributes: Further Options
-    replace_with_new: Replace With New
-    show_model: Show %{model}
-    remove: Remove
-    hours: Hours
-    update: Update
-    no_authorization_for_action: No Authorization for action %{action}
-    update_model: Update %{model}
-    not_null: Not Null
-    mark_all_records: Mark all
-    show_block: (Show)
-    prev_week: Last Week
-    future: Future
-    print: Print
-    next: Next
-    loading: Loading…
-    minutes: Minutes
-    prev_month: Last Month
-    sum: Sum
-    records_marked:
-      one: 1 marked %{model}
-      other:
-    inplace_edit_handle: --
-    remove_file: Remove or Replace file
-    this_week: This Week
-    live_search: Live Search
-    prev_year: Last Year
-    ">=": '>='
-    click_to_edit: 点击以编辑
-    delimiter: 分隔符
-    "!=": '!='
-    doesnt_end_with: 不能以……结尾
     datetime_picker_options:
-      timezoneText: 时区
       closeText: 关闭
       currentText: 现在
       timeText: 小时
+      timezoneText: 时区
     days: 天
-    "<": <
-    contains: 包含
-    create_apply: 创建并继续
-    download: 下载
-    created_model: 已创建 %{model}
-    error_500: (代码 500, 互联网错误)
-    changes: 变更记录
-    found: 发现了
-    click_to_reset: 点击以重置
-    all_tokens: 所有关键词
-    are_you_sure_to_delete: 你确定想要删除 %{label}吗？
-    ">": '>'
-    create: 创建
     delete: 删除
-    config_list: 配置
-    cant_destroy_record: "%{record}不能被删除"
     deleted_model: 已删除 %{model}
-    _select_: '- 选择 -'
+    deleted_records: 已删除记录列表
+    delimiter: 分隔符
+    download: 下载
     doesnt_begin_with: 不能以……开头
-    add_existing_model: 添加现有%{model}
+    doesnt_contain: 不能包含
+    doesnt_end_with: 不能以……结尾
+    edit: 编辑
+    ends_with: 以……结尾
+    error_500: (代码 500, 互联网错误)
     errors:
       template:
+        body: 以下字段存在问题：
         header:
           one: '%{count} 个错误阻止了这个 %{model} 被保存'
           other:
-        body: '以下字段存在问题：'
+    found: 发现了
     months: 月
-    any_token: 任何关键词
-    between: 介于……之间
-    edit: 编辑
-    add_model: 添加 %{model}
-    customize: 自定义
-    doesnt_contain: 不能包含
-    check_all: 全选
-    cancel: 取消
-    create_new: 新建
-    close: 关闭
-    "<=": <=
-    begins_with: 以……开始
-    apply: 应用
-    ends_with: 以……结尾
-    config_list_model: 为%{model}配置列
-    "=": '='
-    create_another: 新建 %{model}
-    add_existing: 添加现有项目
-    add: 添加
-    deleted_records: 已删除记录列表
-    create_model: 创建 %{model}
-    average: 平均值
-  datetime:
-    prompts:
-      millisec: Millisecond
-      microsec: Microsecond
-      second: Second
-      minute: Minute
-      hour: Hour
-  date:
-    formats:
-      month: '%B'
-      quarter: Quarter %{num}
-      week: Week %W, %Y
-      year_quarter: Quarter %{quarter} %{year}
-      year_month: '%b %Y'
-  time:
-    formats:
-      picker: '%a, %d %b %Y %H:%M:%S'
+    active_scaffold:
+      date_picker_options:
+        isRTL: 'false'
+        showMonthAfterYear: 'false'
+        firstDay: '0'
+        weekHeader: 周
+      next_year: Next Year
+      record_not_saved: Failed to save record cause of an unknown error
+      this_month: This Month
+      update_apply: Apply
+      'true': 'True'
+      this_year: This Year
+      past: Past
+      nested_for_model: '%{nested_model} for %{parent_model}'
+      range: Range
+      search_terms: Search Terms
+      version_inconsistency: Version inconsistency - this record has been modified
+        since you started editing it.
+      tomorrow: Tomorrow
+      hide: (Hide)
+      grouped_by: Grouped by %{column}
+      today: Today
+      replace_existing: Replace Existing
+      uncheck_all: Uncheck all
+      seconds: Seconds
+      refresh: Refresh
+      group_by: Group by
+      export: Export
+      remove_files: Remove or Add files
+      no_color: No color
+      revisions_for_model: Revisions for %{model}
+      no_group: No group
+      pdf: PDF
+      omit_header: Omit Header
+      'false': 'False'
+      _to_: ' to '
+      show: Show
+      logical_search: Logical Search
+      reset: Reset
+      options: Options
+      next_week: Next Week
+      years: Years
+      maximum: Maximum
+      yesterday: Yesterday
+      human_conditions:
+        association: '%{column} = %{value}'
+        boolean: '%{column} = %{value}'
+      previous: Previous
+      nested_of_model: '%{nested_model} of %{parent_model}'
+      search: Search
+      no_options: no options
+      internal_error: Request Failed
+      updated_model: Updated %{model}
+      weeks: Weeks
+      next_month: Next Month
+      saving: Saving…
+      filtered: (Filtered)
+      minimum: Minimum
+      no_entries: No Entries
+      'null': 'Null'
+      optional_attributes: Further Options
+      replace_with_new: Replace With New
+      show_model: Show %{model}
+      remove: Remove
+      hours: Hours
+      update: Update
+      no_authorization_for_action: No Authorization for action %{action}
+      update_model: Update %{model}
+      not_null: Not Null
+      mark_all_records: Mark all
+      show_block: (Show)
+      prev_week: Last Week
+      future: Future
+      print: Print
+      next: Next
+      loading: Loading…
+      minutes: Minutes
+      prev_month: Last Month
+      sum: Sum
+      records_marked:
+        one: 1 marked %{model}
+        other:
+      inplace_edit_handle: --
+      remove_file: Remove or Replace file
+      this_week: This Week
+      live_search: Live Search
+      prev_year: Last Year
+      ">=": '>='
+      click_to_edit: 点击以编辑
+      delimiter: 分隔符
+      "!=": '!='
+      doesnt_end_with: 不能以……结尾
+      datetime_picker_options:
+        timezoneText: 时区
+        closeText: 关闭
+        currentText: 现在
+        timeText: 小时
+      days: 天
+      "<": <
+      contains: 包含
+      create_apply: 创建并继续
+      download: 下载
+      created_model: 已创建 %{model}
+      error_500: (代码 500, 互联网错误)
+      changes: 变更记录
+      found: 发现了
+      click_to_reset: 点击以重置
+      all_tokens: 所有关键词
+      are_you_sure_to_delete: 你确定想要删除 %{label}吗？
+      ">": '>'
+      create: 创建
+      delete: 删除
+      config_list: 配置
+      cant_destroy_record: "%{record}不能被删除"
+      deleted_model: 已删除 %{model}
+      _select_: '- 选择 -'
+      doesnt_begin_with: 不能以……开头
+      add_existing_model: 添加现有%{model}
+      errors:
+        template:
+          header:
+            one: '%{count} 个错误阻止了这个 %{model} 被保存'
+            other:
+          body: '以下字段存在问题：'
+      months: 月
+      any_token: 任何关键词
+      between: 介于……之间
+      edit: 编辑
+      add_model: 添加 %{model}
+      customize: 自定义
+      doesnt_contain: 不能包含
+      check_all: 全选
+      cancel: 取消
+      create_new: 新建
+      close: 关闭
+      "<=": <=
+      begins_with: 以……开始
+      apply: 应用
+      ends_with: 以……结尾
+      config_list_model: 为%{model}配置列
+      "=": '='
+      create_another: 新建 %{model}
+      add_existing: 添加现有项目
+      add: 添加
+      deleted_records: 已删除记录列表
+      create_model: 创建 %{model}
+      average: 平均值
+    datetime:
+      prompts:
+        millisec: Millisecond
+        microsec: Microsecond
+        second: Second
+        minute: Minute
+        hour: Hour
+    date:
+      formats:
+        month: '%B'
+        quarter: Quarter %{num}
+        week: Week %W, %Y
+        year_quarter: Quarter %{quarter} %{year}
+        year_month: '%b %Y'
+    time:
+      formats:
+        picker: '%a, %d %b %Y %H:%M:%S'
