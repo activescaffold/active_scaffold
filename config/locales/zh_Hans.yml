@@ -66,6 +66,8 @@ active_scaffold:
     date_picker_options:
       isRTL: 'false'
       showMonthAfterYear: 'false'
+      firstDay: '0'
+      weekHeader: Wk
     next_year: Next Year
     record_not_saved: Failed to save record cause of an unknown error
     this_month: This Month
@@ -147,6 +149,66 @@ active_scaffold:
     this_week: This Week
     live_search: Live Search
     prev_year: Last Year
+    ">=": '>='
+    click_to_edit: Click to edit
+    delimiter: Delimiter
+    "!=": '!='
+    doesnt_end_with: Doesn't end with
+    datetime_picker_options:
+      timezoneText: Timezone
+      closeText: Close
+      currentText: Now
+      timeText: Hour
+    days: Days
+    "<": <
+    contains: Contains
+    create_apply: Create and continue
+    download: Download
+    created_model: Created %{model}
+    error_500: (code 500, Internal Error)
+    changes: Changes
+    found: Found
+    click_to_reset: Click to reset
+    all_tokens: All keywords
+    are_you_sure_to_delete: Are you sure you want to delete %{label}?
+    ">": '>'
+    create: Create
+    delete: Delete
+    config_list: Configure
+    cant_destroy_record: "%{record} can't be destroyed"
+    deleted_model: Deleted %{model}
+    _select_: '- select -'
+    doesnt_begin_with: Doesn't begin with
+    add_existing_model: Add Existing %{model}
+    errors:
+      template:
+        header:
+          one: 1 error prohibited this %{model} from being saved.
+          other:
+        body: 'There were problems with the following fields:'
+    months: Months
+    any_token: Any keyword
+    between: Between
+    edit: Edit
+    add_model: Add %{model}
+    customize: Customize
+    doesnt_contain: Doesn't contain
+    check_all: Check all
+    cancel: Cancel
+    create_new: Create New
+    close: Close
+    "<=": <=
+    begins_with: Begins with
+    apply: Apply
+    ends_with: Ends with
+    config_list_model: Configure Columns for %{model}
+    "=": '='
+    create_another: Create Another %{model}
+    add_existing: Add Existing
+    add: Add
+    deleted_records: List Deleted Records
+    create_model: Create %{model}
+    average: Average
   datetime:
     prompts:
       millisec: Millisecond
