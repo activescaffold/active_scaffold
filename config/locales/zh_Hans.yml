@@ -183,7 +183,7 @@ active_scaffold:
     errors:
       template:
         header:
-          one: 1 error prohibited this %{model} from being saved.
+          one: '%{count} 个错误阻止了这个 %{model} 被保存'
           other:
         body: '以下字段存在问题：'
     months: 月
