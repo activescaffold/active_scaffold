@@ -177,7 +177,7 @@ active_scaffold:
     config_list: Configure
     cant_destroy_record: "%{record} can't be destroyed"
     deleted_model: Deleted %{model}
-    _select_: '- select -'
+    _select_: '- 选择 -'
     doesnt_begin_with: Doesn't begin with
     add_existing_model: Add Existing %{model}
     errors:
@@ -205,7 +205,7 @@ active_scaffold:
     "=": '='
     create_another: Create Another %{model}
     add_existing: Add Existing
-    add: Add
+    add: 添加
     deleted_records: List Deleted Records
     create_model: Create %{model}
     average: Average
