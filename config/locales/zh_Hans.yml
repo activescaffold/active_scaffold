@@ -143,6 +143,7 @@ zh_Hans:
     weeks: Weeks
     years: Years
     yesterday: Yesterday
+    not_null: Not Null
   date:
     formats:
       month: '%B'
