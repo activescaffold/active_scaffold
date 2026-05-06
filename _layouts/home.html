@@ -14,7 +14,7 @@
     {%- include footer.html -%}
 
     {%- if page.pagefind -%}
-    <script src="{{ '/pagefind/pagefind-ui.js' | relative_url }}"></script>
+    <script src="{{ '/pagefind/pagefind-ui.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
     <script>
       window.addEventListener('DOMContentLoaded', () => {
         new PagefindUI({ element: "#search", showSubResults: false });
