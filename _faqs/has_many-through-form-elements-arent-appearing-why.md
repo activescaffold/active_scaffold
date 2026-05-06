@@ -1,11 +1,11 @@
 ---
-title: "‘has_many :through’ form elements aren’t appearing. Why?"
+title: "‘has_many :through’ form elements aren't appearing. Why?"
 date: "2025-02-17 14:38:55.000000000 +01:00"
 ---
 
 ActiveScaffold only shows form elements for write-able attributes. By default in Rails, records of `has_many :through` associations are read-only. To get around this, simply add `readonly: false` to the association (not the join model association), as shown:
 
-{% highlight ruby -%}
+```ruby
 class Book < ActiveRecord::Base
   has_many :authorships
   has_many :authors, :through => :authorships, :readonly => false
@@ -20,5 +20,5 @@ class Author < ActiveRecord::Base
   has_many :authorships
   has_many :books, :through => :authorships, :readonly => false
 end
-{%- endhighlight %}
-The ‘has\_many :through’ association should now behave just like an HABTM association.
+```
+The `has_many :through` association should now behave just like an HABTM association.

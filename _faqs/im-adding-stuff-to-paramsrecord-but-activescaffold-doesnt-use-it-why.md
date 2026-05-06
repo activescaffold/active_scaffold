@@ -1,5 +1,5 @@
 ---
-title: "I’m adding stuff to params[:record] but ActiveScaffold doesn’t use it. Why?"
+title: "I'm adding stuff to params[:record] but ActiveScaffold doesn't use it. Why?"
 date: "2025-02-17 14:37:55.000000000 +01:00"
 ---
 

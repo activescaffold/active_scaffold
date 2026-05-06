@@ -1,5 +1,5 @@
 ---
-title: "I need to customize the CSS (or JavaScript). What’s the best way?"
+title: "I need to customize the CSS (or JavaScript). What's the best way?"
 date: "2025-02-17 14:38:07.000000000 +01:00"
 ---
 

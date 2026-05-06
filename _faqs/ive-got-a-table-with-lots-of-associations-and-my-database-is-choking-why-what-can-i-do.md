@@ -1,5 +1,5 @@
 ---
-title: "I’ve got a table with lots of associations, and my database is choking. Why?"
+title: "I've got a table with lots of associations, and my database is choking. Why?"
 date: "2025-02-17 14:36:09.000000000 +01:00"
 ---
 
