@@ -767,20 +767,6 @@ figure.highlight pre code[data-lang]::before {
     }
 }
 
-.doc-kb-group {
-    margin-bottom: 2.5rem;
-}
-
-.doc-kb-group__title {
-    text-align: left;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #888;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0.4rem;
-    margin-bottom: 1rem;
-}
 
 .doc-cards {
     display: grid;
@@ -798,26 +784,37 @@ figure.highlight pre code[data-lang]::before {
     padding: 20px 24px;
     display: flex;
     flex-direction: column;
-    text-decoration: none !important;
-    border: 1px solid transparent;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    border: 1px solid #eee;
 
     h4 {
-        margin: 0 0 8px;
-        font-size: 0.95rem;
+        margin: 0 0 12px;
+        font-size: 1rem;
         color: var(--color-primary);
     }
 
-    p {
+    ul {
         margin: 0;
-        font-size: 0.85rem;
-        color: #555;
+        padding: 0;
+        list-style: none;
         flex: 1;
     }
 
-    &:hover {
-        border-color: var(--color-primary);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    li {
+        border-top: 1px solid #f0f0f0;
+        &:first-child { border-top: none; }
+    }
+
+    li a {
+        display: block;
+        padding: 5px 0;
+        font-size: 0.875rem;
+        color: #333;
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
     }
 }
 

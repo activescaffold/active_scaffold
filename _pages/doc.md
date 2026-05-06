@@ -15,21 +15,18 @@ pagefind: true
   <div class="wrapper">
     <h2>Knowledge Base</h2>
     {% assign kb_groups = site.kb | group_by: "category" | sort: "name" %}
-    {% for group in kb_groups %}
-    <div class="doc-kb-group">
-      {% if group.name != "" %}
-      <h3 class="doc-kb-group__title">{{ group.name }}</h3>
-      {% endif %}
-      <div class="doc-cards">
-        {% for article in group.items %}
-        <a href="{{ article.url | relative_url }}" class="doc-card">
-          <h4>{{ article.title | escape }}</h4>
-          <p>{{ article.excerpt | strip_html | truncatewords: 20 }}</p>
-        </a>
-        {% endfor %}
+    <div class="doc-cards">
+      {% for group in kb_groups %}
+      <div class="doc-card">
+        <h4>{{ group.name | default: "Other" }}</h4>
+        <ul>
+          {% for article in group.items %}
+          <li><a href="{{ article.url | relative_url }}">{{ article.title | escape }}</a></li>
+          {% endfor %}
+        </ul>
       </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
 </div>
 
