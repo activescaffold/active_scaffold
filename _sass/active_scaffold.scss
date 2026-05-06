@@ -756,3 +756,112 @@ figure.highlight pre code[data-lang]::before {
         opacity: 0.85;
     }
 }
+
+/* ── Doc page ─────────────────────────────────────────────────────── */
+.hero-search {
+    margin-top: 1.5rem;
+    max-width: 600px;
+
+    .pagefind-ui__search-input {
+        border-radius: 4px;
+    }
+}
+
+.doc-kb-group {
+    margin-bottom: 2.5rem;
+}
+
+.doc-kb-group__title {
+    text-align: left;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.doc-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    @media screen and (max-width: 700px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.doc-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none !important;
+    border: 1px solid transparent;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    h4 {
+        margin: 0 0 8px;
+        font-size: 0.95rem;
+        color: var(--color-primary);
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #555;
+        flex: 1;
+    }
+
+    &:hover {
+        border-color: var(--color-primary);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+}
+
+.doc-faq {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+
+    &:first-child {
+        border-top: 1px solid rgba(0,0,0,0.1);
+    }
+
+    &[open] .faq-summary::after {
+        transform: rotate(180deg);
+    }
+}
+
+.faq-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    list-style: none;
+
+    &::-webkit-details-marker { display: none; }
+
+    &::after {
+        content: '▾';
+        font-size: 1.1rem;
+        transition: transform 0.2s;
+        flex-shrink: 0;
+        margin-left: 1rem;
+    }
+}
+
+.faq-content {
+    padding: 0 0 1rem;
+    font-size: 0.9rem;
+
+    p:last-child { margin-bottom: 0; }
+}

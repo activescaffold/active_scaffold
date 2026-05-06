@@ -1,7 +1,6 @@
 ---
 title: CanCan Usage
 date: "2025-02-17 14:09:13.000000000 +01:00"
-permalink: "/wiki-2/cancan-usage/"
 ---
 
 Setup your favourite current\_user strategy (devise, or whatever), and add this to map AS calls (row, show\_search, etc.) to basic ones (create, read, update, delete). Ability\#as\_action\_aliases should be called by the user in his ability class. Note: you can omit this if you want fine control of each action.

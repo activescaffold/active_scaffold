@@ -1,7 +1,6 @@
 ---
 title: ActiveScaffold Actions Flow
 date: "2025-02-17 13:51:18.000000000 +01:00"
-permalink: "/wiki-2/activescaffold-actions-flow/"
 ---
 
 ActiveScaffold actions have a common flow:

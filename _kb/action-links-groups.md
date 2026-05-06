@@ -1,7 +1,6 @@
 ---
 title: Action links groups
 date: "2025-02-17 12:58:27.000000000 +01:00"
-permalink: "/wiki-2/action-links-groups/"
 ---
 
 If you want to add an action\_link to your controller you do something like ‘conf.action\_links &lt;&lt; ….'. Internally, these are stored in an array. If list header is rendered all action\_links of type 'collection' are selected and the same happens for type 'member' for each list row.

@@ -1,7 +1,6 @@
 ---
 title: Adding relational data to Active Scaffold
 date: "2025-02-17 15:03:43.000000000 +01:00"
-permalink: "/wiki-2/adding-relational-data-to-active-scaffold/"
 ---
 
 While there is a lot of documentation in the wiki on ActiveScaffold API functions having to do with associations, I couldn't find anything about the basics of showing relational data and enabling creation/editing. After my question on this sat unnoticed for two days on StackOverflow while I was puzzling it out, I thought I'd post this in case it's helpful to others.

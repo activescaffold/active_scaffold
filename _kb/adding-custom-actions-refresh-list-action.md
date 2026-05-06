@@ -1,7 +1,6 @@
 ---
 title: Adding custom actions Refresh list action
 date: "2025-02-17 14:50:43.000000000 +01:00"
-permalink: "/wiki-2/adding-custom-actions-refresh-list-action/"
 ---
 
 One of the easiest actions you can add, is an action which refreshes the list. It could be an action which changes some filtering, for example.

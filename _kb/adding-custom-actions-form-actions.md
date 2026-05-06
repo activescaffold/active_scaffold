@@ -1,7 +1,6 @@
 ---
 title: Adding custom actions Form actions
 date: "2025-02-17 15:00:28.000000000 +01:00"
-permalink: "/wiki-2/adding-custom-actions-form-actions/"
 ---
 
 These are actions which displays a form and later process the form, like create or update. You must add two actions: one to display the form and another to process the form (like new and create actions). For displaying form action you can use the `_base_form` partial, and for processing form action you can use process\_action\_link\_action again:

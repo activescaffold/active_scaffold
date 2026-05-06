@@ -13,5 +13,14 @@
 
     {%- include footer.html -%}
 
+    {%- if page.pagefind -%}
+    <script src="{{ '/pagefind/pagefind-ui.js' | relative_url }}"></script>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        new PagefindUI({ element: "#search", showSubResults: false });
+      });
+    </script>
+    {%- endif -%}
+
   </body>
 </html>

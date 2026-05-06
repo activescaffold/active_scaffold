@@ -3,6 +3,11 @@ title: "I need to customize the CSS (or JavaScript). What’s the best way?"
 date: "2025-02-17 14:38:07.000000000 +01:00"
 ---
 
-Don’t edit the ActiveScaffold files in public/! These files are automatically copied from vendor/plugins/active\_scaffold every time the server starts, to make sure you’re using the latest code. Instead, treat them the same way you’d treat the rest of the ActiveScaffold code – override them somewhere else, or use [Piston](http://piston.rubyforge.org/) and edit the original file in vendor/plugins/active\_scaffold.
+Don't edit ActiveScaffold's assets directly. ActiveScaffold is now a gem, and its assets are managed through the asset pipeline or Propshaft — editing gem files directly will cause your changes to be lost when the gem is updated.
+Instead, override styles by creating app/assets/stylesheets/active_scaffold_overrides.css and adding your custom CSS there. Then, load it below `@use 'active_scaffold/core'` or `@use 'active_scaffold'`.
 
-For example, if you want to customize the CSS, create public/stylesheets/active\_scaffold\_overrides.css and include that file in your layout by placing `<%= stylesheet_link_tag 'active_scaffold_overrides' %>` **after** the `<%= active_scaffold_includes %>`.
+If you need to modify ActiveScaffold's behaviour beyond CSS — views, helpers, or JavaScript — the recommended approaches are:
+
+- Override views by copying the relevant template from the gem into your own app/views directory. Rails' view resolution will pick up your copy first. In the directory for the controller you want to apply it, or active_scaffold_overrides to apply it to every controller.
+- Override JavaScript by importing your own JS after ActiveScaffold's in your manifest or application.js.
+- Create the same helper method in your helpers.

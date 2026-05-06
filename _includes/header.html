@@ -42,6 +42,9 @@
         <h1>{{ _hero_heading }}</h1>
         <p class="home-hero__lead">{{ page.hero_lead }}</p>
         <p>{{ page.hero_body }}</p>
+        {% if page.hero_search %}
+        <div id="search" class="hero-search"></div>
+        {% endif %}
         {% if page.hero_cta_url and page.hero_cta_text %}
         <a href="{{ page.hero_cta_url }}" class="btn" target="_blank" rel="noopener">{{ page.hero_cta_text }}</a>
         {% endif %}

@@ -1,7 +1,6 @@
 ---
 title: Column Overrides (List)
 date: "2025-02-17 15:11:29.000000000 +01:00"
-permalink: "/wiki-2/column-overrides-list/"
 ---
 
 If you want to customize the presentation of a column, you can define a specially named method in your helper file. The format is `#{class_name}_#{column_name}_column` or `#{column_name}_column`. So, for example, to customize the `:username` column displayed on your `UsersController`, you would add a `user_username_column` method to your `UsersHelper` file. If you want to override username columns in all models, add a `username_column` method to your `ApplicationHelper` file.

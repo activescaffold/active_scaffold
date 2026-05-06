@@ -20,11 +20,10 @@ collections:
     output: true
     permalink: /:path/
   faqs:
-    output: true
-    permalink: /faq/:title/
+    output: false
   kb:
     output: true
-    permalink: /kb/:title/
+    permalink: /doc/:title/
 
 # Default settings for collections
 defaults:

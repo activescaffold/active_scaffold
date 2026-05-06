@@ -1,7 +1,6 @@
 ---
 title: Adding custom actions Process and refresh action
 date: "2025-02-17 14:55:37.000000000 +01:00"
-permalink: "/wiki-2/adding-custom-actions-process-and-refresh-action/"
 ---
 
 It could be an action which acts over some marked records, or a record action. It's like delete action, which doesn't display a form and then do some processing. For a collection action it will refresh the list, for a member action it will refresh row and messages, and calculations if are used.

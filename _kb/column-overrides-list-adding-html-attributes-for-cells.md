@@ -1,7 +1,6 @@
 ---
 title: Column Overrides (List) Adding html attributes for cells
 date: "2025-02-17 15:15:13.000000000 +01:00"
-permalink: "/wiki-2/column-overrides-list-adding-html-attributes-for-cells/"
 ---
 
 Cells in records table already has a class attribute, and you can add more classes with [column](https://github.com/activescaffold/active_scaffold/wiki/API%3A-Column)\#css\_class. If you want to add other html attributes, such as title attribute, you have to define a method in your helper named `#{class_name}_#{column_name}_column_attributes` or `#{column_name}_column_attributes`. This method accepts one argument: the entire record object, and must return a hash with html attributes, as used in rails helpers.

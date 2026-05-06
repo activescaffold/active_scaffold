@@ -1,7 +1,6 @@
 ---
 title: Chaining Form Fields
 date: "2025-02-17 14:40:49.000000000 +01:00"
-permalink: "/wiki-2/chaining-form-fields/"
 ---
 
 Sometimes you want update a form field after setting a value in another field. For example, you might have a form with a dropdown to select an author and another dropdown to select a book, and you want the book dropdown to only display books from the chosen author. To do this, you need to render the books dropdown each time an author is chosen.

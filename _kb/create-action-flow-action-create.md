@@ -1,7 +1,6 @@
 ---
 title: Create Action Flow Action 'create'
 date: "2025-02-17 15:33:16.000000000 +01:00"
-permalink: "/wiki-2/create-action-flow-action-create/"
 ---
 
 When form is submitted, these methods are called in the following order:

@@ -1,7 +1,6 @@
 ---
 title: CanCan FAQ
 date: "2025-02-17 14:17:02.000000000 +01:00"
-permalink: "/wiki-2/cancan-faq/"
 ---
 
 Q. I get a undefined method 'something\_id' for nil:NilClass

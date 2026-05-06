@@ -1,7 +1,6 @@
 ---
 title: CanCan About
 date: "2025-02-17 13:54:54.000000000 +01:00"
-permalink: "/wiki-2/cancan-about/"
 ---
 
 ### About

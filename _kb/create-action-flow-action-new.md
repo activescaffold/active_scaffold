@@ -1,7 +1,6 @@
 ---
 title: Create Action Flow Action 'new'
 date: "2025-02-17 15:23:33.000000000 +01:00"
-permalink: "/wiki-2/create-action-flow-action-new/"
 ---
 
 These methods are called in the following order:

@@ -1,7 +1,6 @@
 ---
 title: CanCan Features
 date: "2025-02-17 13:59:14.000000000 +01:00"
-permalink: "/wiki-2/cancan-features/"
 ---
 
 If you use [CanCan](https://github.com/ryanb/cancan) for authorization, the ActiveScaffold CanCan bridge auto-loads and plugs into ActiveScaffold by chaining your Ability rules in the default ActiveScaffold behavior. (Versions AS &gt;= 3.0.13 & CanCan ~&gt; 1.6.7)

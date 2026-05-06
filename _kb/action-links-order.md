@@ -1,7 +1,6 @@
 ---
 title: Action Links Order
 date: "2025-02-17 13:34:46.000000000 +01:00"
-permalink: "/wiki-2/action-links-order/"
 ---
 
 The order of action links is defined by order in action\_links array. The follow line in `display_action_links` helper called from `list_record` and `list_header` partials iterates over action\_links adding them to the page:
