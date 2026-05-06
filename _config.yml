@@ -19,10 +19,10 @@ collections:
   pages:
     output: true
     permalink: /:path/
-  echo_kb_faqs:
+  faqs:
     output: true
     permalink: /faq/:title/
-  epkb_post_type_1s:
+  kb:
     output: true
     permalink: /kb/:title/
 
@@ -35,12 +35,12 @@ defaults:
       layout: page
   - scope:
       path: ""
-      type: "echo_kb_faqs"
+      type: "faqs"
     values:
       layout: post
   - scope:
       path: ""
-      type: "epkb_post_type_1s"
+      type: "kb"
     values:
       layout: post
   - scope:
