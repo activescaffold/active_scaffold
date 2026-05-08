@@ -9,7 +9,7 @@ hero_heading: Duplicate action for ActiveScaffold
 hero_lead: An action to clone records
 ---
 
-Adds an action to clone records, and support to clone rows in subforms. 
+Adds an action to clone records, and support to clone rows in subforms. 
 
 ### Description
 

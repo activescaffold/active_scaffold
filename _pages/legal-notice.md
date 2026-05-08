@@ -8,8 +8,8 @@ permalink: "/legal-notice/"
 This website (the “Site”) is owned and operated by:  
 **ActiveScaffold**  
 Address: Spain  
-Email: <span>sergio@enpijama.es</span>  
-Website: [https://activescaffold.eu](/)
+Email: <span>sergio@enpijama.es</span>  
+Website: [https://activescaffold.eu](/)
 
 ### 1. Acceptance of Terms
 

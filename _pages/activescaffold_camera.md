@@ -15,7 +15,7 @@ Adds a camera interface to forms, letting users take snapshots directly from the
 
 ActiveScaffoldCamera adds a camera interface to ActiveScaffold forms, allowing users to capture and upload photos directly from their devices. It is ideal for applications requiring photo verification, profile pictures, or document scanning.
 
-###  
+###  
 
 ### Installation
 

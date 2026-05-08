@@ -3,7 +3,7 @@ title: "Those subforms are slick, but I want to turn them off. How can I simplif
 date: "2025-02-17 14:35:11.000000000 +01:00"
 ---
 
-The `form_ui = :select` option lets you switch the form interface from the standard subform setup to a simple select setup. This configuration can be set per-column.
+The `form_ui = :select` option lets you switch the form interface from the standard subform setup to a simple select setup. This configuration can be set per-column.
 
 ```ruby
 class UsersController < ApplicationController

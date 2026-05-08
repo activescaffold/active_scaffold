@@ -15,7 +15,7 @@ Integrates a signature pad into forms, enabling users to capture signatures dire
 
 ActiveScaffoldSignaturePad integrates a digital signature pad into ActiveScaffold forms, allowing users to sign directly within the interface. This feature is useful for applications requiring digital approvals, agreements, or user authentication via handwritten signatures.
 
-###  
+###  
 
 ### Installation
 

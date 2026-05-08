@@ -21,4 +21,4 @@ class Author < ActiveRecord::Base
   has_many :books, :through => :authorships, :readonly => false
 end
 ```
-The `has_many :through` association should now behave just like an HABTM association.
+The `has_many :through` association should now behave just like an HABTM association.
