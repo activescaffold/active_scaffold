@@ -18,7 +18,7 @@ ActiveScaffold by itself comes alone so you decide what to use or how to integra
 
 ## User Interface
 
-- [Record Select](/doc/record-select-integration/) Fancy select box alternative, with ajax autocomplete. Very suitable for long datasets
+- [Record Select](/doc/record-select/) Fancy select box alternative, with ajax autocomplete. Very suitable for long datasets
 - [ancestry](https://github.com/stefankroes/ancestry) Tree structured associations support
 - [active scaffold sortable](https://github.com/activescaffold/active_scaffold_sortable) Drag and drop sorting
 - [active scaffold config list](https://github.com/activescaffold/active_scaffold_config_list) Adds UI for columns list configuration per user/session

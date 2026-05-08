@@ -26,7 +26,7 @@ There are four basic steps to this process.
 
 Here's a walkthrough:
 
-1. Verify you’ve got a straightforward ActiveScaffold view working for the child. That process is outside the scope of this answer, but see [the Getting Started page](https://github.com/activescaffold/active_scaffold/wiki/Getting-Started) for some straightforward instructions.
+1. Verify you’ve got a straightforward ActiveScaffold view working for the child. That process is outside the scope of this answer, but see [the Getting Started page](/doc/getting-started) for some straightforward instructions.
 
 2. Add a foreign key in the **child** table. This requires the creation of the parent and child tables. For editing and creating to work, the foreign key field in the child table **must** be named as the singular form of the parent table with _id tacked on the end. To complete this, your migration also needs “add_foreign_key [*child table symbol*], [*parent table symbol*]”  In the example's case, here’s the full migration:
 

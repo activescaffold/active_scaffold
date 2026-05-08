@@ -43,7 +43,7 @@ end
 
 format\_column\_value
 
-It's the default helper used to render columns in the list, when no list UI or [column override](https://github.com/activescaffold/active_scaffold/wiki/Column-Overrides-%28List%29) is defined for the column.
+It's the default helper used to render columns in the list, when no list UI or [column override](/doc/column-overrides-list) is defined for the column.
 
 If the column is not an association, and it's using `:select` or `:radio` form\_ui, it will look for the saved value in the options set in form\_ui options (or Column\#options hash), and will use the text for the saved value, as it's displayed in the form.
 
@@ -64,7 +64,7 @@ If it's a singular association, and it's polymorphic, it will display as `<mode
 If it's a collection association, the format will depend on the column settings `associated_limit` and `associated_number`:
 
 -   If `associated_limit` is `nil`, it will display the labels for all associated records, better to use `includes` to preload the association (as set by default) to reduce the number of SQL queries.
--   If `associated_limit` is 0, then will display the count of associated records if `associated_number` is enabled. If the column is preloaded, or has a counter cache, it will get the count from the association, otherwise a group query is used to get the counts for all listed records with one SQL query (see [Preload Column Counts](https://github.com/activescaffold/active_scaffold/wiki/Preload-Column-Counts)). If the associated records are not needed for permission methods or other helpers, it's better to avoid preloading them by setting `includes = nil` so a counter cache or count query is used, which is faster.
+-   If `associated_limit` is 0, then will display the count of associated records if `associated_number` is enabled. If the column is preloaded, or has a counter cache, it will get the count from the association, otherwise a group query is used to get the counts for all listed records with one SQL query (see [Preload Column Counts](/doc/preload-column-counts)). If the associated records are not needed for permission methods or other helpers, it's better to avoid preloading them by setting `includes = nil` so a counter cache or count query is used, which is faster.
 -   If `associated_limit` has other value (defaults to 3), it will list the label for associated records upto the limit, will add `… (<size>)` if the association has more associated records. The size won't be added unless `associated_number` is enabled. In this case, it's better to preload the associated records, unless the association may be too big.
 ```
 -   If the column has 3 or less records: `Record 1, Record 2, Record 3`
@@ -82,7 +82,7 @@ When associated records' labels are displayed, they are join with the text in `
 
 format\_grouped\_search\_column
 
-If the group search function is `year_month` or `month`, it will use I18n.localize to format the value, if the function is `year_quarter` or `quarter`, then it will use I18n.translate to format the value. In both cases, it will use the group search function as format name under `date.formats` in the locale file, although it can be changed with `:group_format` option in the column's options hash. See [Grouped Searches](https://github.com/activescaffold/active_scaffold/wiki/Grouped-Searches) for the explanation on using them.
+If the group search function is `year_month` or `month`, it will use I18n.localize to format the value, if the function is `year_quarter` or `quarter`, then it will use I18n.translate to format the value. In both cases, it will use the group search function as format name under `date.formats` in the locale file, although it can be changed with `:group_format` option in the column's options hash. See [Grouped Searches](/doc/grouped-searches) for the explanation on using them.
 
  
 format\_number\_value

@@ -479,7 +479,7 @@ conf.columns[:task_name].form_ui = :record_select, {controller: 'tasks'}
 
 ![](/assets/screenshots/form-ui-record-select-autocomplete.png)
 
-There are more explanation about [integrating RecordSelect](/doc/record-select-integration-recordselect/) in the wiki and the [docs for RecordSelect](https://github.com/scambra/recordselect/wiki)
+There are more explanation about [integrating RecordSelect](/doc/record-select/) in the wiki and the [docs for RecordSelect](https://github.com/scambra/recordselect/wiki)
 
 ### :text_editor
 

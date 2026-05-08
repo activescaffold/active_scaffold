@@ -1,6 +1,6 @@
 ---
 title: "Security"
-category: "Integrations"
+category: "API Reference"
 ---
 
 If you want to deploy ActiveScaffold in production and expose it to possibly untrusted users, you can take advantage of its security layer to protect your data. The security layer works by paying attention to methods that you can define on your models and controllers. With these methods you may restrict access by taking into account any of the following, as appropriate: the ActiveRecord model, the database record, the current/intended action, and the current user. You may also restrict access at various levels of granularity, forbidding access to an entire action, an entire record, or just a column on the record.

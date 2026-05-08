@@ -44,7 +44,7 @@ Add `active_scaffold/manifest.js` to `app/assets/config/manifest.js` to prevent 
 
 Support for rails 5.2 and 6.0, and ruby 2.x, has been removed.
 
-Changing column settings on a request has changed, it must use `active_scaffold_config.columns.override(:name)` at least the first time. After calling `columns.override(:name)`, calling it again or calling `columns[:name]` will return the overrided column. It also supports a block. See [Per Request Configuration](https://github.com/activescaffold/active_scaffold/wiki/Per-Request-Configuration) for examples and more comprehensive explanation.
+Changing column settings on a request has changed, it must use `active_scaffold_config.columns.override(:name)` at least the first time. After calling `columns.override(:name)`, calling it again or calling `columns[:name]` will return the overrided column. It also supports a block. See [Per Request Configuration](/doc/per-request-configuration) for examples and more comprehensive explanation.
 
 Changing columns for an action (e.g. add or exclude) on a request must use active\_scaffold\_config.actions.override\_columns, the first time, or use assignment with the whole list of columns.
 

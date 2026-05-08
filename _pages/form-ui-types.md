@@ -109,7 +109,7 @@ conf.columns[:due_on].form_ui = :date, {max: 1.week.since.end_of_week}
 
 :draggable
 
-It’s the same as `:select, {draggable_lists: true}`, for plural associations, see explanation at [select](https://github.com/activescaffold/active_scaffold/wiki/Form_ui-types#select).
+It’s the same as `:select, {draggable_lists: true}`, for plural associations, see explanation at [select](/doc/form_ui-types#select).
 
 :email
 
@@ -321,7 +321,7 @@ conf.columns[:skill_sub_discipline].form_ui = :select, {refresh_link: {title: 'C
  
 :select\_multiple
 
-It works like `:select, {html_options: {multiple: true}}`, to render a select tag with multiple attribute. See explanation at [select](https://github.com/activescaffold/active_scaffold/wiki/Form_ui-types#select)
+It works like `:select, {html_options: {multiple: true}}`, to render a select tag with multiple attribute. See explanation at [select](/doc/form_ui-types#select)
 
  
 :textarea
@@ -520,7 +520,7 @@ conf.columns[:task_name].form_ui = :record_select, {controller: 'tasks'}
 ```
 <img src="{{site.baseurl}}/assets/2025/02/299336709-eb3a9942-22e9-4637-9cf0-75e5184cf62f-300x85.png" width="300" height="85" />
 
-There are more explanation about [integrating RecordSelect](https://github.com/activescaffold/active_scaffold/wiki/Record-Select-Integration-%28RecordSelect%29) in the wiki and the [docs for RecordSelect](https://github.com/scambra/recordselect/wiki)
+There are more explanation about [integrating RecordSelect](/doc/record-select) in the wiki and the [docs for RecordSelect](https://github.com/scambra/recordselect/wiki)
 
  
 :text\_editor
@@ -535,7 +535,7 @@ It can be used as :tinymce too. This requires the tinymce-rails gem for rails >=
 
      
 
--   The default TinyMCE configuration can be modified via the `:tinymce` option hash. Any [configuration options](http://www.tinymce.com/wiki.php/Configuration) that can be passed via the Javascript `tinyMCE.init({ ... })` may be passed as options
+-   The default TinyMCE configuration can be modified via the `:tinymce` option hash. Any [configuration options](https://www.tinymce.com/wiki.php/Configuration) that can be passed via the Javascript `tinyMCE.init({ ... })` may be passed as options
 
         active_scaffold :product do |conf|
           conf.columns[:description_html].form_ui = :text_editor, {

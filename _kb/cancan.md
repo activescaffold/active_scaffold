@@ -12,7 +12,7 @@ If you use [CanCan](https://github.com/ryanb/cancan) for authorization, the Acti
 ### Features
 
 1. activates only when CanCan is installed via default bridges `@install_if = lambda { Object.const_defined?(name) }` functionality
-2. delegates to [default AS security](https://github.com/activescaffold/active_scaffold/wiki/Security) in case CanCan says "no"
+2. delegates to [default AS security](/doc/security) in case CanCan says "no"
 3. integrates with `beginning_of_chain` both in "list" and "nested" via `CanCan#accessible_by`, feature more known as `load_and_authorize_resources`. This means that the index action will select from the database only allowed records for the current user, and the creation of a record is done on the allowed scope (ie.: `Model.where(restrictions_from_cancan).new`). Note that you must test this, because on some cases, when using MetaWhere or Squeel or scope-based conditions in CanCan rules, not all conditions can be used for creation.
 
 ### Usage
@@ -61,11 +61,11 @@ end
 Just define your abilities and this bridge will use them automagically, making sure the user sees and does only what he is allowed to do. ActiveScaffold asks CanCan access to the following abilities, grouped in two categories:
 
 1. CRUD Types `:create, :update, :read`
-2. Actions `:list, :show` etc (other rails actions (controller method names)). Note that NOT ALL the actions in the AS-enabled controller are authorized, but only the actions that are injected by AS as per [AS security documentation](https://github.com/activescaffold/active_scaffold/wiki/Security). The method `as_action_aliases` injected in the Ability class can be called to alias most AS actions to their CRUD corespondent for example list and row to read etc.  
-:TODO document column granularity [https://github.com/vhochstein/active_scaffold/issues#issue/122](/doc/https-github-com-vhochstein-active_scaffold-issues/#issue-122)
+2. Actions `:list, :show` etc (other rails actions (controller method names)). Note that NOT ALL the actions in the AS-enabled controller are authorized, but only the actions that are injected by AS as per [AS security documentation](/doc/security). The method `as_action_aliases` injected in the Ability class can be called to alias most AS actions to their CRUD corespondent for example list and row to read etc.  
+:TODO document column granularity [issue #122](https://github.com/vhochstein/active_scaffold/issues/122)
 
 For access to be allowed, CanCan must reply true both to `:crud_type` and `:action` simultaneously.
-If access is not granted it defaults to [old ActiveScaffold security behavior](https://github.com/activescaffold/active_scaffold/wiki/Security) and you can write access rules inside your models like you used to.
+If access is not granted it defaults to [old ActiveScaffold security behavior](/doc/security) and you can write access rules inside your models like you used to.
 
 The CanCan bridge also makes available to the model the `current_ability` if the model is used within a controller (so this does not work, say, in the console).
 
@@ -94,13 +94,13 @@ In this case because of the default "paranoic" false security reply (if you use 
       config.security.default_permission = false
     end
 
-you'll have to override the security methods as per [AS#security  wiki](https://github.com/activescaffold/active_scaffold/wiki/Security)
+you'll have to override the security methods as per [AS#security  wiki](/doc/security)
 
 **Q**. My form only shows the submit button, all the fields are missing  
 **A**. AS also authorizes at column level, and your CanCan rule probably replies "no". Make sure the model (`@record`) that is used for `form_for` is sufficiently wired to it's related objects. For example the rule `can :create, Project, :account_id => user.account_id` will render an empty form for a record unless you wire it (override `do_new` in controller) like `@record.account_id = current_user.account_id`. As a side-note, a better rule in the given example is `can :create, Project` and enforce `@record.account_id = current_user.account_id` in the update action.
 
 **Q**. I have a n+1 query problem because of this bridge  
-**A**. Make sure you eager load either via [Column#includes](https://github.com/activescaffold/active_scaffold/wiki/API:-Column) or via `active_scaffold_includes` instance method override for corner cases.  
+**A**. Make sure you eager load either via [Column#includes](/doc/api-column) or via `active_scaffold_includes` instance method override for corner cases.  
 
 **Q**. I just installed CanCan and all my data vanished  
 **A**. Because CanCan plugs into your select conditions, you can only see the records that have "can" rules that allow them. So unless you write `can :read, User` no user shall be showed. Or when you write `can :read, User, :active => true` only active users will be showed.
