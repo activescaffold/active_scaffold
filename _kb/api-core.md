@@ -133,7 +133,7 @@ Note that if excluding and re-adding columns, the order/weight of columns may se
 active_scaffold_config.list.columns = active_scaffold_config.columns._inheritable
 {%- endhighlight %}
 
-This solution of resetting columns prior to additions and exclusions is preferred since it supports class caching being enabled or disabled. For more information, please read <a href="https://code.google.com/p/activescaffold/issues/detail?id=732">issue 732</a> and <a href="https://stufftohelpyouout.blogspot.com/2010/03/activescaffold-and-column-order.html">this post</a>.
+This solution of resetting columns prior to additions and exclusions is preferred since it supports class caching being enabled or disabled. For more information, please read [issue 732](https://code.google.com/p/activescaffold/issues/detail?id=732) and [this post](<https://stufftohelpyouout.blogspot.com/2010/03/activescaffold-and-column-order.html).
 
 ## conditional_get_support <small><em>global local v3.4+</em></small>
 
