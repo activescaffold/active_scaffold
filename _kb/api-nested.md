@@ -51,7 +51,7 @@ class CompaniesController < ApplicationController
 end
 {%- endhighlight %}
 
-[/images/nested_example_1.jpg](/doc/images-nested_example_1-jpg/)
+![Nested scaffold example](/assets/screenshots/nested-example.jpg)
 <small>Figure 1.0: A nested scaffold for the above example</small>
 
 You can also set options for link as last parameter. Some options have a default value, such as type, controller, security_method, position, refresh_on_close and label, but they can be overrided. Nested parameters (parent_scaffold, association, and parent model's id) are added to the provided parameters.
