@@ -17,10 +17,11 @@ pagefind: true
     {% assign kb_groups = site.kb | group_by: "category" | sort: "name" %}
     <div class="doc-cards">
       {% for group in kb_groups %}
-      <div class="doc-card">
+      <div class="doc-card" id="{{ group.name | default: 'other' | slugify }}">
         <h4>{{ group.name | default: "Other" }}</h4>
         <ul>
-          {% for article in group.items %}
+          {% assign sorted_items = group.items | sort: "title" %}
+        {% for article in sorted_items %}
           <li><a href="{{ article.url | relative_url }}">{{ article.title | escape }}</a></li>
           {% endfor %}
         </ul>
@@ -32,7 +33,7 @@ pagefind: true
 
 <div class="home-section home-section--accent">
   <div class="wrapper">
-    <h2>Frequently Asked Questions</h2>
+    <h2 id="faq">Frequently Asked Questions</h2>
     <div class="doc-faq">
       {% for faq in site.faqs %}
       <details class="faq-item">

@@ -1,15 +1,15 @@
 ---
-title: Action links groups
-date: "2025-02-17 12:58:27.000000000 +01:00"
+title: "Action links groups"
+category: "Advanced"
 ---
 
-If you want to add an action\_link to your controller you do something like ‘conf.action\_links &lt;&lt; ….'. Internally, these are stored in an array. If list header is rendered all action\_links of type 'collection' are selected and the same happens for type 'member' for each list row.
+If you want to add an action_link to your controller you do something like ‘conf.action_links << ….'. Internally, these are stored in an array. If list header is rendered all action_links of type 'collection' are selected and the same happens for type 'member' for each list row.
 
-The grouping is achieved by changing the array to a tree structure. Leafs are representing action\_links and nodes represent our groups. Two groups are automatically created: 'member' and 'collection'.
+The grouping is achieved by changing the array to a tree structure. Leafs are representing action_links and nodes represent our groups. Two groups are automatically created: 'member' and 'collection'. 
 
 Let s start with the first example. We would like to add all collection actions (create, search) to a group 'menu' for our teams controller.
 
-```
+{% highlight ruby -%}
 class TeamsController < ApplicationController
   active_scaffold :team do |conf|
     ....
@@ -18,22 +18,24 @@ class TeamsController < ApplicationController
     ....
   end
 end
-```
+{%- endhighlight %}
+
 Now you should see a menu link at the top of your teams list view, which opens a "submenu" when hovering over it.
 
-Another example. We would like to group all member actions for all controllers (application\_controller.rb).
+Another example. We would like to group all member actions for all controllers (application_controller.rb).
 
-```
+{% highlight ruby -%}
 ActiveScaffold.set_defaults do |conf| 
   conf.show.action_group = 'member.actions.crud' 
   conf.delete.action_group = 'member.actions.crud' 
   conf.update.action_group = 'member.actions.crud' 
   conf.nested.action_group = 'member.actions.nested'
 end
-```
+{%- endhighlight %}
+
 To add some custom actions to a new collection group you can do something like this:
 
-```
+{% highlight ruby -%}
 class TeamsController < ApplicationController
   active_scaffold :team do |conf|
     ....
@@ -48,10 +50,11 @@ class TeamsController < ApplicationController
     ....
   end
 end
-```
+{%- endhighlight %}
+
 Adding member actions to a new group is the same as collection actions:
 
-```
+{% highlight ruby -%}
 class TeamsController < ApplicationController
   active_scaffold :team do |conf|
     ....
@@ -65,11 +68,12 @@ class TeamsController < ApplicationController
     ....
   end
 end
-```
+{%- endhighlight %}
+
 As of September, 25th 2012, the master branch contains a commit by Sergio allowing to define different groups for nested links as well. Here an example of how to use it:
 
-```
-conf.nested.add_link(:nested_as, :action_group => 'member.ownlinksA')
-conf.nested.add_link(:nested_bs, :action_group => 'member.ownlinksA')
-conf.nested.add_scoped_link(:nested_cs, :action_group => 'member.ownlinksB')
-```
+{% highlight ruby -%}
+    conf.nested.add_link(:nested_as, :action_group => 'member.ownlinksA')
+    conf.nested.add_link(:nested_bs, :action_group => 'member.ownlinksA')
+    conf.nested.add_scoped_link(:nested_cs, :action_group => 'member.ownlinksB')
+{%- endhighlight %}

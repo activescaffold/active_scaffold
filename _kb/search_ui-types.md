@@ -1,0 +1,419 @@
+---
+title: "Search_ui types"
+category: "UI Types"
+---
+
+There are different search_ui types in ActiveScaffold, used in field search form, some may be useful for some column types only. The search ui types may use options from column's options hash (`conf.columns[:xxx].options = {...}`), or an options hash set next to the type (`conf.columns[:xxx].search_ui = :yyy, {...}`). If no search_ui is set, it will use the value from form_ui, using the options set with form_ui assignment, or column's options hash if no options were set with the form_ui.
+
+The same form_ui types are available for search_ui too, only explained here if there are some differences with the usage in form_ui.
+
+## Basic types
+
+### :boolean
+
+It renders a select box with `true` and `false` options. It will have `- select-` option to avoid adding search on the column. If the column can be null, will have `Null` option (or the label set in options[:include_blank]).
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/97263d05-388d-4d67-bf26-98f99b04784a)
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/62349273-6ed0-4e5d-81a2-25a153ae1cfd)
+
+{% highlight ruby -%}
+conf.columns[:approved].form_ui = :boolean, {include_blank: 'Not Set'}
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/466c9c8d-ed86-4d8f-a642-57e39ab887f8)
+
+### :checkbox
+
+It renders the same as `:boolean` in the search form, as a checkbox doesn't allow to choose if searching by that column or not.
+
+### :checkboxes
+
+It renders a collection of checkboxes, it's the same as `:multi_select`, see explanation at [multi_select](/doc/search_ui-types/#multi_select). It supports @:draggable_lists@ option, as in @:multi_select@ UI. 
+
+### :date
+
+Date columns will use this search_ui by default, if form_ui and search_ui is nil. If the form_ui is changed, and want to use the default search_ui for date columns, set `search_ui` to `:date`.
+
+It renders a select box with comparator operators, returned by `active_scaffold_search_datetime_comparator_options` helper: `past`, `future`, `range`, `=`, `>=`, `<=`, `>`, `<`, `!=`, `between`. It will include `Null` and `Not Null` if the column can be null, the behaviour can be changed using `null_comparators: false` in UI options or column options, to never include these operators.
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/e74d46aa-ef05-49f9-b0f8-e08e5bea08b1)
+
+The helper `active_scaffold_search_datetime_comparator_options` can be overrided to change the operators available:
+
+{% highlight ruby -%}
+  def active_scaffold_search_datetime_comparator_options(column, ui_options: column.options)
+    if column.name == :birthday
+      valid = ActiveScaffold::Finder::NUMERIC_COMPARATORS
+      super.select { |_, op| op.in? valid }
+    else
+      super
+    end
+  end
+{%- endhighlight %}
+
+When the operator `between` is selected, 2 date fields are displayed to find values between 2 dates. When `null` or `not null` operators are selected, no date field is displayed.
+
+`Past` and `Future` will display a number field and a date unit select box with options `days`, `weeks`, `months`, `years`:
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/2d913211-3dc4-4817-824c-ce79f2988751)
+
+The available units can be changed overriding `active_scaffold_search_datetime_trend_units` helper:
+
+{% highlight ruby -%}
+def active_scaffold_search_datetime_trend_units(column)
+  if column.column_type == :date
+    ['DAYS', 'WEEKS', 'MONTHS'].collect { |unit| [as_(unit.downcase.to_sym), unit] }
+  else
+    super
+  end
+end
+{%- endhighlight %}
+
+`Range` will display a select box with different options: `today`, `yesterday`, `tomorrow`, `this week`, `last week`, `next week`, `this month`, `last month`, `next month`, `this year`, `last year`, `next year`.
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/07ca5168-834a-46d9-b73d-d64b69d7fe00)
+
+### :datetime
+
+Datetime columns will use this search_ui by default, if form_ui and search_ui is nil. If the form_ui is changed, and want to use the default search_ui for datetime columns, set `search_ui` to `:datetime`. It's aliased as `:timestamp` so it's used by default by timestamp columns too.
+
+It renders a select box with comparator operators, returned by `active_scaffold_search_datetime_comparator_options` helper: `past`, `future`, `range`, `=`, `>=`, `<=`, `>`, `<`, `!=`, `between`. It will include `Null` and `Not Null` if the column can be null, the behaviour can be changed using `null_comparators: false` in UI options or column options, to never include these operators.
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/e74d46aa-ef05-49f9-b0f8-e08e5bea08b1)
+
+The helper `active_scaffold_search_datetime_comparator_options` can be overrided to change the operators available:
+
+{% highlight ruby -%}
+  def active_scaffold_search_datetime_comparator_options(column, ui_options: column.options)
+    if column.name == :birthday
+      valid = ActiveScaffold::Finder::NUMERIC_COMPARATORS
+      super.select { |_, op| op.in? valid }
+    else
+      super
+    end
+  end
+{%- endhighlight %}
+
+When the operator `between` is selected, 2 datetime-local fields are displayed to find values between 2 dates. When `null` or `not null` operators are selected, no datetime-local field is displayed.
+
+`Past` and `Future` will display a number field and a date or time unit select box with options `seconds`, `minutes`, `hours`, `days`, `weeks`, `months`, `years`:
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/2d913211-3dc4-4817-824c-ce79f2988751)
+
+The available units can be changed overriding `active_scaffold_search_datetime_trend_units` helper:
+
+{% highlight ruby -%}
+def active_scaffold_search_datetime_trend_units(column)
+  if column.column_type == :date
+    super
+  else
+    super.reject { |_, op| op == 'SECONDS' }
+  end
+end
+{%- endhighlight %}
+
+`Range` will display a select box with different options: `today`, `yesterday`, `tomorrow`, `this week`, `last week`, `next week`, `this month`, `last month`, `next month`, `this year`, `last year`, `next year`.
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/07ca5168-834a-46d9-b73d-d64b69d7fe00)
+
+
+### :decimal
+
+It renders a select box with comparator operators, returned by `active_scaffold_search_range_comparator_options` helper: `=`, `>=`, `<=`, `>`, `<`, `!=`, `between`. It will include `Null` and `Not Null` if the column can be null, the behaviour can be changed using `null_comparators: false` in UI options or column options, to never include these operators.
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/a7521666-a035-43e9-9f62-d9c5ff596326)
+
+The helper `active_scaffold_search_range_comparator_options` can be overrided to change the operators available, as explained for `:string` search ui.
+
+When the operator `between` is selected, 2 fields are displayed to find values between 2 numbers. When `null` or `not null` operators are selected, no number field is displayed. The number fields will have step attribute set to `any`, to accept decimal, but it can be changed in the options hash when setting search_ui or `column.options`, and `min` and `max` options are supported too.
+
+It's aliased as `:float` too.
+
+### :draggable
+
+It's the same as `:multi_select, {draggable_lists: true}`, see explanation at [multi_select](/doc/search_ui-types/#multi_select).
+
+### :integer
+
+It renders a select box with comparator operators, returned by `active_scaffold_search_range_comparator_options` helper: `=`, `>=`, `<=`, `>`, `<`, `!=`, `between`. It will include `Null` and `Not Null` if the column can be null, the behaviour can be changed using `null_comparators: false` in UI options or column options, to never include these operators.
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/a7521666-a035-43e9-9f62-d9c5ff596326)
+
+The helper `active_scaffold_search_range_comparator_options` can be overrided to change the operators available, as explained for `:string` search ui.
+
+When the operator `between` is selected, 2 fields are displayed to find values between 2 numbers. When `null` or `not null` operators are selected, no number field is displayed. The number fields will have step attribute set to `1`, to accept only integers, but it can be changed in the options hash when setting search_ui or `column.options`, and `min` and `max` options are supported too.
+
+### :multi_select
+
+It renders a list of checkboxes to allow searching for multiple values. It can be used with any column, even with singular associations, to allow searching for multiple values, finding records which have any of the selected values.
+
+{% highlight ruby -%}
+conf.columns[:contract_type].search_ui =:multi_select, {options: ['Not Set','CPAF','COST', 'TM' ,'FFP', 'MS']}
+{%- endhighlight %}
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/0941be7c-98f5-41a3-a973-6eb85b3f0c88)
+
+Valid options:
+* :draggable_lists to show two lists, one with available options and the other with selected options; users select them with drag and drop instead of checkboxes.
+{% highlight ruby -%}
+conf.columns[:contract_type].search_ui =:multi_select, {draggable_lists: true, options: ['Not Set','CPAF','COST', 'TM' ,'FFP', 'MS']}
+{%- endhighlight %}
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/745b235d-1a2f-40f2-a786-f6d9f5bc4f21)
+
+
+### :null
+
+It renders a select box with `Null` and `Not Null` options to search if the column is null or not.
+
+{% highlight ruby -%}
+conf.columns[:birthday].search_ui = :null
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/01514970-024e-46d6-ac97-13f55fb98fa1)
+
+### :select
+
+It renders a select tag, to pick a value to look for records with that value. Plural associations won't use checkboxes as form_ui does. It will look for available options in the same way as form_ui does. Search_sql must be set as `#{table_name}.#{primary_key}` for associations, which is the default value.
+
+If the column, or foreign key for `belongs_to` associations, can be null, then a select box with comparator operators `=`, `Null` and `Not Null` will be displayed before the select tag with values:
+
+![image](https://github.com/user-attachments/assets/36bd9d7d-74bf-4c47-82a4-2743f1de5d64)
+
+Using `null_comparators: false` in UI options or column options, will skip the select box with comparator operators.
+
+Valid options:
+* For all columns:
+  * options for the select rails method.
+{% highlight ruby -%}
+  conf.columns[:skill].form_ui = :select, {include_blank: 'Pick one'}
+{%- endhighlight %}
+{% highlight html -%}
+  <select name="search[skill]" class="skill-input" id="record_skill">
+  <option value="">Pick one</option>
+  </select>
+{%- endhighlight %}
+  * html options hash under html_options key
+{% highlight ruby -%}
+  config.columns[:category].options = {html_options: {title: 'Select a category to look for'}}
+{%- endhighlight %}
+{% highlight html -%}
+  <select name="search[category]" class="category-input" id="record_category" title="Select a category to look for">
+{%- endhighlight %}
+  * :multiple can be set in :html_options, changing to render as select with multiple attribute. It will add `[]` to the select tag name.
+{% highlight ruby -%}
+      conf.columns[:skill].options = :select, {html_options: {multiple: true}}
+{%- endhighlight %}
+  ![image](https://github.com/activescaffold/active_scaffold/assets/20515/9ac3ba32-ed8d-4b26-8a42-b95d06dd8585)
+* For associations:
+  * :label_method with method name (as symbol) of the model to use instead of :to_label
+{% highlight ruby -%}
+  class User < ApplicationRecord
+    belongs_to :skill
+    det long_label
+      [name, description].compact.join ': '
+    end
+  end
+  
+  class UsersController < ApplicationController
+    active_scaffold :user do |conf|
+      conf.columns[:skill].form_ui = :select, {label_method: :long_label} # Will call long_label on Skill records for the text of each option.
+{%- endhighlight %}
+  * the :optgroup in options hash will be used to build a grouped options. If the column has :label_method in its own controller, in column.options, then it will be used instead of to_label to display the group name.
+{% highlight ruby -%}
+  conf.columns[:skill_sub_discipline].form_ui = :select, {optgroup: :skill_discipline}
+{%- endhighlight %}
+  In SkillSubDisciplinesController:
+{% highlight ruby -%}
+  conf.columns[:skill_discipline].options = {label_method: :short_code}
+{%- endhighlight %}
+  ![image](https://github.com/activescaffold/active_scaffold/assets/20515/dad96cdb-686e-4d1f-b6e5-5af4df454e77)
+
+### :select_multiple
+
+It's the same as `:select, {html_options: {multiple: true}}`, rendering as select with multiple attribute. It can be used with any column, even with singular associations, to allow searching for multiple values, finding records which have any of the selected values.
+
+### :string
+
+String columns will use this search_ui by default, if form_ui and search_ui is nil. If the form_ui is changed, and want to use the default search_ui for string columns, set `search_ui` to `:string`.
+
+It renders a select box with comparator operators, returned by `active_scaffold_search_range_comparator_options` helper: `contains`, `begins with`, `ends with`, `doesn't contain`, `doesn't begin with`, `doesn't end with`, `=`, `>=`, `<=`, `>`, `<`, `!=`, `between`. It will include `Null` and `Not Null` if the column can be null, the behaviour can be changed using `null_comparators: false` in UI options or column options, to never include these operators.
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/43fd8d86-5dd3-4161-bc8b-6611dbd80604)
+
+The helper `active_scaffold_search_range_comparator_options` can be overrided to change the operators available:
+
+{% highlight ruby -%}
+  def active_scaffold_search_range_comparator_options(column, ui_options: column.options)
+    if active_scaffold_search_range_string?(column)
+      valid = ActiveScaffold::Finder::STRING_COMPARATORS.values + ['=', '!=']
+      super.select { |_, op| op.in? valid }
+    else
+      super
+    end
+  end
+{%- endhighlight %}
+
+When the operator `between` is selected, 2 fields are displayed to find values between 2 strings. When `null` or `not null` operators are selected, no text field is displayed.
+
+### :text
+
+For simple text field. It’s useful when it has a form_ui but you want a simple text field for search view, without the operator options of `:string`.
+
+### :time
+
+Time columns will use this search_ui by default, if form_ui and search_ui is nil. If the form_ui is changed, and want to use the default search_ui for time columns, set `search_ui` to `:time`.
+
+It renders a select box with comparator operators, returned by `active_scaffold_search_datetime_comparator_options` helper: `past`, `future`, `range`, `=`, `>=`, `<=`, `>`, `<`, `!=`, `between`. It will include `Null` and `Not Null` if the column can be null.
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/e74d46aa-ef05-49f9-b0f8-e08e5bea08b1)
+
+The helper `active_scaffold_search_datetime_comparator_options` can be overrided to change the operators available, as explained for `:datetime` search ui.
+
+When the operator `between` is selected, 2 time fields are displayed to find values between 2 dates. When `null` or `not null` operators are selected, no time field is displayed.
+
+`Past` and `Future` will display a number field and a date or time unit select box with options `seconds`, `minutes`, `hours`, `days`, `weeks`, `months`, `years`:
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/2d913211-3dc4-4817-824c-ce79f2988751)
+
+The available units can be changed overriding `active_scaffold_search_datetime_trend_units` helper:
+
+{% highlight ruby -%}
+def active_scaffold_search_datetime_trend_units(column)
+  if column.column_type == :date
+    super
+  else
+    super.reject { |_, op| op == 'SECONDS' }
+  end
+end
+{%- endhighlight %}
+
+`Range` will display a select box with different options: `today`, `yesterday`, `tomorrow`, `this week`, `last week`, `next week`, `this month`, `last month`, `next month`, `this year`, `last year`, `next year`.
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/07ca5168-834a-46d9-b73d-d64b69d7fe00)
+
+
+## Bridge types
+
+### :calendar_date_select
+
+This requires the [calendar date select](http://code.google.com/p/calendardateselect/) plugin. Plugin specifics can be passed via the Column#options hash. When the plugin is installed is used for date and datetime columns by default. It works as `:date` or `:datetime` search_ui, but using calendar date select for date and time pickers.
+
+### :chosen
+
+It renders a select using [chosen](https://github.com/tsechingho/chosen-rails) library. It works for the same columns as `:select`, singular and plural associations, or non-association columns. For plural associations accepts options for `select` rails helper method, and html_options in the `:html_options` key. For other columns, it accepts the same options as `:select` form_ui. You need to add chosen to Gemfile, assets will be added by ActiveScaffold. 
+
+Association (singular or plural):
+{% highlight ruby -%}
+conf.columns[:skill].search_ui = :chosen, {include_blank: 'Select a skill'}
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/663839bc-2a81-46a4-82cc-1dcbebf4de5c)
+ 
+With multiple choices:
+{% highlight ruby -%}
+conf.columns[:roles].search_ui = :chosen, {html_options: {multiple: true}}
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/266b8e58-cb21-4471-9fc7-e70358a865c6)
+
+Column with options:
+{% highlight ruby -%}
+conf.columns[:level].search_ui =  :chosen, {options: ['Not Set', 'None', 'Low', 'Medium', 'High', 'Very High']}
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/d434c211-f736-4e14-8a59-abd6e0e153b6)
+
+`:optgroup` can be used to group options by another column, as in `:select`:
+{% highlight ruby -%}
+conf.columns[:skills].search_ui = :chosen, {optgroup: :skill_discipline}
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/0a6719cc-3989-4432-b159-0bb5e8634d98)
+
+
+### :country
+
+It requires [country_select](https://github.com/countries/country_select) gem. It accepts `:priority` in the options to set `:priority_countries` option of `country_select` helper, and `:format`, other options are passed to html_options of `country_select` helper.
+
+{% highlight ruby -%}
+conf.columns[:country].search_ui = :country, {priority: ['US']}
+{%- endhighlight %}
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/79f0ff82-f570-45b7-8b89-1bf3a2a97402)
+
+Adding new format, so it can be used with ActiveScaffold, form_ui or search_ui. Put it in initializer:
+{% highlight ruby -%}
+    CountrySelect::FORMATS[:with_alpha2] = lambda do |country|
+      "#{country.iso_short_name} (#{country.alpha2})"
+    end
+{%- endhighlight %}
+{% highlight ruby -%}
+conf.columns[:country].search_ui = :country, {priority: ['US'], format: :with_alpha2, title: 'Select a country'}
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/0230fdb1-1fe9-4739-9fdb-77b1924e0d2b)
+
+### :date_picker
+
+This requires the jquery-ui datepicker, datepicker specific options can be passed via the Column#options hash. When jquery-ui-rails is installed is used for date columns by default. To format input use locale: date.formats.default. It works as `:date` search_ui, but using jquery-ui datepicker for date picker.
+
+### :datetime_picker
+
+The same as date_picker, but with time controls. When jquery-ui-rails is installed is used for datetime columns by default. Format input with locale time.formats.picker. It works as `:datetime` search_ui, but using jquery-ui datepicker for date and time pickers.
+
+### :multi_chosen
+
+It's the same as `:chosen, {html_options: {multiple: true}}`, see explanation at [chosen](/doc/search_ui-types/#chosen).
+
+### :record_select
+
+This requires the [recordselect](https://github.com/scambra/recordselect) gem. It renders a text box to search, calling `record_select_field` helper. Only works for association columns. When `multiple: true` is set in options, `record_multi_select_field` helper is used instead.
+
+The next options will be passed to the record_select helper:
+* :params to send to the controller on record select browse and search requests.
+* :controller, must be a string, although it's automatically put to the controller for the associated model, it can be overrided with options.
+* :field_name for the text field, which usually has no name, as RecordSelect submits the id with a hidden field.
+
+Association example:
+
+{% highlight ruby -%}
+conf.columns[:task].search_ui = :record_select
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/284dd11c-fad6-4141-95b3-6121ea4bafcc)
+
+
+Example with params:
+
+{% highlight ruby -%}
+conf.columns[:tasks].search_ui = :record_select, {params: {endDate: ''}}
+{%- endhighlight %}
+
+Add `permit_rs_browse_params` to Helpers so `endDate` param is passed to the search requests issued while typing:
+
+{% highlight ruby -%}
+  def permit_rs_browse_params
+    [:endDate]
+  end
+{%- endhighlight %}
+
+Example with multiple option:
+
+{% highlight ruby -%}
+conf.columns[:tasks].search_ui = :record_select, {multiple: true}
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/813fafda-664f-4961-bc99-18a3a830a140)
+
+### :text_editor
+
+It just renders a text field to search, so fields using text_editor form_ui will default to simple text field in the search form.
+
+### :usa_state
+
+It renders select field to choose a USA state. It accepts `:priority` in the options to put at the top some states, and other options accepted by `content_tag` rails helper method.
+
+{% highlight ruby -%}
+conf.columns[:state].search_ui = :usa_state, {priority: [%w[Alabama AL], %w[Virginia VA]], title: 'Select a state'}
+{%- endhighlight %}
+
+![image](https://github.com/activescaffold/active_scaffold/assets/20515/76c71165-becc-498d-8dcb-8e25b7c2508f)

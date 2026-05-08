@@ -13,7 +13,12 @@ layout: default
       {%- if page.author -%}
         • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{{ page.author }}</span></span>
       {%- endif -%}
-      {%- if page.categories.size > 0 -%}
+      {%- if page.collection == "kb" and page.category -%}
+        •
+        {%- assign cat_anchor = page.category | slugify -%}
+        <a href="{{ '/doc/' | append: '#' | append: cat_anchor | relative_url }}" class="blog-post-cat">{{ page.category }}</a>
+      {%- endif -%}
+      {%- if page.collection == "posts" and page.categories.size > 0 -%}
         •
         {%- for cat in page.categories -%}
           {%- assign cat_slug = cat | slugify -%}
