@@ -11,13 +11,13 @@ There are different form_ui types in ActiveScaffold, some may be useful for some
 
 It renders a select box with `true` and `false` options (default for boolean type columns which can be null since v2.4+, previously default for all boolean type columns). If the column can be null, will have `- select -` option (or the label set in `options[:include_blank]`).
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/4d324cdd-6327-4d03-b46c-93a1d02063f2!
+![](/assets/screenshots/form-ui-boolean.png)
 
 {% highlight ruby -%}
 conf.columns[:approved].form_ui = :boolean, {include_blank: 'Not Set'}
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/49672a8a-af1f-48be-8077-02be62bb45ac!
+![](/assets/screenshots/form-ui-boolean-custom-blank.png)
 
 The options are used for the options argument in `select` rails helper method. Html options argument is read from :html_options key in the options hash.
 
@@ -52,8 +52,8 @@ It renders an input with type color, to pick a color. If the column can be null,
 {% highlight ruby -%}
 conf.columns[:background_color].form_ui :color, {no_color: 'Transparent'}
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/27b14ad4-eb72-4135-8062-3f2de6137fb4!
-!https://github.com/activescaffold/active_scaffold/assets/20515/a7e554ee-84c9-47a1-9c9d-ff86fda6c2f0!
+![](/assets/screenshots/form-ui-color.png)
+![](/assets/screenshots/form-ui-color-nullable.png)
 
 
 ### :date
@@ -94,7 +94,7 @@ It renders input field with type email, in which modern browsers will accept onl
 
 It renders input field with type month, which modern browsers will render as month picker (old browsers will treat it as simple text input). Options are passed as options argument to month_field.
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/afe80c1b-9c7f-4ad3-b213-77757f2e9623!
+![](/assets/screenshots/form-ui-month.png)
 
 ### :number
 
@@ -125,20 +125,20 @@ Options can be defined in the same way as `:select`, for singular associations o
 {% highlight ruby -%}
 conf.columns[:level].form_ui =  :radio, {include_blank: 'Not Set', options: ['None', 'Low', 'Medium', 'High', 'Very High']}
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/6b1a62b9-19d4-47b1-b1cf-578de7a31801!
+![](/assets/screenshots/form-ui-radio-options.png)
 
 
 {% highlight ruby -%}
 conf.columns[:skill_sub_discipline].form_ui = :radio
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/82951183-dad8-4a7e-942c-29e72015a3cc!
+![](/assets/screenshots/form-ui-radio-association.png)
 
 For singular associations, it supports the option `:add_new`, to add a hidden subform to create a new record, when the radio button to create new is selected (it uses a radio button instead of 'Create New' link).
 
 {% highlight ruby -%}
 conf.columns[:skill_sub_discipline].form_ui = :radio, {add_new: true}
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/2d1bf4c6-227b-4711-8c24-5b67047dddc8!
+![](/assets/screenshots/form-ui-radio-add-new.png)
 
 `:add_new` may be a hash with [different options](/doc/options-for-add_new/), as in `:select`.
 
@@ -158,7 +158,7 @@ class UsersController < ApplicationController
 {% highlight html -%}
 <input type="range" name="record[age]" class="age-input numeric-input text-input" id="record_age_" min="18" max="65" />
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/c385de82-b5ca-4659-8447-93d603f5b0ac!
+![](/assets/screenshots/form-ui-range.png)
 
 ### :select
 
@@ -205,19 +205,19 @@ In SkillSubDisciplinesController:
 {% highlight ruby -%}
 conf.columns[:skill_discipline].options = {label_method: :short_code}
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/dad96cdb-686e-4d1f-b6e5-5af4df454e77!
+![](/assets/screenshots/search-ui-select-optgroup.png)
   - :add_new to support creating a new record. The value for `:add_new` may be `true` or a hash with [different options](/doc/options-for-add_new/).
 {% highlight ruby -%}
 conf.columns[:skill_sub_discipline].form_ui = :select, {add_new: true}
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/5444bd8b-9ed2-4643-b3f6-14f214658a15!
-!https://github.com/activescaffold/active_scaffold/assets/20515/56a1e7f2-a7a8-4fbc-a230-04fa3d02bc89!
+![](/assets/screenshots/form-ui-select-add-new-empty.png)
+![](/assets/screenshots/form-ui-select-add-new-open.png)
 - For plural associations:
   - :draggable_lists to show two lists, one with available options and the other with selected options; users select them with drag and drop instead of checkboxes.
 {% highlight ruby -%}
 conf.columns[:roles].options = {:draggable_lists => true}
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/df7dfb6c-a849-4b06-a87f-2aeafd72eba8!
+![](/assets/screenshots/form-ui-select-draggable.png)
   - :multiple can be set in :html_options, changing to render as select with multiple attribute. It will add `[]` to the select tag name. In this case, plural associations may have options for `select` rails helper method, and html_options, as any column rendering `select` tag.
 {% highlight ruby -%}
 class User < ApplicationRecord
@@ -227,7 +227,7 @@ class UsersController < ApplicationController
   active_scaffold :user do |conf|
     conf.columns[:skills].options = :select, {html_options: {html: true}}
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/9ac3ba32-ed8d-4b26-8a42-b95d06dd8585!
+![](/assets/screenshots/search-ui-select-multiple.png)
 - For non-association columns:
   - :options hash or nested array under options key
 {% highlight ruby -%}
@@ -274,7 +274,7 @@ conf.columns[:skill_sub_discipline].form_ui = :select, {refresh_link: {title: 'C
 <select name="record[skill_sub_discipline]" class="skill_sub_discipline-input" id="record_skill_sub_discipline_"><option value="">- select -</option></select>
 <a class="refresh-link" title="Click to reload" href="/controller/render_field?column=skill_sub_discipline">Reload</a>
 {%- endhighlight %}
-!https://github.com/activescaffold/active_scaffold/assets/20515/61eaa5e7-4024-45e9-bce6-09be1a2ea325!
+![](/assets/screenshots/form-ui-select-refresh-link.png)
 
 ### :select_multiple
 
@@ -307,7 +307,7 @@ It renders input field with type url, in which modern browsers will accept only 
 
 It renders input field with type week, which modern browsers will render as week picker (old browsers will treat it as simple text input). Options are passed as options argument to week_field.
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/cbe1ef6b-af26-4d1c-8303-5f262e59f80b!
+![](/assets/screenshots/form-ui-week.png)
 
 
 ## Bridge types
@@ -326,8 +326,8 @@ conf.columns[:avatar].form_ui = :active_storage_has_one, {thumb: {resize: "30x30
 conf.columns[:avatar].form_ui = :active_storage_has_one, {thumb: false} # display file name
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/6cfe9e18-3006-4066-9feb-58a468823df8!
-!https://github.com/activescaffold/active_scaffold/assets/20515/fce68143-2115-48e3-b0f7-31534a815b9e!
+![](/assets/screenshots/form-ui-active-storage-empty.png)
+![](/assets/screenshots/form-ui-active-storage-file.png)
 
 The default variant can be set with `ActiveScaffold::Bridges::ActiveStorage.thumbnail_variant` in an initializer, which defaults to `{resize_to_limit: [nil, 30]}`. If no thumb option is provided, default value is used from `thumbnail_variant`.
 
@@ -350,7 +350,7 @@ Singular association:
 conf.columns[:skill].form_ui = :chosen, {include_blank: 'Select a skill'}
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/663839bc-2a81-46a4-82cc-1dcbebf4de5c!
+![](/assets/screenshots/search-ui-chosen.png)
 
 `:add_new` is supported to create a new record. As in `:select`, the value for `:add_new` may be `true` or a hash with [different options](/doc/options-for-add_new/).
 
@@ -363,21 +363,21 @@ Plural association:
 conf.columns[:roles].form_ui = :chosen
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/266b8e58-cb21-4471-9fc7-e70358a865c6!
+![](/assets/screenshots/search-ui-chosen-multiple.png)
 
 Column with options:
 {% highlight ruby -%}
 conf.columns[:level].form_ui =  :chosen, {options: ['Not Set', 'None', 'Low', 'Medium', 'High', 'Very High']}
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/d434c211-f736-4e14-8a59-abd6e0e153b6!
+![](/assets/screenshots/search-ui-chosen-with-options.png)
 
 `:optgroup` can be used to group options by another column, as in `:select`:
 {% highlight ruby -%}
 conf.columns[:skills].form_ui = :chosen, {optgroup: :skill_discipline}
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/0a6719cc-3989-4432-b159-0bb5e8634d98!
+![](/assets/screenshots/search-ui-chosen-optgroup.png)
 
 ### :country
 
@@ -392,8 +392,8 @@ It requires [country_select](https://github.com/countries/country_select) gem. I
 conf.columns[:country].form_ui = :country, {priority: ['US'], format: :with_alpha2, title: 'Select a country'}
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/0230fdb1-1fe9-4739-9fdb-77b1924e0d2b!
-!https://github.com/activescaffold/active_scaffold/assets/20515/ac6e05a6-6dcf-4791-8c30-96600b4a64d1!
+![](/assets/screenshots/search-ui-country-with-format.png)
+![](/assets/screenshots/form-ui-country.png)
 
 ### :date_picker
 
@@ -421,7 +421,7 @@ The UI looks similar to the one for `:active_storage_has_one`.
 
 ### :paperclip
 
-This requires the [paperclip](http://github.com/thoughtbot/paperclip) gem, when the gem is installed, it's used for paperclip columns by default. It renders an input with type file, and when the association has value, it show the file as the column in the list, and a link to remove the file, which will show an input file so user can upload another file. If the paperclip column has a style, it can be used to display an image instead of the filename, it defaults to use :thumbnail style, but can be changed with `ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style` in an initializer.
+This requires the [paperclip](https://github.com/thoughtbot/paperclip) gem, when the gem is installed, it's used for paperclip columns by default. It renders an input with type file, and when the association has value, it show the file as the column in the list, and a link to remove the file, which will show an input file so user can upload another file. If the paperclip column has a style, it can be used to display an image instead of the filename, it defaults to use :thumbnail style, but can be changed with `ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style` in an initializer.
 
 The UI looks similar to the one for `:active_storage_has_one`.
 
@@ -452,7 +452,7 @@ Singular association example:
 conf.columns[:task].form_ui = :record_select
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/284dd11c-fad6-4141-95b3-6121ea4bafcc!
+![](/assets/screenshots/search-ui-record-select.png)
 
 
 Plural association example:
@@ -469,7 +469,7 @@ Add `permit_rs_browse_params` to Helpers so `endDate` param is passed to the sea
   end
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/813fafda-664f-4961-bc99-18a3a830a140!
+![](/assets/screenshots/search-ui-record-select-multiple.png)
 
 Autocomplete on column example, will look on the specified controllers, with the record select config, and selecting a record will copy the label into the text field.
 
@@ -477,7 +477,7 @@ Autocomplete on column example, will look on the specified controllers, with the
 conf.columns[:task_name].form_ui = :record_select, {controller: 'tasks'}
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/eb3a9942-22e9-4637-9cf0-75e5184cf62f!
+![](/assets/screenshots/form-ui-record-select-autocomplete.png)
 
 There are more explanation about [integrating RecordSelect](/doc/record-select-integration-recordselect/) in the wiki and the [docs for RecordSelect](https://github.com/scambra/recordselect/wiki)
 
@@ -492,7 +492,7 @@ active_scaffold :product do |conf|
 end
 {%- endhighlight %}
 
-- The default TinyMCE configuration can be modified via the `:tinymce` option hash. Any [configuration options](http://www.tinymce.com/wiki.php/Configuration) that can be passed via the Javascript `tinyMCE.init({ ... })` may be passed as options
+- The default TinyMCE configuration can be modified via the `:tinymce` option hash. Any [configuration options](https://www.tinymce.com/wiki.php/Configuration) that can be passed via the Javascript `tinyMCE.init({ ... })` may be passed as options
 {% highlight ruby -%}
 active_scaffold :product do |conf|
   conf.columns[:description_html].form_ui = :text_editor, {
@@ -514,4 +514,4 @@ It renders select field to choose a USA state. It accepts `:priority` in the opt
 conf.columns[:state].form_ui = :usa_state, {priority: [%w[Alabama AL], %w[Virginia VA]], title: 'Select a state'}
 {%- endhighlight %}
 
-!https://github.com/activescaffold/active_scaffold/assets/20515/5ad3d937-3281-44ff-88c8-a9933dde34e5!
+![](/assets/screenshots/form-ui-usa-state.png)

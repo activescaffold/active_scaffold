@@ -18,7 +18,7 @@ end
 
 It will render a select tag with available options for the `tabbed_by` column, to add a new tab with rows for the selected value:
 
-![Screenshot_20241022_160407](https://github.com/user-attachments/assets/9f3eab6a-d44f-4d37-a15f-a3e3d6373723)
+![Screenshot_20241022_160407](/assets/screenshots/tabbed-subform.png)
 
 When new rows are added to a subform in a tab, the column used for the tab will default to the value of the tab. The column used for `tabbed_by` will be in the subform, but it can be setup to be hidden in the subform controller if don't want to allow changing it:
 

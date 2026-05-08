@@ -13,10 +13,10 @@ When used in `:select` form_ui, the value for `:add_new` may be a hash with diff
 {% highlight ruby -%}
 conf.columns[:skill_sub_discipline].form_ui = :select, {add_new: {mode: :popup, layout: :vertical}}
 {%- endhighlight %}
-![layout example](https://github.com/activescaffold/active_scaffold/assets/20515/014de5de-6862-4dac-97d3-d11ba462fe16)
+![layout example](/assets/screenshots/add-new-layout-example.png)
 * `:hide_subgroups`, when using `:subform` mode, the column subgroups of the subform can be hidden. By default, subgroups are visible, with no link to hide, but with this option the subgroups will be hidden and there will be a link to show them.  
-![subgroup hidden example](https://github.com/activescaffold/active_scaffold/assets/20515/0c7794de-e983-40bf-8f35-fac67426c570)
-![subgroup visible example](https://github.com/activescaffold/active_scaffold/assets/20515/d1f01772-24ea-4f6f-8928-dfb6c66db7bf)
+![subgroup hidden example](/assets/screenshots/add-new-subgroup-hidden.png)
+![subgroup visible example](/assets/screenshots/add-new-subgroup-visible.png)
 * `:add_new_text`, in both `:subform` and `:popup` modes, will have the text to display instead of 'Create New'. It may be a symbol to use translation in `:active_scaffold` scope, or a string to avoid translations.
 * `:add_existing_text`, in `:subform` mode, will have the text to display instead of 'Add Existing', to hide the subform and show the field UI again. It may be a symbol to use translation in `:active_scaffold` scope, or a string to avoid translations.
 * `:security_method` is the name of a controller method to be called to check if the link to open a popup is allowed, it's used only in `:popup` mode. If no `:security_method` is set, it will check if the association's model is authorized for create (calling `model.authorized_for?(crud_type: :create)`).

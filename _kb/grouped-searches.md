@@ -101,7 +101,7 @@ end
 
 When doing a group search, the query will load only the group column and the columns defined in `list.columns` which have calculation, no action links. It would look like this:
 
-![image](https://github.com/activescaffold/active_scaffold/assets/20515/988566d5-ee10-4d79-a50d-e67d377eedc9)
+![image](/assets/screenshots/grouped-search-list.png)
 
 The columns to include in the grouped search can be set in `config.field_search.grouped_columns`, but all columns must have calculations.
 
