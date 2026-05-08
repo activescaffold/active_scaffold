@@ -3,7 +3,7 @@ title: "Action links groups"
 category: "Advanced"
 ---
 
-If you want to add an action_link to your controller you do something like ‘conf.action_links << ….'. Internally, these are stored in an array. If list header is rendered all action_links of type 'collection' are selected and the same happens for type 'member' for each list row.
+If you want to add an action_link to your controller you do something like `conf.action_links << ….`. Internally, these are stored in an array. If list header is rendered all action_links of type 'collection' are selected and the same happens for type 'member' for each list row.
 
 The grouping is achieved by changing the array to a tree structure. Leafs are representing action_links and nodes represent our groups. Two groups are automatically created: 'member' and 'collection'. 
 
