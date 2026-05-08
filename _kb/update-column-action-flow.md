@@ -6,7 +6,7 @@ category: "Action Flows"
 # Action 'render_field' (GET request)
 In-place editing usually displays a form using JS, but if `:ajax` is set in `inplace_edit`, it will use this action with GET request to render the form for in-place edit, which will call these methods in the following order:
 
-![Render Field flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/render_field_get.drawio.svg)
+![Render Field flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/render_field_get.drawio.svg)
 
 1. `render_field`
    1. `render_field_for_inplace_editing`.
@@ -21,7 +21,7 @@ Then it will render the following view:
 # Action 'update_column'
 When form is submitted, these methods are called in the following order:
 
-![Update Column flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/update_column.drawio.svg)
+![Update Column flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/update_column.drawio.svg)
 
 1. `update_column`
    1. `do_update_column`.

@@ -6,7 +6,7 @@ category: "Action Flows"
 # Action 'destroy'
 These methods are called in the following order:
 
-![Destroy action flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/destroy.drawio.svg)
+![Destroy action flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/destroy.drawio.svg)
 
 1. `delete_authorized_filter` called as before_action
    1. `delete_authorized?` (or the method defined in conf.delete.link.security_method if it's changed) is called to check the permission. If this method returns false, `delete_authorized_filter` will raise ActiveScaffold::ActionNotAllowed.

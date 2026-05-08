@@ -6,7 +6,7 @@ category: "Action Flows"
 # Action 'show'
 These methods are called in the following order:
 
-![Show action flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/show.drawio.svg)
+![Show action flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/show.drawio.svg)
 
 1. `show_authorized_filter` called as before_action
    1. `show_authorized?` (or the method defined in conf.show.link.security_method if it's changed) is called to check the permission. If this method returns false, `show_authorized_filter` will raise ActiveScaffold::ActionNotAllowed.

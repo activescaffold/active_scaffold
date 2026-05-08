@@ -6,7 +6,7 @@ category: "Action Flows"
 # Action 'edit'
 These methods are called in the following order:
 
-![Edit action flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/edit.drawio.svg)
+![Edit action flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/edit.drawio.svg)
 
 1. `update_authorized_filter` called as before_action
    1. `update_authorized?` (or the method defined in conf.update.link.security_method if it's changed) is called to check the permission. If this method returns false, `update_authorized_filter` will raise ActiveScaffold::ActionNotAllowed.
@@ -50,7 +50,7 @@ The `_base_form` partial can be overrided to render :super setting some variable
 # Action 'update'
 When form is submitted, these methods are called in the following order:
 
-![Update action flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/update.drawio.svg)
+![Update action flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/update.drawio.svg)
 
 1. `update_authorized_filter` called as before_action
    1. `update_authorized?` (or the method defined in conf.update.link.security_method if it's changed) is called to check the permission. If this method returns false, `update_authorized_filter` will raise ActiveScaffold::ActionNotAllowed.

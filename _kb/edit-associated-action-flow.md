@@ -9,7 +9,7 @@ When 'add another' button is clicked, a GET request to the action 'edit_associat
 
 In both cases, these methods are called in the following order:
 
-![Edit_associated action flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/edit_associated.drawio.svg)
+![Edit_associated action flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/edit_associated.drawio.svg)
 
 1. edit_associated
    1. do_edit_associated, which sets instance variables:

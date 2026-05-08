@@ -6,7 +6,7 @@ category: "Action Flows"
 # Action 'new'
 These methods are called in the following order:
 
-![New action flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/new.drawio.svg)
+![New action flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/new.drawio.svg)
 
 1. `create_authorized_filter` called as before_action
    1. `create_authorized?` (or the method defined in conf.create.link.security_method if it's changed) is called to check the permission. If this method returns false, `create_authorized_filter` will raise ActiveScaffold::ActionNotAllowed.
@@ -50,7 +50,7 @@ The `_base_form` partial can be overrided to render :super setting some variable
 When form is submitted, these methods are called in the following order:
 
 
-![Create action flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/create.drawio.svg)
+![Create action flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/create.drawio.svg)
 
 1. `create_authorized_filter` called as before_action
    1. `create_authorized?` (or the method defined in conf.create.link.security_method if it's changed) is called to check the permission. If this method returns false, `create_authorized_filter` will raise ActiveScaffold::ActionNotAllowed.

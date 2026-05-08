@@ -10,7 +10,7 @@ When the changed column is in a subform, the request is sent to the controller o
 
 The request may include only the changed value, or the whole form if `send_form_on_update_column` was enabled in the column, which is needed when the refreshed columns need to read values from other columns than the changed one. The action may be complex, depending on different settings, so it's a bit complicated to explain. The following methods may be called in the following order:
 
-![Render Field flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/render_field_post.drawio.svg)
+![Render Field flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/render_field_post.drawio.svg)
 
 1. `render_field`
    1. `render_field_for_update_columns`.

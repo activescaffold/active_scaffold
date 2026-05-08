@@ -13,7 +13,7 @@ The search forms submit the data to the `index` action.
 
 These methods are called in the following order:
 
-![Show_search action flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/show_search.drawio.svg)
+![Show_search action flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/show_search.drawio.svg)
 
 1. `search_authorized_filter` called as before_action
    1. `search_authorized?` (or the method defined in conf.search.link.security_method if it's changed) is called to check the permission. If this method returns false, `search_authorized_filter` will raise ActiveScaffold::ActionNotAllowed.
@@ -39,7 +39,7 @@ And depending on the value of `config.search.split_terms`, it will look for the 
 
 These methods are called in the following order:
 
-![Show_search action flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/show_search_field_search.drawio.svg)
+![Show_search action flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/show_search_field_search.drawio.svg)
 
 1. `search_authorized_filter` called as before_action
    1. `search_authorized?` (or the method defined in conf.field_search.link.security_method if it's changed) is called to check the permission. If this method returns false, `search_authorized_filter` will raise ActiveScaffold::ActionNotAllowed.

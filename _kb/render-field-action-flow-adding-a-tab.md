@@ -9,7 +9,7 @@ When `tabbed_by` is set in a group of columns, to render a [tabbed group of colu
 
 The following methods may be called in the following order:
 
-![Render Field adding tab flow](https://github.com/activescaffold/active_scaffold/blob/master/diagrams/render_field_add_tab.drawio.svg)
+![Render Field adding tab flow](https://github.com/activescaffold/active_scaffold/raw/refs/heads/master/diagrams/render_field_add_tab.drawio.svg)
 
 1. `render_field`
    1. `add_tab`.
