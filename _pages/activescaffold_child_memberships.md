@@ -71,7 +71,7 @@ end
 
 Then you get a table, with all users in the group in the rows, and roles in the columns. Only the assigned roles are in the columns by default, and new column can be added with a select tag to pick a new role to assign to users:
 
-![image](/assets/img/child_memberships_ui.png)
+![image](/assets/screenshots/child_memberships_ui.png)
 
 It's possible to add new columns. The form UI used to select the record of the new columns can be customized, with options for the form_ui (or column's options), with the key `:add_column_ui`, for example to use RecordSelect:
 
