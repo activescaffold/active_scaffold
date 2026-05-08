@@ -282,7 +282,7 @@ If you don't set a text, it will use the key `activerecord.placeholder.model_nam
 
 ## required
 
-A boolean for whether the column is required through already-existing validation. Currently used in Update/Create. Defaults to false, but if [validation reflection](http://github.com/redinger/validation_reflection) is available it defaults to true for columns with validates_presence_of. If it's true, the `required` attribute on HTML `input` tag will be set and modern browsers won't allow user to send form unless this column is filled.
+A boolean for whether the column is required through already-existing validation. Currently used in Update/Create. Defaults to false, but if [validation reflection](https://github.com/redinger/validation_reflection) is available it defaults to true for columns with validates_presence_of. If it's true, the `required` attribute on HTML `input` tag will be set and modern browsers won't allow user to send form unless this column is filled.
 
 ## search_sql
 

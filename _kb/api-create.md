@@ -89,7 +89,7 @@ ActiveScaffold doesn't display unauthorized columns in forms. Enabling this prop
 
 ## before_create_save [controller method]
 
-If you want to add or tweak some data before the record gets saved, define this method on your controller. But first, be sure you don't want to define a [callback](http://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html) on your ActiveRecord model instead! This controller method is most useful for adding session-specific data to your model, like the current user.
+If you want to add or tweak some data before the record gets saved, define this method on your controller. But first, be sure you don't want to define a [callback](https://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html) on your ActiveRecord model instead! This controller method is most useful for adding session-specific data to your model, like the current user.
 
 Example:
 

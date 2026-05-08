@@ -14,7 +14,7 @@ There are 2 ways of setting initial values for records: the Active Scaffold way 
 
 ## Rails way
 
-By following advice from [Jeff Perrin at stackoverflow](http://stackoverflow.com/questions/328525/what-is-the-best-way-to-set-default-values-in-activerecord), you may use after_initialize from active record: 
+By following advice from [Jeff Perrin at stackoverflow](https://stackoverflow.com/questions/328525/what-is-the-best-way-to-set-default-values-in-activerecord), you may use after_initialize from active record: 
 
 {% highlight ruby -%}
     class Person

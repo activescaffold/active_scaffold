@@ -200,7 +200,7 @@ conf.columns[:avatar].form_ui = :dragonfly, {thumb: '30x30>'} # use to display a
 
 ### :paperclip
 
-This requires the [paperclip](http://github.com/thoughtbot/paperclip) gem, when the gem is installed, it's used for paperclip columns by default. If it has an attachment, it displays the image using default thumbnail style, if the paperclip column has a style with the same name. The default is `:thumbnail` style, but can be changed with `ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style` in an initializer. If the thumbnail style is not defined, it will display the filename. The image or filename will be a link to download the file.
+This requires the [paperclip](https://github.com/thoughtbot/paperclip) gem, when the gem is installed, it's used for paperclip columns by default. If it has an attachment, it displays the image using default thumbnail style, if the paperclip column has a style with the same name. The default is `:thumbnail` style, but can be changed with `ActiveScaffold::Bridges::Paperclip::PaperclipBridgeHelpers.thumbnail_style` in an initializer. If the thumbnail style is not defined, it will display the filename. The image or filename will be a link to download the file.
 
 ### :thumbnail
 

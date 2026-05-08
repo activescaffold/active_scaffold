@@ -9,7 +9,7 @@ There are different form_ui types in ActiveScaffold, some may be useful for some
 
 ### :boolean
 
-It renders a select box with `true` and `false` options (default for boolean type columns which can be null since v2.4+, previously default for all boolean type columns). If the column can be null, will have `- select -` option (or the label set in options[:include_blank]).
+It renders a select box with `true` and `false` options (default for boolean type columns which can be null since v2.4+, previously default for all boolean type columns). If the column can be null, will have `- select -` option (or the label set in `options[:include_blank]`).
 
 !https://github.com/activescaffold/active_scaffold/assets/20515/4d324cdd-6327-4d03-b46c-93a1d02063f2!
 

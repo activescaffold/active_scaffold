@@ -49,9 +49,9 @@ You can use en.yml locale file to customize column and model names instead of us
 Rails 2.2 now localizes natively the as_() method.  Therefore, your project will need to have a localization file in config/locales/en.yml (This would be the english one.) if locales does not exist, simply create it along with the language yml file.
 The yml file could start something like this:
 
-{% highlight ruby -%}
+{% highlight yaml -%}
 # Sample localization file for English. Add more files in this directory for other locales.
-# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
   active_scaffold:
