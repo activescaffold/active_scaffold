@@ -136,3 +136,9 @@ jobs:
           name: "${{ github.job }}-coverage"
           retention-days: 1
           path: coverage
+  ci-success:
+    name: "CI Success"
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "All mandatory tests passed successfully."
