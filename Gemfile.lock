@@ -111,6 +111,7 @@ GEM
     erubi (1.13.1)
     globalid (1.3.0)
       activesupport (>= 6.1)
+    herb (0.7.5)
     herb (0.7.5-x86_64-linux-gnu)
     highline (3.1.2)
       reline
@@ -149,6 +150,7 @@ GEM
     marcel (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.9)
     minitest (5.27.0)
     minitest-reporters (1.7.1)
       ansi
@@ -167,7 +169,10 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.5)
-    nokogiri (1.19.1-x86_64-linux-gnu)
+    nokogiri (1.19.3)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
+    nokogiri (1.19.3-x86_64-linux-gnu)
       racc (~> 1.4)
     parallel (1.27.0)
     parser (3.3.9.0)
@@ -279,6 +284,8 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
+    sqlite3 (2.7.4)
+      mini_portile2 (~> 2.8.0)
     sqlite3 (2.7.4-x86_64-linux-gnu)
     stringio (3.1.7)
     terminal-table (4.0.0)
@@ -299,6 +306,7 @@ GEM
     zeitwerk (2.7.3)
 
 PLATFORMS
+  ruby
   x86_64-linux
 
 DEPENDENCIES
