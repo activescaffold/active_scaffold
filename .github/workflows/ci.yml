@@ -92,6 +92,7 @@ jobs:
             rails: '7.2'
             coverage: true
           - ruby: '4.0'
+            rails: '8.1'
             allow_failure: true
     timeout-minutes: 60
     env:
