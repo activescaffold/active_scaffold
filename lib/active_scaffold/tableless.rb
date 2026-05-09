@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ActiveScaffold::Tableless < ActiveRecord::Base # rubocop:disable Rails/ApplicationRecord
+class ActiveScaffold::Tableless < ActiveRecord::Base
   class Connection < ActiveRecord::ConnectionAdapters::AbstractAdapter
     attr_reader :klass
 

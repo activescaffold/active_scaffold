@@ -92,6 +92,7 @@ Rails:
 Rails/ApplicationRecord:
   Exclude:
     - 'test/**/*'
+    - 'lib/active_scaffold/tableless.rb'
 
 Rails/DynamicFindBy:
   Whitelist:

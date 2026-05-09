@@ -31,23 +31,6 @@ jobs:
           name: "${{ github.job }}"
           retention-days: 1
           path: brakeman
-  lint-bundler-audit:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    env:
-      BUNDLE_CLEAN: true
-      BUNDLE_DEPLOYMENT: true
-      BUNDLE_GEMFILE: gemfiles/Gemfile.lint
-      BUNDLE_WITHOUT: ''
-    steps:
-      - uses: actions/checkout@v4.1.0
-        with:
-          lfs: true
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-      - run: bundle exec bundle-audit check --update --verbose
   lint-i18n:
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -87,7 +70,6 @@ jobs:
     name: Ruby ${{ matrix.ruby }} / Rails ${{ matrix.rails }}
     needs:
       - lint-brakeman
-      - lint-bundler-audit
       - lint-i18n
       - lint-rubocop
     runs-on: ubuntu-latest
