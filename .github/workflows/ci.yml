@@ -14,7 +14,8 @@ jobs:
     env:
       BUNDLE_CLEAN: true
       BUNDLE_DEPLOYMENT: true
-      BUNDLE_WITHOUT: 'default deployment development production test performance'
+      BUNDLE_GEMFILE: gemfiles/Gemfile.lint
+      BUNDLE_WITHOUT: ''
     steps:
       - uses: actions/checkout@v4.1.0
         with:
@@ -36,7 +37,8 @@ jobs:
     env:
       BUNDLE_CLEAN: true
       BUNDLE_DEPLOYMENT: true
-      BUNDLE_WITHOUT: 'default deployment development production test performance'
+      BUNDLE_GEMFILE: gemfiles/Gemfile.lint
+      BUNDLE_WITHOUT: ''
     steps:
       - uses: actions/checkout@v4.1.0
         with:
@@ -53,7 +55,8 @@ jobs:
     env:
       BUNDLE_CLEAN: true
       BUNDLE_DEPLOYMENT: true
-      BUNDLE_WITHOUT: 'default deployment development production test performance'
+      BUNDLE_GEMFILE: gemfiles/Gemfile.lint
+      BUNDLE_WITHOUT: ''
     steps:
       - uses: actions/checkout@v4.1.0
         with:
@@ -69,7 +72,8 @@ jobs:
     env:
       BUNDLE_CLEAN: true
       BUNDLE_DEPLOYMENT: true
-      BUNDLE_WITHOUT: 'default deployment development production test performance'
+      BUNDLE_GEMFILE: gemfiles/Gemfile.lint
+      BUNDLE_WITHOUT: ''
     steps:
       - uses: actions/checkout@v4.1.0
         with:
