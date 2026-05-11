@@ -1,3 +1,5 @@
+exclude_patterns = ["bin/**/*"]
+
 [[exclude]]
 plugins = ["*"]
 file_patterns = ["bin/**/*"]
