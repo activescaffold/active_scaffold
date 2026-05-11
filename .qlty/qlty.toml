@@ -1,2 +1,4 @@
-[[exclude]]
-paths = ["bin/**/*"]
+[analysis]
+exclude = [
+  "bin/**/*"
+]
