@@ -1,4 +1,3 @@
-[analysis]
-exclude = [
-  "bin/**/*"
-]
+[[exclude]]
+plugins = ["*"]
+file_patterns = ["bin/**/*"]
