@@ -33,5 +33,5 @@ group :test do
   end
 
   # This module allows Ruby programs to interface with the SQLite3 database engine
-  gem 'sqlite3'
+  gem 'sqlite3', platform: :mri
 end
