@@ -132,6 +132,7 @@ GEM
     marcel (1.0.4)
     method_source (1.1.0)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.9)
     minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
@@ -243,6 +244,8 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
+    sqlite3 (2.7.2)
+      mini_portile2 (~> 2.8.0)
     sqlite3 (2.7.2-aarch64-linux-gnu)
     sqlite3 (2.7.2-aarch64-linux-musl)
     sqlite3 (2.7.2-arm-linux-gnu)
@@ -284,6 +287,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_scaffold!
+  activerecord-jdbc-adapter!
   activerecord-jdbcsqlite3-adapter!
   jdbc-sqlite3
   minitest-reporters
@@ -296,4 +300,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   2.5.23
+  4.0.11

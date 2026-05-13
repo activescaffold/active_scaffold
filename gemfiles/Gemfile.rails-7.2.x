@@ -31,8 +31,6 @@ group :test do
     gem 'jdbc-sqlite3'
   end
 
-  platforms :ruby do
-    # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'sqlite3'
-  end
+  # This module allows Ruby programs to interface with the SQLite3 database engine
+  gem 'sqlite3'
 end
