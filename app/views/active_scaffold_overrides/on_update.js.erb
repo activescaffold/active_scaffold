@@ -16,7 +16,7 @@ if (action_link) action_link.update_flash_messages('<%= escape_javascript(render
       <% if nested_singular_association? || render_parent_action == :row %>
         if (action_link) action_link.close(true);
       <% else %>
-        ActiveScaffold.reload('<%= url_for render_parent_options %>');
+        ActiveScaffold.reload('<%=raw url_for render_parent_options %>');
       <% end %>
     <% elsif update_refresh_list? %>
       <%= render 'refresh_list', no_history: true %>
