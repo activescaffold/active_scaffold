@@ -12,8 +12,8 @@ de:
     add_existing: Existierenden Eintrag hinzufügen
     add_existing_model: Existierende %{model} hinzufügen
     add_model: "%{model} hinzufügen"
-    all_tokens:
-    any_token:
+    all_tokens: All keywords
+    any_token: Any keyword
     apply: Akzeptieren
     are_you_sure_to_delete: Sind Sie sicher?
     average: Durchschnitt
@@ -22,7 +22,7 @@ de:
     cancel: Abbrechen
     cant_destroy_record: "%{record} kann nicht gelöscht werden"
     changes: Änderungen
-    check_all:
+    check_all: Check all
     click_to_edit: Zum Editieren anklicken
     click_to_reset: Reset
     close: Schließen
@@ -51,9 +51,9 @@ de:
     deleted_model: "%{model} gelöscht"
     deleted_records: Gelöschte Records auflisten
     delimiter: Trennzeichen
-    doesnt_begin_with:
-    doesnt_contain:
-    doesnt_end_with:
+    doesnt_begin_with: Doesn't begin with
+    doesnt_contain: Doesn't contain
+    doesnt_end_with: Doesn't end with
     download: Herunterladen
     edit: Bearbeiten
     ends_with: Endet
@@ -80,7 +80,7 @@ de:
     internal_error: Fehler bei der Verarbeitung
     live_search: Live-Suche
     loading: Lade…
-    logical_search:
+    logical_search: Logical Search
     mark_all_records: Alle auswählen
     maximum: Maximum
     minimum: Minimum
@@ -136,7 +136,7 @@ de:
     today: Heute
     tomorrow: Morgen
     'true': Richtig
-    uncheck_all:
+    uncheck_all: Uncheck all
     update: Speichern
     update_apply: Bewerben
     update_model: Editiere %{model}
@@ -150,7 +150,7 @@ de:
     formats:
       month: "%B"
       quarter: Quartal %{num}
-      week:
+      week: Week %W, %Y
       year_month: "%b %Y"
       year_quarter: Quartal %{quarter} %{year}
   time:
@@ -158,6 +158,9 @@ de:
       picker: "%d.%m.%Y %H:%M"
   datetime:
     prompts:
-      millisec:
-      microsec:
+      millisec: Millisecond
+      microsec: Microsecond
+      second: Second
+      minute: Minute
+      hour: Hour
 

@@ -2,24 +2,6 @@ source 'https://rubygems.org'
 
 gemspec path: '../'
 
-group :development do
-  #  Send and retrieve your ruby i18n localizations to the Locale translation service https://www.localeapp.com
-  gem 'localeapp'
-  # RDoc produces HTML and command-line documentation for Ruby projects
-  gem 'rdoc'
-end
-
-group :development, :lint do
-  # A static analysis security vulnerability scanner for Ruby on Rails applications
-  gem 'brakeman', require: false
-  # Patch-level verification for Bundler
-  gem 'bundler-audit', require: false
-  # A Ruby static code analyzer. Aims to enforce the community-driven Ruby Style Guide
-  gem 'rubocop', '0.52.1', require: false
-  # Manage translation and localization with static analysis, for Ruby i18n
-  gem 'i18n-tasks', require: false
-end
-
 group :development, :lint, :test do
   gem 'rake', require: false
 end
@@ -37,6 +19,7 @@ group :test do
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
   # It encourages beautiful code by favoring convention over configuration.
   gem 'rails', '~> 7.2.0'
+  gem 'minitest', '~> 5.0'
   # Create customizable MiniTest output formats
   gem 'minitest-reporters', require: false
   # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
@@ -49,8 +32,6 @@ group :test do
     gem 'jdbc-sqlite3'
   end
 
-  platforms :ruby do
-    # This module allows Ruby programs to interface with the SQLite3 database engine
-    gem 'sqlite3'
-  end
+  # This module allows Ruby programs to interface with the SQLite3 database engine
+  gem 'sqlite3', platform: :mri
 end

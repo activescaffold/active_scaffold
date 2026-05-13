@@ -12,8 +12,8 @@ hu:
     add_existing: Meglevő hozzáadása
     add_existing_model: Meglevő %{model} hozzáadása
     add_model: "%{model} hozzáadása"
-    all_tokens:
-    any_token:
+    all_tokens: All keywords
+    any_token: Any keyword
     apply: Apply
     are_you_sure_to_delete: Are you sure you want to delete %{label}?
     average: Average
@@ -21,8 +21,8 @@ hu:
     between: Között
     cancel: Mégse
     cant_destroy_record: 'nem törölhető: %{record}'
-    changes:
-    check_all:
+    changes: Changes
+    check_all: Check all
     click_to_edit: Kattints a szerkesztéshez
     click_to_reset: Kattints az alapállapothoz
     close: Bezárás
@@ -31,7 +31,7 @@ hu:
     contains: Contains
     create: Létrehozás
     create_another: Create Another %{model}
-    create_apply:
+    create_apply: Create and continue
     create_model: "%{model} létrehozása"
     create_new: Új létrehozása
     created_model: "%{model} létrehozva"
@@ -42,18 +42,18 @@ hu:
       showMonthAfterYear: 'false'
       weekHeader: Wk
     datetime_picker_options:
-      closeText:
-      currentText:
-      timeText:
+      closeText: Close
+      currentText: Now
+      timeText: Hour
       timezoneText: Timezone
     days: Days
     delete: Törlés
     deleted_model: "%{model} törölve"
-    deleted_records:
+    deleted_records: List Deleted Records
     delimiter: Elválasztó
-    doesnt_begin_with:
-    doesnt_contain:
-    doesnt_end_with:
+    doesnt_begin_with: Doesn't begin with
+    doesnt_contain: Doesn't contain
+    doesnt_end_with: Doesn't end with
     download: Letöltés
     edit: Szerkesztés
     ends_with: Ends with
@@ -69,8 +69,8 @@ hu:
     filtered: "(Szűrt)"
     found: Találat
     future: Future
-    group_by:
-    grouped_by:
+    group_by: Group by
+    grouped_by: Grouped by %{column}
     hide: "(Elrejtés)"
     hours: Hours
     human_conditions:
@@ -80,7 +80,7 @@ hu:
     internal_error: A lekérés sikertelen
     live_search: Élő keresés
     loading: Betöltés…
-    logical_search:
+    logical_search: Logical Search
     mark_all_records: Mark all
     maximum: Maximum
     minimum: Minimum
@@ -93,9 +93,9 @@ hu:
     next_week: Next Week
     next_year: Next Year
     no_authorization_for_action: No Authorization for action %{action}
-    no_color:
+    no_color: No color
     no_entries: Nincs elem
-    no_group:
+    no_group: No group
     no_options: nincsenek opciók
     not_null: Not Null
     'null': 'Null'
@@ -136,9 +136,9 @@ hu:
     today: Today
     tomorrow: Tomorrow
     'true': 'True'
-    uncheck_all:
+    uncheck_all: Uncheck all
     update: Modosítás
-    update_apply:
+    update_apply: Apply
     update_model: "%{model} modosítása"
     updated_model: "%{model} módosítva"
     version_inconsistency: Verzió ütközés - ezt a rekordot módosították mióta 
@@ -148,15 +148,18 @@ hu:
     yesterday: Yesterday
   date:
     formats:
-      month:
-      quarter:
-      week:
-      year_month:
-      year_quarter:
+      month: '%B'
+      quarter: Quarter %{num}
+      week: Week %W, %Y
+      year_month: '%b %Y'
+      year_quarter: Quarter %{quarter} %{year}
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"
   datetime:
     prompts:
-      millisec:
-      microsec:
+      millisec: Millisecond
+      microsec: Microsecond
+      second: Second
+      minute: Minute
+      hour: Hour

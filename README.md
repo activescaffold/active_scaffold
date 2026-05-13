@@ -8,14 +8,15 @@
 [![Inline docs](https://inch-ci.org/github/activescaffold/active_scaffold.svg?branch=master)](https://inch-ci.org/github/activescaffold/active_scaffold)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 6.1.0 is supported, ruby >= 3.0 required.
+ActiveScaffold provides a quick and powerful user interfaces for CRUD (create, read, update, delete) operations for Rails applications. It offers additonal features including searching, pagination & layout control.  Rails >= 7.2.0 is supported, ruby >= 3.2 required.
 
 ## Branch Details
 
 master supports rails >= 7.2.x and ruby >= 3.2.0  
-4-2-stable supports rails >= 7.2.x and ruby >= 3.2.0
+4-3-stable supports rails >= 7.2.x and <= 8.1.x, and ruby >= 3.2.0
 
 These versions are not supported anymore:  
+4-2-stable supports rails >= 7.2.x and <= 8.1.x, and ruby >= 3.2.0
 4-1-stable supports rails >= 7.0.x and <= 7.2.x, and ruby >= 3.1.0  
 4-0-stable supports rails >= 6.1.x and <= 7.2.x, and ruby >= 2.5.0  
 3-7-stable supports rails >= 5.2.x and <= 7.1.x, and ruby >= 2.5.0  
