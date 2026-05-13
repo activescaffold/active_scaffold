@@ -86,15 +86,9 @@ jobs:
           - ruby: 'jruby-10.0'
             rails: '8.1'
         include:
-          - ruby: '3.4'
-            rails: '7.2'
+          - ruby: '4.0'
+            rails: '8.1'
             coverage: true
-          - ruby: '4.0'
-            rails: '8.0'
-            allow_failure: true
-          - ruby: '4.0'
-            rails: '7.2'
-            allow_failure: true
     timeout-minutes: 60
     env:
       JRUBY_OPTS: "--debug"
