@@ -118,7 +118,7 @@ GEM
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    jar-dependencies (0.5.5)
+    jar-dependencies (0.5.7)
     jdbc-sqlite3 (3.46.1.1)
     logger (1.7.0)
     loofah (2.24.1)
@@ -132,7 +132,9 @@ GEM
     marcel (1.0.4)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    minitest (5.25.5)
+    minitest (6.0.6)
+      drb (~> 2.0)
+      prism (~> 1.5)
     minitest-reporters (1.7.1)
       ansi
       builder
@@ -172,6 +174,7 @@ GEM
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
+    prism (1.9.0)
     psych (5.2.6)
       date
       stringio

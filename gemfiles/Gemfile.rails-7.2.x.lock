@@ -110,7 +110,7 @@ GEM
     irb (1.14.1)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    jar-dependencies (0.5.5)
+    jar-dependencies (0.5.7)
     jdbc-sqlite3 (3.46.1.1)
     logger (1.6.1)
     loofah (2.23.1)
@@ -124,7 +124,9 @@ GEM
     marcel (1.0.4)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    minitest (5.25.1)
+    minitest (6.0.6)
+      drb (~> 2.0)
+      prism (~> 1.5)
     minitest-reporters (1.7.1)
       ansi
       builder
@@ -147,6 +149,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.3-x86_64-linux-gnu)
       racc (~> 1.4)
+    prism (1.9.0)
     psych (5.2.0)
       stringio
     psych (5.2.0-java)
