@@ -38,7 +38,7 @@ Enable export in your controller:
 class ProductsController < ApplicationController
   active_scaffold :product do |config|
     config.actions << :export
-    config.export.columns = [:name, :price, :category]
+    config.export.default_deselected_columns = [:category]
   end
 end
 {%- endhighlight %}
@@ -48,8 +48,8 @@ Customize additional options:
 {% highlight ruby -%}
 config.export.default_full_download = true
 config.export.force_quotes = true
-config.export.delimiter = ';'
-config.export.include_header = true
+config.export.default_delimiter = ';'
+config.export.default_skip_header = true
 {%- endhighlight %}
 
 ### Example Code
