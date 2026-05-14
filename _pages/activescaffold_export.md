@@ -38,6 +38,7 @@ Enable export in your controller:
 class ProductsController < ApplicationController
   active_scaffold :product do |config|
     config.actions << :export
+    config.export.columns = [:name, :price, :category]
     config.export.default_deselected_columns = [:category]
   end
 end
