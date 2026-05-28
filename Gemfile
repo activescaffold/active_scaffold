@@ -6,8 +6,8 @@ gemspec
 
 group :development do
   # RDoc produces HTML and command-line documentation for Ruby projects
-  gem 'rdoc'
   gem 'puma'
+  gem 'rdoc'
 end
 
 group :performance do
