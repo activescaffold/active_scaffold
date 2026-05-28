@@ -623,7 +623,6 @@ module ActiveScaffold
       search_conditions = all_conditions
 
       sorting = options[:sorting]&.clause
-      sorting = sorting.map { |part| Arel.sql(part) } if sorting && active_scaffold_config.active_record?
       # create a general-use options array that's compatible with Rails finders
       finder_options = {
         reorder: sorting,

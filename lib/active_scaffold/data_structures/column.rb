@@ -396,7 +396,7 @@ module ActiveScaffold::DataStructures
       def initialize_sort
         self.sort =
           if column && !tableless?
-            {sql: field}
+            {sql: [name]}
           else
             false
           end

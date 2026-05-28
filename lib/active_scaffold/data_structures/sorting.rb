@@ -136,7 +136,7 @@ module ActiveScaffold::DataStructures
         sql = sql.to_sql if sql.respond_to?(:to_sql)
 
         parts = Array(sql).map do |column|
-          mongoid? ? [column, sort_direction] : "#{column} #{sort_direction}"
+          mongoid? ? [column, sort_direction] : {column => sort_direction}
         end
         order << parts
       end
