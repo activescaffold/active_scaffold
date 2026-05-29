@@ -353,7 +353,13 @@ module ActiveScaffold::DataStructures
 
       def search_sql
         initialize_search_sql if @search_sql == true
-        @search_sql
+        return @search_sql unless @search_sql.is_a?(Array) && active_record?
+
+        @search_sql.map do |sql|
+          next sql unless sql.is_a?(Symbol)
+
+          "#{active_record_class.quoted_table_name}.#{active_record_class.connection.quote_column_name(sql)}"
+        end
       end
 
       def searchable?
@@ -406,7 +412,7 @@ module ActiveScaffold::DataStructures
         self.search_sql =
           unless virtual?
             if association.nil?
-              field.to_s unless tableless?
+              name unless tableless?
             elsif association.allow_join?
               [association.quoted_table_name, association.quoted_primary_key].join('.') unless association.klass < ActiveScaffold::Tableless
             end

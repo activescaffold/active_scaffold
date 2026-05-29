@@ -4,6 +4,7 @@
 - Support defining more options for jQuery.sortable with ActiveScaffold.js_config[:draggable_lists_options]
 - Support changing highlight duration with ActiveScaffold.js_config[:highlight]
 - ActiveScaffold now calls order with hash, leaving the quoting of tables and columns to rails, Arel.sql must be called on the values set on sort_by if rails requires it
+- Column search_sql accepts a symbol and uses symbol by default, delay quoting until query is generated, strings are still supported for cross-table columns or functions
 
 = master
 - Fix escaping URL in JS response, fixing auto paginate and response for actions with render_parent
