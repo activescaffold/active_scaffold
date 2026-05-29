@@ -128,7 +128,7 @@ class ColumnTest < ActiveSupport::TestCase
 
   def test_custom_sort
     @column.sort = true
-    hash = {sql: '"model_stubs"."a"'}
+    hash = {sql: :a}
     assert_equal hash, @column.sort
     @column.sort_by sql: 'foobar'
     hash = {sql: 'foobar'}
