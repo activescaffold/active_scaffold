@@ -355,10 +355,11 @@ module ActiveScaffold::DataStructures
         initialize_search_sql if @search_sql == true
         return @search_sql unless @search_sql.is_a?(Array) && active_record?
 
+        connection = active_record_class.connection
         @search_sql.map do |sql|
           next sql unless sql.is_a?(Symbol)
 
-          "#{active_record_class.quoted_table_name}.#{active_record_class.connection.quote_column_name(sql)}"
+          "#{connection.quote_table_name(active_record_class.table_name)}.#{connection.quote_column_name(sql)}"
         end
       end
 
