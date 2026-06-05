@@ -443,6 +443,8 @@ module ActiveScaffold
         when :time, :datetime, Time then value.to_i
         when :boolean then value ? 1 : 0
         when :binary then nil
+        when :integer then value
+        when :float, :decimal then value % 1 == 0 ? value.to_i : value
         else value.to_s
         end
       end
