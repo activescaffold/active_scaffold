@@ -13,5 +13,18 @@ Rails.application.routes.draw do
     concerns :active_scaffold, except: %i[mark]
   end
 
+  # Tabs test models
+  resources :categories, concerns: :active_scaffold
+  resources :tasks, concerns: :active_scaffold
+  resources :milestones, concerns: :active_scaffold
+  # tabs by belongs_to association + shared tabs with different FK column names
+  resources :projects do
+    concerns :active_scaffold
+  end
+  # tabs by a DB column with :select form_ui (uses same Project model)
+  resources :projects_by_priority, controller: :projects_by_priority do
+    concerns :active_scaffold
+  end
+
   match ':controller(/:action(/:id))', :via => :any
 end

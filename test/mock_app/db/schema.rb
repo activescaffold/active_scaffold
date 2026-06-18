@@ -1,5 +1,34 @@
 # rubocop:disable Metrics/BlockLength
 ActiveRecord::Schema.define do
+  create_table 'categories' do |t|
+    t.string 'name'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
+  end
+
+  create_table 'projects' do |t|
+    t.string 'name'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
+  end
+
+  create_table 'tasks' do |t|
+    t.integer 'project_id'
+    t.integer 'category_id'
+    t.string 'name'
+    t.string 'priority'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
+  end
+
+  create_table 'milestones' do |t|
+    t.integer 'project_id'
+    t.integer 'section_id'
+    t.string 'name'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
+  end
+
   create_table 'addresses' do |t|
     t.integer 'addressable_id'
     t.string 'addressable_type'
