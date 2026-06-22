@@ -3,7 +3,6 @@
 require 'test_helper'
 
 class ProjectsTabsRenderTest < ActionDispatch::IntegrationTest
-
   setup do
     [Task, Milestone, Category, Project].each(&:delete_all)
     @cat1 = Category.create!(name: 'Frontend')
