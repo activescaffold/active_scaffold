@@ -10,6 +10,17 @@
 Metrics/AbcSize:
   Max: 122
 
+Style/OneClassPerFile:
+  inherit_mode:
+    merge:
+      - Exclude
+  Exclude:
+    - lib/active_scaffold/actions/nested.rb
+    - lib/active_scaffold/bridges/cancan/cancan_bridge.rb
+    - lib/active_scaffold/extensions/action_controller_rendering.rb
+    - lib/active_scaffold/extensions/action_view_rendering.rb
+    - lib/active_scaffold/extensions/routing_mapper.rb
+
 Style/OptionalBooleanParameter:
   Exclude:
     - lib/active_scaffold/attribute_params.rb

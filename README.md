@@ -124,7 +124,7 @@ import 'jquery_ujs'
 import 'active_scaffold'
 ```
 
-In the layout, load the importmap modules and call active_scaffold_javascript_tag, that includes some script tags which was in js.erb when using sprockets, so JS ActiveScaffold dependencies are loaded (jquery UI if using jquery-ui-rails, and JS for other ActiveScaffold plugins and bridges): 
+In the layout, load the importmap modules and call active_scaffold_javascript_tag, that includes some script tags that were in js.erb when using sprockets, so JS ActiveScaffold dependencies are loaded (jquery UI if using jquery-ui-rails, and JS for other ActiveScaffold plugins and bridges): 
 
 ```erb
     <%= javascript_importmap_tags %>

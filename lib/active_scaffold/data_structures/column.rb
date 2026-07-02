@@ -539,7 +539,7 @@ module ActiveScaffold::DataStructures
       @disable_on_update_column = true
       @db_default_value = ActiveScaffold::OrmChecks.default_value active_record_class, name if @column
       @delegated_association = delegated_association
-      @cache_key = [@active_record_class.name, name].compact.map(&:to_s).join('#')
+      @cache_key = [@active_record_class.name, name].compact.join('#')
       setup_association_info
 
       @link = nil
@@ -560,7 +560,7 @@ module ActiveScaffold::DataStructures
 
       self.includes = [association.name] if association&.allow_join?
       if delegated_association
-        self.includes = includes ? [delegated_association.name => includes] : [delegated_association.name]
+        self.includes = includes ? [{delegated_association.name => includes}] : [delegated_association.name]
       end
       self.subform_includes = true if association
 

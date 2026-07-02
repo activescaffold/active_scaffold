@@ -5,8 +5,8 @@ module ActiveScaffold
     # Helpers rendering filters
     module FilterHelpers
       def clear_filters_params
-        active_scaffold_config.list.filters.each_with_object({}) do |filter, url_options|
-          url_options[filter.name] = nil
+        active_scaffold_config.list.filters.to_h do |filter|
+          [filter.name, nil]
         end
       end
 

@@ -207,8 +207,8 @@ module ActiveScaffold::Actions
       end
       group = {_id: "$#{column.association.foreign_key}", count: {'$sum' => 1}}
       query = column.association.klass.collection.aggregate([{'$match' => matches}, {'$group' => group}])
-      query.each_with_object({}) do |row, hash|
-        hash[row['_id']] = row['count']
+      query.to_h do |row|
+        [row['_id'], row['count']]
       end
     end
 

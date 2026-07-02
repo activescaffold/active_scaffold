@@ -35,13 +35,14 @@ module ActiveScaffold
 
       def type_casted_tokens(tokens, columns, like_pattern)
         tokens.map do |value|
-          columns.each_with_object({}) do |column, column_tokens|
-            column_tokens[column.name] =
+          columns.to_h do |column|
+            casted_value =
               if column.text?
                 like_pattern.sub('?', column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value)
               else
                 ActiveScaffold::Core.column_type_cast(value, column.column)
               end
+            [column.name, casted_value]
           end
         end
       end

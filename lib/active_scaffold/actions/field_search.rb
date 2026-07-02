@@ -110,8 +110,8 @@ module ActiveScaffold::Actions
       end
 
       def grouped_columns_calculations
-        @grouped_columns_calculations ||= list_columns[1..].each_with_object({}) do |c, h|
-          h[c.name] = calculation_for_group_search(c)
+        @grouped_columns_calculations ||= list_columns[1..].to_h do |c|
+          [c.name, calculation_for_group_search(c)]
         end
       end
 
