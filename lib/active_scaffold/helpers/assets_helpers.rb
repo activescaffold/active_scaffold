@@ -29,9 +29,9 @@ module ActiveScaffold
           config[:jqueryUi] = ActiveScaffold::Assets::JqueryUiManifest.all_dependencies.map { |asset| asset_path(asset, extname: '.js') }
         end
 
-        javascript_tag <<~JS
+        javascript_tag(nonce: true) <<~JS.html_safe
           window.ActiveScaffold = window.ActiveScaffold || {};
-          window.ActiveScaffold.config = #{config.to_json};
+          window.ActiveScaffold.config = #{json_escape config.to_json};
         JS
       end
     end
