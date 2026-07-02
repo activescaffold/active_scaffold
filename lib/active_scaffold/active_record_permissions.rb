@@ -119,7 +119,7 @@ module ActiveScaffold
           key = "#{options[:crud_type]}##{options[:column]}##{options[:action]}"
           if is_a? Class
             self.class_security_methods ||= {}
-            self.class_security_methods[key] ||= authorized_for_methods(options)
+            class_security_methods[key] ||= authorized_for_methods(options)
           else
             self.class.instance_security_methods ||= {}
             self.class.instance_security_methods[key] ||= authorized_for_methods(options)
