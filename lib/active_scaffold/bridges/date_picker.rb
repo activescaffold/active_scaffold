@@ -30,5 +30,15 @@ module ActiveScaffold::Bridges
   }
 });\n"
     end
+
+    # Data-only equivalent of .localization, consumed directly by load.js without eval,
+    # so it works under a CSP that disallows 'unsafe-eval'.
+    def self.localization_data
+      {
+        locale: ::I18n.locale.to_s,
+        datepickerRegional: Helper.date_options_by_locale,
+        timepickerRegional: Helper.datetime_options_by_locale
+      }
+    end
   end
 end

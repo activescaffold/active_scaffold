@@ -76,11 +76,26 @@
 
   const initializeJQueryUI = function() {
     if (config.jqueryUiIncluded && window.jQuery) {
-      // Check if datepicker exists
-      if (jQuery.datepicker) {
-        // Execute the datepicker localization
-        // This will be replaced by actual generated code
-        eval(config.datepickerLocalization);
+      applyDatepickerLocalization();
+    }
+  };
+
+  const applyDatepickerLocalization = () => {
+    const localization = config.datepickerLocalization;
+    if (!localization) return;
+    const { locale, datepickerRegional, timepickerRegional } = localization;
+
+    if (jQuery.datepicker && datepickerRegional) {
+      Object.assign(jQuery.datepicker.regional, datepickerRegional);
+      if (jQuery.datepicker.regional[locale]) {
+        jQuery.datepicker.setDefaults(jQuery.datepicker.regional[locale]);
+      }
+    }
+
+    if (jQuery.timepicker && timepickerRegional) {
+      Object.assign(jQuery.timepicker.regional, timepickerRegional);
+      if (jQuery.timepicker.regional[locale]) {
+        jQuery.timepicker.setDefaults(jQuery.timepicker.regional[locale]);
       }
     }
   };

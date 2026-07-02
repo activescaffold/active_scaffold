@@ -8,7 +8,7 @@ module ActiveScaffold
         js_tags << active_scaffold_javascript_config
         unless defined?(Importmap)
           # Without importmap, active_scaffold/load must be added to the layout too
-          js_tags << javascript_include_tag('active_scaffold/load')
+          js_tags << javascript_include_tag('active_scaffold/load', nonce: true)
         end
         safe_join js_tags
       end
@@ -22,7 +22,7 @@ module ActiveScaffold
           plugins: ActiveScaffold.javascripts.map { |asset| asset_path(asset, extname: '.js') }
         )
         if ActiveScaffold.jquery_ui_included?
-          config[:datepickerLocalization] = ActiveScaffold::Assets.active_scaffold_js_code(:jquery_ui)
+          config[:datepickerLocalization] = ActiveScaffold::Bridges[:date_picker].localization_data
         end
 
         if Object.const_defined?(:Jquery) && Jquery.const_defined?(:Ui)

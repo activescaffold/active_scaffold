@@ -32,6 +32,13 @@ module ActiveScaffold::Bridges
         end.join
       end
 
+      def self.date_options_by_locale
+        I18n.available_locales.filter_map do |locale|
+          locale_date_options = date_options(locale)
+          [locale.to_s, locale_date_options] if locale_date_options
+        end.to_h
+      end
+
       def self.date_options(locale)
         date_picker_options = {
           closeText:       as_(:close),
@@ -74,6 +81,13 @@ module ActiveScaffold::Bridges
           locale_datetime_options = datetime_options(locale)
           "$.timepicker.regional['#{locale}'] = #{locale_datetime_options.to_json};" if locale_datetime_options
         end.join
+      end
+
+      def self.datetime_options_by_locale
+        I18n.available_locales.filter_map do |locale|
+          locale_datetime_options = datetime_options(locale)
+          [locale.to_s, locale_datetime_options] if locale_datetime_options
+        end.to_h
       end
 
       def self.datetime_options(locale)
