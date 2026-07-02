@@ -5,6 +5,7 @@
 - Support changing highlight duration with ActiveScaffold.js_config[:highlight]
 - ActiveScaffold now calls order with hash, leaving the quoting of tables and columns to rails, Arel.sql must be called on the values set on sort_by if rails requires it
 - Column search_sql accepts a symbol and uses symbol by default, delay quoting until query is generated, strings are still supported for cross-table columns or functions
+- Use nonce: true in active_scaffold_javascript_tag so rails app can setup CSP with nonce in script-src
 
 = master
 - Fix escaping URL in JS response, fixing auto paginate and response for actions with render_parent
