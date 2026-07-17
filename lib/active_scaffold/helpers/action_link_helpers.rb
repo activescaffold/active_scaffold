@@ -298,9 +298,17 @@ module ActiveScaffold
 
       def column_in_params_conditions?(key)
         if key.match?(/!$/)
-          conditions_from_params[1..].any? { |node| node.left.name.to_s == key[0..-2] }
+          conditions_from_params[1..].any? { |node| condition_node_for_column?(node, key[0..-2]) }
         else
           conditions_from_params[0].include?(key)
+        end
+      end
+
+      def condition_node_for_column?(node, column_name)
+        return node.name.to_s == column_name if node.is_a?(Arel::Attributes::Attribute)
+
+        %i[expr left right].any? do |child|
+          node.respond_to?(child) && condition_node_for_column?(node.public_send(child), column_name)
         end
       end
 
