@@ -366,44 +366,75 @@ module ActiveScaffold::Actions
       active_scaffold_config.model
     end
 
-    # Builds search conditions by search params for column names. This allows urls like "contacts/list?company_id=5".
+    # Builds search conditions from query parameters whose names match columns.
+    # For example, `contacts/list?company_id=5` matches records with company_id 5.
+    # Append `!` to a column name to negate the condition, as in `company_id!=5`.
+    # A value containing exactly one `..` defines a range for supported column types, for example
+    # `created_at=2025-01-01..2025-12-31`. A missing range endpoint creates an infinite range,
+    # such as `created_at=..2025-12-31` or `created_at=2025-01-01..`.
+    # Array parameters use the `column[]=value` syntax, for example `company_id[]=5&company_id[]=10`.
+    # Negation may also be combined with ranges or arrays, using `not_between` or `not_in`.
     def conditions_from_params
       @conditions_from_params ||= begin
         conditions = [{}]
-        supporting_range = %i[date datetime integer decimal float bigint]
         params.except(:controller, :action, :page, :sort, :sort_direction, :format, :id).each do |key, value|
-          distinct = true if key.match?(/!$/)
+          distinct = key.match?(/!$/)
           column = active_scaffold_config._columns_hash[key.to_s[0..(distinct ? -2 : -1)]]
           next unless column
 
           key = column.name.to_sym
-          not_string = %i[string text].exclude?(column.type)
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 
-          range = supporting_range.include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
-          value = value.split('..') if range
-          if supporting_range.include?(column.type) && value.is_a?(String)
-            range = value.match(/\A(.*)\.\.(.*)\z/)
-            value = [range[1], range[2]] if range
-          end
-          value =
-            if value.is_a?(Array)
-              value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
-            elsif value == '' && (not_string || column.null)
-              ActiveScaffold::Core.column_type_cast(column.default, column)
-            else
-              ActiveScaffold::Core.column_type_cast(value, column)
-            end
-          value = Range.new(*value) if range
+          value = condition_value_from_param(value, column)
           if distinct
-            conditions << active_scaffold_config.model.arel_table[key].not_eq(value)
+            conditions << distinct_condition(key, value)
           else
             conditions[0][key] = value
           end
         end
         conditions
       end
+    end
+
+    def distinct_condition(key, value)
+      attribute = active_scaffold_config.model.arel_table[key]
+      case value
+      when Array
+        attribute.not_in(value)
+      when Range
+        attribute.not_between(value)
+      else
+        attribute.not_eq(value)
+      end
+    end
+
+    def condition_value_from_param(value, column)
+      range = range_from_param(value, column)
+      value = range.captures if range
+      not_string = %i[string text].exclude?(column.type)
+      value =
+        if value.is_a?(Array)
+          value.map { |item| conditional_cast_for_column(item, column, not_string) }
+        elsif value == '' && (not_string || column.null)
+          ActiveScaffold::Core.column_type_cast(column.default, column)
+        else
+          ActiveScaffold::Core.column_type_cast(value, column)
+        end
+      range ? Range.new(*value) : value
+    end
+
+    def conditional_cast_for_column(value, column, not_string)
+      return if value == '' && not_string
+
+      ActiveScaffold::Core.column_type_cast(value, column)
+    end
+
+    def range_from_param(value, column)
+      supporting_range = %i[date datetime integer decimal float bigint]
+      return unless supporting_range.include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
+
+      value.match(/\A(.*)\.\.(.*)\z/)
     end
 
     def empty_model
