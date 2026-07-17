@@ -12,8 +12,8 @@ ru:
     add_existing: Добавить существующую запись
     add_existing_model: "%{model}: добавить существующую запись"
     add_model: "%{model}: добавить запись"
-    all_tokens: 'All keywords'
-    any_token: 'Any keyword'
+    all_tokens: 'Все ключевые слова'
+    any_token: 'Любое ключевое слово'
     apply: Применить
     are_you_sure_to_delete: Удалить %{label}?
     average: Среднее
@@ -21,8 +21,8 @@ ru:
     between: В интервале
     cancel: Отмена
     cant_destroy_record: Запись %{record} не может быть удалена
-    changes: Changes
-    check_all: Check all
+    changes: Изменения
+    check_all: Выбрать все
     click_to_edit: Нажмите для редактирования
     click_to_reset: Нажмите для сброса
     close: Закрыть
@@ -31,7 +31,7 @@ ru:
     contains: Содержит
     create: Создать
     create_another: "%{model}: Создать другую запись"
-    create_apply: Create and continue
+    create_apply: Создать и продолжить
     create_model: "%{model}: создать запись"
     create_new: Создать новую запись
     created_model: "%{model}: запись создана"
@@ -44,16 +44,16 @@ ru:
     datetime_picker_options:
       closeText: Закрыть
       currentText: Текущее время
-      timeText: Hour
+      timeText: Час
       timezoneText: Timezone
     days: дней
     delete: Удалить
     deleted_model: "%{model}: запись удалена"
-    deleted_records: List Deleted Records
+    deleted_records: Список удаленных записей
     delimiter: Разделитель
-    doesnt_begin_with: Doesn't begin with
-    doesnt_contain: Doesn't contain
-    doesnt_end_with: Doesn't end with
+    doesnt_begin_with: Не начинается с
+    doesnt_contain: Не содержит
+    doesnt_end_with: Не заканчивается на
     download: Загрузить
     edit: Изменить
     ends_with: Оканчивается на
@@ -73,8 +73,8 @@ ru:
       few: записи
       many: записей
     future: Будущие
-    group_by: Group by
-    grouped_by: Grouped by %{column}
+    group_by: Группировать по
+    grouped_by: Группировка по %{column}
     hide: "(Скрыть)"
     hours: часов
     human_conditions:
@@ -84,7 +84,7 @@ ru:
     internal_error: Внутренняя ошибка
     live_search: Поиск
     loading: Загрузка…
-    logical_search: Logical Search
+    logical_search: Логический поиск
     mark_all_records: Отметить все
     maximum: Максимум
     minimum: Минимум
@@ -97,9 +97,9 @@ ru:
     next_week: На следующей неделе
     next_year: В следующем году
     no_authorization_for_action: Нет прав на выполнение действия "%{action}"
-    no_color: No color
+    no_color: Без цвета
     no_entries: Нет записей
-    no_group: No group
+    no_group: Без группы
     no_options: Нет вариантов
     not_null: Не пусто
     'null': Пусто
@@ -141,9 +141,9 @@ ru:
     today: Сегодня
     tomorrow: Завтра
     'true': Да
-    uncheck_all: Uncheck all
+    uncheck_all: Снять выделение со всех
     update: Обновить запись
-    update_apply: Apply
+    update_apply: Применить
     update_model: "%{model}: обновить запись"
     updated_model: "%{model}: запись обновлена"
     version_inconsistency: Эта запись была обновлена с того момента, как вы 
@@ -154,17 +154,17 @@ ru:
   date:
     formats:
       month: '%B'
-      quarter: Quarter %{num}
-      week: Week %W, %Y
+      quarter: '%{num} квартал'
+      week: '%W неделя, %Y'
       year_month: '%b %Y'
-      year_quarter: Quarter %{quarter} %{year}
+      year_quarter: '%{quarter} квартал %{year}'
   time:
     formats:
       picker: "%a, %d %b %Y %H:%M:%S"
   datetime:
     prompts:
-      millisec: Millisecond
-      microsec: Microsecond
-      second: Second
-      minute: Minute
-      hour: Hour
+      millisec: Миллисекунда
+      microsec: Микросекунда
+      second: Секунда
+      minute: Минута
+      hour: Час
