@@ -383,6 +383,10 @@ module ActiveScaffold::Actions
 
           range = supporting_range.include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
           value = value.split('..') if range
+          if supporting_range.include?(column.type) && value.is_a?(String)
+            range = value.match(/\A(.*)\.\.(.*)\z/)
+            value = [range[1], range[2]] if range
+          end
           value =
             if value.is_a?(Array)
               value.map { |v| v == '' && not_string ? nil : ActiveScaffold::Core.column_type_cast(v, column) }
