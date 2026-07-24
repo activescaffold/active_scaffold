@@ -368,7 +368,7 @@ module ActiveScaffold
           end
         elsif conversion == :to_date
           parse_date_with_format(*format_for_date(column, value, column.send(ui_method), ui_options))
-        elsif value.include?('T')
+        elsif value.match?(/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/) # iso8601 format
           Time.zone.parse(value)
         else # datetime
           time = parse_time_with_format(value, *format_for_datetime(column, value, column.send(ui_method), ui_options))
