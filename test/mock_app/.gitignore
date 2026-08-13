@@ -1,3 +1,6 @@
 tmp/
 log/
 db/*.sqlite3
+app/assets/builds/*
+!app/assets/builds/.keep
+app/assets/stylesheets/active_scaffold/deps.scss

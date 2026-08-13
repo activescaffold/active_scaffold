@@ -9,6 +9,9 @@ end
 group :development, :test do
   # Rack provides a minimal interface between webservers that support Ruby and Ruby frameworks
   gem 'rack'
+  gem 'propshaft'
+  gem 'dartsass-rails'
+  gem 'jquery-rails'
 end
 
 group :test do
