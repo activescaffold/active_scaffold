@@ -19,7 +19,8 @@ class ProjectsTabsRenderTest < ActionDispatch::IntegrationTest
       assert_select 'option[value=?]', @cat1.id.to_s, text: @cat1.to_label
       assert_select 'option[value=?]', @cat2.id.to_s, text: @cat2.to_label
     end
-    assert_select '.add-tab'
+    input_id = css_select('select.category-input').first['id']
+    assert_select 'a.add-tab[data-field-selector=?]', "##{input_id}"
   end
 
   test 'edit form renders tab nav items for each category used in tasks' do

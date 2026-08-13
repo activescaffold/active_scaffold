@@ -224,6 +224,14 @@
           if (opts.disabled) jQuery(this).find('.ui-slider-handle').hide();
         });
       },
+      activate_tab: function(tab_ctrl) {
+        tab_ctrl = jQuery(tab_ctrl);
+        var tabbed = tab_ctrl.closest('.tabbed');
+        tabbed.find('.nav-tabs .active').removeClass('active');
+        tabbed.find('.tab-content .active').removeClass('in active');
+        tab_ctrl.addClass('active');
+        jQuery(tab_ctrl.attr('href')).addClass('in active');
+      },
       load_embedded: function(element) {
         jQuery('.active-scaffold-component .load-embedded', element).each(function(index, item) {
           item = jQuery(item);
@@ -1659,11 +1667,7 @@
       jQuery(document).on('click', '.active-scaffold .tabbed .nav-tabs a', function(e) {
         if (typeof jQuery().tab == 'function') return; // bootstrap tab plugin is loaded and will handle tabs
         e.preventDefault();
-        var tab_ctrl = jQuery(this), tabbed = tab_ctrl.closest('.tabbed')
-        tabbed.find('.nav-tabs .active').removeClass('active');
-        tabbed.find('.tab-content .active').removeClass('in active');
-        tab_ctrl.closest('li').addClass('active');
-        jQuery(tab_ctrl.attr('href')).addClass('in active');
+        ActiveScaffold.activate_tab(this);
       });
 
       jQuery(document).on('turbolinks:before-visit turbo:before-visit', function() {

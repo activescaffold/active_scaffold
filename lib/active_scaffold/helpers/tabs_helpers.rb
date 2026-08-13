@@ -6,7 +6,7 @@ module ActiveScaffold
     module TabsHelpers
       def active_scaffold_tabbed_by(column, record, scope, subsection_id, &)
         add_tab_url = params_for(action: 'render_field', tabbed_by: column.tabbed_by, id: record.to_param, column: column.label)
-        refresh_opts = {refresh_link: {text: 'Add tab', class: 'refresh-link add-tab'}}
+        refresh_opts = {field_selector: "##{subsection_id}_input", refresh_link: {text: 'Add tab', class: 'refresh-link add-tab'}}
         tab_options = send(override_helper_per_model(:active_scaffold_tab_options, record.class), column, record)
         used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record, tab_options)
         input_helper = override_helper_per_model(:active_scaffold_input_for_tabbed, record.class)
