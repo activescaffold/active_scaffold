@@ -8,8 +8,13 @@
 - Use nonce: true in active_scaffold_javascript_tag so rails app can setup CSP with nonce in script-src
 - Filtering by params support using range syntax (A..B) supports infinite ranges now, such as ..A or A..
 
-= master
-- Fix escaping URL in JS response, fixing auto paginate and response for actions with render_parent
+= 4.3.2
+- Fix adding tab in tabbed forms
+
+= 4.3.1
+- Support Ruby 4
+- Fix date picker options translated as strings, preserving boolean and integer values
+- Fix escaping URLs in JavaScript responses, fixing auto pagination and actions with render_parent
 
 = 4.3.0
 - Support translating enums (or options for :select form_ui on any column) nested in the pluralized name of the column, activerecord.attributes.model_name.pluralized_column.enum_value, defaults to old way activerecord.attributes.model_name.enum_value
