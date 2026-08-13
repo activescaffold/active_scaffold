@@ -5,7 +5,7 @@ namespace :mock_app do
   task :server do
     args = ARGV.drop_while { |a| a != '--' }.drop(1)
     Dir.chdir('test/mock_app') do
-      environment = { 'BUNDLE_GEMFILE' => File.expand_path('../../Gemfile', __dir__) }
+      environment = {'BUNDLE_GEMFILE' => File.expand_path('../../Gemfile', __dir__)}
       system(environment, 'rails', 'dartsass:build', exception: true)
       watcher = Process.spawn(environment, 'rails', 'dartsass:watch')
       _pid, status = Process.wait2(Process.spawn(environment, 'rails', 'server', *args))
