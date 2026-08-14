@@ -26,6 +26,8 @@ Rake::TestTask.new(:test) do |t|
   t.warning = false
 end
 
+Rake::Task[:test].enhance(['mock_app:assets'])
+
 desc 'Generate documentation for ActiveScaffold.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'

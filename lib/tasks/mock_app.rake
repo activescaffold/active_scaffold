@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 namespace :mock_app do
+  desc 'Build the mock app stylesheets'
+  task :assets do
+    environment = {
+      'BUNDLE_GEMFILE' => File.expand_path(ENV.fetch('BUNDLE_GEMFILE', 'Gemfile'))
+    }
+    Dir.chdir('test/mock_app') do
+      system(environment, 'rails', 'dartsass:build', exception: true)
+    end
+  end
+
   desc 'Start the mock_app server and Dart Sass watcher (default port 3000)'
   task :server do
     args = ARGV.drop_while { |a| a != '--' }.drop(1)
