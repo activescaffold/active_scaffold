@@ -158,6 +158,7 @@ GEM
     marcel (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.9)
     minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
@@ -178,6 +179,9 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.5)
+    nokogiri (1.19.3)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
     nokogiri (1.19.3-aarch64-linux-gnu)
       racc (~> 1.4)
     nokogiri (1.19.3-aarch64-linux-musl)
@@ -255,6 +259,9 @@ GEM
       rack (>= 1.4)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    sass-embedded (1.102.0)
+      google-protobuf (~> 4.31)
+      rake (>= 13)
     sass-embedded (1.102.0-aarch64-linux-gnu)
       google-protobuf (~> 4.31)
     sass-embedded (1.102.0-aarch64-linux-musl)
@@ -284,6 +291,8 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
+    sqlite3 (2.9.0)
+      mini_portile2 (~> 2.8.0)
     sqlite3 (2.9.0-aarch64-linux-gnu)
     sqlite3 (2.9.0-aarch64-linux-musl)
     sqlite3 (2.9.0-arm-linux-gnu)
@@ -314,6 +323,7 @@ PLATFORMS
   arm-linux-musl
   arm-linux-musleabihf
   arm64-darwin
+  ruby
   x86_64-darwin
   x86_64-linux-gnu
   x86_64-linux-musl
@@ -336,4 +346,4 @@ DEPENDENCIES
   sqlite3
 
 BUNDLED WITH
-   4.0.11
+  4.0.11
