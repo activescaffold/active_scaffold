@@ -3,7 +3,7 @@ class FileModel < ActiveScaffold::Tableless
   column :person_id, :integer
   self.primary_key = :name
 
-  belongs_to :person
+  belongs_to :person, optional: true
 
   def self.find_all(relation)
     relation.conditions&.each&.with_index do |condition, i|
