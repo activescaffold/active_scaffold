@@ -267,7 +267,8 @@ module ActiveScaffold
       elsif klass.authorized_for?(crud_type: :create)
         association = parent_column.association
         record = klass.new
-        if association.reverse_association&.belongs_to? && (association.collection? || current.nil?)
+        if association.reverse_association&.belongs_to? && association.singular? && current.nil?
+          # assign belongs_to on the new record, for has_one associations
           record.send(:"#{parent_column.association.reverse}=", parent_record)
         end
         record
