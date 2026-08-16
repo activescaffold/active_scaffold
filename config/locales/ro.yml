@@ -6,11 +6,11 @@ en:
     "=": "="
     ">": ">"
     ">=": ">="
-    _select_: "- select -"
-    _to_: " to "
-    add: 'Add'
-    add_existing: 'Add Existing'
-    add_existing_model: 'Add Existing %{model}'
+    _select_: "- alegeți -"
+    _to_: " către "
+    add: 'Adaugă'
+    add_existing: 'Adaugă obiect existent'
+    add_existing_model: 'Adaugă %{model} existent(ă)'
     add_model: 'Add %{model}'
     all_tokens: 'All keywords'
     any_token: 'Any keyword'
