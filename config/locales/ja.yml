@@ -20,7 +20,7 @@ ja:
     begins_with: 開始時間
     between: 範囲指定
     cancel: キャンセル
-    cant_destroy_record: "%{record}を削除できません"
+    cant_destroy_record: "%{record}を削除できません."
     changes: 差分
     check_all: Check all
     click_to_edit: クリックして編集
