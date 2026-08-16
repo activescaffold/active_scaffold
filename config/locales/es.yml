@@ -115,7 +115,7 @@ es:
     previous: Anterior
     print: Imprimir
     range: Rango
-    record_not_saved: Fallo guardando el registro debido a un error desconocido
+    record_not_saved: Fallo guardando el registro debido a un error desconocido.
     records_marked:
       one: 1 %{model} seleccionado
       many: '%{count} %{model} seleccionados'
