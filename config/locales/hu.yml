@@ -110,7 +110,7 @@ hu:
     previous: Előző
     print: Nyomtatás
     range: Range
-    record_not_saved: Failed to save record cause of an unknown error
+    record_not_saved: Failed to save record cause of an unknown error.
     records_marked:
       one: 1 marked %{model}
       other: "%{count} marked %{model}"
