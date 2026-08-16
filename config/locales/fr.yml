@@ -20,7 +20,7 @@ fr:
     begins_with: Commençant par
     between: Entre
     cancel: Annuler
-    cant_destroy_record: "%{record} ne peut être supprimé"
+    cant_destroy_record: "%{record} ne peut être supprimé."
     changes: Changement
     check_all: Check all
     click_to_edit: Cliquer pour éditer
