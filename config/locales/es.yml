@@ -20,7 +20,7 @@ es:
     begins_with: Empieza con
     between: Entre
     cancel: Cancelar
-    cant_destroy_record: No se pudo borrar %{record}
+    cant_destroy_record: No se pudo borrar %{record}.
     changes: Cambios
     check_all: Seleccionar todo
     click_to_edit: Pulsa para editar
@@ -30,10 +30,10 @@ es:
     config_list_model: Configurar columnas de %{model}
     contains: Contiene
     create: Crear
-    create_another: Crear Otro %{model}
+    create_another: Crear otro %{model}
     create_apply: Crear y continuar
     create_model: Crear %{model}
-    create_new: Crear Nuevo
+    create_new: Crear nuevo
     created_model: "%{model} creado"
     customize: Personalizar
     date_picker_options:
@@ -49,7 +49,7 @@ es:
     days: Días
     delete: Borrar
     deleted_model: "%{model} borrado"
-    deleted_records: Ver Eliminados
+    deleted_records: Ver eliminados
     delimiter: Delimitador
     doesnt_begin_with: No empieza con
     doesnt_contain: No contiene
@@ -82,9 +82,9 @@ es:
       boolean: "%{column} = %{value}"
     inplace_edit_handle: "--"
     internal_error: Petición fallida
-    live_search: Buscar en Vivo
+    live_search: Buscar en vivo
     loading: Cargando…
-    logical_search: Búsqueda Logica
+    logical_search: Búsqueda logica
     mark_all_records: Seleccionar todos
     maximum: Máximo
     minimum: Mínimo
@@ -97,14 +97,14 @@ es:
     next_week: Próxima semana
     next_year: Próximo año
     no_authorization_for_action: No dispone de autorización para la acción 
-      %{action}
+      %{action}.
     no_color: Sin color
     no_entries: Sin entradas
     no_group: No agrupar
-    no_options: sin opciones
-    not_null: No Nulo
+    no_options: Sin opciones
+    not_null: No nulo
     'null': Nulo
-    omit_header: Omitir Cabecera
+    omit_header: Omitir cabecera
     optional_attributes: Más opciones
     options: Opciones
     past: Pasado
@@ -122,10 +122,10 @@ es:
       other: '%{count} %{model} seleccionados'
     refresh: Recargar
     remove: Eliminar
-    remove_file: Eliminar o Reemplazar archivo
-    remove_files: Eliminar o Añadir archivos
+    remove_file: Eliminar o reemplazar archivo
+    remove_files: Eliminar o añadir archivos
     replace_existing: Reemplazar existente
-    replace_with_new: Reemplazar con Nuevo
+    replace_with_new: Reemplazar con nuevo
     reset: Restaurar
     revisions_for_model: Revisiones de %{model}
     saving: Guardando…
