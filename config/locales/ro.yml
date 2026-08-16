@@ -20,7 +20,7 @@ en:
     begins_with: 'Începe cu'
     between: 'Între'
     cancel: 'Anulează'
-    cant_destroy_record: "%{record} nu poate fi șters/ștearsă"
+    cant_destroy_record: "%{record} nu poate fi șters/ștearsă."
     changes: 'Modificări'
     check_all: 'Marcați toate'
     click_to_edit: 'Clic pentru a modifica'
@@ -57,7 +57,7 @@ en:
     download: 'Descarcă'
     edit: 'Modifică'
     ends_with: 'Se termină în'
-    error_500: "(cod 500, Eroare internă)"
+    error_500: "(cod 500, eroare internă)"
     errors:
       template:
         body: 'Au fost probleme cu următoarele câmpuri:'
@@ -93,7 +93,7 @@ en:
     next_month: 'Luna următoare'
     next_week: 'Săptămâna următoare'
     next_year: 'Anul următor'
-    no_authorization_for_action: 'Nu aveți dreptul să %{action}'
+    no_authorization_for_action: 'Nu aveți dreptul să %{action}.'
     no_color: 'Nicio culoare'
     no_entries: 'Nicio înregistrare'
     no_group: 'Niciun grup'
@@ -101,7 +101,7 @@ en:
     not_null: 'Completat'
     'null': 'Nul'
     omit_header: 'Omite capul de tabel'
-    optional_attributes: 'Câmputi opționale'
+    optional_attributes: 'Opțiuni suplimentare'
     options: 'Opțiuni'
     past: 'Trecut'
     pdf: 'PDF'
@@ -119,7 +119,7 @@ en:
     remove: 'Emilină'
     remove_file: 'Elimină sau înlocuiește fișierul'
     remove_files: 'Elimină sau adaugă fișiere'
-    replace_existing: 'Înlocuiește cu un obiect existent'
+    replace_existing: 'Înlocuiește obiectul existent'
     replace_with_new: 'Înlocuiește cu un obiect nou'
     reset: 'Resetează'
     revisions_for_model: 'Versiuni anterioare pentru %{model}'
