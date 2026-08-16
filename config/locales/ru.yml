@@ -20,7 +20,7 @@ ru:
     begins_with: Начинается с
     between: В интервале
     cancel: Отмена
-    cant_destroy_record: Запись %{record} не может быть удалена
+    cant_destroy_record: Запись %{record} не может быть удалена.
     changes: Изменения
     check_all: Выбрать все
     click_to_edit: Нажмите для редактирования
@@ -96,7 +96,7 @@ ru:
     next_month: В следующем месяце
     next_week: На следующей неделе
     next_year: В следующем году
-    no_authorization_for_action: Нет прав на выполнение действия "%{action}"
+    no_authorization_for_action: Нет прав на выполнение действия "%{action}".
     no_color: Без цвета
     no_entries: Нет записей
     no_group: Без группы
