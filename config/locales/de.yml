@@ -20,7 +20,7 @@ de:
     begins_with: Beginnt
     between: Zwischen
     cancel: Abbrechen
-    cant_destroy_record: "%{record} kann nicht gelöscht werden"
+    cant_destroy_record: "%{record} kann nicht gelöscht werden."
     changes: Änderungen
     check_all: Check all
     click_to_edit: Zum Editieren anklicken
