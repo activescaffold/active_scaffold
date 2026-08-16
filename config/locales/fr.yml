@@ -112,7 +112,7 @@ fr:
     print: Imprimer
     range: Intervale
     record_not_saved: Impossible d'enregistrer l'enregistrement à cause d'une 
-      erreur inconnue
+      erreur inconnue.
     records_marked:
       one: 1 %{model} marqué
       many: '%{count} %{model} marqués'
