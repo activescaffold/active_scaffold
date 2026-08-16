@@ -20,7 +20,7 @@ hu:
     begins_with: Begins with
     between: Között
     cancel: Mégse
-    cant_destroy_record: 'nem törölhető: %{record}'
+    cant_destroy_record: 'nem törölhető: %{record}.'
     changes: Changes
     check_all: Check all
     click_to_edit: Kattints a szerkesztéshez
