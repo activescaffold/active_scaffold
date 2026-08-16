@@ -111,7 +111,7 @@ en:
     previous: 'Anterior'
     print: 'Listează'
     range: 'Interval'
-    record_not_saved: 'Înregistrarea nu s-a putut salva din cauza unei erori necunoscute'
+    record_not_saved: 'Înregistrarea nu s-a putut salva din cauza unei erori necunoscute.'
     records_marked:
       one: un/o %{model} marcat(ă)
       other: '%{count} %{model} marcați(te)'
