@@ -20,7 +20,7 @@ ta:
     begins_with: 'உடன் தொடங்குகிறது'
     between: 'இடையில்'
     cancel: 'ரத்துசெய்'
-    cant_destroy_record: "%{record} அழிக்க முடியாது"
+    cant_destroy_record: "%{record} அழிக்க முடியாது."
     changes: 'மாற்றங்கள்'
     check_all: 'அனைத்தையும் சரிபார்க்கவும்'
     click_to_edit: 'திருத்த சொடுக்கு செய்யவும்'
@@ -38,8 +38,8 @@ ta:
     customize: 'தனிப்பயனாக்கு'
     date_picker_options:
       firstDay: '0'
-      isRTL: 'பொய்'
-      showMonthAfterYear: 'பொய்'
+      isRTL: 'false'
+      showMonthAfterYear: 'false'
       weekHeader: 'Wk'
     datetime_picker_options:
       closeText: 'மூடு'
@@ -92,7 +92,7 @@ ta:
     next_month: 'அடுத்த மாதம்'
     next_week: 'அடுத்த வாரம்'
     next_year: 'அடுத்த வருடம்'
-    no_authorization_for_action: 'செயலுக்கு ஏற்பு இல்லை %{action}'
+    no_authorization_for_action: 'செயலுக்கு ஏற்பு இல்லை %{action}.'
     no_color: 'நிறம் இல்லை'
     no_entries: 'உள்ளீடுகள் இல்லை'
     no_group: 'குழு இல்லை'
