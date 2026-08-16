@@ -9,8 +9,8 @@ en:
     _select_: "- select -"
     _to_: " to "
     add: Add
-    add_existing: Add Existing
-    add_existing_model: Add Existing %{model}
+    add_existing: Add existing
+    add_existing_model: Add existing %{model}
     add_model: Add %{model}
     all_tokens: All keywords
     any_token: Any keyword
@@ -20,20 +20,20 @@ en:
     begins_with: Begins with
     between: Between
     cancel: Cancel
-    cant_destroy_record: "%{record} can't be destroyed"
+    cant_destroy_record: "%{record} can't be destroyed."
     changes: Changes
     check_all: Check all
     click_to_edit: Click to edit
     click_to_reset: Click to reset
     close: Close
     config_list: Configure
-    config_list_model: Configure Columns for %{model}
+    config_list_model: Configure columns for %{model}
     contains: Contains
     create: Create
-    create_another: Create Another %{model}
+    create_another: Create another %{model}
     create_apply: Create and continue
     create_model: Create %{model}
-    create_new: Create New
+    create_new: Create new
     created_model: Created %{model}
     customize: Customize
     date_picker_options:
@@ -49,7 +49,7 @@ en:
     days: Days
     delete: Delete
     deleted_model: Deleted %{model}
-    deleted_records: List Deleted Records
+    deleted_records: List deleted records
     delimiter: Delimiter
     doesnt_begin_with: Doesn't begin with
     doesnt_contain: Doesn't contain
@@ -57,7 +57,7 @@ en:
     download: Download
     edit: Edit
     ends_with: Ends with
-    error_500: "(code 500, Internal Error)"
+    error_500: "(code 500, internal error)"
     errors:
       template:
         body: 'There were problems with the following fields:'
@@ -77,10 +77,10 @@ en:
       association: "%{column} = %{value}"
       boolean: "%{column} = %{value}"
     inplace_edit_handle: "--"
-    internal_error: Request Failed
-    live_search: Live Search
+    internal_error: Request failed
+    live_search: Live search
     loading: Loading…
-    logical_search: Logical Search
+    logical_search: Logical search
     mark_all_records: Mark all
     maximum: Maximum
     minimum: Minimum
@@ -89,23 +89,23 @@ en:
     nested_for_model: "%{nested_model} for %{parent_model}"
     nested_of_model: "%{nested_model} of %{parent_model}"
     next: Next
-    next_month: Next Month
-    next_week: Next Week
-    next_year: Next Year
-    no_authorization_for_action: No Authorization for action %{action}
+    next_month: Next month
+    next_week: Next week
+    next_year: Next year
+    no_authorization_for_action: No authorization for action %{action}.
     no_color: No color
-    no_entries: No Entries
+    no_entries: No entries
     no_group: No group
-    no_options: no options
-    not_null: Not Null
+    no_options: No options
+    not_null: Not null
     'null': 'Null'
-    omit_header: Omit Header
-    optional_attributes: Further Options
+    omit_header: Omit header
+    optional_attributes: Further options
     options: Options
     past: Past
     pdf: PDF
-    prev_month: Last Month
-    prev_week: Last Week
+    prev_month: Last month
+    prev_week: Last week
     prev_year: Last Year
     previous: Previous
     print: Print
@@ -116,23 +116,23 @@ en:
       other: "%{count} marked %{model}"
     refresh: Refresh
     remove: Remove
-    remove_file: Remove or Replace file
-    remove_files: Remove or Add files
-    replace_existing: Replace Existing
-    replace_with_new: Replace With New
+    remove_file: Remove or replace file
+    remove_files: Remove or add files
+    replace_existing: Replace existing
+    replace_with_new: Replace with new
     reset: Reset
     revisions_for_model: Revisions for %{model}
     saving: Saving…
     search: Search
-    search_terms: Search Terms
+    search_terms: Search terms
     seconds: Seconds
     show: Show
     show_block: "(Show)"
     show_model: Show %{model}
     sum: Sum
-    this_month: This Month
-    this_week: This Week
-    this_year: This Year
+    this_month: This month
+    this_week: This week
+    this_year: This year
     today: Today
     tomorrow: Tomorrow
     'true': 'True'
