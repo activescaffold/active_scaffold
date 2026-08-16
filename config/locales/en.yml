@@ -63,7 +63,7 @@ en:
         body: 'There were problems with the following fields:'
         header:
           one: 1 error prohibited this %{model} from being saved.
-          other: "%{count} errors prohibited this %{model} from being saved"
+          other: '%{count} errors prohibited this %{model} from being saved.'
     export: Export
     'false': 'False'
     filtered: "(Filtered)"
@@ -110,7 +110,7 @@ en:
     previous: Previous
     print: Print
     range: Range
-    record_not_saved: Failed to save record cause of an unknown error
+    record_not_saved: Failed to save record cause of an unknown error.
     records_marked:
       one: 1 marked %{model}
       other: "%{count} marked %{model}"
