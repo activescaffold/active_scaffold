@@ -37,7 +37,7 @@ module Config
       assert_not link.popup?
       assert_not link.confirm?
       assert_equal 'new', link.action
-      assert_equal 'Create New', link.label
+      assert_equal 'Create new', link.label
       assert link.inline?
       blank = {}
       assert_equal blank, link.html_options

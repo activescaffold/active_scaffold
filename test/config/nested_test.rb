@@ -16,7 +16,7 @@ module Config
 
     def test_default_options
       assert @config.nested.shallow_delete
-      assert_equal 'Add Existing Model stub', @config.nested.label
+      assert_equal 'Add existing Model stub', @config.nested.label
     end
 
     def test_label

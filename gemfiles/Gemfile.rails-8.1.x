@@ -15,8 +15,6 @@ group :development, :test do
 end
 
 group :test do
-  # Makes tests easy on the fingers and the eyes
-  gem 'shoulda'
   # Mocking and stubbing library with JMock/SchMock syntax, which allows mocking and stubbing of methods on real (non-mock) classes
   gem 'mocha'
   # Ruby on Rails is a full-stack web framework optimized for programmer happiness and sustainable productivity.
