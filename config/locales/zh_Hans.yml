@@ -64,7 +64,7 @@ zh_Hans:
         header:
           other: '%{count} 个错误阻止了该 %{model} 的保存。'
     export: 导出
-    'false': 'False'
+    'false': '假'
     filtered: (Filtered)
     found: 发现了
     future: Future
