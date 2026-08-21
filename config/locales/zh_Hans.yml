@@ -20,7 +20,7 @@ zh_Hans:
     begins_with: 以……开始
     between: 介于……之间
     cancel: 取消
-    cant_destroy_record: '%{record}不能被删除'
+    cant_destroy_record: '%{record}不能被删除。'
     changes: 变更记录
     check_all: 全选
     click_to_edit: 点击以编辑
@@ -30,7 +30,7 @@ zh_Hans:
     config_list_model: 为%{model}配置列
     contains: 包含
     create: 创建
-    create_another: 新建 %{model}
+    create_another: 新建另一 %{model}
     create_apply: 创建并继续
     create_model: 创建 %{model}
     create_new: 新建
@@ -62,15 +62,15 @@ zh_Hans:
       template:
         body: 以下字段存在问题：
         header:
-          other: '%{count} 个错误阻止了这个 %{model} 被保存'
-    export: Export
+          other: '%{count} 个错误阻止了该 %{model} 的保存。'
+    export: 导出
     'false': 'False'
     filtered: (Filtered)
     found: 发现了
     future: Future
     group_by: Group by
     grouped_by: Grouped by %{column}
-    hide: (Hide)
+    hide: (隐藏)
     hours: Hours
     human_conditions:
       association: '%{column} = %{value}'
