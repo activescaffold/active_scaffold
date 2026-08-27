@@ -81,9 +81,9 @@ zh_Hans:
     loading: Loading…
     logical_search: Logical Search
     mark_all_records: Mark all
-    maximum: Maximum
-    minimum: Minimum
-    minutes: Minutes
+    maximum: 最大值
+    minimum: 最小值
+    minutes: 分钟
     months: 月
     nested_for_model: '%{nested_model} for %{parent_model}'
     nested_of_model: '%{nested_model} of %{parent_model}'
@@ -92,8 +92,8 @@ zh_Hans:
     next_week: Next Week
     next_year: Next Year
     no_authorization_for_action: No Authorization for action %{action}
-    no_color: No color
-    no_entries: No Entries
+    no_color: 无颜色
+    no_entries: 无条目
     no_group: No group
     no_options: no options
     'null': 'Null'
@@ -104,8 +104,8 @@ zh_Hans:
     pdf: PDF
     prev_month: Last Month
     prev_week: Last Week
-    prev_year: Last Year
-    previous: Previous
+    prev_year: 去年
+    previous: 上一个
     print: Print
     range: Range
     record_not_saved: Failed to save record cause of an unknown error
