@@ -26,9 +26,15 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
     def initialize(name, default, type, null = true, *, **) # rubocop:disable Style/OptionalBooleanParameter,Metrics/ParameterLists
       connection = ActiveRecord::Base.connection
       sql_type = type.is_a?(Symbol) ? connection.type_to_sql(type) : type.to_s
-      metadata = connection.send(:fetch_type_metadata, sql_type)
+      cast_type = connection.send(:lookup_cast_type, sql_type)
+      metadata = ActiveRecord::ConnectionAdapters::SqlTypeMetadata.new(
+        sql_type: sql_type,
+        type: cast_type.type,
+        limit: cast_type.limit,
+        precision: cast_type.precision,
+        scale: cast_type.scale
+      )
       if ActiveRecord.version >= Gem::Version.new('8.1')
-        cast_type = connection.send(:lookup_cast_type, sql_type)
         super(name, cast_type, default, metadata, null, *, **)
       else
         super(name, default, metadata, null, *, **)

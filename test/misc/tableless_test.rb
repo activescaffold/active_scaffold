@@ -8,6 +8,12 @@ class TablelessTest < ActiveSupport::TestCase
     assert_equal :integer, FileModel.columns_hash['person_id'].type
   end
 
+  def test_column_does_not_use_adapter_fetch_type_metadata
+    ActiveRecord::Base.connection.expects(:fetch_type_metadata).never
+
+    assert_equal :string, ActiveScaffold::Tableless::Column.new('title', nil, :string).type
+  end
+
   def test_find_all
     assert FileModel.all.to_a.empty?
   end
