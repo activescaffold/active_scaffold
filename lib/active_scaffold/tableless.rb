@@ -24,16 +24,13 @@ class ActiveScaffold::Tableless < ActiveRecord::Base
 
   class Column < ActiveRecord::ConnectionAdapters::Column
     def initialize(name, default, type, null = true, *, **) # rubocop:disable Style/OptionalBooleanParameter,Metrics/ParameterLists
-      if Rails.version >= '8.1'
-        if type.is_a?(Symbol)
-          cast_type = ActiveRecord::Type.lookup(type)
-        else
-          metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, type
-          cast_type = ActiveRecord::Type.lookup(metadata.type)
-        end
+      connection = ActiveRecord::Base.connection
+      sql_type = type.is_a?(Symbol) ? connection.type_to_sql(type) : type.to_s
+      metadata = connection.send(:fetch_type_metadata, sql_type)
+      if ActiveRecord.version >= Gem::Version.new('8.1')
+        cast_type = connection.send(:lookup_cast_type, sql_type)
         super(name, cast_type, default, metadata, null, *, **)
       else
-        metadata = ActiveRecord::Base.connection.send :fetch_type_metadata, type.to_s
         super(name, default, metadata, null, *, **)
       end
     end

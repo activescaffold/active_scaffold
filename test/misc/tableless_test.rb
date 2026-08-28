@@ -3,6 +3,11 @@
 require 'test_helper'
 
 class TablelessTest < ActiveSupport::TestCase
+  def test_column_types
+    assert_equal :string, FileModel.columns_hash['name'].type
+    assert_equal :integer, FileModel.columns_hash['person_id'].type
+  end
+
   def test_find_all
     assert FileModel.all.to_a.empty?
   end
