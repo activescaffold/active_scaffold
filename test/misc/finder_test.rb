@@ -52,13 +52,37 @@ class FinderTest < ActiveSupport::TestCase
     @klass.expects(:custom_finder_options).returns(group: :a)
     relation_class.any_instance.expects(:count).returns('foo' => 5, 'bar' => 4)
     relation_class.any_instance.expects(:limit).with(20).returns(ModelStub.where(nil))
-    relation_class.any_instance.expects(:offset).with(0).returns(ModelStub.where(nil))
-    page = @klass.send :find_page, per_page: 20, pagination: true
+    relation_class.any_instance.expects(:offset).with(20).returns(ModelStub.where(nil))
+    page = @klass.send :find_page, per_page: 20, page: 2, pagination: true
     page.items
 
     assert_kind_of Integer, page.pager.count
     assert_equal 2, page.pager.count
     assert_equal 1, page.pager.number_of_pages
+  end
+
+  def test_first_page_does_not_count_when_it_is_not_full
+    records = [ModelStub.new(a: 'a'), ModelStub.new(a: 'b')]
+    @klass.expects(:load_page_for_delayed_count).with(kind_of(relation_class), 20).returns(records)
+    relation_class.any_instance.expects(:count).never
+
+    page = @klass.send :find_page, per_page: 20, pagination: true
+
+    assert_equal records, page.items
+    assert_equal 2, page.pager.count
+    assert_equal 1, page.pager.number_of_pages
+  end
+
+  def test_first_page_counts_when_it_is_full
+    records = Array.new(20) { ModelStub.new }
+    @klass.expects(:load_page_for_delayed_count).with(kind_of(relation_class), 20).returns(records)
+    relation_class.any_instance.expects(:count).returns(57)
+
+    page = @klass.send :find_page, per_page: 20, pagination: true
+
+    assert_equal records, page.items
+    assert_equal 57, page.pager.count
+    assert_equal 3, page.pager.number_of_pages
   end
 
   def test_disabled_pagination

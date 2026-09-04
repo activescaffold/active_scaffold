@@ -671,13 +671,20 @@ module ActiveScaffold
       find_options = finder_options(options)
       query = filtered_query
       query = query.where(nil) if active_scaffold_config.active_record? # where(nil) is needed because we need a relation
+      count_query = query
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
-      if options[:pagination] && options[:pagination] != :infinite
+      count_after_first_page = count_after_loading_first_page?(options)
+      if options[:pagination] && options[:pagination] != :infinite && !count_after_first_page
         count = count_items(query, find_options, options[:count_includes])
       end
 
       query = append_to_query(query, find_options)
+      first_page_items = load_page_for_delayed_count(query, options[:per_page]) if count_after_first_page
+      if first_page_items
+        count = first_page_items.size
+        count = count_items(count_query, find_options, options[:count_includes]) if count == options[:per_page]
+      end
       # we build the paginator differently for method- and sql-based sorting
       pager = if options[:sorting]&.sorts_by_method?
                 ::Paginator.new(count, options[:per_page]) do |offset, per_page|
@@ -688,12 +695,27 @@ module ActiveScaffold
                 end
               else
                 ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-                  query = append_to_query(query, offset: offset, limit: per_page) if options[:pagination]
-                  calculate_last_modified(query)
-                  query
+                  if first_page_items && offset.zero?
+                    first_page_items
+                  else
+                    page_query = options[:pagination] ? append_to_query(query, offset: offset, limit: per_page) : query
+                    calculate_last_modified(page_query)
+                    page_query
+                  end
                 end
               end
       pager.page(options[:page])
+    end
+
+    def count_after_loading_first_page?(options)
+      active_scaffold_config.active_record? && options[:pagination] && options[:pagination] != :infinite && options[:page].to_i == 1 &&
+        !options[:sorting]&.sorts_by_method?
+    end
+
+    def load_page_for_delayed_count(query, per_page)
+      page_query = append_to_query(query, offset: 0, limit: per_page)
+      calculate_last_modified(page_query)
+      page_query.to_a
     end
 
     def calculate_last_modified(query)

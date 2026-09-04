@@ -7,6 +7,7 @@
 - Column search_sql accepts a symbol and uses symbol by default, delay quoting until query is generated, strings are still supported for cross-table columns or functions
 - Use nonce: true in active_scaffold_javascript_tag so rails app can setup CSP with nonce in script-src
 - Filtering by params support using range syntax (A..B) supports infinite ranges now, such as ..A or A..
+- Speed up listing when all records fit in the first page and it's not full, count query can be avoided.
 
 = 4.3.2
 - Fix adding tab in tabbed forms
