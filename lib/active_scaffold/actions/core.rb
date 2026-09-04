@@ -472,6 +472,10 @@ module ActiveScaffold::Actions
     end
 
     def get_row(crud_type_or_security_options = :read)
+      get_record(crud_type_or_security_options)
+    end
+
+    def get_record(crud_type_or_security_options = :read)
       klass = filtered_query
       klass = klass.preload(active_scaffold_preload) unless active_scaffold_config.mongoid?
       @record = find_if_allowed(params[:id], crud_type_or_security_options, klass)

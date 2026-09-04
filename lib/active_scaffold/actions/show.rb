@@ -48,7 +48,7 @@ module ActiveScaffold::Actions
     # May be overridden to customize show routine
     def do_show
       set_includes_for_columns(:show) if active_scaffold_config.actions.include? :list
-      get_row
+      get_record
     end
 
     # The default security delegates to ActiveRecordPermissions.
