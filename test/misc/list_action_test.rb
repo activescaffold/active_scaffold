@@ -75,9 +75,7 @@ class ListActionTest < ActiveSupport::TestCase
         def helper_method(...); end
       end
 
-      def active_scaffold_config
-        self.class.active_scaffold_config
-      end
+      delegate :active_scaffold_config, to: :class
 
       def get_record(_crud_type_or_security_options = :read); end
     end
