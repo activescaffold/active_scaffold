@@ -301,6 +301,7 @@ module ActiveScaffold
       def active_scaffold_search_timestamp(column, options, ui_options: column.options)
         active_scaffold_search_datetime(column, options, ui_options: ui_options, field_ui: :datetime)
       end
+      alias active_scaffold_search_timestamptz active_scaffold_search_timestamp
 
       def active_scaffold_search_time(column, options, ui_options: column.options)
         active_scaffold_search_datetime(column, options, ui_options: ui_options, field_ui: :time)

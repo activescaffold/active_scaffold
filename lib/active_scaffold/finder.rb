@@ -181,7 +181,7 @@ module ActiveScaffold
           else
             condition_for_single_value(column, value, like_pattern)
           end
-        when :date, :time, :datetime, :timestamp
+        when :date, :time, :datetime, :timestamp, :timestamptz
           condition_for_datetime(column, value)
         when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state, :chosen, :multi_chosen
           if value.is_a?(Hash)

@@ -72,6 +72,7 @@ module ActiveScaffold
       alias active_scaffold_human_condition_time active_scaffold_human_condition_datetime
       alias active_scaffold_human_condition_date active_scaffold_human_condition_datetime
       alias active_scaffold_human_condition_timestamp active_scaffold_human_condition_datetime
+      alias active_scaffold_human_condition_timestamptz active_scaffold_human_condition_datetime
 
       def active_scaffold_human_condition_datetime_range_format(range_type, range)
         case range
