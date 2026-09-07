@@ -386,7 +386,7 @@ module ActiveScaffold::Actions
           next if active_scaffold_constraints[key]
           next if nested? && nested.param_name == key
 
-          value = condition_value_from_param(value, column)
+          value = condition_value_from_param(value, column, active_scaffold_config.model)
           if distinct
             conditions << distinct_condition(key, value)
           else
@@ -409,29 +409,29 @@ module ActiveScaffold::Actions
       end
     end
 
-    def condition_value_from_param(value, column)
+    def condition_value_from_param(value, column, model)
       range = range_from_param(value, column)
       value = range.captures if range
       not_string = %i[string text].exclude?(column.type)
       value =
         if value.is_a?(Array)
-          value.map { |item| conditional_cast_for_column(item, column, not_string) }
+          value.map { |item| conditional_cast_for_column(item, column, not_string, model) }
         elsif value == '' && (not_string || column.null)
-          ActiveScaffold::Core.column_type_cast(column.default, column)
+          ActiveScaffold::Core.column_type_cast(column.default, column, model)
         else
-          ActiveScaffold::Core.column_type_cast(value, column)
+          ActiveScaffold::Core.column_type_cast(value, column, model)
         end
       range ? Range.new(*value) : value
     end
 
-    def conditional_cast_for_column(value, column, not_string)
+    def conditional_cast_for_column(value, column, not_string, model)
       return if value == '' && not_string
 
-      ActiveScaffold::Core.column_type_cast(value, column)
+      ActiveScaffold::Core.column_type_cast(value, column, model)
     end
 
     def range_from_param(value, column)
-      supporting_range = %i[date datetime integer decimal float bigint]
+      supporting_range = %i[date datetime timestamp timestamptz integer decimal float bigint]
       return unless supporting_range.include?(column.type) && value.is_a?(String) && value.scan('..').size == 1
 
       value.match(/\A(.*)\.\.(.*)\z/)

@@ -40,7 +40,7 @@ module ActiveScaffold
               if column.text?
                 like_pattern.sub('?', column.active_record? ? column.active_record_class.sanitize_sql_like(value) : value)
               else
-                ActiveScaffold::Core.column_type_cast(value, column.column)
+                ActiveScaffold::Core.column_type_cast(value, column.column, column.model)
               end
             [column.name, casted_value]
           end
@@ -171,7 +171,7 @@ module ActiveScaffold
           if value == 'null'
             condition_for_null_type(column, value)
           else
-            ['%<search_sql>s = ?', column.column ? ActiveScaffold::Core.column_type_cast(value, column.column) : value]
+            ['%<search_sql>s = ?', column.column ? ActiveScaffold::Core.column_type_cast(value, column.column, column.model) : value]
           end
         when :integer, :decimal, :float
           condition_for_numeric(column, value)
@@ -214,7 +214,7 @@ module ActiveScaffold
           value = column.active_record_class.sanitize_sql_like(value) if column.active_record?
           ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
         else
-          ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column)]
+          ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column, column.model)]
         end
       end
 

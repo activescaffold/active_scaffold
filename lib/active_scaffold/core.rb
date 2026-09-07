@@ -260,11 +260,11 @@ module ActiveScaffold
       raise ActiveScaffold::ControllerNotFound, "Could not find #{error_message.join(' or ')}", caller
     end
 
-    def self.column_type_cast(value, column)
+    def self.column_type_cast(value, column, model)
       if defined?(ActiveRecord) && column.is_a?(ActiveRecord::ConnectionAdapters::Column)
-        active_record_column_type_cast(value, column)
+        active_record_column_type_cast(value, column, model)
       elsif defined?(ActiveModel) && column.is_a?(ActiveModel::Attribute)
-        active_record_column_type_cast(value, column.type)
+        active_record_column_type_cast(value, column.type, model)
       elsif defined?(Mongoid) && column.is_a?(Mongoid::Fields::Standard)
         mongoid_column_type_cast(value, column)
       else
@@ -278,10 +278,13 @@ module ActiveScaffold
       column.type.evolve value
     end
 
-    def self.active_record_column_type_cast(value, column_or_type)
-      return Time.zone.at(value.to_i) if %i[time datetime].include?(column_or_type.type) && value =~ /\A\d+\z/
+    def self.active_record_column_type_cast(value, column_or_type, model)
+      return Time.zone.at(value.to_i) if %i[time datetime timestamp timestamptz].include?(column_or_type.type) && value =~ /\A\d+\z/
 
-      cast_type = column_or_type.is_a?(ActiveRecord::ConnectionAdapters::Column) ? ActiveRecord::Type.lookup(column_or_type.type) : column_or_type
+      cast_type = column_or_type
+      if cast_type.is_a?(ActiveRecord::ConnectionAdapters::Column)
+        cast_type = model.type_for_attribute(column_or_type.name)
+      end
       cast_type ? cast_type.cast(value) : value
     end
   end
