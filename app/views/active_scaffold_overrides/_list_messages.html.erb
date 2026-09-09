@@ -14,10 +14,11 @@
           <% end -%>
         <% end %>
       <% end %>
+      <% applied_filters = (@filter_states || {}).values.filter_map { |filter| filter[:option] if filter[:status] == :applied && !filter[:default] } %>
       <%= as_element :applied_filters_message,
-                      style: ('display:none;' unless active_scaffold_config.list.filter_human_message && @applied_filters.present?) do %>
-        <div><%= render('human_filters', filters: @applied_filters) if active_scaffold_config.list.filter_human_message && @applied_filters.present? %></div>
-        <% if active_scaffold_config.list.show_filter_reset && @applied_filters.present? -%>
+                      style: ('display:none;' unless active_scaffold_config.list.filter_human_message && applied_filters.present?) do %>
+        <div><%= render('human_filters', filters: applied_filters) if active_scaffold_config.list.filter_human_message && applied_filters.present? %></div>
+        <% if active_scaffold_config.list.show_filter_reset && applied_filters.present? -%>
           <%= as_element :message_reset do %>
             <%= loading_indicator_tag(action: :record, id: nil) %>
             <%= render_action_link(active_scaffold_config.list.reset_filter_link) %>

@@ -74,6 +74,10 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    def security_method_set?
+      @security_method.present?
+    end
+
     protected
 
     # called during clone or dup. makes the clone/dup deeper.

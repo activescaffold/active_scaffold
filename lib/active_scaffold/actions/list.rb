@@ -281,22 +281,42 @@ module ActiveScaffold::Actions
       active_scaffold_config.list.refresh_with_header = true
 
       active_scaffold_config.list.filters.inject(query) do |q, filter|
-        next q unless filter.security_method.nil? || send(filter.security_method)
-
         default_option = filter[filter.default_option]
-        apply_filter q, params[filter.name] ? filter[params[filter.name]] : default_option, default_option
+        filter_option = params[filter.name] ? filter[params[filter.name]] : default_option
+        unless filter_allowed?(filter)
+          track_filter filter_option, default_option, :disallowed if params.key?(filter.name)
+          next q
+        end
+
+        apply_filter q, filter_option, default_option
       end
     end
 
-    def apply_filter(query, filter_option, default_option)
-      return query if filter_option.nil? || (filter_option.security_method_set? && !send(filter_option.security_method))
+    def filter_allowed?(filter)
+      !filter.security_method_set? || send(filter.security_method)
+    end
 
-      @applied_filters ||= []
-      @applied_filters << filter_option unless filter_option == default_option
+    def apply_filter(query, filter_option, default_option)
+      if filter_option.nil? || !filter_allowed?(filter_option)
+        track_filter filter_option, default_option, filter_option ? :disallowed : :unknown
+        return query
+      end
+
+      track_filter filter_option, default_option, :applied
       case filter_option.conditions
       when Proc then instance_exec query, &filter_option.conditions
       else query.where(filter_option.conditions)
       end
+    end
+
+    def track_filter(filter_option, default_option, status)
+      @filter_states ||= {}
+      @filter_states[default_option.filter_name] = {
+        option: filter_option,
+        status: status,
+        default: filter_option == default_option,
+        requested: params.key?(default_option.filter_name)
+      }
     end
 
     def scoped_query
