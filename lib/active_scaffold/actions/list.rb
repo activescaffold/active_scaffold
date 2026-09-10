@@ -172,11 +172,13 @@ module ActiveScaffold::Actions
     end
 
     def count_query_for_column(column, records)
-      if count_on_association_class?(column)
-        count_query_on_association_class(column, records)
-      else
-        count_query_with_join(column, records)
-      end
+      query =
+        if count_on_association_class?(column)
+          count_query_on_association_class(column, records)
+        else
+          count_query_with_join(column, records)
+        end
+      query.unscope(:order)
     end
 
     def count_query_on_association_class(column, records)
