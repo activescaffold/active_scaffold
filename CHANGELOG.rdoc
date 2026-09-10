@@ -11,6 +11,7 @@
 - Better PostgreSQL support, accept condition from URL for timestamp and timestamptz columns from PostgreSQL, as done with datetime MySQL columns
 - Applied and ignored filters (due to be disallowed or unknown) are tracked with @filter_states
 - Fix cache column counts on PostgreSQL when the association has order
+- Fix list with ordering using sql functions and left joins in PostgreSQL
 
 = 4.3.2
 - Fix adding tab in tabbed forms

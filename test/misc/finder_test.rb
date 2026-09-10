@@ -48,6 +48,43 @@ class FinderTest < ActiveSupport::TestCase
     assert_equal collection.map(&:a).sort, @klass.send(:sort_collection_by_column, collection, column, 'asc').map(&:a)
   end
 
+  def test_finder_options_add_order_expressions_to_select_for_distinct_query
+    sorting = sorting_by_function
+    @klass.send(:active_scaffold_outer_joins) << :other_models
+    ModelStub.connection.stubs(:needs_order_expressions_in_select?).returns(true)
+
+    options = @klass.send(:finder_options, sorting: sorting)
+
+    assert_equal ['"model_stubs".*', 'LOWER(model_stubs.a)'], options[:select].map(&:to_s)
+    query = @klass.send(:append_to_query, ModelStub.where(nil), options)
+    assert_match(/SELECT DISTINCT "model_stubs"\.\*, LOWER\(model_stubs\.a\).*ORDER BY LOWER\(model_stubs\.a\) ASC/, query.to_sql)
+  end
+
+  def test_finder_options_preserve_select_when_adding_order_expressions
+    sorting = sorting_by_function
+    @klass.send(:active_scaffold_outer_joins) << :other_models
+    ModelStub.connection.stubs(:needs_order_expressions_in_select?).returns(true)
+
+    options = @klass.send(:finder_options, sorting: sorting, select: 'model_stubs.id')
+
+    assert_equal ['model_stubs.id', 'LOWER(model_stubs.a)'], options[:select].map(&:to_s)
+  end
+
+  def test_finder_options_do_not_add_order_expressions_when_adapter_does_not_need_them
+    sorting = sorting_by_function
+    @klass.send(:active_scaffold_outer_joins) << :other_models
+
+    options = @klass.send(:finder_options, sorting: sorting)
+
+    assert_nil options[:select]
+  end
+
+  def test_append_to_query_makes_left_join_query_distinct
+    query = @klass.send(:append_to_query, ModelStub.where(nil), left_joins: :other_models)
+
+    assert_predicate query, :distinct_value
+  end
+
   def test_count_with_group
     @klass.expects(:custom_finder_options).returns(group: :a)
     relation_class.any_instance.expects(:count).returns('foo' => 5, 'bar' => 4)
@@ -143,6 +180,14 @@ class FinderTest < ActiveSupport::TestCase
   end
 
   private
+
+  def sorting_by_function
+    column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
+    column.sort_by sql: Arel.sql('LOWER(model_stubs.a)')
+    sorting = ActiveScaffold::DataStructures::Sorting.new({a: column}, ModelStub)
+    sorting.add :a
+    sorting
+  end
 
   def relation_class
     @klass.active_scaffold_config.model.send(:relation).class

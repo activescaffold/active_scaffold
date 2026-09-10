@@ -644,7 +644,23 @@ module ActiveScaffold
       end
 
       finder_options.merge! custom_finder_options
+      add_order_expressions_to_select(finder_options, options[:sorting])
       finder_options
+    end
+
+    def add_order_expressions_to_select(finder_options, sorting)
+      return unless distinct_query?(finder_options) && active_scaffold_config.model.connection.needs_order_expressions_in_select?
+
+      order_expressions = order_select_expressions(sorting)
+      return if order_expressions.empty?
+
+      select_columns = Array.wrap(finder_options[:select])
+      select_columns = ["#{active_scaffold_config.model.quoted_table_name}.*"] if select_columns.empty?
+      finder_options[:select] = (select_columns + order_expressions).uniq
+    end
+
+    def order_select_expressions(sorting)
+      Array(sorting&.clause).flat_map { |order| order.is_a?(Hash) ? order.keys : [] }
     end
 
     def count_items(query, find_options = {}, count_includes = nil)
@@ -752,8 +768,11 @@ module ActiveScaffold
           rel.send(k, v)
         end
       end
-      relation.distinct_value = true if options[:left_outer_joins].present? || options[:left_joins].present?
-      relation
+      distinct_query?(options) ? relation.distinct : relation
+    end
+
+    def distinct_query?(options)
+      options[:left_outer_joins].present? || options[:left_joins].present?
     end
 
     def joins_for_finder
