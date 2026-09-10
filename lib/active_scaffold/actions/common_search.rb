@@ -35,20 +35,7 @@ module ActiveScaffold::Actions
       end
 
       def set_outer_joins_for_search(columns) # rubocop:disable Naming/AccessorMethodName
-        references = []
-        outer_joins = []
-        columns.each do |column|
-          next if column.search_joins.blank?
-
-          if column.includes.present? && list_columns.include?(column)
-            references << (column.search_joins & column.includes)
-            outer_joins << (column.search_joins - column.includes)
-          else
-            outer_joins << column.search_joins
-          end
-        end
-        active_scaffold_references.concat references.flatten.uniq.compact
-        active_scaffold_outer_joins.concat outer_joins.flatten.uniq.compact
+        active_scaffold_outer_joins.concat columns.flat_map(&:search_joins).uniq
       end
 
       def store_search_params_into_session
