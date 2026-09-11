@@ -110,6 +110,9 @@ module ActiveScaffold::DataStructures
 
         # define the fields to use with logical search
         attr_accessor :logical_search
+
+        # SQL operator used for text searches. Defaults according to the adapter when nil.
+        attr_accessor :like_operator
       end
 
       def inplace_edit=(value)
@@ -553,6 +556,9 @@ module ActiveScaffold::DataStructures
       @select_columns = default_select_columns
 
       @text = @column.nil? || [:string, :text, :citext, String].include?(column_type)
+      if active_record? && @column&.collation.present? && active_record_class.connection.adapter_name.in?(%w[PostgreSQL PostGIS])
+        @like_operator = 'LIKE'
+      end
       @number = false
       setup_defaults_for_column if @column
       @allow_add_existing = true

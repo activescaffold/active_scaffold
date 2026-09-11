@@ -31,6 +31,31 @@ class FinderTest < ActiveSupport::TestCase
     assert_nil ClassWithFinder.conditions_for_columns('foo', [])
   end
 
+  def test_create_conditions_for_columns_uses_like_for_collated_postgresql_column
+    columns_hash = ModelStub.columns_hash.merge('b' => ColumnMock.new('b', '', 'varchar(255)', true, collation: 'case_insensitive'))
+    ModelStub.stubs(columns_hash: columns_hash)
+    ModelStub.connection.stubs(adapter_name: 'PostgreSQL')
+    columns = [
+      ActiveScaffold::DataStructures::Column.new(:a, ModelStub),
+      ActiveScaffold::DataStructures::Column.new(:b, ModelStub)
+    ]
+
+    expected_conditions = [
+      '"model_stubs"."a" ILIKE ? OR "model_stubs"."b" LIKE ?',
+      '%foo%', '%foo%'
+    ]
+    assert_nil columns.first.like_operator
+    assert_equal 'LIKE', columns.last.like_operator
+    assert_equal [expected_conditions], ClassWithFinder.conditions_for_columns('foo', columns)
+  end
+
+  def test_condition_for_column_uses_configured_like_operator
+    column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
+    column.like_operator = 'ILIKE'
+
+    assert_equal ['"model_stubs"."a" ILIKE ?', '%foo%'], ClassWithFinder.condition_for_column(column, 'foo', :full, {})
+  end
+
   def test_method_sorting
     column = ActiveScaffold::DataStructures::Column.new('a', ModelStub)
     column.sort_by method: proc { a }

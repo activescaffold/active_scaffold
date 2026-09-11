@@ -2,8 +2,11 @@
 
 module ActiveScaffold
   module Finder
-    def self.like_operator
-      @@like_operator ||= ::ActiveRecord::Base.connection.adapter_name.in?(%w[PostgreSQL PostGIS]) ? 'ILIKE' : 'LIKE'
+    def self.like_operator(column = nil)
+      return column.like_operator if column&.like_operator
+
+      connection = column&.active_record_class&.connection || ::ActiveRecord::Base.connection
+      connection.adapter_name.in?(%w[PostgreSQL PostGIS]) ? 'ILIKE' : 'LIKE'
     end
 
     def self.logical_comparators
@@ -52,7 +55,7 @@ module ActiveScaffold
           where_clauses = []
           columns.each do |column|
             column.search_sql.each do |search_sql|
-              where_clauses << "#{search_sql} #{column.text? ? ActiveScaffold::Finder.like_operator : '='} ?"
+              where_clauses << "#{search_sql} #{column.text? ? ActiveScaffold::Finder.like_operator(column) : '='} ?"
             end
           end
           phrase = where_clauses.join(' OR ')
@@ -212,7 +215,7 @@ module ActiveScaffold
       def condition_for_single_value(column, value, like_pattern = nil)
         if column.text?
           value = column.active_record_class.sanitize_sql_like(value) if column.active_record?
-          ["%<search_sql>s #{ActiveScaffold::Finder.like_operator} ?", like_pattern.sub('?', value)]
+          ["%<search_sql>s #{ActiveScaffold::Finder.like_operator(column)} ?", like_pattern.sub('?', value)]
         else
           ['%<search_sql>s = ?', ActiveScaffold::Core.column_type_cast(value, column.column, column.model)]
         end
@@ -229,7 +232,7 @@ module ActiveScaffold
         elsif ActiveScaffold::Finder::STRING_COMPARATORS.value?(value[:opt])
           text = column.active_record? ? column.active_record_class.sanitize_sql_like(value[:from]) : value[:from]
           [
-            "%<search_sql>s #{'NOT ' if value[:opt].start_with?('not_')}#{ActiveScaffold::Finder.like_operator} ?",
+            "%<search_sql>s #{'NOT ' if value[:opt].start_with?('not_')}#{ActiveScaffold::Finder.like_operator(column)} ?",
             value[:opt].sub('not_', '').sub('?', text)
           ]
         elsif value[:opt] == 'BETWEEN'
