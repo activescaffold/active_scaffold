@@ -536,6 +536,9 @@ module ActiveScaffold::DataStructures
       @name = name.to_sym
       @active_record_class = active_record_class
       @column = _columns_hash[name.to_s]
+      if active_record? && @column&.collation.present? && active_record_class.connection.adapter_name.in?(%w[PostgreSQL PostGIS])
+        @like_operator = 'LIKE'
+      end
       if @column.nil? && active_record? && active_record_class._default_attributes.key?(name.to_s)
         @column = active_record_class._default_attributes[name.to_s]
       end
@@ -556,9 +559,6 @@ module ActiveScaffold::DataStructures
       @select_columns = default_select_columns
 
       @text = @column.nil? || [:string, :text, :citext, String].include?(column_type)
-      if active_record? && @column&.collation.present? && active_record_class.connection.adapter_name.in?(%w[PostgreSQL PostGIS])
-        @like_operator = 'LIKE'
-      end
       @number = false
       setup_defaults_for_column if @column
       @allow_add_existing = true
