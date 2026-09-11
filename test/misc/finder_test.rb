@@ -49,6 +49,16 @@ class FinderTest < ActiveSupport::TestCase
     assert_equal [expected_conditions], ClassWithFinder.conditions_for_columns('foo', columns)
   end
 
+  def test_like_operator_is_not_set_for_model_attribute
+    model = Class.new(Person) do
+      attribute :allow_after_hours, :boolean
+    end
+
+    column = ActiveScaffold::DataStructures::Column.new(:allow_after_hours, model)
+
+    assert_nil column.like_operator
+  end
+
   def test_condition_for_column_uses_configured_like_operator
     column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
     column.like_operator = 'ILIKE'
