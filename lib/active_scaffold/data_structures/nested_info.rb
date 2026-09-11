@@ -17,6 +17,8 @@ module ActiveScaffold::DataStructures
     def initialize(model, params)
       @parent_scaffold = "#{params[:parent_scaffold].to_s.camelize}Controller".constantize
       @parent_model = @parent_scaffold.active_scaffold_config.model
+    rescue NameError => e
+      raise ActionController::BadRequest, e.message
     end
 
     def to_params
@@ -82,9 +84,14 @@ module ActiveScaffold::DataStructures
     def initialize(model, params)
       super
       column = parent_scaffold.active_scaffold_config.columns[params[:association].to_sym]
+      unless column&.association
+        raise ActionController::BadRequest,
+              "Invalid nested association #{params[:association].inspect} for #{parent_scaffold.active_scaffold_config.model.name}"
+      end
+
       @param_name = column.model.name.foreign_key.to_sym
       @parent_id = params[@param_name]
-      @association = column&.association
+      @association = column.association
       @child_association = association.reverse_association(model) if association
       setup_constrained_fields
     end
