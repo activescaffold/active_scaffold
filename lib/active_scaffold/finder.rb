@@ -647,19 +647,19 @@ module ActiveScaffold
       end
 
       finder_options.merge! custom_finder_options
-      add_order_expressions_to_select(finder_options, options[:sorting])
       finder_options
     end
 
-    def add_order_expressions_to_select(finder_options, sorting)
-      return unless distinct_query?(finder_options) && active_scaffold_config.model.connection.needs_order_expressions_in_select?
+    def add_order_expressions_to_select(query, sorting)
+      return query unless query.respond_to?(:distinct_value) && query.distinct_value &&
+                          active_scaffold_config.model.connection.needs_order_expressions_in_select?
 
       order_expressions = order_select_expressions(sorting)
-      return if order_expressions.empty?
+      return query if order_expressions.empty?
 
-      select_columns = Array.wrap(finder_options[:select])
+      select_columns = query.select_values
       select_columns = ["#{active_scaffold_config.model.quoted_table_name}.*"] if select_columns.empty?
-      finder_options[:select] = (select_columns + order_expressions).uniq
+      query.reselect(*(select_columns + order_expressions).uniq)
     end
 
     def order_select_expressions(sorting)
@@ -699,6 +699,7 @@ module ActiveScaffold
       end
 
       query = append_to_query(query, find_options)
+      query = add_order_expressions_to_select(query, options[:sorting])
       first_page_items = load_page_for_delayed_count(query, options[:per_page]) if count_after_first_page
       if first_page_items
         count = first_page_items.size

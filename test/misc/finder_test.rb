@@ -83,35 +83,45 @@ class FinderTest < ActiveSupport::TestCase
     assert_equal collection.map(&:a).sort, @klass.send(:sort_collection_by_column, collection, column, 'asc').map(&:a)
   end
 
-  def test_finder_options_add_order_expressions_to_select_for_distinct_query
+  def test_find_page_adds_order_expressions_to_select_for_distinct_query
     sorting = sorting_by_function
     @klass.send(:active_scaffold_outer_joins) << :other_models
     ModelStub.connection.stubs(:needs_order_expressions_in_select?).returns(true)
 
-    options = @klass.send(:finder_options, sorting: sorting)
+    query = @klass.send(:find_page, sorting: sorting, pagination: false).items
 
-    assert_equal ['"model_stubs".*', 'LOWER(model_stubs.a)'], options[:select].map(&:to_s)
-    query = @klass.send(:append_to_query, ModelStub.where(nil), options)
+    assert_equal ['"model_stubs".*', 'LOWER(model_stubs.a)'], query.select_values.map(&:to_s)
     assert_match(/SELECT DISTINCT "model_stubs"\.\*, LOWER\(model_stubs\.a\).*ORDER BY LOWER\(model_stubs\.a\) ASC/, query.to_sql)
   end
 
-  def test_finder_options_preserve_select_when_adding_order_expressions
+  def test_find_page_adds_order_expressions_when_filtered_query_is_distinct
     sorting = sorting_by_function
-    @klass.send(:active_scaffold_outer_joins) << :other_models
+    @klass.stubs(:filtered_query).returns(ModelStub.where(nil).distinct)
     ModelStub.connection.stubs(:needs_order_expressions_in_select?).returns(true)
 
-    options = @klass.send(:finder_options, sorting: sorting, select: 'model_stubs.id')
+    query = @klass.send(:find_page, sorting: sorting, pagination: false).items
 
-    assert_equal ['model_stubs.id', 'LOWER(model_stubs.a)'], options[:select].map(&:to_s)
+    assert_equal ['"model_stubs".*', 'LOWER(model_stubs.a)'], query.select_values.map(&:to_s)
+    assert_match(/SELECT DISTINCT "model_stubs"\.\*, LOWER\(model_stubs\.a\).*ORDER BY LOWER\(model_stubs\.a\) ASC/, query.to_sql)
   end
 
-  def test_finder_options_do_not_add_order_expressions_when_adapter_does_not_need_them
+  def test_find_page_preserves_select_when_adding_order_expressions
     sorting = sorting_by_function
-    @klass.send(:active_scaffold_outer_joins) << :other_models
+    @klass.stubs(:filtered_query).returns(ModelStub.where(nil).distinct)
+    ModelStub.connection.stubs(:needs_order_expressions_in_select?).returns(true)
 
-    options = @klass.send(:finder_options, sorting: sorting)
+    query = @klass.send(:find_page, sorting: sorting, select: 'model_stubs.id', pagination: false).items
 
-    assert_nil options[:select]
+    assert_equal ['model_stubs.id', 'LOWER(model_stubs.a)'], query.select_values.map(&:to_s)
+  end
+
+  def test_find_page_does_not_add_order_expressions_when_adapter_does_not_need_them
+    sorting = sorting_by_function
+    @klass.stubs(:filtered_query).returns(ModelStub.where(nil).distinct)
+
+    query = @klass.send(:find_page, sorting: sorting, pagination: false).items
+
+    assert_empty query.select_values
   end
 
   def test_append_to_query_makes_left_join_query_distinct
