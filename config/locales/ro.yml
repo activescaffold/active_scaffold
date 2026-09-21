@@ -63,8 +63,9 @@ ro:
         body: 'Au fost probleme cu următoarele câmpuri:'
         header:
           one: Din cauza unei erori nu s-a putut salva acest/această %{model}.
-          other: Din cauza a %{count} erori nu s-a putut salva acest/această 
+          few: Din cauza a %{count} erori nu s-a putut salva acest/această 
             %{model}.
+          other:
     export: 'Exportă'
     'false': 'Nu'
     filtered: "(Filtrat)"
@@ -114,7 +115,8 @@ ro:
     record_not_saved: 'Înregistrarea nu s-a putut salva din cauza unei erori necunoscute.'
     records_marked:
       one: un/o %{model} marcat(ă)
-      other: '%{count} %{model} marcați(te)'
+      few: '%{count} %{model} marcați(te)'
+      other:
     refresh: 'Împrospătează'
     remove: 'Emilină'
     remove_file: 'Elimină sau înlocuiește fișierul'
@@ -147,6 +149,7 @@ ro:
     weeks: 'Săptămâni'
     years: 'Ani'
     yesterday: 'Ieri'
+    already_added_model: '%{model} has already been added.'
   date:
     formats:
       month: "%B"
