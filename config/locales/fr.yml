@@ -149,6 +149,7 @@ fr:
     weeks: Semaines
     years: Années
     yesterday: Hier
+    already_added_model: '%{model} has already been added.'
   date:
     formats:
       month: "%B"
