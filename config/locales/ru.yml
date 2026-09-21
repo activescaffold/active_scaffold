@@ -151,6 +151,7 @@ ru:
     weeks: недель
     years: лет
     yesterday: Вчера
+    already_added_model: '%{model} has already been added.'
   date:
     formats:
       month: '%B'
