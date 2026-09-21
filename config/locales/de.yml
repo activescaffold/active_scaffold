@@ -146,6 +146,7 @@ de:
     weeks: Wochen
     years: Jahre
     yesterday: Gestern
+    already_added_model: '%{model} has already been added.'
   date:
     formats:
       month: "%B"
