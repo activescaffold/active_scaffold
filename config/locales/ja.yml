@@ -143,6 +143,7 @@ ja:
     weeks: 週間分
     years: 年分
     yesterday: 昨日
+    already_added_model: '%{model} has already been added.'
   date:
     formats:
       month: "%m月"
