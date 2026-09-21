@@ -13,6 +13,7 @@ en:
     add_existing_model: Add existing %{model}
     add_model: Add %{model}
     all_tokens: All keywords
+    already_added_model: "%{model} has already been added."
     any_token: Any keyword
     apply: Apply
     are_you_sure_to_delete: Are you sure you want to delete %{label}?

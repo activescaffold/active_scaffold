@@ -179,7 +179,9 @@ module ActiveScaffold::Actions::Nested
 
     def add_existing_respond_to_html
       if successful?
-        flash[:info] = as_(:created_model, model: ERB::Util.h(@record.to_label))
+        unless @association_already_exists
+          flash[:info] = as_(:created_model, model: ERB::Util.h(@record.to_label))
+        end
         return_to_main
       else
         render action: 'add_existing_form'
@@ -250,14 +252,36 @@ module ActiveScaffold::Actions::Nested
     def do_add_existing
       parent_record = nested_parent_record(:update)
       @record = active_scaffold_config.model.find(params[:associated_id])
-      if parent_record && @record
-        self.successful = false unless parent_record.send(nested.association.name) << @record
-        parent_record.save if successful?
-      else
-        false
+      return false unless parent_record && @record
+
+      association = parent_record.send(nested.association.name)
+      if association.include?(@record)
+        association_already_exists
+        return true
       end
+
+      begin
+        added = association << @record
+      rescue ActiveRecord::RecordNotUnique
+        # Handles concurrent submissions. Only suppress the exception when the
+        # requested association now exists; otherwise it was a different
+        # uniqueness violation.
+        association.reset
+        raise unless association.include?(@record)
+
+        association_already_exists
+        return true
+      end
+
+      self.successful = false unless added
+      parent_record.save if successful?
     end
 
+    def association_already_exists
+      @association_already_exists = true
+      self.successful = true
+      flash[:warning] = as_(:already_added_model, model: ERB::Util.h(@record.to_label))
+    end
     def do_destroy_existing
       if active_scaffold_config.nested.shallow_delete
         @record = nested_parent_record(:update)

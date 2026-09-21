@@ -1,12 +1,15 @@
-<% new_row = render list_record_view, record: @record %>
-ActiveScaffold.create_record_row('<%= active_scaffold_id %>', '<%= escape_javascript(new_row) %>', <%= {insert_at: :top}.to_json.html_safe %>);
+<% unless @association_already_exists %>
+  <% new_row = render list_record_view, record: @record %>
+  ActiveScaffold.create_record_row('<%= active_scaffold_id %>', '<%= escape_javascript(new_row) %>', <%= {insert_at: :top}.to_json.html_safe %>);
 
-<%= render 'update_calculations' %>
+  <%= render 'update_calculations' %>
+<% end %>
 
 <% if form_stays_open ||= true %>
   <%# why not just re-render the form? that wouldn't utilize a possible do_new override which sets default values.%>
   ActiveScaffold.reset_form('<%= element_form_id %>');
-  ActiveScaffold.replace_html('<%= element_messages_id(action: :add_existing) %>', '<%= escape_javascript(render(partial: 'form_messages')) %>');
+  <% messages_partial = @association_already_exists ? 'messages' : 'form_messages' %>
+  ActiveScaffold.replace_html('<%= element_messages_id(action: :add_existing) %>', '<%= escape_javascript(render(partial: messages_partial)) %>');
   <%# have to delay the focus, because there's no "firstElement" in prototype until at least one element is not disabled%>
   ActiveScaffold.focus_first_element_of_form('<%= element_form_id %>');
 <% else %>
