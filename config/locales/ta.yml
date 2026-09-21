@@ -146,6 +146,7 @@ ta:
     weeks: 'வாரங்கள்'
     years: 'ஆண்டுகள்'
     yesterday: 'நேற்று'
+    already_added_model: '%{model} has already been added.'
   date:
     formats:
       month: "%B"
