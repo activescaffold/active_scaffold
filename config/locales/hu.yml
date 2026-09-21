@@ -146,6 +146,7 @@ hu:
     weeks: Weeks
     years: Years
     yesterday: Yesterday
+    already_added_model: '%{model} has already been added.'
   date:
     formats:
       month: '%B'
