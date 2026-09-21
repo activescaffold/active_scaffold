@@ -144,6 +144,7 @@ zh_Hans:
     years: Years
     yesterday: Yesterday
     not_null: Not Null
+    already_added_model: '%{model} has already been added.'
   date:
     formats:
       month: '%B'
