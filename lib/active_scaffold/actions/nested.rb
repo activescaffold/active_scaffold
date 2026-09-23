@@ -255,26 +255,25 @@ module ActiveScaffold::Actions::Nested
       return false unless parent_record && @record
 
       association = parent_record.send(nested.association.name)
-      if association.include?(@record)
-        association_already_exists
-        return true
-      end
-
-      begin
-        added = association << @record
-      rescue ActiveRecord::RecordNotUnique
-        # Handles concurrent submissions. Only suppress the exception when the
-        # requested association now exists; otherwise it was a different
-        # uniqueness violation.
-        association.reset
-        raise unless association.include?(@record)
-
-        association_already_exists
-        return true
-      end
+      added = add_existing_to_association(association)
+      return true if @association_already_exists
 
       self.successful = false unless added
       parent_record.save if successful?
+    end
+
+    def add_existing_to_association(association)
+      return association_already_exists if association.include?(@record)
+
+      association << @record
+    rescue ActiveRecord::RecordNotUnique
+      # Handles concurrent submissions. Only suppress the exception when the
+      # requested association now exists; otherwise it was a different
+      # uniqueness violation.
+      association.reset
+      raise unless association.include?(@record)
+
+      association_already_exists
     end
 
     def association_already_exists
@@ -282,6 +281,7 @@ module ActiveScaffold::Actions::Nested
       self.successful = true
       flash[:warning] = as_(:already_added_model, model: ERB::Util.h(@record.to_label))
     end
+
     def do_destroy_existing
       if active_scaffold_config.nested.shallow_delete
         @record = nested_parent_record(:update)
