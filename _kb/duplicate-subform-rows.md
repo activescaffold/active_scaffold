@@ -3,7 +3,7 @@ title: "Duplicating rows in subforms"
 category: "Plugins"
 ---
 
-ActiveScaffoldDuplicate 2.0 can add a **Dup** link next to the remove link on rows in a collection subform. This is useful when several associated records share most of their values: duplicate the closest row, change the fields that differ, and save the parent form as usual.
+ActiveScaffold Duplicate 2.0 can add a **Dup** link next to the remove link on rows in a collection subform. This is useful when several associated records share most of their values: duplicate the closest row, change the fields that differ, and save the parent form as usual.
 
 This feature requires ActiveScaffold 4.2 or newer.
 
@@ -87,4 +87,4 @@ end
 
 Clearing unique identifiers, resetting state fields, and recalculating derived amounts are common uses for this hook.
 
-See the [ActiveScaffoldDuplicate plugin page](/plugins/activescaffoldduplicate/) for whole-record duplication and the rest of the plugin's configuration.
+See the [ActiveScaffold Duplicate plugin page](/plugins/activescaffoldduplicate/) for whole-record duplication and the rest of the plugin's configuration.

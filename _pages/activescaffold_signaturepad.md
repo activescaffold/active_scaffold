@@ -1,6 +1,6 @@
 ---
 layout: page
-title: ActiveScaffoldSignaturePad
+title: ActiveScaffold Signature Pad
 date: 2025-02-18 11:51:33.000000000 +01:00
 permalink: "/plugins/activescaffoldsignaturepad/"
 parent: Plugins
@@ -13,7 +13,7 @@ Integrates a signature pad into forms, enabling users to capture signatures dire
 
 ### Description
 
-ActiveScaffoldSignaturePad integrates a digital signature pad into ActiveScaffold forms, allowing users to sign directly within the interface. This feature is useful for applications requiring digital approvals, agreements, or user authentication via handwritten signatures.
+ActiveScaffold Signature Pad integrates a digital signature pad into ActiveScaffold forms, allowing users to sign directly within the interface. This feature is useful for applications requiring digital approvals, agreements, or user authentication via handwritten signatures.
 
 ###  
 

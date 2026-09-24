@@ -28,7 +28,7 @@ Allows users to drag and drop records within a list to reorder them easily, and 
 Ideal for applications requiring customizable ordering, such as task prioritization.
 
 
-### [ActiveScaffold ConfigList](/plugins/activescaffoldconfiglist/)
+### [ActiveScaffold Config List](/plugins/activescaffoldconfiglist/)
 
 Gives users the ability to customize which columns are visible in their interface, making data views more flexible.
 
@@ -50,7 +50,7 @@ Perfect for administrative tasks requiring bulk updates or deletions.
 Adds a new action to render the records in a kanban board instead of normal list.
 
 
-### [ActiveScaffold Child Membershpis](/plugins/activescaffoldchildmemberships/)
+### [ActiveScaffold Child Memberships](/plugins/activescaffoldchildmemberships/)
 
 Adds a new form UI, `:child_memberships`, to manage a many-to-many association across multiple related records
 simultaneously, displayed as a table where each row is a related record and each column is a membership option.
@@ -61,7 +61,7 @@ simultaneously, displayed as a table where each row is a related record and each
 Adds a camera interface to forms, letting users take snapshots directly from their devices and upload them.
 
 
-### [ActiveScaffold SignaturePad](/plugins/activescaffoldsignaturepad/)
+### [ActiveScaffold Signature Pad](/plugins/activescaffoldsignaturepad/)
 
 Integrates a signature pad into forms, enabling users to capture signatures directly within your application.
 

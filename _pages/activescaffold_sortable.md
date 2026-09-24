@@ -1,6 +1,6 @@
 ---
 layout: page
-title: ActiveScaffoldSortable
+title: ActiveScaffold Sortable
 date: 2025-02-18 10:44:02.000000000 +01:00
 permalink: "/plugins/activescaffoldsortable/"
 parent: Plugins
@@ -14,7 +14,7 @@ Ideal for applications requiring customizable ordering, such as task prioritizat
 
 ### Description
 
-ActiveScaffoldSortable allows users to reorder records within a list using drag-and-drop functionality. This is particularly useful in applications where item ordering is significant, such as task prioritization or image galleries.
+ActiveScaffold Sortable allows users to reorder records within a list using drag-and-drop functionality. This is particularly useful in applications where item ordering is significant, such as task prioritization or image galleries.
 
 ### Installation
 

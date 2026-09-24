@@ -1,6 +1,6 @@
 ---
 layout: page
-title: ActiveScaffoldConfigList
+title: ActiveScaffold Config List
 date: 2025-02-18 12:04:34.000000000 +01:00
 permalink: "/plugins/activescaffoldconfiglist/"
 parent: Plugins
@@ -13,7 +13,7 @@ Gives users the ability to customize which columns are visible in their interfac
 
 ### Description
 
-ActiveScaffoldConfigList allows users to dynamically select which columns are displayed in ActiveScaffold tables, offering a flexible way to customize data views. Version 4.0 also supports controller-defined, user-saved, and global named views.
+ActiveScaffold Config List allows users to dynamically select which columns are displayed in ActiveScaffold tables, offering a flexible way to customize data views. Version 4.0 also supports controller-defined, user-saved, and global named views.
 
 
 ### Installation

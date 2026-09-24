@@ -1,6 +1,6 @@
 ---
 layout: page
-title: ActiveScaffoldCamera
+title: ActiveScaffold Camera
 date: 2025-02-18 11:57:07.000000000 +01:00
 permalink: "/plugins/activescaffoldcamera/"
 parent: Plugins
@@ -13,7 +13,7 @@ Adds a camera interface to forms, letting users take snapshots directly from the
 
 ### Description
 
-ActiveScaffoldCamera adds a camera interface to ActiveScaffold forms, allowing users to capture and upload photos directly from their devices. It is ideal for applications requiring photo verification, profile pictures, or document scanning.
+ActiveScaffold Camera adds a camera interface to ActiveScaffold forms, allowing users to capture and upload photos directly from their devices. It is ideal for applications requiring photo verification, profile pictures, or document scanning.
 
 ###  
 

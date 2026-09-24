@@ -1,6 +1,6 @@
 ---
 layout: page
-title: ActiveScaffoldKanban
+title: ActiveScaffold Kanban
 date: 2026-05-03 16:13:07 +02:00
 permalink: "/plugins/activescaffoldkanban/"
 parent: Plugins
@@ -11,7 +11,7 @@ hero_lead: Render a kanban board
 
 Adds a new action to render the records in a kanban board instead of normal list,  using a model's column for the kanban columns.
 
-It depends on ActiveScaffoldSortable and ActiveScaffoldConfigList plugins.
+It depends on the ActiveScaffold Sortable and ActiveScaffold Config List plugins.
 
 ### Installation
 

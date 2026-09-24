@@ -1,6 +1,6 @@
 ---
 layout: page
-title: ActiveScaffoldExport
+title: ActiveScaffold Export
 date: 2025-02-18 11:34:51.000000000 +01:00
 permalink: "/plugins/activescaffoldexport/"
 parent: Plugins
@@ -14,7 +14,7 @@ It's an essential tool for generating reports or sharing data with external syst
 
 ### Description
 
-ActiveScaffoldExport adds export functionality to your ActiveScaffold interfaces, allowing users to export data in formats like CSV and Excel. This is essential for generating reports or sharing data with other systems efficiently.
+ActiveScaffold Export adds export functionality to your ActiveScaffold interfaces, allowing users to export data in formats like CSV and Excel. This is essential for generating reports or sharing data with other systems efficiently.
 
 ### Installation
 
