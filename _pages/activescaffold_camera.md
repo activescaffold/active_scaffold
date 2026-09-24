@@ -17,7 +17,7 @@ ActiveScaffold Camera adds the `:snapshot` form UI. It displays a camera preview
 
 The gem requires Active Scaffold 3.4 or newer.
 
-**Browser compatibility:** the current implementation still uses the legacy `MediaStreamTrack.getSources` API and `sourceId` constraints. Modern browsers use [`navigator.mediaDevices.enumerateDevices()`](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices) and `deviceId` constraints, so test the plugin with the browsers you support. Camera access also requires a secure context and the user's permission.
+**Browser compatibility:** version 0.2.0 uses the modern `navigator.mediaDevices` API when available, including `getUserMedia()`, [`enumerateDevices()`](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices), and `deviceId` constraints. It retains the callback-based API, `MediaStreamTrack.getSources`, and `sourceId` constraints as fallbacks for older browsers. Camera access requires a secure context (HTTPS or localhost) and the user's permission.
 
 ### Installation
 
