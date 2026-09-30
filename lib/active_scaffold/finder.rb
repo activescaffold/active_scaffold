@@ -710,7 +710,7 @@ module ActiveScaffold
                 ::Paginator.new(count, options[:per_page]) do |offset, per_page|
                   calculate_last_modified(query)
                   sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)
-                  sorted_collection = sorted_collection.slice(offset, per_page) if options[:pagination]
+                  sorted_collection = sorted_collection.slice(offset, per_page) || [] if options[:pagination]
                   sorted_collection
                 end
               else

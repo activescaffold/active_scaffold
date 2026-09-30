@@ -83,6 +83,21 @@ class FinderTest < ActiveSupport::TestCase
     assert_equal collection.map(&:a).sort, @klass.send(:sort_collection_by_column, collection, column, 'asc').map(&:a)
   end
 
+  def test_method_sorted_page_beyond_collection_returns_empty_array
+    column = ActiveScaffold::DataStructures::Column.new(:a, ModelStub)
+    column.sort_by method: 'a'
+    sorting = ActiveScaffold::DataStructures::Sorting.new({a: column}, ModelStub)
+    sorting.add :a
+    query = ModelStub.where(nil)
+    query.stubs(count: 0, to_a: [])
+    @klass.stubs(:filtered_query).returns(query)
+    @klass.stubs(:append_to_query).returns(query)
+
+    page = @klass.send(:find_page, sorting: sorting, per_page: 20, page: 2, pagination: true)
+
+    assert_equal [], page.items
+  end
+
   def test_find_page_adds_order_expressions_to_select_for_distinct_query
     sorting = sorting_by_function
     @klass.send(:active_scaffold_outer_joins) << :other_models
