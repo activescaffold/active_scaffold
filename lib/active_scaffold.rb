@@ -74,7 +74,7 @@ module ActiveScaffold
   #   * For :action_link_separator the hash will have keys such as :level, :level_0_tag, and other options supported by
   #     +display_action_links+
   #   * Form and search elements receive the column and the configured UI in the options hash.
-  #   * Action link elements receive the link, record, and rendering options.
+  #   * Action link elements receive the link, record, rendering options, and authorized state.
   #   * Pagination elements receive the page number and, for links, the optional text key.
   # Some keys don't have a :tag key, because only attributes are used, the tag is hardcoded, usually elements that are
   # rendered as a form or table, or a table's element (thead, tbody, tr, td, th, tfoot, etc.). For those elements,
@@ -196,8 +196,29 @@ module ActiveScaffold
     (ui_elements[name] ||= {})[:tag] = tag
   end
 
+  # Replace an element's complete definition. Use a block instead of +tag+ and
+  # +attributes+ to define a dynamic element.
+  def self.set_element(name, tag: nil, attributes: nil, &proc)
+    if proc && (tag || attributes)
+      raise ArgumentError, 'tag and attributes cannot be used with a proc'
+    end
+
+    ui_elements[name] = if proc
+                          {proc: proc}
+                        else
+                          {}.tap do |element|
+                            element[:tag] = tag if tag
+                            element[:attributes] = attributes.as_html_attrs if attributes
+                          end
+                        end
+  end
+
   def self.set_element_proc(name, &block)
     (ui_elements[name] ||= {})[:proc] = block
+  end
+
+  def self.set_element_attributes(name, attributes)
+    (ui_elements[name] ||= {})[:attributes] = attributes.as_html_attrs
   end
 
   def self.add_element_attributes(name, attributes)
