@@ -177,8 +177,7 @@ module ActiveScaffold
           class: html_class,
           title: cache ? '--REASON--' : options[:not_authorized_reason]
         }
-        context = {link: link, record: record, options: options}
-        html_options = as_element_attributes(:action_link, proc_options: context, **html_options)
+        html_options = action_link_element_attributes(link, record, options, html_options, authorized: false)
         html = action_link_html(link, nil, html_options, record)
         cache ? html.to_str : html
       end
@@ -187,8 +186,14 @@ module ActiveScaffold
         url = cache ? '--URL--' : action_link_url(link, record)
         options[:link] = '--LABEL--' if cache
         html_options = action_link_html_options(link, record, options, cache: cache)
+        html_options = action_link_element_attributes(link, record, options, html_options, authorized: true)
         html = action_link_html(link, url, html_options, record)
         cache ? html.to_str : html
+      end
+
+      def action_link_element_attributes(link, record, options, attributes, authorized:)
+        context = {link: link, record: record, options: options, authorized: authorized}
+        as_element_attributes(:action_link, proc_options: context, **attributes)
       end
 
       # setup the action link to inline form
@@ -480,8 +485,7 @@ module ActiveScaffold
           html_options[:rel] = [html_options[:rel], 'noopener noreferrer'].compact.join(' ')
         end
         html_options[:id] = link_id
-        context = {link: link, record: record, options: options}
-        as_element_attributes(:action_link, proc_options: context, **html_options)
+        html_options
       end
 
       def get_action_link_id(link, record = nil)
