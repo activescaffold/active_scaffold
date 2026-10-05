@@ -32,6 +32,12 @@ module ActiveScaffold
       ## Uncategorized
       ##
 
+      # UI adapters may override this method and call +super+ to wrap the table,
+      # for example in a responsive-table container.
+      def list_table_html(&)
+        capture(&)
+      end
+
       def handle_exception_on_column(exception, column, record = nil)
         raise exception if exception.instance_variable_get(:@_active_scaffold_wrapped)
 

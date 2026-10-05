@@ -22,7 +22,7 @@
 
   <%= render 'field_search_columns', columns: active_scaffold_config.field_search.columns %>
 
-  <p class="form-footer">
+  <%= as_element :field_search_footer, class: 'form-footer' do %>
     <%
       reset_attrs = {class: ''}
       if active_scaffold_config.field_search.reset_form
@@ -35,5 +35,5 @@
     <%= submit_tag as_(submit_text), as_element_attributes(:field_search_submit) %>
     <%= link_to as_(:reset), url_for(url_options.merge(search: '')), as_element_attributes(:field_search_reset, **reset_attrs) unless local_assigns[:skip_reset] %>
     <%= loading_indicator_tag(action: :search) %>
-  </p>
+  <% end %>
 </form>

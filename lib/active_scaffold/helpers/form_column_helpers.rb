@@ -123,7 +123,9 @@ module ActiveScaffold
 
         collapsible_id = "container_#{id_control}" if (column.form_ui_options || column.options)[:collapsible]
 
-        {name: name, class: classes, id: id_control, collapsible_id: collapsible_id}.merge(options)
+        attributes = {name: name, class: classes, id: id_control, collapsible_id: collapsible_id}.merge(options)
+        context = {column: column, form_ui: column.form_ui}
+        as_element_attributes(:form_control, proc_options: context, **attributes)
       end
 
       def current_form_columns(record, scope, subform_controller = nil)
@@ -244,7 +246,7 @@ module ActiveScaffold
 
       def column_description(column, record, scope = nil)
         desc = column.description(record, scope)
-        as_element(:form_field_description, h(desc) + content_tag(:span, nil, class: 'close')) if desc.present?
+        as_element(:form_field_description, h(desc) + as_element(:form_field_description_close)) if desc.present?
       end
 
       def form_attribute(column, record, scope = nil, only_value = false, col_class = nil, form_columns: nil, field: nil)
@@ -272,7 +274,11 @@ module ActiveScaffold
 
       def form_attribute_html(column, label, field, description, attributes, collapsible_id: nil)
         (field ||= h('')) << description if description.present?
-        content_tag :dl, content_tag(:dt, label) << content_tag(:dd, field, id: collapsible_id), attributes
+        context = {column: column}
+        as_element :form_attribute, proc_options: context, **attributes do
+          as_element(:form_attribute_label, label, proc_options: context) <<
+            as_element(:form_attribute_field, field, proc_options: context, id: collapsible_id)
+        end
       end
 
       def label_for(column, options)

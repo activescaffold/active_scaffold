@@ -101,16 +101,30 @@ module ActiveScaffold
           content = render_action_link_group(link, content, record, options)
         else
           content = render_action_link(link, record, options)
-          content = content_tag(:li, content, class: ('top' if options[:first_action])) unless options[:level].zero?
+          unless options[:level].zero?
+            context = {link: link, record: record, options: options}
+            content = as_element(
+              :action_link_item,
+              content,
+              proc_options: context,
+              class: ('top' if options[:first_action])
+            )
+          end
         end
         content = content_tag(options[:level_0_tag], content, options[:options_level_0_tag]) if options[:level].zero? && options[:level_0_tag]
         content
       end
 
       def render_action_link_group(link, content, record, options, group_label: nil)
-        as_element(:action_link_group, proc_options: options) do
-          as_element(:action_link_group_title, group_label || link.label(record), class: link.css_class, title: options[:title]) <<
-            as_element(:action_link_group_content, content)
+        context = options.merge(link: link, record: record)
+        as_element(:action_link_group, proc_options: context) do
+          as_element(
+            :action_link_group_title,
+            group_label || link.label(record),
+            proc_options: context,
+            class: link.css_class,
+            title: options[:title]
+          ) << as_element(:action_link_group_content, content, proc_options: context)
         end
       end
 
@@ -163,6 +177,8 @@ module ActiveScaffold
           class: html_class,
           title: cache ? '--REASON--' : options[:not_authorized_reason]
         }
+        context = {link: link, record: record, options: options}
+        html_options = as_element_attributes(:action_link, proc_options: context, **html_options)
         html = action_link_html(link, nil, html_options, record)
         cache ? html.to_str : html
       end
@@ -464,7 +480,8 @@ module ActiveScaffold
           html_options[:rel] = [html_options[:rel], 'noopener noreferrer'].compact.join(' ')
         end
         html_options[:id] = link_id
-        html_options
+        context = {link: link, record: record, options: options}
+        as_element_attributes(:action_link, proc_options: context, **html_options)
       end
 
       def get_action_link_id(link, record = nil)

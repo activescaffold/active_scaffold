@@ -50,7 +50,13 @@ module ActiveScaffold
 
       # the standard active scaffold options used for class, name and scope
       def active_scaffold_search_options(column)
-        {name: "search[#{column.name}]", class: "#{column.name}-input", id: "search_#{column.name}", value: field_search_params[column.name.to_s]}
+        attributes = {
+          name: "search[#{column.name}]",
+          class: "#{column.name}-input",
+          id: "search_#{column.name}",
+          value: field_search_params[column.name.to_s]
+        }
+        as_element_attributes(:search_control, proc_options: {column: column, search_ui: column.search_ui}, **attributes)
       end
 
       def search_attribute(column, record)
@@ -63,7 +69,11 @@ module ActiveScaffold
       end
 
       def search_attribute_html(column, label, field)
-        content_tag :dl, content_tag(:dt, label) << content_tag(:dd, field)
+        context = {column: column}
+        as_element :search_attribute, proc_options: context do
+          as_element(:search_attribute_label, label, proc_options: context) <<
+            as_element(:search_attribute_field, field, proc_options: context)
+        end
       end
 
       def search_label_for(column, options)

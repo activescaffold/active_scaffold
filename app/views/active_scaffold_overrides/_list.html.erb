@@ -9,15 +9,16 @@
   </tbody>
 </table>
 <% end %>
+<%= list_table_html do %>
 <table <%= as_element_attributes :list_table, class: "list-table #{'local-sorting' if local_sorting?}" %>>
-  <thead>
-    <tr>
+  <thead <%= as_element_attributes :list_table_head %>>
+    <tr <%= as_element_attributes :list_table_head_row %>>
       <% columns = list_columns %>
       <%= render 'list_column_headings', columns: columns %>
     </tr>
   </thead>
   <%= render 'list_messages', columns: columns %>
-  <tbody class="records" id="<%= active_scaffold_tbody_id %>" data-refresh-record="<%= url_for(params_for(action: :index, id: '--ID--')) %>">
+  <tbody <%= as_element_attributes :list_records, class: 'records', id: active_scaffold_tbody_id, data: {refresh_record: url_for(params_for(action: :index, id: '--ID--'))} %>>
     <% if !@page.empty? -%>
       <%= render partial: list_record_view, collection: @page.items, locals: {hidden: false, columns: columns, action_links: active_scaffold_config.action_links.member} %>
     <% end -%>
@@ -28,4 +29,5 @@
   </tfoot>
   <% end -%>
 </table>
+<% end %>
 <%= render 'list_pagination' %>

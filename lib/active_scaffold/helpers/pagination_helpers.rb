@@ -4,7 +4,12 @@ module ActiveScaffold
   module Helpers
     module PaginationHelpers
       def pagination_ajax_link(page_number, url_options, options, text: nil)
-        link_to text ? as_(text) : page_number, url_options.merge(page: page_number), options.smart_merge(class: 'as_paginate')
+        attributes = as_element_attributes(
+          :pagination_link,
+          proc_options: {page_number: page_number, text: text},
+          **options.smart_merge(class: 'as_paginate')
+        )
+        link_to text ? as_(text) : page_number, url_options.merge(page: page_number), attributes
       end
 
       def pagination_url_options(url_options = nil)
@@ -18,11 +23,19 @@ module ActiveScaffold
       end
 
       def pagination_active_page(page_number, url_options, options)
-        content_tag :span, page_number, options.slice(:id, :class).smart_merge(class: 'as_paginate current')
+        attributes = options.slice(:id, :class).smart_merge(class: 'as_paginate current')
+        as_element :pagination_active_page, page_number,
+                   proc_options: {page_number: page_number}, **attributes
       end
 
       def pagination_gap(options)
         '..'
+      end
+
+      # Wraps the complete pagination sequence, including previous and next links.
+      # UI adapters may override this method and call +super+ to add nested markup.
+      def pagination_html(&)
+        capture(&)
       end
 
       def pagination_ajax_links(current_page, url_options, options, inner_window, outer_window)

@@ -73,6 +73,9 @@ module ActiveScaffold
   #     +display_action_links+
   #   * For :action_link_separator the hash will have keys such as :level, :level_0_tag, and other options supported by
   #     +display_action_links+
+  #   * Form and search elements receive the column and the configured UI in the options hash.
+  #   * Action link elements receive the link, record, and rendering options.
+  #   * Pagination elements receive the page number and, for links, the optional text key.
   # Some keys don't have a :tag key, because only attributes are used, the tag is hardcoded, usually elements that are
   # rendered as a form or table, or a table's element (thead, tbody, tr, td, th, tfoot, etc.). For those elements,
   # the :tag key will be ignored if it's set, so the tag can't be changed.
@@ -86,6 +89,9 @@ module ActiveScaffold
     before_header_table: {tag: :table},
     list_content: {tag: :div},
     list_table: {}, # table
+    list_table_head: {}, # thead
+    list_table_head_row: {}, # tr
+    list_records: {}, # tbody
     list_messages: {attributes: {class: 'messages'}}, # tbody
     list_messages_container: {}, # td
     list_action_messages: {tag: :div},
@@ -99,8 +105,12 @@ module ActiveScaffold
     warning_message: {tag: :div, attributes: {class: 'warning-message message'}},
     error_message: {tag: :div, attributes: {class: 'error-message message'}},
     list_footer: {tag: :div, attributes: {class: 'active-scaffold-footer'}},
+    list_found: {tag: :div},
+    list_found_count: {tag: :span},
     list_calculations: {}, # tr
     pagination_links: {tag: :div},
+    pagination_link: {}, # a
+    pagination_active_page: {tag: :span},
     record_actions_cell: {}, # td
     record_action_links: {}, # table
     action_link_group: {
@@ -124,10 +134,13 @@ module ActiveScaffold
     },
     action_link_group_title: {tag: :div},
     action_link_group_content: {tag: :ul},
+    action_link: {}, # a
+    action_link_item: {tag: :li},
     dynamic_action_group: {tag: :ul, attributes: {class: 'dynamic-menu'}},
     dynamic_action_group_element: {tag: :li},
     search_form: {}, # form
     search_field: {attributes: {class: 'text-input', size: 50, autocomplete: :off}}, # input type=search
+    search_control: {}, # input, select or textarea
     search_submit: {attributes: {class: 'submit'}}, # input type=submit
     search_reset: {attributes: {class: 'reset'}}, # a
     field_search_form: {}, # form
@@ -137,6 +150,7 @@ module ActiveScaffold
     field_search_element: {tag: :li},
     field_search_submit: {attributes: {class: 'submit'}}, # input type=submit
     field_search_reset: {attributes: {class: 'reset'}}, # a
+    field_search_footer: {tag: :p},
     form: {}, # form
     form_title: {tag: :h4},
     form_messages_container: {tag: :div},
@@ -153,7 +167,15 @@ module ActiveScaffold
     subform_replace_with_new: {}, # a
     subform_add_existing: {}, # a
     form_element: {tag: :li},
+    form_attribute: {tag: :dl},
+    form_attribute_label: {tag: :dt},
+    form_attribute_field: {tag: :dd},
+    search_attribute: {tag: :dl},
+    search_attribute_label: {tag: :dt},
+    search_attribute_field: {tag: :dd},
+    form_control: {}, # input, select or textarea
     form_field_description: {tag: :span, attributes: {class: 'description'}},
+    form_field_description_close: {tag: :span, attributes: {class: 'close'}},
     form_footer: {tag: :p},
     form_submit: {attributes: {class: 'submit'}}, # input type=submit
     form_apply: {attributes: {class: 'submit'}}, # input type=submit
