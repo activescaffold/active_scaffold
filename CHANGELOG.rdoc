@@ -1,3 +1,4 @@
+= 4.4.0
 - Add support for local sorting using JS when the list has no pagination
 - Add UI rendering customization for CSS framework and theme integration: configure tags and HTML attributes for named elements, use context-aware procs, and override focused helpers when structural markup must change
 - Fix draggable lists to set hover class on the list while dragging
