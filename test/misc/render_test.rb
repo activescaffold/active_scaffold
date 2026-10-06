@@ -34,10 +34,10 @@ class RenderTest < ActionController::TestCase
 
   private
 
-  def define_adapter_helper(name, &implementation)
+  def define_adapter_helper(name, &)
     @adapter_helper_names ||= []
     @adapter_helper_names << name
-    AddressesController._helpers.define_method(name, &implementation)
+    AddressesController._helpers.define_method(name, &)
   end
 
   def remove_adapter_helpers
