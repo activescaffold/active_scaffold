@@ -14,7 +14,7 @@ ActiveScaffold Sortable adds AJAX drag-and-drop ordering to Active Scaffold list
 ### Requirements
 
 - Ruby 2.0 or newer
-- Active Scaffold 4.0.0.rc1 or newer
+- Active Scaffold 4.4.0 or newer
 - A Rails version supported by the selected Active Scaffold version
 - jQuery UI Sortable on pages that use the plugin
 
@@ -178,6 +178,23 @@ ActiveScaffold::Config::Sortable.add_handle_column = :first
 ActiveScaffold::Config::Sortable.refresh_list = true
 ActiveScaffold::Config::Sortable.options = { handle: ".my-drag-handle" }
 {%- endhighlight %}
+
+### UI adapter support
+
+ActiveScaffold Sortable 3.7 exposes the wrapper around sortable lists and association subforms as the `sortable_container` UI element. The same adapter configuration applies in both contexts:
+
+{% highlight ruby -%}
+ActiveScaffold.add_element_attributes :sortable_container,
+                                      class: "overflow-auto"
+{%- endhighlight %}
+
+The default tag is `div`; an adapter can change it when its markup requires a different container:
+
+{% highlight ruby -%}
+ActiveScaffold.set_element_tag :sortable_container, :section
+{%- endhighlight %}
+
+Adapter attributes are merged with the `sortable-container` class and the `data-*` attributes used for drag-and-drop behavior. See [Customizing UI Markup and Integrating CSS Frameworks](/doc/framework-ui/) for the complete UI adapter API.
 
 ### Effects on the Active Scaffold list
 

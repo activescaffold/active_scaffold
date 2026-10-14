@@ -13,6 +13,11 @@ ActiveScaffold Export adds an **Export** action to your ActiveScaffold controlle
 
 CSV export works out of the box and streams large result sets in batches. XLSX export is available when `caxlsx_rails` is installed.
 
+## Requirements
+
+- Active Scaffold 4.4.0 or newer for ActiveScaffold Export 3.12
+- A Ruby and Rails version supported by the selected Active Scaffold version
+
 ## Installation
 
 Add the plugin to your `Gemfile`:
@@ -67,6 +72,7 @@ conf.export.default_file_format = 'csv'
 conf.export.default_delimiter = ';'
 conf.export.default_skip_header = false
 conf.export.force_quotes = true
+conf.export.draggable = false
 {%- endhighlight %}
 
 | Setting | Purpose | Default |
@@ -80,8 +86,27 @@ conf.export.force_quotes = true
 | `default_delimiter` | CSV column separator | `','` |
 | `default_skip_header` | Omit the header row by default | `false` |
 | `force_quotes` | Quote every field in CSV output | `false` |
+| `draggable` | Let users drag selected columns into export order | `false` |
 
 Set `show_form` to `false` to download immediately using the configured defaults. Set `allow_full_download` to `false` to prevent users from changing the `default_full_download` choice.
+
+## UI adapter support
+
+ActiveScaffold Export 3.12 renders its form with ActiveScaffold 4.4's standard `fields_container`, `form_element`, and `form_attribute` elements. It adds two plugin-specific elements for the option controls:
+
+- `export_option` wraps one option.
+- `export_option_row` groups related options.
+
+For example, an adapter can style the options without replacing the export form partial:
+
+{% highlight ruby -%}
+ActiveScaffold.add_element_attributes :export_option,
+                                      class: "form-check"
+ActiveScaffold.add_element_attributes :export_option_row,
+                                      class: "d-flex gap-3"
+{%- endhighlight %}
+
+Adapter attributes are merged with the plugin's default classes. See [Customizing UI Markup and Integrating CSS Frameworks](/doc/framework-ui/) for the complete adapter API.
 
 ## Customize exported values
 

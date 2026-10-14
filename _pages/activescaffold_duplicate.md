@@ -11,6 +11,11 @@ hero_lead: An action to clone records
 
 Adds an action to clone records, and support to clone rows in subforms. 
 
+### Requirements
+
+- Active Scaffold 4.4.0 or newer
+- A Ruby and Rails version supported by the selected Active Scaffold version
+
 ### Description
 
 By default will only set attributes and `belongs_to` associations. You must override `initialize_dup` in your model or define a method to clone the record and set in `conf.duplicate.method`.
@@ -55,6 +60,17 @@ class OrdersController < ApplicationController
   end
 end
 {%- endhighlight %}
+
+### UI adapter support
+
+ActiveScaffold Duplicate 2.1 exposes the link that duplicates an association-subform row as the `subform_record_duplicate` UI element. A UI adapter can add classes, accessibility attributes, and other presentation attributes without overriding the plugin helper:
+
+{% highlight ruby -%}
+ActiveScaffold.add_element_attributes :subform_record_duplicate,
+                                      class: "btn btn-sm btn-secondary"
+{%- endhighlight %}
+
+Adapter attributes are merged with the `dup` class, remote-link setting, visibility style, and `data-scope` attribute required by the plugin. See [Customizing UI Markup and Integrating CSS Frameworks](/doc/framework-ui/) for the complete UI adapter API.
 
 ### Tutorial
 

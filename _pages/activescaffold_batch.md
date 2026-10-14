@@ -9,12 +9,16 @@ hero_heading: Batch actions for ActiveScaffold
 hero_lead: Perfect for administrative tasks requiring bulk updates or deletions
 ---
 
-This plugin enables batch actions, allowing users to perform operations on multiple records simultaneously.
-Perfect for administrative tasks requiring bulk updates or deletions.
+This plugin enables batch actions, allowing users to create, update, or delete multiple records simultaneously. It is intended for administrative workflows where the affected scope is explicit and reviewable.
+
+### Requirements
+
+- Active Scaffold 4.4.0 or newer for ActiveScaffold Batch 3.8
+- A Ruby and Rails version supported by the selected Active Scaffold version
 
 ### Description
 
-ActiveScaffold Batch enables batch actions, allowing users to perform operations on multiple records simultaneously. This is useful for administrative tasks that require bulk updates or deletions, optimizing time and effort for developers.
+ActiveScaffold Batch provides three independent actions: `batch_create`, `batch_update`, and `batch_destroy`. Enable only the actions appropriate for a controller.
 
 ### Installation
 
@@ -32,8 +36,8 @@ bundle install
 
 ### Usage & Options
 
-It provides 3 actions: `batch_create`, `batch_update` and `batch_delete`.
-After installation, you can enable batch processing in your ActiveScaffold configuration adding any of those actions to default actions:
+It provides three actions: `batch_create`, `batch_update`, and `batch_destroy`.
+You can enable batch processing globally:
 
 {% highlight ruby -%}
 ActiveScaffold.set_defaults do |config|
@@ -46,12 +50,84 @@ Or adding them in your controller:
 {% highlight ruby -%}
 class UsersController < ApplicationController
   active_scaffold :user do |config|
-    config.actions << :batch_create
+    config.actions.add :batch_update
+    config.actions.add :batch_destroy
   end
 end
 {%- endhighlight %}
 
-### Example Code
+Batch Update and Batch Destroy can target every record in the current filtered list. If the scaffold also enables the `mark` action, they can instead target only marked records.
+
+### Batch Create
+
+Batch Create has two modes. Without `default_batch_by_column`, it displays a multiple-row creation form. The user starts with one blank record and can add more rows before submitting them together:
+
+{% highlight ruby -%}
+config.actions.add :batch_create
+config.batch_create.layout = :vertical # or :horizontal
+{%- endhighlight %}
+
+When `default_batch_by_column` is configured, the form creates one record for every selected value of that column while sharing the other entered attributes. For example, this creates one player for each selected team:
+
+{% highlight ruby -%}
+config.actions.add :batch_create
+config.batch_create.default_batch_by_column = :team
+{%- endhighlight %}
+
+The batch column may be a `belongs_to` association or a scalar column. Scalar values are entered one per line. By default, all records are validated and created in one transaction; if one fails, none are saved.
+
+{% highlight ruby -%}
+config.batch_create.run_in_transaction = true
+config.batch_create.list_mode_enabled = true
+{%- endhighlight %}
+
+Set `run_in_transaction` to `false` to retain successful rows when another fails, or to `:validate_first` to validate all rows before saving any of them.
+
+### Batch Update
+
+Each editable column has an operator. `NO_UPDATE` leaves it untouched and `REPLACE` assigns the entered value. Numeric columns also support addition, subtraction, multiplication, and division using absolute or percentage operands; date columns support addition and subtraction.
+
+{% highlight ruby -%}
+config.actions.add :batch_update
+config.batch_update.process_mode = :update
+config.batch_update.list_mode_enabled = true
+{%- endhighlight %}
+
+The default `:update` mode processes each record with authorization, validations, and callbacks. The optional `:update_all` mode performs direct SQL updates and skips model callbacks and validations.
+
+### Batch Destroy
+
+{% highlight ruby -%}
+config.actions.add :batch_destroy
+config.batch_destroy.process_mode = :delete
+{%- endhighlight %}
+
+The default `:delete` mode processes records individually. The optional `:delete_all` mode uses direct SQL and skips model callbacks. List-scoped actions affect the complete filtered result, not only the visible page, so marked-record scope is safer when users should select every affected record explicitly.
+
+### UI adapter support
+
+ActiveScaffold Batch 3.8 reuses ActiveScaffold 4.4's standard form elements. See [ActiveScaffold's complete UI element reference](/doc/framework-ui/#complete-ui-element-reference) for `form`, `form_title`, `fields_container`, `form_element`, `form_attribute`, `form_control`, form footer controls, and the other shared elements.
+
+Batch defines only one plugin-specific element:
+
+| Element | Type | Used for |
+|---|---|---|
+| `batch_create_add_rows` | Attributes only | Remote link that adds blank rows to a multiple-row Batch Create form. |
+
+For example, an adapter can customize the Batch-specific add-row link without replacing its template:
+
+{% highlight ruby -%}
+ActiveScaffold.add_element_attributes :batch_create_add_rows,
+                                      class: "btn btn-sm btn-secondary"
+{%- endhighlight %}
+
+Adapter attributes are merged with the remote-link behavior required by the plugin.
+
+Batch-specific inputs use the shared `form_control` element. Its proc receives the usual `column` and `form_ui` context plus `batch_role`, which identifies `batch_scope`, `batch_update_operator`, `batch_update_value`, `batch_update_numeric_option`, `batch_update_date_amount`, `batch_update_date_unit`, or `batch_create_row_count`. This lets an adapter distinguish these controls when necessary without adding a separate registry element for each one.
+
+The shared elements use the same definitions as ordinary ActiveScaffold forms, keeping core and Batch forms consistent.
+
+### Custom batch actions
 
 If you want to allow bulk activation of users, you can define a custom action:
 
