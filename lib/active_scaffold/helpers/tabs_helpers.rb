@@ -10,9 +10,11 @@ module ActiveScaffold
         tab_options = send(override_helper_per_model(:active_scaffold_tab_options, record.class), column, record)
         used_tabs = send(override_helper_per_model(:active_scaffold_current_tabs, record.class), column, record, tab_options)
         input_helper = override_helper_per_model(:active_scaffold_input_for_tabbed, record.class)
-        send(input_helper, column, record, subsection_id, tab_options, used_tabs.map { |v, _| v }) <<
-          active_scaffold_refresh_link(nil, {'data-update_url' => url_for(add_tab_url)}, record, refresh_opts) <<
-          active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs, &)
+        safe_join([
+                    send(input_helper, column, record, subsection_id, tab_options, used_tabs.map { |v, _| v }),
+                    active_scaffold_refresh_link(nil, {'data-update_url' => url_for(add_tab_url)}, record, refresh_opts),
+                    active_scaffold_tabs_for(column, record, subsection_id, tab_options, used_tabs, &)
+                  ])
       end
 
       def active_scaffold_input_for_tabbed(column, record, subsection_id, tab_options, used_tabs)

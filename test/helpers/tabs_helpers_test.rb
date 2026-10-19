@@ -35,6 +35,24 @@ class TabsHelpersTest < ActionView::TestCase
     end
   end
 
+  def project_active_scaffold_input_for_tabbed(*)
+    content_tag(:select, nil, id: 'custom-tab-input').freeze
+  end
+
+  def project_active_scaffold_tab_options(*) = []
+
+  def test_tabbed_by_does_not_modify_frozen_custom_input
+    stubs(:params_for).returns({})
+    stubs(:url_for).returns('/add-tab')
+    stubs(:active_scaffold_refresh_link).returns(content_tag(:a, 'Add tab', href: '/add-tab'))
+
+    html = active_scaffold_tabbed_by(assignments_group, @project, nil, 'assignments') { '' }
+
+    assert_match(/id="custom-tab-input"/, html)
+    assert_match(%r{href="/add-tab"}, html)
+    assert_match(/class="tabbed"/, html)
+  end
+
   # --- active_scaffold_current_tabs ---
 
   def test_current_tabs_with_association_tabs_returns_category_pairs

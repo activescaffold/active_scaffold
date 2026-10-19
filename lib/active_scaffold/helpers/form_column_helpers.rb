@@ -259,12 +259,12 @@ module ActiveScaffold
           if column.association.nil? || column.association.belongs_to?
             # hidden field probably not needed, but leaving it just in case
             # but it isn't working for assocations which are not belongs_to
-            field << hidden_field(:record, column.association&.foreign_key || column.name, column_options)
+            field = safe_join([field, hidden_field(:record, column.association&.foreign_key || column.name, column_options)])
           end
         else
           field ||= active_scaffold_input_for column, scope, column_options, form_columns: form_columns
         end
-        field << loading_indicator_tag(action: :render_field, id: params[:id]) if field && column.update_columns
+        field = safe_join([field, loading_indicator_tag(action: :render_field, id: params[:id])]) if field && column.update_columns
         description = column_description(column, record, scope)
 
         label = label_tag(label_for(column, column_options), form_column_label(column, record, scope))
@@ -273,7 +273,7 @@ module ActiveScaffold
       end
 
       def form_attribute_html(column, label, field, description, attributes, collapsible_id: nil)
-        (field ||= h('')) << description if description.present?
+        field = safe_join([field, description].compact) if description.present?
         context = {column: column}
         as_element :form_attribute, proc_options: context, **attributes do
           as_element(:form_attribute_label, label, proc_options: context) <<

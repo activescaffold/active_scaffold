@@ -11,6 +11,19 @@ class FormColumnHelpersTest < ActionView::TestCase
     @record = ModelStub.new(a: nil)
   end
 
+  def a_form_column(*)
+    content_tag(:input, nil, name: 'record[a]').freeze
+  end
+
+  def test_form_attribute_html_does_not_modify_frozen_custom_form_column
+    field = active_scaffold_render_input(@column, object: @record)
+    description = content_tag(:span, 'Description')
+
+    assert_predicate field, :frozen?
+    assert_dom_equal '<dl><dt>Label</dt><dd><input name="record[a]"><span>Description</span></dd></dl>',
+                     form_attribute_html(@column, 'Label', field, description, {})
+  end
+
   def test_choices_for_select_form_ui_for_simple_column
     opts = {object: @record}
     @column.options[:options] = %i[value_1 value_2 value_3]
