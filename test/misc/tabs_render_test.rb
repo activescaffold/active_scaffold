@@ -4,6 +4,7 @@ require 'test_helper'
 
 class ProjectsTabsRenderTest < ActionDispatch::IntegrationTest
   setup do
+    RequestStore.clear!
     [Task, Milestone, Category, Project].each(&:delete_all)
     @cat1 = Category.create!(name: 'Frontend')
     @cat2 = Category.create!(name: 'Backend')
@@ -11,6 +12,7 @@ class ProjectsTabsRenderTest < ActionDispatch::IntegrationTest
 
   teardown do
     [Task, Milestone, Category, Project].each(&:delete_all)
+    RequestStore.clear!
   end
 
   test 'new project form renders category select and add-tab link' do
@@ -37,6 +39,7 @@ end
 
 class ProjectsByPriorityTabsRenderTest < ActionDispatch::IntegrationTest
   setup do
+    RequestStore.clear!
     [Task, Category, Project].each(&:delete_all)
     @cat = Category.create!(name: 'Default')
   end
