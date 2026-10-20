@@ -111,6 +111,32 @@ Also, accepts a hash of options:
 
 It returns true if the column is included, checking the subgroups too.
 
+### insert
+
+Inserts one or more columns at the given index. With the default single layout, arrays are flattened and columns already in the set are not duplicated.
+
+{% highlight ruby -%}
+conf.create.columns.insert 2, :phone
+conf.create.columns.insert 3, [:address, :city]
+{%- endhighlight %}
+
+Subgroups are `ActionColumns` objects too, so columns can be inserted at a specific position inside a subgroup:
+
+{% highlight ruby -%}
+conf.create.columns.add_subgroup 'Name' do |group|
+  group.add :first_name, :last_name
+  group.insert 1, :middle_name
+end
+{%- endhighlight %}
+
+When layout is `:multiple`, every inserted value is a group in the layout. An array creates a group with multiple columns, while a column name creates a group containing only that column. An existing `ActionColumns` object can also be inserted directly.
+
+{% highlight ruby -%}
+conf.create.columns.layout = :multiple
+conf.create.columns.insert 1, [:address, :city]
+conf.create.columns.insert 2, :notes
+{%- endhighlight %}
+
 ### skip_column?
 
 It receives the column name, and a hash of options, `for` key is mandatory, it should be a model class or model instance.
