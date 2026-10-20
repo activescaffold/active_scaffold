@@ -324,7 +324,7 @@ module ActiveScaffold
       def active_scaffold_column_expect_array?(column)
         ui_options = column.form_ui_options || column.options
         case column.form_ui
-        when :select
+        when :select, :choices
           column.association&.collection? || ui_options[:multiple]
         when :select_multiple, :checkboxes, :draggable
           true

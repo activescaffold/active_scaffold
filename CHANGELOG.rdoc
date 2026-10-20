@@ -1,3 +1,4 @@
+- Add a default-enabled Choices.js bridge with form and search UI helpers
 - Update install generator for the supported rails versions and asset pipelines
 - Fix rendering field descriptions and tabbed forms when custom input helpers return frozen strings
 

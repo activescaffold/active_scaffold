@@ -9,6 +9,7 @@ class ActiveScaffold::Bridges::Chosen
     included do
       include FormColumnHelpers
       include SearchColumnHelpers
+      include HumanConditionHelpers
     end
 
     module FormColumnHelpers
@@ -52,6 +53,16 @@ class ActiveScaffold::Bridges::Chosen
         options[:multiple] = true
         options[:'data-placeholder'] = ui_options[:placeholder] || as_(:_select_)
         active_scaffold_search_select(column, options, ui_options: ui_options)
+      end
+    end
+
+    module HumanConditionHelpers
+      def active_scaffold_human_condition_chosen(column, associated)
+        active_scaffold_human_condition_select(column, associated)
+      end
+
+      def active_scaffold_human_condition_multi_chosen(column, associated)
+        active_scaffold_human_condition_select(column, associated)
       end
     end
   end

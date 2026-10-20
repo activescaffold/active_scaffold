@@ -186,7 +186,7 @@ module ActiveScaffold
           end
         when :date, :time, :datetime, :timestamp, :timestamptz
           condition_for_datetime(column, value)
-        when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state, :chosen, :multi_chosen
+        when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state, :chosen, :multi_chosen, :choices, :multi_choices
           if value.is_a?(Hash)
             condition_for_range(column, value, like_pattern)
           else

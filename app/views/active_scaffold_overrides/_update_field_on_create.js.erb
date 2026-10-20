@@ -16,6 +16,7 @@ if (field.is('select')) {
     field.val(<%= id %>);
   }
   if (field.is('.chosen')) field.trigger('chosen:updated');
+  field.trigger('as:element_updated');
 } else if (field.is('input.recordselect')) {
   var rs = field.siblings('.record-select-list').data('recordselect');
   if (rs) { // RS multiple

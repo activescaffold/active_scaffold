@@ -135,8 +135,6 @@ module ActiveScaffold
       alias active_scaffold_human_condition_multi_select active_scaffold_human_condition_select
       alias active_scaffold_human_condition_select_multiple active_scaffold_human_condition_select
       alias active_scaffold_human_condition_record_select active_scaffold_human_condition_select
-      alias active_scaffold_human_condition_chosen active_scaffold_human_condition_select
-      alias active_scaffold_human_condition_multi_chosen active_scaffold_human_condition_select
 
       # the naming convention for overriding form fields with helpers
       def override_human_condition_column(column)
