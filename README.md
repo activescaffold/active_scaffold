@@ -41,11 +41,9 @@ Add jquery-rails to Gemfile, or handle jquery with other tools like webpack or i
 gem 'jquery-rails'
 ```
 
-For rails 7.x, install generator will add `active_scaffold` to `config/importmap.rb`, `app/javascript/application.js`, and `active_scaffold/manifest.js` to `app/assets/config/manifest.js`. It will add `jquery` and `jquery_ujs` to all the 3 files if jquery-rails gem is available.
+On supported Rails versions (7.2 and 8.x), the install generator adds the ActiveScaffold route concerns and the lines required to load its JavaScript and stylesheets for the detected asset pipeline. With import maps, this includes both the pins in `config/importmap.rb` and the imports in `app/javascript/application.js`. With Propshaft, it adds the required helpers to the application layout; with Sprockets, it updates the asset manifests instead.
 
-For rails 6.1, install generator will create `app/assets/javascripts/application.js`, add it, and `active_scaffold/manifest.js`, to `app/assets/config/manifest.js` and add `javascript_include_tag` in the layout, as ActiveScaffold doesn't work with webpack. It will add `jquery` to `app/assets/javascripts/application.js` too if query-rails gem is available, although Jquery may be loaded by packs too and it will work, it won't add `jquery_ujs` or `@rails/ujs` as it's added to `app/javascript/packs/application.js` by default.
-
--- TODO: Add notes about dartsass-rails for propshaft or dartsass-sprockets for sprockets.
+For Dart Sass, the generator adds the appropriate `@use` line to `app/assets/stylesheets/application.scss`. It can also update an older `application.css` or `application.css.erb` that contains Sprockets require directives. If `jquery-rails` is installed, the generator adds `jquery` and `jquery_ujs` to the same JavaScript setup. The exact lines for each supported setup are described in [Stylesheet Loading](#stylesheet-loading) and [Javascript Loading](#javascript-loading).
 
 Run the following commands
 
@@ -131,7 +129,7 @@ In the layout, load the importmap modules and call active_scaffold_javascript_ta
     <%= active_scaffold_javascript_tag %>
 ```
 
-### Propshaft
+### Propshaft without import maps
 
 If you're not using importmaps, then you can load the JS files individually, but you only need to load jquery and jquery_ujs or rails_ujs, and then call active_scaffold_javascript_tag:
 

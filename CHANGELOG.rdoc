@@ -1,3 +1,4 @@
+- Update install generator for the supported rails versions and asset pipelines
 - Fix rendering field descriptions and tabbed forms when custom input helpers return frozen strings
 
 = 4.4.0
