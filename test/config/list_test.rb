@@ -6,6 +6,7 @@ module Config
   class ListTest < ActiveSupport::TestCase
     def setup
       @config = ActiveScaffold::Config::Core.new :model_stub
+      ActiveScaffold.deprecator.stubs(:warn)
     end
 
     def test_label
@@ -23,6 +24,7 @@ module Config
       assert_equal '-', @config.list.empty_field_text
       assert_equal ', ', @config.list.association_join_text
       assert_equal true, @config.list.pagination
+      assert_equal false, @config.list.api_pagination
       assert_nil @config.list.search_partial
       assert_equal :no_entries, @config.list.no_entries_message
       assert_equal :filtered, @config.list.filtered_message
@@ -59,6 +61,31 @@ module Config
       assert_equal :infinite, @config.list.pagination
       @config.list.pagination = false
       assert_not @config.list.pagination
+    end
+
+    def test_api_pagination
+      @config.list.api_pagination = true
+      assert @config.list.api_pagination
+    end
+
+    def test_unconfigured_api_pagination_warns_about_next_version_default
+      ActiveScaffold.deprecator.expects(:warn).with(
+        'Set api_pagination globally to false or true. It will default to true in the next version.'
+      )
+
+      assert_equal false, @config.list.api_pagination
+      assert_nil ActiveScaffold::Config::List.api_pagination
+    end
+
+    def test_globally_configured_api_pagination_does_not_warn
+      global_api_pagination = ActiveScaffold::Config::List.api_pagination
+      ActiveScaffold::Config::List.api_pagination = true
+      ActiveScaffold.deprecator.expects(:warn).never
+
+      config = ActiveScaffold::Config::Core.new :model_stub
+      assert config.list.api_pagination
+    ensure
+      ActiveScaffold::Config::List.api_pagination = global_api_pagination
     end
 
     def test_sorting

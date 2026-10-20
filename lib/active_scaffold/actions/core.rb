@@ -328,6 +328,7 @@ module ActiveScaffold::Actions
     end
 
     def response_to_api(format, columns_names, options = {})
+      set_api_pagination_headers
       render(
         options.reverse_merge(
           format => response_object,
@@ -337,6 +338,14 @@ module ActiveScaffold::Actions
           status: response_status
         )
       )
+    end
+
+    def set_api_pagination_headers
+      return unless @page && active_scaffold_config.list.api_pagination
+      return if @page.pager.infinite?
+
+      response.set_header 'X-Total-Count', @page.pager.count.to_s
+      response.set_header 'X-Total-Pages', @page.pager.number_of_pages.to_s
     end
 
     # Success is the existence of one or more model objects. Most actions

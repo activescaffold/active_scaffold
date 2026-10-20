@@ -1,3 +1,4 @@
+- Add an option to enable pagination for API and other non-HTML formats; this will become the default in the next version. Include total record and page counts in response headers
 - Add ActionColumns#insert to insert columns or layout groups at a specific position
 - Add a default-enabled Choices.js bridge with form and search UI helpers
 - Update install generator for the supported rails versions and asset pipelines

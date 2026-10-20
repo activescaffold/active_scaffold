@@ -21,6 +21,11 @@ module ActiveScaffold::Config
       @empty_field_text = self.class.empty_field_text
       @association_join_text = self.class.association_join_text
       @pagination = self.class.pagination
+      @api_pagination = self.class.api_pagination
+      if @api_pagination.nil?
+        ActiveScaffold.deprecator.warn 'Set api_pagination globally to false or true. It will default to true in the next version.'
+        @api_pagination = false
+      end
       @auto_pagination = self.class.auto_pagination
       @show_search_reset = self.class.show_search_reset
       @show_filter_reset = self.class.show_filter_reset
@@ -77,6 +82,10 @@ module ActiveScaffold::Config
     # * false: Disable pagination
     cattr_accessor :pagination, instance_accessor: false
     @@pagination = true
+
+    # Apply the configured pagination to API and other non-HTML formats.
+    cattr_accessor :api_pagination, instance_accessor: false
+    @@api_pagination = nil
 
     # Auto paginate, only can be used with pagination enabled
     # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are loaded
@@ -156,6 +165,9 @@ module ActiveScaffold::Config
     # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for large tables where counting is slow and we don't really care anyway)
     # * false: Disable pagination
     attr_accessor :pagination
+
+    # Apply the configured pagination to API and other non-HTML formats.
+    attr_accessor :api_pagination
 
     # Auto paginate, only can be used with pagination enabled
     # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are loaded
@@ -274,7 +286,7 @@ module ActiveScaffold::Config
                 :association_join_text, :messages_above_header, :wrap_tag, :auto_select_columns, :calculate_etag,
                 :no_entries_message, :filtered_message, :show_search_reset, :always_show_create, :always_show_search,
                 :hide_nested_column, :pagination, :auto_pagination, :filter_human_message, :show_filter_reset,
-                :local_sorting
+                :local_sorting, :api_pagination
 
       def initialize(conf, storage, params)
         super(conf, storage, params, :list)

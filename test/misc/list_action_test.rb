@@ -29,6 +29,34 @@ class ListActionTest < ActiveSupport::TestCase
     action.send(:do_show)
   end
 
+  def test_find_page_options_does_not_paginate_api_format_by_default
+    action = list_action_with_config(format: :json)
+
+    assert_not action.send(:find_page_options).key?(:pagination)
+  end
+
+  def test_find_page_options_paginates_api_format_when_enabled
+    action = list_action_with_config(format: :json, api_pagination: true)
+
+    assert_equal(
+      {sorting: :sorting, count_includes: :count_includes, pagination: true, per_page: 25, page: 3},
+      action.send(:find_page_options)
+    )
+  end
+
+  def test_api_response_includes_pagination_totals_in_headers
+    action = core_action.new
+    pager = stub(infinite?: false, count: 31, number_of_pages: 3)
+    action.instance_variable_set(:@page, stub(pager: pager))
+    action.stubs(:active_scaffold_config).returns(stub(list: stub(api_pagination: true)))
+    response = mock
+    response.expects(:set_header).with('X-Total-Count', '31')
+    response.expects(:set_header).with('X-Total-Pages', '3')
+    action.stubs(:response).returns(response)
+
+    action.send(:set_api_pagination_headers)
+  end
+
   def test_apply_filters_tracks_applied_default_and_requested_filters
     filters = filter_set do |set|
       set.add(:visibility) do |filter|
@@ -121,6 +149,15 @@ class ListActionTest < ActiveSupport::TestCase
 
   def filter_set(&)
     ActiveScaffold::DataStructures::Filters.new.tap(&)
+  end
+
+  def list_action_with_config(format:, api_pagination: false)
+    action = list_action.new
+    user = Struct.new(:sorting, :count_includes, :per_page, :page).new(:sorting, :count_includes, 25, 3)
+    list = Struct.new(:api_pagination, :pagination, :user, :auto_select_columns).new(api_pagination, true, user, false)
+    action.stubs(:params).returns(ActionController::Parameters.new(format: format))
+    action.stubs(:active_scaffold_config).returns(Struct.new(:list).new(list))
+    action
   end
 
   def filters_action(filters, parameters = {})
