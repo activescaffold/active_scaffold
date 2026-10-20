@@ -86,6 +86,29 @@ module ActiveScaffold::DataStructures
     end
     alias << add
 
+    def insert(index, *values)
+      if @layout == :multiple
+        groups = values.map do |value|
+          group =
+            if value.is_a?(ActiveScaffold::DataStructures::ActionColumns)
+              value
+            else
+              ActiveScaffold::DataStructures::ActionColumns.new(*value)
+            end
+          group.action = action
+          group
+        end
+        @set.insert(index, *groups)
+      else
+        values.flatten!
+        values.map! { |value| value.is_a?(String) ? value.to_sym : value }
+        values.uniq!
+        values.reject! { |value| @set.include?(value) }
+        @set.insert(index, *values)
+      end
+      self
+    end
+
     def [](arg)
       if @layout == :multiple && arg.is_a?(Integer)
         @set[arg]

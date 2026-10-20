@@ -65,6 +65,23 @@ class ActionColumnsTest < ActiveSupport::TestCase
     assert @columns.include?(:g)
   end
 
+  def test_insert
+    assert_same @columns, @columns.insert(1, :c)
+    assert_equal %i[a c b], @columns.to_a
+  end
+
+  def test_insert_symbolizes_strings_and_flattens_arrays
+    @columns.insert(1, ['c', :d])
+
+    assert_equal %i[a c d b], @columns.to_a
+  end
+
+  def test_insert_does_not_duplicate_columns
+    @columns.insert(1, :b, :c, :c)
+
+    assert_equal %i[a c b], @columns.to_a
+  end
+
   def test_length
     assert_equal 2, @columns.length
   end
@@ -194,6 +211,34 @@ class ActionColumnsTest < ActiveSupport::TestCase
 
     assert_instance_of ActiveScaffold::DataStructures::ActionColumns, @columns[1]
     assert @columns[1].include?(:c)
+  end
+
+  def test_layout_multiple_insert_array_creates_group
+    @columns.layout = :multiple
+    @columns << %i[e f]
+    @columns.insert(1, %i[c d])
+
+    assert_instance_of ActiveScaffold::DataStructures::ActionColumns, @columns[1]
+    assert_equal %i[c d], @columns[1].to_a
+    assert_equal %i[e f], @columns[2].to_a
+    assert_equal @columns.action, @columns[1].action
+  end
+
+  def test_layout_multiple_insert_column_creates_single_column_group
+    @columns.layout = :multiple
+    @columns.insert(1, :c)
+
+    assert_instance_of ActiveScaffold::DataStructures::ActionColumns, @columns[1]
+    assert_equal [:c], @columns[1].to_a
+  end
+
+  def test_layout_multiple_insert_action_columns
+    @columns.layout = :multiple
+    group = ActiveScaffold::DataStructures::ActionColumns.new(:c, :d)
+    @columns.insert(1, group)
+
+    assert_same group, @columns[1]
+    assert_equal @columns.action, group.action
   end
 
   def test_layout_multiple_add_subgroup_raises
