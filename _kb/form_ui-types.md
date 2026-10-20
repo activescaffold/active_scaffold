@@ -341,6 +341,51 @@ Added by [carrierwave](https://github.com/carrierwaveuploader/carrierwave) gem, 
 
 The UI looks similar to the one for `:active_storage_has_one`.
 
+### :choices
+
+It renders a select enhanced by [Choices.js](https://github.com/Choices-js/Choices). It works for the same columns and accepts the same options as `:select`. Collection associations are rendered as multiple selects.
+
+{% highlight ruby -%}
+conf.columns[:skill].form_ui = :choices, {include_blank: 'Select a skill'}
+conf.columns[:roles].form_ui = :choices
+{%- endhighlight %}
+
+The Choices bridge is enabled by default, but ActiveScaffold does not bundle the Choices.js library or its styles. The application must load both the Choices JavaScript and CSS. With Rails importmap, pin the JavaScript package:
+
+{% highlight shell -%}
+bin/importmap pin choices.js
+{%- endhighlight %}
+
+Then import it in `app/javascript/application.js` and expose its constructor globally before ActiveScaffold is initialized:
+
+{% highlight javascript -%}
+import Choices from 'choices.js'
+
+window.Choices = Choices
+{%- endhighlight %}
+
+Importmap does not download or expose the package's CSS. Load the stylesheet from a CDN using the same Choices.js version shown in `config/importmap.rb`:
+
+{% highlight html -%}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@VERSION/public/assets/styles/choices.min.css">
+{%- endhighlight %}
+
+Replace `VERSION` with the version in the generated Choices.js pin. Alternatively, download that same file into the project, for example as `vendor/assets/stylesheets/choices.css`, and include it through the application's stylesheet pipeline. In every setup, the JavaScript library must define `window.Choices` before `ActiveScaffold.setup` runs.
+
+Options passed to every Choices instance can be configured in the ActiveScaffold initializer:
+
+{% highlight ruby -%}
+ActiveScaffold.js_config[:choices_options] = {removeItemButton: true}
+{%- endhighlight %}
+
+The bridge uses an ActiveScaffold setup callback so selects added or updated through AJAX are initialized or refreshed. If that conflicts with application-owned Choices initialization, disable the bridge and manage the controls in application code:
+
+{% highlight ruby -%}
+ActiveScaffold.exclude_bridges |= [:choices]
+{%- endhighlight %}
+
+Disabling the bridge also removes its UI helpers, so do not configure `form_ui = :choices` unless the application provides an equivalent helper.
+
 ### :chosen
 
 It renders a select using [chosen](https://github.com/tsechingho/chosen-rails) library. It works for the same columns as `:select`, singular and plural associations, or non-association columns. For plural associations accepts options for `select` rails helper method, and html_options in the :html_options key. For other columns, it accepts the same options as `:select` form_ui. You need to add chosen to Gemfile, assets will be added by ActiveScaffold. 

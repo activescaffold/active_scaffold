@@ -298,6 +298,51 @@ end
 
 This requires the [calendar date select](https://code.google.com/p/calendardateselect/) plugin. Plugin specifics can be passed via the Column#options hash. When the plugin is installed is used for date and datetime columns by default. It works as `:date` or `:datetime` search_ui, but using calendar date select for date and time pickers.
 
+### :choices
+
+It renders a select enhanced by [Choices.js](https://github.com/Choices-js/Choices). It accepts the same columns and options as `:select`.
+
+{% highlight ruby -%}
+conf.columns[:skill].search_ui = :choices, {include_blank: 'Select a skill'}
+conf.columns[:roles].search_ui = :multi_choices
+{%- endhighlight %}
+
+The Choices bridge is enabled by default, but ActiveScaffold does not bundle the Choices.js library or its styles. The application must load both the Choices JavaScript and CSS. With Rails importmap, pin the JavaScript package:
+
+{% highlight shell -%}
+bin/importmap pin choices.js
+{%- endhighlight %}
+
+Then import it in `app/javascript/application.js` and expose its constructor globally before ActiveScaffold is initialized:
+
+{% highlight javascript -%}
+import Choices from 'choices.js'
+
+window.Choices = Choices
+{%- endhighlight %}
+
+Importmap does not download or expose the package's CSS. Load the stylesheet from a CDN using the same Choices.js version shown in `config/importmap.rb`:
+
+{% highlight html -%}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@VERSION/public/assets/styles/choices.min.css">
+{%- endhighlight %}
+
+Replace `VERSION` with the version in the generated Choices.js pin. Alternatively, download that same file into the project, for example as `vendor/assets/stylesheets/choices.css`, and include it through the application's stylesheet pipeline. In every setup, the JavaScript library must define `window.Choices` before `ActiveScaffold.setup` runs.
+
+Options passed to every Choices instance can be configured in the ActiveScaffold initializer:
+
+{% highlight ruby -%}
+ActiveScaffold.js_config[:choices_options] = {removeItemButton: true}
+{%- endhighlight %}
+
+The bridge uses an ActiveScaffold setup callback so selects added or updated through AJAX are initialized or refreshed. If that conflicts with application-owned Choices initialization, disable the bridge and manage the controls in application code:
+
+{% highlight ruby -%}
+ActiveScaffold.exclude_bridges |= [:choices]
+{%- endhighlight %}
+
+Disabling the bridge also removes its UI helpers, so do not configure `search_ui` as `:choices` or `:multi_choices` unless the application provides equivalent helpers.
+
 ### :chosen
 
 It renders a select using [chosen](https://github.com/tsechingho/chosen-rails) library. It works for the same columns as `:select`, singular and plural associations, or non-association columns. For plural associations accepts options for `select` rails helper method, and html_options in the `:html_options` key. For other columns, it accepts the same options as `:select` form_ui. You need to add chosen to Gemfile, assets will be added by ActiveScaffold. 
@@ -330,7 +375,6 @@ conf.columns[:skills].search_ui = :chosen, {optgroup: :skill_discipline}
 
 ![image](/assets/screenshots/search-ui-chosen-optgroup.png)
 
-
 ### :country
 
 It requires [country_select](https://github.com/countries/country_select) gem. It accepts `:priority` in the options to set `:priority_countries` option of `country_select` helper, and `:format`, other options are passed to html_options of `country_select` helper.
@@ -359,6 +403,10 @@ This requires the jquery-ui datepicker, datepicker specific options can be passe
 ### :datetime_picker
 
 The same as date_picker, but with time controls. When jquery-ui-rails is installed is used for datetime columns by default. Format input with locale time.formats.picker. It works as `:datetime` search_ui, but using jquery-ui datepicker for date and time pickers.
+
+### :multi_choices
+
+It's the same as `:choices, {html_options: {multiple: true}}`, see explanation at [choices](/doc/search_ui-types/#choices).
 
 ### :multi_chosen
 
