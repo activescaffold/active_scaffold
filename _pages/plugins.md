@@ -33,6 +33,11 @@ Ideal for applications requiring customizable ordering, such as task prioritizat
 Gives users the ability to customize which columns are visible in their interface, making data views more flexible.
 
 
+### [ActiveScaffold MCP](/plugins/activescaffoldmcp/)
+
+Generates read-only MCP tools from ActiveScaffold list and show configuration, so MCP clients can discover and query selected application data through ActionMCP.
+
+
 ### [ActiveScaffold Export](/plugins/activescaffoldexport/)
 
 Add export functionality to your ActiveScaffold interfaces, supporting formats like CSV and Excel.
