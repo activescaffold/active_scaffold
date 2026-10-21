@@ -31,6 +31,26 @@ config.actions << :search
 config.list.always_show_search = :search
 {%- endhighlight %}
 
+## api_pagination <small><em>global local</em></small>
+
+Apply the configured list pagination to API and other non-HTML formats. When
+enabled, API requests accept the same `page` and `limit` parameters as HTML and
+JavaScript requests. Finite paginated responses include the total number of
+matching records in the `X-Total-Count` response header and the total number of
+pages in `X-Total-Pages`. These headers are omitted when `pagination` is set to
+`:infinite`, because the total is not calculated.
+
+The global default is currently `nil`, which preserves the previous `false`
+behavior and emits a deprecation warning. Set it explicitly in an initializer;
+the default will change to `true` in the next version:
+
+{% highlight ruby -%}
+ActiveScaffold::Config::List.api_pagination = true
+{%- endhighlight %}
+
+Set it to `false` globally to retain unpaginated API responses and silence the
+deprecation warning.
+
 ## association_join_text <small><em>global local v2.4+</em></small>
 
 Defines what string to use to join records from plural associations. Defaults to `", "`.
