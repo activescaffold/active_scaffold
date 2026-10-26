@@ -776,7 +776,14 @@ module ActiveScaffold
     end
 
     def distinct_query?(options)
-      options[:left_outer_joins].present? || options[:left_joins].present?
+      joins = [options[:left_outer_joins], options[:left_joins]].flatten.compact
+      model = active_scaffold_config.model
+
+      joins.any? do |join|
+        next true unless join.is_a?(Symbol)
+
+        model.reflect_on_association(join)&.macro != :belongs_to
+      end
     end
 
     def joins_for_finder

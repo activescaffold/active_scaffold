@@ -145,6 +145,32 @@ class FinderTest < ActiveSupport::TestCase
     assert_predicate query, :distinct_value
   end
 
+  def test_append_to_query_does_not_make_belongs_to_left_join_query_distinct
+    ModelStub.stubs(:reflect_on_association).with(:parent_model).returns(stub(macro: :belongs_to))
+
+    query = @klass.send(:append_to_query, ModelStub.where(nil), left_joins: :parent_model)
+
+    assert_not_predicate query, :distinct_value
+  end
+
+  def test_append_to_query_makes_has_one_left_join_query_distinct
+    query = @klass.send(:append_to_query, ModelStub.where(nil), left_joins: :other_model)
+
+    assert_predicate query, :distinct_value
+  end
+
+  def test_distinct_query_is_false_without_left_joins
+    assert_not @klass.send(:distinct_query?, {})
+  end
+
+  def test_distinct_query_is_true_for_unknown_association
+    assert @klass.send(:distinct_query?, left_joins: :missing_association)
+  end
+
+  def test_distinct_query_is_true_for_nested_associations
+    assert @klass.send(:distinct_query?, left_outer_joins: {parent_model: :other_models})
+  end
+
   def test_count_with_group
     @klass.expects(:custom_finder_options).returns(group: :a)
     relation_class.any_instance.expects(:count).returns('foo' => 5, 'bar' => 4)
