@@ -1,6 +1,7 @@
 - Avoid unnecessary DISTINCT in searches without joins or with only belongs_to joins, fixing PostgreSQL searches on models with json columns
 - Update install generator for the supported rails versions and asset pipelines
 - Fix rendering field descriptions and tabbed forms when custom input helpers return frozen strings
+- Fix inline action links with rails-ujs on Rails 8.1 by inserting the raw HTML response instead of its parsed Document
 
 = 4.4.0
 - Add support for local sorting using JS when the list has no pagination

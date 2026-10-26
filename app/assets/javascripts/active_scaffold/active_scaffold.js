@@ -1339,7 +1339,12 @@
         return true;
       });
       jQuery(document).on('ajax:success', 'a.as_action', function(event, response) {
-        if (event.detail && !response) response = event.detail[0];
+        if (event.detail && !response) {
+          response = event.detail[0];
+          // rails-ujs parses text/html responses into a Document, which cannot be inserted and
+          // loses table rows parsed outside a table, so use the raw response from the XHR.
+          if (response instanceof Document && event.detail[2]) response = event.detail[2].responseText;
+        }
         var action_link = ActiveScaffold.ActionLink.get(jQuery(this));
         if (action_link) {
           if (action_link.position) {
