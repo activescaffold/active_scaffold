@@ -57,6 +57,12 @@ module ActiveScaffold
       require 'active_scaffold/extensions/paginator_extensions'
     end
 
+    initializer 'active_scaffold.active_record_session_store', after: :load_config_initializers do |app|
+      require 'active_scaffold/extensions/active_record_session_store'
+      extension = ActiveScaffold::Extensions::ActiveRecordSessionStore
+      ActiveScaffold::Core.prepend(extension::Core) if extension.affected?(app)
+    end
+
     initializer 'active_scaffold.assets' do |app|
       if defined?(::Sprockets)
         # Tell sprockets where your assets are located
