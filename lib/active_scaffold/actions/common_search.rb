@@ -35,7 +35,7 @@ module ActiveScaffold::Actions
       end
 
       def set_outer_joins_for_search(columns) # rubocop:disable Naming/AccessorMethodName
-        active_scaffold_outer_joins.concat columns.flat_map(&:search_joins).uniq
+        active_scaffold_outer_joins.concat columns.flat_map(&:search_joins).compact.uniq
       end
 
       def store_search_params_into_session
