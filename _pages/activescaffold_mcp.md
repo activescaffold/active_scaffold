@@ -121,6 +121,33 @@ config.mcp.expose :show,
 
 Presenter methods should return structured, non-HTML values. See [Customize presentation](/doc/active-scaffold-mcp-read-tools/#customize-presentation) for list and show configuration details.
 
+When changing individual record fields is not enough, list and show tools also
+provide a protected `render_result` hook. The default implementation renders
+the records as JSON. An action module can override the hook to return different
+MCP content while keeping the generated tool's lookup, filtering,
+authorization, and error handling:
+
+```ruby
+module AttachmentMCPResult
+  def render_result
+    render(
+      resource: "attachment://#{@record.id}",
+      blob: Base64.strict_encode64(@record.data),
+      mime_type: @record.mime_type
+    )
+  end
+end
+
+config.mcp.expose :show, modules: AttachmentMCPResult
+```
+
+`render_result` is called after the action has loaded and validated its result.
+Show overrides can use `@record`; list overrides can use `@records` and `@page`.
+Use `presenter_modules` when only serialized fields need customization, and an
+action's `modules` option with `render_result` when the MCP response content or
+format itself must change. ActionMCP also accepts Base64 data through the
+`image:` and `audio:` render arguments when returning those content types.
+
 ### Designed for controlled exposure
 
 ActiveScaffold MCP does not publish every scaffold automatically. Applications choose the actions and data appropriate for agent access. Generated tools apply ActiveScaffold's column and record authorization, action-specific authorization such as `list_authorized?`, and an optional application-level authorization hook during both discovery and execution.
