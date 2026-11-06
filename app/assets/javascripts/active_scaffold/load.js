@@ -1,6 +1,10 @@
 // ActiveScaffold main entry point
 (function() {
   const config = window.ActiveScaffold?.config || {};
+  config.deferInitialSetup = true;
+  const scriptLoads = new Map();
+  const readyHeld = typeof window.jQuery?.holdReady === 'function';
+  if (readyHeld) window.jQuery.holdReady(true);
 
   // Load dependencies based on configuration
   const loadDependencies = async () => {
@@ -17,23 +21,14 @@
     await loadScript(RAILS_ASSET_URL('/active_scaffold/active_scaffold.js'));
     await loadScript(RAILS_ASSET_URL('/active_scaffold/jquery.editinplace.js'));
 
-    // Load plugins
-    if (config.plugins) {
-      for (const plugin of config.plugins) {
-        await loadScript(plugin);
-      }
-    }
-
-    // Load bridges
-    if (config.bridges) {
-      for (const bridge of config.bridges) {
-        await loadScript(bridge);
-      }
-    }
+    // Load plugins and bridges in order. Some of them depend on scripts loaded
+    // before them and register callbacks while they are being evaluated.
+    await loadScripts(config.plugins);
+    await loadScripts(config.bridges);
 
     // ALL DEPENDENCIES ARE LOADED NOW
     // Initialize everything
-    initializeActiveScaffold();
+    await initializeActiveScaffold();
   };
 
   const loadJQueryUI = async () => {
@@ -57,8 +52,16 @@
     initializeJQueryUI();
   };
 
+  const loadScripts = async (paths = []) => {
+    for (const path of paths || []) {
+      await loadScript(path);
+    }
+  };
+
   const loadScript = (path) => {
-    return new Promise((resolve, reject) => {
+    if (scriptLoads.has(path)) return scriptLoads.get(path);
+
+    const promise = new Promise((resolve, reject) => {
       // Check if already loaded
       if (document.querySelector(`script[src*="${path}"]`)) {
         resolve();
@@ -72,6 +75,9 @@
       script.onerror = reject;
       document.head.appendChild(script);
     });
+
+    scriptLoads.set(path, promise);
+    return promise;
   };
 
   const initializeJQueryUI = function() {
@@ -100,13 +106,26 @@
     }
   };
 
-  // NEW: Initialize everything after all scripts are loaded
-  const initializeActiveScaffold = () => {
-    // Run any post-load initialization
-    if (window.jQuery) {
-      jQuery(document).trigger('active-scaffold:loaded');
+  // Initialize only after plugins and bridges are available. This is especially
+  // important when this file is loaded as a regular script after DOM ready.
+  const initializeActiveScaffold = () => new Promise((resolve) => {
+    if (!window.jQuery || !window.ActiveScaffold) {
+      resolve();
+      return;
     }
-  };
+
+    jQuery(function() {
+      config.deferInitialSetup = false;
+      if ((typeof(Turbolinks) == 'undefined' || !Turbolinks.supported) && typeof(Turbo) == 'undefined') {
+        ActiveScaffold.setup_history_state();
+      }
+      ActiveScaffold.setup(document);
+      jQuery(document).trigger('active-scaffold:loaded');
+      resolve();
+    });
+
+    if (readyHeld) window.jQuery.holdReady(false);
+  });
 
   // Start loading when DOM is ready
   if (document.readyState === 'loading') {

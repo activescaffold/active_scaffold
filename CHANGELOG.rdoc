@@ -1,3 +1,6 @@
+= 4.4.3
+- Wait for dynamically loaded plugins and bridges to finish registering their ready and setup callbacks before initial setup, fixing initialization on directly rendered forms
+
 = 4.4.2
 - Add an option to enable pagination for API and other non-HTML formats; this will become the default in the next version. Include total record and page counts in response headers
 - Add ActionColumns#insert to insert columns or layout groups at a specific position
