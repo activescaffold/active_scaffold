@@ -1,3 +1,6 @@
+= 4.4.2
+- Show all association records in select and multi-select search UIs instead of applying form association conditions
+
 = 4.4.1
 - Avoid unnecessary DISTINCT in searches without joins or with only belongs_to joins, fixing PostgreSQL searches on models with json columns
 - Update install generator for the supported rails versions and asset pipelines
