@@ -1,3 +1,6 @@
+= 4.4.3
+- Wait for dynamically loaded plugins and bridges to finish registering their ready and setup callbacks before initial setup, fixing initialization on directly rendered forms
+
 = 4.4.2
 - Show all association records in select and multi-select search UIs instead of applying form association conditions
 

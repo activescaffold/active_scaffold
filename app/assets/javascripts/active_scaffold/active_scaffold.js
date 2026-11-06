@@ -1695,8 +1695,10 @@
 
       // call setup on document.ready if Turbolinks not enabled
       if ((typeof(Turbolinks) == 'undefined' || !Turbolinks.supported) && typeof(Turbo) == 'undefined') {
-        ActiveScaffold.setup_history_state();
-        ActiveScaffold.setup(document);
+        if (!ActiveScaffold.config.deferInitialSetup) {
+          ActiveScaffold.setup_history_state();
+          ActiveScaffold.setup(document);
+        }
       }
       if (ActiveScaffold.config.warn_changes) ActiveScaffold.setup_warn_changes();
       jQuery(document).on('as:element_updated as:element_created', function(e, action_link) {
@@ -1732,7 +1734,7 @@
     });
 
     jQuery(document).on('turbolinks:load turbo:load', function($) {
-      ActiveScaffold.setup(document);
+      if (!ActiveScaffold.config.deferInitialSetup) ActiveScaffold.setup(document);
     });
     jQuery(window).on('scroll resize', ActiveScaffold.update_floating_form_footer);
   };
