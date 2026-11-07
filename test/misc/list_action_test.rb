@@ -10,6 +10,68 @@ class ListActionTest < ActiveSupport::TestCase
     assert_equal :record, action.send(:get_row, crud_type: :update)
   end
 
+  def test_process_member_action_checks_security_method_with_record
+    action = core_action.new
+    record = Object.new
+    link = ActiveScaffold::DataStructures::ActionLink.new('custom', security_method: :custom_authorized?)
+    prepare_process_action(action, link, id: '1')
+    action.define_singleton_method(:get_row) do |security_options|
+      raise 'unexpected security options' unless security_options == {crud_type: :update, action: 'custom'}
+
+      @record = record
+    end
+    action.define_singleton_method(:custom_authorized?) do |authorized_record|
+      raise 'unexpected record' unless authorized_record.equal?(record)
+
+      false
+    end
+
+    assert_raises ActiveScaffold::ActionNotAllowed do
+      action.send(:process_action_link_action) { flunk 'unauthorized action was yielded' }
+    end
+  end
+
+  def test_process_collection_action_calls_security_method_without_arguments
+    action = core_action.new
+    link = ActiveScaffold::DataStructures::ActionLink.new('custom', security_method: :custom_authorized?)
+    prepare_process_action(action, link)
+    action.define_singleton_method(:custom_authorized?) { true }
+    yielded = false
+
+    action.send(:process_action_link_action) { yielded = true }
+
+    assert yielded
+  end
+
+  def test_process_member_action_handles_get_row_returning_nil
+    action = core_action.new
+    link = ActiveScaffold::DataStructures::ActionLink.new('custom', security_method: :custom_authorized?)
+    prepare_process_action(action, link, id: '1')
+    action.stubs(:get_row).with({crud_type: :update, action: 'custom'}).returns(nil)
+    action.define_singleton_method(:custom_authorized?) { true }
+
+    action.send(:process_action_link_action) { flunk 'action without a record was yielded' }
+
+    assert_not action.send(:successful?)
+    assert action.flash[:error].present?
+  end
+
+  def test_process_member_action_does_not_check_security_when_get_row_raises
+    [ActiveRecord::RecordNotFound, ActiveScaffold::RecordNotAllowed].each do |error_class|
+      action = core_action.new
+      link = ActiveScaffold::DataStructures::ActionLink.new('custom', security_method: :custom_authorized?)
+      prepare_process_action(action, link, id: '1')
+      action.define_singleton_method(:get_row) { |_| raise error_class }
+      security_checked = false
+      action.define_singleton_method(:custom_authorized?) { |_| security_checked = true }
+
+      assert_raises(error_class) do
+        action.send(:process_action_link_action) { flunk 'action without a record was yielded' }
+      end
+      assert_not security_checked
+    end
+  end
+
   def test_get_row_prepares_list_associations_and_counts
     action = list_action.new
     action.expects(:set_includes_for_columns)
@@ -113,6 +175,16 @@ class ListActionTest < ActiveSupport::TestCase
   end
 
   private
+
+  def prepare_process_action(action, link, parameters = {})
+    request = stub(get?: false, head?: false, delete?: false)
+    action.stubs(:request).returns(request)
+    action.stubs(:params).returns(ActionController::Parameters.new(parameters))
+    action.stubs(:action_name).returns('custom')
+    action.stubs(:active_scaffold_config).returns(stub(action_links: {'custom' => link}))
+    action.stubs(:flash).returns({})
+    action.stubs(:respond_to_action)
+  end
 
   def core_action
     Class.new do

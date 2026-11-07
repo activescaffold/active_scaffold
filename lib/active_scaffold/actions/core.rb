@@ -559,6 +559,10 @@ module ActiveScaffold::Actions
         if params[:id]
           crud_type_or_security_options ||= {crud_type: request.delete? ? :delete : :update, action: action_name}
           get_row(crud_type_or_security_options)
+        end
+        raise ActiveScaffold::ActionNotAllowed unless action_link_authorized? @action_link, @record
+
+        if params[:id]
           if @record.nil?
             self.successful = false
             flash[:error] = as_(:no_authorization_for_action, action: @action_link&.label(nil) || action_name)
@@ -566,16 +570,14 @@ module ActiveScaffold::Actions
             yield @record
           end
         else
-          raise ActiveScaffold::ActionNotAllowed unless action_link_authorized? @action_link
-
           yield
         end
         respond_to_action(render_action)
       end
     end
 
-    def action_link_authorized?(link)
-      link&.security_method.nil? || !respond_to?(link.security_method, true) || Array(send(link.security_method))[0]
+    def action_link_authorized?(link, record = nil)
+      link&.security_method.nil? || !respond_to?(link.security_method, true) || Array(send(link.security_method, *record))[0]
     end
 
     def action_confirmation_respond_to_html(confirm_action = action_name.to_sym)
