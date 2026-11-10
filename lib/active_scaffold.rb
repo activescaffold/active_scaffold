@@ -79,8 +79,7 @@ module ActiveScaffold
   # Some keys don't have a :tag key, because only attributes are used, the tag is hardcoded, usually elements that are
   # rendered as a form or table, or a table's element (thead, tbody, tr, td, th, tfoot, etc.). For those elements,
   # the :tag key will be ignored if it's set, so the tag can't be changed.
-  mattr_reader :ui_elements
-  @@ui_elements ||= {
+  mattr_reader :ui_elements, default: {
     list: {tag: :div},
     list_header: {tag: :div},
     list_title: {tag: :h2},
@@ -235,19 +234,13 @@ module ActiveScaffold
     Jquery::Rails.const_defined?(:JQUERY_UI_VERSION) || Jquery.const_defined?(:Ui) if Object.const_defined?(:Jquery)
   end
 
-  mattr_writer :js_config, instance_writer: false
-  def self.js_config
-    @@js_config ||= {scroll_on_close: :checkInViewport}
-  end
+  mattr_accessor :js_config, instance_accessor: false, default: {scroll_on_close: :checkInViewport}
 
   # exclude bridges you do not need, add to an initializer
   # name of bridge subdir should be used to exclude it
   # eg
   #   ActiveScaffold.exclude_bridges = [:cancan, :ancestry]
-  mattr_writer :exclude_bridges, instance_writer: false
-  def self.exclude_bridges
-    @@exclude_bridges ||= []
-  end
+  mattr_accessor :exclude_bridges, instance_accessor: false, default: []
 
   mattr_accessor :nested_subforms, instance_writer: false
 

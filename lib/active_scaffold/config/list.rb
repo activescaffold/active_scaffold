@@ -45,96 +45,84 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # include list header on refresh
-    cattr_accessor :refresh_with_header, instance_accessor: false
-    @@refresh_with_header = false
+    cattr_accessor :refresh_with_header, instance_accessor: false, default: false
 
     # enable sorting locally in the browser, when there is only one page
-    cattr_accessor :local_sorting, instance_accessor: false
-    @@local_sorting = false
+    cattr_accessor :local_sorting, instance_accessor: false, default: false
 
     # how many records to show per page
-    cattr_accessor :per_page, instance_accessor: false
-    @@per_page = 15
+    cattr_accessor :per_page, instance_accessor: false, default: 15
 
     # how many page links around current page to show
-    cattr_accessor :page_links_inner_window, instance_accessor: false
-    @@page_links_inner_window = 2
+    cattr_accessor :page_links_inner_window, instance_accessor: false, default: 2
 
     # how many page links around first and last page to show
-    cattr_accessor :page_links_outer_window, instance_accessor: false
-    @@page_links_outer_window = 0
+    cattr_accessor :page_links_outer_window, instance_accessor: false, default: 0
 
     # what string to use when a field is empty
-    cattr_accessor :empty_field_text, instance_accessor: false
-    @@empty_field_text = '-'
+    cattr_accessor :empty_field_text, instance_accessor: false, default: '-'
 
     # display messages above table header
-    cattr_accessor :messages_above_header, instance_accessor: false
-    @@messages_above_header = false
+    cattr_accessor :messages_above_header, instance_accessor: false, default: false
 
     # what string to use to join records from plural associations
-    cattr_accessor :association_join_text, instance_accessor: false
-    @@association_join_text = ', '
+    cattr_accessor :association_join_text, instance_accessor: false, default: ', '
 
     # What kind of pagination to use:
     # * true: The usual pagination
     # * :infinite: Treat the source as having an infinite number of pages (i.e. don't count the records; useful for large tables where counting is slow and we don't really care anyway)
     # * false: Disable pagination
-    cattr_accessor :pagination, instance_accessor: false
-    @@pagination = true
+    cattr_accessor :pagination, instance_accessor: false, default: true
 
     # Apply the configured pagination to API and other non-HTML formats.
-    cattr_accessor :api_pagination, instance_accessor: false
-    @@api_pagination = nil
+    cattr_accessor :api_pagination, instance_accessor: false, default: nil
 
     # Auto paginate, only can be used with pagination enabled
     # * true: First page will be loaded on first request, next pages will be requested by AJAX until all items are loaded
     # * false: Disable auto pagination
-    cattr_accessor :auto_pagination, instance_accessor: false
-    @@auto_pagination = false
+    cattr_accessor :auto_pagination, instance_accessor: false, default: false
 
     # show a link to reset the search next to filtered message
-    cattr_accessor :show_search_reset, instance_accessor: false
-    @@show_search_reset = true
+    cattr_accessor :show_search_reset, instance_accessor: false, default: true
 
     # show a link to reset the filter next to filter human message
-    cattr_accessor :show_filter_reset, instance_accessor: false
-    @@show_filter_reset = true
+    cattr_accessor :show_filter_reset, instance_accessor: false, default: true
 
     # filter human message
     # you may show the user a humanized applied filters, not the default ones
-    cattr_accessor :filter_human_message, instance_accessor: false
-    @@filter_human_message = false
+    cattr_accessor :filter_human_message, instance_accessor: false, default: false
 
     # the ActionLink to reset search
-    cattr_reader :reset_link, instance_reader: false
-    @@reset_link = ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, parameters: {search: ''})
+    cattr_reader :reset_link, instance_reader: false,
+                              default: ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, parameters: {search: ''})
 
     # the ActionLink to reset the filters
-    cattr_reader :reset_filter_link, instance_reader: false
-    @@reset_filter_link = ActiveScaffold::DataStructures::ActionLink.new('index', label: :click_to_reset, type: :collection, position: false, dynamic_parameters: -> { clear_filters_params })
+    cattr_reader :reset_filter_link,
+                 instance_reader: false,
+                 default: ActiveScaffold::DataStructures::ActionLink.new(
+                   'index',
+                   label: :click_to_reset,
+                   type: :collection,
+                   position: false,
+                   dynamic_parameters: -> { clear_filters_params }
+                 )
 
     # wrap normal cells (not inplace editable columns or with link) with a tag
     # it allows for more css styling
-    cattr_accessor :wrap_tag, instance_accessor: false
-    @@wrap_tag = nil
+    cattr_accessor :wrap_tag, instance_accessor: false, default: nil
 
     # Show search form in the list header instead of display the link
-    cattr_accessor :always_show_search, instance_accessor: false
-    @@always_show_search = false
+    cattr_accessor :always_show_search, instance_accessor: false, default: false
 
     # Show create form in the list header instead of display the link
-    cattr_accessor :always_show_create, instance_accessor: false
-    @@always_show_create = false
+    cattr_accessor :always_show_create, instance_accessor: false, default: false
 
     # Enable auto select columns on list, so only columns needed for list columns are selected
-    cattr_accessor :auto_select_columns, instance_accessor: false
-    @@auto_select_columns = false
+    cattr_accessor :auto_select_columns, instance_accessor: false, default: false
 
     # Enable ETag calculation (when conditional_get_support is enabled), it requires to load records for page, when is disabled query can be avoided when page is cached in browser
     # order clause will be used for ETag when calculate_etag is disabled, so query for records can be avoided
-    cattr_accessor :calculate_etag, instance_accessor: false
-    @@calculate_etag = false
+    cattr_accessor :calculate_etag, instance_accessor: false, default: false
 
     def self.filters
       ActiveScaffold::DataStructures::Filters

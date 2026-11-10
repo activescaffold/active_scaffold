@@ -16,17 +16,14 @@ module ActiveScaffold
     # ActiveRecordPermissions needs to know what method on your ApplicationController will return the current user,
     # if available. This defaults to the :current_user method. You may configure this in your environment.rb if you
     # have a different setup.
-    mattr_accessor :current_user_method
-    @@current_user_method = :current_user
+    mattr_accessor :current_user_method, default: :current_user
 
     # Whether the default permission is permissive or not
     # If set to true, then everything's allowed until configured otherwise
-    mattr_accessor :default_permission
-    @@default_permission = true
+    mattr_accessor :default_permission, default: true
 
     # if enabled, string returned on authorized methods will be interpreted as not authorized and used as reason
-    mattr_accessor :not_authorized_reason
-    @@not_authorized_reason = false
+    mattr_accessor :not_authorized_reason, default: false
 
     # This is a module aimed at making the current_user available to ActiveRecord models for permissions.
     module ModelUserAccess

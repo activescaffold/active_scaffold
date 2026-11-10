@@ -12,20 +12,12 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # the ActionLink for this action
-    def self.link
-      @@link
-    end
+    cattr_accessor :link, instance_accessor: false,
+                          default: ActiveScaffold::DataStructures::ActionLink.new('edit', label: :edit, type: :member, security_method: :update_authorized?, ignore_method: :update_ignore?)
 
-    def self.link=(val)
-      @@link = val
-    end
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('edit', label: :edit, type: :member, security_method: :update_authorized?, ignore_method: :update_ignore?)
+    cattr_accessor :nested_links, instance_accessor: false, default: false
 
-    cattr_accessor :nested_links, instance_accessor: false
-    @@nested_links = false
-
-    cattr_accessor :add_locking_column, instance_accessor: false
-    @@add_locking_column = true
+    cattr_accessor :add_locking_column, instance_accessor: false, default: true
 
     columns_accessor :columns, copy: :create
 

@@ -482,23 +482,18 @@ module ActiveScaffold::DataStructures
     end
 
     # to set how many associated records a column with plural association must show in list
-    cattr_accessor :associated_limit, instance_accessor: false
-    @@associated_limit = 3
+    cattr_accessor :associated_limit, instance_accessor: false, default: 3
 
     # whether the number of associated records must be shown or not
-    cattr_accessor :associated_number, instance_accessor: false
-    @@associated_number = true
+    cattr_accessor :associated_number, instance_accessor: false, default: true
 
     # whether a blank row must be shown in the subform
-    cattr_accessor :show_blank_record, instance_accessor: false
-    @@show_blank_record = true
+    cattr_accessor :show_blank_record, instance_accessor: false, default: true
 
     # methods for automatic links in singular association columns
-    cattr_accessor :actions_for_association_links, instance_accessor: false
-    @@actions_for_association_links = %i[new edit show]
+    cattr_accessor :actions_for_association_links, instance_accessor: false, default: %i[new edit show]
 
-    cattr_accessor :association_form_ui, instance_accessor: false
-    @@association_form_ui = nil
+    cattr_accessor :association_form_ui, instance_accessor: false, default: nil
 
     # ----------------------------------------------------------------- #
     # the below functionality is intended for internal consumption only #

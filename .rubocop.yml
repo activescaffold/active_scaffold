@@ -48,6 +48,15 @@ Layout/LineLength:
   Exclude:
     - 'test/**/*'
 
+Metrics/AbcSize:
+  Max: 30
+  CountRepeatedAttributes: false
+  Exclude:
+    - 'test/**/*'
+    # TODO: cleanup the next files
+    - lib/active_scaffold/helpers/*
+    - lib/**/*
+
 Metrics/CyclomaticComplexity:
   Max: 10
   Exclude:
@@ -60,6 +69,9 @@ Metrics/ModuleLength:
 
 Metrics/ParameterLists:
   CountKeywordArgs: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
 
 Naming/FileName:
   Exclude:

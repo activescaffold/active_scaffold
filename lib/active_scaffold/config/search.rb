@@ -15,8 +15,15 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # the ActionLink for this action
-    cattr_accessor :link, instance_accessor: false
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', label: :search, type: :collection, security_method: :search_authorized?, ignore_method: :search_ignore?)
+    cattr_accessor :link,
+                   instance_accessor: false,
+                   default: ActiveScaffold::DataStructures::ActionLink.new(
+                     'show_search',
+                     label: :search,
+                     type: :collection,
+                     security_method: :search_authorized?,
+                     ignore_method: :search_ignore?
+                   )
 
     # A flag for how the search should do full-text searching in the database:
     # * :full: LIKE %?%
@@ -24,8 +31,7 @@ module ActiveScaffold::Config
     # * :end: LIKE %?
     # * false: LIKE ?
     # Default is :full
-    cattr_accessor :text_search, instance_accessor: false
-    @@text_search = :full
+    cattr_accessor :text_search, instance_accessor: false, default: :full
 
     # whether submits the search as you type
     cattr_writer :live, instance_writer: false
@@ -33,8 +39,7 @@ module ActiveScaffold::Config
       @@live
     end
 
-    cattr_accessor :split_terms, instance_accessor: false
-    @@split_terms = ' '
+    cattr_accessor :split_terms, instance_accessor: false, default: ' '
 
     cattr_accessor :reset_form, instance_accessor: false
 

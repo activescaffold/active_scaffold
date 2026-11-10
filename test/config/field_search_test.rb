@@ -16,6 +16,7 @@ module Config
 
     def test_default_options
       assert_equal :full, @config.field_search.text_search
+      assert_equal false, @config.field_search.floating_footer
     end
 
     def test_text_search

@@ -11,8 +11,7 @@ module ActiveScaffold::Bridges
       ActiveScaffold.jquery_ui_included?
     end
 
-    mattr_accessor :default_ui
-    @@default_ui = true
+    mattr_accessor :default_ui, default: true
 
     def self.stylesheets
       'jquery-ui-timepicker-addon'

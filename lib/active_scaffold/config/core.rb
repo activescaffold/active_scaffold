@@ -9,47 +9,41 @@ module ActiveScaffold::Config
     # --------------------------
 
     # provides read/write access to the global Actions DataStructure
-    cattr_reader :actions, instance_accessor: false
+    cattr_accessor :actions, instance_accessor: false
+    singleton_class.alias_method :write_actions, :actions=
+    private_class_method :write_actions
+
     def self.actions=(val)
-      @@actions = ActiveScaffold::DataStructures::Actions.new(*val)
+      write_actions ActiveScaffold::DataStructures::Actions.new(*val)
     end
     self.actions = %i[create list search update delete show nested subform]
 
     # configures where the ActiveScaffold plugin itself is located. there is no instance version of this.
-    cattr_accessor :plugin_directory
-    @@plugin_directory = File.expand_path(__FILE__).match(%{(^.*)/lib/active_scaffold/config/core.rb})[1]
+    cattr_accessor :plugin_directory, default: File.expand_path(__FILE__).match(%{(^.*)/lib/active_scaffold/config/core.rb})[1]
 
     # lets you specify a global ActiveScaffold theme for your frontend.
-    cattr_accessor :theme, instance_accessor: false
-    @@theme = :default
+    cattr_accessor :theme, instance_accessor: false, default: :default
 
     # enable caching of action link urls
-    cattr_accessor :cache_action_link_urls, instance_accessor: false
-    @@cache_action_link_urls = true
+    cattr_accessor :cache_action_link_urls, instance_accessor: false, default: true
 
     # enable caching of action links
-    cattr_accessor :cache_action_links, instance_accessor: false
-    @@cache_action_links = true
+    cattr_accessor :cache_action_links, instance_accessor: false, default: true
 
     # enable caching of association options
-    cattr_accessor :cache_association_options, instance_accessor: false
-    @@cache_association_options = true
+    cattr_accessor :cache_association_options, instance_accessor: false, default: true
 
     # enable setting ETag and LastModified on responses and using fresh_when/stale? to respond with 304 and avoid rendering views
-    cattr_accessor :conditional_get_support, instance_accessor: false
-    @@conditional_get_support = false
+    cattr_accessor :conditional_get_support, instance_accessor: false, default: false
 
     # enable saving user settings in session (per_page, limit, page, sort, search params)
-    cattr_accessor :store_user_settings, instance_accessor: false
-    @@store_user_settings = true
+    cattr_accessor :store_user_settings, instance_accessor: false, default: true
 
     # action links are used by actions to tie together. you can use them, too! this is a collection of ActiveScaffold::DataStructures::ActionLink objects.
-    cattr_reader :action_links, instance_reader: false
-    @@action_links = ActiveScaffold::DataStructures::ActionLinks.new
+    cattr_reader :action_links, instance_reader: false, default: ActiveScaffold::DataStructures::ActionLinks.new
 
     # modules to include after all ActiveScaffold modules are included, to include generic customizations in all controllers
-    cattr_reader :custom_modules, instance_reader: false
-    @@custom_modules = []
+    cattr_reader :custom_modules, instance_reader: false, default: []
 
     # access to the permissions configuration.
     # configuration options include:
@@ -66,30 +60,24 @@ module ActiveScaffold::Config
 
     # columns that should be ignored for every model. these should be metadata columns like change dates, versions, etc.
     # values in this array may be symbols or strings.
-    def self.ignore_columns
-      @@ignore_columns
-    end
+    cattr_accessor :ignore_columns, instance_accessor: false, default: ActiveScaffold::DataStructures::Set.new
+    singleton_class.alias_method :write_ignore_columns, :ignore_columns=
+    private_class_method :write_ignore_columns
 
     def self.ignore_columns=(val)
-      @@ignore_columns = ActiveScaffold::DataStructures::Set.new(*val)
+      write_ignore_columns ActiveScaffold::DataStructures::Set.new(*val)
     end
-    @@ignore_columns = ActiveScaffold::DataStructures::Set.new
-
     # lets you specify whether add a create link for each sti child
-    cattr_accessor :sti_create_links, instance_accessor: false
-    @@sti_create_links = true
+    cattr_accessor :sti_create_links, instance_accessor: false, default: true
 
     # prefix messages with current timestamp, set the format to display (you can use I18n keys) or true and :short will be used
-    cattr_accessor :timestamped_messages, instance_accessor: false
-    @@timestamped_messages = false
+    cattr_accessor :timestamped_messages, instance_accessor: false, default: false
 
     # a hash of string (or array of strings) and highlighter string to highlight words in messages. It will use highlight rails helper
-    cattr_accessor :highlight_messages, instance_accessor: false
-    @@highlight_messages = nil
+    cattr_accessor :highlight_messages, instance_accessor: false, default: nil
 
     # method names or procs to be called after all configure blocks
-    cattr_reader :after_config_callbacks, instance_accessor: false
-    @@after_config_callbacks = [:_configure_sti]
+    cattr_reader :after_config_callbacks, instance_accessor: false, default: [:_configure_sti]
 
     def self.freeze
       super

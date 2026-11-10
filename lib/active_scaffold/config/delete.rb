@@ -13,8 +13,7 @@ module ActiveScaffold::Config
     # --------------------------
 
     # the ActionLink for this action
-    cattr_accessor :link, instance_accessor: false
-    @@link = ActiveScaffold::DataStructures::ActionLink.new(
+    cattr_accessor :link, instance_accessor: false, default: ActiveScaffold::DataStructures::ActionLink.new(
       'destroy',
       label:           :delete,
       type:            :member,
@@ -28,8 +27,7 @@ module ActiveScaffold::Config
     )
 
     # whether we should refresh list after destroy or not
-    cattr_accessor :refresh_list, instance_accessor: false
-    @@refresh_list = false
+    cattr_accessor :refresh_list, instance_accessor: false, default: false
 
     # instance-level configuration
     # ----------------------------

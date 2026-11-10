@@ -20,7 +20,10 @@ module Config
     end
 
     def test_default_options
-      assert_not @config.create.persistent
+      assert_equal false, @config.create.persistent
+      assert_equal false, @config.create.refresh_list
+      assert_equal false, @config.create.floating_footer
+      assert_equal :show, @config.create.field_descriptions
       assert @config.create.action_after_create.nil?
       assert_equal 'Create Model stub', @config.create.label
       assert @config.columns[:b].required?

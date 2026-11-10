@@ -20,20 +20,16 @@ module ActiveScaffold::Config
     class_attribute :show_unauthorized_columns, instance_accessor: false
 
     # whether the form stays open after an update or not
-    class_attribute :persistent, instance_accessor: false
-    @@persistent = false
+    class_attribute :persistent, instance_accessor: false, default: false
 
     # whether we should refresh list after update or not
-    class_attribute :refresh_list, instance_accessor: false
-    @@refresh_list = false
+    class_attribute :refresh_list, instance_accessor: false, default: false
 
     # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
-    class_attribute :floating_footer, instance_accessor: false
-    @@floating_footer = false
+    class_attribute :floating_footer, instance_accessor: false, default: false
 
     # whether field descriptions are visible always, on hover or click (:show, :hover, :click, default to :show)
-    class_attribute :field_descriptions, instance_accessor: false
-    @@field_descriptions = :show
+    class_attribute :field_descriptions, instance_accessor: false, default: :show
 
     # instance-level configuration
     # ----------------------------

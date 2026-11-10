@@ -7,8 +7,7 @@ module ActiveScaffold::Config
     # What kind of mark all mode to use:
     # * :search: de-/mark all records using current search conditions
     # * :page: de-/mark all records on current page
-    cattr_accessor :mark_all_mode
-    @@mark_all_mode = :search
+    cattr_accessor :mark_all_mode, default: :search
 
     attr_accessor :mark_all_mode
 

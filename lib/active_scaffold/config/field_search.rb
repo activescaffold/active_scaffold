@@ -17,8 +17,15 @@ module ActiveScaffold::Config
     # global level configuration
     # --------------------------
     # the ActionLink for this action
-    cattr_reader :link, instance_accessor: false
-    @@link = ActiveScaffold::DataStructures::ActionLink.new('show_search', label: :search, type: :collection, security_method: :search_authorized?, ignore_method: :field_search_ignore?)
+    cattr_reader :link,
+                 instance_accessor: false,
+                 default: ActiveScaffold::DataStructures::ActionLink.new(
+                   'show_search',
+                   label: :search,
+                   type: :collection,
+                   security_method: :search_authorized?,
+                   ignore_method: :field_search_ignore?
+                 )
 
     # A flag for how the search should do full-text searching in the database:
     # * :full: LIKE %?%
@@ -26,17 +33,14 @@ module ActiveScaffold::Config
     # * :end: LIKE %?
     # * false: LIKE ?
     # Default is :full
-    cattr_accessor :text_search, instance_accessor: false
-    @@text_search = :full
+    cattr_accessor :text_search, instance_accessor: false, default: :full
 
     # human conditions
     # instead of just filtered you may show the user a humanized search condition statment
-    cattr_accessor :human_conditions, instance_accessor: false
-    @@human_conditions = false
+    cattr_accessor :human_conditions, instance_accessor: false, default: false
 
     # whether footer should float when form is too long to fit in the screen, so footer is always available while scrolling
-    class_attribute :floating_footer, instance_accessor: false
-    @@floating_footer = false
+    class_attribute :floating_footer, instance_accessor: false, default: false
 
     cattr_accessor :reset_form, instance_accessor: false
 

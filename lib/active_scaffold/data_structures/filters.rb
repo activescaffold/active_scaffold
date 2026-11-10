@@ -42,8 +42,7 @@ module ActiveScaffold::DataStructures
     delegate :empty?, to: :@set
 
     # default filter type for all app filters, can be :links or :select
-    cattr_accessor :default_type
-    @@default_type = :links
+    cattr_accessor :default_type, default: :links
 
     # default filter type for all filters in this set, can be :links or :select
     attr_accessor :default_type

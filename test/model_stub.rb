@@ -11,18 +11,17 @@ class ModelStub < ActiveRecord::Base
 
   self.primary_key = :id
 
-  @@nested_scope_calls = []
-  cattr_accessor :nested_scope_calls
+  cattr_accessor :nested_scope_calls, default: []
 
   def self.schema_loaded? = true
 
   def self.a_is_defined
-    @@nested_scope_calls << :a_is_defined
+    nested_scope_calls << :a_is_defined
     self
   end
 
   def self.b_like(pattern)
-    @@nested_scope_calls << :b_like
+    nested_scope_calls << :b_like
     self
   end
 
