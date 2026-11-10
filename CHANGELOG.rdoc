@@ -1,11 +1,13 @@
-= Unreleased
-- Fix the behaviour for constraints with array and one value only, was unconsistent
-
-= 4.4.3
+= 4.4.4
+- Fix the inconsistent behaviour for constraints containing an array with only one value
 - Wait for dynamically loaded plugins and bridges to finish registering their ready and setup callbacks before initial setup, fixing initialization on directly rendered forms
-
-= 4.4.2
 - Show all association records in select and multi-select search UIs instead of applying form association conditions
+
+= 4.4.3 (yanked)
+- Yanked because it accidentally included unreleased 4.5 functionality
+
+= 4.4.2 (yanked)
+- Yanked because it accidentally included unreleased 4.5 functionality
 
 = 4.4.1
 - Avoid unnecessary DISTINCT in searches without joins or with only belongs_to joins, fixing PostgreSQL searches on models with json columns
