@@ -109,6 +109,9 @@ Rails/RakeEnvironment:
 Rails/ActionControllerTestCase:
   Enabled: false
 
+Style/ClassAndModuleChildren:
+  Enabled: false
+
 Style/FormatString:
   EnforcedStyle: percent
 

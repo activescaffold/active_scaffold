@@ -35,8 +35,6 @@ Rails/OutputSafety:
 # Offense count: 84
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
-Style/ClassAndModuleChildren:
-  Enabled: false
 
 # Offense count: 190
 Style/Documentation:
