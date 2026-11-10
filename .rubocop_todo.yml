@@ -21,11 +21,6 @@ Style/OneClassPerFile:
     - lib/active_scaffold/extensions/action_view_rendering.rb
     - lib/active_scaffold/extensions/routing_mapper.rb
 
-Style/OptionalBooleanParameter:
-  Exclude:
-    - lib/active_scaffold/attribute_params.rb
-    - lib/active_scaffold/helpers/*
-
 # Offense count: 1857
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https

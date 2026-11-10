@@ -4,6 +4,51 @@
 - Add a default-enabled Choices.js bridge with form and search UI helpers
 - Check action link security methods when processing member actions, passing the record when available
 
+= 4.4.5 (unreleased)
+- Deprecate passing optional boolean arguments positionally; keyword arguments will be required in 4.5.
+
+  Overrides which only forward arguments can replace anonymous +*+ with +...+. This accepts the positional argument from 4.4 and forwards the keyword argument used by 4.5:
+
+    # Before
+    def find_or_create_for_params(params, parent_column, parent_record, *)
+      super
+    end
+
+    # Compatible with both 4.4 and 4.5
+    def find_or_create_for_params(params, parent_column, parent_record, ...)
+      super
+    end
+
+  An override which reads or changes the optional argument must temporarily accept both forms. It must call +super+ explicitly with keywords; bare +super+ would forward the original positional arguments and keep producing the warning:
+
+    # Before
+    def update_columns_options(column, scope, options, force = false)
+      super(column, scope, options, true)
+    end
+
+    # Compatible with both 4.4 and 4.5
+    def update_columns_options(column, scope, options, *legacy_force, force: false, **kwargs)
+      force = legacy_force.first unless legacy_force.empty?
+      force = true
+      super(column, scope, options, force: force, **kwargs)
+    end
+
+  After requiring ActiveScaffold 4.5, the compatibility rest argument can be removed:
+
+    def update_columns_options(column, scope, options, force: false, **kwargs)
+      super(column, scope, options, force: true, **kwargs)
+    end
+
+  For methods such as +form_attribute+, where another positional argument followed the boolean, normalize both arguments before calling +super+:
+
+    def form_attribute(column, record, scope = nil, *legacy_arguments,
+                       only_value: false, col_class: nil, **kwargs)
+      only_value = legacy_arguments.shift unless legacy_arguments.empty?
+      col_class = legacy_arguments.shift unless legacy_arguments.empty?
+
+      super(column, record, scope, only_value: only_value, col_class: col_class, **kwargs)
+    end
+
 = 4.4.4
 - Fix the inconsistent behaviour for constraints containing an array with only one value
 - Wait for dynamically loaded plugins and bridges to finish registering their ready and setup callbacks before initial setup, fixing initialization on directly rendered forms

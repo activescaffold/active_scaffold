@@ -4,7 +4,13 @@ module ActiveScaffold
   module Helpers
     module AssociationHelpers
       # Cache the options for select
-      def cache_association_options(association, conditions, klass, cache = true)
+      def cache_association_options(association, conditions, klass,
+                                    positional_cache = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                                    cache: POSITIONAL_ARGUMENT_NOT_GIVEN)
+        cache = ActiveScaffold.deprecated_positional_argument(
+          positional_cache, cache,
+          method_name: __method__, argument_name: :cache, default: true
+        )
         if active_scaffold_config.cache_association_options && cache
           @_associations_cache ||= Hash.new { |h, k| h[k] = {} }
           key = [association.name, association.inverse_klass.name, klass.respond_to?(:cache_key) ? klass.cache_key : klass.name].join('/')

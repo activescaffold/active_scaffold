@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module ActiveScaffold
+  POSITIONAL_ARGUMENT_NOT_GIVEN = Object.new.freeze
+
   autoload :ActiveRecordPermissions, 'active_scaffold/active_record_permissions'
   autoload :Assets, 'active_scaffold/assets'
   autoload :AttributeParams, 'active_scaffold/attribute_params'
@@ -260,7 +262,33 @@ module ActiveScaffold
   end
 
   def self.deprecator
-    @deprecator ||= ActiveSupport::Deprecation.new('4.3', 'ActiveScaffold')
+    @deprecator ||= ActiveSupport::Deprecation.new('4.5', 'ActiveScaffold')
+  end
+
+  def self.deprecated_positional_argument(positional, keyword, method_name:, argument_name:, default:)
+    if positional.equal?(POSITIONAL_ARGUMENT_NOT_GIVEN)
+      keyword.equal?(POSITIONAL_ARGUMENT_NOT_GIVEN) ? default : keyword
+    elsif keyword.equal?(POSITIONAL_ARGUMENT_NOT_GIVEN)
+      deprecator.warn(
+        "Passing `#{argument_name}` positionally to `#{method_name}` is deprecated; " \
+        "use `#{argument_name}:` instead. Positional support will be removed in ActiveScaffold 4.5. " \
+        'Overrides must accept both forms during 4.4 and pass the argument to `super` as a keyword. ' \
+        'See https://github.com/activescaffold/active_scaffold/blob/4-4-stable/CHANGELOG.rdoc'
+      )
+      positional
+    else
+      raise ArgumentError, "#{argument_name} was given both positionally and as a keyword"
+    end
+  end
+
+  def self.positional_or_keyword_argument(positional, keyword, argument_name:, default:)
+    if positional.equal?(POSITIONAL_ARGUMENT_NOT_GIVEN)
+      keyword.equal?(POSITIONAL_ARGUMENT_NOT_GIVEN) ? default : keyword
+    elsif keyword.equal?(POSITIONAL_ARGUMENT_NOT_GIVEN)
+      positional
+    else
+      raise ArgumentError, "#{argument_name} was given both positionally and as a keyword"
+    end
   end
 
   def self.log_exception(exception, message)
