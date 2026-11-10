@@ -54,44 +54,13 @@ module ActiveScaffold
         active_scaffold_superclasses_blocks.each { |superblock| active_scaffold_config.configure(&superblock) }
         active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
         active_scaffold_config.configure(&block) if block_given?
-        active_scaffold_config.class.after_config_callbacks.each do |callback|
-          if callback.is_a?(Proc)
-            instance_eval(&callback)
-          elsif active_scaffold_config.respond_to?(callback)
-            active_scaffold_config.send(callback)
-          elsif respond_to?(callback)
-            send(callback)
-          end
-        end
+        _run_after_config_callbacks
 
         # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
         # define_attribute_methods is safe to call multiple times since rails 4.0.4
         active_scaffold_config.model.define_attribute_methods if active_scaffold_config.active_record?
         # include the rest of the code into the controller: the action core and the included actions
-        module_eval do
-          unless self < ActiveScaffold::Actions::Core
-            include ActiveScaffold::Finder
-            include ActiveScaffold::Constraints
-            include ActiveScaffold::AttributeParams
-            include ActiveScaffold::Actions::Core
-          end
-          active_scaffold_config.actions.each do |mod|
-            include "ActiveScaffold::Actions::#{mod.to_s.camelize}".constantize
-
-            mod_conf = active_scaffold_config.send(mod)
-            active_scaffold_config._setup_action(mod)
-            next unless mod_conf.respond_to?(:link) && (link = mod_conf.link)
-
-            # sneak the action links from the actions into the main set
-            if link.is_a? Array
-              link.each do |current_link|
-                active_scaffold_config.action_links.add_to_group(current_link, active_scaffold_config.send(mod).action_group)
-              end
-            elsif link.is_a? ActiveScaffold::DataStructures::ActionLink
-              active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
-            end
-          end
-        end
+        _load_action_modules
         _add_sti_create_links if active_scaffold_config.add_sti_create_links?
         ActiveScaffold::Config::Core.custom_modules.each { |mod| include mod }
         active_scaffold_config.custom_modules.each { |mod| include mod }
@@ -125,6 +94,48 @@ module ActiveScaffold
           active_scaffold_config.action_links.collection.create.add(new_sti_link)
         end
       end
+      private :_add_sti_create_links
+
+      def _load_action_modules
+        module_eval do
+          unless self < ActiveScaffold::Actions::Core
+            include ActiveScaffold::Finder
+            include ActiveScaffold::Constraints
+            include ActiveScaffold::AttributeParams
+            include ActiveScaffold::Actions::Core
+          end
+          active_scaffold_config.actions.each do |mod|
+            include "ActiveScaffold::Actions::#{mod.to_s.camelize}".constantize
+
+            mod_conf = active_scaffold_config.send(mod)
+            active_scaffold_config._setup_action(mod)
+            next unless mod_conf.respond_to?(:link) && (link = mod_conf.link)
+
+            # sneak the action links from the actions into the main set
+            if link.is_a? Array
+              link.each do |current_link|
+                active_scaffold_config.action_links.add_to_group(current_link, active_scaffold_config.send(mod).action_group)
+              end
+            elsif link.is_a? ActiveScaffold::DataStructures::ActionLink
+              active_scaffold_config.action_links.add_to_group(link, active_scaffold_config.send(mod).action_group)
+            end
+          end
+        end
+      end
+      private :_load_action_modules
+
+      def _run_after_config_callbacks
+        active_scaffold_config.class.after_config_callbacks.each do |callback|
+          if callback.is_a?(Proc)
+            instance_eval(&callback)
+          elsif active_scaffold_config.respond_to?(callback)
+            active_scaffold_config.send(callback)
+          elsif respond_to?(callback)
+            send(callback)
+          end
+        end
+      end
+      private :_run_after_config_callbacks
 
       # Create the automatic column links. Note that this has to happen when configuration is *done*,
       # because otherwise the Nested module could be disabled. Actually, it could still be disabled later, couldn't it?
@@ -165,15 +176,21 @@ module ActiveScaffold
         else
           actions = controller.active_scaffold_config.actions unless controller == :polymorph
           actions ||= %i[create update show]
-          controller_actions = column.actions_for_association_links
-          controller_actions = controller_actions.dup if controller_actions.frozen?
-          controller_actions.delete :new unless actions.include? :create
-          controller_actions.delete :edit unless actions.include? :update
-          controller_actions.delete :show unless actions.include? :show
+          controller_actions = valid_actions_for_link(column, actions)
           options.merge!(html_options: {class: column.name}, controller_actions: Set.new(controller_actions))
           ActiveScaffold::DataStructures::ActionLink.new(nil, options)
         end
       end
+
+      def valid_actions_for_link(column, actions)
+        controller_actions = column.actions_for_association_links
+        controller_actions = controller_actions.dup if controller_actions.frozen?
+        controller_actions.delete :new unless actions.include? :create
+        controller_actions.delete :edit unless actions.include? :update
+        controller_actions.delete :show unless actions.include? :show
+        controller_actions
+      end
+      private :valid_actions_for_link
 
       def link_for_association_as_scope(scope, options = {})
         options.reverse_merge! label: scope, position: :after, type: :member, controller: controller_path

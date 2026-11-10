@@ -178,12 +178,7 @@ module ActiveScaffold::Config
       @actions = self.class.actions.clone
 
       # create a new default columns datastructure, since it doesn't make sense before now
-      attribute_names = _columns.collect { |c| c.name.to_sym }.sort_by(&:to_s)
-      association_column_names = _reflect_on_all_associations.collect { |a| a.name.to_sym }
-      if defined?(ActiveMongoid) && model < ActiveMongoid::Associations
-        association_column_names.concat model.am_relations.keys.map(&:to_sym)
-      end
-      @columns = ActiveScaffold::DataStructures::Columns.new(model, attribute_names + association_column_names.sort_by(&:to_s))
+      @columns = ActiveScaffold::DataStructures::Columns.new(model, known_columns)
 
       # and then, let's remove some columns from the inheritable set.
       content_columns = Set.new(_content_columns.map(&:name))
@@ -209,17 +204,9 @@ module ActiveScaffold::Config
     def _cache_lazy_values
       action_links.collection # ensure the collection group exist although it's empty
       action_links.member # ensure the collection group exist although it's empty
-      if cache_action_link_urls || cache_action_links
-        action_links.each(&:name_to_cache)
-        list.filters.each { |filter| filter.each(&:name_to_cache) } if actions.include?(:list)
-      end
-      columns.select(&:sortable?).each(&:sort)
-      columns.select(&:searchable?).each(&:search_sql)
-      columns.each(&:field)
-      actions.each do |action_name|
-        action = send(action_name)
-        Array(action.class.columns_collections).each { |method| action.send(method) }
-      end
+      cache_action_links_and_filters if cache_action_link_urls || cache_action_links
+      cache_columns
+      cache_action_columns
     end
 
     # To be called after your finished configuration
@@ -320,6 +307,41 @@ module ActiveScaffold::Config
         end
       action_columns.action = action.is_a?(Symbol) ? send(action) : action
       action_columns
+    end
+
+    protected
+
+    def known_columns
+      attribute_names = _columns.collect { |c| c.name.to_sym }.sort_by(&:to_s)
+      association_column_names = _reflect_on_all_associations.collect { |a| a.name.to_sym }
+      association_column_names.concat am_relations
+      attribute_names + association_column_names.sort_by(&:to_s)
+    end
+
+    def am_relations
+      if defined?(ActiveMongoid) && model < ActiveMongoid::Associations
+        model.am_relations.keys.map(&:to_sym)
+      else
+        []
+      end
+    end
+
+    def cache_columns
+      columns.select(&:sortable?).each(&:sort)
+      columns.select(&:searchable?).each(&:search_sql)
+      columns.each(&:field)
+    end
+
+    def cache_action_columns
+      actions.each do |action_name|
+        action = send(action_name)
+        Array(action.class.columns_collections).each { |method| action.send(method) }
+      end
+    end
+
+    def cache_action_links_and_filters
+      action_links.each(&:name_to_cache)
+      list.filters.each { |filter| filter.each(&:name_to_cache) } if actions.include?(:list)
     end
 
     class UserSettings < Base::UserSettings

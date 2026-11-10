@@ -66,41 +66,45 @@ module ActiveScaffold
     def conditions_from_constraints
       hash_conditions = {}
       conditions = [hash_conditions]
-      active_scaffold_constraints.each do |k, v|
-        column = active_scaffold_config.columns[k]
+      active_scaffold_constraints.each do |key, value|
+        column = active_scaffold_config.columns[key]
         if column
-          # Assume this is a multi-level association constraint.
-          # example:
-          #   data model: Park -> Den -> Bear
-          #   constraint: den: {park: 5}
-          if params_hash? v
-            far_association = column.association.klass.reflect_on_association(v.keys.first)
-            field = far_association.klass.primary_key
-            table = far_association.table_name
-
-            active_scaffold_references.push({k => far_association.name}) # e.g. {den: :park}
-            hash_conditions.deep_merge!(table => {field => v.values.first})
-
-          # association column constraint
-          elsif column.association
-            join_from_association_constraint(column)
-            hash_conditions.deep_merge!(condition_from_association_constraint(column.association, v))
-
-          # regular column constraints
-          elsif column.searchable? && params[column.name] != v
-            active_scaffold_references.concat column.references if column.includes.present?
-            condition = column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR ')
-            condition = ([condition] * v.size).join(' OR ') if Array(v).many?
-            conditions << [condition, *(Array(v) * column.search_sql.size)]
-          end
-        # unknown-to-activescaffold-but-real-database-column constraint
-        elsif active_scaffold_config._columns_hash[k.to_s] && params[column.name] != v
-          hash_conditions.deep_merge!(k => v)
+          condition_from_column_constraint(column, value, conditions, hash_conditions)
+        elsif active_scaffold_config._columns_hash[key.to_s] && params[column.name] != value
+          # unknown-to-activescaffold-but-real-database-column constraint
+          hash_conditions.deep_merge!(key => value)
         else
-          raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, k), caller
+          raise ActiveScaffold::MalformedConstraint, constraint_error(active_scaffold_config.model, key), caller
         end
       end
       conditions.compact_blank
+    end
+
+    def condition_from_column_constraint(column, value, conditions, hash_conditions)
+      # Assume this is a multi-level association constraint.
+      # example:
+      #   data model: Park -> Den -> Bear
+      #   constraint: den: {park: 5}
+      if params_hash? value
+        far_association = column.association.klass.reflect_on_association(value.keys.first)
+        field = far_association.klass.primary_key
+        table = far_association.table_name
+
+        active_scaffold_references.push({column.name => far_association.name}) # e.g. {den: :park}
+        hash_conditions.deep_merge!(table => {field => value.values.first})
+
+        # association column constraint
+      elsif column.association
+        join_from_association_constraint(column)
+        hash_conditions.deep_merge!(condition_from_association_constraint(column.association, value))
+
+        # regular column constraints
+      elsif column.searchable? && params[column.name] != value
+        active_scaffold_references.concat column.references if column.includes.present?
+        condition = column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR ')
+        condition = ([condition] * value.size).join(' OR ') if Array(value).many?
+        conditions << [condition, *(Array(value) * column.search_sql.size)]
+      end
     end
 
     def join_from_association_constraint(column)
@@ -162,20 +166,26 @@ module ActiveScaffold
         record.send(association.name).send(:<<, association.klass.find(value)) unless association.nested?
       elsif association.polymorphic?
         apply_constraint_on_polymorphic_association(record, association, value)
-      elsif !association.source_reflection&.through? && # regular singular association, or one-level through association
-            (!value.is_a?(Array) || value.size == 1)
-        constraint_value = value.is_a?(Array) ? value.first : value
-        record.send(:"#{association.name}=", association.klass.find(constraint_value))
+      elsif !association.source_reflection&.through?
+        # regular singular association, or one-level has_one :through without an inferred source reverse
+        apply_constraint_on_singular_association(record, association, value, allow_autosave:)
+      end
+    end
 
-        # setting the belongs_to side of a has_one isn't safe. if the has_one was already
-        # specified, rails won't automatically clear out the previous associated record.
-        #
-        # note that we can't take the extra step to correct this unless we're permitted to
-        # run operations where activerecord auto-saves the object.
-        reverse = association.reverse_association
-        if reverse&.singular? && !reverse.belongs_to? && allow_autosave
-          record.send(association.name).send(:"#{reverse.name}=", record)
-        end
+    def apply_constraint_on_singular_association(record, association, value, allow_autosave: false)
+      return if value.is_a?(Array) && value.size != 1
+
+      constraint_value = value.is_a?(Array) ? value.first : value
+      record.send(:"#{association.name}=", association.klass.find(constraint_value))
+
+      # setting the belongs_to side of a has_one isn't safe. if the has_one was already
+      # specified, rails won't automatically clear out the previous associated record.
+      #
+      # note that we can't take the extra step to correct this unless we're permitted to
+      # run operations where activerecord auto-saves the object.
+      reverse = association.reverse_association
+      if reverse&.singular? && !reverse.belongs_to? && allow_autosave
+        record.send(association.name).send(:"#{reverse.name}=", record)
       end
     end
 

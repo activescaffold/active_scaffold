@@ -49,20 +49,17 @@ Layout/LineLength:
     - 'test/**/*'
 
 Metrics/CyclomaticComplexity:
+  Max: 10
   Exclude:
     - test/**/*
     # TODO: cleanup the next files
     - lib/active_scaffold/helpers/*
     - lib/active_scaffold/extensions/*
     - lib/active_scaffold/bridges/**/*
-    - lib/active_scaffold/config/*
     - lib/active_scaffold/data_structures/*
     - lib/active_scaffold/actions/core.rb
     - lib/active_scaffold/finder.rb
-    - lib/active_scaffold/constraints.rb
     - lib/active_scaffold/active_record_permissions.rb
-    - lib/active_scaffold/core.rb
-    - lib/active_scaffold/tableless.rb
 
 Metrics/ModuleLength:
   Max: 800
@@ -108,6 +105,9 @@ Rails/ActionControllerTestCase:
 
 Style/FormatString:
   EnforcedStyle: percent
+
+Style/GuardClause:
+  MinBodyLength: 2
 
 Style/HashEachMethods:
   Enabled: true

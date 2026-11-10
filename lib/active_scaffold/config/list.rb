@@ -344,27 +344,40 @@ module ActiveScaffold::Config
       attr_writer :sorting
 
       def sorting
-        if @_sorting.nil?
-          # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
-          self['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] && @params['sort_direction']
-          self['sort'] = nil if @params['sort_direction'] == 'reset'
+        return @_sorting unless @_sorting.nil?
 
+        # we want to store as little as possible in the session, but we want to return a Sorting data structure. so we recreate it each page load based on session data.
+        self['sort'] = [@params['sort'], @params['sort_direction']] if @params['sort'] && @params['sort_direction']
+        self['sort'] = nil if @params['sort_direction'] == 'reset'
+
+        @_sorting =
           if self['sort'] && @conf.core.columns[self['sort'][0]]
-            sorting = sorting_dup
-            sorting.set(*self['sort'])
-            @_sorting = sorting
+            sorting_from_stored_value
           else
-            @_sorting = default_sorting
-            @_sorting.set(*@sorting) if @sorting
-            @_sorting.constraint_columns = @conf.columns.constraint_columns if @conf.columns.constraint_columns.present?
+            default_sorting_with_constraints
           end
-        end
-        @_sorting
       end
 
       delegate :count_includes, to: :@conf
 
       protected
+
+      def sorting_from_stored_value
+        sorting_dup.tap do |sorting|
+          sorting.set(*self['sort'])
+        end
+      end
+
+      def default_sorting_with_constraints
+        sorting = default_sorting
+        sorting.set(*@sorting) if @sorting
+
+        if @conf.columns.constraint_columns.present?
+          sorting.constraint_columns = @conf.columns.constraint_columns
+        end
+
+        sorting
+      end
 
       def sorting_dup
         sorting = @conf.sorting.dup
