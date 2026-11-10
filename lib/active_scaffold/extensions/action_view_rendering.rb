@@ -8,10 +8,8 @@ module ActiveScaffold
       self.last_template = super
     end
   end
-end
 
-# wrap the action rendering for ActiveScaffold views
-module ActiveScaffold # :nodoc:
+  # wrap the action rendering for ActiveScaffold views
   module RenderingHelper
     #
     # Adds two rendering options.
@@ -160,40 +158,28 @@ module ActiveScaffold # :nodoc:
       end
     end
   end
-end
 
-module ActionView
-  LookupContext.class_eval do
-    prepend ActiveScaffold::LookupContext
-  end
+  module LookupContextRendering
+    # override the render method to use our @lookup_context instead of the
+    # memoized @_lookup_context
+    def render(options = {}, locals = {}, &block)
+      return options.render_in(self) if options.respond_to?(:render_in)
 
-  module Helpers
-    Base.class_eval do
-      include ActiveScaffold::RenderingHelper
-    end
-
-    RenderingHelper.class_eval do
-      # override the render method to use our @lookup_context instead of the
-      # memoized @_lookup_context
-      def render(options = {}, locals = {}, &block)
-        return options.render_in(self) if options.respond_to?(:render_in)
-
-        case options
-        when Hash
-          in_rendering_context(options) do |_|
-            # previously set view paths and lookup context are lost here
-            # if you use view_renderer, so instead create a new renderer
-            # with our context
-            temp_renderer = ActionView::Renderer.new(@lookup_context)
-            if block_given?
-              temp_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
-            else
-              temp_renderer.render(self, options)
-            end
+      case options
+      when Hash
+        in_rendering_context(options) do |_|
+          # previously set view paths and lookup context are lost here
+          # if you use view_renderer, so instead create a new renderer
+          # with our context
+          temp_renderer = ActionView::Renderer.new(@lookup_context)
+          if block_given?
+            temp_renderer.render_partial(self, options.merge(partial: options[:layout]), &block)
+          else
+            temp_renderer.render(self, options)
           end
-        else
-          view_renderer.render_partial(self, partial: options, locals: locals, &block)
         end
+      else
+        view_renderer.render_partial(self, partial: options, locals: locals, &block)
       end
     end
   end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # save and validation support for associations.
-class ActiveRecord::Base
+module ActiveScaffold::UnsavedAssociated
   def associated_valid?(path = ::Set.new)
     return true if path.include?(self) # prevent recursion (if associated and parent are new records)
 

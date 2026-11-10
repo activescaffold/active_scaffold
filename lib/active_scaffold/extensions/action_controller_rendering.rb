@@ -19,9 +19,3 @@ module ActiveScaffold
     end
   end
 end
-
-module ActionController
-  class Base
-    prepend ActiveScaffold::ActionController
-  end
-end

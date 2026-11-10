@@ -14,10 +14,6 @@ AllCops:
     - 'vendor/bundle/**/*'
     - 'test/mock_app/**/*'
 
-# we allow long lines yet, because there are many to fix, and it would enforce to create long lines
-Style/IfUnlessModifier:
-  Enabled: false
-
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented_relative_to_receiver
 
@@ -32,6 +28,10 @@ Layout/HashAlignment:
     - key
     - table
 
+Layout/LineLength:
+  Exclude:
+    - 'test/**/*'
+
 Lint/UnusedMethodArgument:
   Enabled: false
 
@@ -43,10 +43,6 @@ Metrics/BlockLength:
   Exclude:
     - 'Rakefile'
     - '**/*.rake'
-
-Layout/LineLength:
-  Exclude:
-    - 'test/**/*'
 
 Metrics/AbcSize:
   Max: 30
@@ -63,6 +59,10 @@ Metrics/CyclomaticComplexity:
     - test/**/*
     # TODO: cleanup the next files
     - lib/active_scaffold/helpers/*
+
+Metrics/MethodLength:
+  Exclude:
+    - 'test/**/*'
 
 Metrics/ModuleLength:
   Max: 800
@@ -126,6 +126,9 @@ Style/HashTransformKeys:
 
 Style/HashTransformValues:
   Enabled: true
+
+Style/IfUnlessModifier:
+  Enabled: false
 
 Style/SingleLineBlockParams:
   Enabled: false

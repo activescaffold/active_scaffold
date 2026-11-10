@@ -6,17 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-Style/OneClassPerFile:
-  inherit_mode:
-    merge:
-      - Exclude
-  Exclude:
-    - lib/active_scaffold/actions/nested.rb
-    - lib/active_scaffold/bridges/cancan/cancan_bridge.rb
-    - lib/active_scaffold/extensions/action_controller_rendering.rb
-    - lib/active_scaffold/extensions/action_view_rendering.rb
-    - lib/active_scaffold/extensions/routing_mapper.rb
-
 # Offense count: 1857
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
@@ -26,7 +15,7 @@ Layout/LineLength:
 # Offense count: 195
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
-  Max: 63
+  Max: 48
 
 Rails/OutputSafety:
   Exclude:

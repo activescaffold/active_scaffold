@@ -6,6 +6,8 @@ module ActiveScaffold
       ActiveSupport.on_load :action_controller do
         require 'active_scaffold/extensions/action_controller_rescueing'
         require 'active_scaffold/extensions/action_controller_rendering'
+        prepend ActiveScaffold::ActionController
+        include ActiveScaffold::ActionControllerRescuing
         include ActiveScaffold::Core
         include ActiveScaffold::RespondsToParent
         include ActiveScaffold::Helpers::ControllerHelpers
@@ -15,6 +17,7 @@ module ActiveScaffold
 
     config.after_initialize do
       require 'active_scaffold/extensions/routing_mapper'
+      ActionDispatch::Routing::Mapper::Resources.include ActiveScaffold::Routing::MapperResources
       ActiveScaffold::Bridges.prepare_all
     end
 
@@ -22,7 +25,11 @@ module ActiveScaffold
       ActiveSupport.on_load :action_view do
         require 'active_scaffold/extensions/action_view_rendering'
         require 'active_scaffold/extensions/name_option_for_datetime'
+        include ActiveScaffold::RenderingHelper
         include ActiveScaffold::Helpers::ViewHelpers
+        ActionView::LookupContext.prepend ActiveScaffold::LookupContext
+        ActionView::Helpers::RenderingHelper.prepend ActiveScaffold::LookupContextRendering
+        ActionView::Helpers::Tags::DateSelect.prepend ActiveScaffold::DateSelectExtension
       end
     end
 
@@ -32,6 +39,9 @@ module ActiveScaffold
         require 'active_scaffold/extensions/unsaved_associated'
         require 'active_scaffold/extensions/unsaved_record'
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
+        include ActiveScaffold::ToLabel
+        include ActiveScaffold::UnsavedAssociated
+        include ActiveScaffold::UnsavedRecord
 
         ActiveRecord::Associations.module_eval do
           self::Association.include ActiveScaffold::Tableless::Association
@@ -55,6 +65,8 @@ module ActiveScaffold
       require 'active_scaffold/extensions/ice_nine'
       require 'active_scaffold/extensions/localize'
       require 'active_scaffold/extensions/paginator_extensions'
+      ::Paginator.prepend ActiveScaffold::Paginator
+      ::Paginator::Page.prepend ActiveScaffold::Page
     end
 
     initializer 'active_scaffold.active_record_session_store', after: :load_config_initializers do |app|

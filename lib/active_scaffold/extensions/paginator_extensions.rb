@@ -34,6 +34,3 @@ module ActiveScaffold
     end
   end
 end
-
-Paginator.class_eval { prepend ActiveScaffold::Paginator }
-Paginator::Page.class_eval { prepend ActiveScaffold::Page }

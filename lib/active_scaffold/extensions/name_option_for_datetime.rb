@@ -10,6 +10,3 @@ module ActiveScaffold
     end
   end
 end
-ActionView::Helpers::Tags::DateSelect.class_eval do
-  prepend ActiveScaffold::DateSelectExtension
-end

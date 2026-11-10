@@ -118,193 +118,191 @@ module ActiveScaffold::Actions
     def nested_formats
       (default_formats + active_scaffold_config.formats + active_scaffold_config.nested.formats).uniq
     end
-  end
-end
 
-module ActiveScaffold::Actions::Nested
-  module ChildMethods
-    def self.included(base)
-      super
-      include_habtm_actions base.active_scaffold_config unless base.active_scaffold_config.frozen?
-    end
-
-    def self.include_habtm_actions(config)
-      # Production mode is ok with adding a link everytime the scaffold is nested - we are not ok with that.
-      unless config.action_links['new_existing']
-        config.action_links.add('new_existing', label: :add_existing, type: :collection,
-                                                security_method: :add_existing_authorized?,
-                                                ignore_method: :add_existing_ignore?)
+    module ChildMethods
+      def self.included(base)
+        super
+        include_habtm_actions base.active_scaffold_config unless base.active_scaffold_config.frozen?
       end
-      return unless config.nested.shallow_delete
 
-      unless config.action_links['destroy_existing']
-        config.action_links.add('destroy_existing', label: :remove, type: :member, confirm: :are_you_sure_to_delete,
-                                                    method: :delete, position: false,
-                                                    security_method: :delete_existing_authorized?,
-                                                    ignore_method: :delete_existing_ignore?)
-      end
-      config.action_links['destroy']&.ignore_method = :habtm_delete_ignore? if config.actions.include?(:delete)
-    end
-
-    def new_existing
-      do_new
-      respond_to_action(:new_existing)
-    end
-
-    def add_existing
-      do_add_existing
-      respond_to_action(:add_existing)
-    end
-
-    def destroy_existing
-      return redirect_to(params.merge(action: :delete, only_path: true)) if request.get? || request.head?
-
-      do_destroy_existing
-      respond_to_action(:destroy_existing)
-    end
-
-    protected
-
-    def new_existing_respond_to_html
-      if successful?
-        render action: 'add_existing_form'
-      else
-        return_to_main
-      end
-    end
-
-    def new_existing_respond_to_js
-      render partial: 'add_existing_form'
-    end
-
-    def add_existing_respond_to_html
-      if successful?
-        unless @association_already_exists
-          flash[:info] = as_(:created_model, model: ERB::Util.h(@record.to_label))
+      def self.include_habtm_actions(config)
+        # Production mode is ok with adding a link everytime the scaffold is nested - we are not ok with that.
+        unless config.action_links['new_existing']
+          config.action_links.add('new_existing', label: :add_existing, type: :collection,
+                                                  security_method: :add_existing_authorized?,
+                                                  ignore_method: :add_existing_ignore?)
         end
+        return unless config.nested.shallow_delete
+
+        unless config.action_links['destroy_existing']
+          config.action_links.add('destroy_existing', label: :remove, type: :member, confirm: :are_you_sure_to_delete,
+                                                      method: :delete, position: false,
+                                                      security_method: :delete_existing_authorized?,
+                                                      ignore_method: :delete_existing_ignore?)
+        end
+        config.action_links['destroy']&.ignore_method = :habtm_delete_ignore? if config.actions.include?(:delete)
+      end
+
+      def new_existing
+        do_new
+        respond_to_action(:new_existing)
+      end
+
+      def add_existing
+        do_add_existing
+        respond_to_action(:add_existing)
+      end
+
+      def destroy_existing
+        return redirect_to(params.merge(action: :delete, only_path: true)) if request.get? || request.head?
+
+        do_destroy_existing
+        respond_to_action(:destroy_existing)
+      end
+
+      protected
+
+      def new_existing_respond_to_html
+        if successful?
+          render action: 'add_existing_form'
+        else
+          return_to_main
+        end
+      end
+
+      def new_existing_respond_to_js
+        render partial: 'add_existing_form'
+      end
+
+      def add_existing_respond_to_html
+        if successful?
+          unless @association_already_exists
+            flash[:info] = as_(:created_model, model: ERB::Util.h(@record.to_label))
+          end
+          return_to_main
+        else
+          render action: 'add_existing_form'
+        end
+      end
+
+      def add_existing_respond_to_js
+        if successful?
+          render action: 'add_existing'
+        else
+          render action: 'form_messages'
+        end
+      end
+
+      def add_existing_respond_to_xml
+        render xml: response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
+      end
+
+      def add_existing_respond_to_json
+        render json: response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
+      end
+
+      def destroy_existing_respond_to_html
+        flash[:info] = as_(:deleted_model, model: ERB::Util.h(@record.to_label))
         return_to_main
-      else
-        render action: 'add_existing_form'
       end
-    end
 
-    def add_existing_respond_to_js
-      if successful?
-        render action: 'add_existing'
-      else
-        render action: 'form_messages'
+      def destroy_existing_respond_to_js
+        render action: 'destroy'
       end
-    end
 
-    def add_existing_respond_to_xml
-      render xml: response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
-    end
-
-    def add_existing_respond_to_json
-      render json: response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
-    end
-
-    def destroy_existing_respond_to_html
-      flash[:info] = as_(:deleted_model, model: ERB::Util.h(@record.to_label))
-      return_to_main
-    end
-
-    def destroy_existing_respond_to_js
-      render action: 'destroy'
-    end
-
-    def destroy_existing_respond_to_xml
-      render xml: successful? ? '' : response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
-    end
-
-    def destroy_existing_respond_to_json
-      render json: successful? ? '' : response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
-    end
-
-    def add_existing_authorized?(record = nil)
-      nested_parent_record.authorized_for?(crud_type: :update, column: nested.association.try(:name))
-    end
-
-    def delete_existing_authorized?(record = nil)
-      nested_parent_record.authorized_for?(crud_type: :update, column: nested.association.try(:name), reason: true)
-    end
-
-    def add_existing_ignore?(record = nil)
-      !nested&.habtm?
-    end
-
-    def delete_existing_ignore?(record = nil)
-      !nested&.habtm?
-    end
-
-    def habtm_delete_ignore?(record = nil)
-      !delete_existing_ignore?(record) || delete_ignore?(record)
-    end
-
-    def after_create_save(record)
-      return unless params[:association_macro] == :has_and_belongs_to_many
-
-      params[:associated_id] = record
-      do_add_existing
-    end
-
-    # The actual "add_existing" algorithm
-    def do_add_existing
-      parent_record = nested_parent_record(:update)
-      @record = active_scaffold_config.model.find(params[:associated_id])
-      return false unless parent_record && @record
-
-      association = parent_record.send(nested.association.name)
-      added = add_existing_to_association(association)
-      return true if @association_already_exists
-
-      self.successful = false unless added
-      parent_record.save if successful?
-    end
-
-    def add_existing_to_association(association)
-      return association_already_exists if association.include?(@record)
-
-      association << @record
-    rescue ActiveRecord::RecordNotUnique
-      # Handles concurrent submissions. Only suppress the exception when the
-      # requested association now exists; otherwise it was a different
-      # uniqueness violation.
-      association.reset
-      raise unless association.include?(@record)
-
-      association_already_exists
-    end
-
-    def association_already_exists
-      @association_already_exists = true
-      self.successful = true
-      flash[:warning] = as_(:already_added_model, model: ERB::Util.h(@record.to_label))
-    end
-
-    def do_destroy_existing
-      if active_scaffold_config.nested.shallow_delete
-        @record = nested_parent_record(:update)
-        collection = @record.send(nested.association.name)
-        assoc_record = collection.find(params[:id])
-        collection.delete(assoc_record)
-      else
-        do_destroy
+      def destroy_existing_respond_to_xml
+        render xml: successful? ? '' : response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
       end
-    end
 
-    private
+      def destroy_existing_respond_to_json
+        render json: successful? ? '' : response_object, only: active_scaffold_config.list.columns.visible_columns_names, status: response_status
+      end
 
-    def new_existing_formats
-      (default_formats + active_scaffold_config.formats).uniq
-    end
+      def add_existing_authorized?(record = nil)
+        nested_parent_record.authorized_for?(crud_type: :update, column: nested.association.try(:name))
+      end
 
-    def add_existing_formats
-      (default_formats + active_scaffold_config.formats).uniq
-    end
+      def delete_existing_authorized?(record = nil)
+        nested_parent_record.authorized_for?(crud_type: :update, column: nested.association.try(:name), reason: true)
+      end
 
-    def destroy_existing_formats
-      (default_formats + active_scaffold_config.formats).uniq
+      def add_existing_ignore?(record = nil)
+        !nested&.habtm?
+      end
+
+      def delete_existing_ignore?(record = nil)
+        !nested&.habtm?
+      end
+
+      def habtm_delete_ignore?(record = nil)
+        !delete_existing_ignore?(record) || delete_ignore?(record)
+      end
+
+      def after_create_save(record)
+        return unless params[:association_macro] == :has_and_belongs_to_many
+
+        params[:associated_id] = record
+        do_add_existing
+      end
+
+      # The actual "add_existing" algorithm
+      def do_add_existing
+        parent_record = nested_parent_record(:update)
+        @record = active_scaffold_config.model.find(params[:associated_id])
+        return false unless parent_record && @record
+
+        association = parent_record.send(nested.association.name)
+        added = add_existing_to_association(association)
+        return true if @association_already_exists
+
+        self.successful = false unless added
+        parent_record.save if successful?
+      end
+
+      def add_existing_to_association(association)
+        return association_already_exists if association.include?(@record)
+
+        association << @record
+      rescue ActiveRecord::RecordNotUnique
+        # Handles concurrent submissions. Only suppress the exception when the
+        # requested association now exists; otherwise it was a different
+        # uniqueness violation.
+        association.reset
+        raise unless association.include?(@record)
+
+        association_already_exists
+      end
+
+      def association_already_exists
+        @association_already_exists = true
+        self.successful = true
+        flash[:warning] = as_(:already_added_model, model: ERB::Util.h(@record.to_label))
+      end
+
+      def do_destroy_existing
+        if active_scaffold_config.nested.shallow_delete
+          @record = nested_parent_record(:update)
+          collection = @record.send(nested.association.name)
+          assoc_record = collection.find(params[:id])
+          collection.delete(assoc_record)
+        else
+          do_destroy
+        end
+      end
+
+      private
+
+      def new_existing_formats
+        (default_formats + active_scaffold_config.formats).uniq
+      end
+
+      def add_existing_formats
+        (default_formats + active_scaffold_config.formats).uniq
+      end
+
+      def destroy_existing_formats
+        (default_formats + active_scaffold_config.formats).uniq
+      end
     end
   end
 end

@@ -9,18 +9,17 @@
 #       end
 #     end
 #
-module CanCan
-  module Ability
-    def as_action_aliases
-      alias_action :list, :show_search, :render_field, to: :read
-      alias_action :update_column, :edit_associated, :new_existing, :add_existing, to: :update
-      alias_action :delete, :destroy_existing, to: :destroy
-    end
-  end
-end
 
 module ActiveScaffold::Bridges
   class Cancan
+    module Ability
+      def as_action_aliases
+        alias_action :list, :show_search, :render_field, to: :read
+        alias_action :update_column, :edit_associated, :new_existing, :add_existing, to: :update
+        alias_action :delete, :destroy_existing, to: :destroy
+      end
+    end
+
     # controller level authorization
     # As already has callbacks to ensure authorization at controller method via "authorization_method"
     # but let's include this too, just in case, no sure how performance is affected tough :TODO benchmark

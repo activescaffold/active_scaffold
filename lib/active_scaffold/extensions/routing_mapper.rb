@@ -70,34 +70,28 @@ module ActiveScaffold
         super if options[:association]
       end
     end
-  end
-  ActiveSupport.run_load_hooks(:active_scaffold_routing, Routing)
-end
 
-module ActionDispatch
-  module Routing
-    class Mapper
-      module Resources
-        def as_nested_resources(*resources)
-          options = resources.extract_options!
-          nested_options = options.merge(parent_scaffold: parent_scaffold)
-          resources.each do |resource|
-            resources(resource, nested_options.merge(association: resource)) { yield if block_given? }
-          end
+    module MapperResources
+      def as_nested_resources(*resources)
+        options = resources.extract_options!
+        nested_options = options.merge(parent_scaffold: parent_scaffold)
+        resources.each do |resource|
+          resources(resource, nested_options.merge(association: resource)) { yield if block_given? }
         end
+      end
 
-        def as_scoped_routes(*scopes)
-          options = scopes.extract_options!
-          scoped_options = options.merge(parent_scaffold: parent_scaffold, association: parent_resource.plural)
-          scopes.each do |scope|
-            resources(scope, scoped_options.merge(named_scope: scope)) { yield if block_given? }
-          end
+      def as_scoped_routes(*scopes)
+        options = scopes.extract_options!
+        scoped_options = options.merge(parent_scaffold: parent_scaffold, association: parent_resource.plural)
+        scopes.each do |scope|
+          resources(scope, scoped_options.merge(named_scope: scope)) { yield if block_given? }
         end
+      end
 
-        def parent_scaffold
-          merge_module_scope(@scope[:module], parent_resource.plural)
-        end
+      def parent_scaffold
+        merge_module_scope(@scope[:module], parent_resource.plural)
       end
     end
   end
+  ActiveSupport.run_load_hooks(:active_scaffold_routing, Routing)
 end

@@ -32,4 +32,3 @@ module ActiveScaffold::UnsavedRecord
     result && old_errors.blank?
   end
 end
-ActiveRecord::Base.class_eval { include ActiveScaffold::UnsavedRecord }
