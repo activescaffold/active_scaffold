@@ -74,16 +74,33 @@ module ActiveScaffold::Actions
     def process_render_field_params
       @source_id = params.delete(:source_id)
       @scope = params.delete(:scope)
-      if @scope
-        @form_action = :subform
-      elsif active_scaffold_config.actions.include? params[:form_action]&.to_sym
-        @form_action = params.delete(:form_action).to_sym
-      end
-      @form_action ||= params[:id] ? :update : :create
-      parent_column = parent_column(main_form_controller, @scope) if @scope && main_form_controller
-      subform_columns = (parent_column.form_ui_options || parent_column.options)&.dig(:subform_columns) if parent_column
+      @form_action = render_field_form_action
+
+      subform_columns = render_field_subform_columns
       action_cfg = active_scaffold_config.send(@form_action)
       @main_columns = subform_columns ? action_cfg.build_action_columns(subform_columns) : action_cfg.columns
+    end
+
+    def render_field_form_action
+      if @scope
+        form_action = :subform
+      elsif active_scaffold_config.actions.include? params[:form_action]&.to_sym
+        form_action = params.delete(:form_action).to_sym
+      end
+
+      form_action || (params[:id] ? :update : :create)
+    end
+
+    def render_field_subform_columns
+      return unless @scope
+
+      controller = main_form_controller
+      return unless controller
+
+      column = parent_column(controller, @scope)
+      return unless column
+
+      (column.form_ui_options || column.options)&.dig(:subform_columns)
     end
 
     def render_field_for_update_columns
@@ -92,7 +109,11 @@ module ActiveScaffold::Actions
       @columns = @column.update_columns || []
       @columns += [@column.name] if @column.options[:refresh_link] && @columns.exclude?(@column.name)
       process_render_field_params
+      prepare_record_for_render_field
+      after_render_field(@record, @column)
+    end
 
+    def prepare_record_for_render_field
       @record = find_from_scope(setup_parent, @scope) if @scope && main_form_controller
       if @column.send_form_on_update_column
         @record ||= updated_record_with_form(@main_columns, params[:record] || params[:search], @scope)
@@ -101,7 +122,6 @@ module ActiveScaffold::Actions
       else
         @record = updated_record_with_column(@column, params.delete(:value), @scope)
       end
-      after_render_field(@record, @column)
     end
 
     def updated_record_with_form(columns, attributes, scope)
@@ -194,13 +214,7 @@ module ActiveScaffold::Actions
         return unless column&.association
         break if parts.blank?
 
-        klass =
-          if column.association.polymorphic? && attrs
-            record = column.active_record_class.new(column.association.foreign_type => attrs[column.association.foreign_type])
-            column.association.klass(record)
-          else
-            column.association.klass
-          end
+        klass = parent_column_association_class(column, attrs)
         return unless klass
 
         columns = active_scaffold_config_for(klass).columns
@@ -209,6 +223,15 @@ module ActiveScaffold::Actions
       end
 
       column
+    end
+
+    def parent_column_association_class(column, attributes)
+      return column.association.klass unless column.association.polymorphic? && attributes
+
+      record = column.active_record_class.new(
+        column.association.foreign_type => attributes[column.association.foreign_type]
+      )
+      column.association.klass(record)
     end
 
     def find_from_scope(parent, scope)
@@ -549,30 +572,41 @@ module ActiveScaffold::Actions
     #   self.successful = true
     #   flash[:info] = 'Player fired'
     # end
-    def process_action_link_action(render_action = :action_update, crud_type_or_security_options = nil)
+    def process_action_link_action(render_action = :action_update, crud_type_or_security_options = nil, &)
       if request.get? || request.head?
         # someone has disabled javascript, we have to show confirmation form first
         @record = find_if_allowed(params[:id], :read) if params[:id]
         respond_to_action(:action_confirmation)
       else
         @action_link = active_scaffold_config.action_links[action_name]
-        if params[:id]
-          crud_type_or_security_options ||= {crud_type: request.delete? ? :delete : :update, action: action_name}
-          get_row(crud_type_or_security_options)
-        end
+        load_action_link_record(crud_type_or_security_options)
         raise ActiveScaffold::ActionNotAllowed unless action_link_authorized? @action_link, @record
 
-        if params[:id]
-          if @record.nil?
-            self.successful = false
-            flash[:error] = as_(:no_authorization_for_action, action: @action_link&.label(nil) || action_name)
-          else
-            yield @record
-          end
-        else
-          yield
-        end
+        invoke_action_link(&)
         respond_to_action(render_action)
+      end
+    end
+
+    def load_action_link_record(crud_type_or_security_options)
+      return unless params[:id]
+
+      crud_type_or_security_options ||= {
+        crud_type: request.delete? ? :delete : :update,
+        action: action_name
+      }
+      get_row(crud_type_or_security_options)
+    end
+
+    def invoke_action_link
+      if params[:id]
+        if @record.nil?
+          self.successful = false
+          flash[:error] = as_(:no_authorization_for_action, action: @action_link&.label(nil) || action_name)
+        else
+          yield @record
+        end
+      else
+        yield
       end
     end
 
