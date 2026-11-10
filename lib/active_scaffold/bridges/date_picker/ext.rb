@@ -41,8 +41,13 @@ class ActiveScaffold::Bridges::DatePicker
       super
     end
 
+    def datetime_picker_format(ui_options)
+      I18n.t "time.formats.#{ui_options[:format] || :picker}", default: ''
+    end
+    private :datetime_picker_format
+
     def format_for_datetime(column, value, ui_name, ui_options)
-      format = I18n.t "time.formats.#{ui_options[:format] || :picker}", default: '' if ui_name == :datetime_picker
+      format = datetime_picker_format ui_options if ui_name == :datetime_picker
       return super if format.blank?
 
       parts = Date._parse(value)
