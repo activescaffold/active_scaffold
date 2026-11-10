@@ -52,20 +52,7 @@ module ActiveScaffold
         handle_exception_on_column(e, column, record)
       end
 
-      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, *positional_arguments,
-                                                add_class: POSITIONAL_ARGUMENT_NOT_GIVEN,
-                                                record: POSITIONAL_ARGUMENT_NOT_GIVEN, form_columns: nil)
-        raise ArgumentError, 'too many positional arguments' if positional_arguments.size > 2
-
-        positional_add_class = positional_arguments.fetch(0, POSITIONAL_ARGUMENT_NOT_GIVEN)
-        positional_record = positional_arguments.fetch(1, POSITIONAL_ARGUMENT_NOT_GIVEN)
-        add_class = ActiveScaffold.deprecated_positional_argument(
-          positional_add_class, add_class,
-          method_name: __method__, argument_name: :add_class, default: false
-        )
-        record = ActiveScaffold.positional_or_keyword_argument(
-          positional_record, record, argument_name: :record, default: nil
-        )
+      def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class: false, record: nil, form_columns: nil)
         if add_class
           col_class = []
           col_class << 'required' if column.required?(action_for_validation(record))
@@ -75,7 +62,7 @@ module ActiveScaffold
           col_class = col_class.join(' ')
         end
         if (readonly && !record.new_record?) || !record.authorized_for?(crud_type: crud_type, column: column.name)
-          form_attribute(column, record, scope, true, col_class)
+          form_attribute(column, record, scope, only_value: true, col_class: col_class)
         else
           renders_as = column_renders_as(column)
           html = render_column(column, record, renders_as, scope, only_value: false, col_class: col_class, form_columns: form_columns)
@@ -169,13 +156,7 @@ module ActiveScaffold
         url_params
       end
 
-      def update_columns_options(column, scope, options,
-                                 positional_force = POSITIONAL_ARGUMENT_NOT_GIVEN,
-                                 force: POSITIONAL_ARGUMENT_NOT_GIVEN, form_columns: nil, url_params: {})
-        force = ActiveScaffold.deprecated_positional_argument(
-          positional_force, force,
-          method_name: __method__, argument_name: :force, default: false
-        )
+      def update_columns_options(column, scope, options, force: false, form_columns: nil, url_params: {})
         record = options[:object]
         subform_controller = controller.class.active_scaffold_controller_for(record.class) if scope
         form_columns ||= current_form_columns(record, scope, subform_controller)
@@ -222,7 +203,7 @@ module ActiveScaffold
         hide_column, clear = form_column_is_hidden?(column, record, scope)
         if hide_column
           if clear
-            form_hidden_attribute(column, record, scope, true)
+            form_hidden_attribute(column, record, scope, clear: true)
           else
             # creates an element that can be replaced by the update_columns routine,
             # but will not affect the value of the submitted form in this state:
@@ -234,7 +215,7 @@ module ActiveScaffold
         elsif (partial = override_form_field_partial(column))
           render partial, column: column, only_value: only_value, scope: scope, col_class: col_class, record: record, form_columns: form_columns
         elsif renders_as == :field || override_form_field?(column)
-          form_attribute(column, record, scope, only_value, col_class, form_columns: form_columns)
+          form_attribute(column, record, scope, only_value: only_value, col_class: col_class, form_columns: form_columns)
         elsif renders_as == :subform
           render 'form_association', subform_locals.slice(:tabbed_by, :tab_value, :tab_id).merge(column: column, scope: scope, parent_record: record)
         else
@@ -268,20 +249,7 @@ module ActiveScaffold
         as_element(:form_field_description, h(desc) + as_element(:form_field_description_close)) if desc.present?
       end
 
-      def form_attribute(column, record, scope = nil, *positional_arguments,
-                         only_value: POSITIONAL_ARGUMENT_NOT_GIVEN,
-                         col_class: POSITIONAL_ARGUMENT_NOT_GIVEN, form_columns: nil, field: nil)
-        raise ArgumentError, 'too many positional arguments' if positional_arguments.size > 2
-
-        positional_only_value = positional_arguments.fetch(0, POSITIONAL_ARGUMENT_NOT_GIVEN)
-        positional_col_class = positional_arguments.fetch(1, POSITIONAL_ARGUMENT_NOT_GIVEN)
-        only_value = ActiveScaffold.deprecated_positional_argument(
-          positional_only_value, only_value,
-          method_name: __method__, argument_name: :only_value, default: false
-        )
-        col_class = ActiveScaffold.positional_or_keyword_argument(
-          positional_col_class, col_class, argument_name: :col_class, default: nil
-        )
+      def form_attribute(column, record, scope = nil, only_value: false, col_class: nil, form_columns: nil, field: nil)
         column_options = active_scaffold_input_options(column, scope, object: record)
         collapsible_id = column_options.delete :collapsible_id
         attributes = field_attributes(column, record)
@@ -325,26 +293,14 @@ module ActiveScaffold
         column.label unless hidden
       end
 
-      def form_hidden_attribute(column, record, scope = nil,
-                                positional_clear = POSITIONAL_ARGUMENT_NOT_GIVEN,
-                                clear: POSITIONAL_ARGUMENT_NOT_GIVEN)
-        clear = ActiveScaffold.deprecated_positional_argument(
-          positional_clear, clear,
-          method_name: __method__, argument_name: :clear, default: false
-        )
+      def form_hidden_attribute(column, record, scope = nil, clear: false)
         content_tag :dl, style: 'display: none' do
           content_tag(:dt, '') <<
-            content_tag(:dd, form_hidden_field(column, record, scope, clear))
+            content_tag(:dd, form_hidden_field(column, record, scope, clear: clear))
         end
       end
 
-      def form_hidden_field(column, record, scope,
-                            positional_clear = POSITIONAL_ARGUMENT_NOT_GIVEN,
-                            clear: POSITIONAL_ARGUMENT_NOT_GIVEN)
-        clear = ActiveScaffold.deprecated_positional_argument(
-          positional_clear, clear,
-          method_name: __method__, argument_name: :clear, default: false
-        )
+      def form_hidden_field(column, record, scope, clear: false)
         options = active_scaffold_input_options(column, scope)
         value = record.send(column.name) unless clear
         if column.association&.collection?
@@ -417,7 +373,7 @@ module ActiveScaffold
         controller = active_scaffold_controller_for(model)
         while controller.uses_active_scaffold?
           path = File.join(controller.controller_path, partial)
-          return path if template_exists?(path, true)
+          return path if template_exists?(path, partial: true)
 
           controller = controller.superclass
         end

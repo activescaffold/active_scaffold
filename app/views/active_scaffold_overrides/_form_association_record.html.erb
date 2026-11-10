@@ -59,7 +59,7 @@
     col_class << 'hidden' if column_renders_as(column) == :hidden
   -%>
     <%= content_tag column_tag, class: col_class.join(' ') do %>
-      <%= active_scaffold_render_subform_column(column, scope, crud_type, readonly, false, record, form_columns: column_names) %>
+      <%= active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class: false, record: record, form_columns: column_names) %>
     <% end %>
   <% end -%>
   <% if show_actions -%>
@@ -83,13 +83,13 @@
           col_class << 'hidden' if column_renders_as(col) == :hidden
         %>
         <%= content_tag column_tag, class: col_class, colspan: (columns_length if column_tag == :td) do %>
-          <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, false, record) %>
+          <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, add_class: false, record: record) %>
         <% end %>
       <% end %>
     <% else %>
       <%= content_tag column_tag, colspan: (columns_length if column_tag == :td) do %>
       <% columns_group.each_column(for: record.class, crud_type: :read, flatten: true) do |col| %>
-        <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, true, record) %>
+        <%= active_scaffold_render_subform_column(col, scope, crud_type, readonly, add_class: true, record: record) %>
       <% end %>
       <% end %>
     <% end %>

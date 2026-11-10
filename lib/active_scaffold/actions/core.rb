@@ -118,7 +118,7 @@ module ActiveScaffold::Actions
       if @column.send_form_on_update_column
         @record ||= updated_record_with_form(@main_columns, params[:record] || params[:search], @scope)
       elsif @record
-        update_column_from_params(@record, @column, params.delete(:value), true)
+        update_column_from_params(@record, @column, params.delete(:value), avoid_changes: true)
       else
         @record = updated_record_with_column(@column, params.delete(:value), @scope)
       end
@@ -141,7 +141,7 @@ module ActiveScaffold::Actions
       if @form_action == :field_search
         update_columns_from_params(@form_record, columns, attributes || {}, :read, avoid_changes: true, search_attributes: true)
       else
-        update_record_from_params(@form_record, columns, attributes || {}, true)
+        update_record_from_params(@form_record, columns, attributes || {}, avoid_changes: true)
       end
     end
 
@@ -155,7 +155,7 @@ module ActiveScaffold::Actions
         # use instance variable so it's available in the view and helpers
         @value = value
       else
-        update_column_from_params(record, column, value, true)
+        update_column_from_params(record, column, value, avoid_changes: true)
       end
       record.id = params[:id]
       record
@@ -185,7 +185,9 @@ module ActiveScaffold::Actions
       copy_data_from_saved_record(params[:parent_id], cfg, parent) if params[:parent_id]
       apply_constraints_to_record(parent) unless params[:parent_id]
       if @column.send_form_on_update_column
-        parent = update_record_from_params(parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], true)
+        parent = update_record_from_params(
+          parent, cfg.send(params[:parent_id] ? :update : :create).columns, params[:record], avoid_changes: true
+        )
       end
 
       if params[:nested] # form in nested scaffold, set nested parent_record to parent
