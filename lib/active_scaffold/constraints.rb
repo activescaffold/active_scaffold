@@ -163,8 +163,9 @@ module ActiveScaffold
       elsif association.polymorphic?
         apply_constraint_on_polymorphic_association(record, association, value)
       elsif !association.source_reflection&.through? && # regular singular association, or one-level through association
-            !value.is_a?(Array)
-        record.send(:"#{association.name}=", association.klass.find(value))
+            (!value.is_a?(Array) || value.size == 1)
+        constraint_value = value.is_a?(Array) ? value.first : value
+        record.send(:"#{association.name}=", association.klass.find(constraint_value))
 
         # setting the belongs_to side of a has_one isn't safe. if the has_one was already
         # specified, rails won't automatically clear out the previous associated record.
