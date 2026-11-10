@@ -227,6 +227,15 @@ class FinderTest < ActiveSupport::TestCase
     assert_equal ['"people"."adult" = ?', false], ClassWithFinder.condition_for_column(column, '0', :full, {})
   end
 
+  def test_condition_value_for_integer
+    column = ActiveScaffold::DataStructures::Column.new('buildings_count', Person)
+    column.search_ui = :integer
+
+    assert_equal 12, ClassWithFinder.condition_value_for_numeric(column, '12')
+    assert_equal 1, ClassWithFinder.condition_value_for_numeric(column, true)
+    assert_equal 0, ClassWithFinder.condition_value_for_numeric(column, false)
+  end
+
   def test_condition_for_polymorphic_column
     column = ActiveScaffold::DataStructures::Column.new('addressable', Address)
     column.search_sql = [{subquery: [Building, 'name']}]

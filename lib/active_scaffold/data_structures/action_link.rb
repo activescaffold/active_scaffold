@@ -6,34 +6,9 @@ module ActiveScaffold::DataStructures
 
     # provides a quick way to set any property of the object from a hash
     def initialize(action, options = {})
-      # set defaults
-      @action = action
-      @label = action
-      @confirm = false
-      @type = :collection
-      @method = :get
-      @crud_type =
-        case action&.to_sym
-        when :destroy then :delete
-        when :create, :new then :create
-        when :update, :edit then :update
-        else :read
-        end
-      @column = nil
-      @image = nil
-      @controller = nil
-      @parameters = nil
-      @dynamic_parameters = nil
-      @html_options = nil
-      @weight = 0
-      self.inline = true
-
-      # apply quick properties
-      options.each_pair do |k, v|
-        setter = "#{k}="
-        send(setter, v) if respond_to? setter
-      end
-      self.toggle = self.action&.to_sym == :index && !position && (parameters.present? || dynamic_parameters) unless options.include? :toggle
+      initialize_defaults(action)
+      apply_options(options)
+      set_default_toggle unless options.include? :toggle
     end
 
     def initialize_copy(action_link)
@@ -273,6 +248,42 @@ module ActiveScaffold::DataStructures
       # force generating cache_key, except for column's link without action, or polymorphic associations
       name_to_cache if action && !column&.association&.polymorphic?
       super
+    end
+
+    private
+
+    def initialize_defaults(action)
+      @action = action
+      @label = action
+      @confirm = false
+      @type = :collection
+      @method = :get
+      @crud_type =
+        case action&.to_sym
+        when :destroy then :delete
+        when :create, :new then :create
+        when :update, :edit then :update
+        else :read
+        end
+      @column = nil
+      @image = nil
+      @controller = nil
+      @parameters = nil
+      @dynamic_parameters = nil
+      @html_options = nil
+      @weight = 0
+      self.inline = true
+    end
+
+    def apply_options(options)
+      options.each_pair do |k, v|
+        setter = "#{k}="
+        send(setter, v) if respond_to? setter
+      end
+    end
+
+    def set_default_toggle
+      self.toggle = action&.to_sym == :index && !position && (parameters.present? || dynamic_parameters)
     end
   end
 end

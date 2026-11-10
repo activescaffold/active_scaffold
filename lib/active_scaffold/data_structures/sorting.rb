@@ -130,15 +130,8 @@ module ActiveScaffold::DataStructures
       each do |sort_column, sort_direction|
         next if constraint_columns.include? sort_column.name
 
-        sql = grouped_columns ? grouped_columns[sort_column.name] : sort_column.sort[:sql]
-        next if sql.blank?
-
-        sql = sql.to_sql if sql.respond_to?(:to_sql)
-
-        parts = Array(sql).map do |column|
-          mongoid? ? [column, sort_direction] : {column => sort_direction}
-        end
-        order << parts
+        parts = clauses_for_column(sort_column, sort_direction, grouped_columns)
+        order << parts if parts
       end
 
       order << @primary_key_order_clause if @sorting_by_primary_key && grouped_columns.nil?
@@ -147,6 +140,17 @@ module ActiveScaffold::DataStructures
     end
 
     protected
+
+    def clauses_for_column(column, direction, grouped_columns)
+      sql = grouped_columns ? grouped_columns[column.name] : column.sort[:sql]
+      return if sql.blank?
+
+      sql = sql.to_sql if sql.respond_to?(:to_sql)
+
+      Array(sql).map do |col|
+        mongoid? ? [col, direction] : {col => direction}
+      end
+    end
 
     # retrieves the sorting clause for the given column
     def get_clause(column)

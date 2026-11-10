@@ -166,18 +166,14 @@ module ActiveScaffold::DataStructures
       false
     end
 
-    def each_column(options = {}, &proc)
+    def each_column(options = {}, &)
       columns = options[:core_columns] || (action.core.user || action.core).columns
       self.unauthorized_columns = []
       options[:for] ||= columns.active_record_class
 
       each do |item|
         if item.is_a? ActiveScaffold::DataStructures::ActionColumns
-          if options[:flatten]
-            item.each_column(options, &proc)
-          elsif !options[:skip_groups]
-            yield item
-          end
+          each_column_group(item, options, &)
         else
           next if !options[:skip_authorization] && skip_column?(item, options)
 
@@ -227,6 +223,14 @@ module ActiveScaffold::DataStructures
     end
 
     protected
+
+    def each_column_group(group, options, &)
+      if options[:flatten]
+        group.each_column(options, &)
+      elsif !options[:skip_groups]
+        yield group
+      end
+    end
 
     def collect_columns
       @set.collect { |col| col.is_a?(ActiveScaffold::DataStructures::ActionColumns) ? col.collect_columns : col }

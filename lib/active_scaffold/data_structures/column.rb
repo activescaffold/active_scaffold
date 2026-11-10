@@ -245,22 +245,11 @@ module ActiveScaffold::DataStructures
       def number_to_native(value)
         return value if value.blank? || !value.is_a?(String)
 
-        native = '.' # native ruby separator
-        format = {separator: '', delimiter: ''}.merge! I18n.t('number.format', default: {})
-        specific =
-          case options[:format]
-          when :currency
-            I18n.t('number.currency.format', default: nil)
-          when :size
-            I18n.t('number.human.format', default: nil)
-          when :percentage
-            I18n.t('number.percentage.format', default: nil)
-          end
-        format.merge! specific unless specific.nil?
-        if format[:separator].blank? || (value.exclude?(format[:separator]) && value.include?(native) && (format[:delimiter] != native || value !~ /\.\d{3}$/))
+        format = number_format
+        if format[:separator].blank? || uses_native_separator?(value, format)
           value
         else
-          value.gsub(/[^0-9\-#{format[:separator]}]/, '').gsub(format[:separator], native)
+          value.gsub(/[^0-9\-#{format[:separator]}]/, '').gsub(format[:separator], '.')
         end
       end
 
@@ -422,6 +411,25 @@ module ActiveScaffold::DataStructures
             end
           end
       end
+
+      def number_format
+        format = {separator: '', delimiter: ''}.merge! I18n.t('number.format', default: {})
+        specific =
+          case options[:format]
+          when :currency
+            I18n.t('number.currency.format', default: nil)
+          when :size
+            I18n.t('number.human.format', default: nil)
+          when :percentage
+            I18n.t('number.percentage.format', default: nil)
+          end
+        format.merge! specific unless specific.nil?
+        format
+      end
+
+      def uses_native_separator?(number, format)
+        number.exclude?(format[:separator]) && number.include?('.') && (format[:delimiter] != '.' || number !~ /\.\d{3}$/)
+      end
     end
 
     include ActiveScaffold::Configurable
@@ -535,10 +543,8 @@ module ActiveScaffold::DataStructures
     def initialize(name, active_record_class, delegated_association = nil) # :nodoc:
       @name = name.to_sym
       @active_record_class = active_record_class
-      @column = db_column = _columns_hash[name.to_s]
-      if @column.nil? && active_record? && active_record_class._default_attributes.key?(name.to_s)
-        @column = active_record_class._default_attributes[name.to_s]
-      end
+      @db_column = _columns_hash[name.to_s]
+      @column = @db_column || model_attribute
       @disable_on_update_column = true
       @db_default_value = ActiveScaffold::OrmChecks.default_value active_record_class, name if @column
       @delegated_association = delegated_association
@@ -555,32 +561,21 @@ module ActiveScaffold::DataStructures
       @actions_for_association_links = self.class.actions_for_association_links.dup if association
       @select_columns = default_select_columns
 
-      @text = @column.nil? || [:string, :text, :citext, String].include?(column_type)
-      if active_record? && db_column&.collation.present? && active_record_class.connection.adapter_name.in?(%w[PostgreSQL PostGIS])
-        @like_operator = 'LIKE'
-      end
+      @text = default_to_text?
       @number = false
       setup_defaults_for_column if @column
       @allow_add_existing = true
-      @form_ui = self.class.association_form_ui if @association && self.class.association_form_ui
 
-      self.includes = [association.name] if association&.allow_join?
-      if delegated_association
-        self.includes = includes ? [{delegated_association.name => includes}] : [delegated_association.name]
+      if @delegated_association
+        self.includes = includes ? [{@delegated_association.name => includes}] : [@delegated_association.name]
       end
-      self.subform_includes = true if association
 
       # default all the configurable variables
       self.css_class = ''
-      validators_force_require_on = active_record_class.validators_on(name)
-                                      .map { |val| validator_force_required?(val) }
-                                      .compact_blank
-      self.required = validators_force_require_on.any?(true) ||
-                      validators_force_require_on.reject { |opt| opt == true }.flatten.presence
       self.sort = true
       self.search_sql = true
       self.logical_search = [name] unless virtual? || association || tableless?
-
+      setup_required
       @weight = estimate_weight
     end
 
@@ -635,28 +630,29 @@ module ActiveScaffold::DataStructures
     end
 
     def type_for_attribute
-      ActiveScaffold::OrmChecks.type_for_attribute active_record_class, name
+      ActiveScaffold::OrmChecks.type_for_attribute @active_record_class, @name
     end
 
     def column_type
-      ActiveScaffold::OrmChecks.column_type active_record_class, name
+      ActiveScaffold::OrmChecks.column_type @active_record_class, @name
     end
 
     def cast(value)
-      ActiveScaffold::OrmChecks.cast active_record_class, name, value
+      ActiveScaffold::OrmChecks.cast @active_record_class, @name, value
     end
 
     protected
 
     def setup_defaults_for_column
-      if active_record_class.respond_to?(:defined_enums) && active_record_class.defined_enums[name.to_s]
+      if @active_record_class.respond_to?(:defined_enums) && @active_record_class.defined_enums[@name.to_s]
         @form_ui = :select
-        @options = {options: active_record_class.send(name.to_s.pluralize).keys.map(&:to_sym)}
+        @options = {options: @active_record_class.send(@name.to_s.pluralize).keys.map(&:to_sym)}
       elsif column_number?
         @number = true
         @form_ui = :number
         @options = {format: :i18n_number}
       else
+        @like_operator = 'LIKE' if use_like_in_postgresql?
         @form_ui =
           case column_type
           when :boolean then null? ? :boolean : :checkbox
@@ -665,8 +661,12 @@ module ActiveScaffold::DataStructures
       end
     end
 
+    def use_like_in_postgresql?
+      active_record? && @db_column&.collation.present? && @active_record_class.connection.adapter_name.in?(%w[PostgreSQL PostGIS])
+    end
+
     def setup_association_info
-      assoc = active_record_class.reflect_on_association(name)
+      assoc = @active_record_class.reflect_on_association(@name)
       @association =
         if assoc
           if active_record?
@@ -675,9 +675,23 @@ module ActiveScaffold::DataStructures
             Association::Mongoid.new(assoc)
           end
         elsif defined?(ActiveMongoid) && model < ActiveMongoid::Associations
-          assoc = active_record_class.reflect_on_am_association(name)
+          assoc = @active_record_class.reflect_on_am_association(@name)
           Association::ActiveMongoid.new(assoc) if assoc
         end
+
+      return unless @association
+
+      @form_ui = self.class.association_form_ui
+      self.subform_includes = true
+      self.includes = [@association.name] if @association&.allow_join?
+    end
+
+    def setup_required
+      validators_force_require_on = @active_record_class.validators_on(@name)
+                                      .map { |val| validator_force_required?(val) }
+                                      .compact_blank
+      self.required = validators_force_require_on.any?(true) ||
+                      validators_force_require_on.reject { |opt| opt == true }.flatten.presence
     end
 
     def validator_force_required?(val)
@@ -703,20 +717,20 @@ module ActiveScaffold::DataStructures
     end
 
     def default_select_columns
-      if association.nil? && column
+      if @association.nil? && @column
         [field]
-      elsif association&.polymorphic?
-        [field, quoted_field(quoted_field_name(association.foreign_type))]
-      elsif association
-        if association.belongs_to?
+      elsif @association&.polymorphic?
+        [field, quoted_field(quoted_field_name(@association.foreign_type))]
+      elsif @association
+        if @association.belongs_to?
           [field]
         else
           columns = []
-          if _columns_hash[count_column = "#{association.name}_count"]
+          if _columns_hash[count_column = "#{@association.name}_count"]
             columns << quoted_field(quoted_field_name(count_column))
           end
-          if association.through_reflection&.belongs_to?
-            columns << quoted_field(quoted_field_name(association.through_reflection.foreign_key))
+          if @association.through_reflection&.belongs_to?
+            columns << quoted_field(quoted_field_name(@association.through_reflection.foreign_key))
           end
           columns
         end
@@ -778,6 +792,18 @@ module ActiveScaffold::DataStructures
 
     def valid_form_ui?(value)
       value.nil? || value.is_a?(Symbol)
+    end
+
+    def default_to_text?
+      @column.nil? || [:string, :text, :citext, String].include?(column_type)
+    end
+
+    def model_attribute
+      return unless active_record?
+
+      name = @name.to_s
+      attributes = @active_record_class._default_attributes
+      attributes[name] if attributes.key?(name)
     end
   end
 end

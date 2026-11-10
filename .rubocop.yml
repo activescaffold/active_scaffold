@@ -54,8 +54,6 @@ Metrics/CyclomaticComplexity:
     - test/**/*
     # TODO: cleanup the next files
     - lib/active_scaffold/helpers/*
-    - lib/active_scaffold/data_structures/column.rb
-    - lib/active_scaffold/finder.rb
 
 Metrics/ModuleLength:
   Max: 800

@@ -78,4 +78,26 @@ class ActionLinkTest < ActiveSupport::TestCase
     assert_not @link.popup?
     assert_not @link.page?
   end
+
+  def test_crud_type_is_inferred_from_action
+    {
+      'destroy' => :delete,
+      'create' => :create,
+      'new' => :create,
+      'update' => :update,
+      'edit' => :update,
+      'show' => :read,
+      nil => :read
+    }.each do |action, crud_type|
+      assert_equal crud_type, ActiveScaffold::DataStructures::ActionLink.new(action).crud_type
+    end
+  end
+
+  def test_toggle_is_inferred_after_applying_options
+    link = ActiveScaffold::DataStructures::ActionLink.new(:index, position: false, parameters: {scope: 'all'})
+    assert link.toggle
+
+    link = ActiveScaffold::DataStructures::ActionLink.new(:index, position: false, parameters: {scope: 'all'}, toggle: false)
+    assert_not link.toggle
+  end
 end

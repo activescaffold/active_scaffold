@@ -120,35 +120,42 @@ module ActiveScaffold
 
         search_ui = column.search_ui || column.column_type
         begin
-          sql, *values =
-            if search_ui && respond_to?(:"condition_for_#{search_ui}_type")
-              send(:"condition_for_#{search_ui}_type", column, value, like_pattern)
-            elsif column.search_sql.instance_of? Proc
-              column.search_sql.call(value)
-            else
-              condition_for_search_ui(column, value, like_pattern, search_ui)
-            end
+          sql, *values = dispatch_condition_for_column(column, value, like_pattern, search_ui)
           return nil unless sql
           return sql if sql.is_a? ::ActiveRecord::Relation
 
-          where_values = []
-          sql_conditions = []
-          column.search_sql.each do |search_sql|
-            if search_sql.is_a?(Hash)
-              subquery_sql, *subquery_values = subquery_condition(column, sql, search_sql, values)
-              sql_conditions << subquery_sql
-              where_values.concat subquery_values
-            else
-              sql_conditions << (sql % {search_sql: search_sql})
-              where_values.concat values
-            end
-          end
-          [sql_conditions.join(' OR '), *where_values]
+          build_condition_for_column(column, sql, values)
         rescue StandardError => e
           message = "on the ActiveScaffold column :#{column.name}, search_ui = #{search_ui} in #{name}"
           ActiveScaffold.log_exception(e, message)
           raise e, "#{e.message} -- #{message}", e.backtrace
         end
+      end
+
+      def dispatch_condition_for_column(column, value, like_pattern, search_ui)
+        if search_ui && respond_to?(:"condition_for_#{search_ui}_type")
+          send(:"condition_for_#{search_ui}_type", column, value, like_pattern)
+        elsif column.search_sql.instance_of? Proc
+          column.search_sql.call(value)
+        else
+          condition_for_search_ui(column, value, like_pattern, search_ui)
+        end
+      end
+
+      def build_condition_for_column(column, sql, values)
+        where_values = []
+        sql_conditions = []
+        column.search_sql.each do |search_sql|
+          if search_sql.is_a?(Hash)
+            subquery_sql, *subquery_values = subquery_condition(column, sql, search_sql, values)
+            sql_conditions << subquery_sql
+            where_values.concat subquery_values
+          else
+            sql_conditions << (sql % {search_sql: search_sql})
+            where_values.concat values
+          end
+        end
+        [sql_conditions.join(' OR '), *where_values]
       end
 
       def subquery_condition(column, sql, options, values)
@@ -190,8 +197,7 @@ module ActiveScaffold
           if value.is_a?(Hash)
             condition_for_range(column, value, like_pattern)
           else
-            values = Array(value).compact_blank
-            ['%<search_sql>s in (?)', values] if values.present?
+            condition_for_array(column, value)
           end
         else
           condition_for_single_value(column, value, like_pattern)
@@ -221,33 +227,45 @@ module ActiveScaffold
         end
       end
 
+      def condition_for_array(column, value)
+        values = Array(value).compact_blank
+        ['%<search_sql>s in (?)', values] if values.present?
+      end
+
       def condition_for_range(column, value, like_pattern = nil)
         if ActiveScaffold::Finder::NULL_COMPARATORS.include?(value[:opt])
           condition_for_null_type(column, value[:opt], like_pattern)
         elsif value[:from].is_a?(Array) # opt can be only =
-          from = Array(value[:from]).compact_blank
-          ['%<search_sql>s in (?)', from] if from.present?
+          condition_for_array(column, value[:from])
         elsif value[:from].blank?
           nil
         elsif ActiveScaffold::Finder::STRING_COMPARATORS.value?(value[:opt])
-          text = column.active_record? ? column.active_record_class.sanitize_sql_like(value[:from]) : value[:from]
-          [
-            "%<search_sql>s #{'NOT ' if value[:opt].start_with?('not_')}#{ActiveScaffold::Finder.like_operator(column)} ?",
-            value[:opt].sub('not_', '').sub('?', text)
-          ]
+          condition_for_string_comparator(column, value)
         elsif value[:opt] == 'BETWEEN'
           ['(%<search_sql>s BETWEEN ? AND ?)', value[:from], value[:to]]
         elsif ActiveScaffold::Finder::NUMERIC_COMPARATORS.include?(value[:opt])
           ["%<search_sql>s #{value[:opt]} ?", value[:from]]
         elsif ActiveScaffold::Finder.logical_comparators&.include?(value[:opt])
-          operator =
-            case value[:opt]
-            when 'all_tokens' then 'AND'
-            when 'any_token'  then 'OR'
-            end
-          parser = ActiveScaffold::Bridges::LogicalQueryParser::KeywordQueryParser.new(operator) if operator
-          [logical_search_condition(column, value[:from], parser || ::LogicalQueryParser)]
+          [logical_search_condition(column, value[:from], logical_search_parser(value[:opt]))]
         end
+      end
+
+      def condition_for_string_comparator(column, value)
+        text = column.active_record? ? column.active_record_class.sanitize_sql_like(value[:from]) : value[:from]
+        [
+          "%<search_sql>s #{'NOT ' if value[:opt].start_with?('not_')}#{ActiveScaffold::Finder.like_operator(column)} ?",
+          value[:opt].sub('not_', '').sub('?', text)
+        ]
+      end
+
+      def logical_search_parser(opt)
+        operator =
+          case opt
+          when 'all_tokens' then 'AND'
+          when 'any_token'  then 'OR'
+          end
+        parser = ActiveScaffold::Bridges::LogicalQueryParser::KeywordQueryParser.new(operator) if operator
+        parser || ::LogicalQueryParser
       end
 
       def logical_search_condition(column, search, parser)
@@ -356,7 +374,7 @@ module ActiveScaffold
       end
 
       def condition_value_for_datetime(column, value, conversion = :to_time, ui_method: :search_ui, ui_options: nil)
-        return if value.nil? || value.blank?
+        return if value.blank?
 
         ui_options ||= column.send(:"#{ui_method}_options") || column.options
         if value.is_a? Hash
@@ -384,12 +402,7 @@ module ActiveScaffold
 
         value = column.number_to_native(value) if column.options[:format] && column.search_ui != :number
         case column.search_ui || column.column_type
-        when :integer
-          if value.is_a?(TrueClass) || value.is_a?(FalseClass)
-            value ? 1 : 0
-          else
-            value.to_i
-          end
+        when :integer   then ::ActiveRecord::Type::Integer.new.cast(value)
         when :float     then value.to_f
         when :decimal   then ::ActiveRecord::Type::Decimal.new.cast(value)
         else
@@ -706,30 +719,34 @@ module ActiveScaffold
         count = count_items(count_query, find_options, options[:count_includes]) if count == options[:per_page]
       end
       # we build the paginator differently for method- and sql-based sorting
-      pager = if options[:sorting]&.sorts_by_method?
-                ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-                  calculate_last_modified(query)
-                  sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)
-                  sorted_collection = sorted_collection.slice(offset, per_page) || [] if options[:pagination]
-                  sorted_collection
-                end
-              else
-                ::Paginator.new(count, options[:per_page]) do |offset, per_page|
-                  if first_page_items && offset.zero?
-                    first_page_items
-                  else
-                    page_query = options[:pagination] ? append_to_query(query, offset: offset, limit: per_page) : query
-                    calculate_last_modified(page_query)
-                    page_query
-                  end
-                end
-              end
+      pager = build_finder_pager(query, count, first_page_items, options)
       pager.page(options[:page])
     end
 
+    def build_finder_pager(query, count, first_page_items, options)
+      if options[:sorting]&.sorts_by_method?
+        ::Paginator.new(count, options[:per_page]) do |offset, per_page|
+          calculate_last_modified(query)
+          sorted_collection = sort_collection_by_column(query.to_a, *options[:sorting].first)
+          sorted_collection = sorted_collection.slice(offset, per_page) || [] if options[:pagination]
+          sorted_collection
+        end
+      else
+        ::Paginator.new(count, options[:per_page]) do |offset, per_page|
+          if first_page_items && offset.zero?
+            first_page_items
+          else
+            page_query = options[:pagination] ? append_to_query(query, offset: offset, limit: per_page) : query
+            calculate_last_modified(page_query)
+            page_query
+          end
+        end
+      end
+    end
+
     def count_after_loading_first_page?(options)
-      active_scaffold_config.active_record? && options[:pagination] && options[:pagination] != :infinite && options[:page].to_i == 1 &&
-        !options[:sorting]&.sorts_by_method?
+      active_scaffold_config.active_record? && options[:pagination] && options[:pagination] != :infinite &&
+        options[:page].to_i == 1 && !options[:sorting]&.sorts_by_method?
     end
 
     def load_page_for_delayed_count(query, per_page)
