@@ -21,6 +21,7 @@ class PermissionModel < ActiveRecord::Base
   def authorized_for_read?; true; end
 
   def authorized_for_update?; false; end
+
   # def authorized_for_create?; end
 
   def a1_authorized?; true; end
@@ -182,6 +183,32 @@ class ActiveRecordPermissionsTest < ActiveSupport::TestCase
     pass(@model.authorized_for?(crud_type: :read, column: :c1), 'tta')
     miss(@model.authorized_for?(crud_type: :read, column: :b1), 'ttf')
     pass(@model.authorized_for?(crud_type: :read, column: :a1), 'ttt')
+  end
+
+  def test_reason_response_with_default_permission
+    ActiveScaffold::ActiveRecordPermissions.stubs(default_permission: true)
+    assert_equal [true, nil], @model.authorized_for?(crud_type: :create, reason: true)
+
+    ActiveScaffold::ActiveRecordPermissions.stubs(default_permission: false)
+    assert_equal [false, nil], @model.authorized_for?(crud_type: :create, reason: true)
+  end
+
+  def test_reason_response_with_single_authorization_method
+    assert_equal [true, nil], @model.authorized_for?(crud_type: :read, reason: true)
+    assert_equal [false, nil], @model.authorized_for?(crud_type: :update, reason: true)
+  end
+
+  def test_reason_response_with_multiple_authorization_methods
+    assert_equal [true, nil], @model.authorized_for?(crud_type: :read, column: :c1, reason: true)
+    assert_equal [false, nil], @model.authorized_for?(crud_type: :read, column: :c2, reason: true)
+  end
+
+  def test_string_result_is_reason_when_enabled
+    ActiveScaffold::ActiveRecordPermissions.stubs(not_authorized_reason: true)
+    @model.stubs(:authorized_for_explained?).returns('Permission denied for a reason')
+
+    assert_equal false, @model.authorized_for?(action: :explained)
+    assert_equal [false, 'Permission denied for a reason'], @model.authorized_for?(action: :explained, reason: true)
   end
 
   private

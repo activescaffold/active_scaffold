@@ -56,10 +56,8 @@ Metrics/CyclomaticComplexity:
     - lib/active_scaffold/helpers/*
     - lib/active_scaffold/extensions/*
     - lib/active_scaffold/bridges/**/*
-    - lib/active_scaffold/data_structures/*
-    - lib/active_scaffold/actions/core.rb
+    - lib/active_scaffold/data_structures/column.rb
     - lib/active_scaffold/finder.rb
-    - lib/active_scaffold/active_record_permissions.rb
 
 Metrics/ModuleLength:
   Max: 800
