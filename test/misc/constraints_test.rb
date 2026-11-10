@@ -195,6 +195,25 @@ class ConstraintsTest < ActiveSupport::TestCase
     assert_constraint_condition({'user' => 1}, [{'primary_key_locations' => {'username' => ['User Name']}}], 'association with primary-key constraint')
   end
 
+  def test_apply_single_value_array_constraint_on_singular_association
+    association = stub(
+      through_singular?: false,
+      collection?: false,
+      polymorphic?: false,
+      source_reflection: nil,
+      name: :service,
+      klass: ModelStubs::Service,
+      reverse_association: nil
+    )
+    service = stub
+    record = mock
+
+    ModelStubs::Service.expects(:find).with(1).returns(service)
+    record.expects(:service=).with(service)
+
+    @test_object.send(:apply_constraint_on_association, record, association, [1])
+  end
+
   protected
 
   def assert_constraint_condition(constraint, condition, message = nil)

@@ -1,3 +1,6 @@
+= Unreleased
+- Fix the behaviour for constraints with array and one value only, was unconsistent
+
 = 4.4.3
 - Wait for dynamically loaded plugins and bridges to finish registering their ready and setup callbacks before initial setup, fixing initialization on directly rendered forms
 
