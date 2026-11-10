@@ -58,13 +58,7 @@ module ActiveScaffold
       # This is the template finder logic, keep it updated with however we find stuff in rails
       # currently this very similar to the logic in ActionBase::Base.render for options file
       def template_exists?(template_name, partial = false)
-        if @_view_paths
-          restore_view_paths = lookup_context.view_paths
-          lookup_context.view_paths = @_view_paths
-        end
-        (@_lookup_context || lookup_context).exists?(template_name, '', partial).tap do
-          lookup_context.view_paths = restore_view_paths if @_view_paths
-        end
+        (@_lookup_context || lookup_context).exists?(template_name, '', partial)
       end
 
       def form_remote_upload_tag(url_for_options = {}, options = {})

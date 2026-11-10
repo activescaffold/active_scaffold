@@ -43,37 +43,9 @@ module ActiveScaffold # :nodoc:
       if args.first.is_a?(Hash) && args.first[:active_scaffold]
         render_embedded args.first
       elsif args.first == :super
-        if @lookup_context # rails 6
-          @_lookup_context ||= lookup_context
-        else # rails < 6
-          @_view_paths ||= lookup_context.view_paths.clone
-          @_last_template ||= lookup_context.last_template
-        end
-        result = super(options_for_render_super(args[1]))
-        @lookup_context = @_lookup_context if @_lookup_context # rails 6
-        lookup_context.view_paths = @_view_paths if @_view_paths # rails < 6
-        lookup_context.last_template = @_last_template if @_last_template # rails < 6
-        result
+        render_super(args[1]) { |options| super(options) }
       else
-        if @lookup_context # rails 6
-          @_lookup_context ||= lookup_context
-        else # rails < 6
-          @_view_paths ||= lookup_context.view_paths.clone
-        end
-        last_template = lookup_context.last_template
-        current_view =
-          if args[0].is_a?(Hash)
-            {locals: args[0][:locals], object: args[0][:object]}
-          else # call is render 'partial', locals_hash
-            {locals: args[1]}
-          end
-        view_stack << current_view if current_view
-        @lookup_context = @_lookup_context if @_lookup_context # rails 6, reset lookup_context in case a view render :super, and then render :partial
-        lookup_context.view_paths = @_view_paths if @_view_paths # rails < 6, reset view_paths in case a view render :super, and then render :partial
-        result = super
-        view_stack.pop if current_view.present?
-        lookup_context.last_template = last_template
-        result
+        render_with_super_support(args) { super }
       end
     end
 
@@ -82,6 +54,34 @@ module ActiveScaffold # :nodoc:
     end
 
     private
+
+    def render_super(options)
+      @_lookup_context ||= lookup_context
+
+      result = yield options_for_render_super(options)
+
+      @lookup_context = @_lookup_context
+      result
+    end
+
+    def render_with_super_support(args)
+      @_lookup_context ||= lookup_context
+      last_template = lookup_context.last_template
+      current_view =
+        if args[0].is_a?(Hash)
+          {locals: args[0][:locals], object: args[0][:object]}
+        else # call is render 'partial', locals_hash
+          {locals: args[1]}
+        end
+      view_stack << current_view
+      @lookup_context = @_lookup_context # reset lookup_context in case a view render :super, and then render :partial
+
+      result = yield
+
+      view_stack.pop
+      lookup_context.last_template = last_template
+      result
+    end
 
     def options_for_render_super(options)
       options ||= {}
@@ -105,22 +105,12 @@ module ActiveScaffold # :nodoc:
     end
 
     def update_view_paths
-      last_view_path =
-        if @lookup_context # rails 6
-          File.expand_path(File.dirname(@lookup_context.last_template.short_identifier.to_s, 2), Rails.root)
-        else
-          File.expand_path(File.dirname(lookup_context.last_template.inspect, 2), Rails.root)
-        end
+      last_view_path = File.expand_path(
+        File.dirname(@lookup_context.last_template.short_identifier.to_s, 2),
+        Rails.root
+      )
       new_view_paths = view_paths.drop(view_paths.find_index { |path| path.to_s == last_view_path } + 1)
-      if @lookup_context # rails 6
-        if respond_to? :build_lookup_context # rails 6.0
-          build_lookup_context(new_view_paths)
-        else # rails 6.1
-          @lookup_context = ActionView::LookupContext.new(new_view_paths)
-        end
-      else
-        lookup_context.view_paths = new_view_paths
-      end
+      @lookup_context = ActionView::LookupContext.new(new_view_paths)
     end
 
     def remote_controller_config(controller_path)
