@@ -57,7 +57,13 @@ module ActiveScaffold
     #
     # This is a secure way to apply params to a record, because it's based on a loop over the columns
     # set. The columns set will not yield unauthorized columns, and it will not yield unregistered columns.
-    def update_record_from_params(parent_record, columns, attributes, avoid_changes = false, search_attributes: false)
+    def update_record_from_params(parent_record, columns, attributes,
+                                  positional_avoid_changes = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                                  avoid_changes: POSITIONAL_ARGUMENT_NOT_GIVEN, search_attributes: false)
+      avoid_changes = ActiveScaffold.deprecated_positional_argument(
+        positional_avoid_changes, avoid_changes,
+        method_name: __method__, argument_name: :avoid_changes, default: false
+      )
       crud_type = parent_record.new_record? ? :create : :update
       return parent_record unless parent_record.authorized_for?(crud_type: crud_type)
 
@@ -91,7 +97,13 @@ module ActiveScaffold
       column.params.select { |p| attributes.key? p }.each { |p| parent_record.send(:"#{p}=", attributes[p]) }
     end
 
-    def update_column_from_params(parent_record, column, attribute, avoid_changes = false)
+    def update_column_from_params(parent_record, column, attribute,
+                                  positional_avoid_changes = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                                  avoid_changes: POSITIONAL_ARGUMENT_NOT_GIVEN)
+      avoid_changes = ActiveScaffold.deprecated_positional_argument(
+        positional_avoid_changes, avoid_changes,
+        method_name: __method__, argument_name: :avoid_changes, default: false
+      )
       value = column_value_from_param_value(parent_record, column, attribute, avoid_changes)
       if column.association
         update_column_association(parent_record, column, attribute, value, avoid_changes)
@@ -110,7 +122,13 @@ module ActiveScaffold
       parent_record.send(:"#{column.association.foreign_key}=", value&.id) if column.association.belongs_to?
     end
 
-    def update_column_association(parent_record, column, attribute, value, avoid_changes = false)
+    def update_column_association(parent_record, column, attribute, value,
+                                  positional_avoid_changes = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                                  avoid_changes: POSITIONAL_ARGUMENT_NOT_GIVEN)
+      avoid_changes = ActiveScaffold.deprecated_positional_argument(
+        positional_avoid_changes, avoid_changes,
+        method_name: __method__, argument_name: :avoid_changes, default: false
+      )
       if avoid_changes
         assign_column_association(parent_record, column, attribute, value)
       elsif column.association.collection? && column.association.through_singular?
@@ -126,7 +144,13 @@ module ActiveScaffold
       parent_record.association(column.name).target = value
     end
 
-    def column_value_from_param_value(parent_record, column, value, avoid_changes = false)
+    def column_value_from_param_value(parent_record, column, value,
+                                      positional_avoid_changes = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                                      avoid_changes: POSITIONAL_ARGUMENT_NOT_GIVEN)
+      avoid_changes = ActiveScaffold.deprecated_positional_argument(
+        positional_avoid_changes, avoid_changes,
+        method_name: __method__, argument_name: :avoid_changes, default: false
+      )
       # convert the value, possibly by instantiating associated objects
       form_ui = column.form_ui || column.column&.type
       if form_ui && respond_to?(:"column_value_for_#{form_ui}_type", true)
@@ -205,7 +229,13 @@ module ActiveScaffold
       end
     end
 
-    def column_value_from_param_hash_value(parent_record, column, value, avoid_changes = false)
+    def column_value_from_param_hash_value(parent_record, column, value,
+                                           positional_avoid_changes = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                                           avoid_changes: POSITIONAL_ARGUMENT_NOT_GIVEN)
+      avoid_changes = ActiveScaffold.deprecated_positional_argument(
+        positional_avoid_changes, avoid_changes,
+        method_name: __method__, argument_name: :avoid_changes, default: false
+      )
       if column.association&.singular?
         manage_nested_record_from_params(parent_record, column, value, avoid_changes)
       elsif column.association&.collection?
@@ -233,7 +263,13 @@ module ActiveScaffold
       columns ? subform_cfg.build_action_columns(columns) : subform_cfg.columns
     end
 
-    def manage_nested_record_from_params(parent_record, column, attributes, avoid_changes = false)
+    def manage_nested_record_from_params(parent_record, column, attributes,
+                                         positional_avoid_changes = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                                         avoid_changes: POSITIONAL_ARGUMENT_NOT_GIVEN)
+      avoid_changes = ActiveScaffold.deprecated_positional_argument(
+        positional_avoid_changes, avoid_changes,
+        method_name: __method__, argument_name: :avoid_changes, default: false
+      )
       return nil unless avoid_changes || build_record_from_params?(attributes, column, parent_record)
 
       record = find_or_create_for_params(attributes, column, parent_record, avoid_changes)
@@ -259,7 +295,13 @@ module ActiveScaffold
     # Attempts to create or find an instance of the klass of the association in parent_column from the
     # request parameters given. If params[primary_key] exists it will attempt to find an existing object
     # otherwise it will build a new one.
-    def find_or_create_for_params(params, parent_column, parent_record, avoid_changes = false)
+    def find_or_create_for_params(params, parent_column, parent_record,
+                                  positional_avoid_changes = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                                  avoid_changes: POSITIONAL_ARGUMENT_NOT_GIVEN)
+      avoid_changes = ActiveScaffold.deprecated_positional_argument(
+        positional_avoid_changes, avoid_changes,
+        method_name: __method__, argument_name: :avoid_changes, default: false
+      )
       current = parent_record.send(parent_column.name)
       klass = parent_column.association.klass(parent_record)
       if params.key? klass.primary_key
@@ -277,7 +319,13 @@ module ActiveScaffold
 
     # Attempts to find an instance of klass (which must be an ActiveRecord object) with id primary key
     # Returns record from current if it's included or find from DB
-    def record_from_current_or_find(klass, id, current, avoid_changes = false)
+    def record_from_current_or_find(klass, id, current,
+                                    positional_avoid_changes = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                                    avoid_changes: POSITIONAL_ARGUMENT_NOT_GIVEN)
+      avoid_changes = ActiveScaffold.deprecated_positional_argument(
+        positional_avoid_changes, avoid_changes,
+        method_name: __method__, argument_name: :avoid_changes, default: false
+      )
       record = record_from_current(current, id)
       record ||= klass.new(klass.primary_key => id) if avoid_changes
       record ||= klass.find(id)

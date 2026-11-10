@@ -57,7 +57,12 @@ module ActiveScaffold
 
       # This is the template finder logic, keep it updated with however we find stuff in rails
       # currently this very similar to the logic in ActionBase::Base.render for options file
-      def template_exists?(template_name, partial = false)
+      def template_exists?(template_name, positional_partial = POSITIONAL_ARGUMENT_NOT_GIVEN,
+                           partial: POSITIONAL_ARGUMENT_NOT_GIVEN)
+        partial = ActiveScaffold.deprecated_positional_argument(
+          positional_partial, partial,
+          method_name: __method__, argument_name: :partial, default: false
+        )
         if @_view_paths
           restore_view_paths = lookup_context.view_paths
           lookup_context.view_paths = @_view_paths
