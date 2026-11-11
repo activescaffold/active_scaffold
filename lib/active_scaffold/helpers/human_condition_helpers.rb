@@ -117,17 +117,11 @@ module ActiveScaffold
 
           associated = associated['from']
         end
-        associated = [associated] unless associated.is_a? Array
-        associated = associated.compact_blank
+        associated = Array.wrap(associated).compact_blank
         if column.association
-          method = column.options[:label_method] || :to_label
-          associated = column.association.klass.where(id: associated.map(&:to_i)).map(&method)
+          associated = human_condition_association_labels(column, associated)
         elsif column.options[:options]
-          associated = associated.collect do |value|
-            text, val = column.options[:options].find { |t, v| (v.nil? ? t : v).to_s == value.to_s }
-            value = active_scaffold_translated_option(column, text, val).first if text
-            value
-          end
+          associated = human_condition_option_labels(column, associated)
         end
         as_(:association, scope: :human_conditions, column: attribute, value: associated.join(', '))
       end
@@ -135,6 +129,19 @@ module ActiveScaffold
       alias active_scaffold_human_condition_multi_select active_scaffold_human_condition_select
       alias active_scaffold_human_condition_select_multiple active_scaffold_human_condition_select
       alias active_scaffold_human_condition_record_select active_scaffold_human_condition_select
+
+      def human_condition_association_labels(column, associated)
+        method = column.options[:label_method] || :to_label
+        column.association.klass.where(id: associated.map(&:to_i)).map(&method)
+      end
+
+      def human_condition_option_labels(column, associated)
+        associated.collect do |value|
+          text, option_value = column.options[:options].find { |text, candidate| (candidate.nil? ? text : candidate).to_s == value.to_s }
+          text ? active_scaffold_translated_option(column, text, option_value).first : value
+        end
+      end
+      private :human_condition_association_labels, :human_condition_option_labels
 
       # the naming convention for overriding form fields with helpers
       def override_human_condition_column(column)

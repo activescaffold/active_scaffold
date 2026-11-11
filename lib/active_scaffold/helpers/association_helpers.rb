@@ -21,35 +21,43 @@ module ActiveScaffold
 
       # Provides a way to honor the :conditions on an association while searching the association's klass
       def association_options_find(association, conditions = nil, klass = nil, record = nil)
-        if klass.nil? && association.polymorphic?
-          class_name = record.send(association.foreign_type) if association.belongs_to?
-          return [] if class_name.blank?
-
-          klass = class_name.constantize
-          cache = !block_given?
-        else
-          cache = !block_given? && klass.nil?
-          klass ||= association.klass
-        end
+        cache = !block_given? && klass.nil?
+        klass ||= association_options_class(association, record)
+        return [] unless klass
 
         conditions ||= send(association_helper_method(association, :options_for_association_conditions), association, record)
         klass = send(association_helper_method(association, :association_klass_scoped), association, klass, record)
         cache_association_options(association, conditions, klass, cache: cache) do
-          relation = klass.where(conditions)
-          column = column_for_association(association, record)
-          if column&.includes
-            include_assoc = includes_for_association(column, klass)
-            relation = relation.includes(include_assoc) if include_assoc
-          end
-          if column&.sort&.dig(:sql)
-            # with threasafe enabled, column.sort[:sql] returns proxied strings and
-            # regexp capture won't work, which rails uses internally, so to_s is needed
-            relation = relation.order(Array(column.sort[:sql]).map { |sql| Arel.sql(sql.to_s) })
-          end
+          relation = association_options_relation(association, conditions, klass, record)
           relation = yield(relation) if block_given?
           relation.to_a
         end
       end
+
+      def association_options_class(association, record)
+        if association.polymorphic?
+          class_name = record.send(association.foreign_type) if association.belongs_to?
+          class_name.presence&.constantize
+        else
+          association.klass
+        end
+      end
+
+      def association_options_relation(association, conditions, klass, record)
+        relation = klass.where(conditions)
+        column = column_for_association(association, record)
+        if column&.includes
+          include_assoc = includes_for_association(column, klass)
+          relation = relation.includes(include_assoc) if include_assoc
+        end
+        if column&.sort&.dig(:sql)
+          # with threasafe enabled, column.sort[:sql] returns proxied strings and
+          # regexp capture won't work, which rails uses internally, so to_s is needed
+          relation = relation.order(Array(column.sort[:sql]).map { |sql| Arel.sql(sql.to_s) })
+        end
+        relation
+      end
+      private :association_options_class, :association_options_relation
 
       def includes_for_association(column, klass)
         includes = column.includes.find { |assoc| assoc.is_a?(Hash) && assoc.include?(column.association.name) }

@@ -15,7 +15,7 @@ Layout/LineLength:
 # Offense count: 195
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
-  Max: 48
+  Max: 26
 
 Rails/OutputSafety:
   Exclude:

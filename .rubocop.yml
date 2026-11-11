@@ -49,15 +49,11 @@ Metrics/AbcSize:
   CountRepeatedAttributes: false
   Exclude:
     - 'test/**/*'
-    # TODO: cleanup the next files
-    - lib/active_scaffold/helpers/*
 
 Metrics/CyclomaticComplexity:
   Max: 10
   Exclude:
     - test/**/*
-    # TODO: cleanup the next files
-    - lib/active_scaffold/helpers/*
 
 Metrics/MethodLength:
   Exclude:

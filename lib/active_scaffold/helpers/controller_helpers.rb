@@ -61,6 +61,12 @@ module ActiveScaffold
                             iframe associated_id authenticity_token _added _removed _popstate _].freeze
 
       def params_for(options = {})
+        url_options = base_params_for.merge(options)
+        add_user_settings_to_params(url_options)
+        url_options
+      end
+
+      def base_params_for
         unless @params_for
           @params_for = {}
           params.except(*BLACKLIST_PARAMS).each do |key, value|
@@ -69,19 +75,26 @@ module ActiveScaffold
           @params_for[:controller] = "/#{@params_for[:controller]}" unless @params_for[:controller]&.first(1) == '/' # for namespaced controllers
           @params_for.delete(:id) if @params_for[:id].nil?
         end
-
-        url_options = @params_for.merge(options)
-        if !active_scaffold_config.store_user_settings && controller_requested(url_options[:controller]) == controller_path
-          url_options[:search] ||= copy_param search_params if respond_to?(:search_params, true) && search_params.present?
-          url_options[:page] ||= params[:page]
-          if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.user.user_sorting?
-            column, direction = active_scaffold_config.list.user.sorting.first
-            url_options[:sort] ||= column.name
-            url_options[:sort_direction] ||= direction
-          end
-        end
-        url_options
+        @params_for
       end
+
+      def add_user_settings_to_params(url_options)
+        return if active_scaffold_config.store_user_settings
+        return unless controller_requested(url_options[:controller]) == controller_path
+
+        url_options[:search] ||= copy_param search_params if respond_to?(:search_params, true) && search_params.present?
+        url_options[:page] ||= params[:page]
+        add_sorting_to_params(url_options)
+      end
+
+      def add_sorting_to_params(url_options)
+        return unless active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.user.user_sorting?
+
+        column, direction = active_scaffold_config.list.user.sorting.first
+        url_options[:sort] ||= column.name
+        url_options[:sort_direction] ||= direction
+      end
+      private :base_params_for, :add_user_settings_to_params, :add_sorting_to_params
 
       def controller_requested(controller)
         if controller.to_s.first(1) == '/'
@@ -147,17 +160,20 @@ module ActiveScaffold
       end
 
       def render_parent_action
-        if @parent_action.nil?
-          @parent_action = :row
-          if parent_sti_controller
-            parent_sti_config = parent_sti_controller.active_scaffold_config
-            @parent_action = :index if action_name == 'create' && parent_sti_config.actions.include?(:create) && parent_sti_config.create.refresh_list == true
-            @parent_action = :index if action_name == 'update' && parent_sti_config.actions.include?(:update) && parent_sti_config.update.refresh_list == true
-            @parent_action = :index if action_name == 'destroy' && parent_sti_config.actions.include?(:delete) && parent_sti_config.delete.refresh_list == true
-          end
-        end
+        return @parent_action unless @parent_action.nil?
+
+        @parent_action = parent_sti_refreshes_list? ? :index : :row
         @parent_action
       end
+
+      def parent_sti_refreshes_list?
+        return false unless parent_sti_controller
+
+        config = parent_sti_controller.active_scaffold_config
+        action = {'create' => :create, 'update' => :update, 'destroy' => :delete}[action_name]
+        action && config.actions.include?(action) && config.public_send(action).refresh_list
+      end
+      private :parent_sti_refreshes_list?
 
       def tabbed_by_association(assoc_column, tabbed_by)
         assoc_column.association.klass.reflect_on_association(tabbed_by)
@@ -165,16 +181,31 @@ module ActiveScaffold
 
       # build an associated record for association
       def build_associated(association, parent_record)
-        if association.through? && association.through_reflection.collection?
-          # build full chain, only check create_associated on initial parent_record
-          parent_record = build_associated(association.through_reflection, parent_record)
-          build_associated(association.source_reflection, parent_record).tap do |record|
-            save_record_to_association(record, association.source_reflection.reverse_association, parent_record) # set inverse
+        record =
+          if association.through?
+            build_through_associated(association, parent_record)
+          else
+            build_direct_associated(association, parent_record)
           end
-        elsif association.through? # through belongs_to/has_one
+        yield record if block_given?
+        record
+      end
+
+      def build_through_associated(association, parent_record)
+        unless association.through_reflection.collection?
           parent_record = parent_record.send(association.through_reflection.name)
-          build_associated(association.source_reflection, parent_record)
-        elsif association.collection?
+          return build_associated(association.source_reflection, parent_record)
+        end
+
+        # build full chain, only check create_associated on initial parent_record
+        parent_record = build_associated(association.through_reflection, parent_record)
+        build_associated(association.source_reflection, parent_record).tap do |record|
+          save_record_to_association(record, association.source_reflection.reverse_association, parent_record) # set inverse
+        end
+      end
+
+      def build_direct_associated(association, parent_record)
+        if association.collection?
           parent_record.send(association.name).build
         elsif association.belongs_to? || parent_record.new_record? || parent_record.send(association.name).nil?
           # avoid use build_association in has_one when record is saved and had associated record
@@ -185,8 +216,9 @@ module ActiveScaffold
             assign_default_attributes record
             save_record_to_association(record, association.reverse_association, parent_record) # set inverse
           end
-        end.tap { |record| yield record if block_given? }
+        end
       end
+      private :build_through_associated, :build_direct_associated
 
       def save_record_to_association(record, association, value, reverse = nil)
         return unless association

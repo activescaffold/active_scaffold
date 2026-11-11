@@ -45,16 +45,7 @@ module ActiveScaffold
             separator = true if prev_link
             next
           end
-          content = nil
-          if link.is_a? ActiveScaffold::DataStructures::ActionLinks
-            content = display_action_link_group(link, record, options, &block) unless link.empty?
-          elsif !skip_action_link?(link, *Array(options[:for]))
-            authorized, reason = action_link_authorized?(link, *Array(options[:for]))
-            next if !authorized && options[:skip_unauthorized]
-
-            content = display_action_link(link, nil, record, options.merge(authorized: authorized, not_authorized_reason: reason))
-            options[:first_action] = false
-          end
+          content = action_link_content(link, record, options, &block)
           next if content.blank?
 
           prev_link = true
@@ -64,6 +55,20 @@ module ActiveScaffold
         end
         output
       end
+
+      def action_link_content(link, record, options, &)
+        if link.is_a? ActiveScaffold::DataStructures::ActionLinks
+          display_action_link_group(link, record, options, &) unless link.empty?
+        elsif !skip_action_link?(link, *Array(options[:for]))
+          authorized, reason = action_link_authorized?(link, *Array(options[:for]))
+          return if !authorized && options[:skip_unauthorized]
+
+          content = display_action_link(link, nil, record, options.merge(authorized: authorized, not_authorized_reason: reason))
+          options[:first_action] = false
+          content
+        end
+      end
+      private :action_link_content
 
       def display_action_link_group(link, record, options, &)
         if link.click_menu?
@@ -129,23 +134,29 @@ module ActiveScaffold
       end
 
       def render_action_link(link, record = nil, options = {})
-        if link.action.nil? || link.column&.association&.polymorphic?
-          link = action_link_to_inline_form(link, record) if link.column&.association
-          options[:authorized] = false if link.action.nil? || link.controller.nil?
-          options.delete :link if link.crud_type == :create
-        end
-        method =
-          if link.action.nil? || (link.type == :member && options.key?(:authorized) && !options[:authorized])
-            :render_unauthorized_action_link
-          else
-            :render_authorized_action_link
-          end
+        link = prepare_action_link(link, record, options)
+        method = action_link_render_method(link, options)
 
         cache_link = cache_action_link?(link)
         label = options[:link]
         result = optional_cache_helper(method, link.name_to_cache.to_s, cache_link, link, record, options, cache: cache_link)
         cache_link ? replace_tags_for_action_link(result, method, link, label, record, options) : result
       end
+
+      def prepare_action_link(link, record, options)
+        return link unless link.action.nil? || link.column&.association&.polymorphic?
+
+        link = action_link_to_inline_form(link, record) if link.column&.association
+        options[:authorized] = false if link.action.nil? || link.controller.nil?
+        options.delete :link if link.crud_type == :create
+        link
+      end
+
+      def action_link_render_method(link, options)
+        unauthorized = link.action.nil? || (link.type == :member && options.key?(:authorized) && !options[:authorized])
+        unauthorized ? :render_unauthorized_action_link : :render_authorized_action_link
+      end
+      private :prepare_action_link, :action_link_render_method
 
       def optional_cache_helper(method, key, cache, ...)
         if cache
@@ -210,6 +221,19 @@ module ActiveScaffold
 
       def configure_column_link(link, record, associated, actions = nil)
         actions ||= link.controller_actions || []
+        configure_column_link_action(link, associated, actions)
+
+        unless column_link_authorized?(link, link.column, record, associated)[0]
+          link.action = nil
+          # if action is edit and is not authorized, fallback to show if it's enabled
+          if link.crud_type == :update && actions.include?(:show)
+            link = configure_column_link(link, record, associated, [:show])
+          end
+        end
+        link
+      end
+
+      def configure_column_link_action(link, associated, actions)
         if column_empty?(associated) # if association is empty, we only can link to create form
           if actions.include?(:new)
             link.action = 'new'
@@ -226,16 +250,8 @@ module ActiveScaffold
           link.action = 'index'
           link.crud_type = :read
         end
-
-        unless column_link_authorized?(link, link.column, record, associated)[0]
-          link.action = nil
-          # if action is edit and is not authorized, fallback to show if it's enabled
-          if link.crud_type == :update && actions.include?(:show)
-            link = configure_column_link(link, record, associated, [:show])
-          end
-        end
-        link
       end
+      private :configure_column_link_action
 
       def column_link_authorized?(link, column, record, associated)
         if column.association
@@ -342,23 +358,7 @@ module ActiveScaffold
           return [@query_string, @non_nested_query_string]
         end
 
-        keep = true
-        @query_string_params ||= Set.new
-        query_string_options = {}
-        non_nested_query_string_options = {}
-
-        params_for.except(:controller, :action, :id).each do |key, value|
-          @query_string_params << key
-          if link.parameters.include? key
-            keep = false
-            next
-          end
-          if ignore_param_for_nested?(key)
-            non_nested_query_string_options[key] = value
-          else
-            query_string_options[key] = value
-          end
-        end
+        keep, query_string_options, non_nested_query_string_options = action_link_query_options(link)
         if nested_singular_association? && action_name == 'index'
           # pass the current path as return_to, for nested listing on singular association, so forms don't return to parent listing
           @query_string_params << :return_to
@@ -376,6 +376,25 @@ module ActiveScaffold
         [query_string, non_nested_query_string]
       end
 
+      def action_link_query_options(link)
+        keep = true
+        @query_string_params ||= Set.new
+        query_options = {}
+        non_nested_options = {}
+        params_for.except(:controller, :action, :id).each do |key, value|
+          @query_string_params << key
+          if link.parameters.include? key
+            keep = false
+          elsif ignore_param_for_nested?(key)
+            non_nested_options[key] = value
+          else
+            query_options[key] = value
+          end
+        end
+        [keep, query_options, non_nested_options]
+      end
+      private :action_link_query_options
+
       def cache_action_link_url_options?(link, record)
         active_scaffold_config.user.cache_action_link_urls && (link.type == :collection || !link.dynamic_parameters.is_a?(Proc)) && !sti_record?(record)
       end
@@ -389,22 +408,28 @@ module ActiveScaffold
         url_options[:id] = '--ID--' unless record.nil?
         url_options[:controller] = link.controller.to_s if link.controller
         url_options.merge! link.parameters if link.parameters
-        if link.dynamic_parameters.is_a?(Proc)
-          if record.nil?
-            url_options.merge! instance_exec(&link.dynamic_parameters)
-          else
-            url_options.merge! instance_exec(record, &link.dynamic_parameters)
-          end
-        end
+        add_dynamic_action_link_parameters(url_options, link, record)
+        add_nested_action_link_parameters(url_options, link, record)
+        url_options_for_sti_link(link.column, record, link, url_options) unless record.nil? || active_scaffold_config.sti_children.nil?
+        url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get
+        url_options
+      end
+
+      def add_dynamic_action_link_parameters(url_options, link, record)
+        return unless link.dynamic_parameters.is_a?(Proc)
+
+        dynamic_parameters = record.nil? ? instance_exec(&link.dynamic_parameters) : instance_exec(record, &link.dynamic_parameters)
+        url_options.merge! dynamic_parameters
+      end
+
+      def add_nested_action_link_parameters(url_options, link, record)
         if link.nested_link?
           url_options_for_nested_link(link.column, record, link, url_options)
         elsif nested?
           url_options[nested.param_name] = '--CHILD_ID--'
         end
-        url_options_for_sti_link(link.column, record, link, url_options) unless record.nil? || active_scaffold_config.sti_children.nil?
-        url_options[:_method] = link.method if !link.confirm? && link.inline? && link.method != :get
-        url_options
       end
+      private :add_dynamic_action_link_parameters, :add_nested_action_link_parameters
 
       def action_link_text(link, record, options)
         if link.image
@@ -419,6 +444,14 @@ module ActiveScaffold
         url = cached_action_link_url_options(link, record)
         url[:controller] ||= params[:controller]
         missing_options, url_options = url.partition { |_, v| v.nil? }
+        replacements = action_link_url_replacements(link, record)
+        url_options.collect! do |k, v|
+          [k.to_s, replacements[v] || v]
+        end
+        [missing_options, url_options]
+      end
+
+      def action_link_url_replacements(link, record)
         replacements = {}
         replacements['--ID--'] = record.id.to_s if record
         if link.column&.association&.singular?
@@ -426,11 +459,9 @@ module ActiveScaffold
         elsif nested?
           replacements['--CHILD_ID--'] = params[nested.param_name].to_s
         end
-        url_options.collect! do |k, v|
-          [k.to_s, replacements[v] || v]
-        end
-        [missing_options, url_options]
+        replacements
       end
+      private :action_link_url_replacements
 
       def action_link_selected?(link, record)
         if link.respond_to?(:filter_name)
@@ -452,66 +483,85 @@ module ActiveScaffold
         html_options = html_options.merge(class: [html_options[:class], link.action.to_s].compact.join(' '))
         html_options[:link] = action_link_text(link, record, options)
 
-        # Needs to be in html_options to as the adding _method to the url is no longer supported by Rails
-        html_options[:method] = link.method if link.method != :get
-
-        html_options[:data] ||= {}
-        html_options[:data] = html_options[:data].deep_dup if html_options[:data].frozen?
-        html_options[:data][:confirm] = cache ? '--CONFIRM--' : link.confirm(h(record&.to_label)) if link.confirm?
-        if !options[:page] && !options[:popup] && (options[:inline] || link.inline?)
-          html_options[:class] += ' as_action'
-          html_options[:data][:position] = link.position if link.position
-          html_options[:data][:action] = link.action
-          html_options[:data][:cancel_refresh] = true if link.refresh_on_close
-          html_options[:data][:keep_open] = true if link.keep_open?
-          if link.prompt?
-            html_options[:data][:prompt] = cache ? '--PROMPT--' : link.prompt(h(record&.to_label))
-            html_options[:data][:prompt_required] = true if link.prompt_required?
-          end
-          html_options[:remote] = true
-        end
-
-        if link.toggle
-          html_options[:class] += ' toggle'
-          if cache
-            html_options[:class] << ' --ACTIVE--'
-          elsif action_link_selected?(link, record)
-            html_options[:class] << ' active'
-          end
-        end
-
-        if !options[:page] && !options[:inline] && (options[:popup] || link.popup?)
-          html_options[:target] = '_blank'
-          html_options[:rel] = [html_options[:rel], 'noopener noreferrer'].compact.join(' ')
-        end
+        add_action_link_method_and_data(html_options, link, record, cache)
+        add_inline_action_link_options(html_options, link, record, cache) if inline_action_link?(link, options)
+        add_toggle_action_link_options(html_options, link, record, cache) if link.toggle
+        add_popup_action_link_options(html_options, link, options) if popup_action_link?(link, options)
         html_options[:id] = link_id
         html_options
       end
 
+      def add_action_link_method_and_data(html_options, link, record, cache)
+        # Needs to be in html_options as adding _method to the URL is no longer supported by Rails.
+        html_options[:method] = link.method if link.method != :get
+        html_options[:data] ||= {}
+        html_options[:data] = html_options[:data].deep_dup if html_options[:data].frozen?
+        html_options[:data][:confirm] = cache ? '--CONFIRM--' : link.confirm(h(record&.to_label)) if link.confirm?
+      end
+
+      def add_inline_action_link_options(html_options, link, record, cache)
+        html_options[:class] += ' as_action'
+        html_options[:data][:position] = link.position if link.position
+        html_options[:data][:action] = link.action
+        html_options[:data][:cancel_refresh] = true if link.refresh_on_close
+        html_options[:data][:keep_open] = true if link.keep_open?
+        add_action_link_prompt(html_options, link, record, cache) if link.prompt?
+        html_options[:remote] = true
+      end
+
+      def inline_action_link?(link, options)
+        !options[:page] && !options[:popup] && (options[:inline] || link.inline?)
+      end
+
+      def add_action_link_prompt(html_options, link, record, cache)
+        html_options[:data][:prompt] = cache ? '--PROMPT--' : link.prompt(h(record&.to_label))
+        html_options[:data][:prompt_required] = true if link.prompt_required?
+      end
+
+      def add_toggle_action_link_options(html_options, link, record, cache)
+        html_options[:class] += ' toggle'
+        if cache
+          html_options[:class] << ' --ACTIVE--'
+        elsif action_link_selected?(link, record)
+          html_options[:class] << ' active'
+        end
+      end
+
+      def popup_action_link?(link, options)
+        !options[:page] && !options[:inline] && (options[:popup] || link.popup?)
+      end
+
+      def add_popup_action_link_options(html_options, link, options)
+        html_options[:target] = '_blank'
+        html_options[:rel] = [html_options[:rel], 'noopener noreferrer'].compact.join(' ')
+      end
+      private :add_action_link_method_and_data, :add_inline_action_link_options, :inline_action_link?, :add_action_link_prompt,
+              :add_toggle_action_link_options, :popup_action_link?, :add_popup_action_link_options
+
       def get_action_link_id(link, record = nil)
         column = link.column unless link.is_a?(ActiveScaffold::DataStructures::ActionLinks)
-        if column&.association && record
-          associated = record.send(column.association.name) unless column.association.collection?
-          id =
-            if associated
-              "#{column.association.name}-#{associated.id}-#{record.id}"
-            else
-              "#{column.association.name}-#{record.id}"
-            end
-        end
-        id ||= record&.id&.to_s || (nested? ? nested_parent_id.to_s : '')
-        action_link_id = ActiveScaffold::Registry.cache :action_link_id, link.name_to_cache.to_s do
-          if link.is_a?(ActiveScaffold::DataStructures::ActionLinks)
-            action_link_id(link.path.tr('.', '_'), '--ID--')
-          else
-            if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)
-              controller_id = id_from_controller("#{link.controller}-")
-            end
-            action_link_id("#{controller_id}#{link.action}", '--ID--')
-          end
-        end
+        id = column&.association ? association_action_link_id(column, record) : record.id&.to_s if record
+        id ||= nested? ? nested_parent_id.to_s : ''
+        action_link_id = ActiveScaffold::Registry.cache(:action_link_id, link.name_to_cache.to_s) { cached_action_link_id(link) }
         action_link_id.sub('--ID--', id)
       end
+
+      def cached_action_link_id(link)
+        return action_link_id(link.path.tr('.', '_'), '--ID--') if link.is_a?(ActiveScaffold::DataStructures::ActionLinks)
+
+        if params[:parent_controller] || (link.controller && link.controller != controller.controller_path)
+          controller_id = id_from_controller("#{link.controller}-")
+        end
+        action_link_id("#{controller_id}#{link.action}", '--ID--')
+      end
+
+      def association_action_link_id(column, record)
+        associated = record.send(column.association.name) unless column.association.collection?
+        return "#{column.association.name}-#{record.id}" unless associated
+
+        "#{column.association.name}-#{associated.id}-#{record.id}"
+      end
+      private :association_action_link_id, :cached_action_link_id
 
       def action_link_html(link, url, html_options, record)
         label = html_options.delete(:link)

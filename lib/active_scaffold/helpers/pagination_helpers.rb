@@ -39,57 +39,77 @@ module ActiveScaffold
       end
 
       def pagination_ajax_links(current_page, url_options, options, inner_window, outer_window)
-        start_number = current_page.number - inner_window
-        end_number = current_page.number + inner_window
-        start_number = 1 if start_number <= 0
+        start_number, end_number = pagination_window(current_page, inner_window)
+        html, last_page = pagination_leading_links(current_page, url_options, options, outer_window)
         if current_page.pager.infinite?
-          offsets = [20, 100]
-        elsif end_number > current_page.pager.last.number
-          end_number = current_page.pager.last.number
-        end
-
-        html = []
-        if current_page.number == 1
-          last_page = 0
-        else
-          last_page = 1
-          last_page.upto([last_page + outer_window, current_page.number - 1].min) do |num|
-            html << pagination_ajax_link(num, url_options, options)
-            last_page = num
-          end
-        end
-        if current_page.pager.infinite?
-          offsets.reverse_each do |offset|
-            page = current_page.number - offset
-            next unless page < start_number && page > last_page
-
+          infinite_previous_pages(current_page, start_number, last_page).each do |page|
             html << pagination_gap(options) if page > last_page + 1
             html << pagination_ajax_link(page, url_options, options)
             last_page = page
           end
         end
         html << pagination_gap(options) if start_number > last_page + 1
-
-        [start_number, last_page + 1].max.upto(end_number) do |num|
-          html << if current_page.number == num
-                    pagination_active_page(num, url_options, options)
-                  else
-                    pagination_ajax_link(num, url_options, options)
-                  end
-        end
-
-        if current_page.pager.infinite?
-          offsets.each do |offset|
-            html << pagination_gap(options) << pagination_ajax_link(current_page.number + offset, url_options, options)
-          end
-        else
-          html << pagination_gap(options) unless end_number >= current_page.pager.last.number - outer_window - 1
-          [end_number + 1, current_page.pager.last.number - outer_window].max.upto(current_page.pager.last.number) do |num|
-            html << pagination_ajax_link(num, url_options, options)
-          end
-        end
+        page_range = [start_number, last_page + 1].max..end_number
+        html.concat pagination_window_links(current_page, page_range, url_options, options)
+        html.concat pagination_trailing_links(current_page, end_number, outer_window, url_options, options)
         safe_join html, ' '
       end
+
+      def pagination_window(current_page, inner_window)
+        start_number = [current_page.number - inner_window, 1].max
+        end_number = current_page.number + inner_window
+        end_number = [end_number, current_page.pager.last.number].min unless current_page.pager.infinite?
+        [start_number, end_number]
+      end
+
+      def pagination_leading_links(current_page, url_options, options, outer_window)
+        return [[], 0] if current_page.number == 1
+
+        html = []
+        last_page = 1
+        last_page.upto([last_page + outer_window, current_page.number - 1].min) do |number|
+          html << pagination_ajax_link(number, url_options, options)
+          last_page = number
+        end
+        [html, last_page]
+      end
+
+      def infinite_previous_pages(current_page, start_number, last_page)
+        [20, 100].reverse_each.filter_map do |offset|
+          page = current_page.number - offset
+          page if page < start_number && page > last_page
+        end
+      end
+
+      def pagination_window_links(current_page, page_range, url_options, options)
+        page_range.map do |number|
+          if current_page.number == number
+            pagination_active_page(number, url_options, options)
+          else
+            pagination_ajax_link(number, url_options, options)
+          end
+        end
+      end
+
+      def pagination_trailing_links(current_page, end_number, outer_window, url_options, options)
+        return infinite_trailing_links(current_page, url_options, options) if current_page.pager.infinite?
+
+        html = []
+        html << pagination_gap(options) unless end_number >= current_page.pager.last.number - outer_window - 1
+        first_page = [end_number + 1, current_page.pager.last.number - outer_window].max
+        first_page.upto(current_page.pager.last.number) do |number|
+          html << pagination_ajax_link(number, url_options, options)
+        end
+        html
+      end
+
+      def infinite_trailing_links(current_page, url_options, options)
+        [20, 100].flat_map do |offset|
+          [pagination_gap(options), pagination_ajax_link(current_page.number + offset, url_options, options)]
+        end
+      end
+      private :pagination_window, :pagination_leading_links, :infinite_previous_pages,
+              :pagination_window_links, :pagination_trailing_links, :infinite_trailing_links
     end
   end
 end
