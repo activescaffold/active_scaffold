@@ -6,6 +6,7 @@ module ActiveScaffold
     # Also a dumping ground for uncategorized helpers.
     module ViewHelpers
       include ActiveScaffold::Helpers::AssetsHelpers
+      include ActiveScaffold::Helpers::JavascriptHelpers
       include ActiveScaffold::Helpers::IdHelpers
       include ActiveScaffold::Helpers::ActionLinkHelpers
       include ActiveScaffold::Helpers::AssociationHelpers

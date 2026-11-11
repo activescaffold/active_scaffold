@@ -67,6 +67,6 @@
       end
 -%>
 
-ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(html) %>', <%= options.to_json.html_safe %>);
+ActiveScaffold.render_form_field('<%= source_id %>','<%= escape_javascript(html) %>', <%= javascript_literal(options) %>);
 <%= render(partial: 'render_field', collection: column.update_columns, as: :column, locals: local_assigns) if column.update_columns.present? %>
 <% end %>

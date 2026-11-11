@@ -12,4 +12,4 @@ elsif @record.persisted?
   options[:id] = active_scaffold_input_options(column, column_scope(@column, @scope, @record))[:id]
 end
 %>
-ActiveScaffold.create_associated_record_form('<%= subform_id %>', '<%= escape_javascript(associated_form) %>', <%= options.to_json.html_safe %>);
+ActiveScaffold.create_associated_record_form('<%= subform_id %>', '<%= escape_javascript(associated_form) %>', <%= javascript_literal(options) %>);

@@ -12,10 +12,6 @@
 Layout/LineLength:
   Max: 200
 
-Rails/OutputSafety:
-  Exclude:
-    - app/**/*
-
 # Offense count: 84
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact

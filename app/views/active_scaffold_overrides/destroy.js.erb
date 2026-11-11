@@ -2,15 +2,19 @@
 <% if successful? %>
   <% if render_parent? %>
     <% if render_parent_action == :row %>
-      <% current_id = controller_id(params[:eid] || params[:parent_sti]) -%>
-      ActiveScaffold.delete_record_row('<%= element_row_id(controller_id: current_id, action: 'list', id: params[:id]) %>', '<%=raw url_for params_for(render_parent_options.merge(id: nil, page: [active_scaffold_config.list.user.page.to_i - 1, 1].max)) %>');
+      <%
+        current_id = controller_id(params[:eid] || params[:parent_sti])
+        page = [active_scaffold_config.list.user.page.to_i - 1, 1].max
+        parent_url = url_for(params_for(render_parent_options.merge(id: nil, page: page)))
+      -%>
+      ActiveScaffold.delete_record_row('<%= element_row_id(controller_id: current_id, action: 'list', id: params[:id]) %>', <%= javascript_literal(parent_url) %>);
       <% messages_id = active_scaffold_messages_id(controller_id: current_id) %>
       <%= render 'update_calculations', calculations_id: active_scaffold_calculations_id(controller_id: current_id) %>
     <% elsif render_parent_action == :index %>
       <% if controller.respond_to?(:render_component_into_view, true) %>
         <%= escape_javascript(controller.send(:render_component_into_view, render_parent_options)) %>
       <% else %>
-        ActiveScaffold.reload('<%=raw url_for render_parent_options %>');
+        ActiveScaffold.reload(<%= javascript_literal(url_for(render_parent_options)) %>);
       <% end %>
     <% end %>
   <% elsif active_scaffold_config.delete.refresh_list %>
@@ -23,7 +27,7 @@
         url = url_for(url)
       end
     %>
-    ActiveScaffold.delete_record_row('<%= element_row_id(action: 'list', id: params[:id]) %>', '<%= url %>');
+    ActiveScaffold.delete_record_row('<%= element_row_id(action: 'list', id: params[:id]) %>', <%= javascript_literal(url) %>);
     <%= render 'update_calculations' %>
   <% end %>
 <% else %>

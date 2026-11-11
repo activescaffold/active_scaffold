@@ -29,7 +29,13 @@ module ActiveScaffold
         html = as_element :dynamic_action_group, **ul_options do
           safe_join(links.map { |link| as_element :dynamic_action_group_element, link })
         end
-        raw "ActiveScaffold.display_dynamic_action_group('#{get_action_link_id action_link, record}', '#{escape_javascript html}');" # rubocop:disable Rails/OutputSafety
+        safe_join([
+                    'ActiveScaffold.display_dynamic_action_group(',
+                    javascript_literal(get_action_link_id(action_link, record)),
+                    ', ',
+                    javascript_literal(html),
+                    ');'
+                  ])
       end
 
       def display_action_links(action_links, record, options, &block)

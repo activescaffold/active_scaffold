@@ -59,7 +59,7 @@ end
   <%= as_element :form_messages_container, id: element_messages_id(action: form_action), class: 'messages-container' do %>
     <% unless xhr %>
       <%= server_error_msg class: 'as-msg', style: 'display:none;' do %>
-        <%= as_(:internal_error).html_safe %>
+        <%= as_(:internal_error) %>
         <%= as_element :message_close, as_(:close), class: 'msg-close', title: as_(:close) %>
       <% end %>
     <% end %>
