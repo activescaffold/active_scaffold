@@ -16,41 +16,41 @@ module ActiveScaffold
         record = options[:object]
         if (input_method = override_form_field(column))
           send(input_method, record, options)
-        elsif (input_method = configured_form_input_method(column))
-          render_configured_form_input(column, options, input_method)
+        elsif (input_method = _as_configured_form_input_method(column))
+          _as_render_configured_form_input(column, options, input_method)
         elsif column.association
-          render_association_form_input(column, options)
+          _as_render_association_form_input(column, options)
         elsif column.virtual?
-          render_virtual_form_input(column, record, options)
+          _as_render_virtual_form_input(column, record, options)
         elsif (input_method = override_input(column.column_type))
           send(input_method, column, options)
         else
-          render_default_form_input(column, record, options)
+          _as_render_default_form_input(column, record, options)
         end
       rescue StandardError => e
         handle_exception_on_column(e, column, record)
       end
 
-      def configured_form_input_method(column)
+      def _as_configured_form_input_method(column)
         override_input(column.form_ui) if column.form_ui
       end
 
-      def render_configured_form_input(column, options, method)
+      def _as_render_configured_form_input(column, options, method)
         send(method, column, options, ui_options: (column.form_ui_options || column.options).except(:collapsible))
       end
 
-      def render_association_form_input(column, options)
+      def _as_render_association_form_input(column, options)
         raise ArgumentError, "Unknown form_ui `#{column.form_ui}' for column `#{column.name}'" if column.form_ui
 
         active_scaffold_input_select(column, options)
       end
 
-      def render_virtual_form_input(column, record, options)
+      def _as_render_virtual_form_input(column, record, options)
         options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
         active_scaffold_input_virtual(column, options)
       end
 
-      def render_default_form_input(column, record, options)
+      def _as_render_default_form_input(column, record, options)
         options = active_scaffold_input_text_options(options) if column.text? || column.number?
         if column.column_type == :string && options[:maxlength].blank?
           options[:maxlength] = column.type_for_attribute.limit
@@ -59,11 +59,11 @@ module ActiveScaffold
         options[:value] = format_number_value(record.send(column.name), column.options) if column.number?
         text_field(:record, column.name, options.merge(column.options).except(:format))
       end
-      private :configured_form_input_method, :render_configured_form_input, :render_association_form_input,
-              :render_virtual_form_input, :render_default_form_input
+      private :_as_configured_form_input_method, :_as_render_configured_form_input, :_as_render_association_form_input,
+              :_as_render_virtual_form_input, :_as_render_default_form_input
 
       def active_scaffold_render_subform_column(column, scope, crud_type, readonly, add_class: false, record: nil, form_columns: nil)
-        col_class = subform_column_class(column, record) if add_class
+        col_class = _as_subform_column_class(column, record) if add_class
         if (readonly && !record.new_record?) || !record.authorized_for?(crud_type: crud_type, column: column.name)
           form_attribute(column, record, scope, only_value: true, col_class: col_class)
         else
@@ -74,7 +74,7 @@ module ActiveScaffold
         end
       end
 
-      def subform_column_class(column, record)
+      def _as_subform_column_class(column, record)
         classes = []
         classes << 'required' if column.required?(action_for_validation(record))
         classes << column.css_class unless column.css_class.nil? || column.css_class.is_a?(Proc)
@@ -82,7 +82,7 @@ module ActiveScaffold
         classes << 'checkbox' if column.form_ui == :checkbox
         classes.join(' ')
       end
-      private :subform_column_class
+      private :_as_subform_column_class
 
       def active_scaffold_subform_attributes(column, column_css_class = nil, klass = nil, tab_id: nil, ui_options: column.options)
         {
@@ -120,9 +120,9 @@ module ActiveScaffold
       def active_scaffold_input_options(column, scope = nil, options = {})
         name = scope ? "record#{scope}[#{column.name}]" : "record[#{column.name}]"
         record = options[:object]
-        options[:required] = true if required_form_input?(column, record, scope)
+        options[:required] = true if _as_required_form_input?(column, record, scope)
         options[:placeholder] = column.placeholder if column.placeholder.present?
-        id_control = form_input_id(column, scope)
+        id_control = _as_form_input_id(column, scope)
         classes = "#{column.name}-input#{' numeric-input' if column.number?}"
         collapsible_id = "container_#{id_control}" if (column.form_ui_options || column.options)[:collapsible]
 
@@ -131,16 +131,16 @@ module ActiveScaffold
         as_element_attributes(:form_control, proc_options: context, **attributes)
       end
 
-      def required_form_input?(column, record, scope)
+      def _as_required_form_input?(column, record, scope)
         column.required?(action_for_validation(record)) && (!@disable_required_for_new || scope.nil? || record&.persisted?)
       end
 
-      def form_input_id(column, scope)
+      def _as_form_input_id(column, scope)
         id = "record_#{column.name}_#{[params[:eid], params[:parent_id] || params[:id]].compact.join '_'}"
         id += scope_id(scope) if scope
         id
       end
-      private :required_form_input?, :form_input_id
+      private :_as_required_form_input?, :_as_form_input_id
 
       def current_form_columns(record, scope, subform_controller = nil)
         if @main_columns && (scope.nil? || subform_controller == controller.class)
@@ -177,14 +177,14 @@ module ActiveScaffold
         update_columns = column.update_columns&.flat_map { |col| col.is_a?(Hash) ? col.keys : col }
         force = true if update_columns&.include?(:__root__)
 
-        return options unless force || render_updated_columns?(form_columns, update_columns)
+        return options unless force || _as_render_updated_columns?(form_columns, update_columns)
 
         url_params = url_options_for_render_field(column, record, scope, subform_controller, url_params)
-        add_update_columns_options(options, column, url_params)
+        _as_add_update_columns_options(options, column, url_params)
         options
       end
 
-      def add_update_columns_options(options, column, url_params)
+      def _as_add_update_columns_options(options, column, url_params)
         options[:class] = "#{options[:class]} update_form".strip
         options['data-update_url'] = url_for(url_params)
         options['data-update_send_form'] = column.update_columns&.any?(Hash) || column.send_form_on_update_column
@@ -192,10 +192,10 @@ module ActiveScaffold
         options['data-skip-disable-form'] = !column.disable_on_update_column
       end
 
-      def render_updated_columns?(form_columns, update_columns)
+      def _as_render_updated_columns?(form_columns, update_columns)
         form_columns && update_columns&.intersect?(form_columns)
       end
-      private :add_update_columns_options, :render_updated_columns?
+      private :_as_add_update_columns_options, :_as_render_updated_columns?
 
       def field_attributes(column, record)
         {}
@@ -279,7 +279,7 @@ module ActiveScaffold
         attributes[:class] = "#{attributes[:class]} #{col_class}" if col_class.present?
         field ||=
           if only_value
-            readonly_form_field(column, record, column_options)
+            _as_readonly_form_field(column, record, column_options)
           else
             active_scaffold_input_for column, scope, column_options, form_columns: form_columns
           end
@@ -291,14 +291,14 @@ module ActiveScaffold
         form_attribute_html(column, label, field, description, attributes, collapsible_id: collapsible_id)
       end
 
-      def readonly_form_field(column, record, column_options)
+      def _as_readonly_form_field(column, record, column_options)
         field = content_tag(:span, show_column_value(record, column), column_options.except(:name, :object))
         return field unless column.association.nil? || column.association.belongs_to?
 
         # Hidden field is retained for compatibility with scalar and belongs_to columns.
         safe_join([field, hidden_field(:record, column.association&.foreign_key || column.name, column_options)])
       end
-      private :readonly_form_field
+      private :_as_readonly_form_field
 
       def form_attribute_html(column, label, field, description, attributes, collapsible_id: nil)
         field = safe_join([field, description].compact) if description.present?
@@ -485,7 +485,7 @@ module ActiveScaffold
 
       # Try to get numerical constraints from model's validators
       def column_numerical_constraints(column, options)
-        validators = numerical_validators_for(column)
+        validators = _as_numerical_validators_for(column)
         equal_validator = validators.find { |v| v.options[:equal_to] }
         # If there is equal_to constraint - use it (unless otherwise specified by user)
         if equal_validator && !(options[:min] || options[:max])
@@ -493,25 +493,25 @@ module ActiveScaffold
           return {min: equal_to, max: equal_to}
         end
 
-        only_integer = integer_constraints?(column, validators)
+        only_integer = _as_integer_constraints?(column, validators)
         margin = only_integer ? 1 : 0
-        numerical_constraints = numerical_constraint_bounds(validators, options, margin)
-        add_numerical_step_constraint(numerical_constraints, column, validators, options, only_integer) unless options[:step]
+        numerical_constraints = _as_numerical_constraint_bounds(validators, options, margin)
+        _as_add_numerical_step_constraint(numerical_constraints, column, validators, options, only_integer) unless options[:step]
         numerical_constraints
       end
 
-      def numerical_validators_for(column)
+      def _as_numerical_validators_for(column)
         column.active_record_class.validators.select do |validator|
           validator.is_a?(ActiveModel::Validations::NumericalityValidator) &&
             validator.attributes.include?(column.name) && !validator.options[:if] && !validator.options[:unless]
         end
       end
 
-      def integer_constraints?(column, validators)
+      def _as_integer_constraints?(column, validators)
         (column.column && column.column_type == :integer) || validators.any? { |validator| validator.options[:only_integer] }
       end
 
-      def numerical_constraint_bounds(validators, options, margin)
+      def _as_numerical_constraint_bounds(validators, options, margin)
         constraints = {}
         unless options[:min]
           minimum = validators.filter_map { |validator| validator.options[:greater_than_or_equal_to] }.max
@@ -526,26 +526,26 @@ module ActiveScaffold
         constraints
       end
 
-      def add_numerical_step_constraint(constraints, column, validators, options, only_integer)
+      def _as_add_numerical_step_constraint(constraints, column, validators, options, only_integer)
         only_odd_valid = validators.any? { |validator| validator.options[:odd] }
         only_even_valid = validators.any? { |validator| validator.options[:even] } unless only_odd_valid
         if only_integer
-          add_integer_step_constraint(constraints, options, only_odd_valid, only_even_valid)
+          _as_add_integer_step_constraint(constraints, options, only_odd_valid, only_even_valid)
         else
           constraints[:step] ||= "0.#{'0' * (column.column.scale - 1)}1" if column.column&.scale.to_i.positive?
           constraints[:step] ||= 'any'
         end
       end
 
-      def add_integer_step_constraint(constraints, options, only_odd_valid, only_even_valid)
+      def _as_add_integer_step_constraint(constraints, options, only_odd_valid, only_even_valid)
         return unless options[:min].respond_to?(:even?) && (only_odd_valid || only_even_valid)
 
         constraints[:step] = 2
         constraints[:min] += 1 if only_odd_valid && options[:min].even?
         constraints[:min] += 1 if only_even_valid && options[:min].odd?
       end
-      private :numerical_validators_for, :integer_constraints?, :numerical_constraint_bounds,
-              :add_numerical_step_constraint, :add_integer_step_constraint
+      private :_as_numerical_validators_for, :_as_integer_constraints?, :_as_numerical_constraint_bounds,
+              :_as_add_numerical_step_constraint, :_as_add_integer_step_constraint
 
       def numerical_constraints_for_column(column, options)
         constraints = Rails.cache.fetch("#{column.cache_key}#numerical_constraints") do

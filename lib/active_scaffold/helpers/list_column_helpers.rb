@@ -209,21 +209,21 @@ module ActiveScaffold
       FORM_UI_WITH_OPTIONS = %i[select radio].freeze
       def format_column_value(record, column, value = nil)
         value ||= read_value_from_record(record, column) unless record.nil?
-        if grouped_search_column?(column)
+        if _as_grouped_search_column?(column)
           format_grouped_search_column(value, column.options)
         elsif column.association.nil?
-          format_non_association_value(value, column)
+          _as_format_non_association_value(value, column)
         else
-          associated_size = prepare_collection_association(record, column, value) if column.association.collection?
+          associated_size = _as_prepare_collection_association(record, column, value) if column.association.collection?
           format_association_value(value, column, associated_size)
         end
       end
 
-      def grouped_search_column?(column)
+      def _as_grouped_search_column?(column)
         grouped_search? && column == search_group_column && (search_group_function || search_group_column.group_by)
       end
 
-      def format_non_association_value(value, column)
+      def _as_format_non_association_value(value, column)
         if value.is_a? Numeric
           format_number_value(value, column.options)
         else
@@ -231,14 +231,14 @@ module ActiveScaffold
         end
       end
 
-      def prepare_collection_association(record, column, value)
+      def _as_prepare_collection_association(record, column, value)
         associated_size = column_association_size(record, column, value) if column.associated_number? # get count before cache association
         if column.association.respond_to_target? && !value.loaded?
           cache_association(record.association(column.name), column, associated_size)
         end
         associated_size
       end
-      private :grouped_search_column?, :format_non_association_value, :prepare_collection_association
+      private :_as_grouped_search_column?, :_as_format_non_association_value, :_as_prepare_collection_association
 
       def column_association_size(record, column, value)
         cached_counts = @counts&.dig(column.name)
@@ -259,16 +259,17 @@ module ActiveScaffold
           when :size then number_to_human_size(value, i18n_options)
           when :percentage then number_to_percentage(value, i18n_options)
           when :currency then number_to_currency(value, i18n_options)
-          when :i18n_number then format_i18n_number(value, i18n_options)
+          when :i18n_number then _as_format_i18n_number(value, i18n_options)
           else value
           end
         clean_column_value(formatted_value)
       end
 
-      def format_i18n_number(value, options)
+      def _as_format_i18n_number(value, options)
         formatter = value.is_a?(Integer) ? :number_with_delimiter : :number_with_precision
         send(formatter, value, options)
       end
+      private :_as_format_i18n_number
 
       def format_grouped_search_column(value, options = {})
         case search_group_function
@@ -418,13 +419,13 @@ module ActiveScaffold
 
       INPLACE_EDIT_PLURAL_FORM_UI = %i[select record_select].freeze
       def inplace_edit_data(column)
-        data = inplace_edit_default_data(column)
-        add_inplace_edit_field_data(data, column)
-        add_inplace_edit_mode_data(data, column)
+        data = _as_inplace_edit_default_data(column)
+        _as_add_inplace_edit_field_data(data, column)
+        _as_add_inplace_edit_mode_data(data, column)
         data
       end
 
-      def inplace_edit_default_data(column)
+      def _as_inplace_edit_default_data(column)
         {
           ie_url: url_for(params_for(action: 'update_column', column: column.name, id: '__id__')),
           ie_cancel_text: column.options[:cancel_text] || as_(:cancel),
@@ -434,14 +435,14 @@ module ActiveScaffold
         }
       end
 
-      def add_inplace_edit_field_data(data, column)
+      def _as_add_inplace_edit_field_data(data, column)
         data[:ie_rows] = column.options[:rows] || 5 if column.column&.type == :text
         data[:ie_cols] = column.options[:cols] if column.options[:cols]
         data[:ie_size] = column.options[:size] if column.options[:size]
         data[:ie_use_html] = column.options[:use_html] if column.options[:use_html]
       end
 
-      def add_inplace_edit_mode_data(data, column)
+      def _as_add_inplace_edit_mode_data(data, column)
         if column.list_ui == :checkbox
           data[:ie_mode] = :inline_checkbox
         elsif inplace_edit_cloning?(column)
@@ -454,7 +455,7 @@ module ActiveScaffold
           data[:ie_plural] = plural
         end
       end
-      private :inplace_edit_default_data, :add_inplace_edit_field_data, :add_inplace_edit_mode_data
+      private :_as_inplace_edit_default_data, :_as_add_inplace_edit_field_data, :_as_add_inplace_edit_mode_data
 
       def local_sorting?
         @page&.pager&.number_of_pages == 1 && active_scaffold_config.list.local_sorting

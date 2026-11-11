@@ -107,7 +107,7 @@ module ActiveScaffold
       end
 
       def column_class(column, column_value, record)
-        classes = cached_column_class(column).dup
+        classes = _as_cached_column_class(column).dup
         classes << 'empty ' if column_empty? column_value
         classes << 'in_place_editor_field ' if inplace_edit?(record, column) || column.list_ui == :marked
         if column.css_class.is_a?(Proc)
@@ -117,7 +117,7 @@ module ActiveScaffold
         classes
       end
 
-      def cached_column_class(column)
+      def _as_cached_column_class(column)
         ActiveScaffold::Registry.cache :column_classes, column.cache_key do
           classes = "#{column.name}-column "
           classes << 'sorted ' if active_scaffold_config.actions.include?(:list) && active_scaffold_config.list.user.sorting.sorts_on?(column)
@@ -126,7 +126,7 @@ module ActiveScaffold
           classes
         end
       end
-      private :cached_column_class
+      private :_as_cached_column_class
 
       def column_heading_class(column, sorting)
         classes = "#{column.name}-column_heading "
@@ -232,20 +232,20 @@ module ActiveScaffold
       def active_scaffold_error_messages_for(*params)
         options = params.extract_options!.symbolize_keys
         options.reverse_merge!(container_tag: :div, list_type: :ul)
-        objects = error_message_objects(params, options)
+        objects = _as_error_message_objects(params, options)
         count = objects.sum { |object| object.errors.count }
         return '' if count.zero?
 
-        html = error_message_html_options(options)
+        html = _as_error_message_html_options(options)
         options[:object_name] ||= params.first
-        header_message = error_message_header(options, count)
+        header_message = _as_error_message_header(options, count)
         message = options.include?(:message) ? options[:message] : as_('errors.template.body')
-        error_messages = error_message_list(objects, options[:list_type])
-        contents = error_message_contents(options, header_message, message, error_messages)
+        error_messages = _as_error_message_list(objects, options[:list_type])
+        contents = _as_error_message_contents(options, header_message, message, error_messages)
         options[:container_tag] ? content_tag(options[:container_tag], contents, html) : contents
       end
 
-      def error_message_objects(params, options)
+      def _as_error_message_objects(params, options)
         objects = Array.wrap(options.delete(:object) || params).map do |object|
           object = instance_variable_get(:"@#{object}") unless object.respond_to?(:to_model)
           object = convert_to_model(object)
@@ -257,7 +257,7 @@ module ActiveScaffold
         objects.compact
       end
 
-      def error_message_html_options(options)
+      def _as_error_message_html_options(options)
         %i[id class].to_h do |key|
           if options.include?(key)
             [key, options[key].presence]
@@ -267,7 +267,7 @@ module ActiveScaffold
         end.compact
       end
 
-      def error_message_header(options, count)
+      def _as_error_message_header(options, count)
         if options.include?(:header_message)
           options[:header_message]
         else
@@ -275,7 +275,7 @@ module ActiveScaffold
         end
       end
 
-      def error_message_list(objects, list_type)
+      def _as_error_message_list(objects, list_type)
         error_messages = objects.sum([]) do |object|
           object.errors.full_messages.map do |message|
             list_type == :br ? message : content_tag(:li, message)
@@ -286,15 +286,15 @@ module ActiveScaffold
         content_tag list_type, safe_join(error_messages)
       end
 
-      def error_message_contents(options, header_message, message, error_messages)
+      def _as_error_message_contents(options, header_message, message, error_messages)
         contents = []
         contents << content_tag(options[:header_tag] || :h2, header_message) if header_message.present?
         contents << content_tag(:p, message) if message.present?
         contents << error_messages
         safe_join(contents)
       end
-      private :error_message_objects, :error_message_html_options, :error_message_header,
-              :error_message_list, :error_message_contents
+      private :_as_error_message_objects, :_as_error_message_html_options, :_as_error_message_header,
+              :_as_error_message_list, :_as_error_message_contents
 
       def new_option_from_record(record)
         [record.to_label, record.id]

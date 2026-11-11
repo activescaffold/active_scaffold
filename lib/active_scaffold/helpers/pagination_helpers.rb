@@ -39,10 +39,10 @@ module ActiveScaffold
       end
 
       def pagination_ajax_links(current_page, url_options, options, inner_window, outer_window)
-        start_number, end_number = pagination_window(current_page, inner_window)
-        html, last_page = pagination_leading_links(current_page, url_options, options, outer_window)
+        start_number, end_number = _as_pagination_window(current_page, inner_window)
+        html, last_page = _as_pagination_leading_links(current_page, url_options, options, outer_window)
         if current_page.pager.infinite?
-          infinite_previous_pages(current_page, start_number, last_page).each do |page|
+          _as_infinite_previous_pages(current_page, start_number, last_page).each do |page|
             html << pagination_gap(options) if page > last_page + 1
             html << pagination_ajax_link(page, url_options, options)
             last_page = page
@@ -50,19 +50,19 @@ module ActiveScaffold
         end
         html << pagination_gap(options) if start_number > last_page + 1
         page_range = [start_number, last_page + 1].max..end_number
-        html.concat pagination_window_links(current_page, page_range, url_options, options)
-        html.concat pagination_trailing_links(current_page, end_number, outer_window, url_options, options)
+        html.concat _as_pagination_window_links(current_page, page_range, url_options, options)
+        html.concat _as_pagination_trailing_links(current_page, end_number, outer_window, url_options, options)
         safe_join html, ' '
       end
 
-      def pagination_window(current_page, inner_window)
+      def _as_pagination_window(current_page, inner_window)
         start_number = [current_page.number - inner_window, 1].max
         end_number = current_page.number + inner_window
         end_number = [end_number, current_page.pager.last.number].min unless current_page.pager.infinite?
         [start_number, end_number]
       end
 
-      def pagination_leading_links(current_page, url_options, options, outer_window)
+      def _as_pagination_leading_links(current_page, url_options, options, outer_window)
         return [[], 0] if current_page.number == 1
 
         html = []
@@ -74,14 +74,14 @@ module ActiveScaffold
         [html, last_page]
       end
 
-      def infinite_previous_pages(current_page, start_number, last_page)
+      def _as_infinite_previous_pages(current_page, start_number, last_page)
         [20, 100].reverse_each.filter_map do |offset|
           page = current_page.number - offset
           page if page < start_number && page > last_page
         end
       end
 
-      def pagination_window_links(current_page, page_range, url_options, options)
+      def _as_pagination_window_links(current_page, page_range, url_options, options)
         page_range.map do |number|
           if current_page.number == number
             pagination_active_page(number, url_options, options)
@@ -91,8 +91,8 @@ module ActiveScaffold
         end
       end
 
-      def pagination_trailing_links(current_page, end_number, outer_window, url_options, options)
-        return infinite_trailing_links(current_page, url_options, options) if current_page.pager.infinite?
+      def _as_pagination_trailing_links(current_page, end_number, outer_window, url_options, options)
+        return _as_infinite_trailing_links(current_page, url_options, options) if current_page.pager.infinite?
 
         html = []
         html << pagination_gap(options) unless end_number >= current_page.pager.last.number - outer_window - 1
@@ -103,13 +103,13 @@ module ActiveScaffold
         html
       end
 
-      def infinite_trailing_links(current_page, url_options, options)
+      def _as_infinite_trailing_links(current_page, url_options, options)
         [20, 100].flat_map do |offset|
           [pagination_gap(options), pagination_ajax_link(current_page.number + offset, url_options, options)]
         end
       end
-      private :pagination_window, :pagination_leading_links, :infinite_previous_pages,
-              :pagination_window_links, :pagination_trailing_links, :infinite_trailing_links
+      private :_as_pagination_window, :_as_pagination_leading_links, :_as_infinite_previous_pages,
+              :_as_pagination_window_links, :_as_pagination_trailing_links, :_as_infinite_trailing_links
     end
   end
 end

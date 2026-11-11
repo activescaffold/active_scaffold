@@ -22,19 +22,19 @@ module ActiveScaffold
       # Provides a way to honor the :conditions on an association while searching the association's klass
       def association_options_find(association, conditions = nil, klass = nil, record = nil)
         cache = !block_given? && klass.nil?
-        klass ||= association_options_class(association, record)
+        klass ||= _as_association_options_class(association, record)
         return [] unless klass
 
         conditions ||= send(association_helper_method(association, :options_for_association_conditions), association, record)
         klass = send(association_helper_method(association, :association_klass_scoped), association, klass, record)
         cache_association_options(association, conditions, klass, cache: cache) do
-          relation = association_options_relation(association, conditions, klass, record)
+          relation = _as_association_options_relation(association, conditions, klass, record)
           relation = yield(relation) if block_given?
           relation.to_a
         end
       end
 
-      def association_options_class(association, record)
+      def _as_association_options_class(association, record)
         if association.polymorphic?
           class_name = record.send(association.foreign_type) if association.belongs_to?
           class_name.presence&.constantize
@@ -43,7 +43,7 @@ module ActiveScaffold
         end
       end
 
-      def association_options_relation(association, conditions, klass, record)
+      def _as_association_options_relation(association, conditions, klass, record)
         relation = klass.where(conditions)
         column = column_for_association(association, record)
         if column&.includes
@@ -57,7 +57,7 @@ module ActiveScaffold
         end
         relation
       end
-      private :association_options_class, :association_options_relation
+      private :_as_association_options_class, :_as_association_options_relation
 
       def includes_for_association(column, klass)
         includes = column.includes.find { |assoc| assoc.is_a?(Hash) && assoc.include?(column.association.name) }
