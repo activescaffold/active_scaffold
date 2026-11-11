@@ -120,20 +120,7 @@ module ActiveScaffold::Actions
         unless no_record_param_update
           @record = update_record_from_params(@record, active_scaffold_config.update.columns, attributes)
         end
-        before_update_save(@record)
-        # errors to @record can be added by update_record_from_params when association fails
-        # to set and ActiveRecord::RecordNotSaved is raised
-        # this syntax avoids a short-circuit, so we run validations on record and associations
-        self.successful = [@record.keeping_errors { @record.valid? }, @record.associated_valid?].all?
-
-        unless successful?
-          # some associations such as habtm are saved before saved is called on parent object
-          # we have to revert these changes if validation fails
-          raise ActiveRecord::Rollback, "don't save habtm associations unless record is valid"
-        end
-
-        @record.save! && @record.save_associated!
-        after_update_save(@record)
+        save_updated_record
       end
     rescue ActiveRecord::StaleObjectError
       @record.errors.add(:base, as_(:version_inconsistency))
@@ -150,12 +137,27 @@ module ActiveScaffold::Actions
       self.successful = false
     end
 
+    def save_updated_record
+      before_update_save(@record)
+      # errors to @record can be added by update_record_from_params when association fails
+      # to set and ActiveRecord::RecordNotSaved is raised
+      # this syntax avoids a short-circuit, so we run validations on record and associations
+      self.successful = [@record.keeping_errors { @record.valid? }, @record.associated_valid?].all?
+
+      unless successful?
+        # some associations such as habtm are saved before saved is called on parent object
+        # we have to revert these changes if validation fails
+        raise ActiveRecord::Rollback, "don't save habtm associations unless record is valid"
+      end
+
+      @record.save! && @record.save_associated!
+      after_update_save(@record)
+    end
+    private :save_updated_record
+
     def do_update_column
       # delete from params so update :table won't break urls, also they shouldn't be used in sort links too
-      value = params.delete(:value)
-      column = params.delete(:column)
-      params.delete(:original_html)
-      params.delete(:original_value)
+      value, column = extract_update_column_params
       @column = active_scaffold_config.columns[column]
 
       value_record = record_for_update_column
@@ -163,20 +165,37 @@ module ActiveScaffold::Actions
       value_record.send(:"#{@column.name}=", value)
       before_update_save(@record)
       self.successful = value_record.save
-      if !successful?
-        flash.now[:error] = value_record.errors.full_messages.presence
-      elsif active_scaffold_config.actions.include?(:list)
-        if @column.inplace_edit_update == :table
-          params.delete(:id)
-          do_list
-        elsif @column.inplace_edit_update
-          get_row
-        end
-      end
+      handle_update_column_result(value_record)
       after_update_save(@record)
     rescue ActiveScaffold::ActionNotAllowed
       self.successful = false
     end
+
+    def extract_update_column_params
+      value = params.delete(:value)
+      column = params.delete(:column)
+      params.delete(:original_html)
+      params.delete(:original_value)
+      [value, column]
+    end
+
+    def handle_update_column_result(value_record)
+      if successful?
+        refresh_after_update_column if active_scaffold_config.actions.include?(:list)
+      else
+        flash.now[:error] = value_record.errors.full_messages.presence
+      end
+    end
+
+    def refresh_after_update_column
+      if @column.inplace_edit_update == :table
+        params.delete(:id)
+        do_list
+      elsif @column.inplace_edit_update
+        get_row
+      end
+    end
+    private :extract_update_column_params, :handle_update_column_result, :refresh_after_update_column
 
     def record_for_update_column
       @record = find_if_allowed(params[:id], :read)

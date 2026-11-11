@@ -219,21 +219,29 @@ module ActiveScaffold::Actions
         sorting: active_scaffold_config.list.user.sorting,
         count_includes: active_scaffold_config.list.user.count_includes
       }
-
-      paginate = active_scaffold_config.list.api_pagination ||
-                 (params[:format].nil? ? accepts?(:html, :js) : %w[html js].include?(params[:format]))
-      options[:pagination] = active_scaffold_config.list.pagination if paginate
-      if options[:pagination]
-        options[:per_page] = active_scaffold_config.list.user.per_page
-        options[:page] = active_scaffold_config.list.user.page
-      end
-
-      if active_scaffold_config.list.auto_select_columns
-        auto_select_columns = list_columns + [active_scaffold_config.columns[active_scaffold_config.model.primary_key]]
-        options[:select] = auto_select_columns.filter_map { |c| quoted_select_columns(c.select_columns) }.flatten
-      end
-
+      add_pagination_options(options)
+      add_auto_select_options(options)
       options
+    end
+
+    def add_pagination_options(options)
+      options[:pagination] = active_scaffold_config.list.pagination if paginate_list?
+      return unless options[:pagination]
+
+      options[:per_page] = active_scaffold_config.list.user.per_page
+      options[:page] = active_scaffold_config.list.user.page
+    end
+
+    def paginate_list?
+      active_scaffold_config.list.api_pagination ||
+        (params[:format].nil? ? accepts?(:html, :js) : %w[html js].include?(params[:format]))
+    end
+
+    def add_auto_select_options(options)
+      return unless active_scaffold_config.list.auto_select_columns
+
+      auto_select_columns = list_columns + [active_scaffold_config.columns[active_scaffold_config.model.primary_key]]
+      options[:select] = auto_select_columns.filter_map { |column| quoted_select_columns(column.select_columns) }.flatten
     end
 
     def quoted_select_columns(columns)
