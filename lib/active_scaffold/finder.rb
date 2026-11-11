@@ -191,30 +191,29 @@ module ActiveScaffold
       def condition_for_search_ui(column, value, like_pattern, search_ui)
         case search_ui
         when :boolean, :checkbox
-          if value == 'null'
-            condition_for_null_type(column, value)
-          else
-            ['%<search_sql>s = ?', column.column ? ActiveScaffold::Core.column_type_cast(value, column.column, column.model) : value]
-          end
+          condition_for_boolean(column, value)
         when :integer, :decimal, :float
           condition_for_numeric(column, value)
         when :string, :range
-          if value.is_a?(Hash)
-            condition_for_range(column, value, like_pattern)
-          else
-            condition_for_single_value(column, value, like_pattern)
-          end
+          return condition_for_single_value(column, value, like_pattern) unless value.is_a?(Hash)
+
+          condition_for_range(column, value, like_pattern)
         when :date, :time, :datetime, :timestamp, :timestamptz
           condition_for_datetime(column, value)
         when :select, :select_multiple, :draggable, :multi_select, :country, :usa_state, :chosen, :multi_chosen, :choices, :multi_choices
-          if value.is_a?(Hash)
-            condition_for_range(column, value, like_pattern)
-          else
-            condition_for_array(column, value)
-          end
+          return condition_for_array(column, value) unless value.is_a?(Hash)
+
+          condition_for_range(column, value, like_pattern)
         else
           condition_for_single_value(column, value, like_pattern)
         end
+      end
+
+      def condition_for_boolean(column, value)
+        return condition_for_null_type(column, value) if value == 'null'
+
+        cast_value = column.column ? ActiveScaffold::Core.column_type_cast(value, column.column, column.model) : value
+        ['%<search_sql>s = ?', cast_value]
       end
 
       def condition_for_numeric(column, value)

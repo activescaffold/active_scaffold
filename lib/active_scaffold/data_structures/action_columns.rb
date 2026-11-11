@@ -47,28 +47,35 @@ module ActiveScaffold::DataStructures
     def layout=(value)
       case value
       when :multiple
-        if @layout != :multiple && !@set.empty?
-          group = ActiveScaffold::DataStructures::ActionColumns.new(*@set)
-          group.action = action
-          @set = [group]
-        end
+        group_columns_for_multiple_layout
       when :single, nil
-        if @layout == :multiple
-          merged = []
-          @set.each do |item|
-            if item.is_a?(ActiveScaffold::DataStructures::ActionColumns)
-              item.each { |col| merged << col }
-            else
-              merged << item
-            end
-          end
-          @set = merged
-        end
+        flatten_columns_for_single_layout
       else
         raise ArgumentError, "invalid layout mode: #{value.inspect}"
       end
       @layout = value
     end
+
+    def group_columns_for_multiple_layout
+      return if @layout == :multiple || @set.empty?
+
+      group = ActiveScaffold::DataStructures::ActionColumns.new(*@set)
+      group.action = action
+      @set = [group]
+    end
+
+    def flatten_columns_for_single_layout
+      return unless @layout == :multiple
+
+      @set = @set.each_with_object([]) do |item, columns|
+        if item.is_a?(ActiveScaffold::DataStructures::ActionColumns)
+          item.each { |column| columns << column }
+        else
+          columns << item
+        end
+      end
+    end
+    private :group_columns_for_multiple_layout, :flatten_columns_for_single_layout
 
     def set_values(*)
       @layout = nil
