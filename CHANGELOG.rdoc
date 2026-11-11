@@ -1,4 +1,5 @@
 = Unreleased
+- Authorize the PaperTrail deleted-records action and allow overriding its version query with +deleted_records_query+
 - Deprecate passing optional boolean arguments positionally; keyword arguments will be required in 4.5.
 
   Overrides which only forward arguments can replace anonymous +*+ with +...+. This accepts the positional argument from 4.4 and forwards the keyword argument used by 4.5:
