@@ -8,7 +8,7 @@ jobs:
       contents: write
       pull-requests: write
     runs-on: ubuntu-latest
-    if: github.actor_id == 49699333 # 'dependabot[bot]'
+    if: github.event.pull_request.user.id == 49699333 # 'dependabot[bot]'
     steps:
       - name: Enable auto-merge for Dependabot PRs
         run: gh pr merge --auto --squash "$PR_URL"
