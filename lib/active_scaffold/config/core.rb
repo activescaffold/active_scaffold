@@ -165,6 +165,11 @@ module ActiveScaffold::Config
       # inherit the actions list directly from the global level
       @actions = self.class.actions.clone
 
+      initialize_columns
+      initialize_core_settings
+    end
+
+    def initialize_columns
       # create a new default columns datastructure, since it doesn't make sense before now
       @columns = ActiveScaffold::DataStructures::Columns.new(model, known_columns)
 
@@ -173,7 +178,9 @@ module ActiveScaffold::Config
       @columns.exclude(*self.class.ignore_columns)
       @columns.exclude(*@columns.find_all { |c| c.column && content_columns.exclude?(c.column.name) }.collect(&:name))
       @columns.exclude(*model.reflect_on_all_associations.filter_map { |a| a.foreign_type.to_sym if a.options[:polymorphic] })
+    end
 
+    def initialize_core_settings
       @theme = self.class.theme
       @cache_action_link_urls = self.class.cache_action_link_urls
       @cache_action_links = self.class.cache_action_links
@@ -181,12 +188,11 @@ module ActiveScaffold::Config
       @conditional_get_support = self.class.conditional_get_support
       @store_user_settings = self.class.store_user_settings
       @sti_create_links = self.class.sti_create_links
-
-      # inherit from the global set of action links
-      @action_links = self.class.action_links.clone
+      @action_links = self.class.action_links.clone # inherit from the global set of action links
       @timestamped_messages = self.class.timestamped_messages
       @highlight_messages = self.class.highlight_messages
     end
+    private :initialize_columns, :initialize_core_settings
 
     # To be called before freezing
     def _cache_lazy_values

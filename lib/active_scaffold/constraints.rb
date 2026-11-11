@@ -86,12 +86,7 @@ module ActiveScaffold
       #   data model: Park -> Den -> Bear
       #   constraint: den: {park: 5}
       if params_hash? value
-        far_association = column.association.klass.reflect_on_association(value.keys.first)
-        field = far_association.klass.primary_key
-        table = far_association.table_name
-
-        active_scaffold_references.push({column.name => far_association.name}) # e.g. {den: :park}
-        hash_conditions.deep_merge!(table => {field => value.values.first})
+        add_nested_association_constraint(column, value, hash_conditions)
 
         # association column constraint
       elsif column.association
@@ -100,11 +95,24 @@ module ActiveScaffold
 
         # regular column constraints
       elsif column.searchable? && params[column.name] != value
-        active_scaffold_references.concat column.references if column.includes.present?
-        condition = column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR ')
-        condition = ([condition] * value.size).join(' OR ') if Array(value).many?
-        conditions << [condition, *(Array(value) * column.search_sql.size)]
+        add_column_constraint(column, value, conditions)
       end
+    end
+
+    def add_nested_association_constraint(column, value, hash_conditions)
+      far_association = column.association.klass.reflect_on_association(value.keys.first)
+      field = far_association.klass.primary_key
+      table = far_association.table_name
+
+      active_scaffold_references.push({column.name => far_association.name}) # e.g. {den: :park}
+      hash_conditions.deep_merge!(table => {field => value.values.first})
+    end
+
+    def add_column_constraint(column, value, conditions)
+      active_scaffold_references.concat column.references if column.includes.present?
+      condition = column.search_sql.collect { |search_sql| "#{search_sql} = ?" }.join(' OR ')
+      condition = ([condition] * value.size).join(' OR ') if Array(value).many?
+      conditions << [condition, *(Array(value) * column.search_sql.size)]
     end
 
     def join_from_association_constraint(column)

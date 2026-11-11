@@ -159,20 +159,33 @@ module ActiveScaffold
       end
 
       def subquery_condition(column, sql, options, values)
+        relation, subquery = build_search_subquery(sql, options, values)
+        conditions = subquery_conditions(column, options, subquery)
+        add_polymorphic_subquery_condition(column, relation, conditions)
+        conditions
+      end
+
+      def build_search_subquery(sql, options, values)
         relation, *columns = options[:subquery]
         conditions = [columns.map { |search_sql| sql % {search_sql: search_sql} }.join(' OR ')]
         conditions += values * columns.size if values.present?
         subquery = relation.where(conditions)
         subquery = subquery.select(relation.primary_key) if subquery.select_values.blank?
+        [relation, subquery]
+      end
 
+      def subquery_conditions(column, options, subquery)
         conditions = [["#{options[:field] || column.field} IN (?)", options[:conditions]&.first].compact.join(' AND ')]
         conditions << subquery
         conditions.concat options[:conditions][1..] if options[:conditions]
-        if column.association&.polymorphic?
-          conditions[0] << " AND #{column.quoted_foreign_type} = ?"
-          conditions << relation.base_class.sti_name
-        end
         conditions
+      end
+
+      def add_polymorphic_subquery_condition(column, relation, conditions)
+        return unless column.association&.polymorphic?
+
+        conditions[0] << " AND #{column.quoted_foreign_type} = ?"
+        conditions << relation.base_class.sti_name
       end
 
       def condition_for_search_ui(column, value, like_pattern, search_ui)
@@ -456,29 +469,22 @@ module ActiveScaffold
       end
 
       def datetime_from_to_for_trend(column, value)
+        trend_number = [value['number'].to_i, 1].max
+        duration = trend_number.send(value['unit'].downcase.singularize.to_sym)
+        now = datetime_now
         case value['opt']
         when 'PAST'
-          trend_number = [value['number'].to_i, 1].max
-          now = datetime_now
           if datetime_column_date?(column)
-            from = now.beginning_of_day.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
-            to = now.end_of_day
+            [now.beginning_of_day.ago(duration), now.end_of_day]
           else
-            from = now.ago(trend_number.send(value['unit'].downcase.singularize.to_sym))
-            to = now
+            [now.ago(duration), now]
           end
-          [from, to]
         when 'FUTURE'
-          trend_number = [value['number'].to_i, 1].max
-          now = datetime_now
           if datetime_column_date?(column)
-            from = now.beginning_of_day
-            to = now.end_of_day.in(trend_number.send(value['unit'].downcase.singularize.to_sym))
+            [now.beginning_of_day, now.end_of_day.in(duration)]
           else
-            from = now
-            to = now.in(trend_number.send(value['unit'].downcase.singularize.to_sym))
+            [now, now.in(duration)]
           end
-          [from, to]
         end
       end
 
@@ -491,20 +497,19 @@ module ActiveScaffold
         when 'TOMORROW'
           [datetime_now.in(1.day).beginning_of_day, datetime_now.in(1.day).end_of_day]
         else
-          range_type, range = value['range'].downcase.split('_')
-          raise ArgumentError unless %w[week month year].include?(range)
-
-          case range_type
-          when 'this'
-            [datetime_now.send(:"beginning_of_#{range}"), datetime_now.send(:"end_of_#{range}")]
-          when 'prev'
-            [datetime_now.ago(1.send(range.to_sym)).send(:"beginning_of_#{range}"), datetime_now.ago(1.send(range.to_sym)).send(:"end_of_#{range}")]
-          when 'next'
-            [datetime_now.in(1.send(range.to_sym)).send(:"beginning_of_#{range}"), datetime_now.in(1.send(range.to_sym)).send(:"end_of_#{range}")]
-          else
-            [nil, nil]
-          end
+          datetime_from_to_for_named_range(value['range'])
         end
+      end
+
+      def datetime_from_to_for_named_range(named_range)
+        range_type, range = named_range.downcase.split('_')
+        raise ArgumentError unless %w[week month year].include?(range)
+        return [nil, nil] unless %w[this prev next].include?(range_type)
+
+        now = datetime_now
+        now = now.ago(1.send(range.to_sym)) if range_type == 'prev'
+        now = now.in(1.send(range.to_sym)) if range_type == 'next'
+        [now.send(:"beginning_of_#{range}"), now.send(:"end_of_#{range}")]
       end
 
       def datetime_column_date?(column)
@@ -700,9 +705,7 @@ module ActiveScaffold
       options[:per_page] ||= 999_999_999
       options[:page] ||= 1
 
-      find_options = finder_options(options)
-      query = filtered_query
-      query = query.where(nil) if active_scaffold_config.active_record? # where(nil) is needed because we need a relation
+      find_options, query = find_page_query(options)
       count_query = query
 
       # NOTE: we must use :include in the count query, because some conditions may reference other tables
@@ -713,14 +716,24 @@ module ActiveScaffold
 
       query = append_to_query(query, find_options)
       query = add_order_expressions_to_select(query, options[:sorting])
-      first_page_items = load_page_for_delayed_count(query, options[:per_page]) if count_after_first_page
-      if first_page_items
-        count = first_page_items.size
-        count = count_items(count_query, find_options, options[:count_includes]) if count == options[:per_page]
-      end
+      first_page_items, count = delayed_page_count(query, count_query, find_options, options) if count_after_first_page
       # we build the paginator differently for method- and sql-based sorting
       pager = build_finder_pager(query, count, first_page_items, options)
       pager.page(options[:page])
+    end
+
+    def find_page_query(options)
+      find_options = finder_options(options)
+      query = filtered_query
+      query = query.where(nil) if active_scaffold_config.active_record? # where(nil) is needed because we need a relation
+      [find_options, query]
+    end
+
+    def delayed_page_count(query, count_query, find_options, options)
+      first_page_items = load_page_for_delayed_count(query, options[:per_page])
+      count = first_page_items.size
+      count = count_items(count_query, find_options, options[:count_includes]) if count == options[:per_page]
+      [first_page_items, count]
     end
 
     def build_finder_pager(query, count, first_page_items, options)

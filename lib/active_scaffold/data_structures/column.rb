@@ -540,31 +540,38 @@ module ActiveScaffold::DataStructures
       @active_record_class = active_record_class
       @db_column = _columns_hash[name.to_s]
       @column = @db_column || model_attribute
+      @table = _table_name
       @disable_on_update_column = true
       @db_default_value = ActiveScaffold::OrmChecks.default_value active_record_class, name if @column
       @delegated_association = delegated_association
       @cache_key = [@active_record_class.name, name].compact.join('#')
       setup_association_info
+      initialize_association_defaults
 
-      @link = nil
-      @autolink = association.present?
-      @table = _table_name
-      @associated_limit = self.class.associated_limit
-      @associated_number = self.class.associated_number
-      @show_blank_record = self.class.show_blank_record
-      @send_form_on_update_column = self.class.send_form_on_update_column
-      @actions_for_association_links = self.class.actions_for_association_links.dup if association
       @select_columns = default_select_columns
-
       @text = default_to_text?
       @number = false
       setup_defaults_for_column if @column
-      @allow_add_existing = true
 
       if @delegated_association
         self.includes = includes ? [{@delegated_association.name => includes}] : [@delegated_association.name]
       end
 
+      initialize_configurable_defaults(name)
+    end
+
+    def initialize_association_defaults
+      @link = nil
+      @autolink = association.present?
+      @associated_limit = self.class.associated_limit
+      @associated_number = self.class.associated_number
+      @show_blank_record = self.class.show_blank_record
+      @send_form_on_update_column = self.class.send_form_on_update_column
+      @actions_for_association_links = self.class.actions_for_association_links.dup if association
+      @allow_add_existing = true
+    end
+
+    def initialize_configurable_defaults(name)
       # default all the configurable variables
       self.css_class = ''
       self.sort = true
@@ -573,6 +580,7 @@ module ActiveScaffold::DataStructures
       setup_required
       @weight = estimate_weight
     end
+    private :initialize_association_defaults, :initialize_configurable_defaults
 
     # just the field (not table.field)
     def field_name

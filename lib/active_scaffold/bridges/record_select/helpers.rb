@@ -50,14 +50,17 @@ class ActiveScaffold::Bridges::RecordSelect
         )
         record_select_options.merge!(ui_options)
 
-        html =
-          if multiple
-            record_multi_select_field(options[:name], value || [], record_select_options.except(:required))
-          else
-            record_select_field(options[:name], value || klass.new, record_select_options)
-          end
+        html = record_select_field_for(options[:name], value, klass, multiple, record_select_options)
         html = instance_exec(html, self, &self.class.field_error_proc) if record.errors[column.name].any?
         html
+      end
+
+      def record_select_field_for(name, value, klass, multiple, record_select_options)
+        if multiple
+          record_multi_select_field(name, value || [], record_select_options.except(:required))
+        else
+          record_select_field(name, value || klass.new, record_select_options)
+        end
       end
 
       def active_scaffold_record_select_autocomplete(record, column, options, ui_options: column.options)

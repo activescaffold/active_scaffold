@@ -46,20 +46,24 @@ module ActiveScaffold
         # converts Foo::BarController to 'bar' and FooBarsController to 'foo_bar' and AddressController to 'address'
         model_id ||= to_s.split('::').last.sub(/Controller$/, '').pluralize.singularize.underscore
 
-        # run the configuration
+        initialize_active_scaffold_config(model_id, block)
+        load_active_scaffold_config
+      end
+
+      def initialize_active_scaffold_config(model_id, block)
         @active_scaffold_config = ActiveScaffold::Config::Core.new(model_id)
         @active_scaffold_config_block = block
         links_for_associations
 
         active_scaffold_superclasses_blocks.each { |superblock| active_scaffold_config.configure(&superblock) }
         active_scaffold_config.sti_children = nil # reset sti_children if set in parent block
-        active_scaffold_config.configure(&block) if block_given?
+        active_scaffold_config.configure(&block) if block
         _run_after_config_callbacks
+      end
 
-        # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
-        # define_attribute_methods is safe to call multiple times since rails 4.0.4
+      def load_active_scaffold_config
+        # Defines attribute readers so record.send does not find protected/private methods instead.
         active_scaffold_config.model.define_attribute_methods if active_scaffold_config.active_record?
-        # include the rest of the code into the controller: the action core and the included actions
         _load_action_modules
         _add_sti_create_links if active_scaffold_config.add_sti_create_links?
         ActiveScaffold::Config::Core.custom_modules.each { |mod| include mod }
@@ -67,6 +71,7 @@ module ActiveScaffold
         active_scaffold_config._cache_lazy_values
         active_scaffold_config.deep_freeze!
       end
+      private :initialize_active_scaffold_config, :load_active_scaffold_config
 
       module Prefixes
         define_method :local_prefixes do

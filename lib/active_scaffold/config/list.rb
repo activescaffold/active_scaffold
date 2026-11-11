@@ -6,20 +6,19 @@ module ActiveScaffold::Config
 
     def initialize(core_config)
       super
+      @filters = ActiveScaffold::DataStructures::Filters.new
+      initialize_pagination_settings
+      initialize_sorting
+      initialize_display_settings
+      initialize_behavior_settings
+    end
+
+    def initialize_pagination_settings
       # inherit from global scope
       # full configuration path is: defaults => global table => local table
       @per_page = self.class.per_page
-      @filters = ActiveScaffold::DataStructures::Filters.new
       @page_links_inner_window = self.class.page_links_inner_window
       @page_links_outer_window = self.class.page_links_outer_window
-
-      # originates here
-      @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns, @core.model)
-      @sorting.set_default_sorting
-
-      # inherit from global scope
-      @empty_field_text = self.class.empty_field_text
-      @association_join_text = self.class.association_join_text
       @pagination = self.class.pagination
       @api_pagination = self.class.api_pagination
       if @api_pagination.nil?
@@ -27,20 +26,34 @@ module ActiveScaffold::Config
         @api_pagination = false
       end
       @auto_pagination = self.class.auto_pagination
+    end
+
+    def initialize_sorting
+      @sorting = ActiveScaffold::DataStructures::Sorting.new(@core.columns, @core.model)
+      @sorting.set_default_sorting
+    end
+
+    def initialize_display_settings
+      @empty_field_text = self.class.empty_field_text
+      @association_join_text = self.class.association_join_text
+      @wrap_tag = self.class.wrap_tag
+      @always_show_search = self.class.always_show_search
+      @always_show_create = self.class.always_show_create
+      @messages_above_header = self.class.messages_above_header
+    end
+
+    def initialize_behavior_settings
       @show_search_reset = self.class.show_search_reset
       @show_filter_reset = self.class.show_filter_reset
       @filter_human_message = self.class.filter_human_message
       @reset_link = self.class.reset_link.clone
       @reset_filter_link = self.class.reset_filter_link.clone
-      @wrap_tag = self.class.wrap_tag
-      @always_show_search = self.class.always_show_search
-      @always_show_create = self.class.always_show_create
-      @messages_above_header = self.class.messages_above_header
       @auto_select_columns = self.class.auto_select_columns
       @refresh_with_header = self.class.refresh_with_header
       @local_sorting = self.class.local_sorting
       @calculate_etag = self.class.calculate_etag
     end
+    private :initialize_pagination_settings, :initialize_sorting, :initialize_display_settings, :initialize_behavior_settings
 
     # global level configuration
     # --------------------------

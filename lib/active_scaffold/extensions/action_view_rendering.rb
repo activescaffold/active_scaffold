@@ -126,33 +126,45 @@ module ActiveScaffold
       require 'digest/md5'
 
       remote_controller = options[:active_scaffold]
+      eid = embedded_eid(options)
+      add_embedded_params(options, eid)
+
+      url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
+
+      if controller.respond_to?(:render_component_into_view, true) && !options[:xhr]
+        controller.send(:render_component_into_view, url_options)
+      else
+        render_embedded_component(remote_controller, options, eid, url_options)
+      end
+    end
+
+    def embedded_eid(options)
       # It is important that the EID hash remains short as to not contribute
       # to a large session size and thus a possible cookie overflow exception
       # when using rails CookieStore or EncryptedCookieStore. For example,
       # when rendering many embedded scaffolds with constraints or conditions
       # on a single page.
-      eid = Digest::MD5.hexdigest(params[:controller] + options.to_s)
+      Digest::MD5.hexdigest(params[:controller] + options.to_s)
+    end
+
+    def add_embedded_params(options, eid)
       eid_info = {loading: true}
       eid_info[:constraints] = options[:constraints] if options[:constraints]
       eid_info[:conditions] = options[:conditions] if options[:conditions]
       eid_info[:label] = options[:label] if options[:label]
       options[:params] ||= {}
       options[:params].merge! eid: eid, embedded: eid_info
+    end
 
+    def render_embedded_component(remote_controller, options, eid, url_options)
       id = "as_#{eid}-embedded"
-      url_options = {controller: remote_controller.to_s, action: 'index', id: nil}.merge(options[:params])
-
-      if controller.respond_to?(:render_component_into_view, true) && !options[:xhr]
-        controller.send(:render_component_into_view, url_options)
-      else
-        url = url_for(url_options)
-        content_tag(:div, id: id, class: 'active-scaffold-component', data: {refresh: url}) do
-          content_tag(:div, class: 'active-scaffold-header') do
-            content_tag(:h2) do
-              label = options[:label] || remote_controller_config(remote_controller).list.label
-              link_to(label, url, remote: true, class: 'load-embedded', data: {error_msg: server_error_msg(as_(:error_500))}) <<
-                loading_indicator_tag(url_options)
-            end
+      url = url_for(url_options)
+      content_tag(:div, id: id, class: 'active-scaffold-component', data: {refresh: url}) do
+        content_tag(:div, class: 'active-scaffold-header') do
+          content_tag(:h2) do
+            label = options[:label] || remote_controller_config(remote_controller).list.label
+            link_to(label, url, remote: true, class: 'load-embedded', data: {error_msg: server_error_msg(as_(:error_500))}) <<
+              loading_indicator_tag(url_options)
           end
         end
       end
