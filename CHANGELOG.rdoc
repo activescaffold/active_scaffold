@@ -5,7 +5,8 @@
 - Add a default-enabled Choices.js bridge with form and search UI helpers
 - Check action link security methods when processing member actions, passing the record when available
 
-= 4.4.5 (unreleased)
+= 4.4.5
+- Authorize the PaperTrail deleted-records action and allow overriding its version query with +deleted_records_query+
 - Deprecate passing optional boolean arguments positionally; keyword arguments will be required in 4.5.
 
   Overrides which only forward arguments can replace anonymous +*+ with +...+. This accepts the positional argument from 4.4 and forwards the keyword argument used by 4.5:
