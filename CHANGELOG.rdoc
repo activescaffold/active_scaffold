@@ -1,3 +1,6 @@
+= Unreleased
+- Add explicit HTML translations to +as_+. Move translations containing markup from +key+ to +key.html+. Legacy HTML translations remain HTML-safe in 4.4 but emit one deprecation warning per key and scope; ordinary translations will no longer be marked HTML-safe in ActiveScaffold 4.5
+
 = 4.4.5
 - Authorize the PaperTrail deleted-records action and allow overriding its version query with +deleted_records_query+
 - Deprecate passing optional boolean arguments positionally; keyword arguments will be required in 4.5.
