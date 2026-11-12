@@ -22,6 +22,36 @@ class JavascriptLoadTest < ActiveSupport::TestCase
     assert_includes core, 'if (!ActiveScaffold.config.deferInitialSetup)'
   end
 
+  def test_callback_registry_loads_before_jquery_ui_and_core
+    loader = File.read(File.join(ASSETS_PATH, 'load.js'))
+    registry_source = File.read(File.join(ASSETS_PATH, 'callback_registry.js'))
+
+    registry = loader.index("loadScript(RAILS_ASSET_URL('/active_scaffold/callback_registry.js'))")
+    jquery_ui = loader.index('await loadJQueryUI();')
+    core = loader.index("loadScript(RAILS_ASSET_URL('/active_scaffold/active_scaffold.js'))")
+
+    assert_operator registry, :<, jquery_ui
+    assert_operator registry, :<, core
+    assert_equal 'active_scaffold/callback_registry', ActiveScaffold::Assets.active_scaffold_javascripts(:core).first
+    assert_includes registry_source, 'ActiveScaffold.datepickerCallbacks'
+    assert_includes registry_source, 'ActiveScaffold.tinymceCallbacks'
+    assert_includes registry_source, 'DEPRECATION WARNING'
+    assert_includes registry_source, 'global.eval('
+  end
+
+  def test_bridges_delegate_inline_setting_resolution_to_registry
+    datepicker = File.read(File.join(ASSETS_PATH, 'date_picker_bridge.js'))
+    tinymce = File.read(File.join(ASSETS_PATH, 'tiny_mce_bridge.js'))
+    timepicker = File.read(File.expand_path('../../vendor/assets/javascripts/jquery-ui-timepicker-addon.js', __dir__))
+
+    assert_not_includes datepicker, 'eval('
+    assert_not_includes tinymce, 'eval('
+    assert_not_includes timepicker, 'eval('
+    assert_includes datepicker, 'ActiveScaffold.resolveDatepickerSetting'
+    assert_includes tinymce, "ActiveScaffold.resolveCallback('tinymceCallbacks'"
+    assert_includes timepicker, 'ActiveScaffold.resolveDatepickerSetting'
+  end
+
   def test_plugin_ready_callbacks_run_before_initial_setup
     loader = File.read(File.join(ASSETS_PATH, 'load.js'))
     initialization = loader[/const initializeActiveScaffold = \(\) => .*?^  \}\);/m]

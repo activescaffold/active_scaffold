@@ -40,7 +40,7 @@
     var id = jQuery(this).attr('id');
     if (tinymce && tinymce.majorVersion >= 6) {
       settings.selector = '#' + id;
-      var userSetup = settings.setup ? eval(settings.setup) : function () {};
+      var userSetup = settings.setup ? ActiveScaffold.resolveCallback('tinymceCallbacks', settings.setup, 'TinyMCE setup') : function () {};
       settings.setup = function(editor) {
         userSetup(editor);                  // run what the user already had
 

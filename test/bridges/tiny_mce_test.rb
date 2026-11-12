@@ -24,6 +24,12 @@ class TinyMceTest < ActionView::TestCase
           {theme: 'alternate', toolbar: 'undo redo | format'}
         end
       end.new
+    when :callback
+      Class.new do
+        def options
+          {theme: 'modern', setup: 'configureEditor'}
+        end
+      end.new
     end
   end
 
@@ -47,6 +53,15 @@ class TinyMceTest < ActionView::TestCase
     opts = {name: 'record[name]', id: 'record_name', class: 'name-input', object: record}
 
     assert_dom_equal %(<textarea name="record[name]" class="name-input mceEditor" id="record_name" data-tinymce="{&quot;theme&quot;:&quot;alternate&quot;,&quot;toolbar&quot;:&quot;undo redo | format&quot;}">\n</textarea>), active_scaffold_input_tinymce(config.columns[:name], opts)
+  end
+
+  def test_form_ui_with_named_setup_callback
+    config = ActiveScaffold::Config::Core.new(:company)
+    record = Company.new
+    config.columns[:name].options[:tinymce_config] = :callback
+    opts = {name: 'record[name]', id: 'record_name', object: record}
+
+    assert_dom_equal %(<textarea name="record[name]" class="mceEditor" id="record_name" data-tinymce="{&quot;theme&quot;:&quot;modern&quot;,&quot;setup&quot;:&quot;configureEditor&quot;}">\n</textarea>), active_scaffold_input_tinymce(config.columns[:name], opts)
   end
 
   protected

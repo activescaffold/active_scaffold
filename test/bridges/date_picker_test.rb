@@ -30,4 +30,17 @@ class DatePickerTest < ActionView::TestCase
     assert active_scaffold_input_date_picker(config.columns[:date], opts.merge(id: 'record_date', name: 'record[date]'))
     assert active_scaffold_input_date_picker(config.columns[:datetime], opts.merge(id: 'record_date', name: 'record[datetime]'))
   end
+
+  def test_form_ui_with_named_callback
+    config = ActiveScaffold::Config::Core.new(:company)
+    config.columns[:date].options[:data] = {beforeshowday: 'availableDate'}
+    @record = Company.new
+
+    html = active_scaffold_input_date_picker(
+      config.columns[:date],
+      {object: @record, id: 'record_date', name: 'record[date]'}
+    )
+
+    assert_includes html, 'data-beforeshowday="availableDate"'
+  end
 end

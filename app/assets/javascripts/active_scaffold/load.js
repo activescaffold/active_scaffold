@@ -8,6 +8,8 @@
 
   // Load dependencies based on configuration
   const loadDependencies = async () => {
+    await loadScript(RAILS_ASSET_URL('/active_scaffold/callback_registry.js'));
+
     // Always load these
     await loadScript(RAILS_ASSET_URL('/jquery.ba-throttle-debounce.js'));
     await loadScript(RAILS_ASSET_URL('/jquery.visible.min.js'));

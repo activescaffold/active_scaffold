@@ -1,4 +1,24 @@
 = Unreleased
+- Add named callback registries for datepicker and TinyMCE configuration. Inline JavaScript remains supported in 4.4, but successful evaluation emits a browser deprecation warning because support will be removed in ActiveScaffold 4.5.
+
+  Define callbacks in an application JavaScript file:
+
+    ActiveScaffold.datepickerCallbacks.availableDate = function(date) {
+      return [date.getDay() !== 0, ''];
+    };
+    ActiveScaffold.tinymceCallbacks.configureEditor = function(editor) {
+      editor.on('init', function() { /* ... */ });
+    };
+
+  Reference their names from configuration instead of embedding function source:
+
+    config.columns[:starts_on].options[:data] = {beforeshowday: 'availableDate'}
+
+    # config/tinymce.yml
+    default:
+      setup: configureEditor
+
+  Migrate warnings before upgrading to 4.5. Non-callback datepicker settings should use JSON-compatible values.
 - Add explicit HTML translations to +as_+. Move translations containing markup from +key+ to +key.html+. Interpolation follows Rails' HTML translation behavior, escaping unsafe values and preserving already HTML-safe values. Legacy HTML translations remain HTML-safe in 4.4 but emit one deprecation warning per key and scope; ordinary translations will no longer be marked HTML-safe in ActiveScaffold 4.5
 
 = 4.4.5
