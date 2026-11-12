@@ -1,5 +1,5 @@
 = Unreleased
-- Add explicit HTML translations to +as_+. Move translations containing markup from +key+ to +key.html+. Legacy HTML translations remain HTML-safe in 4.4 but emit one deprecation warning per key and scope; ordinary translations will no longer be marked HTML-safe in ActiveScaffold 4.5
+- Add explicit HTML translations to +as_+. Move translations containing markup from +key+ to +key.html+. Interpolation follows Rails' HTML translation behavior, escaping unsafe values and preserving already HTML-safe values. Legacy HTML translations remain HTML-safe in 4.4 but emit one deprecation warning per key and scope; ordinary translations will no longer be marked HTML-safe in ActiveScaffold 4.5
 
 = 4.4.5
 - Authorize the PaperTrail deleted-records action and allow overriding its version query with +deleted_records_query+

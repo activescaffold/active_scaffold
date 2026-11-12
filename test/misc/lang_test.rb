@@ -27,6 +27,28 @@ class LocalizationTest < ActiveSupport::TestCase
     assert_predicate translation, :html_safe?
   end
 
+  def test_html_translation_escapes_interpolation
+    I18n.backend.store_translations :en, active_scaffold: {
+      escaped_greeting: {html: '<strong>Hello, %<name>s</strong>'}
+    }
+
+    translation = as_(:escaped_greeting, name: '<em>Test</em>')
+
+    assert_equal '<strong>Hello, &lt;em&gt;Test&lt;/em&gt;</strong>', translation
+    assert_predicate translation, :html_safe?
+  end
+
+  def test_html_translation_preserves_html_safe_interpolation
+    I18n.backend.store_translations :en, active_scaffold: {
+      safe_greeting: {html: '<strong>Hello, %<name>s</strong>'}
+    }
+
+    translation = as_(:safe_greeting, name: '<em>Test</em>'.html_safe)
+
+    assert_equal '<strong>Hello, <em>Test</em></strong>', translation
+    assert_predicate translation, :html_safe?
+  end
+
   def test_html_in_plain_translation_warns_only_once
     I18n.backend.store_translations :en, active_scaffold: {legacy_markup: '<strong>Legacy</strong>'}
     warning = 'HTML in translation active_scaffold.legacy_markup is deprecated. ' \
