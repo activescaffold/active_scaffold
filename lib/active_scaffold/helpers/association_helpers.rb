@@ -128,7 +128,22 @@ module ActiveScaffold
       end
 
       def record_select_params_for_add_existing(association, edit_associated_url_options, record)
-        {onselect: "ActiveScaffold.record_select_onselect(#{url_for(edit_associated_url_options).to_json}, #{active_scaffold_id.to_json}, id);"}
+        if ActiveScaffold::Bridges::RecordSelect.callback_registry?
+          {
+            onselect: 'active_scaffold.add_existing',
+            html: {
+              data: {
+                edit_associated_url: url_for(edit_associated_url_options),
+                active_scaffold_id: active_scaffold_id
+              }
+            }
+          }
+        else
+          {
+            onselect: "ActiveScaffold.record_select_onselect(#{url_for(edit_associated_url_options).to_json}, " \
+                      "#{active_scaffold_id.to_json}, id);"
+          }
+        end
       end
     end
   end

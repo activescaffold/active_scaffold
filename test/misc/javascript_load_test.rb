@@ -52,6 +52,50 @@ class JavascriptLoadTest < ActiveSupport::TestCase
     assert_includes timepicker, 'ActiveScaffold.resolveDatepickerSetting'
   end
 
+  def test_record_select_bridge_registers_add_existing_callback
+    bridge = File.read(File.join(ASSETS_PATH, 'record_select_bridge.js'))
+    bridge_class = ActiveScaffold::Bridges::RecordSelect
+    singleton_class = bridge_class.singleton_class
+    callback_registry = singleton_class.instance_method(:callback_registry?)
+
+    singleton_class.define_method(:callback_registry?) { true }
+    assert_equal ['record_select', 'active_scaffold/record_select_bridge'], bridge_class.javascripts
+    singleton_class.define_method(:callback_registry?) { false }
+    assert_equal ['record_select'], bridge_class.javascripts
+    assert_includes bridge, "RecordSelect.registerCallback('active_scaffold.add_existing'"
+    assert_includes bridge, "this.obj.attr('data-edit-associated-url')"
+    assert_includes bridge, "this.obj.attr('data-active-scaffold-id')"
+    assert_not_includes bridge, 'eval('
+  ensure
+    singleton_class&.define_method(:callback_registry?, callback_registry) if callback_registry
+  end
+
+  def test_add_existing_uses_registry_only_when_record_select_supports_it
+    bridge_class = ActiveScaffold::Bridges::RecordSelect
+    singleton_class = bridge_class.singleton_class
+    callback_registry = singleton_class.instance_method(:callback_registry?)
+    helper = Object.new.extend(ActiveScaffold::Helpers::AssociationHelpers)
+    helper.define_singleton_method(:url_for) { |_options| '/projects/--ID--' }
+    helper.define_singleton_method(:active_scaffold_id) { 'as_projects' }
+
+    singleton_class.define_method(:callback_registry?) { true }
+    assert_equal(
+      {
+        onselect: 'active_scaffold.add_existing',
+        html: {data: {edit_associated_url: '/projects/--ID--', active_scaffold_id: 'as_projects'}}
+      },
+      helper.record_select_params_for_add_existing(nil, {}, nil)
+    )
+
+    singleton_class.define_method(:callback_registry?) { false }
+    assert_equal(
+      {onselect: 'ActiveScaffold.record_select_onselect("/projects/--ID--", "as_projects", id);'},
+      helper.record_select_params_for_add_existing(nil, {}, nil)
+    )
+  ensure
+    singleton_class&.define_method(:callback_registry?, callback_registry) if callback_registry
+  end
+
   def test_plugin_ready_callbacks_run_before_initial_setup
     loader = File.read(File.join(ASSETS_PATH, 'load.js'))
     initialization = loader[/const initializeActiveScaffold = \(\) => .*?^  \}\);/m]
