@@ -1,7 +1,28 @@
+= Unreleased
+- Remove deprecated inline JavaScript datepicker and TinyMCE settings. Configuration must reference a registered callback name, and other datepicker values must use JSON-compatible data attributes.
+- Require TinyMCE 6 or newer, removing the legacy TinyMCE 5 editor initialization path. TinyMCE 5 reached end of support in April 2023.
+- Make HTML safety explicit in +as_+ translations. This is a backward-incompatible change: ordinary translations are no longer marked HTML safe. Applications must move translations containing markup under an +html+ subkey:
+
+    # Before
+    active_scaffold:
+      greeting: "<strong>Hello, %{name}</strong>"
+
+    # After
+    active_scaffold:
+      greeting:
+        html: "<strong>Hello, %{name}</strong>"
+
+  +as_(:greeting)+ prefers +active_scaffold.greeting.html+ and marks only that entry HTML safe. Dynamic interpolation values are escaped using Rails' HTML translation behavior, while already HTML-safe values are preserved.
+- Require keyword arguments for optional boolean parameters, completing the deprecation introduced in 4.4.5
+- Add an option to enable pagination for API and other non-HTML formats; this will become the default in the next version. Include total record and page counts in response headers
+- Add ActionColumns#insert to insert columns or layout groups at a specific position
+- Add a default-enabled Choices.js bridge with form and search UI helpers
+- Check action link security methods when processing member actions, passing the record when available
+
 = 4.4.6
 - Execute iframe responses by injecting a nonce-aware script into the parent document, avoiding +eval()+ under a strict Content Security Policy
 - Use RecordSelect's named callback registry for the add-existing subform link when available, avoiding +eval()+ under a strict Content Security Policy while retaining compatibility with older RecordSelect releases.
-- Add named callback registries for datepicker and TinyMCE configuration, allowing callbacks to work with a strict Content Security Policy. This is a backward-incompatible change: configuration must reference a registered callback name instead of embedding JavaScript source or naming a global function.
+- Add named callback registries for datepicker and TinyMCE configuration. Inline JavaScript remains supported in 4.4, but successful evaluation emits a browser deprecation warning because support will be removed in ActiveScaffold 4.5.
 
   Define callbacks in an application JavaScript file:
 
@@ -21,25 +42,8 @@
     default:
       setup: configureEditor
 
-  Other datepicker values must use JSON-compatible data attributes. Use a registered +beforeShow+ callback for values that must be calculated in JavaScript.
-- Require TinyMCE 6 or newer, removing the legacy TinyMCE 5 editor initialization path. TinyMCE 5 reached end of support in April 2023.
-- Make HTML safety explicit in +as_+ translations. This is a backward-incompatible change: ordinary translations are no longer marked HTML safe. Applications must move translations containing markup under an +html+ subkey:
-
-    # Before
-    active_scaffold:
-      greeting: "<strong>Hello, %{name}</strong>"
-
-    # After
-    active_scaffold:
-      greeting:
-        html: "<strong>Hello, %{name}</strong>"
-
-  +as_(:greeting)+ prefers +active_scaffold.greeting.html+ and marks only that entry HTML safe. Dynamic interpolation values are escaped using Rails' HTML translation behavior, while already HTML-safe values are preserved.
-- Require keyword arguments for optional boolean parameters, completing the deprecation introduced in 4.4.5
-- Add an option to enable pagination for API and other non-HTML formats; this will become the default in the next version. Include total record and page counts in response headers
-- Add ActionColumns#insert to insert columns or layout groups at a specific position
-- Add a default-enabled Choices.js bridge with form and search UI helpers
-- Check action link security methods when processing member actions, passing the record when available
+  Migrate warnings before upgrading to 4.5. Non-callback datepicker settings should use JSON-compatible values.
+- Add explicit HTML translations to +as_+. Move translations containing markup from +key+ to +key.html+. Interpolation follows Rails' HTML translation behavior, escaping unsafe values and preserving already HTML-safe values. Legacy HTML translations remain HTML-safe in 4.4 but emit one deprecation warning per key and scope; ordinary translations will no longer be marked HTML-safe in ActiveScaffold 4.5
 
 = 4.4.5
 - Authorize the PaperTrail deleted-records action and allow overriding its version query with +deleted_records_query+
