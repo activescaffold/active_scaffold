@@ -42,7 +42,33 @@ default:
   setup: configureEditor
 {%- endhighlight %}
 
-Non-callback datepicker settings should use JSON-compatible values instead of JavaScript expressions.
+Non-callback datepicker settings should use JSON-compatible values instead of JavaScript expressions. jQuery UI accepts a number of days from today and relative date strings, so `new Date` is not needed for common date limits:
+
+{% highlight ruby -%}
+# Before: these strings must be evaluated as JavaScript
+config.columns[:starts_on].options[:data] = {
+  mindate: "new Date()",
+  maxdate: "new Date(new Date().setMonth(new Date().getMonth() + 1))"
+}
+
+# After: 0 means today and "+1m" means one month from today
+config.columns[:starts_on].options[:data] = {
+  mindate: 0,
+  maxdate: "+1m"
+}
+{%- endhighlight %}
+
+Fixed or server-calculated dates can be serialized as strings. Set `dateformat` to match their format:
+
+{% highlight ruby -%}
+config.columns[:starts_on].options[:data] = {
+  dateformat: "yy-mm-dd",
+  mindate: Date.current.iso8601,
+  maxdate: 1.year.from_now.to_date.iso8601
+}
+{%- endhighlight %}
+
+These values become ordinary numbers and strings in the input's data attributes, so the browser does not need to evaluate JavaScript to initialize the datepicker.
 
 The old syntax still works in ActiveScaffold 4.4.6 and emits a browser deprecation warning when it is evaluated. This lets applications migrate one setting at a time. An application that has migrated all legacy settings can remove `'unsafe-eval'` from its CSP; an application that still uses them can keep `'unsafe-eval'` temporarily until its migration is complete.
 
