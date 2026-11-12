@@ -7,6 +7,7 @@ module ActiveScaffold
     autoload :JqueryUiThemeGenerator, 'active_scaffold/assets/jquery_ui_theme_generator'
 
     CORE_STYLESHEETS = ['active_scaffold/core'].freeze
+    CALLBACK_REGISTRY_JAVASCRIPT = 'active_scaffold/callback_registry'
     CORE_JAVASCRIPTS = ['jquery.ba-throttle-debounce', 'jquery.visible.min', 'active_scaffold/jquery.editinplace', 'active_scaffold/active_scaffold'].freeze
 
     class << self
@@ -34,17 +35,17 @@ module ActiveScaffold
       def active_scaffold_javascripts(load = :all)
         case load
         when :all
-          jquery_ui_javascripts + CORE_JAVASCRIPTS + ActiveScaffold.javascripts + bridge_javascripts
+          [CALLBACK_REGISTRY_JAVASCRIPT] + jquery_ui_javascripts + CORE_JAVASCRIPTS + ActiveScaffold.javascripts + bridge_javascripts
         when :deps
-          jquery_ui_javascripts + ActiveScaffold.javascripts + bridge_javascripts
+          [CALLBACK_REGISTRY_JAVASCRIPT] + jquery_ui_javascripts + ActiveScaffold.javascripts + bridge_javascripts
         when :core
-          CORE_JAVASCRIPTS
+          [CALLBACK_REGISTRY_JAVASCRIPT] + CORE_JAVASCRIPTS
         when :plugins
           ActiveScaffold.javascripts
         when :bridges
           bridge_javascripts
         when :jquery_ui
-          jquery_ui_javascripts
+          [CALLBACK_REGISTRY_JAVASCRIPT] + jquery_ui_javascripts
         else
           raise ArgumentError, "Unknown load mode: #{load.inspect}"
         end

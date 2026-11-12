@@ -1,4 +1,26 @@
 = Unreleased
+- Add named callback registries for datepicker and TinyMCE configuration, allowing callbacks to work with a strict Content Security Policy. This is a backward-incompatible change: configuration must reference a registered callback name instead of embedding JavaScript source or naming a global function.
+
+  Define callbacks in an application JavaScript file:
+
+    ActiveScaffold.datepickerCallbacks.availableDate = function(date) {
+      return [date.getDay() !== 0, ''];
+    };
+    ActiveScaffold.tinymceCallbacks.configureEditor = function(editor) {
+      editor.on('init', function() { /* ... */ });
+    };
+
+  Reference their names from configuration instead of embedding function source:
+
+    # Datepicker column options
+    config.columns[:starts_on].options[:data] = {beforeshowday: 'availableDate'}
+
+    # config/tinymce.yml
+    default:
+      setup: configureEditor
+
+  Other datepicker values must use JSON-compatible data attributes. Use a registered +beforeShow+ callback for values that must be calculated in JavaScript.
+- Require TinyMCE 6 or newer, removing the legacy TinyMCE 5 editor initialization path. TinyMCE 5 reached end of support in April 2023.
 - Make HTML safety explicit in +as_+ translations. This is a backward-incompatible change: ordinary translations are no longer marked HTML safe. Applications must move translations containing markup under an +html+ subkey:
 
     # Before

@@ -38,29 +38,17 @@
       settings[key] = local_settings[key];
     }
     var id = jQuery(this).attr('id');
-    if (tinymce && tinymce.majorVersion >= 6) {
-      settings.selector = '#' + id;
-      var userSetup = settings.setup ? eval(settings.setup) : function () {};
-      settings.setup = function(editor) {
-        userSetup(editor);                  // run what the user already had
+    var userSetup = settings.setup ? ActiveScaffold.resolveCallback('tinymceCallbacks', settings.setup, 'TinyMCE setup') : function () {};
+    settings.selector = '#' + id;
+    settings.setup = function(editor) {
+      userSetup(editor);                  // run what the user already had
 
-        /* keep textarea in sync */
-        var sync = function() { editor.save(); };  // same as triggerSave()
-        editor.on('change input NodeChange Undo Redo', sync);
-      };
-      tinymce.init(settings);
-    } else { // tinyMCE.majorVersion < 6
-      settings.init_instance_callback = function(editor) {
-        var sync = function () { editor.save(); };   // same as triggerSave()
-        editor.on('change input NodeChange Undo Redo', sync);
-        if (userInit) userInit(editor);              // run user’s callback too
-      };
-      tinyMCE.settings = settings;
-      tinyMCE.execCommand('mceAddEditor', false, id);
-    }
+      /* keep textarea in sync */
+      var sync = function() { editor.save(); };  // same as triggerSave()
+      editor.on('change input NodeChange Undo Redo', sync);
+    };
+    tinymce.init(settings);
   }
-/*const sync = () => editor.save();   // same as triggerSave for this editor
-        editor.on('change input NodeChange Undo Redo', sync);*/
   jQuery(document).on('submit', 'form.as_form', function() {
     tinymce.triggerSave();
     jQuery('textarea.mceEditor', this).each(function() { tinymce.remove('#'+jQuery(this).attr('id')); });

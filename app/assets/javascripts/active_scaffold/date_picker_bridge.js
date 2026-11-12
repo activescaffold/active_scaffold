@@ -6,11 +6,7 @@ jQuery.extend(Object.getPrototypeOf(jQuery.datepicker), {
       if(this._defaults.hasOwnProperty(attrName)){
         var attrValue = $target.data(attrName.toLowerCase());
         if (attrValue !== undefined) {
-          try {
-            inlineSettings[attrName] = eval(attrValue);
-          } catch (err) {
-            inlineSettings[attrName] = attrValue;
-          }
+          inlineSettings[attrName] = ActiveScaffold.resolveDatepickerSetting(attrName, attrValue);
         }
       }
     }

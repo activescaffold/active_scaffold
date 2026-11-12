@@ -176,11 +176,7 @@
 				if (this._defaults.hasOwnProperty(attrName)) {
 					var attrValue = $input.data(attrName.toLowerCase());
 					if (attrValue !== undefined) {
-						try {
-							inlineSettings[attrName] = eval(attrValue);
-						} catch (err) {
-							inlineSettings[attrName] = attrValue;
-						}
+						inlineSettings[attrName] = ActiveScaffold.resolveDatepickerSetting(attrName, attrValue);
 					}
 				}
 			}
