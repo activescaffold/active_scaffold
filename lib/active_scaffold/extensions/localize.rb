@@ -3,10 +3,17 @@
 class Object
   def as_(key, options = {})
     if key.present?
-      scope = [:active_scaffold, *options.delete(:scope)]
-      options = options.reverse_merge(scope: scope, default: key.is_a?(String) ? key : key.to_s.titleize)
-      text = I18n.t(key.to_s, **options).html_safe
-      # text = nil if text.include?('translation missing:')
+      options = options.merge(scope: [:active_scaffold, *options[:scope]])
+      options[:default] = key.is_a?(String) ? key : key.to_s.titleize unless options.key?(:default)
+
+      missing_html_translation = Object.new
+      html = I18n.t("#{key}.html", **options, default: missing_html_translation)
+      text =
+        if html.equal?(missing_html_translation)
+          I18n.t(key.to_s, **options)
+        else
+          html.html_safe # rubocop:disable Rails/OutputSafety
+        end
     end
     text || key
   end

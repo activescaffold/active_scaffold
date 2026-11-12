@@ -1,4 +1,16 @@
 = Unreleased
+- Make HTML safety explicit in +as_+ translations. This is a backward-incompatible change: ordinary translations are no longer marked HTML safe. Applications must move translations containing markup under an +html+ subkey:
+
+    # Before
+    active_scaffold:
+      greeting: "<strong>Hello, %{name}</strong>"
+
+    # After
+    active_scaffold:
+      greeting:
+        html: "<strong>Hello, %{name}</strong>"
+
+  +as_(:greeting)+ prefers +active_scaffold.greeting.html+ and marks only that entry HTML safe. Applications must continue escaping dynamic values interpolated into HTML translations.
 - Require keyword arguments for optional boolean parameters, completing the deprecation introduced in 4.4.5
 - Add an option to enable pagination for API and other non-HTML formats; this will become the default in the next version. Include total record and page counts in response headers
 - Add ActionColumns#insert to insert columns or layout groups at a specific position
