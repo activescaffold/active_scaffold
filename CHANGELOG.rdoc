@@ -1,4 +1,5 @@
 = Unreleased
+- Use RecordSelect's named callback registry for the add-existing subform link when available, avoiding +eval()+ under a strict Content Security Policy while retaining compatibility with older RecordSelect releases.
 - Add named callback registries for datepicker and TinyMCE configuration, allowing callbacks to work with a strict Content Security Policy. This is a backward-incompatible change: configuration must reference a registered callback name instead of embedding JavaScript source or naming a global function.
 
   Define callbacks in an application JavaScript file:
