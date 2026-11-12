@@ -19,16 +19,10 @@ module ActiveScaffold
         end
       response.status = 200 if (300...400).cover? response.status
 
-      # Eval in parent scope and replace document location of this frame
-      # so back button doesn't replay action on targeted forms
-      # loc = document.location to be set after parent is updated for IE
-      # with(window.parent) - pull in variables from parent window
-      # setTimeout - scope the execution in the windows parent for safari
-      # window.eval - legal eval for Opera
-      script = "<html><body><script type='text/javascript' charset='utf-8'>
-        var loc = document.location;
-        with(window.parent) { setTimeout(function() { window.eval('#{self.class.helpers.escape_javascript script}'); window.loc && loc.replace('about:blank'); }, 1) }
-      </script></body></html>"
+      # Inject the response into the parent document so it executes in the parent scope.
+      # Reuse its CSP nonce when one is available, then replace the frame location so the
+      # back button doesn't replay the action on targeted forms.
+      script = responds_to_parent_html(script)
 
       # Clear out the previous render to prevent double render and then render
       if respond_to?(:erase_results, true)
@@ -41,5 +35,24 @@ module ActiveScaffold
       render html: script.html_safe, content_type: 'text/html' # rubocop:disable Rails/OutputSafety
     end
     alias respond_to_parent responds_to_parent
+
+    private
+
+    def responds_to_parent_html(response_javascript)
+      escaped_response = self.class.helpers.escape_javascript(response_javascript)
+      "<html><body><script type='text/javascript' charset='utf-8'>
+        var loc = document.location;
+        var responseJavaScript = '#{escaped_response}';
+        var parentDocument = window.parent.document;
+        var script = parentDocument.createElement('script');
+        var nonceSource = parentDocument.querySelector('script[nonce]');
+
+        if (nonceSource) script.nonce = nonceSource.nonce;
+        script.text = responseJavaScript;
+        parentDocument.head.appendChild(script);
+        script.remove();
+        loc.replace('about:blank');
+      </script></body></html>"
+    end
   end
 end
