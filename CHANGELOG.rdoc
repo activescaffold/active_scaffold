@@ -18,6 +18,9 @@
 - Add ActionColumns#insert to insert columns or layout groups at a specific position
 - Add a default-enabled Choices.js bridge with form and search UI helpers
 - Check action link security methods when processing member actions, passing the record when available
+- Improve list column links by using the configured empty-field text for blank labels
+- Removing the obsolete IE6 non-breaking-space workaround in the list
+- Applying association authorization only to automatically generated association links, custom links use normal action link authorization
 
 = 4.4.6
 - Execute iframe responses by injecting a nonce-aware script into the parent document, avoiding +eval()+ under a strict Content Security Policy

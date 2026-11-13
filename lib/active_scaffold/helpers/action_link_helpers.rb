@@ -267,8 +267,10 @@ module ActiveScaffold
       end
       private :_as_configure_column_link_action
 
-      def column_link_authorized?(link, column, record, associated)
-        if column.association
+      def column_link_authorized?(link, column, record, associated = nil)
+        # Only automatic links on association columns validate associated data.
+        if column.association && link.column == column
+          associated ||= record.send(column.association.name) unless column.association.collection?
           associated_for_authorized =
             if column.association.collection? || associated.nil?
               column.association.klass

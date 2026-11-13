@@ -43,4 +43,8 @@ class ActiveRecordTest < ActiveSupport::TestCase
     RequestStore.clear!
     assert_equal 'name', @record.to_label
   end
+
+  def test_to_label_takes_precedence_over_other_active_record_fallbacks
+    assert_equal ActiveScaffold::ToLabel, ActiveRecord::Base.instance_method(:to_label).owner
+  end
 end

@@ -45,15 +45,13 @@ module ActiveScaffold
         end
       end
 
-      # TODO: move empty_field_text and &nbsp; logic in here?
-      # TODO: we need to distinguish between the automatic links *we* create and the ones that the dev specified. some logic may not apply if the dev specified the link.
       def render_list_column(text, column, record)
         if column.link && !skip_action_link?(column.link, record)
           link = column.link
-          associated = record.send(column.association.name) if column.association
           authorized = link.action.nil?
-          authorized, reason = column_link_authorized?(link, column, record, associated) unless authorized
-          render_action_link(link, record, link: text, authorized: authorized, not_authorized_reason: reason)
+          authorized, reason = column_link_authorized?(link, column, record) unless authorized
+          link_text = text != false && text.blank? ? empty_field_text(column) : text
+          render_action_link(link, record, link: link_text, authorized: authorized, not_authorized_reason: reason)
         elsif inplace_edit?(record, column)
           active_scaffold_inplace_edit(record, column, formatted_column: text)
         elsif column_wrap_tag
