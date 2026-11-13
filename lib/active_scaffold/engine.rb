@@ -39,7 +39,7 @@ module ActiveScaffold
         require 'active_scaffold/extensions/unsaved_associated'
         require 'active_scaffold/extensions/unsaved_record'
         include ActiveScaffold::ActiveRecordPermissions::ModelUserAccess::Model
-        include ActiveScaffold::ToLabel
+        prepend ActiveScaffold::ToLabel
         include ActiveScaffold::UnsavedAssociated
         include ActiveScaffold::UnsavedRecord
 
