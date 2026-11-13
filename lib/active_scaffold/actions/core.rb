@@ -126,8 +126,8 @@ module ActiveScaffold::Actions
 
     def updated_record_with_form(columns, attributes, scope)
       if attributes && scope
-        attributes = scope.delete('[').split(']').inject(attributes) { |h, idx| h[idx] }
-        id = attributes[:id]
+        attributes = attributes_from_scope(attributes, scope)
+        id = attributes&.[](:id)
       else
         id = params[:id]
       end
@@ -210,7 +210,7 @@ module ActiveScaffold::Actions
 
     def parent_column(parent_controller, scope)
       attrs = params[:record]
-      parts = scope[1..-2].split('][')
+      parts = scope_parts(scope)
       columns = parent_controller.active_scaffold_config.columns
       column = nil
 
@@ -240,7 +240,7 @@ module ActiveScaffold::Actions
     end
 
     def find_from_scope(parent, scope)
-      parts = scope[1..-2].split('][')
+      parts = scope_parts(scope)
       record = parent
 
       while parts.present?
@@ -258,6 +258,16 @@ module ActiveScaffold::Actions
       end
 
       record
+    end
+
+    def scope_parts(scope)
+      return [] unless scope
+
+      scope[1..-2].split('][')
+    end
+
+    def attributes_from_scope(attributes, scope)
+      scope_parts(scope).inject(attributes) { |scoped_attributes, part| scoped_attributes&.[](part) }
     end
 
     def copy_attributes(orig, dst = nil)

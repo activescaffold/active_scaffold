@@ -93,6 +93,31 @@ class RenderFieldTest < ActionController::TestCase
     assert_equal :buildings, column.name
   end
 
+  test 'splits a nested scope into its parts' do
+    assert_equal %w[buildings 1 floors], @controller.send(:scope_parts, '[buildings][1][floors]')
+    assert_empty @controller.send(:scope_parts, nil)
+  end
+
+  test 'finds attributes through a nested scope' do
+    attributes = {
+      'buildings' => {
+        '1' => {
+          'floors' => {'2' => {name: 'First floor'}}
+        }
+      }
+    }
+
+    scoped_attributes = @controller.send(:attributes_from_scope, attributes, '[buildings][1][floors][2]')
+
+    assert_equal({name: 'First floor'}, scoped_attributes)
+  end
+
+  test 'returns nil when attributes do not contain the scope' do
+    attributes = {'buildings' => {}}
+
+    assert_nil @controller.send(:attributes_from_scope, attributes, '[buildings][1][floors]')
+  end
+
   private
 
   def assign_params(params)
